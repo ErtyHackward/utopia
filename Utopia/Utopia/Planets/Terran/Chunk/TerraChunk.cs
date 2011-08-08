@@ -84,22 +84,30 @@ namespace Utopia.Planets.Terran.Chunk
             int XWorld, YWorld, ZWorld;
             int cubeIndex, neightborCubeIndex;
 
-            for (int Y = 0; Y < _cubeRange.Max.Y; Y++)
+            for (int X = 0; X < LandscapeBuilder.Chunksize; X++)
             {
+                XWorld = (X + _cubeRange.Min.X);
+                    
                 for (int Z = 0; Z < LandscapeBuilder.Chunksize; Z++)
                 {
-                    for (int X = 0; X < LandscapeBuilder.Chunksize; X++)
-                    {
-                        //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
-                        XWorld = (X + _cubeRange.Min.X);
-                        YWorld = (Y + _cubeRange.Min.Y);
-                        ZWorld = (Z + _cubeRange.Min.Z);
+                    ZWorld = (Z + _cubeRange.Min.Z);
 
+                    //by moving it there an reordering the loops, we avoid doing this operations 128 times for each chunk
+                    int offset = MathHelper.Mod(XWorld, LandscapeBuilder.Worldsize.X)
+                            + MathHelper.Mod(ZWorld, LandscapeBuilder.Worldsize.Z) * LandscapeBuilder.Worldsize.X;
+
+                    
+                    for (int Y = 0; Y < _cubeRange.Max.Y; Y++)
+                    {
+
+                        //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
+                        YWorld = (Y + _cubeRange.Min.Y);
+                    
                         //Inlinning Fct for speed !
                         //==> Could use this instead of the next line ==> cubeIndex = _landscape.Index(XWorld, YWorld, ZWorld);
                         //The "problem" being that everytime this fonction is called, it is creation a copy of the parameter variables, this fct is being called 
                         //A lot of time, to easy the GAC work, it's better to inline the fct here.
-                        cubeIndex = MathHelper.Mod(XWorld, LandscapeBuilder.Worldsize.X) + MathHelper.Mod(ZWorld, LandscapeBuilder.Worldsize.Z) * LandscapeBuilder.Worldsize.X + YWorld * LandscapeBuilder.Worldsize.X * LandscapeBuilder.Worldsize.Z;
+                        cubeIndex =  offset + YWorld * LandscapeBuilder.Worldsize.X * LandscapeBuilder.Worldsize.Z;
 
                         //_landscape.Cubes[] is the BIG table containing all terraCube in the visible world.
                         //For speed access, I use an array with only one dimension, thus the table index must be computed from the X, Y, Z position of the terracube.
