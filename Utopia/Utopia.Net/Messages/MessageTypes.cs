@@ -1,0 +1,61 @@
+﻿namespace Utopia.Net.Messages
+{
+    /// <summary>
+    /// Enumeration of all network messages
+    /// </summary>
+    public enum MessageTypes : byte
+    {
+        /// <summary>
+        /// First message that client should send
+        /// </summary>
+        Login = 1,
+        /// <summary>
+        /// Players can send chat messages by this command
+        /// </summary>
+        Chat = 2,
+        /// <summary>
+        /// Server indicates of error by this command, this command means that connection is broken
+        /// </summary>
+        Error = 3,
+        /// <summary>
+        /// Server notify clients about current game time using this command
+        /// </summary>
+        DateTime = 4,
+        /// <summary>
+        /// Player's request for chunk range
+        /// </summary>
+        GetChunks = 5,
+        /// <summary>
+        /// Game information
+        /// </summary>
+        GameInformation = 6,
+        /// <summary>
+        /// Occurs when block is changed
+        /// </summary>
+        BlockChange = 7,
+        /// <summary>
+        /// Player position change
+        /// </summary>
+        PlayerPosition = 8,
+        /// <summary>
+        /// Player view direction
+        /// </summary>
+        PlayerDirection = 9,
+        /// <summary>
+        /// Server responce to GetChunks with chunk data
+        /// </summary>
+        ChunkData = 10,
+        /// <summary>
+        /// New player somewhere near
+        /// </summary>
+        PlayerIn = 11,
+        /// <summary>
+        /// Player get out of our view range
+        /// </summary>
+        PlayerOut = 12,
+        /// <summary>
+        /// Result of login procedure
+        /// </summary>
+        LoginResult = 13
+    }
+}

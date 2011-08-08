@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E1E5C757-C550-4E62-8BE3-2E9553F023F7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>S33M3Engines</RootNamespace>
+    <AssemblyName>S33M3Engines</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualC" />
+    <Reference Include="SharpDX">
+      <HintPath>..\Library\SharpDX\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.D3DCompiler">
+      <HintPath>..\Library\SharpDX\SharpDX.D3DCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>..\Library\SharpDX\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI">
+      <HintPath>..\Library\SharpDX\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Error">
+      <HintPath>..\Library\SharpDX\SharpDX.Error.dll</HintPath>
+    </Reference>
+    <Reference Include="SmartThreadPool, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Library\SmartThreadPool.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Buffers\IndexBuffer.cs" />
+    <Compile Include="Buffers\InstancedVertexBuffer.cs" />
+    <Compile Include="Buffers\VertexBuffer.cs" />
+    <Compile Include="Cameras\Camera.cs" />
+    <Compile Include="Cameras\FirstPersonCamera.cs" />
+    <Compile Include="Cameras\ICameraPlugin.cs" />
+    <Compile Include="D3D\DebugTools\PerfTimer.cs" />
+    <Compile Include="D3D\Effects\Basics\DebugEffect.cs" />
+    <Compile Include="D3D\Effects\Basics\HLSLSprites.cs" />
+    <Compile Include="D3D\Effects\Basics\HLSLVertexPositionColor.cs" />
+    <Compile Include="D3D\Effects\Basics\HLSLVertexPositionTexture.cs" />
+    <Compile Include="D3D\Effects\HLSLFramework\CBuffer.cs" />
+    <Compile Include="D3D\Effects\HLSLFramework\Constant.cs" />
+    <Compile Include="D3D\Effects\HLSLFramework\HLSLShaderWrap.cs" />
+    <Compile Include="D3D\Effects\HLSLFramework\ShaderResource.cs" />
+    <Compile Include="D3D\Effects\HLSLFramework\ShaderSampler.cs" />
+    <Compile Include="D3D\WorldFocus.cs" />
+    <Compile Include="D3DEngine.cs" />
+    <Compile Include="D3D\DebugTools\GameConsole.cs" />
+    <Compile Include="D3D\DebugTools\DebugInfo.cs" />
+    <Compile Include="D3D\DebugTools\FPS.cs" />
+    <Compile Include="D3D\Game.cs" />
+    <Compile Include="D3D\GameComponent.cs" />
+    <Compile Include="D3D\Tools\Resource.cs" />
+    <Compile Include="Maths\DVector3.cs" />
+    <Compile Include="Maths\MathHelper.cs" />
+    <Compile Include="Sprites\SpriteFont.cs" />
+    <Compile Include="Sprites\SpriteRenderer.cs" />
+    <Compile Include="Sprites\SpriteTexture.cs" />
+    <Compile Include="StatesManager\StatesRepository.cs" />
+    <Compile Include="Struct\FixedTimeStepHelper.cs" />
+    <Compile Include="Struct\GameTime.cs" />
+    <Compile Include="InputHandler\InputHandler.cs" />
+    <Compile Include="InputHandler\Keyboard.cs" />
+    <Compile Include="InputHandler\KeyboardHelper\KeyboardState.cs" />
+    <Compile Include="InputHandler\KeyboardHelper\KeyState.cs" />
+    <Compile Include="InputHandler\Mouse.cs" />
+    <Compile Include="InputHandler\MouseHelper\ButtonState.cs" />
+    <Compile Include="InputHandler\MouseHelper\MouseMessageHooker.cs" />
+    <Compile Include="InputHandler\MouseHelper\MouseState.cs" />
+    <Compile Include="Maths\Graphics\BoundingFrustum.cs" />
+    <Compile Include="Maths\MBoundingBox.cs" />
+    <Compile Include="Maths\MMatrix.cs" />
+    <Compile Include="Maths\MPlane.cs" />
+    <Compile Include="Maths\MBoundingSphere.cs" />
+    <Compile Include="Maths\MVector2.cs" />
+    <Compile Include="Maths\MVector3.cs" />
+    <Compile Include="Struct\Vertex\Helper\FormatSize.cs" />
+    <Compile Include="Struct\Vertex\Helper\Interfaces.cs" />
+    <Compile Include="Struct\Vertex\Helper\Enums.cs" />
+    <Compile Include="Struct\Vertex\Helper\VertexDeclaration.cs" />
+    <Compile Include="Struct\Vertex\VertexCubeCloud.cs" />
+    <Compile Include="Struct\Vertex\VertexCubeFaceHQ.cs" />
+    <Compile Include="Struct\Vertex\VertexCubeFaceLQ.cs" />
+    <Compile Include="Struct\Vertex\VertexCubeLiquid.cs" />
+    <Compile Include="Struct\Vertex\VertexCubeSolid.cs" />
+    <Compile Include="Struct\Vertex\VertexPosition.cs" />
+    <Compile Include="Struct\Vertex\VertexPositionColor.cs" />
+    <Compile Include="Struct\Vertex\VertexPositionColorTexture.cs" />
+    <Compile Include="Struct\Vertex\VertexPositionNormalTexture.cs" />
+    <Compile Include="Struct\Vertex\VertexPositionTexture.cs" />
+    <Compile Include="Struct\Vertex\VertexSprite.cs" />
+    <Compile Include="Struct\Vertex\VertexSpriteInstanced.cs" />
+    <Compile Include="Textures\ArrayTexture.cs" />
+    <Compile Include="Textures\ArrayTextureHelper.cs" />
+    <Compile Include="Textures\DrawableTex2D.cs" />
+    <Compile Include="Threading\WorkQueue.cs" />
+    <Compile Include="TypeExtension\Queue.cs" />
+    <Compile Include="Windows\APIStructs.cs" />
+    <Compile Include="Windows\Helpers.cs" />
+    <Compile Include="Windows\SafeNativeMethods.cs" />
+    <Compile Include="Windows\UnsafeNativeMethods.cs" />
+    <Compile Include="Windows\WindowMessageHooker.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D3D\Effects\Basics\Sprites.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="D3D\Effects\Basics\VertexPositionColor.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="D3D\Effects\Basics\VertexPositionTexture.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="D3D\Effects\Basics\VertexPositionTextureArrays.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
+      <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
+      <Name>Utopia.Shared</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
