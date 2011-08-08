@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <WorldParameters>
+    <WorldSize>32</WorldSize>
+    <CloudsLayers>1</CloudsLayers>
+  </WorldParameters>
+  <KeyboardMapping>
+    <KeyMapping Action="DebugMode" Category="Debug" CommentAndInfo="Enter graphical debug mode">F2</KeyMapping>
+    <KeyMapping Action="DebugInfo" Category="Debug" CommentAndInfo="Diplay technical informations">F3</KeyMapping>
+    <KeyMapping Action="Console" Category="Debug" CommentAndInfo="Show Console">F4</KeyMapping>
+    <KeyMapping Action="FullScreen" Category="Engine" CommentAndInfo="Fullscreen switcher">F11</KeyMapping>
+    <KeyMapping Action="LockMouseCursor" Category="Engine" CommentAndInfo="Locking/Unlocking mouse cursor">Tab</KeyMapping>
+    <KeyMapping Action="VSync" Category="Engine" CommentAndInfo="Enable/Disable VSync" KeyModifier="RControlKey">F8</KeyMapping>
+    <KeyMapping Action="FreezeTime" Category="World" CommentAndInfo="Stop World Clock">F10</KeyMapping>
+    <KeyMapping Action="Forward" Category="Movement" CommentAndInfo="">Z</KeyMapping>
+    <KeyMapping Action="Backward" Category="Movement" CommentAndInfo="">S</KeyMapping>
+    <KeyMapping Action="StrafeLeft" Category="Movement" CommentAndInfo="">Q</KeyMapping>
+    <KeyMapping Action="StrafeRight" Category="Movement" CommentAndInfo="">D</KeyMapping>
+    <KeyMapping Action="Down" Category="Movement" CommentAndInfo="">W</KeyMapping>
+    <KeyMapping Action="Up" Category="Movement" CommentAndInfo="">X</KeyMapping>
+    <KeyMapping Action="Jump" Category="Movement" CommentAndInfo="">Space</KeyMapping>
+    <KeyMapping Action="MoveMode" Category="Movement" CommentAndInfo="Switch between displacement mode">M</KeyMapping>
+    <KeyMapping Action="Run" Category="Movement" CommentAndInfo="Hold On to run in walk Movemode">LShiftKey</KeyMapping>
+  </KeyboardMapping>
+</Config>

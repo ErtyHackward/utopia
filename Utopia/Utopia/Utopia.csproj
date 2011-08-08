@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DB3E251E-EF28-44D5-9F9A-DB07624CD753}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Utopia</RootNamespace>
+    <AssemblyName>Utopia</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SharpDX">
+      <HintPath>..\Library\SharpDX\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>..\Library\SharpDX\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI">
+      <HintPath>..\Library\SharpDX\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Error">
+      <HintPath>..\Library\SharpDX\SharpDX.Error.dll</HintPath>
+    </Reference>
+    <Reference Include="SmartThreadPool">
+      <HintPath>..\Library\SmartThreadPool.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\Library\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GUI\Forms\CustControls\Config.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\CustControls\Config.Designer.cs">
+      <DependentUpon>Config.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\ClientSettings.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="Entities\Living\ILivingEntity.cs" />
+    <Compile Include="Entities\Living\LivingEntity.cs" />
+    <Compile Include="Entities\Admin\Wisp.cs" />
+    <Compile Include="GameDXStates\DXStates.cs" />
+    <Compile Include="GUI\Forms\CustControls\MultiPlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\CustControls\MultiPlayer.Designer.cs">
+      <DependentUpon>MultiPlayer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Forms\CustControls\SinglePlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\CustControls\SinglePlayer.Designer.cs">
+      <DependentUpon>SinglePlayer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Forms\WelcomeScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\WelcomeScreen.Designer.cs">
+      <DependentUpon>WelcomeScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Network\Server.cs" />
+    <Compile Include="Planets\Planet.cs" />
+    <Compile Include="Planets\Terran\Cube\TerraCubeWithPosition.cs" />
+    <Compile Include="PlugIn\Plugin.cs" />
+    <Compile Include="Planets\PlanetSkybox\Stars.cs" />
+    <Compile Include="GUI\D3D\GUI.cs" />
+    <Compile Include="Planets\Terran\Chunk\baseChunk.cs" />
+    <Compile Include="Planets\Terran\Chunk\TerraChunk.cs" />
+    <Compile Include="Planets\Terran\Cube\CubeMeshFactory.cs" />
+    <Compile Include="Planets\Terran\EntityImpact.cs" />
+    <Compile Include="Planets\Terran\Flooding\TerraFlooding.cs" />
+    <Compile Include="Planets\Terran\Lighting\TerraLighting.cs" />
+    <Compile Include="Planets\Terran\Shadow.cs" />
+    <Compile Include="Planets\Terran\World\LandscapePopulation\LiquidPopulate.cs" />
+    <Compile Include="Sprites2D.cs" />
+    <Compile Include="Universes\Universe.cs" />
+    <Compile Include="USM\SQLite\DBHelper.cs" />
+    <Compile Include="USM\USMGet.cs" />
+    <Compile Include="USM\USMSet.cs" />
+    <Compile Include="USM\UtopiaSaveManager.cs" />
+    <Compile Include="UtopiaClient.cs" />
+    <Compile Include="UtopiaRender.cs" />
+    <Compile Include="GameClock\Clock.cs" />
+    <Compile Include="Entities\Living\Player.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Planets\PlanetSkybox\PlanetSkyDome.cs" />
+    <Compile Include="Planets\Terran\Chunk\ChunkFinder.cs" />
+    <Compile Include="Planets\Terran\Chunk\ChunkWrapper.cs" />
+    <Compile Include="Planets\Terran\Terra.cs" />
+    <Compile Include="Planets\Terran\Cube\RenderCubeProfile.cs" />
+    <Compile Include="Planets\Terran\TerraWorld.cs" />
+    <Compile Include="Planets\Terran\World\LandScape.cs" />
+    <Compile Include="Planets\Weather\Items\Clouds.cs" />
+    <Compile Include="Planets\Weather\Items\Wind.cs" />
+    <Compile Include="Planets\Weather\WeatherManager.cs" />
+    <EmbeddedResource Include="GUI\Forms\CustControls\Config.resx">
+      <DependentUpon>Config.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Forms\CustControls\MultiPlayer.resx">
+      <DependentUpon>MultiPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Forms\CustControls\SinglePlayer.resx">
+      <DependentUpon>SinglePlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Forms\WelcomeScreen.resx">
+      <DependentUpon>WelcomeScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\S33M3Physics\S33M3Physics.csproj">
+      <Project>{A5C84956-C735-457B-9BF5-C5359F427418}</Project>
+      <Name>S33M3Physics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utopia.Net\Utopia.Net.csproj">
+      <Project>{5AF1BAD4-43AC-4069-B338-CF19F7B987C2}</Project>
+      <Name>Utopia.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
+      <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
+      <Name>Utopia.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UtopiaContent\UtopiaContent.csproj">
+      <Project>{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}</Project>
+      <Name>UtopiaContent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\S33M3Engines\S33M3Engines.csproj">
+      <Project>{E1E5C757-C550-4E62-8BE3-2E9553F023F7}</Project>
+      <Name>S33M3Engines</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WelcomeScreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Space\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_UseGlobalSettings="True" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
