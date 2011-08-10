@@ -211,5 +211,18 @@ namespace S33M3Engines.Sprites
 
         }
 
+
+        public Vector2 MeasureString(StringBuilder stringBuilder)
+        {
+            return (MeasureString(stringBuilder.ToString()));
+        }
+
+        public Vector2 MeasureString(string text)
+        {
+            return new Vector2(text.Length * _size, _charHeight);
+            //HACK SpriteFont.MasureString is approximated to Vector2(text.Length * _size, _charHeight)
+        }
+
+        public float LineSpacing { get { return 4; } } //HACK SpriteFont.LineSpacing hardcoded
     }
 }

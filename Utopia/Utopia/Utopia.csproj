@@ -81,6 +81,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GUI\cegui\GuiRenderer.cs" />
+    <Compile Include="GUI\cegui\GuiTexture.cs" />
     <Compile Include="GUI\Forms\CustControls\Config.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -182,6 +184,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CeGui\CeGui.csproj">
+      <Project>{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}</Project>
+      <Name>CeGui</Name>
+    </ProjectReference>
     <ProjectReference Include="..\S33M3Physics\S33M3Physics.csproj">
       <Project>{A5C84956-C735-457B-9BF5-C5359F427418}</Project>
       <Name>S33M3Physics</Name>
