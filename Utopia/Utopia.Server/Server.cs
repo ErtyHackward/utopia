@@ -277,16 +277,13 @@ namespace Utopia.Server
                         vec.X = x;
                         vec.Y = y;
 
-                        
-
-                        Chunk chunk = GetChunk(vec);
-
-                        ChunkDataMessage msg;
-
-                        msg.MessageId = (byte)MessageTypes.ChunkData;
-                        msg.Position = vec;
-                        msg.Flag = ChunkDataMessageFlag.ChunkWasModified; // todo: implement corrent flag behaviour
-                        msg.Data = chunk.DataCompressed;
+                        var chunk = GetChunk(vec);
+                        var msg = new ChunkDataMessage
+                                      {
+                                          Position = vec,
+                                          Flag = ChunkDataMessageFlag.ChunkWasModified, // todo: implement corrent flag behaviour
+                                          Data = chunk.DataCompressed
+                                      };
                         
                         connection.Send(msg);
                     }
