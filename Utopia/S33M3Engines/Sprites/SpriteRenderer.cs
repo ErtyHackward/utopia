@@ -140,7 +140,7 @@ namespace S33M3Engines.Sprites
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
         }
 
-        public void Render(SpriteTexture spriteTexture, ref Matrix transform, Vector4 color, Vector4 drawRect = default(Vector4))
+        public void Render(SpriteTexture spriteTexture, ref Matrix transform, Vector4 color, Vector4 sourceRect = default(Vector4))
         {
             _vBuffer.SetToDevice(0); // Set the Vertex buffer
 
@@ -154,13 +154,13 @@ namespace S33M3Engines.Sprites
             // Set per-instance data
             _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
             _effect.CBPerInstance.Values.Color = color;
-            if (drawRect == default(Vector4))
+            if (sourceRect == default(Vector4))
             {
                 _effect.CBPerInstance.Values.SourceRect = new Vector4(0, 0, spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
             }
             else
             {
-                _effect.CBPerInstance.Values.SourceRect = drawRect;
+                _effect.CBPerInstance.Values.SourceRect = sourceRect;
             }
             _effect.CBPerInstance.IsDirty = true;
 
