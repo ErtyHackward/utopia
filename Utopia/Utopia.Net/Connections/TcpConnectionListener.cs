@@ -4,25 +4,25 @@ using System.Net.Sockets;
 
 namespace Utopia.Net.Connections
 {
-    public class TcpConnectionListener : IDisposable
+    public sealed class TcpConnectionListener : IDisposable
     {
-        protected Socket listenSocket;
-        protected IPEndPoint ep;
-        protected int maximumDependingConnections = 10;
-        protected readonly AsyncCallback startTransfer;
+        private readonly int _maxDependingConnections = 10;
+        private readonly Socket _listenSocket;
+        private readonly IPEndPoint _ep;
+        private readonly AsyncCallback startTransfer;
 
         /// <summary>
         /// Occurs when we receive a new connection, if event is not handled socket will be closed
         /// </summary>
         public event EventHandler<IncomingConnectionEventArgs> IncomingConnection;
 
-        protected void OnIncomingConnection(IncomingConnectionEventArgs e)
+        private void OnIncomingConnection(IncomingConnectionEventArgs e)
         {
             if (IncomingConnection != null)
                 IncomingConnection(this, e);
         }
-        
-        protected TcpConnectionListener()
+
+        private TcpConnectionListener()
         {
             startTransfer = OnStartConnection;
         }
@@ -31,15 +31,16 @@ namespace Utopia.Net.Connections
         /// Creates new TcpListener on port specified
         /// </summary>
         /// <param name="port"></param>
-        public TcpConnectionListener(int port)
+        public TcpConnectionListener(int port, int maxDependingConnections = 10)
             : this()
         {
-            listenSocket = new Socket(
+            _maxDependingConnections = maxDependingConnections;
+            _listenSocket = new Socket(
                                         AddressFamily.InterNetwork,
                                         SocketType.Stream,
                                         ProtocolType.Tcp);
-            ep = new IPEndPoint(IPAddress.Any, port);
-            listenSocket.Bind(ep);
+            _ep = new IPEndPoint(IPAddress.Any, port);
+            _listenSocket.Bind(_ep);
         }
 
         public void Start()
@@ -47,8 +48,8 @@ namespace Utopia.Net.Connections
             try
             {
                 // start listening
-                listenSocket.Listen(maximumDependingConnections);
-                SetupConnection(listenSocket);
+                _listenSocket.Listen(_maxDependingConnections);
+                SetupConnection(_listenSocket);
             }
             catch (ObjectDisposedException) { /* End has been called */ }
             catch (System.Net.Sockets.SocketException) { }
@@ -56,11 +57,11 @@ namespace Utopia.Net.Connections
 
         public void End()
         {
-            listenSocket.Close();
+            _listenSocket.Close();
         }
 
-        
-        protected void SetupConnection(Socket sc)
+
+        private void SetupConnection(Socket sc)
         {
             try
             {
@@ -70,7 +71,7 @@ namespace Utopia.Net.Connections
             catch (System.Net.Sockets.SocketException) { }
         }
 
-        protected void OnStartConnection(IAsyncResult ar)
+        private void OnStartConnection(IAsyncResult ar)
         {
             try
             {

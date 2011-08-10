@@ -147,6 +147,7 @@ namespace Utopia.Net.Connections
         {
             try
             {
+                Writer.Write(msg.MessageId);
                 msg.Write(Writer);
                 Writer.Flush();
             }
@@ -164,6 +165,7 @@ namespace Utopia.Net.Connections
         {
             foreach (var msg in messages)
             {
+                Writer.Write(msg.MessageId);
                 msg.Write(Writer);
             }
             Writer.Flush();
@@ -197,7 +199,6 @@ namespace Utopia.Net.Connections
                         while (ms.Position != ms.Length)
                         {
                             var idByte = (MessageTypes)reader.ReadByte();
-                            ms.Seek(-1, SeekOrigin.Current);
                             startPosition = ms.Position;
                             switch (idByte)
                             {
@@ -224,6 +225,7 @@ namespace Utopia.Net.Connections
                     }
                     catch (EndOfStreamException)
                     {
+                        // we need to save tail data to use it with next tcp pocket
                         _tail = new byte[ms.Length - startPosition];
                         System.Buffer.BlockCopy(buffer, (int)startPosition, _tail, 0, _tail.Length);
                     }

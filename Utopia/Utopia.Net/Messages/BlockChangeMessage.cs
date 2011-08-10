@@ -11,26 +11,51 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct BlockChangeMessage : IBinaryMessage
     {
-        public byte MessageId;
         /// <summary>
         /// Global block position
         /// </summary>
-        public Location3<int> BlockPosition;
+        private Location3<int> _blockPosition;
+
         /// <summary>
         /// Block type
         /// </summary>
-        public byte BlockType;
-        
+        private byte _blockType;
+
+        /// <summary>
+        /// Gets current message Id
+        /// </summary>
+        public byte MessageId
+        {
+            get { return (byte)MessageTypes.BlockChange; }
+        }
+
+        /// <summary>
+        /// Gets or sets global block position
+        /// </summary>
+        public Location3<int> BlockPosition
+        {
+            get { return _blockPosition; }
+            set { _blockPosition = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets block type
+        /// </summary>
+        public byte BlockType
+        {
+            get { return _blockType; }
+            set { _blockType = value; }
+        }
+
         public static BlockChangeMessage Read(BinaryReader reader)
         {
             BlockChangeMessage bcm;
 
-            bcm.MessageId = reader.ReadByte();
-            bcm.BlockPosition.X = reader.ReadInt32();
-            bcm.BlockPosition.Y = reader.ReadInt32();
-            bcm.BlockPosition.Z = reader.ReadInt32();
+            bcm._blockPosition.X = reader.ReadInt32();
+            bcm._blockPosition.Y = reader.ReadInt32();
+            bcm._blockPosition.Z = reader.ReadInt32();
 
-            bcm.BlockType = reader.ReadByte();
+            bcm._blockType = reader.ReadByte();
 
 
             return bcm;
@@ -38,16 +63,14 @@ namespace Utopia.Net.Messages
 
         public static void Write(BinaryWriter writer, BlockChangeMessage msg)
         {
-            writer.Write(msg.MessageId);
-            writer.Write(msg.BlockPosition.X);
-            writer.Write(msg.BlockPosition.Y);
-            writer.Write(msg.BlockPosition.Z);
-            writer.Write(msg.BlockType);
+            writer.Write(msg._blockPosition.X);
+            writer.Write(msg._blockPosition.Y);
+            writer.Write(msg._blockPosition.Z);
+            writer.Write(msg._blockType);
         }
 
         public void Write(BinaryWriter writer)
         {
-            MessageId = (byte)MessageTypes.BlockChange;
             Write(writer, this);
         }
     }
