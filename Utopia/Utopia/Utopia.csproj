@@ -50,6 +50,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Nuclex.Support">
+      <HintPath>..\Library\Nuclex.Support.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\Library\SharpDX\SharpDX.dll</HintPath>
     </Reference>
@@ -87,6 +90,104 @@
     <Compile Include="GUI\Forms\CustControls\Config.Designer.cs">
       <DependentUpon>Config.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\NuclexPort\Controls\Arcade\CommandControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Arcade\PanelControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Control.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Control.Input.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Control.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\ControlEventArgs.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\ControlEventArgs.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\DesktopControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\DesktopControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\ButtonControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\ButtonControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\ChoiceControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\ChoiceControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\CloseWindowButtonControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\CloseWindowButtonControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\DraggableControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\DraggableControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\HorizontalSliderControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\HorizontalSliderControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\IListRowLocator.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\InputControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\InputControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\IOpeningLocator.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\IThumbLocator.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\ListControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\ListControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\OptionControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\OptionControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\SliderControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\SliderControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\VerticalSliderControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\VerticalSliderControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\WindowControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\Desktop\WindowControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\IFocusable.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\IWritable.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\LabelControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\LabelControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\ParentingControlCollection.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\ParentingControlCollection.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\PressableControl.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\PressableControl.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Controls\ProgressControl.cs" />
+    <Compile Include="GUI\NuclexPort\DuplicateNameException.cs" />
+    <Compile Include="GUI\NuclexPort\DuplicateNameException.Test.cs" />
+    <Compile Include="GUI\NuclexPort\GuiManager.Test.cs" />
+    <Compile Include="GUI\NuclexPort\IGuiService.cs" />
+    <Compile Include="GUI\NuclexPort\Input\Command.cs" />
+    <Compile Include="GUI\NuclexPort\Input\DefaultInputCapturer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Input\IInputCapturer.cs" />
+    <Compile Include="GUI\NuclexPort\Input\IInputReceiver.cs" />
+    <Compile Include="GUI\NuclexPort\RectangleF.cs" />
+    <Compile Include="GUI\NuclexPort\RectangleF.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Screen.cs" />
+    <Compile Include="GUI\NuclexPort\Screen.Test.cs" />
+    <Compile Include="GUI\NuclexPort\UniAssertHelper.cs" />
+    <Compile Include="GUI\NuclexPort\UniAssertHelper.Test.cs" />
+    <Compile Include="GUI\NuclexPort\UniRectangle.cs" />
+    <Compile Include="GUI\NuclexPort\UniRectangle.Test.cs" />
+    <Compile Include="GUI\NuclexPort\UniScalar.cs" />
+    <Compile Include="GUI\NuclexPort\UniScalar.Test.cs" />
+    <Compile Include="GUI\NuclexPort\UniVector.cs" />
+    <Compile Include="GUI\NuclexPort\UniVector.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\FlatGuiGraphics.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\FlatGuiGraphics.Drawing.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\FlatGuiGraphics.SkinParsing.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\FlatGuiGraphics.SkinParsing2.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\FlatGuiGraphics.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\FlatGuiVisualizer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\FlatGuiVisualizer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\IFlatControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\IFlatGuiGraphics.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\OpeningLocator.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\OpeningLocator.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\ControlRendererTest.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatButtonControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatButtonControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatChoiceControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatChoiceControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatHorizontalSliderControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatHorizontalSliderControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatInputControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatInputControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatLabelControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatLabelControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatListControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatListControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatOptionControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatOptionControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatPanelControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatPanelControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatProgressControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatProgressControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatVerticalSliderControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatVerticalSliderControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatWindowControlRenderer.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\Flat\Renderers\FlatWindowControlRenderer.Test.cs" />
+    <Compile Include="GUI\NuclexPort\Visuals\IGuiVisualizer.cs" />
     <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\IEntity.cs" />
