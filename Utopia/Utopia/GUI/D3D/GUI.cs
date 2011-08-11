@@ -40,6 +40,7 @@ namespace Utopia.GUI.D3D
 
             _spriteRender = new SpriteRenderer();
             _spriteRender.Initialize(Game);
+
             _font = new SpriteFont();
             _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, Game.GraphicDevice);
 

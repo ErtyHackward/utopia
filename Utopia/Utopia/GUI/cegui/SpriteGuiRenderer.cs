@@ -6,6 +6,7 @@ using S33M3Engines.D3D;
 using S33M3Engines.Sprites;
 using SharpDX;
 using CeGui;
+using RectangleF = System.Drawing.RectangleF;
 
 namespace Utopia.GUI.cegui
 {
@@ -23,9 +24,9 @@ namespace Utopia.GUI.cegui
             public SpriteGuiTexture guiTexture;
             public Matrix transform;
             public Vector4 color;
-            public Vector4 sourceRect;
+            public RectangleF sourceRect;
 
-            public UISprite(SpriteGuiTexture guiTexture, ref Matrix transform, Vector4 color, Vector4 sourceRect)
+            public UISprite(SpriteGuiTexture guiTexture, ref Matrix transform, Vector4 color, RectangleF sourceRect)
             {
                 this.guiTexture = guiTexture;
                 this.transform = transform;
@@ -46,6 +47,12 @@ namespace Utopia.GUI.cegui
             //original d3d & xna renderer did not use  quadSplitMode, ignore this
             SpriteGuiTexture guiTexture = texture as SpriteGuiTexture;
 
+            //Transform the TextureRect from CeGUI to tru-1e dimention (At this moment, it is in the range of 0-1
+            //textureRect.Bottom *= texture.Height;
+            //textureRect.Top *= texture.Height;
+            //textureRect.Right *= texture.Width;
+            //textureRect.Left *= texture.Width;
+
             // somewhat put destrect into a matrix ? 
             // why doesnt spriteRenderer.Render have 2 rectangles like xna spritebatch ?
             Matrix transform = Matrix.Scaling(destRect.Width / textureRect.Width, destRect.Height / textureRect.Height, 0) * 
@@ -53,7 +60,7 @@ namespace Utopia.GUI.cegui
 
             Vector4 color = new Vector4(1, 1, 1, 1);
 
-            Vector4 sourceRect = new Vector4(textureRect.Left, textureRect.Top, textureRect.Width, textureRect.Height);
+            RectangleF sourceRect = new RectangleF(textureRect.Left, textureRect.Top, textureRect.Width, textureRect.Height);
 
             _sprites.Add(new UISprite(guiTexture, ref transform, color, sourceRect));
         }
@@ -62,7 +69,7 @@ namespace Utopia.GUI.cegui
         {
             foreach (UISprite sprite in _sprites)
             {
-                _spriteRenderer.Render(sprite.guiTexture.SpriteTexture, ref sprite.transform, sprite.color, sprite.sourceRect);
+                _spriteRenderer.Render(sprite.guiTexture.SpriteTexture, ref sprite.transform, sprite.color, sprite.sourceRect, false);
             }
         }
 
