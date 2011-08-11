@@ -9,7 +9,7 @@ using S33M3Engines.D3D;
 
 namespace Utopia.GUI.cegui
 {
-    public class GuiTexture : CeGui.Texture, IDisposable
+    public class SpriteGuiTexture : CeGui.Texture, IDisposable
     {
 
         protected SpriteTexture _texture;
@@ -20,17 +20,17 @@ namespace Utopia.GUI.cegui
         public SpriteTexture SpriteTexture { get { return _texture; } }
 
 
-        public GuiTexture(Renderer owner)
+        public SpriteGuiTexture(Renderer owner)
             : base(owner)
         {
-            _game = ((GuiRenderer)owner).Game;
+            _game = ((SpriteGuiRenderer)owner).Game;
         }
 
         public override void LoadFromFile(string fileName)
         {
             Dispose();
 
-            _texture = new SpriteTexture(((GuiRenderer)owner).Game, fileName);
+            _texture = new SpriteTexture(((SpriteGuiRenderer)owner).Game, fileName);
             _filename = fileName;
 
             // grab the inferred dimensions of the texture
@@ -42,7 +42,7 @@ namespace Utopia.GUI.cegui
         {
 
 
-            Texture2D d3dTexture = Texture2D.FromStream<Texture2D>(_game.GraphicDevice, buffer, 1);
+            Texture2D d3dTexture = Texture2D.FromStream<Texture2D>(_game.GraphicDevice, buffer, (int)buffer.Length);
 
             /* directx9 :
                         this.texture = D3D.TextureLoader.FromStream(

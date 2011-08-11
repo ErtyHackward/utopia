@@ -10,6 +10,9 @@ using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.Struct;
+using Utopia.GUI.cegui;
+using CeGui;
+using CeGui.Demo.DirectX;
 
 namespace Utopia.GUI.D3D
 {
@@ -18,6 +21,9 @@ namespace Utopia.GUI.D3D
         SpriteRenderer _spriteRender;
         SpriteTexture _crosshair;
         SpriteFont _font;
+
+        SpriteGuiRenderer _ceguiRenderer;
+        GuiSheet _rootGuiSheet;
 
         public GUI(Game game)
             : base(game)
@@ -37,6 +43,21 @@ namespace Utopia.GUI.D3D
             _font = new SpriteFont();
             _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, Game.GraphicDevice);
 
+            _ceguiRenderer = new SpriteGuiRenderer(Game, _spriteRender);
+          
+            CeGui.GuiSystem.Initialize(_ceguiRenderer);
+            _ceguiRenderer.loadCeGuiResources();
+            _ceguiRenderer.setupDefaults();
+            WindowManager winMgr = WindowManager.Instance;
+            _rootGuiSheet = winMgr.CreateWindow("DefaultWindow", "Root") as GuiSheet;
+
+            GuiSystem.Instance.GuiSheet = _rootGuiSheet;
+
+            VideoModeSelectionForm videoModeSelector = new VideoModeSelectionForm(
+                new CeGui.WidgetSets.Suave.SuaveGuiBuilder());
+            ((CeGui.Window)videoModeSelector).SetFont("WindowTitle");
+            _rootGuiSheet.AddChild(videoModeSelector);
+        
         }
 
         public override void UnloadContent()
@@ -62,6 +83,8 @@ namespace Utopia.GUI.D3D
             _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Vector4(1, 0, 0, 1));
 
             //_spriteRender.RenderText(_font, "That's Bumbas baby !\nDeuxième ligne !", Matrix.Translation(0, 0, 0), new Vector4(1, 1, 0, 1));
+
+            CeGui.GuiSystem.Instance.RenderGui();
 
             _spriteRender.End();
             //StatesMnger.ApplyStates(_statesId);
