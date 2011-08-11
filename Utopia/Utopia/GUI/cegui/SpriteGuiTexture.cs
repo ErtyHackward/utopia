@@ -41,7 +41,6 @@ namespace Utopia.GUI.cegui
         public override void LoadFromMemory(System.IO.Stream buffer, int bufferWidth, int bufferHeight)
         {
 
-
             Texture2D d3dTexture = Texture2D.FromStream<Texture2D>(_game.GraphicDevice, buffer, (int)buffer.Length);
 
             /* directx9 :
