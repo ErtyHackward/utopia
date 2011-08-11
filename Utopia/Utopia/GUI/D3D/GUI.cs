@@ -79,14 +79,14 @@ namespace Utopia.GUI.D3D
         public override void DrawDepth2()
         {
             _spriteRender.Begin(SpriteRenderer.FilterMode.Linear);
-
             _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Vector4(1, 0, 0, 1));
-
             //_spriteRender.RenderText(_font, "That's Bumbas baby !\nDeuxième ligne !", Matrix.Translation(0, 0, 0), new Vector4(1, 1, 0, 1));
 
             CeGui.GuiSystem.Instance.RenderGui();
 
             _spriteRender.End();
+
+
             //StatesMnger.ApplyStates(_statesId);
             //// + Call to shader
             //_effect.DiffuseTexture = _sprite.Texture;
