@@ -43,22 +43,19 @@ namespace Utopia.GUI.cegui
 
         public override void AddQuad(CeGui.Rect destRect, float z, CeGui.Texture texture, CeGui.Rect textureRect, CeGui.ColourRect colors, CeGui.QuadSplitMode quadSplitMode)
         {
-
             //original d3d & xna renderer did not use  quadSplitMode, ignore this
-
             SpriteGuiTexture guiTexture = texture as SpriteGuiTexture;
 
             // somewhat put destrect into a matrix ? 
             // why doesnt spriteRenderer.Render have 2 rectangles like xna spritebatch ?
-            Matrix transform = Matrix.Translation(destRect.Position.X, destRect.Position.Y,0);
+            Matrix transform = Matrix.Scaling(destRect.Width / textureRect.Width, destRect.Height / textureRect.Height, 0) * 
+                               Matrix.Translation(destRect.Position.X, destRect.Position.Y, 0);
 
             Vector4 color = new Vector4(1, 1, 1, 1);
-            
-            //using vector4 is not explicit, had to search in existing code to see if it was x y w h or x y x2 y2
+
             Vector4 sourceRect = new Vector4(textureRect.Left, textureRect.Top, textureRect.Width, textureRect.Height);
 
             _sprites.Add(new UISprite(guiTexture, ref transform, color, sourceRect));
-
         }
 
         public override void DoRender()
@@ -66,7 +63,6 @@ namespace Utopia.GUI.cegui
             foreach (UISprite sprite in _sprites)
             {
                 _spriteRenderer.Render(sprite.guiTexture.SpriteTexture, ref sprite.transform, sprite.color, sprite.sourceRect);
-
             }
         }
 
