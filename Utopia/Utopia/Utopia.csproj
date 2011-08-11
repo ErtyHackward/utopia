@@ -81,15 +81,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GUI\cegui\D3DRenderer.cs">
+    <Compile Include="GUI\cegui\demo\VideoModeSelectionForm.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUI\cegui\D3DTexture.cs">
+    <Compile Include="GUI\cegui\SpriteGuiRenderer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUI\cegui\demo\VideoModeSelectionForm.cs" />
-    <Compile Include="GUI\cegui\SpriteGuiRenderer.cs" />
-    <Compile Include="GUI\cegui\SpriteGuiTexture.cs" />
+    <Compile Include="GUI\cegui\SpriteGuiTexture.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GUI\Forms\CustControls\Config.cs">
       <SubType>UserControl</SubType>
     </Compile>

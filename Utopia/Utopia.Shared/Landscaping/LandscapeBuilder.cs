@@ -13,7 +13,7 @@ namespace Utopia.Shared.Landscaping
     /// Class responsible for generating the landscape
     /// This class is thread safe.
     /// </summary>
-    public static class LandscapeBuilder
+    public class LandscapeBuilder
     {
         //Static Properties linked to the world
         public static byte Chunksize = 16;               //Size of the chunk
@@ -39,7 +39,7 @@ namespace Utopia.Shared.Landscaping
         /// <summary>
         /// Initialization
         /// </summary>
-        public static void Initialize(int worldSize)
+        public virtual void Initialize(int worldSize)
         {
             //Get the number of visible chunks from the config size 
             ChunkGridSize = worldSize;
@@ -76,7 +76,7 @@ namespace Utopia.Shared.Landscaping
         /// <param name="TerraCubes>The Array of terracubes representing the world visible</param>
         /// <param name="workingRange">The chunk Cube range in world coordinate</param>
         /// <param name="withRangeClearing">The specified range will be reset to block type AIR before beginning the generation</param>
-        public static void CreateChunkLandscape(TerraCube[] TerraCubes, ref Range<int> workingRange, bool withRangeClearing)
+        public  void CreateChunkLandscape(TerraCube[] TerraCubes, ref Range<int> workingRange, bool withRangeClearing)
         {
             CreateChunkLandscape(null, TerraCubes, ref workingRange, withRangeClearing);
         }
@@ -87,12 +87,12 @@ namespace Utopia.Shared.Landscaping
         /// <param name="Cubes>The Array of Cube ID from the chunk that will be filled</param>
         /// <param name="workingRange">The chunk Cube range in world coordinate</param>
         /// <param name="withRangeClearing">The specified range will be reset to block type AIR before beginning the generation</param>
-        public static void CreateChunkLandscape(byte[] Cubes, ref Range<int> workingRange, bool withRangeClearing)
+        public  void CreateChunkLandscape(byte[] Cubes, ref Range<int> workingRange, bool withRangeClearing)
         {
             CreateChunkLandscape(Cubes, null, ref workingRange, withRangeClearing);
         }
 
-        private static void CreateChunkLandscape(byte[] Cubes, TerraCube[] TerraCubes, ref Range<int> workingRange, bool withRangeClearing)
+        protected virtual void CreateChunkLandscape(byte[] Cubes, TerraCube[] TerraCubes, ref Range<int> workingRange, bool withRangeClearing)
         {
             if (withRangeClearing) ClearRangeArea(Cubes, TerraCubes, ref workingRange);
 
@@ -108,7 +108,7 @@ namespace Utopia.Shared.Landscaping
         /// <param name="Cubes">Cube array result</param>
         /// <param name="TerraCubes">TerraCube array result</param>
         /// <param name="workingRange">The chunk working range</param>
-        private static void GenerateLayoutFrom3DNoise(byte[] Cubes, TerraCube[] TerraCubes, ref Range<int> workingRange)
+        private  void GenerateLayoutFrom3DNoise(byte[] Cubes, TerraCube[] TerraCubes, ref Range<int> workingRange)
         {
             double[] _baseTerranResult = null;
             double[] _landHeightResult = null;
@@ -265,7 +265,7 @@ namespace Utopia.Shared.Landscaping
         /// <param name="Cubes"></param>
         /// <param name="TerraCubes"></param>
         /// <param name="dataNoises"></param>
-        private static void CreateLandscapeFromNoisesResult(int XSamplingCount, int ZSamplingCount, int YSamplingCount,
+        private  void CreateLandscapeFromNoisesResult(int XSamplingCount, int ZSamplingCount, int YSamplingCount,
                                                      ref Range<int> workingRange, ref byte[] Cubes, ref TerraCube[] TerraCubes, ref double[] dataNoises)
         {
             int XSamplingCount2 = XSamplingCount + 1;
@@ -373,7 +373,7 @@ namespace Utopia.Shared.Landscaping
         /// <param name="Cubes"></param>
         /// <param name="TerraCubes"></param>
         /// <param name="workingRange"></param>
-        private static void ClearRangeArea(byte[] Cubes, TerraCube[] TerraCubes, ref Range<int> workingRange)
+        protected  void ClearRangeArea(byte[] Cubes, TerraCube[] TerraCubes, ref Range<int> workingRange)
         {
             for (int X = workingRange.Min.X; X < workingRange.Max.X; X++) //X
             {
@@ -394,7 +394,7 @@ namespace Utopia.Shared.Landscaping
         /// <param name="Cubes"></param>
         /// <param name="TerraCubes"></param>
         /// <param name="workingRange"></param>
-        private static void AfterGenerationTerraForming(byte[] Cubes, TerraCube[] TerraCubes, ref Range<int> workingRange)
+        private  void AfterGenerationTerraForming(byte[] Cubes, TerraCube[] TerraCubes, ref Range<int> workingRange)
         {
             byte cubeId;
             int index;
@@ -504,8 +504,8 @@ namespace Utopia.Shared.Landscaping
         }
 
         //Will compute the index from the Client TerraCube array.
-        private static int RenderIndex(int X, int Y, int Z)
-        {
+        protected  int RenderIndex(int X, int Y, int Z)
+        {//TODO Optimize index offsets in generation 
             return MathHelper.Mod(X, LandscapeBuilder.Worldsize.X) +
                     MathHelper.Mod(Z, LandscapeBuilder.Worldsize.Z) * LandscapeBuilder.Worldsize.X +
                     Y * LandscapeBuilder.Worldsize.X * LandscapeBuilder.Worldsize.Z;
