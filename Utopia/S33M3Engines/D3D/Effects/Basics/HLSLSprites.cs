@@ -8,6 +8,7 @@ using SharpDX;
 using SharpDX.D3DCompiler;
 using SharpDX.Direct3D11;
 using Buffer = SharpDX.Direct3D11.Buffer;
+using RectangleF = System.Drawing.RectangleF;
 using S33M3Engines.D3D.Effects;
 using S33M3Engines.D3D;
 
@@ -26,7 +27,7 @@ namespace S33M3Engines.D3D.Effects.Basics
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 16)]
+        [StructLayout(LayoutKind.Explicit, Size = 32)]
         public struct CBPerBatch_Struct
         {
             [FieldOffset(0)]
@@ -44,7 +45,7 @@ namespace S33M3Engines.D3D.Effects.Basics
             [FieldOffset(64)]
             public Vector4 Color;
             [FieldOffset(80)]
-            public Vector4 SourceRect;
+            public RectangleF SourceRect;
         }
         public CBuffer<CBPerInstance_Struct> CBPerInstance;
         #endregion

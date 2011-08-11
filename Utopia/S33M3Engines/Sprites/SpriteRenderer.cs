@@ -10,6 +10,7 @@ using S33M3Engines.Struct.Vertex;
 using S33M3Engines.Buffers;
 using S33M3Engines.StatesManager;
 using SharpDX.Direct3D;
+using RectangleF = System.Drawing.RectangleF;
 
 namespace S33M3Engines.Sprites
 {
@@ -140,7 +141,7 @@ namespace S33M3Engines.Sprites
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
         }
 
-        public void Render(SpriteTexture spriteTexture, ref Matrix transform, Vector4 color, Vector4 sourceRect = default(Vector4))
+        public void Render(SpriteTexture spriteTexture, ref Matrix transform, Vector4 color, RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true)
         {
             _vBuffer.SetToDevice(0); // Set the Vertex buffer
 
@@ -148,15 +149,18 @@ namespace S33M3Engines.Sprites
             _effect.Begin();
 
             _effect.CBPerDraw.Values.ViewportSize = new Vector2(_game.ActivCamera.Viewport.Width, _game.ActivCamera.Viewport.Height);
-            _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            if (sourceRectInTextCoord) _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            else _effect.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
+            
             _effect.CBPerDraw.IsDirty = true;
-
+            
             // Set per-instance data
             _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
             _effect.CBPerInstance.Values.Color = color;
-            if (sourceRect == default(Vector4))
+            if (sourceRect == default(RectangleF))
             {
-                _effect.CBPerInstance.Values.SourceRect = new Vector4(0, 0, spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+                if (sourceRectInTextCoord) _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+                else _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, 1, 1);
             }
             else
             {
