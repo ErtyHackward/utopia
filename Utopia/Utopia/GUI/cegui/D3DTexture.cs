@@ -28,7 +28,7 @@ using System.Text;
 using SharpDX.Direct3D11;
 
 
-namespace CeGui.Renderers.SharpDX
+namespace CeGui.Renderers.dx11
 {
 
     /// <summary>A texture in managed DirectX 2.0 on DirectX 9.0c</summary>
@@ -112,7 +112,6 @@ namespace CeGui.Renderers.SharpDX
                 Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
                 Filter = FilterFlags.None,
 
-
             };
 
             Texture2D.FromStream<Texture2D>(device, buffer, (int)buffer.Length, loadInfo);
@@ -124,12 +123,10 @@ namespace CeGui.Renderers.SharpDX
             Filter.Point, Filter.Point, 0
           );*/
 
-            this.texture =
-
-          this.filename = string.Empty;
+            this.filename = string.Empty;
 
             // grab the inferred dimensions of the texture
-            SurfaceDescription desc = texture.GetLevelDescription(0);
+            Texture2DDescription desc = texture.Description;
             this.width = desc.Width;
             this.height = desc.Height;
         }
