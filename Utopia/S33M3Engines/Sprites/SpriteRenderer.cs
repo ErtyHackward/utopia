@@ -140,6 +140,7 @@ namespace S33M3Engines.Sprites
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
         }
 
+        //drawRect is the optional source rectangle vector4(left,top,width,height)  
         public void Render(SpriteTexture spriteTexture, ref Matrix transform, Vector4 color, Vector4 drawRect = default(Vector4))
         {
             _vBuffer.SetToDevice(0); // Set the Vertex buffer
