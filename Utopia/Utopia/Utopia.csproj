@@ -81,8 +81,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GUI\cegui\GuiRenderer.cs" />
-    <Compile Include="GUI\cegui\GuiTexture.cs" />
+    <Compile Include="GUI\cegui\D3DRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUI\cegui\D3DTexture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUI\cegui\demo\VideoModeSelectionForm.cs" />
+    <Compile Include="GUI\cegui\SpriteGuiRenderer.cs" />
+    <Compile Include="GUI\cegui\SpriteGuiTexture.cs" />
     <Compile Include="GUI\Forms\CustControls\Config.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -173,6 +180,9 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="Content\Layouts\MainMenu.layout">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -184,6 +194,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CeGui.WidgetSets.Suave\CeGui.WidgetSets.Suave.csproj">
+      <Project>{5BA79437-F033-454F-A78C-CD7422BB0B58}</Project>
+      <Name>CeGui.WidgetSets.Suave</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CeGui\CeGui.csproj">
       <Project>{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}</Project>
       <Name>CeGui</Name>
