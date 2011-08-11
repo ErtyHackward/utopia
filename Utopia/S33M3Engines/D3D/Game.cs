@@ -20,6 +20,7 @@ using S33M3Engines.InputHandler;
 using System.Windows.Forms;
 using S33M3Engines.Struct;
 using S33M3Engines.D3D.DebugTools;
+using Utopia.Shared.Landscaping;
 
 namespace S33M3Engines.D3D
 {
@@ -45,6 +46,8 @@ namespace S33M3Engines.D3D
         public bool FixedTimeSteps { get { return S33M3Engines.D3DEngine.FIXED_TIMESTEP_ENABLED; } set { ResetGamePendingUpdate(value); S33M3Engines.D3DEngine.FIXED_TIMESTEP_ENABLED = value; } }
         public IWorldFocus WorldFocus;
 
+        public LandscapeBuilder LandscapeBuilder { get; set; }
+        
         public bool UnlockedMouse
         {
             get { return _unlockedMouse; }
