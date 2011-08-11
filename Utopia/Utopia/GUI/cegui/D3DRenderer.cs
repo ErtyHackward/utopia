@@ -34,7 +34,7 @@ using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.StatesManager;
 
 
-namespace CeGui.Renderers.SharpDX
+namespace CeGui.Renderers.dx11
 {
 
     /// <summary>Renders GUIs using managed DirectX 2.0 on DirectX 9.0c</summary>
