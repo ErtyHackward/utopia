@@ -14,6 +14,16 @@ namespace Utopia.Net.Connections
     /// </summary>
     public class ClientConnection : TcpConnection
     {
+        #region Fields
+
+        private byte[] _tail;
+        protected NetworkStream Stream;
+        protected BinaryWriter Writer;
+
+        #endregion
+
+        #region Properties
+
         /// <summary>
         /// Gets identification string of connection
         /// </summary>
@@ -48,6 +58,8 @@ namespace Utopia.Net.Connections
         /// Gets or sets associated user login
         /// </summary>
         public string Login { get; set; }
+
+        #endregion
 
         #region Events
 
@@ -118,10 +130,7 @@ namespace Utopia.Net.Connections
         }
 
         #endregion
-
-        protected NetworkStream Stream;
-        protected BinaryWriter Writer;
-
+        
         /// <summary>
         /// Creates new instance of ClientConnection over socket specified
         /// </summary>
@@ -136,9 +145,7 @@ namespace Utopia.Net.Connections
             Stream = new NetworkStream(socket);
             Writer = new BinaryWriter(new BufferedStream(Stream, 1024 * 18));
         }
-
-        private byte[] _tail;
-
+        
         /// <summary>
         /// Sends a message to client
         /// </summary>
