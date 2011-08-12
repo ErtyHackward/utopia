@@ -127,6 +127,15 @@ public abstract class Texture {
   /// <param name="bufferHeight">Height of the buffer.</param>
   public abstract void LoadFromMemory(Stream buffer, int bufferWidth, int bufferHeight);
 
+  /// <summary>
+  ///		Loads (copies) an image in memory into the texture.  
+  ///		The texture is resized as required to hold the image.
+  /// </summary>
+  /// <param name="buffer">Reference to the stream containing the image data.</param>
+  /// <param name="bufferWidth">Width of the buffer.</param>
+  /// <param name="bufferHeight">Height of the buffer.</param>
+  public abstract void LoadFromBitMap(Bitmap buffer, int bufferWidth, int bufferHeight);
+
   #endregion Abstract Methods
 }
 

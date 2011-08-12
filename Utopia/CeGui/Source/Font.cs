@@ -616,18 +616,21 @@ public class Font {
 
     // save the image to a memory stream
     MemoryStream stream = new MemoryStream();
+
+    // load the image from memory
+    glyphImages.Texture.LoadFromBitMap(bitmap, bitmapWidth, bitmapHeight);
+
     bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Bmp); // Bmp
 
     // destroy the bitmap
     bitmap.Dispose();
 
-    // offset from the beginning to skip the header info
-    //stream.Position = BitmapHeaderSize;
-    stream.Position = 0; // MDX 2.0 needs this header
+    //// offset from the beginning to skip the header info
+    ////stream.Position = BitmapHeaderSize;
+    //stream.Position = 0; // MDX 2.0 needs this header
 
-    // load the image from memory
-    glyphImages.Texture.LoadFromMemory(stream, bitmapWidth, bitmapHeight);
-
+    //// load the image from memory
+    //glyphImages.Texture.LoadFromMemory(stream, bitmapWidth, bitmapHeight);
   }
 
   /// <summary>

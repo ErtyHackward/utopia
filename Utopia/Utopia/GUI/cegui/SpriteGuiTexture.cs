@@ -44,6 +44,44 @@ namespace Utopia.GUI.cegui
             this.height = _texture.TextureDescr.Height;
         }
 
+        public override void LoadFromBitMap(Bitmap buffer, int bufferWidth, int bufferHeight)
+        {
+            // Lock the bitmap for direct memory access
+            BitmapData bmData = buffer.LockBits(new Rectangle(0, 0, bufferWidth, bufferHeight), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            // Create a D3D texture, initalized with the bitmap data  
+            Texture2DDescription texDesc = new Texture2DDescription();
+            texDesc.Width = bufferWidth;
+            texDesc.Height = bufferHeight;
+            texDesc.MipLevels = 1;
+            texDesc.ArraySize = 1;
+            texDesc.Format = Format.B8G8R8A8_UNorm;
+            texDesc.SampleDescription = new SampleDescription(1, 0);
+            texDesc.Usage = ResourceUsage.Immutable;
+            texDesc.BindFlags = BindFlags.ShaderResource;
+            texDesc.CpuAccessFlags = CpuAccessFlags.None;
+            texDesc.OptionFlags = ResourceOptionFlags.None;
+
+            DataRectangle data = new DataRectangle(bufferWidth * 4, new DataStream(bmData.Scan0, 4 * bufferWidth * bufferHeight, true, false));
+
+            Texture2D texture = new Texture2D(_game.GraphicDevice, texDesc, data);
+
+            buffer.UnlockBits(bmData);
+
+            ShaderResourceViewDescription srDesc = new ShaderResourceViewDescription();
+            srDesc.Format = Format.B8G8R8A8_UNorm;
+            srDesc.Dimension = ShaderResourceViewDimension.Texture2D;
+            srDesc.Texture2D = new ShaderResourceViewDescription.Texture2DResource() { MipLevels = 1, MostDetailedMip = 0 };
+
+            ShaderResourceView _srView = new ShaderResourceView(_game.GraphicDevice, texture, srDesc);
+
+            _texture = new SpriteTexture(texture, _srView, new SharpDX.Vector2(0, 0));
+            texture.Dispose();
+
+            this.width = bufferWidth;
+            this.height = bufferHeight;
+        }
+
         public override void LoadFromMemory(System.IO.Stream buffer, int bufferWidth, int bufferHeight)
         {
             ////TEST 1 Methods similar to the one I use with my font generator => Not working still no alpha in the used texture ...!
