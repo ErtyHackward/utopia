@@ -11,42 +11,64 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct PlayerDirectionMessage : IBinaryMessage
     {
-        public byte MessageId;
         /// <summary>
         /// User identification number
         /// </summary>
-        public int UserId;
+        private int _userId;
         /// <summary>
         /// Actual direction vector of the player
         /// </summary>
-        public Vector3 Direction;
-        
+        private Vector3 _direction;
+
+        /// <summary>
+        /// Gets message id
+        /// </summary>
+        public byte MessageId
+        {
+            get { return (byte)MessageTypes.PlayerDirection; }
+        }
+
+        /// <summary>
+        /// Gets or sets a user identification number
+        /// </summary>
+        public int UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets an actual direction vector of the player
+        /// </summary>
+        public Vector3 Direction
+        {
+            get { return _direction; }
+            set { _direction = value; }
+        }
+
         public static PlayerDirectionMessage Read(BinaryReader reader)
         {
             
             PlayerDirectionMessage msg;
 
-            msg.MessageId = reader.ReadByte();
-            msg.UserId = reader.ReadInt32();
-            msg.Direction.X = reader.ReadSingle();
-            msg.Direction.Y = reader.ReadSingle();
-            msg.Direction.Z = reader.ReadSingle();
+            msg._userId = reader.ReadInt32();
+            msg._direction.X = reader.ReadSingle();
+            msg._direction.Y = reader.ReadSingle();
+            msg._direction.Z = reader.ReadSingle();
 
             return msg;
         }
 
         public static void Write(BinaryWriter writer, PlayerDirectionMessage msg)
         {
-            writer.Write(msg.MessageId);
-            writer.Write(msg.UserId);
-            writer.Write(msg.Direction.X);
-            writer.Write(msg.Direction.Y);
-            writer.Write(msg.Direction.Z);
+            writer.Write(msg._userId);
+            writer.Write(msg._direction.X);
+            writer.Write(msg._direction.Y);
+            writer.Write(msg._direction.Z);
         }
 
         public void Write(BinaryWriter writer)
         {
-            MessageId = (byte)MessageTypes.PlayerDirection;
             Write(writer, this);
         }
     }

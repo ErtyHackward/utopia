@@ -8,6 +8,11 @@ namespace Utopia.Net.Interfaces
     public interface IBinaryMessage
     {
         /// <summary>
+        /// Gets a message identification number
+        /// </summary>
+        byte MessageId { get; }
+
+        /// <summary>
         /// Writes all necessary instance members
         /// </summary>
         /// <param name="writer"></param>

@@ -15,8 +15,8 @@ namespace Utopia.Net.Connections
     public class ServerConnection : TcpConnection
     {
         private byte[] _tail; // used to store incomplete binary data
-        protected NetworkStream stream;
-        internal BinaryWriter writer;
+        protected NetworkStream Stream;
+        protected BinaryWriter Writer;
 
         // async block
         private readonly AutoResetEvent _needSend = new AutoResetEvent(false);
@@ -243,15 +243,16 @@ namespace Utopia.Net.Connections
         {
             lock (_synObject)
             {
-                msg.Write(writer);
-                writer.Flush();
+                Writer.Write(msg.MessageId);
+                msg.Write(Writer);
+                Writer.Flush();
             }
         }
 
         protected override void SentFirstCommands()
         {
-            stream = new NetworkStream(socket);
-            writer = new BinaryWriter(stream);
+            Stream = new NetworkStream(socket);
+            Writer = new BinaryWriter(Stream);
 
             Authenticate();
 
@@ -263,19 +264,28 @@ namespace Utopia.Net.Connections
         /// </summary>
         public void Authenticate()
         {
-            Send(new LoginMessage { MessageId = (byte)MessageTypes.Login, Login = Login, Password = Password, Register = Register, Version = ClientVersion });
+            Send(new LoginMessage { Login = Login, Password = Password, Register = Register, Version = ClientVersion });
         }
 
         /// <summary>
         /// Stops send-thread and releases all resources used
         /// </summary>
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (_sendThread != null && _sendThread.IsAlive)
+            if (disposing)
             {
-                _sendThread.Abort();
+                if (_sendThread != null && _sendThread.IsAlive)
+                {
+                    _sendThread.Abort();
+                }
+                _needSend.Dispose();
+                if(Writer != null)
+                    Writer.Dispose();
+                if(Stream != null)
+                    Stream.Dispose();
             }
-            base.Dispose();
+
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -306,7 +316,6 @@ namespace Utopia.Net.Connections
                         while (ms.Position != ms.Length)
                         {
                             var idByte = (MessageTypes)reader.ReadByte();
-                            ms.Seek(-1, SeekOrigin.Current);
                             startPosition = ms.Position;
                             switch (idByte)
                             {
@@ -348,6 +357,7 @@ namespace Utopia.Net.Connections
                     }
                     catch (EndOfStreamException)
                     {
+                        // we need to save tail data to use it with next tcp pocket
                         _tail = new byte[ms.Length - startPosition];
                         System.Buffer.BlockCopy(buffer, (int)startPosition, _tail, 0, _tail.Length);
                     }

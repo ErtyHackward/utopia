@@ -126,5 +126,11 @@ namespace S33M3Engines.Maths
             result.Z = num;
         }
 
+        public static void Round(ref Vector3 data, int decimals)
+        {
+            data.X = (float)Math.Round(data.X, decimals);
+            data.Y = (float)Math.Round(data.Y, decimals);
+            data.Z = (float)Math.Round(data.Z, decimals);
+        }
     }
 }

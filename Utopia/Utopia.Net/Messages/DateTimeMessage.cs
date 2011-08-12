@@ -9,30 +9,42 @@ namespace Utopia.Net.Messages
     /// </summary>
     public struct DateTimeMessage : IBinaryMessage
     {
-        public byte MessageId;
-        public DateTime DateTime;
+        private DateTime _dateTime;
+
+        /// <summary>
+        /// Gets message id
+        /// </summary>
+        public byte MessageId
+        {
+            get { return (byte)MessageTypes.DateTime; }
+        }
+
+        /// <summary>
+        /// Gets or sets game DateTime
+        /// </summary>
+        public DateTime DateTime
+        {
+            get { return _dateTime; }
+            set { _dateTime = value; }
+        }
 
         public static DateTimeMessage Read(BinaryReader reader)
         {
             DateTimeMessage msg;
-            msg.MessageId = reader.ReadByte();
-            msg.DateTime = DateTime.FromBinary(reader.ReadInt64());
+
+            msg._dateTime = DateTime.FromBinary(reader.ReadInt64());
 
             return msg;
         }
 
         public static void Write(BinaryWriter writer, DateTimeMessage msg)
         {
-            writer.Write(msg.MessageId);
-            writer.Write(msg.DateTime.ToBinary());
+            writer.Write(msg._dateTime.ToBinary());
         }
 
         public void Write(BinaryWriter writer)
         {
-            MessageId = (byte)MessageTypes.DateTime;
             Write(writer, this);
         }
-
-
     }
 }
