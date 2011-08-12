@@ -81,12 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GUI\cegui\D3DRenderer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUI\cegui\D3DTexture.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="GUI\cegui\InputInjector.cs" />
     <Compile Include="GUI\cegui\UISpriteBatchManager.cs" />
     <Compile Include="GUI\cegui\demo\VideoModeSelectionForm.cs" />
     <Compile Include="GUI\cegui\SpriteGuiRenderer.cs" />

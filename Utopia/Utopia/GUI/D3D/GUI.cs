@@ -68,8 +68,9 @@ namespace Utopia.GUI.D3D
             _font.Dispose();
         }
 
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime TimeSpent)
         {
+            
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
@@ -83,6 +84,21 @@ namespace Utopia.GUI.D3D
             _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Vector4(1, 0, 0, 1));
             //_spriteRender.RenderText(_font, "That's Bumbas baby !\nDeuxième ligne !", Matrix.Translation(0, 0, 0), new Color4(1, 1, 0, 1));
 
+
+            // Here is what cygon ( author of ceguisharp branch we use , that later became nuclex ui ) : 
+            // "
+            // We do input processing here instead of in Update() because it makes no sense to
+            // handle input on another basis than per frame. The Update() calls in XNA are done
+            // batch-wise and not regularly in a background thread, so there's nothing to gain
+            // from moving this into update, not even better responsiveness (user still would
+            // have to hold the mouse button down for an entire frame to achieve any effect).
+            //"
+
+            CeGui.Renderers.Xna.Source.InputInjector.processMouseInput();
+
+            //TODO pass gameTime to draw methods ? autorepeat feature is disabled cause there s no gametime in draw methods  
+            CeGui.Renderers.Xna.Source.InputInjector.processKeyboardInput();
+          
             CeGui.GuiSystem.Instance.RenderGui();
 
             _spriteRender.End();
