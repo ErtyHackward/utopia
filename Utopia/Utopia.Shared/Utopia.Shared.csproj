@@ -67,6 +67,7 @@
     <Compile Include="Config\KeyWithModifier.cs" />
     <Compile Include="Config\XmlSettingsManager.cs" />
     <Compile Include="Landscaping\CubeIDs.cs" />
+    <Compile Include="Landscaping\FlatLandscape.cs" />
     <Compile Include="Landscaping\LandscapeBuilder.cs" />
     <Compile Include="Math\MathHelper.cs" />
     <Compile Include="Math\Noises\NoiseMath.cs" />
