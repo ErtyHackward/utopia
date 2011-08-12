@@ -31,7 +31,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -87,8 +87,10 @@
     <Compile Include="GUI\cegui\D3DTexture.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUI\cegui\UISpriteBatchManager.cs" />
     <Compile Include="GUI\cegui\demo\VideoModeSelectionForm.cs" />
     <Compile Include="GUI\cegui\SpriteGuiRenderer.cs" />
+    <Compile Include="GUI\cegui\SpriteGuiRendererOptimized.cs" />
     <Compile Include="GUI\cegui\SpriteGuiTexture.cs" />
     <Compile Include="GUI\Forms\CustControls\Config.cs">
       <SubType>UserControl</SubType>

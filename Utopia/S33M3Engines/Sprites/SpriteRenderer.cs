@@ -176,12 +176,18 @@ namespace S33M3Engines.Sprites
             _game.D3dEngine.Context.DrawIndexed(6, 0, 0);
         }
 
-        public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, int numSprites)
+        public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, bool sourceRectInTextCoord = true)
+        {
+            RenderBatch(spriteTexture, drawData, drawData.Length, sourceRectInTextCoord);
+        }
+
+        public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, int numSprites, bool sourceRectInTextCoord = true)
         {
             //Set Par Batch Constant
             _effectInstanced.Begin();
             _effectInstanced.CBPerDraw.Values.ViewportSize = new Vector2(_game.ActivCamera.Viewport.Width, _game.ActivCamera.Viewport.Height);
-            _effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            if(sourceRectInTextCoord)_effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            else _effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
             _effectInstanced.CBPerDraw.IsDirty = true;
             _effectInstanced.SpriteTexture.Value = spriteTexture.Texture;
             _effectInstanced.SpriteTexture.IsDirty = true;

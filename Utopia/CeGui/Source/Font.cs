@@ -543,6 +543,7 @@ public class Font {
     g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
     g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
+
     // used for calculating position in the image for rendering the characters
     float x = 0, y = 0;
 
@@ -626,6 +627,7 @@ public class Font {
 
     // load the image from memory
     glyphImages.Texture.LoadFromMemory(stream, bitmapWidth, bitmapHeight);
+
   }
 
   /// <summary>

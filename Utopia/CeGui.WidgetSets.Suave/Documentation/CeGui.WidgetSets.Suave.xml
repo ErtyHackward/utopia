@@ -4,6 +4,84 @@
         <name>CeGui.WidgetSets.Suave</name>
     </assembly>
     <members>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveTitleBar">
+            <summary>A window's title bar using the 'suave' look</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.ImagesetName">
+            <summary>Name of the imageset to use for rendering</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.LeftEndSectionImageName">
+            <summary>The image for the left cap of the title bar</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.CenterSectionImageName">
+            <summary>The image for the middle section of the title bar</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.RightEndSectionImageName">
+            <summary>The image for the right cap of the title bar</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.TextLayer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.ActiveColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.InactiveColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.CaptionColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.leftImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.topImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.bottomImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.rightImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.centerImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveTitleBar.#ctor(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <param name="name"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveTitleBar.DrawSelf(System.Single)">
+            <summary>
+            
+            </summary>
+            <param name="z"></param>
+        </member>
+        <member name="P:CeGui.WidgetSets.Suave.SuaveTitleBar.PixelRect">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:CeGui.WidgetSets.Suave.SuaveFrameWindow">
             <summary>A frame window using the 'suave' look</summary>
         </member>
@@ -217,198 +295,6 @@
         <member name="P:CeGui.WidgetSets.Suave.SuaveFrameWindow.UnclippedInnerRect">
             <summary>
             	Return a Rect object that describes, unclipped, the inner rectangle for this window.	
-            </summary>
-        </member>
-        <member name="T:CeGui.WidgetSets.Suave.SuaveGuiBuilder">
-            <summary>Gui builder and widget factory for the suave CEGUI theme</summary>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.#ctor">
-            <summary>Initializes the suave gui builder</summary>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateButton(System.String)">
-            <summary>Creates an uninitialized PushButton</summary>
-            <param name="name">Name of the button</param>
-            <returns>The new, uninitialized PushButton</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateCheckbox(System.String)">
-            <summary>Creates an uninitialized Checkbox</summary>
-            <param name="name">Name of the check box</param>
-            <returns>The new, uninitialized Checkbox</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateRadioButton(System.String)">
-            <summary>Creates an uninitialized RadioButton</summary>
-            <param name="name">Name of the radio button</param>
-            <returns>The new, uninitialized RadioButton</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateComboBox(System.String)">
-            <summary>Creates an uninitialized ComboBox</summary>
-            <param name="name">Name of the combo box</param>
-            <returns>The new, uninitialized ComboBox</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateListBox(System.String)">
-            <summary>Creates an uninitialized ListBox</summary>
-            <param name="name">Name of the list box</param>
-            <returns>The new, uninitialized ListBox</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateGrid(System.String)">
-            <summary>Creates an uninitialized Grid</summary>
-            <param name="name">Name of the grid</param>
-            <returns>The new, uninitialized Grid</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateEditBox(System.String)">
-            <summary>Creates an uninitialized EditBox</summary>
-            <param name="name">Name of the edit box</param>
-            <returns>The new, uninitialized EditBox</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateFrameWindow(System.String)">
-            <summary>Creates an uninitialized FrameWindow</summary>
-            <param name="name">Name of the frame window</param>
-            <returns>The new, uninitialized FrameWindow</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateProgressBar(System.String)">
-            <summary>Creates an uninitialized ProgressBar</summary>
-            <param name="name">Name of the progress bar</param>
-            <returns>The new, uninitialized ProgressBar</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateSlider(System.String)">
-            <summary>Creates an uninitialized Slider</summary>
-            <param name="name">Name of the slider</param>
-            <returns>The new, uninitialized Slider</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateTitleBar(System.String)">
-            <summary>Creates an uninitialized TitleBar</summary>
-            <param name="name">Name of the title bar</param>
-            <returns>The new, uninitialized TitleBar</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateVertScrollbar(System.String)">
-            <summary>Creates an uninitialized Scrollbar</summary>
-            <param name="name">Name of the scroll bar</param>
-            <returns>The new, uninitialized Scrollbar</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateHorzScrollbar(System.String)">
-            <summary>Creates an uninitialized Scrollbar</summary>
-            <param name="name">Name of the scroll bar</param>
-            <returns>The new, uninitialized Scrollbar</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateListHeader(System.String)">
-            <summary>Creates an uninitialized ListHeader</summary>
-            <param name="name">Name of the list header</param>
-            <returns>The new, uninitialized ListHeader</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateListHeaderSegment(System.String)">
-            <summary>Creates an uninitialized ListHeaderSegment</summary>
-            <param name="name">Name of the list header segment</param>
-            <returns>The new, uninitialized ListHeaderSegment</returns>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateComboDropList(System.String)">
-            <summary>Creates an uninitialized ComboDropList</summary>
-            <param name="name">Name of the combo drop list</param>
-            <returns>The new, uninitialized ComboDropList</returns>
-        </member>
-        <member name="T:CeGui.WidgetSets.Suave.SuaveCheckbox">
-            <summary>
-            Summary description for SuaveCheckbox.
-            </summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.ImagesetName">
-            <summary>Name of the imageset to use for rendering</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.NormalUncheckedImageName">
-            <summary>Name of the image to use for the unchecked normal state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.NormalCheckedImageName">
-            <summary>Name of the image to use for the checked normal state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.NormalMixedImageName">
-            <summary>Name of the image to use for the mixed normal state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.HoverUncheckedImageName">
-            <summary>Name of the image to use for the unchecked hover state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.HoverCheckedImageName">
-            <summary>Name of the image to use for the checked hover state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.HoverMixedImageName">
-            <summary>Name of the image to use for the mixed hover state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.PushedUncheckedImageName">
-            <summary>Name of the image to use for the unchecked pushed state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.PushedCheckedImageName">
-            <summary>Name of the image to use for the checked pushed state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.PushedMixedImageName">
-            <summary>Name of the image to use for the mixed pushed state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DisabledUncheckedImageName">
-            <summary>Name of the image to use for the unchecked disabled state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DisabledCheckedImageName">
-            <summary>Name of the image to use for the checked disabled state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DisabledMixedImageName">
-            <summary>Name of the image to use for the mixed disabled state</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.LabelPadding">
-            <summary>
-              Pixel padding value for text label (space between image and text label).
-            </summary>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.#ctor(System.String,System.String)">
-            <summary>Initializes the check box</summary>
-            <param name="name"></param>
-            <param name="type"></param>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.drawCheckbox(CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes,System.Single)">
-            <summary>Helper method for rendering the check box in any mode</summary>
-            <param name="drawMode">Mode in which to draw the check box</param>
-            <param name="z">Z value to use</param>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawNormal(System.Single)">
-            <summary>Render the checkbox in the 'normal' state</summary>
-            <param name="z">Z value for rendering</param>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawPushed(System.Single)">
-            <summary>Render the checkbox in the 'pushed' state</summary>
-            <param name="z">Z value for rendering</param>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawHover(System.Single)">
-            <summary>Render the checkbox in the 'hover' state</summary>
-            <param name="z">Z value for rendering</param>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.checkboxImages">
-            <summary>Images used to draw the checkbox</summary>
-        </member>
-        <member name="T:CeGui.WidgetSets.Suave.SuaveCheckbox.States">
-            <summary>States the check box can be in</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.States.Unchecked">
-            <summary>Check box does not have the check mark set</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.States.Checked">
-            <summary>Check box is checked</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.States.Mixed">
-            <summary>Mixed state (neither checked nor unchecked)</summary>
-        </member>
-        <member name="T:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes">
-            <summary>Modes in which the check box can be drawn</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Normal">
-            <summary>Normal (sitting around and doing nothing)</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Hover">
-            <summary>Used to display that the check box has input focus</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Pushed">
-            <summary>Used while the check box is button-pushed</summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Disabled">
-            <summary>Check box is disabled</summary>
-        </member>
-        <member name="T:CeGui.WidgetSets.Suave.SuaveCloseButton">
-            <summary>
-            	Close button widget for the Windows Gui Scheme.
             </summary>
         </member>
         <member name="T:CeGui.WidgetSets.Suave.SuaveButton">
@@ -720,6 +606,11 @@
             </summary>
             <value>true if the standard button imagery will be rendered, false if no standard rendering will be performed.</value>
         </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveCloseButton">
+            <summary>
+            	Close button widget for the Windows Gui Scheme.
+            </summary>
+        </member>
         <member name="M:CeGui.WidgetSets.Suave.SuaveCloseButton.#ctor(System.String,System.String)">
             <summary>
             
@@ -732,83 +623,192 @@
             
             </summary>
         </member>
-        <member name="T:CeGui.WidgetSets.Suave.SuaveTitleBar">
-            <summary>A window's title bar using the 'suave' look</summary>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveGuiBuilder">
+            <summary>Gui builder and widget factory for the suave CEGUI theme</summary>
         </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.ImagesetName">
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.#ctor">
+            <summary>Initializes the suave gui builder</summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateButton(System.String)">
+            <summary>Creates an uninitialized PushButton</summary>
+            <param name="name">Name of the button</param>
+            <returns>The new, uninitialized PushButton</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateCheckbox(System.String)">
+            <summary>Creates an uninitialized Checkbox</summary>
+            <param name="name">Name of the check box</param>
+            <returns>The new, uninitialized Checkbox</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateRadioButton(System.String)">
+            <summary>Creates an uninitialized RadioButton</summary>
+            <param name="name">Name of the radio button</param>
+            <returns>The new, uninitialized RadioButton</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateComboBox(System.String)">
+            <summary>Creates an uninitialized ComboBox</summary>
+            <param name="name">Name of the combo box</param>
+            <returns>The new, uninitialized ComboBox</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateListBox(System.String)">
+            <summary>Creates an uninitialized ListBox</summary>
+            <param name="name">Name of the list box</param>
+            <returns>The new, uninitialized ListBox</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateGrid(System.String)">
+            <summary>Creates an uninitialized Grid</summary>
+            <param name="name">Name of the grid</param>
+            <returns>The new, uninitialized Grid</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateEditBox(System.String)">
+            <summary>Creates an uninitialized EditBox</summary>
+            <param name="name">Name of the edit box</param>
+            <returns>The new, uninitialized EditBox</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateFrameWindow(System.String)">
+            <summary>Creates an uninitialized FrameWindow</summary>
+            <param name="name">Name of the frame window</param>
+            <returns>The new, uninitialized FrameWindow</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateProgressBar(System.String)">
+            <summary>Creates an uninitialized ProgressBar</summary>
+            <param name="name">Name of the progress bar</param>
+            <returns>The new, uninitialized ProgressBar</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateSlider(System.String)">
+            <summary>Creates an uninitialized Slider</summary>
+            <param name="name">Name of the slider</param>
+            <returns>The new, uninitialized Slider</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateTitleBar(System.String)">
+            <summary>Creates an uninitialized TitleBar</summary>
+            <param name="name">Name of the title bar</param>
+            <returns>The new, uninitialized TitleBar</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateVertScrollbar(System.String)">
+            <summary>Creates an uninitialized Scrollbar</summary>
+            <param name="name">Name of the scroll bar</param>
+            <returns>The new, uninitialized Scrollbar</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateHorzScrollbar(System.String)">
+            <summary>Creates an uninitialized Scrollbar</summary>
+            <param name="name">Name of the scroll bar</param>
+            <returns>The new, uninitialized Scrollbar</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateListHeader(System.String)">
+            <summary>Creates an uninitialized ListHeader</summary>
+            <param name="name">Name of the list header</param>
+            <returns>The new, uninitialized ListHeader</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateListHeaderSegment(System.String)">
+            <summary>Creates an uninitialized ListHeaderSegment</summary>
+            <param name="name">Name of the list header segment</param>
+            <returns>The new, uninitialized ListHeaderSegment</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateComboDropList(System.String)">
+            <summary>Creates an uninitialized ComboDropList</summary>
+            <param name="name">Name of the combo drop list</param>
+            <returns>The new, uninitialized ComboDropList</returns>
+        </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveCheckbox">
+            <summary>
+            Summary description for SuaveCheckbox.
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.ImagesetName">
             <summary>Name of the imageset to use for rendering</summary>
         </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.LeftEndSectionImageName">
-            <summary>The image for the left cap of the title bar</summary>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.NormalUncheckedImageName">
+            <summary>Name of the image to use for the unchecked normal state</summary>
         </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.CenterSectionImageName">
-            <summary>The image for the middle section of the title bar</summary>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.NormalCheckedImageName">
+            <summary>Name of the image to use for the checked normal state</summary>
         </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.RightEndSectionImageName">
-            <summary>The image for the right cap of the title bar</summary>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.NormalMixedImageName">
+            <summary>Name of the image to use for the mixed normal state</summary>
         </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.TextLayer">
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.HoverUncheckedImageName">
+            <summary>Name of the image to use for the unchecked hover state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.HoverCheckedImageName">
+            <summary>Name of the image to use for the checked hover state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.HoverMixedImageName">
+            <summary>Name of the image to use for the mixed hover state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.PushedUncheckedImageName">
+            <summary>Name of the image to use for the unchecked pushed state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.PushedCheckedImageName">
+            <summary>Name of the image to use for the checked pushed state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.PushedMixedImageName">
+            <summary>Name of the image to use for the mixed pushed state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DisabledUncheckedImageName">
+            <summary>Name of the image to use for the unchecked disabled state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DisabledCheckedImageName">
+            <summary>Name of the image to use for the checked disabled state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DisabledMixedImageName">
+            <summary>Name of the image to use for the mixed disabled state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.LabelPadding">
             <summary>
-            
+              Pixel padding value for text label (space between image and text label).
             </summary>
         </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.ActiveColor">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.InactiveColor">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.CaptionColor">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.leftImage">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.topImage">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.bottomImage">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.rightImage">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.centerImage">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveTitleBar.#ctor(System.String,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="type"></param>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.#ctor(System.String,System.String)">
+            <summary>Initializes the check box</summary>
             <param name="name"></param>
+            <param name="type"></param>
         </member>
-        <member name="M:CeGui.WidgetSets.Suave.SuaveTitleBar.DrawSelf(System.Single)">
-            <summary>
-            
-            </summary>
-            <param name="z"></param>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.drawCheckbox(CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes,System.Single)">
+            <summary>Helper method for rendering the check box in any mode</summary>
+            <param name="drawMode">Mode in which to draw the check box</param>
+            <param name="z">Z value to use</param>
         </member>
-        <member name="P:CeGui.WidgetSets.Suave.SuaveTitleBar.PixelRect">
-            <summary>
-            
-            </summary>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawNormal(System.Single)">
+            <summary>Render the checkbox in the 'normal' state</summary>
+            <param name="z">Z value for rendering</param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawPushed(System.Single)">
+            <summary>Render the checkbox in the 'pushed' state</summary>
+            <param name="z">Z value for rendering</param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawHover(System.Single)">
+            <summary>Render the checkbox in the 'hover' state</summary>
+            <param name="z">Z value for rendering</param>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.checkboxImages">
+            <summary>Images used to draw the checkbox</summary>
+        </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveCheckbox.States">
+            <summary>States the check box can be in</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.States.Unchecked">
+            <summary>Check box does not have the check mark set</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.States.Checked">
+            <summary>Check box is checked</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.States.Mixed">
+            <summary>Mixed state (neither checked nor unchecked)</summary>
+        </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes">
+            <summary>Modes in which the check box can be drawn</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Normal">
+            <summary>Normal (sitting around and doing nothing)</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Hover">
+            <summary>Used to display that the check box has input focus</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Pushed">
+            <summary>Used while the check box is button-pushed</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Disabled">
+            <summary>Check box is disabled</summary>
         </member>
     </members>
 </doc>

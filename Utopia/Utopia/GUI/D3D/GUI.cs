@@ -22,7 +22,7 @@ namespace Utopia.GUI.D3D
         SpriteTexture _crosshair;
         SpriteFont _font;
 
-        SpriteGuiRenderer _ceguiRenderer;
+        SpriteGuiRendererOptimized _ceguiRenderer;
         GuiSheet _rootGuiSheet;
 
         public GUI(Game game)
@@ -44,7 +44,7 @@ namespace Utopia.GUI.D3D
             _font = new SpriteFont();
             _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, Game.GraphicDevice);
 
-            _ceguiRenderer = new SpriteGuiRenderer(Game, _spriteRender);
+            _ceguiRenderer = new SpriteGuiRendererOptimized(Game, _spriteRender);
           
             CeGui.GuiSystem.Initialize(_ceguiRenderer);
             _ceguiRenderer.loadCeGuiResources();
@@ -81,7 +81,7 @@ namespace Utopia.GUI.D3D
         {
             _spriteRender.Begin(SpriteRenderer.FilterMode.Linear);
             _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Vector4(1, 0, 0, 1));
-            //_spriteRender.RenderText(_font, "That's Bumbas baby !\nDeuxième ligne !", Matrix.Translation(0, 0, 0), new Vector4(1, 1, 0, 1));
+            //_spriteRender.RenderText(_font, "That's Bumbas baby !\nDeuxième ligne !", Matrix.Translation(0, 0, 0), new Color4(1, 1, 0, 1));
 
             CeGui.GuiSystem.Instance.RenderGui();
 
