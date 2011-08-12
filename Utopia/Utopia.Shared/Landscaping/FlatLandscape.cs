@@ -21,19 +21,7 @@ namespace Utopia.Shared.Landscaping
 
         protected override void CreateChunkLandscape(byte[] Cubes, Structs.Landscape.TerraCube[] TerraCubes, ref Structs.Range<int> workingRange, bool withRangeClearing)
         {
-            if (withRangeClearing) ClearRangeArea(Cubes, TerraCubes, ref workingRange);
-
-            for (int X = workingRange.Min.X; X < workingRange.Max.X; X++) //X
-            {
-                for (int Z = workingRange.Min.Z; Z < workingRange.Max.Z; Z++) //Z
-                {
-                    for (int Y = workingRange.Min.Y; Y < workingRange.Max.Y; Y++) //X
-                    {
-                        if (TerraCubes != null) TerraCubes[RenderIndex(X, Y, Z)].Id = CubeId.Air;
-                        if (Cubes != null) Cubes[X * workingRange.Max.X * workingRange.Max.Y + Y * workingRange.Max.Y + Z] = CubeId.Air;
-                    }
-                }
-            }
+          //  if (withRangeClearing) ClearRangeArea(Cubes, TerraCubes, ref workingRange);
 
             int floor = 93;//for testing portals, made ground level with grassland
             //chunk.UpperGroundHeight = floor; //this one is useful for populators like itempopulator
@@ -43,6 +31,7 @@ namespace Utopia.Shared.Landscaping
                 {
                     for (int y = workingRange.Min.Y; y < workingRange.Max.Y; y++) //X
                     {
+
                         byte block = CubeId.Air;
 
                         if (y < workingRange.Max.Y / 4)
@@ -69,11 +58,13 @@ namespace Utopia.Shared.Landscaping
                         }
 
                         // byte h = (byte)(chunk.Index.Z % 2 == 0 && y > 1 ? y - 1 : y); //stairs for debugging corner cases with water for example
-                        int h = y;
 
-                        if (TerraCubes != null) TerraCubes[RenderIndex(x, h, z)].Id = CubeId.Air;
-                        if (Cubes != null) Cubes[x * workingRange.Max.X * workingRange.Max.Y + h * workingRange.Max.Y + z] = CubeId.Air;
-                   
+
+                        if (TerraCubes != null) TerraCubes[RenderIndex(x, y, z)].Id = block;
+                        if (Cubes != null)
+                        {
+                            Cubes[x * workingRange.Max.X * workingRange.Max.Y + y * workingRange.Max.Y + z] = block;
+                        }
 
                     }
                 }
