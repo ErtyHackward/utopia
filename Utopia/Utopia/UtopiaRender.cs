@@ -77,7 +77,7 @@ namespace Utopia
             //Load the config
             //Config_old.LoadConfig();
 
-             LandscapeBuilder = new LandscapeBuilder();
+            LandscapeBuilder = new LandscapeBuilder();
             // LandscapeBuilder = new FlatLandscape();
 
              LandscapeBuilder.Initialize(ClientSettings.Current.Settings.GraphicalParameters.WorldSize);
