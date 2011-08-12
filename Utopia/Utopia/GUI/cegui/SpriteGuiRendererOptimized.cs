@@ -27,9 +27,10 @@ namespace Utopia.GUI.cegui
             _spriteManager = new UISpriteBatchManager(100, 1000);
         }
 
+        //original d3d & xna renderer did not use  quadSplitMode, ignore this parameter
         public override void AddQuad(CeGui.Rect destRect, float z, CeGui.Texture texture, CeGui.Rect textureRect, CeGui.ColourRect colors, CeGui.QuadSplitMode quadSplitMode)
         {
-            //original d3d & xna renderer did not use  quadSplitMode, ignore this
+            
             SpriteGuiTexture spriteTexture = texture as SpriteGuiTexture;
 
             //Transform the TextureRect from CeGUI to tru-1e dimention (At this moment, it is in the range of 0-1
@@ -38,8 +39,6 @@ namespace Utopia.GUI.cegui
             //textureRect.Right *= texture.Width;
             //textureRect.Left *= texture.Width;
 
-            // somewhat put destrect into a matrix ? 
-            // why doesnt spriteRenderer.Render have 2 rectangles like xna spritebatch ?
             Matrix transform = Matrix.Scaling(destRect.Width / textureRect.Width, destRect.Height / textureRect.Height, 0) *
                                Matrix.Translation(destRect.Position.X, destRect.Position.Y, 0);
 
@@ -61,7 +60,7 @@ namespace Utopia.GUI.cegui
 
         public override void ClearRenderList()
         {
-
+            _spriteManager.SpriteBatchs.Clear();
         }
 
         public override CeGui.Texture CreateTexture()
@@ -187,9 +186,11 @@ namespace Utopia.GUI.cegui
             //
             // This is a bit hacky since we're assuming the SuaveLook image set, referenced
             // below, will always be available.
+            
+            /*
             GuiSystem.Instance.SetDefaultMouseCursor(
               ImagesetManager.Instance.GetImageset("SuaveLook").GetImage("Mouse-Arrow")
-            );
+            );*/
 
         }
 
