@@ -11,14 +11,15 @@ using System.Windows.Forms;
 using S33M3Engines.InputHandler.KeyboardHelper;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
+using CeGui;
 
 
-namespace CeGui.Renderers.Xna.Source
+namespace S33M3Engines.Sprites.GUI
 {
     /// <summary>
-    /// Takes Keyboard activity, and injects into CeGui#
+    /// Takes Keyboard and mouse activity, and injects into CeGui#
     /// </summary>
-    sealed class InputInjector
+    public class InputInjector
     {
         #region Public Members
 
@@ -55,7 +56,7 @@ namespace CeGui.Renderers.Xna.Source
                     doPressed(addedKeys, isShiftKeyDown(newKeyboardState));
                 }
                 else
-                {   
+                {
                     doAutoRepeat(isShiftKeyDown(newKeyboardState), gameTime);
                 }
                 doReleased(findAdded(newKeys, oldKeys));
@@ -200,7 +201,7 @@ namespace CeGui.Renderers.Xna.Source
         /// <param name="gameTime">Time elapsed since last call</param>
         private static void doAutoRepeat(bool shiftDown, GameTime gameTime)
         {
-            autoRepeatTimeElapsed.Add(TimeSpan.FromSeconds((double) gameTime.ElapsedGameTimeInS_LD));
+            autoRepeatTimeElapsed.Add(TimeSpan.FromSeconds((double)gameTime.ElapsedGameTimeInS_LD));
 
             bool repeat = false;
             if (autoRepeatStarted)
