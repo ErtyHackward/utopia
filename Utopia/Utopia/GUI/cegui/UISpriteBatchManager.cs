@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using S33M3Engines.Struct.Vertex;
 using SharpDX;
+using RectangleF = System.Drawing.RectangleF;
 
 namespace Utopia.GUI.cegui
 {
@@ -28,7 +29,7 @@ namespace Utopia.GUI.cegui
                 SpriteTexture = spriteTexture;
             }
 
-            public void AddSpriteData(ref Matrix transform,ref Color4 color,ref Vector4 sourceRect)
+            public void AddSpriteData(ref Matrix transform,ref Color4 color,ref RectangleF sourceRect)
             {
                 SpriteData.Add(new VertexSpriteInstanced() { Color = color, SourceRect = sourceRect, Tranform = transform });
             }
@@ -40,7 +41,7 @@ namespace Utopia.GUI.cegui
             SpriteBatchs = new List<UISpriteBatch>(SpriteBatchCount);
         }
 
-        public void AddSprite(SpriteGuiTexture spriteTexture,ref Matrix transform,ref Color4 color,ref Vector4 sourceRect)
+        public void AddSprite(SpriteGuiTexture spriteTexture,ref Matrix transform,ref Color4 color,ref RectangleF sourceRect)
         {
             //If the Texture change than Create a new SpriteBatch
             //=> It means that the sprite must be sorted by Texture type !
@@ -54,9 +55,8 @@ namespace Utopia.GUI.cegui
             _currentBatch.AddSpriteData(ref transform, ref color, ref sourceRect);
         }
 
-        public void Clear()
+        public void ClearList()
         {
-            foreach (var batch in SpriteBatchs) batch.SpriteTexture.Dispose();
             SpriteBatchs.Clear();
             _currentBatch = null;
         }

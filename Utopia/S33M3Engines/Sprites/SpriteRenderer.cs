@@ -141,7 +141,7 @@ namespace S33M3Engines.Sprites
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
         }
 
-        public void Render(SpriteTexture spriteTexture, ref Matrix transform, Vector4 color, RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true)
+        public void Render(SpriteTexture spriteTexture, ref Matrix transform, Color4 color,  RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true)
         {
             _vBuffer.SetToDevice(0); // Set the Vertex buffer
 
@@ -244,8 +244,8 @@ namespace S33M3Engines.Sprites
                     _textDrawData[currentDraw].Color = color;
                     _textDrawData[currentDraw].SourceRect.X = desc.X;
                     _textDrawData[currentDraw].SourceRect.Y = desc.Y;
-                    _textDrawData[currentDraw].SourceRect.Z = desc.Width;
-                    _textDrawData[currentDraw].SourceRect.W = desc.Height;
+                    _textDrawData[currentDraw].SourceRect.Width = desc.Width;
+                    _textDrawData[currentDraw].SourceRect.Height = desc.Height;
                     currentDraw++;
 
                     textTransform.M41 += desc.Width + 1;

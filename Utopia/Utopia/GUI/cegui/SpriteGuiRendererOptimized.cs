@@ -30,24 +30,24 @@ namespace Utopia.GUI.cegui
         //original d3d & xna renderer did not use  quadSplitMode, ignore this parameter
         public override void AddQuad(CeGui.Rect destRect, float z, CeGui.Texture texture, CeGui.Rect textureRect, CeGui.ColourRect colors, CeGui.QuadSplitMode quadSplitMode)
         {
-            
             SpriteGuiTexture spriteTexture = texture as SpriteGuiTexture;
-
-            //Transform the TextureRect from CeGUI to tru-1e dimention (At this moment, it is in the range of 0-1
-            //textureRect.Bottom *= texture.Height;
-            //textureRect.Top *= texture.Height;
-            //textureRect.Right *= texture.Width;
-            //textureRect.Left *= texture.Width;
-
             Matrix transform = Matrix.Scaling(destRect.Width / textureRect.Width, destRect.Height / textureRect.Height, 0) *
-                               Matrix.Translation(destRect.Position.X, destRect.Position.Y, 0);
+                   Matrix.Translation(destRect.Position.X, destRect.Position.Y, 0);
 
             Color4 color = new Color4(1, 1, 1, 1);
 
-            //RectangleF sourceRect = new RectangleF(textureRect.Left, textureRect.Top, textureRect.Width, textureRect.Height);
-            Vector4 sourceRect = new Vector4(textureRect.Left, textureRect.Top, textureRect.Width, textureRect.Height);
+            RectangleF sourceRect = new RectangleF(textureRect.Left, textureRect.Top, textureRect.Width, textureRect.Height);
 
-            _spriteManager.AddSprite(spriteTexture, ref transform, ref color, ref sourceRect);
+            if (this.IsQueueingEnabled)
+            {
+                //Buffer the Rectangle
+                _spriteManager.AddSprite(spriteTexture, ref transform, ref color, ref sourceRect);
+            }
+            else
+            {
+                //Direct Draw without memorize it
+                _spriteRenderer.Render(spriteTexture.SpriteTexture, ref transform, color, sourceRect, false);
+            }
         }
 
         public override void DoRender()
@@ -60,7 +60,7 @@ namespace Utopia.GUI.cegui
 
         public override void ClearRenderList()
         {
-            _spriteManager.SpriteBatchs.Clear();
+            _spriteManager.ClearList();
         }
 
         public override CeGui.Texture CreateTexture()
@@ -90,7 +90,7 @@ namespace Utopia.GUI.cegui
 
         public override void DestroyAllTextures()
         {
-            _spriteManager.Clear();
+            _spriteManager.Dispose();
         }
 
         public override float Width
