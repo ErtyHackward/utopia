@@ -84,12 +84,15 @@
     <Compile Include="GUI\cegui\demo\VideoModeSelectionForm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUI\cegui\InputInjector.cs" />
     <Compile Include="GUI\cegui\SpriteGuiRenderer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUI\cegui\SpriteGuiRendererOptimized.cs" />
     <Compile Include="GUI\cegui\SpriteGuiTexture.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUI\cegui\UISpriteBatchManager.cs" />
     <Compile Include="GUI\Forms\CustControls\Config.cs">
       <SubType>UserControl</SubType>
     </Compile>
