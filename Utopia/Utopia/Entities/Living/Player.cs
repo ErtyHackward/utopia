@@ -84,6 +84,7 @@ namespace Utopia.Entities.Living
                     newRay.Intersects(ref bBox, out FaceDistance);
 
                     Vector3 CollisionPoint = ((WorldPosition.Value + _entityEyeOffset).AsVector3()) + (LookAt * FaceDistance);
+                    MVector3.Round(ref CollisionPoint, 5);
                     _newCubePlace = new Location3<int>(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z);
                     if (CollisionPoint.X == _pickedBlock.X) _newCubePlace.X--;
                     else

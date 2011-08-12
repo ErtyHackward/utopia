@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Config\KeyWithModifier.cs" />
     <Compile Include="Config\XmlSettingsManager.cs" />
+    <Compile Include="Interfaces\IWorldProcessor.cs" />
     <Compile Include="Landscaping\CubeIDs.cs" />
     <Compile Include="Landscaping\FlatLandscape.cs" />
     <Compile Include="Landscaping\LandscapeBuilder.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Structs\ByteVector3.cs" />
     <Compile Include="Structs\ByteVector4.cs" />
     <Compile Include="Structs\Color.cs" />
+    <Compile Include="Structs\GeneratedChunk.cs" />
     <Compile Include="Structs\Helpers\HalfUtils.cs" />
     <Compile Include="Structs\HalfVector2.cs" />
     <Compile Include="Structs\HalfVector4.cs" />
@@ -87,7 +89,11 @@
     <Compile Include="Structs\Location2.cs" />
     <Compile Include="Structs\Location3.cs" />
     <Compile Include="Structs\Range.cs" />
+    <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
+    <Compile Include="World\WorldGenerationStagesManager.cs" />
+    <Compile Include="World\WorldGenerator.cs" />
+    <Compile Include="World\WorldParameters.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -111,6 +117,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

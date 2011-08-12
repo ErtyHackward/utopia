@@ -40,6 +40,7 @@ namespace Liquid.plugin
         private long FloodingSpeedTex = (long)(Stopwatch.Frequency / 30);
         private long previousTime, currentTime, previousTimeTex, currentTimeTex;
         private long timeAccumulator, timeAccumulatorTex;
+        private Universe _universe;
 
         public float TextureAnimationOffset = 0;
         // The Activated flooding cubes !
@@ -61,6 +62,7 @@ namespace Liquid.plugin
 
         public void Initialize(Universe universe)
         {
+            _universe = universe;
             _terra = universe.Planet.Terra;
             _liquid = new Liquid(this, _terra);
 
@@ -243,6 +245,10 @@ namespace Liquid.plugin
             {
                 StatesRepository.ApplyStates(Utopia.GameDXStates.DXStates.Rasters.Default, Utopia.GameDXStates.DXStates.Blenders.Disabled);
             }
+
+#if DEBUG
+            if (_universe.Game.DebugDisplay == 2) StatesRepository.ApplyStates(Utopia.GameDXStates.DXStates.Rasters.Wired, Utopia.GameDXStates.DXStates.Blenders.Disabled);
+#endif
 
             TerraChunk chunk;
             for (int chunkIndice = 0; chunkIndice < LandscapeBuilder.ChunkGridSize * LandscapeBuilder.ChunkGridSize; chunkIndice++)
