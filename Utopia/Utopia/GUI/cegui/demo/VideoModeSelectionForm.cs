@@ -95,14 +95,20 @@ public class VideoModeSelectionForm : CeGui.Form {
   /// <param name="sender">Button that has been clicked</param>
   /// <param name="e">Not used</param>
   private void cancelButtonClicked(object sender, GuiEventArgs e) {
-    // moo!
+      close();
   }
 
   /// <summary>Handles clicks on the close button of the dialog</summary>
   /// <param name="sender">Close button that has been clicked</param>
   /// <param name="e">Not used</param>
   private void formCloseClicked(object sender, WindowEventArgs e) {
-    // moo!
+      close();
+   }
+
+  private void close()
+  {
+      //HACK may be a better way to close a cegui window, but i see no harm in this !
+      this.frame.Parent.RemoveChild(this.frame.ID);
   }
 
   #region Not really Windows Form Designer generated code ;)
