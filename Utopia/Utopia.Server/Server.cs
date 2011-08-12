@@ -88,7 +88,7 @@ namespace Utopia.Server
             
         }
         
-        // this functions executes in other thead
+        // this functions executes in other thread
         private void SaveChunks(object obj)
         {
             if (_saveList.Count == 0)
@@ -111,7 +111,7 @@ namespace Utopia.Server
             }
         }
 
-        // this functions executes in other thead
+        // this functions executes in other thread
         private void CleanUp(object obj)
         {
             var chunksToRemove = new List<Chunk>(); 
@@ -137,7 +137,7 @@ namespace Utopia.Server
             e.Connection.MessageDirection -= Connection_MessageDirection;
             e.Connection.MessageChat -= Connection_MessageChat;
             Console.WriteLine("{0} disconnected", e.Connection.RemoteAddress);
-
+            
             if (e.Connection.Authorized)
             {
                 ConnectionManager.Broadcast(new PlayerOutMessage { UserId = e.Connection.UserId });
