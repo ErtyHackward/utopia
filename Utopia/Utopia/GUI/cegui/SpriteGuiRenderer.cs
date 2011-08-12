@@ -23,10 +23,10 @@ namespace Utopia.GUI.cegui
         {
             public SpriteGuiTexture guiTexture;
             public Matrix transform;
-            public Vector4 color;
+            public Color4 color;
             public RectangleF sourceRect;
 
-            public UISprite(SpriteGuiTexture guiTexture, ref Matrix transform, Vector4 color, RectangleF sourceRect)
+            public UISprite(SpriteGuiTexture guiTexture, ref Matrix transform, Color4 color, RectangleF sourceRect)
             {
                 this.guiTexture = guiTexture;
                 this.transform = transform;
@@ -58,7 +58,7 @@ namespace Utopia.GUI.cegui
             Matrix transform = Matrix.Scaling(destRect.Width / textureRect.Width, destRect.Height / textureRect.Height, 0) * 
                                Matrix.Translation(destRect.Position.X, destRect.Position.Y, 0);
 
-            Vector4 color = new Vector4(1, 1, 1, 1);
+            Color4 color = new Color4(1, 1, 1, 1);
 
             RectangleF sourceRect = new RectangleF(textureRect.Left, textureRect.Top, textureRect.Width, textureRect.Height);
 

@@ -43,7 +43,7 @@ namespace S33M3Engines.D3D.Effects.Basics
             [FieldOffset(0)]
             public Matrix Transform;
             [FieldOffset(64)]
-            public Vector4 Color;
+            public Color4 Color;
             [FieldOffset(80)]
             public RectangleF SourceRect;
         }
