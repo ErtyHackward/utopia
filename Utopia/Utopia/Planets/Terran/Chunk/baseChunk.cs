@@ -189,7 +189,7 @@ namespace Utopia.Planets.Terran.Chunk
 
         public void CreateLandScape()
         {
-            LandscapeBuilder.CreateChunkLandscape(_landscape.Cubes, ref _cubeRange, LandscapeInitialized); 
+            _game.LandscapeBuilder.CreateChunkLandscape(_landscape.Cubes, ref _cubeRange, LandscapeInitialized); 
 
             _borderChunk = ChunkFinder.isBorderChunk(_cubeRange.Min.X, _cubeRange.Min.Z, ref _terraWorld.WorldRange);
             LandscapeInitialized = true;
