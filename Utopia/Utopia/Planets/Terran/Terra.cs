@@ -430,6 +430,7 @@ namespace Utopia.Planets.Terran
             
         }
 
+#if DEBUG
         private void DrawDebug()
         {
             TerraChunk chunk;
@@ -450,7 +451,7 @@ namespace Utopia.Planets.Terran
                 }
             }
         }
-
+#endif
         private float GetSunColor()
         {
             float SunColorBase;
