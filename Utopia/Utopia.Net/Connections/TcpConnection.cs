@@ -10,7 +10,7 @@ namespace Utopia.Net.Connections
     /// <summary>
     /// Class represents a Tcp/Ip connection supporting different protocols
     /// </summary>
-    public abstract class TcpConnection
+    public abstract class TcpConnection : IDisposable
     {
         #region Events
 
@@ -42,7 +42,6 @@ namespace Utopia.Net.Connections
         protected long bufferSize = 128 * 1024;
         protected byte[] Buffer = null;
         protected volatile bool disposed = false;
-        protected volatile bool disposing = false;
         protected readonly object _synObject = new object();
 
         // bandwidth limit
@@ -135,16 +134,13 @@ namespace Utopia.Net.Connections
         /// </summary>
         public IEnumerable<int> LocalPorts { get; set; }
 
+        /// <summary>
+        /// Indicates if object has released its resources
+        /// </summary>
         public bool IsDisposed
         {
             get { return disposed; }
         }
-
-        public bool IsDisposing
-        {
-            get { return disposing; }
-        }
-
 
         /// <summary>
         /// Remote IPEndPoint for the other party
@@ -287,28 +283,47 @@ namespace Utopia.Net.Connections
             this.bufferSize = bufferSize;
         }
 
+        ~TcpConnection()
+        {
+            Dispose(false);
+        }
+
+
         /// <summary>
         /// Releases all resources used by this connection
         /// </summary>
-        public virtual void Dispose()
+        public void Dispose()
         {
-            if (!disposed && !disposing)
-            {
-                disposing = true;
-                lock (_synObject)
-                {
-                    Disconnect(DisconnectReason.Dispose);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-                    Buffer = null;
-                    localAddress = null;
-                    remoteAddress = null;
-                    
-                    socket = null;
-                    
-                    disposed = true;
-                    disposing = false;
-                }                
+        protected virtual void Dispose(bool disposing)
+        {
+            if(!disposed)
+            {
+                if (disposing)
+                {
+                    lock (_synObject)
+                    {
+                        Disconnect(DisconnectReason.Dispose);
+
+                        Buffer = null;
+                        localAddress = null;
+                        remoteAddress = null;
+
+                        connectionDone.Dispose();
+                        receiveDone.Dispose();
+                        sendDone.Dispose();
+
+
+                        socket = null;
+
+                        disposed = true;
+                    }
+                }
             }
+
         }
 
         /// <summary>
@@ -538,10 +553,10 @@ namespace Utopia.Net.Connections
         /// <param name="ar"></param>
         protected virtual void OnRecievedData(IAsyncResult ar)
         {
-            if (disposed || disposing) return;
+            if (disposed) return;
             lock (_synObject)
             {
-                if (disposed || disposing) return;
+                if (disposed) return;
                 // Socket was the passed in object
                 Socket sock = ar.AsyncState as Socket;
                 int nBytesRec = 0;

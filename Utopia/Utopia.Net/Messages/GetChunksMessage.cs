@@ -11,52 +11,111 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct GetChunksMessage : IBinaryMessage
     {
-        public byte MessageId;
-        public IntVector2 StartPosition;
-        public IntVector2 EndPosition;
+        private IntVector2 _startPosition;
+        private IntVector2 _endPosition;
 
         /// <summary>
         /// Request mode
         /// </summary>
-        public GetChunksMessageFlag Flag;
+        private GetChunksMessageFlag _flag;
 
         /// <summary>
         /// Count of hashes
         /// </summary>
-        public int HashesCount;
+        private int _hashesCount;
         /// <summary>
         /// Corresponding positions array of size HashesCount
         /// </summary>
-        public IntVector2[] Positions;
+        private IntVector2[] _positions;
         /// <summary>
         /// Corresponding md5 hashes array of size HashesCount, each hash must be 16 bytes length
         /// </summary>
-        public byte[][] Md5Hashes;
+        private byte[][] _md5Hashes;
+
+        /// <summary>
+        /// Gets message id
+        /// </summary>
+        public byte MessageId
+        {
+            get { return (byte)MessageTypes.GetChunks; }
+        }
+
+        /// <summary>
+        /// Gets or sets region start position
+        /// </summary>
+        public IntVector2 StartPosition
+        {
+            get { return _startPosition; }
+            set { _startPosition = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets region end position
+        /// </summary>
+        public IntVector2 EndPosition
+        {
+            get { return _endPosition; }
+            set { _endPosition = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets request mode flag
+        /// </summary>
+        public GetChunksMessageFlag Flag
+        {
+            get { return _flag; }
+            set { _flag = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a count of hashes
+        /// </summary>
+        public int HashesCount
+        {
+            get { return _hashesCount; }
+            set { _hashesCount = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets corresponding positions array of size HashesCount
+        /// </summary>
+        public IntVector2[] Positions
+        {
+            get { return _positions; }
+            set { _positions = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets corresponding md5 hashes array of size HashesCount, each hash must be 16 bytes length
+        /// </summary>
+        public byte[][] Md5Hashes
+        {
+            get { return _md5Hashes; }
+            set { _md5Hashes = value; }
+        }
 
         public static GetChunksMessage Read(BinaryReader reader)
         {
             GetChunksMessage msg;
-
-            msg.MessageId = reader.ReadByte();
             
-            msg.StartPosition.X = reader.ReadInt32();
-            msg.StartPosition.Y = reader.ReadInt32();
+            msg._startPosition.X = reader.ReadInt32();
+            msg._startPosition.Y = reader.ReadInt32();
             
-            msg.EndPosition.X = reader.ReadInt32();
-            msg.EndPosition.Y = reader.ReadInt32();
+            msg._endPosition.X = reader.ReadInt32();
+            msg._endPosition.Y = reader.ReadInt32();
 
-            msg.Flag = (GetChunksMessageFlag)reader.ReadByte();
+            msg._flag = (GetChunksMessageFlag)reader.ReadByte();
 
-            msg.HashesCount = reader.ReadInt32();
+            msg._hashesCount = reader.ReadInt32();
 
-            msg.Positions = new IntVector2[msg.HashesCount];
-            msg.Md5Hashes = new byte[msg.HashesCount][];
+            msg._positions = new IntVector2[msg._hashesCount];
+            msg._md5Hashes = new byte[msg._hashesCount][];
 
-            for (int i = 0; i < msg.HashesCount; i++)
+            for (int i = 0; i < msg._hashesCount; i++)
             {
-                msg.Positions[i].X = reader.ReadInt32();
-                msg.Positions[i].Y = reader.ReadInt32();
-                msg.Md5Hashes[i] = reader.ReadBytes(16);
+                msg._positions[i].X = reader.ReadInt32();
+                msg._positions[i].Y = reader.ReadInt32();
+                msg._md5Hashes[i] = reader.ReadBytes(16);
             }
             
             return msg;
@@ -64,21 +123,20 @@ namespace Utopia.Net.Messages
 
         public static void Write(BinaryWriter writer, GetChunksMessage msg)
         {
-            writer.Write(msg.MessageId);
-            writer.Write(msg.StartPosition.X);
-            writer.Write(msg.StartPosition.Y);
-            writer.Write(msg.EndPosition.X);
-            writer.Write(msg.EndPosition.Y);
-            writer.Write((byte)msg.Flag);
+            writer.Write(msg._startPosition.X);
+            writer.Write(msg._startPosition.Y);
+            writer.Write(msg._endPosition.X);
+            writer.Write(msg._endPosition.Y);
+            writer.Write((byte)msg._flag);
 
-            if (msg.Positions != null)
+            if (msg._positions != null)
             {
-                writer.Write(msg.Positions.Length);
-                for (int i = 0; i < msg.Positions.Length; i++)
+                writer.Write(msg._positions.Length);
+                for (int i = 0; i < msg._positions.Length; i++)
                 {
-                    writer.Write(msg.Positions[i].X);
-                    writer.Write(msg.Positions[i].Y);
-                    writer.Write(msg.Md5Hashes[i]);
+                    writer.Write(msg._positions[i].X);
+                    writer.Write(msg._positions[i].Y);
+                    writer.Write(msg._md5Hashes[i]);
                 }
             }
             else writer.Write(0);
@@ -86,7 +144,6 @@ namespace Utopia.Net.Messages
         
         public void Write(BinaryWriter writer)
         {
-            MessageId = (byte)MessageTypes.GetChunks;
             Write(writer, this);
         }
     }

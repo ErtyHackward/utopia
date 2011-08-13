@@ -11,42 +11,64 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct GameInformationMessage : IBinaryMessage
     {
-        public byte MessageId;
         /// <summary>
         /// Defines a maximum chunk distance that client can query (in chunks)
         /// </summary>
-        public int MaxViewRange;
+        private int _maxViewRange;
         /// <summary>
         /// Defines a chunk size used on the server
         /// </summary>
-        public Location3<int> ChunkSize;
+        private Location3<int> _chunkSize;
+
+        /// <summary>
+        /// Gets message id
+        /// </summary>
+        public byte MessageId
+        {
+            get { return (byte)MessageTypes.GameInformation; }
+        }
+
+        /// <summary>
+        /// Gets or sets a maximum chunk distance that client can query (in chunks)
+        /// </summary>
+        public int MaxViewRange
+        {
+            get { return _maxViewRange; }
+            set { _maxViewRange = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a chunk size used on the server
+        /// </summary>
+        public Location3<int> ChunkSize
+        {
+            get { return _chunkSize; }
+            set { _chunkSize = value; }
+        }
 
         public static GameInformationMessage Read(BinaryReader reader)
         {
             GameInformationMessage gi;
 
-            gi.MessageId = reader.ReadByte();
-            gi.MaxViewRange = reader.ReadInt32();
+            gi._maxViewRange = reader.ReadInt32();
 
-            gi.ChunkSize.X = reader.ReadInt32();
-            gi.ChunkSize.Y = reader.ReadInt32();
-            gi.ChunkSize.Z = reader.ReadInt32();
+            gi._chunkSize.X = reader.ReadInt32();
+            gi._chunkSize.Y = reader.ReadInt32();
+            gi._chunkSize.Z = reader.ReadInt32();
             
             return gi;
         }
 
         public static void Write(BinaryWriter writer, GameInformationMessage info)
         {
-            writer.Write(info.MessageId);
-            writer.Write(info.MaxViewRange);
-            writer.Write(info.ChunkSize.X);
-            writer.Write(info.ChunkSize.Y);
-            writer.Write(info.ChunkSize.Z);
+            writer.Write(info._maxViewRange);
+            writer.Write(info._chunkSize.X);
+            writer.Write(info._chunkSize.Y);
+            writer.Write(info._chunkSize.Z);
         }
         
         public void Write(BinaryWriter writer)
         {
-            MessageId = (byte)MessageTypes.GameInformation;
             Write(writer, this);
         }
     }

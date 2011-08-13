@@ -79,9 +79,30 @@ namespace Utopia.Shared.Structs
             return string.Format("X = {0},Y = {1}", X, Y);
         }
 
+        public static implicit operator Location2<int>(IntVector2 pos)
+        {
+            Location2<int> vec;
+
+            vec.X = pos.X;
+            vec.Z = pos.Y;
+
+            return vec;
+        }
+
+        public static implicit operator IntVector2(Location2<int> pos)
+        {
+            IntVector2 vec;
+
+            vec.X = pos.X;
+            vec.Y = pos.Z;
+
+            return vec;
+        }
+
         public static implicit operator Vector2(IntVector2 pos)
         {
             Vector2 vec;
+
             vec.X = pos.X;
             vec.Y = pos.Y;
             

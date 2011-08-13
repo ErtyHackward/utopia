@@ -10,35 +10,58 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct PlayerInMessage : IBinaryMessage
     {
-        public byte MessageId;
         /// <summary>
         /// Player identification number
         /// </summary>
-        public int UserId;
+        private int _userId;
+
         /// <summary>
         /// Login of the player
         /// </summary>
-        public string Login;
+        private string _login;
+
+        /// <summary>
+        /// Gets message id
+        /// </summary>
+        public byte MessageId
+        {
+            get { return (byte)MessageTypes.PlayerIn; }
+        }
+
+        /// <summary>
+        /// Gets or sets a player identification number
+        /// </summary>
+        public int UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a login of the player
+        /// </summary>
+        public string Login
+        {
+            get { return _login; }
+            set { _login = value; }
+        }
 
         public static PlayerInMessage Read(BinaryReader reader)
         {
             PlayerInMessage msg;
-            msg.MessageId = reader.ReadByte();
-            msg.UserId = reader.ReadInt32();
-            msg.Login = reader.ReadString();
+            msg._userId = reader.ReadInt32();
+            msg._login = reader.ReadString();
             return msg;
         }
 
         public static void Write(BinaryWriter writer, PlayerInMessage msg)
         {
-            writer.Write(msg.MessageId);
-            writer.Write(msg.UserId);
-            writer.Write(msg.Login);
+            writer.Write(msg._userId);
+            writer.Write(msg._login);
         }
         
         public void Write(BinaryWriter writer)
         {
-            MessageId = (byte)MessageTypes.PlayerIn;
             Write(writer, this);
         }
     }

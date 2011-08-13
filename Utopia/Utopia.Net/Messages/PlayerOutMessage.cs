@@ -10,30 +10,43 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct PlayerOutMessage : IBinaryMessage
     {
-        public byte MessageId;
         /// <summary>
         /// Identification number of the player
         /// </summary>
-        public int UserId;
+        private int _userId;
+
+        /// <summary>
+        /// Gets message id
+        /// </summary>
+        public byte MessageId
+        {
+            get { return (byte)MessageTypes.PlayerOut; }
+        }
+
+        /// <summary>
+        /// Gets or sets an identification number of the player
+        /// </summary>
+        public int UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
+        }
 
         public static PlayerOutMessage Read(BinaryReader reader)
         {
             PlayerOutMessage msg;
-            msg.MessageId = reader.ReadByte();
-            msg.UserId = reader.ReadInt32();
+            msg._userId = reader.ReadInt32();
             return msg;
         }
 
         public static void Write(BinaryWriter writer, PlayerOutMessage msg)
         {
-            writer.Write(msg.MessageId);
-            writer.Write(msg.UserId);
+            writer.Write(msg._userId);
         }
 
 
         public void Write(BinaryWriter writer)
         {
-            MessageId = (byte)MessageTypes.PlayerOut;
             Write(writer, this);
         }
     }
