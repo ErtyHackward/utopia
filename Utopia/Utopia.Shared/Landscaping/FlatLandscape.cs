@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Math;
 
 namespace Utopia.Shared.Landscaping
 {
@@ -34,6 +35,12 @@ namespace Utopia.Shared.Landscaping
 
                         byte block = CubeId.Air;
 
+                        int xAbs = System.Math.Abs(x);
+                        int yAbs = System.Math.Abs(y);
+                        int zAbs = System.Math.Abs(z);
+
+
+
                         if (y < workingRange.Max.Y / 4)
                             block = CubeId.Rock;//TODO was lava but lava has special rendering now
                         /*
@@ -45,8 +52,8 @@ namespace Utopia.Shared.Landscaping
                         else if (y == floor)
                         {
                             // block = alternateGroundPerchunk(chunk, block);
-                            if (x == 1) block = (byte)(z % 5 + 1);
-                            else if (z == workingRange.Max.Z - 2) block = (byte)(x % 5 + 1);
+                            if (x == 1) block = (byte)(zAbs % 5 + 1);
+                            else if (z == workingRange.Max.Z - 2) block = (byte)(xAbs % 5 + 1);
                             else block = CubeId.Sand;
                         }
                         else
@@ -59,6 +66,9 @@ namespace Utopia.Shared.Landscaping
 
                         // byte h = (byte)(chunk.Index.Z % 2 == 0 && y > 1 ? y - 1 : y); //stairs for debugging corner cases with water for example
 
+                        if (block > 26){
+                        System.Diagnostics.Debugger.Break();
+                        }
 
                         if (TerraCubes != null) TerraCubes[RenderIndex(x, y, z)].Id = block;
                         if (Cubes != null)
