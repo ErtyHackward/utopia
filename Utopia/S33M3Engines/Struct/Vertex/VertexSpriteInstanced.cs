@@ -9,6 +9,7 @@ using S33M3Engines.Windows;
 using System.Globalization;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
+using RectangleF = System.Drawing.RectangleF;
 
 namespace S33M3Engines.Struct.Vertex
 {
@@ -17,10 +18,10 @@ namespace S33M3Engines.Struct.Vertex
     {
         public Matrix Tranform;
         public Color4 Color;
-        public Vector4 SourceRect;
+        public RectangleF SourceRect;
         public static readonly VertexDeclaration VertexDeclaration;
 
-        public VertexSpriteInstanced(Matrix Tranform, Color4 Color, Vector4 SourceRect)
+        public VertexSpriteInstanced(Matrix Tranform, Color4 Color, RectangleF SourceRect)
         {
             this.Tranform = Tranform;
             this.Color = Color;
@@ -31,7 +32,7 @@ namespace S33M3Engines.Struct.Vertex
         {
             this.Tranform = Tranform;
             this.Color = Color;
-            this.SourceRect = default(Vector4);
+            this.SourceRect = default(RectangleF);
         }
 
         VertexDeclaration IVertexType.VertexDeclaration

@@ -10,37 +10,59 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct ChatMessage : IBinaryMessage
     {
-        public byte MessageId;
         /// <summary>
         /// Login of the sender, can be null if system message
         /// </summary>
-        public string Login;
+        private string _login;
         /// <summary>
         /// Actual message text
         /// </summary>
-        public string Message;
+        private string _message;
+
+        /// <summary>
+        /// Gets current message Id
+        /// </summary>
+        public byte MessageId
+        {
+            get { return (byte)MessageTypes.Chat; }
+        }
+
+        /// <summary>
+        /// Gets or sets login of the sender, can be null if system message
+        /// </summary>
+        public string Login
+        {
+            get { return _login; }
+            set { _login = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets actual message text
+        /// </summary>
+        public string Message
+        {
+            get { return _message; }
+            set { _message = value; }
+        }
 
         public static ChatMessage Read(BinaryReader reader)
         {
             ChatMessage msg;
 
-            msg.MessageId = reader.ReadByte();
-            msg.Login = reader.ReadString();
-            msg.Message = reader.ReadString();
+            msg._login = reader.ReadString();
+            msg._message = reader.ReadString();
 
             return msg;
         }
 
         public static void Write(BinaryWriter writer, ChatMessage msg)
         {
-            writer.Write(msg.MessageId);
-            writer.Write(msg.Login);
-            writer.Write(msg.Message);
+            writer.Write(msg._login);
+            writer.Write(msg._message);
         }
 
         public void Write(BinaryWriter writer)
         {
-            MessageId = (byte)MessageTypes.Chat;
             Write(writer, this);
         }
     }

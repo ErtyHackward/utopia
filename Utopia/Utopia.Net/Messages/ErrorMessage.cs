@@ -10,26 +10,58 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct ErrorMessage : IBinaryMessage
     {
-        public byte MessageId;
-        public ErrorCodes ErrorCode;
-        public int Data;
-        public string Message;
+        private ErrorCodes _errorCode;
+        private int _data;
+        private string _message;
+
+        /// <summary>
+        /// Gets message id
+        /// </summary>
+        public byte MessageId
+        {
+            get { return (byte)MessageTypes.Error; }
+        }
+
+        /// <summary>
+        /// Gets or sets message error code
+        /// </summary>
+        public ErrorCodes ErrorCode
+        {
+            get { return _errorCode; }
+            set { _errorCode = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets additinal error data
+        /// </summary>
+        public int Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets error description
+        /// </summary>
+        public string Message
+        {
+            get { return _message; }
+            set { _message = value; }
+        }
 
         public static ErrorMessage Read(BinaryReader reader)
         {
             ErrorMessage msg;
 
-            msg.MessageId = reader.ReadByte();
-            msg.ErrorCode = (ErrorCodes)reader.ReadByte();
-            msg.Data = reader.ReadInt32();
-            msg.Message = reader.ReadString();
+            msg._errorCode = (ErrorCodes)reader.ReadByte();
+            msg._data = reader.ReadInt32();
+            msg._message = reader.ReadString();
             
             return msg;
         }
 
         public static void Write(BinaryWriter writer, ErrorMessage msg)
         {
-            writer.Write(msg.MessageId);
             writer.Write((byte)msg.ErrorCode);
             writer.Write(msg.Data);
             writer.Write(msg.Message);
@@ -37,7 +69,6 @@ namespace Utopia.Net.Messages
 
         public void Write(BinaryWriter writer)
         {
-            MessageId = (byte)MessageTypes.Error;
             Write(writer, this);
         }
     }

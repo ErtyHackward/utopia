@@ -11,41 +11,63 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct PlayerPositionMessage : IBinaryMessage
     {
-        public byte MessageId;
         /// <summary>
         /// Identification number of the player
         /// </summary>
-        public int UserId;
+        private int _userId;
         /// <summary>
         /// Current position of the player
         /// </summary>
-        public Vector3 Position;
+        private Vector3 _position;
+
+        /// <summary>
+        /// Gets message id
+        /// </summary>
+        public byte MessageId
+        {
+            get { return (byte)MessageTypes.PlayerPosition; }
+        }
+
+        /// <summary>
+        /// Gets or sets an identification number of the player
+        /// </summary>
+        public int UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a current position of the player
+        /// </summary>
+        public Vector3 Position
+        {
+            get { return _position; }
+            set { _position = value; }
+        }
 
         public static PlayerPositionMessage Read(BinaryReader reader)
         {
             PlayerPositionMessage msg;
 
-            msg.MessageId = reader.ReadByte();
-            msg.UserId = reader.ReadInt32();
-            msg.Position.X = reader.ReadSingle();
-            msg.Position.Y = reader.ReadSingle();
-            msg.Position.Z = reader.ReadSingle();
+            msg._userId = reader.ReadInt32();
+            msg._position.X = reader.ReadSingle();
+            msg._position.Y = reader.ReadSingle();
+            msg._position.Z = reader.ReadSingle();
 
             return msg;
         }
 
         public static void Write(BinaryWriter writer, PlayerPositionMessage msg)
         {
-            writer.Write(msg.MessageId);
-            writer.Write(msg.UserId);
-            writer.Write(msg.Position.X);
-            writer.Write(msg.Position.Y);
-            writer.Write(msg.Position.Z);
+            writer.Write(msg._userId);
+            writer.Write(msg._position.X);
+            writer.Write(msg._position.Y);
+            writer.Write(msg._position.Z);
         }
 
         public void Write(BinaryWriter writer)
         {
-            MessageId = (byte)MessageTypes.PlayerPosition;
             Write(writer, this);
         }
     }

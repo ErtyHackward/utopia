@@ -10,6 +10,7 @@ using S33M3Engines.Struct.Vertex;
 using S33M3Engines.Buffers;
 using S33M3Engines.StatesManager;
 using SharpDX.Direct3D;
+using RectangleF = System.Drawing.RectangleF;
 
 namespace S33M3Engines.Sprites
 {
@@ -140,7 +141,7 @@ namespace S33M3Engines.Sprites
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
         }
 
-        public void Render(SpriteTexture spriteTexture, ref Matrix transform, Vector4 color, Vector4 drawRect = default(Vector4))
+        public void Render(SpriteTexture spriteTexture, ref Matrix transform, Color4 color,  RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true)
         {
             _vBuffer.SetToDevice(0); // Set the Vertex buffer
 
@@ -148,19 +149,22 @@ namespace S33M3Engines.Sprites
             _effect.Begin();
 
             _effect.CBPerDraw.Values.ViewportSize = new Vector2(_game.ActivCamera.Viewport.Width, _game.ActivCamera.Viewport.Height);
-            _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            if (sourceRectInTextCoord) _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            else _effect.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
+            
             _effect.CBPerDraw.IsDirty = true;
-
+            
             // Set per-instance data
             _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
             _effect.CBPerInstance.Values.Color = color;
-            if (drawRect == default(Vector4))
+            if (sourceRect == default(RectangleF))
             {
-                _effect.CBPerInstance.Values.SourceRect = new Vector4(0, 0, spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+                if (sourceRectInTextCoord) _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+                else _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, 1, 1);
             }
             else
             {
-                _effect.CBPerInstance.Values.SourceRect = drawRect;
+                _effect.CBPerInstance.Values.SourceRect = sourceRect;
             }
             _effect.CBPerInstance.IsDirty = true;
 
@@ -172,12 +176,18 @@ namespace S33M3Engines.Sprites
             _game.D3dEngine.Context.DrawIndexed(6, 0, 0);
         }
 
-        public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, int numSprites)
+        public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, bool sourceRectInTextCoord = true)
+        {
+            RenderBatch(spriteTexture, drawData, drawData.Length, sourceRectInTextCoord);
+        }
+
+        public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, int numSprites, bool sourceRectInTextCoord = true)
         {
             //Set Par Batch Constant
             _effectInstanced.Begin();
             _effectInstanced.CBPerDraw.Values.ViewportSize = new Vector2(_game.ActivCamera.Viewport.Width, _game.ActivCamera.Viewport.Height);
-            _effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            if(sourceRectInTextCoord)_effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            else _effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
             _effectInstanced.CBPerDraw.IsDirty = true;
             _effectInstanced.SpriteTexture.Value = spriteTexture.Texture;
             _effectInstanced.SpriteTexture.IsDirty = true;
@@ -234,8 +244,8 @@ namespace S33M3Engines.Sprites
                     _textDrawData[currentDraw].Color = color;
                     _textDrawData[currentDraw].SourceRect.X = desc.X;
                     _textDrawData[currentDraw].SourceRect.Y = desc.Y;
-                    _textDrawData[currentDraw].SourceRect.Z = desc.Width;
-                    _textDrawData[currentDraw].SourceRect.W = desc.Height;
+                    _textDrawData[currentDraw].SourceRect.Width = desc.Width;
+                    _textDrawData[currentDraw].SourceRect.Height = desc.Height;
                     currentDraw++;
 
                     textTransform.M41 += desc.Width + 1;

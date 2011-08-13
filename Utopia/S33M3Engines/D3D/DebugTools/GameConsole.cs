@@ -95,7 +95,7 @@ namespace S33M3Engines.D3D.DebugTools
 
         private static void DrawInterface()
         {
-            _spriteRender.Render(_spriteTexture, ref _spriteTexture.ScreenPosition, new Vector4(1,1,1,1), new Vector4(0,0, _game.ActivCamera.Viewport.Width, _game.ActivCamera.Viewport.Height / 3));
+            _spriteRender.Render(_spriteTexture, ref _spriteTexture.ScreenPosition, new Color4(1, 1, 1, 1), new RectangleF(0, 0, _game.ActivCamera.Viewport.Width, _game.ActivCamera.Viewport.Height / 3));
         }
 
         private static void DrawText()

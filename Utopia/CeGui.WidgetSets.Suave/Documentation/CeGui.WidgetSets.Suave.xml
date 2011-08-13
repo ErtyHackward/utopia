@@ -1,0 +1,814 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CeGui.WidgetSets.Suave</name>
+    </assembly>
+    <members>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveCloseButton">
+            <summary>
+            	Close button widget for the Windows Gui Scheme.
+            </summary>
+        </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveButton">
+            <summary>A button using the 'suave' look</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.ImagesetName">
+            <summary>Name of the imageset to use for rendering</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.NormalTopLeftImageName">
+            <summary>The image for the top left corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.NormalLeftImageName">
+            <summary>The image for the left side of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.NormalBottomLeftImageName">
+            <summary>The image for the bottom left corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.NormalTopImageName">
+            <summary>The image for the top side of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.NormalCenterImageName">
+            <summary>The image for the center area of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.NormalBottomImageName">
+            <summary>The image for the bottom line of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.NormalTopRightImageName">
+            <summary>The image for the top right corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.NormalRightImageName">
+            <summary>The image for the right side of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.NormalBottomRightImageName">
+            <summary>The image for the bottom right corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.HoverTopLeftImageName">
+            <summary>The image for the top left corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.HoverLeftImageName">
+            <summary>The image for the left side of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.HoverBottomLeftImageName">
+            <summary>The image for the bottom left corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.HoverTopImageName">
+            <summary>The image for the top side of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.HoverCenterImageName">
+            <summary>The image for the center area of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.HoverBottomImageName">
+            <summary>The image for the bottom line of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.HoverTopRightImageName">
+            <summary>The image for the top right corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.HoverRightImageName">
+            <summary>The image for the right side of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.HoverBottomRightImageName">
+            <summary>The image for the bottom right corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.PushedTopLeftImageName">
+            <summary>The image for the top left corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.PushedLeftImageName">
+            <summary>The image for the left side of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.PushedBottomLeftImageName">
+            <summary>The image for the bottom left corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.PushedTopImageName">
+            <summary>The image for the top side of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.PushedCenterImageName">
+            <summary>The image for the center area of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.PushedBottomImageName">
+            <summary>The image for the bottom line of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.PushedTopRightImageName">
+            <summary>The image for the top right corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.PushedRightImageName">
+            <summary>The image for the right side of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.PushedBottomRightImageName">
+            <summary>The image for the bottom right corner of the button</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.CustomImageLayer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.LabelLayer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.NormalImageColor">
+            <summary>Color of the button when it is in its normal state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.DefaultNormalTextColor">
+            <summary>Color of the text on the button when it is in its normal state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.DisabledImageColor">
+            <summary>Color of the button when it is in its normal state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.DefaultDisabledTextColor">
+            <summary>Color of the text on the button when it is in its normal state</summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.#ctor(System.String,System.String)">
+            <summary>Initializes a new 'suave' look button instance</summary>
+            <param name="type">TODO: No idea what it's used for</param>
+            <param name="name">The name of the new button</param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.StoreFrameSizes">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.SetNormalImage(CeGui.RenderableImage)">
+            <summary>
+            	Set the details of the image to render for the button in the normal state.
+            </summary>
+            <param name="image">
+            	RenderableImage object with all the details for the image.  Note that an internal copy of the Renderable image is made and
+            	ownership of <paramref name="image"/> remains with client code.  If this parameter is NULL, rendering of an image for this 
+            	button state is disabled.
+            </param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.SetHoverImage(CeGui.RenderableImage)">
+            <summary>
+            	Set the details of the image to render for the button in the hover state.
+            </summary>
+            <param name="image">
+            	RenderableImage object with all the details for the image.  Note that an internal copy of the Renderable image is made and
+            	ownership of <paramref name="image"/> remains with client code.  If this parameter is NULL, rendering of an image for this 
+            	button state is disabled.
+            </param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.SetPushedImage(CeGui.RenderableImage)">
+            <summary>
+            	Set the details of the image to render for the button in the pushed state.
+            </summary>
+            <param name="image">
+            	RenderableImage object with all the details for the image.  Note that an internal copy of the Renderable image is made and
+            	ownership of <paramref name="image"/> remains with client code.  If this parameter is NULL, rendering of an image for this 
+            	button state is disabled.
+            </param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.SetDisabledImage(CeGui.RenderableImage)">
+            <summary>
+            	Set the details of the image to render for the button in the disabled state.
+            </summary>
+            <param name="image">
+            	RenderableImage object with all the details for the image.  Note that an internal copy of the Renderable image is made and
+            	ownership of <paramref name="image"/> remains with client code.  If this parameter is NULL, rendering of an image for this 
+            	button state is disabled.
+            </param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.DrawNormal(System.Single)">
+            <summary>
+            
+            </summary>
+            <param name="z"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.DrawHover(System.Single)">
+            <summary>
+            
+            </summary>
+            <param name="z"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.DrawPushed(System.Single)">
+            <summary>
+            
+            </summary>
+            <param name="z"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.DrawDisabled(System.Single)">
+            <summary>
+            
+            </summary>
+            <param name="z"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.OnSized(CeGui.GuiEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveButton.OnAlphaChanged(CeGui.GuiEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.autoscaleImages">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.useStandardImagery">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.useNormalImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.useHoverImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.usePushedImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.useDisabledImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.normalImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.hoverImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.pushedImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.disabledImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.normalFrame">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.hoverFrame">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.pushedFrame">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.frameLeftSize">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.frameTopSize">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.frameRightSize">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.frameBottomSize">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.background">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.normalBackground">
+            <summary>Image used to fill the center area of the button in normal mode</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.hoverBackground">
+            <summary>Image used to fill the center area of the button in mouse-over mode</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveButton.pushedBackground">
+            <summary>Image used to fill the center area of the button when it is pushed</summary>
+        </member>
+        <member name="P:CeGui.WidgetSets.Suave.SuaveButton.CustomImageryAutoSized">
+            <summary>
+            	Get/Set whether of not custom button image areas are auto-scaled to the size of the button.
+            </summary>
+            <value>
+            	true if client specified custom image areas are re-sized when the button size changes.  
+            	false if image areas will remain unchanged when the button is sized.
+            </value>
+        </member>
+        <member name="P:CeGui.WidgetSets.Suave.SuaveButton.StandardImageryEnabled">
+            <summary>
+            	Get/Set whether or not rendering of the standard imagery is enabled.
+            </summary>
+            <value>true if the standard button imagery will be rendered, false if no standard rendering will be performed.</value>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCloseButton.#ctor(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <param name="type"></param>
+        </member>
+        <member name="P:CeGui.WidgetSets.Suave.SuaveCloseButton.PixelRect">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveCheckbox">
+            <summary>
+            Summary description for SuaveCheckbox.
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.ImagesetName">
+            <summary>Name of the imageset to use for rendering</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.NormalUncheckedImageName">
+            <summary>Name of the image to use for the unchecked normal state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.NormalCheckedImageName">
+            <summary>Name of the image to use for the checked normal state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.NormalMixedImageName">
+            <summary>Name of the image to use for the mixed normal state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.HoverUncheckedImageName">
+            <summary>Name of the image to use for the unchecked hover state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.HoverCheckedImageName">
+            <summary>Name of the image to use for the checked hover state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.HoverMixedImageName">
+            <summary>Name of the image to use for the mixed hover state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.PushedUncheckedImageName">
+            <summary>Name of the image to use for the unchecked pushed state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.PushedCheckedImageName">
+            <summary>Name of the image to use for the checked pushed state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.PushedMixedImageName">
+            <summary>Name of the image to use for the mixed pushed state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DisabledUncheckedImageName">
+            <summary>Name of the image to use for the unchecked disabled state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DisabledCheckedImageName">
+            <summary>Name of the image to use for the checked disabled state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DisabledMixedImageName">
+            <summary>Name of the image to use for the mixed disabled state</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.LabelPadding">
+            <summary>
+              Pixel padding value for text label (space between image and text label).
+            </summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.#ctor(System.String,System.String)">
+            <summary>Initializes the check box</summary>
+            <param name="name"></param>
+            <param name="type"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.drawCheckbox(CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes,System.Single)">
+            <summary>Helper method for rendering the check box in any mode</summary>
+            <param name="drawMode">Mode in which to draw the check box</param>
+            <param name="z">Z value to use</param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawNormal(System.Single)">
+            <summary>Render the checkbox in the 'normal' state</summary>
+            <param name="z">Z value for rendering</param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawPushed(System.Single)">
+            <summary>Render the checkbox in the 'pushed' state</summary>
+            <param name="z">Z value for rendering</param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawHover(System.Single)">
+            <summary>Render the checkbox in the 'hover' state</summary>
+            <param name="z">Z value for rendering</param>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.checkboxImages">
+            <summary>Images used to draw the checkbox</summary>
+        </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveCheckbox.States">
+            <summary>States the check box can be in</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.States.Unchecked">
+            <summary>Check box does not have the check mark set</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.States.Checked">
+            <summary>Check box is checked</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.States.Mixed">
+            <summary>Mixed state (neither checked nor unchecked)</summary>
+        </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes">
+            <summary>Modes in which the check box can be drawn</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Normal">
+            <summary>Normal (sitting around and doing nothing)</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Hover">
+            <summary>Used to display that the check box has input focus</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Pushed">
+            <summary>Used while the check box is button-pushed</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveCheckbox.DrawModes.Disabled">
+            <summary>Check box is disabled</summary>
+        </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveTitleBar">
+            <summary>A window's title bar using the 'suave' look</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.ImagesetName">
+            <summary>Name of the imageset to use for rendering</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.LeftEndSectionImageName">
+            <summary>The image for the left cap of the title bar</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.CenterSectionImageName">
+            <summary>The image for the middle section of the title bar</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.RightEndSectionImageName">
+            <summary>The image for the right cap of the title bar</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.TextLayer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.ActiveColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.InactiveColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.CaptionColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.leftImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.topImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.bottomImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.rightImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveTitleBar.centerImage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveTitleBar.#ctor(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="type"></param>
+            <param name="name"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveTitleBar.DrawSelf(System.Single)">
+            <summary>
+            
+            </summary>
+            <param name="z"></param>
+        </member>
+        <member name="P:CeGui.WidgetSets.Suave.SuaveTitleBar.PixelRect">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveGuiBuilder">
+            <summary>Gui builder and widget factory for the suave CEGUI theme</summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.#ctor">
+            <summary>Initializes the suave gui builder</summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateButton(System.String)">
+            <summary>Creates an uninitialized PushButton</summary>
+            <param name="name">Name of the button</param>
+            <returns>The new, uninitialized PushButton</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateCheckbox(System.String)">
+            <summary>Creates an uninitialized Checkbox</summary>
+            <param name="name">Name of the check box</param>
+            <returns>The new, uninitialized Checkbox</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateRadioButton(System.String)">
+            <summary>Creates an uninitialized RadioButton</summary>
+            <param name="name">Name of the radio button</param>
+            <returns>The new, uninitialized RadioButton</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateComboBox(System.String)">
+            <summary>Creates an uninitialized ComboBox</summary>
+            <param name="name">Name of the combo box</param>
+            <returns>The new, uninitialized ComboBox</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateListBox(System.String)">
+            <summary>Creates an uninitialized ListBox</summary>
+            <param name="name">Name of the list box</param>
+            <returns>The new, uninitialized ListBox</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateGrid(System.String)">
+            <summary>Creates an uninitialized Grid</summary>
+            <param name="name">Name of the grid</param>
+            <returns>The new, uninitialized Grid</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateEditBox(System.String)">
+            <summary>Creates an uninitialized EditBox</summary>
+            <param name="name">Name of the edit box</param>
+            <returns>The new, uninitialized EditBox</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateFrameWindow(System.String)">
+            <summary>Creates an uninitialized FrameWindow</summary>
+            <param name="name">Name of the frame window</param>
+            <returns>The new, uninitialized FrameWindow</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateProgressBar(System.String)">
+            <summary>Creates an uninitialized ProgressBar</summary>
+            <param name="name">Name of the progress bar</param>
+            <returns>The new, uninitialized ProgressBar</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateSlider(System.String)">
+            <summary>Creates an uninitialized Slider</summary>
+            <param name="name">Name of the slider</param>
+            <returns>The new, uninitialized Slider</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateTitleBar(System.String)">
+            <summary>Creates an uninitialized TitleBar</summary>
+            <param name="name">Name of the title bar</param>
+            <returns>The new, uninitialized TitleBar</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateVertScrollbar(System.String)">
+            <summary>Creates an uninitialized Scrollbar</summary>
+            <param name="name">Name of the scroll bar</param>
+            <returns>The new, uninitialized Scrollbar</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateHorzScrollbar(System.String)">
+            <summary>Creates an uninitialized Scrollbar</summary>
+            <param name="name">Name of the scroll bar</param>
+            <returns>The new, uninitialized Scrollbar</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateListHeader(System.String)">
+            <summary>Creates an uninitialized ListHeader</summary>
+            <param name="name">Name of the list header</param>
+            <returns>The new, uninitialized ListHeader</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateListHeaderSegment(System.String)">
+            <summary>Creates an uninitialized ListHeaderSegment</summary>
+            <param name="name">Name of the list header segment</param>
+            <returns>The new, uninitialized ListHeaderSegment</returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveGuiBuilder.CreateComboDropList(System.String)">
+            <summary>Creates an uninitialized ComboDropList</summary>
+            <param name="name">Name of the combo drop list</param>
+            <returns>The new, uninitialized ComboDropList</returns>
+        </member>
+        <member name="T:CeGui.WidgetSets.Suave.SuaveFrameWindow">
+            <summary>A frame window using the 'suave' look</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ImagesetName">
+            <summary>Name of the imageset to use for rendering</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ActiveTopLeftImageName">
+            <summary>The image for the top left corner of the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ActiveLeftImageName">
+            <summary>The image for the left side of the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ActiveBottomLeftImageName">
+            <summary>The image for the bottom left corner of the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ActiveTopImageName">
+            <summary>The image for the top side of the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ActiveCenterImageName">
+            <summary>The image for the top side of the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ActiveBottomImageName">
+            <summary>The image for the bottom side of the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ActiveTopRightImageName">
+            <summary>The image for the top right corner of the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ActiveRightImageName">
+            <summary>The image for the right side of the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ActiveBottomRightImageName">
+            <summary>The image for the bottom right corner of the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.CloseButtonNormalImageName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.CloseButtonHoverImageName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.CloseButtonPushedImageName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.NormalCursorImageName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.NorthSouthCursorImageName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.EastWestCursorImageName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.NWestSEastCursorImageName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.NEastSWestCursorImageName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.TitlebarType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.CloseButtonType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.TitlebarXOffset">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.TitlebarYOffset">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.TitlebarTextPadding">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ActiveColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.InactiveColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ClientTopLeftColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ClientTopRightColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ClientBottomLeftColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.ClientBottomRightColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.#ctor(System.String,System.String)">
+            <summary>
+            	Constructor.
+            </summary>
+            <param name="name"></param>
+            <param name="type"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.StoreFrameSizes">
+            <summary>
+            	Store the sizes for the frame edges.
+            </summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.UpdateFrameColors">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.CreateCloseButton">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.CreateTitleBar">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.LayoutComponentWidgets">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.DrawSelf(System.Single)">
+            <summary>
+            
+            </summary>
+            <param name="z"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.OnSized(CeGui.GuiEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.OnAlphaChanged(CeGui.GuiEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.OnActivated(CeGui.WindowEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:CeGui.WidgetSets.Suave.SuaveFrameWindow.OnDeactivated(CeGui.WindowEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.frame">
+            <summary>Handles the frame for the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.clientBrush">
+            <summary>Handles the client clearing brush for the window</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.frameLeftSize">
+            <summary>Width of the left frame edge in pixels</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.frameRightSize">
+            <summary>Width of the right frame edge in pixels</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.frameTopSize">
+            <summary>Height of the top frame edge in pixels</summary>
+        </member>
+        <member name="F:CeGui.WidgetSets.Suave.SuaveFrameWindow.frameBottomSize">
+            <summary>Height of the bottom frame edge in pixels</summary>
+        </member>
+        <member name="P:CeGui.WidgetSets.Suave.SuaveFrameWindow.UnclippedInnerRect">
+            <summary>
+            	Return a Rect object that describes, unclipped, the inner rectangle for this window.	
+            </summary>
+        </member>
+    </members>
+</doc>
