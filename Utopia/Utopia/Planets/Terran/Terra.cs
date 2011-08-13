@@ -376,7 +376,7 @@ namespace Utopia.Planets.Terran
             {
                 StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 #if DEBUG
-                if (Game.DebugDisplay == 2) StatesRepository.ApplyRaster(GameDXStates.DXStates.Rasters.Wired);
+                if (Game.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 #endif
                 _chunkDrawByFrame = 0;
 
@@ -391,6 +391,9 @@ namespace Utopia.Planets.Terran
                 else _terraEffect.CBPerFrame.Values.SunColor = new Vector3(SunColorBase, SunColorBase, SunColorBase);
 
                 DrawSolidFaces();
+#if DEBUG
+                DrawDebug();
+#endif
             }
         }
 
@@ -419,15 +422,33 @@ namespace Utopia.Planets.Terran
 
                         chunk.DrawSolidFaces();
                         _chunkDrawByFrame++;
-#if DEBUG
-                        if (Game.DebugDisplay == 1) chunk.ChunkBoundingBoxDisplay.Draw(Game.ActivCamera, ref Game.WorldFocus);
-#endif
                     }
 
                 }
             }
 
             
+        }
+
+        private void DrawDebug()
+        {
+            TerraChunk chunk;
+            Matrix worldFocus = Matrix.Identity;
+
+            //Foreach faces type
+            for (int chunkIndice = 0; chunkIndice < LandscapeBuilder.ChunkGridSize * LandscapeBuilder.ChunkGridSize; chunkIndice++)
+            {
+                chunk = World.SortedChunks[chunkIndice];
+
+                if (chunk.Ready2Draw)
+                {
+                    if (!chunk.FrustumCulled)
+                    {
+                        if (Game.DebugDisplay == 1) chunk.ChunkBoundingBoxDisplay.Draw(Game.ActivCamera, ref Game.WorldFocus);
+                    }
+
+                }
+            }
         }
 
         private float GetSunColor()
@@ -478,7 +499,9 @@ namespace Utopia.Planets.Terran
             Matrix worldFocus = Matrix.Identity;
 
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-
+#if DEBUG
+            if (Game.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+#endif
             TerraChunk chunk;
 
             _liquidEffect.Begin();

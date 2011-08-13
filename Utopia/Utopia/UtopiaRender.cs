@@ -47,6 +47,8 @@ namespace Utopia
 
         //Debug Tool
         private DebugInfo _debugInfo;
+
+       
 #if DEBUG
         private Axis _axis;
 #endif
@@ -75,7 +77,10 @@ namespace Utopia
             //Load the config
             //Config_old.LoadConfig();
 
-            LandscapeBuilder.Initialize(ClientSettings.Current.Settings.GraphicalParameters.WorldSize);
+            LandscapeBuilder = new LandscapeBuilder();
+             //LandscapeBuilder = new FlatLandscape();
+
+             LandscapeBuilder.Initialize(ClientSettings.Current.Settings.GraphicalParameters.WorldSize);
             RenderCubeProfile.InitCubeProfiles();           // Init the render cube profiles
             CubeProfile.InitCubeProfiles();                 // Init the cube profiles
         }

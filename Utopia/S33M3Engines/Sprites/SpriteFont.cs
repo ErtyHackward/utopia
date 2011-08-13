@@ -58,9 +58,13 @@ namespace S33M3Engines.Sprites
             Font font = new Font(fontName, fontSize, fontStyle, GraphicsUnit.Pixel);
 
             int size = (int)(fontSize * NumChars * 2) + 1;
+
             Bitmap sizeBitmap = new Bitmap(size, size, PixelFormat.Format32bppArgb);
 
             Graphics sizeGraphics = Graphics.FromImage(sizeBitmap);
+
+            sizeGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            sizeGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             sizeGraphics.TextRenderingHint = hint;
 
             _charHeight = font.Height; // *1.1f;
