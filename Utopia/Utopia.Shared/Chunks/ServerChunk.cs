@@ -11,11 +11,6 @@ namespace Utopia.Shared.Chunks
     public class ServerChunk : CompressibleChunk
     {
         /// <summary>
-        /// Gets or sets current chunk position
-        /// </summary>
-        public IntVector2 Position { get; set; }
-
-        /// <summary>
         /// Indicates that we no need to send bytes to client, it can obtain in using generator
         /// </summary>
         public bool PureGenerated { get; set; }
