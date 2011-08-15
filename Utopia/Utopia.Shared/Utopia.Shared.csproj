@@ -80,7 +80,8 @@
     <Compile Include="Chunks\Entities\IContainerEntity.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
-    <Compile Include="Chunks\OutsideDataProvider.cs" />
+    <Compile Include="Chunks\SingleArrayChunkCube.cs" />
+    <Compile Include="Chunks\SingleArrayDataProvider.cs" />
     <Compile Include="Chunks\ServerChunk.cs" />
     <Compile Include="Chunks\VisualChunk.cs" />
     <Compile Include="Config\KeyWithModifier.cs" />
