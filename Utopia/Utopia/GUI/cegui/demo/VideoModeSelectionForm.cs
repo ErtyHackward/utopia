@@ -115,6 +115,9 @@ public class VideoModeSelectionForm : CeGui.Form {
 
   /// <summary>Initializes the childs contained on this window</summary>
   private void initializeComponent() {
+
+    this.guiBuilder.CreateImage();
+
     this.okButton = this.guiBuilder.CreateButton("okButton");
     this.cancelButton = this.guiBuilder.CreateButton("cancelButton");
     this.fullscreenOption = this.guiBuilder.CreateCheckbox("fullscreenOption");

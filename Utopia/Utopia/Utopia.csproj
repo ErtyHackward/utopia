@@ -50,6 +50,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Nuclex.Support">
+      <HintPath>..\..\..\utopia-nuclex port\Utopia\Library\Nuclex.Support.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\Library\SharpDX\SharpDX.dll</HintPath>
     </Reference>
@@ -81,15 +84,77 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GUI\cegui\demo\VideoModeSelectionForm.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="GUI\D3D\NuclexGUI.cs" />
     <Compile Include="GUI\Forms\CustControls\Config.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="GUI\Forms\CustControls\Config.Designer.cs">
       <DependentUpon>Config.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\NuclexUIPort\Controls\Arcade\CommandControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Arcade\PanelControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Control.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Control.Input.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\ControlEventArgs.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\DesktopControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ButtonControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ButtonControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ChoiceControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ChoiceControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\CloseWindowButtonControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\CloseWindowButtonControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\DraggableControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\DraggableControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\HorizontalSliderControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\HorizontalSliderControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IListRowLocator.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\InputControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\InputControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IOpeningLocator.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IThumbLocator.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ListControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ListControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\OptionControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\OptionControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\SliderControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\SliderControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\VerticalSliderControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\VerticalSliderControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\WindowControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\WindowControl.Test.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\IFocusable.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\IWritable.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\LabelControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\ParentingControlCollection.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\PressableControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\ProgressControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\DuplicateNameException.cs" />
+    <Compile Include="GUI\NuclexUIPort\IGuiService.cs" />
+    <Compile Include="GUI\NuclexUIPort\Input\Command.cs" />
+    <Compile Include="GUI\NuclexUIPort\Input\IInputCapturer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Input\IInputReceiver.cs" />
+    <Compile Include="GUI\NuclexUIPort\Input\MouseButtons.cs" />
+    <Compile Include="GUI\NuclexUIPort\RectangleF.cs" />
+    <Compile Include="GUI\NuclexUIPort\Screen.cs" />
+    <Compile Include="GUI\NuclexUIPort\UniAssertHelper.cs" />
+    <Compile Include="GUI\NuclexUIPort\UniRectangle.cs" />
+    <Compile Include="GUI\NuclexUIPort\UniScalar.cs" />
+    <Compile Include="GUI\NuclexUIPort\UniVector.cs" />
+    <Compile Include="GUI\XnaAdapters\IGraphicsDeviceService.cs" />
+    <Compile Include="GUI\XnaAdapters\ContentManager.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.Drawing.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.SkinParsing.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.SkinParsing2.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiVisualizer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\IFlatControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\IFlatGuiGraphics.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\OpeningLocator.cs" />
+    <Compile Include="GUI\XnaAdapters\GraphicsDevice.cs" />
+    <Compile Include="GUI\XnaAdapters\ServiceProvider.cs" />
+    <Compile Include="GUI\XnaAdapters\SpriteBatch.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\IGuiVisualizer.cs" />
+    <Compile Include="GUI\XnaAdapters\SpriteSortMode.cs" />
     <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\IEntity.cs" />
@@ -120,7 +185,6 @@
     <Compile Include="Planets\Terran\Cube\TerraCubeWithPosition.cs" />
     <Compile Include="PlugIn\Plugin.cs" />
     <Compile Include="Planets\PlanetSkybox\Stars.cs" />
-    <Compile Include="GUI\D3D\GUI.cs" />
     <Compile Include="Planets\Terran\Chunk\baseChunk.cs" />
     <Compile Include="Planets\Terran\Chunk\TerraChunk.cs" />
     <Compile Include="Planets\Terran\Cube\CubeMeshFactory.cs" />
@@ -221,6 +285,7 @@
     <None Include="Resources\WelcomeScreen.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="GUI\cegui\demo\" />
     <Folder Include="Space\" />
   </ItemGroup>
   <ItemGroup>
