@@ -24,33 +24,33 @@ namespace Utopia.Shared.Chunks.Entities
         /// </summary>
         /// <param name="classId">Entity class identificator</param>
         /// <returns></returns>
-        public Entity CreateEntity(EntityId classId)
+        public Entity CreateEntity(EntityClassId classId)
         {
             // todo: implement this method correctly
 
             switch (classId)
             {
-                case EntityId.None:
+                case EntityClassId.None:
                     break;
-                case EntityId.Sword:
+                case EntityClassId.Sword:
                     break;
-                case EntityId.PickAxe:
+                case EntityClassId.PickAxe:
                     break;
-                case EntityId.Shovel:
+                case EntityClassId.Shovel:
                     break;
-                case EntityId.Hoe:
+                case EntityClassId.Hoe:
                     break;
-                case EntityId.Axe:
+                case EntityClassId.Axe:
                     break;
-                case EntityId.Chest:
+                case EntityClassId.Chest:
                     break;
-                case EntityId.Chair:
+                case EntityClassId.Chair:
                     break;
-                case EntityId.Door:
+                case EntityClassId.Door:
                     break;
-                case EntityId.Bed:
+                case EntityClassId.Bed:
                     break;
-                case EntityId.ThinGlass:
+                case EntityClassId.ThinGlass:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("classId");
@@ -70,7 +70,7 @@ namespace Utopia.Shared.Chunks.Entities
 
             reader.BaseStream.Seek(-2, SeekOrigin.Current);
 
-            var entity = CreateEntity((EntityId)classId);
+            var entity = CreateEntity((EntityClassId)classId);
 
             entity.Load(reader);
 
