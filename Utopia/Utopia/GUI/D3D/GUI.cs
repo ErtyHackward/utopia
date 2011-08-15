@@ -11,7 +11,7 @@ using SharpDX;
 using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.Struct;
 using CeGui;
-using CeGui.Demo.DirectX;
+//using CeGui.Demo.DirectX;
 using S33M3Engines.Sprites.GUI;
 
 namespace Utopia.GUI.D3D
@@ -44,8 +44,14 @@ namespace Utopia.GUI.D3D
             _font = new SpriteFont();
             _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, Game.GraphicDevice);
 
-            _ceguiRenderer = new SpriteGuiRenderer(Game, _spriteRender);
-          
+            InitCegui();
+        
+        }
+
+        private void InitCegui()
+        {
+         /*   _ceguiRenderer = new SpriteGuiRenderer(Game, _spriteRender);
+
             CeGui.GuiSystem.Initialize(_ceguiRenderer);
             _ceguiRenderer.loadCeGuiResources();
             _ceguiRenderer.setupDefaults();
@@ -57,8 +63,7 @@ namespace Utopia.GUI.D3D
             VideoModeSelectionForm videoModeSelector = new VideoModeSelectionForm(
                 new CeGui.WidgetSets.Suave.SuaveGuiBuilder());
             ((CeGui.Window)videoModeSelector).SetFont("WindowTitle");
-            _rootGuiSheet.AddChild(videoModeSelector);
-        
+            _rootGuiSheet.AddChild(videoModeSelector);*/
         }
 
         public override void UnloadContent()
@@ -82,6 +87,21 @@ namespace Utopia.GUI.D3D
         {
             _spriteRender.Begin(SpriteRenderer.FilterMode.Linear);
             _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
+            
+            InjectInputToCegui();
+
+            RenderGui();
+
+            _spriteRender.End();
+        }
+
+        private static void RenderGui()
+        {
+            CeGui.GuiSystem.Instance.RenderGui();
+        }
+
+        private static void InjectInputToCegui()
+        {
             //_spriteRender.RenderText(_font, "That's Bumbas baby !\nDeuxième ligne !", Matrix.Translation(0, 0, 0), new Color4(1, 1, 0, 1));
 
             // Here is what cygon ( author of ceguisharp branch we use , that later became nuclex ui ) : 
@@ -96,10 +116,6 @@ namespace Utopia.GUI.D3D
 
             //TODO pass gameTime to draw methods ? autorepeat feature is disabled cause there s no gametime in draw methods  
             InputInjector.processKeyboardInput();
-          
-            CeGui.GuiSystem.Instance.RenderGui();
-
-            _spriteRender.End();
         }
     }
 }
