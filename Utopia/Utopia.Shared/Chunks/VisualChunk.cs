@@ -11,8 +11,9 @@ namespace Utopia.Shared.Chunks
         //todo: move this class to Utopia project
         private TerraCube[] _cubes;
 
-        public VisualChunk()
+        public VisualChunk() : base(new OutsideDataProvider())
         {
+            
             _cubes = new TerraCube[ChunkBlocksByteLength]; // creating additional data for each block, actually we can remove Id from TerraCube structure to release client memory
         }
 

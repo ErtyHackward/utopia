@@ -24,5 +24,10 @@ namespace Utopia.Shared.Chunks
         /// DateTime stamp of the chunk. Determines whether the chunk can be unloaded from memory
         /// </summary>
         public DateTime LastAccess { get; set; }
+
+        public ServerChunk() : base(new InsideDataProvider())
+        {
+            
+        }
     }
 }
