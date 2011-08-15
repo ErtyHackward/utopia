@@ -24,42 +24,34 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         public bool CompressedDirty { get; set; }
 
-        /// <summary>
-        /// Sets block to chunk internal position
-        /// </summary>
-        /// <param name="inBlockPosition"></param>
-        /// <param name="value"></param>
-        public override void SetBlock(Structs.Location3<int> inBlockPosition, byte value)
+        public CompressibleChunk(ChunkDataProvider provider) : base(provider)
         {
-            base.SetBlock(inBlockPosition, value);
-
-            if (InstantCompress)
-            {
-                Compress();
-                CompressedDirty = false;
-            }
-            else
-            {
-                CompressedDirty = true;
-            }
+            
         }
 
         /// <summary>
         /// Performs serialization and compression of resulted bytes
         /// </summary>
-        public void Compress()
+        /// <param name="saveResult">Whether or not to save resulted bytes into CompressedBytes property</param>
+        /// <returns>Compressed bytes array</returns>
+        public byte[] Compress(bool saveResult = true)
         {
-            if (BlockBytes != null)
+            if (BlockData == null)
+                throw new ArgumentNullException();
+            
+            var ms = new MemoryStream();
+            using (var zip = new GZipStream(ms, CompressionMode.Compress))
             {
-                var ms = new MemoryStream();
-                using (var zip = new GZipStream(ms, CompressionMode.Compress))
-                {
-                    var serializedBytes = Serialize();
-                    zip.Write(serializedBytes, 0, serializedBytes.Length);
-                }
-                CompressedBytes = ms.ToArray();
+                var serializedBytes = Serialize();
+                zip.Write(serializedBytes, 0, serializedBytes.Length);
             }
-            else CompressedBytes = null;
+
+            var bytes = ms.ToArray();
+
+            if (saveResult)
+                CompressedBytes = bytes;
+            
+            return bytes;
         }
 
         /// <summary>
@@ -79,21 +71,53 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         public void Decompress()
         {
-            if (CompressedBytes != null)
+            if (CompressedBytes == null)
+                throw new InvalidOperationException("Set CompressedBytes property before decompression");
+
+            var ms = new MemoryStream(CompressedBytes);
+            using (var zip = new GZipStream(ms, CompressionMode.Decompress))
             {
-                if (BlockBytes == null) BlockBytes = new byte[ChunkBlocksByteLength];
-                var ms = new MemoryStream(CompressedBytes);
-                using (var zip = new GZipStream(ms, CompressionMode.Decompress))
-                {
-                    var decompressed = new MemoryStream();
-                    zip.CopyTo(decompressed);
-                    Deserialize(decompressed);
-                }
+                var decompressed = new MemoryStream();
+                zip.CopyTo(decompressed);
+                Deserialize(decompressed);
             }
-            else 
-            { 
-                BlockBytes = null; 
-                Entities.Clear(); 
+        }
+
+        protected override void BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
+        {
+            OnBlockDataChanged();
+
+            base.BlockDataChanged(sender, e);
+        }
+
+        protected override void BlockBufferChanged(object sender, ChunkDataProviderBufferChangedEventArgs e)
+        {
+            OnBlockDataChanged();
+
+            base.BlockBufferChanged(sender, e);
+        }
+
+        public override void ChangeBlockDataProvider(ChunkDataProvider newProvider, bool sameData)
+        {
+            base.ChangeBlockDataProvider(newProvider, sameData);
+
+            if (!sameData)
+            {
+                OnBlockDataChanged();
+            }
+
+        }
+
+        private void OnBlockDataChanged()
+        {
+            if (InstantCompress)
+            {
+                Compress();
+                CompressedDirty = false;
+            }
+            else
+            {
+                CompressedDirty = true;
             }
         }
 

@@ -32,64 +32,63 @@ namespace Utopia.Shared.Chunks
         #endregion
         
         #region Properties
+
+        private ChunkDataProvider _blockDataProvider;
+
+        protected byte[] Md5HashData;
+
         /// <summary>
-        /// Contains only block information as a byte array. This array must be with length of ChunkBlocksByteLength. To change it change ChunkSize static property.
+        /// Gets or sets a chunk blocks data provider
         /// </summary>
-        public byte[] BlockBytes { get; set; }
+        public ChunkDataProvider BlockData
+        {
+            get { return _blockDataProvider; }
+        }
+
+        /// <summary>
+        /// Provides ability to change the chunk block data provider
+        /// </summary>
+        /// <param name="newProvider">New provider to replace</param>
+        /// <param name="sameData">Indicates if new provider has the same block data as previous</param>
+        public virtual void ChangeBlockDataProvider(ChunkDataProvider newProvider, bool sameData)
+        {
+            if (_blockDataProvider != newProvider)
+            {
+                if (_blockDataProvider != null)
+                {
+                    _blockDataProvider.BlockBufferChanged -= BlockBufferChanged;
+                    _blockDataProvider.BlockDataChanged -= BlockDataChanged;
+                }
+
+                _blockDataProvider = newProvider;
+
+                if (_blockDataProvider != null)
+                {
+                    _blockDataProvider.BlockBufferChanged += BlockBufferChanged;
+                    _blockDataProvider.BlockDataChanged += BlockDataChanged;
+                }
+            }
+        }
 
         /// <summary>
         /// Gets entity collection of the chunk
         /// </summary>
         public EntityCollection Entities { get; private set; }
-
-
-        protected byte[] Md5HashData;
-
+        
         #endregion
-
-        protected AbstractChunk()
+        
+        protected AbstractChunk(ChunkDataProvider blockDataProvider)
         {
+            _blockDataProvider = blockDataProvider;
+
+            _blockDataProvider.BlockBufferChanged += BlockBufferChanged;
+            _blockDataProvider.BlockDataChanged += BlockDataChanged;
+
             Entities = new EntityCollection();
         }
 
         /// <summary>
-        /// Gets block from specified internal position
-        /// </summary>
-        /// <param name="inBlockPosition"></param>
-        /// <returns></returns>
-        public virtual byte GetBlock(Location3<int> inBlockPosition)
-        {
-            return BlockBytes[inBlockPosition.X * _chunkSize.X * _chunkSize.Y + inBlockPosition.Y * _chunkSize.Y + inBlockPosition.Z];
-        }
-
-        /// <summary>
-        /// Sets block to chunk internal position
-        /// </summary>
-        /// <param name="inBlockPosition"></param>
-        /// <param name="value"></param>
-        public virtual void SetBlock(Location3<int> inBlockPosition, byte value)
-        {
-            if (BlockBytes == null)
-            {
-                BlockBytes = new byte[ChunkBlocksByteLength];
-            }
-            BlockBytes[inBlockPosition.X * _chunkSize.X * _chunkSize.Y + inBlockPosition.Y * _chunkSize.Y + inBlockPosition.Z] = value;
-            Md5HashData = null;
-        }
-
-        /// <summary>
-        /// Gets or sets a block in the chunk
-        /// </summary>
-        /// <param name="position">Local position of the block</param>
-        /// <returns></returns>
-        public byte this[Location3<int> position]
-        {
-            get { return GetBlock(position); }
-            set { SetBlock(position, value); }
-        }
-
-        /// <summary>
-        /// Loads chunk data from bytes array
+        /// Loads chunk data from bytes array (blocks and entites)
         /// </summary>
         /// <param name="bytes"></param>
         public void Deserialize(byte[] bytes)
@@ -98,29 +97,29 @@ namespace Utopia.Shared.Chunks
         }
 
         /// <summary>
-        /// Loads chunk data from memory stream
+        /// Loads chunk data from memory stream (blocks and entites)
         /// </summary>
         /// <param name="ms"></param>
         public void Deserialize(MemoryStream ms)
         {
             var reader = new BinaryReader(ms);
-            BlockBytes = reader.ReadBytes(ChunkBlocksByteLength);
+            BlockData.SetBlockBytes(reader.ReadBytes(ChunkBlocksByteLength));
             Entities.Clear();
             Entities.LoadEntities(EntityFactory.Instance, ms, ChunkBlocksByteLength, (int)(ms.Length - ChunkBlocksByteLength));
         }
 
         /// <summary>
-        /// Saves current chunk data to binary format
+        /// Saves current chunk data to binary format (blocks and entites)
         /// </summary>
         /// <param name="writer"></param>
         public void Serialize(BinaryWriter writer)
         {
-            writer.Write(BlockBytes);
+            writer.Write(BlockData.GetBlocksBytes());
             Entities.SaveEntities(writer);
         }
 
         /// <summary>
-        /// Saves current chunk data to binary format
+        /// Saves current chunk data to binary format (blocks and entites)
         /// </summary>
         public byte[] Serialize()
         {
@@ -148,6 +147,26 @@ namespace Utopia.Shared.Chunks
             var provider = new MD5CryptoServiceProvider();
             
             return provider.ComputeHash(bytes);
+        }
+
+        /// <summary>
+        /// Handling of chunk blocks data change
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
+        {
+            Md5HashData = null;
+        }
+
+        /// <summary>
+        /// Handling of whole chunk blocks buffer change
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void BlockBufferChanged(object sender, ChunkDataProviderBufferChangedEventArgs e)
+        {
+            Md5HashData = null;
         }
     }
 }

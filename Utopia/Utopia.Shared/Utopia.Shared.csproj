@@ -65,6 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chunks\AbstractChunk.cs" />
+    <Compile Include="Chunks\ChunkDataProvider.cs" />
+    <Compile Include="Chunks\ChunkDataProviderBufferChangedEventArgs.cs" />
+    <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\Entities\Concrete\ChestEntity.cs" />
     <Compile Include="Chunks\Entities\Entity.cs" />
@@ -76,6 +79,8 @@
     <Compile Include="Chunks\Entities\Concrete\VoxelEntity.cs" />
     <Compile Include="Chunks\Entities\IContainerEntity.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
+    <Compile Include="Chunks\InsideDataProvider.cs" />
+    <Compile Include="Chunks\OutsideDataProvider.cs" />
     <Compile Include="Chunks\ServerChunk.cs" />
     <Compile Include="Chunks\VisualChunk.cs" />
     <Compile Include="Config\KeyWithModifier.cs" />
@@ -129,6 +134,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ChunkHierarchy.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
