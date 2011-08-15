@@ -69,13 +69,13 @@
     <Compile Include="Chunks\ChunkDataProviderBufferChangedEventArgs.cs" />
     <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
     <Compile Include="Chunks\CompressibleChunk.cs" />
-    <Compile Include="Chunks\Entities\Concrete\ChestEntity.cs" />
+    <Compile Include="Chunks\Entities\Concrete\ContainerEntity.cs" />
     <Compile Include="Chunks\Entities\Entity.cs" />
     <Compile Include="Chunks\Entities\EntityCollection.cs" />
     <Compile Include="Chunks\Entities\EntityFactory.cs" />
-    <Compile Include="Chunks\Entities\EntityId.cs" />
+    <Compile Include="Chunks\Entities\EntityClassId.cs" />
     <Compile Include="Chunks\Entities\EntityType.cs" />
-    <Compile Include="Chunks\Entities\Concrete\SwordEntity.cs" />
+    <Compile Include="Chunks\Entities\Concrete\WeaponEntity.cs" />
     <Compile Include="Chunks\Entities\Concrete\VoxelEntity.cs" />
     <Compile Include="Chunks\Entities\IContainerEntity.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />

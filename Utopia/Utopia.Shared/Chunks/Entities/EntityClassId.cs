@@ -3,7 +3,7 @@
     /// <summary>
     /// Enumerates all available entities IDs (just for easy use in code). Please add new IDs to the bottom of the enum
     /// </summary>
-    public enum EntityId : ushort
+    public enum EntityClassId : ushort
     {
         // items
         None = 0,

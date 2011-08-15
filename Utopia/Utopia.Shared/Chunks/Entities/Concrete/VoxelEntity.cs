@@ -7,8 +7,7 @@
     {
         // todo: change to real things
         public int VoxelRelatedProperty { get; set; }
-
-
+        
         // we need to override save and load!
 
         public override void Load(System.IO.BinaryReader reader)

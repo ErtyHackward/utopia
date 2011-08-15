@@ -5,7 +5,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
     /// <summary>
     /// Represents a voxel chest
     /// </summary>
-    public class ChestEntity : VoxelEntity, IContainerEntity
+    public class ContainerEntity : VoxelEntity, IContainerEntity
     {
         /// <summary>
         /// Indicates if chest cover is opened
@@ -23,6 +23,14 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
         /// </summary>
         public List<Entity> Items { get; set; }
 
+        /// <summary>
+        /// Gets a displayed entity name
+        /// </summary>
+        public override string DisplayName
+        {
+            get { return "Container"; }
+        }
+
         public override void Load(System.IO.BinaryReader reader)
         {
             // first we need to load base information
@@ -30,8 +38,10 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
 
             IsOpened = reader.ReadBoolean();
 
+            // read contained entites count
             var count = reader.ReadInt32();
 
+            // load contained entites
             Items.Clear();
             for (int i = 0; i < count; i++)
             {
@@ -51,10 +61,13 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
             // we need to save items count to be able to load again
             writer.Write(Items.Count);
 
+            // saving containing items
             foreach (var entity in Items)
             {
                 entity.Save(writer);
             }
         }
+
+
     }
 }

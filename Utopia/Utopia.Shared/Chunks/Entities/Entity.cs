@@ -11,7 +11,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Gets entity class id
         /// </summary>
-        public EntityId ClassId { get; protected set; }
+        public EntityClassId ClassId { get; protected set; }
 
         /// <summary>
         /// Gets current entity type
@@ -27,6 +27,11 @@ namespace Utopia.Shared.Chunks.Entities
         /// Gets or sets entity rotation information
         /// </summary>
         public Quaternion Rotation { get; set; }
+
+        /// <summary>
+        /// Gets a displayed entity name
+        /// </summary>
+        public abstract string DisplayName { get; }
         
         /// <summary>
         /// Loads current entity from a binaryReader
@@ -34,7 +39,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// <param name="reader"></param>
         public virtual void Load(BinaryReader reader)
         {
-            ClassId = (EntityId)reader.ReadUInt16();
+            ClassId = (EntityClassId)reader.ReadUInt16();
 
             Type = (EntityType)reader.ReadByte();
 

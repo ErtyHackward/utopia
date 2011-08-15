@@ -142,7 +142,7 @@ namespace Utopia.Shared.Chunks.Entities
             while (ms.Position < offset + length)
             {
                 var classId = reader.ReadUInt16();
-                var entity = factory.CreateEntity((EntityId)classId);
+                var entity = factory.CreateEntity((EntityClassId)classId);
                 Add(entity);
             }
         }
