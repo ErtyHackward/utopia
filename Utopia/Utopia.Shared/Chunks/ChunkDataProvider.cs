@@ -9,11 +9,6 @@ namespace Utopia.Shared.Chunks
     public abstract class ChunkDataProvider
     {
         /// <summary>
-        /// Gets or sets current chunk position
-        /// </summary>
-        public IntVector2 ChunkPosition { get; set; }
-
-        /// <summary>
         /// Occurs when block data was changed
         /// </summary>
         public event EventHandler<ChunkDataProviderDataChangedEventArgs> BlockDataChanged;
