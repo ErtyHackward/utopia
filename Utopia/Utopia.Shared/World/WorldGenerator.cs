@@ -103,5 +103,24 @@ namespace Utopia.Shared.World
         {
             _abortOperation = true;
         }
+
+        /// <summary>
+        /// Gets a generated chunk. (Generates it if needed)
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public GeneratedChunk GetChunk(IntVector2 position)
+        {
+            if (Chunks.ContainsKey(position))
+            {
+                return Chunks[position];
+            }
+
+            // todo: need to generate bigger range
+            Generate(new Range2 { Min = position, Max = position + 1 });
+            return Chunks[position];
+            
+
+        }
     }
 }

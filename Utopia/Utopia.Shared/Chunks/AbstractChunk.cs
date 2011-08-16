@@ -71,6 +71,9 @@ namespace Utopia.Shared.Chunks
                     _blockDataProvider.BlockBufferChanged += BlockBufferChanged;
                     _blockDataProvider.BlockDataChanged += BlockDataChanged;
                 }
+
+                if(!sameData)
+                    Md5HashData = null;
             }
         }
 

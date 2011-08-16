@@ -11,6 +11,7 @@ using Utopia.Server.Structs;
 using Utopia.Server.Utils;
 using Utopia.Shared.Config;
 using Utopia.Shared.Structs;
+using Utopia.Shared.World;
 
 namespace Utopia.Server
 {
@@ -27,7 +28,7 @@ namespace Utopia.Server
 
         #region fields
 
-        private readonly List<Chunk> _saveList = new List<Chunk>();
+        private readonly List<ServerChunk> _saveList = new List<ServerChunk>();
         private Timer _cleanUpTimer;
         private Timer _saveTimer;
         
@@ -36,7 +37,7 @@ namespace Utopia.Server
         /// <summary>
         /// Gets main server chunk storage
         /// </summary>
-        public Dictionary<IntVector2, Chunk> Chunks { get; private set; }
+        public Dictionary<IntVector2, ServerChunk> Chunks { get; private set; }
 
         /// <summary>
         /// Gets connection listener. Allows to accept client connections
@@ -57,13 +58,18 @@ namespace Utopia.Server
         /// Gets main storage manager
         /// </summary>
         public SQLiteStorageManager Storage { get; private set; }
+
+        /// <summary>
+        /// Gets a servers world generator
+        /// </summary>
+        public WorldGenerator WorldGenerator { get; private set; }
         
         /// <summary>
         /// Create new instance of Server class
         /// </summary>
         public Server()
         {
-            Chunks = new Dictionary<IntVector2, Chunk>();
+            Chunks = new Dictionary<IntVector2, ServerChunk>();
             SettingsManager = new XmlSettingsManager<ServerSettings>("utopiaserver.config", SettingsStorage.ApplicationData);
             SettingsManager.Load();
 
@@ -81,7 +87,8 @@ namespace Utopia.Server
             
             Storage = new SQLiteStorageManager(dbPath);
 
-            // todo: terrain generator initialize
+            // todo: proper terrain generator initialize
+            WorldGenerator = new WorldGenerator(new WorldParameters());
 
             _cleanUpTimer = new Timer(CleanUp, null, SettingsManager.Settings.CleanUpInterval, SettingsManager.Settings.CleanUpInterval);
             _saveTimer = new Timer(SaveChunks, null, SettingsManager.Settings.SaveInterval, SettingsManager.Settings.SaveInterval);
@@ -103,7 +110,7 @@ namespace Utopia.Server
                 {
                     _saveList[i].NeedSave = false;
                     positions[i] = _saveList[i].Position;
-                    datas.Add(_saveList[i].DataCompressed);
+                    datas.Add(_saveList[i].CompressedBytes);
                 }
 
                 Storage.SaveBlocksData(positions, datas.ToArray());
@@ -114,7 +121,7 @@ namespace Utopia.Server
         // this functions executes in other thread
         private void CleanUp(object obj)
         {
-            var chunksToRemove = new List<Chunk>(); 
+            var chunksToRemove = new List<ServerChunk>(); 
 
             lock (Chunks)
             {
@@ -212,7 +219,7 @@ namespace Utopia.Server
                 lock (_saveList)
                     _saveList.Add(chunk);
 
-            chunk.SetBlock(inchunkpos, e.Message.BlockType);
+            chunk.BlockData.SetBlock(inchunkpos, e.Message.BlockType);
 
             ConnectionManager.Broadcast(e.Message);
         }
@@ -222,9 +229,9 @@ namespace Utopia.Server
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
-        public Chunk GetChunk(IntVector2 position)
+        public ServerChunk GetChunk(IntVector2 position)
         {
-            Chunk chunk;
+            ServerChunk chunk;
             // search chunk in memory or load it
             if (Chunks.ContainsKey(position))
             {
@@ -237,7 +244,8 @@ namespace Utopia.Server
                 {
                     if (!Chunks.ContainsKey(position))
                     {
-                        chunk = new Chunk { Data = null, Position = position, LastAccess = DateTime.Now };
+                        chunk = new ServerChunk { Position = position, LastAccess = DateTime.Now };
+
                         var data = Storage.LoadBlockData(position);
 
                         if (data == null)
@@ -245,19 +253,27 @@ namespace Utopia.Server
                             //todo: chunk generator
                             //TerrainGenerator.FillChunk(position, out data);
 
-                            if (data != null)
+                            var generatedChunk = WorldGenerator.GetChunk(position);
+                            
+                            if (generatedChunk != null)
                             {
                                 chunk.NeedSave = true;
+                                // todo: think about chunk disposing
+                                chunk.ChangeBlockDataProvider(generatedChunk.BlockData, true);
+
                                 lock (_saveList)
                                     _saveList.Add(chunk);
-                                chunk.Data = data;
                             }
                         }
-                        else chunk.DataCompressed = data;
+                        else
+                        {
+                            chunk.CompressedBytes = data;
+                            chunk.Decompress();
+                        }
 
                         Chunks.Add(position, chunk);
                     }
-                    else chunk = (Chunk)Chunks[position];
+                    else chunk = Chunks[position];
                 }
             }
             return chunk;
@@ -282,7 +298,7 @@ namespace Utopia.Server
                                       {
                                           Position = vec,
                                           Flag = ChunkDataMessageFlag.ChunkWasModified, // todo: implement corrent flag behaviour
-                                          Data = chunk.DataCompressed
+                                          Data = chunk.CompressedBytes
                                       };
                         
                         connection.Send(msg);
@@ -347,7 +363,7 @@ namespace Utopia.Server
                 {
                     ConnectionManager.Broadcast(new PlayerPositionMessage { UserId = loginData.Value.UserId, Position = new Vector3(8, 50, 8) });
                     ConnectionManager.Broadcast(new PlayerDirectionMessage { UserId = loginData.Value.UserId, Direction = new Vector3(-0.15f, -0.97f, -0.15f) });
-                    connection.Position = new Vector3 {X = 8, Y = 50, Z = 8};
+                    connection.Position = new Vector3 { X = 8, Y = 50, Z = 8 };
                     connection.Direction = new Vector3 { X = -0.15f, Y = -0.97f, Z = -0.15f };
                 }
                 else

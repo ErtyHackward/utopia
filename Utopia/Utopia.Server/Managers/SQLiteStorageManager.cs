@@ -93,8 +93,6 @@ namespace Utopia.Server.Managers
         {
             lock (this)
             {
-                //Stopwatch sw = new Stopwatch();
-                //sw.Start();
                 SQLiteDataReader reader = null;
                 try
                 {
@@ -106,8 +104,6 @@ namespace Utopia.Server.Managers
                     }
                 }
                 catch { return null; }
-                //sw.Stop();
-                //Debug.WriteLine(query + "(" + sw.ElapsedTicks.ToString() + ")");
                 return reader;
             }
         }
@@ -175,8 +171,6 @@ namespace Utopia.Server.Managers
             {
                 try
                 {
-                    //Stopwatch sw = new Stopwatch();
-                    //sw.Start();
                     int val = 0;
                     using (var cmd = conn.CreateCommand())
                     {
@@ -191,8 +185,6 @@ namespace Utopia.Server.Managers
                     }
                 }
                 catch (Exception) { }
-                //sw.Stop();
-                //Debug.WriteLine(query+ "("+sw.ElapsedTicks.ToString()+")");
                 return;
             }
         }
