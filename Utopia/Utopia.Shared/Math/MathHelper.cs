@@ -67,5 +67,17 @@ namespace Utopia.Shared.Math
             value = (value < min) ? min : value;
             return value;
         }
+
+        //Count the number of bit inside the number
+        public static int Bitcount(int n)
+        {
+            int count = 0;
+            while (n != 0)
+            {
+                count++;
+                n &= (n - 1);
+            }
+            return count;
+        }
     }
 }

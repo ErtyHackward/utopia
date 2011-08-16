@@ -15,9 +15,15 @@ namespace Utopia.Shared.Chunks
     public class SingleArrayChunkCube
     {
         /// <summary>
+        /// Occurs when block data was changed
+        /// </summary>
+        public event EventHandler<ChunkDataProviderDataChangedEventArgs> BlockDataChanged;
+
+        /// <summary>
         /// Contains the array of visible cubes
         /// </summary>
-        public TerraCube[] Cubes { get; set;}
+        public TerraCube[] CubesMetaData { get; set;}
+        public byte[] Cubes { get; set; }
 
         /// <summary>
         /// Contains the value used to advance inside the array from a specific Index.
@@ -29,7 +35,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Visible World size in cubes Unit
         /// </summary>
-        private Location3<int> _visibleWorldSize;
+        public Location3<int> _visibleWorldSize;
 
         /// <summary>
         /// Constructor
@@ -65,6 +71,24 @@ namespace Utopia.Shared.Chunks
             if (z < 0) z += _visibleWorldSize.Z;
 
             return x * MoveX + z * MoveZ + Y;
+        }
+
+        public void SetCube(ref Location3<int> cubeCoordinates, byte cubeType, ref TerraCube cubeMetaData)
+        {
+            int index = Index(cubeCoordinates.X, cubeCoordinates.Y, cubeCoordinates.Z);
+            Cubes[index] = cubeType;
+            CubesMetaData[index] = cubeMetaData;
+
+            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { cubeCoordinates }, Bytes = new[] { cubeType } });
+        }
+
+        public void SetCube(int X, int Y, int Z, byte cubeType, ref TerraCube cubeMetaData)
+        {
+            int index = Index(X, Y, Z);
+            Cubes[index] = cubeType;
+            CubesMetaData[index] = cubeMetaData;
+
+            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Location3<int> { X = X, Y = Y, Z = Z} }, Bytes = new[] { cubeType } });
         }
 
     }

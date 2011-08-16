@@ -223,6 +223,7 @@
     <Compile Include="Planets\Weather\Items\Wind.cs" />
     <Compile Include="Planets\Weather\WeatherManager.cs" />
     <Compile Include="Worlds\Chunks\VisualChunk.cs" />
+    <Compile Include="Worlds\World.cs" />
     <EmbeddedResource Include="GUI\Forms\CustControls\Config.resx">
       <DependentUpon>Config.cs</DependentUpon>
     </EmbeddedResource>

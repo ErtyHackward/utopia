@@ -13,7 +13,7 @@ namespace Utopia.Shared.World
         public Location3<int> ChunkSize { get; set; }
 
         /// <summary>
-        /// World size (width and length)
+        /// World size in chunk unit (width and length)
         /// </summary>
         public Location2<int> WorldSize { get; set; }
 
