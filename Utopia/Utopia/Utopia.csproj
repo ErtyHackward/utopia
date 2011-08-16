@@ -51,7 +51,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Nuclex.Support">
-      <HintPath>..\..\..\utopia-nuclex port\Utopia\Library\Nuclex.Support.dll</HintPath>
+      <HintPath>..\Library\Nuclex.Support.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\Library\SharpDX\SharpDX.dll</HintPath>

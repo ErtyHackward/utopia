@@ -56,7 +56,7 @@ namespace Utopia.GUI.D3D
 
             ButtonControl testBtn = new ButtonControl();
             testBtn.Bounds = new UniRectangle(40,40,80,20);
-            testBtn.Text="Salut";
+            testBtn.Text="H";
 
             _screen.Desktop.Children.Add(testBtn);
         }
@@ -84,7 +84,6 @@ namespace Utopia.GUI.D3D
 
         public override void Update(ref GameTime TimeSpent)
         {
-
             InjectInput();
         }
 
@@ -109,7 +108,7 @@ namespace Utopia.GUI.D3D
         }
 
       
-        private  void InjectInput()
+        private void InjectInput()
         {  
             MouseState mouseState = Game.InputHandler.CurMouseState;
             
