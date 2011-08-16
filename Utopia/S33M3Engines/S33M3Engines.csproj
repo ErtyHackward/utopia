@@ -106,10 +106,6 @@
     <Compile Include="D3D\Tools\Resource.cs" />
     <Compile Include="Maths\DVector3.cs" />
     <Compile Include="Maths\MathHelper.cs" />
-    <Compile Include="Sprites\GUI\InputInjector.cs" />
-    <Compile Include="Sprites\GUI\SpriteGuiRenderer.cs" />
-    <Compile Include="Sprites\GUI\SpriteGuiTexture.cs" />
-    <Compile Include="Sprites\GUI\UISpriteBatchManager.cs" />
     <Compile Include="Sprites\SpriteFont.cs" />
     <Compile Include="Sprites\SpriteRenderer.cs" />
     <Compile Include="Sprites\SpriteTexture.cs" />
@@ -174,10 +170,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CeGui\CeGui.csproj">
-      <Project>{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}</Project>
-      <Name>CeGui</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>
@@ -204,6 +196,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sprites\GUI\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -17,10 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utopia.Shared", "Utopia.Sha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utopia.Server", "Utopia.Server\Utopia.Server.csproj", "{0DE240B7-B340-43AD-B663-65CFA43351ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CeGui", "CeGui\CeGui.csproj", "{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CeGui.WidgetSets.Suave", "CeGui.WidgetSets.Suave\CeGui.WidgetSets.Suave.csproj", "{5BA79437-F033-454F-A78C-CD7422BB0B58}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,26 +107,6 @@ Global
 		{0DE240B7-B340-43AD-B663-65CFA43351ED}.Release|Mixed Platforms.Build.0 = Release|x86
 		{0DE240B7-B340-43AD-B663-65CFA43351ED}.Release|x86.ActiveCfg = Release|x86
 		{0DE240B7-B340-43AD-B663-65CFA43351ED}.Release|x86.Build.0 = Release|x86
-		{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{41AE7F18-8C96-43E7-98D8-1E9D83081CD6}.Release|x86.ActiveCfg = Release|Any CPU
-		{5BA79437-F033-454F-A78C-CD7422BB0B58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5BA79437-F033-454F-A78C-CD7422BB0B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5BA79437-F033-454F-A78C-CD7422BB0B58}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5BA79437-F033-454F-A78C-CD7422BB0B58}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5BA79437-F033-454F-A78C-CD7422BB0B58}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5BA79437-F033-454F-A78C-CD7422BB0B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5BA79437-F033-454F-A78C-CD7422BB0B58}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5BA79437-F033-454F-A78C-CD7422BB0B58}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5BA79437-F033-454F-A78C-CD7422BB0B58}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{5BA79437-F033-454F-A78C-CD7422BB0B58}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

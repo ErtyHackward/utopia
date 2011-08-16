@@ -10,7 +10,6 @@ using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.Struct;
-using S33M3Engines.Sprites.GUI;
 using Nuclex.UserInterface;
 using Utopia.GUI.XnaAdapters;
 using Utopia.GUI.NuclexUIPort.Visuals.Flat;
@@ -56,7 +55,7 @@ namespace Utopia.GUI.D3D
             _screen = new Screen();
 
             ButtonControl testBtn = new ButtonControl();
-            testBtn.Bounds = new UniRectangle(40,40,1000,400);
+            testBtn.Bounds = new UniRectangle(40,40,80,20);
             testBtn.Text="Salut";
 
             _screen.Desktop.Children.Add(testBtn);
