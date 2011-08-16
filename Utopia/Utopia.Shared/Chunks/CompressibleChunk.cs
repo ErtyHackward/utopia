@@ -26,7 +26,6 @@ namespace Utopia.Shared.Chunks
 
         public CompressibleChunk(ChunkDataProvider provider) : base(provider)
         {
-            
         }
 
         /// <summary>

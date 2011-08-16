@@ -27,16 +27,21 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public override byte[] GetBlocksBytes()
         {
+            //byte[] extractedCubes = new byte[AbstractChunk.ChunkBlocksByteLength];
+
+            //int index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
+            ////Depending of the layout of the byte !! (Order)
+            //for (int i = 0; i < AbstractChunk.ChunkBlocksByteLength; i++)
+            //{
+            //    extractedCubes[index] = ChunkCubes.Cubes[index].Id;
+            //    index++;
+            //}
+
+            //return extractedCubes;
+
             byte[] extractedCubes = new byte[AbstractChunk.ChunkBlocksByteLength];
-
             int index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
-            //Depending of the layout of the byte !! (Order)
-            for (int i = 0; i < AbstractChunk.ChunkBlocksByteLength; i++)
-            {
-                extractedCubes[index] = ChunkCubes.Cubes[index].Id;
-                index++;
-            }
-
+            Array.Copy(ChunkCubes.Cubes, index, extractedCubes, 0, AbstractChunk.ChunkBlocksByteLength);
             return extractedCubes;
         }
 
@@ -49,7 +54,7 @@ namespace Utopia.Shared.Chunks
         {
             return ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPosition.X,
                                                      inChunkPosition.Y,
-                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)].Id;
+                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)];
         }
 
         /// <summary>
@@ -61,7 +66,10 @@ namespace Utopia.Shared.Chunks
         {
             ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPosition.X,
                                                      inChunkPosition.Y,
-                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)].Id = blockValue;
+                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)] = blockValue;
+
+            //Init ChunkCubes.CubesMetaData[] ???
+            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { inChunkPosition }, Bytes = new[] { blockValue } });
         }
 
         /// <summary>
@@ -75,9 +83,10 @@ namespace Utopia.Shared.Chunks
             {
                 ChunkCubes.Cubes[ChunkCubes.Index(positions[i].X + DataProviderUser.ChunkPosition.X,
                                          positions[i].Y,
-                                         positions[i].Z + DataProviderUser.ChunkPosition.Y)].Id = values[i];
+                                         positions[i].Z + DataProviderUser.ChunkPosition.Y)] = values[i];
             }
 
+            //Init ChunkCubes.CubesMetaData[] ???
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs() { Bytes = values, Count = values.Length, Locations = positions} );
         }
 
@@ -87,13 +96,17 @@ namespace Utopia.Shared.Chunks
         /// <param name="bytes"></param>
         public override void SetBlockBytes(byte[] bytes)
         {
+            ////Depending of the layout of the byte !! (Order)
+            //for (int i = 0; i < bytes.Length; i++)
+            //{
+            //    ChunkCubes.Cubes[index].Id = bytes[i];
+            //    index++;
+            //}
+
             int index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
-            //Depending of the layout of the byte !! (Order)
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                ChunkCubes.Cubes[index].Id = bytes[i];
-                index++;
-            }
+            Array.Copy(bytes, 0, ChunkCubes.Cubes, index, AbstractChunk.ChunkBlocksByteLength);
+
+            //Init ChunkCubes.CubesMetaData[] ???
 
             OnBlockBufferChanged(new ChunkDataProviderBufferChangedEventArgs() { NewBuffer = bytes });
         }

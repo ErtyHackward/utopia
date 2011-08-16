@@ -55,17 +55,11 @@ namespace Utopia.Planets.Terran.Chunk
             ZMaxCorner = (arrayZ + 1) / 16f == (int)((arrayZ + 1) / 16f);
             ZMinCorner = (arrayZ) / 16f == (int)((arrayZ) / 16f);
 
-            //Console.WriteLine(" X => : " + (arrayX + 1) / 16f);
-            //Console.WriteLine(" <= X : " + (arrayX) / 16f);
-            //Console.WriteLine(" <= Z  : " + (arrayZ) / 16f);
-            //Console.WriteLine(" Z => : " + (arrayZ + 1) / 16f);
-
             return XMaxCorner || XMinCorner || ZMaxCorner || ZMinCorner;
         }
 
         public static bool isBorderChunk(int X, int Z, ref Range<int> worldRange)
         {
-
             if(X == worldRange.Min.X ||
                Z == worldRange.Min.Z ||
                X == worldRange.Max.X - LandscapeBuilder.Chunksize ||
