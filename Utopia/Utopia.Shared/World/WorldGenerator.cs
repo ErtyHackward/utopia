@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
@@ -83,6 +84,8 @@ namespace Utopia.Shared.World
                 // no need to perform any further actions
                 return;
             }
+
+            // todo: add initialization code of the chunks here after designing of the 
 
             foreach (var stage in Stages)
             {
