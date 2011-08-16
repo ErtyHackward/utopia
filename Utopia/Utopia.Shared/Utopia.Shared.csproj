@@ -82,7 +82,6 @@
     <Compile Include="Chunks\InsideDataProvider.cs" />
     <Compile Include="Chunks\SingleArrayChunkCube.cs" />
     <Compile Include="Chunks\SingleArrayDataProvider.cs" />
-    <Compile Include="Chunks\ServerChunk.cs" />
     <Compile Include="Chunks\VisualChunk.cs" />
     <Compile Include="Config\KeyWithModifier.cs" />
     <Compile Include="Config\XmlSettingsManager.cs" />
