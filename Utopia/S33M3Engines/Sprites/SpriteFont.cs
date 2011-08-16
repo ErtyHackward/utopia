@@ -47,6 +47,8 @@ namespace S33M3Engines.Sprites
         protected int _texHeight;
         protected float _spaceWidth;
         protected float _charHeight;
+        protected Font _font;
+        protected Graphics _fontGraphics;
         #endregion
 
         #region Public Methods
@@ -55,19 +57,19 @@ namespace S33M3Engines.Sprites
             _size = fontSize;
             TextRenderingHint hint = antiAliased ? TextRenderingHint.AntiAliasGridFit : TextRenderingHint.SystemDefault;
 
-            Font font = new Font(fontName, fontSize, fontStyle, GraphicsUnit.Pixel);
+            _font = new Font(fontName, fontSize, fontStyle, GraphicsUnit.Pixel);
 
             int size = (int)(fontSize * NumChars * 2) + 1;
 
             Bitmap sizeBitmap = new Bitmap(size, size, PixelFormat.Format32bppArgb);
 
-            Graphics sizeGraphics = Graphics.FromImage(sizeBitmap);
+            _fontGraphics = Graphics.FromImage(sizeBitmap);
 
-            sizeGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            sizeGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            sizeGraphics.TextRenderingHint = hint;
+            _fontGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            _fontGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            _fontGraphics.TextRenderingHint = hint;
 
-            _charHeight = font.Height; // *1.1f;
+            _charHeight = _font.Height; // *1.1f;
 
             char[] allChars = new char[NumChars + 1];
             for (int i = 0; i < NumChars; ++i)
@@ -78,7 +80,7 @@ namespace S33M3Engines.Sprites
 
             string allCharsString = new string(allChars);
 
-            SizeF sizeRect = sizeGraphics.MeasureString(allCharsString, font, NumChars);
+            SizeF sizeRect = _fontGraphics.MeasureString(allCharsString, _font, NumChars);
 
             int numRows = (int)(sizeRect.Width / TexWidth) + 1;
             int texHeight = (int)(numRows * _charHeight) + 1;
@@ -109,7 +111,7 @@ namespace S33M3Engines.Sprites
 
                 // Draw the character
                 drawGraphics.Clear(Color.FromArgb(0, 255, 255, 255));
-                drawGraphics.DrawString(new string(charString[0], 1), font, brush, new PointF(0, 0));
+                drawGraphics.DrawString(new string(charString[0], 1), _font, brush, new PointF(0, 0));
 
                 // Figure out the amount of blank space before the character
                 int minX = 0;
@@ -170,7 +172,7 @@ namespace S33M3Engines.Sprites
             charString[0] = ' ';
             charString[1] = (char)0;
 
-            sizeRect = drawGraphics.MeasureString(new string(charString[0], 1), font, NumChars);
+            sizeRect = drawGraphics.MeasureString(new string(charString[0], 1), _font, NumChars);
             _spaceWidth = sizeRect.Width;
 
             // Lock the bitmap for direct memory access
@@ -212,7 +214,8 @@ namespace S33M3Engines.Sprites
         {
             if (_srView != null) _srView.Dispose();
             if (SpriteTexture != null) SpriteTexture.Dispose();
-
+            if (_fontGraphics != null) _fontGraphics.Dispose();
+            if (_font != null) _font.Dispose();
         }
 
 
@@ -223,10 +226,27 @@ namespace S33M3Engines.Sprites
 
         public Vector2 MeasureString(string text)
         {
-            return new Vector2(text.Length * _size, _charHeight);
+            //return new Vector2(text.Length * _size, _charHeight);
             //HACK SpriteFont.MasureString is approximated to Vector2(text.Length * _size, _charHeight)
+            SizeF sizeRect = (_fontGraphics.MeasureString(text, _font));
+            return new Vector2(sizeRect.Width, sizeRect.Height);
         }
 
-        public float LineSpacing { get { return 4; } } //HACK SpriteFont.LineSpacing hardcoded
+        public Vector2 MeasureString2(string text)
+        {
+            System.Drawing.StringFormat format = new System.Drawing.StringFormat();
+            System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0, 0, 1000, 1000);
+            System.Drawing.CharacterRange[] ranges = { new System.Drawing.CharacterRange(0, text.Length) };
+            System.Drawing.Region[] regions = new System.Drawing.Region[1];
+
+            format.SetMeasurableCharacterRanges(ranges);
+
+            regions = _fontGraphics.MeasureCharacterRanges(text, _font, rect, format);
+            rect = regions[0].GetBounds(_fontGraphics);
+
+            return new Vector2(rect.Right + 1.0f, _charHeight);
+        }
+
+        public float LineSpacing { get { return _charHeight * 0.1f; } } //HACK SpriteFont.LineSpacing hardcoded
     }
 }

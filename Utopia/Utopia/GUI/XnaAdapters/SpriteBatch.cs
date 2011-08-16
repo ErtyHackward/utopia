@@ -35,10 +35,10 @@ namespace Nuclex.UserInterface.Visuals.Flat
         {
             SpriteTexture tex = new SpriteTexture(GraphicsDevice.device, texture2D, Vector2.Zero);
 
-            Matrix transform = Matrix.Scaling(destRect.Width / srcRect.Width, destRect.Height / srcRect.Height, 0) *
-              Matrix.Translation(destRect.Left, destRect.Top, 0);
+            Matrix transform = Matrix.Scaling((float)destRect.Width / srcRect.Width, (float)destRect.Height / srcRect.Height, 0) *
+                               Matrix.Translation(destRect.Left, destRect.Top, 0);
 
-            System.Drawing.RectangleF src = new System.Drawing.RectangleF(srcRect.Left, srcRect.Top, srcRect.Right, srcRect.Bottom);
+            System.Drawing.RectangleF src = new System.Drawing.RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height);
 
             _renderer.Render(tex, ref transform, new Color4(color.ToVector4()), src);
         }
