@@ -22,7 +22,7 @@ using System; using SharpDX;
 using System.Collections.Generic;
 using SharpDX.Direct3D11;
 
-
+using Rectangle = System.Drawing.Rectangle;
 
 
 namespace Nuclex.UserInterface.Visuals.Flat {

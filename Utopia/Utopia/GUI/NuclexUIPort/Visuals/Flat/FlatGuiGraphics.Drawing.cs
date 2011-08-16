@@ -26,14 +26,12 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 
-
-
-
-
+using Texture2D = SharpDX.Direct3D11.Texture2D;
+using Rectangle = System.Drawing.Rectangle;
 using Nuclex.Support;
 
 using Utopia.Shared.Structs;
-using SharpDX.Direct3D11;
+
 
 
 namespace Nuclex.UserInterface.Visuals.Flat {

@@ -37,6 +37,7 @@ using Nuclex.Support;
 using SharpDX.Direct3D11;
 using S33M3Engines.Sprites;
 using Utopia.Shared.Structs;
+using Utopia.GUI.D3D;
 
 namespace Nuclex.UserInterface.Visuals.Flat {
 
@@ -130,8 +131,8 @@ namespace Nuclex.UserInterface.Visuals.Flat {
             Id = id,
             Texture = bitmaps[source]
           };
-          region.SourceRegion.Left = int.Parse(x);
-          region.SourceRegion.Right = int.Parse(y);
+          region.SourceRegion.X = int.Parse(x);
+          region.SourceRegion.Y = int.Parse(y);//FIXME SIMON rectangle.right was set to value y ?
           region.SourceRegion.Width = int.Parse(w);
           region.SourceRegion.Height = int.Parse(h);
 
@@ -349,7 +350,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
 
       // Load the schema
       XmlSchema schema;
-      using (Stream schemaStream = getResourceStream("Resources.skin.xsd")) {
+      using (Stream schemaStream = getResourceStream("Utopia.Resources.skin.xsd")) {
         schema = XmlHelper.LoadSchema(schemaStream);
       }
 
@@ -421,7 +422,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     private static Stream getResourceStream(string resourceName) {
       Assembly self = Assembly.GetCallingAssembly();
       string[] resources = self.GetManifestResourceNames();
-      return self.GetManifestResourceStream(typeof(IGuiService), resourceName);
+      return self.GetManifestResourceStream(resourceName);
     }
 
     /// <summary>Converts a string in the style "#rrggbb" into a Color value</summary>

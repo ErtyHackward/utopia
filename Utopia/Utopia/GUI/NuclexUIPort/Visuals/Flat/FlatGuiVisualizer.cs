@@ -28,6 +28,7 @@ using System.Resources;
 
 
 using Nuclex.Support.Plugins;
+using S33M3Engines.D3D;
 
 namespace Nuclex.UserInterface.Visuals.Flat {
 
@@ -301,7 +302,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <param name="skinPath">
     ///   Path to the skin description this GUI visualizer will load
     /// </param>
-    public static FlatGuiVisualizer FromFile(
+    public static FlatGuiVisualizer FromFile(Game game,
       IServiceProvider serviceProvider, string skinPath
     ) {
       using(
@@ -313,7 +314,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
           serviceProvider, Path.GetDirectoryName(skinPath)
         );
         try {
-          return new FlatGuiVisualizer(contentManager, skinStream);
+          return new FlatGuiVisualizer(game,contentManager, skinStream);
         }
         catch(Exception) {
           contentManager.Dispose();
@@ -367,14 +368,14 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <param name="skinStream">
     ///   Stream from which the GUI Visualizer will read the skin description
     /// </param>
-    protected FlatGuiVisualizer(ContentManager contentManager, Stream skinStream) {
+    protected FlatGuiVisualizer(Game game, ContentManager contentManager, Stream skinStream) {
       this.employer = new ControlRendererEmployer();
       this.pluginHost = new PluginHost(this.employer);
 
       // Employ our own assembly in order to obtain the default GUI renderers
       this.pluginHost.Repository.AddAssembly(Self);
 
-      this.flatGuiGraphics = new FlatGuiGraphics(contentManager, skinStream);
+      this.flatGuiGraphics = new FlatGuiGraphics(game,contentManager, skinStream);
       this.controlStack = new Stack<ControlWithBounds>();
     }
 
