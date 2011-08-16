@@ -88,9 +88,9 @@ namespace Utopia.GUI.D3D
             _spriteRender.Begin(SpriteRenderer.FilterMode.Linear);
             _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
             
-            InjectInputToCegui();
+            //InjectInputToCegui();
 
-            RenderGui();
+           // RenderGui();
 
             _spriteRender.End();
         }

@@ -26,14 +26,16 @@ using System.Resources;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
-using SharpDX.Direct3D11;
+
 using Utopia.Shared.Structs;
 
 using Utopia.GUI.NuclexUIPort.Visuals.Flat;
 using S33M3Engines.Sprites;
+using S33M3Engines.D3D;
 
-
-
+using Texture2D = SharpDX.Direct3D11.Texture2D;
+using Rectangle = System.Drawing.Rectangle;
+using RasterizerState = SharpDX.Direct3D11.RasterizerState;
 
 
 namespace Nuclex.UserInterface.Visuals.Flat {
@@ -194,13 +196,13 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <param name="skinStream">
     ///   Stream from which the skin description will be read
     /// </param>
-    public FlatGuiGraphics(ContentManager contentManager, Stream skinStream) {
+    public FlatGuiGraphics(Game game, ContentManager contentManager, Stream skinStream) {
       IGraphicsDeviceService graphicsDeviceService =
         (IGraphicsDeviceService)contentManager.ServiceProvider.GetService(
           typeof(IGraphicsDeviceService)
         );
 
-      this.spriteBatch = new SpriteBatch(graphicsDeviceService.GraphicsDevice);
+      this.spriteBatch = new SpriteBatch(graphicsDeviceService.GraphicsDevice,game);
       this.contentManager = contentManager;
       this.openingLocator = new OpeningLocator();
       this.stringBuilder = new StringBuilder(64);

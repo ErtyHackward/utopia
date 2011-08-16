@@ -14,7 +14,7 @@ namespace Nuclex.UserInterface.Visuals.Flat
         public int X, Y, Width, Height;
     }
 
-
+    //stateless wrapper to dx11 device with nuclex xna dx9 method signatures
     public class GraphicsDevice
     {
         public Device device { get; private set; }

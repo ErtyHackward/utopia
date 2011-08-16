@@ -84,7 +84,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GUI\D3D\NuclexGUI.cs" />
+    <Compile Include="GUI\D3D\NuclexGUI.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GUI\Forms\CustControls\Config.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -98,30 +100,19 @@
     <Compile Include="GUI\NuclexUIPort\Controls\ControlEventArgs.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\DesktopControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ButtonControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ButtonControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ChoiceControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ChoiceControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\CloseWindowButtonControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\CloseWindowButtonControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\DraggableControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\DraggableControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\HorizontalSliderControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\HorizontalSliderControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IListRowLocator.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\InputControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\InputControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IOpeningLocator.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IThumbLocator.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ListControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ListControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\OptionControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\OptionControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\SliderControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\SliderControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\VerticalSliderControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\VerticalSliderControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\WindowControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\WindowControl.Test.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\IFocusable.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\IWritable.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\LabelControl.cs" />
@@ -140,6 +131,17 @@
     <Compile Include="GUI\NuclexUIPort\UniRectangle.cs" />
     <Compile Include="GUI\NuclexUIPort\UniScalar.cs" />
     <Compile Include="GUI\NuclexUIPort\UniVector.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatButtonControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatChoiceControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatHorizontalSliderControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatInputControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatLabelControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatListControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatOptionControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatPanelControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatProgressControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatVerticalSliderControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatWindowControlRenderer.cs" />
     <Compile Include="GUI\XnaAdapters\IGraphicsDeviceService.cs" />
     <Compile Include="GUI\XnaAdapters\ContentManager.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.cs" />
@@ -155,6 +157,11 @@
     <Compile Include="GUI\XnaAdapters\SpriteBatch.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\IGuiVisualizer.cs" />
     <Compile Include="GUI\XnaAdapters\SpriteSortMode.cs" />
+    <Compile Include="Resources\SuaveSkinResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SuaveSkinResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\IEntity.cs" />
@@ -237,6 +244,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Resources\SuaveSkinResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SuaveSkinResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Content\Layouts\MainMenu.layout">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -282,6 +293,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\skin.xsd" />
     <None Include="Resources\WelcomeScreen.png" />
   </ItemGroup>
   <ItemGroup>
@@ -309,6 +321,15 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Skins\Suave\Suave.skin.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Skins\Suave\SuaveSheet.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

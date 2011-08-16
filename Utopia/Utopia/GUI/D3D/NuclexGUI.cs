@@ -17,6 +17,7 @@ using Utopia.GUI.NuclexUIPort.Visuals.Flat;
 using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.InputHandler;
 using Nuclex.UserInterface.Input;
+using Nuclex.UserInterface.Controls.Desktop;
 
 namespace Utopia.GUI.D3D
 {
@@ -34,10 +35,6 @@ namespace Utopia.GUI.D3D
         SpriteTexture _crosshair;
         SpriteFont _font;
 
-        SpriteGuiRenderer _ceguiRenderer;
-       
-
-
         public GUI(Game game)
             : base(game)
         {
@@ -54,9 +51,15 @@ namespace Utopia.GUI.D3D
             graphicsDeviceService.GraphicsDevice = Game.GraphicDevice;
             serviceProvider.AddService<IGraphicsDeviceService>(graphicsDeviceService);
 
-            _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(serviceProvider,"SuaveSkin");
+            _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(Game, serviceProvider, "Resources\\Skins\\Suave\\Suave.skin.xml");
 
             _screen = new Screen();
+
+            ButtonControl testBtn = new ButtonControl();
+            testBtn.Bounds = new UniRectangle(40,40,1000,400);
+            testBtn.Text="Salut";
+
+            _screen.Desktop.Children.Add(testBtn);
         }
 
         public override void LoadContent()
@@ -82,8 +85,8 @@ namespace Utopia.GUI.D3D
 
         public override void Update(ref GameTime TimeSpent)
         {
-            
-            
+
+            InjectInput();
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
@@ -95,16 +98,15 @@ namespace Utopia.GUI.D3D
         {
             _spriteRender.Begin(SpriteRenderer.FilterMode.Linear);
             _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
-            
-            
-            RenderGui();
-
             _spriteRender.End();
+
+            // NuclexUI handles its own spritebatch, separate from the crosshair
+            RenderGui();
         }
 
         private  void RenderGui()
         {
-            CeGui.GuiSystem.Instance.RenderGui();
+            _guiVisualizer.Draw(_screen);
         }
 
       
