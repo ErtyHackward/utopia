@@ -1,6 +1,7 @@
 using System;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
+using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Chunks
 {
@@ -9,6 +10,9 @@ namespace Utopia.Shared.Chunks
     /// </summary>
     public class SingleArrayDataProvider : ChunkDataProvider
     {
+        //A reference to the class using this DataProvider.
+        public ISingleArrayDataProviderUser DataProviderUser {get; set;}
+
         #region Direct circular Array access
         /// <summary>
         /// Static class responsible to manage the Circular array of cubes.
@@ -25,7 +29,7 @@ namespace Utopia.Shared.Chunks
         {
             byte[] extractedCubes = new byte[AbstractChunk.ChunkBlocksByteLength];
 
-            int index = ChunkCubes.Index(ChunkPosition.X, 0, ChunkPosition.Y);
+            int index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
             //Depending of the layout of the byte !! (Order)
             for (int i = 0; i < AbstractChunk.ChunkBlocksByteLength; i++)
             {
@@ -43,9 +47,9 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public override byte GetBlock(Location3<int> inChunkPosition)
         {
-            return ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + ChunkPosition.X,
+            return ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPosition.X,
                                                      inChunkPosition.Y,
-                                                     inChunkPosition.Z + ChunkPosition.Y)].Id;
+                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)].Id;
         }
 
         /// <summary>
@@ -55,9 +59,9 @@ namespace Utopia.Shared.Chunks
         /// <param name="blockValue"></param>
         public override void SetBlock(Location3<int> inChunkPosition, byte blockValue)
         {
-            ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + ChunkPosition.X,
+            ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPosition.X,
                                                      inChunkPosition.Y,
-                                                     inChunkPosition.Z + ChunkPosition.Y)].Id = blockValue;
+                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)].Id = blockValue;
         }
 
         /// <summary>
@@ -69,9 +73,9 @@ namespace Utopia.Shared.Chunks
         {
             for (int i = 0; i < positions.Length; i++)
             {
-                ChunkCubes.Cubes[ChunkCubes.Index(positions[i].X + ChunkPosition.X,
+                ChunkCubes.Cubes[ChunkCubes.Index(positions[i].X + DataProviderUser.ChunkPosition.X,
                                          positions[i].Y,
-                                         positions[i].Z + ChunkPosition.Y)].Id = values[i];
+                                         positions[i].Z + DataProviderUser.ChunkPosition.Y)].Id = values[i];
             }
 
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs() { Bytes = values, Count = values.Length, Locations = positions} );
@@ -83,7 +87,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="bytes"></param>
         public override void SetBlockBytes(byte[] bytes)
         {
-            int index = ChunkCubes.Index(ChunkPosition.X, 0, ChunkPosition.Y);
+            int index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
             //Depending of the layout of the byte !! (Order)
             for (int i = 0; i < bytes.Length; i++)
             {

@@ -32,11 +32,6 @@ namespace Utopia.Shared.Chunks
         #endregion
         
         #region Properties
-        /// <summary>
-        /// Gets or sets current chunk position
-        /// </summary>
-        public IntVector2 Position { get; set; }
-
         private ChunkDataProvider _blockDataProvider;
 
         protected byte[] Md5HashData;
@@ -87,8 +82,6 @@ namespace Utopia.Shared.Chunks
         protected AbstractChunk(ChunkDataProvider blockDataProvider)
         {
             _blockDataProvider = blockDataProvider;
-            _blockDataProvider.ChunkPosition = Position; //Pass the chunk world position to the data provider;
-
             _blockDataProvider.BlockBufferChanged += BlockBufferChanged;
             _blockDataProvider.BlockDataChanged += BlockDataChanged;
 

@@ -1,5 +1,6 @@
 using System;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Server.Structs
 {
@@ -12,6 +13,11 @@ namespace Utopia.Server.Structs
         /// Indicates that we no need to send bytes to client, it can obtain in using generator
         /// </summary>
         public bool PureGenerated { get; set; }
+
+        /// </summary>
+        /// Gets or sets current chunk position
+        /// </summary>
+        public IntVector2 Position { get; set; }
 
         /// <summary>
         /// DateTime stamp of the chunk. Determines whether the chunk can be unloaded from memory
