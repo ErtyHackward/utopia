@@ -54,11 +54,16 @@ namespace Utopia.GUI.D3D
 
             _screen = new Screen();
 
+            WindowControl window = new WindowControl();
+            window.Bounds = new UniRectangle(40, 40, 300, 300);
+            window.Title = "NuclexUI Testing";
+            _screen.Desktop.Children.Add(window);
+
             ButtonControl testBtn = new ButtonControl();
             testBtn.Bounds = new UniRectangle(40,40,80,20);
-            testBtn.Text="H";
+            testBtn.Text="Hello !";
 
-            _screen.Desktop.Children.Add(testBtn);
+            window.Children.Add(testBtn);
         }
 
         public override void LoadContent()
@@ -70,10 +75,7 @@ namespace Utopia.GUI.D3D
 
             _font = new SpriteFont();
             _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, Game.GraphicDevice);
-
-          
         }
-
 
         public override void UnloadContent()
         {
