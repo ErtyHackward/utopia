@@ -25,7 +25,7 @@ namespace Utopia.GUI.D3D
 
         /// <summary>Draws the GUI</summary>
         private Nuclex.UserInterface.Visuals.IGuiVisualizer _guiVisualizer;
-        
+
         /// <summary>The GUI screen representing the desktop</summary>
         private Screen _screen;
 
@@ -44,7 +44,7 @@ namespace Utopia.GUI.D3D
             //all this crap is to feed the GraphicsDevice to contentManager + FlatGuiVisualizer
             // this shows the superiority of clean explicit dependency injection vs service locator anti pattern
             //  this is a good explanation of the problem :  http://www.beefycode.com/post/Why-I-Hate-IServiceProvider.aspx
-          
+
             ServiceProvider serviceProvider = new ServiceProvider();
             GraphicsDeviceService graphicsDeviceService = new GraphicsDeviceService();
             graphicsDeviceService.GraphicsDevice = Game.GraphicDevice;
@@ -60,10 +60,15 @@ namespace Utopia.GUI.D3D
             _screen.Desktop.Children.Add(window);
 
             ButtonControl testBtn = new ButtonControl();
-            testBtn.Bounds = new UniRectangle(40,40,80,20);
-            testBtn.Text="Hello !";
+            testBtn.Bounds = new UniRectangle(40, 40, 80, 20);
+            testBtn.Text = "Hello !";
+
+            ButtonControl testBtn2 = new ButtonControl();
+            testBtn2.Bounds = new UniRectangle(130, 40, 80, 20);
+            testBtn2.Text = "goodBye !";
 
             window.Children.Add(testBtn);
+            window.Children.Add(testBtn2);
         }
 
         public override void LoadContent()
@@ -86,7 +91,7 @@ namespace Utopia.GUI.D3D
 
         public override void Update(ref GameTime TimeSpent)
         {
-            InjectInput();
+            InjectInput(); 
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
@@ -104,34 +109,29 @@ namespace Utopia.GUI.D3D
             RenderGui();
         }
 
-        private  void RenderGui()
+        private void RenderGui()
         {
+          
             _guiVisualizer.Draw(_screen);
         }
 
-      
+
+        MouseState prevMouseState;
+
         private void InjectInput()
-        {  
-            MouseState mouseState = Game.InputHandler.CurMouseState;
-            
-            MouseState prevMouseState = Game.InputHandler.PrevMouseState;
+        {
+            MouseState mouseState = Mouse.GetState();
 
-            MouseButtons pressedButtons = 0;
-            MouseButtons releasedButtons = 0;
 
-            if (mouseState.LeftButton.HasFlag(ButtonState.Pressed))
-                pressedButtons |= MouseButtons.Left;
-            else
-                releasedButtons |= MouseButtons.Left;
+             if (prevMouseState.LeftButton==ButtonState.Released && mouseState.LeftButton==ButtonState.Pressed)
+                _screen.InjectMousePress(MouseButtons.Left);
 
-            if (mouseState.RightButton.HasFlag(ButtonState.Pressed)) 
-                pressedButtons |= MouseButtons.Right;
-            else
-                releasedButtons |= MouseButtons.Right;
+             if (prevMouseState.LeftButton==ButtonState.Pressed && mouseState.LeftButton==ButtonState.Released)
+                _screen.InjectMouseRelease(MouseButtons.Left);
 
-            _screen.InjectMouseMove(mouseState.X,mouseState.Y);
-            _screen.InjectMousePress(pressedButtons);
-            _screen.InjectMouseRelease(releasedButtons);
+            _screen.InjectMouseMove(mouseState.X, mouseState.Y);
+
+            prevMouseState = Mouse.GetState(); 
         }
     }
 }
