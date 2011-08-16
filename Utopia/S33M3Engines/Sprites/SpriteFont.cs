@@ -69,7 +69,7 @@ namespace S33M3Engines.Sprites
             _fontGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             _fontGraphics.TextRenderingHint = hint;
 
-            _charHeight = _font.Height; // *1.1f;
+            _charHeight = _font.Height;// * 1.1f;
 
             char[] allChars = new char[NumChars + 1];
             for (int i = 0; i < NumChars; ++i)
@@ -230,6 +230,13 @@ namespace S33M3Engines.Sprites
             //HACK SpriteFont.MasureString is approximated to Vector2(text.Length * _size, _charHeight)
             SizeF sizeRect = (_fontGraphics.MeasureString(text, _font));
             return new Vector2(sizeRect.Width, sizeRect.Height);
+        }
+
+        //TODO Correct MeasureString methods
+        public Vector2 MeasureString3(string text)
+        {
+            //In fact we should use the array CharDescriptors[], where the size of each letter is referenced.
+            return default(Vector2);
         }
 
         public Vector2 MeasureString2(string text)

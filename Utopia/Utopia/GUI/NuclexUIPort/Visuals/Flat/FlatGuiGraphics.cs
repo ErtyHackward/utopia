@@ -268,7 +268,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         }
         case Frame.VerticalTextAlignment.Center:
         default: {
-          y = (bounds.Height - anchor.Font.LineSpacing) / 2.0f + bounds.Top;
+          y = (bounds.Height - anchor.Font.CharHeight) / 2.0f + bounds.Top;
           break;
         }
       }

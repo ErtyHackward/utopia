@@ -48,7 +48,6 @@ namespace Utopia
         //Debug Tool
         private DebugInfo _debugInfo;
 
-       
 #if DEBUG
         private Axis _axis;
 #endif
