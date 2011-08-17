@@ -57,40 +57,40 @@ namespace Utopia.GUI.D3D
 
             _screen = new Screen();
 
-            //PlayerInventory inventory = new PlayerInventory(); //TODO this would move to player class 
-            //Pickaxe tool = new Pickaxe();
-            //tool.AllowedSlots = InventorySlot.Bags;
-            //tool.Icon = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\pickaxe-icon.png");
+            PlayerInventory inventory = new PlayerInventory(); //TODO this would move to player class 
+            Pickaxe tool = new Pickaxe();
+            tool.AllowedSlots = InventorySlot.Bags;
+            tool.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\pickaxe-icon.png", new Vector2(0, 0)); 
 
-            //Armor ring = new Armor();
-            //ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
-            //ring.Icon = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\ring-icon.png");
+            Armor ring = new Armor();
+            ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
+            ring.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\ring-icon.png", new Vector2(0, 0)); 
 
 
-            //inventory.bag.Items = new List<Item>();
-            //inventory.bag.Items.Add(tool);
-            //inventory.bag.Items.Add(ring);
+            inventory.bag.Items = new List<Item>();
+            inventory.bag.Items.Add(tool);
+            inventory.bag.Items.Add(ring);
 
-            //Texture2D backGround = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\charactersheet.png");
-            //InventoryWindow invWin = new InventoryWindow(inventory, backGround);
+            SpriteTexture backGround = new SpriteTexture(Game.GraphicDevice, @"Textures\charactersheet.png", new Vector2(0, 0));
+            InventoryWindow invWin = new InventoryWindow(inventory, backGround);
 
-            //_screen.Desktop.Children.Add(invWin);
+            _screen.Desktop.Children.Add(invWin);
 
-            WindowControl window = new WindowControl();
-            window.Bounds = new UniRectangle(40, 40, 300, 300);
-            window.Title = "NuclexUI Testing";
-            _screen.Desktop.Children.Add(window);
+            //WindowControl window = new WindowControl();
+            //window.Bounds = new UniRectangle(40, 40, 300, 300);
+            //window.Title = "NuclexUI Testing";
+            //_screen.Desktop.Children.Add(window);
 
-            ButtonControl testBtn = new ButtonControl();
-            testBtn.Bounds = new UniRectangle(40, 40, 80, 20);
-            testBtn.Text = "Hello !";
+            //ButtonControl testBtn = new ButtonControl();
+            //testBtn.Bounds = new UniRectangle(40, 40, 80, 20);
+            //testBtn.Text = "Hello !";
 
-            ButtonControl testBtn2 = new ButtonControl();
-            testBtn2.Bounds = new UniRectangle(130, 40, 80, 20);
-            testBtn2.Text = "goodBye !";
+            //ButtonControl testBtn2 = new ButtonControl();
+            //testBtn2.Bounds = new UniRectangle(130, 40, 80, 20);
+            //testBtn2.Text = "goodBye !";
 
-            window.Children.Add(testBtn);
-            window.Children.Add(testBtn2);
+            //window.Children.Add(testBtn);
+            //window.Children.Add(testBtn2);
         }
 
         public override void LoadContent()
