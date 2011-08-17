@@ -384,7 +384,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         string contentPath = element.Attribute("contentPath").Value;
 
         SpriteFont spriteFont = new SpriteFont();
-        spriteFont.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true,this.spriteBatch.GraphicsDevice.device);
+        spriteFont.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true , _game.GraphicDevice);
         this.fonts.Add(fontName, spriteFont);
       }
 

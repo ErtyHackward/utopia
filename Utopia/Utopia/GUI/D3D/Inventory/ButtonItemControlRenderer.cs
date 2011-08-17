@@ -74,10 +74,10 @@ namespace Utopia.GUI.D3D.Inventory
                     float w = controlBounds.Width/2;
                     float h = controlBounds.Height/2;
 
-                    RectangleF leftBounds = new RectangleF(controlBounds.X,controlBounds.Y,w,h);
+                    RectangleF leftBounds = new RectangleF(controlBounds.Left,controlBounds.Top,w,h);
                     drawIcon(control.Item, graphics, leftBounds);
                    
-                    RectangleF rBounds = new RectangleF(controlBounds.X + w,controlBounds.Y+h,w,h);
+                    RectangleF rBounds = new RectangleF(controlBounds.Left + w,controlBounds.Top+h,w,h);
                     drawIcon(control.RightItem, graphics, rBounds);
                 }
                 else

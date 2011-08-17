@@ -136,12 +136,12 @@
     <Compile Include="GUI\NuclexUIPort\Input\IInputCapturer.cs" />
     <Compile Include="GUI\NuclexUIPort\Input\IInputReceiver.cs" />
     <Compile Include="GUI\NuclexUIPort\Input\MouseButtons.cs" />
-    <Compile Include="GUI\NuclexUIPort\RectangleF.cs" />
+    <Compile Include="GUI\NuclexUIPort\Struct\RectangleF.cs" />
     <Compile Include="GUI\NuclexUIPort\Screen.cs" />
     <Compile Include="GUI\NuclexUIPort\UniAssertHelper.cs" />
-    <Compile Include="GUI\NuclexUIPort\UniRectangle.cs" />
-    <Compile Include="GUI\NuclexUIPort\UniScalar.cs" />
-    <Compile Include="GUI\NuclexUIPort\UniVector.cs" />
+    <Compile Include="GUI\NuclexUIPort\Struct\UniRectangle.cs" />
+    <Compile Include="GUI\NuclexUIPort\Struct\UniScalar.cs" />
+    <Compile Include="GUI\NuclexUIPort\Struct\UniVector.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatButtonControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatChoiceControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatHorizontalSliderControlRenderer.cs" />
