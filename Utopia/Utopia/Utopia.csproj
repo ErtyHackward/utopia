@@ -84,6 +84,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GUI\D3D\Inventory.cs" />
+    <Compile Include="GUI\D3D\Inventory\ButtonItemControl.cs" />
+    <Compile Include="GUI\D3D\Inventory\ButtonItemControlRenderer.cs" />
+    <Compile Include="GUI\D3D\Inventory\ContainerControl.cs" />
+    <Compile Include="GUI\D3D\Inventory\ContainerRenderer.cs" />
+    <Compile Include="GUI\D3D\Inventory\DraggableItemControl.cs" />
+    <Compile Include="GUI\D3D\Inventory\DraggableItemRenderer.cs" />
+    <Compile Include="GUI\D3D\Inventory\IDropTarget.cs" />
+    <Compile Include="GUI\D3D\Inventory\InventoryCell.cs" />
+    <Compile Include="GUI\D3D\Inventory\InventoryCellRenderer.cs" />
+    <Compile Include="GUI\D3D\Inventory\InventoryWindow.cs" />
     <Compile Include="GUI\D3D\NuclexGUI.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -222,8 +233,6 @@
     <Compile Include="Planets\Weather\Items\Clouds.cs" />
     <Compile Include="Planets\Weather\Items\Wind.cs" />
     <Compile Include="Planets\Weather\WeatherManager.cs" />
-    <Compile Include="Worlds\Chunks\VisualChunk.cs" />
-    <Compile Include="Worlds\World.cs" />
     <EmbeddedResource Include="GUI\Forms\CustControls\Config.resx">
       <DependentUpon>Config.cs</DependentUpon>
     </EmbeddedResource>
@@ -291,7 +300,6 @@
     <None Include="Resources\WelcomeScreen.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="GUI\cegui\demo\" />
     <Folder Include="Space\" />
   </ItemGroup>
   <ItemGroup>
