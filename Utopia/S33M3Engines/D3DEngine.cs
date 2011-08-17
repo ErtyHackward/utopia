@@ -147,6 +147,12 @@ namespace S33M3Engines
             //Texture2D.SaveTextureToFile(Context, _staggingBackBufferTexture, ImageFileFormat.Png, @"e:\Img.png");
         }
 
+        public SharpDX.Rectangle ScissorRectangle
+        {
+            get { return Context.Rasterizer.GetScissorRectangles()[0]; }
+            set { Context.Rasterizer.SetScissorRectangles(new SharpDX.Rectangle[] { value }); }
+        }
+
         void _renderForm_ResizeBegin(object sender, EventArgs e)
         {
             _isResizing = true;
