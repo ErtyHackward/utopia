@@ -12,6 +12,7 @@ using S33M3Engines.StatesManager;
 using SharpDX.Direct3D;
 using RectangleF = System.Drawing.RectangleF;
 using S33M3Engines.Shared.Sprites;
+using Utopia.Shared.Structs;
 
 namespace S33M3Engines.Sprites
 {
@@ -142,6 +143,22 @@ namespace S33M3Engines.Sprites
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
         }
 
+        public void Render(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color)
+        {
+            Matrix transform = Matrix.Scaling((float)destRect.Width / srcRect.Width, (float)destRect.Height / srcRect.Height, 0) *
+                               Matrix.Translation(destRect.Left, destRect.Top, 0);
+
+            System.Drawing.RectangleF src = new System.Drawing.RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height);
+
+            Render(spriteTexture, ref transform, new Color4(color.ToVector4()), src);
+        }
+
+        public void Render(SpriteTexture texture2D, Rectangle destRect, Color color)
+        {
+            Matrix transform = Matrix.Translation(destRect.Left, destRect.Top, 0);
+            Render(texture2D, ref transform, new Color4(color.ToVector4()));
+        }
+
         public void Render(SpriteTexture spriteTexture, ref Matrix transform, Color4 color,  RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true)
         {
             _vBuffer.SetToDevice(0); // Set the Vertex buffer
@@ -218,6 +235,12 @@ namespace S33M3Engines.Sprites
             if (numSprites > numSpritesToDraw)
                 RenderBatch(spriteTexture, drawData, numSprites - numSpritesToDraw);
 
+        }
+
+        public void RenderText(SpriteFont spriteFont, string text, Vector2 pos, Color color)
+        {
+            Matrix transform = Matrix.Translation(pos.X, pos.Y, 0);
+            RenderText(spriteFont, text, transform, new Color4(color.ToVector4()));//TODO color vs color4
         }
 
         public void RenderText(SpriteFont font, string text, Matrix transform, Color4 color)

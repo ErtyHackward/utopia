@@ -20,6 +20,7 @@ License along with this library
 
 using System;
 using System.Collections.Generic;
+using SharpDX;
 
 
 
