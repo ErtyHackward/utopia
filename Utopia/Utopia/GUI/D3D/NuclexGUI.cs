@@ -11,8 +11,6 @@ using SharpDX;
 using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.Struct;
 using Nuclex.UserInterface;
-using Utopia.GUI.XnaAdapters;
-using Utopia.GUI.NuclexUIPort.Visuals.Flat;
 using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.InputHandler;
 using Nuclex.UserInterface.Input;
@@ -45,15 +43,7 @@ namespace Utopia.GUI.D3D
 
         public override void Initialize()
         {
-            //all this crap is to feed the GraphicsDevice to contentManager + FlatGuiVisualizer
-            // this shows the superiority of clean explicit dependency injection vs service locator anti pattern
-            //  this is a good explanation of the problem :  http://www.beefycode.com/post/Why-I-Hate-IServiceProvider.aspx
-            ServiceProvider serviceProvider = new ServiceProvider();
-            GraphicsDeviceService graphicsDeviceService = new GraphicsDeviceService();
-            graphicsDeviceService.GraphicsDevice = Game.GraphicDevice;
-            serviceProvider.AddService<IGraphicsDeviceService>(graphicsDeviceService);
-
-            _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(Game, serviceProvider, "Resources\\Skins\\Suave\\Suave.skin.xml");
+            _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(Game, "Resources\\Skins\\Suave\\Suave.skin.xml");
 
             _screen = new Screen();
 
