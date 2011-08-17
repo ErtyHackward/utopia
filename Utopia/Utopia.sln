@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utopia.Shared", "Utopia.Sha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utopia.Server", "Utopia.Server\Utopia.Server.csproj", "{0DE240B7-B340-43AD-B663-65CFA43351ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockEngine", "..\..\tech_priv_default\TechCraft\Engine\Engine\BlockEngine.csproj", "{EC9E9D6B-1532-4A3B-84ED-C8494274348D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
