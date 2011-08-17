@@ -33,6 +33,10 @@ namespace S33M3Engines.Sprites
 
         private VertexSpriteInstanced[] _textDrawData = new VertexSpriteInstanced[MaxBatchSize];
 
+        private int _accumulatedSprites;
+        private SpriteTexture _currentSpriteTexture;
+        private VertexSpriteInstanced[] _spriteAccumulator = new VertexSpriteInstanced[MaxBatchSize];
+
         public enum FilterMode
         {
             DontSet = 0,
@@ -133,6 +137,8 @@ namespace S33M3Engines.Sprites
 
         public void Begin(FilterMode filterMode = FilterMode.DontSet)
         {
+            _accumulatedSprites = 0;
+            _currentSpriteTexture = null;
 
             //Send index buffer to Device
             _iBuffer.SetToDevice(0);
@@ -153,10 +159,10 @@ namespace S33M3Engines.Sprites
             Render(spriteTexture, ref transform, new Color4(color.ToVector4()), src);
         }
 
-        public void Render(SpriteTexture texture2D, Rectangle destRect, Color color)
+        public void Render(SpriteTexture spriteTexture, Rectangle destRect, Color color)
         {
             Matrix transform = Matrix.Translation(destRect.Left, destRect.Top, 0);
-            Render(texture2D, ref transform, new Color4(color.ToVector4()));
+            Render(spriteTexture, ref transform, new Color4(color.ToVector4()));
         }
 
         public void Render(SpriteTexture spriteTexture, ref Matrix transform, Color4 color,  RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true)
@@ -194,11 +200,60 @@ namespace S33M3Engines.Sprites
             _game.D3dEngine.Context.DrawIndexed(6, 0, 0);
         }
 
+
+        /// <summary>
+        /// Will be used as an accumulator, will create a draw call at texture change
+        /// </summary>
+        /// <param name="spriteTexture"></param>
+        /// <param name="numSprites"></param>
+        /// <param name="sourceRectInTextCoord"></param>
+        public void RenderBatch(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color, bool sourceRectInTextCoord = true)
+        {
+            Matrix transform = Matrix.Scaling((float)destRect.Width / srcRect.Width, (float)destRect.Height / srcRect.Height, 0) *
+                               Matrix.Translation(destRect.Left, destRect.Top, 0);
+
+            VertexSpriteInstanced newSpriteInstace = new VertexSpriteInstanced()
+                                        {
+                                            Tranform = transform,
+                                            SourceRect = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height),
+                                            Color = new Color4(color.ToVector4())
+                                        };
+
+            //Texture change ==> Flush the accomulator by creation a batched draw call
+            if(_currentSpriteTexture != null && spriteTexture.GetHashCode() != _currentSpriteTexture.GetHashCode())
+            {
+                flushAccumulatedSprite();
+            }
+
+            _currentSpriteTexture = spriteTexture;
+            _spriteAccumulator[_accumulatedSprites] = newSpriteInstace;
+            _accumulatedSprites++;
+
+        }
+
+        private void flushAccumulatedSprite()
+        {
+            if (_accumulatedSprites > 0)
+            {
+                RenderBatch(_currentSpriteTexture, _spriteAccumulator, _accumulatedSprites);
+            }
+            _accumulatedSprites = 0;
+        }
+
+
+
         public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, bool sourceRectInTextCoord = true)
         {
             RenderBatch(spriteTexture, drawData, drawData.Length, sourceRectInTextCoord);
         }
 
+        /// <summary>
+        /// Will issue a draw call with batched drawData
+        /// </summary>
+        /// <param name="spriteTexture"></param>
+        /// <param name="drawData"></param>
+        /// <param name="numSprites"></param>
+        /// <param name="sourceRectInTextCoord"></param>
         public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, int numSprites, bool sourceRectInTextCoord = true)
         {
             //Set Par Batch Constant
@@ -245,6 +300,8 @@ namespace S33M3Engines.Sprites
 
         public void RenderText(SpriteFont font, string text, Matrix transform, Color4 color)
         {
+            flushAccumulatedSprite();
+
             int length = text.Length;
             Matrix textTransform = Matrix.Identity;
 
@@ -285,6 +342,7 @@ namespace S33M3Engines.Sprites
 
         public void End()
         {
+            flushAccumulatedSprite();
         }
 
         public void Dispose()

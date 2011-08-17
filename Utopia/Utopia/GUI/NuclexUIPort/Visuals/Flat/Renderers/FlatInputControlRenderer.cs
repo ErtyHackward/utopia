@@ -49,47 +49,52 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
       // Draw the control's frame and background
       graphics.DrawElement(Style, controlBounds);
 
-      using(graphics.SetClipRegion(controlBounds)) {
-        string text = control.Text ?? string.Empty;
+      //using (graphics.SetClipRegion(controlBounds))
+      //{
+          string text = control.Text ?? string.Empty;
 
-        // Amount by which the text will be moved within the input box in
-        // order to keep the caret in view even when the text is wider than
-        // the input box.
-        float left = 0;
+          // Amount by which the text will be moved within the input box in
+          // order to keep the caret in view even when the text is wider than
+          // the input box.
+          float left = 0;
 
-        // Only scroll the text within the input box when it has the input
-        // focus and the caret is being shown.
-        if(control.HasFocus) {
+          // Only scroll the text within the input box when it has the input
+          // focus and the caret is being shown.
+          if (control.HasFocus)
+          {
 
-          // Find out where the cursor is from the left end of the text
-          RectangleF stringSize = graphics.MeasureString(
-            Style, controlBounds, text.Substring(0, control.CaretPosition)
-          );
+              // Find out where the cursor is from the left end of the text
+              RectangleF stringSize = graphics.MeasureString(
+                Style, controlBounds, text.Substring(0, control.CaretPosition)
+              );
 
-          // TODO: Renderer should query the size of the control's frame
-          //   Otherwise text will be visible over the frame, which might look bad
-          //   if a skin uses a frame wider than 2 pixels or in a different color
-          //   than the text.
-          while(stringSize.Width + left > controlBounds.Width) {
-            left -= controlBounds.Width / 10.0f;
+              // TODO: Renderer should query the size of the control's frame
+              //   Otherwise text will be visible over the frame, which might look bad
+              //   if a skin uses a frame wider than 2 pixels or in a different color
+              //   than the text.
+              while (stringSize.Width + left > controlBounds.Width)
+              {
+                  left -= controlBounds.Width / 10.0f;
+              }
+
           }
-          
-        }
 
-        // Draw the text into the input box
-        controlBounds.X += left;
-        graphics.DrawString(Style, controlBounds, control.Text);
+          // Draw the text into the input box
+          controlBounds.X += left;
+          graphics.DrawString(Style, controlBounds, control.Text);
 
-        // If the input box is in focus, also draw the caret so the user knows
-        // where characters will be inserted into the text.
-        if(control.HasFocus) {
-          if(control.MillisecondsSinceLastCaretMovement % 500 < 250) {
-            graphics.DrawCaret(
-              "input.normal", controlBounds, control.Text, control.CaretPosition
-            );
+          // If the input box is in focus, also draw the caret so the user knows
+          // where characters will be inserted into the text.
+          if (control.HasFocus)
+          {
+              if (control.MillisecondsSinceLastCaretMovement % 500 < 250)
+              {
+                  graphics.DrawCaret(
+                    "input.normal", controlBounds, control.Text, control.CaretPosition
+                  );
+              }
           }
-        }
-      }
+      //}
 
       // Let the control know that we can provide it with additional informations
       // about how its text is being rendered
