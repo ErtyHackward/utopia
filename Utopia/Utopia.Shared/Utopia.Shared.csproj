@@ -92,9 +92,9 @@
     <Compile Include="Chunks\InsideDataProvider.cs" />
     <Compile Include="Chunks\SingleArrayChunkCube.cs" />
     <Compile Include="Chunks\SingleArrayDataProvider.cs" />
-    <Compile Include="Chunks\VisualChunk.cs" />
     <Compile Include="Config\KeyWithModifier.cs" />
     <Compile Include="Config\XmlSettingsManager.cs" />
+    <Compile Include="Interfaces\ISingleArrayDataProviderUser.cs" />
     <Compile Include="Interfaces\IWorldProcessor.cs" />
     <Compile Include="Landscaping\CubeIDs.cs" />
     <Compile Include="Landscaping\FlatLandscape.cs" />
