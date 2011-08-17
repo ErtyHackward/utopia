@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -26,16 +27,14 @@ namespace Utopia.Shared.Chunks.Entities
         /// <returns></returns>
         public Entity CreateEntity(EntityClassId classId)
         {
-            // todo: implement this method correctly
+            // todo: implement this method correctly, create appropriate class here
 
             switch (classId)
             {
-                case EntityClassId.None:
-                    break;
+                case EntityClassId.None: throw new InvalidOperationException("Unable to create entity on none class.");
                 case EntityClassId.Sword:
                     break;
-                case EntityClassId.PickAxe:
-                    break;
+                case EntityClassId.PickAxe: return new Pickaxe();
                 case EntityClassId.Shovel:
                     break;
                 case EntityClassId.Hoe:
