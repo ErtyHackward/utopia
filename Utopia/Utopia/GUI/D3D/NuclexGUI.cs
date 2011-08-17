@@ -17,6 +17,9 @@ using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.InputHandler;
 using Nuclex.UserInterface.Input;
 using Nuclex.UserInterface.Controls.Desktop;
+using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Chunks.Entities.Inventory.Tools;
+using Utopia.GUI.D3D.Inventory;
 
 namespace Utopia.GUI.D3D
 {
@@ -44,17 +47,37 @@ namespace Utopia.GUI.D3D
             //all this crap is to feed the GraphicsDevice to contentManager + FlatGuiVisualizer
             // this shows the superiority of clean explicit dependency injection vs service locator anti pattern
             //  this is a good explanation of the problem :  http://www.beefycode.com/post/Why-I-Hate-IServiceProvider.aspx
-
             ServiceProvider serviceProvider = new ServiceProvider();
             GraphicsDeviceService graphicsDeviceService = new GraphicsDeviceService();
             graphicsDeviceService.GraphicsDevice = Game.GraphicDevice;
             serviceProvider.AddService<IGraphicsDeviceService>(graphicsDeviceService);
 
+
             _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(Game, serviceProvider, "Resources\\Skins\\Suave\\Suave.skin.xml");
 
             _screen = new Screen();
 
-            WindowControl window = new WindowControl();
+            PlayerInventory inventory = new PlayerInventory(); //TODO this would move to player class 
+            Pickaxe tool = new Pickaxe();
+            tool.AllowedSlots = InventorySlot.Bags;
+            tool.Icon = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\pickaxe-icon.png");
+            
+            Armor ring = new Armor();
+            ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
+            ring.Icon = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\ring-icon.png");
+            
+
+            inventory.bag.Items = new List<Item>();
+            inventory.bag.Items.Add(tool);
+            inventory.bag.Items.Add(ring);
+
+
+            Texture2D backGround = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\charactersheet.png");
+            InventoryWindow invWin = new InventoryWindow(inventory,backGround);
+
+            _screen.Desktop.Children.Add(invWin);
+
+           /* WindowControl window = new WindowControl();
             window.Bounds = new UniRectangle(40, 40, 300, 300);
             window.Title = "NuclexUI Testing";
             _screen.Desktop.Children.Add(window);
@@ -68,7 +91,7 @@ namespace Utopia.GUI.D3D
             testBtn2.Text = "goodBye !";
 
             window.Children.Add(testBtn);
-            window.Children.Add(testBtn2);
+            window.Children.Add(testBtn2);*/
         }
 
         public override void LoadContent()

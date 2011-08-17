@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Utopia.Shared.Chunks.Entities.Inventory;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -16,6 +17,6 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Gets or sets a list of contained items
         /// </summary>
-        List<Entity> Items { get; set; }
+        List<Item> Items { get; set; }
     }
 }

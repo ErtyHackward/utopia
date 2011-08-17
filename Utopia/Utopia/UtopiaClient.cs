@@ -24,7 +24,11 @@ namespace Utopia
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             LoadClientsSettings();
+#if STEALTH
+            StartDirectXWindow();
+#else 
             ShowWelcomeScreen(true);
+#endif      
         }
         #endregion
 

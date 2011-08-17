@@ -47,13 +47,20 @@ namespace Utopia
 
         //Debug Tool
         private DebugInfo _debugInfo;
+#if STEALTH
+        const int W = 48;
+        const int H = 32;
+#else
+        const int W = 1024;
+        const int H = 600;
+#endif
 
 #if DEBUG
         private Axis _axis;
 #endif
 
         public UtopiaRender()
-            :base(new System.Drawing.Size(1024,600))                    // Windowed screen size resolution
+            :base(new System.Drawing.Size(W,H))                    // Windowed screen size resolution
         {
              S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
              S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
