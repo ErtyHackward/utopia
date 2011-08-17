@@ -1,12 +1,13 @@
 ﻿using Utopia.Shared.Structs;
 using Utopia.Shared.World;
+using System;
 
 namespace Utopia.Shared.Interfaces
 {
     /// <summary>
     /// Represents object that can do world generation related operations
     /// </summary>
-    public interface IWorldProcessor
+    public interface IWorldProcessor : IDisposable
     {
         /// <summary>
         /// Gets overall operation progress [0; 100]

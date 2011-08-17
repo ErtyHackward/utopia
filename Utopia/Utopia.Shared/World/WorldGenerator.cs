@@ -116,11 +116,23 @@ namespace Utopia.Shared.World
                 return Chunks[position];
             }
 
-            // todo: need to generate bigger range
+            // todo: need to generate a bigger range
             Generate(new Range2 { Min = position, Max = position + 1 });
             return Chunks[position];
             
 
+        }
+
+        /// <summary>
+        /// Releases all resources
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (var stage in Stages)
+            {
+                stage.Dispose();
+            }
+            Chunks.Clear();
         }
     }
 }
