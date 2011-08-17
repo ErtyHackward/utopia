@@ -66,8 +66,8 @@ namespace Nuclex.UserInterface.Controls.Desktop {
         if(thumbRegion.Contains(this.pickupX, this.pickupY)) {
           this.pressedDown = true;
           
-          this.pickupX -= thumbRegion.X;
-          this.pickupY -= thumbRegion.Y;
+          this.pickupX -= thumbRegion.Left;
+          this.pickupY -= thumbRegion.Top;
         }
       }
     }

@@ -20,6 +20,7 @@ License along with this library
 
 using System;
 using System.Collections.Generic;
+using SharpDX;
 
 
 
@@ -47,7 +48,7 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
       graphics.DrawElement("rail.horizontal", controlBounds);
 
       RectangleF thumbBounds = new RectangleF(
-        controlBounds.X + thumbX, controlBounds.Y, thumbWidth, controlBounds.Height
+        controlBounds.Left + thumbX, controlBounds.Top, thumbWidth, controlBounds.Height
       );
 
       if(control.ThumbDepressed) {

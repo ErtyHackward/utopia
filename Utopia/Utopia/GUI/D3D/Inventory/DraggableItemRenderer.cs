@@ -32,7 +32,6 @@ namespace Utopia.GUI.D3D.Inventory
         {
             RectangleF controlBounds = control.GetAbsoluteBounds();
 
-
            // graphics.DrawElement("button.normal", controlBounds);
 
             if (control.Item != null)
