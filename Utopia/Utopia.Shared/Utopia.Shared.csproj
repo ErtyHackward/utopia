@@ -51,6 +51,9 @@
     <Reference Include="SharpDX">
       <HintPath>..\Library\SharpDX\SharpDX.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>..\Library\SharpDX\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX.Error">
       <HintPath>..\Library\SharpDX\SharpDX.Error.dll</HintPath>
     </Reference>
@@ -75,9 +78,16 @@
     <Compile Include="Chunks\Entities\EntityFactory.cs" />
     <Compile Include="Chunks\Entities\EntityClassId.cs" />
     <Compile Include="Chunks\Entities\EntityType.cs" />
-    <Compile Include="Chunks\Entities\Concrete\WeaponEntity.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Armor.cs" />
+    <Compile Include="Chunks\Entities\Inventory\InventorySlot.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Item.cs" />
     <Compile Include="Chunks\Entities\Concrete\VoxelEntity.cs" />
     <Compile Include="Chunks\Entities\IContainerEntity.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tool.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tools\BlockAdder.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tools\BlockRemover.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tools\Pickaxe.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Weapon.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
     <Compile Include="Chunks\SingleArrayChunkCube.cs" />
@@ -138,6 +148,7 @@
   <ItemGroup>
     <None Include="ChunkHierarchy.cd" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

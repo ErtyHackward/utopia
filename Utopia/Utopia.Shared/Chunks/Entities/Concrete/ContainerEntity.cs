@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Utopia.Shared.Chunks.Entities.Inventory;
 
 namespace Utopia.Shared.Chunks.Entities.Concrete
 {
@@ -7,6 +8,11 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
     /// </summary>
     public class ContainerEntity : VoxelEntity, IContainerEntity
     {
+
+        public ContainerEntity() {
+            Capacity = 25;
+        } 
+
         /// <summary>
         /// Indicates if chest cover is opened
         /// </summary>
@@ -15,13 +21,13 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
         /// <summary>
         /// Gets maximum container capacity
         /// </summary>
-        public int Capacity { get { return 50; } }
+        public int Capacity { get; private set; }
 
         // todo: change items to provide entity and entities count
         /// <summary>
         /// Gets or sets a list of contained items
         /// </summary>
-        public List<Entity> Items { get; set; }
+        public List<Item> Items { get; set; }
 
         /// <summary>
         /// Gets a displayed entity name
@@ -46,7 +52,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
             for (int i = 0; i < count; i++)
             {
                 var entity = EntityFactory.Instance.CreateFromBytes(reader);
-                Items.Add(entity);
+                Items.Add((Item)entity);//TODO EntityFactory feeding items to container not entities 
             }
 
         }

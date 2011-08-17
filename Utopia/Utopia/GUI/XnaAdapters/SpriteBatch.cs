@@ -45,9 +45,13 @@ namespace Nuclex.UserInterface.Visuals.Flat
 
         //only used by custom UI for unique item icon ( not optimized, even item icons should be packed in one texture,
         // or maybe with new dx11 stuff like textureArray      
-        internal void Draw(Texture2D customTex, Rectangle destinationRegion, Color color)
+        internal void Draw(Texture2D texture2D, Rectangle destRect, Color color)
         {
-            throw new NotImplementedException();
+            SpriteTexture tex = new SpriteTexture(GraphicsDevice.device, texture2D, Vector2.Zero);
+
+            Matrix transform = Matrix.Translation(destRect.Left, destRect.Top, 0);
+            
+            _renderer.Render(tex, ref transform, new Color4(color.ToVector4()));
         }
 
         internal void DrawString(SpriteFont spriteFont, string text, Vector2 pos, Color color)
