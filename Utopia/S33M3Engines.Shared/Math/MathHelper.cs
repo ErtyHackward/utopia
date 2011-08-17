@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SharpDX;
-using S33M3Engines.Struct;
-using S33M3Engines.Cameras;
-using S33M3Engines.D3D;
 
-namespace S33M3Engines.Maths
+namespace S33M3Engines.Shared.Math
 {
     public static class MathHelper
     {
@@ -49,7 +46,7 @@ namespace S33M3Engines.Maths
 
         public static float Distance(float value1, float value2)
         {
-            return Math.Abs((float)(value1 - value2));
+            return System.Math.Abs((float)(value1 - value2));
         }
 
         public static float Hermite(float value1, float tangent1, float value2, float tangent2, float amount)
@@ -75,19 +72,19 @@ namespace S33M3Engines.Maths
             return withClamp ? MathHelper.Clamp(result, MinTargetValue, MaxTargetValue) : result;
         }
 
-        public static float FullLerp(float MinTargetValue, float MaxTargetValue, Utopia.Shared.Math.Noises.NoiseResult Amounts, bool withClamp = false)
+        public static float FullLerp(float MinTargetValue, float MaxTargetValue, S33M3Engines.Shared.Math.Noises.NoiseResult Amounts, bool withClamp = false)
         {
             return FullLerp(MinTargetValue, MaxTargetValue, Amounts.MinValue, Amounts.MaxValue, Amounts.Value, withClamp);
         }
 
         public static float Max(float value1, float value2)
         {
-            return Math.Max(value1, value2);
+            return System.Math.Max(value1, value2);
         }
 
         public static float Min(float value1, float value2)
         {
-            return Math.Min(value1, value2);
+            return System.Math.Min(value1, value2);
         }
 
         public static float SmoothStep(float value1, float value2, float amount)
@@ -108,7 +105,7 @@ namespace S33M3Engines.Maths
 
         public static float WrapAngle(float angle)
         {
-            angle = (float)Math.IEEERemainder((double)angle, 6.2831854820251465);
+            angle = (float)System.Math.IEEERemainder((double)angle, 6.2831854820251465);
             if (angle <= -3.141593f)
             {
                 angle += 6.283185f;
@@ -162,12 +159,16 @@ namespace S33M3Engines.Maths
             return result < 0 ? result + div : result;
         }
 
-        public static void CenterOnFocus(ref Matrix WorldMatrix, ref Matrix WorldFocusedMatrix, ref IWorldFocus WorldFocus)
+        //Count the number of bit inside the number
+        public static int Bitcount(int n)
         {
-            WorldFocusedMatrix.M41 = WorldMatrix.M41 - (float)WorldFocus.FocusPoint.ActualValue.X;
-            WorldFocusedMatrix.M42 = WorldMatrix.M42 - (float)WorldFocus.FocusPoint.ActualValue.Y;
-            WorldFocusedMatrix.M43 = WorldMatrix.M43 - (float)WorldFocus.FocusPoint.ActualValue.Z;
+            int count = 0;
+            while (n != 0)
+            {
+                count++;
+                n &= (n - 1);
+            }
+            return count;
         }
     }
-
 }

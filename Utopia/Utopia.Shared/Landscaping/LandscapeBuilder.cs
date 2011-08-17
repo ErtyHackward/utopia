@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Shared.Math.Noises;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
-using Utopia.Shared.Math;
+using S33M3Engines.Shared.Math.Noises;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.Landscaping
 {

@@ -20,11 +20,6 @@ License along with this library
 
 using System; using SharpDX;
 using System.Collections.Generic;
-
-
-
-
-
 using Nuclex.UserInterface.Visuals;
 
 namespace Nuclex.UserInterface {

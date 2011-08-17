@@ -20,6 +20,7 @@ using Nuclex.UserInterface.Controls.Desktop;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using Utopia.GUI.D3D.Inventory;
+using S33M3Engines.Shared.Sprites;
 
 namespace Utopia.GUI.D3D
 {
@@ -52,32 +53,30 @@ namespace Utopia.GUI.D3D
             graphicsDeviceService.GraphicsDevice = Game.GraphicDevice;
             serviceProvider.AddService<IGraphicsDeviceService>(graphicsDeviceService);
 
-
             _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(Game, serviceProvider, "Resources\\Skins\\Suave\\Suave.skin.xml");
 
             _screen = new Screen();
 
-            PlayerInventory inventory = new PlayerInventory(); //TODO this would move to player class 
-            Pickaxe tool = new Pickaxe();
-            tool.AllowedSlots = InventorySlot.Bags;
-            tool.Icon = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\pickaxe-icon.png");
-            
-            Armor ring = new Armor();
-            ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
-            ring.Icon = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\ring-icon.png");
-            
+            //PlayerInventory inventory = new PlayerInventory(); //TODO this would move to player class 
+            //Pickaxe tool = new Pickaxe();
+            //tool.AllowedSlots = InventorySlot.Bags;
+            //tool.Icon = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\pickaxe-icon.png");
 
-            inventory.bag.Items = new List<Item>();
-            inventory.bag.Items.Add(tool);
-            inventory.bag.Items.Add(ring);
+            //Armor ring = new Armor();
+            //ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
+            //ring.Icon = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\ring-icon.png");
 
 
-            Texture2D backGround = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\charactersheet.png");
-            InventoryWindow invWin = new InventoryWindow(inventory,backGround);
+            //inventory.bag.Items = new List<Item>();
+            //inventory.bag.Items.Add(tool);
+            //inventory.bag.Items.Add(ring);
 
-            _screen.Desktop.Children.Add(invWin);
+            //Texture2D backGround = Texture2D.FromFile<Texture2D>(Game.GraphicDevice, "Textures\\charactersheet.png");
+            //InventoryWindow invWin = new InventoryWindow(inventory, backGround);
 
-           /* WindowControl window = new WindowControl();
+            //_screen.Desktop.Children.Add(invWin);
+
+            WindowControl window = new WindowControl();
             window.Bounds = new UniRectangle(40, 40, 300, 300);
             window.Title = "NuclexUI Testing";
             _screen.Desktop.Children.Add(window);
@@ -91,12 +90,12 @@ namespace Utopia.GUI.D3D
             testBtn2.Text = "goodBye !";
 
             window.Children.Add(testBtn);
-            window.Children.Add(testBtn2);*/
+            window.Children.Add(testBtn2);
         }
 
         public override void LoadContent()
         {
-            _crosshair = new SpriteTexture(Game, @"Textures\Gui\Crosshair.png");
+            _crosshair = new SpriteTexture(Game.GraphicDevice, @"Textures\Gui\Crosshair.png", ref Game.D3dEngine.ViewPort_Updated, Game.ActivCamera.Viewport);
 
             _spriteRender = new SpriteRenderer();
             _spriteRender.Initialize(Game);

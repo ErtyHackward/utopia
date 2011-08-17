@@ -2,6 +2,7 @@
 using Utopia.Shared.Chunks.Entities.Concrete;
 using SharpDX;
 using System;
+using S33M3Engines.Shared.Sprites;
 namespace Utopia.Shared.Chunks.Entities.Inventory
 {
     /// <summary>
@@ -13,7 +14,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         //FIXME icon stuff should probably not be here , rendering the voxel model as a 2d icon would be better,
         // but for now I need to port the XNA UI code
         public static int IconSize = 64;
-        public SharpDX.Direct3D11.Texture2D Icon { get; set; }
+        public SpriteTexture Icon { get; set; }
         public Nullable<Rectangle> IconSourceRectangle { get; set; }
   
         /// <summary>

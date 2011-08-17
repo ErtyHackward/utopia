@@ -17,6 +17,7 @@ using SharpDX.Direct3D;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Landscaping;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Planets.Terran.Chunk
 {

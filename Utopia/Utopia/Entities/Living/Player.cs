@@ -20,6 +20,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Landscaping;
 using Utopia.Shared;
 using Utopia.Settings;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities.Living
 {

@@ -18,8 +18,9 @@ using S33M3Engines.TypeExtension;
 using SharpDX.Direct3D11;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
-using Utopia.Shared.Math.Noises;
 using Utopia.Shared.Landscaping;
+using S33M3Engines.Shared.Math.Noises;
+using S33M3Engines.Shared.Math;
 
 namespace Liquid.plugin
 {

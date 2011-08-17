@@ -8,12 +8,12 @@ using Rectangle = System.Drawing.Rectangle;
 using Utopia.Shared.Structs;
 using S33M3Engines.Sprites;
 using S33M3Engines.D3D;
+using S33M3Engines.Shared.Sprites;
 
 namespace Nuclex.UserInterface.Visuals.Flat
 {
     public class SpriteBatch
     {
-
         SpriteRenderer _renderer;
 
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -31,27 +31,23 @@ namespace Nuclex.UserInterface.Visuals.Flat
             throw new NotImplementedException();
         }
 
-        internal void Draw(Texture2D texture2D, Rectangle destRect, Rectangle srcRect, Color color)
+        internal void Draw(SpriteTexture texture2D, Rectangle destRect, Rectangle srcRect, Color color)
         {
-            SpriteTexture tex = new SpriteTexture(GraphicsDevice.device, texture2D, Vector2.Zero);
-
             Matrix transform = Matrix.Scaling((float)destRect.Width / srcRect.Width, (float)destRect.Height / srcRect.Height, 0) *
                                Matrix.Translation(destRect.Left, destRect.Top, 0);
 
             System.Drawing.RectangleF src = new System.Drawing.RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height);
 
-            _renderer.Render(tex, ref transform, new Color4(color.ToVector4()), src);
+            _renderer.Render(texture2D, ref transform, new Color4(color.ToVector4()), src);
         }
 
         //only used by custom UI for unique item icon ( not optimized, even item icons should be packed in one texture,
         // or maybe with new dx11 stuff like textureArray      
-        internal void Draw(Texture2D texture2D, Rectangle destRect, Color color)
+        internal void Draw(SpriteTexture texture2D, Rectangle destRect, Color color)
         {
-            SpriteTexture tex = new SpriteTexture(GraphicsDevice.device, texture2D, Vector2.Zero);
-
             Matrix transform = Matrix.Translation(destRect.Left, destRect.Top, 0);
-            
-            _renderer.Render(tex, ref transform, new Color4(color.ToVector4()));
+
+            _renderer.Render(texture2D, ref transform, new Color4(color.ToVector4()));
         }
 
         internal void DrawString(SpriteFont spriteFont, string text, Vector2 pos, Color color)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Utopia.Shared.Math.Noises
+namespace S33M3Engines.Shared.Math.Noises
 {
     public interface INoise2D
     {
@@ -58,3 +58,4 @@ namespace Utopia.Shared.Math.Noises
 
     }
 }
+

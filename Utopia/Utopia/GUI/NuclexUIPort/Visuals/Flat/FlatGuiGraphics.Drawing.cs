@@ -31,6 +31,8 @@ using Rectangle = System.Drawing.Rectangle;
 using Nuclex.Support;
 
 using Utopia.Shared.Structs;
+using S33M3Engines.Sprites;
+using S33M3Engines.Shared.Sprites;
 
 
 
@@ -118,27 +120,24 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     ///     GUI elements are the basic building blocks of a GUI: 
     ///   </para>
     /// </remarks>
-    public void DrawElement(string frameName, RectangleF bounds) {
-      Frame frame = lookupFrame(frameName);
+    public void DrawElement(string frameName, RectangleF bounds)
+    {
+        Frame frame = lookupFrame(frameName);
 
-      // Draw all the regions defined for the element. Each region is a small bitmap
-      // that needs to be blit somewhere into the element to form the element's
-      // visual representation step by step.
-      for (int index = 0; index < frame.Regions.Length; ++index) {
-        Rectangle destinationRegion = calculateDestinationRectangle(
-          ref bounds, ref frame.Regions[index].DestinationRegion
-        );
+        // Draw all the regions defined for the element. Each region is a small bitmap
+        // that needs to be blit somewhere into the element to form the element's
+        // visual representation step by step.
+        for (int index = 0; index < frame.Regions.Length; ++index)
+        {
+            Rectangle destinationRegion = calculateDestinationRectangle(
+              ref bounds, ref frame.Regions[index].DestinationRegion
+            );
 
-        this.spriteBatch.Draw(
-          frame.Regions[index].Texture,
-          destinationRegion,
-          frame.Regions[index].SourceRegion,
-          Color.White
-        );
-      }
+            this.spriteBatch.Draw(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion, Color.White);
+        }
     }
     //the 2 DrawCustomTexture methods were added by Simon ! 
-    public void DrawCustomTexture(Texture2D customTex, RectangleF bounds)
+    public void DrawCustomTexture(SpriteTexture customTex, RectangleF bounds)
     {
 
         UniRectangle offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
@@ -147,10 +146,9 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         );
 
         this.spriteBatch.Draw(customTex, destinationRegion, Color.White);
-
     }
 
-    public void DrawCustomTexture(Texture2D customTex, Rectangle textureSourceRect, RectangleF bounds)
+    public void DrawCustomTexture(SpriteTexture customTex, Rectangle textureSourceRect, RectangleF bounds)
     {
 
         UniRectangle offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
@@ -268,8 +266,6 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <summary>Starts drawing on the sprite batch</summary>
     private void beginSpriteBatch() {
       this.spriteBatch.Begin();
-      //  SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, this.rasterizerState
-      // HACK simon removed spritebatch init for alphablend);
     }
 
     /// <summary>Stops drawing on the sprite batch</summary>

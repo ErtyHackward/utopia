@@ -16,6 +16,7 @@ using S33M3Engines.Struct;
 using S33M3Engines.D3D.Effects.Basics;
 using UtopiaContent.Effects.Skydome;
 using SharpDX.Direct3D;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Planets.Skybox
 {
@@ -150,7 +151,7 @@ namespace Utopia.Planets.Skybox
         {
             Matrix World = Matrix.Translation((float)Game.ActivCamera.WorldPosition.X, -(float)Game.ActivCamera.WorldPosition.Y, (float)Game.ActivCamera.WorldPosition.Z);
 
-            MathHelper.CenterOnFocus(ref World, ref World, ref Game.WorldFocus);
+            GMathHelper.CenterOnFocus(ref World, ref World, ref Game.WorldFocus);
 
             //Set States.
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullFront, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
@@ -181,7 +182,7 @@ namespace Utopia.Planets.Skybox
                             Matrix.Translation(LightDirection.X * 1900, LightDirection.Y * 1900, LightDirection.Z * 1900) *
                             Matrix.Translation((float)Game.ActivCamera.WorldPosition.X, -(float)Game.ActivCamera.WorldPosition.Y, (float)Game.ActivCamera.WorldPosition.Z);
 
-            MathHelper.CenterOnFocus(ref World, ref World, ref Game.WorldFocus);
+            GMathHelper.CenterOnFocus(ref World, ref World, ref Game.WorldFocus);
 
             _posiTextureEffect.Begin();
             _posiTextureEffect.CBPerFrame.Values.Projection = Matrix.Transpose(Game.ActivCamera.Projection3D);
@@ -212,7 +213,7 @@ namespace Utopia.Planets.Skybox
                     Matrix.Translation(LightDirection.X * 1700, LightDirection.Y * 1700, LightDirection.Z * 1700) *
                     Matrix.Translation((float)Game.ActivCamera.WorldPosition.X, -(float)Game.ActivCamera.WorldPosition.Y, (float)Game.ActivCamera.WorldPosition.Z);
 
-            MathHelper.CenterOnFocus(ref World, ref World, ref Game.WorldFocus);
+            GMathHelper.CenterOnFocus(ref World, ref World, ref Game.WorldFocus);
             _posiTextureEffect.CBPerDraw.Values.World = Matrix.Transpose(World);
             _posiTextureEffect.CBPerDraw.IsDirty = true;
 

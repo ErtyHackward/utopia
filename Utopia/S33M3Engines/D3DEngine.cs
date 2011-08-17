@@ -13,6 +13,7 @@ using SharpDX;
 using SharpDX.D3DCompiler;
 using S33M3Engines.StatesManager;
 using SharpDX.Direct3D;
+using S33M3Engines.Shared.Delegates;
 
 namespace S33M3Engines
 {
@@ -44,8 +45,7 @@ namespace S33M3Engines
         #region Public properties
         public Device GraphicsDevice;
 
-        public delegate void ViewPortUpdated(Viewport viewport);
-        public event ViewPortUpdated ViewPort_Updated;
+        public D3DEngineDelegates.ViewPortUpdated ViewPort_Updated;
         public ShaderFlags ShaderFlags { get { return _shaderFlags; } }
         public Viewport ViewPort { get { return _viewPort; } set { _viewPort = value; } }
         public RenderForm GameWindow { get { return _renderForm; } }

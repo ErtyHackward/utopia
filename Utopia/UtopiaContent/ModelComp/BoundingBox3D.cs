@@ -83,7 +83,7 @@ namespace UtopiaContent.ModelComp
         public void Draw(ICamera camera, ref IWorldFocus FocusPoint)
         {
             Matrix WorldFocused = Matrix.Identity;
-            MathHelper.CenterOnFocus(ref BB3dworld, ref WorldFocused, ref _game.WorldFocus);
+            GMathHelper.CenterOnFocus(ref BB3dworld, ref WorldFocused, ref _game.WorldFocus);
 
             _wrappedEffect.Begin();
             _wrappedEffect.CBPerDraw.Values.World = Matrix.Transpose(WorldFocused);

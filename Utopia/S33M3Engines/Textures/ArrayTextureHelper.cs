@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines.Maths;
+using S33M3Engines.Shared.Math;
 
 namespace S33M3Engines.Textures
 {
@@ -14,7 +15,7 @@ namespace S33M3Engines.Textures
 		
 		    while( mipSlice > 0 )
 		    {
-			    size = MathHelper.Fastfloor(size / 2.0f);
+                size = MathHelper.Fastfloor(size / 2.0f);
                 mipSlice--;
 		    }
 		

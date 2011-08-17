@@ -7,6 +7,7 @@ using S33M3Engines.Struct;
 using S33M3Engines.Maths;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Landscaping;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Planets.Terran.Chunk
 {
@@ -106,8 +107,8 @@ namespace Utopia.Planets.Terran.Chunk
                 return false;
             }
 
-            int arrayX = MathHelper.Mod(X,_landscapeBufferSize.X);
-            int arrayZ = MathHelper.Mod(Z,_landscapeBufferSize.Z);
+            int arrayX = MathHelper.Mod(X, _landscapeBufferSize.X);
+            int arrayZ = MathHelper.Mod(Z, _landscapeBufferSize.Z);
 
             int chunkX = arrayX >> LandscapeBuilder.ChunkPOWsize;
             int chunkZ = arrayZ >> LandscapeBuilder.ChunkPOWsize;

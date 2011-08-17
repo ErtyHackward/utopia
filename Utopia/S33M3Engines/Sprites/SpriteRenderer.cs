@@ -11,6 +11,7 @@ using S33M3Engines.Buffers;
 using S33M3Engines.StatesManager;
 using SharpDX.Direct3D;
 using RectangleF = System.Drawing.RectangleF;
+using S33M3Engines.Shared.Sprites;
 
 namespace S33M3Engines.Sprites
 {
