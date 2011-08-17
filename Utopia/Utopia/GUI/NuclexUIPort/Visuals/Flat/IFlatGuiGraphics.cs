@@ -49,7 +49,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     ///   impacting rendering performance (in technical terms, a clipping region
     ///   change likely causes 2 more DrawPrimitive() calls from the painter).
     /// </remarks>
-    IDisposable SetClipRegion(RectangleF clipRegion);
+    //IDisposable SetClipRegion(RectangleF clipRegion);
 
     /// <summary>Draws a GUI element onto the drawing buffer</summary>
     /// <param name="frameName">Class of the element to draw</param>

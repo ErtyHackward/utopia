@@ -45,7 +45,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         public void BeginDrawing()
         {
             //No sense to define a full screen Scissor ...
-            _game.D3dEngine.ScissorRectangle = new System.Drawing.Rectangle(0, 0, (int)_game.ViewPort.Width, (int)_game.ViewPort.Height);
+            //_game.D3dEngine.ScissorRectangle = new System.Drawing.Rectangle(0, 0, (int)_game.ViewPort.Width, (int)_game.ViewPort.Height);
 
             this.spriteRenderer.Begin();
         }
@@ -56,57 +56,57 @@ namespace Nuclex.UserInterface.Visuals.Flat {
             this.spriteRenderer.End();
         }
 
-        /// <summary>Sets the clipping region for any future drawing commands</summary>
-        /// <param name="clipRegion">Clipping region that will be set</param>
-        /// <returns>
-        ///   An object that will unset the clipping region upon its destruction.
-        /// </returns>
-        /// <remarks>
-        ///   Clipping regions can be stacked, though this is not very typical for
-        ///   a game GUI and also not recommended practice due to performance constraints.
-        ///   Unless clipping is implemented in software, setting up a clip region
-        ///   on current hardware requires the drawing queue to be flushed, negatively
-        ///   impacting rendering performance (in technical terms, a clipping region
-        ///   change likely causes 2 more DrawPrimitive() calls from the painter).
-        /// </remarks>
-        public IDisposable SetClipRegion(RectangleF clipRegion)
-        {
+        ///// <summary>Sets the clipping region for any future drawing commands</summary>
+        ///// <param name="clipRegion">Clipping region that will be set</param>
+        ///// <returns>
+        /////   An object that will unset the clipping region upon its destruction.
+        ///// </returns>
+        ///// <remarks>
+        /////   Clipping regions can be stacked, though this is not very typical for
+        /////   a game GUI and also not recommended practice due to performance constraints.
+        /////   Unless clipping is implemented in software, setting up a clip region
+        /////   on current hardware requires the drawing queue to be flushed, negatively
+        /////   impacting rendering performance (in technical terms, a clipping region
+        /////   change likely causes 2 more DrawPrimitive() calls from the painter).
+        ///// </remarks>
+        //public IDisposable SetClipRegion(RectangleF clipRegion)
+        //{
 
-            // Cache the integer values of the clipping region's boundaries
-            int clipX = (int)clipRegion.Left;
-            int clipY = (int)clipRegion.Top;
-            int clipRight = clipX + (int)clipRegion.Width;
-            int clipBottom = clipY + (int)clipRegion.Height;
+        //    // Cache the integer values of the clipping region's boundaries
+        //    int clipX = (int)clipRegion.Left;
+        //    int clipY = (int)clipRegion.Top;
+        //    int clipRight = clipX + (int)clipRegion.Width;
+        //    int clipBottom = clipY + (int)clipRegion.Height;
 
-            // Calculate the viewport's right and bottom coordinates
-            Viewport viewport = _game.ViewPort;
-            int viewportRight = (int)(viewport.TopLeftX + viewport.Width);
-            int viewportBottom = (int)(viewport.TopLeftY + viewport.Height);
+        //    // Calculate the viewport's right and bottom coordinates
+        //    Viewport viewport = _game.ViewPort;
+        //    int viewportRight = (int)(viewport.TopLeftX + viewport.Width);
+        //    int viewportBottom = (int)(viewport.TopLeftY + viewport.Height);
 
-            // Extract the part of the clipping region that lies within the viewport
-            Rectangle scissorRegion = new Rectangle(
-                                                Math.Max(clipX, (int)viewport.TopLeftX),
-                                                Math.Max(clipY, (int)viewport.TopLeftY),
-                                                Math.Min(clipRight, viewportRight) - clipX,
-                                                Math.Min(clipBottom, viewportBottom) - clipY
-                                            );
-            scissorRegion.Width += clipX - scissorRegion.X;
-            scissorRegion.Height += clipY - scissorRegion.Y;
+        //    // Extract the part of the clipping region that lies within the viewport
+        //    Rectangle scissorRegion = new Rectangle(
+        //                                        Math.Max(clipX, (int)viewport.TopLeftX),
+        //                                        Math.Max(clipY, (int)viewport.TopLeftY),
+        //                                        Math.Min(clipRight, viewportRight) - clipX,
+        //                                        Math.Min(clipBottom, viewportBottom) - clipY
+        //                                    );
+        //    scissorRegion.Width += clipX - scissorRegion.X;
+        //    scissorRegion.Height += clipY - scissorRegion.Y;
 
-            // If the clipping region was entirely outside of the viewport (meaning
-            // the calculated width and/or height are negative), use an empty scissor
-            // rectangle instead because XNA doesn't like scissor rectangles with
-            // negative coordinates.
-            if ((scissorRegion.Width <= 0) || (scissorRegion.Height <= 0))
-            {
-                scissorRegion = System.Drawing.Rectangle.Empty;
-            }
+        //    // If the clipping region was entirely outside of the viewport (meaning
+        //    // the calculated width and/or height are negative), use an empty scissor
+        //    // rectangle instead because XNA doesn't like scissor rectangles with
+        //    // negative coordinates.
+        //    if ((scissorRegion.Width <= 0) || (scissorRegion.Height <= 0))
+        //    {
+        //        scissorRegion = System.Drawing.Rectangle.Empty;
+        //    }
 
-            // All done, take over the new scissor rectangle
-            this.scissorManager.Assign(ref scissorRegion);
-            return this.scissorManager;
+        //    // All done, take over the new scissor rectangle
+        //    this.scissorManager.Assign(ref scissorRegion);
+        //    return this.scissorManager;
 
-        }
+        //}
 
         /// <summary>Draws a GUI element onto the drawing buffer</summary>
         /// <param name="frameName">Class of the element to draw</param>
@@ -125,11 +125,10 @@ namespace Nuclex.UserInterface.Visuals.Flat {
             // visual representation step by step.
             for (int index = 0; index < frame.Regions.Length; ++index)
             {
-                Rectangle destinationRegion = calculateDestinationRectangle(
-                  ref bounds, ref frame.Regions[index].DestinationRegion
-                );
+                Rectangle destinationRegion = calculateDestinationRectangle(ref bounds, ref frame.Regions[index].DestinationRegion);
 
-                this.spriteRenderer.Render(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion, Color.White);
+                //this.spriteRenderer.Render(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion, Color.White);
+                this.spriteRenderer.RenderBatch(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion, Color.White);
             }
         }
         //the 2 DrawCustomTexture methods were added by Simon ! 
@@ -141,7 +140,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
               ref bounds, ref offset
             );
 
-            this.spriteRenderer.Render(customTex, destinationRegion, Color.White);
+            this.spriteRenderer.RenderBatch(customTex, destinationRegion, new SharpDX.Rectangle(0 ,0 , customTex.TextureDescr.Width, customTex.TextureDescr.Height) ,Color.White);
         }
 
         public void DrawCustomTexture(SpriteTexture customTex, Rectangle textureSourceRect, RectangleF bounds)
@@ -152,7 +151,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
               ref bounds, ref offset
             );
 
-            this.spriteRenderer.Render(customTex, destinationRegion, textureSourceRect, Color.White);
+            this.spriteRenderer.RenderBatch(customTex, destinationRegion, textureSourceRect, Color.White);
 
         }
 

@@ -50,12 +50,11 @@ namespace Utopia.GUI.D3D
             PlayerInventory inventory = new PlayerInventory(); //TODO this would move to player class 
             Pickaxe tool = new Pickaxe();
             tool.AllowedSlots = InventorySlot.Bags;
-            tool.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\pickaxe-icon.png", new Vector2(0, 0)); 
+            tool.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
 
             Armor ring = new Armor();
             ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
-            ring.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\ring-icon.png", new Vector2(0, 0)); 
-
+            ring.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\ring-icon.png", new Vector2(0, 0));
 
             inventory.bag.Items = new List<Item>();
             inventory.bag.Items.Add(tool);

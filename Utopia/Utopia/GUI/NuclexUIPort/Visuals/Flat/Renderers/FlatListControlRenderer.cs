@@ -78,16 +78,19 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
       itemBounds.Y -= (scrollPosition - firstItem) * rowHeight;
       itemBounds.Height = rowHeight;
 
-      using(graphics.SetClipRegion(controlBounds)) {
-        for(int item = firstItem; item < lastItem; ++item) {
-          if(control.SelectedItems.Contains(item)) {
-            graphics.DrawElement("list.selection", itemBounds);
-          }
+      //using (graphics.SetClipRegion(controlBounds))
+      //{
+          for (int item = firstItem; item < lastItem; ++item)
+          {
+              if (control.SelectedItems.Contains(item))
+              {
+                  graphics.DrawElement("list.selection", itemBounds);
+              }
 
-          graphics.DrawString(Style, itemBounds, control.Items[item]);
-          itemBounds.X += rowHeight;
-        }
-      }
+              graphics.DrawString(Style, itemBounds, control.Items[item]);
+              itemBounds.X += rowHeight;
+          }
+      //}
 
       control.ListRowLocator = this;
     }
