@@ -45,7 +45,7 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public override byte GetBlock(Location3<int> inChunkPosition)
         {
-            return BlockBytes[inChunkPosition.X * AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Y + inChunkPosition.Y * AbstractChunk.ChunkSize.Y + inChunkPosition.Z];
+            return BlockBytes[inChunkPosition.X * AbstractChunk.ChunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * AbstractChunk.ChunkSize.Y * AbstractChunk.ChunkSize.X];
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Utopia.Shared.Chunks
             {
                 BlockBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
             }
-            BlockBytes[inChunkPosition.X * AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Y + inChunkPosition.Y * AbstractChunk.ChunkSize.Y + inChunkPosition.Z] = blockValue;
+            BlockBytes[inChunkPosition.X * AbstractChunk.ChunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * AbstractChunk.ChunkSize.Y * AbstractChunk.ChunkSize.X] = blockValue;
 
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { inChunkPosition }, Bytes = new[] { blockValue } });
         }
@@ -78,7 +78,7 @@ namespace Utopia.Shared.Chunks
 
             for (var i = 0; i < positions.Length; i++)
             {
-                BlockBytes[positions[i].X * AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Y + positions[i].Y * AbstractChunk.ChunkSize.Y + positions[i].Z] = values[i];    
+                BlockBytes[positions[i].X * AbstractChunk.ChunkSize.Y + positions[i].Y + positions[i].Z * AbstractChunk.ChunkSize.Y * AbstractChunk.ChunkSize.X] = values[i];    
             }
 
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs { Count = positions.Length, Locations = positions, Bytes = values });

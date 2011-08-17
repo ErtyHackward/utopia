@@ -18,12 +18,12 @@ namespace Utopia.Server
     /// <summary>
     /// Main Utopia server class
     /// </summary>
-    public class Server
+    public class Server : IDisposable
     {
         /// <summary>
         /// Modify this constant to actual value
         /// </summary>
-        public const int ServerVersion = 1;
+        public const int ServerProtocolVersion = 1;
         
 
         #region fields
@@ -328,12 +328,12 @@ namespace Utopia.Server
                 }
             }
 
-            if (e.Message.Version != ServerVersion)
+            if (e.Message.Version != ServerProtocolVersion)
             {
                 var error = new ErrorMessage { 
                     ErrorCode = ErrorCodes.VersionMissmatch, 
-                    Data = ServerVersion, 
-                    Message = "Wrong client version, expected " + ServerVersion 
+                    Data = ServerProtocolVersion, 
+                    Message = "Wrong client version, expected " + ServerProtocolVersion 
                 };
                 connection.Send(error);
                 connection.Disconnect();
@@ -417,6 +417,17 @@ namespace Utopia.Server
 
             if (!e.Handled)
                 conn.BeginDispose();
+        }
+
+        /// <summary>
+        /// Stops the server and releases all related resources
+        /// </summary>
+        public void Dispose()
+        {
+            ConnectionManager.Dispose();
+            Listener.Dispose();
+            Chunks.Clear();
+            WorldGenerator.Dispose();
         }
     }
 }

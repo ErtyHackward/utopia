@@ -8,7 +8,7 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Provides server connection management
     /// </summary>
-    public class ConnectionManager
+    public class ConnectionManager : IDisposable
     {
         private readonly Dictionary<string, ClientConnection> _connections;
         private readonly object _syncRoot = new object();
@@ -140,6 +140,20 @@ namespace Utopia.Server.Managers
                 {
                     if (connection.Authorized)
                         action(connection);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Disposes all contained collection
+        /// </summary>
+        public void Dispose()
+        {
+            lock (_syncRoot)
+            {
+                foreach (var connection in _connections.Values)
+                {
+                    connection.BeginDispose();
                 }
             }
         }
