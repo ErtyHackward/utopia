@@ -21,6 +21,7 @@ License along with this library
 using System; using SharpDX;
 using System.Collections.Generic;
 using S33M3Engines.Maths;
+using S33M3Engines.Shared.Math;
 
 
 

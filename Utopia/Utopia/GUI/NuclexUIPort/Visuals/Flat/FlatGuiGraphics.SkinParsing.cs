@@ -38,6 +38,7 @@ using SharpDX.Direct3D11;
 using S33M3Engines.Sprites;
 using Utopia.Shared.Structs;
 using Utopia.GUI.D3D;
+using S33M3Engines.Shared.Sprites;
 
 namespace Nuclex.UserInterface.Visuals.Flat {
 
@@ -64,7 +65,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
       ///   A list of the regions that have been extracted from the frame XML node
       /// </returns>
       public static Frame.Region[] Build(
-        XElement frameElement, IDictionary<string, Texture2D> bitmaps
+        XElement frameElement, IDictionary<string, SpriteTexture> bitmaps
       ) {
         RegionListBuilder builder = new RegionListBuilder();
         builder.retrieveBorderSizes(frameElement);
@@ -110,7 +111,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
       /// </param>
       /// <returns>The regions created for the frame</returns>
       private Frame.Region[] createAndPlaceRegions(
-        XElement frameElement, IDictionary<string, Texture2D> bitmaps
+        XElement frameElement, IDictionary<string, SpriteTexture> bitmaps
       ) {
         var regions = new List<Frame.Region>();
 
@@ -392,7 +393,9 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         string bitmapName = element.Attribute("name").Value;
         string contentPath = element.Attribute("contentPath").Value;
 
-        Texture2D bitmap = this.contentManager.Load<Texture2D>(contentPath);
+        //Create the SpriteTexture
+        SpriteTexture bitmap = new SpriteTexture(_game.GraphicDevice, _resourceDirectory + @"\" + contentPath + ".png", new Vector2(0, 0));
+
         this.bitmaps.Add(bitmapName, bitmap);
       }
 

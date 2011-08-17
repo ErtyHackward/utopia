@@ -99,9 +99,6 @@
     <Compile Include="Landscaping\CubeIDs.cs" />
     <Compile Include="Landscaping\FlatLandscape.cs" />
     <Compile Include="Landscaping\LandscapeBuilder.cs" />
-    <Compile Include="Math\MathHelper.cs" />
-    <Compile Include="Math\Noises\NoiseMath.cs" />
-    <Compile Include="Math\Noises\SimplexNoise.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs\ByteColor.cs" />
     <Compile Include="Structs\ByteVector3.cs" />
@@ -148,7 +145,12 @@
   <ItemGroup>
     <None Include="ChunkHierarchy.cd" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
+      <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
+      <Name>S33M3Engines.Shared</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

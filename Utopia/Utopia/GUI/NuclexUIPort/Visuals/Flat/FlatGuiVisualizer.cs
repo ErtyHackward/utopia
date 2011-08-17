@@ -302,25 +302,21 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <param name="skinPath">
     ///   Path to the skin description this GUI visualizer will load
     /// </param>
-    public static FlatGuiVisualizer FromFile(Game game,
-      IServiceProvider serviceProvider, string skinPath
-    ) {
-      using(
-        FileStream skinStream = new FileStream(
-          skinPath, FileMode.Open, FileAccess.Read, FileShare.Read
-        )
-      ) {
-        ContentManager contentManager = new ContentManager(
-          serviceProvider, Path.GetDirectoryName(skinPath)
-        );
-        try {
-          return new FlatGuiVisualizer(game,contentManager, skinStream);
+    public static FlatGuiVisualizer FromFile(Game game, IServiceProvider serviceProvider, string skinPath)
+    {
+        using (FileStream skinStream = new FileStream(skinPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+        {
+            ContentManager contentManager = new ContentManager(serviceProvider, Path.GetDirectoryName(skinPath));
+            try
+            {
+                return new FlatGuiVisualizer(game, contentManager, skinStream, Path.GetDirectoryName(skinPath));
+            }
+            catch (Exception)
+            {
+                contentManager.Dispose();
+                throw;
+            }
         }
-        catch(Exception) {
-          contentManager.Dispose();
-          throw;
-        }
-      }
     }
     /* HACK SIMON : disabled ResourceManager FlatGuiVisualizer FromResource, use file 
   /// <summary>Initializes a new gui visualizer from a skin stored as a resource</summary>
@@ -368,14 +364,14 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <param name="skinStream">
     ///   Stream from which the GUI Visualizer will read the skin description
     /// </param>
-    protected FlatGuiVisualizer(Game game, ContentManager contentManager, Stream skinStream) {
+    protected FlatGuiVisualizer(Game game, ContentManager contentManager, Stream skinStream, string resourceDirectory) {
       this.employer = new ControlRendererEmployer();
       this.pluginHost = new PluginHost(this.employer);
 
       // Employ our own assembly in order to obtain the default GUI renderers
       this.pluginHost.Repository.AddAssembly(Self);
 
-      this.flatGuiGraphics = new FlatGuiGraphics(game,contentManager, skinStream);
+      this.flatGuiGraphics = new FlatGuiGraphics(game, contentManager, skinStream, resourceDirectory);
       this.controlStack = new Stack<ControlWithBounds>();
     }
 

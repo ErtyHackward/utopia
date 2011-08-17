@@ -31,7 +31,6 @@ namespace Nuclex.UserInterface.Visuals {
     /// <summary>Renders an entire control tree starting at the provided control</summary>
     /// <param name="screen">Screen containing the GUI that will be drawn</param>
     void Draw(Screen screen);
-
   }
 
 } // namespace Nuclex.UserInterface.Visuals

@@ -10,6 +10,7 @@ using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.InputHandler;
 using S33M3Engines.Maths;
 using S33M3Engines.Maths.Graphics;
+using S33M3Engines.Shared.Delegates;
 
 namespace S33M3Engines.Cameras
 {
@@ -148,7 +149,7 @@ namespace S33M3Engines.Cameras
         public Camera(Game game)
             : base(game)
         {
-            game.D3dEngine.ViewPort_Updated += new D3DEngine.ViewPortUpdated(D3dEngine_ViewPort_Updated);
+            game.D3dEngine.ViewPort_Updated += new D3DEngineDelegates.ViewPortUpdated(D3dEngine_ViewPort_Updated);
         }
 
         #region Private Methods

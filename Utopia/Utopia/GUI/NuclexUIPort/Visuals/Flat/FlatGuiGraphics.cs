@@ -36,6 +36,7 @@ using S33M3Engines.D3D;
 using Texture2D = SharpDX.Direct3D11.Texture2D;
 using Rectangle = System.Drawing.Rectangle;
 using RasterizerState = SharpDX.Direct3D11.RasterizerState;
+using S33M3Engines.Shared.Sprites;
 
 
 namespace Nuclex.UserInterface.Visuals.Flat {
@@ -97,7 +98,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         /// </remarks>
         public string Id;
         /// <summary>Texture the picture region is taken from</summary>
-        public Texture2D Texture;
+        public SpriteTexture Texture;
         /// <summary>Area within the texture containing the picture region</summary>
         public Rectangle SourceRegion;
         /// <summary>Location in the frame where the picture region will be drawn</summary>
@@ -188,6 +189,9 @@ namespace Nuclex.UserInterface.Visuals.Flat {
 
     #endregion // class ScissorKeeper
 
+    private Game _game;
+    private string _resourceDirectory; 
+
     /// <summary>Initializes a new gui painter</summary>
     /// <param name="contentManager">
     ///   Content manager containing the resources for the GUI. The instance takes
@@ -196,25 +200,29 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <param name="skinStream">
     ///   Stream from which the skin description will be read
     /// </param>
-    public FlatGuiGraphics(Game game, ContentManager contentManager, Stream skinStream) {
-      IGraphicsDeviceService graphicsDeviceService =
-        (IGraphicsDeviceService)contentManager.ServiceProvider.GetService(
-          typeof(IGraphicsDeviceService)
-        );
+    public FlatGuiGraphics(Game game, ContentManager contentManager, Stream skinStream, string resourceDirectory)
+    {
+        IGraphicsDeviceService graphicsDeviceService =
+          (IGraphicsDeviceService)contentManager.ServiceProvider.GetService(
+            typeof(IGraphicsDeviceService)
+          );
 
-      this.spriteBatch = new SpriteBatch(graphicsDeviceService.GraphicsDevice,game);
-      this.contentManager = contentManager;
-      this.openingLocator = new OpeningLocator();
-      this.stringBuilder = new StringBuilder(64);
-      this.scissorManager = new ScissorKeeper(this);
-      /*  this.rasterizerState = new RasterizerState() { FIXME DX11 ScissorTestEnable ??
-          ScissorTestEnable = true
-        };*/
-      this.fonts = new Dictionary<string, SpriteFont>();
-      this.bitmaps = new Dictionary<string, Texture2D>();
-      this.frames = new Dictionary<string, Frame>();
-      
-      loadSkin(skinStream);
+        _game = game;
+        _resourceDirectory = resourceDirectory;
+
+        this.spriteBatch = new SpriteBatch(graphicsDeviceService.GraphicsDevice, game);
+        this.contentManager = contentManager;
+        this.openingLocator = new OpeningLocator();
+        this.stringBuilder = new StringBuilder(64);
+        this.scissorManager = new ScissorKeeper(this);
+        /*  this.rasterizerState = new RasterizerState() { FIXME DX11 ScissorTestEnable ??
+            ScissorTestEnable = true
+          };*/
+        this.fonts = new Dictionary<string, SpriteFont>();
+        this.bitmaps = new Dictionary<string, SpriteTexture>();
+        this.frames = new Dictionary<string, Frame>();
+
+        loadSkin(skinStream);
     }
 
     /// <summary>Immediately releases all resources owned by the instance</summary>
@@ -341,7 +349,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <summary>Font styles known to the GUI</summary>
     private Dictionary<string, SpriteFont> fonts;
     /// <summary>Bitmaps containing resources for the GUI</summary>
-    private Dictionary<string, Texture2D> bitmaps;
+    private Dictionary<string, SpriteTexture> bitmaps;
     /// <summary>Types of frames the painter can draw</summary>
     private Dictionary<string, Frame> frames;
     /// <summary>Rasterizer state used for drawing the GUI</summary>

@@ -14,6 +14,7 @@ using SharpDX.Direct3D11;
 using S33M3Engines.StatesManager;
 using Utopia.Shared.Structs;
 using SharpDX.Direct3D;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Planets.Skybox
 {

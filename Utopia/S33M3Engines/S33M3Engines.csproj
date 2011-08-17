@@ -104,13 +104,14 @@
     <Compile Include="D3D\Game.cs" />
     <Compile Include="D3D\GameComponent.cs" />
     <Compile Include="D3D\Tools\Resource.cs" />
+    <Compile Include="Interfaces\IWorldFocus.cs" />
     <Compile Include="Maths\DVector3.cs" />
-    <Compile Include="Maths\MathHelper.cs" />
+    <Compile Include="Maths\GMathHelper.cs" />
     <Compile Include="Sprites\SpriteFont.cs" />
     <Compile Include="Sprites\SpriteRenderer.cs" />
     <Compile Include="Sprites\SpriteTexture.cs" />
     <Compile Include="StatesManager\StatesRepository.cs" />
-    <Compile Include="Struct\FixedTimeStepHelper.cs" />
+    <Compile Include="Struct\FTSValue.cs" />
     <Compile Include="Struct\GameTime.cs" />
     <Compile Include="InputHandler\InputHandler.cs" />
     <Compile Include="InputHandler\Keyboard.cs" />
@@ -170,6 +171,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
+      <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
+      <Name>S33M3Engines.Shared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>

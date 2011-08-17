@@ -28,6 +28,7 @@ using Nuclex.Support.Collections;
 using Nuclex.UserInterface.Input;
 using System.Windows.Forms;
 using S33M3Engines.Maths;
+using S33M3Engines.Shared.Math;
 
 namespace Nuclex.UserInterface.Controls.Desktop {
 

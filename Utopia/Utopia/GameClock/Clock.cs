@@ -11,6 +11,7 @@ using S33M3Engines;
 using System.Windows.Forms;
 using Utopia.Shared;
 using Utopia.Settings;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.GameClock
 {

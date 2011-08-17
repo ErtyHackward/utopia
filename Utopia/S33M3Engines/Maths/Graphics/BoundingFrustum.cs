@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Globalization;
 using SharpDX;
+using S33M3Engines.Shared.Math;
 
 namespace S33M3Engines.Maths.Graphics
 {

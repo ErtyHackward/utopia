@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using SharpDX.Direct3D11;
 
 using Rectangle = System.Drawing.Rectangle;
+using S33M3Engines.Sprites;
+using S33M3Engines.Shared.Sprites;
 
 
 namespace Nuclex.UserInterface.Visuals.Flat {
@@ -59,8 +61,8 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// </remarks>
     void DrawElement(string frameName, RectangleF bounds);
 
-    void DrawCustomTexture(Texture2D custom , RectangleF bounds);
-    void DrawCustomTexture(Texture2D customTex, Rectangle textureSourceRect, RectangleF bounds);
+    void DrawCustomTexture(SpriteTexture custom, RectangleF bounds);
+    void DrawCustomTexture(SpriteTexture customTex, Rectangle textureSourceRect, RectangleF bounds);
 
     /// <summary>Draws text into the drawing buffer for the specified element</summary>
     /// <param name="frameName">Class of the element for which to draw text</param>

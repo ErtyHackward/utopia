@@ -9,8 +9,7 @@ using Nuclex.UserInterface.Controls.Desktop;
 using Nuclex.UserInterface;
 using SharpDX.Direct3D11;
 using Utopia.Shared.Chunks.Entities.Inventory;
-
-
+using S33M3Engines.Shared.Sprites;
 
 
 namespace Utopia.GUI.D3D.Inventory
@@ -22,7 +21,7 @@ namespace Utopia.GUI.D3D.Inventory
        private ButtonControl _okButton;
         private Utopia.Shared.Chunks.Entities.Inventory.PlayerInventory _inventory;
 
-        public InventoryWindow(PlayerInventory inventory, Texture2D back)
+        public InventoryWindow(PlayerInventory inventory, SpriteTexture back)
         {
             _inventory = inventory;
             InitializeComponent(back);
@@ -36,7 +35,7 @@ namespace Utopia.GUI.D3D.Inventory
             this.RemoveFromParent();
         }
 
-        private void InitializeComponent(Texture2D back)
+        private void InitializeComponent(SpriteTexture back)
         {
            
             this._okButton = new Nuclex.UserInterface.Controls.Desktop.ButtonControl();
@@ -53,15 +52,15 @@ namespace Utopia.GUI.D3D.Inventory
             Children.Add(this._okButton);
 
             buildCharacterSheet(back);
-            buildGrid(back.Description.Width + 5);
+            buildGrid(back.TextureDescr.Width + 5);
 
         }
 
-        private void buildCharacterSheet(Texture2D back)
+        private void buildCharacterSheet(SpriteTexture back)
         {
             ContainerControl characterSheet = new ContainerControl();
             characterSheet.background = back;
-            characterSheet.Bounds = new UniRectangle(0, 0, back.Description.Width, back.Description.Height);
+            characterSheet.Bounds = new UniRectangle(0, 0, back.TextureDescr.Width, back.TextureDescr.Height);
             Children.Add(characterSheet);
 
             buildBodyslot(characterSheet, InventorySlot.Head, 74, 2);

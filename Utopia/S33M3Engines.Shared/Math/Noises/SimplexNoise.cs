@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Utopia.Shared.Math.Noises
+namespace S33M3Engines.Shared.Math.Noises
 {
     //From Paper at : http://webstaff.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
     public class SimplexNoise : INoise2D, INoise3D
@@ -604,3 +604,4 @@ namespace Utopia.Shared.Math.Noises
 
     }
 }
+

@@ -27,6 +27,7 @@ using SharpDX.DXGI;
 using S33M3Engines.Maths.Graphics;
 using S33M3Engines.Sprites;
 using Utopia.Shared.Landscaping;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Planets.Terran
 {
@@ -414,7 +415,7 @@ namespace Utopia.Planets.Terran
 
                     if (!chunk.FrustumCulled)
                     {
-                        MathHelper.CenterOnFocus(ref chunk.World, ref worldFocus, ref Game.WorldFocus);
+                        GMathHelper.CenterOnFocus(ref chunk.World, ref worldFocus, ref Game.WorldFocus);
                         _terraEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _terraEffect.CBPerDraw.Values.popUpYOffset = chunk.PopUpYOffset;
                         _terraEffect.CBPerDraw.IsDirty = true;
@@ -519,7 +520,7 @@ namespace Utopia.Planets.Terran
                     //Only If I have something to draw !
                     if (chunk.LiquidCubeVB != null)
                     {
-                        MathHelper.CenterOnFocus(ref chunk.World, ref worldFocus, ref Game.WorldFocus);
+                        GMathHelper.CenterOnFocus(ref chunk.World, ref worldFocus, ref Game.WorldFocus);
                         _liquidEffect.CBPerDraw.Values.popUpYOffset = chunk.PopUpYOffset;
                         _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _liquidEffect.CBPerDraw.IsDirty = true;

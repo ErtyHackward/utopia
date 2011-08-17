@@ -14,7 +14,6 @@ namespace Utopia.GUI.D3D.Inventory
 
             if (control.background != null)
                 graphics.DrawCustomTexture(control.background, control.GetAbsoluteBounds());
-
         }
     }
 }

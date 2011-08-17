@@ -10,6 +10,7 @@ using SharpDX;
 using Rectangle = System.Drawing.Rectangle;
 using System.Drawing;
 using SharpDX.Direct3D;
+using S33M3Engines.Shared.Sprites;
 
 namespace S33M3Engines.Sprites
 {
@@ -224,7 +225,7 @@ namespace S33M3Engines.Sprites
             return (MeasureString(stringBuilder.ToString()));
         }
 
-        public Vector2 MeasureString(string text)
+        public Vector2 MeasureString3(string text)
         {
             //return new Vector2(text.Length * _size, _charHeight);
             //HACK SpriteFont.MasureString is approximated to Vector2(text.Length * _size, _charHeight)
@@ -232,11 +233,29 @@ namespace S33M3Engines.Sprites
             return new Vector2(sizeRect.Width, sizeRect.Height);
         }
 
-        //TODO Correct MeasureString methods
-        public Vector2 MeasureString3(string text)
+        public Vector2 MeasureString(string text)
         {
-            //In fact we should use the array CharDescriptors[], where the size of each letter is referenced.
-            return default(Vector2);
+            int length = text.Length;
+            float textWidth = 0;
+            float textHeight = CharHeight;
+            for (int i = 0; i < length; ++i)
+            {
+                char character = text[i];
+                if (character == ' ')
+                    textWidth += this.SpaceWidth;
+                else if (character == '\n')
+                {
+                    textHeight += CharHeight;
+                }
+                else
+                {
+                    CharDesc desc = CharDescriptors[character];
+                    textWidth += desc.Width;
+                }
+            }
+
+            return new Vector2(textWidth, textHeight);
+
         }
 
         public Vector2 MeasureString2(string text)

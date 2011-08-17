@@ -8,6 +8,7 @@ using S33M3Engines.StatesManager;
 using S33M3Engines.Sprites;
 using S33M3Engines.Maths;
 using S33M3Engines.Struct;
+using S33M3Engines.Shared.Sprites;
 
 namespace S33M3Engines.D3D.DebugTools
 {

@@ -23,6 +23,7 @@ using Utopia.Univers;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Landscaping;
+using S33M3Engines.Shared.Math;
 
 namespace Liquid.plugin
 {
@@ -258,7 +259,7 @@ namespace Liquid.plugin
                 {
                     if (chunk.LiquidCubeVB != null)
                     {
-                        MathHelper.CenterOnFocus(ref chunk.World, ref worldFocus, ref _terra.Game.WorldFocus);
+                        GMathHelper.CenterOnFocus(ref chunk.World, ref worldFocus, ref _terra.Game.WorldFocus);
                         LiquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         LiquidEffect.CBPerDraw.Values.popUpYOffset = chunk.PopUpYOffset;
                         LiquidEffect.CBPerDraw.IsDirty = true;
