@@ -20,6 +20,7 @@ License along with this library
 
 using System;
 using System.Collections.Generic;
+using SharpDX;
 
 
 
@@ -84,7 +85,7 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
           }
 
           graphics.DrawString(Style, itemBounds, control.Items[item]);
-          itemBounds.Y += rowHeight;
+          itemBounds.X += rowHeight;
         }
       }
 

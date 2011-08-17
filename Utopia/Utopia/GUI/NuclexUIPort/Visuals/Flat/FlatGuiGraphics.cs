@@ -29,7 +29,6 @@ using System.Xml.Schema;
 
 using Utopia.Shared.Structs;
 
-using Utopia.GUI.NuclexUIPort.Visuals.Flat;
 using S33M3Engines.Sprites;
 using S33M3Engines.D3D;
 
@@ -140,50 +139,50 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     #region class ScissorKeeper
 
     /// <summary>Manages the scissor rectangle for the GUI graphics interface</summary>
-    private class ScissorKeeper : IDisposable {
+    private class ScissorKeeper : IDisposable
+    {
+        private Game _game;
 
-      /// <summary>Initializes a new scissor manager</summary>
-      /// <param name="flatGuiGraphics">
-      ///   GUI graphics interface the scissor rectangle will be managed for
-      /// </param>
-      public ScissorKeeper(FlatGuiGraphics flatGuiGraphics) {
-        this.flatGuiGraphics = flatGuiGraphics;
-      }
+        /// <summary>Initializes a new scissor manager</summary>
+        /// <param name="flatGuiGraphics">
+        ///   GUI graphics interface the scissor rectangle will be managed for
+        /// </param>
+        public ScissorKeeper(Game game, FlatGuiGraphics flatGuiGraphics)
+        {
+            _game = game;
+            this.flatGuiGraphics = flatGuiGraphics;
+        }
 
-      /// <summary>Assigns the scissor rectangle to the graphics device</summary>
-      /// <param name="clipRegion">Scissor rectangle that will be assigned</param>
-      public void Assign(ref System.Drawing.Rectangle clipRegion) {
-        this.flatGuiGraphics.endSpriteBatch();
-        try {
-          GraphicsDevice graphics = this.flatGuiGraphics.spriteBatch.GraphicsDevice;
-          this.oldScissorRectangle = graphics.ScissorRectangle;
-          graphics.ScissorRectangle = clipRegion;
+        /// <summary>Assigns the scissor rectangle to the graphics device</summary>
+        /// <param name="clipRegion">Scissor rectangle that will be assigned</param>
+        public void Assign(ref System.Drawing.Rectangle clipRegion)
+        {
+            this.flatGuiGraphics.EndDrawing();
+            try
+            {
+                this.oldScissorRectangle = _game.D3dEngine.ScissorRectangle;
+                _game.D3dEngine.ScissorRectangle = clipRegion;
+            }
+            finally
+            {
+                this.flatGuiGraphics.BeginDrawing();
+            }
         }
-        finally {
-          this.flatGuiGraphics.beginSpriteBatch();
-        }
-      }
 
-      /// <summary>Releases the currently assigned scissor rectangle again</summary>
-      public void Dispose() {
-        this.flatGuiGraphics.endSpriteBatch();
-        try {
-          GraphicsDevice graphics = this.flatGuiGraphics.spriteBatch.GraphicsDevice;
-          graphics.ScissorRectangle = this.oldScissorRectangle;
+        /// <summary>Releases the currently assigned scissor rectangle again</summary>
+        public void Dispose()
+        {
+            _game.D3dEngine.ScissorRectangle = this.oldScissorRectangle;
         }
-        finally {
-          this.flatGuiGraphics.beginSpriteBatch();
-        }
-      }
 
-      /// <summary>
-      ///   GUI graphics interface for which the scissor rectangle is managed
-      /// </summary>
-      private FlatGuiGraphics flatGuiGraphics;
-      /// <summary>
-      ///   Scissor rectangle that was previously assigned to the graphics device
-      /// </summary>
-      private Rectangle oldScissorRectangle;
+        /// <summary>
+        ///   GUI graphics interface for which the scissor rectangle is managed
+        /// </summary>
+        private FlatGuiGraphics flatGuiGraphics;
+        /// <summary>
+        ///   Scissor rectangle that was previously assigned to the graphics device
+        /// </summary>
+        private Rectangle oldScissorRectangle;
 
     }
 
@@ -200,21 +199,17 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <param name="skinStream">
     ///   Stream from which the skin description will be read
     /// </param>
-    public FlatGuiGraphics(Game game, ContentManager contentManager, Stream skinStream, string resourceDirectory)
+    public FlatGuiGraphics(Game game, Stream skinStream, string resourceDirectory)
     {
-        IGraphicsDeviceService graphicsDeviceService =
-          (IGraphicsDeviceService)contentManager.ServiceProvider.GetService(
-            typeof(IGraphicsDeviceService)
-          );
-
         _game = game;
         _resourceDirectory = resourceDirectory;
 
-        this.spriteBatch = new SpriteBatch(graphicsDeviceService.GraphicsDevice, game);
-        this.contentManager = contentManager;
+        this.spriteRenderer = new SpriteRenderer();
+        this.spriteRenderer.Initialize(game);
+
         this.openingLocator = new OpeningLocator();
         this.stringBuilder = new StringBuilder(64);
-        this.scissorManager = new ScissorKeeper(this);
+        this.scissorManager = new ScissorKeeper(game, this);
         /*  this.rasterizerState = new RasterizerState() { FIXME DX11 ScissorTestEnable ??
             ScissorTestEnable = true
           };*/
@@ -227,13 +222,9 @@ namespace Nuclex.UserInterface.Visuals.Flat {
 
     /// <summary>Immediately releases all resources owned by the instance</summary>
     public void Dispose() {
-      if(this.contentManager != null) {
-        this.contentManager.Dispose();
-        this.contentManager = null;
-      }
-      if(this.spriteBatch != null) {
-        this.spriteBatch.Dispose();
-        this.spriteBatch = null;
+        if (this.spriteRenderer != null)
+        {
+            this.spriteRenderer.Dispose();
       }
     }
 
@@ -295,10 +286,10 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     private static Rectangle calculateDestinationRectangle(
       ref RectangleF bounds, ref UniRectangle destination
     ) {
-      int x = (int)(bounds.X + destination.Location.X.Offset);
+      int x = (int)(bounds.Left + destination.Location.X.Offset);
       x += (int)(bounds.Width * destination.Location.X.Fraction);
 
-      int y = (int)(bounds.Y + destination.Location.Y.Offset);
+      int y = (int)(bounds.Top + destination.Location.Y.Offset);
       y += (int)(bounds.Height * destination.Location.Y.Fraction);
 
       int width = (int)(destination.Size.X.Offset);
@@ -343,9 +334,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <summary>Manages the scissor rectangle and its assignment time</summary>
     private ScissorKeeper scissorManager;
     /// <summary>Batches GUI elements for faster drawing</summary>
-    private SpriteBatch spriteBatch;
-    /// <summary>Manages the content used to draw the GUI</summary>
-    private ContentManager contentManager;
+    private SpriteRenderer spriteRenderer;
     /// <summary>Font styles known to the GUI</summary>
     private Dictionary<string, SpriteFont> fonts;
     /// <summary>Bitmaps containing resources for the GUI</summary>

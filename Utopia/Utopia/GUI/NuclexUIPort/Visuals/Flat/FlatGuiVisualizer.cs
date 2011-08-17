@@ -64,10 +64,10 @@ namespace Nuclex.UserInterface.Visuals.Flat {
       public static ControlWithBounds FromControl(
         Controls.Control control, RectangleF containerBounds
       ) {
-        containerBounds.X += control.Bounds.Location.X.Fraction * containerBounds.Width;
-        containerBounds.X += control.Bounds.Location.X.Offset;
-        containerBounds.Y += control.Bounds.Location.Y.Fraction * containerBounds.Height;
-        containerBounds.Y += control.Bounds.Location.Y.Offset;
+        containerBounds.Y += control.Bounds.Location.X.Fraction * containerBounds.Width;
+        containerBounds.Y += control.Bounds.Location.X.Offset;
+        containerBounds.X += control.Bounds.Location.Y.Fraction * containerBounds.Height;
+        containerBounds.X += control.Bounds.Location.Y.Offset;
 
         containerBounds.Width = control.Bounds.Size.X.ToOffset(containerBounds.Width);
         containerBounds.Height = control.Bounds.Size.Y.ToOffset(containerBounds.Height);
@@ -302,20 +302,11 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <param name="skinPath">
     ///   Path to the skin description this GUI visualizer will load
     /// </param>
-    public static FlatGuiVisualizer FromFile(Game game, IServiceProvider serviceProvider, string skinPath)
+    public static FlatGuiVisualizer FromFile(Game game, string skinPath)
     {
         using (FileStream skinStream = new FileStream(skinPath, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-            ContentManager contentManager = new ContentManager(serviceProvider, Path.GetDirectoryName(skinPath));
-            try
-            {
-                return new FlatGuiVisualizer(game, contentManager, skinStream, Path.GetDirectoryName(skinPath));
-            }
-            catch (Exception)
-            {
-                contentManager.Dispose();
-                throw;
-            }
+            return new FlatGuiVisualizer(game, skinStream, Path.GetDirectoryName(skinPath));
         }
     }
     /* HACK SIMON : disabled ResourceManager FlatGuiVisualizer FromResource, use file 
@@ -364,14 +355,14 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <param name="skinStream">
     ///   Stream from which the GUI Visualizer will read the skin description
     /// </param>
-    protected FlatGuiVisualizer(Game game, ContentManager contentManager, Stream skinStream, string resourceDirectory) {
+    protected FlatGuiVisualizer(Game game, Stream skinStream, string resourceDirectory) {
       this.employer = new ControlRendererEmployer();
       this.pluginHost = new PluginHost(this.employer);
 
       // Employ our own assembly in order to obtain the default GUI renderers
       this.pluginHost.Repository.AddAssembly(Self);
 
-      this.flatGuiGraphics = new FlatGuiGraphics(game, contentManager, skinStream, resourceDirectory);
+      this.flatGuiGraphics = new FlatGuiGraphics(game, skinStream, resourceDirectory);
       this.controlStack = new Stack<ControlWithBounds>();
     }
 
