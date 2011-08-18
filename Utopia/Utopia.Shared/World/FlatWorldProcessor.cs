@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Utopia.Shared.Chunks;
+﻿using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Landscaping;
 using Utopia.Shared.Structs;
@@ -43,7 +42,7 @@ namespace Utopia.Shared.World
         /// </summary>
         public void Generate(WorldGenerator parentGenerator, Range2 generationRange)
         {
-            _totalChunks = generationRange.Count();
+            _totalChunks = generationRange.Count;
             _chunksDone = 0;
             generationRange.Foreach(pos => 
             { 

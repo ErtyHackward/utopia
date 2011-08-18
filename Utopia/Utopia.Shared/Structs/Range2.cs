@@ -29,6 +29,11 @@ namespace Utopia.Shared.Structs
             }
         }
 
+        /// <summary>
+        /// Gets total items count
+        /// </summary>
+        public int Count { get { return (Max.X - Min.X)*(Max.Y - Min.Y); } }
+
         public IEnumerator<IntVector2> GetEnumerator()
         {
             for (int x = Min.X; x < Max.X; x++)

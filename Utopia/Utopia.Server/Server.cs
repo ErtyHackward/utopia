@@ -88,7 +88,7 @@ namespace Utopia.Server
             Storage = new SQLiteStorageManager(dbPath);
 
             // todo: proper terrain generator initialize
-            WorldGenerator = new WorldGenerator(new WorldParameters());
+            WorldGenerator = new WorldGenerator(new WorldParameters(), new FlatWorldProcessor());
 
             _cleanUpTimer = new Timer(CleanUp, null, SettingsManager.Settings.CleanUpInterval, SettingsManager.Settings.CleanUpInterval);
             _saveTimer = new Timer(SaveChunks, null, SettingsManager.Settings.SaveInterval, SettingsManager.Settings.SaveInterval);

@@ -1,8 +1,8 @@
-﻿
-using Utopia.Shared.Chunks.Entities.Concrete;
+﻿using Utopia.Shared.Chunks.Entities.Concrete;
 using SharpDX;
 using System;
 using S33M3Engines.Shared.Sprites;
+
 namespace Utopia.Shared.Chunks.Entities.Inventory
 {
     /// <summary>
