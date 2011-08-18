@@ -11,6 +11,7 @@ using Utopia.Entities.Living;
 using Utopia.Planets.Skybox;
 using S33M3Engines.Struct;
 using Utopia.Shared.Structs;
+using Utopia.Planets.SkyDome;
 
 namespace Utopia.Planets
 {

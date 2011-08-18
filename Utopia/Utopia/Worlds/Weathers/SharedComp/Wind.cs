@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using S33M3Engines.D3D;
 using SharpDX;
+using Utopia.Worlds.Weathers.SharedComp;
 
-namespace Utopia.Planets.Weather.Items
+namespace Utopia.Worlds.Weather
 {
-    public class Wind : IUpdatableComponent
+    public class Wind : IWind
     {
         #region Private Variables
         private Random _rndWindFlowing;
@@ -15,7 +16,7 @@ namespace Utopia.Planets.Weather.Items
         #endregion
 
         #region Public Variables
-        public Vector3 WindFlow;
+        public Vector3 WindFlow { get; set; }
         #endregion
 
         #region Public methods
@@ -42,7 +43,6 @@ namespace Utopia.Planets.Weather.Items
 
         public void Dispose()
         {
-            
         }
         #endregion
 

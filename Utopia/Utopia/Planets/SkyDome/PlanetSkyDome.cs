@@ -17,8 +17,9 @@ using S33M3Engines.D3D.Effects.Basics;
 using UtopiaContent.Effects.Skydome;
 using SharpDX.Direct3D;
 using S33M3Engines.Shared.Math;
+using Utopia.Planets.Skybox;
 
-namespace Utopia.Planets.Skybox
+namespace Utopia.Planets.SkyDome
 {
     public class PlanetSkyDome : GameComponent
     {

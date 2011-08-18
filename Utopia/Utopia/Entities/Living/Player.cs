@@ -220,14 +220,17 @@ namespace Utopia.Entities.Living
             base.Update(ref TimeSpend);
 
             //Block Picking !?
-            GetSelectedBlock();
-            ind = TerraWorld.Landscape.Index(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z);
+            if (TerraWorld != null)
+            {
+                GetSelectedBlock();
+                ind = TerraWorld.Landscape.Index(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z);
 
-            //Handle Specific User Keyboard/Mouse Action !
-            InputHandler(false);
+                //Handle Specific User Keyboard/Mouse Action !
+                InputHandler(false);
 
-            //Head Under Water ??
-            RefreshHeadUnderWater();
+                //Head Under Water ??
+                RefreshHeadUnderWater();
+            }
         }
 
         public override void DrawDepth2()

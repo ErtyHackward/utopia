@@ -158,17 +158,5 @@ namespace S33M3Engines.Shared.Math
             int result = value % div;
             return result < 0 ? result + div : result;
         }
-
-        //Count the number of bit inside the number
-        public static int Bitcount(int n)
-        {
-            int count = 0;
-            while (n != 0)
-            {
-                count++;
-                n &= (n - 1);
-            }
-            return count;
-        }
     }
 }
