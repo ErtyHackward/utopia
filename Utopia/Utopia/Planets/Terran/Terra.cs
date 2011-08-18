@@ -28,6 +28,7 @@ using S33M3Engines.Maths.Graphics;
 using S33M3Engines.Sprites;
 using Utopia.Shared.Landscaping;
 using S33M3Engines.Shared.Math;
+using Utopia.Planets.SkyDome;
 
 namespace Utopia.Planets.Terran
 {

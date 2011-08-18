@@ -202,7 +202,7 @@
     <Compile Include="Planets\Planet.cs" />
     <Compile Include="Planets\Terran\Cube\TerraCubeWithPosition.cs" />
     <Compile Include="PlugIn\Plugin.cs" />
-    <Compile Include="Planets\PlanetSkybox\Stars.cs" />
+    <Compile Include="Planets\SkyDome\Stars.cs" />
     <Compile Include="Planets\Terran\Chunk\baseChunk.cs" />
     <Compile Include="Planets\Terran\Chunk\TerraChunk.cs" />
     <Compile Include="Planets\Terran\Cube\CubeMeshFactory.cs" />
@@ -211,7 +211,6 @@
     <Compile Include="Planets\Terran\Lighting\TerraLighting.cs" />
     <Compile Include="Planets\Terran\Shadow.cs" />
     <Compile Include="Planets\Terran\World\LandscapePopulation\LiquidPopulate.cs" />
-    <Compile Include="Sprites2D.cs" />
     <Compile Include="Universes\Universe.cs" />
     <Compile Include="USM\SQLite\DBHelper.cs" />
     <Compile Include="USM\USMGet.cs" />
@@ -223,7 +222,7 @@
     <Compile Include="Entities\Living\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Planets\PlanetSkybox\PlanetSkyDome.cs" />
+    <Compile Include="Planets\SkyDome\PlanetSkyDome.cs" />
     <Compile Include="Planets\Terran\Chunk\ChunkFinder.cs" />
     <Compile Include="Planets\Terran\Chunk\ChunkWrapper.cs" />
     <Compile Include="Planets\Terran\Terra.cs" />
@@ -233,8 +232,27 @@
     <Compile Include="Planets\Weather\Items\Clouds.cs" />
     <Compile Include="Planets\Weather\Items\Wind.cs" />
     <Compile Include="Planets\Weather\WeatherManager.cs" />
+    <Compile Include="UtopiaRender.debug.cs" />
     <Compile Include="Worlds\Chunks\VisualChunk.cs" />
+    <Compile Include="Worlds\Chunks\WorldChunks.Draw.cs" />
+    <Compile Include="Worlds\GameClocks\Clock.cs" />
+    <Compile Include="Worlds\GameClocks\IClock.cs" />
+    <Compile Include="Worlds\GameClocks\RealTimeClock.cs" />
+    <Compile Include="Worlds\GameClocks\WorldClock.cs" />
+    <Compile Include="Worlds\Chunks\IWorldChunks.cs" />
+    <Compile Include="Worlds\IWorld.cs" />
+    <Compile Include="Worlds\SkyDomes\ISkyDome.cs" />
+    <Compile Include="Worlds\SkyDomes\NormalSkyDome.cs" />
+    <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.cs" />
+    <Compile Include="Worlds\SkyDomes\SkyDome.cs" />
+    <Compile Include="Worlds\Chunks\WorldChunks.cs" />
+    <Compile Include="Worlds\SkyDomes\SharedComp\SkyStars.cs" />
+    <Compile Include="Worlds\Weathers\IWeather.cs" />
+    <Compile Include="Worlds\Weathers\SharedComp\IWind.cs" />
+    <Compile Include="Worlds\Weathers\Weather.cs" />
+    <Compile Include="Worlds\Weathers\SharedComp\Wind.cs" />
     <Compile Include="Worlds\World.cs" />
+    <Compile Include="Worlds\WorldRenderer.cs" />
     <EmbeddedResource Include="GUI\Forms\CustControls\Config.resx">
       <DependentUpon>Config.cs</DependentUpon>
     </EmbeddedResource>
@@ -307,6 +325,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Space\" />
+    <Folder Include="Worlds\Entities\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
