@@ -33,6 +33,8 @@ using Utopia.Worlds.Chunks;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Weather;
 using Utopia.Worlds.SkyDomes.SharedComp;
+using Ninject;
+using Ninject.Parameters;
 
 namespace Utopia
 {
@@ -83,8 +85,19 @@ namespace Utopia
             //Init the Big array.
             SingleArrayDataProvider.ChunkCubes = new SingleArrayChunkCube(ref worldParam);
 
-            //-- Clock --
-            _worldClock = new WorldClock(this, 480, (float)Math.PI * 1f);
+            using (IKernel kernel = new StandardKernel())
+            {
+                kernel.Bind<IClock>()
+                      .To<WorldClock>()
+                      .InSingletonScope()
+                      .WithConstructorArgument("game", this)
+                      .WithConstructorArgument("clockSpeed", 480f)
+                      .WithConstructorArgument("startTime", (float)Math.PI * 1f);
+
+                //-- Clock --
+                //_worldClock = new WorldClock(this, 480, (float)Math.PI * 1f);
+                _worldClock = kernel.Get<IClock>();
+            }
 
             //-- Weather --
             _weather = new Weather(_worldClock);
