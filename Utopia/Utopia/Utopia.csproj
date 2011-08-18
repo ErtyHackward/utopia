@@ -50,6 +50,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ninject">
+      <HintPath>..\Library\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="Nuclex.Support">
       <HintPath>..\Library\Nuclex.Support.dll</HintPath>
     </Reference>
@@ -234,6 +237,7 @@
     <Compile Include="Planets\Weather\Items\Wind.cs" />
     <Compile Include="Planets\Weather\WeatherManager.cs" />
     <Compile Include="UtopiaRender.debug.cs" />
+    <Compile Include="UtopiaRender.Inject.cs" />
     <Compile Include="Worlds\Chunks\VisualChunk.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.Draw.cs" />
     <Compile Include="Worlds\GameClocks\Clock.cs" />
