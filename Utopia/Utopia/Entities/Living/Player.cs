@@ -21,6 +21,9 @@ using Utopia.Shared.Landscaping;
 using Utopia.Shared;
 using Utopia.Settings;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Chunks.Entities.Inventory.Tools;
+using S33M3Engines.Shared.Sprites;
 
 namespace Utopia.Entities.Living
 {
@@ -41,6 +44,8 @@ namespace Utopia.Entities.Living
         HLSLVertexPositionColor _cursorEffect;
         Color _cursorColor = Color.Red; //Color.FromNonPremultiplied(30,30,30, 255);
 
+        
+
         #endregion
 
         #region public properties
@@ -49,6 +54,9 @@ namespace Utopia.Entities.Living
         {
             get { return _name; }
         }
+
+        public PlayerInventory Inventory { get; private set; }
+        
         #endregion
 
         public Player(Game game, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed)
@@ -56,6 +64,20 @@ namespace Utopia.Entities.Living
         {
             _game = game;
             _name = Name;
+            Inventory = new PlayerInventory();
+            Pickaxe tool = new Pickaxe();
+            tool.AllowedSlots = InventorySlot.Bags;
+            tool.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
+
+            Armor ring = new Armor();
+            ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
+            ring.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\ring-icon.png", new Vector2(0, 0));
+
+
+            Inventory.bag.Items = new List<Item>();
+            Inventory.bag.Items.Add(tool);
+            Inventory.bag.Items.Add(ring);
+
         }
 
         #region private methods

@@ -26,6 +26,7 @@ using Utopia.Shared.Landscaping;
 using Utopia.Shared;
 using Utopia.Settings;
 using Utopia.Shared.Config;
+using Utopia.Entities.Living;
 
 namespace Utopia
 {
@@ -48,6 +49,10 @@ namespace Utopia
 
         //Debug Tool
         private DebugInfo _debugInfo;
+
+        //TODO validate the way to access player properties from other components / eventually remove casts
+        public Player Player {get {return (Player) _player;}}
+
 #if STEALTH
         const int W = 48;
         const int H = 32;

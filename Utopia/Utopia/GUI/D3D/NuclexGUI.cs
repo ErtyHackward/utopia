@@ -36,6 +36,8 @@ namespace Utopia.GUI.D3D
         SpriteTexture _crosshair;
         SpriteFont _font;
 
+        ToolBarUI _toolbarUI;
+
         public GUI(Game game)
             : base(game)
         {
@@ -44,25 +46,21 @@ namespace Utopia.GUI.D3D
         public override void Initialize()
         {
             _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(Game, "Resources\\Skins\\Suave\\Suave.skin.xml");
+
             _screen = new Screen();
 
-            //PlayerInventory inventory = new PlayerInventory(); //TODO this would move to player class 
-            //Pickaxe tool = new Pickaxe();
-            //tool.AllowedSlots = InventorySlot.Bags;
-            //tool.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
+            //TODO best way for acceding player component from GUI component ? 
+            //or moving the GUI into the player comnponent ? 
+            UtopiaRender renderer = Game as UtopiaRender;
+            PlayerInventory inventory = renderer.Player.Inventory;
 
-            //Armor ring = new Armor();
-            //ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
-            //ring.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\ring-icon.png", new Vector2(0, 0));
 
-            //inventory.bag.Items = new List<Item>();
-            //inventory.bag.Items.Add(tool);
-            //inventory.bag.Items.Add(ring);
+            SpriteTexture backGround = new SpriteTexture(Game.GraphicDevice, @"Textures\charactersheet.png", new Vector2(0, 0));
+            InventoryWindow invWin = new InventoryWindow(inventory, backGround);
+            _toolbarUI = new ToolBarUI(inventory);
 
-            //SpriteTexture backGround = new SpriteTexture(Game.GraphicDevice, @"Textures\charactersheet.png", new Vector2(0, 0));
-            //InventoryWindow invWin = new InventoryWindow(inventory, backGround);
-
-            //_screen.Desktop.Children.Add(invWin);
+            _screen.Desktop.Children.Add(invWin);
+            _screen.Desktop.Children.Add(_toolbarUI);
 
             //WindowControl window = new WindowControl();
             //window.Bounds = new UniRectangle(40, 40, 300, 300);
@@ -99,9 +97,10 @@ namespace Utopia.GUI.D3D
             _font.Dispose();
         }
 
-        public override void Update(ref GameTime TimeSpent)
+        public override void Update(ref GameTime timeSpent)
         {
-            InjectInput(); 
+            InjectInput();
+            _toolbarUI.Update(ref timeSpent);
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
