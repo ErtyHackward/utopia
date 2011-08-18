@@ -37,6 +37,7 @@
             this.txtSeed = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btNewArch = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -129,10 +130,21 @@
             this.panel1.Size = new System.Drawing.Size(549, 3);
             this.panel1.TabIndex = 8;
             // 
+            // btNewArch
+            // 
+            this.btNewArch.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btNewArch.Location = new System.Drawing.Point(375, 338);
+            this.btNewArch.Name = "btNewArch";
+            this.btNewArch.Size = new System.Drawing.Size(174, 37);
+            this.btNewArch.TabIndex = 9;
+            this.btNewArch.Text = "New client arch.";
+            this.btNewArch.UseVisualStyleBackColor = true;
+            // 
             // SinglePlayer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btNewArch);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtSeed);
@@ -160,5 +172,6 @@
         internal System.Windows.Forms.ListBox lstSAvedGame;
         internal System.Windows.Forms.Button btNew;
         internal System.Windows.Forms.TextBox txtSeed;
+        internal System.Windows.Forms.Button btNewArch;
     }
 }

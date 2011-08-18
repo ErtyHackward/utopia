@@ -29,6 +29,7 @@ namespace Utopia.GUI.Forms
             if(withFadeIn) FadeInWinForm();
 
             singleChild.btNew.Click += new EventHandler(btNew_Click);
+            singleChild.btNewArch.Click += new EventHandler(btNewArch_Click);
         }
 
         private void FadeInWinForm()
@@ -44,6 +45,23 @@ namespace Utopia.GUI.Forms
             };
         }
 
+        void btNewArch_Click(object sender, EventArgs e)
+        {
+            //Create the Single Player NEW world data message
+            Data = new FormData();
+            Data.RequestAction = FormRequestedAction.StartSinglePlayer;
+            Data.SinglePlData = new FormData.SinglePlayerData()
+            {
+                isNew = true,
+                SavedGameId = "",
+                Seed = singleChild.txtSeed.Text,
+                WorldName = "",
+                NewStruct = true
+            };
+
+            this.Hide();
+        }
+
         void btNew_Click(object sender, EventArgs e)
         {
             //Create the Single Player NEW world data message
@@ -54,7 +72,8 @@ namespace Utopia.GUI.Forms
                 isNew = true,
                 SavedGameId = "",
                 Seed = singleChild.txtSeed.Text,
-                WorldName = ""
+                WorldName = "",
+                NewStruct = false
             };
 
             this.Hide();
@@ -111,6 +130,7 @@ namespace Utopia.GUI.Forms
             public string WorldName;
             public bool isNew;
             public string SavedGameId;
+            public bool NewStruct;
         }
 
         public struct MultiplayerData

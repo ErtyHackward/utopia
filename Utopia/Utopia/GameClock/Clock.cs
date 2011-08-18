@@ -68,7 +68,6 @@ namespace Utopia.GameClock
                 {
                     return 1 - MathHelper.FullLerp(0, 1, MathHelper.Pi, MathHelper.TwoPi, _clockTime.ActualValue);
                 }
-
             }
         }
         public float ClockSpeed
