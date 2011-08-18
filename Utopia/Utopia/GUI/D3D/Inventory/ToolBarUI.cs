@@ -6,6 +6,8 @@ using Nuclex.UserInterface.Controls.Desktop;
 using Nuclex.UserInterface;
 
 using Nuclex.UserInterface.Controls;
+using Utopia.Shared.Chunks.Entities.Inventory;
+using S33M3Engines.D3D;
 
 
 namespace Utopia.GUI.D3D.Inventory
@@ -19,15 +21,19 @@ namespace Utopia.GUI.D3D.Inventory
 
         private List<ButtonItemControl> buttons;
 
-        private Player player;
+        private PlayerInventory _inventory;
 
-        public ToolBarUI(Player player, Viewport viewport)
+        public ToolBarUI(PlayerInventory inventory)
         {
-            this.Bounds = new UniRectangle(0.0f, new UniScalar(1, -80), new UniScalar(1, 0), 80.0f);
+            //FIXME uniscalar relative positions doe not work, surely due to rectangle ordering  
+            //this.Bounds = new UniRectangle(0.0f, new UniScalar(.5f, 0f), new UniScalar(1, 0), 80.0f);
+            //TODO remove all magic hardcoded numbers
+            this.Bounds = new UniRectangle(0.0f, 600-60, new UniScalar(1, 0), 80.0f);
+            
             this.Name = "Toolbar";
-            this.player = player;
+            _inventory = inventory;
 
-            leftButton = new ButtonItemControl(player.LeftTool);
+            leftButton = new ButtonItemControl(inventory.LeftTool);
             leftButton.IsLink = true;
             leftButton.Name = "LeftTool";
             leftButton.Bounds = new UniRectangle(
@@ -36,17 +42,17 @@ namespace Utopia.GUI.D3D.Inventory
             this.Children.Add(leftButton);
 
 
-            rightButton = new ButtonItemControl(player.RightTool);
+            rightButton = new ButtonItemControl(inventory.RightTool);
             rightButton.Name = "RightTool";
             rightButton.IsLink = true;
             rightButton.Bounds = new UniRectangle(
-               new UniScalar(1, -_buttonSize), 0, _buttonSize, _buttonSize
+              1024-46, 0, _buttonSize, _buttonSize
             );
             this.Children.Add(rightButton);
 
             buttons = new List<ButtonItemControl>(15);
 
-            for (int x = 3; x < 15; x++)
+            for (int x = 3; x < 19; x++)
             {
                 ButtonItemControl btn = new ButtonItemControl(null);
                 btn.Bounds = new UniRectangle(x * _buttonSize, 0, _buttonSize, _buttonSize);
@@ -56,14 +62,15 @@ namespace Utopia.GUI.D3D.Inventory
             }
         }
 
-        public void Update()
+        //TODO review ToolBarUI update, envent based may be better
+        public void Update(ref GameTime gameTime)
         {
 
-            for (int i = 0; i < player.inventory.toolbar.Count; i++)
+            for (int i = 0; i < _inventory.toolbar.Count; i++)
             {
-                buttons[i].Item = player.inventory.toolbar[i];
+                buttons[i].Item = _inventory.toolbar[i];
 
-                if (buttons[i].Item == player.LeftTool)
+                if (buttons[i].Item == _inventory.LeftTool)
                 {
                     buttons[i].Highlight = true;
                 }
@@ -73,22 +80,22 @@ namespace Utopia.GUI.D3D.Inventory
                 }
             }
 
-            if (player.LeftTool != null)
+            if (_inventory.LeftTool != null)
             {
-                leftButton.Item = player.LeftTool;
+                leftButton.Item = _inventory.LeftTool;
 
                 if (leftButton.Item.Icon == null)
-                    leftButton.Text = player.LeftTool.name;
+                    leftButton.Text = _inventory.LeftTool.UniqueName;
                 else
                     leftButton.Text = null;
             }
 
-            if (player.RightTool != null)
+            if (_inventory.RightTool != null)
             {
-                rightButton.Item = player.RightTool;
+                rightButton.Item = _inventory.RightTool;
 
                 if (rightButton.Item.Icon == null)
-                    rightButton.Text = player.RightTool.name;
+                    rightButton.Text = _inventory.RightTool.UniqueName;
                 else
                     rightButton.Text = null;
             }

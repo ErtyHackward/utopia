@@ -95,6 +95,7 @@
     <Compile Include="GUI\D3D\Inventory\InventoryCell.cs" />
     <Compile Include="GUI\D3D\Inventory\InventoryCellRenderer.cs" />
     <Compile Include="GUI\D3D\Inventory\InventoryWindow.cs" />
+    <Compile Include="GUI\D3D\Inventory\ToolBarUI.cs" />
     <Compile Include="GUI\D3D\NuclexGUI.cs">
       <SubType>Code</SubType>
     </Compile>

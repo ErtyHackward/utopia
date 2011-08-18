@@ -76,8 +76,8 @@ namespace Utopia.GUI.D3D.Inventory
             this.MouseHovering = false;
         }
 
-        public void Link(Item itemToLink) { 
-        
+        public void Link(Item itemToLink) {
+            this.Item = itemToLink;
         }
     }
 }
