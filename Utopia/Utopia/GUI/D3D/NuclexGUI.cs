@@ -44,26 +44,25 @@ namespace Utopia.GUI.D3D
         public override void Initialize()
         {
             _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(Game, "Resources\\Skins\\Suave\\Suave.skin.xml");
-
             _screen = new Screen();
 
-            PlayerInventory inventory = new PlayerInventory(); //TODO this would move to player class 
-            Pickaxe tool = new Pickaxe();
-            tool.AllowedSlots = InventorySlot.Bags;
-            tool.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
+            //PlayerInventory inventory = new PlayerInventory(); //TODO this would move to player class 
+            //Pickaxe tool = new Pickaxe();
+            //tool.AllowedSlots = InventorySlot.Bags;
+            //tool.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
 
-            Armor ring = new Armor();
-            ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
-            ring.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\ring-icon.png", new Vector2(0, 0));
+            //Armor ring = new Armor();
+            //ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
+            //ring.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\ring-icon.png", new Vector2(0, 0));
 
-            inventory.bag.Items = new List<Item>();
-            inventory.bag.Items.Add(tool);
-            inventory.bag.Items.Add(ring);
+            //inventory.bag.Items = new List<Item>();
+            //inventory.bag.Items.Add(tool);
+            //inventory.bag.Items.Add(ring);
 
-            SpriteTexture backGround = new SpriteTexture(Game.GraphicDevice, @"Textures\charactersheet.png", new Vector2(0, 0));
-            InventoryWindow invWin = new InventoryWindow(inventory, backGround);
+            //SpriteTexture backGround = new SpriteTexture(Game.GraphicDevice, @"Textures\charactersheet.png", new Vector2(0, 0));
+            //InventoryWindow invWin = new InventoryWindow(inventory, backGround);
 
-            _screen.Desktop.Children.Add(invWin);
+            //_screen.Desktop.Children.Add(invWin);
 
             //WindowControl window = new WindowControl();
             //window.Bounds = new UniRectangle(40, 40, 300, 300);
@@ -122,7 +121,6 @@ namespace Utopia.GUI.D3D
 
         private void RenderGui()
         {
-          
             _guiVisualizer.Draw(_screen);
         }
 
@@ -132,7 +130,6 @@ namespace Utopia.GUI.D3D
         private void InjectInput()
         {
             MouseState mouseState = Mouse.GetState();
-
 
              if (prevMouseState.LeftButton==ButtonState.Released && mouseState.LeftButton==ButtonState.Pressed)
                 _screen.InjectMousePress(MouseButtons.Left);

@@ -12,28 +12,43 @@ namespace Utopia.Worlds.Chunks
     /// <summary>
     /// Represents a chunk for 3d rendering
     /// </summary>
-    public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser
+    public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IDisposable
     {
+        #region Static Variables
+        #endregion
+
         #region Private variables
-        private World _world;
+        private WorldChunks _world;
+        private Range<int> _cubeRange;
         #endregion
 
         #region Public properties/Variable
         public IntVector2 ChunkPosition { get; set; } // Gets or sets current chunk position
         public ChunkState State { get; set; }         // Chunk State
-
+        public Range<int> CubeRange
+        {
+            get { return _cubeRange; }
+            set { _cubeRange = value; }
+        }
         #endregion
 
-        public VisualChunk(World world)
+        public VisualChunk(WorldChunks world, ref Range<int> cubeRange)
             : base(new SingleArrayDataProvider())
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
-            
+
+            CubeRange = cubeRange;
             State = ChunkState.Empty;
             _world = world;
         }
 
         #region Public methods
+        /// <summary>
+        /// Is my chunk at the edge of the visible world ?
+        /// </summary>
+        /// <param name="X">Chunk world X position</param>
+        /// <param name="Z">Chunk world Z position</param>
+        /// <returns>True if the chunk is at border</returns>
         public bool isBorderChunk(int X, int Z)
         {
             if (X == _world.WorldBorder.Min.X ||
@@ -58,6 +73,10 @@ namespace Utopia.Worlds.Chunks
         {
             State = ChunkState.LandscapeCreated;
             base.BlockDataChanged(sender, e);
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

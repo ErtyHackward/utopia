@@ -123,7 +123,5 @@ namespace Utopia.Planets.Skybox
             _vb.SetData(vertices);
         }
         #endregion
-
-
     }
 }

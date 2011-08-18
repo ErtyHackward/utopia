@@ -30,7 +30,7 @@ using Utopia.Shared.Config;
 namespace Utopia
 {
 
-    public class UtopiaRender : Game
+    public partial class UtopiaRender : Game
     {
         //Debug tools
         private FPS _fps; //FPS computing object
@@ -38,6 +38,7 @@ namespace Utopia
         //Manage pluggins
         private Plugins _plugins;
         private bool _loadPluggin = true;
+        private bool _newClientStructure = false;
 
         //Game componants
         private GameClock.Clock _clock;
@@ -59,16 +60,17 @@ namespace Utopia
         private Axis _axis;
 #endif
 
-        public UtopiaRender()
+        public UtopiaRender(bool newClientStructure = false)
             :base(new System.Drawing.Size(W,H))                    // Windowed screen size resolution
         {
+             _newClientStructure = newClientStructure;
              S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
              S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
              VSync = true;                                              // Vsync ON (default)
 
-            ////Load the pluggin ! ===================
+            //Load the pluggin ! ===================
              _plugins = new Plugins();
-             if (_loadPluggin)
+             if (_loadPluggin && !newClientStructure)
              {
                  _plugins.LoadPlugins();
              }
@@ -86,31 +88,19 @@ namespace Utopia
             LandscapeBuilder = new LandscapeBuilder();
              //LandscapeBuilder = new FlatLandscape();
 
-             LandscapeBuilder.Initialize(ClientSettings.Current.Settings.GraphicalParameters.WorldSize);
+            LandscapeBuilder.Initialize(ClientSettings.Current.Settings.GraphicalParameters.WorldSize);
             RenderCubeProfile.InitCubeProfiles();           // Init the render cube profiles
             CubeProfile.InitCubeProfiles();                 // Init the cube profiles
         }
 
-        //private void LoadSettings(XmlSettingsManager<ClientSettings.ClientConfig> SettingsManager)
-        //{
-        //    ClientSettings.Settings = SettingsManager;
-        //    ClientSettings.Settings = new XmlSettingsManager<ClientSettings.ClientConfig>("UtopiaClient.config", SettingsStorage.ApplicationData);
-        //    ClientSettings.Settings.Load();
-        //    //If file was not present create a new one with the Azerty Default mapping !
-        //    if (SettingsManager.Settings.KeyboardMapping == null)
-        //    {
-        //        SettingsManager.Settings = ClientSettings.ClientConfig.DefaultQwerty;
-        //        SettingsManager.Save();
-        //    }
-        //}
-
         public override void Initialize()
         {
+            //Create all States that could by used by the game.
             DXStates.CreateStates(this.D3dEngine);
             //UtopiaSaveManager.Start("s33m3's World");
 
-            //DebugInit();
-            NormalInit();
+            if(_newClientStructure) DebugInit();
+            else Init();
 
             //Display the pluggins that have been loaded ! =========================
             for (int i = 0; i < WorldPlugins.Plugins.WorldPlugins.Length; i++)
@@ -124,30 +114,10 @@ namespace Utopia
 #endif
             base.Initialize(); 
         }
-
-        //Init phase used for testing purpose
-        private void DebugInit()
-        {
-            //ICamera camera = new FirstPersonCamera(this);  // Create a firstPersonCAmera viewer
-            
-            //WorldFocus = (IWorldFocus)camera;
-            
-            //Entities.IEntity _wisp = new Entities.Admin.Wisp(this, "Wisp", camera, InputHandler,
-            //                                     new DVector3(0, 0, 3)
-            //                                     );
-            //GameComponents.Add(_wisp);
-            ////Attached the Player to the camera =+> The player will be used as Camera Holder !
-            //camera.CameraPlugin = _wisp;
-            //GameComponents.Add(camera);
-
-            //Testing.NewEffect effect = new Testing.NewEffect(this);
-            //GameComponents.Add(effect);
-
-            //base.ActivCamera = camera;
-        }
+        
 
         //Default Utopia Init method.
-        private void NormalInit()
+        private void Init()
         {
             #region Debug Components
 #if DEBUG
