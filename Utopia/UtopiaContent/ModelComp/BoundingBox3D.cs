@@ -12,16 +12,19 @@ using S33M3Engines.D3D;
 using S33M3Engines.D3D.Effects.Basics;
 using SharpDX.Direct3D;
 using Utopia.Shared.Structs;
+using S33M3Engines;
+using S33M3Engines.WorldFocus;
 
 namespace UtopiaContent.ModelComp
 {
     public class BoundingBox3D : IDisposable
     {
         #region Private variable
-        private Game _game;
-        HLSLVertexPositionColor _wrappedEffect;
+        private D3DEngine _d3dEngine;
+        private WorldFocusManager _worldFocusManager;
+        private HLSLVertexPositionColor _wrappedEffect;
         //Buffer _vertexBuffer;
-        VertexBuffer<VertexPositionColor> _vertexBuffer;
+        private VertexBuffer<VertexPositionColor> _vertexBuffer;
         private Line3D[] _lines = new Line3D[12];
         private Matrix BB3dworld;
         #endregion
@@ -29,9 +32,10 @@ namespace UtopiaContent.ModelComp
         #region Public properties
         #endregion
 
-        public BoundingBox3D(Game game, Vector3 BBDimension, HLSLVertexPositionColor effect, Color color)
+        public BoundingBox3D(D3DEngine d3dEngine, WorldFocusManager worldFocusManager, Vector3 BBDimension, HLSLVertexPositionColor effect, Color color)
         {
-            _game = game;
+            _d3dEngine = d3dEngine;
+            _worldFocusManager = worldFocusManager;
             _wrappedEffect = effect;
             CreateBBShape(ref BBDimension, ref color);
         }
@@ -66,7 +70,7 @@ namespace UtopiaContent.ModelComp
             ptList[22] = new VertexPositionColor() { Position = new Vector3(0, 0, BBDimension.Z), Color = color };
             ptList[23] = new VertexPositionColor() { Position = new Vector3(0, BBDimension.Y, BBDimension.Z), Color = color };
 
-            _vertexBuffer = new VertexBuffer<VertexPositionColor>(_game, 24, VertexPositionColor.VertexDeclaration, PrimitiveTopology.LineList);
+            _vertexBuffer = new VertexBuffer<VertexPositionColor>(_d3dEngine, 24, VertexPositionColor.VertexDeclaration, PrimitiveTopology.LineList);
             _vertexBuffer.SetData(ptList);
         }
 
@@ -80,10 +84,10 @@ namespace UtopiaContent.ModelComp
 
         #region Public methods
         //My points are already on world space !
-        public void Draw(ICamera camera, ref IWorldFocus FocusPoint)
+        public void Draw(ICamera camera, IWorldFocus FocusPoint)
         {
             Matrix WorldFocused = Matrix.Identity;
-            GMathHelper.CenterOnFocus(ref BB3dworld, ref WorldFocused, ref _game.WorldFocus);
+            _worldFocusManager.CenterOnFocus(ref BB3dworld, ref WorldFocused);
 
             _wrappedEffect.Begin();
             _wrappedEffect.CBPerDraw.Values.World = Matrix.Transpose(WorldFocused);
@@ -95,7 +99,7 @@ namespace UtopiaContent.ModelComp
 
             _vertexBuffer.SetToDevice(0);
 
-            _game.D3dEngine.Context.Draw(24, 0);
+            _d3dEngine.Context.Draw(24, 0);
         }
 
         #endregion

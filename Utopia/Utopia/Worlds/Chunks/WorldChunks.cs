@@ -12,6 +12,8 @@ using S33M3Engines.D3D;
 using S33M3Engines.Maths;
 using Utopia.GameClock;
 using Utopia.Worlds.GameClocks;
+using S33M3Engines;
+using S33M3Engines.Cameras;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -24,7 +26,8 @@ namespace Utopia.Worlds.Chunks
         private WorldParameters _worldParameters; //The current world parameters
         private int _chunkPOWsize;
         private bool _chunkNeed2BeSorted;
-        private Game _game;
+        private D3DEngine _d3dEngine;
+        private CameraManager _camManager;
         private Location2<int> _worldStartUpPosition;
         #endregion
 
@@ -54,9 +57,10 @@ namespace Utopia.Worlds.Chunks
         public Location2<int> WrapEnd { get; set; }
         #endregion
 
-        public WorldChunks(Game game, WorldParameters worldParameters, Location2<int> worldStartUpPosition, IClock gameClock)
+        public WorldChunks(D3DEngine d3dEngine, CameraManager camManager , WorldParameters worldParameters, Location2<int> worldStartUpPosition, IClock gameClock)
         {
-            _game = game;
+            _d3dEngine = d3dEngine;
+            _camManager = camManager;
             _worldStartUpPosition = worldStartUpPosition;
             WorldParameters = worldParameters;
 
@@ -249,10 +253,10 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         private void SortChunks()
         {
-            if (!_chunkNeed2BeSorted || _game.ActivCamera == null) return;
+            if (!_chunkNeed2BeSorted || _camManager.ActiveCamera == null) return;
             int index = 0;
 
-            foreach (var chunk in Chunks.OrderBy(x => MVector3.Distance(x.CubeRange.Min, _game.ActivCamera.WorldPosition)))
+            foreach (var chunk in Chunks.OrderBy(x => MVector3.Distance(x.CubeRange.Min, _camManager.ActiveCamera.WorldPosition)))
             {
                 SortedChunks[index] = chunk;
                 index++;

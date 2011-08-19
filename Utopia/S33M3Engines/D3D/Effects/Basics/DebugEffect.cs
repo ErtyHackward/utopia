@@ -16,9 +16,9 @@ namespace S33M3Engines.D3D.Effects.Basics
             get { return _debugEffect; }
         }
 
-        public static void Init(Game game)
+        public static void Init(D3DEngine d3dEngine)
         {
-            _debugEffect = new HLSLVertexPositionColor(game, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
+            _debugEffect = new HLSLVertexPositionColor(d3dEngine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
         }
         public static void Dispose()
         {

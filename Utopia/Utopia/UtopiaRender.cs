@@ -27,6 +27,10 @@ using Utopia.Shared;
 using Utopia.Settings;
 using Utopia.Shared.Config;
 using Utopia.Entities.Living;
+using S33M3Engines;
+using Ninject;
+using S33M3Engines.GameStates;
+using S33M3Engines.WorldFocus;
 
 namespace Utopia
 {
@@ -38,7 +42,7 @@ namespace Utopia
 
         //Manage pluggins
         private Plugins _plugins;
-        private bool _loadPluggin = true;
+        private bool _loadPluggin = false;
         private bool _newClientStructure = false;
 
         //Game componants
@@ -46,6 +50,8 @@ namespace Utopia
         private Entities.Living.ILivingEntity _player;
         private GUI.D3D.GUI _gui;
         private Univers.Universe _universe;
+
+        private GameStatesManager _gameStateManagers;
 
         //Debug Tool
         private DebugInfo _debugInfo;
@@ -66,7 +72,6 @@ namespace Utopia
 #endif
 
         public UtopiaRender(bool newClientStructure = false)
-            :base(new System.Drawing.Size(W,H))                    // Windowed screen size resolution
         {
              _newClientStructure = newClientStructure;
              S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
@@ -100,48 +105,67 @@ namespace Utopia
 
         public override void Initialize()
         {
-            //Create all States that could by used by the game.
-            DXStates.CreateStates(this.D3dEngine);
-            //UtopiaSaveManager.Start("s33m3's World");
-
-            if(_newClientStructure) DebugInit();
-            else Init();
-
-            //Display the pluggins that have been loaded ! =========================
-            for (int i = 0; i < WorldPlugins.Plugins.WorldPlugins.Length; i++)
+            using (IKernel IoCContainer = new StandardKernel())
             {
-                GameConsole.Write("Pluggin Loaded : " + WorldPlugins.Plugins.WorldPlugins[i].PluginName + " v" + WorldPlugins.Plugins.WorldPlugins[i].PluginVersion);
-                WorldPlugins.Plugins.WorldPlugins[i].Initialize(_universe);
-            }
-            //======================================================================
+                _gameStateManagers = new GameStatesManager() { DebugActif = false, DebugDisplay = 0};
+
+                //Initialize the Thread Pool manager
+                S33M3Engines.Threading.WorkQueue.Initialize();
+
+                _d3dEngine = new D3DEngine(new System.Drawing.Size(W, H), "Powered By S33m3 Engine ! Rulezzz", S33M3Engines.Threading.WorkQueue.ThreadPool.Concurrency);
+
+                //Init the 3d Engine
+                _d3dEngine.Initialize();
+
+                _d3dEngine.GameWindow.Closed += (o, args) =>
+                {
+                    _isFormClosed = true;
+                };
+
+                if (!_d3dEngine.UnlockedMouse) System.Windows.Forms.Cursor.Hide(); //Hide the mouse by default !
+
+
+                InputHandler = new InputHandlerManager(this);
+
+                //Create all States that could by used by the game.
+                DXStates.CreateStates(_d3dEngine);
+                //UtopiaSaveManager.Start("s33m3's World");
+
+                if (_newClientStructure) DebugInit(IoCContainer);
+                else Init();
+
+                //Display the pluggins that have been loaded ! =========================
+                for (int i = 0; i < WorldPlugins.Plugins.WorldPlugins.Length; i++)
+                {
+                    GameConsole.Write("Pluggin Loaded : " + WorldPlugins.Plugins.WorldPlugins[i].PluginName + " v" + WorldPlugins.Plugins.WorldPlugins[i].PluginVersion);
+                    WorldPlugins.Plugins.WorldPlugins[i].Initialize(_d3dEngine, _camManager, _worldFocusManager, null , _gameStateManagers);
+                }
+                //======================================================================
 #if DEBUG
-            GameConsole.Write("DX11 main engine started and initialized with feature level : " + D3dEngine.GraphicsDevice.FeatureLevel);
+                GameConsole.Write("DX11 main engine started and initialized with feature level : " + _d3dEngine.Device.FeatureLevel);
 #endif
-            base.Initialize(); 
+                base.Initialize();
+
+            }
         }
         
 
         //Default Utopia Init method.
         private void Init()
         {
-            #region Debug Components
-#if DEBUG
-            _axis = new Axis(this, 10);         // Use to display the X,Y,Z axis
-            GameComponents.Add(_axis);          
-            DebugEffect.Init(this);             // Default Effect used by debug componant (will be shared)
-#endif
-            #endregion
+            WorldFocusManager _worldFocusManager = new WorldFocusManager();
 
-
-            _clock = new GameClock.Clock(this, 120, GameClock.GameTimeMode.Automatic, (float)Math.PI * 1f, InputHandler);     // Clock creation, manage Utopia time
+            _clock = new GameClock.Clock(120, GameClock.GameTimeMode.Automatic, (float)Math.PI * 1f, InputHandler);     // Clock creation, manage Utopia time
             GameComponents.Add(_clock);
 
-            ICamera camera = new FirstPersonCamera(this);  // Create a firstPersonCAmera viewer
-            
-            WorldFocus = (IWorldFocus)camera; //Set the World Focus on my Camera
+            ICamera camera = new FirstPersonCamera(_d3dEngine, _worldFocusManager);  // Create a firstPersonCAmera viewer
+
+            _worldFocusManager.WorldFocus = (IWorldFocus)camera; //Set the World Focus on my Camera
+
+            _camManager = new CameraManager(camera);
 
             //Create an entity, link to camera to it.
-            _player = new Entities.Living.Player(this, "s33m3", camera, InputHandler,
+            _player = new Entities.Living.Player(_d3dEngine, _camManager, _worldFocusManager, "s33m3", camera, InputHandler,
                                                  new DVector3((LandscapeBuilder.Worldsize.X / 2.0) + LandscapeBuilder.WorldStartUpX, 90, (LandscapeBuilder.Worldsize.Z / 2.0f) + LandscapeBuilder.WorldStartUpZ),
                                                  new Vector3(0.5f, 1.9f, 0.5f),
                                                  5f, 30f, 10f)
@@ -152,26 +176,31 @@ namespace Utopia
 
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
             camera.CameraPlugin = _player; //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
-            GameComponents.Add(camera);
+            GameComponents.Add(_camManager);
 
-            _universe = new Univers.Universe(this, _clock, _player, "S33m3's World");
+            _universe = new Univers.Universe(_d3dEngine, _camManager, _worldFocusManager, _gameStateManagers, LandscapeBuilder, _clock, _player, "S33m3's World");
             GameComponents.Add(_universe);
 
-            _fps = new FPS(this);
+            _fps = new FPS();
             GameComponents.Add(_fps);
 
-            _gui = new GUI.D3D.GUI(this);
+            _gui = new GUI.D3D.GUI(_d3dEngine, ((Player)_player).Inventory);
             GameComponents.Add(_gui);
 
-            _debugInfo = new DebugInfo(this); 
+            _debugInfo = new DebugInfo(_d3dEngine);
             _debugInfo.Activated = true;
             _debugInfo.SetComponants(_fps, _clock, _universe, _player);
             GameComponents.Add(_debugInfo);
 
-            GameConsole.Initialize(this);
+            GameConsole.Initialize(_d3dEngine);
 
-            //Set Default Camera !
-            base.ActivCamera = camera;
+            #region Debug Components
+#if DEBUG
+            _axis = new Axis(_d3dEngine, _camManager,  10, _gameStateManagers);         // Use to display the X,Y,Z axis
+            GameComponents.Add(_axis);
+            DebugEffect.Init(_d3dEngine);             // Default Effect used by debug componant (will be shared)
+#endif
+            #endregion
         }
 
         public override void LoadContent()
@@ -214,7 +243,7 @@ namespace Utopia
                 GameConsole.Write("FixeTimeStep Mode : " + FixedTimeSteps.ToString());
             }
 
-            if (InputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.FullScreen)) isFullScreen = !isFullScreen; //Go full screen !
+            if (InputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.FullScreen)) _d3dEngine.isFullScreen = !_d3dEngine.isFullScreen; //Go full screen !
 
             if (InputHandler.PrevKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) && !InputHandler.PrevKeyboardState.IsKeyDown(Keys.LControlKey) && InputHandler.CurKeyboardState.IsKeyUp(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) && !InputHandler.CurKeyboardState.IsKeyDown(Keys.LControlKey))
             {
@@ -239,7 +268,7 @@ namespace Utopia
 
             if (InputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.LockMouseCursor))
             {
-                UnlockedMouse = !UnlockedMouse;
+                _d3dEngine.UnlockedMouse = !_d3dEngine.UnlockedMouse;
             }
 
             if (InputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.VSync))
@@ -260,8 +289,8 @@ namespace Utopia
 
         public override void Draw()
         {
-            D3dEngine.Context.ClearRenderTargetView(RenderTarget, BackBufferColor);
-            D3dEngine.Context.ClearDepthStencilView(DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
+            _d3dEngine.Context.ClearRenderTargetView(_d3dEngine.RenderTarget, BackBufferColor);
+            _d3dEngine.Context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
 
             base.Draw();
             WorldPlugins.Draw();

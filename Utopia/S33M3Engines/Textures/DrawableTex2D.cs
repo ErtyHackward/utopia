@@ -17,7 +17,7 @@ namespace S33M3Engines.Textures
         private int _width;
         private int _height;
         private Format _colorMapFormat;
-        private Game _game;
+        private D3DEngine _d3dEngine;
         private RenderTargetView _colorMapRTV;
         private ShaderResourceView _colorMapSRV;
         private DepthStencilView _depthMapDSV;
@@ -50,9 +50,9 @@ namespace S33M3Engines.Textures
         }
         #endregion
 
-        public DrawableTex2D(Game game)
+        public DrawableTex2D(D3DEngine d3dEngine)
         {
-            _game = game;
+            _d3dEngine = d3dEngine;
         }
 
 
@@ -84,17 +84,17 @@ namespace S33M3Engines.Textures
         public void Begin()
         {
             //Set the Depth Buffer and Render texture target to the outputMerger
-            _game.D3dEngine.Context.OutputMerger.SetTargets(_depthMapDSV, _colorMapRTV);
+            _d3dEngine.Context.OutputMerger.SetTargets(_depthMapDSV, _colorMapRTV);
             //Set the viewport associated to the Texture renderer
-            _game.D3dEngine.Context.Rasterizer.SetViewports(_viewport);
+            _d3dEngine.Context.Rasterizer.SetViewports(_viewport);
 
-            if (_colorMapRTV != null) _game.D3dEngine.Context.ClearRenderTargetView(_colorMapRTV, _whiteColor);
-            _game.D3dEngine.Context.ClearDepthStencilView(_depthMapDSV, DepthStencilClearFlags.Depth, 1.0f, 0);
+            if (_colorMapRTV != null) _d3dEngine.Context.ClearRenderTargetView(_colorMapRTV, _whiteColor);
+            _d3dEngine.Context.ClearDepthStencilView(_depthMapDSV, DepthStencilClearFlags.Depth, 1.0f, 0);
         }
 
         public void End()
         {
-            if (_colorMapSRV != null) _game.D3dEngine.Context.GenerateMips(_colorMapSRV);
+            if (_colorMapSRV != null) _d3dEngine.Context.GenerateMips(_colorMapSRV);
         }
         #endregion
 
@@ -114,7 +114,7 @@ namespace S33M3Engines.Textures
                 CpuAccessFlags = CpuAccessFlags.None,
                 OptionFlags = ResourceOptionFlags.None
             };
-            Texture2D depthMap = new Texture2D(_game.D3dEngine.GraphicsDevice, _depthMapDesc);
+            Texture2D depthMap = new Texture2D(_d3dEngine.Device, _depthMapDesc);
 
             DepthStencilViewDescription dsvDesc = new DepthStencilViewDescription()
             {
@@ -123,7 +123,7 @@ namespace S33M3Engines.Textures
                 Texture2D = new DepthStencilViewDescription.Texture2DResource() { MipSlice = 0 }
             };
 
-            _depthMapDSV = new DepthStencilView(_game.D3dEngine.GraphicsDevice, depthMap, dsvDesc);
+            _depthMapDSV = new DepthStencilView(_d3dEngine.Device, depthMap, dsvDesc);
 
             ShaderResourceViewDescription srvDesc = new ShaderResourceViewDescription()
             {
@@ -133,7 +133,7 @@ namespace S33M3Engines.Textures
             };
 
 
-            _depthMapSRV = new ShaderResourceView(_game.D3dEngine.GraphicsDevice, depthMap, srvDesc);
+            _depthMapSRV = new ShaderResourceView(_d3dEngine.Device, depthMap, srvDesc);
 
             //Can be disposed because a reference to it is still applied by the 2 view created on it !
 
@@ -155,10 +155,10 @@ namespace S33M3Engines.Textures
                 OptionFlags = ResourceOptionFlags.GenerateMipMaps
             };
 
-            Texture2D colorMap = new Texture2D(_game.D3dEngine.GraphicsDevice, _colorMaptexDesc);
+            Texture2D colorMap = new Texture2D(_d3dEngine.Device, _colorMaptexDesc);
 
-            _colorMapRTV = new RenderTargetView(_game.D3dEngine.GraphicsDevice, colorMap);
-            _colorMapSRV = new ShaderResourceView(_game.D3dEngine.GraphicsDevice, colorMap);
+            _colorMapRTV = new RenderTargetView(_d3dEngine.Device, colorMap);
+            _colorMapSRV = new ShaderResourceView(_d3dEngine.Device, colorMap);
 
             colorMap.Dispose();
         }

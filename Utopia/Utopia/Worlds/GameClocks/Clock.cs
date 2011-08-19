@@ -61,7 +61,6 @@ namespace Utopia.Worlds.GameClocks
         #endregion
 
         #region Private/Protected variable
-        protected Game _game;
         protected VisualClockTime _visualClockTime;
         
         // Radian angle representing the Period of time inside a day. 0 = Midi, Pi = SunSleep, 2Pi = Midnight, 3/2Pi : Sunrise Morning
@@ -76,9 +75,8 @@ namespace Utopia.Worlds.GameClocks
         }
         #endregion
 
-        public Clock(Game game)
+        public Clock()
         {
-            _game = game;
         }
 
         #region Public methods

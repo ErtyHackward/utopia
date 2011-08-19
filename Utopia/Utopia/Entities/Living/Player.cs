@@ -24,6 +24,8 @@ using S33M3Engines.Shared.Math;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using S33M3Engines.Shared.Sprites;
+using S33M3Engines;
+using S33M3Engines.WorldFocus;
 
 namespace Utopia.Entities.Living
 {
@@ -40,12 +42,9 @@ namespace Utopia.Entities.Living
         //Bloc Cursor Variables
         BoundingBox _playerSelectedBox, _playerPotentialNewBlock;
         BoundingBox3D _blocCursor;
-        Game _game;
         HLSLVertexPositionColor _cursorEffect;
         Color _cursorColor = Color.Red; //Color.FromNonPremultiplied(30,30,30, 255);
-
-        
-
+        WorldFocusManager _worldFocusManager;
         #endregion
 
         #region public properties
@@ -59,19 +58,19 @@ namespace Utopia.Entities.Living
         
         #endregion
 
-        public Player(Game game, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed)
-            : base(game, inputHandler, startUpWorldPosition, size, walkingSpeed, flyingSpeed, headRotationSpeed)
+        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager ,string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed)
+            : base(d3dEngine, camManager, inputHandler, startUpWorldPosition, size, walkingSpeed, flyingSpeed, headRotationSpeed)
         {
-            _game = game;
+            _worldFocusManager = worldFocusManager;
             _name = Name;
             Inventory = new PlayerInventory();
             Pickaxe tool = new Pickaxe();
             tool.AllowedSlots = InventorySlot.Bags;
-            tool.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
+            tool.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
 
             Armor ring = new Armor();
             ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
-            ring.Icon = new SpriteTexture(Game.GraphicDevice, @"Textures\ring-icon.png", new Vector2(0, 0));
+            ring.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
 
             Inventory.bag.Items = new List<Item>();
@@ -226,8 +225,8 @@ namespace Utopia.Entities.Living
             _buildingCubeIndex = 1;
             _buildingCube = RenderCubeProfile.CubesProfile[_buildingCubeIndex];
 
-            _cursorEffect = new HLSLVertexPositionColor(_game, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
-            _blocCursor = new BoundingBox3D(_game, new Vector3(1.004f, 1.004f, 1.004f), _cursorEffect, _cursorColor);
+            _cursorEffect = new HLSLVertexPositionColor(_d3dEngine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
+            _blocCursor = new BoundingBox3D(_d3dEngine, _worldFocusManager, new Vector3(1.004f, 1.004f, 1.004f), _cursorEffect, _cursorColor);
         }
 
         public override void UnloadContent()
@@ -258,7 +257,7 @@ namespace Utopia.Entities.Living
         public override void DrawDepth2()
         {
             if (_isBlockPicked)
-                _blocCursor.Draw(Game.ActivCamera, ref Game.WorldFocus);
+                _blocCursor.Draw(_camManager.ActiveCamera, _worldFocusManager.WorldFocus);
 
             base.DrawDepth2();
         }

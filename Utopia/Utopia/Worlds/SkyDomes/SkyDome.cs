@@ -9,13 +9,14 @@ using S33M3Engines.Struct;
 using SharpDX;
 using Utopia.Worlds.Weather;
 using Utopia.Shared.World;
+using S33M3Engines;
 
 namespace Utopia.Worlds.SkyDomes
 {
     public abstract class SkyDome : ISkyDome
     {
         #region Private variable
-        protected Game _game;
+        protected D3DEngine _d3dEngine;
         protected IClock _clock;
         protected IWeather _weather;
         protected FTSValue<Vector3> _lightDirection;
@@ -26,9 +27,9 @@ namespace Utopia.Worlds.SkyDomes
         public Vector3 LightDirection { get { return _lightDirection.ActualValue; } }
         #endregion
 
-        public SkyDome(Game game, IClock clock, IWeather weather)
+        public SkyDome(D3DEngine d3dEngine, IClock clock, IWeather weather)
         {
-            _game = game;
+            _d3dEngine = d3dEngine;
             _clock = clock;
             _weather = weather;
         }

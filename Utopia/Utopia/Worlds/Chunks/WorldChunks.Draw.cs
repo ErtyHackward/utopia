@@ -27,10 +27,10 @@ namespace Utopia.Worlds.Chunks
 
         private void InitDrawComponents()
         {
-            ArrayTexture.CreateTexture2DFromFiles(_game.GraphicDevice, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, out _terra_View);
+            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, out _terra_View);
 
-            _terraEffect = new HLSLTerran(_game, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
-            _liquidEffect = new HLSLLiquid(_game, @"Effects/Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration);
+            _terraEffect = new HLSLTerran(_d3dEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
+            _liquidEffect = new HLSLLiquid(_d3dEngine, @"Effects/Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration);
 
             _terraEffect.TerraTexture.Value = _terra_View;
             _terraEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);

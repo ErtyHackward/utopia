@@ -11,23 +11,11 @@ using S33M3Engines.InputHandler;
 using S33M3Engines.Maths;
 using S33M3Engines.Maths.Graphics;
 using S33M3Engines.Shared.Delegates;
+using S33M3Engines.WorldFocus;
 
 namespace S33M3Engines.Cameras
 {
-    public interface ICamera : IGameComponent, IDebugInfo
-    {
-        Matrix View { get; }
-        Matrix Projection3D { get; }
-        Matrix Projection2D { get; }
-        Matrix ViewProjection3D { get; }
-        DVector3 WorldPosition { get; set; }
-        Vector3 LookAt { get; set; }
-        Viewport Viewport { get; set; }
-        BoundingFrustum Frustum { get; }
-        ICameraPlugin CameraPlugin { get; set; }
-    }
-
-    public abstract class Camera : GameComponent, IWorldFocus
+    public abstract class Camera : ICamera, IWorldFocus
     {
         #region Private TimeDepending Variable ===> Will be LERPED, SLERPED or recomputed
         protected FTSValue<DVector3> _worldPosition = new FTSValue<DVector3>();
@@ -55,6 +43,7 @@ namespace S33M3Engines.Cameras
 
         private FTSValue<DVector3> _focusPoint = new FTSValue<DVector3>();
 
+        protected D3DEngine _d3dEngine;
         #endregion
 
         #region Properties
@@ -74,7 +63,7 @@ namespace S33M3Engines.Cameras
             {
                 if (_viewport == null)
                 {
-                    _viewport = Game.ViewPort;
+                    _viewport = _d3dEngine.ViewPort;
                 }
                 return ((Viewport)_viewport);
             }
@@ -145,18 +134,38 @@ namespace S33M3Engines.Cameras
 
         #endregion
 
+        #region Public methods
         //Constructors
-        public Camera(Game game)
-            : base(game)
+        public Camera(D3DEngine d3dEngine)
         {
-            game.D3dEngine.ViewPort_Updated += new D3DEngineDelegates.ViewPortUpdated(D3dEngine_ViewPort_Updated);
+            _d3dEngine = d3dEngine;
+            d3dEngine.ViewPort_Updated += new D3DEngineDelegates.ViewPortUpdated(D3dEngine_ViewPort_Updated);
         }
 
+
+        public virtual void Update(ref GameTime TimeSpend)
+        {
+        }
+
+        public virtual void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        {
+        }
+
+        public virtual void Dispose()
+        {
+        }
+
+        public virtual string GetInfo()
+        {
+            return null;
+        }
+        #endregion
+
         #region Private Methods
-        public override void Initialize()
+
+        public virtual void Initialize()
         {
             CameraInitialize();
-            base.Initialize();
         }
 
         protected virtual void CameraInitialize()

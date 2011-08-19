@@ -84,7 +84,9 @@
     <Compile Include="Buffers\InstancedVertexBuffer.cs" />
     <Compile Include="Buffers\VertexBuffer.cs" />
     <Compile Include="Cameras\Camera.cs" />
+    <Compile Include="Cameras\CameraManager.cs" />
     <Compile Include="Cameras\FirstPersonCamera.cs" />
+    <Compile Include="Cameras\ICamera.cs" />
     <Compile Include="Cameras\ICameraPlugin.cs" />
     <Compile Include="D3D\DebugTools\PerfTimer.cs" />
     <Compile Include="D3D\Effects\Basics\DebugEffect.cs" />
@@ -96,7 +98,6 @@
     <Compile Include="D3D\Effects\HLSLFramework\HLSLShaderWrap.cs" />
     <Compile Include="D3D\Effects\HLSLFramework\ShaderResource.cs" />
     <Compile Include="D3D\Effects\HLSLFramework\ShaderSampler.cs" />
-    <Compile Include="D3D\WorldFocus.cs" />
     <Compile Include="D3DEngine.cs" />
     <Compile Include="D3D\DebugTools\GameConsole.cs" />
     <Compile Include="D3D\DebugTools\DebugInfo.cs" />
@@ -104,7 +105,7 @@
     <Compile Include="D3D\Game.cs" />
     <Compile Include="D3D\GameComponent.cs" />
     <Compile Include="D3D\Tools\Resource.cs" />
-    <Compile Include="Interfaces\IWorldFocus.cs" />
+    <Compile Include="GameStates\GameStatesManager.cs" />
     <Compile Include="Maths\DVector3.cs" />
     <Compile Include="Maths\GMathHelper.cs" />
     <Compile Include="Sprites\SpriteFont.cs" />
@@ -155,6 +156,8 @@
     <Compile Include="Windows\UnsafeNativeMethods.cs" />
     <Compile Include="Windows\WindowMessageHooker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WorldFocus\IWorldFocus.cs" />
+    <Compile Include="WorldFocus\WorldFocusManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="D3D\Effects\Basics\Sprites.hlsl">

@@ -12,6 +12,9 @@ using S33M3Engines.D3D.Effects.Basics;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Shared.Structs;
+using S33M3Engines;
+using S33M3Engines.Cameras;
+using S33M3Engines.GameStates;
 
 namespace UtopiaContent.ModelComp
 {
@@ -21,15 +24,19 @@ namespace UtopiaContent.ModelComp
     public class Axis : GameComponent
     {
         float _axisSize;
-
+        D3DEngine _d3dEngine;
+        CameraManager _camManager;
         HLSLVertexPositionColor _wrappedEffect;
         //Buffer _vertexBuffer;
         VertexBuffer<VertexPositionColor> _vertexBuffer;
+        GameStatesManager _gameStates;
         int _renderRasterId;
 
-        public Axis(Game game, float AxisSize)
-            : base(game)
+        public Axis(D3DEngine d3dEngine, CameraManager camManager ,float AxisSize, GameStatesManager gameStates)
         {
+            _gameStates = gameStates;
+            _d3dEngine = d3dEngine;
+            _camManager = camManager;
             this._axisSize = AxisSize;
         }
 
@@ -46,7 +53,7 @@ namespace UtopiaContent.ModelComp
         {
             _renderRasterId = StatesRepository.AddRasterStates(new RasterizerStateDescription() { CullMode = SharpDX.Direct3D11.CullMode.None, FillMode = FillMode.Solid });
 
-            _wrappedEffect = new HLSLVertexPositionColor(Game, @"D3D\Effects\Basics\VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
+            _wrappedEffect = new HLSLVertexPositionColor(_d3dEngine, @"D3D\Effects\Basics\VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
             //_wrappedEffect.CurrentTechnique = _wrappedEffect.Effect.GetTechniqueByIndex(0); ==> Optional, defaulted to 0 !
 
             CreateVertexBuffer();
@@ -63,7 +70,7 @@ namespace UtopiaContent.ModelComp
             ptList.AddRange(new Line3D(new Vector3(0, 0, 0) * _axisSize, new Vector3(0, 1f, 0) * _axisSize, Color.Green).PointsList);
             ptList.AddRange(new Line3D(new Vector3(0, 0, 0) * _axisSize, new Vector3(0, 0, 1f) * _axisSize, Color.Blue).PointsList);
 
-            _vertexBuffer = new VertexBuffer<VertexPositionColor>(Game, 6, VertexPositionColor.VertexDeclaration, PrimitiveTopology.LineList);
+            _vertexBuffer = new VertexBuffer<VertexPositionColor>(_d3dEngine, 6, VertexPositionColor.VertexDeclaration, PrimitiveTopology.LineList);
             _vertexBuffer.SetData(ptList.ToArray());
         }
 
@@ -78,7 +85,7 @@ namespace UtopiaContent.ModelComp
 
         public override void DrawDepth0()
         {
-            if (Game.DebugDisplay == 1)
+            if (_gameStates.DebugDisplay == 1)
             {
                 //Set States.
                 StatesRepository.ApplyRaster(_renderRasterId);
@@ -87,15 +94,15 @@ namespace UtopiaContent.ModelComp
                 _wrappedEffect.Begin();
                 _wrappedEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Identity);
                 _wrappedEffect.CBPerDraw.IsDirty = true;
-                _wrappedEffect.CBPerFrame.Values.View = Matrix.Transpose(Game.ActivCamera.View);
-                _wrappedEffect.CBPerFrame.Values.Projection = Matrix.Transpose(Game.ActivCamera.Projection3D);
+                _wrappedEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
+                _wrappedEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
                 _wrappedEffect.CBPerFrame.IsDirty = true;
                 _wrappedEffect.Apply();
 
                 //Set the vertex buffer to the Graphical Card.
                 _vertexBuffer.SetToDevice(0);
 
-                Game.D3dEngine.Context.Draw(6, 0); //2 Vertex by line ! ==> 6 vertex to draw
+                _d3dEngine.Context.Draw(6, 0); //2 Vertex by line ! ==> 6 vertex to draw
 
             }
         }

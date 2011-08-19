@@ -36,6 +36,7 @@ using Texture2D = SharpDX.Direct3D11.Texture2D;
 using Rectangle = System.Drawing.Rectangle;
 using RasterizerState = SharpDX.Direct3D11.RasterizerState;
 using S33M3Engines.Shared.Sprites;
+using S33M3Engines;
 
 
 namespace Nuclex.UserInterface.Visuals.Flat {
@@ -141,15 +142,15 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <summary>Manages the scissor rectangle for the GUI graphics interface</summary>
     private class ScissorKeeper : IDisposable
     {
-        private Game _game;
+        private D3DEngine _d3dEngine;
 
         /// <summary>Initializes a new scissor manager</summary>
         /// <param name="flatGuiGraphics">
         ///   GUI graphics interface the scissor rectangle will be managed for
         /// </param>
-        public ScissorKeeper(Game game, FlatGuiGraphics flatGuiGraphics)
+        public ScissorKeeper(D3DEngine d3dEngine, FlatGuiGraphics flatGuiGraphics)
         {
-            _game = game;
+            _d3dEngine = d3dEngine;
             this.flatGuiGraphics = flatGuiGraphics;
         }
 
@@ -160,8 +161,8 @@ namespace Nuclex.UserInterface.Visuals.Flat {
             this.flatGuiGraphics.EndDrawing();
             try
             {
-                this.oldScissorRectangle = _game.D3dEngine.ScissorRectangle;
-                _game.D3dEngine.ScissorRectangle = clipRegion;
+                this.oldScissorRectangle = _d3dEngine.ScissorRectangle;
+                _d3dEngine.ScissorRectangle = clipRegion;
             }
             finally
             {
@@ -172,7 +173,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         /// <summary>Releases the currently assigned scissor rectangle again</summary>
         public void Dispose()
         {
-            _game.D3dEngine.ScissorRectangle = this.oldScissorRectangle;
+            _d3dEngine.ScissorRectangle = this.oldScissorRectangle;
         }
 
         /// <summary>
@@ -188,7 +189,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
 
     #endregion // class ScissorKeeper
 
-    private Game _game;
+    private D3DEngine _d3dEngine;
     private string _resourceDirectory; 
 
     /// <summary>Initializes a new gui painter</summary>
@@ -199,17 +200,17 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <param name="skinStream">
     ///   Stream from which the skin description will be read
     /// </param>
-    public FlatGuiGraphics(Game game, Stream skinStream, string resourceDirectory)
+    public FlatGuiGraphics(D3DEngine d3dEngine, Stream skinStream, string resourceDirectory)
     {
-        _game = game;
+        _d3dEngine = d3dEngine;
         _resourceDirectory = resourceDirectory;
 
         this.spriteRenderer = new SpriteRenderer();
-        this.spriteRenderer.Initialize(game);
+        this.spriteRenderer.Initialize(_d3dEngine);
 
         this.openingLocator = new OpeningLocator();
         this.stringBuilder = new StringBuilder(64);
-        this.scissorManager = new ScissorKeeper(game, this);
+        this.scissorManager = new ScissorKeeper(_d3dEngine, this);
         /*  this.rasterizerState = new RasterizerState() { FIXME DX11 ScissorTestEnable ??
             ScissorTestEnable = true
           };*/

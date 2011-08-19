@@ -19,6 +19,8 @@ using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using Utopia.GUI.D3D.Inventory;
 using S33M3Engines.Shared.Sprites;
+using S33M3Engines;
+using Utopia.Entities.Living;
 
 namespace Utopia.GUI.D3D
 {
@@ -37,27 +39,28 @@ namespace Utopia.GUI.D3D
         SpriteFont _font;
 
         ToolBarUI _toolbarUI;
+        D3DEngine _d3dEngine;
+        PlayerInventory _inventory;
 
-        public GUI(Game game)
-            : base(game)
+
+        public GUI(D3DEngine d3dEngine, PlayerInventory inventory)
         {
+            _d3dEngine = d3dEngine;
+            _inventory = inventory;
         }
 
         public override void Initialize()
         {
-            _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(Game, "Resources\\Skins\\Suave\\Suave.skin.xml");
+            _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(_d3dEngine, "Resources\\Skins\\Suave\\Suave.skin.xml");
 
             _screen = new Screen();
 
             //TODO best way for acceding player component from GUI component ? 
-            //or moving the GUI into the player comnponent ? 
-            UtopiaRender renderer = Game as UtopiaRender;
-            PlayerInventory inventory = renderer.Player.Inventory;
 
 
-            SpriteTexture backGround = new SpriteTexture(Game.GraphicDevice, @"Textures\charactersheet.png", new Vector2(0, 0));
-            InventoryWindow invWin = new InventoryWindow(inventory, backGround);
-            _toolbarUI = new ToolBarUI(inventory);
+            SpriteTexture backGround = new SpriteTexture(_d3dEngine.Device, @"Textures\charactersheet.png", new Vector2(0, 0));
+            InventoryWindow invWin = new InventoryWindow(_inventory, backGround);
+            _toolbarUI = new ToolBarUI(_inventory);
 
             _screen.Desktop.Children.Add(invWin);
             _screen.Desktop.Children.Add(_toolbarUI);
@@ -81,13 +84,13 @@ namespace Utopia.GUI.D3D
 
         public override void LoadContent()
         {
-            _crosshair = new SpriteTexture(Game.GraphicDevice, @"Textures\Gui\Crosshair.png", ref Game.D3dEngine.ViewPort_Updated, Game.ActivCamera.Viewport);
+            _crosshair = new SpriteTexture(_d3dEngine.Device, @"Textures\Gui\Crosshair.png", ref _d3dEngine.ViewPort_Updated, _d3dEngine.ViewPort);
 
             _spriteRender = new SpriteRenderer();
-            _spriteRender.Initialize(Game);
+            _spriteRender.Initialize(_d3dEngine);
 
             _font = new SpriteFont();
-            _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, Game.GraphicDevice);
+            _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
         }
 
         public override void UnloadContent()

@@ -19,7 +19,7 @@ namespace S33M3Engines.D3D.DebugTools
         static Sprites.SpriteFont _font;
         static Sprites.SpriteRenderer _spriteRender;
         static List<string> _loggedInfo = new List<string>();
-        static Game _game;
+        static D3DEngine _d3dEngine;
         static Color4 _colorText = new Color4(1, 1, 1, 1);
         static Matrix _textPosition = Matrix.Translation(5, 0, 0);
 
@@ -42,15 +42,15 @@ namespace S33M3Engines.D3D.DebugTools
             if (Actif) _loggedInfo.Add(info);
         }
 
-        public static void Initialize(Game game)
+        public static void Initialize(D3DEngine d3dEngine)
         {
-            _game = game;
+            _d3dEngine = d3dEngine;
 
             _font = new Sprites.SpriteFont();
-            _font.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true, game.GraphicDevice);
+            _font.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
 
             _spriteRender = new Sprites.SpriteRenderer();
-            _spriteRender.Initialize(game);
+            _spriteRender.Initialize(_d3dEngine);
 
             //create backGround texture
             Texture2DDescription desc = new Texture2DDescription()
@@ -66,15 +66,15 @@ namespace S33M3Engines.D3D.DebugTools
                 CpuAccessFlags = CpuAccessFlags.Write
             };
 
-            Texture2D backTexture = new Texture2D(_game.GraphicDevice, desc);
+            Texture2D backTexture = new Texture2D(_d3dEngine.Device, desc);
 
-            DataBox data = game.GraphicDevice.ImmediateContext.MapSubresource(backTexture, 0, 16, MapMode.WriteDiscard, MapFlags.None);
+            DataBox data = _d3dEngine.Context.MapSubresource(backTexture, 0, 16, MapMode.WriteDiscard, MapFlags.None);
             data.Data.Position = 0;
             data.Data.Write<SharpDX.Vector4>(new SharpDX.Vector4(0, 0, 0, 0.5f)); //Ecrire dans la texture
             data.Data.Position = 0;
-            game.GraphicDevice.ImmediateContext.UnmapSubresource(backTexture, 0);
+            _d3dEngine.Context.UnmapSubresource(backTexture, 0);
 
-            _spriteTexture = new SpriteTexture(game.GraphicDevice, backTexture, new Vector2(0, 0));
+            _spriteTexture = new SpriteTexture(_d3dEngine.Device, backTexture, new Vector2(0, 0));
             backTexture.Dispose();
         }
 
@@ -96,7 +96,7 @@ namespace S33M3Engines.D3D.DebugTools
 
         private static void DrawInterface()
         {
-            _spriteRender.Render(_spriteTexture, ref _spriteTexture.ScreenPosition, new Color4(1, 1, 1, 1), new RectangleF(0, 0, _game.ActivCamera.Viewport.Width, _game.ActivCamera.Viewport.Height / 3));
+            _spriteRender.Render(_spriteTexture, ref _spriteTexture.ScreenPosition, new Color4(1, 1, 1, 1), new RectangleF(0, 0, _d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height / 3));
         }
 
         private static void DrawText()

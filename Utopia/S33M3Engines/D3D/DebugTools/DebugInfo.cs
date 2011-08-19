@@ -28,10 +28,11 @@ namespace S33M3Engines.D3D.DebugTools
         string[] _infos;
         public bool Activated = false;
         private Color4 _fontColor = new Color4(Color.Yellow.A, Color.Yellow.R, Color.Yellow.G, Color.Yellow.B);
+        private D3DEngine _d3dEngine;
 
-        public DebugInfo(Game game)
-            : base(game)
+        public DebugInfo(D3DEngine d3dEngine)
         {
+            _d3dEngine = d3dEngine;
         }
 
         public void SetComponants(params IDebugInfo[] args)
@@ -43,9 +44,9 @@ namespace S33M3Engines.D3D.DebugTools
         public override void LoadContent()
         {
             _font = new SpriteFont();
-            _font.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true, Game.GraphicDevice);
+            _font.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
             _spriteRender = new SpriteRenderer();
-            _spriteRender.Initialize(Game);
+            _spriteRender.Initialize(_d3dEngine);
         }
 
         public override void UnloadContent()

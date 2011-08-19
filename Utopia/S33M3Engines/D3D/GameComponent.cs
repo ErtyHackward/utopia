@@ -21,7 +21,6 @@ namespace S33M3Engines.D3D
 
     public interface IGameComponent
     {
-        Game Game { get; }
         bool CallUpdate { get; set; }
         bool CallDraw { get; set; }
         void Initialize();
@@ -37,26 +36,22 @@ namespace S33M3Engines.D3D
     public class GameComponent : IGameComponent
     {
         #region Private variables
-        Game _game;
         bool _callUpdate = true;
         bool _callDraw = true;
         #endregion
 
         #region Public properties
-        public Game Game { get { return _game; } }
         public bool CallUpdate { get { return _callUpdate; } set { _callUpdate = value; } }
         public bool CallDraw { get { return _callDraw; } set { _callDraw = value; } }
         #endregion
 
         //Ctor
-        public GameComponent(Game game)
+        public GameComponent()
         {
-            _game = game;
         }
 
         public virtual void Initialize()
         {
-
         }
 
         public virtual void LoadContent()
