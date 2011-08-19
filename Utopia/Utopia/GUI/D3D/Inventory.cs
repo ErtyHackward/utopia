@@ -6,6 +6,7 @@ using System.Text;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Chunks.Entities.Inventory;
 
+//TODO state should be maintained on server,  move to shared project ?
 namespace Utopia.Shared.Chunks.Entities.Inventory
 {
     //based on http://code.google.com/p/rpginventory/source/browse

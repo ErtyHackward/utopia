@@ -85,6 +85,11 @@ namespace Utopia.GUI.D3D.Inventory
         //returns null if no match
         private IDropTarget findDropTarget(Control parent)
         {
+            if (parent is ToolBarUI)
+            {
+                Console.WriteLine();
+            }
+
             if (this.MouseOverControl is IDropTarget)
             {
                 Debug.WriteLine("mouse over ctrl");
@@ -93,11 +98,11 @@ namespace Utopia.GUI.D3D.Inventory
 
             foreach (Control control in parent.Children)
             {
-                int x = Mouse.GetState().X;
-                int y = Mouse.GetState().Y;
+                //int x = Mouse.GetState().X;
+               // int y = Mouse.GetState().Y;
 
                 if (control != this && control is IDropTarget && ((IDropTarget)control).MouseHovering
-                    && control.GetAbsoluteBounds().Contains(x, y)//avoid bugs with multiple selected cells
+                   // && control.GetAbsoluteBounds().Contains(x, y)//avoid bugs with multiple selected cells
                     )
                 {
                     if (this.Item!=null && this.Item.AllowedSlots.HasFlag(((IDropTarget)control).InventorySlot))

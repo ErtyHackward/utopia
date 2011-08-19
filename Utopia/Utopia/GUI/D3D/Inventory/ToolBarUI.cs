@@ -28,7 +28,7 @@ namespace Utopia.GUI.D3D.Inventory
             //FIXME uniscalar relative positions doe not work, surely due to rectangle ordering  
             //this.Bounds = new UniRectangle(0.0f, new UniScalar(.5f, 0f), new UniScalar(1, 0), 80.0f);
             //TODO remove all magic hardcoded numbers
-            this.Bounds = new UniRectangle(0.0f, 600-60, new UniScalar(1, 0), 80.0f);
+            this.Bounds = new UniRectangle(0.0f, 600-46, 1024, 80.0f);
             
             this.Name = "Toolbar";
             _inventory = inventory;
@@ -99,6 +99,11 @@ namespace Utopia.GUI.D3D.Inventory
                 else
                     rightButton.Text = null;
             }
+        }
+
+        protected override void OnMouseEntered()
+        {
+            base.OnMouseEntered();
         }
     }
 }
