@@ -21,6 +21,7 @@ using Utopia.GUI.D3D.Inventory;
 using S33M3Engines.Shared.Sprites;
 using S33M3Engines;
 using Utopia.Entities.Living;
+using Utopia.GUI.D3D.DebugUI;
 
 namespace Utopia.GUI.D3D
 {
@@ -38,15 +39,17 @@ namespace Utopia.GUI.D3D
         SpriteTexture _crosshair;
         SpriteFont _font;
 
-        ToolBarUI _toolbarUI;
+        ToolBarUI _toolbarUI;//this one is a field because it will be updateable when you change tools with mousewheel
+
         D3DEngine _d3dEngine;
         PlayerInventory _inventory;
+        readonly List<IGameComponent> _components;
 
-
-        public GUI(D3DEngine d3dEngine, PlayerInventory inventory)
+        public GUI(List<IGameComponent> components, D3DEngine d3dEngine, PlayerInventory inventory)
         {
             _d3dEngine = d3dEngine;
             _inventory = inventory;
+            _components = components;
         }
 
         public override void Initialize()
@@ -59,27 +62,16 @@ namespace Utopia.GUI.D3D
 
 
             SpriteTexture backGround = new SpriteTexture(_d3dEngine.Device, @"Textures\charactersheet.png", new Vector2(0, 0));
+            
             InventoryWindow invWin = new InventoryWindow(_inventory, backGround);
+            //_screen.Desktop.Children.Add(invWin);
+
+            //TODO this one and the components dependency should surely be moved in a separate debug only component
+            Utopia.GUI.D3D.DebugUI.DebugUI debugUI = new Utopia.GUI.D3D.DebugUI.DebugUI(_components);
+            _screen.Desktop.Children.Add(debugUI);
+
             _toolbarUI = new ToolBarUI(_inventory);
-
-            _screen.Desktop.Children.Add(invWin);
             _screen.Desktop.Children.Add(_toolbarUI);
-
-            //WindowControl window = new WindowControl();
-            //window.Bounds = new UniRectangle(40, 40, 300, 300);
-            //window.Title = "NuclexUI Testing";
-            //_screen.Desktop.Children.Add(window);
-
-            //ButtonControl testBtn = new ButtonControl();
-            //testBtn.Bounds = new UniRectangle(40, 40, 80, 20);
-            //testBtn.Text = "Hello !";
-
-            //ButtonControl testBtn2 = new ButtonControl();
-            //testBtn2.Bounds = new UniRectangle(130, 40, 80, 20);
-            //testBtn2.Text = "goodBye !";
-
-            //window.Children.Add(testBtn);
-            //window.Children.Add(testBtn2);
         }
 
         public override void LoadContent()
