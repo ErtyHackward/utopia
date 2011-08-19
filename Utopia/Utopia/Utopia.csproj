@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameStates\GameStatesManager.cs" />
+    <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
     <Compile Include="GUI\D3D\Inventory.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControlRenderer.cs" />
