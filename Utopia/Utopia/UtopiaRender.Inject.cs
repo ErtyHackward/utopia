@@ -4,22 +4,17 @@ using System.Linq;
 using System.Text;
 using Ninject;
 using Utopia.Worlds.GameClocks;
+using Utopia.Worlds.Weather;
 
 namespace Utopia
 {
     public partial class UtopiaRender
     {
-        private void InjectionContainersCreation()
+        private void ContainersBindings(IKernel iocContainer)
         {
-            using (IKernel kernel = new StandardKernel())
-            {
-                kernel.Bind<IClock>()
-                      .To<WorldClock>()
-                      .InSingletonScope()
-                      .WithConstructorArgument("Game", this)
-                      .WithConstructorArgument("clockSpeed", 480)
-                      .WithConstructorArgument("startTime", (float)Math.PI * 1f);
-            }
+            iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
+            iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
+
         }
     }
 }

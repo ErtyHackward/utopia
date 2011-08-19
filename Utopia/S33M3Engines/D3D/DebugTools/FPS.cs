@@ -37,8 +37,7 @@ namespace S33M3Engines.D3D.DebugTools
         public bool ShowInGameBar { get; set; }
         #endregion
 
-        public FPS(Game game)
-            : base(game)
+        public FPS()
         {
         }
 

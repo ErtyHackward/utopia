@@ -17,6 +17,8 @@ using Amib.Threading;
 using Utopia.USM;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Landscaping;
+using S33M3Engines;
+using S33M3Engines.WorldFocus;
 
 namespace Utopia.Planets.Terran.Chunk
 {
@@ -40,7 +42,7 @@ namespace Utopia.Planets.Terran.Chunk
         protected ThreadStatus _threadStatus;
         protected LandScape _landscape;
         protected TerraWorld _terraWorld;
-        protected Game _game;
+        protected D3DEngine _d3dEngine;
         protected bool _frustumCulled = false;
         private List<Location3<int>> _lightSourcesArray = new List<Location3<int>>();
 
@@ -51,6 +53,8 @@ namespace Utopia.Planets.Terran.Chunk
         private WorkItemPriority _priority = WorkItemPriority.Normal;
         private int _userChangeOrder = 0;
         private float _popUpYOffset = -60;
+
+        protected LandscapeBuilder _landscapeBuilder;
 
         public Location2<int> LightPropagateBorderOffset = new Location2<int>(0, 0);
 
@@ -104,16 +108,17 @@ namespace Utopia.Planets.Terran.Chunk
 
         #endregion
 
-        public baseChunk(Game game, Range<int> CubeRange, LandScape Landscape, TerraWorld World)
+        public baseChunk(D3DEngine d3dEngine, WorldFocusManager worldFocusManager , Range<int> CubeRange, LandScape Landscape, TerraWorld World, LandscapeBuilder landscapeBuilder)
         {
             //Init variables
 
 #if DEBUG
-            _chunkBoundingBoxDisplay = new BoundingBox3D(game, new Vector3((float)(CubeRange.Max.X - CubeRange.Min.X), (float)(CubeRange.Max.Y - CubeRange.Min.Y), (float)(CubeRange.Max.Z - CubeRange.Min.Z)), S33M3Engines.D3D.Effects.Basics.DebugEffect.DebugEffectVPC, Color.Tomato);
+            _chunkBoundingBoxDisplay = new BoundingBox3D(d3dEngine, worldFocusManager, new Vector3((float)(CubeRange.Max.X - CubeRange.Min.X), (float)(CubeRange.Max.Y - CubeRange.Min.Y), (float)(CubeRange.Max.Z - CubeRange.Min.Z)), S33M3Engines.D3D.Effects.Basics.DebugEffect.DebugEffectVPC, Color.Tomato);
 #endif
             _chunkWorldBoundingBox = new BoundingBox();
 
-            _game = game;
+            _landscapeBuilder = landscapeBuilder;
+            _d3dEngine = d3dEngine;
             _terraWorld = World;
             this.CubeRange = CubeRange;
             _landscape = Landscape;
@@ -189,7 +194,8 @@ namespace Utopia.Planets.Terran.Chunk
 
         public void CreateLandScape()
         {
-            _game.LandscapeBuilder.CreateChunkLandscape(_landscape.Cubes, ref _cubeRange, LandscapeInitialized); 
+
+            _landscapeBuilder.CreateChunkLandscape(_landscape.Cubes, ref _cubeRange, LandscapeInitialized); 
 
             _borderChunk = ChunkFinder.isBorderChunk(_cubeRange.Min.X, _cubeRange.Min.Z, ref _terraWorld.WorldRange);
             LandscapeInitialized = true;

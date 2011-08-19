@@ -12,6 +12,8 @@ using SharpDX.Direct3D;
 using Utopia.Shared.Structs;
 using S33M3Engines.StatesManager;
 using S33M3Engines.Shared.Math;
+using S33M3Engines;
+using S33M3Engines.Cameras;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -25,23 +27,25 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private Matrix _world = Matrix.Identity;
         private IClock _gameClock;
         private float _visibility;
-        private Game _game;
+        private D3DEngine _d3dEngine;
+        private CameraManager _camManager;
         #endregion
 
         #region Public Properties
 
         #endregion
 
-        public SkyStars(Game game, IClock gameClock)
+        public SkyStars(D3DEngine d3dEngine, CameraManager camManager , IClock gameClock)
         {
-            _game = game;
+            _d3dEngine = d3dEngine;
             _gameClock = gameClock;
+            _camManager = camManager;
         }
 
         #region public methods
         public void Initialize()
         {
-            _effectStars = new HLSLStars(_game, @"Effects\SkyDome\Stars.hlsl", VertexPositionColor.VertexDeclaration);
+            _effectStars = new HLSLStars(_d3dEngine, @"Effects\SkyDome\Stars.hlsl", VertexPositionColor.VertexDeclaration);
             CreateBuffer();
         }
 
@@ -66,7 +70,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _effectStars.Begin();
             _effectStars.CBPerDraw.Values.World = Matrix.Transpose(_world);
-            _effectStars.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_game.ActivCamera.ViewProjection3D);
+            _effectStars.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
 
             //Compute Vibility !
             if (_gameClock.ClockTime.ClockTimeNormalized < 0.25) _visibility = 1;     // Before 06:00 am
@@ -79,7 +83,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                         else
                             _visibility = 1;
 
-            _visibility = Math.Max(_visibility, Math.Min(Math.Max((float)_game.ActivCamera.WorldPosition.Y - 127, 0), 173) / 173.0f);
+            _visibility = Math.Max(_visibility, Math.Min(Math.Max((float)_camManager.ActiveCamera.WorldPosition.Y - 127, 0), 173) / 173.0f);
 
             _effectStars.CBPerDraw.Values.Visibility = _visibility;
             _effectStars.CBPerDraw.IsDirty = true;
@@ -87,7 +91,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _effectStars.Apply();
 
             _vb.SetToDevice(0);
-            _game.D3dEngine.Context.Draw(_vb.VertexCount, 0);
+            _d3dEngine.Context.Draw(_vb.VertexCount, 0);
         }
         #endregion
 
@@ -95,7 +99,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private void CreateBuffer()
         {
             VertexPositionColor[] vertices = GenerateSpherePoints(_nbrStars, 1500);
-            _vb = new VertexBuffer<VertexPositionColor>(_game, vertices.Length, VertexPositionColor.VertexDeclaration, PrimitiveTopology.PointList);
+            _vb = new VertexBuffer<VertexPositionColor>(_d3dEngine, vertices.Length, VertexPositionColor.VertexDeclaration, PrimitiveTopology.PointList);
             _vb.SetData(vertices);
         }
 

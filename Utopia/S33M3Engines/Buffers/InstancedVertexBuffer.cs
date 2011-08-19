@@ -33,12 +33,12 @@ namespace S33M3Engines.Buffers
         VertexDeclaration _vertexDeclatation;
         PrimitiveTopology _primitiveTopology;
 
-        Game _game;
+        D3DEngine _d3dEngine;
 
         public int VertexCount { get { return _vertexCountFixedData; } set { _vertexCountFixedData = value; } }
         #endregion
 
-        public InstancedVertexBuffer(Game game, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology)
+        public InstancedVertexBuffer(D3DEngine d3dEngine, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology)
         {
             //Fixed Data part Buffer ========================
             //Create the buffer for the fixed data
@@ -62,7 +62,7 @@ namespace S33M3Engines.Buffers
 
             _vertexDeclatation = vertexDeclatation;
             _primitiveTopology = primitiveTopology;
-            _game = game;
+            _d3dEngine = d3dEngine;
         }
 
         public void SetFixedData(FixedDataType[] data)
@@ -81,7 +81,7 @@ namespace S33M3Engines.Buffers
 
             //Create new Buffer
             _descriptionFixedData.SizeInBytes = _vertexCountFixedData * _vertexDeclatation.PerVertex_vertexStride;
-            _vertexBufferFixedData = new Buffer(_game.D3dEngine.GraphicsDevice, verticesFixedData, _descriptionFixedData);
+            _vertexBufferFixedData = new Buffer(_d3dEngine.Device, verticesFixedData, _descriptionFixedData);
 
             verticesFixedData.Dispose();
 
@@ -106,18 +106,18 @@ namespace S33M3Engines.Buffers
 
                 //Create new Buffer
                 _descriptionInstancedData.SizeInBytes = _vertexCountInstancedData * _vertexDeclatation.PerInstance_vertexStride;
-                _vertexBufferInstancedData = new Buffer(_game.D3dEngine.GraphicsDevice, verticesInstancedData, _descriptionInstancedData);
+                _vertexBufferInstancedData = new Buffer(_d3dEngine.Device, verticesInstancedData, _descriptionInstancedData);
 
                 verticesInstancedData.Dispose();
             }
             else
             {
                 //Update the buffer
-                DataBox databox = _game.D3dEngine.Context.MapSubresource(_vertexBufferInstancedData, 0, _vertexCountInstancedData * _vertexDeclatation.PerInstance_vertexStride, MapMode.WriteDiscard, MapFlags.None);
+                DataBox databox = _d3dEngine.Context.MapSubresource(_vertexBufferInstancedData, 0, _vertexCountInstancedData * _vertexDeclatation.PerInstance_vertexStride, MapMode.WriteDiscard, MapFlags.None);
                 databox.Data.Position = 0;
                 databox.Data.WriteRange(data);
                 databox.Data.Position = 0;
-                _game.D3dEngine.Context.UnmapSubresource(_vertexBufferInstancedData, 0);
+                _d3dEngine.Context.UnmapSubresource(_vertexBufferInstancedData, 0);
             }
 
             _bindingInstanced = new VertexBufferBinding(_vertexBufferInstancedData, _vertexDeclatation.PerInstance_vertexStride, 0);
@@ -128,12 +128,12 @@ namespace S33M3Engines.Buffers
         {
             if (VertexBuffer.LastPrimitiveTopology != _primitiveTopology)
             {
-                _game.D3dEngine.Context.InputAssembler.SetPrimitiveTopology(_primitiveTopology);
+                _d3dEngine.Context.InputAssembler.SetPrimitiveTopology(_primitiveTopology);
                 VertexBuffer.LastPrimitiveTopology = _primitiveTopology;
             }
 
             _bindingInstanced.Offset = Offset;
-            _game.D3dEngine.Context.InputAssembler.SetVertexBuffers(0, _bindingFixed, _bindingInstanced);
+            _d3dEngine.Context.InputAssembler.SetVertexBuffers(0, _bindingFixed, _bindingInstanced);
         }
 
 

@@ -63,7 +63,7 @@ namespace S33M3Engines.D3D.Effects
         VertexDeclaration _vertexDeclaration;
         InputLayout _inputLayout;
 
-        public Game _game;
+        public D3DEngine _d3dEngine;
         public string CompilationErrors;
         #endregion
 
@@ -74,10 +74,10 @@ namespace S33M3Engines.D3D.Effects
         #endregion
 
         //Ctor
-        public HLSLShaderWrap(Game game, string filePathName, VertexDeclaration VertexDeclaration)
+        public HLSLShaderWrap(D3DEngine d3dEngine, string filePathName, VertexDeclaration VertexDeclaration)
         {
             _filePathName = filePathName;
-            _game = game;
+            _d3dEngine = d3dEngine;
             _vertexDeclaration = VertexDeclaration;
         }
 
@@ -110,14 +110,14 @@ namespace S33M3Engines.D3D.Effects
         {
             if (_shaderEntryPoint.VertexShader_EntryPoint != null)
             {
-                using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, _game.D3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
+                using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
                 {
                     //Get the VS Input signature from the Vertex Shader
                     _signature = ShaderSignature.GetInputSignature(bytecode);
                     //Create the inputLayout from the signature (Must Match the Vertex Format used with this effect !!!)
-                    _inputLayout = new InputLayout(_game.GraphicDevice, _signature, _vertexDeclaration.Elements);
+                    _inputLayout = new InputLayout(_d3dEngine.Device, _signature, _vertexDeclaration.Elements);
 
-                    _vs = new VertexShader(_game.D3dEngine.GraphicsDevice, bytecode);
+                    _vs = new VertexShader(_d3dEngine.Device, bytecode);
                     using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
                     {
                         ShaderReflection(Shaders.VS, ShaderIDs.VS, shaderMetaData);
@@ -131,9 +131,9 @@ namespace S33M3Engines.D3D.Effects
         {
             if (_shaderEntryPoint.GeometryShader_EntryPoint != null)
             {
-                using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, _game.D3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
+                using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
                 {
-                    _gs = new GeometryShader(_game.D3dEngine.GraphicsDevice, bytecode);
+                    _gs = new GeometryShader(_d3dEngine.Device, bytecode);
                     using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
                     {
                         ShaderReflection(Shaders.GS, ShaderIDs.GS, shaderMetaData);
@@ -147,9 +147,9 @@ namespace S33M3Engines.D3D.Effects
         {
             if (_shaderEntryPoint.PixelShader_EntryPoint != null)
             {
-                using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, _game.D3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
+                using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
                 {
-                    _ps = new PixelShader(_game.D3dEngine.GraphicsDevice, bytecode);
+                    _ps = new PixelShader(_d3dEngine.Device, bytecode);
                     using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
                     {
                         ShaderReflection(Shaders.PS, ShaderIDs.PS, shaderMetaData);
@@ -217,14 +217,14 @@ namespace S33M3Engines.D3D.Effects
         //Set all states that should only be done once for the Effect
         public void Begin()
         {
-            if (_vs != null) _game.D3dEngine.Context.VertexShader.Set(_vs);
-            if (_gs != null) _game.D3dEngine.Context.GeometryShader.Set(_gs); else _game.D3dEngine.Context.GeometryShader.Set(null);
-            if (_ps != null) _game.D3dEngine.Context.PixelShader.Set(_ps);
+            if (_vs != null) _d3dEngine.Context.VertexShader.Set(_vs);
+            if (_gs != null) _d3dEngine.Context.GeometryShader.Set(_gs); else _d3dEngine.Context.GeometryShader.Set(null);
+            if (_ps != null) _d3dEngine.Context.PixelShader.Set(_ps);
 
             // Input Layout changed ?? ==> Need to send it to the InputAssembler
             if (HLSLShaderWrap.LastEffectSet != _inputLayout.GetHashCode())
             {
-                _game.D3dEngine.Context.InputAssembler.SetInputLayout(_inputLayout);
+                _d3dEngine.Context.InputAssembler.SetInputLayout(_inputLayout);
                 HLSLShaderWrap.LastEffectSet = _inputLayout.GetHashCode();
             }
 

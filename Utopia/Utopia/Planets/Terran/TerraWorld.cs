@@ -12,6 +12,9 @@ using S33M3Engines.Maths;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Landscaping;
 using S33M3Engines.Shared.Math;
+using S33M3Engines;
+using S33M3Engines.WorldFocus;
+using S33M3Engines.Cameras;
 
 namespace Utopia.Planets.Terran
 {
@@ -31,7 +34,10 @@ namespace Utopia.Planets.Terran
         }
 
         #region private variables
-        internal Game _game;
+        internal D3DEngine _d3dEngine;
+        internal WorldFocusManager _worldFocusManager;
+        internal CameraManager _camManager;
+        internal LandscapeBuilder _landscapeBuilder;
         #endregion
 
         #region public Properties
@@ -44,10 +50,13 @@ namespace Utopia.Planets.Terran
         public bool ChunkNeed2BeSorted;
         #endregion
 
-        public TerraWorld(Game game, ref int worldSeed)
+        public TerraWorld(D3DEngine d3dEngine, WorldFocusManager worldFocusManager, CameraManager camManager, ref int worldSeed, LandscapeBuilder landscapeBuilder)
         {
-            _game = game;
+            _worldFocusManager = worldFocusManager;
+            _camManager = camManager;
+            _d3dEngine = d3dEngine;
             WorldSeed = worldSeed;
+            _landscapeBuilder = landscapeBuilder;
 
             Initialize();
         }
@@ -95,7 +104,7 @@ namespace Utopia.Planets.Terran
                     arrayZ = MathHelper.Mod(cubeRange.Min.Z, LandscapeBuilder.Worldsize.Z);
 
                     //Block modified ===> the chunk must be rebuilt !
-                    chunk = new TerraChunk(_game, cubeRange, Landscape, this);
+                    chunk = new TerraChunk(_d3dEngine, _worldFocusManager, cubeRange, Landscape, this, _landscapeBuilder);
 
                     Chunks[(arrayX >> LandscapeBuilder.ChunkPOWsize) + (arrayZ >> LandscapeBuilder.ChunkPOWsize) * LandscapeBuilder.ChunkGridSize] = chunk;
                     SortedChunks[(arrayX >> LandscapeBuilder.ChunkPOWsize) + (arrayZ >> LandscapeBuilder.ChunkPOWsize) * LandscapeBuilder.ChunkGridSize] = chunk;
@@ -111,10 +120,10 @@ namespace Utopia.Planets.Terran
 
         public void SortChunk()
         {
-            if (!ChunkNeed2BeSorted || _game.ActivCamera == null) return;
+            if (!ChunkNeed2BeSorted || _camManager.ActiveCamera == null) return;
             int index = 0;
 
-            foreach (var chunk in Chunks.OrderBy(x => MVector3.Distance(x.CubeRange.Min, _game.ActivCamera.WorldPosition)))
+            foreach (var chunk in Chunks.OrderBy(x => MVector3.Distance(x.CubeRange.Min, _camManager.ActiveCamera.WorldPosition)))
             {
                 SortedChunks[index] = chunk;
                 index++;

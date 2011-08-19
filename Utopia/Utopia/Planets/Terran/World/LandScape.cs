@@ -205,7 +205,6 @@ namespace Utopia.Planets.Terran.World
 
         public void SetCube(ref Location3<int> cubeCoordinates, ref TerraCube cube, bool isUSMCalled = true)
         {
-            TerraChunk _chunk;
             Cubes[Index(cubeCoordinates.X, cubeCoordinates.Y, cubeCoordinates.Z)] = cube;
             // Save the cube that has been changed !
 
@@ -219,7 +218,6 @@ namespace Utopia.Planets.Terran.World
 
         public void SetCube(int x, int y, int z, ref TerraCube cube, bool isUSMCalled = true)
         {
-            TerraChunk _chunk;
             Cubes[Index(x, y, z)] = cube;
             // Save the cube that has been changed !
             //if (isUSMCalled)

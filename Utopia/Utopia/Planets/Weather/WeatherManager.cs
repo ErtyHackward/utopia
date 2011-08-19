@@ -7,6 +7,8 @@ using S33M3Engines.D3D.DebugTools;
 using Utopia.Planets.Weather.Items;
 using Utopia.GameClock;
 using Utopia.Planets.Terran;
+using S33M3Engines;
+using S33M3Engines.Cameras;
 
 namespace Utopia.Planets.Weather
 {
@@ -17,14 +19,17 @@ namespace Utopia.Planets.Weather
         IUpdatableComponent _wind;
         Clock _gameClock;
         TerraWorld _terraworld;
+        D3DEngine _d3dEngine;
+        CameraManager _camManager;
         #endregion
 
         #region Public Properties
         #endregion
 
-        public WeatherManager(Game game, Clock gameClock, TerraWorld terraworld)
-            : base(game)
+        public WeatherManager(D3DEngine d3dEngine, CameraManager camManager ,Clock gameClock, TerraWorld terraworld)
         {
+            _d3dEngine = d3dEngine;
+            _camManager = camManager;
             _gameClock = gameClock;
             _terraworld = terraworld;
         }
@@ -35,7 +40,7 @@ namespace Utopia.Planets.Weather
         {
             _wind = new Wind();
             _wind.Initialize();
-            _clouds = new Clouds(this.Game, _terraworld, _wind as Wind);
+            _clouds = new Clouds(_d3dEngine, _camManager, _terraworld, _wind as Wind);
             _clouds.Initialize();
         }
 

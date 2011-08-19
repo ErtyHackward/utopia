@@ -10,21 +10,24 @@ using System.Windows.Forms;
 using S33M3Engines.Maths.Graphics;
 using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.Struct;
+using S33M3Engines.WorldFocus;
 
 namespace S33M3Engines.Cameras
 {
-    public class FirstPersonCamera : Camera, ICamera
+    public class FirstPersonCamera : Camera
     {
         #region Private Variables
+        WorldFocusManager _worldFocusManager;
         #endregion
 
         #region Public Properties
         #endregion
         //Constructors
 
-        public FirstPersonCamera(Game game)
-            : base(game)
+        public FirstPersonCamera(D3DEngine d3dEngine, WorldFocusManager worldFocusManager)
+            : base(d3dEngine)
         {
+            _worldFocusManager = worldFocusManager;
         }
 
         #region Private Methods
@@ -48,7 +51,7 @@ namespace S33M3Engines.Cameras
                 base.FocusPoint.Value = _worldPosition.Value; // == Position of my camera !
 
                 //Compute new View matrix based on the Position and Orientation from a Quaternion (No Euler angles, to have the possibility to slerps those value)
-                Matrix MTranslation = Matrix.Translation(-(_worldPosition.Value - Game.WorldFocus.FocusPoint.Value).AsVector3());
+                Matrix MTranslation = Matrix.Translation(-(_worldPosition.Value - _worldFocusManager.WorldFocus.FocusPoint.Value).AsVector3());
                 Matrix MRotation = Matrix.RotationQuaternion(_cameraOrientation.Value);
                 Matrix.Multiply(ref MTranslation, ref MRotation, out _view);
 
@@ -74,7 +77,7 @@ namespace S33M3Engines.Cameras
             Quaternion.Slerp(ref _cameraOrientation.ValuePrev, ref _cameraOrientation.Value, (float)interpolation_ld, out _cameraOrientation.ValueInterp);
 
             //Recompute the interpolated View Matrix
-            Matrix MTranslation = Matrix.Translation(-(_worldPosition.ValueInterp - Game.WorldFocus.FocusPoint.ValueInterp).AsVector3());
+            Matrix MTranslation = Matrix.Translation(-(_worldPosition.ValueInterp - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3());
             Matrix MRotation = Matrix.RotationQuaternion(_cameraOrientation.ValueInterp);
             Matrix.Multiply(ref MTranslation, ref MRotation, out _view);
 
@@ -92,7 +95,7 @@ namespace S33M3Engines.Cameras
 
         #region IDebugInfo Members
 
-        public string GetInfo()
+        public override string GetInfo()
         {
             return string.Concat("<FirstPersonCamera> X : ", WorldPosition.X.ToString("0.000"), " Y : ", WorldPosition.Y.ToString("0.000"), " Z : ", WorldPosition.Z.ToString("0.000"), " Pitch : ", _lookAt.X.ToString("0.000"), " Yaw : ", _lookAt.Y.ToString("0.000"));
         }
