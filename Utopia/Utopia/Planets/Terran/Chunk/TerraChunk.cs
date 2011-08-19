@@ -18,6 +18,8 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Landscaping;
 using S33M3Engines.Shared.Math;
+using S33M3Engines;
+using S33M3Engines.WorldFocus;
 
 namespace Utopia.Planets.Terran.Chunk
 {
@@ -43,8 +45,8 @@ namespace Utopia.Planets.Terran.Chunk
         public IndexBuffer<ushort> LiquidCubeIB;            //Liquid cube index Buffer
         #endregion
 
-        public TerraChunk(Game game, Range<int> CubeRange, LandScape Landscape, TerraWorld World)
-            : base(game, CubeRange, Landscape, World)
+        public TerraChunk(D3DEngine d3dEngine, WorldFocusManager worldFocusManager, Range<int> CubeRange, LandScape Landscape, TerraWorld World, LandscapeBuilder landscapeBuilder)
+            : base(d3dEngine, worldFocusManager, CubeRange, Landscape, World, landscapeBuilder)
         {
         }
 
@@ -233,14 +235,14 @@ namespace Utopia.Planets.Terran.Chunk
 
                 if (SolidCubeVB == null)
                 {
-                    SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_game, _solidCubeVertices.Count, VertexCubeSolid.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Default, 10);
+                    SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_d3dEngine, _solidCubeVertices.Count, VertexCubeSolid.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Default, 10);
                 }
                 SolidCubeVB.SetData(_solidCubeVertices.ToArray());
                 _solidCubeVertices.Clear();
 
                 if (SolidCubeIB == null)
                 {
-                    SolidCubeIB = new IndexBuffer<ushort>(_game, _solidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt);
+                    SolidCubeIB = new IndexBuffer<ushort>(_d3dEngine, _solidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt);
                 }
                 SolidCubeIB.SetData(_solidCubeIndices.ToArray());
                 _solidCubeIndices.Clear();
@@ -265,14 +267,14 @@ namespace Utopia.Planets.Terran.Chunk
 
                 if (LiquidCubeVB == null)
                 {
-                    LiquidCubeVB = new VertexBuffer<VertexCubeLiquid>(_game, _liquidCubeVertices.Count, VertexCubeLiquid.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Default, 10);
+                    LiquidCubeVB = new VertexBuffer<VertexCubeLiquid>(_d3dEngine, _liquidCubeVertices.Count, VertexCubeLiquid.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Default, 10);
                 }
                 LiquidCubeVB.SetData(_liquidCubeVertices.ToArray());
                 _liquidCubeVertices.Clear();
 
                 if (LiquidCubeIB == null)
                 {
-                    LiquidCubeIB = new IndexBuffer<ushort>(_game, _liquidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt);
+                    LiquidCubeIB = new IndexBuffer<ushort>(_d3dEngine, _liquidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt);
                 }
                 LiquidCubeIB.SetData(_liquidCubeIndices.ToArray());
                 _liquidCubeIndices.Clear();
@@ -288,7 +290,7 @@ namespace Utopia.Planets.Terran.Chunk
                 {
                     SolidCubeVB.SetToDevice(0);
                     SolidCubeIB.SetToDevice(0);
-                    _game.D3dEngine.Context.DrawIndexed(SolidCubeIB.IndicesCount, 0, 0);
+                    _d3dEngine.Context.DrawIndexed(SolidCubeIB.IndicesCount, 0, 0);
                 }
             }
         }
@@ -302,7 +304,7 @@ namespace Utopia.Planets.Terran.Chunk
                 {
                     LiquidCubeVB.SetToDevice(0);
                     LiquidCubeIB.SetToDevice(0);
-                    _game.D3dEngine.Context.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
+                    _d3dEngine.Context.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
                 }
             }
         }

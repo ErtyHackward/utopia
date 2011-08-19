@@ -384,7 +384,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         string contentPath = element.Attribute("contentPath").Value;
 
         SpriteFont spriteFont = new SpriteFont();
-        spriteFont.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true , _game.GraphicDevice);
+        spriteFont.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
         this.fonts.Add(fontName, spriteFont);
       }
 
@@ -394,7 +394,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         string contentPath = element.Attribute("contentPath").Value;
 
         //Create the SpriteTexture
-        SpriteTexture bitmap = new SpriteTexture(_game.GraphicDevice, _resourceDirectory + @"\" + contentPath + ".png", new Vector2(0, 0));
+        SpriteTexture bitmap = new SpriteTexture(_d3dEngine.Device , _resourceDirectory + @"\" + contentPath + ".png", new Vector2(0, 0));
 
         this.bitmaps.Add(bitmapName, bitmap);
       }

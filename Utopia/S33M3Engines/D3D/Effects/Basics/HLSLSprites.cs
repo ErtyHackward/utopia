@@ -67,22 +67,22 @@ namespace S33M3Engines.D3D.Effects.Basics
         };
         #endregion
 
-        public HLSLSprites(Game game, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(game, shaderPath, VertexDeclaration)
+        public HLSLSprites(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+            : base(d3dEngine, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerBatch_Struct>(_game.D3dEngine, "PerBatch");
+            CBPerDraw = new CBuffer<CBPerBatch_Struct>(_d3dEngine, "PerBatch");
             CBuffers.Add(CBPerDraw);
 
-            CBPerInstance = new CBuffer<CBPerInstance_Struct>(_game.D3dEngine, "PerInstance");
+            CBPerInstance = new CBuffer<CBPerInstance_Struct>(_d3dEngine, "PerInstance");
             CBuffers.Add(CBPerInstance);
 
             //Create the resource interfaces ==================================================
-            SpriteTexture = new ShaderResource(_game.D3dEngine, "SpriteTexture");
+            SpriteTexture = new ShaderResource(_d3dEngine, "SpriteTexture");
             ShaderResources.Add(SpriteTexture);
 
             //Create the Sampler interface ==================================================
-            SpriteSampler = new ShaderSampler(_game.D3dEngine, "SpriteSampler");
+            SpriteSampler = new ShaderSampler(_d3dEngine, "SpriteSampler");
             ShaderSamplers.Add(SpriteSampler);
 
             //Load the shaders

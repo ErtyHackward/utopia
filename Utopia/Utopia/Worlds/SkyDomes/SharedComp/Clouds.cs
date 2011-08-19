@@ -15,13 +15,15 @@ using Utopia.Worlds.Weather;
 using Utopia.Shared.World;
 using SharpDX.Direct3D;
 using Utopia.Shared.Structs;
+using S33M3Engines;
+using S33M3Engines.Cameras;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
     public class Clouds : IDrawableComponent
     {
         #region Private Variables
-        private Game _game;
+        private D3DEngine _d3dEngine;
         private ShaderResourceView _cloudMap;
         private HLSLClouds2D _cloudEffect2D;
         private VertexBuffer<VertexCubeCloud> _cloudVB2D;
@@ -35,16 +37,18 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private Vector2 _uvOffset = new Vector2();
         private float _moveOffset;
         private DVector3 _previousCameraPosition;
+        private CameraManager _camManager;
         #endregion
 
         #region Public properties
 
         #endregion
-        public Clouds(Game game, IWeather weather, ref WorldParameters worldParam)
+        public Clouds(D3DEngine d3dEngine, CameraManager camManager , IWeather weather, ref WorldParameters worldParam)
         {
-            _game = game;
+            _d3dEngine = d3dEngine;
             _worldParam = worldParam;
             _weather = weather;
+            _camManager = camManager;
 
             _visibleWorldSize = new Location3<int>()
             {
@@ -58,7 +62,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         public void Initialize()
         {
             _nbrLayer = ClientSettings.Current.Settings.GraphicalParameters.CloudsLayers;
-            _cloudMap = ShaderResourceView.FromFile(_game.GraphicDevice, @"Textures\Weather\clouds.png");
+            _cloudMap = ShaderResourceView.FromFile(_d3dEngine.Device, @"Textures\Weather\clouds.png");
             Init2D();
         }
 
@@ -72,15 +76,15 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         public void Draw()
         {
-            if (_game.ActivCamera.WorldPosition.Y > 500) return;
+            if (_camManager.ActiveCamera.WorldPosition.Y > 500) return;
             //Matrix.Translation((float)_game.ActivCamera.WorldPosition.X, 0, (float)_game.ActivCamera.WorldPosition.Z, out _world);
             //MathHelper.CenterOnFocus(ref _world, ref _world, ref _game.WorldFocus);
-            _world.M42 = -(float)_game.ActivCamera.WorldPosition.Y;
+            _world.M42 = -(float)_camManager.ActiveCamera.WorldPosition.Y;
 
-            if (_previousCameraPosition.X == 0 && _previousCameraPosition.Y == 0 && _previousCameraPosition.Z == 0) _previousCameraPosition = _game.ActivCamera.WorldPosition;
+            if (_previousCameraPosition.X == 0 && _previousCameraPosition.Y == 0 && _previousCameraPosition.Z == 0) _previousCameraPosition = _camManager.ActiveCamera.WorldPosition;
 
-            double XOffsetCameraMove = _game.ActivCamera.WorldPosition.X - _previousCameraPosition.X;
-            double ZOffsetCameraMove = _game.ActivCamera.WorldPosition.Z - _previousCameraPosition.Z;
+            double XOffsetCameraMove = _camManager.ActiveCamera.WorldPosition.X - _previousCameraPosition.X;
+            double ZOffsetCameraMove = _camManager.ActiveCamera.WorldPosition.Z - _previousCameraPosition.Z;
 
             _uvOffset.X += ((float)XOffsetCameraMove / _moveOffset) + (_weather.Wind.WindFlow.X / 50000);
             _uvOffset.Y += ((float)ZOffsetCameraMove / _moveOffset) + (_weather.Wind.WindFlow.Z / 50000);
@@ -88,7 +92,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             //if (_uvOffset.X > 1 || _uvOffset.X < -1) _uvOffset.X = 0;
             //if (_uvOffset.Y > 1 || _uvOffset.Y < -1) _uvOffset.Y = 0;
 
-            _previousCameraPosition = _game.ActivCamera.WorldPosition;
+            _previousCameraPosition = _camManager.ActiveCamera.WorldPosition;
 
 
             Draw2D();
@@ -108,7 +112,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #region private methods
         private void Init2D()
         {
-            _cloudEffect2D = new HLSLClouds2D(_game, @"Effects\Weather\Clouds2D.hlsl", VertexCubeCloud.VertexDeclaration);
+            _cloudEffect2D = new HLSLClouds2D(_d3dEngine, @"Effects\Weather\Clouds2D.hlsl", VertexCubeCloud.VertexDeclaration);
 
             _cloudEffect2D.CloudTexture.Value = _cloudMap;
             _cloudEffect2D.cloudSampler.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
@@ -154,7 +158,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                 _vb[nbrVertex] = new VertexCubeCloud(ref Posi, ref TextCoord, (byte)YlayerPosi);
                 nbrVertex++;
 
-                _cloudVB2D = new VertexBuffer<VertexCubeCloud>(_game, 4, VertexCubeCloud.VertexDeclaration, PrimitiveTopology.TriangleList);
+                _cloudVB2D = new VertexBuffer<VertexCubeCloud>(_d3dEngine, 4, VertexCubeCloud.VertexDeclaration, PrimitiveTopology.TriangleList);
                 _cloudVB2D.SetData(_vb);
 
                 //Create Vertices
@@ -168,14 +172,14 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                 MeshVertexOffset = nbrVertex;
             }
 
-            _cloudIB = new IndexBuffer<ushort>(_game, 6, SharpDX.DXGI.Format.R16_UInt);
+            _cloudIB = new IndexBuffer<ushort>(_d3dEngine, 6, SharpDX.DXGI.Format.R16_UInt);
             _cloudIB.SetData(_ib);
         }
 
         private void Draw2D()
         {
             _cloudEffect2D.Begin();
-            _cloudEffect2D.CBPerDraw.Values.WorldViewProj = Matrix.Transpose(_world * _game.ActivCamera.ViewProjection3D);
+            _cloudEffect2D.CBPerDraw.Values.WorldViewProj = Matrix.Transpose(_world * _camManager.ActiveCamera.ViewProjection3D);
             _cloudEffect2D.CBPerDraw.Values.UVOffset = _uvOffset;
             if (_nbrLayer == 1) _cloudEffect2D.CBPerDraw.Values.nbrLayers = 2; else _cloudEffect2D.CBPerDraw.Values.nbrLayers = _nbrLayer;
             _cloudEffect2D.CBPerDraw.IsDirty = true;
@@ -187,7 +191,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             {
                 _cloudVB2D.SetToDevice(0);
                 _cloudIB.SetToDevice(0);
-                _game.D3dEngine.Context.DrawIndexed(_cloudIB.IndicesCount, 0, 0);
+                _d3dEngine.Context.DrawIndexed(_cloudIB.IndicesCount, 0, 0);
             }
         }
         #endregion

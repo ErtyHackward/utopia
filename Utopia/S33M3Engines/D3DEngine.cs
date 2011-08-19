@@ -28,6 +28,7 @@ namespace S33M3Engines
 
         #region Private variables
         bool _isResizing = false;
+        bool _unlockedMouse = false;
         RenderForm _renderForm;
         SwapChain _swapChain;
         RenderTargetView _renderTarget;
@@ -43,7 +44,7 @@ namespace S33M3Engines
         #endregion
 
         #region Public properties
-        public Device GraphicsDevice;
+        public Device Device;
 
         public D3DEngineDelegates.ViewPortUpdated ViewPort_Updated;
         public ShaderFlags ShaderFlags { get { return _shaderFlags; } }
@@ -70,6 +71,23 @@ namespace S33M3Engines
                     _swapChain.SetFullscreenState(value, null);
                     WindowSizeChanged();
                 }
+            }
+        }
+
+        public bool UnlockedMouse
+        {
+            get { return _unlockedMouse; }
+            set
+            {
+                if (value)
+                {
+                    System.Windows.Forms.Cursor.Show();
+                }
+                else
+                {
+                    System.Windows.Forms.Cursor.Hide();
+                }
+                _unlockedMouse = value;
             }
         }
 
@@ -205,15 +223,15 @@ namespace S33M3Engines
 
                 if (!FULLDEBUGMODE)
                 {
-                    Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.None, SwapDesc, out GraphicsDevice, out _swapChain);
+                    Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.None, SwapDesc, out Device, out _swapChain);
                 }
                 else
                 {
-                    Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.Debug, SwapDesc, out GraphicsDevice, out _swapChain);
+                    Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.Debug, SwapDesc, out Device, out _swapChain);
                 }
 
                 //Create the threaded contexts
-                Context = GraphicsDevice.ImmediateContext;
+                Context = Device.ImmediateContext;
             }
             else
             {
@@ -227,7 +245,7 @@ namespace S33M3Engines
         private void CreateRenderTarget()
         {
             //Create RenderTargetView 
-            _renderTarget = new RenderTargetView(GraphicsDevice, _backBuffer);
+            _renderTarget = new RenderTargetView(Device, _backBuffer);
         }
 
         private void CreateDepthStencil()
@@ -246,7 +264,7 @@ namespace S33M3Engines
                 CpuAccessFlags = CpuAccessFlags.None,
                 OptionFlags = ResourceOptionFlags.None,
             };
-            Texture2D DepthStencilBuffer = new Texture2D(GraphicsDevice, DepthStencilDescr);
+            Texture2D DepthStencilBuffer = new Texture2D(Device, DepthStencilDescr);
 
             //Create the Depth Stencil View + View
             DepthStencilViewDescription DepthStencilViewDescr = new DepthStencilViewDescription()
@@ -256,7 +274,7 @@ namespace S33M3Engines
                 Texture2D = new DepthStencilViewDescription.Texture2DResource() { MipSlice = 0 }
             };
             //Create the Depth Stencil view
-            _depthStencil = new DepthStencilView(GraphicsDevice, DepthStencilBuffer, DepthStencilViewDescr);
+            _depthStencil = new DepthStencilView(Device, DepthStencilBuffer, DepthStencilViewDescr);
 
             DepthStencilBuffer.Dispose();
         }
@@ -285,8 +303,8 @@ namespace S33M3Engines
                 OptionFlags = ResourceOptionFlags.None,
             };
 
-            _staggingBackBufferTexture = new Texture2D(GraphicsDevice, StaggingBackBufferDescr);
-            StaggingBackBuffer = new ShaderResourceView(GraphicsDevice, _staggingBackBufferTexture);
+            _staggingBackBufferTexture = new Texture2D(Device, StaggingBackBufferDescr);
+            StaggingBackBuffer = new ShaderResourceView(Device, _staggingBackBufferTexture);
         }
 
         private void ReleaseBackBufferLinkedResources()
@@ -340,7 +358,7 @@ namespace S33M3Engines
             _staggingBackBufferTexture.Dispose();
             StaggingBackBuffer.Dispose();
             Context.Dispose();
-            GraphicsDevice.Dispose();
+            Device.Dispose();
         }
 
         #endregion

@@ -29,6 +29,10 @@ using S33M3Engines.Sprites;
 using Utopia.Shared.Landscaping;
 using S33M3Engines.Shared.Math;
 using Utopia.Planets.SkyDome;
+using S33M3Engines;
+using S33M3Engines.WorldFocus;
+using S33M3Engines.Cameras;
+using S33M3Engines.GameStates;
 
 namespace Utopia.Planets.Terran
 {
@@ -42,7 +46,10 @@ namespace Utopia.Planets.Terran
         private int _chunkDrawByFrame;
         private PlanetSkyDome _skyDome;
         private ILivingEntity _player;
-
+        private D3DEngine _d3dEngine;
+        private CameraManager _camManager;
+        private WorldFocusManager _worldFocusManager;
+        private GameStatesManager _gameStates;
         #endregion
 
         #region public properties
@@ -54,13 +61,17 @@ namespace Utopia.Planets.Terran
         public Clock GameClock;
         #endregion
 
-        public Terra(Game game, ref PlanetSkyDome skyDome, ref ILivingEntity player, ref int _worldSeed, ref Clock gameClock)
-            : base(game)
+        public Terra(D3DEngine d3dEngine, WorldFocusManager worldFocusManager, CameraManager camManager ,ref PlanetSkyDome skyDome, ref ILivingEntity player, ref int _worldSeed, ref Clock gameClock, LandscapeBuilder landscapeBuilder, GameStatesManager gameStates)
         {
+
+            _d3dEngine = d3dEngine;
+            _gameStates = gameStates;
+            _worldFocusManager = worldFocusManager;
+            _camManager = camManager;
             _skyDome = skyDome;
             _player = player;
             GameClock = gameClock;
-            World = new TerraWorld(Game, ref _worldSeed);
+            World = new TerraWorld(_d3dEngine, _worldFocusManager, _camManager, ref _worldSeed, landscapeBuilder);
             EntityImpact.Init(World);
             ChunkWrapper.Init(World);
             CubeMeshFactory.Init(World);
@@ -70,10 +81,10 @@ namespace Utopia.Planets.Terran
 
         public override void LoadContent()
         {
-             ArrayTexture.CreateTexture2DFromFiles(Game.GraphicDevice, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, out Terra_View);
+            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, out Terra_View);
 
-            _terraEffect = new HLSLTerran(Game, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
-            _liquidEffect = new HLSLLiquid(Game, @"Effects/Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration);
+             _terraEffect = new HLSLTerran(_d3dEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
+             _liquidEffect = new HLSLLiquid(_d3dEngine, @"Effects/Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration);
 
             _terraEffect.TerraTexture.Value = Terra_View;
             _terraEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear); 
@@ -85,10 +96,10 @@ namespace Utopia.Planets.Terran
         #region Update
         public override void Update(ref GameTime TimeSpend)
         {
-            if (Game.ActivCamera.WorldPosition.Y < 400)
+            if (_camManager.ActiveCamera.WorldPosition.Y < 400)
             {
                 ChunkUpdateManager();
-                if (!Game.DebugActif) CheckWrapping();     // Handle Playerzz impact on Terra (Mainly the location will trigger chunk creation/destruction)
+                if (!_gameStates.DebugActif) CheckWrapping();     // Handle Playerzz impact on Terra (Mainly the location will trigger chunk creation/destruction)
                 SortChunk();
             }
         }
@@ -374,16 +385,16 @@ namespace Utopia.Planets.Terran
         public float SunColorBase;
         public override void DrawDepth0()
         {
-            if (Game.ActivCamera.WorldPosition.Y < 300)
+            if (_camManager.ActiveCamera.WorldPosition.Y < 300)
             {
                 StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 #if DEBUG
-                if (Game.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                if (_gameStates.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 #endif
                 _chunkDrawByFrame = 0;
 
                 _terraEffect.Begin();
-                _terraEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(Game.ActivCamera.ViewProjection3D);
+                _terraEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                 _terraEffect.CBPerFrame.Values.dayTime = GameClock.ClockTimeNormalized2;
                 _terraEffect.CBPerFrame.Values.fogdist = ((LandscapeBuilder.Worldsize.X) / 2) - 48;
                 _terraEffect.CBPerFrame.IsDirty = true;
@@ -412,11 +423,11 @@ namespace Utopia.Planets.Terran
                 if (chunk.Ready2Draw)
                 {
                     //Only checking Frustum with the faceID = 0
-                    chunk.FrustumCulled = !Game.ActivCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
+                    chunk.FrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
 
                     if (!chunk.FrustumCulled)
                     {
-                        GMathHelper.CenterOnFocus(ref chunk.World, ref worldFocus, ref Game.WorldFocus);
+                        _worldFocusManager.CenterOnFocus(ref chunk.World, ref worldFocus);
                         _terraEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _terraEffect.CBPerDraw.Values.popUpYOffset = chunk.PopUpYOffset;
                         _terraEffect.CBPerDraw.IsDirty = true;
@@ -447,7 +458,7 @@ namespace Utopia.Planets.Terran
                 {
                     if (!chunk.FrustumCulled)
                     {
-                        if (Game.DebugDisplay == 1) chunk.ChunkBoundingBoxDisplay.Draw(Game.ActivCamera, ref Game.WorldFocus);
+                        if (_gameStates.DebugDisplay == 1) chunk.ChunkBoundingBoxDisplay.Draw(_camManager.ActiveCamera, _worldFocusManager.WorldFocus);
                     }
 
                 }
@@ -486,7 +497,7 @@ namespace Utopia.Planets.Terran
 
         public override void DrawDepth1()
         {
-            if (Game.ActivCamera.WorldPosition.Y < 300)
+            if (_camManager.ActiveCamera.WorldPosition.Y < 300)
             {
                 DrawLiquid();
             }
@@ -503,12 +514,12 @@ namespace Utopia.Planets.Terran
 
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 #if DEBUG
-            if (Game.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            if (_gameStates.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 #endif
             TerraChunk chunk;
 
             _liquidEffect.Begin();
-            _liquidEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(Game.ActivCamera.ViewProjection3D);
+            _liquidEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
             if (_player.HeadInsideWater) _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(SunColorBase / 3, SunColorBase / 3, SunColorBase);
             else _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(SunColorBase, SunColorBase, SunColorBase);
             _liquidEffect.CBPerFrame.IsDirty = true;
@@ -521,7 +532,7 @@ namespace Utopia.Planets.Terran
                     //Only If I have something to draw !
                     if (chunk.LiquidCubeVB != null)
                     {
-                        GMathHelper.CenterOnFocus(ref chunk.World, ref worldFocus, ref Game.WorldFocus);
+                        _worldFocusManager.CenterOnFocus(ref chunk.World, ref worldFocus);
                         _liquidEffect.CBPerDraw.Values.popUpYOffset = chunk.PopUpYOffset;
                         _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _liquidEffect.CBPerDraw.IsDirty = true;

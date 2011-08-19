@@ -13,6 +13,10 @@ using System.Reflection;
 using Utopia.Univers;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
+using S33M3Engines;
+using S33M3Engines.Cameras;
+using S33M3Engines.WorldFocus;
+using S33M3Engines.GameStates;
 
 namespace Utopia.PlugIn
 {
@@ -41,11 +45,11 @@ namespace Utopia.PlugIn
             Plugins = plugins;
         }
 
-        public static void Initialize(Universe universe)
+        public static void Initialize(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, Terra terra, GameStatesManager gameStates)
         {
             for (int i = 0; i < WorldPlugins.Plugins.WorldPlugins.Length; i++)
             {
-                WorldPlugins.Plugins.WorldPlugins[i].Initialize(universe);
+                WorldPlugins.Plugins.WorldPlugins[i].Initialize(d3dEngine, camManager, worldFocusManager, terra, gameStates);
             }
         }
 
@@ -96,7 +100,7 @@ namespace Utopia.PlugIn
         string PluginName { get; }
         string PluginVersion { get; }
 
-        void Initialize(Universe universe);
+        void Initialize(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, Terra terra, GameStatesManager gameStates);
         void Update(ref GameTime TimeSpend);
         void Draw();
         void Interpolation(ref double interpolation_hd, ref float interpolation_ld);

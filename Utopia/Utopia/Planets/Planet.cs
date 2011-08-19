@@ -12,6 +12,11 @@ using Utopia.Planets.Skybox;
 using S33M3Engines.Struct;
 using Utopia.Shared.Structs;
 using Utopia.Planets.SkyDome;
+using S33M3Engines;
+using S33M3Engines.Cameras;
+using S33M3Engines.WorldFocus;
+using S33M3Engines.GameStates;
+using Utopia.Shared.Landscaping;
 
 namespace Utopia.Planets
 {
@@ -43,19 +48,18 @@ namespace Utopia.Planets
         }
         #endregion
 
-        public Planet(Game game, Clock gameClock, ILivingEntity player,int planetSeed, Location3<int> universeLocation)
-            :base(game)
+        public Planet(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, GameStatesManager gameStates , LandscapeBuilder landscapeBuilder ,Clock gameClock, ILivingEntity player,int planetSeed, Location3<int> universeLocation)
         {
             _gameClock = gameClock;
             _player = player;
             _planetnfo = new PlanetInfo() { Seed = planetSeed, UniverseLocation = universeLocation }; ;
             //Skydome creation
-            _planetSkyDome = new PlanetSkyDome(Game, gameClock);
+            _planetSkyDome = new PlanetSkyDome(d3dEngine, camManager, worldFocusManager, gameClock);
             //Main terrain creation
-            Terra = new Planets.Terran.Terra(Game, ref _planetSkyDome, ref _player, ref _planetnfo.Seed, ref _gameClock);
+            Terra = new Planets.Terran.Terra(d3dEngine, worldFocusManager, camManager, ref _planetSkyDome, ref _player, ref _planetnfo.Seed, ref _gameClock, landscapeBuilder, gameStates);
             player.TerraWorld = Terra.World;
             //Weather management
-            _weatherMng = new Planets.Weather.WeatherManager(Game, _gameClock, Terra.World);
+            _weatherMng = new Planets.Weather.WeatherManager(d3dEngine, camManager,  _gameClock, Terra.World);
         }
 
         #region Public Methods

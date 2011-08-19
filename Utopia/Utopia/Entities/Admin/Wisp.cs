@@ -8,6 +8,7 @@ using S33M3Engines.InputHandler;
 using SharpDX;
 using System.Windows.Forms;
 using S33M3Engines.Maths;
+using S33M3Engines;
 
 namespace Utopia.Entities.Admin
 {
@@ -16,8 +17,8 @@ namespace Utopia.Entities.Admin
         InputHandlerManager _inputHandler;
         Vector3 _entityXAxis, _entityYAxis, _entityZAxis;
 
-        public Wisp(Game game, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition)
-            : base(game, startUpWorldPosition, new Vector3(0,0,0))
+        public Wisp(string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition)
+            : base(startUpWorldPosition, new Vector3(0, 0, 0))
         {
             _inputHandler = inputHandler;
         }

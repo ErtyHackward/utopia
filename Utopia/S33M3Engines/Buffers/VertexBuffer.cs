@@ -27,7 +27,7 @@ namespace S33M3Engines.Buffers
         Buffer _vertexBuffer;
         PrimitiveTopology _primitiveTopology;
         //VertexBufferBinding _defaultBinding;
-        Game _game;
+        D3DEngine _d3dEngine;
         DataStream _vertices;
         VertexDeclaration _vertexDeclatation;
         DataBox _databox;
@@ -42,7 +42,7 @@ namespace S33M3Engines.Buffers
 
         #region Public Properties
         #endregion
-        public VertexBuffer(Game game, int vertexCount, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology, ResourceUsage usage = ResourceUsage.Default, int AutoResizePerc = 0)
+        public VertexBuffer(D3DEngine d3dEngine, int vertexCount, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology, ResourceUsage usage = ResourceUsage.Default, int AutoResizePerc = 0)
         {
             _autoResizePerc = AutoResizePerc;
             _vertexCount = vertexCount;
@@ -50,7 +50,7 @@ namespace S33M3Engines.Buffers
 
             _vertexDeclatation = vertexDeclatation;
             _primitiveTopology = primitiveTopology;
-            _game = game;
+            _d3dEngine = d3dEngine;
 
             //Create the buffer description object
             _description = new BufferDescription()
@@ -87,24 +87,24 @@ namespace S33M3Engines.Buffers
 
                 //Create new Buffer
                 _description.SizeInBytes = _bufferCount * _vertexDeclatation.VertexStride;
-                _vertexBuffer = new Buffer(_game.D3dEngine.GraphicsDevice, _vertices, _description);
+                _vertexBuffer = new Buffer(_d3dEngine.Device, _vertices, _description);
             }
             else
             {
                 if (MapUpdate || _vertexBuffer.Description.Usage == ResourceUsage.Dynamic)
                 {
-                    DataBox databox = _game.D3dEngine.Context.MapSubresource(_vertexBuffer, 0, _vertexCount * _vertexDeclatation.VertexStride, MapMode.WriteDiscard, MapFlags.None);
+                    DataBox databox = _d3dEngine.Context.MapSubresource(_vertexBuffer, 0, _vertexCount * _vertexDeclatation.VertexStride, MapMode.WriteDiscard, MapFlags.None);
                     databox.Data.Position = 0;
                     databox.Data.WriteRange(data);
                     databox.Data.Position = 0;
-                    _game.D3dEngine.Context.UnmapSubresource(_vertexBuffer, 0);
+                    _d3dEngine.Context.UnmapSubresource(_vertexBuffer, 0);
                 }
                 else
                 {
                     _databox.Data.Position = 0;
                     _databox.Data.WriteRange(data);
                     _databox.Data.Position = 0;
-                    _game.D3dEngine.Context.UpdateSubresource(_databox, _vertexBuffer, 0);
+                    _d3dEngine.Context.UpdateSubresource(_databox, _vertexBuffer, 0);
                 }
             }
 
@@ -116,13 +116,13 @@ namespace S33M3Engines.Buffers
         {
             if (VertexBuffer.LastPrimitiveTopology != _primitiveTopology)
             {
-                _game.D3dEngine.Context.InputAssembler.SetPrimitiveTopology(_primitiveTopology);
+                _d3dEngine.Context.InputAssembler.SetPrimitiveTopology(_primitiveTopology);
                 VertexBuffer.LastPrimitiveTopology = _primitiveTopology;
             }
 
             _binding.Offset = Offset;
 
-            _game.D3dEngine.Context.InputAssembler.SetVertexBuffers(0, _binding);
+            _d3dEngine.Context.InputAssembler.SetVertexBuffers(0, _binding);
 
         }
 

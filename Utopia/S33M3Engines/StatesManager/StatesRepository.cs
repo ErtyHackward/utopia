@@ -29,7 +29,7 @@ namespace S33M3Engines.StatesManager
         public static int AddRasterStates(RasterizerStateDescription RasterDescr)
         {
             Array.Resize<RasterizerState>(ref _rasterStates, _rasterStates.Length + 1);
-            _rasterStates[_rasterStates.Length - 1] = new RasterizerState(_engine.GraphicsDevice, ref RasterDescr);
+            _rasterStates[_rasterStates.Length - 1] = new RasterizerState(_engine.Device, ref RasterDescr);
             return _rasterStates.Length - 1;
         }
 
@@ -46,7 +46,7 @@ namespace S33M3Engines.StatesManager
         public static int AddBlendStates(BlendStateDescription BlendStateDescr)
         {
             Array.Resize<BlendState>(ref _blendStates, _blendStates.Length + 1);
-            _blendStates[_blendStates.Length - 1] = new BlendState(_engine.GraphicsDevice, ref BlendStateDescr);
+            _blendStates[_blendStates.Length - 1] = new BlendState(_engine.Device, ref BlendStateDescr);
             return _blendStates.Length - 1;
         }
 
@@ -62,7 +62,7 @@ namespace S33M3Engines.StatesManager
         public static int AddDepthStencilStates(DepthStencilStateDescription DepthStencilStateDescr)
         {
             Array.Resize<DepthStencilState>(ref _depthStencilStates, _depthStencilStates.Length + 1);
-            _depthStencilStates[_depthStencilStates.Length - 1] = new DepthStencilState(_engine.GraphicsDevice, ref DepthStencilStateDescr);
+            _depthStencilStates[_depthStencilStates.Length - 1] = new DepthStencilState(_engine.Device, ref DepthStencilStateDescr);
             return _depthStencilStates.Length - 1;
         }
 
@@ -76,7 +76,7 @@ namespace S33M3Engines.StatesManager
         public static int AddSamplerStates(SamplerStateDescription SamplerDescr)
         {
             Array.Resize<SamplerState>(ref _samplerStates, _samplerStates.Length + 1);
-            _samplerStates[_samplerStates.Length - 1] = new SamplerState(_engine.GraphicsDevice, ref SamplerDescr);
+            _samplerStates[_samplerStates.Length - 1] = new SamplerState(_engine.Device, ref SamplerDescr);
             return _samplerStates.Length - 1;
         }
 

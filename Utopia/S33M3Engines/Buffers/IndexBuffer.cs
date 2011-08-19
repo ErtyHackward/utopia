@@ -17,7 +17,7 @@ namespace S33M3Engines.Buffers
     {
         #region Private variables
         Buffer _indexBuffer;
-        Game _game;
+        D3DEngine _d3dEngine;
         Format _indexFormat;
         BufferDescription _description;
         DataStream _indices;
@@ -33,14 +33,14 @@ namespace S33M3Engines.Buffers
         #region Public Properties
         #endregion
 
-        public IndexBuffer(Game game, int IndicesCount, Format indexFormat, int AutoResizePerc = 0)
+        public IndexBuffer(D3DEngine d3dEngine, int IndicesCount, Format indexFormat, int AutoResizePerc = 0)
         {
             _indicesCount = IndicesCount;
             _bufferCount = _indicesCount + (_indicesCount * _autoResizePerc / 100);
 
             _autoResizePerc = AutoResizePerc;
 
-            _game = game;
+            _d3dEngine = d3dEngine;
             _indexFormat = indexFormat;
             _indexStride = FormatSize.GetFormatSize(indexFormat);
             
@@ -78,24 +78,24 @@ namespace S33M3Engines.Buffers
 
                 //Create new Buffer
                 _description.SizeInBytes = _bufferCount * _indexStride;
-                _indexBuffer = new Buffer(_game.GraphicDevice, _indices, _description);
+                _indexBuffer = new Buffer(_d3dEngine.Device, _indices, _description);
             }
             else
             {
                 if (MapUpdate || _indexBuffer.Description.Usage == ResourceUsage.Dynamic)
                 {
-                    DataBox databox = _game.D3dEngine.Context.MapSubresource(_indexBuffer, 0, _indicesCount * _indexStride, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None);
+                    DataBox databox = _d3dEngine.Context.MapSubresource(_indexBuffer, 0, _indicesCount * _indexStride, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None);
                     databox.Data.Position = 0;
                     databox.Data.WriteRange(data);
                     databox.Data.Position = 0;
-                    _game.D3dEngine.Context.UnmapSubresource(_indexBuffer, 0);
+                    _d3dEngine.Context.UnmapSubresource(_indexBuffer, 0);
                 }
                 else
                 {
                     _databox.Data.Position = 0;
                     _databox.Data.WriteRange(data);
                     _databox.Data.Position = 0;
-                    _game.D3dEngine.Context.UpdateSubresource(_databox, _indexBuffer, 0);
+                    _d3dEngine.Context.UpdateSubresource(_databox, _indexBuffer, 0);
                 }
 
             }
@@ -104,7 +104,7 @@ namespace S33M3Engines.Buffers
 
         public void SetToDevice(int Offset)
         {
-            _game.D3dEngine.Context.InputAssembler.SetIndexBuffer(_indexBuffer, _indexFormat, Offset);
+            _d3dEngine.Context.InputAssembler.SetIndexBuffer(_indexBuffer, _indexFormat, Offset);
         }
 
         #region IDisposable Members

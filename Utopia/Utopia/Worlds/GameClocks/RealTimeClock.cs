@@ -17,8 +17,7 @@ namespace Utopia.Worlds.GameClocks
         public float ClockSpeed { get; set; }
         #endregion
 
-        public RealTimeClock(Game game, float clockSpeed, float startTime)
-            : base(game)
+        public RealTimeClock(float clockSpeed, float startTime)
         {
             _startTime = startTime;
             ClockSpeed = clockSpeed;

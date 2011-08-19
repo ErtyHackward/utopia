@@ -39,8 +39,7 @@ namespace Utopia.Entities
             get { return _lookAtDirection.ActualValue; }
         }
 
-        public Entity(Game game, DVector3 startUpWorldPosition, Vector3 size)
-            : base(game)
+        public Entity( DVector3 startUpWorldPosition, Vector3 size)
         {
             _worldPosition.Value = startUpWorldPosition;
             _worldPosition.ValueInterp = startUpWorldPosition;

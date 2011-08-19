@@ -23,7 +23,7 @@ namespace S33M3Engines.Sprites
         private HLSLSprites _effect;
         private HLSLSprites _effectInstanced;
         private SamplerState _spriteSampler;
-        private Game _game;
+        private D3DEngine _d3dEngine;
 
         private int _rasterStateId, _blendStateId, _depthStateId;
 
@@ -44,14 +44,14 @@ namespace S33M3Engines.Sprites
             Point = 2
         };
 
-        public void Initialize(Game game)
+        public void Initialize(D3DEngine d3dEngine)
         {
-            _game = game;
-            _effect = new HLSLSprites(game, @"D3D\Effects\Basics\Sprites.hlsl", VertexSprite.VertexDeclaration);
-            _effectInstanced = new HLSLSprites(game, @"D3D\Effects\Basics\Sprites.hlsl", VertexSpriteInstanced.VertexDeclaration, new D3D.Effects.EntryPoints() { VertexShader_EntryPoint = "SpriteInstancedVS", PixelShader_EntryPoint = "SpritePS" });
+            _d3dEngine = d3dEngine;
+            _effect = new HLSLSprites(_d3dEngine, @"D3D\Effects\Basics\Sprites.hlsl", VertexSprite.VertexDeclaration);
+            _effectInstanced = new HLSLSprites(_d3dEngine, @"D3D\Effects\Basics\Sprites.hlsl", VertexSpriteInstanced.VertexDeclaration, new D3D.Effects.EntryPoints() { VertexShader_EntryPoint = "SpriteInstancedVS", PixelShader_EntryPoint = "SpritePS" });
 
 
-            _spriteSampler = new SamplerState(_game.GraphicDevice,
+            _spriteSampler = new SamplerState(_d3dEngine.Device,
                                                         new SamplerStateDescription()
                                                         {
                                                             AddressU = TextureAddressMode.Clamp,
@@ -73,10 +73,10 @@ namespace S33M3Engines.Sprites
                                           new VertexSprite(new Vector2(0.0f, 1.0f), new Vector2(0.0f, 1.0f)),
                                       };
 
-            _vBuffer = new VertexBuffer<VertexSprite>(game, vertices.Length, VertexSprite.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Immutable);
+            _vBuffer = new VertexBuffer<VertexSprite>(_d3dEngine, vertices.Length, VertexSprite.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Immutable);
             _vBuffer.SetData(vertices);
 
-            _vBufferInstanced = new InstancedVertexBuffer<VertexSprite, VertexSpriteInstanced>(game, VertexSpriteInstanced.VertexDeclaration, PrimitiveTopology.TriangleList);
+            _vBufferInstanced = new InstancedVertexBuffer<VertexSprite, VertexSpriteInstanced>(_d3dEngine, VertexSpriteInstanced.VertexDeclaration, PrimitiveTopology.TriangleList);
             _vBufferInstanced.SetFixedData(vertices);
 
             // Create the instance data buffer
@@ -84,7 +84,7 @@ namespace S33M3Engines.Sprites
 
             // Create the index buffer
             short[] indices = { 0, 1, 2, 3, 0, 2 };
-            _iBuffer = new IndexBuffer<short>(game, indices.Length, SharpDX.DXGI.Format.R16_UInt);
+            _iBuffer = new IndexBuffer<short>(_d3dEngine, indices.Length, SharpDX.DXGI.Format.R16_UInt);
             _iBuffer.SetData(indices);
 
             // Create our constant buffers
@@ -172,7 +172,7 @@ namespace S33M3Engines.Sprites
             //Set Par Batch Constant
             _effect.Begin();
 
-            _effect.CBPerDraw.Values.ViewportSize = new Vector2(_game.ActivCamera.Viewport.Width, _game.ActivCamera.Viewport.Height);
+            _effect.CBPerDraw.Values.ViewportSize = new Vector2(_d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height);
             if (sourceRectInTextCoord) _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
             else _effect.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
             
@@ -197,7 +197,7 @@ namespace S33M3Engines.Sprites
 
             _effect.Apply(); //Set Shader to the device
 
-            _game.D3dEngine.Context.DrawIndexed(6, 0, 0);
+            _d3dEngine.Context.DrawIndexed(6, 0, 0);
         }
 
 
@@ -258,7 +258,7 @@ namespace S33M3Engines.Sprites
         {
             //Set Par Batch Constant
             _effectInstanced.Begin();
-            _effectInstanced.CBPerDraw.Values.ViewportSize = new Vector2(_game.ActivCamera.Viewport.Width, _game.ActivCamera.Viewport.Height);
+            _effectInstanced.CBPerDraw.Values.ViewportSize = new Vector2(_d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height);
             if(sourceRectInTextCoord)_effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
             else _effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
             _effectInstanced.CBPerDraw.IsDirty = true;
@@ -285,7 +285,7 @@ namespace S33M3Engines.Sprites
             _vBufferInstanced.SetInstancedData(drawData);
             _vBufferInstanced.SetToDevice(0);
 
-            _game.D3dEngine.Context.DrawIndexedInstanced(6, numSpritesToDraw, 0, 0, 0);
+            _d3dEngine.Context.DrawIndexedInstanced(6, numSpritesToDraw, 0, 0, 0);
             // If there's any left to be rendered, do it recursively
             if (numSprites > numSpritesToDraw)
                 RenderBatch(spriteTexture, drawData, numSprites - numSpritesToDraw);
