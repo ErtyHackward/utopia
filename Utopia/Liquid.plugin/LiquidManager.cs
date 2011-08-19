@@ -24,6 +24,10 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Landscaping;
 using S33M3Engines.Shared.Math;
+using S33M3Engines;
+using S33M3Engines.Cameras;
+using S33M3Engines.WorldFocus;
+using S33M3Engines.GameStates;
 
 namespace Liquid.plugin
 {
@@ -32,6 +36,10 @@ namespace Liquid.plugin
     {
         private Liquid _liquid;
         private Terra _terra;
+        private D3DEngine _d3dEngine;
+        private CameraManager _camManager;
+        private WorldFocusManager _worldFocusManager;
+        private GameStatesManager _gameStates;
 
         public HLSLLiquid LiquidEffect;
 
@@ -61,10 +69,13 @@ namespace Liquid.plugin
             get { return _version; }
         }
 
-        public void Initialize(Universe universe)
+        public void Initialize(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, Terra terra, GameStatesManager gameStates)
         {
-            _universe = universe;
-            _terra = universe.Planet.Terra;
+            _d3dEngine = d3dEngine;
+            _camManager = camManager;
+            _worldFocusManager = worldFocusManager;
+            _gameStates = gameStates;
+            _terra = terra;
             _liquid = new Liquid(this, _terra);
 
             _terra.DrawLiquid = DrawLiquid;
@@ -218,7 +229,7 @@ namespace Liquid.plugin
             Matrix worldFocus = Matrix.Identity;
 
             LiquidEffect.Begin();
-            LiquidEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_terra.Game.ActivCamera.ViewProjection3D);
+            LiquidEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
             LiquidEffect.CBPerFrame.Values.dayTime = _terra.GameClock.ClockTimeNormalized2;
             LiquidEffect.CBPerFrame.Values.fogdist = ((LandscapeBuilder.Worldsize.X) / 2) - 48;
 
@@ -231,11 +242,11 @@ namespace Liquid.plugin
                 LiquidEffect.CBPerFrame.Values.SunColor = new Vector3(_terra.SunColorBase, _terra.SunColorBase, _terra.SunColorBase);
             }
             LiquidEffect.CBPerFrame.Values.WaveGlobalOffset = _liquid.WaveGlobalOffset.ActualValue;
-            LiquidEffect.CBPerFrame.Values.BackBufferSize = new Vector2(_terra.Game.ViewPort.Width, _terra.Game.ViewPort.Height);
+            LiquidEffect.CBPerFrame.Values.BackBufferSize = new Vector2(_d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height);
             LiquidEffect.CBPerFrame.Values.LiquidOffset = TextureAnimationOffset;
             LiquidEffect.CBPerFrame.IsDirty = true;
 
-            LiquidEffect.SolidBackBuffer.Value = _terra.Game.D3dEngine.StaggingBackBuffer;
+            LiquidEffect.SolidBackBuffer.Value = _d3dEngine.StaggingBackBuffer;
             LiquidEffect.SolidBackBuffer.IsDirty = true;
 
             if (_terra.Player.HeadInsideWater)
@@ -248,7 +259,7 @@ namespace Liquid.plugin
             }
 
 #if DEBUG
-            if (_universe.Game.DebugDisplay == 2) StatesRepository.ApplyStates(Utopia.GameDXStates.DXStates.Rasters.Wired, Utopia.GameDXStates.DXStates.Blenders.Disabled);
+            if (_gameStates.DebugDisplay == 2) StatesRepository.ApplyStates(Utopia.GameDXStates.DXStates.Rasters.Wired, Utopia.GameDXStates.DXStates.Blenders.Disabled);
 #endif
 
             TerraChunk chunk;
@@ -259,7 +270,7 @@ namespace Liquid.plugin
                 {
                     if (chunk.LiquidCubeVB != null)
                     {
-                        GMathHelper.CenterOnFocus(ref chunk.World, ref worldFocus, ref _terra.Game.WorldFocus);
+                        _worldFocusManager.CenterOnFocus(ref chunk.World, ref worldFocus);
                         LiquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         LiquidEffect.CBPerDraw.Values.popUpYOffset = chunk.PopUpYOffset;
                         LiquidEffect.CBPerDraw.IsDirty = true;
@@ -278,7 +289,7 @@ namespace Liquid.plugin
 
         public void LoadContent()
         {
-            LiquidEffect = new HLSLLiquid(_terra.Game, @"PlugIns/Effects/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration);
+            LiquidEffect = new HLSLLiquid(_d3dEngine, @"PlugIns/Effects/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration);
             LiquidEffect.TerraTexture.Value = _terra.Terra_View;
             LiquidEffect.SamplerBackBuffer.Value = StatesRepository.GetSamplerState(Utopia.GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
             LiquidEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(Utopia.GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);

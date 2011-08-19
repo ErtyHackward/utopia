@@ -25,8 +25,7 @@ namespace Utopia.Worlds
         }
         #endregion
 
-        public WorldRenderer(Game game, IWorld world)
-            : base(game)
+        public WorldRenderer(IWorld world)
         {
             _world = world;
         }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using S33M3Engines.D3D;
 using Utopia.Settings;
+using S33M3Engines;
+using S33M3Engines.InputHandler;
 
 namespace Utopia.Worlds.GameClocks
 {
@@ -13,6 +15,7 @@ namespace Utopia.Worlds.GameClocks
         private float _startTime;
         private float _deltaAngleTime;
         private bool _frozenTime;
+        private InputHandlerManager _inputHandler;
         #endregion
 
         #region Public variable/properties
@@ -25,9 +28,9 @@ namespace Utopia.Worlds.GameClocks
         /// <param name="game">Base tools class</param>
         /// <param name="clockSpeed">The Ingame time speed in "Nbr of second ingame for each realtime seconds"; ex : 1 = Real time, 60 = 60times faster than realtime</param>
         /// <param name="gameTimeStatus">The startup time</param>
-        public WorldClock(Game game, float clockSpeed, float startTime)
-            :base(game)
+        public WorldClock(InputHandlerManager input, float clockSpeed, float startTime)
         {
+            _inputHandler = input;
             _startTime = startTime;
             ClockSpeed = clockSpeed;
         }
@@ -88,7 +91,7 @@ namespace Utopia.Worlds.GameClocks
         bool _freezeTimeBuffer;
         private void InputHandler(bool bufferMode)
         {
-            if (_game.InputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.FreezeTime) || _freezeTimeBuffer)
+            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.FreezeTime) || _freezeTimeBuffer)
             {
                 if (bufferMode) { _freezeTimeBuffer = true; return; } else _freezeTimeBuffer = false;
 

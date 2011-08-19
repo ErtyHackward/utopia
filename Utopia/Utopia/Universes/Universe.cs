@@ -11,6 +11,10 @@ using S33M3Engines.Struct;
 using Utopia.USM;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Landscaping;
+using S33M3Engines;
+using S33M3Engines.Cameras;
+using S33M3Engines.WorldFocus;
+using S33M3Engines.GameStates;
 
 namespace Utopia.Univers
 {
@@ -34,15 +38,14 @@ namespace Utopia.Univers
         }
         #endregion
 
-        public Universe(Game game, Clock gameClock, ILivingEntity player, string Name)
-            :base(game)
+        public Universe(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, GameStatesManager gameStates , LandscapeBuilder landscapeBuilder, Clock gameClock, ILivingEntity player, string Name)
         {
             _name = Name;
             _gameClock = gameClock;
             _player = player;
 
             //Main terrain creation
-            Planet = new Planet(Game, _gameClock, _player, LandscapeBuilder.Seed, new Location3<int>(0,0,0));
+            Planet = new Planet(d3dEngine, camManager, worldFocusManager, gameStates,landscapeBuilder , _gameClock, _player, LandscapeBuilder.Seed, new Location3<int>(0, 0, 0));
             //UtopiaSaveManager.ChangePlanet(Planet.Planetnfo);
         }
 

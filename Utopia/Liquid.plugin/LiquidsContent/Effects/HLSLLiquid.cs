@@ -9,6 +9,7 @@ using SharpDX.Direct3D11;
 using Buffer = SharpDX.Direct3D11.Buffer;
 using S33M3Engines.D3D.Effects;
 using S33M3Engines.D3D;
+using S33M3Engines;
 
 namespace Liquid.plugin.LiquidsContent.Effects
 {
@@ -75,28 +76,28 @@ namespace Liquid.plugin.LiquidsContent.Effects
         };
         #endregion
 
-        public HLSLLiquid(Game game, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(game, shaderPath, VertexDeclaration)
+        public HLSLLiquid(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+            : base(d3dEngine, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDraw_Struct>(_game.D3dEngine, "PerDraw");
+            CBPerDraw = new CBuffer<CBPerDraw_Struct>(_d3dEngine, "PerDraw");
             CBuffers.Add(CBPerDraw);
 
-            CBPerFrame = new CBuffer<CBPerFrame_Struct>(_game.D3dEngine, "PerFrame");
+            CBPerFrame = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrame");
             CBuffers.Add(CBPerFrame);
 
             //Create the resource interfaces ==================================================
-            TerraTexture = new ShaderResource(_game.D3dEngine, "TerraTexture");
+            TerraTexture = new ShaderResource(_d3dEngine, "TerraTexture");
             ShaderResources.Add(TerraTexture);
 
-            SolidBackBuffer = new ShaderResource(_game.D3dEngine, "SolidBackBuffer");
+            SolidBackBuffer = new ShaderResource(_d3dEngine, "SolidBackBuffer");
             ShaderResources.Add(SolidBackBuffer);
 
             //Create the Sampler interface ==================================================
-            SamplerDiffuse = new ShaderSampler(_game.D3dEngine, "SamplerDiffuse");
+            SamplerDiffuse = new ShaderSampler(_d3dEngine, "SamplerDiffuse");
             ShaderSamplers.Add(SamplerDiffuse);
 
-            SamplerBackBuffer = new ShaderSampler(_game.D3dEngine, "SamplerBackBuffer");
+            SamplerBackBuffer = new ShaderSampler(_d3dEngine, "SamplerBackBuffer");
             ShaderSamplers.Add(SamplerBackBuffer);
 
             //Load the shaders

@@ -65,7 +65,7 @@ namespace S33M3Engines.D3D.Effects
             _engine = engine;
 
             _size = Marshal.SizeOf(typeof(T));
-            _CBuffer = new Buffer(_engine.GraphicsDevice,
+            _CBuffer = new Buffer(_engine.Device,
                                     new BufferDescription
                                     {
                                         Usage = ResourceUsage.Default,

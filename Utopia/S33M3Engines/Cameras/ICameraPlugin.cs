@@ -7,7 +7,6 @@ using S33M3Engines.Maths;
 
 namespace S33M3Engines.Cameras
 {
-
     public interface ICameraPlugin
     {
         DVector3 CameraWorldPosition { get; }

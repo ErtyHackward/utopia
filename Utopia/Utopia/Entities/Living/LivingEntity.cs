@@ -22,6 +22,8 @@ using Utopia.Shared.Landscaping;
 using Utopia.Shared;
 using Utopia.Settings;
 using S33M3Engines.Shared.Math;
+using S33M3Engines;
+using S33M3Engines.Cameras;
 
 namespace Utopia.Entities.Living
 {
@@ -31,6 +33,8 @@ namespace Utopia.Entities.Living
     public class LivingEntity : Entity, ILivingEntity
     {
         #region private variables
+        protected CameraManager _camManager;
+        protected D3DEngine _d3dEngine;
         private Vector3 _lookAt = new Vector3(0f, 0f, -1f);
         private FTSValue<Quaternion> _moveDirection = new FTSValue<Quaternion>();
         private float _moveSpeed;
@@ -90,9 +94,11 @@ namespace Utopia.Entities.Living
 
         #endregion
 
-        public LivingEntity(Game game, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed)
-            : base(game, startUpWorldPosition, size)
+        public LivingEntity(D3DEngine d3dEngine, CameraManager camManager, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed)
+            : base(startUpWorldPosition, size)
         {
+            _camManager = camManager;
+            _d3dEngine = d3dEngine;
             _refreshHeadUnderWater = CheckHeadUnderWater;
 
             _inputHandler = inputHandler;
@@ -153,7 +159,7 @@ namespace Utopia.Entities.Living
             //Compute the amount of movement to take into account for this Update !
             
             //Compute Gravity Influence 
-            _gravityInfluence = MathHelper.FullLerp(1, 10, 0, 300, Math.Min(Math.Max((float)Game.ActivCamera.WorldPosition.Y - 300, 0),300));
+            _gravityInfluence = MathHelper.FullLerp(1, 10, 0, 300, Math.Min(Math.Max((float)_camManager.ActiveCamera.WorldPosition.Y - 300, 0),300));
 
             _moveDelta = _moveSpeed * _gravityInfluence * TimeSpend.ElapsedGameTimeInS_LD;
 
@@ -254,9 +260,9 @@ namespace Utopia.Entities.Living
         private void EntityRotationsOnEvents(LivingEntityMode mode)
         {
             MouseState mouseState;
-            int centerX = (int)Game.ActivCamera.Viewport.Width / 2; // Largeur Viewport pour centrer la souris !
-            int centerY = (int)Game.ActivCamera.Viewport.Height / 2;
-            if (!Game.UnlockedMouse)
+            int centerX = (int)_camManager.ActiveCamera.Viewport.Width / 2; // Largeur Viewport pour centrer la souris !
+            int centerY = (int)_camManager.ActiveCamera.Viewport.Height / 2;
+            if (_d3dEngine.UnlockedMouse == false)
             {
                 _inputHandler.GetCurrentMouseState(out mouseState); //To be sure the take the latest place of the mouse cursor !
                 Mouse.SetPosition(centerX, centerY);

@@ -62,22 +62,22 @@ namespace S33M3Engines.D3D.Effects.Basics
         };
         #endregion
 
-        public HLSLVertexPositionTexture(Game game, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(game, shaderPath, VertexDeclaration)
+        public HLSLVertexPositionTexture(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+            : base(d3dEngine, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDraw_Struct>(_game.D3dEngine, "PerDraw");
+            CBPerDraw = new CBuffer<CBPerDraw_Struct>(_d3dEngine, "PerDraw");
             CBuffers.Add(CBPerDraw);
 
-            CBPerFrame = new CBuffer<CBPerFrame_Struct>(_game.D3dEngine, "PerFrame");
+            CBPerFrame = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrame");
             CBuffers.Add(CBPerFrame);
 
             //Create the resource interfaces ==================================================
-            DiffuseTexture = new ShaderResource(_game.D3dEngine, "DiffuseTexture");
+            DiffuseTexture = new ShaderResource(_d3dEngine, "DiffuseTexture");
             ShaderResources.Add(DiffuseTexture);
 
             //Create the Sampler interface ==================================================
-            SamplerDiffuse = new ShaderSampler(_game.D3dEngine, "SamplerDiffuse");
+            SamplerDiffuse = new ShaderSampler(_d3dEngine, "SamplerDiffuse");
             ShaderSamplers.Add(SamplerDiffuse);
             
             //Load the shaders

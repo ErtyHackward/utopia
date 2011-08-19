@@ -86,8 +86,7 @@ namespace Utopia.GameClock
         /// <param name="game">Base tools class</param>
         /// <param name="clockSpeed">The Ingame time speed in "Nbr of second ingame for each realtime seconds"; ex : 1 = Real time, 60 = 60times faster than realtime</param>
         /// <param name="gameTimeStatus">The mode use to make the time progress</param>
-        public Clock(Game game, float clockSpeed, GameTimeMode gameTimeStatus, float startTime, InputHandlerManager input)
-            : base(game)
+        public Clock(float clockSpeed, GameTimeMode gameTimeStatus, float startTime, InputHandlerManager input)
         {
             _gameTimeStatus = gameTimeStatus;
             ClockSpeed = clockSpeed;
