@@ -40,7 +40,7 @@ namespace S33M3Engines.InputHandler
         }
         #endregion
 
-        public InputHandlerManager(Game game)
+        public InputHandlerManager()
         {
             Initialize();
         }

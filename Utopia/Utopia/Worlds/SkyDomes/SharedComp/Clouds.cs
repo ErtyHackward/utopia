@@ -43,7 +43,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #region Public properties
 
         #endregion
-        public Clouds(D3DEngine d3dEngine, CameraManager camManager , IWeather weather, ref WorldParameters worldParam)
+        public Clouds(D3DEngine d3dEngine, CameraManager camManager , IWeather weather, WorldParameters worldParam)
         {
             _d3dEngine = d3dEngine;
             _worldParam = worldParam;
