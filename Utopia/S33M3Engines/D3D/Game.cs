@@ -36,7 +36,7 @@ namespace S33M3Engines.D3D
         public bool FixedTimeSteps { get { return S33M3Engines.D3DEngine.FIXED_TIMESTEP_ENABLED; } set { ResetGamePendingUpdate(value); S33M3Engines.D3DEngine.FIXED_TIMESTEP_ENABLED = value; } }
 
         public LandscapeBuilder LandscapeBuilder { get; set; }
-        protected InputHandlerManager InputHandler { get; set; }
+        protected InputHandlerManager _inputHandler { get; set; }
 
         #endregion
 
@@ -220,7 +220,7 @@ namespace S33M3Engines.D3D
         //Keyboard and Mouse system watch up
         private void systemInputStates()
         {
-            InputHandler.ReshreshStates();
+            _inputHandler.ReshreshStates();
         }
 
 
@@ -230,7 +230,7 @@ namespace S33M3Engines.D3D
 
         public virtual void Dispose()
         {
-            InputHandler.CleanUp();
+            _inputHandler.CleanUp();
         }
 
         #endregion

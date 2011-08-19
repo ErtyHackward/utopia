@@ -22,6 +22,7 @@ using Utopia.Shared.World;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.WorldFocus;
+using Ninject;
 
 namespace Utopia.Worlds.SkyDomes
 {
@@ -60,7 +61,7 @@ namespace Utopia.Worlds.SkyDomes
         /// <summary>
         /// Regular Skydome loading
         /// </summary>
-        public RegularSkyDome(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager ,IClock clock, IWeather weather, IDrawableComponent skyStars, IDrawableComponent clouds)
+        public RegularSkyDome(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, IClock clock, IWeather weather, [Named("Stars")] IDrawableComponent skyStars, [Named("Clouds")] IDrawableComponent clouds)
             : base(d3dEngine, clock, weather)
         {
             _camManager = camManager;

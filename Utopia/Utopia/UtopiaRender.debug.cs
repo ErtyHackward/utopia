@@ -36,6 +36,11 @@ using Utopia.Worlds.SkyDomes.SharedComp;
 using Ninject;
 using Ninject.Parameters;
 using S33M3Engines.WorldFocus;
+using S33M3Engines.GameStates;
+using S33M3Engines;
+using Size = System.Drawing.Size;
+using S33M3Engines.Threading;
+using Utopia.Entities.Living;
 
 namespace Utopia
 {
@@ -59,78 +64,84 @@ namespace Utopia
             //=======================================================================================
             //Create the world components ===========================================================
 
-            ContainersBindings(IoCContainer);
-
-            WorldFocusManager _worldFocusManager = new WorldFocusManager();
-
-            ICamera camera = new FirstPersonCamera(_d3dEngine, _worldFocusManager);  // Create a firstPersonCAmera viewer
-
-            _worldFocusManager.WorldFocus = (IWorldFocus)camera;
-
-            _camManager = new CameraManager(camera);
-
-            //Create an entity, link to camera to it.
-            _player = new Entities.Living.Player(_d3dEngine, _camManager, _worldFocusManager, "s33m3", camera, InputHandler,
-                                                 new DVector3((LandscapeBuilder.Worldsize.X / 2.0) + LandscapeBuilder.WorldStartUpX, 90, (LandscapeBuilder.Worldsize.Z / 2.0f) + LandscapeBuilder.WorldStartUpZ),
-                                                 new Vector3(0.5f, 1.9f, 0.5f),
-                                                 5f, 30f, 10f)
+            //Variables initialisation ==================================================================
+            Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
             {
-                Mode = Entities.Living.LivingEntityMode.FreeFirstPerson //Defaulted to "Flying" mode
+                ChunkSize = new Location3<int>(16, 128, 16),
+                IsInfinite = true,
+                Seed = 0,
+                WorldSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
+                                                ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
+            Location2<int> worldStartUp = new Location2<int>(0 * worldParam.ChunkSize.X, 0 * worldParam.ChunkSize.Z);
+            //Init the Big array.
+            SingleArrayDataProvider.ChunkCubes = new SingleArrayChunkCube(ref worldParam);
+            //===========================================================================================
+
+            //Creating the IoC Bindings
+            ContainersBindings(IoCContainer, worldParam);
+
+            //-- Get the Main D3dEngine --
+            _d3dEngine = IoCContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(W, H)),
+                                                     new ConstructorArgument("windowCaption", "Powered By S33m3 Engine ! Rulezzz"),
+                                                     new ConstructorArgument("MaxNbrThreads", WorkQueue.ThreadPool.Concurrency));
+
+            _d3dEngine.Initialize(); //Init the 3d Engine
+            _d3dEngine.GameWindow.Closed += (o, args) => { _isFormClosed = true; }; //Subscribe to Close event
+            if (!_d3dEngine.UnlockedMouse) System.Windows.Forms.Cursor.Hide();      //Hide the mouse by default !
+
+            _inputHandler = IoCContainer.Get<InputHandlerManager>();
+            DXStates.CreateStates(_d3dEngine);  //Create all States that could by used by the game.
+
+            //-- Get Camera --
+            ICamera camera = IoCContainer.Get<ICamera>(); // Create a firstPersonCamera viewer
+
+            //-- Get World focus --
+            _worldFocusManager = IoCContainer.Get<WorldFocusManager>();
+            _worldFocusManager.WorldFocus = (IWorldFocus)camera; // Use the camera as a the world focus
+
+            //-- Get StateManager --
+            _gameStateManagers = IoCContainer.Get<GameStatesManager>();
+            _gameStateManagers.DebugActif = false;
+            _gameStateManagers.DebugDisplay = 0;
+
+            //-- Get Camera manager --
+            _camManager = IoCContainer.Get<CameraManager>();
+
+            //-- Create Entity Player --
+            //TODO : Create an entity manager that will be responsible to render the various entities instead of leaving each entity to render itself.
+            _player = IoCContainer.Get<ILivingEntity>(new ConstructorArgument("Name", "s33m3"),
+                                                      new ConstructorArgument("startUpWorldPosition", new DVector3((worldParam.WorldSize.X / 2.0) + worldStartUp.X, 90, (worldParam.WorldSize.Z / 2.0f) + worldStartUp.Z)),
+                                                      new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)),
+                                                      new ConstructorArgument("walkingSpeed", 5f),
+                                                      new ConstructorArgument("flyingSpeed", 30f),
+                                                      new ConstructorArgument("headRotationSpeed", 10f)); 
+
+            ((Player)_player).Mode = LivingEntityMode.FreeFirstPerson;
             GameComponents.Add(_player);
 
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
-            camera.CameraPlugin = _player; //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
-            GameComponents.Add(_camManager);
+            camera.CameraPlugin = _player;
+            GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
 
-            Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
-                    {
-                        ChunkSize = new Location3<int>(16, 128, 16),
-                        IsInfinite = true,
-                        Seed = 0,
-                        WorldSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
-                                                        ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
-                    };
-            Location2<int> worldStartUp = new Location2<int>(0 * worldParam.ChunkSize.X, 0 * worldParam.ChunkSize.Z);
-
-            //Init the Big array.
-            SingleArrayDataProvider.ChunkCubes = new SingleArrayChunkCube(ref worldParam);
 
             //-- Clock --
-            _worldClock = IoCContainer.Get<IClock>(new ConstructorArgument("input", InputHandler),
-                                                    new ConstructorArgument("clockSpeed", 480f),
-                                                    new ConstructorArgument("startTime", (float)Math.PI * 1f));
-
+            _worldClock = IoCContainer.Get<IClock>(new ConstructorArgument("input", _inputHandler),
+                                                   new ConstructorArgument("clockSpeed", 480f),
+                                                   new ConstructorArgument("startTime", (float)Math.PI * 1f));
             //-- Weather --
             _weather = IoCContainer.Get<IWeather>();
-
             //-- SkyDome --
-            _skyDome = new RegularSkyDome(_d3dEngine, 
-                                          _camManager, 
-                                          _worldFocusManager,
-                                          _worldClock,
-                                          _weather,
-                                          new SkyStars(_d3dEngine, _camManager, _worldClock),
-                                          new Clouds(_d3dEngine, _camManager, _weather, ref worldParam)
-                                            );
-
+            _skyDome = IoCContainer.Get<ISkyDome>();
             //-- Chunks --
-            _chunks = new WorldChunks(_d3dEngine, _camManager, worldParam, worldStartUp, _worldClock);
+            _chunks = IoCContainer.Get<IWorldChunks>(new ConstructorArgument("worldStartUpPosition", worldStartUp));
 
-            //Create the World Components wrapper
-            _currentWorld = new World()
-            {
-                WorldChunks = _chunks,
-                WorldClock = _worldClock,
-                WorldSkyDome = _skyDome,
-                WorldWeather = _weather
-            };
+            //Create the World Components wrapper -----------------------
+            _currentWorld = IoCContainer.Get<IWorld>();
 
             //Send the world to render
-            _worldRenderer = new WorldRenderer(_currentWorld);
-
-            //Bind worldRendered to main loop.
-            GameComponents.Add(_worldRenderer);
+            _worldRenderer = IoCContainer.Get<WorldRenderer>();
+            GameComponents.Add(_worldRenderer);             //Bind worldRendered to main loop.
 
             
             //=======================================================================================
