@@ -11,7 +11,7 @@ namespace Utopia.Shared.World
     /// Represents a highest level world generator.
     /// This class organize work of any world-generation related classes
     /// </summary>
-    public class WorldGenerator
+    public class WorldGenerator : IDisposable
     {
         private bool _abortOperation;
         private delegate void GenerateDelegate(Range2 range);
@@ -84,9 +84,10 @@ namespace Utopia.Shared.World
                 // no need to perform any further actions
                 return;
             }
-
-            // todo: add initialization code of the chunks here after designing of the 
-
+            
+            // creating the chunks 
+            range.Foreach(pos => { if(!Chunks.ContainsKey(pos)) { Chunks.Add(pos, new GeneratedChunk()); } });
+            
             foreach (var stage in Stages)
             {
                 stage.Generate(this, range);
