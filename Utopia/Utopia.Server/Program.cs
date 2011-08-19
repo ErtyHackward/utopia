@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Utopia.Server.Services;
 
 namespace Utopia.Server
 {
@@ -11,6 +12,7 @@ namespace Utopia.Server
         {
             Console.WriteLine("Welcome to Utopia game server v{1} Protocol: v{0}", Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
             
+
             _server = new Server();
             _server.Listen();
             

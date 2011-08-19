@@ -48,6 +48,8 @@
     <Compile Include="Events\ConnectionEventArgs.cs" />
     <Compile Include="Managers\ConnectionManager.cs" />
     <Compile Include="ServerSettings.cs" />
+    <Compile Include="Services\Clock.cs" />
+    <Compile Include="Services\Service.cs" />
     <Compile Include="Structs\LoginData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

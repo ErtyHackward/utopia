@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Utopia.Shared.Config;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -10,7 +7,7 @@ namespace Utopia.Settings
 {
     public class ClientSettings
     {
-        public static XmlSettingsManager<ClientSettings.ClientConfig> Current;
+        public static XmlSettingsManager<ClientConfig> Current;
 
         /// <summary>
         /// Game parameters section
@@ -45,7 +42,7 @@ namespace Utopia.Settings
             public KeyWithModifier Up;
             public KeyWithModifier Jump;
             /// <summary>
-            /// Change the movement Mode (From Fly <=> Walf)
+            /// Change the movement Mode (From Fly &lt;=&gt; Walk)
             /// </summary>
             public KeyWithModifier Mode;
             /// <summary>
@@ -167,6 +164,7 @@ namespace Utopia.Settings
                     config.KeyboardMapping.Move.Forward = Keys.Z;
                     config.KeyboardMapping.Move.Backward = Keys.S;
                     config.KeyboardMapping.Move.StrafeLeft = Keys.Q;
+
                     return config;
                 }
             }

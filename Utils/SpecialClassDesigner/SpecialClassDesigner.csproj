@@ -77,7 +77,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
+    <ProjectReference Include="..\..\Utopia\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>
     </ProjectReference>
