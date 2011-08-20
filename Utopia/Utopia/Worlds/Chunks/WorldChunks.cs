@@ -14,9 +14,30 @@ using Utopia.GameClock;
 using Utopia.Worlds.GameClocks;
 using S33M3Engines;
 using S33M3Engines.Cameras;
+using S33M3Engines.GameStates;
+using Utopia.Entities.Living;
 
 namespace Utopia.Worlds.Chunks
 {
+    public enum ChunkState : byte
+    {
+        Empty,
+        LandscapeCreated,
+        LandscapeLightsSourceCreated,
+        LandscapeLightsPropagated,
+        MeshesChanged,
+        DisplayInSyncWithMeshes,
+        UserChanged
+    }
+
+    private enum ChunksThreadSyncMode
+    {
+        UpdateReadyForLightPropagation,
+        UpdateReadyForMeshCreation,
+        HighPriorityReadyToBeSendToGraphicalCard,
+        ReadyForWrapping
+    }
+
     /// <summary>
     /// Will contains world block landscape stored as Chunks.
     /// </summary>
@@ -29,12 +50,15 @@ namespace Utopia.Worlds.Chunks
         private D3DEngine _d3dEngine;
         private CameraManager _camManager;
         private Location2<int> _worldStartUpPosition;
+        private GameStatesManager _gameStates;
+        private ILivingEntity _player;
         #endregion
 
         #region Public Property/Variables
         /// <summary> The chunk collection </summary>
         public VisualChunk[] Chunks { get; set; }
         public VisualChunk[] SortedChunks { get; set; }
+        public new Range<int> WorldRange { get; set; }
         
         /// <summary> World parameters </summary>
         public WorldParameters WorldParameters
@@ -57,11 +81,13 @@ namespace Utopia.Worlds.Chunks
         public Location2<int> WrapEnd { get; set; }
         #endregion
 
-        public WorldChunks(D3DEngine d3dEngine, CameraManager camManager , WorldParameters worldParameters, Location2<int> worldStartUpPosition, IClock gameClock)
+        public WorldChunks(D3DEngine d3dEngine, CameraManager camManager, WorldParameters worldParameters, GameStatesManager gameStates, Location2<int> worldStartUpPosition, IClock gameClock, ILivingEntity player)
         {
             _d3dEngine = d3dEngine;
+            _gameStates = gameStates;
             _camManager = camManager;
             _worldStartUpPosition = worldStartUpPosition;
+            _player = player;
             WorldParameters = worldParameters;
 
             //Subscribe to chunk modifications
@@ -77,6 +103,7 @@ namespace Utopia.Worlds.Chunks
             InitChunks();
             InitWrappingVariables();
             InitDrawComponents();
+            IntilializeUpdateble();
         }
 
         public void Dispose()
@@ -200,6 +227,13 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         private void InitChunks()
         {
+            //Defining the World Offset, to be used to reference the 2d circular array of dim defined in chunk
+            WorldRange = new Range<int>()
+            {
+                Min = new Location3<int>(_worldStartUpPosition.X, 0, _worldStartUpPosition.Z),
+                Max = new Location3<int>(_worldStartUpPosition.X + VisibleWorldSize.X, VisibleWorldSize.Y, _worldStartUpPosition.Z + VisibleWorldSize.Z)
+            };
+
             //Create the chunks that will be used as "Rendering" array
             Chunks = new VisualChunk[_worldParameters.WorldSize.X * _worldParameters.WorldSize.Z];
             SortedChunks = new VisualChunk[_worldParameters.WorldSize.X * _worldParameters.WorldSize.Z];
@@ -248,22 +282,7 @@ namespace Utopia.Worlds.Chunks
             WrapEnd = new Location2<int>(XWrap, ZWrap);
         }
 
-        /// <summary>
-        /// Sort the chunks array if needed
-        /// </summary>
-        private void SortChunks()
-        {
-            if (!_chunkNeed2BeSorted || _camManager.ActiveCamera == null) return;
-            int index = 0;
 
-            foreach (var chunk in Chunks.OrderBy(x => MVector3.Distance(x.CubeRange.Min, _camManager.ActiveCamera.WorldPosition)))
-            {
-                SortedChunks[index] = chunk;
-                index++;
-            }
-
-            _chunkNeed2BeSorted = false;
-        }
         #endregion
 
         #region Events Handling

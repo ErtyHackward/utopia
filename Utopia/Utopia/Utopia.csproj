@@ -242,6 +242,8 @@
     <Compile Include="UtopiaRender.Bind.cs" />
     <Compile Include="Worlds\Chunks\VisualChunk.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.Draw.cs" />
+    <Compile Include="Worlds\Chunks\WorldChunks.Update.cs" />
+    <Compile Include="Worlds\Chunks\WorldChunksWrapper.cs" />
     <Compile Include="Worlds\GameClocks\Clock.cs" />
     <Compile Include="Worlds\GameClocks\IClock.cs" />
     <Compile Include="Worlds\GameClocks\RealTimeClock.cs" />
@@ -332,6 +334,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Space\" />
+    <Folder Include="Worlds\Chunks\ChunkLandscape\" />
+    <Folder Include="Worlds\Chunks\ChunkLighting\" />
+    <Folder Include="Worlds\Chunks\ChunkMesh\" />
     <Folder Include="Worlds\Entities\" />
   </ItemGroup>
   <ItemGroup>

@@ -6,29 +6,36 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
 using Utopia.Planets.Terran.Chunk;
+using S33M3Engines.Threading;
+using Amib.Threading;
 
 namespace Utopia.Worlds.Chunks
 {
     /// <summary>
     /// Represents a chunk for 3d rendering
     /// </summary>
-    public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IDisposable
+    public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IThreadStatus, IDisposable
     {
-        #region Static Variables
-        #endregion
-
         #region Private variables
         private WorldChunks _world;
         private Range<int> _cubeRange;
         #endregion
 
         #region Public properties/Variable
-        public IntVector2 ChunkPosition { get; set; } // Gets or sets current chunk position
-        public ChunkState State { get; set; }         // Chunk State
+        public IntVector2 ChunkPosition { get; private set; } // Gets or sets current chunk position
+        public ChunkState State { get; set; }                 // Chunk State
+        public ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
+        public WorkItemPriority ThreadPriority { get; set; }  // Thread Priority value
+        public int UserChangeOrder { get; set; }              // Variable for sync drawing at rebuild time.
+
         public Range<int> CubeRange
         {
             get { return _cubeRange; }
-            set { _cubeRange = value; }
+            set
+            {
+                _cubeRange = value;
+                ChunkPosition = new IntVector2() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
+            }
         }
         #endregion
 
