@@ -120,8 +120,6 @@ namespace Utopia.Shared.World
             // todo: need to generate a bigger range
             Generate(new Range2 { Min = position, Max = position + 1 });
             return Chunks[position];
-            
-
         }
 
         /// <summary>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Utopia.Worlds.Chunks
+namespace Utopia.Worlds.Chunks.ChunkWrapper
 {
     public enum ChunkWrapType
     {

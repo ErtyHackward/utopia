@@ -11,7 +11,7 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Class responsible to manage the acces to the circular array containing the Cubes
     /// </summary>
-    public class SingleArrayChunkCube
+    public class SingleArrayChunkContainer
     {
         /// <summary>
         /// Occurs when block data was changed
@@ -40,7 +40,7 @@ namespace Utopia.Shared.Chunks
         /// Constructor
         /// </summary>
         /// <param name="worldParam">The world Parameters</param>
-        public SingleArrayChunkCube(ref WorldParameters worldParam)
+        public SingleArrayChunkContainer(ref WorldParameters worldParam)
         {
             _visibleWorldSize = new Location3<int>()
             {

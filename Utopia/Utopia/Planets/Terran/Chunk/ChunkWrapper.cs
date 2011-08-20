@@ -9,6 +9,7 @@ using S33M3Engines.Struct;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Landscaping;
 using Utopia.Worlds.Chunks;
+using Utopia.Worlds.Chunks.ChunkWrapper;
 
 namespace Utopia.Planets.Terran.Chunk
 {

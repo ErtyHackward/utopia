@@ -74,8 +74,12 @@ namespace Utopia
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
             Location2<int> worldStartUp = new Location2<int>(0 * worldParam.ChunkSize.X, 0 * worldParam.ChunkSize.Z);
-            //Init the Big array.
-            SingleArrayDataProvider.ChunkCubes = new SingleArrayChunkCube(ref worldParam);
+            
+            
+            
+            //Init a new Big array Holder.
+            SingleArrayChunkContainer sglArrayChunkManager = new SingleArrayChunkContainer(ref worldParam);
+
             //===========================================================================================
 
             //Creating the IoC Bindings

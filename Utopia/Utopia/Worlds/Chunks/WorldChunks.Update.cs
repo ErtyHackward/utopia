@@ -46,8 +46,8 @@ namespace Utopia.Worlds.Chunks
         private void ChunkUpdateManager()
         {
             ProcessChunks_Empty();
-            ProcessChunks_LandscapeCreated();
-            ProcessChunks_LandscapeLightsSourceCreated();
+            //ProcessChunks_LandscapeCreated();
+            //ProcessChunks_LandscapeLightsSourceCreated();
             ProcessChunks_LandscapeLightsPropagated();
             ProcessChunks_MeshesChanged();
         }
@@ -68,43 +68,43 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        private void ProcessChunks_LandscapeCreated()
-        {
-            VisualChunk chunk;
+        //private void ProcessChunks_LandscapeCreated()
+        //{
+        //    VisualChunk chunk;
 
-            for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
-            {
-                chunk = Chunks[chunkIndice];
-                if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
+        //    for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+        //    {
+        //        chunk = Chunks[chunkIndice];
+        //        if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
 
-                if (chunk.State == ChunkState.LandscapeCreated ||
-                    chunk.State == ChunkState.UserChanged)
-                {
-                    WorkQueue.DoWorkInThread(new WorkItemCallback(chunk.CreateLightingSources_Threaded), null, chunk as IThreadStatus, chunk.ThreadPriority);
-                }
-            }
-        }
+        //        if (chunk.State == ChunkState.LandscapeCreated ||
+        //            chunk.State == ChunkState.UserChanged)
+        //        {
+        //            WorkQueue.DoWorkInThread(new WorkItemCallback(chunk.CreateLightingSources_Threaded), null, chunk as IThreadStatus, chunk.ThreadPriority);
+        //        }
+        //    }
+        //}
 
-        // Syncronisation STEP !!! ==> No previous state pending job possible !! Wait for them all to be finished !
-        private void ProcessChunks_LandscapeLightsSourceCreated()
-        {
-            processInsync = isUpdateInSync(ChunksThreadSyncMode.UpdateReadyForLightPropagation);
+        //// Syncronisation STEP !!! ==> No previous state pending job possible !! Wait for them all to be finished !
+        //private void ProcessChunks_LandscapeLightsSourceCreated()
+        //{
+        //    processInsync = isUpdateInSync(ChunksThreadSyncMode.UpdateReadyForLightPropagation);
 
-            VisualChunk chunk;
-            for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
-            {
-                chunk = Chunks[chunkIndice];
-                if (processInsync || chunk.ThreadPriority == WorkItemPriority.Highest)
-                {
-                    if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
+        //    VisualChunk chunk;
+        //    for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+        //    {
+        //        chunk = Chunks[chunkIndice];
+        //        if (processInsync || chunk.ThreadPriority == WorkItemPriority.Highest)
+        //        {
+        //            if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
 
-                    if (chunk.State == ChunkState.LandscapeLightsSourceCreated)
-                    {
-                        WorkQueue.DoWorkInThread(new WorkItemCallback(chunk.PropagateLights_Threaded), null, chunk as IThreadStatus, chunk.ThreadPriority);
-                    }
-                }
-            }
-        }
+        //            if (chunk.State == ChunkState.LandscapeLightsSourceCreated)
+        //            {
+        //                WorkQueue.DoWorkInThread(new WorkItemCallback(chunk.PropagateLights_Threaded), null, chunk as IThreadStatus, chunk.ThreadPriority);
+        //            }
+        //        }
+        //    }
+        //}
 
         // Syncronisation STEP !!! ==> No previous state pending job possible !! Wait for them all to be finished !
         private void ProcessChunks_LandscapeLightsPropagated()
