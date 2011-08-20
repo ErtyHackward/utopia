@@ -8,24 +8,10 @@ using SharpDX;
 using S33M3Engines.Struct;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Landscaping;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Planets.Terran.Chunk
 {
-    public enum ChunkWrapType
-    {
-        X_Plus1,
-        X_Minus1,
-        Z_Plus1,
-        Z_Minus1
-    }
-
-    public enum ChunkWrapperStatus
-    {
-        Idle,
-        ProcessingNewWrap,
-        WrapPostWrapWork
-    }
-
     //Managed the wrapping by enqueuing the request, to ensure that only one wrap operation is done at a time
     public static class ChunkWrapper
     {
