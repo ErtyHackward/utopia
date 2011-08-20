@@ -30,7 +30,7 @@ namespace Utopia.Worlds.Chunks
         UserChanged
     }
 
-    private enum ChunksThreadSyncMode
+    public enum ChunksThreadSyncMode
     {
         UpdateReadyForLightPropagation,
         UpdateReadyForMeshCreation,
