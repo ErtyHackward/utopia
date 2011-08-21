@@ -12,6 +12,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Landscaping;
 using S33M3Engines.Shared.Math;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Planets.Terran.World
 {

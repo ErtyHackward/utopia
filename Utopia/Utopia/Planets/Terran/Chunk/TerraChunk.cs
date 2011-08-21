@@ -20,6 +20,7 @@ using Utopia.Shared.Landscaping;
 using S33M3Engines.Shared.Math;
 using S33M3Engines;
 using S33M3Engines.WorldFocus;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Planets.Terran.Chunk
 {

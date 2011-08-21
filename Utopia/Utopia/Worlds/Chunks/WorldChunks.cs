@@ -16,6 +16,7 @@ using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.GameStates;
 using Utopia.Entities.Living;
+using Utopia.Worlds.Chunks.ChunkLandscape;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -52,6 +53,9 @@ namespace Utopia.Worlds.Chunks
         private Location2<int> _worldStartUpPosition;
         private GameStatesManager _gameStates;
         private ILivingEntity _player;
+        private SingleArrayChunkContainer _cubes;
+
+        private ILandscapeManager _landscapeManager;
         #endregion
 
         #region Public Property/Variables
@@ -81,7 +85,15 @@ namespace Utopia.Worlds.Chunks
         public Location2<int> WrapEnd { get; set; }
         #endregion
 
-        public WorldChunks(D3DEngine d3dEngine, CameraManager camManager, WorldParameters worldParameters, GameStatesManager gameStates, Location2<int> worldStartUpPosition, IClock gameClock, ILivingEntity player)
+        public WorldChunks(D3DEngine d3dEngine, 
+                           CameraManager camManager, 
+                           WorldParameters worldParameters, 
+                           GameStatesManager gameStates, 
+                           Location2<int> worldStartUpPosition, 
+                           IClock gameClock, 
+                           ILivingEntity player,
+                           SingleArrayChunkContainer cubes,
+                           ILandscapeManager landscapeManager)
         {
             _d3dEngine = d3dEngine;
             _gameStates = gameStates;
@@ -89,9 +101,11 @@ namespace Utopia.Worlds.Chunks
             _worldStartUpPosition = worldStartUpPosition;
             _player = player;
             WorldParameters = worldParameters;
+            _cubes = cubes;
+            _landscapeManager = landscapeManager;
 
             //Subscribe to chunk modifications
-            SingleArrayDataProvider.ChunkCubes.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
+            _cubes.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
 
             Initialize();
         }
@@ -256,7 +270,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Min.Z, VisibleWorldSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(this, ref cubeRange);
+                    chunk = new VisualChunk(this, ref cubeRange, _cubes);
 
                     //Store this chunk inside the arrays.
                     Chunks[(arrayX >> _chunkPOWsize) + (arrayZ >> _chunkPOWsize) * _worldParameters.WorldSize.X] = chunk;
