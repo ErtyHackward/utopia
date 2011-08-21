@@ -39,8 +39,8 @@ namespace Utopia.Worlds.Chunks
         }
         #endregion
 
-        public VisualChunk(WorldChunks world, ref Range<int> cubeRange)
-            : base(new SingleArrayDataProvider())
+        public VisualChunk(WorldChunks world, ref Range<int> cubeRange, SingleArrayChunkContainer singleArrayContainer)
+            : base(new SingleArrayDataProvider(singleArrayContainer))
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 

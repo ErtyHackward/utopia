@@ -49,7 +49,6 @@ namespace Liquid.plugin
         private long FloodingSpeedTex = (long)(Stopwatch.Frequency / 30);
         private long previousTime, currentTime, previousTimeTex, currentTimeTex;
         private long timeAccumulator, timeAccumulatorTex;
-        private Universe _universe;
 
         public float TextureAnimationOffset = 0;
         // The Activated flooding cubes !

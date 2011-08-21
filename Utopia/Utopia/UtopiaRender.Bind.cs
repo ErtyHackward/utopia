@@ -17,6 +17,8 @@ using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds;
+using Utopia.Shared.Chunks;
+using Utopia.Worlds.Chunks.ChunkLandscape;
 
 namespace Utopia
 {
@@ -32,6 +34,7 @@ namespace Utopia
             iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope();
             iocContainer.Bind<CameraManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<WorldRenderer>().ToSelf().InSingletonScope();
+            iocContainer.Bind<SingleArrayChunkContainer>().ToSelf();
 
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().Named("Stars");
             iocContainer.Bind<IDrawableComponent>().To<Clouds>().Named("Clouds");
@@ -39,9 +42,10 @@ namespace Utopia
             iocContainer.Bind<ISkyDome>().To<RegularSkyDome>();
 
             iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();
+            iocContainer.Bind<ILandscapeManager>().To<LandscapeManager>().InSingletonScope();
             iocContainer.Bind<IWorld>().To<World>();
 
-            iocContainer.Bind<ILivingEntity>().To<Player>();
+            iocContainer.Bind<ILivingEntity>().To<Player>().InSingletonScope(); 
 
             iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
             iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
