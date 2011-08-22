@@ -65,7 +65,7 @@ namespace Utopia.Worlds.Chunks
                 if (chunk.State == ChunkState.Empty)
                 {
                     //WorkQueue.DoWorkInThread(new WorkItemCallback(chunk.CreateLandScape_Threaded), null, chunk as IThreadStatus, chunk.ThreadPriority);
-                    _landscapeManager.CreateLandScape(chunk, true);
+                    LandscapeManager.CreateLandScape(chunk, true);
                 }
             }
         }

@@ -41,6 +41,8 @@ using S33M3Engines;
 using Size = System.Drawing.Size;
 using S33M3Engines.Threading;
 using Utopia.Entities.Living;
+using Utopia.Shared.Interfaces;
+using Utopia.Shared.World;
 
 namespace Utopia
 {
@@ -134,8 +136,12 @@ namespace Utopia
             _weather = IoCContainer.Get<IWeather>();
             //-- SkyDome --
             _skyDome = IoCContainer.Get<ISkyDome>();
-            //-- Chunks --
+            //-- Chunks -- Get chunks manager.
+            
+            //Get Processor Config by giving world specification
             _chunks = IoCContainer.Get<IWorldChunks>(new ConstructorArgument("worldStartUpPosition", worldStartUp));
+            //Attach a "Flat world generator"
+            _chunks.LandscapeManager.WorldGenerator = new WorldGenerator(IoCContainer.Get<WorldParameters>(), IoCContainer.Get<IWorldProcessorConfig>("FlatWorld"));
 
             //Create the World Components wrapper -----------------------
             _currentWorld = IoCContainer.Get<IWorld>();

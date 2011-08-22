@@ -48,6 +48,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ninject">
+      <HintPath>..\Library\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\Library\SharpDX\SharpDX.dll</HintPath>
     </Reference>
@@ -96,6 +99,7 @@
     <Compile Include="Config\XmlSettingsManager.cs" />
     <Compile Include="Interfaces\ISingleArrayDataProviderUser.cs" />
     <Compile Include="Interfaces\IWorldProcessor.cs" />
+    <Compile Include="Interfaces\IWorldProcessorConfig.cs" />
     <Compile Include="Landscaping\CubeIDs.cs" />
     <Compile Include="Landscaping\FlatLandscape.cs" />
     <Compile Include="Landscaping\LandscapeBuilder.cs" />
@@ -118,7 +122,9 @@
     <Compile Include="Structs\Range.cs" />
     <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
-    <Compile Include="World\FlatWorldProcessor.cs" />
+    <Compile Include="World\FlatWorld\DummyWorldConfigurationConfig.cs" />
+    <Compile Include="World\FlatWorld\FlatWorldProcessorConfig.cs" />
+    <Compile Include="World\Processors\FlatWorldProcessor.cs" />
     <Compile Include="World\WorldGenerationStagesManager.cs" />
     <Compile Include="World\WorldGenerator.cs" />
     <Compile Include="World\WorldParameters.cs" />

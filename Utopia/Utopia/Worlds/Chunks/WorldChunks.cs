@@ -54,8 +54,6 @@ namespace Utopia.Worlds.Chunks
         private GameStatesManager _gameStates;
         private ILivingEntity _player;
         private SingleArrayChunkContainer _cubes;
-
-        private ILandscapeManager _landscapeManager;
         #endregion
 
         #region Public Property/Variables
@@ -83,6 +81,8 @@ namespace Utopia.Worlds.Chunks
 
         /// <summary> Variable to track the world wrapping End</summary>
         public Location2<int> WrapEnd { get; set; }
+
+        public ILandscapeManager LandscapeManager { get; private set; }
         #endregion
 
         public WorldChunks(D3DEngine d3dEngine, 
@@ -102,7 +102,7 @@ namespace Utopia.Worlds.Chunks
             _player = player;
             WorldParameters = worldParameters;
             _cubes = cubes;
-            _landscapeManager = landscapeManager;
+            LandscapeManager = landscapeManager;
 
             //Subscribe to chunk modifications
             _cubes.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);

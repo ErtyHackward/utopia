@@ -3,6 +3,8 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
+using Ninject;
+using System.Collections.Generic;
 
 namespace Utopia.Shared.World
 {
@@ -15,8 +17,7 @@ namespace Utopia.Shared.World
         private bool _abortOperation;
         private delegate void GenerateDelegate(Range2 range);
         private int _activeStage;
-        private GeneratedChunk[,] _chunks;
-        private Range2 _generatedRange;
+        private Dictionary<IntVector2, GeneratedChunk> Chunks { get; private set; }
 
         /// <summary>
         /// Gets or sets current world designer
@@ -49,9 +50,22 @@ namespace Utopia.Shared.World
         {
             if (worldParameters == null) throw new ArgumentNullException("worldParameters");
             WorldParametes = worldParameters;
-            
+
+            Chunks = new Dictionary<IntVector2, GeneratedChunk>();
+
             Stages = new WorldGenerationStagesManager();
             Stages.AddStages(processors);
+        }
+
+        /// <summary>
+        /// Initializes instance of world generator
+        /// </summary>
+        /// <param name="worldParameters">World parameters object</param>
+        /// <param name="processors">Arbitrary amount of world processors</param>
+        [Inject()]
+        public WorldGenerator(WorldParameters worldParameters, IWorldProcessorConfig processorsConfig)
+            : this(worldParameters, processorsConfig.WorldProcessors)
+        {
         }
 
         /// <summary>
