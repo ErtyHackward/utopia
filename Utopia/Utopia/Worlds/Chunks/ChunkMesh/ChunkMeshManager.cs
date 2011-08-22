@@ -21,14 +21,17 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         private delegate void CreateChunkMeshDelegate(VisualChunk chunk);
         private WorldParameters _worldParameters;
         private Location3<int> _visibleWorldSize;
+        private SingleArrayChunkContainer _cubesHolder;
         #endregion
 
         #region public variables/properties
+        public WorldChunks WorldChunks { get; set; }
         #endregion
 
-        public ChunkMeshManager(WorldParameters worldParameters)
+        public ChunkMeshManager(WorldParameters worldParameters, SingleArrayChunkContainer cubesHolder)
         {
             _worldParameters = worldParameters;
+            _cubesHolder = cubesHolder;
             Intialize();
         }
 
@@ -84,125 +87,112 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
         private void GenerateCubesFace(CubeFace cubeFace, VisualChunk chunk)
         {
-            //byte currentCube, neightborCube;
-            //VisualCubeProfile cubeProfile;
+            byte currentCube, neightborCube;
+            VisualCubeProfile cubeProfile;
 
-            //ByteVector4 cubePosiInChunk;
-            //Location3<int> cubePosiInWorld;
-            //int XWorld, YWorld, ZWorld;
-            //int cubeIndex, neightborCubeIndex;
+            ByteVector4 cubePosiInChunk;
+            Location3<int> cubePosiInWorld;
+            int XWorld, YWorld, ZWorld;
+            int cubeIndex, neightborCubeIndex;
 
-            //for (int X = 0; X < _worldParameters.ChunkSize.X; X++)
-            //{
-            //    XWorld = (X + chunk.CubeRange.Min.X);
+            for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
+            {
+                XWorld = (X + chunk.CubeRange.Min.X);
 
-            //    for (int Z = 0; Z < _worldParameters.ChunkSize.Z; Z++)
-            //    {
-            //        ZWorld = (Z + chunk.CubeRange.Min.Z);
+                for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
+                {
+                    ZWorld = (Z + chunk.CubeRange.Min.Z);
 
-            //        //by moving it there an reordering the loops, we avoid doing this operations 128 times for each chunk
-            //        int offset = MathHelper.Mod(XWorld, _visibleWorldSize.X)
-            //                + MathHelper.Mod(ZWorld, _visibleWorldSize.Z) * _visibleWorldSize.X;
+                    //by moving it there an reordering the loops, we avoid doing this operations 128 times for each chunk
+                    cubeIndex = _cubesHolder.Index(X, 0, Z);
 
+                    for (int Y = 0; Y < chunk.CubeRange.Max.Y; Y++)
+                    {
 
-            //        for (int Y = 0; Y < chunk.CubeRange.Max.Y; Y++)
-            //        {
+                        //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
+                        YWorld = (Y + chunk.CubeRange.Min.Y);
 
-            //            //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
-            //            YWorld = (Y + chunk.CubeRange.Min.Y);
+                        //Inlinning Fct for speed !
+                        //==> Could use this instead of the next line ==> cubeIndex = _landscape.Index(XWorld, YWorld, ZWorld);
+                        //The "problem" being that everytime this fonction is called, it is creation a copy of the parameter variables, this fct is being called 
+                        //A lot of time, to easy the GAC work, it's better to inline the fct here.
+                        if (Y != 0) cubeIndex += _cubesHolder.MoveY;
 
-            //            //Inlinning Fct for speed !
-            //            //==> Could use this instead of the next line ==> cubeIndex = _landscape.Index(XWorld, YWorld, ZWorld);
-            //            //The "problem" being that everytime this fonction is called, it is creation a copy of the parameter variables, this fct is being called 
-            //            //A lot of time, to easy the GAC work, it's better to inline the fct here.
-            //            cubeIndex = offset + YWorld * _visibleWorldSize.X * _visibleWorldSize.Z;
+                        //_landscape.Cubes[] is the BIG table containing all terraCube in the visible world.
+                        //For speed access, I use an array with only one dimension, thus the table index must be computed from the X, Y, Z position of the terracube.
+                        //Computing myself this index, is faster than using an array defined as [x,y,z]
+                        // ? Am I an Air Cube ? ==> Default Value, not needed to render !
+                        if (_cubesHolder.Cubes[cubeIndex] == CubeId.Air || _cubesHolder.Cubes[cubeIndex] == CubeId.Error) continue;
 
-            //            //_landscape.Cubes[] is the BIG table containing all terraCube in the visible world.
-            //            //For speed access, I use an array with only one dimension, thus the table index must be computed from the X, Y, Z position of the terracube.
-            //            //Computing myself this index, is faster than using an array defined as [x,y,z]
-            //            // ? Am I an Air Cube ? ==> Default Value, not needed to render !
-            //            if (_landscape.Cubes[cubeIndex].Id == CubeId.Air || _landscape.Cubes[cubeIndex].Id == CubeId.Error) continue;
+                        //Terra Cube contain only the data that are variables, and could be different between 2 cube.
+                        currentCube = _cubesHolder.Cubes[cubeIndex];
+                        //The Cube profile contain the value that are fixe for a block type.
+                        cubeProfile = VisualCubeProfile.CubesProfile[currentCube];
 
-            //            //Terra Cube contain only the data that are variables, and could be different between 2 cube.
-            //            currentCube = _landscape.Cubes[cubeIndex];
-            //            //The Cube profile contain the value that are fixe for a block type.
-            //            cubeProfile = RenderCubeProfile.CubesProfile[currentCube.Id];
+                        cubePosiInWorld = new Location3<int>(XWorld, YWorld, ZWorld);
+                        cubePosiInChunk = new ByteVector4(X, Y, Z);
 
-            //            cubePosiInWorld = new Location3<int>(XWorld, YWorld, ZWorld);
-            //            cubePosiInChunk = new ByteVector4(X, Y, Z);
+                        //Check to see if the face needs to be generated or not !
+                        //Border Chunk test ! ==> Don't generate faces that are "border" chunks
+                        //BorderChunk value is true if the chunk is at the border of the visible world.
+                        switch (cubeFace)
+                        {
+                            case CubeFace.Back:
+                                if (chunk.BorderChunk && (ZWorld - 1 < WorldChunks.WorldRange.Min.Z)) continue;
+                                neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
+                             
+                                break;
+                            case CubeFace.Front:
+                                if (chunk.BorderChunk && (ZWorld + 1 >= WorldChunks.WorldRange.Max.Z)) continue;
+                                neightborCubeIndex = cubeIndex + _cubesHolder.MoveZ;
+                                break;
+                            case CubeFace.Bottom:
+                                if (YWorld - 1 < 0) continue;
+                                neightborCubeIndex = cubeIndex - _cubesHolder.MoveY;
+                                break;
+                            case CubeFace.Top:
+                                if (YWorld + 1 >= WorldChunks.WorldRange.Max.Y) continue;
+                                neightborCubeIndex = cubeIndex + _cubesHolder.MoveY;
+                                break;
+                            case CubeFace.Left:
+                                if (chunk.BorderChunk && (XWorld - 1 < WorldChunks.WorldRange.Min.X)) continue;
+                                neightborCubeIndex = cubeIndex - _cubesHolder.MoveX;
+                                break;
+                            case CubeFace.Right:
+                                if (chunk.BorderChunk && (XWorld + 1 >= WorldChunks.WorldRange.Max.X)) continue;
+                                neightborCubeIndex = cubeIndex + _cubesHolder.MoveX;
+                                break;
+                            default:
+                                throw new NullReferenceException();
+                        }
 
-            //            IdxRelativeMove neightRelativeMove;
-            //            int relativeMoveFrom;
+                        //Custom test to see if the face can be generated (Between cube checks)
+                        //_landscape.FastIndex is another method of computing index of the big table but faster !
+                        //The constraint is that it only compute index of a cube neightbor
+                        neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
 
-            //            //Check to see if the face needs to be generated or not !
-            //            //Border Chunk test ! ==> Don't generate faces that are "border" chunks
-            //            //BorderChunk value is true if the chunk is at the border of the visible world.
-            //            switch (cubeFace)
-            //            {
-            //                case CubeFace.Back:
-            //                    if (BorderChunk && (ZWorld - 1 < _terraWorld.WorldRange.Min.Z)) continue;
-            //                    neightRelativeMove = IdxRelativeMove.Z_Minus1;
-            //                    relativeMoveFrom = ZWorld;
-            //                    break;
-            //                case CubeFace.Front:
-            //                    if (BorderChunk && (ZWorld + 1 >= _terraWorld.WorldRange.Max.Z)) continue;
-            //                    neightRelativeMove = IdxRelativeMove.Z_Plus1;
-            //                    relativeMoveFrom = ZWorld;
-            //                    break;
-            //                case CubeFace.Bottom:
-            //                    if (YWorld - 1 < 0) continue;
-            //                    neightRelativeMove = IdxRelativeMove.Y_Minus1;
-            //                    relativeMoveFrom = YWorld;
-            //                    break;
-            //                case CubeFace.Top:
-            //                    if (YWorld + 1 >= _terraWorld.WorldRange.Max.Y) continue;
-            //                    neightRelativeMove = IdxRelativeMove.Y_Plus1;
-            //                    relativeMoveFrom = YWorld;
-            //                    break;
-            //                case CubeFace.Left:
-            //                    if (BorderChunk && (XWorld - 1 < _terraWorld.WorldRange.Min.X)) continue;
-            //                    neightRelativeMove = IdxRelativeMove.X_Minus1;
-            //                    relativeMoveFrom = XWorld;
-            //                    break;
-            //                case CubeFace.Right:
-            //                    if (BorderChunk && (XWorld + 1 >= _terraWorld.WorldRange.Max.X)) continue;
-            //                    neightRelativeMove = IdxRelativeMove.X_Plus1;
-            //                    relativeMoveFrom = XWorld;
-            //                    break;
-            //                default:
-            //                    neightRelativeMove = IdxRelativeMove.Z_Minus1;
-            //                    relativeMoveFrom = ZWorld;
-            //                    throw new NullReferenceException();
-            //            }
+                        //It is using a delegate in order to give the possibility for Plugging to replace the fonction call.
+                        //Be default the fonction called here is : TerraCube.FaceGenerationCheck or TerraCube.WaterFaceGenerationCheck
+                        if (!cubeProfile.CanGenerateCubeFace(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube)) continue;
 
-            //            //Custom test to see if the face can be generated (Between cube checks)
-            //            //_landscape.FastIndex is another method of computing index of the big table but faster !
-            //            //The constraint is that it only compute index of a cube neightbor
-            //            neightborCubeIndex = _landscape.FastIndex(cubeIndex, relativeMoveFrom, neightRelativeMove); // MathHelper.Mod(XWorld, TerraWorld.Worldsize.X) + MathHelper.Mod(ZWorld - 1, TerraWorld.Worldsize.Z) * TerraWorld.Worldsize.X + YWorld * TerraWorld.Worldsize.X * TerraWorld.Worldsize.Z;
-            //            neightborCube = _landscape.Cubes[neightborCubeIndex];
+                        switch (cubeProfile.CubeFamilly)
+                        {
+                            case enuCubeFamilly.Solid:
+                                //Other delegate.
+                                //Default linked to : CubeMeshFactory.GenSolidCubeFace;
+                                cubeProfile.CreateSolidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, ref _solidCubeVertices, ref _solidCubeIndices, ref _solidCubeVerticeDico);
+                                break;
+                            case enuCubeFamilly.Liquid:
+                                //Default linked to : CubeMeshFactory.GenLiquidCubeFace;
+                                cubeProfile.CreateLiquidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, ref _liquidCubeVertices, ref _liquidCubeIndices, ref _solidCubeVerticeDico);
+                                break;
+                            case enuCubeFamilly.Other:
+                                break;
+                        }
 
-            //            //It is using a delegate in order to give the possibility for Plugging to replace the fonction call.
-            //            //Be default the fonction called here is : TerraCube.FaceGenerationCheck or TerraCube.WaterFaceGenerationCheck
-            //            if (!cubeProfile.CanGenerateCubeFace(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube)) continue;
-
-            //            switch (cubeProfile.CubeFamilly)
-            //            {
-            //                case enuCubeFamilly.Solid:
-            //                    //Other delegate.
-            //                    //Default linked to : CubeMeshFactory.GenSolidCubeFace;
-            //                    cubeProfile.CreateSolidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, ref _solidCubeVertices, ref _solidCubeIndices, ref _solidCubeVerticeDico);
-            //                    break;
-            //                case enuCubeFamilly.Liquid:
-            //                    //Default linked to : CubeMeshFactory.GenLiquidCubeFace;
-            //                    cubeProfile.CreateLiquidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, ref _liquidCubeVertices, ref _liquidCubeIndices, ref _solidCubeVerticeDico);
-            //                    break;
-            //                case enuCubeFamilly.Other:
-            //                    break;
-            //            }
-
-            //        }
-            //    }
-            //}
+                    }
+                }
+            }
 
         }
 

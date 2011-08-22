@@ -54,14 +54,13 @@ namespace Utopia.Worlds.Chunks
         private Location2<int> _worldStartUpPosition;
         private GameStatesManager _gameStates;
         private ILivingEntity _player;
-        private SingleArrayChunkContainer _cubes;
+        private SingleArrayChunkContainer _cubesHolder;
         #endregion
 
         #region Public Property/Variables
         /// <summary> The chunk collection </summary>
         public VisualChunk[] Chunks { get; set; }
         public VisualChunk[] SortedChunks { get; set; }
-        public new Range<int> WorldRange { get; set; }
         
         /// <summary> World parameters </summary>
         public WorldParameters WorldParameters
@@ -78,7 +77,7 @@ namespace Utopia.Worlds.Chunks
         public Location3<int> VisibleWorldSize { get; private set; }
 
         /// <summary> the visible world border in world coordinate </summary>
-        public Range<int> WorldBorder { get; set; }
+        public Range<int> WorldRange { get; set; }
 
         /// <summary> Variable to track the world wrapping End</summary>
         public Location2<int> WrapEnd { get; set; }
@@ -95,7 +94,7 @@ namespace Utopia.Worlds.Chunks
                            Location2<int> worldStartUpPosition, 
                            IClock gameClock, 
                            ILivingEntity player,
-                           SingleArrayChunkContainer cubes,
+                           SingleArrayChunkContainer cubesHolder,
                            ILandscapeManager landscapeManager,
                            IChunkMeshManager chunkMeshManager)
         {
@@ -105,12 +104,16 @@ namespace Utopia.Worlds.Chunks
             _worldStartUpPosition = worldStartUpPosition;
             _player = player;
             WorldParameters = worldParameters;
-            _cubes = cubes;
+            _cubesHolder = cubesHolder;
             LandscapeManager = landscapeManager;
             ChunkMeshManager = chunkMeshManager;
 
+            //Self injecting inside components
+            landscapeManager.WorldChunks = this;
+            chunkMeshManager.WorldChunks = this; 
+
             //Subscribe to chunk modifications
-            _cubes.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
+            _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
 
             Initialize();
         }
@@ -175,7 +178,7 @@ namespace Utopia.Worlds.Chunks
         /// <returns>True if the chunk was found</returns>
         public bool GetSafeChunk(int X, int Z, out VisualChunk chunk)
         {
-            if (X < WorldBorder.Min.X || X > WorldBorder.Max.X || Z < WorldBorder.Min.Z || Z > WorldBorder.Max.Z)
+            if (X < WorldRange.Min.X || X > WorldRange.Max.X || Z < WorldRange.Min.Z || Z > WorldRange.Max.Z)
             {
                 chunk = null;
                 return false;
@@ -224,6 +227,26 @@ namespace Utopia.Worlds.Chunks
                 X += AbstractChunk.ChunkSize.X;
             }
         }
+
+        /// <summary>
+        /// indicate if the Chunk coordinate passed in is the border of the visible world
+        /// </summary>
+        /// <param name="X"></param>
+        /// <param name="Z"></param>
+        /// <param name="worldRange"></param>
+        /// <returns></returns>
+        public bool isBorderChunk(IntVector2 chunkPosition)
+        {
+            if (chunkPosition.X == WorldRange.Min.X ||
+               chunkPosition.Y == WorldRange.Min.Z ||
+               chunkPosition.X == WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
+               chunkPosition.Y == WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
+            {
+                return true;
+            }
+            return false;
+        }
+
         #endregion
 
         #region Private methods

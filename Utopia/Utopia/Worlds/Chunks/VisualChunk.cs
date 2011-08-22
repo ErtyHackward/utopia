@@ -37,6 +37,7 @@ namespace Utopia.Worlds.Chunks
         public ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
         public WorkItemPriority ThreadPriority { get; set; }  // Thread Priority value
         public int UserChangeOrder { get; set; }              // Variable for sync drawing at rebuild time.
+        public bool BorderChunk { get; set; }                 // Set to true if the chunk is located at the border of the visible world !
 
         public Range<int> CubeRange
         {
@@ -45,6 +46,7 @@ namespace Utopia.Worlds.Chunks
             {
                 _cubeRange = value;
                 ChunkPosition = new IntVector2() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
+                BorderChunk = _world.isBorderChunk(ChunkPosition);
             }
         }
         #endregion
@@ -68,10 +70,10 @@ namespace Utopia.Worlds.Chunks
         /// <returns>True if the chunk is at border</returns>
         public bool isBorderChunk(int X, int Z)
         {
-            if (X == _world.WorldBorder.Min.X ||
-               Z == _world.WorldBorder.Min.Z ||
-               X == _world.WorldBorder.Max.X - AbstractChunk.ChunkSize.X ||
-               Z == _world.WorldBorder.Max.Z - AbstractChunk.ChunkSize.Z)
+            if (X == _world.WorldRange.Min.X ||
+               Z == _world.WorldRange.Min.Z ||
+               X == _world.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
+               Z == _world.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
             {
                 return true;
             }

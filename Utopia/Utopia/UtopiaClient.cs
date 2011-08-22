@@ -27,8 +27,8 @@ namespace Utopia
 #if STEALTH
             StartDirectXWindow(false);
 #else 
-            //StartDirectXWindow(true);
-            ShowWelcomeScreen(true);
+            StartDirectXWindow(true);
+            //ShowWelcomeScreen(true);
 #endif      
         }
         #endregion
