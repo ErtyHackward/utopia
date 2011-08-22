@@ -77,7 +77,7 @@ namespace Utopia.Worlds.Cubes
         public static bool FaceGenerationCheck(byte cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, byte neightboorFaceCube)
         {
             //By default I don't need to trace the cubeFace of my cube if the face neightboor cube is blocking light ! (Not see-through)
-            if (VisualCubeProfile.CubesProfile[cube].IsBlockingLight) return false;
+            if (VisualCubeProfile.CubesProfile[neightboorFaceCube].IsBlockingLight) return false;
             //Else draw the face
             return true;
         }

@@ -11,6 +11,11 @@ using Utopia.Shared.World;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Landscaping;
 using Utopia.Shared.Chunks;
+using S33M3Engines.Buffers;
+using S33M3Engines.Struct.Vertex;
+using SharpDX.Direct3D;
+using SharpDX.Direct3D11;
+using S33M3Engines;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -22,16 +27,18 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         private WorldParameters _worldParameters;
         private Location3<int> _visibleWorldSize;
         private SingleArrayChunkContainer _cubesHolder;
+        private D3DEngine _d3dEngine;
         #endregion
 
         #region public variables/properties
         public WorldChunks WorldChunks { get; set; }
         #endregion
 
-        public ChunkMeshManager(WorldParameters worldParameters, SingleArrayChunkContainer cubesHolder)
+        public ChunkMeshManager(D3DEngine d3dEngine, WorldParameters worldParameters, SingleArrayChunkContainer cubesHolder)
         {
             _worldParameters = worldParameters;
             _cubesHolder = cubesHolder;
+            _d3dEngine = d3dEngine;
             Intialize();
         }
 
@@ -46,6 +53,46 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             else
             {
                 _createChunkMeshDelegate.Invoke(chunk);
+            }
+        }
+
+
+        public void SendCubeMeshesToBuffers(VisualChunk chunk)
+        {
+            SendSolidCubeMeshToGraphicCard(chunk);
+            chunk.State = ChunkState.DisplayInSyncWithMeshes;
+        }
+
+        //Solid Cube
+        //Create the VBuffer + IBuffer from the List, then clear the list
+        //The Buffers are pushed to the graphic card. (SetData());
+
+        private void SendSolidCubeMeshToGraphicCard(VisualChunk chunk)
+        {
+            lock (chunk.Lock_DrawChunksSolidFaces)
+            {
+                if (chunk.SolidCubeVertices.Count == 0)
+                {
+                    if (chunk.SolidCubeVB != null) chunk.SolidCubeVB.Dispose();
+                    chunk.SolidCubeVB = null;
+                    return;
+                }
+
+                if (chunk.SolidCubeVB == null)
+                {
+                    chunk.SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_d3dEngine, chunk.SolidCubeVertices.Count, VertexCubeSolid.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Default, 10);
+                }
+                chunk.SolidCubeVB.SetData(chunk.SolidCubeVertices.ToArray());
+                chunk.SolidCubeVertices.Clear();
+
+                if (chunk.SolidCubeIB == null)
+                {
+                    chunk.SolidCubeIB = new IndexBuffer<ushort>(_d3dEngine, chunk.SolidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt);
+                }
+                chunk.SolidCubeIB.SetData(chunk.SolidCubeIndices.ToArray());
+                chunk.SolidCubeIndices.Clear();
+
+                chunk.CubeVerticeDico.Clear();
             }
         }
         #endregion
@@ -83,6 +130,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             GenerateCubesFace(CubeFace.Top, chunk);
             GenerateCubesFace(CubeFace.Left, chunk);
             GenerateCubesFace(CubeFace.Right, chunk);
+
+            //Update Graphic Buffers inside graphical card
+            SendCubeMeshesToBuffers(chunk);
+            chunk.Ready2Draw = true;
         }
 
         private void GenerateCubesFace(CubeFace cubeFace, VisualChunk chunk)
@@ -104,7 +155,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                     ZWorld = (Z + chunk.CubeRange.Min.Z);
 
                     //by moving it there an reordering the loops, we avoid doing this operations 128 times for each chunk
-                    cubeIndex = _cubesHolder.Index(X, 0, Z);
+                    cubeIndex = _cubesHolder.Index(XWorld, 0, ZWorld);
 
                     for (int Y = 0; Y < chunk.CubeRange.Max.Y; Y++)
                     {
@@ -135,6 +186,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //Check to see if the face needs to be generated or not !
                         //Border Chunk test ! ==> Don't generate faces that are "border" chunks
                         //BorderChunk value is true if the chunk is at the border of the visible world.
+
                         switch (cubeFace)
                         {
                             case CubeFace.Back:

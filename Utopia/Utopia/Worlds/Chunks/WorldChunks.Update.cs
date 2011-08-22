@@ -125,7 +125,7 @@ namespace Utopia.Worlds.Chunks
                     if (chunk.State == ChunkState.LandscapeLightsPropagated)
                     {
                         //WorkQueue.DoWorkInThread(new WorkItemCallback(chunk.CreateCubeMeshes_Threaded), null, chunk as IThreadStatus, chunk.ThreadPriority);
-                        ChunkMeshManager.CreateChunkMesh(chunk, false);
+                        ChunkMeshManager.CreateChunkMesh(chunk, true);
                     }
                 }
             }

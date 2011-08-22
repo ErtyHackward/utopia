@@ -20,6 +20,7 @@ using Utopia.Worlds.Chunks.ChunkLandscape;
 using Utopia.Worlds.Chunks.ChunkMesh;
 using Utopia.Worlds.Cubes;
 using Ninject;
+using S33M3Engines.WorldFocus;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -57,6 +58,8 @@ namespace Utopia.Worlds.Chunks
         private GameStatesManager _gameStates;
         private ILivingEntity _player;
         private SingleArrayChunkContainer _cubesHolder;
+        private IClock _gameClock;
+        private WorldFocusManager _worldFocusManager;
         #endregion
 
         #region Public Property/Variables
@@ -91,7 +94,8 @@ namespace Utopia.Worlds.Chunks
 
         public WorldChunks(D3DEngine d3dEngine, 
                            CameraManager camManager, 
-                           WorldParameters worldParameters, 
+                           WorldParameters worldParameters,
+                           WorldFocusManager worldFocusManager,
                            GameStatesManager gameStates, 
                            Location2<int> worldStartUpPosition, 
                            IClock gameClock, 
@@ -101,8 +105,10 @@ namespace Utopia.Worlds.Chunks
                            IChunkMeshManager chunkMeshManager)
         {
             _d3dEngine = d3dEngine;
+            _worldFocusManager = worldFocusManager;
             _gameStates = gameStates;
             _camManager = camManager;
+            _gameClock = gameClock;
             _worldStartUpPosition = worldStartUpPosition;
             _player = player;
             WorldParameters = worldParameters;
