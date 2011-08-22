@@ -17,6 +17,7 @@ using S33M3Engines.Cameras;
 using S33M3Engines.GameStates;
 using Utopia.Entities.Living;
 using Utopia.Worlds.Chunks.ChunkLandscape;
+using Utopia.Worlds.Chunks.ChunkMesh;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -83,6 +84,8 @@ namespace Utopia.Worlds.Chunks
         public Location2<int> WrapEnd { get; set; }
 
         public ILandscapeManager LandscapeManager { get; private set; }
+
+        public IChunkMeshManager ChunkMeshManager { get; private set; }
         #endregion
 
         public WorldChunks(D3DEngine d3dEngine, 
@@ -93,7 +96,8 @@ namespace Utopia.Worlds.Chunks
                            IClock gameClock, 
                            ILivingEntity player,
                            SingleArrayChunkContainer cubes,
-                           ILandscapeManager landscapeManager)
+                           ILandscapeManager landscapeManager,
+                           IChunkMeshManager chunkMeshManager)
         {
             _d3dEngine = d3dEngine;
             _gameStates = gameStates;
@@ -103,6 +107,7 @@ namespace Utopia.Worlds.Chunks
             WorldParameters = worldParameters;
             _cubes = cubes;
             LandscapeManager = landscapeManager;
+            ChunkMeshManager = chunkMeshManager;
 
             //Subscribe to chunk modifications
             _cubes.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);

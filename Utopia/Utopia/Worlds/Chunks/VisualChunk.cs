@@ -8,6 +8,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Planets.Terran.Chunk;
 using S33M3Engines.Threading;
 using Amib.Threading;
+using S33M3Engines.Struct.Vertex;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -19,6 +20,15 @@ namespace Utopia.Worlds.Chunks
         #region Private variables
         private WorldChunks _world;
         private Range<int> _cubeRange;
+
+        Dictionary<string, int> _solidCubeVerticeDico; // Dictionnary used in the mesh creation, to avoid to recreate a vertex that has already been used create for another cube.
+
+        //List are use instead of standard array because it's not possible to know the number of vertices/indices that will be produced at cubes creation time.
+        //After vertex/index buffer creation those collections are cleared.
+        List<VertexCubeSolid> _solidCubeVertices;      // Collection use to collect the vertices at the solid cube creation time
+        List<ushort> _solidCubeIndices;                // Collection use to collect the indices at the solid cube creation time
+        List<VertexCubeLiquid> _liquidCubeVertices;    // Collection use to collect the vertices at the liquid cube creation time
+        List<ushort> _liquidCubeIndices;               // Collection use to collect the indices at the liquid cube creation time
         #endregion
 
         #region Public properties/Variable
@@ -67,8 +77,20 @@ namespace Utopia.Worlds.Chunks
             }
             return false;
         }
-        #endregion
 
+
+        //Graphical Part
+        public void InitializeChunkBuffers()
+        {
+            _solidCubeVerticeDico = new Dictionary<string, int>();
+            _solidCubeVertices = new List<VertexCubeSolid>();
+            _solidCubeIndices = new List<ushort>();
+            _liquidCubeVertices = new List<VertexCubeLiquid>();
+            _liquidCubeIndices = new List<ushort>();
+        }
+
+
+        #endregion
 
         protected override void BlockBufferChanged(object sender, ChunkDataProviderBufferChangedEventArgs e)
         {

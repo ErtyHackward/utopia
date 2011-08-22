@@ -52,6 +52,9 @@ namespace Utopia.Shared.Chunks
             MoveX = _visibleWorldSize.Y;
             MoveZ = _visibleWorldSize.Y * _visibleWorldSize.X;
             MoveY = 1;
+
+            //Initialize the Big Array
+            Cubes = new byte[_visibleWorldSize.X * _visibleWorldSize.Y * _visibleWorldSize.Z];
         }
 
         /// <summary>
