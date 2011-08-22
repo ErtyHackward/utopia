@@ -3,6 +3,7 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
+using Ninject;
 
 namespace Utopia.Shared.World
 {

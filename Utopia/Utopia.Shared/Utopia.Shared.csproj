@@ -137,7 +137,6 @@
     <Compile Include="Structs\TerraCubeWithPosition.cs" />
     <Compile Include="World\FlatWorld\DummyWorldConfigurationConfig.cs" />
     <Compile Include="World\FlatWorld\FlatWorldProcessorConfig.cs" />
-    <Compile Include="World\Inject.cs" />
     <Compile Include="World\Processors\FlatWorldProcessor.cs" />
     <Compile Include="World\WorldGenerationStagesManager.cs" />
     <Compile Include="World\WorldGenerator.cs" />
