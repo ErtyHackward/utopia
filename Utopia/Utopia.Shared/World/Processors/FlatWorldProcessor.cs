@@ -3,7 +3,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Landscaping;
 using Utopia.Shared.Structs;
 
-namespace Utopia.Shared.World
+namespace Utopia.Shared.World.Processors
 {
     /// <summary>
     /// Sample world processor that creates simple flat world
@@ -40,13 +40,13 @@ namespace Utopia.Shared.World
         /// <summary>
         /// Starts generation process.
         /// </summary>
-        public void Generate(Range2 generationRange, GeneratedChunk[,] chunks)
+        public void Generate(WorldGenerator parentGenerator, Range2 generationRange)
         {
             _totalChunks = generationRange.Count;
             _chunksDone = 0;
-            generationRange.Foreach(pos => 
+            generationRange.Foreach(pos =>
             {
-                var chunk = chunks[pos.X - generationRange.Min.X, pos.Y - generationRange.Min.Y];
+                var chunk = parentGenerator.Chunks[pos];
 
                 var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
 
@@ -60,10 +60,10 @@ namespace Utopia.Shared.World
 
                             if (y >= AbstractChunk.ChunkSize.Y / 2)
                                 chunkBytes[index] = CubeId.Air;
-                            else 
+                            else
                                 chunkBytes[index] = CubeId.Stone;
                         }
-                    }    
+                    }
                 }
 
                 chunk.BlockData.SetBlockBytes(chunkBytes);

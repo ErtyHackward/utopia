@@ -41,6 +41,8 @@ using S33M3Engines;
 using Size = System.Drawing.Size;
 using S33M3Engines.Threading;
 using Utopia.Entities.Living;
+using Utopia.Shared.Interfaces;
+using Utopia.Shared.World;
 
 namespace Utopia
 {
@@ -74,8 +76,12 @@ namespace Utopia
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
             Location2<int> worldStartUp = new Location2<int>(0 * worldParam.ChunkSize.X, 0 * worldParam.ChunkSize.Z);
-            //Init the Big array.
-            SingleArrayDataProvider.ChunkCubes = new SingleArrayChunkCube(ref worldParam);
+            
+            //HACK
+            AbstractChunk.ChunkSize = worldParam.ChunkSize;
+
+            //Init a new Big array Holder.
+            SingleArrayChunkContainer sglArrayChunkManager = new SingleArrayChunkContainer(worldParam);
             //===========================================================================================
 
             //Creating the IoC Bindings
@@ -133,8 +139,12 @@ namespace Utopia
             _weather = IoCContainer.Get<IWeather>();
             //-- SkyDome --
             _skyDome = IoCContainer.Get<ISkyDome>();
-            //-- Chunks --
+            //-- Chunks -- Get chunks manager.
+            
+            //Get Processor Config by giving world specification
             _chunks = IoCContainer.Get<IWorldChunks>(new ConstructorArgument("worldStartUpPosition", worldStartUp));
+            //Attach a "Flat world generator"
+            _chunks.LandscapeManager.WorldGenerator = new WorldGenerator(IoCContainer.Get<WorldParameters>(), IoCContainer.Get<IWorldProcessorConfig>("FlatWorld"));
 
             //Create the World Components wrapper -----------------------
             _currentWorld = IoCContainer.Get<IWorld>();
