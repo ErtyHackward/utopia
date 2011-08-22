@@ -16,13 +16,9 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
     public abstract class BlockAdder : Tool
     {
-        public override ToolImpact Use(TerraCubeWithPosition pickedBlock, Location3<int>? newCubePlace, TerraCube terraCube)
+        public override bool Use()
         {
-            if (newCubePlace.HasValue)
-            {
-                return new ToolImpact(new TerraCubeWithPosition(newCubePlace.Value, terraCube));
-            }
-            return new ToolImpact();//no impact when there is no available newCubePlace
+            throw new NotImplementedException();
         }
     }
 }
