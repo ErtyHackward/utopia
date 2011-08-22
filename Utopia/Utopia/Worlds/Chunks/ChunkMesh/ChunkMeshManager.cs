@@ -173,18 +173,18 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                         //It is using a delegate in order to give the possibility for Plugging to replace the fonction call.
                         //Be default the fonction called here is : TerraCube.FaceGenerationCheck or TerraCube.WaterFaceGenerationCheck
-                        if (!cubeProfile.CanGenerateCubeFace(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube)) continue;
+                        if (!cubeProfile.CanGenerateCubeFace(currentCube, ref cubePosiInWorld, cubeFace, neightborCube)) continue;
 
                         switch (cubeProfile.CubeFamilly)
                         {
                             case enuCubeFamilly.Solid:
                                 //Other delegate.
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;
-                                cubeProfile.CreateSolidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, ref _solidCubeVertices, ref _solidCubeIndices, ref _solidCubeVerticeDico);
+                                cubeProfile.CreateSolidCubeMesh(currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk);
                                 break;
                             case enuCubeFamilly.Liquid:
                                 //Default linked to : CubeMeshFactory.GenLiquidCubeFace;
-                                cubeProfile.CreateLiquidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, ref _liquidCubeVertices, ref _liquidCubeIndices, ref _solidCubeVerticeDico);
+                                //cubeProfile.CreateLiquidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, ref _liquidCubeVertices, ref _liquidCubeIndices, ref _solidCubeVerticeDico);
                                 break;
                             case enuCubeFamilly.Other:
                                 break;

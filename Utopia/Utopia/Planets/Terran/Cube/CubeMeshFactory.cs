@@ -13,7 +13,7 @@ using Utopia.Worlds.Chunks.Enums;
 
 namespace Utopia.Planets.Terran.Cube
 {
-    public static class CubeMeshFactory
+    public static class CubeMeshFactoryOLD
     {
         private static TerraWorld _world;
 

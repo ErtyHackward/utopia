@@ -14,21 +14,18 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Gets byte amount needed to store chunk block data
         /// </summary>
-        public static int ChunkBlocksByteLength { get; private set; }
+        private static int _chunkBlocksByteLength = 16 * 128 * 16;
+        public static int ChunkBlocksByteLength
+        {
+            get { return _chunkBlocksByteLength; }
+        }
 
         private static Location3<int> _chunkSize = new Location3<int>(16, 128, 16);
-        /// <summary>
-        /// Gets or sets chunk size
-        /// </summary>
         public static Location3<int> ChunkSize
         {
             get { return _chunkSize; }
-            set
-            {
-                _chunkSize = value;
-                ChunkBlocksByteLength = _chunkSize.X * _chunkSize.Y * _chunkSize.Z;
-            }
         }
+
         #endregion
         
         #region Properties
