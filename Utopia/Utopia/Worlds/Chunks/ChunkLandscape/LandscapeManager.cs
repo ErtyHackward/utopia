@@ -23,6 +23,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             get { return _worldGenerator; }
             set { _worldGenerator = value; }
         }
+
+        public WorldChunks WorldChunks { get; set; }
         #endregion
 
         public LandscapeManager()

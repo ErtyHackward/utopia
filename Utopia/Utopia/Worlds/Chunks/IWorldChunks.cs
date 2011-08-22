@@ -23,7 +23,7 @@ namespace Utopia.Worlds.Chunks
         Location3<int> VisibleWorldSize { get; }
 
         /// <summary> the visible world border in world coordinate </summary>
-        Range<int> WorldBorder { get; set; }
+        Range<int> WorldRange { get; set; }
 
         /// <summary> Variable to track the world wrapping End</summary>
         Location2<int> WrapEnd { get; set; }

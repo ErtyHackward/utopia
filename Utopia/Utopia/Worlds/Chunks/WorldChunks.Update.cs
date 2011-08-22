@@ -50,7 +50,7 @@ namespace Utopia.Worlds.Chunks
             ProcessChunks_Empty();
             //ProcessChunks_LandscapeCreated();
             //ProcessChunks_LandscapeLightsSourceCreated();
-            //ProcessChunks_LandscapeLightsPropagated();
+            ProcessChunks_LandscapeLightsPropagated();
             //ProcessChunks_MeshesChanged();
         }
 
