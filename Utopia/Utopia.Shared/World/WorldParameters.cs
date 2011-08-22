@@ -8,11 +8,6 @@ namespace Utopia.Shared.World
     public class WorldParameters
     {
         /// <summary>
-        /// Base chunk size (default 16*128*16)
-        /// </summary>
-        public Location3<int> ChunkSize { get; set; }
-
-        /// <summary>
         /// World size in chunk unit (width and length)
         /// </summary>
         public Location2<int> WorldSize { get; set; }

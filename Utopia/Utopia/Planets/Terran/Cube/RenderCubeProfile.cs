@@ -12,34 +12,10 @@ using System.Data;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Landscaping;
+using Utopia.Worlds.Chunks.Enums;
 
 namespace Utopia.Planets.Terran.Cube
 {
-    public enum CubeFace : byte
-    {
-        Back = 0,
-        Front = 1,
-        Bottom = 2,
-        Top = 3,
-        Left = 4,
-        Right = 5
-    }
-
-    public enum enuCubeFamilly
-    {
-        Solid,
-        Liquid,
-        Other
-    }
-
-    public enum enuLiquidType
-    {
-        None,
-        Ocean,
-        FreshWater,
-        Lava
-    }
-
     public class RenderCubeProfile
     {
         public static RenderCubeProfile[] CubesProfile;

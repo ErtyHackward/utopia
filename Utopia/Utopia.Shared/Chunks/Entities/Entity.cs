@@ -1,23 +1,29 @@
 ﻿using System.IO;
 using SharpDX;
+using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Chunks.Entities
 {
     /// <summary>
     /// Represents a base entity 
     /// </summary>
-    public abstract class Entity
+    public abstract class Entity : IBinaryStorable
     {
         /// <summary>
         /// Gets entity class id
         /// </summary>
-        public EntityClassId ClassId { get; protected set; }
+        public abstract EntityClassId ClassId { get; }
 
         /// <summary>
         /// Gets current entity type
         /// </summary>
         public EntityType Type { get; protected set; }
 
+        /// <summary>
+        /// Unique entity identification number
+        /// </summary>
+        public uint EntityId { get; set; }
+        
         /// <summary>
         /// Gets or sets entity position
         /// </summary>
@@ -39,9 +45,11 @@ namespace Utopia.Shared.Chunks.Entities
         /// <param name="reader"></param>
         public virtual void Load(BinaryReader reader)
         {
-            ClassId = (EntityClassId)reader.ReadUInt16();
+            // skipping entity class id
+            reader.ReadUInt16();
 
             Type = (EntityType)reader.ReadByte();
+            EntityId = reader.ReadUInt32();
 
             Vector3 position;
             position.X = reader.ReadSingle();
@@ -66,6 +74,7 @@ namespace Utopia.Shared.Chunks.Entities
             writer.Write((ushort)ClassId);
 
             writer.Write((byte)Type);
+            writer.Write(EntityId);
 
             writer.Write(Position.X);
             writer.Write(Position.Y);

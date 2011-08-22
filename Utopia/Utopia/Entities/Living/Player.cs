@@ -69,34 +69,34 @@ namespace Utopia.Entities.Living
             _name = Name;
             Inventory = new PlayerInventory();
 
-            //this is only temporary starting gear, it should be received from the server
-            BlockRemover remover = new BlockRemover();
-            remover.AllowedSlots = InventorySlot.Bags;
-            Inventory.Toolbar.Add(remover);
-            //pickaxe.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
+            ////this is only temporary starting gear, it should be received from the server
+            //BlockRemover remover = new BlockRemover();
+            //remover.AllowedSlots = InventorySlot.Bags;
+            //Inventory.Toolbar.Add(remover);
+            ////pickaxe.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
 
-            Armor ring = new Armor();
-            ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing;
-            ring.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
+            //Armor ring = new Armor();
+            //ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing;
+            //ring.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
-            BlockAdder adder = new BlockAdder();
-            adder.AllowedSlots = InventorySlot.Bags;
-            Inventory.Toolbar.Add(adder);
-            //adder.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
+            //BlockAdder adder = new BlockAdder();
+            //adder.AllowedSlots = InventorySlot.Bags;
+            //Inventory.Toolbar.Add(adder);
+            ////adder.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
-            Inventory.LeftTool = remover;
-            Inventory.RightTool = adder;
+            //Inventory.LeftTool = remover;
+            //Inventory.RightTool = adder;
 
-            Inventory.Bag.Items = new List<Item>();
-            Inventory.Bag.Items.Add(remover);
-            Inventory.Bag.Items.Add(ring);
+            //Inventory.Bag.Items = new List<Item>();
+            //Inventory.Bag.Items.Add(remover);
+            //Inventory.Bag.Items.Add(ring);
 
             Pickaxe pickaxe = new Pickaxe();
-            pickaxe.AllowedSlots = InventorySlot.Bags;
+            pickaxe.AllowedSlots = EquipmentSlot.Bags;
             Inventory.Toolbar.Add(pickaxe);
 
             Shovel shovel = new Shovel();
-            shovel.AllowedSlots = InventorySlot.Bags;
+            shovel.AllowedSlots = EquipmentSlot.Bags;
             Inventory.Toolbar.Add(shovel);
         }
 

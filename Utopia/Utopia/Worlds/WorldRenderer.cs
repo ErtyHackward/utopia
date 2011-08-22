@@ -40,7 +40,7 @@ namespace Utopia.Worlds
             _world.WorldClock.Initialize();
             _world.WorldWeather.Initialize();
             _world.WorldSkyDome.Initialize();
-            //_world.WorldChunks.Initialize();
+            _world.WorldChunks.Initialize();
         }
 
         public override void UnloadContent()
@@ -48,7 +48,7 @@ namespace Utopia.Worlds
             _world.WorldClock.Dispose();
             _world.WorldWeather.Dispose();
             _world.WorldSkyDome.Dispose();
-            //_world.WorldChunks.Dispose();
+            _world.WorldChunks.Dispose();
         }
 
         public override void Update(ref GameTime TimeSpend)
@@ -56,7 +56,7 @@ namespace Utopia.Worlds
             _world.WorldClock.Update(ref TimeSpend);
             _world.WorldWeather.Update(ref TimeSpend);
             _world.WorldSkyDome.Update(ref TimeSpend);
-            //_world.WorldChunks.Update(ref TimeSpend);
+            _world.WorldChunks.Update(ref TimeSpend);
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)

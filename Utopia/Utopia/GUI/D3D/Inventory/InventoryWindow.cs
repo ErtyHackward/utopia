@@ -63,18 +63,18 @@ namespace Utopia.GUI.D3D.Inventory
             characterSheet.Bounds = new UniRectangle(0, 0, back.TextureDescr.Width, back.TextureDescr.Height);
             Children.Add(characterSheet);
 
-            buildBodyslot(characterSheet, InventorySlot.Head, 74, 2);
-            buildBodyslot(characterSheet, InventorySlot.Neck, 82, 46, 16);
-            buildBodyslot(characterSheet, InventorySlot.Torso, 74, 71);
-            buildBodyslot(characterSheet, InventorySlot.RightHand, 145, 64);
-            buildBodyslot(characterSheet, InventorySlot.LeftHand, 2, 64);
-            buildBodyslot(characterSheet, InventorySlot.Legs, 110, 136);
-            buildBodyslot(characterSheet, InventorySlot.Feet, 48, 178);
-            buildBodyslot(characterSheet, InventorySlot.LeftRing, 5, 101, 16);
+            buildBodyslot(characterSheet, EquipmentSlot.Head, 74, 2);
+            buildBodyslot(characterSheet, EquipmentSlot.Neck, 82, 46, 16);
+            buildBodyslot(characterSheet, EquipmentSlot.Torso, 74, 71);
+            buildBodyslot(characterSheet, EquipmentSlot.RightHand, 145, 64);
+            buildBodyslot(characterSheet, EquipmentSlot.LeftHand, 2, 64);
+            buildBodyslot(characterSheet, EquipmentSlot.Legs, 110, 136);
+            buildBodyslot(characterSheet, EquipmentSlot.Feet, 48, 178);
+            buildBodyslot(characterSheet, EquipmentSlot.LeftRing, 5, 101, 16);
 
         }
 
-        private void buildBodyslot(Control parent, InventorySlot inventorySlot, int x, int y, int size = 32)
+        private void buildBodyslot(Control parent, EquipmentSlot inventorySlot, int x, int y, int size = 32)
         {
             InventoryCell bodyCell = new InventoryCell(inventorySlot);
             bodyCell.Bounds = new UniRectangle(x, y, size, size);
@@ -85,7 +85,7 @@ namespace Utopia.GUI.D3D.Inventory
         public void buildGrid(int xstart)
         {
 
-            List<Item> items = _inventory.Bag.Items;
+            //List<ContainedSlot> items = _inventory.Bag.Items;
 
             int gridSize = 5; // grid is gridSize*gridSize
 
@@ -105,7 +105,7 @@ namespace Utopia.GUI.D3D.Inventory
                     drag.Bounds = DraggableItemControl.referenceBounds;
                     drag.Name = "drag " + x + "," + y;
 
-                    if (cell < items.Count()) drag.Item = items[cell];
+                    //if (cell < items.Count()) drag.Item = items[cell];
 
                     control.Children.Add(drag);
 

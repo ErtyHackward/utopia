@@ -12,6 +12,7 @@ using Utopia.Server.Utils;
 using Utopia.Shared.Config;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
+using Utopia.Shared.World.Processors;
 
 namespace Utopia.Server
 {

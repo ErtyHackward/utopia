@@ -19,7 +19,7 @@ namespace Utopia.Server.Services
         {
             get {
                 var realTimeDiff = DateTime.Now - _clockStartTime;
-                return _gameStartTime + TimeSpan.FromSeconds(realTimeDiff.TotalSeconds*_timeFactor);
+                return _gameStartTime + TimeSpan.FromSeconds(realTimeDiff.TotalSeconds * _timeFactor);
             }
         }
         

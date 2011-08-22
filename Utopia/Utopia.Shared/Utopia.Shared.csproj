@@ -48,6 +48,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ninject, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Library\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\Library\SharpDX\SharpDX.dll</HintPath>
     </Reference>
@@ -73,13 +77,17 @@
     <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\Entities\Concrete\ContainerEntity.cs" />
+    <Compile Include="Chunks\Entities\Concrete\NoEntity.cs" />
     <Compile Include="Chunks\Entities\Entity.cs" />
     <Compile Include="Chunks\Entities\EntityCollection.cs" />
     <Compile Include="Chunks\Entities\EntityFactory.cs" />
     <Compile Include="Chunks\Entities\EntityClassId.cs" />
     <Compile Include="Chunks\Entities\EntityType.cs" />
     <Compile Include="Chunks\Entities\Inventory\Armor.cs" />
-    <Compile Include="Chunks\Entities\Inventory\InventorySlot.cs" />
+    <Compile Include="Chunks\Entities\Inventory\BaseContainer.cs" />
+    <Compile Include="Chunks\Entities\Inventory\CharacterEquipment.cs" />
+    <Compile Include="Chunks\Entities\Inventory\ContainedSlot.cs" />
+    <Compile Include="Chunks\Entities\Inventory\EquipmentSlot.cs" />
     <Compile Include="Chunks\Entities\Inventory\Item.cs" />
     <Compile Include="Chunks\Entities\Concrete\VoxelEntity.cs" />
     <Compile Include="Chunks\Entities\IContainerEntity.cs" />
@@ -91,14 +99,19 @@
     <Compile Include="Chunks\Entities\Inventory\Tools\Survey.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\ToolImpact.cs" />
     <Compile Include="Chunks\Entities\Inventory\Weapon.cs" />
+    <Compile Include="Chunks\Entities\LivingEntity.cs" />
+    <Compile Include="Chunks\Entities\LivingEntityUseEventArgs.cs" />
+    <Compile Include="Chunks\Entities\LivingEntityUseType.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
-    <Compile Include="Chunks\SingleArrayChunkCube.cs" />
+    <Compile Include="Chunks\SingleArrayChunkContainer.cs" />
     <Compile Include="Chunks\SingleArrayDataProvider.cs" />
     <Compile Include="Config\KeyWithModifier.cs" />
     <Compile Include="Config\XmlSettingsManager.cs" />
+    <Compile Include="Interfaces\IBinaryStorable.cs" />
     <Compile Include="Interfaces\ISingleArrayDataProviderUser.cs" />
     <Compile Include="Interfaces\IWorldProcessor.cs" />
+    <Compile Include="Interfaces\IWorldProcessorConfig.cs" />
     <Compile Include="Landscaping\CubeIDs.cs" />
     <Compile Include="Landscaping\FlatLandscape.cs" />
     <Compile Include="Landscaping\LandscapeBuilder.cs" />
@@ -122,7 +135,10 @@
     <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\TerraCubeWithPosition.cs" />
-    <Compile Include="World\FlatWorldProcessor.cs" />
+    <Compile Include="World\FlatWorld\DummyWorldConfigurationConfig.cs" />
+    <Compile Include="World\FlatWorld\FlatWorldProcessorConfig.cs" />
+    <Compile Include="World\Inject.cs" />
+    <Compile Include="World\Processors\FlatWorldProcessor.cs" />
     <Compile Include="World\WorldGenerationStagesManager.cs" />
     <Compile Include="World\WorldGenerator.cs" />
     <Compile Include="World\WorldParameters.cs" />
