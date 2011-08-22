@@ -22,6 +22,7 @@ using Utopia.Shared.Landscaping;
 using S33M3Engines.Shared.Math.Noises;
 using S33M3Engines.Shared.Math;
 using Utopia.Worlds.Chunks;
+using Utopia.Worlds.Chunks.Enums;
 
 namespace Liquid.plugin
 {

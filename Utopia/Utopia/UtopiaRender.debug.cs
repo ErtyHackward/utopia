@@ -77,6 +77,9 @@ namespace Utopia
             };
             Location2<int> worldStartUp = new Location2<int>(0 * worldParam.ChunkSize.X, 0 * worldParam.ChunkSize.Z);
             
+            //HACK
+            AbstractChunk.ChunkSize = worldParam.ChunkSize;
+
             //Init a new Big array Holder.
             SingleArrayChunkContainer sglArrayChunkManager = new SingleArrayChunkContainer(worldParam);
             //===========================================================================================

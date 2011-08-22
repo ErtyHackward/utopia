@@ -1,24 +1,18 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Runtime.InteropServices;
-using Utopia.Planets.Terran.Cube;
-using S33M3Engines.Struct;
-using S33M3Engines.Struct.Vertex;
-using Utopia.Planets.Terran.World;
 using System.Data;
-using Utopia.Shared.Structs;
-using Utopia.Shared.Structs.Landscape;
-using Utopia.Shared.Landscaping;
 using Utopia.Worlds.Chunks.Enums;
+using Utopia.Shared.Structs;
+using S33M3Engines.Struct.Vertex;
 
-namespace Utopia.Planets.Terran.Cube
+namespace Utopia.Worlds.Cubes
 {
-    public class RenderCubeProfile
+
+    public class VisualCubeProfile
     {
-        public static RenderCubeProfile[] CubesProfile;
+        public static VisualCubeProfile[] CubesProfile;
 
         //Create the various Cubes
         public static void InitCubeProfiles()
@@ -28,15 +22,15 @@ namespace Utopia.Planets.Terran.Cube
             CubeProfileDS.ReadXml(@"Models\CubesProfile.xml", XmlReadMode.Auto);
 
             DataTable dt = CubeProfileDS.Tables["Cube"];
-            CubesProfile = new RenderCubeProfile[dt.Rows.Count];
+            CubesProfile = new VisualCubeProfile[dt.Rows.Count];
 
             byte Id;
-            RenderCubeProfile profile;
+            VisualCubeProfile profile;
             string[] emissiveColor;
             foreach (DataRow cubeProfil in dt.Rows)
             {
                 Id = byte.Parse(cubeProfil.ItemArray[dt.Columns["Id"].Ordinal].ToString());
-                profile = new RenderCubeProfile();
+                profile = new VisualCubeProfile();
                 profile.Id = Id;
                 profile.Name = cubeProfil.ItemArray[dt.Columns["Name"].Ordinal].ToString();
                 profile.Tex_Top = byte.Parse(cubeProfil.ItemArray[dt.Columns["Tex_Top"].Ordinal].ToString());
@@ -63,15 +57,15 @@ namespace Utopia.Planets.Terran.Cube
                 profile.CubeFamilly = (enuCubeFamilly)Enum.Parse(typeof(enuCubeFamilly), cubeProfil.ItemArray[dt.Columns["CubeFamilly"].Ordinal].ToString());
                 profile.LiquidType = cubeProfil.ItemArray[dt.Columns["LiquidType"].Ordinal].ToString() != "" ? (enuLiquidType)Enum.Parse(typeof(enuLiquidType), cubeProfil.ItemArray[dt.Columns["LiquidType"].Ordinal].ToString()) : enuLiquidType.None;
 
-                if (profile.CubeFamilly == enuCubeFamilly.Liquid)
-                {
-                    profile.CanGenerateCubeFace = RenderCubeProfile.WaterFaceGenerationCheck;
-                    profile.CreateLiquidCubeMesh = CubeMeshFactory.GenLiquidCubeFace;
-                }
+                //if (profile.CubeFamilly == enuCubeFamilly.Liquid)
+                //{
+                //    profile.CanGenerateCubeFace = VisualCubeProfile.WaterFaceGenerationCheck;
+                //    profile.CreateLiquidCubeMesh = CubeMeshFactory.GenLiquidCubeFace;
+                //}
                 if (profile.CubeFamilly == enuCubeFamilly.Solid)
                 {
-                    profile.CanGenerateCubeFace = RenderCubeProfile.FaceGenerationCheck;
-                    profile.CreateSolidCubeMesh = CubeMeshFactory.GenSolidCubeFace;
+                    profile.CanGenerateCubeFace = VisualCubeProfile.FaceGenerationCheck;
+                    //profile.CreateSolidCubeMesh = CubeMeshFactory.GenSolidCubeFace;
                 }
 
                 CubesProfile[Id] = profile;
@@ -79,40 +73,40 @@ namespace Utopia.Planets.Terran.Cube
         }
 
         //Default Face Generation Checks !
-        public static bool FaceGenerationCheck(ref TerraCube cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube)
+        public static bool FaceGenerationCheck(byte cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, byte neightboorFaceCube)
         {
             //By default I don't need to trace the cubeFace of my cube if the face neightboor cube is blocking light ! (Not see-through)
-            if (RenderCubeProfile.CubesProfile[neightboorFaceCube.Id].IsBlockingLight) return false;
+            if (VisualCubeProfile.CubesProfile[cube].IsBlockingLight) return false;
             //Else draw the face
             return true;
         }
 
-        public static bool WaterFaceGenerationCheck(ref TerraCube cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube)
-        {
-            if (cubeFace != CubeFace.Bottom && cubeFace != CubeFace.Top) //Never display a bottom Water face !
-            {
-                if ((!RenderCubeProfile.CubesProfile[neightboorFaceCube.Id].IsBlockingLight && !RenderCubeProfile.CubesProfile[neightboorFaceCube.Id].IsFlooding))
-                {
-                    return true;
-                }
-            }
-            if (cubeFace == CubeFace.Top)
-            {
-                if (cubePosiInWorld.Y == LandscapeBuilder.SeaLevel || neightboorFaceCube.Id == CubeId.Air)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        //public static bool WaterFaceGenerationCheck(byte cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, byte neightboorFaceCube)
+        //{
+        //    if (cubeFace != CubeFace.Bottom && cubeFace != CubeFace.Top) //Never display a bottom Water face !
+        //    {
+        //        if ((!VisualCubeProfile.CubesProfile[neightboorFaceCube].IsBlockingLight && !VisualCubeProfile.CubesProfile[neightboorFaceCube].IsFlooding))
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    if (cubeFace == CubeFace.Top)
+        //    {
+        //        if (cubePosiInWorld.Y == LandscapeBuilder.SeaLevel || neightboorFaceCube.Id == CubeId.Air)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
 
-        public delegate bool CanGenerateCubeFaceDelegate(ref TerraCube cube, ref Location3<int> cubelocation, CubeFace cubeFace, ref TerraCube neightboorFaceCube);
+        public delegate bool CanGenerateCubeFaceDelegate(byte cube, ref Location3<int> cubelocation, CubeFace cubeFace, byte neightboorFaceCube);
         public CanGenerateCubeFaceDelegate CanGenerateCubeFace;
 
-        public delegate void GenerateSolidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, ref List<VertexCubeSolid> cubeVertices, ref List<ushort> cubeIndices, ref Dictionary<string, int> cubeVerticeDico);
+        public delegate void GenerateSolidMesh(byte cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, ref List<VertexCubeSolid> cubeVertices, ref List<ushort> cubeIndices, ref Dictionary<string, int> cubeVerticeDico);
         public GenerateSolidMesh CreateSolidCubeMesh;
 
-        public delegate void GenerateLiquidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, ref List<VertexCubeLiquid> cubeVertices, ref List<ushort> cubeIndices, ref Dictionary<string, int> cubeVerticeDico);
+        public delegate void GenerateLiquidMesh(byte cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, ref List<VertexCubeLiquid> cubeVertices, ref List<ushort> cubeIndices, ref Dictionary<string, int> cubeVerticeDico);
         public GenerateLiquidMesh CreateLiquidCubeMesh;
 
         public string Name;
@@ -131,6 +125,4 @@ namespace Utopia.Planets.Terran.Cube
         //Texture id foreach face
         public byte Tex_Front, Tex_Back, Tex_Left, Tex_Right, Tex_Top, Tex_Bottom;
     }
-
 }
-

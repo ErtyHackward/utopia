@@ -44,7 +44,7 @@ namespace Utopia.Shared.World.Processors
         {
             _totalChunks = generationRange.Count;
             _chunksDone = 0;
-            generationRange.Foreach(pos => 
+            generationRange.Foreach(pos =>
             {
                 var chunk = parentGenerator.Chunks[pos];
 
@@ -60,10 +60,10 @@ namespace Utopia.Shared.World.Processors
 
                             if (y >= AbstractChunk.ChunkSize.Y / 2)
                                 chunkBytes[index] = CubeId.Air;
-                            else 
+                            else
                                 chunkBytes[index] = CubeId.Stone;
                         }
-                    }    
+                    }
                 }
 
                 chunk.BlockData.SetBlockBytes(chunkBytes);

@@ -5,6 +5,7 @@ using System.Text;
 using S33M3Engines.Threading;
 using System.Threading.Tasks;
 using Utopia.Shared.World;
+using Utopia.Shared.Chunks;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
@@ -27,6 +28,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         public LandscapeManager()
         {
             Intialize();
+            System.Threading.ThreadPool.SetMaxThreads(1, 1);
         }
 
         public void Dispose()
@@ -63,9 +65,9 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         //Create the landscape for the chunk
         private void createLandScape_threaded(VisualChunk chunk)
         {
-            var test = _worldGenerator.GetChunk(chunk.ChunkPosition);
-
-
+            GeneratedChunk generatedChunk = _worldGenerator.GetChunk(chunk.ChunkPosition);
+            chunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
+            chunk.State = ChunkState.LandscapeLightsPropagated;
             chunk.ThreadStatus = ThreadStatus.Idle;
         }
 

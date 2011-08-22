@@ -49,7 +49,7 @@ namespace Utopia.Worlds.Chunks
             ProcessChunks_Empty();
             //ProcessChunks_LandscapeCreated();
             //ProcessChunks_LandscapeLightsSourceCreated();
-            //ProcessChunks_LandscapeLightsPropagated();
+            ProcessChunks_LandscapeLightsPropagated();
             //ProcessChunks_MeshesChanged();
         }
 
@@ -64,7 +64,6 @@ namespace Utopia.Worlds.Chunks
 
                 if (chunk.State == ChunkState.Empty)
                 {
-                    //WorkQueue.DoWorkInThread(new WorkItemCallback(chunk.CreateLandScape_Threaded), null, chunk as IThreadStatus, chunk.ThreadPriority);
                     LandscapeManager.CreateLandScape(chunk, true);
                 }
             }
@@ -108,26 +107,28 @@ namespace Utopia.Worlds.Chunks
         //    }
         //}
 
-        //// Syncronisation STEP !!! ==> No previous state pending job possible !! Wait for them all to be finished !
-        //private void ProcessChunks_LandscapeLightsPropagated()
-        //{
-        //    processInsync = isUpdateInSync(ChunksThreadSyncMode.UpdateReadyForMeshCreation);
+        // Syncronisation STEP !!! ==> No previous state pending job possible !! Wait for them all to be finished !
+        private void ProcessChunks_LandscapeLightsPropagated()
+        {
+            //processInsync = isUpdateInSync(ChunksThreadSyncMode.UpdateReadyForMeshCreation);
+            processInsync = true;
 
-        //    VisualChunk chunk;
-        //    for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
-        //    {
-        //        chunk = Chunks[chunkIndice];
-        //        if (processInsync || chunk.ThreadPriority == WorkItemPriority.Highest)
-        //        {
-        //            if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
+            VisualChunk chunk;
+            for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+            {
+                chunk = Chunks[chunkIndice];
+                if (processInsync) // || chunk.ThreadPriority == WorkItemPriority.Highest)
+                {
+                    if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
 
-        //            if (chunk.State == ChunkState.LandscapeLightsPropagated)
-        //            {
-        //                WorkQueue.DoWorkInThread(new WorkItemCallback(chunk.CreateCubeMeshes_Threaded), null, chunk as IThreadStatus, chunk.ThreadPriority);
-        //            }
-        //        }
-        //    }
-        //}
+                    if (chunk.State == ChunkState.LandscapeLightsPropagated)
+                    {
+                        //WorkQueue.DoWorkInThread(new WorkItemCallback(chunk.CreateCubeMeshes_Threaded), null, chunk as IThreadStatus, chunk.ThreadPriority);
+                        ChunkMeshManager.CreateChunkMesh(chunk, false);
+                    }
+                }
+            }
+        }
 
         //int userOrder = 0;
         //private void ProcessChunks_MeshesChanged()
