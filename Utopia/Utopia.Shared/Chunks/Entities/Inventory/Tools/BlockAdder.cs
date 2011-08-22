@@ -7,44 +7,22 @@ using System.Text;
 
 
 using System.Diagnostics;
+using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Landscape;
+
 #endregion
 
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
     public class BlockAdder : Tool
     {
-     
-        /*
-       
-        public bool Use()
+        public override ToolImpact Use(TerraCubeWithPosition pickedBlock, Location3<int>? newCubePlace, TerraCube terraCube)
         {
-            
-              
-            if (currentSelectedAdjacent.HasValue)
+            if (newCubePlace.HasValue)
             {
-                player.world.SetBlockAndReBuild(currentSelectedAdjacent.Value.Position, blockType);
-                return true;
+                return new ToolImpact(new TerraCubeWithPosition(newCubePlace.Value, terraCube));
             }
-            else return false;
+            return new ToolImpact();//no impact when there is no available newCubePlace
         }
-
-        public override void switchType(int delta)
-        {
-            
-            if (delta >= 120)
-            {
-                blockType++;
-                if (blockType == BlockType.MAXIMUM) blockType = BlockType.MAXIMUM - 1;
-                this.IconSourceRectangle = TextureHelper.GetSourceRectangle(blockType);
-            }
-            else if (delta <= -120)
-            {
-                blockType--;
-                if (blockType == BlockType.None) blockType = (BlockType)1;
-                this.IconSourceRectangle = TextureHelper.GetSourceRectangle(blockType);
-            }
-
-        
-        }*/
     }
 }

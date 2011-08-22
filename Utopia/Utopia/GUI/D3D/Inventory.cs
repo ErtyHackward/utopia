@@ -14,27 +14,27 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     public class PlayerInventory
     {
 
-        public Armor headGear { get; set; }
-        public Armor torso { get; set; }
-        public Armor arms { get; set; }
-        public Armor hands { get; set; }
-        public Armor legs { get; set; }
-        public Armor feet { get; set; }
-        public Item leftRing { get; set; }
-        public Item rightRing { get; set; }
-        public Item neckLace { get; set; }
+        public Armor HeadGear { get; set; }
+        public Armor Torso { get; set; }
+        public Armor Arms { get; set; }
+        public Armor Hands { get; set; }
+        public Armor Legs { get; set; }
+        public Armor Feet { get; set; }
+        public Item LeftRing { get; set; }
+        public Item RightRing { get; set; }
+        public Item NeckLace { get; set; }
 
 
-        public ContainerEntity bag = new ContainerEntity();
+        public ContainerEntity Bag = new ContainerEntity();
 
-        public List<Tool> toolbar = new List<Tool>();
+        public List<Tool> Toolbar = new List<Tool>();
 
         public Tool LeftTool { get; set; }
         public Tool RightTool { get; set; }
 
-        public void changeTool(ref Tool item, int dir)
+        public void ChangeTool(ref Tool item, int dir)
         {
-            List<Tool> tools = toolbar;
+            List<Tool> tools = Toolbar;
             int i = tools.IndexOf(item);
             if (dir > 0)
             {

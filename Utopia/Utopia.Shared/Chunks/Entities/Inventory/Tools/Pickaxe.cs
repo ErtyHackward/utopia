@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Landscaping;
 
 
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
@@ -9,13 +10,13 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
     public class Pickaxe : BlockRemover
     {
 
-      /*  public Pickaxe(int id, String name, Player player,VoxelModel model)
-            : base(id, name, player,model)
+        public Pickaxe()
+            : base()
         {
-            _selectableTypes = new HashSet<BlockType>(allSolids);
-
-        }*/
-
+            //a pickaxe can remove anything like base class except water
+            RemoveableCubeIds.Remove(CubeId.Water);
+            RemoveableCubeIds.Remove(CubeId.WaterSource);
+        }
 
     }
 }

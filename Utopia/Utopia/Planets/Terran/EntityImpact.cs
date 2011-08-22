@@ -53,6 +53,18 @@ namespace Utopia.Planets.Terran
             }
         }
 
+          public static void ReplaceBlocks( TerraCubeWithPosition[] coordinatesAndReplacement)
+          {
+              foreach (var locationBlock in coordinatesAndReplacement)
+              {
+                  //TODO here i have to copy the value to satisfy the use of ref in ReplaceBlock, cause i intended the location to be readonly  
+                  // Locations should not be modifiable here, so they should not be passed by ref ?? 
+                  Location3<int> location = locationBlock.Position;
+
+                  ReplaceBlock(ref location, locationBlock.Cube.Id);
+              }
+          }
+
         public static void ReplaceBlock(ref Location3<int> cubeCoordinates, byte replacementCubeId)
         {
             TerraCube newCube = new TerraCube(replacementCubeId);
