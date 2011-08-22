@@ -86,7 +86,10 @@
     <Compile Include="Chunks\Entities\Inventory\Tool.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\BlockAdder.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\BlockRemover.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tools\Shovel.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Pickaxe.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tools\Survey.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tools\ToolImpact.cs" />
     <Compile Include="Chunks\Entities\Inventory\Weapon.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
@@ -118,6 +121,7 @@
     <Compile Include="Structs\Range.cs" />
     <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
+    <Compile Include="Structs\TerraCubeWithPosition.cs" />
     <Compile Include="World\FlatWorldProcessor.cs" />
     <Compile Include="World\WorldGenerationStagesManager.cs" />
     <Compile Include="World\WorldGenerator.cs" />

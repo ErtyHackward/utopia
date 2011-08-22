@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Chunks.Entities.Inventory.Tools;
+using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory
 {
@@ -12,5 +15,10 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     {
         public int Speed { get; set; }
         public int Damage { get; set; }
+
+        public override ToolImpact Use(TerraCubeWithPosition pickedBlock, Location3<int>? newCubePlace, TerraCube terraCube)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

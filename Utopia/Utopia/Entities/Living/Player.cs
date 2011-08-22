@@ -13,6 +13,7 @@ using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.Struct;
 using S33M3Engines.InputHandler;
 using System.Windows.Forms;
+using Utopia.Shared.Structs.Landscape;
 using UtopiaContent.ModelComp;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.D3D.Effects.Basics;
@@ -33,7 +34,10 @@ namespace Utopia.Entities.Living
     {
         #region private/public variables
         string _name;
+
         Location3<int> _pickedBlock, _previousPickedBlock, _newCubePlace;
+        private TerraCube _pickedCube;//TODO refactor _pickedBlock to be a positioned terracube 
+
         bool _isBlockPicked;
 
         int _buildingCubeIndex;
@@ -55,28 +59,45 @@ namespace Utopia.Entities.Living
         }
 
         public PlayerInventory Inventory { get; private set; }
-        
+
         #endregion
 
-        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager ,string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed)
+        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed)
             : base(d3dEngine, camManager, inputHandler, startUpWorldPosition, size, walkingSpeed, flyingSpeed, headRotationSpeed)
         {
             _worldFocusManager = worldFocusManager;
             _name = Name;
             Inventory = new PlayerInventory();
-            Pickaxe tool = new Pickaxe();
-            tool.AllowedSlots = InventorySlot.Bags;
-            tool.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
+
+            //this is only temporary starting gear, it should be received from the server
+            BlockRemover remover = new BlockRemover();
+            remover.AllowedSlots = InventorySlot.Bags;
+            Inventory.Toolbar.Add(remover);
+            //pickaxe.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\pickaxe-icon.png", new Vector2(0, 0));
 
             Armor ring = new Armor();
-            ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing; //FIXME slot system is ko
+            ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing;
             ring.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
+            BlockAdder adder = new BlockAdder();
+            adder.AllowedSlots = InventorySlot.Bags;
+            Inventory.Toolbar.Add(adder);
+            //adder.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
-            Inventory.bag.Items = new List<Item>();
-            Inventory.bag.Items.Add(tool);
-            Inventory.bag.Items.Add(ring);
+            Inventory.LeftTool = remover;
+            Inventory.RightTool = adder;
 
+            Inventory.Bag.Items = new List<Item>();
+            Inventory.Bag.Items.Add(remover);
+            Inventory.Bag.Items.Add(ring);
+
+            Pickaxe pickaxe = new Pickaxe();
+            pickaxe.AllowedSlots = InventorySlot.Bags;
+            Inventory.Toolbar.Add(pickaxe);
+
+            Shovel shovel = new Shovel();
+            shovel.AllowedSlots = InventorySlot.Bags;
+            Inventory.Toolbar.Add(shovel);
         }
 
         #region private methods
@@ -92,7 +113,7 @@ namespace Utopia.Entities.Living
             {
                 pickingPointInLine += LookAt * 0.02f;
 
-                if (TerraWorld.Landscape.isPickable(ref pickingPointInLine))
+                if (TerraWorld.Landscape.isPickable(ref pickingPointInLine, out _pickedCube))
                 {
 
                     _pickedBlock.X = MathHelper.Fastfloor(pickingPointInLine.X);
@@ -140,6 +161,7 @@ namespace Utopia.Entities.Living
         bool KeyMBuffer, LButtonBuffer, RButtonBuffer, WheelForward, WheelBackWard;
         private void InputHandler(bool bufferMode)
         {
+
             if ((_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.Move.Mode)) || KeyMBuffer)
             {
                 if (bufferMode) { KeyMBuffer = true; return; } else KeyMBuffer = false;
@@ -162,16 +184,56 @@ namespace Utopia.Entities.Living
             {
                 if (bufferMode) { LButtonBuffer = true; return; } else LButtonBuffer = false;
 
-                if (_isBlockPicked)
+                if (_isBlockPicked && Inventory.LeftTool.NeedsPick)
                 {
                     if (_inputHandler.CurKeyboardState.IsKeyDown(Keys.LShiftKey))
                     {
+                        //XXX do we want a notion of tool modifier, shift + left mouse = alternate usage ?
                         //EntityImpact.TnT(ref _pickedBlock, CubeType.Air);
                     }
                     else
                     {
-                        EntityImpact.ReplaceBlock(ref _pickedBlock, CubeId.Air);
+                        Location3<int>? newPlace;
+
+                        if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
+                        {
+                            newPlace = _newCubePlace;
+                        }
+                        else
+                        {
+                            newPlace = null;
+                        }
+                        TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
+                        ToolImpact impact = Inventory.LeftTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
+                        if (impact.CubesImpact != null)
+                            EntityImpact.ReplaceBlocks(impact.CubesImpact);
+                        if (impact.Message != null) Console.WriteLine(impact.Message);
                     }
+                }
+            }
+
+            if ((_inputHandler.PrevKeyboardState.IsKeyUp(Keys.RButton) && _inputHandler.CurKeyboardState.IsKeyDown(Keys.RButton)) || RButtonBuffer)
+            {
+                if (bufferMode) { RButtonBuffer = true; return; } else RButtonBuffer = false;
+
+                if (_isBlockPicked && Inventory.RightTool.NeedsPick)
+                {
+                    Location3<int>? newPlace;
+
+                    if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
+                    {
+                        newPlace = _newCubePlace;
+                    }
+                    else
+                    {
+                        newPlace = null;
+                    }
+
+                    TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
+                    ToolImpact impact = Inventory.RightTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
+                    if (impact.CubesImpact != null)
+                        EntityImpact.ReplaceBlocks(impact.CubesImpact);
+
                 }
             }
 
@@ -203,18 +265,7 @@ namespace Utopia.Entities.Living
                 WheelBackWard = false;
             }
 
-            if ((_inputHandler.PrevKeyboardState.IsKeyUp(Keys.RButton) && _inputHandler.CurKeyboardState.IsKeyDown(Keys.RButton)) || RButtonBuffer)
-            {
-                if (bufferMode) { RButtonBuffer = true; return; } else RButtonBuffer = false;
 
-                if (_isBlockPicked)
-                {
-                    if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
-                    {
-                        EntityImpact.ReplaceBlock(ref _newCubePlace, _buildingCube.Id);
-                    }
-                }
-            }
         }
         #endregion
 

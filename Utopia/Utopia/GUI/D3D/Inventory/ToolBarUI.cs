@@ -58,6 +58,11 @@ namespace Utopia.GUI.D3D.Inventory
                 btn.Bounds = new UniRectangle(x * _buttonSize, 0, _buttonSize, _buttonSize);
                 btn.IsLink = true;
                 buttons.Add(btn);
+                btn.Pressed += delegate(object sender, EventArgs e)
+                                   {
+                                       inventory.LeftTool = btn.Item as Tool;
+                                   };
+
                 this.Children.Add(btn);
             }
         }
@@ -65,10 +70,17 @@ namespace Utopia.GUI.D3D.Inventory
         //TODO review ToolBarUI update, envent based may be better
         public void Update(ref GameTime gameTime)
         {
+           
 
-            for (int i = 0; i < _inventory.toolbar.Count; i++)
+            for (int i = 0; i < _inventory.Toolbar.Count; i++)
             {
-                buttons[i].Item = _inventory.toolbar[i];
+                buttons[i].Item = _inventory.Toolbar[i];
+
+                if (_inventory.Toolbar[i] !=null)
+                {
+                    buttons[i].Text = _inventory.Toolbar[i].UniqueName;
+                }
+               
 
                 if (buttons[i].Item == _inventory.LeftTool)
                 {
@@ -83,7 +95,6 @@ namespace Utopia.GUI.D3D.Inventory
             if (_inventory.LeftTool != null)
             {
                 leftButton.Item = _inventory.LeftTool;
-
                 if (leftButton.Item.Icon == null)
                     leftButton.Text = _inventory.LeftTool.UniqueName;
                 else

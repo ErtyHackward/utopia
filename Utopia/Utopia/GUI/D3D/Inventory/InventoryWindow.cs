@@ -85,7 +85,7 @@ namespace Utopia.GUI.D3D.Inventory
         public void buildGrid(int xstart)
         {
 
-            List<Item> items = _inventory.bag.Items;
+            List<Item> items = _inventory.Bag.Items;
 
             int gridSize = 5; // grid is gridSize*gridSize
 
