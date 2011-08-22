@@ -48,16 +48,9 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
             RemoveableCubeIds.Add(CubeId.WaterSource);
         }
 
-        public override ToolImpact Use(TerraCubeWithPosition pickedBlock, Location3<int>? newCubePlace, TerraCube terraCube)
+        public override bool Use()
         {
-            if (RemoveableCubeIds.Contains((pickedBlock.Cube.Id)))
-            {
-                return new ToolImpact(new TerraCubeWithPosition(pickedBlock.Position, new TerraCube(CubeId.Air)));
-            } else
-            {
-                return new ToolImpact(String.Format("Cant remove {0} with {1}", terraCube.Id,this.UniqueName)); 
-                // this is abusing the message impact for debugging, its not intended for debug but for gameplay
-            }
+            throw new NotImplementedException();
         }
     }
 }

@@ -10,6 +10,8 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     /// </summary>
     public class CharacterEquipment : IBinaryStorable
     {
+        private readonly LivingEntity _parent;
+
         /// <summary>
         /// Occurs when the character wears something
         /// </summary>
@@ -35,6 +37,11 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         private Item _neckLace;
         private Tool _leftTool;
         private Tool _rightTool;
+
+        public CharacterEquipment(LivingEntity parent)
+        {
+            _parent = parent;
+        }
 
         /// <summary>
         /// Wear some item
@@ -167,7 +174,14 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             get { return _leftTool; }
             set
             {
+                if (_leftTool != null)
+                    _leftTool.Parent = null;
+
                 _leftTool = value;
+
+                if (_leftTool != null)
+                    _leftTool.Parent = _parent;
+
                 OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.LeftHand});
             }
         }
@@ -177,7 +191,14 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             get { return _rightTool; }
             set
             {
+                if (_rightTool != null)
+                    _rightTool.Parent = null;
+
                 _rightTool = value;
+
+                if (_rightTool != null)
+                    _rightTool.Parent = _parent;
+
                 OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.RightHand});
             }
         }

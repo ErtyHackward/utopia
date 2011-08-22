@@ -47,7 +47,7 @@ namespace Utopia.Shared.Chunks.Entities
 
         protected LivingEntity()
         {
-            Equipment = new CharacterEquipment();
+            Equipment = new CharacterEquipment(this);
             Inventory = new BaseContainer();
             PrimaryAttributes = new CharacterPrimaryAttributes();
             SecondaryAttributes = new CharacterSecondaryAttributes();
