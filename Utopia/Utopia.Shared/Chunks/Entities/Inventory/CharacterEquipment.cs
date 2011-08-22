@@ -204,7 +204,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         }
 
         /// <summary>
-        /// Saves character eqipment
+        /// Saves character equipment
         /// </summary>
         /// <param name="writer"></param>
         public void Save(BinaryWriter writer)
