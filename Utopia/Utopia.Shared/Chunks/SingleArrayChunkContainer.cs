@@ -39,7 +39,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="worldParam">The world Parameters</param>
+        /// <param name="worldParam">The world Parameters</param>e
         public SingleArrayChunkContainer(WorldParameters worldParam)
         {
             _visibleWorldSize = new Location3<int>()

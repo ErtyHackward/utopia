@@ -39,7 +39,7 @@ namespace Utopia
             iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope();
             iocContainer.Bind<CameraManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<WorldRenderer>().ToSelf().InSingletonScope();
-            iocContainer.Bind<SingleArrayChunkContainer>().ToSelf();
+            iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().Named("Stars");
             iocContainer.Bind<IDrawableComponent>().To<Clouds>().Named("Clouds");

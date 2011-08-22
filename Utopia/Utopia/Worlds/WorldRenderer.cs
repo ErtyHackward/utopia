@@ -64,14 +64,13 @@ namespace Utopia.Worlds
             _world.WorldClock.Interpolation(ref interpolation_hd, ref interpolation_ld);
             _world.WorldWeather.Interpolation(ref interpolation_hd, ref interpolation_ld);
             _world.WorldSkyDome.Interpolation(ref interpolation_hd, ref interpolation_ld);
-            //_world.WorldChunks.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
 
         //First draw pass
         public override void DrawDepth0()
         {
             _world.WorldSkyDome.Draw();
-            //_world.WorldChunks.Draw();
+            _world.WorldChunks.Draw();
         }
 
         //Draw second draw pass

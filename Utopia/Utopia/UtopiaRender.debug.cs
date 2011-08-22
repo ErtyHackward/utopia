@@ -77,8 +77,6 @@ namespace Utopia
             };
             Location2<int> worldStartUp = new Location2<int>(0 * AbstractChunk.ChunkSize.X, 0 * AbstractChunk.ChunkSize.Z);
             
-            //Init a new Big array Holder.
-            SingleArrayChunkContainer sglArrayChunkManager = new SingleArrayChunkContainer(worldParam);
             //===========================================================================================
 
             //Creating the IoC Bindings
