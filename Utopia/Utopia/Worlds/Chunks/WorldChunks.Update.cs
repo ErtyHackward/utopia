@@ -7,6 +7,7 @@ using S33M3Engines.Maths;
 using S33M3Engines.Threading;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using System.Threading;
+using Utopia.Shared.Chunks;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -41,7 +42,7 @@ namespace Utopia.Worlds.Chunks
 
         private void IntilializeUpdateble()
         {
-            _chunkCreationTrigger = (VisibleWorldSize.X / 2) - (1 * WorldParameters.ChunkSize.X);
+            _chunkCreationTrigger = (VisibleWorldSize.X / 2) - (1 * AbstractChunk.ChunkSize.X);
         }
 
         private void ChunkUpdateManager()
@@ -49,7 +50,7 @@ namespace Utopia.Worlds.Chunks
             ProcessChunks_Empty();
             //ProcessChunks_LandscapeCreated();
             //ProcessChunks_LandscapeLightsSourceCreated();
-            ProcessChunks_LandscapeLightsPropagated();
+            //ProcessChunks_LandscapeLightsPropagated();
             //ProcessChunks_MeshesChanged();
         }
 

@@ -204,7 +204,7 @@ namespace Utopia.Worlds.Chunks
             for (int chunkInd = 0; chunkInd < WorldParameters.WorldSize.Z; chunkInd++)
             {
                 yield return GetChunk(FixedX, Z);
-                Z += WorldParameters.ChunkSize.Z;
+                Z += AbstractChunk.ChunkSize.Z;
             }
         }
 
@@ -221,10 +221,9 @@ namespace Utopia.Worlds.Chunks
             for (int chunkInd = 0; chunkInd < WorldParameters.WorldSize.X; chunkInd++)
             {
                 yield return GetChunk(X, FixedZ);
-                X += WorldParameters.ChunkSize.X;
+                X += AbstractChunk.ChunkSize.X;
             }
         }
-
         #endregion
 
         #region Private methods
@@ -233,12 +232,12 @@ namespace Utopia.Worlds.Chunks
         {
             VisibleWorldSize = new Location3<int>()
             {
-                X = param.ChunkSize.X * param.WorldSize.X,
-                Y = param.ChunkSize.Y,
-                Z = param.ChunkSize.Z * param.WorldSize.Z,
+                X = AbstractChunk.ChunkSize.X * param.WorldSize.X,
+                Y = AbstractChunk.ChunkSize.Y,
+                Z = AbstractChunk.ChunkSize.Z * param.WorldSize.Z,
             };
 
-            _chunkPOWsize = (int)Math.Log(param.ChunkSize.X, 2);
+            _chunkPOWsize = (int)Math.Log(AbstractChunk.ChunkSize.X, 2);
         }
 
         /// <summary>
@@ -267,8 +266,8 @@ namespace Utopia.Worlds.Chunks
                 {
                     cubeRange = new Range<int>()
                     {
-                        Min = new Location3<int>(_worldStartUpPosition.X + (chunkX * _worldParameters.ChunkSize.X), 0, _worldStartUpPosition.Z + (chunkZ * _worldParameters.ChunkSize.Z)),
-                        Max = new Location3<int>(_worldStartUpPosition.X + ((chunkX + 1) * _worldParameters.ChunkSize.X), _worldParameters.ChunkSize.Y, _worldStartUpPosition.Z + ((chunkZ + 1) * _worldParameters.ChunkSize.Z))
+                        Min = new Location3<int>(_worldStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, _worldStartUpPosition.Z + (chunkZ * AbstractChunk.ChunkSize.Z)),
+                        Max = new Location3<int>(_worldStartUpPosition.X + ((chunkX + 1) * AbstractChunk.ChunkSize.X), AbstractChunk.ChunkSize.Y, _worldStartUpPosition.Z + ((chunkZ + 1) * AbstractChunk.ChunkSize.Z))
                     };
 
                     arrayX = MathHelper.Mod(cubeRange.Min.X, VisibleWorldSize.X);

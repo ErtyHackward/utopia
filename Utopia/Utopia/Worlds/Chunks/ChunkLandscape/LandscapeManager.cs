@@ -65,7 +65,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         //Create the landscape for the chunk
         private void createLandScape_threaded(VisualChunk chunk)
         {
-            GeneratedChunk generatedChunk = _worldGenerator.GetChunk(chunk.ChunkPosition);
+            GeneratedChunk generatedChunk = _worldGenerator.GetChunks(chunk.ChunkPosition);
             chunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
             chunk.State = ChunkState.LandscapeLightsPropagated;
             chunk.ThreadStatus = ThreadStatus.Idle;
