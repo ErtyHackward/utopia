@@ -105,7 +105,15 @@ namespace Utopia.Shared.World
         {
             _generatedRange = range;
             _chunks = new GeneratedChunk[range.Size.X, range.Size.Z];
-            
+
+            for (int x = range.Min.X; x < range.Max.X; x++)
+            {
+                for (int z = range.Min.Y; z < range.Max.Y; z++)
+                {
+                    _chunks[x - range.Min.X, z - range.Min.Y] = new GeneratedChunk();
+                }
+            }
+
             foreach (var stage in Stages)
             {
                 stage.Generate(range, _chunks);
