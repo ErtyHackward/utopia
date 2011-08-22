@@ -250,6 +250,8 @@
     <Compile Include="Worlds\Chunks\VisualChunk.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.Draw.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.Update.cs" />
+    <Compile Include="Worlds\Cubes\SolidCubeMeshFactory.cs" />
+    <Compile Include="Worlds\Cubes\ICubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\VisualCubeProfile.cs" />
     <Compile Include="Worlds\GameClocks\Clock.cs" />
     <Compile Include="Worlds\GameClocks\IClock.cs" />

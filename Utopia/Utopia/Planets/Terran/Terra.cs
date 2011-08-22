@@ -76,7 +76,7 @@ namespace Utopia.Planets.Terran
             World = new TerraWorld(_d3dEngine, _worldFocusManager, _camManager, ref _worldSeed, landscapeBuilder);
             EntityImpact.Init(World);
             ChunkWrapper.Init(World);
-            CubeMeshFactory.Init(World);
+            CubeMeshFactoryOLD.Init(World);
             DrawLiquid = DefaultDrawLiquid;
             //GameConsole.Write("Utopia started - Starting Position=" + TerraWorld.WorldStartUpX + ":" + TerraWorld.WorldStartUpZ + " Chunksize=" + TerraWorld.Chunksize);
         }

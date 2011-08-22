@@ -21,17 +21,19 @@ namespace Utopia.Worlds.Chunks
         private WorldChunks _world;
         private Range<int> _cubeRange;
 
-        Dictionary<string, int> _solidCubeVerticeDico; // Dictionnary used in the mesh creation, to avoid to recreate a vertex that has already been used create for another cube.
 
         //List are use instead of standard array because it's not possible to know the number of vertices/indices that will be produced at cubes creation time.
         //After vertex/index buffer creation those collections are cleared.
-        List<VertexCubeSolid> _solidCubeVertices;      // Collection use to collect the vertices at the solid cube creation time
-        List<ushort> _solidCubeIndices;                // Collection use to collect the indices at the solid cube creation time
-        List<VertexCubeLiquid> _liquidCubeVertices;    // Collection use to collect the vertices at the liquid cube creation time
-        List<ushort> _liquidCubeIndices;               // Collection use to collect the indices at the liquid cube creation time
+
         #endregion
 
         #region Public properties/Variable
+        public Dictionary<string, int> CubeVerticeDico; // Dictionnary used in the mesh creation, to avoid to recreate a vertex that has already been used create for another cube.
+        public List<VertexCubeSolid> SolidCubeVertices;      // Collection use to collect the vertices at the solid cube creation time
+        public List<ushort> SolidCubeIndices;                // Collection use to collect the indices at the solid cube creation time
+        public List<VertexCubeLiquid> LiquidCubeVertices;    // Collection use to collect the vertices at the liquid cube creation time
+        public List<ushort> LiquidCubeIndices;               // Collection use to collect the indices at the liquid cube creation time
+
         public IntVector2 ChunkPosition { get; private set; } // Gets or sets current chunk position
         public ChunkState State { get; set; }                 // Chunk State
         public ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
@@ -56,9 +58,9 @@ namespace Utopia.Worlds.Chunks
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 
+            _world = world;
             CubeRange = cubeRange;
             State = ChunkState.Empty;
-            _world = world;
         }
 
         #region Public methods
@@ -84,11 +86,11 @@ namespace Utopia.Worlds.Chunks
         //Graphical Part
         public void InitializeChunkBuffers()
         {
-            _solidCubeVerticeDico = new Dictionary<string, int>();
-            _solidCubeVertices = new List<VertexCubeSolid>();
-            _solidCubeIndices = new List<ushort>();
-            _liquidCubeVertices = new List<VertexCubeLiquid>();
-            _liquidCubeIndices = new List<ushort>();
+            CubeVerticeDico = new Dictionary<string, int>();
+            SolidCubeVertices = new List<VertexCubeSolid>();
+            SolidCubeIndices = new List<ushort>();
+            LiquidCubeVertices = new List<VertexCubeLiquid>();
+            LiquidCubeIndices = new List<ushort>();
         }
 
 

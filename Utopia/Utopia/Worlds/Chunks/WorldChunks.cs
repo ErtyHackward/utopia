@@ -18,6 +18,8 @@ using S33M3Engines.GameStates;
 using Utopia.Entities.Living;
 using Utopia.Worlds.Chunks.ChunkLandscape;
 using Utopia.Worlds.Chunks.ChunkMesh;
+using Utopia.Worlds.Cubes;
+using Ninject;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -297,7 +299,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Min.Z, VisibleWorldSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(this, ref cubeRange, _cubes);
+                    chunk = new VisualChunk(this, ref cubeRange, _cubesHolder);
 
                     //Store this chunk inside the arrays.
                     Chunks[(arrayX >> _chunkPOWsize) + (arrayZ >> _chunkPOWsize) * _worldParameters.WorldSize.X] = chunk;

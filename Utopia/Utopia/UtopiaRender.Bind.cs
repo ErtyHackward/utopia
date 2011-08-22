@@ -23,6 +23,7 @@ using Utopia.Shared.World.FlatWorld;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World.Processors;
 using Utopia.Worlds.Chunks.ChunkMesh;
+using Utopia.Worlds.Cubes;
 
 namespace Utopia
 {
@@ -42,6 +43,8 @@ namespace Utopia
 
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().Named("Stars");
             iocContainer.Bind<IDrawableComponent>().To<Clouds>().Named("Clouds");
+
+            iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InSingletonScope().Named("SolidCubeMeshFactory");
 
             //Chunk Landscape
             iocContainer.Bind<ILandscapeManager>().To<LandscapeManager>().InSingletonScope();

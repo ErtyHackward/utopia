@@ -6,6 +6,7 @@ using System.Data;
 using Utopia.Worlds.Chunks.Enums;
 using Utopia.Shared.Structs;
 using S33M3Engines.Struct.Vertex;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -15,9 +16,8 @@ namespace Utopia.Worlds.Cubes
         public static VisualCubeProfile[] CubesProfile;
 
         //Create the various Cubes
-        public static void InitCubeProfiles()
+        public static void InitCubeProfiles(ICubeMeshFactory solidCubeMeshFactory)
         {
-
             DataSet CubeProfileDS = new DataSet();
             CubeProfileDS.ReadXml(@"Models\CubesProfile.xml", XmlReadMode.Auto);
 
@@ -62,10 +62,11 @@ namespace Utopia.Worlds.Cubes
                 //    profile.CanGenerateCubeFace = VisualCubeProfile.WaterFaceGenerationCheck;
                 //    profile.CreateLiquidCubeMesh = CubeMeshFactory.GenLiquidCubeFace;
                 //}
+
                 if (profile.CubeFamilly == enuCubeFamilly.Solid)
                 {
                     profile.CanGenerateCubeFace = VisualCubeProfile.FaceGenerationCheck;
-                    //profile.CreateSolidCubeMesh = CubeMeshFactory.GenSolidCubeFace;
+                    profile.CreateSolidCubeMesh = solidCubeMeshFactory.GenCubeFace;
                 }
 
                 CubesProfile[Id] = profile;
@@ -103,10 +104,10 @@ namespace Utopia.Worlds.Cubes
         public delegate bool CanGenerateCubeFaceDelegate(byte cube, ref Location3<int> cubelocation, CubeFace cubeFace, byte neightboorFaceCube);
         public CanGenerateCubeFaceDelegate CanGenerateCubeFace;
 
-        public delegate void GenerateSolidMesh(byte cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, ref List<VertexCubeSolid> cubeVertices, ref List<ushort> cubeIndices, ref Dictionary<string, int> cubeVerticeDico);
+        public delegate void GenerateSolidMesh(byte cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk);
         public GenerateSolidMesh CreateSolidCubeMesh;
 
-        public delegate void GenerateLiquidMesh(byte cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, ref List<VertexCubeLiquid> cubeVertices, ref List<ushort> cubeIndices, ref Dictionary<string, int> cubeVerticeDico);
+        public delegate void GenerateLiquidMesh(byte cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk);
         public GenerateLiquidMesh CreateLiquidCubeMesh;
 
         public string Name;

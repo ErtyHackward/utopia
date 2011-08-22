@@ -43,6 +43,7 @@ using S33M3Engines.Threading;
 using Utopia.Entities.Living;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
+using Utopia.Worlds.Cubes;
 
 namespace Utopia
 {
@@ -76,15 +77,16 @@ namespace Utopia
             };
             Location2<int> worldStartUp = new Location2<int>(0 * AbstractChunk.ChunkSize.X, 0 * AbstractChunk.ChunkSize.Z);
             
-            //HACK
-            AbstractChunk.ChunkSize = AbstractChunk.ChunkSize;
-
             //Init a new Big array Holder.
             SingleArrayChunkContainer sglArrayChunkManager = new SingleArrayChunkContainer(worldParam);
             //===========================================================================================
 
             //Creating the IoC Bindings
             ContainersBindings(IoCContainer, worldParam);
+
+            //Init Block Profiles
+            VisualCubeProfile.InitCubeProfiles(IoCContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"));
+
 
             //-- Get the Main D3dEngine --
             _d3dEngine = IoCContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(W, H)),
@@ -142,6 +144,7 @@ namespace Utopia
             
             //Get Processor Config by giving world specification
             _chunks = IoCContainer.Get<IWorldChunks>(new ConstructorArgument("worldStartUpPosition", worldStartUp));
+
             //Attach a "Flat world generator"
             _chunks.LandscapeManager.WorldGenerator = new WorldGenerator(IoCContainer.Get<WorldParameters>(), IoCContainer.Get<IWorldProcessorConfig>("FlatWorld"));
 
