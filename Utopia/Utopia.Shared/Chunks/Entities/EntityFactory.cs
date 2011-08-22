@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
 namespace Utopia.Shared.Chunks.Entities
@@ -31,31 +32,13 @@ namespace Utopia.Shared.Chunks.Entities
 
             switch (classId)
             {
-                case EntityClassId.None: throw new InvalidOperationException("Unable to create entity on none class.");
-                case EntityClassId.Sword:
-                    break;
+                case EntityClassId.None: return new NoEntity();
                 case EntityClassId.PickAxe: return new Pickaxe();
-                case EntityClassId.Shovel:
-                    break;
-                case EntityClassId.Hoe:
-                    break;
-                case EntityClassId.Axe:
-                    break;
-                case EntityClassId.Chest:
-                    break;
-                case EntityClassId.Chair:
-                    break;
-                case EntityClassId.Door:
-                    break;
-                case EntityClassId.Bed:
-                    break;
-                case EntityClassId.ThinGlass:
-                    break;
+                case EntityClassId.Shovel: return new Shovel();
+                case EntityClassId.Survey: return new Survey();
                 default:
                     throw new ArgumentOutOfRangeException("classId");
             }
-
-            throw new NotImplementedException();
         }
 
         /// <summary>

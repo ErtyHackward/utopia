@@ -12,7 +12,7 @@ using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
-    public class BlockRemover : Tool
+    public abstract class BlockRemover : Tool
     {
         //BlockRemover base class can remove anyting
         protected HashSet<Byte> RemoveableCubeIds = new HashSet<byte>();

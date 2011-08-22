@@ -89,7 +89,6 @@
   <ItemGroup>
     <Compile Include="GameStates\GameStatesManager.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
-    <Compile Include="GUI\D3D\Inventory.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControlRenderer.cs" />
     <Compile Include="GUI\D3D\Inventory\ContainerControl.cs" />
@@ -216,6 +215,7 @@
     <Compile Include="Planets\Terran\Lighting\TerraLighting.cs" />
     <Compile Include="Planets\Terran\Shadow.cs" />
     <Compile Include="Planets\Terran\World\LandscapePopulation\LiquidPopulate.cs" />
+    <Compile Include="GUI\D3D\Inventory\Inventory.cs" />
     <Compile Include="Universes\Universe.cs" />
     <Compile Include="USM\SQLite\DBHelper.cs" />
     <Compile Include="USM\USMGet.cs" />

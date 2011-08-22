@@ -1,10 +1,6 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Utopia.Shared.Chunks.Entities.Concrete;
-using Utopia.Shared.Chunks.Entities.Inventory;
 
 //TODO state should be maintained on server,  move to shared project ?
 namespace Utopia.Shared.Chunks.Entities.Inventory
@@ -25,7 +21,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         public Item NeckLace { get; set; }
 
 
-        public ContainerEntity Bag = new ContainerEntity();
+        public BaseContainer Bag = new BaseContainer();
 
         public List<Tool> Toolbar = new List<Tool>();
 

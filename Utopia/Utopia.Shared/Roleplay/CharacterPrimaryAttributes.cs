@@ -1,11 +1,12 @@
 ﻿using System;
+using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Roleplay
 {
     /// <summary>
     /// Role-playing players and NPC attributes. All parameters can be in range [1; 10]
     /// </summary>
-    public class CharacterPrimaryAttributes
+    public class CharacterPrimaryAttributes : IBinaryStorable
     {
         /// <summary>
         /// Defines how much weight a character can carry, how power is a character's attack is, how fast he can destruct a block
@@ -104,6 +105,28 @@ namespace Utopia.Shared.Roleplay
             {
                 return new CharacterPrimaryAttributes { Strength = 4, Perception = 7, Endurance = 4, Charisma = 4, Intellect = 7, Agility = 7, Luck = 7 };
             }
+        }
+
+        public void Save(System.IO.BinaryWriter writer)
+        {
+            writer.Write(Strength);
+            writer.Write(Perception);
+            writer.Write(Endurance);
+            writer.Write(Charisma);
+            writer.Write(Intellect);
+            writer.Write(Agility);
+            writer.Write(Luck);
+        }
+
+        public void Load(System.IO.BinaryReader reader)
+        {
+            Strength = reader.ReadByte();
+            Perception = reader.ReadByte();
+            Endurance = reader.ReadByte();
+            Charisma = reader.ReadByte();
+            Intellect = reader.ReadByte();
+            Agility = reader.ReadByte();
+            Luck = reader.ReadByte();
         }
     }
 }

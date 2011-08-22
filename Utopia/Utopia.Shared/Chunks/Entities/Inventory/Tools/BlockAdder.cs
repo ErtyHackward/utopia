@@ -14,7 +14,7 @@ using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
-    public class BlockAdder : Tool
+    public abstract class BlockAdder : Tool
     {
         public override ToolImpact Use(TerraCubeWithPosition pickedBlock, Location3<int>? newCubePlace, TerraCube terraCube)
         {
