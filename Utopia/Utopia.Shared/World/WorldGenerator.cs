@@ -12,11 +12,7 @@ namespace Utopia.Shared.World
     /// </summary>
     public class WorldGenerator : IDisposable
     {
-        private bool _abortOperation;
-        private delegate void GenerateDelegate(Range2 range);
-        private int _activeStage;
-        private GeneratedChunk[,] _chunks;
-        private Range2 _generatedRange;
+        private delegate GeneratedChunk[,] GenerateDelegate(Range2 range);
 
         /// <summary>
         /// Gets or sets current world designer
@@ -27,18 +23,6 @@ namespace Utopia.Shared.World
         /// Gets a generation stages manager
         /// </summary>
         public WorldGenerationStagesManager Stages { get; private set; }
-        
-        /// <summary>
-        /// Gets overall operations progress percent [0; 100]
-        /// </summary>
-        public int OverallProgress
-        {
-            get {
-                // todo: need to check the formula
-                var percentPerStage = 100m / Stages.Count;
-                return (int) (_activeStage * percentPerStage + (Decimal)Stages[_activeStage].PercentCompleted / 100 * percentPerStage); 
-            }
-        }
 
         /// <summary>
         /// Initializes instance of world generator
@@ -75,8 +59,6 @@ namespace Utopia.Shared.World
             if(Stages.Count == 0)
                 throw new InvalidOperationException("Add at least one genereation process (stage) before starting");
 
-            _abortOperation = false;
-            _activeStage = 0;
             return new GenerateDelegate(Generate).BeginInvoke(range, callback, state);
         }
 
@@ -89,7 +71,7 @@ namespace Utopia.Shared.World
         /// <param name="entities">Generated entities collection</param>
         public void Generate(Range2 range, byte[] dataArray, int arrayOffset, out EntityCollection[] entities)
         {
-            Generate(range);
+            var chunks = Generate(range);
 
             entities = new EntityCollection[range.Count];
 
@@ -99,7 +81,7 @@ namespace Utopia.Shared.World
             {
                 for (int z = range.Min.Y; z < range.Max.Y; z++)
                 {
-                    var chunk = _chunks[x - range.Min.X, z - range.Min.Y];
+                    var chunk = chunks[x - range.Min.X, z - range.Min.Y];
                     var chunkData = chunk.BlockData.GetBlocksBytes();
                     var chunkEntities = chunk.Entities;
                     
@@ -111,34 +93,24 @@ namespace Utopia.Shared.World
             }
         }
 
-        private void Generate(Range2 range)
+        private GeneratedChunk[,] Generate(Range2 range)
         {
-            _generatedRange = range;
-            _chunks = new GeneratedChunk[range.Size.X, range.Size.Z];
+            var chunks = new GeneratedChunk[range.Size.X, range.Size.Z];
 
             for (int x = range.Min.X; x < range.Max.X; x++)
             {
                 for (int z = range.Min.Y; z < range.Max.Y; z++)
                 {
-                    _chunks[x - range.Min.X, z - range.Min.Y] = new GeneratedChunk();
+                    chunks[x - range.Min.X, z - range.Min.Y] = new GeneratedChunk();
                 }
             }
 
             foreach (var stage in Stages)
             {
-                stage.Generate(range, _chunks);
-                if (_abortOperation)
-                    return;
-                _activeStage++;
+                stage.Generate(range, chunks);
             }
-        }
 
-        /// <summary>
-        /// Stops generation
-        /// </summary>
-        public void Abort()
-        {
-            _abortOperation = true;
+            return chunks;
         }
 
         /// <summary>
@@ -148,14 +120,9 @@ namespace Utopia.Shared.World
         /// <returns></returns>
         public GeneratedChunk GetChunks(IntVector2 position)
         {
-            if (_chunks != null && _generatedRange.Contains(position))
-            {
-                return _chunks[position.X - _generatedRange.Min.X, position.Y - _generatedRange.Min.Y];
-            }
+            var chunks = Generate(new Range2 { Min = position, Max = position + 1 });
 
-            // todo: need to generate a bigger range
-            Generate(new Range2 { Min = position, Max = position + 1 });
-            return GetChunks(position);
+            return GetChunk(position);
         }
 
         /// <summary>
@@ -179,7 +146,6 @@ namespace Utopia.Shared.World
             {
                 stage.Dispose();
             }
-            _chunks = null;
         }
     }
 }
