@@ -44,9 +44,9 @@ namespace Utopia.Shared.Chunks
         {
             _visibleWorldSize = new Location3<int>()
             {
-                X = worldParam.ChunkSize.X * worldParam.WorldSize.X,
-                Y = worldParam.ChunkSize.Y,
-                Z = worldParam.ChunkSize.Z * worldParam.WorldSize.Z,
+                X = AbstractChunk.ChunkSize.X * worldParam.WorldSize.X,
+                Y = AbstractChunk.ChunkSize.Y,
+                Z = AbstractChunk.ChunkSize.Z * worldParam.WorldSize.Z,
             };
 
             MoveX = _visibleWorldSize.Y;

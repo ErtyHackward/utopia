@@ -69,16 +69,15 @@ namespace Utopia
             //Variables initialisation ==================================================================
             Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
             {
-                ChunkSize = new Location3<int>(16, 128, 16),
                 IsInfinite = true,
                 Seed = 0,
                 WorldSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
-            Location2<int> worldStartUp = new Location2<int>(0 * worldParam.ChunkSize.X, 0 * worldParam.ChunkSize.Z);
+            Location2<int> worldStartUp = new Location2<int>(0 * AbstractChunk.ChunkSize.X, 0 * AbstractChunk.ChunkSize.Z);
             
             //HACK
-            AbstractChunk.ChunkSize = worldParam.ChunkSize;
+            AbstractChunk.ChunkSize = AbstractChunk.ChunkSize;
 
             //Init a new Big array Holder.
             SingleArrayChunkContainer sglArrayChunkManager = new SingleArrayChunkContainer(worldParam);

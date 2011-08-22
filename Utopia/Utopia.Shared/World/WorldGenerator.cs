@@ -54,6 +54,16 @@ namespace Utopia.Shared.World
             Stages.AddStages(processors);
         }
 
+        /// Initializes instance of world generator
+        /// </summary>
+        /// <param name="worldParameters">World parameters object</param>
+        /// <param name="processors">Arbitrary amount of world processors</param>
+        [Inject()]
+        public WorldGenerator(WorldParameters worldParameters, IWorldProcessorConfig processorsConfig)
+            : this(worldParameters, processorsConfig.WorldProcessors)
+        {
+        }
+
         /// <summary>
         /// Performs world generation asynchronously
         /// </summary>
@@ -117,7 +127,7 @@ namespace Utopia.Shared.World
             foreach (var stage in Stages)
             {
                 stage.Generate(range, _chunks);
-                if(_abortOperation)
+                if (_abortOperation)
                     return;
                 _activeStage++;
             }
@@ -136,7 +146,7 @@ namespace Utopia.Shared.World
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
-        public GeneratedChunk GetChunk(IntVector2 position)
+        public GeneratedChunk GetChunks(IntVector2 position)
         {
             if (_chunks != null && _generatedRange.Contains(position))
             {
@@ -145,7 +155,19 @@ namespace Utopia.Shared.World
 
             // todo: need to generate a bigger range
             Generate(new Range2 { Min = position, Max = position + 1 });
-            return GetChunk(position);
+            return GetChunks(position);
+        }
+
+        /// <summary>
+        /// Get a single chunk in a threadSafe way.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public GeneratedChunk GetChunk(IntVector2 position)
+        {
+            GeneratedChunk newChunk = new GeneratedChunk();
+            Generate(new Range2 { Min = position, Max = position + 1 });
+            return GetChunks(position);
         }
 
         /// <summary>

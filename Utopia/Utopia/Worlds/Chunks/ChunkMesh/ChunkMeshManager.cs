@@ -10,6 +10,7 @@ using Utopia.Worlds.Cubes;
 using Utopia.Shared.World;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Landscaping;
+using Utopia.Shared.Chunks;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -52,9 +53,9 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             _createChunkMeshDelegate = new CreateChunkMeshDelegate(createChunkMesh_threaded);
             _visibleWorldSize = new Location3<int>()
             {
-                X = _worldParameters.ChunkSize.X * _worldParameters.WorldSize.X,
-                Y = _worldParameters.ChunkSize.Y,
-                Z = _worldParameters.ChunkSize.Z * _worldParameters.WorldSize.Z,
+                X = AbstractChunk.ChunkSize.X * _worldParameters.WorldSize.X,
+                Y = AbstractChunk.ChunkSize.Y,
+                Z = AbstractChunk.ChunkSize.Z * _worldParameters.WorldSize.Z,
             };
         }
 
