@@ -1,6 +1,4 @@
-﻿using Utopia.Shared.Chunks;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Structs;
+﻿using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using System;
 
@@ -29,6 +27,6 @@ namespace Utopia.Shared.Interfaces
         /// <summary>
         /// Starts generation process.
         /// </summary>
-        void Generate(Range2 generationRange, GeneratedChunk[,] chunks);
+        void Generate(WorldGenerator parentGenerator, Range2 generationRange);
     }
 }

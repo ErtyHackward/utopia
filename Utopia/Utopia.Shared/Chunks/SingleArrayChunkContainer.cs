@@ -11,7 +11,7 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Class responsible to manage the acces to the circular array containing the Cubes
     /// </summary>
-    public class SingleArrayChunkCube
+    public class SingleArrayChunkContainer
     {
         /// <summary>
         /// Occurs when block data was changed
@@ -40,7 +40,7 @@ namespace Utopia.Shared.Chunks
         /// Constructor
         /// </summary>
         /// <param name="worldParam">The world Parameters</param>
-        public SingleArrayChunkCube(ref WorldParameters worldParam)
+        public SingleArrayChunkContainer(WorldParameters worldParam)
         {
             _visibleWorldSize = new Location3<int>()
             {
@@ -52,6 +52,9 @@ namespace Utopia.Shared.Chunks
             MoveX = _visibleWorldSize.Y;
             MoveZ = _visibleWorldSize.Y * _visibleWorldSize.X;
             MoveY = 1;
+
+            //Initialize the Big Array
+            Cubes = new byte[_visibleWorldSize.X * _visibleWorldSize.Y * _visibleWorldSize.Z];
         }
 
         /// <summary>

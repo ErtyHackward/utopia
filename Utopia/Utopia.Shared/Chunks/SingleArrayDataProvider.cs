@@ -12,13 +12,12 @@ namespace Utopia.Shared.Chunks
     {
         //A reference to the class using this DataProvider.
         public ISingleArrayDataProviderUser DataProviderUser {get; set;}
+        public SingleArrayChunkContainer ChunkCubes { get; set; }
 
-        #region Direct circular Array access
-        /// <summary>
-        /// Static class responsible to manage the Circular array of cubes.
-        /// </summary>
-        public static SingleArrayChunkCube ChunkCubes { get; set; }
-        #endregion
+        public SingleArrayDataProvider(SingleArrayChunkContainer singleArrayContainer)
+        {
+            ChunkCubes = singleArrayContainer;
+        }
 
         #region Circular Array access through chunk
         /// <summary>

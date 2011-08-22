@@ -33,6 +33,8 @@ using S33M3Engines;
 using S33M3Engines.WorldFocus;
 using S33M3Engines.Cameras;
 using S33M3Engines.GameStates;
+using Utopia.Worlds.Chunks;
+using Utopia.Worlds.Chunks.ChunkWrapper;
 
 namespace Utopia.Planets.Terran
 {
