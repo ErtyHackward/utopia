@@ -6,6 +6,7 @@ using S33M3Engines.D3D;
 using Utopia.Worlds.Chunks;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
+using Utopia.Worlds.Chunks.ChunkLandscape;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -69,5 +70,7 @@ namespace Utopia.Worlds.Chunks
         /// <returns></returns>
         IEnumerable<VisualChunk> GetChunksWithFixedZ(int FixedZ, int WorldMinX);
 
+
+        ILandscapeManager LandscapeManager { get; }
     }
 }
