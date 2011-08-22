@@ -254,7 +254,7 @@ namespace Utopia.Server
                             //todo: chunk generator
                             //TerrainGenerator.FillChunk(position, out data);
 
-                            var generatedChunk = WorldGenerator.GetChunks(position);
+                            var generatedChunk = WorldGenerator.GetChunk(position);
                             
                             if (generatedChunk != null)
                             {

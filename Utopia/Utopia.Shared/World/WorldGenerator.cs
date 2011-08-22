@@ -33,10 +33,11 @@ namespace Utopia.Shared.World
         {
             if (worldParameters == null) throw new ArgumentNullException("worldParameters");
             WorldParametes = worldParameters;
-            
+
             Stages = new WorldGenerationStagesManager();
             Stages.AddStages(processors);
         }
+
 
         /// Initializes instance of world generator
         /// </summary>
@@ -56,7 +57,7 @@ namespace Utopia.Shared.World
         /// <param name="state"></param>
         public IAsyncResult GenerateAsync(Range2 range, AsyncCallback callback, object state)
         {
-            if(Stages.Count == 0)
+            if (Stages.Count == 0)
                 throw new InvalidOperationException("Add at least one genereation process (stage) before starting");
 
             return new GenerateDelegate(Generate).BeginInvoke(range, callback, state);
@@ -84,7 +85,7 @@ namespace Utopia.Shared.World
                     var chunk = chunks[x - range.Min.X, z - range.Min.Y];
                     var chunkData = chunk.BlockData.GetBlocksBytes();
                     var chunkEntities = chunk.Entities;
-                    
+
                     Array.Copy(chunkData, 0, dataArray, arrayOffset + chunkIndex * AbstractChunk.ChunkBlocksByteLength, AbstractChunk.ChunkBlocksByteLength);
                     entities[chunkIndex] = chunkEntities;
 
@@ -118,23 +119,11 @@ namespace Utopia.Shared.World
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
-        public GeneratedChunk GetChunks(IntVector2 position)
+        public GeneratedChunk GetChunk(IntVector2 position)
         {
             var chunks = Generate(new Range2 { Min = position, Max = position + 1 });
 
-            return GetChunk(position);
-        }
-
-        /// <summary>
-        /// Get a single chunk in a threadSafe way.
-        /// </summary>
-        /// <param name="position"></param>
-        /// <returns></returns>
-        public GeneratedChunk GetChunk(IntVector2 position)
-        {
-            GeneratedChunk newChunk = new GeneratedChunk();
-            Generate(new Range2 { Min = position, Max = position + 1 });
-            return GetChunks(position);
+            return chunks[0, 0];
         }
 
         /// <summary>

@@ -42,7 +42,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             //1) Request Server the chunk
             //2) If chunk is a "pure" chunk on the server, then generate it localy.
             //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
-
             if (Async)
             {
                 chunk.ThreadStatus = ThreadStatus.Locked;
@@ -65,7 +64,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         //Create the landscape for the chunk
         private void createLandScape_threaded(VisualChunk chunk)
         {
-            GeneratedChunk generatedChunk = _worldGenerator.GetChunks(chunk.ChunkPosition);
+            GeneratedChunk generatedChunk = _worldGenerator.GetChunk(chunk.ChunkPosition);
             chunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
             chunk.State = ChunkState.LandscapeLightsPropagated;
             chunk.ThreadStatus = ThreadStatus.Idle;
