@@ -11,6 +11,8 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
     //Survey gets you the number of blocks of selected cubeid under the selection cube. 
     public class Survey : Tool
     {
+
+
         public override ToolImpact Use(TerraCubeWithPosition pickedBlock, Location3<int>? newCubePlace, TerraCube terraCube1)
         {
             int count = 0;
@@ -31,6 +33,16 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
                */
             return new ToolImpact(String.Format("Survey is broken, should run on server, but message system works"));
                
+        }
+
+        public override EntityClassId ClassId
+        {
+            get { return EntityClassId.Survey; }
+        }
+
+        public override int MaxStackSize
+        {
+            get { return 1; }
         }
     }
 }

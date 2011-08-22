@@ -8,7 +8,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     /// <summary>
     /// Represents any lootable voxelEntity, tool, weapon, armor, collectible
     /// </summary>
-    public class Item : VoxelEntity
+    public abstract class Item : VoxelEntity
     {
   
         //FIXME icon stuff should probably not be here , rendering the voxel model as a 2d icon would be better,
@@ -27,12 +27,15 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// </summary>
         public string UniqueName { get; set; }
 
-        public InventorySlot AllowedSlots { get; set;}
+        public EquipmentSlot AllowedSlots { get; set;}
 
-
+        /// <summary>
+        /// Gets maximum allowed number of items in one stack
+        /// </summary>
+        public abstract int MaxStackSize { get; }
         
            
-           // we need to override save and load!
+        // we need to override save and load!
 
         public override void Load(System.IO.BinaryReader reader)
         {
