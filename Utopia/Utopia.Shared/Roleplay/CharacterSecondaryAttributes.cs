@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel;
+using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Roleplay
 {
     /// <summary>
     /// Secondary character's attributes in [0; 255] range
     /// </summary>
-    public class CharacterSecondaryAttributes
+    public class CharacterSecondaryAttributes : IBinaryStorable
     {
         /// <summary>
         /// Defines a bow attack skill
@@ -95,6 +96,36 @@ namespace Utopia.Shared.Roleplay
             attr.Sneak = (byte)(3 * primary.Agility + primary.Luck);
 
             return attr;
+        }
+
+        public void Save(System.IO.BinaryWriter writer)
+        {
+            writer.Write(Bows);
+            writer.Write(Swords);
+            writer.Write(Mine);
+            writer.Write(Barter);
+            writer.Write(Doctor);
+            writer.Write(Repair);
+            writer.Write(Science);
+            writer.Write(Speech);
+            writer.Write(Steal);
+            writer.Write(Cook);
+            writer.Write(Sneak);
+        }
+
+        public void Load(System.IO.BinaryReader reader)
+        {
+            Bows = reader.ReadByte();
+            Swords = reader.ReadByte();
+            Mine = reader.ReadByte();
+            Barter = reader.ReadByte();
+            Doctor = reader.ReadByte();
+            Repair = reader.ReadByte();
+            Science = reader.ReadByte();
+            Speech = reader.ReadByte();
+            Steal = reader.ReadByte();
+            Cook = reader.ReadByte();
+            Sneak = reader.ReadByte();
         }
     }
 }

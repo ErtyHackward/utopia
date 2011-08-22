@@ -20,5 +20,15 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
             RemoveableCubeIds.Add(CubeId.Grass);
         }
 
+
+        public override EntityClassId ClassId
+        {
+            get { return EntityClassId.Shovel; }
+        }
+
+        public override int MaxStackSize
+        {
+            get { return 1; }
+        }
     }
 }

@@ -89,7 +89,6 @@
   <ItemGroup>
     <Compile Include="GameStates\GameStatesManager.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
-    <Compile Include="GUI\D3D\Inventory.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControlRenderer.cs" />
     <Compile Include="GUI\D3D\Inventory\ContainerControl.cs" />
@@ -216,6 +215,7 @@
     <Compile Include="Planets\Terran\Lighting\TerraLighting.cs" />
     <Compile Include="Planets\Terran\Shadow.cs" />
     <Compile Include="Planets\Terran\World\LandscapePopulation\LiquidPopulate.cs" />
+    <Compile Include="GUI\D3D\Inventory\Inventory.cs" />
     <Compile Include="Universes\Universe.cs" />
     <Compile Include="USM\SQLite\DBHelper.cs" />
     <Compile Include="USM\USMGet.cs" />
@@ -239,8 +239,18 @@
     <Compile Include="Planets\Weather\WeatherManager.cs" />
     <Compile Include="UtopiaRender.debug.cs" />
     <Compile Include="UtopiaRender.Bind.cs" />
+    <Compile Include="Worlds\Chunks\ChunkLandscape\ILandscapeManager.cs" />
+    <Compile Include="Worlds\Chunks\ChunkLandscape\LandscapeManager.cs" />
+    <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
+    <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
+    <Compile Include="Worlds\Chunks\ChunkWrapper\WorldChunksWrapper.cs" />
+    <Compile Include="Worlds\Chunks\Enums\CubesFaces.cs" />
+    <Compile Include="Worlds\Chunks\Enums\enuCubeFamilly.cs" />
+    <Compile Include="Worlds\Chunks\Enums\enuLiquidType.cs" />
     <Compile Include="Worlds\Chunks\VisualChunk.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.Draw.cs" />
+    <Compile Include="Worlds\Chunks\WorldChunks.Update.cs" />
+    <Compile Include="Worlds\Cubes\VisualCubeProfile.cs" />
     <Compile Include="Worlds\GameClocks\Clock.cs" />
     <Compile Include="Worlds\GameClocks\IClock.cs" />
     <Compile Include="Worlds\GameClocks\RealTimeClock.cs" />
@@ -331,6 +341,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Space\" />
+    <Folder Include="Worlds\Chunks\ChunkLighting\" />
     <Folder Include="Worlds\Entities\" />
   </ItemGroup>
   <ItemGroup>

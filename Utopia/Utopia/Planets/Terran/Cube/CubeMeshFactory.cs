@@ -9,6 +9,7 @@ using SharpDX;
 using Utopia.Planets.Terran.Flooding;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
+using Utopia.Worlds.Chunks.Enums;
 
 namespace Utopia.Planets.Terran.Cube
 {

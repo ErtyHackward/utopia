@@ -17,6 +17,7 @@ using SharpDX.Direct3D;
 using Utopia.Shared.Structs;
 using S33M3Engines;
 using S33M3Engines.Cameras;
+using Utopia.Shared.Chunks;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -52,9 +53,9 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _visibleWorldSize = new Location3<int>()
             {
-                X = worldParam.ChunkSize.X * worldParam.WorldSize.X,
-                Y = worldParam.ChunkSize.Y,
-                Z = worldParam.ChunkSize.Z * worldParam.WorldSize.Z,
+                X = AbstractChunk.ChunkSize.X * worldParam.WorldSize.X,
+                Y = AbstractChunk.ChunkSize.Y,
+                Z = AbstractChunk.ChunkSize.Z * worldParam.WorldSize.Z,
             };
         }
 

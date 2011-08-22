@@ -12,6 +12,7 @@
         Shovel = 3,
         Hoe = 4,
         Axe = 5,
+        Survey = 6,
 
         // static
         Chest = 1000,

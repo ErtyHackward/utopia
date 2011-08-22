@@ -18,7 +18,7 @@ namespace Utopia.GUI.D3D.Inventory
 
         public bool IsLink { get; set; }
 
-        public InventorySlot InventorySlot { get; set; }
+        public EquipmentSlot InventorySlot { get; set; }
 
         public bool Highlight { get; set; } // to render as the hasfocus without really giving focus
 
@@ -27,7 +27,7 @@ namespace Utopia.GUI.D3D.Inventory
         {
             Item = item;
             //Text = item.name;
-            InventorySlot = InventorySlot.Bags;//no need for a toolbar slot, all items are accepted
+            InventorySlot = EquipmentSlot.Bags;//no need for a toolbar slot, all items are accepted
         }
 
         protected override void OnMouseEntered()

@@ -25,6 +25,18 @@ namespace Utopia.Worlds.Chunks
         public ShaderResourceView _terra_View;
         #endregion
 
+        #region public variables
+        #endregion
+
+        #region Public methods
+
+        public void Draw()
+        {
+
+        }
+        #endregion
+
+        #region Private methods
         private void InitDrawComponents()
         {
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, out _terra_View);
@@ -45,20 +57,9 @@ namespace Utopia.Worlds.Chunks
             _liquidEffect.Dispose();
             _terraEffect.Dispose();
         }
+        #endregion
+        
 
-        public void Draw()
-        {
-            throw new NotImplementedException();
-        }
 
-        public void Update(ref GameTime TimeSpend)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
