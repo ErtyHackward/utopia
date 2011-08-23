@@ -11,6 +11,9 @@ using Amib.Threading;
 using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using S33M3Engines.Buffers;
+using S33M3Engines;
+using SharpDX.Direct3D;
+using SharpDX.Direct3D11;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -22,6 +25,10 @@ namespace Utopia.Worlds.Chunks
         #region Private variables
         private WorldChunks _world;
         private Range<int> _cubeRange;
+        private D3DEngine _d3dEngine;
+
+        private object Lock_DrawChunksSolidFaces = new object();       //Multithread Locker
+        private object Lock_DrawChunksSeeThrough1Faces = new object(); //Multithread Locker
         #endregion
 
         #region Public properties/Variable
@@ -51,8 +58,7 @@ namespace Utopia.Worlds.Chunks
         public Matrix World;                                  // The chunk World matrix ==> Not a property, to be sure it will be direct variables acces !!
         public BoundingBox ChunkWorldBoundingBox;             // The chunk World BoundingBox ==> Not a property, to be sure it will be direct variables acces !!
 
-        public object Lock_DrawChunksSolidFaces = new object();       //Multithread Locker
-        public object Lock_DrawChunksSeeThrough1Faces = new object(); //Multithread Locker
+        public Location2<int> LightPropagateBorderOffset;
 
         public Range<int> CubeRange
         {
@@ -65,15 +71,17 @@ namespace Utopia.Worlds.Chunks
         }
         #endregion
 
-        public VisualChunk(WorldChunks world, ref Range<int> cubeRange, SingleArrayChunkContainer singleArrayContainer)
+        public VisualChunk(D3DEngine d3dEngine, WorldChunks world, ref Range<int> cubeRange, SingleArrayChunkContainer singleArrayContainer)
             : base(new SingleArrayDataProvider(singleArrayContainer))
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 
+            _d3dEngine = d3dEngine;
             _world = world;
             CubeRange = cubeRange;
             State = ChunkState.Empty;
             Ready2Draw = false;
+            LightPropagateBorderOffset = new Location2<int>(0, 0);
         }
 
         #region Public methods
@@ -104,6 +112,59 @@ namespace Utopia.Worlds.Chunks
             SolidCubeIndices = new List<ushort>();
             LiquidCubeVertices = new List<VertexCubeLiquid>();
             LiquidCubeIndices = new List<ushort>();
+        }
+
+        public void SendCubeMeshesToBuffers()
+        {
+            SendSolidCubeMeshToGraphicCard();
+            State = ChunkState.DisplayInSyncWithMeshes;
+            Ready2Draw = true;
+        }
+
+        //Solid Cube
+        //Create the VBuffer + IBuffer from the List, then clear the list
+        //The Buffers are pushed to the graphic card. (SetData());
+        private void SendSolidCubeMeshToGraphicCard()
+        {
+            lock (Lock_DrawChunksSolidFaces)
+            {
+                if (SolidCubeVertices.Count == 0)
+                {
+                    if (SolidCubeVB != null) SolidCubeVB.Dispose();
+                    SolidCubeVB = null;
+                    return;
+                }
+
+                if (SolidCubeVB == null)
+                {
+                    SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_d3dEngine, SolidCubeVertices.Count, VertexCubeSolid.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Default, 10);
+                }
+                SolidCubeVB.SetData(SolidCubeVertices.ToArray());
+                SolidCubeVertices.Clear();
+
+                if (SolidCubeIB == null)
+                {
+                    SolidCubeIB = new IndexBuffer<ushort>(_d3dEngine, SolidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt);
+                }
+                SolidCubeIB.SetData(SolidCubeIndices.ToArray());
+                SolidCubeIndices.Clear();
+
+                CubeVerticeDico.Clear();
+            }
+        }
+
+        //Ask the Graphical card to Draw the solid faces
+        public void DrawSolidFaces()
+        {
+            lock (Lock_DrawChunksSolidFaces)
+            {
+                if (SolidCubeVB != null)
+                {
+                    SolidCubeVB.SetToDevice(0);
+                    SolidCubeIB.SetToDevice(0);
+                    _d3dEngine.Context.DrawIndexed(SolidCubeIB.IndicesCount, 0, 0);
+                }
+            }
         }
 
         #endregion

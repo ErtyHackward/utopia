@@ -241,8 +241,11 @@
     <Compile Include="UtopiaRender.Bind.cs" />
     <Compile Include="Worlds\Chunks\ChunkLandscape\ILandscapeManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkLandscape\LandscapeManager.cs" />
+    <Compile Include="Worlds\Chunks\ChunkLighting\ILightingManager.cs" />
+    <Compile Include="Worlds\Chunks\ChunkLighting\LightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
+    <Compile Include="Worlds\Chunks\ChunkWrapper\IChunksWrapper.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\WorldChunksWrapper.cs" />
     <Compile Include="Worlds\Chunks\Enums\CubesFaces.cs" />
     <Compile Include="Worlds\Chunks\Enums\enuCubeFamilly.cs" />
@@ -253,6 +256,8 @@
     <Compile Include="Worlds\Cubes\SolidCubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\ICubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\VisualCubeProfile.cs" />
+    <Compile Include="Worlds\Entities\EntityManager.cs" />
+    <Compile Include="Worlds\Entities\IEntityManager.cs" />
     <Compile Include="Worlds\GameClocks\Clock.cs" />
     <Compile Include="Worlds\GameClocks\IClock.cs" />
     <Compile Include="Worlds\GameClocks\RealTimeClock.cs" />
@@ -343,8 +348,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Space\" />
-    <Folder Include="Worlds\Chunks\ChunkLighting\" />
-    <Folder Include="Worlds\Entities\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

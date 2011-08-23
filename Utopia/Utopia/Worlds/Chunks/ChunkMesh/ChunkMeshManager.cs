@@ -16,6 +16,8 @@ using S33M3Engines.Struct.Vertex;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using S33M3Engines;
+using Utopia.Shared.Structs.Landscape;
+using Amib.Threading;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -23,22 +25,20 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
     {
         #region private variables
         private CreateChunkMeshDelegate _createChunkMeshDelegate;
-        private delegate void CreateChunkMeshDelegate(VisualChunk chunk);
+        private delegate object CreateChunkMeshDelegate(object chunk);
         private WorldParameters _worldParameters;
         private Location3<int> _visibleWorldSize;
         private SingleArrayChunkContainer _cubesHolder;
-        private D3DEngine _d3dEngine;
         #endregion
 
         #region public variables/properties
         public WorldChunks WorldChunks { get; set; }
         #endregion
 
-        public ChunkMeshManager(D3DEngine d3dEngine, WorldParameters worldParameters, SingleArrayChunkContainer cubesHolder)
+        public ChunkMeshManager(WorldParameters worldParameters, SingleArrayChunkContainer cubesHolder)
         {
             _worldParameters = worldParameters;
             _cubesHolder = cubesHolder;
-            _d3dEngine = d3dEngine;
             Intialize();
         }
 
@@ -47,54 +47,14 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         {
             if (Async)
             {
-                chunk.ThreadStatus = ThreadStatus.Locked;
-                Task.Factory.StartNew(() => createChunkMesh_threaded(chunk));
+                WorkQueue.DoWorkInThread(new WorkItemCallback(createChunkMesh_threaded), chunk, chunk as IThreadStatus, chunk.ThreadPriority);
             }
             else
             {
                 _createChunkMeshDelegate.Invoke(chunk);
             }
         }
-
-
-        public void SendCubeMeshesToBuffers(VisualChunk chunk)
-        {
-            SendSolidCubeMeshToGraphicCard(chunk);
-            chunk.State = ChunkState.DisplayInSyncWithMeshes;
-        }
-
-        //Solid Cube
-        //Create the VBuffer + IBuffer from the List, then clear the list
-        //The Buffers are pushed to the graphic card. (SetData());
-
-        private void SendSolidCubeMeshToGraphicCard(VisualChunk chunk)
-        {
-            lock (chunk.Lock_DrawChunksSolidFaces)
-            {
-                if (chunk.SolidCubeVertices.Count == 0)
-                {
-                    if (chunk.SolidCubeVB != null) chunk.SolidCubeVB.Dispose();
-                    chunk.SolidCubeVB = null;
-                    return;
-                }
-
-                if (chunk.SolidCubeVB == null)
-                {
-                    chunk.SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_d3dEngine, chunk.SolidCubeVertices.Count, VertexCubeSolid.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Default, 10);
-                }
-                chunk.SolidCubeVB.SetData(chunk.SolidCubeVertices.ToArray());
-                chunk.SolidCubeVertices.Clear();
-
-                if (chunk.SolidCubeIB == null)
-                {
-                    chunk.SolidCubeIB = new IndexBuffer<ushort>(_d3dEngine, chunk.SolidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt);
-                }
-                chunk.SolidCubeIB.SetData(chunk.SolidCubeIndices.ToArray());
-                chunk.SolidCubeIndices.Clear();
-
-                chunk.CubeVerticeDico.Clear();
-            }
-        }
+        
         #endregion
 
         #region Private methods
@@ -110,12 +70,15 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         }
 
         //Create the landscape for the chunk
-        private void createChunkMesh_threaded(VisualChunk chunk)
+        private object createChunkMesh_threaded(object chunk)
         {
-            CreateCubeMeshes(chunk);
+            VisualChunk visualChunk = (VisualChunk)chunk;
+            CreateCubeMeshes(visualChunk);
 
-            chunk.State = ChunkState.MeshesChanged;
-            chunk.ThreadStatus = ThreadStatus.Idle;
+            visualChunk.State = ChunkState.MeshesChanged;
+            visualChunk.ThreadStatus = ThreadStatus.Idle;
+
+            return null;
         }
 
         //Creation of the cubes meshes, Face type by face type
@@ -130,15 +93,11 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             GenerateCubesFace(CubeFace.Top, chunk);
             GenerateCubesFace(CubeFace.Left, chunk);
             GenerateCubesFace(CubeFace.Right, chunk);
-
-            //Update Graphic Buffers inside graphical card
-            SendCubeMeshesToBuffers(chunk);
-            chunk.Ready2Draw = true;
         }
 
         private void GenerateCubesFace(CubeFace cubeFace, VisualChunk chunk)
         {
-            byte currentCube, neightborCube;
+            TerraCube currentCube, neightborCube;
             VisualCubeProfile cubeProfile;
 
             ByteVector4 cubePosiInChunk;
@@ -154,12 +113,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                 {
                     ZWorld = (Z + chunk.CubeRange.Min.Z);
 
-                    //by moving it there an reordering the loops, we avoid doing this operations 128 times for each chunk
                     cubeIndex = _cubesHolder.Index(XWorld, 0, ZWorld);
 
                     for (int Y = 0; Y < chunk.CubeRange.Max.Y; Y++)
                     {
-
                         //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
                         YWorld = (Y + chunk.CubeRange.Min.Y);
 
@@ -173,12 +130,12 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //For speed access, I use an array with only one dimension, thus the table index must be computed from the X, Y, Z position of the terracube.
                         //Computing myself this index, is faster than using an array defined as [x,y,z]
                         // ? Am I an Air Cube ? ==> Default Value, not needed to render !
-                        if (_cubesHolder.Cubes[cubeIndex] == CubeId.Air || _cubesHolder.Cubes[cubeIndex] == CubeId.Error) continue;
+                        if (_cubesHolder.Cubes[cubeIndex].Id == CubeId.Air || _cubesHolder.Cubes[cubeIndex].Id == CubeId.Error) continue;
 
                         //Terra Cube contain only the data that are variables, and could be different between 2 cube.
                         currentCube = _cubesHolder.Cubes[cubeIndex];
                         //The Cube profile contain the value that are fixe for a block type.
-                        cubeProfile = VisualCubeProfile.CubesProfile[currentCube];
+                        cubeProfile = VisualCubeProfile.CubesProfile[currentCube.Id];
 
                         cubePosiInWorld = new Location3<int>(XWorld, YWorld, ZWorld);
                         cubePosiInChunk = new ByteVector4(X, Y, Z);
@@ -192,7 +149,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                             case CubeFace.Back:
                                 if (chunk.BorderChunk && (ZWorld - 1 < WorldChunks.WorldRange.Min.Z)) continue;
                                 neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
-                             
                                 break;
                             case CubeFace.Front:
                                 if (chunk.BorderChunk && (ZWorld + 1 >= WorldChunks.WorldRange.Max.Z)) continue;
@@ -221,18 +177,23 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //Custom test to see if the face can be generated (Between cube checks)
                         //_landscape.FastIndex is another method of computing index of the big table but faster !
                         //The constraint is that it only compute index of a cube neightbor
+                        //int i = neightborCubeIndex;
+                        //if (i >= _cubesHolder.Cubes.Length) i -= _cubesHolder.Cubes.Length;
+                        //if (i < 0) i += _cubesHolder.Cubes.Length;
+                        neightborCubeIndex = _cubesHolder.ValidateIndex(neightborCubeIndex);
+
                         neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
 
                         //It is using a delegate in order to give the possibility for Plugging to replace the fonction call.
                         //Be default the fonction called here is : TerraCube.FaceGenerationCheck or TerraCube.WaterFaceGenerationCheck
-                        if (!cubeProfile.CanGenerateCubeFace(currentCube, ref cubePosiInWorld, cubeFace, neightborCube)) continue;
+                        if (!cubeProfile.CanGenerateCubeFace(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube)) continue;
 
                         switch (cubeProfile.CubeFamilly)
                         {
                             case enuCubeFamilly.Solid:
                                 //Other delegate.
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;
-                                cubeProfile.CreateSolidCubeMesh(currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk);
+                                cubeProfile.CreateSolidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk);
                                 break;
                             case enuCubeFamilly.Liquid:
                                 //Default linked to : CubeMeshFactory.GenLiquidCubeFace;

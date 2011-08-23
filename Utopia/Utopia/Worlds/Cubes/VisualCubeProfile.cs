@@ -7,6 +7,7 @@ using Utopia.Worlds.Chunks.Enums;
 using Utopia.Shared.Structs;
 using S33M3Engines.Struct.Vertex;
 using Utopia.Worlds.Chunks;
+using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -74,10 +75,10 @@ namespace Utopia.Worlds.Cubes
         }
 
         //Default Face Generation Checks !
-        public static bool FaceGenerationCheck(byte cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, byte neightboorFaceCube)
+        public static bool FaceGenerationCheck(ref TerraCube cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube)
         {
             //By default I don't need to trace the cubeFace of my cube if the face neightboor cube is blocking light ! (Not see-through)
-            if (VisualCubeProfile.CubesProfile[neightboorFaceCube].IsBlockingLight) return false;
+            if (VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsBlockingLight) return false;
             //Else draw the face
             return true;
         }
@@ -101,13 +102,13 @@ namespace Utopia.Worlds.Cubes
         //    return false;
         //}
 
-        public delegate bool CanGenerateCubeFaceDelegate(byte cube, ref Location3<int> cubelocation, CubeFace cubeFace, byte neightboorFaceCube);
+        public delegate bool CanGenerateCubeFaceDelegate(ref TerraCube cube, ref Location3<int> cubelocation, CubeFace cubeFace, ref TerraCube neightboorFaceCube);
         public CanGenerateCubeFaceDelegate CanGenerateCubeFace;
 
-        public delegate void GenerateSolidMesh(byte cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk);
+        public delegate void GenerateSolidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk);
         public GenerateSolidMesh CreateSolidCubeMesh;
 
-        public delegate void GenerateLiquidMesh(byte cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk);
+        public delegate void GenerateLiquidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk);
         public GenerateLiquidMesh CreateLiquidCubeMesh;
 
         public string Name;

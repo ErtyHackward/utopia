@@ -13,6 +13,8 @@ namespace Utopia.Shared.Chunks
     /// </summary>
     public class SingleArrayChunkContainer
     {
+        private int _bigArraySize;
+
         /// <summary>
         /// Occurs when block data was changed
         /// </summary>
@@ -21,8 +23,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Contains the array of visible cubes
         /// </summary>
-        public TerraCube[] CubesMetaData { get; set;}
-        public byte[] Cubes { get; set; }
+        public TerraCube[] Cubes { get; set;}
 
         /// <summary>
         /// Contains the value used to advance inside the array from a specific Index.
@@ -54,7 +55,26 @@ namespace Utopia.Shared.Chunks
             MoveY = 1;
 
             //Initialize the Big Array
-            Cubes = new byte[_visibleWorldSize.X * _visibleWorldSize.Y * _visibleWorldSize.Z];
+            Cubes = new TerraCube[_visibleWorldSize.X * _visibleWorldSize.Y * _visibleWorldSize.Z];
+            _bigArraySize = Cubes.Length;
+        }
+
+        /// <summary>
+        /// Get the Array Index of a cube
+        /// </summary>
+        /// <param name="X">world X position</param>
+        /// <param name="Y">world Y position</param>
+        /// <param name="Z">world Z position</param>
+        /// <returns></returns>
+        public int Index(ref Location3<int> cubePosition)
+        {
+            int x, z;
+            x = cubePosition.X % _visibleWorldSize.X;
+            if (x < 0) x += _visibleWorldSize.X;
+            z = cubePosition.Z % _visibleWorldSize.Z;
+            if (z < 0) z += _visibleWorldSize.Z;
+
+            return x * MoveX + z * MoveZ + cubePosition.Y;
         }
 
         /// <summary>
@@ -75,22 +95,64 @@ namespace Utopia.Shared.Chunks
             return x * MoveX + z * MoveZ + Y;
         }
 
-        public void SetCube(ref Location3<int> cubeCoordinates, byte cubeType, ref TerraCube cubeMetaData)
+        /// <summary>
+        /// Get the Array Index of a cube
+        /// </summary>
+        /// <param name="X">world X position</param>
+        /// <param name="Y">world Y position</param>
+        /// <param name="Z">world Z position</param>
+        /// <returns></returns>
+        public int IndexMoveValidated(int index, int Modification1, int Modification2)
         {
-            int index = Index(cubeCoordinates.X, cubeCoordinates.Y, cubeCoordinates.Z);
-            Cubes[index] = cubeType;
-            CubesMetaData[index] = cubeMetaData;
-
-            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { cubeCoordinates }, Bytes = new[] { cubeType } });
+            index = ValidateIndex(index + Modification1);
+            index = ValidateIndex(index + Modification2);
+            return index;
         }
 
-        public void SetCube(int X, int Y, int Z, byte cubeType, ref TerraCube cubeMetaData)
+        /// <summary>
+        /// Get the Array Index of a cube
+        /// </summary>
+        /// <param name="X">world X position</param>
+        /// <param name="Y">world Y position</param>
+        /// <param name="Z">world Z position</param>
+        /// <returns></returns>
+        public int IndexMoveValidated(int index, int Modification1, int Modification2, int Modification3)
+        {
+            index = ValidateIndex(index + Modification1);
+            index = ValidateIndex(index + Modification2);
+            index = ValidateIndex(index + Modification3);
+            return index;
+        }
+
+        public int ValidateIndex(int index)
+        {
+            //int i = neightborCubeIndex;
+            //if (i >= _cubesHolder.Cubes.Length) i -= _cubesHolder.Cubes.Length;
+            //if (i < 0) i += _cubesHolder.Cubes.Length;
+
+            if (index < 0) index += _bigArraySize;
+            else
+            {
+                if (index >= _bigArraySize) index -= _bigArraySize;
+            }
+
+            return index;
+        }
+
+        public void SetCube(ref Location3<int> cubeCoordinates, ref TerraCube cube)
+        {
+            int index = Index(cubeCoordinates.X, cubeCoordinates.Y, cubeCoordinates.Z);
+            Cubes[index] = cube;
+
+            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { cubeCoordinates }, Bytes = new[] { cube.Id } });
+        }
+
+        public void SetCube(int X, int Y, int Z, ref TerraCube cube)
         {
             int index = Index(X, Y, Z);
-            Cubes[index] = cubeType;
-            CubesMetaData[index] = cubeMetaData;
+            Cubes[index] = cube;
 
-            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Location3<int> { X = X, Y = Y, Z = Z} }, Bytes = new[] { cubeType } });
+            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Location3<int> { X = X, Y = Y, Z = Z } }, Bytes = new[] { cube.Id } });
         }
 
     }

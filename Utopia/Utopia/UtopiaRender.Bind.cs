@@ -24,6 +24,8 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.World.Processors;
 using Utopia.Worlds.Chunks.ChunkMesh;
 using Utopia.Worlds.Cubes;
+using Utopia.Worlds.Chunks.ChunkWrapper;
+using Utopia.Worlds.Chunks.ChunkLighting;
 
 namespace Utopia
 {
@@ -41,6 +43,7 @@ namespace Utopia
             iocContainer.Bind<WorldRenderer>().ToSelf().InSingletonScope();
             iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();
 
+
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().Named("Stars");
             iocContainer.Bind<IDrawableComponent>().To<Clouds>().Named("Clouds");
 
@@ -52,8 +55,12 @@ namespace Utopia
             iocContainer.Bind<IWorldProcessorConfig>().To<DummyWorldConfigurationConfig>().InSingletonScope().Named("DummyWorld");
             iocContainer.Bind<IWorldProcessor>().To<FlatWorldProcessor>().Named("FlatWorldProcessor");
 
+            iocContainer.Bind<ILightingManager>().To<LightingManager>().InSingletonScope();
+
             //Chunk Mesh creator
             iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InSingletonScope();
+
+            iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();
 
             iocContainer.Bind<ISkyDome>().To<RegularSkyDome>();
             iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();
