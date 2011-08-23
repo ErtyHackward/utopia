@@ -68,7 +68,7 @@ namespace Utopia.GUI.D3D
 
             //TODO this one and the components dependency should surely be moved in a separate debug only component
             Utopia.GUI.D3D.DebugUI.DebugUI debugUI = new Utopia.GUI.D3D.DebugUI.DebugUI(_components);
-            _screen.Desktop.Children.Add(debugUI);
+           // _screen.Desktop.Children.Add(debugUI);
 
             _toolbarUI = new ToolBarUI(_inventory);
             _screen.Desktop.Children.Add(_toolbarUI);

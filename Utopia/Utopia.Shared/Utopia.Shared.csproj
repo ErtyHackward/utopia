@@ -92,8 +92,9 @@
     <Compile Include="Chunks\Entities\Concrete\VoxelEntity.cs" />
     <Compile Include="Chunks\Entities\IContainerEntity.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tool.cs" />
-    <Compile Include="Chunks\Entities\Inventory\Tools\BlockAdder.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tools\Wally.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\BlockRemover.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tools\BlockAdder.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Shovel.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Pickaxe.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Survey.cs" />

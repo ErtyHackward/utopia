@@ -79,9 +79,9 @@ namespace Utopia.Entities.Living
             //ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing;
             //ring.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
-            //BlockAdder adder = new BlockAdder();
-            //adder.AllowedSlots = InventorySlot.Bags;
-            //Inventory.Toolbar.Add(adder);
+            BlockAdder adder = new Wally();
+            adder.AllowedSlots = EquipmentSlot.Bags;
+            Inventory.Toolbar.Add(adder);
             ////adder.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
             //Inventory.LeftTool = remover;
@@ -98,6 +98,9 @@ namespace Utopia.Entities.Living
             Shovel shovel = new Shovel();
             shovel.AllowedSlots = EquipmentSlot.Bags;
             Inventory.Toolbar.Add(shovel);
+
+            Inventory.LeftTool = pickaxe;
+            Inventory.RightTool = adder;
         }
 
         #region private methods
