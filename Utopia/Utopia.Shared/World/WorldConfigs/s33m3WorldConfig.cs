@@ -5,9 +5,9 @@ using System.Text;
 using Utopia.Shared.Interfaces;
 using Ninject;
 
-namespace Utopia.Shared.World.FlatWorld
+namespace Utopia.Shared.World.WorldConfigs
 {
-    public class DummyWorldConfigurationConfig : IWorldProcessorConfig
+    public class s33m3WorldConfig : IWorldProcessorConfig
     {
         private IWorldProcessor[] _worldProcessors;
 
@@ -16,10 +16,12 @@ namespace Utopia.Shared.World.FlatWorld
             get { return _worldProcessors; }
         }
 
-        public DummyWorldConfigurationConfig([Named("FlatWorldProcessor")] IWorldProcessor FlatWorldProcessor)
+        public s33m3WorldConfig([Named("s33m3WorldProcessor")] IWorldProcessor MainWorldProcessor,
+                                [Named("LandscapeLayersProcessor")] IWorldProcessor LandscapeLayersProcessor)
         {
-            _worldProcessors = new IWorldProcessor[1];
-            _worldProcessors[0] = FlatWorldProcessor;
+            _worldProcessors = new IWorldProcessor[2];
+            _worldProcessors[0] = MainWorldProcessor;
+            _worldProcessors[1] = LandscapeLayersProcessor;
         }
 
         public void Dispose()

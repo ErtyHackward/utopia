@@ -197,7 +197,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 break;
                             case enuCubeFamilly.Liquid:
                                 //Default linked to : CubeMeshFactory.GenLiquidCubeFace;
-                                //cubeProfile.CreateLiquidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, ref _liquidCubeVertices, ref _liquidCubeIndices, ref _solidCubeVerticeDico);
+                                cubeProfile.CreateLiquidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk);
                                 break;
                             case enuCubeFamilly.Other:
                                 break;
