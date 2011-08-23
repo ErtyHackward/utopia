@@ -250,23 +250,23 @@ namespace Utopia
 
             if (_inputHandler.PrevKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) && !_inputHandler.PrevKeyboardState.IsKeyDown(Keys.LControlKey) && _inputHandler.CurKeyboardState.IsKeyUp(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) && !_inputHandler.CurKeyboardState.IsKeyDown(Keys.LControlKey))
             {
-                DebugActif = !DebugActif;
+                _gameStateManagers.DebugActif = !_gameStateManagers.DebugActif;
                 if (!DebugActif)
                 {
-                    DebugDisplay = 0;
+                    _gameStateManagers.DebugDisplay = 0;
                 }
             }
             if (_inputHandler.IsKeyPressed(Keys.Up))
             {
-                if (!DebugActif) return;
-                DebugDisplay++;
-                if (DebugDisplay > 2) DebugDisplay = 2;
+                if (!_gameStateManagers.DebugActif) return;
+                _gameStateManagers.DebugDisplay++;
+                if (_gameStateManagers.DebugDisplay > 2) _gameStateManagers.DebugDisplay = 2;
             }
             if (_inputHandler.IsKeyPressed(Keys.Down))
             {
-                if (!DebugActif) return;
-                DebugDisplay--;
-                if (DebugDisplay < 0) DebugDisplay = 0;
+                if (!_gameStateManagers.DebugActif) return;
+                _gameStateManagers.DebugDisplay--;
+                if (_gameStateManagers.DebugDisplay < 0) _gameStateManagers.DebugDisplay = 0;
             }
 
             if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.LockMouseCursor))

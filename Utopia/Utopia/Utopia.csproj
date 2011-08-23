@@ -87,6 +87,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\EntityRenderer.cs" />
     <Compile Include="GameStates\GameStatesManager.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControl.cs" />
@@ -257,8 +258,6 @@
     <Compile Include="Worlds\Cubes\SolidCubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\ICubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\VisualCubeProfile.cs" />
-    <Compile Include="Worlds\Entities\EntityManager.cs" />
-    <Compile Include="Worlds\Entities\IEntityManager.cs" />
     <Compile Include="Worlds\GameClocks\Clock.cs" />
     <Compile Include="Worlds\GameClocks\IClock.cs" />
     <Compile Include="Worlds\GameClocks\RealTimeClock.cs" />

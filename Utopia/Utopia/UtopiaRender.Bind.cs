@@ -26,6 +26,7 @@ using Utopia.Worlds.Cubes;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Shared.World.WorldConfigs;
+using Utopia.Entities;
 
 namespace Utopia
 {
@@ -43,6 +44,7 @@ namespace Utopia
             iocContainer.Bind<WorldRenderer>().ToSelf().InSingletonScope();
             iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();
 
+            iocContainer.Bind<EntityRenderer>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().Named("Stars");
             iocContainer.Bind<IDrawableComponent>().To<Clouds>().Named("Clouds");
