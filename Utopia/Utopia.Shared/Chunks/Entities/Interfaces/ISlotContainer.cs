@@ -1,24 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 
-namespace Utopia.Shared.Chunks.Entities
+namespace Utopia.Shared.Chunks.Entities.Interfaces
 {
     /// <summary>
     /// Describes a container for entities
     /// </summary>
-    public interface IEntityContainer : IEnumerable<ContainedSlot>
+    public interface ISlotContainer<T> : IEnumerable<T>
     {
         /// <summary>
         /// Occurs when the item was taken from the container
         /// </summary>
-        event EventHandler<EntityContainerEventArgs> ItemTaken;
+        event EventHandler<EntityContainerEventArgs<T>> ItemTaken;
 
         /// <summary>
         /// Occurs when the item was put into the container
         /// </summary>
-        event EventHandler<EntityContainerEventArgs> ItemPut;
+        event EventHandler<EntityContainerEventArgs<T>> ItemPut;
 
         /// <summary>
         /// Gets maximum container capacity
@@ -35,19 +34,19 @@ namespace Utopia.Shared.Chunks.Entities
         /// </summary>
         /// <param name="slot"></param>
         /// <returns>True if succeed otherwise false</returns>
-        bool PutItem(ContainedSlot slot);
+        bool PutItem(T slot);
 
         /// <summary>
         /// Tries to get item from slot
         /// </summary>
         /// <param name="slot"></param>
         /// <returns>True if succeed otherwise false</returns>
-        bool GetItem(ContainedSlot slot);
+        bool GetItem(T slot);
 
     }
 
-    public class EntityContainerEventArgs : EventArgs
+    public class EntityContainerEventArgs<T> : EventArgs
     {
-        public ContainedSlot Slot { get; set; }
+        public T Slot { get; set; }
     }
 }

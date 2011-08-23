@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
@@ -8,37 +9,49 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     /// <summary>
     /// Represents a base container implementation (this is not an entity)
     /// </summary>
-    public class BaseContainer : IEntityContainer, IBinaryStorable
+    public class SlotContainer<T> : ISlotContainer<T>, IBinaryStorable where T: ContainedSlot, new()
     {
         /// <summary>
         /// Occurs when the item was taken from the container
         /// </summary>
-        public event EventHandler<EntityContainerEventArgs> ItemTaken;
+        public event EventHandler<EntityContainerEventArgs<T>> ItemTaken;
 
-        public void OnItemTaken(EntityContainerEventArgs e)
+        public void OnItemTaken(EntityContainerEventArgs<T> e)
         {
-            EventHandler<EntityContainerEventArgs> handler = ItemTaken;
+            EventHandler<EntityContainerEventArgs<T>> handler = ItemTaken;
             if (handler != null) handler(this, e);
         }
 
         /// <summary>
         /// Occurs when the item was put into the container
         /// </summary>
-        public event EventHandler<EntityContainerEventArgs> ItemPut;
+        public event EventHandler<EntityContainerEventArgs<T>> ItemPut;
 
-        public void OnItemPut(EntityContainerEventArgs e)
+        public void OnItemPut(EntityContainerEventArgs<T> e)
         {
-            EventHandler<EntityContainerEventArgs> handler = ItemPut;
+            EventHandler<EntityContainerEventArgs<T>> handler = ItemPut;
             if (handler != null) handler(this, e);
         }
 
-        private ContainedSlot[,] _items;
+        private T[,] _items;
         private Location2<byte> _gridSize;
         private int _slotsCount;
 
-        public BaseContainer()
+        /// <summary>
+        /// Creates new instance of container with gridSize specified
+        /// </summary>
+        /// <param name="containerGridSize"></param>
+        public SlotContainer(Location2<byte> containerGridSize)
         {
-            GridSize = new Location2<byte>(8, 5);
+            GridSize = containerGridSize;
+        }
+
+        /// <summary>
+        /// Creates new instance of container with GridSize of 8x5 items
+        /// </summary>
+        public SlotContainer() : this(new Location2<byte>(8, 5))
+        {
+            
         }
 
         /// <summary>
@@ -55,7 +68,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             set { 
                 _gridSize = value;
                 //todo: copy of items to new container from old
-                _items = new ContainedSlot[_gridSize.X, _gridSize.Z];
+                _items = new T[_gridSize.X, _gridSize.Z];
             }
         }
 
@@ -90,14 +103,16 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             // load contained slots (slot is count and entity example)
             for (int i = 0; i < _slotsCount; i++)
             {
-                var containedSlot = new ContainedSlot();
+                var containedSlot = new T();
 
                 containedSlot.Load(reader);
                 _items[containedSlot.GridPosition.X, containedSlot.GridPosition.Z] = containedSlot;
             }
         }
 
+// ReSharper disable UnusedParameter.Local
         private void ValidatePosition(Location2<byte> position)
+// ReSharper restore UnusedParameter.Local
         {
             if (position.X < 0 || position.Z < 0 || position.X >= _gridSize.X || position.Z >= _gridSize.Z)
                 throw new ArgumentException("Slot position is unacceptable for this container");
@@ -108,7 +123,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// </summary>
         /// <param name="slot"></param>
         /// <returns>True if succeed otherwise false</returns>
-        public bool PutItem(ContainedSlot slot)
+        public bool PutItem(T slot)
         {
             ValidatePosition(slot.GridPosition);
 
@@ -134,7 +149,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
                 _slotsCount++;
             }
 
-            OnItemPut(new EntityContainerEventArgs { Slot = slot });
+            OnItemPut(new EntityContainerEventArgs<T> { Slot = slot });
             return true;
         }
 
@@ -143,7 +158,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// </summary>
         /// <param name="slot"></param>
         /// <returns>True if succeed otherwise false</returns>
-        public bool GetItem(ContainedSlot slot)
+        public bool GetItem(T slot)
         {
             ValidatePosition(slot.GridPosition);
 
@@ -169,7 +184,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
                 _slotsCount--;
             }
 
-            OnItemTaken(new EntityContainerEventArgs { Slot = slot });
+            OnItemTaken(new EntityContainerEventArgs<T> { Slot = slot });
             return true;
         }
 
@@ -177,7 +192,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// Allows to enumerate slots in the container
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<ContainedSlot> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
             for (int x = 0; x < _gridSize.X; x++)
             {

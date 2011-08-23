@@ -30,5 +30,24 @@ namespace Utopia.Shared.Chunks.Entities
         /// Gets entity that currently picked by character
         /// </summary>
         public uint PickedEntityId { get; set; }
+
+        /// <summary>
+        /// Creates event args from entity state
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="use"></param>
+        /// <returns></returns>
+        public static LivingEntityUseEventArgs FromState(LivingEntityState state, LivingEntityUseType use)
+        {
+            var e = new LivingEntityUseEventArgs();
+
+            e.SpaceVector = state.SpaceVector;
+            e.PickedBlockPosition = state.PickedBlockPosition;
+            e.NewBlockPosition = state.NewBlockPosition;
+            e.PickedEntityId = state.PickedEntityId;
+            e.UseType = use;
+
+            return e;
+        }
     }
 }

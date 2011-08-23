@@ -72,6 +72,13 @@
     <Compile Include="Chunks\ChunkDataProviderBufferChangedEventArgs.cs" />
     <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
     <Compile Include="Chunks\CompressibleChunk.cs" />
+    <Compile Include="Chunks\Entities\Interfaces\ISlotContainer.cs" />
+    <Compile Include="Chunks\Entities\Interfaces\IUsableEntity.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Slot.cs" />
+    <Compile Include="Chunks\Entities\Inventory\ToolbarSlot.cs" />
+    <Compile Include="Chunks\Entities\LivingEntityState.cs" />
+    <Compile Include="Chunks\Entities\PlayerCharacter.cs" />
+    <Compile Include="Chunks\Entities\SpecialCharacterEntity.cs" />
     <Compile Include="Chunks\Entities\Concrete\ContainerEntity.cs" />
     <Compile Include="Chunks\Entities\Concrete\NoEntity.cs" />
     <Compile Include="Chunks\Entities\Entity.cs" />
@@ -80,13 +87,12 @@
     <Compile Include="Chunks\Entities\EntityClassId.cs" />
     <Compile Include="Chunks\Entities\EntityType.cs" />
     <Compile Include="Chunks\Entities\Inventory\Armor.cs" />
-    <Compile Include="Chunks\Entities\Inventory\BaseContainer.cs" />
+    <Compile Include="Chunks\Entities\Inventory\SlotContainer.cs" />
     <Compile Include="Chunks\Entities\Inventory\CharacterEquipment.cs" />
     <Compile Include="Chunks\Entities\Inventory\ContainedSlot.cs" />
-    <Compile Include="Chunks\Entities\Inventory\EquipmentSlot.cs" />
+    <Compile Include="Chunks\Entities\Inventory\EquipmentSlotType.cs" />
     <Compile Include="Chunks\Entities\Inventory\Item.cs" />
     <Compile Include="Chunks\Entities\Concrete\VoxelEntity.cs" />
-    <Compile Include="Chunks\Entities\IContainerEntity.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tool.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\BlockAdder.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\BlockRemover.cs" />
@@ -111,6 +117,7 @@
     <Compile Include="Landscaping\FlatLandscape.cs" />
     <Compile Include="Landscaping\LandscapeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Roleplay\CharacterExperience.cs" />
     <Compile Include="Roleplay\CharacterPrimaryAttributes.cs" />
     <Compile Include="Roleplay\CharacterSecondaryAttributes.cs" />
     <Compile Include="Structs\ByteColor.cs" />
@@ -159,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ChunkHierarchy.cd" />
+    <None Include="EntityObjectModel.cd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
