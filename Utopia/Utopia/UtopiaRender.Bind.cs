@@ -19,13 +19,13 @@ using Utopia.Worlds.Chunks;
 using Utopia.Worlds;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Chunks.ChunkLandscape;
-using Utopia.Shared.World.FlatWorld;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World.Processors;
 using Utopia.Worlds.Chunks.ChunkMesh;
 using Utopia.Worlds.Cubes;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
+using Utopia.Shared.World.WorldConfigs;
 
 namespace Utopia
 {
@@ -48,12 +48,16 @@ namespace Utopia
             iocContainer.Bind<IDrawableComponent>().To<Clouds>().Named("Clouds");
 
             iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InSingletonScope().Named("SolidCubeMeshFactory");
+            iocContainer.Bind<ICubeMeshFactory>().To<LiquidCubeMashFactory>().InSingletonScope().Named("LiquidCubeMeshFactory");
 
             //Chunk Landscape
             iocContainer.Bind<ILandscapeManager>().To<LandscapeManager>().InSingletonScope();
-            iocContainer.Bind<IWorldProcessorConfig>().To<FlatWorldProcessorConfig>().InSingletonScope().Named("FlatWorld");
-            iocContainer.Bind<IWorldProcessorConfig>().To<DummyWorldConfigurationConfig>().InSingletonScope().Named("DummyWorld");
+            iocContainer.Bind<IWorldProcessorConfig>().To<FlatWorldConfig>().InSingletonScope().Named("FlatWorld");
+            iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope().Named("s33m3World");
             iocContainer.Bind<IWorldProcessor>().To<FlatWorldProcessor>().Named("FlatWorldProcessor");
+            iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
+            iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
+            
 
             iocContainer.Bind<ILightingManager>().To<LightingManager>().InSingletonScope();
 

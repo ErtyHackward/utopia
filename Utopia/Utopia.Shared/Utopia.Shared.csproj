@@ -135,9 +135,11 @@
     <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\TerraCubeWithPosition.cs" />
-    <Compile Include="World\FlatWorld\DummyWorldConfigurationConfig.cs" />
-    <Compile Include="World\FlatWorld\FlatWorldProcessorConfig.cs" />
+    <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
+    <Compile Include="World\WorldConfigs\s33m3WorldConfig.cs" />
+    <Compile Include="World\WorldConfigs\FlatWorldConfig.cs" />
     <Compile Include="World\Processors\FlatWorldProcessor.cs" />
+    <Compile Include="World\Processors\s33m3WorldProcessor.cs" />
     <Compile Include="World\WorldGenerationStagesManager.cs" />
     <Compile Include="World\WorldGenerator.cs" />
     <Compile Include="World\WorldParameters.cs" />

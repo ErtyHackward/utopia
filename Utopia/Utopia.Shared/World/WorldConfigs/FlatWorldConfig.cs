@@ -5,12 +5,12 @@ using System.Text;
 using Utopia.Shared.Interfaces;
 using Ninject;
 
-namespace Utopia.Shared.World.FlatWorld
+namespace Utopia.Shared.World.WorldConfigs
 {
     /// <summary>
     /// Wrapper arround the needed processor to build a so called "FlatWorld world generator"
     /// </summary>
-    public class FlatWorldProcessorConfig : IWorldProcessorConfig
+    public class FlatWorldConfig : IWorldProcessorConfig
     {
         private IWorldProcessor[] _worldProcessors;
 
@@ -19,7 +19,7 @@ namespace Utopia.Shared.World.FlatWorld
             get { return _worldProcessors; }
         }
 
-        public FlatWorldProcessorConfig([Named("FlatWorldProcessor")] IWorldProcessor FlatWorldProcessor)
+        public FlatWorldConfig([Named("FlatWorldProcessor")] IWorldProcessor FlatWorldProcessor)
         {
             _worldProcessors = new IWorldProcessor[1];
             _worldProcessors[0] = FlatWorldProcessor;

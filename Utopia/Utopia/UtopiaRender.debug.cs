@@ -83,7 +83,8 @@ namespace Utopia
             ContainersBindings(IoCContainer, worldParam);
 
             //Init Block Profiles
-            VisualCubeProfile.InitCubeProfiles(IoCContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"));
+            VisualCubeProfile.InitCubeProfiles(IoCContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"),
+                                               IoCContainer.Get<ICubeMeshFactory>("LiquidCubeMeshFactory"));
 
 
             //-- Get the Main D3dEngine --
@@ -144,7 +145,7 @@ namespace Utopia
             _chunks = IoCContainer.Get<IWorldChunks>(new ConstructorArgument("worldStartUpPosition", worldStartUp));
 
             //Attach a "Flat world generator"
-            _chunks.LandscapeManager.WorldGenerator = new WorldGenerator(IoCContainer.Get<WorldParameters>(), IoCContainer.Get<IWorldProcessorConfig>("FlatWorld"));
+            _chunks.LandscapeManager.WorldGenerator = new WorldGenerator(IoCContainer.Get<WorldParameters>(), IoCContainer.Get<IWorldProcessorConfig>("s33m3World"));
 
             //Create the World Components wrapper -----------------------
             _currentWorld = IoCContainer.Get<IWorld>();
