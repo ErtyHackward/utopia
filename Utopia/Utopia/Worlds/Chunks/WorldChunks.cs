@@ -21,6 +21,8 @@ using Utopia.Worlds.Chunks.ChunkMesh;
 using Utopia.Worlds.Cubes;
 using Ninject;
 using S33M3Engines.WorldFocus;
+using Utopia.Worlds.Chunks.ChunkWrapper;
+using Utopia.Worlds.Chunks.ChunkLighting;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -51,7 +53,6 @@ namespace Utopia.Worlds.Chunks
         #region Private variables
         private WorldParameters _worldParameters; //The current world parameters
         private int _chunkPOWsize;
-        private bool _chunkNeed2BeSorted;
         private D3DEngine _d3dEngine;
         private CameraManager _camManager;
         private Location2<int> _worldStartUpPosition;
@@ -60,13 +61,19 @@ namespace Utopia.Worlds.Chunks
         private SingleArrayChunkContainer _cubesHolder;
         private IClock _gameClock;
         private WorldFocusManager _worldFocusManager;
+        private IChunksWrapper _chunkWrapper;
+        private ILightingManager _lightingManager;
+        private ILandscapeManager _landscapeManager;
+        private IChunkMeshManager _chunkMeshManager;
         #endregion
 
         #region Public Property/Variables
         /// <summary> The chunk collection </summary>
         public VisualChunk[] Chunks { get; set; }
         public VisualChunk[] SortedChunks { get; set; }
-        
+
+        public bool ChunkNeed2BeSorted { get; set; }
+
         /// <summary> World parameters </summary>
         public WorldParameters WorldParameters
         {
@@ -87,9 +94,10 @@ namespace Utopia.Worlds.Chunks
         /// <summary> Variable to track the world wrapping End</summary>
         public Location2<int> WrapEnd { get; set; }
 
-        public ILandscapeManager LandscapeManager { get; private set; }
-
-        public IChunkMeshManager ChunkMeshManager { get; private set; }
+        public ILandscapeManager LandscapeManager
+        {
+            get { return _landscapeManager; }
+        }
         #endregion
 
         public WorldChunks(D3DEngine d3dEngine, 
@@ -102,7 +110,9 @@ namespace Utopia.Worlds.Chunks
                            ILivingEntity player,
                            SingleArrayChunkContainer cubesHolder,
                            ILandscapeManager landscapeManager,
-                           IChunkMeshManager chunkMeshManager)
+                           IChunkMeshManager chunkMeshManager,
+                           IChunksWrapper chunkWrapper,
+                           ILightingManager lightingManager)
         {
             _d3dEngine = d3dEngine;
             _worldFocusManager = worldFocusManager;
@@ -113,12 +123,15 @@ namespace Utopia.Worlds.Chunks
             _player = player;
             WorldParameters = worldParameters;
             _cubesHolder = cubesHolder;
-            LandscapeManager = landscapeManager;
-            ChunkMeshManager = chunkMeshManager;
+            _chunkWrapper = chunkWrapper;
+            _landscapeManager = landscapeManager;
+            _chunkMeshManager = chunkMeshManager;
+            _lightingManager = lightingManager;
 
             //Self injecting inside components
             landscapeManager.WorldChunks = this;
-            chunkMeshManager.WorldChunks = this; 
+            chunkMeshManager.WorldChunks = this;
+            _chunkWrapper.WorldChunks = this;
 
             //Subscribe to chunk modifications
             _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
@@ -305,7 +318,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Min.Z, VisibleWorldSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(this, ref cubeRange, _cubesHolder);
+                    chunk = new VisualChunk(_d3dEngine ,this, ref cubeRange, _cubesHolder);
 
                     //Store this chunk inside the arrays.
                     Chunks[(arrayX >> _chunkPOWsize) + (arrayZ >> _chunkPOWsize) * _worldParameters.WorldSize.X] = chunk;
@@ -313,7 +326,7 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
-            _chunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
+            ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
         }
 
         /// <summary>

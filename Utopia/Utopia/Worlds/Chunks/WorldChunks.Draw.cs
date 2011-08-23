@@ -79,15 +79,7 @@ namespace Utopia.Worlds.Chunks
                         _terraEffect.CBPerDraw.IsDirty = true;
                         _terraEffect.Apply();
 
-                        lock (chunk.Lock_DrawChunksSolidFaces)
-                        {
-                            if (chunk.SolidCubeVB != null)
-                            {
-                                chunk.SolidCubeVB.SetToDevice(0);
-                                chunk.SolidCubeIB.SetToDevice(0);
-                                _d3dEngine.Context.DrawIndexed(chunk.SolidCubeIB.IndicesCount, 0, 0);
-                            }
-                        }
+                        chunk.DrawSolidFaces();
 
                         _chunkDrawByFrame++;
                     }
