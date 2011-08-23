@@ -72,6 +72,7 @@ namespace Utopia
             {
                 IsInfinite = true,
                 Seed = 0,
+                SeaLevel = AbstractChunk.ChunkSize.Y / 2,
                 WorldSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
@@ -133,7 +134,7 @@ namespace Utopia
 
             //-- Clock --
             _worldClock = IoCContainer.Get<IClock>(new ConstructorArgument("input", _inputHandler),
-                                                   new ConstructorArgument("clockSpeed", 480f),
+                                                   new ConstructorArgument("clockSpeed", 1f),
                                                    new ConstructorArgument("startTime", (float)Math.PI * 1f));
             //-- Weather --
             _weather = IoCContainer.Get<IWeather>();

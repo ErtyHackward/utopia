@@ -117,6 +117,7 @@ namespace Utopia.Worlds.Chunks
         public void SendCubeMeshesToBuffers()
         {
             SendSolidCubeMeshToGraphicCard();
+            SendLiquidCubeMeshToGraphicCard();
             State = ChunkState.DisplayInSyncWithMeshes;
             Ready2Draw = true;
         }
@@ -153,6 +154,36 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
+        //Liquid Cube
+        //Create the VBuffer + IBuffer from the List, then clear the list
+        //The Buffers are pushed to the graphic card. (SetData());
+        private void SendLiquidCubeMeshToGraphicCard()
+        {
+            lock (Lock_DrawChunksSeeThrough1Faces)
+            {
+                if (LiquidCubeVertices.Count == 0)
+                {
+                    if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
+                    LiquidCubeVB = null;
+                    return;
+                }
+
+                if (LiquidCubeVB == null)
+                {
+                    LiquidCubeVB = new VertexBuffer<VertexCubeLiquid>(_d3dEngine, LiquidCubeVertices.Count, VertexCubeLiquid.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Default, 10);
+                }
+                LiquidCubeVB.SetData(LiquidCubeVertices.ToArray());
+                LiquidCubeVertices.Clear();
+
+                if (LiquidCubeIB == null)
+                {
+                    LiquidCubeIB = new IndexBuffer<ushort>(_d3dEngine, LiquidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt);
+                }
+                LiquidCubeIB.SetData(LiquidCubeIndices.ToArray());
+                LiquidCubeIndices.Clear();
+            }
+        }
+
         //Ask the Graphical card to Draw the solid faces
         public void DrawSolidFaces()
         {
@@ -163,6 +194,20 @@ namespace Utopia.Worlds.Chunks
                     SolidCubeVB.SetToDevice(0);
                     SolidCubeIB.SetToDevice(0);
                     _d3dEngine.Context.DrawIndexed(SolidCubeIB.IndicesCount, 0, 0);
+                }
+            }
+        }
+
+        //Ask the Graphical card to Draw the solid faces
+        public void DrawLiquidFaces()
+        {
+            lock (Lock_DrawChunksSeeThrough1Faces)
+            {
+                if (LiquidCubeVB != null)
+                {
+                    LiquidCubeVB.SetToDevice(0);
+                    LiquidCubeIB.SetToDevice(0);
+                    _d3dEngine.Context.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
                 }
             }
         }

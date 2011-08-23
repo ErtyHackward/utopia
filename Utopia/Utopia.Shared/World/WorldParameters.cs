@@ -21,5 +21,10 @@ namespace Utopia.Shared.World
         /// Base seed to use in random initializers
         /// </summary>
         public int Seed { get; set; }
+
+        /// <summary>
+        /// See Level
+        /// </summary>
+        public int SeaLevel { get; set; }
     }
 }

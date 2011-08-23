@@ -76,7 +76,7 @@ namespace Utopia.Worlds.Cubes
         }
 
         //Default Face Generation Checks !
-        public static bool FaceGenerationCheck(ref TerraCube cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube)
+        public static bool FaceGenerationCheck(ref TerraCube cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
         {
             //By default I don't need to trace the cubeFace of my cube if the face neightboor cube is blocking light ! (Not see-through)
             if (VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsBlockingLight) return false;
@@ -84,7 +84,7 @@ namespace Utopia.Worlds.Cubes
             return true;
         }
 
-        public static bool WaterFaceGenerationCheck(ref TerraCube cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube)
+        public static bool WaterFaceGenerationCheck(ref TerraCube cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
         {
             if (cubeFace != CubeFace.Bottom && cubeFace != CubeFace.Top) //Never display a bottom Water face !
             {
@@ -95,7 +95,7 @@ namespace Utopia.Worlds.Cubes
             }
             if (cubeFace == CubeFace.Top)
             {
-                if (cubePosiInWorld.Y == 64 || neightboorFaceCube.Id == CubeId.Air)
+                if (cubePosiInWorld.Y == seaLevel || neightboorFaceCube.Id == CubeId.Air)
                 {
                     return true;
                 }
@@ -103,7 +103,7 @@ namespace Utopia.Worlds.Cubes
             return false;
         }
 
-        public delegate bool CanGenerateCubeFaceDelegate(ref TerraCube cube, ref Location3<int> cubelocation, CubeFace cubeFace, ref TerraCube neightboorFaceCube);
+        public delegate bool CanGenerateCubeFaceDelegate(ref TerraCube cube, ref Location3<int> cubelocation, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel);
         public CanGenerateCubeFaceDelegate CanGenerateCubeFace;
 
         public delegate void GenerateSolidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk);

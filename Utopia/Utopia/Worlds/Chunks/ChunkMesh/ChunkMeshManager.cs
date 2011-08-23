@@ -186,7 +186,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                         //It is using a delegate in order to give the possibility for Plugging to replace the fonction call.
                         //Be default the fonction called here is : TerraCube.FaceGenerationCheck or TerraCube.WaterFaceGenerationCheck
-                        if (!cubeProfile.CanGenerateCubeFace(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube)) continue;
+                        if (!cubeProfile.CanGenerateCubeFace(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _worldParameters.SeaLevel)) continue;
 
                         switch (cubeProfile.CubeFamilly)
                         {

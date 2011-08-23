@@ -52,6 +52,7 @@ namespace Utopia.Worlds.Chunks
 
             DrawSolidFaces();
 
+            DefaultDrawLiquid(); //After Solid faces
         }
         #endregion
 
@@ -87,6 +88,38 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
+        //Default Liquid Drawing
+        private void DefaultDrawLiquid()
+        {
+            Matrix worldFocus = Matrix.Identity;
+
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            VisualChunk chunk;
+
+            _liquidEffect.Begin();
+            _liquidEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            if (_player.HeadInsideWater) _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
+            else _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
+            _liquidEffect.CBPerFrame.IsDirty = true;
+
+            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
+            {
+                chunk = SortedChunks[chunkIndice];
+                if (chunk.Ready2Draw && !chunk.isFrustumCulled) // !! Display all Changed one, even if the changed failed the Frustum culling test
+                {
+                    //Only If I have something to draw !
+                    if (chunk.LiquidCubeVB != null)
+                    {
+                        _worldFocusManager.CenterOnFocus(ref chunk.World, ref worldFocus);
+                        _liquidEffect.CBPerDraw.Values.popUpYOffset = 0;
+                        _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
+                        _liquidEffect.CBPerDraw.IsDirty = true;
+                        _liquidEffect.Apply();
+                        chunk.DrawLiquidFaces();
+                    }
+                }
+            }
+        }
 
         private float GetSunColor()
         {

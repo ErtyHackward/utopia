@@ -20,7 +20,6 @@ namespace Utopia.Shared.World.Processors
         private SimplexNoise _baseTerran, _landHeight, _landNoise, _landRiver, _landOcean;
         private Random _rnd;
         private WorldParameters _worldParameters;
-        private int _seaLevel = 64;
         #endregion
 
         #region Public properties/Variables
@@ -220,7 +219,7 @@ namespace Utopia.Shared.World.Processors
                     for (int Y = 0; Y <= YSamplingCount; Y++)
                     {
                         //Si mon altitude est en dessous de la moitire de ma hauteur max + 5 && JE suis sur une rivière
-                        if ((Y * YPointLerpedCount <= (_seaLevel) + 5 && RiverOceanDepth > 0) || endOfWorld > 0)
+                        if ((Y * YPointLerpedCount <= (_worldParameters.SeaLevel) + 5 && RiverOceanDepth > 0) || endOfWorld > 0)
                         {
                             sealevel = basesealevel - RiverOceanDepth;
                         }
@@ -333,11 +332,15 @@ namespace Utopia.Shared.World.Processors
                                         if (Cubes != null)
                                         {
                                             int nX = (SampledpointX * XPointLerpedCount) + X;
-                                            int nY = (SampledpointY * XPointLerpedCount) + Y;
-                                            int nZ = (SampledpointZ * XPointLerpedCount) + Z;
+                                            int nY = (SampledpointY * YPointLerpedCount) + Y;
+                                            int nZ = (SampledpointZ * ZPointLerpedCount) + Z;
                                             Cubes[nX * AbstractChunk.ChunkSize.Y + nY + nZ * AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Y] = cube;
                                         }
                                     }
+                                    //else
+                                    //{
+                                    //    Console.WriteLine("");
+                                    //}
 
                                     Noise3 += DeltaX;
                                 }
