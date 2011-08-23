@@ -19,7 +19,7 @@ namespace Utopia.Planets.Terran.Chunk
         private static ChunkWrapType _processingType;
         private static TerraWorld _world;
 
-        public static ChunkWrapperStatus Status = ChunkWrapperStatus.Idle;
+        //public static ChunkWrapperStatus Status = ChunkWrapperStatus.Idle;
 
         //Force some chunks to be refresh (not reconstructed)
         private static void PostWrappingStep()

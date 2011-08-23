@@ -18,6 +18,11 @@ using S33M3Engines.GameStates;
 using Utopia.Entities.Living;
 using Utopia.Worlds.Chunks.ChunkLandscape;
 using Utopia.Worlds.Chunks.ChunkMesh;
+using Utopia.Worlds.Cubes;
+using Ninject;
+using S33M3Engines.WorldFocus;
+using Utopia.Worlds.Chunks.ChunkWrapper;
+using Utopia.Worlds.Chunks.ChunkLighting;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -48,21 +53,27 @@ namespace Utopia.Worlds.Chunks
         #region Private variables
         private WorldParameters _worldParameters; //The current world parameters
         private int _chunkPOWsize;
-        private bool _chunkNeed2BeSorted;
         private D3DEngine _d3dEngine;
         private CameraManager _camManager;
         private Location2<int> _worldStartUpPosition;
         private GameStatesManager _gameStates;
         private ILivingEntity _player;
-        private SingleArrayChunkContainer _cubes;
+        private SingleArrayChunkContainer _cubesHolder;
+        private IClock _gameClock;
+        private WorldFocusManager _worldFocusManager;
+        private IChunksWrapper _chunkWrapper;
+        private ILightingManager _lightingManager;
+        private ILandscapeManager _landscapeManager;
+        private IChunkMeshManager _chunkMeshManager;
         #endregion
 
         #region Public Property/Variables
         /// <summary> The chunk collection </summary>
         public VisualChunk[] Chunks { get; set; }
         public VisualChunk[] SortedChunks { get; set; }
-        public new Range<int> WorldRange { get; set; }
-        
+
+        public bool ChunkNeed2BeSorted { get; set; }
+
         /// <summary> World parameters </summary>
         public WorldParameters WorldParameters
         {
@@ -78,39 +89,52 @@ namespace Utopia.Worlds.Chunks
         public Location3<int> VisibleWorldSize { get; private set; }
 
         /// <summary> the visible world border in world coordinate </summary>
-        public Range<int> WorldBorder { get; set; }
+        public Range<int> WorldRange { get; set; }
 
         /// <summary> Variable to track the world wrapping End</summary>
         public Location2<int> WrapEnd { get; set; }
 
-        public ILandscapeManager LandscapeManager { get; private set; }
-
-        public IChunkMeshManager ChunkMeshManager { get; private set; }
+        public ILandscapeManager LandscapeManager
+        {
+            get { return _landscapeManager; }
+        }
         #endregion
 
         public WorldChunks(D3DEngine d3dEngine, 
                            CameraManager camManager, 
-                           WorldParameters worldParameters, 
+                           WorldParameters worldParameters,
+                           WorldFocusManager worldFocusManager,
                            GameStatesManager gameStates, 
                            Location2<int> worldStartUpPosition, 
                            IClock gameClock, 
                            ILivingEntity player,
-                           SingleArrayChunkContainer cubes,
+                           SingleArrayChunkContainer cubesHolder,
                            ILandscapeManager landscapeManager,
-                           IChunkMeshManager chunkMeshManager)
+                           IChunkMeshManager chunkMeshManager,
+                           IChunksWrapper chunkWrapper,
+                           ILightingManager lightingManager)
         {
             _d3dEngine = d3dEngine;
+            _worldFocusManager = worldFocusManager;
             _gameStates = gameStates;
             _camManager = camManager;
+            _gameClock = gameClock;
             _worldStartUpPosition = worldStartUpPosition;
             _player = player;
             WorldParameters = worldParameters;
-            _cubes = cubes;
-            LandscapeManager = landscapeManager;
-            ChunkMeshManager = chunkMeshManager;
+            _cubesHolder = cubesHolder;
+            _chunkWrapper = chunkWrapper;
+            _landscapeManager = landscapeManager;
+            _chunkMeshManager = chunkMeshManager;
+            _lightingManager = lightingManager;
+
+            //Self injecting inside components
+            landscapeManager.WorldChunks = this;
+            chunkMeshManager.WorldChunks = this;
+            _chunkWrapper.WorldChunks = this;
 
             //Subscribe to chunk modifications
-            _cubes.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
+            _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
 
             Initialize();
         }
@@ -175,7 +199,7 @@ namespace Utopia.Worlds.Chunks
         /// <returns>True if the chunk was found</returns>
         public bool GetSafeChunk(int X, int Z, out VisualChunk chunk)
         {
-            if (X < WorldBorder.Min.X || X > WorldBorder.Max.X || Z < WorldBorder.Min.Z || Z > WorldBorder.Max.Z)
+            if (X < WorldRange.Min.X || X > WorldRange.Max.X || Z < WorldRange.Min.Z || Z > WorldRange.Max.Z)
             {
                 chunk = null;
                 return false;
@@ -224,6 +248,26 @@ namespace Utopia.Worlds.Chunks
                 X += AbstractChunk.ChunkSize.X;
             }
         }
+
+        /// <summary>
+        /// indicate if the Chunk coordinate passed in is the border of the visible world
+        /// </summary>
+        /// <param name="X"></param>
+        /// <param name="Z"></param>
+        /// <param name="worldRange"></param>
+        /// <returns></returns>
+        public bool isBorderChunk(IntVector2 chunkPosition)
+        {
+            if (chunkPosition.X == WorldRange.Min.X ||
+               chunkPosition.Y == WorldRange.Min.Z ||
+               chunkPosition.X == WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
+               chunkPosition.Y == WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
+            {
+                return true;
+            }
+            return false;
+        }
+
         #endregion
 
         #region Private methods
@@ -274,7 +318,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Min.Z, VisibleWorldSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(this, ref cubeRange, _cubes);
+                    chunk = new VisualChunk(_d3dEngine ,this, ref cubeRange, _cubesHolder);
 
                     //Store this chunk inside the arrays.
                     Chunks[(arrayX >> _chunkPOWsize) + (arrayZ >> _chunkPOWsize) * _worldParameters.WorldSize.X] = chunk;
@@ -282,7 +326,7 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
-            _chunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
+            ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
         }
 
         /// <summary>

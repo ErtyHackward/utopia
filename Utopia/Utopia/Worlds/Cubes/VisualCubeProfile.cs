@@ -6,6 +6,9 @@ using System.Data;
 using Utopia.Worlds.Chunks.Enums;
 using Utopia.Shared.Structs;
 using S33M3Engines.Struct.Vertex;
+using Utopia.Worlds.Chunks;
+using Utopia.Shared.Structs.Landscape;
+using Utopia.Shared.Landscaping;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -15,9 +18,8 @@ namespace Utopia.Worlds.Cubes
         public static VisualCubeProfile[] CubesProfile;
 
         //Create the various Cubes
-        public static void InitCubeProfiles()
+        public static void InitCubeProfiles(ICubeMeshFactory solidCubeMeshFactory, ICubeMeshFactory liquidCubeMeshFactory)
         {
-
             DataSet CubeProfileDS = new DataSet();
             CubeProfileDS.ReadXml(@"Models\CubesProfile.xml", XmlReadMode.Auto);
 
@@ -57,15 +59,16 @@ namespace Utopia.Worlds.Cubes
                 profile.CubeFamilly = (enuCubeFamilly)Enum.Parse(typeof(enuCubeFamilly), cubeProfil.ItemArray[dt.Columns["CubeFamilly"].Ordinal].ToString());
                 profile.LiquidType = cubeProfil.ItemArray[dt.Columns["LiquidType"].Ordinal].ToString() != "" ? (enuLiquidType)Enum.Parse(typeof(enuLiquidType), cubeProfil.ItemArray[dt.Columns["LiquidType"].Ordinal].ToString()) : enuLiquidType.None;
 
-                //if (profile.CubeFamilly == enuCubeFamilly.Liquid)
-                //{
-                //    profile.CanGenerateCubeFace = VisualCubeProfile.WaterFaceGenerationCheck;
-                //    profile.CreateLiquidCubeMesh = CubeMeshFactory.GenLiquidCubeFace;
-                //}
+                if (profile.CubeFamilly == enuCubeFamilly.Liquid)
+                {
+                    profile.CanGenerateCubeFace = VisualCubeProfile.WaterFaceGenerationCheck;
+                    profile.CreateLiquidCubeMesh = liquidCubeMeshFactory.GenCubeFace;
+                }
+
                 if (profile.CubeFamilly == enuCubeFamilly.Solid)
                 {
                     profile.CanGenerateCubeFace = VisualCubeProfile.FaceGenerationCheck;
-                    //profile.CreateSolidCubeMesh = CubeMeshFactory.GenSolidCubeFace;
+                    profile.CreateSolidCubeMesh = solidCubeMeshFactory.GenCubeFace;
                 }
 
                 CubesProfile[Id] = profile;
@@ -73,40 +76,40 @@ namespace Utopia.Worlds.Cubes
         }
 
         //Default Face Generation Checks !
-        public static bool FaceGenerationCheck(byte cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, byte neightboorFaceCube)
+        public static bool FaceGenerationCheck(ref TerraCube cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
         {
             //By default I don't need to trace the cubeFace of my cube if the face neightboor cube is blocking light ! (Not see-through)
-            if (VisualCubeProfile.CubesProfile[cube].IsBlockingLight) return false;
+            if (VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsBlockingLight) return false;
             //Else draw the face
             return true;
         }
 
-        //public static bool WaterFaceGenerationCheck(byte cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, byte neightboorFaceCube)
-        //{
-        //    if (cubeFace != CubeFace.Bottom && cubeFace != CubeFace.Top) //Never display a bottom Water face !
-        //    {
-        //        if ((!VisualCubeProfile.CubesProfile[neightboorFaceCube].IsBlockingLight && !VisualCubeProfile.CubesProfile[neightboorFaceCube].IsFlooding))
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    if (cubeFace == CubeFace.Top)
-        //    {
-        //        if (cubePosiInWorld.Y == LandscapeBuilder.SeaLevel || neightboorFaceCube.Id == CubeId.Air)
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
+        public static bool WaterFaceGenerationCheck(ref TerraCube cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
+        {
+            if (cubeFace != CubeFace.Bottom && cubeFace != CubeFace.Top) //Never display a bottom Water face !
+            {
+                if ((!VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsBlockingLight && !VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsFlooding))
+                {
+                    return true;
+                }
+            }
+            if (cubeFace == CubeFace.Top)
+            {
+                if (cubePosiInWorld.Y == seaLevel || neightboorFaceCube.Id == CubeId.Air)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-        public delegate bool CanGenerateCubeFaceDelegate(byte cube, ref Location3<int> cubelocation, CubeFace cubeFace, byte neightboorFaceCube);
+        public delegate bool CanGenerateCubeFaceDelegate(ref TerraCube cube, ref Location3<int> cubelocation, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel);
         public CanGenerateCubeFaceDelegate CanGenerateCubeFace;
 
-        public delegate void GenerateSolidMesh(byte cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, ref List<VertexCubeSolid> cubeVertices, ref List<ushort> cubeIndices, ref Dictionary<string, int> cubeVerticeDico);
+        public delegate void GenerateSolidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk);
         public GenerateSolidMesh CreateSolidCubeMesh;
 
-        public delegate void GenerateLiquidMesh(byte cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, ref List<VertexCubeLiquid> cubeVertices, ref List<ushort> cubeIndices, ref Dictionary<string, int> cubeVerticeDico);
+        public delegate void GenerateLiquidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk);
         public GenerateLiquidMesh CreateLiquidCubeMesh;
 
         public string Name;
