@@ -134,14 +134,15 @@ namespace Utopia.Shared.World.Processors
 
                         if (cubeId == CubeId.Stone)
                         {
-                            if (Y > LandscapeBuilder.SeaLevel - 3 && Y <= LandscapeBuilder.SeaLevel + 1 && sandResult.Value > 0.7)
+
+                            if (Y > _worldParameters.SeaLevel - 3 && Y <= _worldParameters.SeaLevel + 1 && sandResult.Value > 0.7)
                             {
                                 Cubes[index] = CubeId.Sand;
                                 sandPlaced = true;
                                 continue;
                             }
 
-                            if (Y < LandscapeBuilder.SeaLevel && inWaterMaxLevel != 0)
+                            if (Y < _worldParameters.SeaLevel && inWaterMaxLevel != 0)
                             {
                                 if (cubeId == CubeId.Stone)
                                 {
@@ -161,7 +162,7 @@ namespace Utopia.Shared.World.Processors
                                 }
                                 else
                                 {
-                                    if (Y > LandscapeBuilder.SeaLevel - 1 && Y <= LandscapeBuilder.SeaLevel + 4 && gravelResult.Value > 1.8)
+                                    if (Y > _worldParameters.SeaLevel - 1 && Y <= _worldParameters.SeaLevel + 4 && gravelResult.Value > 1.8)
                                     {
                                         Cubes[index] = CubeId.Gravel;
                                         continue;
