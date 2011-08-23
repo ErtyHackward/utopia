@@ -23,11 +23,13 @@ namespace Utopia.Worlds.Chunks
         Location3<int> VisibleWorldSize { get; }
 
         /// <summary> the visible world border in world coordinate </summary>
-        Range<int> WorldBorder { get; set; }
+        Range<int> WorldRange { get; set; }
 
         /// <summary> Variable to track the world wrapping End</summary>
         Location2<int> WrapEnd { get; set; }
 
+        /// <summary> indicate wether the chunks needs to be sorted</summary>
+        bool ChunkNeed2BeSorted { get; set; }
         /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate
         /// </summary>
@@ -69,7 +71,6 @@ namespace Utopia.Worlds.Chunks
         /// <param name="WorldMinZ">Get All chunk From the WorldMinX value to MaxLineX-WorldMinX (Excluded)</param>
         /// <returns></returns>
         IEnumerable<VisualChunk> GetChunksWithFixedZ(int FixedZ, int WorldMinX);
-
 
         ILandscapeManager LandscapeManager { get; }
     }

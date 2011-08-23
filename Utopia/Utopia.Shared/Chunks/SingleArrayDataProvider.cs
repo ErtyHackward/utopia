@@ -53,7 +53,7 @@ namespace Utopia.Shared.Chunks
         {
             return ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPosition.X,
                                                      inChunkPosition.Y,
-                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)];
+                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)].Id;
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Utopia.Shared.Chunks
         {
             ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPosition.X,
                                                      inChunkPosition.Y,
-                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)] = blockValue;
+                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)].Id = blockValue;
 
             //Init ChunkCubes.CubesMetaData[] ???
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { inChunkPosition }, Bytes = new[] { blockValue } });
@@ -82,7 +82,7 @@ namespace Utopia.Shared.Chunks
             {
                 ChunkCubes.Cubes[ChunkCubes.Index(positions[i].X + DataProviderUser.ChunkPosition.X,
                                          positions[i].Y,
-                                         positions[i].Z + DataProviderUser.ChunkPosition.Y)] = values[i];
+                                         positions[i].Z + DataProviderUser.ChunkPosition.Y)].Id = values[i];
             }
 
             //Init ChunkCubes.CubesMetaData[] ???
@@ -95,15 +95,26 @@ namespace Utopia.Shared.Chunks
         /// <param name="bytes"></param>
         public override void SetBlockBytes(byte[] bytes)
         {
-            ////Depending of the layout of the byte !! (Order)
-            //for (int i = 0; i < bytes.Length; i++)
-            //{
-            //    ChunkCubes.Cubes[index].Id = bytes[i];
-            //    index++;
-            //}
+            int byteArrayIndex = 0;
+            int index;
+            for (int z = 0; z < AbstractChunk.ChunkSize.Z; z++)
+            {
+                for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
+                {
+                    index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X + x, 0, DataProviderUser.ChunkPosition.Y + z);
+                    for (int y = 0; y < AbstractChunk.ChunkSize.Y; y++)
+                    {
+                        if(y != 0) index += ChunkCubes.MoveY;
 
-            int index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
-            Array.Copy(bytes, 0, ChunkCubes.Cubes, index, AbstractChunk.ChunkBlocksByteLength);
+                        ChunkCubes.Cubes[index].Id = bytes[byteArrayIndex];
+
+                        byteArrayIndex++;
+                    }
+                }
+            }
+
+            //int index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
+            //Array.Copy(bytes, 0, ChunkCubes.Cubes, index, AbstractChunk.ChunkBlocksByteLength);
 
             //Init ChunkCubes.CubesMetaData[] ???
 

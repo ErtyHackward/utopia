@@ -23,7 +23,6 @@ namespace Utopia.Planets.Terran.Cube
         //Create the various Cubes
         public static void InitCubeProfiles()
         {
-
             DataSet CubeProfileDS = new DataSet();
             CubeProfileDS.ReadXml(@"Models\CubesProfile.xml", XmlReadMode.Auto);
 
@@ -66,12 +65,12 @@ namespace Utopia.Planets.Terran.Cube
                 if (profile.CubeFamilly == enuCubeFamilly.Liquid)
                 {
                     profile.CanGenerateCubeFace = RenderCubeProfile.WaterFaceGenerationCheck;
-                    profile.CreateLiquidCubeMesh = CubeMeshFactory.GenLiquidCubeFace;
+                    profile.CreateLiquidCubeMesh = CubeMeshFactoryOLD.GenLiquidCubeFace;
                 }
                 if (profile.CubeFamilly == enuCubeFamilly.Solid)
                 {
                     profile.CanGenerateCubeFace = RenderCubeProfile.FaceGenerationCheck;
-                    profile.CreateSolidCubeMesh = CubeMeshFactory.GenSolidCubeFace;
+                    profile.CreateSolidCubeMesh = CubeMeshFactoryOLD.GenSolidCubeFace;
                 }
 
                 CubesProfile[Id] = profile;

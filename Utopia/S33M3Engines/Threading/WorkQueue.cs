@@ -50,8 +50,9 @@ namespace S33M3Engines.Threading
             _totThread = coreCount -1; //Remove the one use by the applicatino itself
             if (_totThread < 1) _totThread = 1;
 
-            STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread };
+            STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };
             ThreadPool = new SmartThreadPool(_stpInfo);
+            
             ThreadPoolGrp = ThreadPool.CreateWorkItemsGroup(_totThread);
         }
 

@@ -43,6 +43,7 @@ using S33M3Engines.Threading;
 using Utopia.Entities.Living;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
+using Utopia.Worlds.Cubes;
 
 namespace Utopia
 {
@@ -71,20 +72,21 @@ namespace Utopia
             {
                 IsInfinite = true,
                 Seed = 0,
+                SeaLevel = AbstractChunk.ChunkSize.Y / 2,
                 WorldSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
             Location2<int> worldStartUp = new Location2<int>(0 * AbstractChunk.ChunkSize.X, 0 * AbstractChunk.ChunkSize.Z);
             
-            //HACK
-            AbstractChunk.ChunkSize = AbstractChunk.ChunkSize;
-
-            //Init a new Big array Holder.
-            SingleArrayChunkContainer sglArrayChunkManager = new SingleArrayChunkContainer(worldParam);
             //===========================================================================================
 
             //Creating the IoC Bindings
             ContainersBindings(IoCContainer, worldParam);
+
+            //Init Block Profiles
+            VisualCubeProfile.InitCubeProfiles(IoCContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"),
+                                               IoCContainer.Get<ICubeMeshFactory>("LiquidCubeMeshFactory"));
+
 
             //-- Get the Main D3dEngine --
             _d3dEngine = IoCContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(W, H)),
@@ -132,7 +134,7 @@ namespace Utopia
 
             //-- Clock --
             _worldClock = IoCContainer.Get<IClock>(new ConstructorArgument("input", _inputHandler),
-                                                   new ConstructorArgument("clockSpeed", 480f),
+                                                   new ConstructorArgument("clockSpeed", 1f),
                                                    new ConstructorArgument("startTime", (float)Math.PI * 1f));
             //-- Weather --
             _weather = IoCContainer.Get<IWeather>();
@@ -142,8 +144,9 @@ namespace Utopia
             
             //Get Processor Config by giving world specification
             _chunks = IoCContainer.Get<IWorldChunks>(new ConstructorArgument("worldStartUpPosition", worldStartUp));
+
             //Attach a "Flat world generator"
-            _chunks.LandscapeManager.WorldGenerator = new WorldGenerator(IoCContainer.Get<WorldParameters>(), IoCContainer.Get<IWorldProcessorConfig>("FlatWorld"));
+            _chunks.LandscapeManager.WorldGenerator = new WorldGenerator(IoCContainer.Get<WorldParameters>(), IoCContainer.Get<IWorldProcessorConfig>("s33m3World"));
 
             //Create the World Components wrapper -----------------------
             _currentWorld = IoCContainer.Get<IWorld>();

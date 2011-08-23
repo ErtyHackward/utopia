@@ -77,7 +77,7 @@ namespace Utopia
         {
              _newClientStructure = newClientStructure;
              S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
-             S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
+             S33M3Engines.D3DEngine.FULLDEBUGMODE = true;
              VSync = true;                                              // Vsync ON (default)
 
             //Load the pluggin ! ===================
