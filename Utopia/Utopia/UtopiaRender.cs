@@ -187,7 +187,7 @@ namespace Utopia
             _fps = new FPS();
             GameComponents.Add(_fps);
 
-            _gui = new GUI.D3D.GUI(GameComponents,_d3dEngine, ((Player)_player).Inventory);
+            _gui = new GUI.D3D.GUI(GameComponents,_d3dEngine /*,((Player)_player).Inventory*/);
             GameComponents.Add(_gui);
 
             _debugInfo = new DebugInfo(_d3dEngine);

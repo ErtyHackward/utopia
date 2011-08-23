@@ -58,7 +58,7 @@ namespace Utopia.Entities.Living
             get { return _name; }
         }
 
-        public PlayerInventory Inventory { get; private set; }
+        //public PlayerInventory Inventory { get; private set; }
 
         #endregion
 
@@ -67,7 +67,7 @@ namespace Utopia.Entities.Living
         {
             _worldFocusManager = worldFocusManager;
             _name = Name;
-            Inventory = new PlayerInventory();
+            //Inventory = new PlayerInventory();
 
             ////this is only temporary starting gear, it should be received from the server
             //BlockRemover remover = new BlockRemover();
@@ -91,13 +91,13 @@ namespace Utopia.Entities.Living
             //Inventory.Bag.Items.Add(remover);
             //Inventory.Bag.Items.Add(ring);
 
-            Pickaxe pickaxe = new Pickaxe();
-            pickaxe.AllowedSlots = EquipmentSlot.Bags;
-            Inventory.Toolbar.Add(pickaxe);
+            //Pickaxe pickaxe = new Pickaxe();
+            //pickaxe.AllowedSlots = EquipmentSlot.Bags;
+            //Inventory.Toolbar.Add(pickaxe);
 
-            Shovel shovel = new Shovel();
-            shovel.AllowedSlots = EquipmentSlot.Bags;
-            Inventory.Toolbar.Add(shovel);
+            //Shovel shovel = new Shovel();
+            //shovel.AllowedSlots = EquipmentSlot.Bags;
+            //Inventory.Toolbar.Add(shovel);
         }
 
         #region private methods

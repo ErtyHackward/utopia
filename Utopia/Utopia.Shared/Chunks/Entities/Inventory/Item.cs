@@ -6,7 +6,7 @@ using S33M3Engines.Shared.Sprites;
 namespace Utopia.Shared.Chunks.Entities.Inventory
 {
     /// <summary>
-    /// Represents any lootable voxelEntity, tool, weapon, armor, collectible
+    /// Represents any lootable voxelEntity, tool, weapon, armor, collectible. This entity can be put into the inventory
     /// </summary>
     public abstract class Item : VoxelEntity
     {
@@ -15,7 +15,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         // but for now I need to port the XNA UI code
         public static int IconSize = 64;
         public SpriteTexture Icon { get; set; }
-        public Nullable<Rectangle> IconSourceRectangle { get; set; }
+        public Rectangle? IconSourceRectangle { get; set; }
   
         /// <summary>
         /// Gets or sets tool wear
@@ -27,16 +27,23 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// </summary>
         public string UniqueName { get; set; }
 
-        public EquipmentSlot AllowedSlots { get; set;}
+        public EquipmentSlotType AllowedSlots { get; set;}
 
         /// <summary>
-        /// Gets maximum allowed number of items in one stack
+        /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
         /// </summary>
         public abstract int MaxStackSize { get; }
+
+        /// <summary>
+        /// Gets a displayed entity name
+        /// </summary>
+        public override string DisplayName
+        {
+            get { return UniqueName; }
+        }
         
            
         // we need to override save and load!
-
         public override void Load(System.IO.BinaryReader reader)
         {
             // first we need to load base information
@@ -54,15 +61,5 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             writer.Write(Durability);
             writer.Write(UniqueName);
         }
-
-        /// <summary>
-        /// Gets a displayed entity name
-        /// </summary>
-        public override string DisplayName
-        {
-            get { return UniqueName; }
-        }
-
-        
     }
 }

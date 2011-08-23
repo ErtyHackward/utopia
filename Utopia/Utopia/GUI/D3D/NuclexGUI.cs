@@ -42,13 +42,13 @@ namespace Utopia.GUI.D3D
         ToolBarUI _toolbarUI;//this one is a field because it will be updateable when you change tools with mousewheel
 
         D3DEngine _d3dEngine;
-        PlayerInventory _inventory;
+        //PlayerInventory _inventory;
         readonly List<IGameComponent> _components;
 
-        public GUI(List<IGameComponent> components, D3DEngine d3dEngine, PlayerInventory inventory)
+        public GUI(List<IGameComponent> components, D3DEngine d3dEngine /*,PlayerInventory inventory*/)
         {
             _d3dEngine = d3dEngine;
-            _inventory = inventory;
+            //_inventory = inventory;
             _components = components;
         }
 
@@ -63,14 +63,14 @@ namespace Utopia.GUI.D3D
 
             SpriteTexture backGround = new SpriteTexture(_d3dEngine.Device, @"Textures\charactersheet.png", new Vector2(0, 0));
             
-            InventoryWindow invWin = new InventoryWindow(_inventory, backGround);
+            InventoryWindow invWin = new InventoryWindow(/*_inventory,*/ backGround);
             //_screen.Desktop.Children.Add(invWin);
 
             //TODO this one and the components dependency should surely be moved in a separate debug only component
             Utopia.GUI.D3D.DebugUI.DebugUI debugUI = new Utopia.GUI.D3D.DebugUI.DebugUI(_components);
             _screen.Desktop.Children.Add(debugUI);
 
-            _toolbarUI = new ToolBarUI(_inventory);
+            _toolbarUI = new ToolBarUI(/*_inventory*/);
             _screen.Desktop.Children.Add(_toolbarUI);
         }
 
