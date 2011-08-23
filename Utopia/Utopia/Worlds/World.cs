@@ -7,6 +7,7 @@ using Utopia.Worlds.SkyDomes;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
 using Utopia.Shared.Chunks;
+using S33M3Engines.D3D;
 
 namespace Utopia.Worlds
 {

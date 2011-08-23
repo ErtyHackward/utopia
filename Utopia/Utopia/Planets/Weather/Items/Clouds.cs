@@ -40,7 +40,6 @@ namespace Utopia.Planets.Weather.Items
         #endregion
 
         #region Public properties
-
         #endregion
 
         public Clouds(D3DEngine d3dEngine, CameraManager camManager, TerraWorld terraWorld, Wind wind)

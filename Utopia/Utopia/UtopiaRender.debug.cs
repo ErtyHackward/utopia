@@ -44,6 +44,7 @@ using Utopia.Entities.Living;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
 using Utopia.Worlds.Cubes;
+using Utopia.Entities;
 
 namespace Utopia
 {
@@ -58,6 +59,7 @@ namespace Utopia
         private IWeather _weather;
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
+        private EntityRenderer _entityRender;
 
         //Init phase used for testing purpose
         private void DebugInit(IKernel IoCContainer)
@@ -122,10 +124,16 @@ namespace Utopia
                                                       new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)),
                                                       new ConstructorArgument("walkingSpeed", 5f),
                                                       new ConstructorArgument("flyingSpeed", 30f),
-                                                      new ConstructorArgument("headRotationSpeed", 10f)); 
-
+                                                      new ConstructorArgument("headRotationSpeed", 10f));
             ((Player)_player).Mode = LivingEntityMode.FreeFirstPerson;
-            GameComponents.Add(_player);
+
+            //Create the Entity Renderer
+            //A simple object wrapping a collectin of Entities, and wiring them for update/draw/...
+            _entityRender = IoCContainer.Get<EntityRenderer>();
+            _entityRender.Entities.Add(_player); //Add the main player to Entities
+
+            GameComponents.Add(_entityRender);
+            //GameComponents.Add(_player);
 
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
             camera.CameraPlugin = _player;

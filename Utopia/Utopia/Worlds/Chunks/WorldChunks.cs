@@ -98,6 +98,7 @@ namespace Utopia.Worlds.Chunks
         {
             get { return _landscapeManager; }
         }
+
         #endregion
 
         public WorldChunks(D3DEngine d3dEngine, 
