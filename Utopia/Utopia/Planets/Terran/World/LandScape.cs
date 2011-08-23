@@ -8,6 +8,7 @@ using S33M3Engines.Maths;
 using SharpDX;
 using Utopia.Planets.Terran.Chunk;
 using Utopia.Shared;
+using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.USM;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
@@ -309,6 +310,24 @@ namespace Utopia.Planets.Terran.World
             cube = new TerraCube(CubeId.Error);
             return false;
         }
+
+        public bool isPickable(ref Vector3 position, Tool withTool, out TerraCube cube)
+        {
+            int cubeIndex;
+
+            if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
+            {
+                cube = Cubes[cubeIndex];
+
+               // withTool.
+                // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == CubeId.Air) cube = new TerraCube(CubeId.Error);
+                return RenderCubeProfile.CubesProfile[cube.Id].IsPickable;
+            }
+
+            cube = new TerraCube(CubeId.Error);
+            return false;
+        }
+
 
         public bool isPickable(ref Vector3 position)
         {
