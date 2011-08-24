@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Shared.Landscaping;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
+using Utopia.Shared.Cubes;
 
 #endregion
 

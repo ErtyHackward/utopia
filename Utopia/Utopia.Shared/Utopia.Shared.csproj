@@ -113,9 +113,7 @@
     <Compile Include="Interfaces\ISingleArrayDataProviderUser.cs" />
     <Compile Include="Interfaces\IWorldProcessor.cs" />
     <Compile Include="Interfaces\IWorldProcessorConfig.cs" />
-    <Compile Include="Landscaping\CubeIDs.cs" />
-    <Compile Include="Landscaping\FlatLandscape.cs" />
-    <Compile Include="Landscaping\LandscapeBuilder.cs" />
+    <Compile Include="Cubes\CubeIDs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Roleplay\CharacterPrimaryAttributes.cs" />
     <Compile Include="Roleplay\CharacterSecondaryAttributes.cs" />

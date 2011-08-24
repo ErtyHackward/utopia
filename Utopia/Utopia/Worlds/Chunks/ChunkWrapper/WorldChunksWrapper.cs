@@ -207,7 +207,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
             WorldChunks.VisualWorldParameters.WorldRange = NewWorldRange;
             WorldChunks.WrapEnd = NewWrapEnd;
 
-            //PostWrappingStep();
+            PostWrappingStep();
 
             WorldChunks.ChunkNeed2BeSorted = true;
 

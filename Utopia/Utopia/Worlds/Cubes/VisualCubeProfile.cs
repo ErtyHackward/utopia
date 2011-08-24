@@ -8,7 +8,7 @@ using Utopia.Shared.Structs;
 using S33M3Engines.Struct.Vertex;
 using Utopia.Worlds.Chunks;
 using Utopia.Shared.Structs.Landscape;
-using Utopia.Shared.Landscaping;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Worlds.Cubes
 {

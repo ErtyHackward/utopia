@@ -19,7 +19,7 @@ namespace Utopia.Shared.World
 
         public Range<int> WorldRange;
         public Location3<int> WorldVisibleSize;
-
+        public Location2<int> WorldChunkStartUpPosition;
 
         public VisualWorldParameters(WorldParameters worldParameters)
         {

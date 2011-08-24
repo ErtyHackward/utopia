@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Utopia.Shared.Landscaping
+namespace Utopia.Shared.Cubes
 {
     //Helper to find the Cube ID's from label.
     //The cubes are defined in the XML file in UtopiaContent/Models/CubesProfile.xml

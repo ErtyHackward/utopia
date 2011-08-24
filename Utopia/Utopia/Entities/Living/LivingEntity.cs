@@ -10,21 +10,19 @@ using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.Maths;
 using System.Windows.Forms;
 using ButtonState = S33M3Engines.InputHandler.MouseHelper.ButtonState;
-using Utopia.Planets.Terran;
-using Utopia.Planets.Terran.Cube;
 using S33M3Physics.Euler;
 using S33M3Physics;
 using S33M3Engines.D3D.DebugTools;
 using S33M3Physics.Verlet;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
-using Utopia.Shared.Landscaping;
 using Utopia.Shared;
 using Utopia.Settings;
 using S33M3Engines.Shared.Math;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Entities.Living
 {

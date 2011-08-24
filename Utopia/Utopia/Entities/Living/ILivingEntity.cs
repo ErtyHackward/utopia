@@ -6,7 +6,6 @@ using SharpDX;
 using S33M3Engines.Struct;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D.DebugTools;
-using Utopia.Planets.Terran;
 using Utopia.Shared.Chunks;
 
 namespace Utopia.Entities.Living
