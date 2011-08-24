@@ -22,8 +22,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         private delegate object PropagateLightSourcesDelegate(object Params);
         private PropagateLightSourcesDelegate _propagateLightSourcesDelegate;
 
-        private byte _LightPropagateSteps;
+        private byte _lightPropagateSteps;
         private byte _lightDecreaseStep;
+
         private enum LightComponent
         {
             SunLight,
@@ -35,14 +36,18 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         #endregion
 
         #region Public variable
+        public byte LightPropagateSteps
+        {
+            get { return _lightPropagateSteps; }
+        }
         #endregion
 
         public LightingManager(SingleArrayChunkContainer cubesHolder)
         {
             _cubesHolder = cubesHolder;
 
-            _LightPropagateSteps = 8;
-            _lightDecreaseStep = (byte)(256 / _LightPropagateSteps);
+            _lightPropagateSteps = 8;
+            _lightDecreaseStep = (byte)(256 / _lightPropagateSteps);
         }
 
         #region Public methods

@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines.Struct;
-using Utopia.Planets.Terran.Cube;
-using Utopia.Planets.Terran.World;
-using Utopia.Planets.Terran.Lighting;
-using Utopia.Planets.Terran.Chunk;
-using Utopia.Planets.Terran.Flooding;
-using Utopia.PlugIn;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
-using Utopia.Shared.Landscaping;
 using Utopia.Worlds.Chunks;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Chunks.ChunkLighting;
+using Utopia.Worlds.Cubes;
 
-namespace Utopia.Planets.Terran
+namespace Utopia.Entities
 {
     public static class EntityImpact
     {
@@ -53,13 +47,7 @@ namespace Utopia.Planets.Terran
         {
             TerraCube newCube = new TerraCube(replacementCubeId);
 
-            for (int i = 0; i < WorldPlugins.Plugins.WorldPlugins.Length; i++)
-            {
-                if (!WorldPlugins.Plugins.WorldPlugins[i].EntityBlockReplaced(ref cubeCoordinates, ref newCube)) return;
-            }
-
             _cubesHolder.SetCube(ref cubeCoordinates, ref newCube);
-
             LigthingImpact(ref cubeCoordinates, replacementCubeId);
         }
 
@@ -70,8 +58,8 @@ namespace Utopia.Planets.Terran
             //Compute the Range impacted by the cube change
             Range<int> cubeRange = new Range<int>()
             {
-                Min = new Location3<int>(cubeCoordinates.X - TerraLighting.LightPropagateSteps, 0, cubeCoordinates.Z - TerraLighting.LightPropagateSteps),
-                Max = new Location3<int>(cubeCoordinates.X + TerraLighting.LightPropagateSteps, LandscapeBuilder.Worldsize.Y, cubeCoordinates.Z + TerraLighting.LightPropagateSteps)
+                Min = new Location3<int>(cubeCoordinates.X - _lightManager.LightPropagateSteps, 0, cubeCoordinates.Z - _lightManager.LightPropagateSteps),
+                Max = new Location3<int>(cubeCoordinates.X + _lightManager.LightPropagateSteps, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, cubeCoordinates.Z + _lightManager.LightPropagateSteps)
             };
 
             _lightManager.CreateLightSources(ref cubeRange);
@@ -83,7 +71,7 @@ namespace Utopia.Planets.Terran
 
             _lightManager.PropagateLightSources(ref cubeRange, true);
 
-            RenderCubeProfile profile = RenderCubeProfile.CubesProfile[replacementCubeId];
+            VisualCubeProfile profile = VisualCubeProfile.CubesProfile[replacementCubeId];
 
             //Find the chunks that have been impacted = Max of 4
             VisualChunk neightboorChunk;
@@ -94,7 +82,7 @@ namespace Utopia.Planets.Terran
             mainChunkId = neightboorChunk.ChunkID;
             //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
 
-            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X + TerraLighting.LightPropagateSteps, cubeCoordinates.Z);
+            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X + _lightManager.LightPropagateSteps, cubeCoordinates.Z);
             if (neightboorChunk.ChunkID != mainChunkId)
             {
                 neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
@@ -103,7 +91,7 @@ namespace Utopia.Planets.Terran
                 //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X - TerraLighting.LightPropagateSteps, cubeCoordinates.Z);
+            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X - _lightManager.LightPropagateSteps, cubeCoordinates.Z);
             if (neightboorChunk.ChunkID != mainChunkId)
             {
                 neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
@@ -112,7 +100,7 @@ namespace Utopia.Planets.Terran
                 //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z + TerraLighting.LightPropagateSteps);
+            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z + _lightManager.LightPropagateSteps);
             if (neightboorChunk.ChunkID != mainChunkId)
             {
                 neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
@@ -121,7 +109,7 @@ namespace Utopia.Planets.Terran
                 //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z - TerraLighting.LightPropagateSteps);
+            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z - _lightManager.LightPropagateSteps);
             if (neightboorChunk.ChunkID != mainChunkId)
             {
                 neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
@@ -130,7 +118,7 @@ namespace Utopia.Planets.Terran
                 //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X + TerraLighting.LightPropagateSteps, cubeCoordinates.Z + TerraLighting.LightPropagateSteps);
+            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X + _lightManager.LightPropagateSteps, cubeCoordinates.Z + _lightManager.LightPropagateSteps);
             if (neightboorChunk.ChunkID != mainChunkId)
             {
                 neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
@@ -139,7 +127,7 @@ namespace Utopia.Planets.Terran
                 //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X - TerraLighting.LightPropagateSteps, cubeCoordinates.Z + TerraLighting.LightPropagateSteps);
+            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X - _lightManager.LightPropagateSteps, cubeCoordinates.Z + _lightManager.LightPropagateSteps);
             if (neightboorChunk.ChunkID != mainChunkId)
             {
                 neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
@@ -148,7 +136,7 @@ namespace Utopia.Planets.Terran
                 //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X + TerraLighting.LightPropagateSteps, cubeCoordinates.Z - TerraLighting.LightPropagateSteps);
+            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X + _lightManager.LightPropagateSteps, cubeCoordinates.Z - _lightManager.LightPropagateSteps);
             if (neightboorChunk.ChunkID != mainChunkId)
             {
                 neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
@@ -157,7 +145,7 @@ namespace Utopia.Planets.Terran
                 //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X - TerraLighting.LightPropagateSteps, cubeCoordinates.Z - TerraLighting.LightPropagateSteps);
+            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X - _lightManager.LightPropagateSteps, cubeCoordinates.Z - _lightManager.LightPropagateSteps);
             if (neightboorChunk.ChunkID != mainChunkId)
             {
                 neightboorChunk.State = ChunkState.LandscapeLightsPropagated;

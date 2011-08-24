@@ -8,7 +8,7 @@ using Utopia.Shared.Structs;
 using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Chunks.Entities.Inventory;
-using Utopia.Shared.Landscaping;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.Chunks
 {
@@ -203,6 +203,53 @@ namespace Utopia.Shared.Chunks
             return index;
         }
 
+        public int ValidateIndex2(int index)
+        {
+            index = index % _bigArraySize;
+
+            if (index < 0) index += _bigArraySize;
+
+            return index;
+        }
+
+        public int FastIndex(int baseIndex, IdxRelativeMove idxmove)
+        {
+            int MoveAmount = 0;
+            switch (idxmove)
+            {
+                case IdxRelativeMove.East:
+                    baseIndex += MoveX;
+                    MoveAmount = -MoveZ;
+                    break;
+                case IdxRelativeMove.West:
+                    baseIndex -= MoveX;
+                    MoveAmount = MoveZ;
+                    break;
+                case IdxRelativeMove.South:
+                    baseIndex -= MoveZ;
+                    break;
+                case IdxRelativeMove.North:
+                    baseIndex += MoveZ;
+                    break;
+                case IdxRelativeMove.Down:
+                    baseIndex -= MoveY;
+                    MoveAmount = MoveZ * MoveX;
+                    break;
+                case IdxRelativeMove.Up:
+                    baseIndex += MoveY;
+                    MoveAmount = -MoveZ * MoveX;;
+                    break;
+                case IdxRelativeMove.None:
+                    break;
+            }
+
+            //baseIndex = baseIndex % _bigArraySize;
+
+            baseIndex += MoveAmount;
+
+            return baseIndex;
+        }
+
         public SurroundingIndex[] GetSurroundingBlocksIndex(int baseIndex, int CubeXCoord, int CubeYCoord, int CubeZCoord)
         {
             int cubeIndex = baseIndex;
@@ -349,7 +396,7 @@ namespace Utopia.Shared.Chunks
             int Z = MathHelper.Fastfloor(FromPosition.Z);
             int Y = MathHelper.Fastfloor(FromPosition.Y);
 
-            if (Y >= LandscapeBuilder.Worldsize.Y) Y = LandscapeBuilder.Worldsize.Y - 1;
+            if (Y >= _visualWorldParam.WorldVisibleSize.Y) Y = _visualWorldParam.WorldVisibleSize.Y - 1;
 
             while (!CubeProfile.CubesProfile[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
             {

@@ -28,7 +28,7 @@ namespace Utopia.Worlds.Chunks
             if (_camManager.ActiveCamera.WorldPosition.Y < 400)
             {
                 ChunkUpdateManager();
-                //if (!_gameStates.DebugActif) CheckWrapping();     // Handle Playerzz impact on Terra (Mainly the location will trigger chunk creation/destruction)
+                if (!_gameStates.DebugActif) CheckWrapping();     // Handle Playerzz impact on Terra (Mainly the location will trigger chunk creation/destruction)
                 SortChunks();
             }
         }

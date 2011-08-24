@@ -9,7 +9,6 @@ using Utopia.Shared.Structs;
 using Utopia.Worlds.Cubes;
 using Utopia.Shared.World;
 using S33M3Engines.Shared.Math;
-using Utopia.Shared.Landscaping;
 using Utopia.Shared.Chunks;
 using S33M3Engines.Buffers;
 using S33M3Engines.Struct.Vertex;
@@ -18,6 +17,7 @@ using SharpDX.Direct3D11;
 using S33M3Engines;
 using Utopia.Shared.Structs.Landscape;
 using Amib.Threading;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -116,6 +116,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                     for (int Y = 0; Y < chunk.CubeRange.Max.Y; Y++)
                     {
+
                         //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
                         YWorld = (Y + chunk.CubeRange.Min.Y);
 
@@ -142,32 +143,72 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //Check to see if the face needs to be generated or not !
                         //Border Chunk test ! ==> Don't generate faces that are "border" chunks
                         //BorderChunk value is true if the chunk is at the border of the visible world.
-
+                        int neightborCubeIndexTest;
                         switch (cubeFace)
                         {
                             case CubeFace.Back:
                                 if (chunk.BorderChunk && (ZWorld - 1 < _visualWorldParameters.WorldRange.Min.Z)) continue;
-                                neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
+                                //neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
+                                neightborCubeIndex = _cubesHolder.Index(XWorld, YWorld, ZWorld - 1);
+                                neightborCubeIndexTest = _cubesHolder.FastIndex(cubeIndex, SingleArrayChunkContainer.IdxRelativeMove.South);
+                                if (neightborCubeIndex != neightborCubeIndexTest)
+                                {
+                                    Console.WriteLine("STOP");
+                                }
                                 break;
                             case CubeFace.Front:
                                 if (chunk.BorderChunk && (ZWorld + 1 >= _visualWorldParameters.WorldRange.Max.Z)) continue;
-                                neightborCubeIndex = cubeIndex + _cubesHolder.MoveZ;
+                                //neightborCubeIndex = cubeIndex + _cubesHolder.MoveZ;
+                                neightborCubeIndex = _cubesHolder.Index(XWorld, YWorld, ZWorld + 1);
+                                neightborCubeIndexTest = _cubesHolder.FastIndex(cubeIndex, SingleArrayChunkContainer.IdxRelativeMove.North);
+                                if (neightborCubeIndex != neightborCubeIndexTest)
+                                {
+                                    Console.WriteLine("STOP");
+                                }
                                 break;
                             case CubeFace.Bottom:
                                 if (YWorld - 1 < 0) continue;
-                                neightborCubeIndex = cubeIndex - _cubesHolder.MoveY;
+                                //neightborCubeIndex = cubeIndex - _cubesHolder.MoveY;
+                                neightborCubeIndex = _cubesHolder.Index(XWorld, YWorld - 1, ZWorld);
+                                neightborCubeIndexTest = _cubesHolder.FastIndex(cubeIndex, SingleArrayChunkContainer.IdxRelativeMove.Down);
+                                if (neightborCubeIndex != neightborCubeIndexTest)
+                                {
+                                    Console.WriteLine("STOP");
+                                }
+                                
                                 break;
                             case CubeFace.Top:
                                 if (YWorld + 1 >= _visualWorldParameters.WorldRange.Max.Y) continue;
-                                neightborCubeIndex = cubeIndex + _cubesHolder.MoveY;
+                                //neightborCubeIndex = cubeIndex + _cubesHolder.MoveY;
+                                neightborCubeIndex = _cubesHolder.Index(XWorld, YWorld + 1, ZWorld);
+                                neightborCubeIndexTest = _cubesHolder.ValidateIndex2(cubeIndex + _cubesHolder.MoveY);
+                                neightborCubeIndexTest = _cubesHolder.FastIndex(cubeIndex, SingleArrayChunkContainer.IdxRelativeMove.Up);
+                                if (neightborCubeIndex != neightborCubeIndexTest)
+                                {
+                                    Console.WriteLine("STOP");
+                                }
+                                
                                 break;
                             case CubeFace.Left:
                                 if (chunk.BorderChunk && (XWorld - 1 < _visualWorldParameters.WorldRange.Min.X)) continue;
-                                neightborCubeIndex = cubeIndex - _cubesHolder.MoveX;
+                                //neightborCubeIndex = cubeIndex - _cubesHolder.MoveX;
+                                neightborCubeIndex = _cubesHolder.Index(XWorld - 1, YWorld, ZWorld);
+                                neightborCubeIndexTest = _cubesHolder.FastIndex(cubeIndex, SingleArrayChunkContainer.IdxRelativeMove.West);
+                                if (neightborCubeIndex != neightborCubeIndexTest)
+                                {
+                                    Console.WriteLine("STOP");
+                                }
+                                
                                 break;
                             case CubeFace.Right:
                                 if (chunk.BorderChunk && (XWorld + 1 >= _visualWorldParameters.WorldRange.Max.X)) continue;
-                                neightborCubeIndex = cubeIndex + _cubesHolder.MoveX;
+                                //neightborCubeIndex = cubeIndex + _cubesHolder.MoveX;
+                                neightborCubeIndex = _cubesHolder.Index(XWorld + 1, YWorld, ZWorld);
+                                neightborCubeIndexTest = _cubesHolder.FastIndex(cubeIndex, SingleArrayChunkContainer.IdxRelativeMove.East);
+                                if (neightborCubeIndex != neightborCubeIndexTest)
+                                {
+                                    Console.WriteLine("STOP");
+                                }
                                 break;
                             default:
                                 throw new NullReferenceException();
@@ -182,6 +223,8 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         neightborCubeIndex = _cubesHolder.ValidateIndex(neightborCubeIndex);
 
                         neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
+
+                        var test = _cubesHolder.Index(XWorld + 1, YWorld, ZWorld);
 
                         //It is using a delegate in order to give the possibility for Plugging to replace the fonction call.
                         //Be default the fonction called here is : TerraCube.FaceGenerationCheck or TerraCube.WaterFaceGenerationCheck

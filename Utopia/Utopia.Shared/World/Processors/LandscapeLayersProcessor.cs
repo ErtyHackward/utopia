@@ -1,9 +1,9 @@
 ﻿using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Landscaping;
 using Utopia.Shared.Structs;
 using S33M3Engines.Shared.Math.Noises;
 using System;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.World.Processors
 {
@@ -56,7 +56,7 @@ namespace Utopia.Shared.World.Processors
         public virtual void Initialize()
         {
             //Create a rnd generator based on the seed.
-            _rnd = new Random(LandscapeBuilder.Seed);
+            _rnd = new Random(_worldParameters.Seed);
 
             _sand = new SimplexNoise(_rnd);
             _gravel = new SimplexNoise(_rnd);

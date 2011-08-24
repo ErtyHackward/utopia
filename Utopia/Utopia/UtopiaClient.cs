@@ -25,10 +25,10 @@ namespace Utopia
             Application.SetCompatibleTextRenderingDefault(false);
             LoadClientsSettings();
 #if STEALTH
-            StartDirectXWindow(false);
+            StartDirectXWindow();
 #else 
-            StartDirectXWindow(true);
-            //ShowWelcomeScreen(true);
+            //StartDirectXWindow();
+            ShowWelcomeScreen(true);
 #endif      
         }
         #endregion
@@ -70,7 +70,7 @@ namespace Utopia
                 case FormRequestedAction.ExitGame:
                     return;
                 case FormRequestedAction.StartSinglePlayer:
-                    StartDirectXWindow(data.SinglePlData.NewStruct);
+                    StartDirectXWindow();
                     break;
                 case FormRequestedAction.StartMultiPlayer:
                     break;
@@ -81,9 +81,9 @@ namespace Utopia
         }
 
         //Start the DirectX Render Loop
-        private void StartDirectXWindow(bool newStruct)
+        private void StartDirectXWindow()
         {
-            using (UtopiaRender main = new UtopiaRender(newStruct))
+            using (UtopiaRender main = new UtopiaRender())
             {
                 main.Run();
             }

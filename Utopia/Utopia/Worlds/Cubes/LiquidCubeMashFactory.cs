@@ -9,7 +9,7 @@ using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Chunks;
 using SharpDX;
-using Utopia.Planets.Terran.Flooding;
+using Utopia.Worlds.Liquid;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -43,7 +43,7 @@ namespace Utopia.Worlds.Cubes
             ByteVector4 vertexInfo1 = new ByteVector4((byte)cubeFace,
                                                       (byte)cubeProfile.LiquidType,
                 //cubeFace == CubeFace.Top || (cube.FloodingData == (byte)TerraFlooding.FloodDirection.Fall && cubeFace != CubeFace.Top && cubeFace != CubeFace.Bottom) ? (byte)cube.FloodingData : (byte)0,
-                                                      cubeFace == CubeFace.Top ? (byte)cube.MetaData3 : (byte)TerraFlooding.FloodDirection.Fall,
+                                                      cubeFace == CubeFace.Top ? (byte)cube.MetaData3 : (byte)FloodDirection.Fall,
                                                       (byte)0);
 
             string hashVertex;

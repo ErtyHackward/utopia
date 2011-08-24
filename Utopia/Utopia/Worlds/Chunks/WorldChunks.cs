@@ -6,11 +6,9 @@ using Utopia.Shared.World;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Chunks;
 using Utopia.Shared.Structs;
-using Utopia.Planets.Terran.Chunk;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.D3D;
 using S33M3Engines.Maths;
-using Utopia.GameClock;
 using Utopia.Worlds.GameClocks;
 using S33M3Engines;
 using S33M3Engines.Cameras;
@@ -53,7 +51,6 @@ namespace Utopia.Worlds.Chunks
         #region Private variables
         private D3DEngine _d3dEngine;
         private CameraManager _camManager;
-        private Location2<int> _worldStartUpPosition;
         private GameStatesManager _gameStates;
         private ILivingEntity _player;
         private SingleArrayChunkContainer _cubesHolder;
@@ -90,7 +87,6 @@ namespace Utopia.Worlds.Chunks
                            VisualWorldParameters visualWorldParameters,
                            WorldFocusManager worldFocusManager,
                            GameStatesManager gameStates, 
-                           Location2<int> worldStartUpPosition, 
                            IClock gameClock, 
                            ILivingEntity player,
                            SingleArrayChunkContainer cubesHolder,
@@ -104,7 +100,6 @@ namespace Utopia.Worlds.Chunks
             _gameStates = gameStates;
             _camManager = camManager;
             _gameClock = gameClock;
-            _worldStartUpPosition = worldStartUpPosition;
             _player = player;
             VisualWorldParameters = visualWorldParameters;
             _cubesHolder = cubesHolder;
@@ -263,8 +258,8 @@ namespace Utopia.Worlds.Chunks
             //Defining the World Offset, to be used to reference the 2d circular array of dim defined in chunk
             VisualWorldParameters.WorldRange = new Range<int>()
             {
-                Min = new Location3<int>(_worldStartUpPosition.X, 0, _worldStartUpPosition.Z),
-                Max = new Location3<int>(_worldStartUpPosition.X + VisualWorldParameters.WorldVisibleSize.X, VisualWorldParameters.WorldVisibleSize.Y, _worldStartUpPosition.Z + VisualWorldParameters.WorldVisibleSize.Z)
+                Min = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X, 0, VisualWorldParameters.WorldChunkStartUpPosition.Z),
+                Max = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X + VisualWorldParameters.WorldVisibleSize.X, VisualWorldParameters.WorldVisibleSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Z + VisualWorldParameters.WorldVisibleSize.Z)
             };
 
             //Create the chunks that will be used as "Rendering" array
@@ -281,8 +276,8 @@ namespace Utopia.Worlds.Chunks
                 {
                     cubeRange = new Range<int>()
                     {
-                        Min = new Location3<int>(_worldStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, _worldStartUpPosition.Z + (chunkZ * AbstractChunk.ChunkSize.Z)),
-                        Max = new Location3<int>(_worldStartUpPosition.X + ((chunkX + 1) * AbstractChunk.ChunkSize.X), AbstractChunk.ChunkSize.Y, _worldStartUpPosition.Z + ((chunkZ + 1) * AbstractChunk.ChunkSize.Z))
+                        Min = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, VisualWorldParameters.WorldChunkStartUpPosition.Z + (chunkZ * AbstractChunk.ChunkSize.Z)),
+                        Max = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X + ((chunkX + 1) * AbstractChunk.ChunkSize.X), AbstractChunk.ChunkSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Z + ((chunkZ + 1) * AbstractChunk.ChunkSize.Z))
                     };
 
                     arrayX = MathHelper.Mod(cubeRange.Min.X, VisualWorldParameters.WorldVisibleSize.X);
@@ -306,8 +301,8 @@ namespace Utopia.Worlds.Chunks
         private void InitWrappingVariables()
         {
             //Find the next number where mod == 0 !
-            int XWrap = _worldStartUpPosition.X;
-            int ZWrap = _worldStartUpPosition.Z;
+            int XWrap = VisualWorldParameters.WorldChunkStartUpPosition.X;
+            int ZWrap = VisualWorldParameters.WorldChunkStartUpPosition.Z;
 
             while (MathHelper.Mod(XWrap, VisualWorldParameters.WorldVisibleSize.X) != 0) XWrap++;
             while (MathHelper.Mod(ZWrap, VisualWorldParameters.WorldVisibleSize.Z) != 0) ZWrap++;

@@ -14,7 +14,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     public abstract class Tool : Item
     {
 
-        //TODO RenderCubeProfile has interesting info for the server , isSolid, cubeFamily etc but has client rendering things too
+        //TODO VisualCubeProfile has interesting info for the server , isSolid, cubeFamily etc but has client rendering things too
         //player.cs already has buildingCubeId so passing it would be nice ( or having it as field of the building tool)
         public abstract ToolImpact Use(TerraCubeWithPosition pickedBlock, Location3<int>? newCubePlace,  TerraCube terraCube);
 

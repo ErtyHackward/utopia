@@ -6,9 +6,6 @@ using S33M3Engines.D3D;
 using S33M3Engines.Cameras;
 using SharpDX;
 using S33M3Engines.Maths;
-using Utopia.Planets.Terran;
-using Utopia.Planets.Terran.World;
-using Utopia.Planets.Terran.Cube;
 using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.Struct;
 using S33M3Engines.InputHandler;
@@ -18,7 +15,6 @@ using UtopiaContent.ModelComp;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.D3D.Effects.Basics;
 using Utopia.Shared.Structs;
-using Utopia.Shared.Landscaping;
 using Utopia.Shared;
 using Utopia.Settings;
 using S33M3Engines.Shared.Math;
@@ -28,6 +24,8 @@ using S33M3Engines.Shared.Sprites;
 using S33M3Engines;
 using S33M3Engines.WorldFocus;
 using Utopia.Shared.Chunks;
+using Utopia.Worlds.Cubes;
+using Utopia.Shared.World;
 
 namespace Utopia.Entities.Living
 {
@@ -38,11 +36,12 @@ namespace Utopia.Entities.Living
 
         Location3<int> _pickedBlock, _previousPickedBlock, _newCubePlace;
         private TerraCube _pickedCube;//TODO refactor _pickedBlock to be a positioned terracube 
+        private VisualWorldParameters _visualWorldParameters;
 
         bool _isBlockPicked;
 
         int _buildingCubeIndex;
-        RenderCubeProfile _buildingCube;
+        VisualCubeProfile _buildingCube;
 
         //Bloc Cursor Variables
         BoundingBox _playerSelectedBox, _playerPotentialNewBlock;
@@ -63,9 +62,10 @@ namespace Utopia.Entities.Living
 
         #endregion
 
-        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed, SingleArrayChunkContainer cubesHolder)
+        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed, SingleArrayChunkContainer cubesHolder, VisualWorldParameters visualWorldParameters)
             : base(d3dEngine, camManager, inputHandler, startUpWorldPosition, size, walkingSpeed, flyingSpeed, headRotationSpeed, cubesHolder)
         {
+            _visualWorldParameters = visualWorldParameters;
             _worldFocusManager = worldFocusManager;
             _name = Name;
             Inventory = new PlayerInventory();
@@ -199,7 +199,7 @@ namespace Utopia.Entities.Living
                     {
                         Location3<int>? newPlace;
 
-                        if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
+                        if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= _visualWorldParameters.WorldVisibleSize.Y - 2)
                         {
                             newPlace = _newCubePlace;
                         }
@@ -224,7 +224,7 @@ namespace Utopia.Entities.Living
                 {
                     Location3<int>? newPlace;
 
-                    if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
+                    if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= _visualWorldParameters.WorldVisibleSize.Y - 2)
                     {
                         newPlace = _newCubePlace;
                     }
@@ -254,15 +254,15 @@ namespace Utopia.Entities.Living
                 if (_inputHandler.CurMouseState.ScrollWheelTicks > _inputHandler.PrevMouseState.ScrollWheelTicks || WheelForward)
                 {
                     _buildingCubeIndex++;
-                    if (_buildingCubeIndex >= RenderCubeProfile.CubesProfile.Length) _buildingCubeIndex = 1;
+                    if (_buildingCubeIndex >= VisualCubeProfile.CubesProfile.Length) _buildingCubeIndex = 1;
 
-                    _buildingCube = RenderCubeProfile.CubesProfile[_buildingCubeIndex];
+                    _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
                 }
                 else
                 {
                     _buildingCubeIndex--;
-                    if (_buildingCubeIndex <= 0) _buildingCubeIndex = RenderCubeProfile.CubesProfile.Length - 1;
-                    _buildingCube = RenderCubeProfile.CubesProfile[_buildingCubeIndex];
+                    if (_buildingCubeIndex <= 0) _buildingCubeIndex = VisualCubeProfile.CubesProfile.Length - 1;
+                    _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
                 }
 
                 WheelForward = false;
@@ -278,7 +278,7 @@ namespace Utopia.Entities.Living
         public override void LoadContent()
         {
             _buildingCubeIndex = 1;
-            _buildingCube = RenderCubeProfile.CubesProfile[_buildingCubeIndex];
+            _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
 
             _cursorEffect = new HLSLVertexPositionColor(_d3dEngine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
             _blocCursor = new BoundingBox3D(_d3dEngine, _worldFocusManager, new Vector3(1.004f, 1.004f, 1.004f), _cursorEffect, _cursorColor);
@@ -324,7 +324,7 @@ namespace Utopia.Entities.Living
 
         public override string GetInfo()
         {
-            return string.Concat("<IPerson : Player (", _name, ")> X : ", (WorldPosition.ActualValue.X - LandscapeBuilder.WorldStartUpX).ToString("0.0"), " Y : ", WorldPosition.ActualValue.Y.ToString("0.0"), " Z : ", (WorldPosition.ActualValue.Z - LandscapeBuilder.WorldStartUpZ).ToString("0.0"), " Block Focus : ", _isBlockPicked ? _pickedBlock.ToString() : "None", " Block Add : ", _isBlockPicked ? _newCubePlace.ToString() : "None", " CubeType : ", _buildingCube.Name);
+            return string.Concat("<IPerson : Player (", _name, ")> X : ", (WorldPosition.ActualValue.X - _visualWorldParameters.WorldChunkStartUpPosition.X).ToString("0.0"), " Y : ", WorldPosition.ActualValue.Y.ToString("0.0"), " Z : ", (WorldPosition.ActualValue.Z - _visualWorldParameters.WorldChunkStartUpPosition.Z).ToString("0.0"), " Block Focus : ", _isBlockPicked ? _pickedBlock.ToString() : "None", " Block Add : ", _isBlockPicked ? _newCubePlace.ToString() : "None", " CubeType : ", _buildingCube.Name);
         }
         #endregion
 

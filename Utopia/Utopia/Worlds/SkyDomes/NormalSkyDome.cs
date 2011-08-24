@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines.D3D;
-using Utopia.GameClock;
 using Utopia.Worlds.GameClocks;
 using S33M3Engines.Buffers;
 using S33M3Engines.Struct.Vertex;

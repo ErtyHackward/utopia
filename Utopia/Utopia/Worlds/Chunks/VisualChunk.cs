@@ -5,7 +5,6 @@ using System.Text;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
-using Utopia.Planets.Terran.Chunk;
 using S33M3Engines.Threading;
 using Amib.Threading;
 using S33M3Engines.Struct.Vertex;

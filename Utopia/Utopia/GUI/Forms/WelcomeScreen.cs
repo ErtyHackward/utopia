@@ -29,7 +29,6 @@ namespace Utopia.GUI.Forms
             if(withFadeIn) FadeInWinForm();
 
             singleChild.btNew.Click += new EventHandler(btNew_Click);
-            singleChild.btNewArch.Click += new EventHandler(btNewArch_Click);
         }
 
         private void FadeInWinForm()
