@@ -18,6 +18,7 @@ namespace Utopia.Shared.World
         }
 
         public Range<int> WorldRange;
+        public Location2<int> WrapEnd;
         public Location3<int> WorldVisibleSize;
         public Location2<int> WorldChunkStartUpPosition;
 

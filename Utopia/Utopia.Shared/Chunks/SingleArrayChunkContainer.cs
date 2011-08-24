@@ -26,12 +26,12 @@ namespace Utopia.Shared.Chunks
 
         public enum IdxRelativeMove : byte
         {
-            East,
-            West,
-            South,
-            North,
-            Down,
-            Up,
+            X_Minus1,
+            X_Plus1,
+            Z_Minus1,
+            Z_Plus1,
+            Y_Minus1,
+            Y_Plus1,
             None
         }
 
@@ -212,42 +212,40 @@ namespace Utopia.Shared.Chunks
             return index;
         }
 
-        public int FastIndex(int baseIndex, IdxRelativeMove idxmove)
+        public int FastIndex(int baseIndex, int Position, IdxRelativeMove idxmove)
         {
-            int MoveAmount = 0;
+            int value;
             switch (idxmove)
             {
-                case IdxRelativeMove.East:
-                    baseIndex += MoveX;
-                    MoveAmount = -MoveZ;
-                    break;
-                case IdxRelativeMove.West:
-                    baseIndex -= MoveX;
-                    MoveAmount = MoveZ;
-                    break;
-                case IdxRelativeMove.South:
-                    baseIndex -= MoveZ;
-                    break;
-                case IdxRelativeMove.North:
-                    baseIndex += MoveZ;
-                    break;
-                case IdxRelativeMove.Down:
-                    baseIndex -= MoveY;
-                    MoveAmount = MoveZ * MoveX;
-                    break;
-                case IdxRelativeMove.Up:
-                    baseIndex += MoveY;
-                    MoveAmount = -MoveZ * MoveX;;
-                    break;
                 case IdxRelativeMove.None:
+                    return baseIndex;
+                case IdxRelativeMove.X_Minus1:
+                    value = baseIndex - _visualWorldParam.WorldVisibleSize.Y;
+                    if (Position == _visualWorldParam.WrapEnd.X) value += _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
+                    break;
+                case IdxRelativeMove.X_Plus1:
+                    value = baseIndex + _visualWorldParam.WorldVisibleSize.Y;
+                    if (Position == _visualWorldParam.WrapEnd.X - 1) value -= _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
+                    break;
+                case IdxRelativeMove.Z_Minus1:
+                    value = baseIndex - _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
+                    if (Position == _visualWorldParam.WrapEnd.Z) value += _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
+                    break;
+                case IdxRelativeMove.Z_Plus1:
+                    value = baseIndex + _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
+                    if (Position == _visualWorldParam.WrapEnd.Z - 1) value -= _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
+                    break;
+                case IdxRelativeMove.Y_Minus1:
+                    value = baseIndex - 1;
+                    break;
+                case IdxRelativeMove.Y_Plus1:
+                    value = baseIndex + 1;
+                    break;
+                default:
+                    value = int.MaxValue;
                     break;
             }
-
-            //baseIndex = baseIndex % _bigArraySize;
-
-            baseIndex += MoveAmount;
-
-            return baseIndex;
+            return value;
         }
 
         public SurroundingIndex[] GetSurroundingBlocksIndex(int baseIndex, int CubeXCoord, int CubeYCoord, int CubeZCoord)
@@ -255,12 +253,12 @@ namespace Utopia.Shared.Chunks
             int cubeIndex = baseIndex;
             SurroundingIndex[] surroundingIndexes = new SurroundingIndex[6];
 
-            surroundingIndexes[0] = new SurroundingIndex() { Index = cubeIndex + MoveX , IndexRelativePosition = IdxRelativeMove.East, Position = new Location3<int>(CubeXCoord + 1, CubeYCoord, CubeZCoord) };
-            surroundingIndexes[1] = new SurroundingIndex() { Index = cubeIndex - MoveX , IndexRelativePosition = IdxRelativeMove.West, Position = new Location3<int>(CubeXCoord - 1, CubeYCoord, CubeZCoord) };
-            surroundingIndexes[2] = new SurroundingIndex() { Index = cubeIndex + MoveZ , IndexRelativePosition = IdxRelativeMove.North, Position = new Location3<int>(CubeXCoord, CubeYCoord, CubeZCoord + 1) };
-            surroundingIndexes[3] = new SurroundingIndex() { Index = cubeIndex - MoveZ , IndexRelativePosition = IdxRelativeMove.South, Position = new Location3<int>(CubeXCoord, CubeYCoord, CubeZCoord - 1) };
-            surroundingIndexes[4] = new SurroundingIndex() { Index = cubeIndex + MoveY , IndexRelativePosition = IdxRelativeMove.Up, Position = new Location3<int>(CubeXCoord, CubeYCoord + 1, CubeZCoord) };
-            surroundingIndexes[5] = new SurroundingIndex() { Index = cubeIndex - MoveY , IndexRelativePosition = IdxRelativeMove.Down, Position = new Location3<int>(CubeXCoord, CubeYCoord - 1, CubeZCoord) };
+            surroundingIndexes[0] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeXCoord, IdxRelativeMove.X_Plus1), IndexRelativePosition = IdxRelativeMove.X_Plus1, Position = new Location3<int>(CubeXCoord + 1, CubeYCoord, CubeZCoord) };
+            surroundingIndexes[1] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeXCoord, IdxRelativeMove.X_Minus1), IndexRelativePosition = IdxRelativeMove.X_Minus1, Position = new Location3<int>(CubeXCoord - 1, CubeYCoord, CubeZCoord) };
+            surroundingIndexes[2] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeZCoord, IdxRelativeMove.Z_Plus1), IndexRelativePosition = IdxRelativeMove.Z_Plus1, Position = new Location3<int>(CubeXCoord, CubeYCoord, CubeZCoord + 1) };
+            surroundingIndexes[3] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeZCoord, IdxRelativeMove.Z_Minus1), IndexRelativePosition = IdxRelativeMove.Z_Minus1, Position = new Location3<int>(CubeXCoord, CubeYCoord, CubeZCoord - 1) };
+            surroundingIndexes[4] = new SurroundingIndex() { Index = cubeIndex + MoveY , IndexRelativePosition = IdxRelativeMove.Y_Plus1, Position = new Location3<int>(CubeXCoord, CubeYCoord + 1, CubeZCoord) };
+            surroundingIndexes[5] = new SurroundingIndex() { Index = cubeIndex - MoveY , IndexRelativePosition = IdxRelativeMove.Y_Minus1, Position = new Location3<int>(CubeXCoord, CubeYCoord - 1, CubeZCoord) };
             return surroundingIndexes;
         }
 

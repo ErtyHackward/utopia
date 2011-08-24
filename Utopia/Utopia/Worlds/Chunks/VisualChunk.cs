@@ -229,6 +229,11 @@ namespace Utopia.Worlds.Chunks
         {
             ChunkID = (((Int64)_cubeRange.Min.X) << 32) + _cubeRange.Min.Z;
 
+            if (ChunkID == 68719476880)
+            {
+                Console.WriteLine(ChunkID);
+            }
+
             ChunkPosition = new IntVector2() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
             BorderChunk = _world.isBorderChunk(ChunkPosition);
 
