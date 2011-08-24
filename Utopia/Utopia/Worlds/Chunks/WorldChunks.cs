@@ -72,9 +72,6 @@ namespace Utopia.Worlds.Chunks
         /// <summary> World parameters </summary>
         public VisualWorldParameters VisualWorldParameters { get; set; }
 
-        /// <summary> Variable to track the world wrapping End</summary>
-        public Location2<int> WrapEnd { get; set; }
-
         public ILandscapeManager LandscapeManager
         {
             get { return _landscapeManager; }
@@ -307,7 +304,7 @@ namespace Utopia.Worlds.Chunks
             while (MathHelper.Mod(XWrap, VisualWorldParameters.WorldVisibleSize.X) != 0) XWrap++;
             while (MathHelper.Mod(ZWrap, VisualWorldParameters.WorldVisibleSize.Z) != 0) ZWrap++;
 
-            WrapEnd = new Location2<int>(XWrap, ZWrap);
+            VisualWorldParameters.WrapEnd = new Location2<int>(XWrap, ZWrap);
         }
 
 

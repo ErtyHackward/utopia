@@ -19,9 +19,6 @@ namespace Utopia.Worlds.Chunks
         /// <summary> the visible world border in world coordinate </summary>
         VisualWorldParameters VisualWorldParameters { get; set; }
 
-        /// <summary> Variable to track the world wrapping End</summary>
-        Location2<int> WrapEnd { get; set; }
-
         /// <summary> indicate wether the chunks needs to be sorted</summary>
         bool ChunkNeed2BeSorted { get; set; }
         /// <summary>

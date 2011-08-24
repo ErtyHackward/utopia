@@ -92,7 +92,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
             int NewMinWorldValue;
 
             NewWorldRange = WorldChunks.VisualWorldParameters.WorldRange;
-            NewWrapEnd = WorldChunks.WrapEnd;
+            NewWrapEnd = WorldChunks.VisualWorldParameters.WrapEnd;
 
             switch (operationType)
             {
@@ -119,7 +119,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     NewWorldRange.Min.X += AbstractChunk.ChunkSize.X;
                     NewWorldRange.Max.X += AbstractChunk.ChunkSize.X;
 
-                    if (WorldChunks.VisualWorldParameters.WorldRange.Min.X > WorldChunks.WrapEnd.X) NewWrapEnd.X += WorldChunks.VisualWorldParameters.WorldVisibleSize.X;
+                    if (NewWorldRange.Min.X > NewWrapEnd.X) NewWrapEnd.X += WorldChunks.VisualWorldParameters.WorldVisibleSize.X;
 
                     break;
                 case ChunkWrapType.X_Minus1:
@@ -145,7 +145,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     NewWorldRange.Min.X -= AbstractChunk.ChunkSize.X;
                     NewWorldRange.Max.X -= AbstractChunk.ChunkSize.X;
 
-                    if (WorldChunks.VisualWorldParameters.WorldRange.Min.X <= WorldChunks.WrapEnd.X - (WorldChunks.VisualWorldParameters.WorldVisibleSize.X)) NewWrapEnd.X -= WorldChunks.VisualWorldParameters.WorldVisibleSize.X;
+                    if (NewWorldRange.Min.X <= NewWrapEnd.X - (WorldChunks.VisualWorldParameters.WorldVisibleSize.X)) NewWrapEnd.X -= WorldChunks.VisualWorldParameters.WorldVisibleSize.X;
 
                     break;
                 case ChunkWrapType.Z_Plus1:
@@ -171,7 +171,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     NewWorldRange.Min.Z += AbstractChunk.ChunkSize.Z;
                     NewWorldRange.Max.Z += AbstractChunk.ChunkSize.Z;
 
-                    if (WorldChunks.VisualWorldParameters.WorldRange.Min.Z > WorldChunks.WrapEnd.Z) NewWrapEnd.Z += WorldChunks.VisualWorldParameters.WorldVisibleSize.Z;
+                    if (NewWorldRange.Min.Z > NewWrapEnd.Z) NewWrapEnd.Z += WorldChunks.VisualWorldParameters.WorldVisibleSize.Z;
 
                     break;
                 case ChunkWrapType.Z_Minus1:
@@ -196,7 +196,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     NewWorldRange.Min.Z -= AbstractChunk.ChunkSize.Z;
                     NewWorldRange.Max.Z -= AbstractChunk.ChunkSize.Z;
 
-                    if (WorldChunks.VisualWorldParameters.WorldRange.Min.Z <= WorldChunks.WrapEnd.Z - (WorldChunks.VisualWorldParameters.WorldVisibleSize.Z)) NewWrapEnd.Z -= WorldChunks.VisualWorldParameters.WorldVisibleSize.Z;
+                    if (NewWorldRange.Min.Z <= NewWrapEnd.Z - (WorldChunks.VisualWorldParameters.WorldVisibleSize.Z)) NewWrapEnd.Z -= WorldChunks.VisualWorldParameters.WorldVisibleSize.Z;
 
                     break;
                 default:
@@ -205,7 +205,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
 
             //Save the new World Range after Wrapping
             WorldChunks.VisualWorldParameters.WorldRange = NewWorldRange;
-            WorldChunks.WrapEnd = NewWrapEnd;
+            WorldChunks.VisualWorldParameters.WrapEnd = NewWrapEnd;
 
             PostWrappingStep();
 
