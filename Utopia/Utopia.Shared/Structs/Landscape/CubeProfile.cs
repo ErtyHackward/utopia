@@ -19,7 +19,6 @@ namespace Utopia.Shared.Structs.Landscape
         //Create the various Cubes
         public static void InitCubeProfiles()
         {
-
             DataSet CubeProfileDS = new DataSet();
             CubeProfileDS.ReadXml(@"Models\CubesProfile.xml", XmlReadMode.Auto);
 

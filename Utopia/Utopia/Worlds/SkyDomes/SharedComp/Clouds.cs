@@ -52,9 +52,9 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _visibleWorldSize = new Location3<int>()
             {
-                X = AbstractChunk.ChunkSize.X * worldParam.WorldSize.X,
+                X = AbstractChunk.ChunkSize.X * worldParam.WorldChunkSize.X,
                 Y = AbstractChunk.ChunkSize.Y,
-                Z = AbstractChunk.ChunkSize.Z * worldParam.WorldSize.Z,
+                Z = AbstractChunk.ChunkSize.Z * worldParam.WorldChunkSize.Z,
             };
         }
 

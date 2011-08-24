@@ -7,6 +7,7 @@ using S33M3Engines.Struct;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D.DebugTools;
 using Utopia.Planets.Terran;
+using Utopia.Shared.Chunks;
 
 namespace Utopia.Entities.Living
 {
@@ -15,7 +16,6 @@ namespace Utopia.Entities.Living
         Vector3 LookAt { get; }
         FTSValue<Quaternion> LookAtDirection { get; }
 
-        TerraWorld TerraWorld { get; set; }
         float WalkingSpeed { get; set; }
         float FlyingSpeed { get; set; }
         float MoveSpeed { get; set; }

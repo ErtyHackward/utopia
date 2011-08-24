@@ -57,7 +57,7 @@ namespace Utopia.Planets
             _planetSkyDome = new PlanetSkyDome(d3dEngine, camManager, worldFocusManager, gameClock);
             //Main terrain creation
             Terra = new Planets.Terran.Terra(d3dEngine, worldFocusManager, camManager, ref _planetSkyDome, ref _player, ref _planetnfo.Seed, ref _gameClock, landscapeBuilder, gameStates);
-            player.TerraWorld = Terra.World;
+            //player.TerraWorld = Terra.World;
             //Weather management
             _weatherMng = new Planets.Weather.WeatherManager(d3dEngine, camManager,  _gameClock, Terra.World);
         }
