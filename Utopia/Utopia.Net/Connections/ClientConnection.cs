@@ -205,8 +205,9 @@ namespace Utopia.Net.Connections
                     {
                         while (ms.Position != ms.Length)
                         {
-                            var idByte = (MessageTypes)reader.ReadByte();
                             startPosition = ms.Position;
+                            var idByte = (MessageTypes)reader.ReadByte();
+                            
                             switch (idByte)
                             {
                                 case MessageTypes.Login:

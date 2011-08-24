@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
@@ -22,6 +23,7 @@ namespace Utopia.Net.Connections
         private readonly AutoResetEvent _needSend = new AutoResetEvent(false);
         private readonly Queue<IBinaryMessage> _messages = new Queue<IBinaryMessage>();
         private Thread _sendThread;
+        private ConcurrentQueue<IBinaryMessage> _concurrentQueue = new ConcurrentQueue<IBinaryMessage>();
 
         /// <summary>
         /// Gets or sets current client version
@@ -289,7 +291,72 @@ namespace Utopia.Net.Connections
         }
 
         /// <summary>
-        /// Process incoming binary data
+        /// Process all buffered messages in current thread
+        /// </summary>
+        /// <param name="messageLimit">Count of messages to process, set 0 to process all messages</param>
+        public void FetchPendingMessages(int messageLimit = 0)
+        {
+            if(messageLimit == 0) 
+                messageLimit = _concurrentQueue.Count;
+
+            for (int i = 0; i < messageLimit; i++)
+            {
+                IBinaryMessage msg;
+                if (_concurrentQueue.TryDequeue(out msg))
+                {
+                    InvokeEvent(msg);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Invokes required event
+        /// </summary>
+        /// <param name="msg"></param>
+        private void InvokeEvent(IBinaryMessage msg)
+        {
+            switch ((MessageTypes)msg.MessageId)
+            {
+                case MessageTypes.Chat:
+                    OnMessageChat((ChatMessage)msg);
+                    break;
+                case MessageTypes.Error:
+                    OnMessageError((ErrorMessage)msg);
+                    break;
+                case MessageTypes.DateTime:
+                    OnMessageDateTime((DateTimeMessage)msg);
+                    break;
+                case MessageTypes.GameInformation:
+                    OnMessageGameInformation((GameInformationMessage)msg);
+                    break;
+                case MessageTypes.BlockChange:
+                    OnMessageBlockChange((BlockChangeMessage)msg);
+                    break;
+                case MessageTypes.PlayerPosition:
+                    OnMessagePosition((PlayerPositionMessage)msg);
+                    break;
+                case MessageTypes.PlayerDirection:
+                    OnMessageDirection((PlayerDirectionMessage)msg);
+                    break;
+                case MessageTypes.ChunkData:
+                    OnMessageChunkData((ChunkDataMessage)msg);
+                    break;
+                case MessageTypes.PlayerIn:
+                    OnMessagePlayerIn((PlayerInMessage)msg);
+                    break;
+                case MessageTypes.PlayerOut:
+                    OnMessagePlayerOut((PlayerOutMessage)msg);
+                    break;
+                case MessageTypes.LoginResult:
+                    OnMessageLoginResult((LoginResultMessage)msg);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("msg","Invalid message received from server");
+            }
+        }
+
+        /// <summary>
+        /// Process incoming binary data and puts it into the internal buffer
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="length"></param>
@@ -315,44 +382,15 @@ namespace Utopia.Net.Connections
                     {
                         while (ms.Position != ms.Length)
                         {
-                            var idByte = (MessageTypes)reader.ReadByte();
                             startPosition = ms.Position;
-                            switch (idByte)
-                            {
-                                case MessageTypes.ChunkData:
-                                    OnMessageChunkData(ChunkDataMessage.Read(reader));
-                                    break;
-                                case MessageTypes.Chat:
-                                    OnMessageChat(ChatMessage.Read(reader));
-                                    break;
-                                case MessageTypes.BlockChange:
-                                    OnMessageBlockChange(BlockChangeMessage.Read(reader));
-                                    break;
-                                case MessageTypes.PlayerPosition:
-                                    OnMessagePosition(PlayerPositionMessage.Read(reader));
-                                    break;
-                                case MessageTypes.PlayerDirection:
-                                    OnMessageDirection(PlayerDirectionMessage.Read(reader));
-                                    break;
-                                case MessageTypes.GameInformation:
-                                    OnMessageGameInformation(GameInformationMessage.Read(reader));
-                                    break;
-                                case MessageTypes.LoginResult:
-                                    OnMessageLoginResult(LoginResultMessage.Read(reader));
-                                    break;
-                                case MessageTypes.Error:
-                                    OnMessageError(ErrorMessage.Read(reader));
-                                    break;
-                                case MessageTypes.PlayerIn:
-                                    OnMessagePlayerIn(PlayerInMessage.Read(reader));
-                                    break;
-                                case MessageTypes.PlayerOut:
-                                    OnMessagePlayerOut(PlayerOutMessage.Read(reader));
-                                    break;
-                                case MessageTypes.DateTime:
-                                    OnMessageDateTime(DateTimeMessage.Read(reader));
-                                    break;
-                            }
+                            var idByte = (MessageTypes)reader.ReadByte();
+
+                            // if we need some message not to go into the buffer then it should be done here using InvokeEvent()
+
+                            // using Factory here makes additional box\unbox operation to pass strucutre by interface
+                            // need to profile in real conditions
+                            var message = NetworkMessageFactory.Instance.ReadMessage(idByte, reader);
+                            _concurrentQueue.Enqueue(message);
                         }
                     }
                     catch (EndOfStreamException)
