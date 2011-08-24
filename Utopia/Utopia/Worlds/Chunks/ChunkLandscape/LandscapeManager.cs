@@ -25,7 +25,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             set { _worldGenerator = value; }
         }
 
-        public WorldChunks WorldChunks { get; set; }
         #endregion
 
         public LandscapeManager()

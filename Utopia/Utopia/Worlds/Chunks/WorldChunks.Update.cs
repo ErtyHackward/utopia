@@ -43,7 +43,7 @@ namespace Utopia.Worlds.Chunks
 
         private void IntilializeUpdateble()
         {
-            _chunkCreationTrigger = (VisibleWorldSize.X / 2) - (1 * AbstractChunk.ChunkSize.X);
+            _chunkCreationTrigger = (VisualWorldParameters.WorldVisibleSize.X / 2) - (1 * AbstractChunk.ChunkSize.X);
         }
 
         private void ChunkUpdateManager()
@@ -83,7 +83,7 @@ namespace Utopia.Worlds.Chunks
                 if (chunk.State == ChunkState.LandscapeCreated ||
                     chunk.State == ChunkState.UserChanged)
                 {
-                    _lightingManager.CreateLightSources(chunk, S33M3Engines.Threading.WorkQueue.ThreadingActif);
+                    _lightingManager.CreateChunkLightSources(chunk, S33M3Engines.Threading.WorkQueue.ThreadingActif);
                 }
             }
         }
@@ -103,7 +103,7 @@ namespace Utopia.Worlds.Chunks
 
                     if (chunk.State == ChunkState.LandscapeLightsSourceCreated)
                     {
-                        _lightingManager.PropagateLightSources(chunk, S33M3Engines.Threading.WorkQueue.ThreadingActif);
+                        _lightingManager.PropagateChunkLightSources(chunk, S33M3Engines.Threading.WorkQueue.ThreadingActif);
                     }
                 }
             }
@@ -269,13 +269,13 @@ namespace Utopia.Worlds.Chunks
 
             // Get World Border line ! => Highest and lowest X et Z chunk components
             //Compute Player position against WorldRange
-            var resultmin = new DVector3(_player.WorldPosition.Value.X - WorldRange.Min.X,
-                                        _player.WorldPosition.Value.Y - WorldRange.Min.Y,
-                                        _player.WorldPosition.Value.Z - WorldRange.Min.Z);
+            var resultmin = new DVector3(_player.WorldPosition.Value.X - VisualWorldParameters.WorldRange.Min.X,
+                                        _player.WorldPosition.Value.Y - VisualWorldParameters.WorldRange.Min.Y,
+                                        _player.WorldPosition.Value.Z - VisualWorldParameters.WorldRange.Min.Z);
 
-            var resultmax = new DVector3(WorldRange.Max.X - _player.WorldPosition.Value.X,
-                                        WorldRange.Max.Y - _player.WorldPosition.Value.Y,
-                                        WorldRange.Max.Z - _player.WorldPosition.Value.Z);
+            var resultmax = new DVector3(VisualWorldParameters.WorldRange.Max.X - _player.WorldPosition.Value.X,
+                                        VisualWorldParameters.WorldRange.Max.Y - _player.WorldPosition.Value.Y,
+                                        VisualWorldParameters.WorldRange.Max.Z - _player.WorldPosition.Value.Z);
 
             float wrapOrder = float.MaxValue;
             ChunkWrapType operation = ChunkWrapType.Z_Plus1;

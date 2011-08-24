@@ -35,6 +35,8 @@ namespace Utopia
         private void ContainersBindings(IKernel iocContainer, WorldParameters worldParam)
         {
             iocContainer.Bind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
+            iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
+
 
             iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope();

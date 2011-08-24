@@ -137,6 +137,7 @@
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\TerraCubeWithPosition.cs" />
     <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
+    <Compile Include="World\VisualWorldParameters.cs" />
     <Compile Include="World\WorldConfigs\s33m3WorldConfig.cs" />
     <Compile Include="World\WorldConfigs\FlatWorldConfig.cs" />
     <Compile Include="World\Processors\FlatWorldProcessor.cs" />

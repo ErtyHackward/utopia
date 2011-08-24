@@ -16,14 +16,8 @@ namespace Utopia.Worlds.Chunks
         VisualChunk[] Chunks { get; set; }
         VisualChunk[] SortedChunks { get; set; }
 
-        /// <summary> World parameters </summary>
-        WorldParameters WorldParameters { get; set; }
-
-        /// <summary> Visible World Size in Cubes unit </summary>
-        Location3<int> VisibleWorldSize { get; }
-
         /// <summary> the visible world border in world coordinate </summary>
-        Range<int> WorldRange { get; set; }
+        VisualWorldParameters VisualWorldParameters { get; set; }
 
         /// <summary> Variable to track the world wrapping End</summary>
         Location2<int> WrapEnd { get; set; }

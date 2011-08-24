@@ -24,6 +24,7 @@ using Utopia.Settings;
 using S33M3Engines.Shared.Math;
 using S33M3Engines;
 using S33M3Engines.Cameras;
+using Utopia.Shared.Chunks;
 
 namespace Utopia.Entities.Living
 {
@@ -48,7 +49,6 @@ namespace Utopia.Entities.Living
         private Vector3 _entityHeadXAxis, _entityHeadYAxis, _entityHeadZAxis;
         private Vector3 _entityXAxis, _entityYAxis, _entityZAxis;
         private Matrix _headRotation, _entityRotation;
-        private TerraWorld _terraWorld;
         private LivingEntityMode _moveMode = LivingEntityMode.WalkingFirstPerson;
         private float _groundBelowEntity;
         private bool _headInsideWater = false;
@@ -57,6 +57,7 @@ namespace Utopia.Entities.Living
 
         private VerletSimulator _physicSimu;
         private RefreshHeadUnderWaterDelegate _refreshHeadUnderWater;
+        
 
         #endregion
 
@@ -70,7 +71,7 @@ namespace Utopia.Entities.Living
         public float FlyingSpeed { get { return _flyingSpeed; } set { _flyingSpeed = value; } }
         public float MoveRotationSpeed { get { return _moveRotationSpeed; } set { _moveRotationSpeed = value; } }
         public float HeadRotationSpeed { get { return _headRotationSpeed; } set { _headRotationSpeed = value; } }
-        public TerraWorld TerraWorld { get { return _terraWorld; } set { _terraWorld = value; } }
+        protected SingleArrayChunkContainer CubesHolder { get; set; }
         public delegate void RefreshHeadUnderWaterDelegate();
 
         public RefreshHeadUnderWaterDelegate RefreshHeadUnderWater{ get { return _refreshHeadUnderWater; } set { _refreshHeadUnderWater = value; } }
@@ -94,7 +95,7 @@ namespace Utopia.Entities.Living
 
         #endregion
 
-        public LivingEntity(D3DEngine d3dEngine, CameraManager camManager, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed)
+        public LivingEntity(D3DEngine d3dEngine, CameraManager camManager, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed, SingleArrayChunkContainer cubesHolder)
             : base(startUpWorldPosition, size)
         {
             _camManager = camManager;
@@ -106,6 +107,8 @@ namespace Utopia.Entities.Living
             _walkingSpeed = walkingSpeed;
             _flyingSpeed = flyingSpeed;
             _moveSpeed = _flyingSpeed;
+
+            CubesHolder = cubesHolder;
 
             _headRotationSpeed = headRotationSpeed;
             _moveRotationSpeed = 0;
@@ -129,19 +132,17 @@ namespace Utopia.Entities.Living
 
         public override void Initialize()
         {
-            
         }
 
         #region Update
-
         TerraCube _headCube;
         int _headCubeIndex;
         protected void CheckHeadUnderWater()
         {
-            if (TerraWorld.Landscape.SafeIndexY(MathHelper.Fastfloor(CameraWorldPosition.X), MathHelper.Fastfloor(CameraWorldPosition.Y), MathHelper.Fastfloor(CameraWorldPosition.Z), out _headCubeIndex))
+            if (CubesHolder.IndexSafe(MathHelper.Fastfloor(CameraWorldPosition.X), MathHelper.Fastfloor(CameraWorldPosition.Y), MathHelper.Fastfloor(CameraWorldPosition.Z), out _headCubeIndex))
             {
                 //Get the cube at the camera position !
-                _headCube = TerraWorld.Landscape.Cubes[_headCubeIndex];
+                _headCube = CubesHolder.Cubes[_headCubeIndex];
                 if (_headCube.Id == CubeId.Water || _headCube.Id == CubeId.WaterSource)
                 {
                     //Take into account the Offseting in case of Offseted Water !
@@ -390,7 +391,7 @@ namespace Utopia.Entities.Living
             Location3<int> GroundDirection = new Location3<int>(0, -1, 0);
             DVector3 newWorldPosition;
 
-            TerraWorld.Landscape.GetNextSolidBlockToPlayer(ref _boundingBox, ref GroundDirection, out groundCube);
+            CubesHolder.GetNextSolidBlockToPlayer(ref _boundingBox, ref GroundDirection, out groundCube);
             if (groundCube.Cube.Id != CubeId.Error)
             {
                 _groundBelowEntity = groundCube.Position.Y + 1;
@@ -414,7 +415,7 @@ namespace Utopia.Entities.Living
             //X Testing
             newPositionWithColliding.X = newPosition2Evaluate.X;
             RefreshBoundingBox(ref newPositionWithColliding, out _boundingBox2Evaluate);
-            if (_terraWorld.Landscape.IsSolidToPlayer(ref _boundingBox2Evaluate)) 
+            if (CubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate)) 
                 newPositionWithColliding.X = previousPosition.X;
 
             //Y Testing
@@ -424,7 +425,7 @@ namespace Utopia.Entities.Living
             if (previousPosition.Y < newPositionWithColliding.Y && _physicSimu.OnGround) _physicSimu.OnGround = false;
 
             RefreshBoundingBox(ref newPositionWithColliding, out _boundingBox2Evaluate);
-            if (_terraWorld.Landscape.IsSolidToPlayer(ref _boundingBox2Evaluate))
+            if (CubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate))
             {
                 //If Jummping
                 if (previousPosition.Y < newPositionWithColliding.Y)
@@ -442,7 +443,7 @@ namespace Utopia.Entities.Living
             //Z Testing
             newPositionWithColliding.Z = newPosition2Evaluate.Z;
             RefreshBoundingBox(ref newPositionWithColliding, out _boundingBox2Evaluate);
-            if (_terraWorld.Landscape.IsSolidToPlayer(ref _boundingBox2Evaluate)) 
+            if (CubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate)) 
                 newPositionWithColliding.Z = previousPosition.Z;
 
             newPosition2Evaluate = newPositionWithColliding;

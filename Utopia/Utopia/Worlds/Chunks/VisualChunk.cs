@@ -54,6 +54,7 @@ namespace Utopia.Worlds.Chunks
         public bool BorderChunk { get; set; }                 // Set to true if the chunk is located at the border of the visible world !
         public bool Ready2Draw { get; set; }                  // Whenever the chunk mesh are ready to be rendered to screen
         public bool isFrustumCulled { get; set; }             // Chunk Frustum culled
+        public Int64 ChunkID { get; set; }                    // Chunk ID
 
         public Matrix World;                                  // The chunk World matrix ==> Not a property, to be sure it will be direct variables acces !!
         public BoundingBox ChunkWorldBoundingBox;             // The chunk World BoundingBox ==> Not a property, to be sure it will be direct variables acces !!
@@ -93,10 +94,10 @@ namespace Utopia.Worlds.Chunks
         /// <returns>True if the chunk is at border</returns>
         public bool isBorderChunk(int X, int Z)
         {
-            if (X == _world.WorldRange.Min.X ||
-               Z == _world.WorldRange.Min.Z ||
-               X == _world.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
-               Z == _world.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
+            if (X == _world.VisualWorldParameters.WorldRange.Min.X ||
+               Z == _world.VisualWorldParameters.WorldRange.Min.Z ||
+               X == _world.VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
+               Z == _world.VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
             {
                 return true;
             }
@@ -227,6 +228,8 @@ namespace Utopia.Worlds.Chunks
 
         private void RangeChanged() // Start it also if the World offset Change !!!
         {
+            ChunkID = (((Int64)_cubeRange.Min.X) << 32) + _cubeRange.Min.Z;
+
             ChunkPosition = new IntVector2() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
             BorderChunk = _world.isBorderChunk(ChunkPosition);
 

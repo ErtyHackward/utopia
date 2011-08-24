@@ -8,7 +8,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 {
     public interface ILightingManager
     {
-        void CreateLightSources(VisualChunk chunk, bool Async);
-        void PropagateLightSources(VisualChunk chunk, bool Async);
+        void CreateChunkLightSources(VisualChunk chunk, bool Async);
+        void PropagateChunkLightSources(VisualChunk chunk, bool Async);
+        void CreateLightSources(ref Range<int> cubeRange);
+        void PropagateLightSources(ref Range<int> cubeRange, bool borderAsLightSource = false);
     }
 }

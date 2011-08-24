@@ -27,6 +27,7 @@ using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using S33M3Engines.Shared.Sprites;
 using S33M3Engines;
 using S33M3Engines.WorldFocus;
+using Utopia.Shared.Chunks;
 
 namespace Utopia.Entities.Living
 {
@@ -62,8 +63,8 @@ namespace Utopia.Entities.Living
 
         #endregion
 
-        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed)
-            : base(d3dEngine, camManager, inputHandler, startUpWorldPosition, size, walkingSpeed, flyingSpeed, headRotationSpeed)
+        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed, SingleArrayChunkContainer cubesHolder)
+            : base(d3dEngine, camManager, inputHandler, startUpWorldPosition, size, walkingSpeed, flyingSpeed, headRotationSpeed, cubesHolder)
         {
             _worldFocusManager = worldFocusManager;
             _name = Name;
@@ -116,7 +117,7 @@ namespace Utopia.Entities.Living
             {
                 pickingPointInLine += LookAt * 0.02f;
 
-                if (TerraWorld.Landscape.isPickable(ref pickingPointInLine, out _pickedCube))
+                if (CubesHolder.isPickable(ref pickingPointInLine, out _pickedCube))
                 {
 
                     _pickedBlock.X = MathHelper.Fastfloor(pickingPointInLine.X);
@@ -295,17 +296,14 @@ namespace Utopia.Entities.Living
             base.Update(ref TimeSpend);
 
             //Block Picking !?
-            if (TerraWorld != null)
-            {
-                GetSelectedBlock();
-                ind = TerraWorld.Landscape.Index(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z);
+            GetSelectedBlock();
+            ind = CubesHolder.Index(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z);
 
-                //Handle Specific User Keyboard/Mouse Action !
-                InputHandler(false);
+            //Handle Specific User Keyboard/Mouse Action !
+            InputHandler(false);
 
-                //Head Under Water ??
-                RefreshHeadUnderWater();
-            }
+            //Head Under Water ??
+            RefreshHeadUnderWater();
         }
 
         public override void DrawDepth2()

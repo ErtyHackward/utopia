@@ -74,7 +74,7 @@ namespace Utopia.Planets.Terran
             _player = player;
             GameClock = gameClock;
             World = new TerraWorld(_d3dEngine, _worldFocusManager, _camManager, ref _worldSeed, landscapeBuilder);
-            EntityImpact.Init(World);
+            //EntityImpact.Init(World);
             ChunkWrapper.Init(World);
             CubeMeshFactoryOLD.Init(World);
             DrawLiquid = DefaultDrawLiquid;

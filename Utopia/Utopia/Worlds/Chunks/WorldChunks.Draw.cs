@@ -43,7 +43,7 @@ namespace Utopia.Worlds.Chunks
             _terraEffect.Begin();
             _terraEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
             _terraEffect.CBPerFrame.Values.dayTime = _gameClock.ClockTime.ClockTimeNormalized2;
-            _terraEffect.CBPerFrame.Values.fogdist = ((VisibleWorldSize.X) / 2) - 48;
+            _terraEffect.CBPerFrame.Values.fogdist = ((VisualWorldParameters.WorldVisibleSize.X) / 2) - 48;
             _terraEffect.CBPerFrame.IsDirty = true;
             _sunColorBase = GetSunColor();
 
@@ -63,7 +63,7 @@ namespace Utopia.Worlds.Chunks
             Matrix worldFocus = Matrix.Identity;
 
             //Foreach faces type
-            for (int chunkIndice = 0; chunkIndice < _worldParameters.WorldSize.X * _worldParameters.WorldSize.Z; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Z; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
 

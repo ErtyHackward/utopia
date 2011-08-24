@@ -26,18 +26,17 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         #region private variables
         private CreateChunkMeshDelegate _createChunkMeshDelegate;
         private delegate object CreateChunkMeshDelegate(object chunk);
-        private WorldParameters _worldParameters;
+        private VisualWorldParameters _visualWorldParameters;
         private Location3<int> _visibleWorldSize;
         private SingleArrayChunkContainer _cubesHolder;
         #endregion
 
         #region public variables/properties
-        public WorldChunks WorldChunks { get; set; }
         #endregion
 
-        public ChunkMeshManager(WorldParameters worldParameters, SingleArrayChunkContainer cubesHolder)
+        public ChunkMeshManager(VisualWorldParameters visualWorldParameters, SingleArrayChunkContainer cubesHolder)
         {
-            _worldParameters = worldParameters;
+            _visualWorldParameters = visualWorldParameters;
             _cubesHolder = cubesHolder;
             Intialize();
         }
@@ -63,9 +62,9 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             _createChunkMeshDelegate = new CreateChunkMeshDelegate(createChunkMesh_threaded);
             _visibleWorldSize = new Location3<int>()
             {
-                X = AbstractChunk.ChunkSize.X * _worldParameters.WorldSize.X,
+                X = AbstractChunk.ChunkSize.X * _visualWorldParameters.WorldParameters.WorldChunkSize.X,
                 Y = AbstractChunk.ChunkSize.Y,
-                Z = AbstractChunk.ChunkSize.Z * _worldParameters.WorldSize.Z,
+                Z = AbstractChunk.ChunkSize.Z * _visualWorldParameters.WorldParameters.WorldChunkSize.Z,
             };
         }
 
@@ -147,11 +146,11 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         switch (cubeFace)
                         {
                             case CubeFace.Back:
-                                if (chunk.BorderChunk && (ZWorld - 1 < WorldChunks.WorldRange.Min.Z)) continue;
+                                if (chunk.BorderChunk && (ZWorld - 1 < _visualWorldParameters.WorldRange.Min.Z)) continue;
                                 neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
                                 break;
                             case CubeFace.Front:
-                                if (chunk.BorderChunk && (ZWorld + 1 >= WorldChunks.WorldRange.Max.Z)) continue;
+                                if (chunk.BorderChunk && (ZWorld + 1 >= _visualWorldParameters.WorldRange.Max.Z)) continue;
                                 neightborCubeIndex = cubeIndex + _cubesHolder.MoveZ;
                                 break;
                             case CubeFace.Bottom:
@@ -159,15 +158,15 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 neightborCubeIndex = cubeIndex - _cubesHolder.MoveY;
                                 break;
                             case CubeFace.Top:
-                                if (YWorld + 1 >= WorldChunks.WorldRange.Max.Y) continue;
+                                if (YWorld + 1 >= _visualWorldParameters.WorldRange.Max.Y) continue;
                                 neightborCubeIndex = cubeIndex + _cubesHolder.MoveY;
                                 break;
                             case CubeFace.Left:
-                                if (chunk.BorderChunk && (XWorld - 1 < WorldChunks.WorldRange.Min.X)) continue;
+                                if (chunk.BorderChunk && (XWorld - 1 < _visualWorldParameters.WorldRange.Min.X)) continue;
                                 neightborCubeIndex = cubeIndex - _cubesHolder.MoveX;
                                 break;
                             case CubeFace.Right:
-                                if (chunk.BorderChunk && (XWorld + 1 >= WorldChunks.WorldRange.Max.X)) continue;
+                                if (chunk.BorderChunk && (XWorld + 1 >= _visualWorldParameters.WorldRange.Max.X)) continue;
                                 neightborCubeIndex = cubeIndex + _cubesHolder.MoveX;
                                 break;
                             default:
@@ -186,7 +185,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                         //It is using a delegate in order to give the possibility for Plugging to replace the fonction call.
                         //Be default the fonction called here is : TerraCube.FaceGenerationCheck or TerraCube.WaterFaceGenerationCheck
-                        if (!cubeProfile.CanGenerateCubeFace(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _worldParameters.SeaLevel)) continue;
+                        if (!cubeProfile.CanGenerateCubeFace(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
 
                         switch (cubeProfile.CubeFamilly)
                         {

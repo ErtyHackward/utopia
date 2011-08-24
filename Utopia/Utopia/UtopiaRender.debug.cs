@@ -45,6 +45,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
 using Utopia.Worlds.Cubes;
 using Utopia.Entities;
+using Utopia.Worlds.Chunks.ChunkLighting;
 
 namespace Utopia
 {
@@ -75,7 +76,7 @@ namespace Utopia
                 IsInfinite = true,
                 Seed = 0,
                 SeaLevel = AbstractChunk.ChunkSize.Y / 2,
-                WorldSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
+                WorldChunkSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
             Location2<int> worldStartUp = new Location2<int>(0 * AbstractChunk.ChunkSize.X, 0 * AbstractChunk.ChunkSize.Z);
@@ -88,7 +89,6 @@ namespace Utopia
             //Init Block Profiles
             VisualCubeProfile.InitCubeProfiles(IoCContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"),
                                                IoCContainer.Get<ICubeMeshFactory>("LiquidCubeMeshFactory"));
-
 
             //-- Get the Main D3dEngine --
             _d3dEngine = IoCContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(W, H)),
@@ -120,7 +120,7 @@ namespace Utopia
             //-- Create Entity Player --
             //TODO : Create an entity manager that will be responsible to render the various entities instead of leaving each entity to render itself.
             _player = IoCContainer.Get<ILivingEntity>(new ConstructorArgument("Name", "s33m3"),
-                                                      new ConstructorArgument("startUpWorldPosition", new DVector3((worldParam.WorldSize.X / 2.0) + worldStartUp.X, 90, (worldParam.WorldSize.Z / 2.0f) + worldStartUp.Z)),
+                                                      new ConstructorArgument("startUpWorldPosition", new DVector3((worldParam.WorldChunkSize.X / 2.0) + worldStartUp.X, 90, (worldParam.WorldChunkSize.Z / 2.0f) + worldStartUp.Z)),
                                                       new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)),
                                                       new ConstructorArgument("walkingSpeed", 5f),
                                                       new ConstructorArgument("flyingSpeed", 30f),
@@ -131,9 +131,8 @@ namespace Utopia
             //A simple object wrapping a collectin of Entities, and wiring them for update/draw/...
             _entityRender = IoCContainer.Get<EntityRenderer>();
             _entityRender.Entities.Add(_player); //Add the main player to Entities
-
             GameComponents.Add(_entityRender);
-            //GameComponents.Add(_player);
+
 
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
             camera.CameraPlugin = _player;
@@ -163,7 +162,23 @@ namespace Utopia
             _worldRenderer = IoCContainer.Get<WorldRenderer>();
             GameComponents.Add(_worldRenderer);             //Bind worldRendered to main loop.
 
-            
+            //TODO Incoroporate EntityImpect inside Enitty framework as a single class ==> Not static !
+            EntityImpact.Init(IoCContainer.Get<SingleArrayChunkContainer>(), IoCContainer.Get<ILightingManager>(), IoCContainer.Get<IWorldChunks>());
+
+            //GUI components
+            _fps = new FPS();
+            GameComponents.Add(_fps);
+
+            _gui = new GUI.D3D.GUI(GameComponents, _d3dEngine, ((Player)IoCContainer.Get<ILivingEntity>()).Inventory);
+            GameComponents.Add(_gui);
+
+            _debugInfo = new DebugInfo(_d3dEngine);
+            _debugInfo.Activated = true;
+            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), _player);
+            GameComponents.Add(_debugInfo);
+
+            GameConsole.Initialize(_d3dEngine);
+
             //=======================================================================================
             //=======================================================================================
         }

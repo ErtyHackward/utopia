@@ -31,6 +31,7 @@ using S33M3Engines;
 using Ninject;
 using S33M3Engines.GameStates;
 using S33M3Engines.WorldFocus;
+using Utopia.Worlds.Cubes;
 
 namespace Utopia
 {
@@ -171,7 +172,7 @@ namespace Utopia
             _player = new Entities.Living.Player(_d3dEngine, _camManager, _worldFocusManager, "s33m3", camera, _inputHandler,
                                                  new DVector3((LandscapeBuilder.Worldsize.X / 2.0) + LandscapeBuilder.WorldStartUpX, 90, (LandscapeBuilder.Worldsize.Z / 2.0f) + LandscapeBuilder.WorldStartUpZ),
                                                  new Vector3(0.5f, 1.9f, 0.5f),
-                                                 5f, 30f, 10f)
+                                                 5f, 30f, 10f, null)
                 {
                     Mode = Entities.Living.LivingEntityMode.FreeFirstPerson //Defaulted to "Flying" mode
                 };
