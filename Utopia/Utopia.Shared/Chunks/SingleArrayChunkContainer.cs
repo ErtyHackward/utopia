@@ -160,11 +160,11 @@ namespace Utopia.Shared.Chunks
         /// <param name="Y">world Y position</param>
         /// <param name="Z">world Z position</param>
         /// <returns></returns>
-        public int IndexMoveValidated(int index, int Modification1, int Modification2)
+        public int IndexMoves(int index, int Modification1, int Modification2)
         {
-            index = ValidateIndex(index + Modification1);
-            index = ValidateIndex(index + Modification2);
-            return index;
+            index = index + Modification1;
+            index = index + Modification2;
+            return ValidateIndex(index);
         }
 
         /// <summary>
@@ -174,12 +174,12 @@ namespace Utopia.Shared.Chunks
         /// <param name="Y">world Y position</param>
         /// <param name="Z">world Z position</param>
         /// <returns></returns>
-        public int IndexMoveValidated(int index, int Modification1, int Modification2, int Modification3)
+        public int IndexMoves(int index, int Modification1, int Modification2, int Modification3)
         {
-            index = ValidateIndex(index + Modification1);
-            index = ValidateIndex(index + Modification2);
-            index = ValidateIndex(index + Modification3);
-            return index;
+            index = index + Modification1;
+            index = index + Modification2;
+            index = index + Modification3;
+            return ValidateIndex(index);
         }
 
         public bool isIndexInError(int index)
@@ -189,21 +189,6 @@ namespace Utopia.Shared.Chunks
         }
 
         public int ValidateIndex(int index)
-        {
-            //int i = neightborCubeIndex;
-            //if (i >= _cubesHolder.Cubes.Length) i -= _cubesHolder.Cubes.Length;
-            //if (i < 0) i += _cubesHolder.Cubes.Length;
-
-            if (index < 0) index += _bigArraySize;
-            else
-            {
-                if (index >= _bigArraySize) index -= _bigArraySize;
-            }
-
-            return index;
-        }
-
-        public int ValidateIndex2(int index)
         {
             index = index % _bigArraySize;
 

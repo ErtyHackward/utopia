@@ -51,6 +51,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             {
                 _createLandScapeDelegate.Invoke(chunk);
             }
+
+            chunk.RefreshBorderChunk();
         }
         #endregion
 
