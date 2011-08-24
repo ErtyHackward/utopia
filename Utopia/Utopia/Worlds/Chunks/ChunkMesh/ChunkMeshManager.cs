@@ -158,57 +158,26 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 break;
                             case CubeFace.Front:
                                 if (chunk.BorderChunk && (ZWorld + 1 >= _visualWorldParameters.WorldRange.Max.Z)) continue;
-                                //neightborCubeIndex = cubeIndex + _cubesHolder.MoveZ;
-                                neightborCubeIndex = _cubesHolder.Index(XWorld, YWorld, ZWorld + 1);
-                                neightborCubeIndexTest = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1);
-                                if (neightborCubeIndex != neightborCubeIndexTest)
-                                {
-                                    Console.WriteLine("STOP");
-                                }
+                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1);
                                 break;
                             case CubeFace.Bottom:
                                 if (YWorld - 1 < 0) continue;
-                                //neightborCubeIndex = cubeIndex - _cubesHolder.MoveY;
-                                neightborCubeIndex = _cubesHolder.Index(XWorld, YWorld - 1, ZWorld);
-                                neightborCubeIndexTest = cubeIndex - _cubesHolder.MoveY;
-                                if (neightborCubeIndex != neightborCubeIndexTest)
-                                {
-                                    Console.WriteLine("STOP");
-                                }
+                                neightborCubeIndex = cubeIndex - _cubesHolder.MoveY;
                                 
                                 break;
                             case CubeFace.Top:
                                 if (YWorld + 1 >= _visualWorldParameters.WorldRange.Max.Y) continue;
-                                //neightborCubeIndex = cubeIndex + _cubesHolder.MoveY;
-                                neightborCubeIndex = _cubesHolder.Index(XWorld, YWorld + 1, ZWorld);
-                                neightborCubeIndexTest = _cubesHolder.ValidateIndex2(cubeIndex + _cubesHolder.MoveY);
-                                neightborCubeIndexTest = cubeIndex + _cubesHolder.MoveY;
-                                if (neightborCubeIndex != neightborCubeIndexTest)
-                                {
-                                    Console.WriteLine("STOP");
-                                }
+                                neightborCubeIndex = cubeIndex + _cubesHolder.MoveY;
                                 
                                 break;
                             case CubeFace.Left:
                                 if (chunk.BorderChunk && (XWorld - 1 < _visualWorldParameters.WorldRange.Min.X)) continue;
-                                //neightborCubeIndex = cubeIndex - _cubesHolder.MoveX;
-                                neightborCubeIndex = _cubesHolder.Index(XWorld - 1, YWorld, ZWorld);
-                                neightborCubeIndexTest = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1);
-                                if (neightborCubeIndex != neightborCubeIndexTest)
-                                {
-                                    Console.WriteLine("STOP");
-                                }
+                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1);
                                 
                                 break;
                             case CubeFace.Right:
                                 if (chunk.BorderChunk && (XWorld + 1 >= _visualWorldParameters.WorldRange.Max.X)) continue;
-                                //neightborCubeIndex = cubeIndex + _cubesHolder.MoveX;
-                                neightborCubeIndex = _cubesHolder.Index(XWorld + 1, YWorld, ZWorld);
-                                neightborCubeIndexTest = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1);
-                                if (neightborCubeIndex != neightborCubeIndexTest)
-                                {
-                                    Console.WriteLine("STOP");
-                                }
+                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1);
                                 break;
                             default:
                                 throw new NullReferenceException();
@@ -220,8 +189,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //int i = neightborCubeIndex;
                         //if (i >= _cubesHolder.Cubes.Length) i -= _cubesHolder.Cubes.Length;
                         //if (i < 0) i += _cubesHolder.Cubes.Length;
-                        neightborCubeIndex = _cubesHolder.ValidateIndex(neightborCubeIndex);
-
                         neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
 
                         var test = _cubesHolder.Index(XWorld + 1, YWorld, ZWorld);

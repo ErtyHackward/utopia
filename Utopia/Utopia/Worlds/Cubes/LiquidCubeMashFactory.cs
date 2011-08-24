@@ -60,14 +60,14 @@ namespace Utopia.Worlds.Cubes
                     //Get the 9 Facing cubes to the face
 
                     ByteColor Back_Cube = _cubesHolder.Cubes[baseIndex + _cubesHolder.MoveZ].EmissiveColor;
-                    ByteColor BackLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BackRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BackTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BackBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BackLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BackRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BackLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BackRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BackLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BackRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BackTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BackBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BackLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BackRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BackLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BackRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
 
                     topLeft = cubePosition + new ByteVector4(0, 1, 1, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(1, 1, 1, cubeFaceType);
@@ -127,14 +127,14 @@ namespace Utopia.Worlds.Cubes
 
                     //Get the 9 Facing cubes to the face
                     ByteColor Front_Cube = _cubesHolder.Cubes[baseIndex - _cubesHolder.MoveZ].EmissiveColor;
-                    ByteColor FrontLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor FrontRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor FrontTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor FrontBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor FrontLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor FrontRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor FrontLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor FrontRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor FrontLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor FrontRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor FrontTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor FrontBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor FrontLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor FrontRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor FrontLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor FrontRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
 
                     topLeft = cubePosition + new ByteVector4(1, 1, 0, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(0, 1, 0, cubeFaceType);
@@ -194,14 +194,14 @@ namespace Utopia.Worlds.Cubes
 
                     //Get the 9 Facing cubes to the face
                     ByteColor Bottom_Cube = _cubesHolder.Cubes[baseIndex + _cubesHolder.MoveY].EmissiveColor;
-                    ByteColor BottomLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
-                    ByteColor BottomRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
-                    ByteColor BottomTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BottomBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BottomLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BottomRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BottomLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor BottomRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BottomLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
+                    ByteColor BottomRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
+                    ByteColor BottomTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BottomBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BottomLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BottomRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BottomLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor BottomRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
 
                     topLeft = cubePosition + new ByteVector4(0, 1, 0, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(1, 1, 0, cubeFaceType);
@@ -261,14 +261,14 @@ namespace Utopia.Worlds.Cubes
 
                     //Get the 9 Facing cubes to the face
                     ByteColor Top_Cube = _cubesHolder.Cubes[baseIndex - _cubesHolder.MoveY].EmissiveColor;
-                    ByteColor TopLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
-                    ByteColor TopRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
-                    ByteColor TopTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor TopBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor TopLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor TopRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor TopLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor TopRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor TopLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
+                    ByteColor TopRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
+                    ByteColor TopTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor TopBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor TopLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor TopRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor TopLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor TopRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
 
                     topLeft = cubePosition + new ByteVector4(0, 0, 1, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(1, 0, 1, cubeFaceType);
@@ -327,14 +327,14 @@ namespace Utopia.Worlds.Cubes
                 case CubeFace.Left:
                     //Get the 9 Facing cubes to the face
                     ByteColor Right_Cube = _cubesHolder.Cubes[baseIndex - _cubesHolder.MoveX].EmissiveColor;
-                    ByteColor RightLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor RightRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor RightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
-                    ByteColor RightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
-                    ByteColor RightLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor RightRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor RightLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor RightRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor RightLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor RightRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor RightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
+                    ByteColor RightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
+                    ByteColor RightLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor RightRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor RightLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor RightRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
 
                     topLeft = cubePosition + new ByteVector4(0, 1, 0, cubeFaceType);
                     bottomRight = cubePosition + new ByteVector4(0, 0, 1, cubeFaceType);
@@ -393,14 +393,14 @@ namespace Utopia.Worlds.Cubes
 
                     //Get the 9 Facing cubes to the face
                     ByteColor Left_Cube = _cubesHolder.Cubes[baseIndex + _cubesHolder.MoveX].EmissiveColor;
-                    ByteColor LeftLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor LefttRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor LeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
-                    ByteColor LeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
-                    ByteColor LeftLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor LeftRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor LeftLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    ByteColor LeftRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoveValidated(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor LeftLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor LefttRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor LeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
+                    ByteColor LeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
+                    ByteColor LeftLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor LeftRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor LeftLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
+                    ByteColor LeftRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
 
                     topLeft = cubePosition + new ByteVector4(1, 1, 1, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(1, 1, 0, cubeFaceType);

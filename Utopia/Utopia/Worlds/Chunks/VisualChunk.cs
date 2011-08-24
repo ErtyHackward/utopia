@@ -85,22 +85,11 @@ namespace Utopia.Worlds.Chunks
         }
 
         #region Public methods
-        /// <summary>
-        /// Is my chunk at the edge of the visible world ?
-        /// </summary>
-        /// <param name="X">Chunk world X position</param>
-        /// <param name="Z">Chunk world Z position</param>
-        /// <returns>True if the chunk is at border</returns>
-        public bool isBorderChunk(int X, int Z)
+        
+
+        public void RefreshBorderChunk()
         {
-            if (X == _world.VisualWorldParameters.WorldRange.Min.X ||
-               Z == _world.VisualWorldParameters.WorldRange.Min.Z ||
-               X == _world.VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
-               Z == _world.VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
-            {
-                return true;
-            }
-            return false;
+            BorderChunk = isBorderChunk(ChunkPosition.X, ChunkPosition.Y);
         }
 
 
@@ -216,6 +205,24 @@ namespace Utopia.Worlds.Chunks
 
         #region Privates Methods
 
+        /// <summary>
+        /// Is my chunk at the edge of the visible world ?
+        /// </summary>
+        /// <param name="X">Chunk world X position</param>
+        /// <param name="Z">Chunk world Z position</param>
+        /// <returns>True if the chunk is at border</returns>
+        private bool isBorderChunk(int X, int Z)
+        {
+            if (X == _world.VisualWorldParameters.WorldRange.Min.X ||
+               Z == _world.VisualWorldParameters.WorldRange.Min.Z ||
+               X == _world.VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
+               Z == _world.VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private void RefreshWorldMatrix()
         {
             Matrix.Translation(_cubeRange.Min.X, _cubeRange.Min.Y, _cubeRange.Min.Z, out World); //Create a matrix for world translation
@@ -229,14 +236,7 @@ namespace Utopia.Worlds.Chunks
         {
             ChunkID = (((Int64)_cubeRange.Min.X) << 32) + _cubeRange.Min.Z;
 
-            if (ChunkID == 68719476880)
-            {
-                Console.WriteLine(ChunkID);
-            }
-
             ChunkPosition = new IntVector2() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
-            BorderChunk = _world.isBorderChunk(ChunkPosition);
-
             RefreshWorldMatrix();
         }
 
