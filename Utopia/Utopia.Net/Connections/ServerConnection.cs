@@ -23,7 +23,7 @@ namespace Utopia.Net.Connections
         private readonly AutoResetEvent _needSend = new AutoResetEvent(false);
         private readonly Queue<IBinaryMessage> _messages = new Queue<IBinaryMessage>();
         private Thread _sendThread;
-        private ConcurrentQueue<IBinaryMessage> _concurrentQueue = new ConcurrentQueue<IBinaryMessage>();
+        private readonly ConcurrentQueue<IBinaryMessage> _concurrentQueue = new ConcurrentQueue<IBinaryMessage>();
 
         /// <summary>
         /// Gets or sets current client version

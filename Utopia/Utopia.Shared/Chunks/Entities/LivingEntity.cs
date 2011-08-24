@@ -77,6 +77,16 @@ namespace Utopia.Shared.Chunks.Entities
         /// </summary>
         public bool IsRealPlayer { get; set; }
 
+        /// <summary>
+        /// Gets current health points of entity
+        /// </summary>
+        public int Health { get; set; }
+
+        /// <summary>
+        /// Gets maximum health point of entity
+        /// </summary>
+        public int MaxHealth { get; set; }
+
         #endregion
 
         /// <summary>

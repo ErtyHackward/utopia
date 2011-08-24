@@ -76,6 +76,7 @@
     <Compile Include="Chunks\Entities\Interfaces\IUsableEntity.cs" />
     <Compile Include="Chunks\Entities\Inventory\Slot.cs" />
     <Compile Include="Chunks\Entities\Inventory\ToolbarSlot.cs" />
+    <Compile Include="Chunks\Entities\LivingEntityEffect.cs" />
     <Compile Include="Chunks\Entities\LivingEntityState.cs" />
     <Compile Include="Chunks\Entities\PlayerCharacter.cs" />
     <Compile Include="Chunks\Entities\SpecialCharacterEntity.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Roleplay\CharacterExperience.cs" />
     <Compile Include="Roleplay\CharacterPrimaryAttributes.cs" />
     <Compile Include="Roleplay\CharacterSecondaryAttributes.cs" />
+    <Compile Include="Roleplay\CharacterSurvivalAttributes.cs" />
     <Compile Include="Structs\ByteColor.cs" />
     <Compile Include="Structs\ByteVector3.cs" />
     <Compile Include="Structs\ByteVector4.cs" />
