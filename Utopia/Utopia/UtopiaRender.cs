@@ -118,6 +118,7 @@ namespace Utopia
             //=======================================================================================
             //Create the world components ===========================================================
 
+
             //Variables initialisation ==================================================================
             Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
             {
@@ -222,10 +223,18 @@ namespace Utopia
 
             _debugInfo = new DebugInfo(_d3dEngine);
             _debugInfo.Activated = true;
-            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), _player);
+            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), _player, IoCContainer.Get<IWorldChunks>());
             GameComponents.Add(_debugInfo);
 
             GameConsole.Initialize(_d3dEngine);
+
+
+
+            #region Debug Components
+#if DEBUG
+            DebugEffect.Init(_d3dEngine);             // Default Effect used by debug componant (will be shared)
+#endif
+            #endregion
 
         }
 

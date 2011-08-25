@@ -13,6 +13,8 @@ using S33M3Engines.Buffers;
 using S33M3Engines;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
+using UtopiaContent.ModelComp;
+using S33M3Engines.WorldFocus;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -69,19 +71,29 @@ namespace Utopia.Worlds.Chunks
                 RangeChanged();
             }
         }
+
+#if DEBUG
+        private BoundingBox3D _chunkBoundingBoxDisplay;
+        public BoundingBox3D ChunkBoundingBoxDisplay { get { return _chunkBoundingBoxDisplay; } }
+#endif
+
         #endregion
 
-        public VisualChunk(D3DEngine d3dEngine, WorldChunks world, ref Range<int> cubeRange, SingleArrayChunkContainer singleArrayContainer)
+        public VisualChunk(D3DEngine d3dEngine, WorldFocusManager worldFocusManager, WorldChunks world, ref Range<int> cubeRange, SingleArrayChunkContainer singleArrayContainer)
             : base(new SingleArrayDataProvider(singleArrayContainer))
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 
+#if DEBUG
+            _chunkBoundingBoxDisplay = new BoundingBox3D(d3dEngine, worldFocusManager, new Vector3((float)(cubeRange.Max.X - cubeRange.Min.X), (float)(cubeRange.Max.Y - cubeRange.Min.Y), (float)(cubeRange.Max.Z - cubeRange.Min.Z)), S33M3Engines.D3D.Effects.Basics.DebugEffect.DebugEffectVPC, Color.Tomato);
+#endif
             _d3dEngine = d3dEngine;
             _world = world;
             CubeRange = cubeRange;
             State = ChunkState.Empty;
             Ready2Draw = false;
             LightPropagateBorderOffset = new Location2<int>(0, 0);
+
         }
 
         #region Public methods
@@ -230,6 +242,11 @@ namespace Utopia.Worlds.Chunks
             //Refresh the bounding Box to make it in world coord.
             ChunkWorldBoundingBox.Minimum = new Vector3(_cubeRange.Min.X, _cubeRange.Min.Y, _cubeRange.Min.Z);
             ChunkWorldBoundingBox.Maximum = new Vector3(_cubeRange.Max.X, _cubeRange.Max.Y, _cubeRange.Max.Z);
+
+#if DEBUG
+            ChunkBoundingBoxDisplay.Update(ref ChunkWorldBoundingBox);
+#endif
+
         }
 
         private void RangeChanged() // Start it also if the World offset Change !!!
@@ -256,6 +273,9 @@ namespace Utopia.Worlds.Chunks
 
         public void Dispose()
         {
+#if DEBUG
+            ChunkBoundingBoxDisplay.Dispose();
+#endif
         }
     }
 }
