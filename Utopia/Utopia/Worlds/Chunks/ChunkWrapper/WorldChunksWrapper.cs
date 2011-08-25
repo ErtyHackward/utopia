@@ -35,6 +35,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
         public WorldChunksWrapper()
         {
         }
+
         #region Private methods
         //Force some chunks to be refresh (not reconstructed)
         private void PostWrappingStep()
