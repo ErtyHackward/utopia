@@ -46,7 +46,7 @@ namespace Utopia.Worlds.Cubes
                                                       cubeFace == CubeFace.Top ? (byte)cube.MetaData3 : (byte)FloodDirection.Fall,
                                                       (byte)0);
 
-            string hashVertex;
+            long hashVertex;
             int generatedVertex = 0;
             int vertexOffset0, vertexOffset1, vertexOffset2, vertexOffset3;
 
@@ -74,7 +74,7 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new ByteVector4(0, 0, 1, cubeFaceType);
                     bottomRight = cubePosition + new ByteVector4(1, 0, 1, cubeFaceType);
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
@@ -84,7 +84,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
@@ -94,7 +94,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
@@ -104,7 +104,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
@@ -141,7 +141,7 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new ByteVector4(1, 0, 0, cubeFaceType);
                     bottomRight = cubePosition + new ByteVector4(0, 0, 0, cubeFaceType);
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
@@ -151,7 +151,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
@@ -161,7 +161,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
@@ -171,7 +171,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
@@ -208,7 +208,7 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new ByteVector4(0, 1, 1, cubeFaceType);
                     bottomRight = cubePosition + new ByteVector4(1, 1, 1, cubeFaceType);
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
@@ -218,7 +218,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
@@ -228,7 +228,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
@@ -238,7 +238,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
@@ -275,7 +275,7 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new ByteVector4(0, 0, 0, cubeFaceType);
                     bottomRight = cubePosition + new ByteVector4(1, 0, 0, cubeFaceType);
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
@@ -285,7 +285,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
@@ -295,7 +295,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
@@ -305,7 +305,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
@@ -341,7 +341,7 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new ByteVector4(0, 0, 0, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(0, 1, 1, cubeFaceType);
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
@@ -351,7 +351,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
@@ -361,7 +361,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
@@ -371,7 +371,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
@@ -407,7 +407,7 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new ByteVector4(1, 0, 1, cubeFaceType);
                     bottomRight = cubePosition + new ByteVector4(1, 0, 0, cubeFaceType);
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
@@ -417,7 +417,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + topLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
@@ -427,7 +427,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomLeft.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
@@ -437,7 +437,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = cubeFace.GetHashCode().ToString() + bottomRight.GetHashCode().ToString() + cube.Id.GetHashCode().ToString();
+                    hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
