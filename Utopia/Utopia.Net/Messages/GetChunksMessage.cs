@@ -30,7 +30,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Corresponding md5 hashes array of size HashesCount, each hash must be 16 bytes length
         /// </summary>
-        private byte[][] _md5Hashes;
+        private Md5Hash[] _md5Hashes;
 
         /// <summary>
         /// Gets message id
@@ -88,7 +88,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Gets or sets corresponding md5 hashes array of size HashesCount, each hash must be 16 bytes length
         /// </summary>
-        public byte[][] Md5Hashes
+        public Md5Hash[] Md5Hashes
         {
             get { return _md5Hashes; }
             set { _md5Hashes = value; }
@@ -108,16 +108,24 @@ namespace Utopia.Net.Messages
 
             msg._hashesCount = reader.ReadInt32();
 
-            msg._positions = new IntVector2[msg._hashesCount];
-            msg._md5Hashes = new byte[msg._hashesCount][];
-
-            for (int i = 0; i < msg._hashesCount; i++)
+            if (msg._hashesCount > 0)
             {
-                msg._positions[i].X = reader.ReadInt32();
-                msg._positions[i].Y = reader.ReadInt32();
-                msg._md5Hashes[i] = reader.ReadBytes(16);
+                msg._positions = new IntVector2[msg._hashesCount];
+                msg._md5Hashes = new Md5Hash[msg._hashesCount];
+                
+                for (int i = 0; i < msg._hashesCount; i++)
+                {
+                    msg._positions[i].X = reader.ReadInt32();
+                    msg._positions[i].Y = reader.ReadInt32();
+                    msg._md5Hashes[i] = new Md5Hash(reader.ReadBytes(16));
+                }
             }
-            
+            else
+            {
+                msg._positions = null;
+                msg._md5Hashes = null;
+            }
+
             return msg;
         }
 
@@ -136,7 +144,7 @@ namespace Utopia.Net.Messages
                 {
                     writer.Write(msg._positions[i].X);
                     writer.Write(msg._positions[i].Y);
-                    writer.Write(msg._md5Hashes[i]);
+                    writer.Write(msg._md5Hashes[i].Bytes);
                 }
             }
             else writer.Write(0);
