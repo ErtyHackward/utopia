@@ -129,7 +129,8 @@ namespace Utopia
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
             Location2<int> worldStartUp = new Location2<int>(0 * AbstractChunk.ChunkSize.X, 0 * AbstractChunk.ChunkSize.Z);
-
+            //Debug Lighting near position 350;86;248
+            //Location2<int> worldStartUp = new Location2<int>(20 * AbstractChunk.ChunkSize.X, 15 * AbstractChunk.ChunkSize.Z);
             //===========================================================================================
 
             //Creating the IoC Bindings
@@ -167,6 +168,7 @@ namespace Utopia
             _camManager = IoCContainer.Get<CameraManager>();
 
             //-- Create Entity Player --
+
             //TODO : Create an entity manager that will be responsible to render the various entities instead of leaving each entity to render itself.
             _player = IoCContainer.Get<ILivingEntity>(new ConstructorArgument("Name", ClientSettings.Current.Settings.GameParameters.NickName),
                                                       new ConstructorArgument("startUpWorldPosition", new DVector3((worldParam.WorldChunkSize.X * AbstractChunk.ChunkSize.X / 2.0) + worldStartUp.X, 90, (worldParam.WorldChunkSize.Z * AbstractChunk.ChunkSize.Z / 2.0f) + worldStartUp.Z)),
