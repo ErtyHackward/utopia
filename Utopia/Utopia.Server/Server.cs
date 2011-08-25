@@ -30,9 +30,10 @@ namespace Utopia.Server
         #region fields
 
         private readonly List<ServerChunk> _saveList = new List<ServerChunk>();
+        // ReSharper disable NotAccessedField.Local
         private Timer _cleanUpTimer;
         private Timer _saveTimer;
-        
+        // ReSharper restore NotAccessedField.Local        
         #endregion
 
         /// <summary>
@@ -75,11 +76,11 @@ namespace Utopia.Server
             SettingsManager.Load();
 
             Listener = new TcpConnectionListener(SettingsManager.Settings.ServerPort);
-            Listener.IncomingConnection += Listener_IncomingConnection;
+            Listener.IncomingConnection += ListenerIncomingConnection;
             
             ConnectionManager = new ConnectionManager();
-            ConnectionManager.ConnectionAdded += ConnectionManager_ConnectionAdded;
-            ConnectionManager.ConnectionRemoved += ConnectionManager_ConnectionRemoved;
+            ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
+            ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
 
             var dbPath = SettingsManager.Settings.DatabasePath;
 
@@ -136,14 +137,14 @@ namespace Utopia.Server
             }
         }
 
-        void ConnectionManager_ConnectionRemoved(object sender, ConnectionEventArgs e)
+        void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
         {
-            e.Connection.MessageLogin -= Connection_MessageLogin;
-            e.Connection.MessageGetChunks -= Connection_MessageGetChunks;
-            e.Connection.MessageBlockChange -= Connection_MessageBlockChange;
-            e.Connection.MessagePosition -= Connection_MessagePosition;
-            e.Connection.MessageDirection -= Connection_MessageDirection;
-            e.Connection.MessageChat -= Connection_MessageChat;
+            e.Connection.MessageLogin -= ConnectionMessageLogin;
+            e.Connection.MessageGetChunks -= ConnectionMessageGetChunks;
+            e.Connection.MessageBlockChange -= ConnectionMessageBlockChange;
+            e.Connection.MessagePosition -= ConnectionMessagePosition;
+            e.Connection.MessageDirection -= ConnectionMessageDirection;
+            e.Connection.MessageChat -= ConnectionMessageChat;
             Console.WriteLine("{0} disconnected", e.Connection.RemoteAddress);
             
             if (e.Connection.Authorized)
@@ -168,44 +169,44 @@ namespace Utopia.Server
 
         }
 
-        void Connection_MessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
+        void ConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
         {
             var connection = sender as ClientConnection;
-            if (e.Message.Login == connection.Login)
+            if (connection != null && e.Message.Login == connection.Login)
                 ConnectionManager.Broadcast(e.Message);
         }
 
-        void ConnectionManager_ConnectionAdded(object sender, ConnectionEventArgs e)
+        void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
         {
-            e.Connection.MessageLogin += Connection_MessageLogin;
-            e.Connection.MessageGetChunks += Connection_MessageGetChunks;
-            e.Connection.MessageBlockChange += Connection_MessageBlockChange;
-            e.Connection.MessagePosition += Connection_MessagePosition;
-            e.Connection.MessageDirection += Connection_MessageDirection;
-            e.Connection.MessageChat += Connection_MessageChat;
+            e.Connection.MessageLogin += ConnectionMessageLogin;
+            e.Connection.MessageGetChunks += ConnectionMessageGetChunks;
+            e.Connection.MessageBlockChange += ConnectionMessageBlockChange;
+            e.Connection.MessagePosition += ConnectionMessagePosition;
+            e.Connection.MessageDirection += ConnectionMessageDirection;
+            e.Connection.MessageChat += ConnectionMessageChat;
         }
 
-        void Connection_MessageDirection(object sender, ProtocolMessageEventArgs<PlayerDirectionMessage> e)
+        void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<PlayerDirectionMessage> e)
         {
             var connection = sender as ClientConnection;
-            if (e.Message.UserId == connection.UserId)
+            if (connection != null && e.Message.UserId == connection.UserId)
             {
                 ConnectionManager.Broadcast(e.Message);
                 connection.Direction = e.Message.Direction;
             }
         }
 
-        void Connection_MessagePosition(object sender, ProtocolMessageEventArgs<PlayerPositionMessage> e)
+        void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<PlayerPositionMessage> e)
         {
             var connection = sender as ClientConnection;
-            if (e.Message.UserId == connection.UserId)
+            if (connection != null && e.Message.UserId == connection.UserId)
             {
                 ConnectionManager.Broadcast(e.Message);
                 connection.Position = e.Message.Position;
             }
         }
 
-        void Connection_MessageBlockChange(object sender, ProtocolMessageEventArgs<BlockChangeMessage> e)
+        void ConnectionMessageBlockChange(object sender, ProtocolMessageEventArgs<BlockChangeMessage> e)
         {
             var vector = e.Message.BlockPosition;
             Console.WriteLine("BlockChanged {0} {1} {2}", vector.X,vector.Y,vector.Z );
@@ -232,7 +233,7 @@ namespace Utopia.Server
         /// <returns></returns>
         public ServerChunk GetChunk(IntVector2 position)
         {
-            ServerChunk chunk;
+            ServerChunk chunk = null;
             // search chunk in memory or load it
             if (Chunks.ContainsKey(position))
             {
@@ -245,30 +246,20 @@ namespace Utopia.Server
                 {
                     if (!Chunks.ContainsKey(position))
                     {
-                        chunk = new ServerChunk { Position = position, LastAccess = DateTime.Now };
-
                         var data = Storage.LoadBlockData(position);
 
                         if (data == null)
                         {
-                            //todo: chunk generator
-                            //TerrainGenerator.FillChunk(position, out data);
-
                             var generatedChunk = WorldGenerator.GetChunk(position);
                             
                             if (generatedChunk != null)
                             {
-                                chunk.NeedSave = true;
-                                // todo: think about chunk disposing
-                                chunk.ChangeBlockDataProvider(generatedChunk.BlockData, true);
-
-                                lock (_saveList)
-                                    _saveList.Add(chunk);
+                                chunk = new ServerChunk(generatedChunk) { Position = position, LastAccess = DateTime.Now };
                             }
                         }
                         else
                         {
-                            chunk.CompressedBytes = data;
+                            chunk = new ServerChunk { CompressedBytes = data };
                             chunk.Decompress();
                         }
 
@@ -280,31 +271,59 @@ namespace Utopia.Server
             return chunk;
         }
 
-        void Connection_MessageGetChunks(object sender, ProtocolMessageEventArgs<GetChunksMessage> e)
+        void ConnectionMessageGetChunks(object sender, ProtocolMessageEventArgs<GetChunksMessage> e)
         {
             var connection = sender as ClientConnection;
 
             try
             {
-                for (int x = e.Message.StartPosition.X; x <= e.Message.EndPosition.X; x++)
-                {
-                    for (int y = e.Message.StartPosition.Y; y <= e.Message.EndPosition.Y; y++)
-                    {
-                        IntVector2 vec;
-                        vec.X = x;
-                        vec.Y = y;
+                var range = new Range2 { Min = e.Message.StartPosition, Max = e.Message.EndPosition };
 
-                        var chunk = GetChunk(vec);
-                        var msg = new ChunkDataMessage
-                                      {
-                                          Position = vec,
-                                          Flag = ChunkDataMessageFlag.ChunkWasModified, // todo: implement corrent flag behaviour
-                                          Data = chunk.CompressedBytes
-                                      };
-                        
-                        connection.Send(msg);
+                // list to get indicies
+                var positionsList = new List<IntVector2>(e.Message.Positions);
+
+                range.Foreach( pos => {
+
+                    var chunk = GetChunk(pos);
+                    
+                    if (e.Message.Flag == GetChunksMessageFlag.AlwaysSendChunkData)
+                    {
+                        goto sendAllData;
                     }
-                }
+                    
+                    // do we have hashes from client?
+                    if (e.Message.HashesCount > 0)
+                    {
+                        int hashIndex = positionsList.IndexOf(pos);
+
+                        if (hashIndex != -1) 
+                        {
+                            if (e.Message.Md5Hashes[hashIndex] == chunk.GetMd5Hash())
+                            {
+                                connection.Send(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkMd5Equal });
+                                return;
+                            }
+                        }
+                    }
+                    
+                    if (chunk.PureGenerated)
+                    {
+                        connection.Send(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkCanBeGenerated, Data = chunk.GetMd5Hash().Bytes });
+                        return;
+                    }
+
+                    sendAllData:
+                    // send data anyway
+                    connection.Send(new ChunkDataMessage
+                    {
+                        Position = pos,
+                        Flag = ChunkDataMessageFlag.ChunkWasModified,
+                        Data = chunk.CompressedBytes
+                    });
+
+                });
+
+
             }
             catch (IOException ex)
             {
@@ -312,7 +331,7 @@ namespace Utopia.Server
             }
         }
 
-        void Connection_MessageLogin(object sender, ProtocolMessageEventArgs<LoginMessage> e)
+        void ConnectionMessageLogin(object sender, ProtocolMessageEventArgs<LoginMessage> e)
         {
             var connection = sender as ClientConnection;
 
@@ -356,8 +375,7 @@ namespace Utopia.Server
                 connection.Send(gameInfo);
 
 
-                ConnectionManager.Broadcast(new PlayerInMessage
-                                                {Login = e.Message.Login, UserId = connection.UserId});
+                ConnectionManager.Broadcast(new PlayerInMessage { Login = e.Message.Login, UserId = connection.UserId });
 
                 // send initial data
                 if (loginData.Value.State == null)
@@ -406,7 +424,7 @@ namespace Utopia.Server
             Console.WriteLine("Listening at {0} port", SettingsManager.Settings.ServerPort);
         }
 
-        void Listener_IncomingConnection(object sender, IncomingConnectionEventArgs e)
+        void ListenerIncomingConnection(object sender, IncomingConnectionEventArgs e)
         {
             var conn = new ClientConnection(e.Socket);
 
