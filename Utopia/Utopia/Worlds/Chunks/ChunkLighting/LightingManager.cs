@@ -186,7 +186,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             VisualCubeProfile cubeprofile;
             bool borderchunk = false;
             int index;
-            //Foreach Blocks in the chunks
+            //Foreach Blocks in the Range
             for (int X = cubeRange.Min.X; X < cubeRange.Max.X; X++)
             {
                 for (int Z = cubeRange.Min.Z; Z < cubeRange.Max.Z; Z++)
@@ -202,19 +202,19 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         cubeprofile = VisualCubeProfile.CubesProfile[_cubesHolder.Cubes[index].Id];
                         if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) continue;
 
-                        if (_cubesHolder.Cubes[index].EmissiveColor.SunLight == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.SunLight, LightComponent.SunLight, true, index);
+                        if (_cubesHolder.Cubes[index].EmissiveColor.SunLight == 255 || (borderAsLightSource && borderchunk)) PropagateLight(_cubesHolder.Cubes[index].EmissiveColor.SunLight, LightComponent.SunLight, true, index);
                         if (cubeprofile.IsEmissiveColorLightSource || (borderAsLightSource && borderchunk))
                         {
-                            if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
-                            if (_cubesHolder.Cubes[index].EmissiveColor.G > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.G, LightComponent.Green, true, index);
-                            if (_cubesHolder.Cubes[index].EmissiveColor.B > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.B, LightComponent.Blue, true, index);
+                            if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(_cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
+                            if (_cubesHolder.Cubes[index].EmissiveColor.G > 0) PropagateLight(_cubesHolder.Cubes[index].EmissiveColor.G, LightComponent.Green, true, index);
+                            if (_cubesHolder.Cubes[index].EmissiveColor.B > 0) PropagateLight(_cubesHolder.Cubes[index].EmissiveColor.B, LightComponent.Blue, true, index);
                         }
                     }
                 }
             }
         }
 
-        private void PropagateLight(int X, int Y, int Z, int LightValue, LightComponent lightComp, bool isLightSource, int index)
+        private void PropagateLight(int LightValue, LightComponent lightComp, bool isLightSource, int index)
         {
             VisualCubeProfile cubeprofile;
             TerraCube cube;
@@ -223,8 +223,8 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             {
                 if (LightValue <= 0) return; // No reason to propate "no light";
 
+                //Avoid to be outside the Array ==> Trick to remove the need to check for border limit, but could lead to small graphical artifact with lighting !
                 index = _cubesHolder.ValidateIndex(index);
-
                 //End Inlining ===============================================================================================
 
                 //End propagation ?
@@ -257,23 +257,20 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             //Call the 6 surrounding blocks !
             if (!isLightSource || lightComp != LightComponent.SunLight)
             {
-                PropagateLight(X, Y + 1, Z, LightValue - _lightDecreaseStep, lightComp, false, index += _cubesHolder.MoveY);
-                PropagateLight(X, Y - 1, Z, LightValue - _lightDecreaseStep, lightComp, false, index -= _cubesHolder.MoveY);
+                PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveY);
+                PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveY);
             }
 
-            PropagateLight(X + 1, Y, Z, LightValue - _lightDecreaseStep, lightComp, false, index += _cubesHolder.MoveX);
-            PropagateLight(X, Y, Z + 1, LightValue - _lightDecreaseStep, lightComp, false, index += _cubesHolder.MoveZ);
-            PropagateLight(X - 1, Y, Z, LightValue - _lightDecreaseStep, lightComp, false, index -= _cubesHolder.MoveX);
-            PropagateLight(X, Y, Z - 1, LightValue - _lightDecreaseStep, lightComp, false, index -= _cubesHolder.MoveZ);
-
+            //X + 1, Y, Z
+            PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveX);
+            //X, Y, Z + 1
+            PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveZ);
+            //X - 1, Y, Z
+            PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveX);
+            //X, Y, Z - 1
+            PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveZ);
         }
-
-
-
-
         #endregion
 
-
-        
     }
 }
