@@ -48,8 +48,11 @@ namespace Utopia.Shared.Chunks
             var bytes = ms.ToArray();
 
             if (saveResult)
+            {
                 CompressedBytes = bytes;
-            
+                CompressedDirty = false;
+            }
+
             return bytes;
         }
 
@@ -79,6 +82,7 @@ namespace Utopia.Shared.Chunks
                 var decompressed = new MemoryStream();
                 zip.CopyTo(decompressed);
                 Deserialize(decompressed);
+                CompressedDirty = false;
             }
         }
 
@@ -104,7 +108,6 @@ namespace Utopia.Shared.Chunks
             {
                 OnBlockDataChanged();
             }
-
         }
 
         private void OnBlockDataChanged()
@@ -112,7 +115,6 @@ namespace Utopia.Shared.Chunks
             if (InstantCompress)
             {
                 Compress();
-                CompressedDirty = false;
             }
             else
             {
