@@ -19,7 +19,10 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
             RemoveableCubeIds.Add(CubeId.Dirt);
             RemoveableCubeIds.Add(CubeId.Grass);
         }
-
+        public override bool Use()
+        {
+            throw new NotImplementedException();
+        }
 
         public override EntityClassId ClassId
         {

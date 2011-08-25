@@ -10,18 +10,20 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     /// </summary>
     public class CharacterEquipment : IBinaryStorable
     {
+        private readonly LivingEntity _parent;
+
         /// <summary>
         /// Occurs when the character wears something
         /// </summary>
-        public event EventHandler<CharacterEqipmentEventArgs> ItemEquipped;
+        public event EventHandler<CharacterEquipmentEventArgs> ItemEquipped;
 
         /// <summary>
         /// Invokes ItemEquipped event
         /// </summary>
         /// <param name="e"></param>
-        public void OnItemEquipped(CharacterEqipmentEventArgs e)
+        public void OnItemEquipped(CharacterEquipmentEventArgs e)
         {
-            EventHandler<CharacterEqipmentEventArgs> handler = ItemEquipped;
+            EventHandler<CharacterEquipmentEventArgs> handler = ItemEquipped;
             if (handler != null) handler(this, e);
         }
 
@@ -36,45 +38,50 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         private Tool _leftTool;
         private Tool _rightTool;
 
+        public CharacterEquipment(LivingEntity parent)
+        {
+            _parent = parent;
+        }
+
         /// <summary>
         /// Wear some item
         /// </summary>
         /// <param name="item"></param>
         /// <param name="slot"></param>
-        public void WearItem(Item item, EquipmentSlot slot)
+        public void WearItem(Item item, EquipmentSlotType slot)
         {
             switch (slot)
             {
-                case EquipmentSlot.Head:
+                case EquipmentSlotType.Head:
                     HeadGear = item as Armor;
                     break;
-                case EquipmentSlot.Torso:
+                case EquipmentSlotType.Torso:
                     Torso = item as Armor;
                     break;
-                case EquipmentSlot.Legs:
+                case EquipmentSlotType.Legs:
                     Legs = item as Armor;
                     break;
-                case EquipmentSlot.Feet:
+                case EquipmentSlotType.Feet:
                     Feet = item as Armor;
                     break;
-                case EquipmentSlot.Arms:
+                case EquipmentSlotType.Arms:
                     Arms = item as Armor;
                     break;
-                case EquipmentSlot.LeftHand:
+                case EquipmentSlotType.LeftHand:
                     LeftTool = item as Tool;
                     break;
-                case EquipmentSlot.RightHand:
+                case EquipmentSlotType.RightHand:
                     RightTool = item as Tool;
                     break;
-                case EquipmentSlot.LeftRing:
+                case EquipmentSlotType.LeftRing:
                     LeftRing = item;
                     break;
-                case EquipmentSlot.RightRing:
+                case EquipmentSlotType.RightRing:
                     RightRing = item;
                     break;
-                case EquipmentSlot.Bags:
+                case EquipmentSlotType.Bags:
                     break;
-                case EquipmentSlot.Neck:
+                case EquipmentSlotType.Neck:
                     NeckLace = item;
                     break;
                 default:
@@ -88,7 +95,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             set
             {
                 _headGear = value;
-                OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.Head});
+                OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.Head});
             }
         }
         
@@ -98,7 +105,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             set
             {
                 _torso = value;
-                OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.Torso});
+                OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.Torso});
             }
         }
         
@@ -108,7 +115,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             set
             {
                 _arms = value;
-                OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.Arms});
+                OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.Arms});
             }
         }
         
@@ -118,7 +125,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             set
             {
                 _legs = value;
-                OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.Legs});
+                OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.Legs});
             }
         }
         
@@ -128,7 +135,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             set
             {
                 _feet = value;
-                OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.Feet});
+                OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.Feet});
             }
         }
         
@@ -138,7 +145,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             set
             {
                 _leftRing = value;
-                OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.LeftRing});
+                OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.LeftRing});
             }
         }
         
@@ -148,7 +155,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             set
             {
                 _rightRing = value;
-                OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.RightRing});
+                OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.RightRing});
             }
         }
         
@@ -158,7 +165,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             set
             {
                 _neckLace = value;
-                OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.Neck});
+                OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.Neck});
             }
         }
         
@@ -167,8 +174,15 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             get { return _leftTool; }
             set
             {
+                if (_leftTool != null)
+                    _leftTool.Parent = null;
+
                 _leftTool = value;
-                OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.LeftHand});
+
+                if (_leftTool != null)
+                    _leftTool.Parent = _parent;
+
+                OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.LeftHand});
             }
         }
         
@@ -177,8 +191,15 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             get { return _rightTool; }
             set
             {
+                if (_rightTool != null)
+                    _rightTool.Parent = null;
+
                 _rightTool = value;
-                OnItemEquipped(new CharacterEqipmentEventArgs {Item = value, Slot = EquipmentSlot.RightHand});
+
+                if (_rightTool != null)
+                    _rightTool.Parent = _parent;
+
+                OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.RightHand});
             }
         }
 
@@ -242,9 +263,9 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         }
     }
 
-    public class CharacterEqipmentEventArgs : EventArgs
+    public class CharacterEquipmentEventArgs : EventArgs
     {
         public Item Item { get; set; }
-        public EquipmentSlot Slot { get; set; }
+        public EquipmentSlotType Slot { get; set; }
     }
 }

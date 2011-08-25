@@ -19,11 +19,11 @@ namespace Utopia.GUI.D3D.Inventory
     {
 
        private ButtonControl _okButton;
-        private Utopia.Shared.Chunks.Entities.Inventory.PlayerInventory _inventory;
+        //private Utopia.Shared.Chunks.Entities.Inventory.PlayerInventory _inventory;
 
-        public InventoryWindow(PlayerInventory inventory, SpriteTexture back)
+        public InventoryWindow(/*PlayerInventory inventory,*/ SpriteTexture back)
         {
-            _inventory = inventory;
+            //_inventory = inventory;
             InitializeComponent(back);
         }
 
@@ -63,18 +63,18 @@ namespace Utopia.GUI.D3D.Inventory
             characterSheet.Bounds = new UniRectangle(0, 0, back.TextureDescr.Width, back.TextureDescr.Height);
             Children.Add(characterSheet);
 
-            buildBodyslot(characterSheet, EquipmentSlot.Head, 74, 2);
-            buildBodyslot(characterSheet, EquipmentSlot.Neck, 82, 46, 16);
-            buildBodyslot(characterSheet, EquipmentSlot.Torso, 74, 71);
-            buildBodyslot(characterSheet, EquipmentSlot.RightHand, 145, 64);
-            buildBodyslot(characterSheet, EquipmentSlot.LeftHand, 2, 64);
-            buildBodyslot(characterSheet, EquipmentSlot.Legs, 110, 136);
-            buildBodyslot(characterSheet, EquipmentSlot.Feet, 48, 178);
-            buildBodyslot(characterSheet, EquipmentSlot.LeftRing, 5, 101, 16);
+            buildBodyslot(characterSheet, EquipmentSlotType.Head, 74, 2);
+            buildBodyslot(characterSheet, EquipmentSlotType.Neck, 82, 46, 16);
+            buildBodyslot(characterSheet, EquipmentSlotType.Torso, 74, 71);
+            buildBodyslot(characterSheet, EquipmentSlotType.RightHand, 145, 64);
+            buildBodyslot(characterSheet, EquipmentSlotType.LeftHand, 2, 64);
+            buildBodyslot(characterSheet, EquipmentSlotType.Legs, 110, 136);
+            buildBodyslot(characterSheet, EquipmentSlotType.Feet, 48, 178);
+            buildBodyslot(characterSheet, EquipmentSlotType.LeftRing, 5, 101, 16);
 
         }
 
-        private void buildBodyslot(Control parent, EquipmentSlot inventorySlot, int x, int y, int size = 32)
+        private void buildBodyslot(Control parent, EquipmentSlotType inventorySlot, int x, int y, int size = 32)
         {
             InventoryCell bodyCell = new InventoryCell(inventorySlot);
             bodyCell.Bounds = new UniRectangle(x, y, size, size);

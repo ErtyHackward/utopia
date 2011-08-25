@@ -6,7 +6,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     /// Describes the slot on the character
     /// </summary>
     [Flags]
-    public enum EquipmentSlot
+    public enum EquipmentSlotType
     {
         Head = 1,
         Torso = 2,

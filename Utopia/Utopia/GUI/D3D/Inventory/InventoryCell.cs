@@ -19,7 +19,7 @@ namespace Utopia.GUI.D3D.Inventory
     {
 
  
-        public EquipmentSlot InventorySlot { get; set; }
+        public EquipmentSlotType InventorySlot { get; set; }
 
 
         public bool MouseHovering
@@ -38,7 +38,7 @@ namespace Utopia.GUI.D3D.Inventory
         public Item Item { get; set; }
 
 
-        public InventoryCell( EquipmentSlot slot = EquipmentSlot.Bags)
+        public InventoryCell( EquipmentSlotType slot = EquipmentSlotType.Bags)
             : base()
         {
             InventorySlot = slot;
