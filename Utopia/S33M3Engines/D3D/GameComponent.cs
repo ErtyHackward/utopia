@@ -7,7 +7,8 @@ using SharpDX;
 
 namespace S33M3Engines.D3D
 {
-    public interface IDrawableComponent : IUpdatableComponent,IDisposable
+
+    public interface IDrawableComponent : IUpdatableComponent
     {
         void Draw();
     }

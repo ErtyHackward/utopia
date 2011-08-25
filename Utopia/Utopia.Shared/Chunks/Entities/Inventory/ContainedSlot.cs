@@ -1,46 +1,40 @@
 ﻿using System.IO;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory
 {
     /// <summary>
-    /// Represents a contained slot that can be stored in inventory. Each slot has an entity and number of entities count.
+    /// Represents a contained slot that can be stored into the inventory grid. 
     /// </summary>
-    public class ContainedSlot : IBinaryStorable
+    public class ContainedSlot : Slot
     {
         /// <summary>
         /// Gets or sets slot position in container grid
         /// </summary>
         public Location2<byte> GridPosition { get; set; }
 
-        /// <summary>
-        /// Gets or sets items count
-        /// </summary>
-        public int ItemsCount { get; set; }
-
-        /// <summary>
-        /// Gets or sets entity
-        /// </summary>
-        public Item Item { get; set; }
-
-        public void Save(BinaryWriter writer)
+        public override void Load(BinaryReader reader)
         {
-            writer.Write(ItemsCount);
-            writer.Write(GridPosition.X);
-            writer.Write(GridPosition.Z);
-            Item.Save(writer);
+            base.Load(reader);
+
+            if (!IsEmpty)
+            {
+                Location2<byte> location;
+                location.X = reader.ReadByte();
+                location.Z = reader.ReadByte();
+                GridPosition = location;
+            }
         }
 
-        public void Load(BinaryReader reader)
+        public override void Save(BinaryWriter writer)
         {
-            ItemsCount = reader.ReadInt32();
-            Location2<byte> location;
-            location.X = reader.ReadByte();
-            location.Z = reader.ReadByte();
-            GridPosition = location;
-            Item = (Item)EntityFactory.Instance.CreateFromBytes(reader);
-        }
+            base.Save(writer);
 
+            if (!IsEmpty)
+            {
+                writer.Write(GridPosition.X);
+                writer.Write(GridPosition.Z);
+            }
+        }
     }
 }

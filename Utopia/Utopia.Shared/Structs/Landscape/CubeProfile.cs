@@ -10,7 +10,7 @@ namespace Utopia.Shared.Structs.Landscape
     /// Class that will hold the collection of Cube profiles.
     /// A cube profile contains the informations for a cube type that cannot change.
     /// It needs to be initialized (InitCubeProfiles) !
-    /// Client is using a more complete profile collection (RenderCubeProfile) with graphical informations, like Texture mapping, but also delegates that can only be called from the Client side
+    /// Client is using a more complete profile collection (VisualCubeProfile) with graphical informations, like Texture mapping, but also delegates that can only be called from the Client side
     /// </summary>
     public class CubeProfile
     {
@@ -19,7 +19,6 @@ namespace Utopia.Shared.Structs.Landscape
         //Create the various Cubes
         public static void InitCubeProfiles()
         {
-
             DataSet CubeProfileDS = new DataSet();
             CubeProfileDS.ReadXml(@"Models\CubesProfile.xml", XmlReadMode.Auto);
 

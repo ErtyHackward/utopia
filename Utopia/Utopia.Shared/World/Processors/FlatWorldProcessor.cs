@@ -1,7 +1,7 @@
 ﻿using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Landscaping;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.World.Processors
 {

@@ -10,7 +10,7 @@ namespace Utopia.Shared.World
         /// <summary>
         /// World size in chunk unit (width and length)
         /// </summary>
-        public Location2<int> WorldSize { get; set; }
+        public Location2<int> WorldChunkSize { get; set; }
 
         /// <summary>
         /// Indicates if world is infinite of final
@@ -21,5 +21,10 @@ namespace Utopia.Shared.World
         /// Base seed to use in random initializers
         /// </summary>
         public int Seed { get; set; }
+
+        /// <summary>
+        /// See Level
+        /// </summary>
+        public int SeaLevel { get; set; }
     }
 }

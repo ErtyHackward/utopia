@@ -1,6 +1,5 @@
 ﻿using System;
 using Utopia.Shared.Chunks.Entities.Inventory;
-using Utopia.Shared.Roleplay;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -47,10 +46,9 @@ namespace Utopia.Shared.Chunks.Entities
 
         protected LivingEntity()
         {
-            Equipment = new CharacterEquipment();
-            Inventory = new BaseContainer();
-            PrimaryAttributes = new CharacterPrimaryAttributes();
-            SecondaryAttributes = new CharacterSecondaryAttributes();
+            Equipment = new CharacterEquipment(this);
+            Inventory = new SlotContainer<ContainedSlot>();
+
         }
 
         #region Properties
@@ -62,19 +60,64 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Gets character inventory
         /// </summary>
-        public BaseContainer Inventory { get; private set; }
-        
-        /// <summary>
-        /// Gets character primary attributes
-        /// </summary>
-        public CharacterPrimaryAttributes PrimaryAttributes { get; set; }
+        public SlotContainer<ContainedSlot> Inventory { get; private set; }
 
         /// <summary>
-        /// Gets character secondary attributes (skills)
+        /// Gets or sets entity state (this field should be refreshed before using the tool)
         /// </summary>
-        public CharacterSecondaryAttributes SecondaryAttributes { get; set; }
+        public LivingEntityState EntityState { get; set; }
+
+        /// <summary>
+        /// Gets character name
+        /// </summary>
+        public string CharacterName { get; set; }
+
+        /// <summary>
+        /// Indicates if this charater controlled by real human
+        /// </summary>
+        public bool IsRealPlayer { get; set; }
+
+        /// <summary>
+        /// Gets current health points of entity
+        /// </summary>
+        public int Health { get; set; }
+
+        /// <summary>
+        /// Gets maximum health point of entity
+        /// </summary>
+        public int MaxHealth { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// Request tool using
+        /// </summary>
+        /// <param name="type"></param>
+        public void UseTool(LivingEntityUseType type)
+        {
+            switch (type)
+            {
+                case LivingEntityUseType.LeftTool:
+                    if (Equipment.LeftTool != null)
+                    {
+                        if (Equipment.LeftTool.Use())
+                            OnLeftToolUse(LivingEntityUseEventArgs.FromState(EntityState, LivingEntityUseType.LeftTool));
+                    }
+                    break;
+                case LivingEntityUseType.RightTool:
+                    if (Equipment.RightTool != null)
+                    {
+                        if (Equipment.RightTool.Use())
+                            OnRightToolUse(LivingEntityUseEventArgs.FromState(EntityState, LivingEntityUseType.RightTool));
+                    }
+                    break;
+                case LivingEntityUseType.Use:
+                    OnEntityUse(LivingEntityUseEventArgs.FromState(EntityState, LivingEntityUseType.RightTool));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("type");
+            }
+        }
 
         /// <summary>
         /// Loads current entity from a binaryReader
@@ -84,10 +127,10 @@ namespace Utopia.Shared.Chunks.Entities
         {
             base.Load(reader);
 
+            CharacterName = reader.ReadString();
             Equipment.Load(reader);
             Inventory.Load(reader);
-            PrimaryAttributes.Load(reader);
-            SecondaryAttributes.Load(reader);
+
         }
 
         /// <summary>
@@ -98,10 +141,9 @@ namespace Utopia.Shared.Chunks.Entities
         {
             base.Save(writer);
 
+            writer.Write(CharacterName);
             Equipment.Save(writer);
             Inventory.Save(writer);
-            PrimaryAttributes.Save(writer);
-            SecondaryAttributes.Save(writer);
         }
     }
 }

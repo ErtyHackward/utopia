@@ -76,6 +76,14 @@
     <Compile Include="Chunks\ChunkDataProviderBufferChangedEventArgs.cs" />
     <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
     <Compile Include="Chunks\CompressibleChunk.cs" />
+    <Compile Include="Chunks\Entities\Interfaces\ISlotContainer.cs" />
+    <Compile Include="Chunks\Entities\Interfaces\IUsableEntity.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Slot.cs" />
+    <Compile Include="Chunks\Entities\Inventory\ToolbarSlot.cs" />
+    <Compile Include="Chunks\Entities\LivingEntityEffect.cs" />
+    <Compile Include="Chunks\Entities\LivingEntityState.cs" />
+    <Compile Include="Chunks\Entities\PlayerCharacter.cs" />
+    <Compile Include="Chunks\Entities\SpecialCharacterEntity.cs" />
     <Compile Include="Chunks\Entities\Concrete\ContainerEntity.cs" />
     <Compile Include="Chunks\Entities\Concrete\NoEntity.cs" />
     <Compile Include="Chunks\Entities\Entity.cs" />
@@ -84,13 +92,12 @@
     <Compile Include="Chunks\Entities\EntityClassId.cs" />
     <Compile Include="Chunks\Entities\EntityType.cs" />
     <Compile Include="Chunks\Entities\Inventory\Armor.cs" />
-    <Compile Include="Chunks\Entities\Inventory\BaseContainer.cs" />
+    <Compile Include="Chunks\Entities\Inventory\SlotContainer.cs" />
     <Compile Include="Chunks\Entities\Inventory\CharacterEquipment.cs" />
     <Compile Include="Chunks\Entities\Inventory\ContainedSlot.cs" />
-    <Compile Include="Chunks\Entities\Inventory\EquipmentSlot.cs" />
+    <Compile Include="Chunks\Entities\Inventory\EquipmentSlotType.cs" />
     <Compile Include="Chunks\Entities\Inventory\Item.cs" />
     <Compile Include="Chunks\Entities\Concrete\VoxelEntity.cs" />
-    <Compile Include="Chunks\Entities\IContainerEntity.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tool.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Wally.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\BlockRemover.cs" />
@@ -113,12 +120,12 @@
     <Compile Include="Interfaces\ISingleArrayDataProviderUser.cs" />
     <Compile Include="Interfaces\IWorldProcessor.cs" />
     <Compile Include="Interfaces\IWorldProcessorConfig.cs" />
-    <Compile Include="Landscaping\CubeIDs.cs" />
-    <Compile Include="Landscaping\FlatLandscape.cs" />
-    <Compile Include="Landscaping\LandscapeBuilder.cs" />
+    <Compile Include="Cubes\CubeIDs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Roleplay\CharacterExperience.cs" />
     <Compile Include="Roleplay\CharacterPrimaryAttributes.cs" />
     <Compile Include="Roleplay\CharacterSecondaryAttributes.cs" />
+    <Compile Include="Roleplay\CharacterSurvivalAttributes.cs" />
     <Compile Include="Structs\ByteColor.cs" />
     <Compile Include="Structs\ByteVector3.cs" />
     <Compile Include="Structs\ByteVector4.cs" />
@@ -136,9 +143,12 @@
     <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\TerraCubeWithPosition.cs" />
-    <Compile Include="World\FlatWorld\DummyWorldConfigurationConfig.cs" />
-    <Compile Include="World\FlatWorld\FlatWorldProcessorConfig.cs" />
+    <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
+    <Compile Include="World\VisualWorldParameters.cs" />
+    <Compile Include="World\WorldConfigs\s33m3WorldConfig.cs" />
+    <Compile Include="World\WorldConfigs\FlatWorldConfig.cs" />
     <Compile Include="World\Processors\FlatWorldProcessor.cs" />
+    <Compile Include="World\Processors\s33m3WorldProcessor.cs" />
     <Compile Include="World\WorldGenerationStagesManager.cs" />
     <Compile Include="World\WorldGenerator.cs" />
     <Compile Include="World\WorldParameters.cs" />
@@ -167,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ChunkHierarchy.cd" />
+    <None Include="EntityObjectModel.cd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">

@@ -9,7 +9,7 @@ using S33M3Engines.D3D.DebugTools;
 
 namespace Utopia.Worlds.GameClocks
 {
-    public abstract class Clock : IClock, IDebugInfo
+    public abstract class Clock : IClock
     {
         #region Inner struct/Class
         //Handle several different possibility to display the time
