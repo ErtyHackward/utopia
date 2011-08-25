@@ -102,17 +102,32 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             ByteVector4 cubePosiInChunk;
             Location3<int> cubePosiInWorld;
             int XWorld, YWorld, ZWorld;
-            int cubeIndex, neightborCubeIndex;
+            int neightborCubeIndex;
+
+            int baseCubeIndex = _cubesHolder.Index(chunk.CubeRange.Min.X, chunk.CubeRange.Min.Y, chunk.CubeRange.Min.Z);
+            int CubeIndexX = baseCubeIndex;
+            int CubeIndexZ = baseCubeIndex;
+            int cubeIndex = baseCubeIndex;
 
             for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
             {
                 XWorld = (X + chunk.CubeRange.Min.X);
+                if (X != 0)
+                {
+                    CubeIndexX += _cubesHolder.MoveX;
+                    CubeIndexZ = CubeIndexX;
+                    cubeIndex = CubeIndexX;
+                }
 
                 for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
                 {
                     ZWorld = (Z + chunk.CubeRange.Min.Z);
 
-                    cubeIndex = _cubesHolder.Index(XWorld, 0, ZWorld);
+                    if (Z != 0)
+                    {
+                        CubeIndexZ += _cubesHolder.MoveZ;
+                        cubeIndex = CubeIndexZ;
+                    }
 
                     for (int Y = 0; Y < chunk.CubeRange.Max.Y; Y++)
                     {
@@ -124,7 +139,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //==> Could use this instead of the next line ==> cubeIndex = _landscape.Index(XWorld, YWorld, ZWorld);
                         //The "problem" being that everytime this fonction is called, it is creation a copy of the parameter variables, this fct is being called 
                         //A lot of time, to easy the GAC work, it's better to inline the fct here.
-                        if (Y != 0) cubeIndex += _cubesHolder.MoveY;
+                        if (Y != 0)
+                        {
+                            cubeIndex += _cubesHolder.MoveY;
+                        }
 
                         //_landscape.Cubes[] is the BIG table containing all terraCube in the visible world.
                         //For speed access, I use an array with only one dimension, thus the table index must be computed from the X, Y, Z position of the terracube.
@@ -149,12 +167,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                             case CubeFace.Back:
                                 if (chunk.BorderChunk && (ZWorld - 1 < _visualWorldParameters.WorldRange.Min.Z)) continue;
                                 //neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
-                                neightborCubeIndex = _cubesHolder.Index(XWorld, YWorld, ZWorld - 1);
-                                neightborCubeIndexTest = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1);
-                                if (neightborCubeIndex != neightborCubeIndexTest)
-                                {
-                                    Console.WriteLine("STOP");
-                                }
+                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1);
                                 break;
                             case CubeFace.Front:
                                 if (chunk.BorderChunk && (ZWorld + 1 >= _visualWorldParameters.WorldRange.Max.Z)) continue;
@@ -190,8 +203,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //if (i >= _cubesHolder.Cubes.Length) i -= _cubesHolder.Cubes.Length;
                         //if (i < 0) i += _cubesHolder.Cubes.Length;
                         neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
-
-                        var test = _cubesHolder.Index(XWorld + 1, YWorld, ZWorld);
 
                         //It is using a delegate in order to give the possibility for Plugging to replace the fonction call.
                         //Be default the fonction called here is : TerraCube.FaceGenerationCheck or TerraCube.WaterFaceGenerationCheck

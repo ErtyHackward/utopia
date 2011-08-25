@@ -33,12 +33,12 @@ namespace S33M3Engines.Threading
 
         public static bool ThreadingActif { get; set; }
 
-        public static void Initialize()
+        public static void Initialize(int ThreadAllocatedModifier)
         {
-            SetOptimumNbrThread();
+            SetOptimumNbrThread(ThreadAllocatedModifier);
         }
 
-        public static void SetOptimumNbrThread()
+        public static void SetOptimumNbrThread(int ThreadAllocatedModifier)
         {
             //Get number or real Core CPU (Not hyper threaded ones)
             int coreCount = 0;
@@ -47,7 +47,7 @@ namespace S33M3Engines.Threading
                 coreCount += int.Parse(item["NumberOfCores"].ToString());
             }
 
-            _totThread = coreCount -1; //Remove the one use by the applicatino itself
+            _totThread = coreCount - 1 + ThreadAllocatedModifier; //Remove the one use by the applicatino itself
             if (_totThread < 1) _totThread = 1;
 
             STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };

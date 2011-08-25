@@ -70,7 +70,7 @@ namespace Utopia.Worlds.Chunks
                 if (chunk.Ready2Draw)
                 {
                     //Only checking Frustum with the faceID = 0
-                    chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
+                    //chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
 
                     if (!chunk.isFrustumCulled)
                     {

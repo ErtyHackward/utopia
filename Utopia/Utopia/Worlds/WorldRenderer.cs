@@ -45,10 +45,11 @@ namespace Utopia.Worlds
 
         public override void UnloadContent()
         {
-            _world.WorldClock.Dispose();
-            _world.WorldWeather.Dispose();
-            _world.WorldSkyDome.Dispose();
-            _world.WorldChunks.Dispose();
+            //They have not been created here, so no need to dispose them !
+            //_world.WorldClock.Dispose();
+            //_world.WorldWeather.Dispose();
+            //_world.WorldSkyDome.Dispose();
+            //_world.WorldChunks.Dispose();
         }
 
         public override void Update(ref GameTime TimeSpend)

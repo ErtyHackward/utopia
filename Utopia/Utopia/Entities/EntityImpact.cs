@@ -31,7 +31,7 @@ namespace Utopia.Entities
             _worldChunks = worldChunks;
         }
 
-          public static void ReplaceBlocks( TerraCubeWithPosition[] coordinatesAndReplacement)
+          public static void ReplaceBlocks(TerraCubeWithPosition[] coordinatesAndReplacement)
           {
               foreach (var locationBlock in coordinatesAndReplacement)
               {
