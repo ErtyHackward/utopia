@@ -217,7 +217,7 @@ namespace Utopia
             _fps = new FPS();
             GameComponents.Add(_fps);
 
-            _gui = new GUI.D3D.GUI(GameComponents, _d3dEngine, ((Player)IoCContainer.Get<ILivingEntity>()).Inventory);
+            _gui = new GUI.D3D.GUI(GameComponents,_d3dEngine /*,((Player)_player).Inventory*/);
             GameComponents.Add(_gui);
 
             _debugInfo = new DebugInfo(_d3dEngine);
@@ -227,8 +227,6 @@ namespace Utopia
 
             GameConsole.Initialize(_d3dEngine);
 
-            //=======================================================================================
-            //=======================================================================================
         }
 
         public override void LoadContent()

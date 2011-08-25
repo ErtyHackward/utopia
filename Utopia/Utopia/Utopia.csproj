@@ -206,7 +206,6 @@
     </Compile>
     <Compile Include="Network\Server.cs" />
     <Compile Include="Entities\EntityImpact.cs" />
-    <Compile Include="GUI\D3D\Inventory\Inventory.cs" />
     <Compile Include="UtopiaClient.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Entities\Living\Player.cs" />

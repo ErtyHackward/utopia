@@ -58,7 +58,7 @@ namespace Utopia.Entities.Living
             get { return _name; }
         }
 
-        public PlayerInventory Inventory { get; private set; }
+        //public PlayerInventory Inventory { get; private set; }
 
         #endregion
 
@@ -68,7 +68,7 @@ namespace Utopia.Entities.Living
             _visualWorldParameters = visualWorldParameters;
             _worldFocusManager = worldFocusManager;
             _name = Name;
-            Inventory = new PlayerInventory();
+            //Inventory = new PlayerInventory();
 
             ////this is only temporary starting gear, it should be received from the server
             //BlockRemover remover = new BlockRemover();
@@ -92,13 +92,13 @@ namespace Utopia.Entities.Living
             //Inventory.Bag.Items.Add(remover);
             //Inventory.Bag.Items.Add(ring);
 
-            Pickaxe pickaxe = new Pickaxe();
-            pickaxe.AllowedSlots = EquipmentSlot.Bags;
-            Inventory.Toolbar.Add(pickaxe);
+            //Pickaxe pickaxe = new Pickaxe();
+            //pickaxe.AllowedSlots = EquipmentSlot.Bags;
+            //Inventory.Toolbar.Add(pickaxe);
 
-            Shovel shovel = new Shovel();
-            shovel.AllowedSlots = EquipmentSlot.Bags;
-            Inventory.Toolbar.Add(shovel);
+            //Shovel shovel = new Shovel();
+            //shovel.AllowedSlots = EquipmentSlot.Bags;
+            //Inventory.Toolbar.Add(shovel);
 
             Inventory.LeftTool = pickaxe;
             Inventory.RightTool = adder;
@@ -188,7 +188,7 @@ namespace Utopia.Entities.Living
             {
                 if (bufferMode) { LButtonBuffer = true; return; } else LButtonBuffer = false;
 
-                if (_isBlockPicked && Inventory.LeftTool.NeedsPick)
+                if (_isBlockPicked)
                 {
                     if (_inputHandler.CurKeyboardState.IsKeyDown(Keys.LShiftKey))
                     {
@@ -197,21 +197,21 @@ namespace Utopia.Entities.Living
                     }
                     else
                     {
-                        Location3<int>? newPlace;
+                        //Location3<int>? newPlace;
 
-                        if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= _visualWorldParameters.WorldVisibleSize.Y - 2)
-                        {
-                            newPlace = _newCubePlace;
-                        }
-                        else
-                        {
-                            newPlace = null;
-                        }
-                        TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
-                        ToolImpact impact = Inventory.LeftTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
-                        if (impact.CubesImpact != null)
-                            EntityImpact.ReplaceBlocks(impact.CubesImpact);
-                        if (impact.Message != null) Console.WriteLine(impact.Message);
+                        if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
+                        //{
+                        //    newPlace = _newCubePlace;
+                        //}
+                        //else
+                        //{
+                        //    newPlace = null;
+                        //}
+                        //TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
+                        //ToolImpact impact = Inventory.LeftTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
+                        //if (impact.CubesImpact != null)
+                        //    EntityImpact.ReplaceBlocks(impact.CubesImpact);
+                        //if (impact.Message != null) Console.WriteLine(impact.Message);
                     }
                 }
             }
@@ -220,25 +220,25 @@ namespace Utopia.Entities.Living
             {
                 if (bufferMode) { RButtonBuffer = true; return; } else RButtonBuffer = false;
 
-                if (_isBlockPicked && Inventory.RightTool.NeedsPick)
-                {
-                    Location3<int>? newPlace;
+                //if (_isBlockPicked && Inventory.RightTool.NeedsPick)
+                //{
+                //    Location3<int>? newPlace;
 
-                    if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= _visualWorldParameters.WorldVisibleSize.Y - 2)
-                    {
-                        newPlace = _newCubePlace;
-                    }
-                    else
-                    {
-                        newPlace = null;
-                    }
+                //    if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
+                //    {
+                //        newPlace = _newCubePlace;
+                //    }
+                //    else
+                //    {
+                //        newPlace = null;
+                //    }
 
-                    TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
-                    ToolImpact impact = Inventory.RightTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
-                    if (impact.CubesImpact != null)
-                        EntityImpact.ReplaceBlocks(impact.CubesImpact);
+                //    TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
+                //    ToolImpact impact = Inventory.RightTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
+                //    if (impact.CubesImpact != null)
+                //        EntityImpact.ReplaceBlocks(impact.CubesImpact);
 
-                }
+                //}
             }
 
             //Did I use the scrollWheel

@@ -22,5 +22,9 @@
 
         // blocks
         ThinGlass = 2001,
+
+        //alive
+        PlayerCharacter = 3000,
+        NonPlayerCharacter = 3001
     }
 }
