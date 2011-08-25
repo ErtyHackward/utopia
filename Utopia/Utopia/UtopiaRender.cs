@@ -96,7 +96,7 @@ namespace Utopia
         public override void Initialize()
         {
             //Initialize the Thread Pool manager
-            S33M3Engines.Threading.WorkQueue.Initialize();
+            S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
 
             _iocContainer = new StandardKernel(new NinjectSettings { UseReflectionBasedInjection = true });
 
@@ -167,7 +167,7 @@ namespace Utopia
 
             //-- Create Entity Player --
             //TODO : Create an entity manager that will be responsible to render the various entities instead of leaving each entity to render itself.
-            _player = IoCContainer.Get<ILivingEntity>(new ConstructorArgument("Name", "s33m3"),
+            _player = IoCContainer.Get<ILivingEntity>(new ConstructorArgument("Name", ClientSettings.Current.Settings.GameParameters.NickName),
                                                       new ConstructorArgument("startUpWorldPosition", new DVector3((worldParam.WorldChunkSize.X * AbstractChunk.ChunkSize.X / 2.0) + worldStartUp.X, 90, (worldParam.WorldChunkSize.Z * AbstractChunk.ChunkSize.Z / 2.0f) + worldStartUp.Z)),
                                                       new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)),
                                                       new ConstructorArgument("walkingSpeed", 5f),

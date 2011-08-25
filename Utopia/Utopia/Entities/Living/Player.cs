@@ -26,6 +26,7 @@ using S33M3Engines.WorldFocus;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Cubes;
 using Utopia.Shared.World;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Entities.Living
 {
@@ -190,29 +191,29 @@ namespace Utopia.Entities.Living
 
                 if (_isBlockPicked)
                 {
-                    if (_inputHandler.CurKeyboardState.IsKeyDown(Keys.LShiftKey))
-                    {
-                        //XXX do we want a notion of tool modifier, shift + left mouse = alternate usage ?
-                        //EntityImpact.TnT(ref _pickedBlock, CubeType.Air);
-                    }
-                    else
-                    {
-                        //Location3<int>? newPlace;
+                    //Location3<int>? newPlace;
 
-                        //if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
-                        //{
-                        //    newPlace = _newCubePlace;
-                        //}
-                        //else
-                        //{
-                        //    newPlace = null;
-                        //}
-                        //TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
-                        //ToolImpact impact = Inventory.LeftTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
-                        //if (impact.CubesImpact != null)
-                        //    EntityImpact.ReplaceBlocks(impact.CubesImpact);
-                        //if (impact.Message != null) Console.WriteLine(impact.Message);
+                    //if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
+                    //{
+                    //    newPlace = _newCubePlace;
+                    //}
+                    //else
+                    //{
+                    //    newPlace = null;
+                    //}
+                    //TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
+                    //ToolImpact impact = Inventory.LeftTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
+                    //if (impact.CubesImpact != null)
+                    //    EntityImpact.ReplaceBlocks(impact.CubesImpact);
+                    //if (impact.Message != null) Console.WriteLine(impact.Message);
+
+                    //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
+                    if (_isBlockPicked)
+                    {
+                        EntityImpact.ReplaceBlock(ref _pickedBlock, CubeId.Air);
                     }
+                    //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
+
                 }
             }
 
@@ -239,6 +240,18 @@ namespace Utopia.Entities.Living
                 //        EntityImpact.ReplaceBlocks(impact.CubesImpact);
 
                 //}
+
+                //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
+                Location3<int>? newPlace;
+                //Avoid the player to add a block where he is located !
+                if (_isBlockPicked)
+                {
+                    if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= _visualWorldParameters.WorldVisibleSize.Y - 2)
+                    {
+                        EntityImpact.ReplaceBlock(ref _newCubePlace, _buildingCube.Id);
+                    }
+                }
+                //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
             }
 
             //Did I use the scrollWheel

@@ -26,6 +26,7 @@ namespace Utopia.Settings
         {
             public int WorldSize { get; set; }
             public int CloudsLayers { get; set; }
+            public int AllocatedThreadsModifier { get; set; }
         }
 
         /// <summary>
@@ -121,7 +122,8 @@ namespace Utopia.Settings
                         GraphicalParameters = new GraphicalParameters
                         {
                             WorldSize = 32,
-                            CloudsLayers = 1
+                            CloudsLayers = 1,
+                            AllocatedThreadsModifier = 0
                         },
                         KeyboardMapping = new KeyboardMapping
                         {
