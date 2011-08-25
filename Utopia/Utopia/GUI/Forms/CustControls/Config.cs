@@ -29,7 +29,7 @@ namespace Utopia.GUI.Forms.CustControls
         /// Create all the bindings lists from the Config data settings for datagrid binding
         /// </summary>
         /// <param name="Config">The Config parameters to display</param>
-        public void RefreshAllBindingLists(ClientSettings.ClientConfig Config)
+        public void RefreshAllBindingLists(ClientConfig Config)
         {
             RefreshGameSettingsBindingList(Config);
             RefreshGraphicSettingsBindingList(Config);
@@ -40,7 +40,7 @@ namespace Utopia.GUI.Forms.CustControls
         /// Create the binding list for the game Setting from the Config data settings for datagrid binding
         /// </summary>
         /// <param name="Config">The Config parameters to display</param>
-        private void RefreshGameSettingsBindingList(ClientSettings.ClientConfig Config)
+        private void RefreshGameSettingsBindingList(ClientConfig Config)
         {
             object value;
             Type reflectedType;
@@ -63,7 +63,7 @@ namespace Utopia.GUI.Forms.CustControls
         /// Create the binding list for the parameter Setting from the Config data settings for datagrid binding
         /// </summary>
         /// <param name="Config">The Config parameters to display</param>
-        private void RefreshGraphicSettingsBindingList(ClientSettings.ClientConfig Config)
+        private void RefreshGraphicSettingsBindingList(ClientConfig Config)
         {
             Type reflectedType;
             PropertyInfo[] pi;
@@ -86,7 +86,7 @@ namespace Utopia.GUI.Forms.CustControls
         /// Create the binding list for the keyboard mapping setting from the Config data settings for datagrid binding
         /// </summary>
         /// <param name="Config">The Config parameters to display</param>
-        private void RefreshKeyboardSettingsBindingList(ClientSettings.ClientConfig Config)
+        private void RefreshKeyboardSettingsBindingList(ClientConfig Config)
         {
             Type reflectedType;
             FieldInfo[] fi;
@@ -238,7 +238,7 @@ namespace Utopia.GUI.Forms.CustControls
         /// </summary>
         private void btDefaultQWERTY_Click(object sender, EventArgs e)
         {
-            RefreshKeyboardSettingsBindingList(ClientSettings.ClientConfig.DefaultQwerty);
+            RefreshKeyboardSettingsBindingList(ClientConfig.DefaultQwerty);
         }
 
         /// <summary>
@@ -246,7 +246,7 @@ namespace Utopia.GUI.Forms.CustControls
         /// </summary>
         private void btDefaultAZERTY_Click(object sender, EventArgs e)
         {
-            RefreshKeyboardSettingsBindingList(ClientSettings.ClientConfig.DefaultAzerty);
+            RefreshKeyboardSettingsBindingList(ClientConfig.DefaultAzerty);
         }
 
         /// <summary>

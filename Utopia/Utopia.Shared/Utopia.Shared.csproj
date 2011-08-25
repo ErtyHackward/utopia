@@ -139,6 +139,7 @@
     <Compile Include="Structs\Landscape\TerraCube.cs" />
     <Compile Include="Structs\Location2.cs" />
     <Compile Include="Structs\Location3.cs" />
+    <Compile Include="Structs\Md5Hash.cs" />
     <Compile Include="Structs\Range.cs" />
     <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
