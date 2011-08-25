@@ -14,7 +14,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Gets byte amount needed to store chunk block data
         /// </summary>
-        public readonly static int ChunkBlocksByteLength = 16   * 128 * 16;
+        public readonly static int ChunkBlocksByteLength = 16 * 128 * 16;
         public readonly static Location3<int> ChunkSize = new Location3<int>(16, 128, 16);
 
         #endregion
@@ -22,7 +22,7 @@ namespace Utopia.Shared.Chunks
         #region Properties
         private ChunkDataProvider _blockDataProvider;
 
-        protected byte[] Md5HashData;
+        protected Md5Hash Md5HashData;
 
         /// <summary>
         /// Gets or sets a chunk blocks data provider
@@ -122,12 +122,12 @@ namespace Utopia.Shared.Chunks
         /// Gets md5 hash of the chunk data (blocks and entities)
         /// </summary>
         /// <returns></returns>
-        public byte[] GetMd5Hash()
+        public Md5Hash GetMd5Hash()
         {
             return Md5HashData ?? (Md5HashData = CalculateHash(Serialize()));
         }
         
-        protected byte[] CalculateHash(byte[] bytes)
+        protected Md5Hash CalculateHash(byte[] bytes)
         {
             if (bytes == null)
             {
@@ -135,7 +135,7 @@ namespace Utopia.Shared.Chunks
             }
             var provider = new MD5CryptoServiceProvider();
             
-            return provider.ComputeHash(bytes);
+            return new Md5Hash(provider.ComputeHash(bytes));
         }
 
         /// <summary>

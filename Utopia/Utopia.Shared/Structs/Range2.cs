@@ -44,6 +44,25 @@ namespace Utopia.Shared.Structs
         }
 
         /// <summary>
+        /// Performs action for each point in this range
+        /// </summary>
+        /// <param name="action"></param>
+        public void Foreach(Action<IntVector2,int> action)
+        {
+            int index = 0;
+            for (int x = Min.X; x < Max.X; x++)
+            {
+                for (int y = Min.Y; y < Max.Y; y++)
+                {
+                    IntVector2 loc;
+                    loc.X = x;
+                    loc.Y = y;
+                    action(loc, index++);
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets total items count
         /// </summary>
         public int Count { get { return (Max.X - Min.X)*(Max.Y - Min.Y); } }
