@@ -377,6 +377,6 @@
     </SGen>
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\sgen" /a:Utopia.exe /t:Utopia.Settings.ClientConfig /force /compiler:/platform:x86</PostBuildEvent>
+    <PostBuildEvent>"$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\sgen" /a:Utopia.exe /t:Utopia.Settings.ClientConfig /force /compiler:/platform:x86</PostBuildEvent>
   </PropertyGroup>
 </Project>
