@@ -13,7 +13,7 @@ namespace Utopia.GUI.D3D.Inventory
         bool IsLink { get; set; }
         Item Item { get; set; }
 
-        EquipmentSlot InventorySlot { get; set; }
+        EquipmentSlotType InventorySlot { get; set; }
         void Link(Item item);
     }
 }

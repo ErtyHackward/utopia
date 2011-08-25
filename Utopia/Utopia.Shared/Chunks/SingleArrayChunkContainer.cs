@@ -5,6 +5,10 @@ using System.Text;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
+using S33M3Engines.Shared.Math;
+using SharpDX;
+using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.Chunks
 {
@@ -13,6 +17,27 @@ namespace Utopia.Shared.Chunks
     /// </summary>
     public class SingleArrayChunkContainer
     {
+        public struct SurroundingIndex
+        {
+            public int Index;
+            public IdxRelativeMove IndexRelativePosition;
+            public Location3<int> Position;
+        }
+
+        public enum IdxRelativeMove : byte
+        {
+            X_Minus1,
+            X_Plus1,
+            Z_Minus1,
+            Z_Plus1,
+            Y_Minus1,
+            Y_Plus1,
+            None
+        }
+
+        private int _bigArraySize;
+        private VisualWorldParameters _visualWorldParam;
+
         /// <summary>
         /// Occurs when block data was changed
         /// </summary>
@@ -21,8 +46,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Contains the array of visible cubes
         /// </summary>
-        public TerraCube[] CubesMetaData { get; set;}
-        public byte[] Cubes { get; set; }
+        public TerraCube[] Cubes { get; set;}
 
         /// <summary>
         /// Contains the value used to advance inside the array from a specific Index.
@@ -32,29 +56,38 @@ namespace Utopia.Shared.Chunks
         public int MoveY { get; private set; } // + = Move Up, - = Move Bellow
 
         /// <summary>
-        /// Visible World size in cubes Unit
-        /// </summary>
-        public Location3<int> _visibleWorldSize;
-
-        /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="worldParam">The world Parameters</param>
-        public SingleArrayChunkContainer(WorldParameters worldParam)
+        /// <param name="worldParam">The world Parameters</param>e
+        public SingleArrayChunkContainer(VisualWorldParameters visualWorldParam)
         {
-            _visibleWorldSize = new Location3<int>()
-            {
-                X = AbstractChunk.ChunkSize.X * worldParam.WorldSize.X,
-                Y = AbstractChunk.ChunkSize.Y,
-                Z = AbstractChunk.ChunkSize.Z * worldParam.WorldSize.Z,
-            };
+            _visualWorldParam = visualWorldParam;
 
-            MoveX = _visibleWorldSize.Y;
-            MoveZ = _visibleWorldSize.Y * _visibleWorldSize.X;
+            MoveX = _visualWorldParam.WorldVisibleSize.Y;
+            MoveZ = _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.X;
             MoveY = 1;
 
             //Initialize the Big Array
-            Cubes = new byte[_visibleWorldSize.X * _visibleWorldSize.Y * _visibleWorldSize.Z];
+            Cubes = new TerraCube[_visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z];
+            _bigArraySize = Cubes.Length;
+        }
+
+        /// <summary>
+        /// Get the Array Index of a cube
+        /// </summary>
+        /// <param name="X">world X position</param>
+        /// <param name="Y">world Y position</param>
+        /// <param name="Z">world Z position</param>
+        /// <returns></returns>
+        public int Index(ref Location3<int> cubePosition)
+        {
+            int x, z;
+            x = cubePosition.X % _visualWorldParam.WorldVisibleSize.X;
+            if (x < 0) x += _visualWorldParam.WorldVisibleSize.X;
+            z = cubePosition.Z % _visualWorldParam.WorldVisibleSize.Z;
+            if (z < 0) z += _visualWorldParam.WorldVisibleSize.Z;
+
+            return x * MoveX + z * MoveZ + cubePosition.Y;
         }
 
         /// <summary>
@@ -67,30 +100,343 @@ namespace Utopia.Shared.Chunks
         public int Index(int X, int Y, int Z)
         {
             int x, z;
-            x = X % _visibleWorldSize.X;
-            if (x < 0) x += _visibleWorldSize.X;
-            z = Z % _visibleWorldSize.Z;
-            if (z < 0) z += _visibleWorldSize.Z;
+            x = X % _visualWorldParam.WorldVisibleSize.X;
+            if (x < 0) x += _visualWorldParam.WorldVisibleSize.X;
+            z = Z % _visualWorldParam.WorldVisibleSize.Z;
+            if (z < 0) z += _visualWorldParam.WorldVisibleSize.Z;
 
             return x * MoveX + z * MoveZ + Y;
         }
 
-        public void SetCube(ref Location3<int> cubeCoordinates, byte cubeType, ref TerraCube cubeMetaData)
+        /// <summary>
+        /// Get big array Index
+        /// </summary>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="Z"></param>
+        /// <param name="isSafe">Full checks will be applied on the X, Y, and Z values</param>
+        /// <param name="index">Result</param>
+        /// <returns></returns>
+        public bool Index(int X, int Y, int Z, bool isSafe, out int index)
         {
-            int index = Index(cubeCoordinates.X, cubeCoordinates.Y, cubeCoordinates.Z);
-            Cubes[index] = cubeType;
-            CubesMetaData[index] = cubeMetaData;
+            if (isSafe)
+            {
+                if (X < _visualWorldParam.WorldRange.Min.X || X >= _visualWorldParam.WorldRange.Max.X || Z < _visualWorldParam.WorldRange.Min.Z || Z >= _visualWorldParam.WorldRange.Max.Z || Y < 0 || Y >= _visualWorldParam.WorldRange.Max.Y)
+                {
+                    index = int.MaxValue;
+                    return false;
+                }
+            }
 
-            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { cubeCoordinates }, Bytes = new[] { cubeType } });
+            index = Index(X, Y, Z);
+
+            return true;
         }
 
-        public void SetCube(int X, int Y, int Z, byte cubeType, ref TerraCube cubeMetaData)
+        /// <summary>
+        /// Get the Safe Index of a cube. By Safe it means that the Y value will be check against at the maximum possible to avoid wrapping
+        /// </summary>
+        /// <param name="X">world X position</param>
+        /// <param name="Y">world Y position</param>
+        /// <param name="Z">world Z position</param>
+        /// <returns></returns>
+        public bool IndexSafe(int X, int Y, int Z, out int index)
+        {
+            if (Y >= AbstractChunk.ChunkSize.Y || Y < 0)
+            {
+                index = int.MaxValue;
+                return false;
+            }
+
+            index = Index(X, Y, Z);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Get the Array Index of a cube
+        /// </summary>
+        /// <param name="X">world X position</param>
+        /// <param name="Y">world Y position</param>
+        /// <param name="Z">world Z position</param>
+        /// <returns></returns>
+        public int IndexMoves(int index, int Modification1, int Modification2)
+        {
+            index = index + Modification1;
+            index = index + Modification2;
+            return ValidateIndex(index);
+        }
+
+        /// <summary>
+        /// Get the Array Index of a cube
+        /// </summary>
+        /// <param name="X">world X position</param>
+        /// <param name="Y">world Y position</param>
+        /// <param name="Z">world Z position</param>
+        /// <returns></returns>
+        public int IndexMoves(int index, int Modification1, int Modification2, int Modification3)
+        {
+            index = index + Modification1;
+            index = index + Modification2;
+            index = index + Modification3;
+            return ValidateIndex(index);
+        }
+
+        public bool isIndexInError(int index)
+        {
+            if (index == int.MaxValue) return true;
+            return false;
+        }
+
+        public int ValidateIndex(int index)
+        {
+            index = index % _bigArraySize;
+
+            if (index < 0) index += _bigArraySize;
+
+            return index;
+        }
+
+        public int FastIndex(int baseIndex, int Position, IdxRelativeMove idxmove)
+        {
+            int value;
+            switch (idxmove)
+            {
+                case IdxRelativeMove.None:
+                    return baseIndex;
+                case IdxRelativeMove.X_Minus1:
+                    value = baseIndex - _visualWorldParam.WorldVisibleSize.Y;
+                    if (Position == _visualWorldParam.WrapEnd.X) value += _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
+                    break;
+                case IdxRelativeMove.X_Plus1:
+                    value = baseIndex + _visualWorldParam.WorldVisibleSize.Y;
+                    if (Position == _visualWorldParam.WrapEnd.X - 1) value -= _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
+                    break;
+                case IdxRelativeMove.Z_Minus1:
+                    value = baseIndex - _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
+                    if (Position == _visualWorldParam.WrapEnd.Z) value += _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
+                    break;
+                case IdxRelativeMove.Z_Plus1:
+                    value = baseIndex + _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
+                    if (Position == _visualWorldParam.WrapEnd.Z - 1) value -= _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
+                    break;
+                case IdxRelativeMove.Y_Minus1:
+                    value = baseIndex - 1;
+                    break;
+                case IdxRelativeMove.Y_Plus1:
+                    value = baseIndex + 1;
+                    break;
+                default:
+                    value = int.MaxValue;
+                    break;
+            }
+            return value;
+        }
+
+        public SurroundingIndex[] GetSurroundingBlocksIndex(int baseIndex, int CubeXCoord, int CubeYCoord, int CubeZCoord)
+        {
+            int cubeIndex = baseIndex;
+            SurroundingIndex[] surroundingIndexes = new SurroundingIndex[6];
+
+            surroundingIndexes[0] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeXCoord, IdxRelativeMove.X_Plus1), IndexRelativePosition = IdxRelativeMove.X_Plus1, Position = new Location3<int>(CubeXCoord + 1, CubeYCoord, CubeZCoord) };
+            surroundingIndexes[1] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeXCoord, IdxRelativeMove.X_Minus1), IndexRelativePosition = IdxRelativeMove.X_Minus1, Position = new Location3<int>(CubeXCoord - 1, CubeYCoord, CubeZCoord) };
+            surroundingIndexes[2] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeZCoord, IdxRelativeMove.Z_Plus1), IndexRelativePosition = IdxRelativeMove.Z_Plus1, Position = new Location3<int>(CubeXCoord, CubeYCoord, CubeZCoord + 1) };
+            surroundingIndexes[3] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeZCoord, IdxRelativeMove.Z_Minus1), IndexRelativePosition = IdxRelativeMove.Z_Minus1, Position = new Location3<int>(CubeXCoord, CubeYCoord, CubeZCoord - 1) };
+            surroundingIndexes[4] = new SurroundingIndex() { Index = cubeIndex + MoveY , IndexRelativePosition = IdxRelativeMove.Y_Plus1, Position = new Location3<int>(CubeXCoord, CubeYCoord + 1, CubeZCoord) };
+            surroundingIndexes[5] = new SurroundingIndex() { Index = cubeIndex - MoveY , IndexRelativePosition = IdxRelativeMove.Y_Minus1, Position = new Location3<int>(CubeXCoord, CubeYCoord - 1, CubeZCoord) };
+            return surroundingIndexes;
+        }
+
+        public SurroundingIndex[] GetSurroundingBlocksIndex(int CubeXCoord, int CubeYCoord, int CubeZCoord)
+        {
+            int cubeIndex = Index(CubeXCoord, CubeYCoord, CubeZCoord);
+            return GetSurroundingBlocksIndex(cubeIndex, CubeXCoord, CubeYCoord, CubeZCoord);
+        }
+
+        public SurroundingIndex[] GetSurroundingBlocksIndex(ref Location3<int> CubeCoordinates)
+        {
+            return GetSurroundingBlocksIndex(CubeCoordinates.X, CubeCoordinates.Y, CubeCoordinates.Z);
+        }
+
+        public bool isPickable(ref Vector3 position, out TerraCube cube)
+        {
+            int cubeIndex;
+
+            if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
+            {
+                cube = Cubes[cubeIndex];
+                // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == CubeId.Air) cube = new TerraCube(CubeId.Error);
+                return CubeProfile.CubesProfile[cube.Id].IsPickable;
+            }
+
+            cube = new TerraCube(CubeId.Error);
+            return false;
+        }
+
+        public bool isPickable(ref Vector3 position, Tool withTool, out TerraCube cube)
+        {
+            int cubeIndex;
+
+            if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
+            {
+                cube = Cubes[cubeIndex];
+
+                // withTool.
+                // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == CubeId.Air) cube = new TerraCube(CubeId.Error);
+                return CubeProfile.CubesProfile[cube.Id].IsPickable;
+            }
+
+            cube = new TerraCube(CubeId.Error);
+            return false;
+        }
+
+
+        public bool isPickable(ref Vector3 position)
+        {
+            int cubeIndex;
+            if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
+            {
+                return CubeProfile.CubesProfile[Cubes[cubeIndex].Id].IsPickable;
+            }
+
+            return false;
+        }
+
+
+        public bool IsSolidToPlayer(ref BoundingBox bb)
+        {
+            int index;
+
+            //Get ground surface 4 blocks below the Bounding box
+            int Xmin = MathHelper.Fastfloor(bb.Minimum.X);
+            int Zmin = MathHelper.Fastfloor(bb.Minimum.Z);
+            int Ymin = MathHelper.Fastfloor(bb.Minimum.Y);
+            int Xmax = MathHelper.Fastfloor(bb.Maximum.X);
+            int Zmax = MathHelper.Fastfloor(bb.Maximum.Z);
+            int Ymax = MathHelper.Fastfloor(bb.Maximum.Y);
+
+            for (int x = Xmin; x <= Xmax; x++)
+            {
+                for (int z = Zmin; z <= Zmax; z++)
+                {
+                    for (int y = Ymin; y <= Ymax; y++)
+                    {
+                        if (IndexSafe(x, y, z, out index))
+                        {
+                            if (CubeProfile.CubesProfile[Cubes[index].Id].IsSolidToEntity)
+                            {
+                                return true;
+                            }
+                        }
+
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool IsSolidToPlayer(ref BoundingBox bb, out TerraCubeWithPosition collidingcube)
+        {
+            int index;
+
+            //Get ground surface 4 blocks below the Bounding box
+            int Xmin = MathHelper.Fastfloor(bb.Minimum.X);
+            int Zmin = MathHelper.Fastfloor(bb.Minimum.Z);
+            int Ymin = MathHelper.Fastfloor(bb.Minimum.Y);
+            int Xmax = MathHelper.Fastfloor(bb.Maximum.X);
+            int Zmax = MathHelper.Fastfloor(bb.Maximum.Z);
+            int Ymax = MathHelper.Fastfloor(bb.Maximum.Y);
+
+            for (int x = Xmin; x <= Xmax; x++)
+            {
+                for (int z = Zmin; z <= Zmax; z++)
+                {
+                    for (int y = Ymin; y <= Ymax; y++)
+                    {
+                        if (IndexSafe(x, y, z, out index))
+                        {
+                            if (CubeProfile.CubesProfile[Cubes[index].Id].IsSolidToEntity)
+                            {
+                                collidingcube.Cube = Cubes[index];
+                                collidingcube.Position = new Location3<int>(x, y, z);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            collidingcube = new TerraCubeWithPosition();
+            return false;
+        }
+
+        public void GetNextSolidBlockToPlayer(ref Vector3 FromPosition, ref Location3<int> Direction, out TerraCubeWithPosition cubeWithPosition)
+        {
+            int index = 0;
+            cubeWithPosition.Cube = new TerraCube(CubeId.Air);
+
+            int X = MathHelper.Fastfloor(FromPosition.X);
+            int Z = MathHelper.Fastfloor(FromPosition.Z);
+            int Y = MathHelper.Fastfloor(FromPosition.Y);
+
+            if (Y >= _visualWorldParam.WorldVisibleSize.Y) Y = _visualWorldParam.WorldVisibleSize.Y - 1;
+
+            while (!CubeProfile.CubesProfile[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
+            {
+                if (IndexSafe(X, Y, Z, out index))
+                {
+                    if (CubeProfile.CubesProfile[Cubes[index].Id].IsSolidToEntity)
+                    {
+                        cubeWithPosition.Cube = Cubes[index];
+                        break;
+                    }
+                    X += Direction.X;
+                    Y += Direction.Y;
+                    Z += Direction.Z;
+                }
+            }
+
+
+            cubeWithPosition.Position = new Location3<int>(X, Y, Z);
+        }
+
+        public void GetNextSolidBlockToPlayer(ref BoundingBox FromBBPosition, ref Location3<int> Direction, out TerraCubeWithPosition cubeWithPosition)
+        {
+            TerraCubeWithPosition testCube;
+            Vector3 testPoint;
+
+            testPoint = new Vector3(FromBBPosition.Minimum.X, FromBBPosition.Minimum.Y, FromBBPosition.Minimum.Z);
+            GetNextSolidBlockToPlayer(ref testPoint, ref Direction, out testCube);
+            cubeWithPosition = testCube;
+
+            testPoint = new Vector3(FromBBPosition.Maximum.X, FromBBPosition.Minimum.Y, FromBBPosition.Minimum.Z);
+            GetNextSolidBlockToPlayer(ref testPoint, ref Direction, out testCube);
+            if (testCube.Position.Y > cubeWithPosition.Position.Y) cubeWithPosition = testCube;
+
+            testPoint = new Vector3(FromBBPosition.Minimum.X, FromBBPosition.Minimum.Y, FromBBPosition.Maximum.Z);
+            GetNextSolidBlockToPlayer(ref testPoint, ref Direction, out testCube);
+            if (testCube.Position.Y > cubeWithPosition.Position.Y) cubeWithPosition = testCube;
+
+            testPoint = new Vector3(FromBBPosition.Maximum.X, FromBBPosition.Minimum.Y, FromBBPosition.Maximum.Z);
+            GetNextSolidBlockToPlayer(ref testPoint, ref Direction, out testCube);
+            if (testCube.Position.Y > cubeWithPosition.Position.Y) cubeWithPosition = testCube;
+        }
+
+
+        public void SetCube(ref Location3<int> cubeCoordinates, ref TerraCube cube)
+        {
+            int index = Index(cubeCoordinates.X, cubeCoordinates.Y, cubeCoordinates.Z);
+            Cubes[index] = cube;
+
+            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { cubeCoordinates }, Bytes = new[] { cube.Id } });
+        }
+
+        public void SetCube(int X, int Y, int Z, ref TerraCube cube)
         {
             int index = Index(X, Y, Z);
-            Cubes[index] = cubeType;
-            CubesMetaData[index] = cubeMetaData;
+            Cubes[index] = cube;
 
-            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Location3<int> { X = X, Y = Y, Z = Z} }, Bytes = new[] { cubeType } });
+            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Location3<int> { X = X, Y = Y, Z = Z } }, Bytes = new[] { cube.Id } });
         }
 
     }

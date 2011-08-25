@@ -56,6 +56,7 @@
     <Compile Include="Messages\LoginMessage.cs" />
     <Compile Include="Messages\LoginResultMessage.cs" />
     <Compile Include="Messages\MessageTypes.cs" />
+    <Compile Include="Messages\NetworkMessageFactory.cs" />
     <Compile Include="Messages\PlayerDirectionMessage.cs" />
     <Compile Include="Messages\PlayerInMessage.cs" />
     <Compile Include="Messages\PlayerOutMessage.cs" />

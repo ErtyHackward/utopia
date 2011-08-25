@@ -60,8 +60,11 @@ namespace Utopia.Shared.World
         {
             if (Stages.Count == 0)
                 throw new InvalidOperationException("Add at least one genereation process (stage) before starting");
+            
 
-            return new GenerateDelegate(Generate).BeginInvoke(range, callback, state);
+
+            var del = new GenerateDelegate(Generate);
+            return del.BeginInvoke(range, callback, state);
         }
 
         /// <summary>

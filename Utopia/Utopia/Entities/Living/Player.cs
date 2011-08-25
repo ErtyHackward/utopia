@@ -6,9 +6,6 @@ using S33M3Engines.D3D;
 using S33M3Engines.Cameras;
 using SharpDX;
 using S33M3Engines.Maths;
-using Utopia.Planets.Terran;
-using Utopia.Planets.Terran.World;
-using Utopia.Planets.Terran.Cube;
 using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.Struct;
 using S33M3Engines.InputHandler;
@@ -18,7 +15,6 @@ using UtopiaContent.ModelComp;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.D3D.Effects.Basics;
 using Utopia.Shared.Structs;
-using Utopia.Shared.Landscaping;
 using Utopia.Shared;
 using Utopia.Settings;
 using S33M3Engines.Shared.Math;
@@ -27,6 +23,9 @@ using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using S33M3Engines.Shared.Sprites;
 using S33M3Engines;
 using S33M3Engines.WorldFocus;
+using Utopia.Shared.Chunks;
+using Utopia.Worlds.Cubes;
+using Utopia.Shared.World;
 
 namespace Utopia.Entities.Living
 {
@@ -37,11 +36,12 @@ namespace Utopia.Entities.Living
 
         Location3<int> _pickedBlock, _previousPickedBlock, _newCubePlace;
         private TerraCube _pickedCube;//TODO refactor _pickedBlock to be a positioned terracube 
+        private VisualWorldParameters _visualWorldParameters;
 
         bool _isBlockPicked;
 
         int _buildingCubeIndex;
-        RenderCubeProfile _buildingCube;
+        VisualCubeProfile _buildingCube;
 
         //Bloc Cursor Variables
         BoundingBox _playerSelectedBox, _playerPotentialNewBlock;
@@ -58,16 +58,17 @@ namespace Utopia.Entities.Living
             get { return _name; }
         }
 
-        public PlayerInventory Inventory { get; private set; }
+        //public PlayerInventory Inventory { get; private set; }
 
         #endregion
 
-        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed)
-            : base(d3dEngine, camManager, inputHandler, startUpWorldPosition, size, walkingSpeed, flyingSpeed, headRotationSpeed)
+        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed, SingleArrayChunkContainer cubesHolder, VisualWorldParameters visualWorldParameters)
+            : base(d3dEngine, camManager, inputHandler, startUpWorldPosition, size, walkingSpeed, flyingSpeed, headRotationSpeed, cubesHolder)
         {
+            _visualWorldParameters = visualWorldParameters;
             _worldFocusManager = worldFocusManager;
             _name = Name;
-            Inventory = new PlayerInventory();
+            //Inventory = new PlayerInventory();
 
             ////this is only temporary starting gear, it should be received from the server
             //BlockRemover remover = new BlockRemover();
@@ -79,9 +80,9 @@ namespace Utopia.Entities.Living
             //ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing;
             //ring.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
-            BlockAdder adder = new Wally();
-            adder.AllowedSlots = EquipmentSlot.Bags;
-            Inventory.Toolbar.Add(adder);
+            //BlockAdder adder = new Wally();
+            //adder.AllowedSlots = EquipmentSlot.Bags;
+            //Inventory.Toolbar.Add(adder);
             ////adder.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
             //Inventory.LeftTool = remover;
@@ -91,16 +92,16 @@ namespace Utopia.Entities.Living
             //Inventory.Bag.Items.Add(remover);
             //Inventory.Bag.Items.Add(ring);
 
-            Pickaxe pickaxe = new Pickaxe();
-            pickaxe.AllowedSlots = EquipmentSlot.Bags;
-            Inventory.Toolbar.Add(pickaxe);
+            //Pickaxe pickaxe = new Pickaxe();
+            //pickaxe.AllowedSlots = EquipmentSlot.Bags;
+            //Inventory.Toolbar.Add(pickaxe);
 
-            Shovel shovel = new Shovel();
-            shovel.AllowedSlots = EquipmentSlot.Bags;
-            Inventory.Toolbar.Add(shovel);
+            //Shovel shovel = new Shovel();
+            //shovel.AllowedSlots = EquipmentSlot.Bags;
+            //Inventory.Toolbar.Add(shovel);
 
-            Inventory.LeftTool = pickaxe;
-            Inventory.RightTool = adder;
+            //Inventory.LeftTool = pickaxe;
+            //Inventory.RightTool = adder;
         }
 
         #region private methods
@@ -116,7 +117,7 @@ namespace Utopia.Entities.Living
             {
                 pickingPointInLine += LookAt * 0.02f;
 
-                if (TerraWorld.Landscape.isPickable(ref pickingPointInLine, out _pickedCube))
+                if (CubesHolder.isPickable(ref pickingPointInLine, out _pickedCube))
                 {
 
                     _pickedBlock.X = MathHelper.Fastfloor(pickingPointInLine.X);
@@ -187,7 +188,7 @@ namespace Utopia.Entities.Living
             {
                 if (bufferMode) { LButtonBuffer = true; return; } else LButtonBuffer = false;
 
-                if (_isBlockPicked && Inventory.LeftTool.NeedsPick)
+                if (_isBlockPicked)
                 {
                     if (_inputHandler.CurKeyboardState.IsKeyDown(Keys.LShiftKey))
                     {
@@ -196,21 +197,21 @@ namespace Utopia.Entities.Living
                     }
                     else
                     {
-                        Location3<int>? newPlace;
+                        //Location3<int>? newPlace;
 
-                        if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
-                        {
-                            newPlace = _newCubePlace;
-                        }
-                        else
-                        {
-                            newPlace = null;
-                        }
-                        TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
-                        ToolImpact impact = Inventory.LeftTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
-                        if (impact.CubesImpact != null)
-                            EntityImpact.ReplaceBlocks(impact.CubesImpact);
-                        if (impact.Message != null) Console.WriteLine(impact.Message);
+                        //if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
+                        //{
+                        //    newPlace = _newCubePlace;
+                        //}
+                        //else
+                        //{
+                        //    newPlace = null;
+                        //}
+                        //TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
+                        //ToolImpact impact = Inventory.LeftTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
+                        //if (impact.CubesImpact != null)
+                        //    EntityImpact.ReplaceBlocks(impact.CubesImpact);
+                        //if (impact.Message != null) Console.WriteLine(impact.Message);
                     }
                 }
             }
@@ -219,25 +220,25 @@ namespace Utopia.Entities.Living
             {
                 if (bufferMode) { RButtonBuffer = true; return; } else RButtonBuffer = false;
 
-                if (_isBlockPicked && Inventory.RightTool.NeedsPick)
-                {
-                    Location3<int>? newPlace;
+                //if (_isBlockPicked && Inventory.RightTool.NeedsPick)
+                //{
+                //    Location3<int>? newPlace;
 
-                    if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
-                    {
-                        newPlace = _newCubePlace;
-                    }
-                    else
-                    {
-                        newPlace = null;
-                    }
+                //    if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
+                //    {
+                //        newPlace = _newCubePlace;
+                //    }
+                //    else
+                //    {
+                //        newPlace = null;
+                //    }
 
-                    TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
-                    ToolImpact impact = Inventory.RightTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
-                    if (impact.CubesImpact != null)
-                        EntityImpact.ReplaceBlocks(impact.CubesImpact);
+                //    TerraCubeWithPosition pick = new TerraCubeWithPosition(_pickedBlock, _pickedCube);
+                //    ToolImpact impact = Inventory.RightTool.Use(pick, newPlace, new TerraCube(_buildingCube.Id));
+                //    if (impact.CubesImpact != null)
+                //        EntityImpact.ReplaceBlocks(impact.CubesImpact);
 
-                }
+                //}
             }
 
             //Did I use the scrollWheel
@@ -253,15 +254,15 @@ namespace Utopia.Entities.Living
                 if (_inputHandler.CurMouseState.ScrollWheelTicks > _inputHandler.PrevMouseState.ScrollWheelTicks || WheelForward)
                 {
                     _buildingCubeIndex++;
-                    if (_buildingCubeIndex >= RenderCubeProfile.CubesProfile.Length) _buildingCubeIndex = 1;
+                    if (_buildingCubeIndex >= VisualCubeProfile.CubesProfile.Length) _buildingCubeIndex = 1;
 
-                    _buildingCube = RenderCubeProfile.CubesProfile[_buildingCubeIndex];
+                    _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
                 }
                 else
                 {
                     _buildingCubeIndex--;
-                    if (_buildingCubeIndex <= 0) _buildingCubeIndex = RenderCubeProfile.CubesProfile.Length - 1;
-                    _buildingCube = RenderCubeProfile.CubesProfile[_buildingCubeIndex];
+                    if (_buildingCubeIndex <= 0) _buildingCubeIndex = VisualCubeProfile.CubesProfile.Length - 1;
+                    _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
                 }
 
                 WheelForward = false;
@@ -277,7 +278,7 @@ namespace Utopia.Entities.Living
         public override void LoadContent()
         {
             _buildingCubeIndex = 1;
-            _buildingCube = RenderCubeProfile.CubesProfile[_buildingCubeIndex];
+            _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
 
             _cursorEffect = new HLSLVertexPositionColor(_d3dEngine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
             _blocCursor = new BoundingBox3D(_d3dEngine, _worldFocusManager, new Vector3(1.004f, 1.004f, 1.004f), _cursorEffect, _cursorColor);
@@ -295,17 +296,14 @@ namespace Utopia.Entities.Living
             base.Update(ref TimeSpend);
 
             //Block Picking !?
-            if (TerraWorld != null)
-            {
-                GetSelectedBlock();
-                ind = TerraWorld.Landscape.Index(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z);
+            GetSelectedBlock();
+            ind = CubesHolder.Index(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z);
 
-                //Handle Specific User Keyboard/Mouse Action !
-                InputHandler(false);
+            //Handle Specific User Keyboard/Mouse Action !
+            InputHandler(false);
 
-                //Head Under Water ??
-                RefreshHeadUnderWater();
-            }
+            //Head Under Water ??
+            RefreshHeadUnderWater();
         }
 
         public override void DrawDepth2()
@@ -326,7 +324,7 @@ namespace Utopia.Entities.Living
 
         public override string GetInfo()
         {
-            return string.Concat("<IPerson : Player (", _name, ")> X : ", (WorldPosition.ActualValue.X - LandscapeBuilder.WorldStartUpX).ToString("0.0"), " Y : ", WorldPosition.ActualValue.Y.ToString("0.0"), " Z : ", (WorldPosition.ActualValue.Z - LandscapeBuilder.WorldStartUpZ).ToString("0.0"), " Block Focus : ", _isBlockPicked ? _pickedBlock.ToString() : "None", " Block Add : ", _isBlockPicked ? _newCubePlace.ToString() : "None", " CubeType : ", _buildingCube.Name);
+            return string.Concat("<IPerson : Player (", _name, ")> X : ", (WorldPosition.ActualValue.X - _visualWorldParameters.WorldChunkStartUpPosition.X).ToString("0.0"), " Y : ", WorldPosition.ActualValue.Y.ToString("0.0"), " Z : ", (WorldPosition.ActualValue.Z - _visualWorldParameters.WorldChunkStartUpPosition.Z).ToString("0.0"), " Block Focus : ", _isBlockPicked ? _pickedBlock.ToString() : "None", " Block Add : ", _isBlockPicked ? _newCubePlace.ToString() : "None", " CubeType : ", _buildingCube.Name);
         }
         #endregion
 

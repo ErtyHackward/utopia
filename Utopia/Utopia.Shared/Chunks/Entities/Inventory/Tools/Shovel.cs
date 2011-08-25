@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Shared.Landscaping;
+using Utopia.Shared.Cubes;
 
 
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
@@ -19,7 +19,10 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
             RemoveableCubeIds.Add(CubeId.Dirt);
             RemoveableCubeIds.Add(CubeId.Grass);
         }
-
+        public override bool Use()
+        {
+            throw new NotImplementedException();
+        }
 
         public override EntityClassId ClassId
         {

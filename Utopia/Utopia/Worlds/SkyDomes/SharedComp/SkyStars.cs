@@ -32,7 +32,6 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #endregion
 
         #region Public Properties
-
         #endregion
 
         public SkyStars(D3DEngine d3dEngine, CameraManager camManager , IClock gameClock)
