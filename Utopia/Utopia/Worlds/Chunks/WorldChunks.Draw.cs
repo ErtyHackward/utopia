@@ -38,6 +38,9 @@ namespace Utopia.Worlds.Chunks
         {
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
+#if DEBUG
+            if (_gameStates.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+#endif
             _chunkDrawByFrame = 0;
 
             _terraEffect.Begin();
@@ -53,6 +56,10 @@ namespace Utopia.Worlds.Chunks
             DrawSolidFaces();
 
             DefaultDrawLiquid(); //After Solid faces
+#if DEBUG
+            DrawDebug();
+#endif
+
         }
         #endregion
 
@@ -94,6 +101,11 @@ namespace Utopia.Worlds.Chunks
             Matrix worldFocus = Matrix.Identity;
 
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+
+#if DEBUG
+            if (_gameStates.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+#endif
+
             VisualChunk chunk;
 
             _liquidEffect.Begin();
@@ -150,6 +162,27 @@ namespace Utopia.Worlds.Chunks
             return SunColorBase;
         }
 
+#if DEBUG
+        private void DrawDebug()
+        {
+            VisualChunk chunk;
+            Matrix worldFocus = Matrix.Identity;
+
+            for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Z; chunkIndice++)
+            {
+                chunk = SortedChunks[chunkIndice];
+
+                if (chunk.Ready2Draw)
+                {
+                    if (!chunk.isFrustumCulled)
+                    {
+                        if (_gameStates.DebugDisplay == 1) chunk.ChunkBoundingBoxDisplay.Draw(_camManager.ActiveCamera, _worldFocusManager.WorldFocus);
+                    }
+
+                }
+            }
+        }
+#endif
 
         private void InitDrawComponents()
         {
@@ -170,6 +203,27 @@ namespace Utopia.Worlds.Chunks
             _terra_View.Dispose();
             _liquidEffect.Dispose();
             _terraEffect.Dispose();
+        }
+        #endregion
+
+        #region GetInfo Interface
+        public string GetInfo()
+        {
+            int BprimitiveCount = 0;
+            int VprimitiveCount = 0;
+            //Run over all chunks to see their status, and take action accordingly.
+            for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Z; chunkIndice++)
+            {
+                if (SortedChunks[chunkIndice].SolidCubeIB == null) continue;
+                if (!SortedChunks[chunkIndice].isFrustumCulled)
+                {
+                    VprimitiveCount += SortedChunks[chunkIndice].SolidCubeIB.IndicesCount;
+                    if (SortedChunks[chunkIndice].LiquidCubeIB != null) VprimitiveCount += (SortedChunks[chunkIndice].LiquidCubeIB.IndicesCount);
+                }
+                BprimitiveCount += SortedChunks[chunkIndice].SolidCubeIB.IndicesCount;
+                if (SortedChunks[chunkIndice].LiquidCubeIB != null) BprimitiveCount += (SortedChunks[chunkIndice].LiquidCubeIB.IndicesCount);
+            }
+            return string.Concat("<TerraCube Mod> BChunks : ", VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Z, "; BPrim : ", BprimitiveCount, " DChunks : ", _chunkDrawByFrame, " DPrim : ", VprimitiveCount);
         }
         #endregion
         

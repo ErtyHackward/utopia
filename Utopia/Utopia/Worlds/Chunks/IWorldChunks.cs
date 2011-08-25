@@ -7,10 +7,11 @@ using Utopia.Worlds.Chunks;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using Utopia.Worlds.Chunks.ChunkLandscape;
+using S33M3Engines.D3D.DebugTools;
 
 namespace Utopia.Worlds.Chunks
 {
-    public interface IWorldChunks : IDrawableComponent
+    public interface IWorldChunks : IDrawableComponent, IDebugInfo
     {
         /// <summary> The chunk collection </summary>
         VisualChunk[] Chunks { get; set; }

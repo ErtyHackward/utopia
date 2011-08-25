@@ -191,9 +191,7 @@ namespace Utopia.Shared.Chunks
         public int ValidateIndex(int index)
         {
             index = index % _bigArraySize;
-
             if (index < 0) index += _bigArraySize;
-
             return index;
         }
 

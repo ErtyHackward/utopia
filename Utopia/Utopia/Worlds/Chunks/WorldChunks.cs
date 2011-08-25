@@ -281,7 +281,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Min.Z, VisualWorldParameters.WorldVisibleSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(_d3dEngine ,this, ref cubeRange, _cubesHolder);
+                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, this, ref cubeRange, _cubesHolder);
 
                     //Store this chunk inside the arrays.
                     Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
