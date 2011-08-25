@@ -23,7 +23,7 @@ namespace Utopia.Shared.World
         public int Seed { get; set; }
 
         /// <summary>
-        /// See Level
+        /// Sea height Level (blocks)
         /// </summary>
         public int SeaLevel { get; set; }
     }

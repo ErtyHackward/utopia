@@ -36,12 +36,12 @@ namespace Utopia
         #region Private methods
         private void LoadClientsSettings()
         {
-            ClientSettings.Current = new XmlSettingsManager<ClientSettings.ClientConfig>("UtopiaClient.config", SettingsStorage.ApplicationData);
+            ClientSettings.Current = new XmlSettingsManager<ClientConfig>("UtopiaClient.config", SettingsStorage.ApplicationData);
             ClientSettings.Current.Load();
             //If file was not present create a new one with the Azerty Default mapping !
             if (ClientSettings.Current.Settings.KeyboardMapping == null)
             {
-                ClientSettings.Current.Settings = ClientSettings.ClientConfig.DefaultQwerty;
+                ClientSettings.Current.Settings = ClientConfig.DefaultQwerty;
                 ClientSettings.Current.Save();
             }
         }
