@@ -16,29 +16,29 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
     public class Wally : BlockAdder
     {
-        public override ToolImpact Use(TerraCubeWithPosition pickedBlock, Location3<int>? newCubePlace, TerraCube terraCube)
-        {
-            if (newCubePlace.HasValue)
-            {
-                List<TerraCubeWithPosition> poses = new List<TerraCubeWithPosition>();
+        //public override ToolImpact Use(TerraCubeWithPosition pickedBlock, Location3<int>? newCubePlace, TerraCube terraCube)
+        //{
+        //    if (newCubePlace.HasValue)
+        //    {
+        //        List<TerraCubeWithPosition> poses = new List<TerraCubeWithPosition>();
 
-                for (int x = newCubePlace.Value.X - 3; x < newCubePlace.Value.X + 3; x++)
-                {
-                    for (int y = newCubePlace.Value.Y; y < newCubePlace.Value.Y + 5; y++)
-                    {
+        //        for (int x = newCubePlace.Value.X - 3; x < newCubePlace.Value.X + 3; x++)
+        //        {
+        //            for (int y = newCubePlace.Value.Y; y < newCubePlace.Value.Y + 5; y++)
+        //            {
 
-                        Location3<int> loc = new Location3<int>(x, y, newCubePlace.Value.Z);
-                        poses.Add(new TerraCubeWithPosition(loc, terraCube));
-                    }
-                }
+        //                Location3<int> loc = new Location3<int>(x, y, newCubePlace.Value.Z);
+        //                poses.Add(new TerraCubeWithPosition(loc, terraCube));
+        //            }
+        //        }
 
-                return new ToolImpact(poses.ToArray());
-            }
+        //        return new ToolImpact(poses.ToArray());
+        //    }
 
 
 
-            return new ToolImpact();//no impact when there is no available newCubePlace
-        }
+        //    return new ToolImpact();//no impact when there is no available newCubePlace
+        //}
 
         public override EntityClassId ClassId
         {

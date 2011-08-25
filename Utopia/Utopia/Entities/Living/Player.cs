@@ -80,9 +80,9 @@ namespace Utopia.Entities.Living
             //ring.AllowedSlots = InventorySlot.Bags | InventorySlot.LeftRing;
             //ring.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
-            BlockAdder adder = new Wally();
-            adder.AllowedSlots = EquipmentSlot.Bags;
-            Inventory.Toolbar.Add(adder);
+            //BlockAdder adder = new Wally();
+            //adder.AllowedSlots = EquipmentSlot.Bags;
+            //Inventory.Toolbar.Add(adder);
             ////adder.Icon = new SpriteTexture(_d3dEngine.Device, @"Textures\ring-icon.png", new Vector2(0, 0));
 
             //Inventory.LeftTool = remover;
@@ -100,8 +100,8 @@ namespace Utopia.Entities.Living
             //shovel.AllowedSlots = EquipmentSlot.Bags;
             //Inventory.Toolbar.Add(shovel);
 
-            Inventory.LeftTool = pickaxe;
-            Inventory.RightTool = adder;
+            //Inventory.LeftTool = pickaxe;
+            //Inventory.RightTool = adder;
         }
 
         #region private methods
@@ -199,7 +199,7 @@ namespace Utopia.Entities.Living
                     {
                         //Location3<int>? newPlace;
 
-                        if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
+                        //if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= LandscapeBuilder.Worldsize.Y - 2)
                         //{
                         //    newPlace = _newCubePlace;
                         //}
