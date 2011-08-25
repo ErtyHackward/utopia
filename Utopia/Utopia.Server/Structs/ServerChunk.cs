@@ -14,7 +14,7 @@ namespace Utopia.Server.Structs
         /// </summary>
         public bool PureGenerated { get; set; }
 
-        /// </summary>
+        /// <summary>
         /// Gets or sets current chunk position
         /// </summary>
         public IntVector2 Position { get; set; }
@@ -31,7 +31,7 @@ namespace Utopia.Server.Structs
 
         public ServerChunk() : base(new InsideDataProvider())
         {
-            
+            InstantCompress = true;
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Utopia.Server.Structs
             : base(chunk.BlockData)
         {
             PureGenerated = true;
-
+            InstantCompress = true;
         }
 
         protected override void BlockBufferChanged(object sender, ChunkDataProviderBufferChangedEventArgs e)
