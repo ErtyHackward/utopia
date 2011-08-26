@@ -185,6 +185,7 @@
     <Compile Include="GUI\XnaAdapters\SpriteBatch.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\IGuiVisualizer.cs" />
     <Compile Include="GUI\XnaAdapters\SpriteSortMode.cs" />
+    <Compile Include="Network\EntityMessageTranslator.cs" />
     <Compile Include="Resources\SuaveSkinResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

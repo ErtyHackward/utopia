@@ -10,9 +10,9 @@ using Utopia.Server.Managers;
 using Utopia.Server.Structs;
 using Utopia.Server.Utils;
 using Utopia.Shared.Config;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
-using Utopia.Shared.World.Processors;
 
 namespace Utopia.Server
 {
@@ -26,7 +26,6 @@ namespace Utopia.Server
         /// </summary>
         public const int ServerProtocolVersion = 1;
         
-
         #region fields
 
         private readonly List<ServerChunk> _saveList = new List<ServerChunk>();
@@ -37,7 +36,7 @@ namespace Utopia.Server
         #endregion
 
         /// <summary>
-        /// Gets main server chunk storage
+        /// Gets main server memory chunk storage.
         /// </summary>
         public Dictionary<IntVector2, ServerChunk> Chunks { get; private set; }
 
@@ -57,9 +56,14 @@ namespace Utopia.Server
         public ConnectionManager ConnectionManager { get; private set; }
         
         /// <summary>
-        /// Gets main storage manager
+        /// Gets main chunks storage
         /// </summary>
-        public SQLiteStorageManager Storage { get; private set; }
+        public IChunksStorage ChunksStorage { get; private set; }
+
+        /// <summary>
+        /// Gets main users storage
+        /// </summary>
+        public IUsersStorage UsersStorage { get; private set; }
 
         /// <summary>
         /// Gets a servers world generator
@@ -67,31 +71,28 @@ namespace Utopia.Server
         public WorldGenerator WorldGenerator { get; private set; }
         
         /// <summary>
-        /// Create new instance of Server class
+        /// Create new instance of the Server class
         /// </summary>
-        public Server()
+        public Server(XmlSettingsManager<ServerSettings> settingsManager, WorldGenerator worldGenerator, IUsersStorage usersStorage, IChunksStorage chunksStorage)
         {
-            Chunks = new Dictionary<IntVector2, ServerChunk>();
-            SettingsManager = new XmlSettingsManager<ServerSettings>("utopiaserver.config", SettingsStorage.ApplicationData);
-            SettingsManager.Load();
+            // dependency injection
+            SettingsManager = settingsManager;
+            ChunksStorage = chunksStorage;
+            UsersStorage = usersStorage;
+            WorldGenerator = worldGenerator;
 
+            // memory storage for chunks
+            Chunks = new Dictionary<IntVector2, ServerChunk>();
+            
+            // connections
             Listener = new TcpConnectionListener(SettingsManager.Settings.ServerPort);
             Listener.IncomingConnection += ListenerIncomingConnection;
             
             ConnectionManager = new ConnectionManager();
             ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
             ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
-
-            var dbPath = SettingsManager.Settings.DatabasePath;
-
-            if(string.IsNullOrEmpty(dbPath))
-                dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "UtopiaServer\\world.db");
             
-            Storage = new SQLiteStorageManager(dbPath);
-
-            // todo: proper terrain generator initialize
-            WorldGenerator = new WorldGenerator(new WorldParameters(), new FlatWorldProcessor());
-
+            // async server events (saving modified chunks, unloading unused chunks)
             _cleanUpTimer = new Timer(CleanUp, null, SettingsManager.Settings.CleanUpInterval, SettingsManager.Settings.CleanUpInterval);
             _saveTimer = new Timer(SaveChunks, null, SettingsManager.Settings.SaveInterval, SettingsManager.Settings.SaveInterval);
             
@@ -115,7 +116,7 @@ namespace Utopia.Server
                     datas.Add(_saveList[i].CompressedBytes);
                 }
 
-                Storage.SaveBlocksData(positions, datas.ToArray());
+                ChunksStorage.SaveChunksData(positions, datas.ToArray());
                 _saveList.Clear();
             }
         }
@@ -162,7 +163,7 @@ namespace Utopia.Server
                         var b2 = new byte[ms.Position];
                         Buffer.BlockCopy(bytes, 0, b2, 0, (int)ms.Position);
 
-                        Storage.SetData(e.Connection.Login, b2);
+                        UsersStorage.SetData(e.Connection.Login, b2);
                     }
                 }
             }
@@ -246,7 +247,7 @@ namespace Utopia.Server
                 {
                     if (!Chunks.ContainsKey(position))
                     {
-                        var data = Storage.LoadBlockData(position);
+                        var data = ChunksStorage.LoadChunkData(position);
 
                         if (data == null)
                         {
@@ -337,7 +338,7 @@ namespace Utopia.Server
 
             if (e.Message.Register)
             {
-                if (!Storage.Register(e.Message.Login, e.Message.Password, 0))
+                if (!UsersStorage.Register(e.Message.Login, e.Message.Password, 0))
                 {
                     connection.Send(new ErrorMessage
                                         {
@@ -361,7 +362,7 @@ namespace Utopia.Server
             }
 
             LoginData? loginData;
-            if (Storage.Login(e.Message.Login, e.Message.Password, out loginData))
+            if (UsersStorage.Login(e.Message.Login, e.Message.Password, out loginData))
             {
                 Console.WriteLine("{1} logged as ({0}) ", e.Message.Login, connection.Id);
 

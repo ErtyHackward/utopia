@@ -56,6 +56,14 @@
         /// <summary>
         /// Result of login procedure
         /// </summary>
-        LoginResult = 13
+        LoginResult = 13,
+        /// <summary>
+        /// Entity impact
+        /// </summary>
+        EntityUse = 14,
+        /// <summary>
+        /// Player's tool impact
+        /// </summary>
+        ToolUseMessage = 15,
     }
 }
