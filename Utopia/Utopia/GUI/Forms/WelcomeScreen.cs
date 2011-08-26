@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Utopia.GUI.Forms.CustControls;
+using Utopia.Network;
 
 namespace Utopia.GUI.Forms
 {
@@ -17,6 +18,7 @@ namespace Utopia.GUI.Forms
         private SinglePlayer singleChild = new SinglePlayer();
         private MultiPlayer multiChild = new MultiPlayer();
         private Config configChild = new Config();
+        private Server server;
 
         Timer m_TimerFadeIn = new Timer()
         {
@@ -27,7 +29,6 @@ namespace Utopia.GUI.Forms
         {
             InitializeComponent();
             if(withFadeIn) FadeInWinForm();
-
             singleChild.btNew.Click += new EventHandler(btNew_Click);
         }
 

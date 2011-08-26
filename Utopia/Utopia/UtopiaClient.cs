@@ -6,6 +6,7 @@ using Utopia.GUI.Forms;
 using System.Windows.Forms;
 using Utopia.Shared.Config;
 using Utopia.Settings;
+using Utopia.Network;
 
 namespace Utopia
 {
@@ -13,6 +14,7 @@ namespace Utopia
     {
         #region Private variables
         private static WelcomeScreen _welcomeForm;
+        private Server _server;
         #endregion
 
         #region Public Properties/Variables
@@ -42,6 +44,20 @@ namespace Utopia
             if (ClientSettings.Current.Settings.KeyboardMapping == null)
             {
                 ClientSettings.Current.Settings = ClientConfig.DefaultQwerty;
+                ClientSettings.Current.Save();
+            }
+
+            ValidateSettings();
+        }
+
+        /// <summary>
+        /// Do validation on the settings values
+        /// </summary>
+        private void ValidateSettings()
+        {
+            if (ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps == 0)
+            {
+                ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps = 8;
                 ClientSettings.Current.Save();
             }
         }

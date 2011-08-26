@@ -9,6 +9,7 @@ using S33M3Engines.Threading;
 using Amib.Threading;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
+using Utopia.Settings;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
@@ -49,7 +50,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             _cubesHolder = cubesHolder;
             _visualWorldParameters = visualWorldParameters;
 
-            _lightPropagateSteps = 8;
+            _lightPropagateSteps = (byte)ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps;
             _lightDecreaseStep = (byte)(256 / _lightPropagateSteps);
         }
 
