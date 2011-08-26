@@ -27,7 +27,8 @@ namespace Utopia.Settings
     {
         public int WorldSize { get; set; }
         public int CloudsLayers { get; set; }
-            public int AllocatedThreadsModifier { get; set; }
+        public int AllocatedThreadsModifier { get; set; }
+        public int LightPropagateSteps { get; set; }
     }
 
     /// <summary>
@@ -124,7 +125,8 @@ namespace Utopia.Settings
                     {
                         WorldSize = 32,
                             CloudsLayers = 1,
-                            AllocatedThreadsModifier = 0
+                            AllocatedThreadsModifier = 0,
+                            LightPropagateSteps = 8
                     },
                     KeyboardMapping = new KeyboardMapping
                     {

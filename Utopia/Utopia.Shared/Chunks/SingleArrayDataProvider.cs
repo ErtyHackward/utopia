@@ -98,27 +98,28 @@ namespace Utopia.Shared.Chunks
         public override void SetBlockBytes(byte[] bytes)
         {
             int byteArrayIndex = 0;
-            int index;
-            for (int z = 0; z < AbstractChunk.ChunkSize.Z; z++)
+            int baseCubeIndex = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
+            int CubeIndexX = baseCubeIndex;
+            int CubeIndexZ = baseCubeIndex;
+            int cubeIndex = baseCubeIndex;
+            for (int Z = 0; Z < AbstractChunk.ChunkSize.Z;Z++)
             {
-                for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
+                if (Z != 0) { CubeIndexZ += ChunkCubes.MoveZ; CubeIndexX = CubeIndexZ; cubeIndex = CubeIndexZ; }
+
+                for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
                 {
-                    index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X + x, 0, DataProviderUser.ChunkPosition.Y + z);
-                    for (int y = 0; y < AbstractChunk.ChunkSize.Y; y++)
+                    if (X != 0) { CubeIndexX += ChunkCubes.MoveX; cubeIndex = CubeIndexX; }
+
+                    for (int Y = 0; Y < AbstractChunk.ChunkSize.Y; Y++)
                     {
-                        if(y != 0) index += ChunkCubes.MoveY;
+                        if (Y != 0) { cubeIndex += ChunkCubes.MoveY; }
 
-                        ChunkCubes.Cubes[index] = new TerraCube(bytes[byteArrayIndex]);
-
+                        ChunkCubes.Cubes[cubeIndex] = new TerraCube(bytes[byteArrayIndex]);
                         byteArrayIndex++;
                     }
                 }
             }
 
-            //int index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
-            //Array.Copy(bytes, 0, ChunkCubes.Cubes, index, AbstractChunk.ChunkBlocksByteLength);
-
-            //Init ChunkCubes.CubesMetaData[] ???
 
             OnBlockBufferChanged(new ChunkDataProviderBufferChangedEventArgs() { NewBuffer = bytes });
         }
