@@ -39,15 +39,16 @@ namespace Utopia.Shared.World
             Stages.AddStages(processors);
         }
 
-
+        /// <summary>
         /// Initializes instance of world generator
         /// </summary>
         /// <param name="worldParameters">World parameters object</param>
-        /// <param name="processors">Arbitrary amount of world processors</param>
+        /// <param name="processorsConfig">Arbitrary amount of world processors</param>
         [Inject()]
         public WorldGenerator(WorldParameters worldParameters, IWorldProcessorConfig processorsConfig)
             : this(worldParameters, processorsConfig.WorldProcessors)
         {
+
         }
 
         /// <summary>
@@ -58,11 +59,6 @@ namespace Utopia.Shared.World
         /// <param name="state"></param>
         public IAsyncResult GenerateAsync(Range2 range, AsyncCallback callback, object state)
         {
-            if (Stages.Count == 0)
-                throw new InvalidOperationException("Add at least one genereation process (stage) before starting");
-            
-
-
             var del = new GenerateDelegate(Generate);
             return del.BeginInvoke(range, callback, state);
         }
@@ -100,8 +96,11 @@ namespace Utopia.Shared.World
 
         private GeneratedChunk[,] Generate(Range2 range)
         {
-            var chunks = new GeneratedChunk[range.Size.X, range.Size.Z];
+            if (Stages.Count == 0)
+                throw new InvalidOperationException("Add at least one genereation process (stage) before starting");
 
+            var chunks = new GeneratedChunk[range.Size.X, range.Size.Z];
+            
             for (int x = range.Min.X; x < range.Max.X; x++)
             {
                 for (int z = range.Min.Y; z < range.Max.Y; z++)

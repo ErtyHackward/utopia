@@ -130,7 +130,8 @@ namespace Utopia.Shared.Chunks.Entities
             CharacterName = reader.ReadString();
             Equipment.Load(reader);
             Inventory.Load(reader);
-
+            Health = reader.ReadInt32();
+            MaxHealth = reader.ReadInt32();
         }
 
         /// <summary>
@@ -144,6 +145,9 @@ namespace Utopia.Shared.Chunks.Entities
             writer.Write(CharacterName);
             Equipment.Save(writer);
             Inventory.Save(writer);
+            writer.Write(Health);
+            writer.Write(MaxHealth);
+
         }
     }
 }

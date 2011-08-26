@@ -1,4 +1,4 @@
-﻿namespace Utopia.Server.Structs
+namespace Utopia.Shared.Structs
 {
     /// <summary>
     /// Structure for user-related infomation to store in database
