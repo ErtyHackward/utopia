@@ -8,6 +8,7 @@ using Utopia.Shared.Chunks;
 using S33M3Engines.Threading;
 using Amib.Threading;
 using Utopia.Shared.Structs.Landscape;
+using Utopia.Shared.World;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
@@ -21,6 +22,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
         private delegate object PropagateLightSourcesDelegate(object Params);
         private PropagateLightSourcesDelegate _propagateLightSourcesDelegate;
+        private VisualWorldParameters _visualWorldParameters;
 
         private byte _lightPropagateSteps;
         private byte _lightDecreaseStep;
@@ -42,9 +44,10 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         }
         #endregion
 
-        public LightingManager(SingleArrayChunkContainer cubesHolder)
+        public LightingManager(SingleArrayChunkContainer cubesHolder, VisualWorldParameters visualWorldParameters)
         {
             _cubesHolder = cubesHolder;
+            _visualWorldParameters = visualWorldParameters;
 
             _lightPropagateSteps = 8;
             _lightDecreaseStep = (byte)(256 / _lightPropagateSteps);
@@ -202,19 +205,19 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         cubeprofile = VisualCubeProfile.CubesProfile[_cubesHolder.Cubes[index].Id];
                         if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) continue;
 
-                        if (_cubesHolder.Cubes[index].EmissiveColor.SunLight == 255 || (borderAsLightSource && borderchunk)) PropagateLight(_cubesHolder.Cubes[index].EmissiveColor.SunLight, LightComponent.SunLight, true, index);
+                        if (_cubesHolder.Cubes[index].EmissiveColor.SunLight == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.SunLight, LightComponent.SunLight, true, index);
                         if (cubeprofile.IsEmissiveColorLightSource || (borderAsLightSource && borderchunk))
                         {
-                            if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(_cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
-                            if (_cubesHolder.Cubes[index].EmissiveColor.G > 0) PropagateLight(_cubesHolder.Cubes[index].EmissiveColor.G, LightComponent.Green, true, index);
-                            if (_cubesHolder.Cubes[index].EmissiveColor.B > 0) PropagateLight(_cubesHolder.Cubes[index].EmissiveColor.B, LightComponent.Blue, true, index);
+                            if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(X,Y,Z, _cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
+                            if (_cubesHolder.Cubes[index].EmissiveColor.G > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.G, LightComponent.Green, true, index);
+                            if (_cubesHolder.Cubes[index].EmissiveColor.B > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.B, LightComponent.Blue, true, index);
                         }
                     }
                 }
             }
         }
 
-        private void PropagateLight(int LightValue, LightComponent lightComp, bool isLightSource, int index)
+        private void PropagateLight(int X, int Y, int Z, int LightValue, LightComponent lightComp, bool isLightSource, int index)
         {
             VisualCubeProfile cubeprofile;
             TerraCube cube;
@@ -223,6 +226,10 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             {
                 if (LightValue <= 0) return; // No reason to propate "no light";
 
+                if (X < _visualWorldParameters.WorldRange.Min.X || X >= _visualWorldParameters.WorldRange.Max.X || Z < _visualWorldParameters.WorldRange.Min.Z || Z >= _visualWorldParameters.WorldRange.Max.Z || Y < 0 || Y >= _visualWorldParameters.WorldRange.Max.Y)
+                {
+                    return;
+                }
                 //Avoid to be outside the Array ==> Trick to remove the need to check for border limit, but could lead to small graphical artifact with lighting !
                 index = _cubesHolder.ValidateIndex(index);
                 //End Inlining ===============================================================================================
@@ -257,18 +264,18 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             //Call the 6 surrounding blocks !
             if (!isLightSource || lightComp != LightComponent.SunLight)
             {
-                PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveY);
-                PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveY);
+                PropagateLight(X, Y + 1, Z, LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveY);
+                PropagateLight(X, Y - 1, Z, LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveY);
             }
 
             //X + 1, Y, Z
-            PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveX);
+            PropagateLight(X + 1, Y, Z, LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveX);
             //X, Y, Z + 1
-            PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveZ);
+            PropagateLight(X, Y, Z + 1, LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveZ);
             //X - 1, Y, Z
-            PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveX);
+            PropagateLight(X - 1, Y, Z, LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveX);
             //X, Y, Z - 1
-            PropagateLight(LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveZ);
+            PropagateLight(X, Y, Z - 1, LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveZ);
         }
         #endregion
 

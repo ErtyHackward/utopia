@@ -65,7 +65,7 @@ namespace Utopia.Shared.Chunks
         {
             ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPosition.X,
                                                      inChunkPosition.Y,
-                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)].Id = blockValue;
+                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)] = new TerraCube(blockValue);
 
             //Init ChunkCubes.CubesMetaData[] ???
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { inChunkPosition }, Bytes = new[] { blockValue } });
@@ -82,7 +82,7 @@ namespace Utopia.Shared.Chunks
             {
                 ChunkCubes.Cubes[ChunkCubes.Index(positions[i].X + DataProviderUser.ChunkPosition.X,
                                          positions[i].Y,
-                                         positions[i].Z + DataProviderUser.ChunkPosition.Y)].Id = values[i];
+                                         positions[i].Z + DataProviderUser.ChunkPosition.Y)] = new TerraCube(values[i]);
             }
 
             //Init ChunkCubes.CubesMetaData[] ???
@@ -108,7 +108,7 @@ namespace Utopia.Shared.Chunks
                     {
                         if(y != 0) index += ChunkCubes.MoveY;
 
-                        ChunkCubes.Cubes[index].Id = bytes[byteArrayIndex];
+                        ChunkCubes.Cubes[index] = new TerraCube(bytes[byteArrayIndex]);
 
                         byteArrayIndex++;
                     }
