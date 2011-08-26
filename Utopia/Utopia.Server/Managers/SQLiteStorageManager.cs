@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
-using Utopia.Server.Structs;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Server.Managers
@@ -10,7 +10,7 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Allows to store all required data in SQLite database
     /// </summary>
-    public class SQLiteStorageManager
+    public class SQLiteStorageManager : IUsersStorage, IChunksStorage
     {
         /// <summary>
         /// Creates database file and required tables
@@ -194,7 +194,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="pos">Position of the block</param>
         /// <returns></returns>
-        public byte[] LoadBlockData(IntVector2 pos)
+        public byte[] LoadChunkData(IntVector2 pos)
         {
             lock (this)
             {
@@ -213,7 +213,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="positions">Array of chunks positions</param>
         /// <param name="blocksData">corresponding array of chunks data</param>
-        public void SaveBlocksData(IntVector2[] positions, byte[][] blocksData)
+        public void SaveChunksData(IntVector2[] positions, byte[][] blocksData)
         {
             using (var trans = GetConnection().BeginTransaction())
             {
