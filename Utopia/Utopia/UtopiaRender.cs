@@ -123,7 +123,7 @@ namespace Utopia
             Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
             {
                 IsInfinite = true,
-                Seed = 0,
+                Seed = 12695360,
                 SeaLevel = AbstractChunk.ChunkSize.Y / 2,
                 WorldChunkSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
