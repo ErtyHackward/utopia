@@ -42,6 +42,8 @@ namespace Utopia.Net.Messages
                 case MessageTypes.PlayerIn: return PlayerInMessage.Read(reader);
                 case MessageTypes.PlayerOut: return PlayerOutMessage.Read(reader);
                 case MessageTypes.PlayerPosition: return PlayerPositionMessage.Read(reader);
+                case MessageTypes.EntityUse: return EntityUseMessage.Read(reader);
+                case MessageTypes.ToolUseMessage: return ToolUseMessage.Read(reader);
                 default:
                     throw new ArgumentException("");
             }

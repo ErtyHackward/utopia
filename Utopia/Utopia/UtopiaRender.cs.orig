@@ -87,7 +87,7 @@ namespace Utopia
         public UtopiaRender()
         {
              S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
-             S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
+             S33M3Engines.D3DEngine.FULLDEBUGMODE = true;
              VSync = true;                                              // Vsync ON (default)
 
             CubeProfile.InitCubeProfiles();                 // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
@@ -96,7 +96,7 @@ namespace Utopia
         public override void Initialize()
         {
             //Initialize the Thread Pool manager
-            S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
+            S33M3Engines.Threading.WorkQueue.Initialize();
 
             _iocContainer = new StandardKernel(new NinjectSettings { UseReflectionBasedInjection = true });
 
@@ -118,7 +118,6 @@ namespace Utopia
             //=======================================================================================
             //Create the world components ===========================================================
 
-
             //Variables initialisation ==================================================================
             Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
             {
@@ -129,8 +128,7 @@ namespace Utopia
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
             Location2<int> worldStartUp = new Location2<int>(0 * AbstractChunk.ChunkSize.X, 0 * AbstractChunk.ChunkSize.Z);
-            //Debug Lighting near position 350;86;248
-            //Location2<int> worldStartUp = new Location2<int>(20 * AbstractChunk.ChunkSize.X, 15 * AbstractChunk.ChunkSize.Z);
+
             //===========================================================================================
 
             //Creating the IoC Bindings
@@ -168,9 +166,8 @@ namespace Utopia
             _camManager = IoCContainer.Get<CameraManager>();
 
             //-- Create Entity Player --
-
             //TODO : Create an entity manager that will be responsible to render the various entities instead of leaving each entity to render itself.
-            _player = IoCContainer.Get<ILivingEntity>(new ConstructorArgument("Name", ClientSettings.Current.Settings.GameParameters.NickName),
+            _player = IoCContainer.Get<ILivingEntity>(new ConstructorArgument("Name", "s33m3"),
                                                       new ConstructorArgument("startUpWorldPosition", new DVector3((worldParam.WorldChunkSize.X * AbstractChunk.ChunkSize.X / 2.0) + worldStartUp.X, 90, (worldParam.WorldChunkSize.Z * AbstractChunk.ChunkSize.Z / 2.0f) + worldStartUp.Z)),
                                                       new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)),
                                                       new ConstructorArgument("walkingSpeed", 5f),
@@ -225,18 +222,10 @@ namespace Utopia
 
             _debugInfo = new DebugInfo(_d3dEngine);
             _debugInfo.Activated = true;
-            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), _player, IoCContainer.Get<IWorldChunks>());
+            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), _player);
             GameComponents.Add(_debugInfo);
 
             GameConsole.Initialize(_d3dEngine);
-
-
-
-            #region Debug Components
-#if DEBUG
-            DebugEffect.Init(_d3dEngine);             // Default Effect used by debug componant (will be shared)
-#endif
-            #endregion
 
         }
 

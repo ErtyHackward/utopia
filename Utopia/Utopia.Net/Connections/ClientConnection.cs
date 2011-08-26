@@ -129,6 +129,28 @@ namespace Utopia.Net.Connections
                 MessageDirection(this, new ProtocolMessageEventArgs<PlayerDirectionMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when a EntityUseMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityUseMessage>> MessageEntityUse;
+
+        protected void OnMessageEntityUse(EntityUseMessage ea)
+        {
+            if (MessageEntityUse != null)
+                MessageEntityUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when a ToolUseMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<ToolUseMessage>> MessageToolUse;
+
+        protected void OnMessageToolUse(ToolUseMessage ea)
+        {
+            if (MessageToolUse != null)
+                MessageToolUse(this, new ProtocolMessageEventArgs<ToolUseMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -227,6 +249,12 @@ namespace Utopia.Net.Connections
                                     break;
                                 case MessageTypes.PlayerDirection:
                                     OnMessageDirection(PlayerDirectionMessage.Read(reader));
+                                    break;
+                                case MessageTypes.ToolUseMessage:
+                                    OnMessageToolUse(ToolUseMessage.Read(reader));
+                                    break;
+                                case MessageTypes.EntityUse:
+                                    OnMessageEntityUse(EntityUseMessage.Read(reader));
                                     break;
                             }
                         }
