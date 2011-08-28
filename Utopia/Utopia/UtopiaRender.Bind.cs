@@ -77,6 +77,12 @@ namespace Utopia
             iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
             iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
             iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope();
+
+            iocContainer.Bind<UtopiaRender>().ToConstant(this); 
+            //this is required for any component depending on game (having game in constructor params) 
+            // or else the component gets a new game instance
+            // normally/currently, only DebugComponent uses this for accedding to game.exit , _game.VSync  etc...
+            iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope();
         }
     }
 }

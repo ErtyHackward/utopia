@@ -230,9 +230,13 @@ namespace Utopia
 
             GameConsole.Initialize(_d3dEngine);
 
+            GameComponents.Add(IoCContainer.Get<DebugComponent>());
 
-
-            #region Debug Components
+            // TODO (Simon) wire all binded components in one shot with ninject : GameComponents.AddRange(IoCContainer.GetAll<IGameComponent>());
+            // BUT we cant handle the add order ourselves: an updateOrder int + sorted components collection like in XNA would be good
+            
+            // TODO (Simon)  debug vs release is currently a mess : no debug text in debug mode, no UI in debug mode, is debug mode of any use fir us ?
+                #region Debug Components
 #if DEBUG
             DebugEffect.Init(_d3dEngine);             // Default Effect used by debug componant (will be shared)
 #endif
@@ -256,69 +260,16 @@ namespace Utopia
 
         public override void Update(ref GameTime TimeSpend)
         {
-            KeyboardStateHandling();
             //Update Internal Components
             base.Update(ref TimeSpend);
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
-            KeyboardStateHandling();
             base.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
 
-        private void KeyboardStateHandling()
-        {
-
-            if (_inputHandler.PrevKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) && _inputHandler.PrevKeyboardState.IsKeyDown(Keys.LControlKey) && _inputHandler.CurKeyboardState.IsKeyUp(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) && _inputHandler.CurKeyboardState.IsKeyDown(Keys.LControlKey))
-            {
-                FixedTimeSteps = !FixedTimeSteps;
-                GameConsole.Write("FixeTimeStep Mode : " + FixedTimeSteps.ToString());
-            }
-
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.FullScreen)) _d3dEngine.isFullScreen = !_d3dEngine.isFullScreen; //Go full screen !
-
-            if (_inputHandler.PrevKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) && !_inputHandler.PrevKeyboardState.IsKeyDown(Keys.LControlKey) && _inputHandler.CurKeyboardState.IsKeyUp(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) && !_inputHandler.CurKeyboardState.IsKeyDown(Keys.LControlKey))
-            {
-                _gameStateManagers.DebugActif = !_gameStateManagers.DebugActif;
-                if (!DebugActif)
-                {
-                    _gameStateManagers.DebugDisplay = 0;
-                }
-            }
-            if (_inputHandler.IsKeyPressed(Keys.Up))
-            {
-                if (!_gameStateManagers.DebugActif) return;
-                _gameStateManagers.DebugDisplay++;
-                if (_gameStateManagers.DebugDisplay > 2) _gameStateManagers.DebugDisplay = 2;
-            }
-            if (_inputHandler.IsKeyPressed(Keys.Down))
-            {
-                if (!_gameStateManagers.DebugActif) return;
-                _gameStateManagers.DebugDisplay--;
-                if (_gameStateManagers.DebugDisplay < 0) _gameStateManagers.DebugDisplay = 0;
-            }
-
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.LockMouseCursor))
-            {
-                _d3dEngine.UnlockedMouse = !_d3dEngine.UnlockedMouse;
-            }
-
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.VSync))
-            {
-                VSync = !VSync;
-            }
-
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.DebugInfo))
-            {
-                _debugInfo.Activated = !_debugInfo.Activated;
-            }
-
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.Console)) GameConsole.Show = !GameConsole.Show;
-
-            //Exit application
-            if (_inputHandler.IsKeyPressed(Keys.Escape)) Exit();
-        }
+    
 
         public override void Draw()
         {
