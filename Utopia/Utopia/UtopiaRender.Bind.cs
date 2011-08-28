@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Ninject;
+using Nuclex.UserInterface;
+using Utopia.GUI.D3D;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
 using S33M3Engines.WorldFocus;
@@ -78,11 +80,17 @@ namespace Utopia
             iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
             iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope();
 
+            //Nuclex Screen (UI desktop) is a first class injectable now. any component who wants to draw something only needs the screen instance
+            iocContainer.Bind<Screen>().ToSelf().InSingletonScope();
+
             iocContainer.Bind<UtopiaRender>().ToConstant(this); 
             //this is required for any component depending on game (having game in constructor params) 
             // or else the component gets a new game instance
             // normally/currently, only DebugComponent uses this for accedding to game.exit , _game.VSync  etc...
             iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope();
+
+            iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();
+            iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
         }
     }
 }

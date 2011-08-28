@@ -9,6 +9,7 @@ using S33M3Engines.InputHandler.KeyboardHelper;
 using System.Windows.Forms;
 using SharpDX.Direct3D11;
 using S33M3Engines.Cameras;
+using Utopia.GUI.D3D;
 using UtopiaContent.ModelComp;
 using SharpDX;
 using S33M3Engines.Struct;
@@ -60,7 +61,7 @@ namespace Utopia
 
         //Game componants
         private Entities.Living.ILivingEntity _player;
-        private GUI.D3D.GUI _gui;
+        private GUI.D3D.GuiManager _guiManager;
 
         private GameStatesManager _gameStateManagers;
 
@@ -220,9 +221,7 @@ namespace Utopia
             _fps = new FPS();
             GameComponents.Add(_fps);
 
-            _gui = new GUI.D3D.GUI(GameComponents,_d3dEngine /*,((Player)_player).Inventory*/);
-            GameComponents.Add(_gui);
-
+         
             _debugInfo = new DebugInfo(_d3dEngine);
             _debugInfo.Activated = true;
             _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), _player, IoCContainer.Get<IWorldChunks>());
@@ -231,6 +230,10 @@ namespace Utopia
             GameConsole.Initialize(_d3dEngine);
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
+
+            GameComponents.Add(IoCContainer.Get<Hud>());
+
+            GameComponents.Add(IoCContainer.Get<GuiManager>());
 
             // TODO (Simon) wire all binded components in one shot with ninject : GameComponents.AddRange(IoCContainer.GetAll<IGameComponent>());
             // BUT we cant handle the add order ourselves: an updateOrder int + sorted components collection like in XNA would be good
