@@ -40,6 +40,7 @@ using Size = System.Drawing.Size;
 using Utopia.Shared.World;
 using Utopia.Shared.Interfaces;
 using Utopia.Worlds.Chunks.ChunkLighting;
+using Utopia.Network;
 
 namespace Utopia
 {
@@ -55,6 +56,8 @@ namespace Utopia
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
         private EntityRenderer _entityRender;
+
+        private Server _server;
 
         //Debug tools
         private FPS _fps; //FPS computing object
@@ -85,11 +88,13 @@ namespace Utopia
         private Axis _axis;
 #endif
 
-        public UtopiaRender()
+        public UtopiaRender(IKernel iocContainer, Server server)
         {
-             S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
-             S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
-             VSync = true;                                              // Vsync ON (default)
+            _iocContainer = iocContainer;
+            _server = server;
+            S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
+            S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
+            VSync = true;                                              // Vsync ON (default)
 
             CubeProfile.InitCubeProfiles();                 // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
         }
@@ -98,9 +103,7 @@ namespace Utopia
         {
             //Initialize the Thread Pool manager
             S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
-
-            _iocContainer = new StandardKernel(new NinjectSettings { UseReflectionBasedInjection = true });
-
+          
             // DebugInit(_iocContainer); //To use for testing Debug initializer
             Init(_iocContainer);
 
@@ -229,6 +232,9 @@ namespace Utopia
 
             GameConsole.Initialize(_d3dEngine);
 
+            //Add the server if multiplayer mode
+            if (_server != null) GameComponents.Add(_server);
+
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 
             GameComponents.Add(IoCContainer.Get<Hud>());
@@ -287,7 +293,6 @@ namespace Utopia
 
         public override void Dispose()
         {
-            _iocContainer.Dispose(); // Will also disposed all singleton objects that have been registered !
 #if DEBUG
             DebugEffect.Dispose();
 #endif

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Utopia.Shared.Config;
 using Utopia.Settings;
 using Utopia.Network;
+using Ninject;
 
 namespace Utopia
 {
@@ -15,10 +16,18 @@ namespace Utopia
         #region Private variables
         private static WelcomeScreen _welcomeForm;
         private Server _server;
+        private IKernel _iocContainer;
         #endregion
 
         #region Public Properties/Variables
         #endregion
+
+        public UtopiaClient()
+        {
+            //_iocContainer =  new StandardKernel(new NinjectSettings { UseReflectionBasedInjection = true }); ==> More debug infor with this if binding problems, but slower !
+            _iocContainer = new StandardKernel();
+            _server = _iocContainer.Get<Server>();
+        }
 
         #region Public Methods
         public void Run()
@@ -63,8 +72,9 @@ namespace Utopia
         }
 
         private void ShowWelcomeScreen(bool withFadeIn)
-        {  
-            _welcomeForm = new WelcomeScreen(withFadeIn);
+        {
+
+            _welcomeForm = new WelcomeScreen(_server, withFadeIn);
             _welcomeForm.Text = "Utopia Client Alpha " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             _welcomeForm.ShowDialog();
             if (_welcomeForm.IsDisposed == false)
@@ -89,6 +99,7 @@ namespace Utopia
                     StartDirectXWindow();
                     break;
                 case FormRequestedAction.StartMultiPlayer:
+                    StartDirectXWindow(_server);
                     break;
             }
 
@@ -99,16 +110,24 @@ namespace Utopia
         //Start the DirectX Render Loop
         private void StartDirectXWindow()
         {
-            using (UtopiaRender main = new UtopiaRender())
+            StartDirectXWindow(null);
+        }
+
+        private void StartDirectXWindow(Server _server)
+        {
+            //Create the NInject IoC container
+            using (UtopiaRender main = new UtopiaRender(_iocContainer, _server))
             {
                 main.Run();
             }
+
         }
         #endregion
 
         #region CleanUp
         public void Dispose()
         {
+            _iocContainer.Dispose(); // Will also disposed all singleton objects that have been registered !
         }
         #endregion
     }
