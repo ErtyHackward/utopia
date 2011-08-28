@@ -15,21 +15,93 @@ namespace Utopia.GUI.Forms
     {
         internal FormData Data;
 
-        private SinglePlayer singleChild = new SinglePlayer();
-        private MultiPlayer multiChild = new MultiPlayer();
-        private Config configChild = new Config();
-        private Server server;
+        private delegate void SetTextCallback(string text);
+        private delegate void DefaultCallback();
+        private SinglePlayer _singleChild = new SinglePlayer();
+        private MultiPlayer _multiChild = new MultiPlayer();
+        private Config _configChild = new Config();
+        private Server _server;
 
         Timer m_TimerFadeIn = new Timer()
         {
             Interval = 50
         };
 
-        public WelcomeScreen(bool withFadeIn)
+        public WelcomeScreen(Server server, bool withFadeIn)
         {
             InitializeComponent();
+
+            _server = server;
+            _singleChild = new SinglePlayer();
+            _multiChild = new MultiPlayer();
+            _configChild = new Config();
+
             if(withFadeIn) FadeInWinForm();
-            singleChild.btNew.Click += new EventHandler(btNew_Click);
+            _singleChild.btNew.Click += new EventHandler(btNew_Click);
+            _multiChild.btConnect.Click += new EventHandler(btConnect_Click);
+        }
+
+        void btConnect_Click(object sender, EventArgs e)
+        {
+            _server.BindingServer(_multiChild.txtSrvAdress.Text, 4815);
+            RegisterEvents();
+            _server.ConnectToServer(_multiChild.txtUser.Text, _multiChild.txtPassword.Text, _multiChild.chkRegistering.Checked);
+        }
+
+        private void RegisterEvents()
+        {
+            _server.ServerConnection.MessageError += ServerConnection_MessageError;
+            _server.ServerConnection.MessageLoginResult += ServerConnection_MessageLoginResult;
+        }
+
+        //Handle server Error Message
+        void ServerConnection_MessageError(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.ErrorMessage> e)
+        {
+            AddTextToListBox(e.Message.Message);
+        }
+
+        void ServerConnection_MessageLoginResult(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.LoginResultMessage> e)
+        {
+            if (e.Message.Logged) HideWindows();
+        }
+
+        private void HideWindows()
+        {
+            if (_multiChild.lstServerCom.InvokeRequired)
+            {
+                DefaultCallback d = new DefaultCallback(HideWindows);
+                this.Invoke(d);
+            }
+            else
+            {
+                //Create the Single Player NEW world data message
+                Data = new FormData();
+                Data.RequestAction = FormRequestedAction.StartMultiPlayer;
+                Data.SinglePlData = new FormData.SinglePlayerData()
+                {
+                    isNew = true,
+                    SavedGameId = "",
+                    Seed = _singleChild.txtSeed.Text,
+                    WorldName = "",
+                    NewStruct = false
+                };
+                this.Hide();
+            }
+        }
+
+        private void AddTextToListBox(string text)
+        {
+            if (_multiChild.lstServerCom.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(AddTextToListBox);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                _multiChild.lstServerCom.Items.Add(text);
+                _multiChild.lstServerCom.SelectedIndex = _multiChild.lstServerCom.Items.Count - 1;
+                _multiChild.lstServerCom.SelectedIndex = -1;
+            }
         }
 
         private void FadeInWinForm()
@@ -54,7 +126,7 @@ namespace Utopia.GUI.Forms
             {
                 isNew = true,
                 SavedGameId = "",
-                Seed = singleChild.txtSeed.Text,
+                Seed = _singleChild.txtSeed.Text,
                 WorldName = "",
                 NewStruct = true
             };
@@ -71,7 +143,7 @@ namespace Utopia.GUI.Forms
             {
                 isNew = true,
                 SavedGameId = "",
-                Seed = singleChild.txtSeed.Text,
+                Seed = _singleChild.txtSeed.Text,
                 WorldName = "",
                 NewStruct = false
             };
@@ -83,22 +155,22 @@ namespace Utopia.GUI.Forms
         {
             this.ChildContainer.Controls.Clear();
             this.ChildContainer.BackColor = Color.FromArgb(128, 255, 255, 255);
-            this.ChildContainer.Controls.Add(singleChild);
+            this.ChildContainer.Controls.Add(_singleChild);
         }
 
         private void btMultiPlayer_Click(object sender, EventArgs e)
         {
             this.ChildContainer.Controls.Clear();
             this.ChildContainer.BackColor = Color.FromArgb(128, 255, 255, 255);
-            this.ChildContainer.Controls.Add(multiChild);
+            this.ChildContainer.Controls.Add(_multiChild);
         }
 
         private void btConfig_Click(object sender, EventArgs e)
         {
             this.ChildContainer.Controls.Clear();
             this.ChildContainer.BackColor = Color.FromArgb(64, 255, 255, 255);
-            configChild.RefreshAllBindingLists(Utopia.Settings.ClientSettings.Current.Settings);
-            this.ChildContainer.Controls.Add(configChild);
+            _configChild.RefreshAllBindingLists(Utopia.Settings.ClientSettings.Current.Settings);
+            this.ChildContainer.Controls.Add(_configChild);
         }
 
         private void WelcomeScreen_FormClosed(object sender, FormClosedEventArgs e)

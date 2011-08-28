@@ -5,6 +5,7 @@ using System.Text;
 using S33M3Engines.D3D;
 using S33M3Engines.D3D.DebugTools;
 using Utopia.Worlds.Chunks;
+using Utopia.Network;
 
 namespace Utopia.Worlds
 {

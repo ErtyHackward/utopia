@@ -57,6 +57,18 @@ namespace Utopia.Net.Connections
 
         #region Events
 
+
+        /// <summary>
+        /// Occurs when Login data is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<LoginMessage>> MessageLogin;
+
+        protected void OnMessageLogin(LoginMessage ea)
+        {
+            if (MessageLogin != null)
+                MessageLogin(this, new ProtocolMessageEventArgs<LoginMessage> { Message = ea });
+        }
+
         /// <summary>
         /// Occurs when chunk data is received
         /// </summary>
@@ -315,8 +327,13 @@ namespace Utopia.Net.Connections
         /// <param name="msg"></param>
         private void InvokeEvent(IBinaryMessage msg)
         {
+            if (msg == null) return;
+
             switch ((MessageTypes)msg.MessageId)
             {
+                case MessageTypes.Login:
+                    OnMessageLogin((LoginMessage)msg);
+                    break;
                 case MessageTypes.Chat:
                     OnMessageChat((ChatMessage)msg);
                     break;

@@ -94,7 +94,6 @@
             this.btConnect.TabIndex = 8;
             this.btConnect.Text = "Connect";
             this.btConnect.UseVisualStyleBackColor = true;
-            this.btConnect.Click += new System.EventHandler(this.btConnect_Click);
             // 
             // label5
             // 
@@ -200,16 +199,16 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label4;
-        internal System.Windows.Forms.TextBox txtSrvAdress;
         private System.Windows.Forms.Label label3;
         internal System.Windows.Forms.Button btConnect;
         private System.Windows.Forms.Label label5;
-        internal System.Windows.Forms.TextBox txtUser;
         private System.Windows.Forms.Label label6;
-        internal System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListBox lstServerCom;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.CheckBox chkRegistering;
+        internal System.Windows.Forms.ListBox lstServerCom;
+        internal System.Windows.Forms.TextBox txtSrvAdress;
+        internal System.Windows.Forms.TextBox txtUser;
+        internal System.Windows.Forms.TextBox txtPassword;
+        internal System.Windows.Forms.CheckBox chkRegistering;
     }
 }
