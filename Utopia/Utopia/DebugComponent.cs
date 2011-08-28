@@ -10,6 +10,8 @@ using S33M3Engines.GameStates;
 using S33M3Engines.InputHandler;
 using Utopia.GameStates;
 using Utopia.Settings;
+using Screen = Nuclex.UserInterface.Screen;
+using Utopia.GUI.D3D.DebugUI;
 
 namespace Utopia
 {
@@ -20,8 +22,8 @@ namespace Utopia
         private readonly UtopiaRender _game;
         private readonly GameStatesManager _gameStateManagers;
         private readonly DebugInfo _debugInfo;
-
-        public DebugComponent(DebugInfo debugInfo, GameStatesManager gameStateManagers, UtopiaRender game, D3DEngine d3DEngine, InputHandlerManager inputHandler)
+        private readonly Screen _screen;
+        public DebugComponent(DebugInfo debugInfo, GameStatesManager gameStateManagers, UtopiaRender game, D3DEngine d3DEngine, InputHandlerManager inputHandler, Screen screen)
         {
 
             _debugInfo = debugInfo;
@@ -29,6 +31,7 @@ namespace Utopia
             _d3DEngine = d3DEngine;
             _game = game;
             _gameStateManagers = gameStateManagers;
+            _screen = screen;
         }
 
 
@@ -101,10 +104,22 @@ namespace Utopia
             }
 
             if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.Console))
+            {    
                 GameConsole.Show = !GameConsole.Show;
+                if (GameConsole.Show){
+                 //I want a fresh dynamically built UI  each time i press the key, and I dont care for garbage in debug components !
+                    _screen.Desktop.Children.Add(new DebugUi(_game.GameComponents) );
+                }
+                else
+                {
+                //TODO remove the debugui from screen on second console key press
+                }
+            }
+        
 
-            //Exit application
+        //Exit application
             if (_inputHandler.IsKeyPressed(Keys.Escape)) _game.Exit();
+
         }
     }
 }
