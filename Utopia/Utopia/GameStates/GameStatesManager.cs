@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Utopia.GameStates
 {
-    public class GameStatesManager
+    /*public class GameStatesManager //TODO Utopia.GameStates.GameStatesManager ? 
     {
-    }
+    }*/
 }

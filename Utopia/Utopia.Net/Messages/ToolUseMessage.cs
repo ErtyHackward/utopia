@@ -14,6 +14,7 @@ namespace Utopia.Net.Messages
         private Location3<int> _pickedBlockPosition;
         private Location3<int> _newBlockPosition;
         private uint _pickedEntityId;
+        //TODO should ToolUseMessage contain a ToolId ? wich tool is the player using  
 
         /// <summary>
         /// Look vector at tool using moment
