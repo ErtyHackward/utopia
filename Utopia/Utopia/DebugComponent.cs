@@ -25,7 +25,7 @@ namespace Utopia
         private readonly Screen _screen;
 
         private DebugUi _debugUi;
-
+        
         public DebugComponent(DebugInfo debugInfo, GameStatesManager gameStateManagers, UtopiaRender game, D3DEngine d3DEngine, InputHandlerManager inputHandler, Screen screen)
         {
 
@@ -107,18 +107,24 @@ namespace Utopia
             }
 
             if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.Console))
-            {    
+            {
                 GameConsole.Show = !GameConsole.Show;
-                if (GameConsole.Show){
-                    //each time i press the key, I want a fresh dynamically built UI, in synch with components, and I dont care for garbage in debug components !
-                    _screen.Desktop.Children.Remove(_debugUi);
-                    _debugUi = new DebugUi(_game.GameComponents);
-                    _screen.Desktop.Children.Add(_debugUi);
-                }
-                else
+            }
+            
+            if (_inputHandler.IsKeyPressed(Keys.F12))
+            {
+                if (_screen.Desktop.Children.Contains(_debugUi))
                 {
                     _screen.Desktop.Children.Remove(_debugUi);
                 }
+                else {
+                    //each time i press the key, I want a fresh dynamically built UI, in synch with components, and I dont care for garbage in debug components !
+                    _debugUi = new DebugUi(_game, _game.GameComponents, _d3DEngine, _gameStateManagers);
+                    //made this without ninject to keep it explicit, but debugui could be injected into debugcomponent !
+                    _screen.Desktop.Children.Add(_debugUi);
+                }
+                
+                
             }
         
 
