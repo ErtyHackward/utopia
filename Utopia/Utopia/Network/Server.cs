@@ -141,7 +141,7 @@ namespace Utopia.Network
             //Ask once a chunks via the server ! ==> Testing !
             if(oneShot)
             {
-            ServerConnection.SendAsync(new Utopia.Net.Messages.GetChunksMessage() { StartPosition = new Shared.Structs.IntVector2(0,0), EndPosition = new Shared.Structs.IntVector2(32,0), Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData });
+            ServerConnection.SendAsync(new Utopia.Net.Messages.GetChunksMessage() { StartPosition = new Shared.Structs.IntVector2(0,0), EndPosition = new Shared.Structs.IntVector2(32,1), Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData });
                 oneShot = false;
             }
 
