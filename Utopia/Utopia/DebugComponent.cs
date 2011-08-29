@@ -23,6 +23,9 @@ namespace Utopia
         private readonly GameStatesManager _gameStateManagers;
         private readonly DebugInfo _debugInfo;
         private readonly Screen _screen;
+
+        private DebugUi _debugUi;
+
         public DebugComponent(DebugInfo debugInfo, GameStatesManager gameStateManagers, UtopiaRender game, D3DEngine d3DEngine, InputHandlerManager inputHandler, Screen screen)
         {
 
@@ -107,12 +110,14 @@ namespace Utopia
             {    
                 GameConsole.Show = !GameConsole.Show;
                 if (GameConsole.Show){
-                 //I want a fresh dynamically built UI  each time i press the key, and I dont care for garbage in debug components !
-                    _screen.Desktop.Children.Add(new DebugUi(_game.GameComponents) );
+                    //each time i press the key, I want a fresh dynamically built UI, in synch with components, and I dont care for garbage in debug components !
+                    _screen.Desktop.Children.Remove(_debugUi);
+                    _debugUi = new DebugUi(_game.GameComponents);
+                    _screen.Desktop.Children.Add(_debugUi);
                 }
                 else
                 {
-                //TODO remove the debugui from screen on second console key press
+                    _screen.Desktop.Children.Remove(_debugUi);
                 }
             }
         

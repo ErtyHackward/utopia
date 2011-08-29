@@ -9,8 +9,7 @@ using Nuclex.UserInterface.Controls;
 
 namespace Utopia.GUI.D3D.DebugUI
 {
-    //TODO (Simon) debug components UI, click delegates seem to change other components state
-    public class DebugUi : WindowControl
+     public class DebugUi : WindowControl
     {
         private readonly List<IGameComponent> _gameComponentCollection;
         public DebugUi(List<IGameComponent> gameComponentCollection)
@@ -22,6 +21,8 @@ namespace Utopia.GUI.D3D.DebugUI
             this.Title = "Debug options";
 
             InitGameComponents();
+
+
             ButtonControl closeButton = new ButtonControl();
             closeButton.Bounds = new UniRectangle(
                 new UniScalar(1.0f, -90.0f), new UniScalar(1.0f, -40.0f), 80, 24
