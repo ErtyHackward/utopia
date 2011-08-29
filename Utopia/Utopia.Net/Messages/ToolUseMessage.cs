@@ -14,7 +14,7 @@ namespace Utopia.Net.Messages
         private Location3<int> _pickedBlockPosition;
         private Location3<int> _newBlockPosition;
         private uint _pickedEntityId;
-        //TODO should ToolUseMessage contain a ToolId ? wich tool is the player using  
+        private uint _toolId;
 
         /// <summary>
         /// Look vector at tool using moment
@@ -36,6 +36,15 @@ namespace Utopia.Net.Messages
             get { return _newBlockPosition; }
             set { _newBlockPosition = value; }
         }
+
+        /// <summary>
+        /// Gets or sets Tool Entity Id that performs action
+        /// </summary>
+        public uint ToolId
+        {
+            get { return _toolId; }
+            set { _toolId = value; }
+        }
         
         /// <summary>
         /// Picked entity id (optional)
@@ -46,11 +55,14 @@ namespace Utopia.Net.Messages
             set { _pickedEntityId = value; }
         }
 
+        /// <summary>
+        /// Gets message id (cast to MessageTypes enumeration)
+        /// </summary>
         public byte MessageId
         {
             get { return (byte)MessageTypes.ToolUseMessage; }
         }
-
+        
         public static ToolUseMessage Read(BinaryReader reader)
         {
             ToolUseMessage msg;
@@ -59,16 +71,22 @@ namespace Utopia.Net.Messages
             msg._pickedBlockPosition = reader.ReadIntLocation3();
             msg._newBlockPosition = reader.ReadIntLocation3();
             msg._pickedEntityId = reader.ReadUInt32();
+            msg._toolId = reader.ReadUInt32();
 
             return msg;
         }
 
+        /// <summary>
+        /// Writes all necessary instance members
+        /// </summary>
+        /// <param name="writer"></param>
         public void Write(BinaryWriter writer)
         {
             writer.Write(_spaceVector);
             writer.Write(_pickedBlockPosition);
             writer.Write(_newBlockPosition);
             writer.Write(_pickedEntityId);
+            writer.Write(_toolId);
         }
     }
 }
