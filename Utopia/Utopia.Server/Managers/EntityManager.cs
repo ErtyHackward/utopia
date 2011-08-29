@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using SharpDX;
 using Utopia.Shared.Structs;
 
@@ -50,8 +51,8 @@ namespace Utopia.Server.Managers
         /// </summary>
         public static Location2<int> AreaSize = new Location2<int>(16 * 20, 16 * 20);
 
-        private object _syncRoot = new object();
-        private List<ServerDynamicEntity> _entities = new List<ServerDynamicEntity>();
+        private readonly object _syncRoot = new object();
+        private readonly List<ServerDynamicEntity> _entities = new List<ServerDynamicEntity>();
 
         public object SyncRoot
         {
@@ -65,7 +66,8 @@ namespace Utopia.Server.Managers
         
         public MapArea(IntVector2 topLeftPoint)
         {
-            Rectangle = new Rectangle(topLeftPoint.X, topLeftPoint.Y, AreaSize.X, AreaSize.Z);
+            Rectangle = new Rectangle(topLeftPoint.X, topLeftPoint.Y, topLeftPoint.X + AreaSize.X,
+                                      topLeftPoint.Y + AreaSize.Z);
         }
 
         public void AddEntity(ServerDynamicEntity entity)
@@ -93,6 +95,21 @@ namespace Utopia.Server.Managers
 
     }
 
+    public static class RectangleExtensions
+    {
+        /// <summary>
+        /// Determines does this rectangle contains a point
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="vect"></param>
+        /// <returns></returns>
+        public static bool Contains(this Rectangle rect, IntVector2 vect)
+        {
+            return rect.Left <= vect.X && rect.Top <= vect.Y && rect.Right > vect.X && rect.Bottom > vect.Y;
+        }
+
+    }
+
     /// <summary>
     /// Wrapper around active entity class, because entity should not know about areas
     /// </summary>
@@ -102,9 +119,9 @@ namespace Utopia.Server.Managers
         public MapArea Area2 { get; set; }
         public IActiveEntity Entity { get; set; }
 
-        public ServerDynamicEntity()
+        public ServerDynamicEntity(IActiveEntity entity)
         {
-            
+            Entity = entity;
         }
     }
 
