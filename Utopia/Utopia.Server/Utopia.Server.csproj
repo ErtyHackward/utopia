@@ -54,6 +54,8 @@
   <ItemGroup>
     <Compile Include="Events\ConnectionEventArgs.cs" />
     <Compile Include="Managers\ConnectionManager.cs" />
+    <Compile Include="Managers\EntityManager.cs" />
+    <Compile Include="Managers\EntityManagerEventArgs.cs" />
     <Compile Include="Managers\ScheduleCallType.cs" />
     <Compile Include="Managers\ScheduleManager.cs" />
     <Compile Include="Managers\ScheduleTask.cs" />

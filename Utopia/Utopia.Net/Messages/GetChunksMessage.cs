@@ -13,12 +13,10 @@ namespace Utopia.Net.Messages
     {
         private IntVector2 _startPosition;
         private IntVector2 _endPosition;
-
         /// <summary>
         /// Request mode
         /// </summary>
         private GetChunksMessageFlag _flag;
-
         /// <summary>
         /// Count of hashes
         /// </summary>

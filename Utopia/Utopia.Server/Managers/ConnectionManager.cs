@@ -145,7 +145,7 @@ namespace Utopia.Server.Managers
         }
 
         /// <summary>
-        /// Disposes all contained collection
+        /// Disposes all contained connections
         /// </summary>
         public void Dispose()
         {
