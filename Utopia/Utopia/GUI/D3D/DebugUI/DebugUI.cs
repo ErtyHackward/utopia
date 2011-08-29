@@ -53,9 +53,10 @@ namespace Utopia.GUI.D3D.DebugUI
                 OptionControl enable = new OptionControl();
                 enable.Bounds = new UniRectangle(220.0f, y, 40.0f, 16.0f);
                 enable.Text = "E";
+                IGameComponent component1 = component;
                 enable.Changed += delegate(object sender, EventArgs e)
                {
-                   component.CallUpdate = !component.CallUpdate;
+                   component1.CallUpdate = !component1.CallUpdate;
                };
                 enable.Selected = component.CallUpdate;
 
@@ -65,9 +66,10 @@ namespace Utopia.GUI.D3D.DebugUI
                 view.Bounds = new UniRectangle(260.0f, y, 40.0f, 16.0f);
                 view.Text = "V";
                 view.Selected = component.CallDraw;
+                IGameComponent component2 = component;
                 view.Changed += delegate(object sender, EventArgs e)
                 {
-                    component.CallDraw = !component.CallDraw;
+                    component2.CallDraw = !component2.CallDraw;
                 };
                 Children.Add(view);
 
