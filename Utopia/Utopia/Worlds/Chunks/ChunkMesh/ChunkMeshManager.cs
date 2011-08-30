@@ -1,23 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using S33M3Engines.Threading;
-using Utopia.Worlds.Chunks.Enums;
-using Utopia.Shared.Structs;
-using Utopia.Worlds.Cubes;
-using Utopia.Shared.World;
-using S33M3Engines.Shared.Math;
-using Utopia.Shared.Chunks;
-using S33M3Engines.Buffers;
-using S33M3Engines.Struct.Vertex;
-using SharpDX.Direct3D;
-using SharpDX.Direct3D11;
-using S33M3Engines;
-using Utopia.Shared.Structs.Landscape;
 using Amib.Threading;
+using S33M3Engines.Threading;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Landscape;
+using Utopia.Shared.World;
+using Utopia.Worlds.Chunks.Enums;
+using Utopia.Worlds.Cubes;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -26,9 +16,9 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         #region private variables
         private CreateChunkMeshDelegate _createChunkMeshDelegate;
         private delegate object CreateChunkMeshDelegate(object chunk);
-        private VisualWorldParameters _visualWorldParameters;
-        private Location3<int> _visibleWorldSize;
-        private SingleArrayChunkContainer _cubesHolder;
+        private readonly VisualWorldParameters _visualWorldParameters;
+        private Location3<int> _visibleWorldSize;//TODO _visibleWorldSize is not in use, do we want a visibleWorld < _cubesHolder ? could be good ! 
+        private readonly SingleArrayChunkContainer _cubesHolder;
         #endregion
 
         #region public variables/properties
@@ -42,11 +32,11 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         }
 
         #region Public methods
-        public void CreateChunkMesh(VisualChunk chunk, bool Async)
+        public void CreateChunkMesh(VisualChunk chunk, bool async)
         {
-            if (Async)
+            if (async)
             {
-                WorkQueue.DoWorkInThread(new WorkItemCallback(createChunkMesh_threaded), chunk, chunk as IThreadStatus, chunk.ThreadPriority);
+                WorkQueue.DoWorkInThread(new WorkItemCallback(CreateChunkMeshThreaded), chunk, chunk as IThreadStatus, chunk.ThreadPriority);
             }
             else
             {
@@ -59,9 +49,9 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         #region Private methods
         private void Intialize()
         {
-            _createChunkMeshDelegate = new CreateChunkMeshDelegate(createChunkMesh_threaded);
-            _visibleWorldSize = new Location3<int>()
-            {
+            _createChunkMeshDelegate = new CreateChunkMeshDelegate(CreateChunkMeshThreaded);
+            _visibleWorldSize = new Location3<int>
+                                    {
                 X = AbstractChunk.ChunkSize.X * _visualWorldParameters.WorldParameters.WorldChunkSize.X,
                 Y = AbstractChunk.ChunkSize.Y,
                 Z = AbstractChunk.ChunkSize.Z * _visualWorldParameters.WorldParameters.WorldChunkSize.Z,
@@ -69,7 +59,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         }
 
         //Create the landscape for the chunk
-        private object createChunkMesh_threaded(object chunk)
+        private object CreateChunkMeshThreaded(object chunk)
         {
             VisualChunk visualChunk = (VisualChunk)chunk;
             CreateCubeMeshes(visualChunk);
@@ -105,58 +95,57 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             int neightborCubeIndex;
 
             int baseCubeIndex = _cubesHolder.Index(chunk.CubeRange.Min.X, chunk.CubeRange.Min.Y, chunk.CubeRange.Min.Z);
-            int CubeIndexX = baseCubeIndex;
-            int CubeIndexZ = baseCubeIndex;
+            int cubeIndexX = baseCubeIndex;
+            int cubeIndexZ = baseCubeIndex;
             int cubeIndex = baseCubeIndex;
 
-            for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
+            for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
             {
-                XWorld = (X + chunk.CubeRange.Min.X);
-                if (X != 0)
+                XWorld = (x + chunk.CubeRange.Min.X);
+                if (x != 0)
                 {
-                    CubeIndexX += _cubesHolder.MoveX;
-                    CubeIndexZ = CubeIndexX;
-                    cubeIndex = CubeIndexX;
+                    cubeIndexX += _cubesHolder.MoveX;
+                    cubeIndexZ = cubeIndexX;
+                    cubeIndex = cubeIndexX;
                 }
 
-                for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
+                for (int z = 0; z < AbstractChunk.ChunkSize.Z; z++)
                 {
-                    ZWorld = (Z + chunk.CubeRange.Min.Z);
+                    ZWorld = (z + chunk.CubeRange.Min.Z);
 
-                    if (Z != 0)
+                    if (z != 0)
                     {
-                        CubeIndexZ += _cubesHolder.MoveZ;
-                        cubeIndex = CubeIndexZ;
+                        cubeIndexZ += _cubesHolder.MoveZ;
+                        cubeIndex = cubeIndexZ;
                     }
 
-                    for (int Y = 0; Y < chunk.CubeRange.Max.Y; Y++)
+                    for (int y = 0; y < chunk.CubeRange.Max.Y; y++)
                     {
 
                         //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
-                        YWorld = (Y + chunk.CubeRange.Min.Y);
+                        YWorld = (y + chunk.CubeRange.Min.Y);
 
-                        //Inlinning Fct for speed !
-                        //==> Could use this instead of the next line ==> cubeIndex = _landscape.Index(XWorld, YWorld, ZWorld);
-                        //The "problem" being that everytime this fonction is called, it is creation a copy of the parameter variables, this fct is being called 
-                        //A lot of time, to easy the GAC work, it's better to inline the fct here.
-                        if (Y != 0)
+              
+                        if (y != 0)
                         {
                             cubeIndex += _cubesHolder.MoveY;
                         }
 
-                        //_landscape.Cubes[] is the BIG table containing all terraCube in the visible world.
+                        //_cubesHolder.Cubes[] is the BIG table containing all terraCube in the visible world.
                         //For speed access, I use an array with only one dimension, thus the table index must be computed from the X, Y, Z position of the terracube.
                         //Computing myself this index, is faster than using an array defined as [x,y,z]
-                        // ? Am I an Air Cube ? ==> Default Value, not needed to render !
-                        if (_cubesHolder.Cubes[cubeIndex].Id == CubeId.Air || _cubesHolder.Cubes[cubeIndex].Id == CubeId.Error) continue;
-
+                       
                         //Terra Cube contain only the data that are variables, and could be different between 2 cube.
                         currentCube = _cubesHolder.Cubes[cubeIndex];
-                        //The Cube profile contain the value that are fixe for a block type.
+
+                        // ? Am I an Air Cube ? ==> Default Value, not needed to render !
+                        if (currentCube.Id == CubeId.Air || currentCube.Id == CubeId.Error) continue;
+
+                        //The Cube profile contain the value that are fixed for a block type.
                         cubeProfile = VisualCubeProfile.CubesProfile[currentCube.Id];
 
                         cubePosiInWorld = new Location3<int>(XWorld, YWorld, ZWorld);
-                        cubePosiInChunk = new ByteVector4(X, Y, Z);
+                        cubePosiInChunk = new ByteVector4(x, y, z);
 
                         //Check to see if the face needs to be generated or not !
                         //Border Chunk test ! ==> Don't generate faces that are "border" chunks
