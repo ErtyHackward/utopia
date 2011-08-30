@@ -33,6 +33,14 @@ namespace Utopia.Shared.Structs
 
             return System.Math.Sqrt(dx + dy);
         }
+        
+        public static double DistanceSquared(IntVector2 first, IntVector2 second)
+        {
+            var dx = first.X - second.X;
+            var dy = first.Y - second.Y;
+
+            return dx * dx + dy * dy;
+        }
 
         #region IComparable Members
 

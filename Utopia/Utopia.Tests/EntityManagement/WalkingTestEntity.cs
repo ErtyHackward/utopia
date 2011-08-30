@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using SharpDX;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
@@ -48,7 +47,7 @@ namespace Utopia.Tests.EntityManagement
         /// Perform actions when getting into the area
         /// </summary>
         /// <param name="area"></param>
-        public void AreaEnter(MapArea area)
+        public void AddArea(MapArea area)
         {
             area.EntityMoved += AreaEntityMoved;
         }
@@ -57,7 +56,7 @@ namespace Utopia.Tests.EntityManagement
         /// Perform actions when leaving the area
         /// </summary>
         /// <param name="area"></param>
-        public void AreaLeave(MapArea area)
+        public void RemoveArea(MapArea area)
         {
             area.EntityMoved -= AreaEntityMoved;
         }
@@ -78,21 +77,22 @@ namespace Utopia.Tests.EntityManagement
 
         public void Update(DateTime gameTime)
         {
-            // because each entity in two areas simultaneoulsy we need to skip duplicate updates calls
+            // we need to skip duplicate updates calls
             if(_lastUpdate == gameTime)
                 return;
 
             _lastUpdate = gameTime;
 
+            var previousPosition = Position;
             Position = new Vector3(Position.X + MoveVector.X, Position.Y, Position.Z + MoveVector.Y);
 
             if (!WalkRange.Contains(Position))
             {
                 // reverse the vector
-                MoveVector = new Vector2(-MoveVector.X,-MoveVector.Y);
+                MoveVector = new Vector2(-MoveVector.X, -MoveVector.Y);
                 Position = new Vector3(Position.X + MoveVector.X, Position.Y, Position.Z + MoveVector.Y);
             }
-            else OnPositionChanged(new EntityMoveEventArgs { Entity = this });
+            else OnPositionChanged(new EntityMoveEventArgs { Entity = this, PreviousPosition = previousPosition });
         }
     }
 

@@ -4,6 +4,9 @@ using Utopia.Shared.Chunks.Entities.Management;
 
 namespace Utopia.Shared.Chunks.Entities.Interfaces
 {
+    /// <summary>
+    /// Describes dynamic entity. Dynamic entity can listen events of entities from surrounding areas and perform AI logic in update
+    /// </summary>
     public interface IDynamicEntity : IEntity
     {
         /// <summary>
@@ -12,16 +15,16 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         event EventHandler<EntityMoveEventArgs> PositionChanged;
 
         /// <summary>
-        /// Perform actions when getting into the area
+        /// Perform actions when getting closer to area. Entity should add all needed event handlers
         /// </summary>
         /// <param name="area"></param>
-        void AreaEnter(MapArea area);
+        void AddArea(MapArea area);
 
         /// <summary>
-        /// Perform actions when leaving the area
+        /// Perform actions when area is far away, entity should remove any event hadler it has
         /// </summary>
         /// <param name="area"></param>
-        void AreaLeave(MapArea area);
+        void RemoveArea(MapArea area);
 
         /// <summary>
         /// Perform dynamic update (AI logic)
