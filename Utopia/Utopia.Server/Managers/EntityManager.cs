@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using SharpDX;
 using Utopia.Shared.Chunks.Entities.Events;
@@ -48,38 +47,23 @@ namespace Utopia.Server.Managers
 
         #endregion
 
-        private void GetAreas(Vector3 position, out MapArea one, out MapArea two)
+        private MapArea GetArea(Vector3 position)
         {
-            var pos1 = new IntVector2((int)Math.Floor((double)position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor((double)position.Z / (MapArea.AreaSize.Z)) * MapArea.AreaSize.Z);
+            var pos = new IntVector2((int)Math.Floor((double)position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor((double)position.Z / (MapArea.AreaSize.Z)) * MapArea.AreaSize.Z);
 
-            var pos2 = new IntVector2(
-                (int)Math.Floor(((double)position.X - MapArea.AreaSize.X / 2) / (MapArea.AreaSize.X / 2)) * MapArea.AreaSize.X + MapArea.AreaSize.X / 2,
-                (int)Math.Floor(((double)position.Z - MapArea.AreaSize.Z / 2) / (MapArea.AreaSize.Z / 2)) * MapArea.AreaSize.Z + MapArea.AreaSize.Z / 2
-                );
-            
-            if (_areas.ContainsKey(pos1))
+            MapArea area;            
+            if (_areas.ContainsKey(pos))
             {
-                one = _areas[pos1];
+                area = _areas[pos];
             }
             else
             {
-                var area = new MapArea(pos1);
+                area = new MapArea(pos);
+                area = _areas.GetOrAdd(pos, area);
                 ListenArea(area);
-                _areas.TryAdd(pos1, area);
-                one = area;
             }
 
-            if (_areas.ContainsKey(pos2))
-            {
-                two = _areas[pos2];
-            }
-            else
-            {
-                var area = new MapArea(pos2);
-                ListenArea(area);
-                _areas.TryAdd(pos2, area);
-                two = area;
-            }
+            return area;
         }
 
         private void ListenArea(MapArea area)
@@ -94,22 +78,42 @@ namespace Utopia.Server.Managers
             // temp counter
             Interlocked.Increment(ref entityAreaChangesCount);
 #endif
-            // move entity to new areas
-            PutInAreas(e.Entity);
-        }
+            // we need to tell entity which areas are far away and not need to listen anymore
 
-        private void PutInAreas(IDynamicEntity entity)
-        {
-            // current areas
-            MapArea one, two;
-            GetAreas(entity.Position, out one, out two);
+            // erty: I'm not happy with next code, if you know how make it better, you are welcome!
 
-            // changing old Area to new
-            if (!one.ContainsEntity(entity))
-                one.AddEntity(entity);
+            double tooFarAway = MapArea.AreaSize.X + MapArea.AreaSize.Z;
 
-            if (!two.ContainsEntity(entity))
-                two.AddEntity(entity);
+            var currentArea = GetArea(new Vector3(e.Entity.Position.X, 0,
+                                                  e.Entity.Position.Z));
+
+            var previousArea = GetArea(new Vector3(e.PreviousPosition.X, 0,
+                                                  e.PreviousPosition.Z));
+
+            for (int x = -1; x < 2; x++)
+            {
+                for (int z = -1; z < 2; z++)
+                {
+                    var prev = GetArea(new Vector3(e.PreviousPosition.X + x*MapArea.AreaSize.X, 0,
+                                                   e.PreviousPosition.Z + z*MapArea.AreaSize.Z));
+                    
+                    if(IntVector2.DistanceSquared(currentArea.Position,prev.Position) > tooFarAway )
+                    {
+                        // area is too far away, stop listening it
+                        e.Entity.RemoveArea(prev);
+                    }
+                    
+                    var now = GetArea(new Vector3(e.Entity.Position.X + x*MapArea.AreaSize.X, 0,
+                                                  e.Entity.Position.Z + z*MapArea.AreaSize.Z));
+
+                    if(IntVector2.DistanceSquared(previousArea.Position, now.Position) > tooFarAway)
+                    {
+                        // area is too far away from previous center, listen it
+                        e.Entity.AddArea(now);
+                    }
+                }
+            }
+
         }
 
         public void AddEntity(IDynamicEntity entity)
@@ -122,7 +126,18 @@ namespace Utopia.Server.Managers
                 _allEntities.Add(entity);
             }
 
-            PutInAreas(entity);
+            // listen all 9 areas and add at center area
+            for (int x = -1; x < 2; x++)
+            {
+                for (int z = -1; z < 2; z++)
+                {
+                    var area = GetArea(new Vector3(entity.Position.X + x * MapArea.AreaSize.X, 0,
+                                                   entity.Position.Z + z * MapArea.AreaSize.Z));
+                    entity.AddArea(area);
+                    if (x == 0 && z == 0)
+                        area.AddEntity(entity);
+                }
+            }
 
             OnEntityAdded(new EntityManagerEventArgs { Entity = entity });
         }
@@ -138,10 +153,18 @@ namespace Utopia.Server.Managers
             if (!removed) return;
 
             // remove entity from areas
-            MapArea one, two;
-            GetAreas(entity.Position, out one, out two);
-            one.RemoveEntity(entity);
-            two.RemoveEntity(entity);
+            for (int x = -1; x < 2; x++)
+            {
+                for (int z = -1; z < 2; z++)
+                {
+                    var area = GetArea(new Vector3(entity.Position.X + x * MapArea.AreaSize.X, 0,
+                                                   entity.Position.Z + z * MapArea.AreaSize.Z));
+                    if (x == 0 && z == 0)
+                        area.RemoveEntity(entity);
+
+                    entity.RemoveArea(area);
+                }
+            }
 
             OnEntityRemoved(new EntityManagerEventArgs { Entity = entity });
         }

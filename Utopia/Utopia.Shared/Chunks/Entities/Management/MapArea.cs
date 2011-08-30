@@ -87,9 +87,6 @@ namespace Utopia.Shared.Chunks.Entities.Management
 
             // add events to retranslate
             entity.PositionChanged += EntityPositionChanged;
-
-            // tell entity that it should listen new area if it want
-            entity.AreaEnter(this);
         }
 
         public void RemoveEntity(IDynamicEntity entity)
@@ -97,11 +94,8 @@ namespace Utopia.Shared.Chunks.Entities.Management
             IDynamicEntity e;
             _entities.TryRemove(entity,out e);
 
-            //remove events from translating
+            //remove events from re-translating
             entity.PositionChanged -= EntityPositionChanged;
-
-            // tell the entity that it should not more listen this area
-            entity.AreaLeave(this);
         }
 
         private void EntityPositionChanged(object sender, EntityMoveEventArgs e)
@@ -112,7 +106,7 @@ namespace Utopia.Shared.Chunks.Entities.Management
             if (!_rectangle.Contains(e.Entity.Position))
             {
                 RemoveEntity(e.Entity);
-                OnEntityLeave(new EntityLeaveAreaEventArgs {Entity = e.Entity});
+                OnEntityLeave(new EntityLeaveAreaEventArgs {Entity = e.Entity, PreviousPosition = e.PreviousPosition});
             }
         }
 
