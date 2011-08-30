@@ -1,0 +1,30 @@
+using SharpDX;
+using Utopia.Shared.Structs;
+
+namespace Utopia.Shared.ClassExt
+{
+    public static class RectangleExtensions
+    {
+        /// <summary>
+        /// Determines does this rectangle contains a point
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="vect"></param>
+        /// <returns></returns>
+        public static bool Contains(this Rectangle rect, IntVector2 vect)
+        {
+            return rect.Left <= vect.X && rect.Top <= vect.Y && rect.Right > vect.X && rect.Bottom > vect.Y;
+        }
+
+        /// <summary>
+        /// Determines does this rectangle contains a point
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="vect"></param>
+        /// <returns></returns>
+        public static bool Contains(this Rectangle rect, Vector3 vect)
+        {
+            return rect.Left <= vect.X && rect.Top <= vect.Z && rect.Right > vect.X && rect.Bottom > vect.Z;
+        }
+    }
+}

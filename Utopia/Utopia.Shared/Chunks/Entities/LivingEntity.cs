@@ -1,4 +1,5 @@
 ﻿using System;
+using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Inventory;
 
 namespace Utopia.Shared.Chunks.Entities

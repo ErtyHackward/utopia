@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Net.Connections;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Events;
 
 namespace Utopia.Network
 {

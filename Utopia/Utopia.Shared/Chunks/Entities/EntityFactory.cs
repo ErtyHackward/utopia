@@ -21,6 +21,8 @@ namespace Utopia.Shared.Chunks.Entities
             set { _instance = value; }
         }
 
+        private uint _lastId;
+
         /// <summary>
         /// Returns new entity object by its classId
         /// </summary>
@@ -30,15 +32,21 @@ namespace Utopia.Shared.Chunks.Entities
         {
             // todo: implement this method correctly, create appropriate class here
 
+            Entity entity;
+
             switch (classId)
             {
-                case EntityClassId.None: return new NoEntity();
-                case EntityClassId.PickAxe: return new Pickaxe();
-                case EntityClassId.Shovel: return new Shovel();
-                case EntityClassId.Survey: return new Survey();
+                case EntityClassId.None: entity = new NoEntity(); break;
+                case EntityClassId.PickAxe: entity = new Pickaxe(); break;
+                case EntityClassId.Shovel: entity = new Shovel(); break;
+                case EntityClassId.Survey: entity = new Survey(); break;
                 default:
                     throw new ArgumentOutOfRangeException("classId");
             }
+
+            entity.EntityId = ++_lastId;
+
+            return entity;
         }
 
         /// <summary>
