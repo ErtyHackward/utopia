@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using SharpDX;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Chunks.Entities
@@ -7,7 +8,7 @@ namespace Utopia.Shared.Chunks.Entities
     /// <summary>
     /// Represents a base entity 
     /// </summary>
-    public abstract class Entity : IBinaryStorable
+    public abstract class Entity : IBinaryStorable, IEntity
     {
         /// <summary>
         /// Gets entity class id
@@ -86,5 +87,19 @@ namespace Utopia.Shared.Chunks.Entities
             writer.Write(Rotation.W);
 
         }
+
+        public override int GetHashCode()
+        {
+            return (int)EntityId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(obj == null) return false;
+            if(obj.GetType() != GetType()) return false;
+
+            return (obj as Entity).EntityId == EntityId;
+        }
+
     }
 }

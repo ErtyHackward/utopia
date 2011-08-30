@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 
-namespace Utopia.Server.Managers
+namespace Utopia.Shared.Chunks.Entities.Events
 {
-    public class EntityManagerEventArgs : EventArgs
+    public class EntityMoveEventArgs : EventArgs
     {
         public IDynamicEntity Entity { get; set; }
     }

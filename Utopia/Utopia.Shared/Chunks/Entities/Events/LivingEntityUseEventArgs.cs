@@ -2,7 +2,7 @@ using System;
 using SharpDX;
 using Utopia.Shared.Structs;
 
-namespace Utopia.Shared.Chunks.Entities
+namespace Utopia.Shared.Chunks.Entities.Events
 {
     public class LivingEntityUseEventArgs : EventArgs
     {
