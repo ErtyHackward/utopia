@@ -126,7 +126,8 @@ namespace Utopia.Worlds.Cubes
                 case CubeFace.Back:
 
                     //Get the 9 Facing cubes to the face
-                    ByteColor Front_Cube = _cubesHolder.Cubes[baseIndex - _cubesHolder.MoveZ].EmissiveColor;
+                    //ByteColor Front_Cube = _cubesHolder.Cubes[baseIndex - _cubesHolder.MoveZ].EmissiveColor;
+                    ByteColor Front_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, 0, -_cubesHolder.MoveZ)].EmissiveColor;
                     ByteColor FrontLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
                     ByteColor FrontRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
                     ByteColor FrontTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
