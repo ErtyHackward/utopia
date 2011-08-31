@@ -17,7 +17,7 @@ namespace Utopia.Shared.Chunks.Entities.Management
         /// <summary>
         /// Size of each Area
         /// </summary>
-        public static Location2<int> AreaSize = new Location2<int>(16 * 35, 16 * 35);
+        public static Location2<int> AreaSize = new Location2<int>(16 * 20, 16 * 20);
 
         private readonly object _syncRoot = new object();
         private readonly ConcurrentDictionary<IDynamicEntity, IDynamicEntity> _entities = new ConcurrentDictionary<IDynamicEntity, IDynamicEntity>();
@@ -30,11 +30,34 @@ namespace Utopia.Shared.Chunks.Entities.Management
 
         #region Events
         
-        /* Each entity may listen one or more events of its MapArea.
+        /* 
+         * Each entity may listen one or more events of its MapArea.
          * Entity should start listening at AreaEnter and remove listening at AreaLeave
          * Here should be added all required multicast events like direction change and tool using
          */
 
+        /// <summary>
+        /// Occurs when some entity performs use operation
+        /// </summary>
+        public event EventHandler<EntityUseEventArgs> EntityUse;
+
+        private void OnEntityUse(EntityUseEventArgs e)
+        {
+            var handler = EntityUse;
+            if (handler != null) handler(this, e);
+        }
+        
+        /// <summary>
+        /// Occurs when one of dynamic entities changes its view direction
+        /// </summary>
+        public event EventHandler<EntityViewEventArgs> EntityView;
+
+        private void OnEntityView(EntityViewEventArgs e)
+        {
+            var handler = EntityView;
+            if (handler != null) handler(this, e);
+        }
+        
         /// <summary>
         /// Occurs when one of dynamic entities moves in this area
         /// </summary>
@@ -54,6 +77,28 @@ namespace Utopia.Shared.Chunks.Entities.Management
         private void OnEntityLeave(EntityLeaveAreaEventArgs e)
         {
             var handler = EntityLeave;
+            if (handler != null) handler(this, e);
+        }
+
+        /// <summary>
+        /// Occurs when some entity was added to this area
+        /// </summary>
+        public event EventHandler<DynamicEntityEventArgs> EntityAdded;
+
+        private void OnEntityAdded(DynamicEntityEventArgs e)
+        {
+            var handler = EntityAdded;
+            if (handler != null) handler(this, e);
+        }
+
+        /// <summary>
+        /// Occurs when some entity was removed from this area
+        /// </summary>
+        public event EventHandler<DynamicEntityEventArgs> EntityRemoved;
+
+        private void OnEntityRemoved(DynamicEntityEventArgs e)
+        {
+            var handler = EntityRemoved;
             if (handler != null) handler(this, e);
         }
 
@@ -83,30 +128,54 @@ namespace Utopia.Shared.Chunks.Entities.Management
 
         public void AddEntity(IDynamicEntity entity)
         {
-            _entities.TryAdd(entity,entity);
+            if (_entities.TryAdd(entity, entity))
+            {
+                // add events to retranslate
+                entity.PositionChanged += EntityPositionChanged;
+                entity.ViewChanged += EntityViewChanged;
+                entity.Use += EntityUseHandler;
 
-            // add events to retranslate
-            entity.PositionChanged += EntityPositionChanged;
+                OnEntityAdded(new DynamicEntityEventArgs {Entity = entity});
+            }
         }
 
         public void RemoveEntity(IDynamicEntity entity)
         {
             IDynamicEntity e;
-            _entities.TryRemove(entity,out e);
+            if (_entities.TryRemove(entity, out e))
+            {
 
-            //remove events from re-translating
-            entity.PositionChanged -= EntityPositionChanged;
+                // remove events from re-translating
+                entity.PositionChanged -= EntityPositionChanged;
+                entity.ViewChanged -= EntityViewChanged;
+                entity.Use -= EntityUseHandler;
+
+                OnEntityRemoved(new DynamicEntityEventArgs {Entity = entity});
+            }
+        }
+
+        void EntityUseHandler(object sender, EntityUseEventArgs e)
+        {
+            // retranslate
+            OnEntityUse(e);
+        }
+
+        void EntityViewChanged(object sender, EntityViewEventArgs e)
+        {
+            // retranslate
+            OnEntityView(e);
         }
 
         private void EntityPositionChanged(object sender, EntityMoveEventArgs e)
         {
+            // retranslate
             OnEntityMoved(e);
             
             // we need to tell area manager that entity leaves us, to put it into new area
             if (!_rectangle.Contains(e.Entity.Position))
             {
-                RemoveEntity(e.Entity);
                 OnEntityLeave(new EntityLeaveAreaEventArgs {Entity = e.Entity, PreviousPosition = e.PreviousPosition});
+                RemoveEntity(e.Entity);
             }
         }
 

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Utopia.Net.Connections;
-using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia.Network
 {
@@ -18,38 +15,33 @@ namespace Utopia.Network
             _connection = connection;
         }
 
-        public void Listen(LivingEntity entity)
+        public void Listen(IDynamicEntity entity)
         {
-            entity.EntityUse += entity_EntityUse;
-            entity.LeftToolUse += entity_LeftToolUse;
-            entity.RightToolUse += entity_RightToolUse;
+            entity.PositionChanged += entity_PositionChanged;
+            entity.ViewChanged += entity_ViewChanged;
+            entity.Use += entity_Use;
         }
 
-        void entity_RightToolUse(object sender, LivingEntityUseEventArgs e)
-        {
-            
-
-
-        }
-
-        void entity_LeftToolUse(object sender, LivingEntityUseEventArgs e)
+        void entity_Use(object sender, EntityUseEventArgs e)
         {
             
         }
 
-        void entity_EntityUse(object sender, LivingEntityUseEventArgs e)
+        void entity_ViewChanged(object sender, EntityViewEventArgs e)
         {
-            if (e.PickedEntityId == 0)
-                return;
-
             
         }
 
-        public void Unlisten(LivingEntity entity)
+        void entity_PositionChanged(object sender, EntityMoveEventArgs e)
         {
-            entity.EntityUse -= entity_EntityUse;
-            entity.LeftToolUse -= entity_LeftToolUse;
-            entity.RightToolUse -= entity_RightToolUse;
+            
+        }
+
+        public void Unlisten(IDynamicEntity entity)
+        {
+            entity.PositionChanged -= entity_PositionChanged;
+            entity.ViewChanged -= entity_ViewChanged;
+            entity.Use -= entity_Use;
         }
     }
 }

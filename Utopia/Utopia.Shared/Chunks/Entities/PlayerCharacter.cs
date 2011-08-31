@@ -1,4 +1,5 @@
-﻿using Utopia.Shared.Chunks.Entities.Inventory;
+﻿using Utopia.Shared.Chunks.Entities.Events;
+using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities
@@ -23,6 +24,50 @@ namespace Utopia.Shared.Chunks.Entities
         public override string DisplayName
         {
             get { return CharacterName; }
+        }
+
+        public void LeftToolUse()
+        {
+            if (Equipment.LeftTool != null)
+            {
+                var args = EntityUseEventArgs.FromState(EntityState);
+                args.Tool = Equipment.LeftTool;
+                OnUse(args);
+            }
+        }
+
+        public void RightToolUse()
+        {
+            if (Equipment.RightTool != null)
+            {
+                var args = EntityUseEventArgs.FromState(EntityState);
+                args.Tool = Equipment.RightTool;
+                OnUse(args);
+            }
+        }
+
+        public void EntityUse()
+        {
+            if (EntityState.PickedEntityId != 0)
+            {
+                var args = EntityUseEventArgs.FromState(EntityState);
+                OnUse(args);
+            }
+        }
+
+        public override void AddArea(Management.MapArea area)
+        {
+            
+        }
+
+        public override void RemoveArea(Management.MapArea area)
+        {
+            
+        }
+
+        public override void Update(System.DateTime gameTime)
+        {
+            // no need to do something here
         }
     }
 }
