@@ -5,7 +5,7 @@ namespace Utopia.Shared.Chunks.Entities
     /// <summary>
     /// Represents a character with special RPG system
     /// </summary>
-    public abstract class SpecialCharacterEntity : LivingEntity
+    public abstract class SpecialCharacterEntity : CharacterEntity
     {
         protected SpecialCharacterEntity()
         {

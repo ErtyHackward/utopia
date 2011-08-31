@@ -15,6 +15,16 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         event EventHandler<EntityMoveEventArgs> PositionChanged;
 
         /// <summary>
+        /// Occurs when entity changes its view direction
+        /// </summary>
+        event EventHandler<EntityViewEventArgs> ViewChanged;
+
+        /// <summary>
+        /// Occurs when entity performs "use" operation
+        /// </summary>
+        event EventHandler<EntityUseEventArgs> Use;
+
+        /// <summary>
         /// Perform actions when getting closer to area. Entity should add all needed event handlers
         /// </summary>
         /// <param name="area"></param>
