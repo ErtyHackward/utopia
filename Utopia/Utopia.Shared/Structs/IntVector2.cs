@@ -31,7 +31,7 @@ namespace Utopia.Shared.Structs
             dx = dx * dx;
             dy = dy * dy;
 
-            return System.Math.Sqrt(dx + dy);
+            return Math.Sqrt(dx + dy);
         }
         
         public static double DistanceSquared(IntVector2 first, IntVector2 second)

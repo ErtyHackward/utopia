@@ -22,7 +22,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// <summary>
         /// The tool owner, impossible to use the tool without owner
         /// </summary>
-        public LivingEntity Parent { get; set; }
+        public DynamicEntity Parent { get; set; }
 
         protected Tool ()
         {
