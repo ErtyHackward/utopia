@@ -86,8 +86,13 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
         private void GenerateCubesFace(CubeFace cubeFace, VisualChunk chunk)
         {
-            TerraCube currentCube;
+            TerraCube currentCube, neightborCube;
             VisualCubeProfile cubeProfile;
+
+            ByteVector4 cubePosiInChunk;
+            Location3<int> cubePosiInWorld;
+            int XWorld, YWorld, ZWorld;
+            int neightborCubeIndex;
 
             int baseCubeIndex = _cubesHolder.Index(chunk.CubeRange.Min.X, chunk.CubeRange.Min.Y, chunk.CubeRange.Min.Z);
             int cubeIndexX = baseCubeIndex;
@@ -96,7 +101,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
             for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
             {
-                int xWorld = (x + chunk.CubeRange.Min.X);
+                XWorld = (x + chunk.CubeRange.Min.X);
                 if (x != 0)
                 {
                     cubeIndexX += _cubesHolder.MoveX;
@@ -106,7 +111,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                 for (int z = 0; z < AbstractChunk.ChunkSize.Z; z++)
                 {
-                    int zWorld = (z + chunk.CubeRange.Min.Z);
+                    ZWorld = (z + chunk.CubeRange.Min.Z);
 
                     if (z != 0)
                     {
@@ -118,7 +123,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                     {
 
                         //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
-                        int yWorld = (y + chunk.CubeRange.Min.Y);
+                        YWorld = (y + chunk.CubeRange.Min.Y);
 
               
                         if (y != 0)
@@ -139,43 +144,42 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //The Cube profile contain the value that are fixed for a block type.
                         cubeProfile = VisualCubeProfile.CubesProfile[currentCube.Id];
 
-                        Location3<int> cubePosiInWorld = new Location3<int>(xWorld, yWorld, zWorld);
-                        ByteVector4 cubePosiInChunk = new ByteVector4(x, y, z);
+                        cubePosiInWorld = new Location3<int>(XWorld, YWorld, ZWorld);
+                        cubePosiInChunk = new ByteVector4(x, y, z);
 
                         //Check to see if the face needs to be generated or not !
                         //Border Chunk test ! ==> Don't generate faces that are "border" chunks
                         //BorderChunk value is true if the chunk is at the border of the visible world.
-                       
-                        int neightborCubeIndex;
+                        int neightborCubeIndexTest;
                         switch (cubeFace)
                         {
                             case CubeFace.Back:
-                                if (chunk.BorderChunk && (zWorld - 1 < _visualWorldParameters.WorldRange.Min.Z)) continue;
+                                if (chunk.BorderChunk && (ZWorld - 1 < _visualWorldParameters.WorldRange.Min.Z)) continue;
                                 //neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
-                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, zWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1);
+                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1);
                                 break;
                             case CubeFace.Front:
-                                if (chunk.BorderChunk && (zWorld + 1 >= _visualWorldParameters.WorldRange.Max.Z)) continue;
-                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, zWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1);
+                                if (chunk.BorderChunk && (ZWorld + 1 >= _visualWorldParameters.WorldRange.Max.Z)) continue;
+                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1);
                                 break;
                             case CubeFace.Bottom:
-                                if (yWorld - 1 < 0) continue;
+                                if (YWorld - 1 < 0) continue;
                                 neightborCubeIndex = cubeIndex - _cubesHolder.MoveY;
                                 
                                 break;
                             case CubeFace.Top:
-                                if (yWorld + 1 >= _visualWorldParameters.WorldRange.Max.Y) continue;
+                                if (YWorld + 1 >= _visualWorldParameters.WorldRange.Max.Y) continue;
                                 neightborCubeIndex = cubeIndex + _cubesHolder.MoveY;
                                 
                                 break;
                             case CubeFace.Left:
-                                if (chunk.BorderChunk && (xWorld - 1 < _visualWorldParameters.WorldRange.Min.X)) continue;
-                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, xWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1);
+                                if (chunk.BorderChunk && (XWorld - 1 < _visualWorldParameters.WorldRange.Min.X)) continue;
+                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1);
                                 
                                 break;
                             case CubeFace.Right:
-                                if (chunk.BorderChunk && (xWorld + 1 >= _visualWorldParameters.WorldRange.Max.X)) continue;
-                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, xWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1);
+                                if (chunk.BorderChunk && (XWorld + 1 >= _visualWorldParameters.WorldRange.Max.X)) continue;
+                                neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1);
                                 break;
                             default:
                                 throw new NullReferenceException();
@@ -187,7 +191,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //int i = neightborCubeIndex;
                         //if (i >= _cubesHolder.Cubes.Length) i -= _cubesHolder.Cubes.Length;
                         //if (i < 0) i += _cubesHolder.Cubes.Length;
-                        TerraCube neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
+                        neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
 
                         //It is using a delegate in order to give the possibility for Plugging to replace the fonction call.
                         //Be default the fonction called here is : TerraCube.FaceGenerationCheck or TerraCube.WaterFaceGenerationCheck
