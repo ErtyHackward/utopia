@@ -4,9 +4,9 @@ using Utopia.Shared.Structs;
 namespace Utopia.Shared.Chunks.Entities
 {
     /// <summary>
-    /// Represents a living entity state. Hold view position, picked block, picked entity etc
+    /// Represents a dynamic entity state. Hold view position, picked block, picked entity etc
     /// </summary>
-    public struct LivingEntityState
+    public struct DynamicEntityState
     {
         /// <summary>
         /// Gets character view vector at using moment
@@ -24,7 +24,7 @@ namespace Utopia.Shared.Chunks.Entities
         public Location3<int> NewBlockPosition { get; set; }
 
         /// <summary>
-        /// Gets entity that currently picked by character
+        /// Gets entity that currently picked by entity
         /// </summary>
         public uint PickedEntityId { get; set; }
     }

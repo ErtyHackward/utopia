@@ -10,7 +10,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     /// </summary>
     public class CharacterEquipment : IBinaryStorable
     {
-        private readonly LivingEntity _parent;
+        private readonly DynamicEntity _parent;
 
         /// <summary>
         /// Occurs when the character wears something
@@ -38,7 +38,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         private Tool _leftTool;
         private Tool _rightTool;
 
-        public CharacterEquipment(LivingEntity parent)
+        public CharacterEquipment(DynamicEntity parent)
         {
             _parent = parent;
         }

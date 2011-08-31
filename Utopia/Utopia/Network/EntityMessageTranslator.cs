@@ -18,26 +18,26 @@ namespace Utopia.Network
             _connection = connection;
         }
 
-        public void Listen(LivingEntity entity)
+        public void Listen(DynamicEntity entity)
         {
             entity.EntityUse += entity_EntityUse;
             entity.LeftToolUse += entity_LeftToolUse;
             entity.RightToolUse += entity_RightToolUse;
         }
 
-        void entity_RightToolUse(object sender, LivingEntityUseEventArgs e)
+        void entity_RightToolUse(object sender, EntityUseEventArgs e)
         {
             
 
 
         }
 
-        void entity_LeftToolUse(object sender, LivingEntityUseEventArgs e)
+        void entity_LeftToolUse(object sender, EntityUseEventArgs e)
         {
             
         }
 
-        void entity_EntityUse(object sender, LivingEntityUseEventArgs e)
+        void entity_EntityUse(object sender, EntityUseEventArgs e)
         {
             if (e.PickedEntityId == 0)
                 return;
@@ -45,7 +45,7 @@ namespace Utopia.Network
             
         }
 
-        public void Unlisten(LivingEntity entity)
+        public void Unlisten(DynamicEntity entity)
         {
             entity.EntityUse -= entity_EntityUse;
             entity.LeftToolUse -= entity_LeftToolUse;

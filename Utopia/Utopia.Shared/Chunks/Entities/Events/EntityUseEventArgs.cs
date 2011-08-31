@@ -1,20 +1,27 @@
 using System;
 using SharpDX;
+using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities.Events
 {
-    public class LivingEntityUseEventArgs : EventArgs
+    public class EntityUseEventArgs : EventArgs
     {
+        /// <summary>
+        /// Gets or sets sender entity
+        /// </summary>
+        public IDynamicEntity Entity { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tool was used (maybe null)
+        /// </summary>
+        public Tool Tool { get; set; }
+
         /// <summary>
         /// Gets character view vector at using moment
         /// </summary>
         public Vector3 SpaceVector { get; set; }
-
-        /// <summary>
-        /// Gets type of using 
-        /// </summary>
-        public LivingEntityUseType UseType { get; set; }
 
         /// <summary>
         /// Global position of currently picked block
@@ -37,15 +44,14 @@ namespace Utopia.Shared.Chunks.Entities.Events
         /// <param name="state"></param>
         /// <param name="use"></param>
         /// <returns></returns>
-        public static LivingEntityUseEventArgs FromState(LivingEntityState state, LivingEntityUseType use)
+        public static EntityUseEventArgs FromState(DynamicEntityState state)
         {
-            var e = new LivingEntityUseEventArgs();
+            var e = new EntityUseEventArgs();
 
             e.SpaceVector = state.SpaceVector;
             e.PickedBlockPosition = state.PickedBlockPosition;
             e.NewBlockPosition = state.NewBlockPosition;
             e.PickedEntityId = state.PickedEntityId;
-            e.UseType = use;
 
             return e;
         }

@@ -12,7 +12,7 @@ namespace Utopia.Tests.EntityManagement
     /// <summary>
     /// Represents an entity that moves using some vector and says "Hello" to entities around it
     /// </summary>
-    public class WalkingTestEntity : LivingEntity, IDynamicEntity
+    public class WalkingTestEntity : DynamicEntity
     {
         public static Rectangle WalkRange = new Rectangle(-5000, -5000, 5000, 5000);
 
@@ -35,19 +35,13 @@ namespace Utopia.Tests.EntityManagement
             Entities = new HashSet<IEntity>();
         }
 
-        public event EventHandler<EntityMoveEventArgs> PositionChanged;
 
-        protected void OnPositionChanged(EntityMoveEventArgs e)
-        {
-            var handler = PositionChanged;
-            if (handler != null) handler(this, e);
-        }
 
         /// <summary>
         /// Perform actions when getting into the area
         /// </summary>
         /// <param name="area"></param>
-        public void AddArea(MapArea area)
+        public override void AddArea(MapArea area)
         {
             area.EntityMoved += AreaEntityMoved;
         }
@@ -56,7 +50,7 @@ namespace Utopia.Tests.EntityManagement
         /// Perform actions when leaving the area
         /// </summary>
         /// <param name="area"></param>
-        public void RemoveArea(MapArea area)
+        public override void RemoveArea(MapArea area)
         {
             area.EntityMoved -= AreaEntityMoved;
         }
@@ -75,7 +69,10 @@ namespace Utopia.Tests.EntityManagement
 
         private DateTime _lastUpdate;
 
-        public void Update(DateTime gameTime)
+        /// <summary>
+        /// Perform dynamic update (AI logic)
+        /// </summary>
+        public override void Update(DateTime gameTime)
         {
             // we need to skip duplicate updates calls
             if(_lastUpdate == gameTime)
