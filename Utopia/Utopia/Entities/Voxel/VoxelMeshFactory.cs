@@ -48,22 +48,35 @@ namespace Utopia.Entities.Voxel
         //Temporary method, drawing will be in a separate class
         public void SendMeshToGraphicCard()
         {
-            if (_vertexList.Count == 0)
-            {
-                if (VertexBuffer != null) VertexBuffer.Dispose();
-                VertexBuffer = null;
-                return;
-            }
+            //if (_vertexList.Count == 0)
+            //{
+            //    if (VertexBuffer != null) VertexBuffer.Dispose();
+            //    VertexBuffer = null;
+            //    return;
+            //}
 
-            if (VertexBuffer == null)
+            //if (VertexBuffer == null)
+            //{
+            //    VertexBuffer = new VertexBuffer<VertexPositionColor>(_d3DEngine, _vertexList.Count,
+            //                                                          VertexPositionColor.VertexDeclaration,
+            //                                                          PrimitiveTopology.TriangleList,
+            //                                                          ResourceUsage.Default, 10);
+            //}
+            //VertexBuffer.SetData(_vertexList.ToArray());
+            //_vertexList.Clear();
+
+
+
+            if (VertexBuffer == null && _vertexList.Count != 0)
             {
                 VertexBuffer = new VertexBuffer<VertexPositionColor>(_d3DEngine, _vertexList.Count,
                                                                       VertexPositionColor.VertexDeclaration,
                                                                       PrimitiveTopology.TriangleList,
                                                                       ResourceUsage.Default, 10);
+                VertexBuffer.SetData(_vertexList.ToArray());
+                _vertexList.Clear();
             }
-            VertexBuffer.SetData(_vertexList.ToArray());
-            _vertexList.Clear();
+
         }
 
         protected void BuildBlockVertices(List<VertexPositionColor> vertexList, byte blockType, int x, int y, int z)

@@ -75,15 +75,20 @@ namespace Utopia.Entities
             {
                 Entities[i].Update(ref TimeSpend);
             }
+            InputHandler(false);
+        }
 
-
-            if (_inputHandler.IsKeyPressed(Keys.Insert))
+        bool KeyInsertBuffer;
+        private void InputHandler(bool bufferMode)
+        {
+            if (_inputHandler.IsKeyPressed(Keys.Insert) || KeyInsertBuffer)
             {
+                if (bufferMode) { KeyInsertBuffer = true; return; } else KeyInsertBuffer = false;
                 _voxelItem = new VoxelMeshFactory(_d3DEngine);
-                _voxelItem.Blocks = new byte[16,16,16];
+                _voxelItem.Blocks = new byte[16, 16, 16];
                 _voxelItem.RandomFill(5);
                 _voxelItem.GenCubesFaces();
-             }
+            }
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
@@ -92,6 +97,7 @@ namespace Utopia.Entities
             {
                 Entities[i].Interpolation(ref interpolation_hd, ref interpolation_ld);
             }
+            InputHandler(true);
         }
 
         public override void DrawDepth0()
@@ -100,18 +106,16 @@ namespace Utopia.Entities
             {
                 Entities[i].DrawDepth0();
             }
-
-          
         }
 
         private void DrawItem()
         {
             Matrix worldFocused = Matrix.Identity;
-            Matrix world =Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.X,
-                                              -(float) _camManager.ActiveCamera.WorldPosition.Y,
+            Matrix world = Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.X,
+                                              (float) _camManager.ActiveCamera.WorldPosition.Y,
                                               (float) _camManager.ActiveCamera.WorldPosition.Z);
-            
-            _worldFocusManager.CenterOnFocus(ref world, ref world);
+
+            _worldFocusManager.CenterOnFocus(ref world, ref worldFocused);
 
             _itemEffect.Begin();
             _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocused);
@@ -125,7 +129,6 @@ namespace Utopia.Entities
             if (_voxelItem.VertexBuffer != null)
             {
                 _voxelItem.VertexBuffer.SetToDevice(0);
-
                 _d3DEngine.Context.Draw(_voxelItem.VertexBuffer.VertexCount, 0);
             }
         }
