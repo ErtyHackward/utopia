@@ -20,6 +20,8 @@ namespace Utopia.Tests.EntityManagement
 
         public HashSet<IEntity> Entities { get; set; }
 
+        public int AreasListeningCount;
+
         public override EntityClassId ClassId
         {
             get { throw new NotImplementedException(); }
@@ -44,6 +46,7 @@ namespace Utopia.Tests.EntityManagement
         public override void AddArea(MapArea area)
         {
             area.EntityMoved += AreaEntityMoved;
+            AreasListeningCount++;
         }
 
         /// <summary>
@@ -53,6 +56,7 @@ namespace Utopia.Tests.EntityManagement
         public override void RemoveArea(MapArea area)
         {
             area.EntityMoved -= AreaEntityMoved;
+            AreasListeningCount--;
         }
 
         void AreaEntityMoved(object sender, EntityMoveEventArgs e)

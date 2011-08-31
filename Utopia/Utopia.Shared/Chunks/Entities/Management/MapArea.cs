@@ -17,7 +17,7 @@ namespace Utopia.Shared.Chunks.Entities.Management
         /// <summary>
         /// Size of each Area
         /// </summary>
-        public static Location2<int> AreaSize = new Location2<int>(16 * 35, 16 * 35);
+        public static Location2<int> AreaSize = new Location2<int>(16 * 20, 16 * 20);
 
         private readonly object _syncRoot = new object();
         private readonly ConcurrentDictionary<IDynamicEntity, IDynamicEntity> _entities = new ConcurrentDictionary<IDynamicEntity, IDynamicEntity>();
@@ -128,41 +128,47 @@ namespace Utopia.Shared.Chunks.Entities.Management
 
         public void AddEntity(IDynamicEntity entity)
         {
-            _entities.TryAdd(entity, entity);
+            if (_entities.TryAdd(entity, entity))
+            {
+                // add events to retranslate
+                entity.PositionChanged += EntityPositionChanged;
+                entity.ViewChanged += EntityViewChanged;
+                entity.Use += EntityUseHandler;
 
-            // add events to retranslate
-            entity.PositionChanged += EntityPositionChanged;
-            entity.ViewChanged += EntityViewChanged;
-            entity.Use += EntityUseHandler;
-
-            OnEntityAdded(new DynamicEntityEventArgs { Entity = entity });
+                OnEntityAdded(new DynamicEntityEventArgs {Entity = entity});
+            }
         }
 
         public void RemoveEntity(IDynamicEntity entity)
         {
             IDynamicEntity e;
-            _entities.TryRemove(entity, out e);
+            if (_entities.TryRemove(entity, out e))
+            {
 
-            // remove events from re-translating
-            entity.PositionChanged -= EntityPositionChanged;
-            entity.ViewChanged -= EntityViewChanged;
-            entity.Use -= EntityUseHandler;
+                // remove events from re-translating
+                entity.PositionChanged -= EntityPositionChanged;
+                entity.ViewChanged -= EntityViewChanged;
+                entity.Use -= EntityUseHandler;
 
-            OnEntityRemoved(new DynamicEntityEventArgs { Entity = entity });
+                OnEntityRemoved(new DynamicEntityEventArgs {Entity = entity});
+            }
         }
 
         void EntityUseHandler(object sender, EntityUseEventArgs e)
         {
+            // retranslate
             OnEntityUse(e);
         }
 
         void EntityViewChanged(object sender, EntityViewEventArgs e)
         {
+            // retranslate
             OnEntityView(e);
         }
 
         private void EntityPositionChanged(object sender, EntityMoveEventArgs e)
         {
+            // retranslate
             OnEntityMoved(e);
             
             // we need to tell area manager that entity leaves us, to put it into new area

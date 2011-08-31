@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX;
 using Utopia.Server.Managers;
+using Utopia.Shared.Chunks.Entities.Management;
 
 namespace Utopia.Tests.EntityManagement
 {
@@ -35,7 +36,7 @@ namespace Utopia.Tests.EntityManagement
                     if (entity.MoveVector.X != 0f || entity.MoveVector.Y != 0f) break; 
                 }
                 // random entity position
-                entity.Position = new Vector3(r.Next(WalkingTestEntity.WalkRange.Left+1, WalkingTestEntity.WalkRange.Right-1),0,r.Next(WalkingTestEntity.WalkRange.Top+1, WalkingTestEntity.WalkRange.Bottom-1));
+                entity.Position = new Vector3(r.Next(-MapArea.AreaSize.X, MapArea.AreaSize.X), 0, r.Next(-MapArea.AreaSize.Z, MapArea.AreaSize.Z));
                 _manager.AddEntity(entity);
             }
 
@@ -44,7 +45,7 @@ namespace Utopia.Tests.EntityManagement
 
             sw = Stopwatch.StartNew();
 
-            var takes = 1000;
+            var takes = 10000;
 
             for (int i = 0; i < takes; i++)
             {
@@ -52,9 +53,15 @@ namespace Utopia.Tests.EntityManagement
             }
 
             sw.Stop();
-            Trace.WriteLine(string.Format("Modulation finished. One cycle takes {0} ms", sw.ElapsedMilliseconds / takes));
+            Trace.WriteLine(string.Format("Modulation finished. One cycle takes {0} ms", (double)sw.ElapsedMilliseconds / takes));
 #if DEBUG
             Trace.WriteLine(string.Format("Area transitions count: {0}", _manager.entityAreaChangesCount));
+
+            // each entity should listen its area and 8 surrounding (9 total)
+            foreach (WalkingTestEntity entity in _manager.EnumerateEntities())
+            {
+                Assert.AreEqual(entity.AreasListeningCount, 9);
+            }
 #endif
 
 
