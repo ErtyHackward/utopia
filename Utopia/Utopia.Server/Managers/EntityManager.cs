@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using SharpDX;
 using Utopia.Shared.Chunks.Entities.Events;
@@ -20,6 +21,15 @@ namespace Utopia.Server.Managers
 
 #if DEBUG
         public volatile int entityAreaChangesCount;
+
+        /// <summary>
+        /// Use only for test purposes. Thread safty is NOT guaranteed.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IDynamicEntity> EnumerateEntities()
+        {
+            return _allEntities;
+        }
 #endif
         #region Events
 
@@ -46,6 +56,7 @@ namespace Utopia.Server.Managers
         }
 
         #endregion
+
 
         private MapArea GetArea(Vector3 position)
         {
@@ -82,13 +93,13 @@ namespace Utopia.Server.Managers
 
             // erty: I'm not happy with next code, if you know how make it better, you are welcome!
 
-            double tooFarAway = MapArea.AreaSize.X + MapArea.AreaSize.Z;
+            double tooFarAway = MapArea.AreaSize.X * MapArea.AreaSize.X + MapArea.AreaSize.Z * MapArea.AreaSize.Z;
 
             var currentArea = GetArea(new Vector3(e.Entity.Position.X, 0,
                                                   e.Entity.Position.Z));
 
             var previousArea = GetArea(new Vector3(e.PreviousPosition.X, 0,
-                                                  e.PreviousPosition.Z));
+                                                   e.PreviousPosition.Z));
 
             for (int x = -1; x < 2; x++)
             {
@@ -114,6 +125,7 @@ namespace Utopia.Server.Managers
                 }
             }
 
+            currentArea.AddEntity(e.Entity);
         }
 
         public void AddEntity(IDynamicEntity entity)
