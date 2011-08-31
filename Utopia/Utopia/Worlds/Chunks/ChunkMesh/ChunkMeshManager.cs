@@ -17,7 +17,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         private CreateChunkMeshDelegate _createChunkMeshDelegate;
         private delegate object CreateChunkMeshDelegate(object chunk);
         private readonly VisualWorldParameters _visualWorldParameters;
-        private Location3<int> _visibleWorldSize;//TODO _visibleWorldSize is not in use, do we want a visibleWorld < _cubesHolder ? could be good ! 
         private readonly SingleArrayChunkContainer _cubesHolder;
         #endregion
 
@@ -50,12 +49,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         private void Intialize()
         {
             _createChunkMeshDelegate = new CreateChunkMeshDelegate(CreateChunkMeshThreaded);
-            _visibleWorldSize = new Location3<int>
-                                    {
-                X = AbstractChunk.ChunkSize.X * _visualWorldParameters.WorldParameters.WorldChunkSize.X,
-                Y = AbstractChunk.ChunkSize.Y,
-                Z = AbstractChunk.ChunkSize.Z * _visualWorldParameters.WorldParameters.WorldChunkSize.Z,
-            };
         }
 
         //Create the landscape for the chunk
