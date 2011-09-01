@@ -34,25 +34,25 @@
         /// </summary>
         BlockChange = 7,
         /// <summary>
-        /// Player position change
+        /// Entity position change
         /// </summary>
-        PlayerPosition = 8,
+        EntityPosition = 8,
         /// <summary>
-        /// Player view direction
+        /// Entity view direction
         /// </summary>
-        PlayerDirection = 9,
+        EntityDirection = 9,
         /// <summary>
         /// Server responce to GetChunks with chunk data
         /// </summary>
         ChunkData = 10,
         /// <summary>
-        /// New player somewhere near
+        /// New entity somewhere near
         /// </summary>
-        PlayerIn = 11,
+        EntityIn = 11,
         /// <summary>
-        /// Player get out of our view range
+        /// Entity get out of our view range
         /// </summary>
-        PlayerOut = 12,
+        EntityOut = 12,
         /// <summary>
         /// Result of login procedure
         /// </summary>
@@ -60,10 +60,6 @@
         /// <summary>
         /// Entity impact
         /// </summary>
-        EntityUse = 14,
-        /// <summary>
-        /// Player's tool impact
-        /// </summary>
-        ToolUseMessage = 15,
+        EntityUse = 14
     }
 }

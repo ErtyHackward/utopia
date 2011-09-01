@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
-using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Management;
 
 namespace Utopia.Shared.Chunks.Entities
@@ -51,8 +49,7 @@ namespace Utopia.Shared.Chunks.Entities
 
         protected DynamicEntity()
         {
-
-
+            
         }
 
         #region Properties
@@ -61,6 +58,39 @@ namespace Utopia.Shared.Chunks.Entities
         /// Gets or sets entity state (this field should be refreshed before using the tool)
         /// </summary>
         public DynamicEntityState EntityState { get; set; }
+
+        public override SharpDX.Vector3 Position
+        {
+            get
+            {
+                return base.Position;
+            }
+            set
+            {
+                if (base.Position != value)
+                {
+                    var prev = base.Position;
+                    base.Position = value;
+                    OnPositionChanged(new EntityMoveEventArgs { Entity = this, PreviousPosition = prev });
+                }
+            }
+        }
+
+        public override SharpDX.Quaternion Rotation
+        {
+            get
+            {
+                return base.Rotation;
+            }
+            set
+            {
+                if (base.Rotation != value)
+                {
+                    base.Rotation = value;
+                    OnViewChanged(new EntityViewEventArgs { Entity = this });
+                }
+            }
+        }
 
         #endregion
 

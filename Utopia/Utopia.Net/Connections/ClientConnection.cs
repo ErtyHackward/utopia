@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using SharpDX;
 using Utopia.Net.Interfaces;
 using Utopia.Net.Messages;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia.Net.Connections
 {
@@ -40,16 +41,6 @@ namespace Utopia.Net.Connections
         public bool Authorized { get; set; }
 
         /// <summary>
-        /// Gets or sets current player position
-        /// </summary>
-        public Vector3 Position { get; set; }
-
-        /// <summary>
-        /// Gets or sets current player view direction
-        /// </summary>
-        public Vector3 Direction { get; set; }
-
-        /// <summary>
         /// Gets or sets associated user identification number
         /// </summary>
         public int UserId { get; set; }
@@ -58,6 +49,11 @@ namespace Utopia.Net.Connections
         /// Gets or sets associated user login
         /// </summary>
         public string Login { get; set; }
+
+        /// <summary>
+        /// Gets or sets player dynamic entity
+        /// </summary>
+        public IDynamicEntity Entity { get; set; }
 
         #endregion
 
@@ -110,23 +106,23 @@ namespace Utopia.Net.Connections
         /// <summary>
         /// Occurs when a PlayerPositionMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<PlayerPositionMessage>> MessagePosition;
+        public event EventHandler<ProtocolMessageEventArgs<EntityPositionMessage>> MessagePosition;
 
-        protected void OnMessagePosition(PlayerPositionMessage ea)
+        protected void OnMessagePosition(EntityPositionMessage ea)
         {
             if (MessagePosition != null)
-                MessagePosition(this, new ProtocolMessageEventArgs<PlayerPositionMessage> { Message = ea });
+                MessagePosition(this, new ProtocolMessageEventArgs<EntityPositionMessage> { Message = ea });
         }
 
         /// <summary>
         /// Occurs when a PlayerDirectionMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<PlayerDirectionMessage>> MessageDirection;
+        public event EventHandler<ProtocolMessageEventArgs<EntityDirectionMessage>> MessageDirection;
 
-        protected void OnMessageDirection(PlayerDirectionMessage ea)
+        protected void OnMessageDirection(EntityDirectionMessage ea)
         {
             if (MessageDirection != null)
-                MessageDirection(this, new ProtocolMessageEventArgs<PlayerDirectionMessage> { Message = ea });
+                MessageDirection(this, new ProtocolMessageEventArgs<EntityDirectionMessage> { Message = ea });
         }
 
         /// <summary>
@@ -143,12 +139,12 @@ namespace Utopia.Net.Connections
         /// <summary>
         /// Occurs when a ToolUseMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<ToolUseMessage>> MessageToolUse;
+        public event EventHandler<ProtocolMessageEventArgs<EntityUseMessage>> MessageToolUse;
 
-        protected void OnMessageToolUse(ToolUseMessage ea)
+        protected void OnMessageToolUse(EntityUseMessage ea)
         {
             if (MessageToolUse != null)
-                MessageToolUse(this, new ProtocolMessageEventArgs<ToolUseMessage> { Message = ea });
+                MessageToolUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
         }
 
         #endregion
@@ -244,14 +240,11 @@ namespace Utopia.Net.Connections
                                 case MessageTypes.BlockChange:
                                     OnMessageBlockChange(BlockChangeMessage.Read(reader));
                                     break;
-                                case MessageTypes.PlayerPosition:
-                                    OnMessagePosition(PlayerPositionMessage.Read(reader));
+                                case MessageTypes.EntityPosition:
+                                    OnMessagePosition(EntityPositionMessage.Read(reader));
                                     break;
-                                case MessageTypes.PlayerDirection:
-                                    OnMessageDirection(PlayerDirectionMessage.Read(reader));
-                                    break;
-                                case MessageTypes.ToolUseMessage:
-                                    OnMessageToolUse(ToolUseMessage.Read(reader));
+                                case MessageTypes.EntityDirection:
+                                    OnMessageDirection(EntityDirectionMessage.Read(reader));
                                     break;
                                 case MessageTypes.EntityUse:
                                     OnMessageEntityUse(EntityUseMessage.Read(reader));

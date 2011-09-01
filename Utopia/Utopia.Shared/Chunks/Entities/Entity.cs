@@ -28,12 +28,12 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Gets or sets entity position
         /// </summary>
-        public Vector3 Position { get; set; }
+        public virtual Vector3 Position { get; set; }
 
         /// <summary>
         /// Gets or sets entity rotation information
         /// </summary>
-        public Quaternion Rotation { get; set; }
+        public virtual Quaternion Rotation { get; set; }
 
         /// <summary>
         /// Gets a displayed entity name

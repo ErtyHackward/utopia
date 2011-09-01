@@ -3,7 +3,7 @@ using Utopia.Shared.Structs;
 
 namespace System.IO
 {
-    public static class BinaryHelper
+    public static class BinaryExtensions
     {
         public static void Write(this BinaryWriter writer, Location3<int> loc)
         {
@@ -39,6 +39,26 @@ namespace System.IO
             writer.Write(loc.X);
             writer.Write(loc.Y);
             writer.Write(loc.Z);
+        }
+
+        public static Quaternion ReadQuaternion(this BinaryReader reader)
+        {
+            Quaternion q;
+
+            q.X = reader.ReadSingle();
+            q.Y = reader.ReadSingle();
+            q.Z = reader.ReadSingle();
+            q.W = reader.ReadSingle();
+
+            return q;
+        }
+
+        public static void Write(this BinaryWriter writer, Quaternion quaternion)
+        {
+            writer.Write(quaternion.X);
+            writer.Write(quaternion.Y);
+            writer.Write(quaternion.Z);
+            writer.Write(quaternion.W);
         }
     }
 }

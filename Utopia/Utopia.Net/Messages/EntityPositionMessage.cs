@@ -6,17 +6,17 @@ using Utopia.Net.Interfaces;
 namespace Utopia.Net.Messages
 {
     /// <summary>
-    /// Defines a message used to inform about player position change event
+    /// Defines a message used to inform about entity position change event
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct PlayerPositionMessage : IBinaryMessage
+    public struct EntityPositionMessage : IBinaryMessage
     {
         /// <summary>
-        /// Identification number of the player
+        /// Identification number of the entity
         /// </summary>
-        private int _userId;
+        private uint _entityId;
         /// <summary>
-        /// Current position of the player
+        /// Current position of the entity
         /// </summary>
         private Vector3 _position;
 
@@ -25,16 +25,16 @@ namespace Utopia.Net.Messages
         /// </summary>
         public byte MessageId
         {
-            get { return (byte)MessageTypes.PlayerPosition; }
+            get { return (byte)MessageTypes.EntityPosition; }
         }
 
         /// <summary>
         /// Gets or sets an identification number of the player
         /// </summary>
-        public int UserId
+        public uint EntityId
         {
-            get { return _userId; }
-            set { _userId = value; }
+            get { return _entityId; }
+            set { _entityId = value; }
         }
 
         /// <summary>
@@ -46,11 +46,11 @@ namespace Utopia.Net.Messages
             set { _position = value; }
         }
 
-        public static PlayerPositionMessage Read(BinaryReader reader)
+        public static EntityPositionMessage Read(BinaryReader reader)
         {
-            PlayerPositionMessage msg;
+            EntityPositionMessage msg;
 
-            msg._userId = reader.ReadInt32();
+            msg._entityId = reader.ReadUInt32();
             msg._position.X = reader.ReadSingle();
             msg._position.Y = reader.ReadSingle();
             msg._position.Z = reader.ReadSingle();
@@ -58,9 +58,9 @@ namespace Utopia.Net.Messages
             return msg;
         }
 
-        public static void Write(BinaryWriter writer, PlayerPositionMessage msg)
+        public static void Write(BinaryWriter writer, EntityPositionMessage msg)
         {
-            writer.Write(msg._userId);
+            writer.Write(msg._entityId);
             writer.Write(msg._position.X);
             writer.Write(msg._position.Y);
             writer.Write(msg._position.Z);

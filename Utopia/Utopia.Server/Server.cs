@@ -9,6 +9,7 @@ using Utopia.Net.Messages;
 using Utopia.Server.Managers;
 using Utopia.Server.Structs;
 using Utopia.Server.Utils;
+using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Config;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
@@ -66,10 +67,15 @@ namespace Utopia.Server
         public IUsersStorage UsersStorage { get; private set; }
 
         /// <summary>
-        /// Gets a servers world generator
+        /// Gets servers world generator
         /// </summary>
         public WorldGenerator WorldGenerator { get; private set; }
-        
+
+        /// <summary>
+        /// Gets entity manager
+        /// </summary>
+        public EntityManager EntityManager { get; private set; }
+
         /// <summary>
         /// Create new instance of the Server class
         /// </summary>
@@ -83,7 +89,10 @@ namespace Utopia.Server
 
             // memory storage for chunks
             Chunks = new Dictionary<IntVector2, ServerChunk>();
+
+            EntityManager = new EntityManager();
             
+
             // connections
             Listener = new TcpConnectionListener(SettingsManager.Settings.ServerPort);
             Listener.IncomingConnection += ListenerIncomingConnection;
@@ -150,22 +159,7 @@ namespace Utopia.Server
             
             if (e.Connection.Authorized)
             {
-                ConnectionManager.Broadcast(new PlayerOutMessage { UserId = e.Connection.UserId });
-
-                using (var ms = new MemoryStream())
-                {
-                    using (var bw = new BinaryWriter(ms))
-                    {
-                        new PlayerPositionMessage { Position = e.Connection.Position, UserId = e.Connection.UserId }.Write(bw);
-                        new PlayerDirectionMessage { Direction = e.Connection.Position, UserId = e.Connection.UserId }.Write(bw);
-                        var bytes = ms.GetBuffer();
-
-                        var b2 = new byte[ms.Position];
-                        Buffer.BlockCopy(bytes, 0, b2, 0, (int)ms.Position);
-
-                        UsersStorage.SetData(e.Connection.Login, b2);
-                    }
-                }
+                ConnectionManager.Broadcast(new EntityOutMessage { EntityId = e.Connection.Entity.EntityId });
             }
 
         }
@@ -187,23 +181,23 @@ namespace Utopia.Server
             e.Connection.MessageChat += ConnectionMessageChat;
         }
 
-        void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<PlayerDirectionMessage> e)
+        void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
         {
             var connection = sender as ClientConnection;
-            if (connection != null && e.Message.UserId == connection.UserId)
+            if (connection != null && e.Message.EntityId == connection.Entity.EntityId)
             {
                 ConnectionManager.Broadcast(e.Message);
-                connection.Direction = e.Message.Direction;
+                connection.Entity.Rotation = e.Message.Direction;
             }
         }
 
-        void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<PlayerPositionMessage> e)
+        void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
         {
             var connection = sender as ClientConnection;
-            if (connection != null && e.Message.UserId == connection.UserId)
+            if (connection != null && e.Message.EntityId == connection.Entity.EntityId)
             {
                 ConnectionManager.Broadcast(e.Message);
-                connection.Position = e.Message.Position;
+                connection.Entity.Position = e.Message.Position;
             }
         }
 
@@ -370,37 +364,15 @@ namespace Utopia.Server
                 connection.UserId = loginData.Value.UserId;
                 connection.Login = e.Message.Login;
 
+                // todo: need to initilize entity object here properly
+                connection.Entity = new PlayerCharacter { CharacterName = e.Message.Login, EntityId = 1 };
+
                 connection.Send(new LoginResultMessage {Logged = true});
 
-                var gameInfo = new GameInformationMessage { ChunkSize = new Location3<int>(16,128,16), MaxViewRange = 32 };
+                var gameInfo = new GameInformationMessage { ChunkSize = new Location3<int>(16, 128, 16), MaxViewRange = 32 };
                 connection.Send(gameInfo);
-
-
-                ConnectionManager.Broadcast(new PlayerInMessage { Login = e.Message.Login, UserId = connection.UserId });
-
-                // send initial data
-                if (loginData.Value.State == null)
-                {
-                    ConnectionManager.Broadcast(new PlayerPositionMessage { UserId = loginData.Value.UserId, Position = new Vector3(8, 50, 8) });
-                    ConnectionManager.Broadcast(new PlayerDirectionMessage { UserId = loginData.Value.UserId, Direction = new Vector3(-0.15f, -0.97f, -0.15f) });
-                    connection.Position = new Vector3 { X = 8, Y = 50, Z = 8 };
-                    connection.Direction = new Vector3 { X = -0.15f, Y = -0.97f, Z = -0.15f };
-                }
-                else
-                {
-                    ConnectionManager.Broadcast(loginData.Value.State);
-                }
-
-
-                ConnectionManager.Foreach(c =>
-                {
-                    if (c.UserId != connection.UserId)
-                    {
-                        connection.Send(new PlayerInMessage {Login = c.Login, UserId = c.UserId});
-                        connection.Send(new PlayerPositionMessage { UserId = c.UserId, Position = c.Position });
-                        connection.Send(new PlayerDirectionMessage { UserId = c.UserId, Direction = c.Direction });
-                    }
-                });
+                
+                ConnectionManager.Broadcast(new EntityInMessage { Entity = connection.Entity });
 
             }
             else
@@ -415,7 +387,6 @@ namespace Utopia.Server
                                   connection.Id);
 
                 connection.Send(error, new LoginResultMessage { Logged = false });
-                //connection.Disconnect();
             }
         }
 
