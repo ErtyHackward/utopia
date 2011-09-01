@@ -14,6 +14,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         //FIXME icon stuff should probably not be here , rendering the voxel model as a 2d icon would be better,
         // but for now I need to port the XNA UI code
         public static int IconSize = 64;
+    
         public SpriteTexture Icon { get; set; }
         public Rectangle? IconSourceRectangle { get; set; }
   

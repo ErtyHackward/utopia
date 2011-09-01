@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Ninject;
 using Nuclex.UserInterface;
+using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
@@ -49,6 +50,9 @@ namespace Utopia
             iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<EntityRenderer>().ToSelf().InSingletonScope();
+
+            iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();
+            iocContainer.Bind<ItemRenderer>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().Named("Stars");
             iocContainer.Bind<IDrawableComponent>().To<Clouds>().Named("Clouds");
