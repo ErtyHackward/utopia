@@ -2,6 +2,8 @@
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
+using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
@@ -10,7 +12,7 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Allows to store all required data in SQLite database
     /// </summary>
-    public class SQLiteStorageManager : IUsersStorage, IChunksStorage
+    public class SQLiteStorageManager : IUsersStorage, IChunksStorage, IEntityStorage
     {
         /// <summary>
         /// Creates database file and required tables
@@ -49,6 +51,7 @@ namespace Utopia.Server.Managers
             var command = conn.CreateCommand();
             command.CommandText = @"CREATE TABLE [chunks] ([X] integer NOT NULL, [Y] integer NOT NULL,[data] blob NOT NULL, PRIMARY KEY(X,Y)); ";
             command.CommandText += @"CREATE TABLE [users] ([id] integer PRIMARY KEY AUTOINCREMENT NOT NULL, [login] varchar(120) NOT NULL, [password] char(32) NOT NULL, [role] integer NOT NULL, [lastlogin] datetime NULL, [state] blob NULL); CREATE INDEX IDX_USERS_LOGIN on users (login);";
+            command.CommandText += @"CREATE TABLE [entities] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);";
             command.CommandType = CommandType.Text;
             command.ExecuteNonQuery();
         }
@@ -160,12 +163,12 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="pos">Chunk position</param>
         /// <param name="data">Chunk data</param>
-        public void SaveBlock(IntVector2 pos, byte[] data)
+        public void SaveChunk(IntVector2 pos, byte[] data)
         {
-            SaveBlock(pos, data, GetConnection());
+            SaveChunk(pos, data, GetConnection());
         }
 
-        private void SaveBlock(IntVector2 pos, byte[] data, SQLiteConnection conn)
+        private void SaveChunk(IntVector2 pos, byte[] data, SQLiteConnection conn)
         {
             lock (this)
             {
@@ -219,7 +222,7 @@ namespace Utopia.Server.Managers
             {
                 for (int i = 0; i < positions.Length; i++)
                 {
-                    SaveBlock(positions[i], blocksData[i]);
+                    SaveChunk(positions[i], blocksData[i]);
                 }
                 trans.Commit();
             }
@@ -321,6 +324,63 @@ namespace Utopia.Server.Managers
                 }
             }
             catch (Exception) { }
+        }
+
+        public void SaveEntity(IEntity entity)
+        {
+            byte[] bytes;
+            using (var ms = new MemoryStream())
+            {
+                var writer = new BinaryWriter(ms);
+                entity.Save(writer);
+                bytes = ms.ToArray();
+            }
+
+            SaveEntity(entity.EntityId, bytes);
+        }
+
+        public void SaveEntity(uint entityId, byte[] bytes)
+        {
+            using (var cmd = GetConnection().CreateCommand())
+            {
+                cmd.CommandText = string.Format("INSERT OR REPLACE INTO entities (id,data) VALUES ('{0}', @data)", entityId);
+                var param = cmd.CreateParameter();
+                param.DbType = DbType.Binary;
+                param.ParameterName = "@data";
+                param.Size = bytes.Length;
+                param.Value = bytes;
+                cmd.Parameters.Add(param);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public IEntity LoadEntity(uint entityId)
+        {
+            byte[] data = LoadEntityBytes(entityId);
+            return EntityFactory.Instance.CreateFromBytes(data);
+        }
+
+        public byte[] LoadEntityBytes(uint entityId)
+        {
+            byte[] data;
+            using (var cmd = GetConnection().CreateCommand())
+            {
+                cmd.CommandText = string.Format("SELECT data FROM entities WHERE id={0}", entityId);
+                data = (byte[])cmd.ExecuteScalar();
+            }
+            return data;
+        }
+
+        public uint GetMaximumId()
+        {
+            using (var reader = Query("SELECT MAX(id) FROM entities"))
+            {
+                if (reader.Read())
+                {
+                    var maxNumber = reader.GetInt64(0);
+                    return (uint) maxNumber;
+                } return 0;
+            }
         }
     }
 }

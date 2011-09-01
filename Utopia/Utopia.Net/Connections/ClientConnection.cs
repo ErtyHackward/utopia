@@ -93,17 +93,6 @@ namespace Utopia.Net.Connections
         }
 
         /// <summary>
-        /// Occurs when a BlockChageMessage is received
-        /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<BlockChangeMessage>> MessageBlockChange;
-
-        protected void OnMessageBlockChange(BlockChangeMessage ea)
-        {
-            if (MessageBlockChange != null)
-                MessageBlockChange(this, new ProtocolMessageEventArgs<BlockChangeMessage> { Message = ea });
-        }
-
-        /// <summary>
         /// Occurs when a PlayerPositionMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<EntityPositionMessage>> MessagePosition;
@@ -236,9 +225,6 @@ namespace Utopia.Net.Connections
                                     break;
                                 case MessageTypes.GetChunks:
                                     OnMessageGetChunks(GetChunksMessage.Read(reader));
-                                    break;
-                                case MessageTypes.BlockChange:
-                                    OnMessageBlockChange(BlockChangeMessage.Read(reader));
                                     break;
                                 case MessageTypes.EntityPosition:
                                     OnMessagePosition(EntityPositionMessage.Read(reader));
