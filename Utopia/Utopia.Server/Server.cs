@@ -105,7 +105,7 @@ namespace Utopia.Server
 
             EntityManager = new EntityManager();
             
-            EntityFactory.Instance.SetLastId(EntityStorage.GetMaximumId()+1);
+            EntityFactory.Instance.SetLastId(EntityStorage.GetMaximumId());
 
             // connections
             Listener = new TcpConnectionListener(SettingsManager.Settings.ServerPort);
@@ -366,8 +366,12 @@ namespace Utopia.Server
                 if (loginData.Value.State == null)
                 {
                     // create new message
-                    playerEntity = new ServerPlayerCharacterEntity(connection);
-                    
+                    var serverChar= new ServerPlayerCharacterEntity(connection);
+
+                    serverChar.CharacterName = "Chuck norris";
+
+                    playerEntity = serverChar;
+
                     var state = new UserState();
                     state.EntityId = playerEntity.EntityId;
 
