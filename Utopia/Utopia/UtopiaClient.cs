@@ -26,7 +26,7 @@ namespace Utopia
         {
             //_iocContainer =  new StandardKernel(new NinjectSettings { UseReflectionBasedInjection = true }); ==> More debug infor with this if binding problems, but slower !
             _iocContainer = new StandardKernel();
-            _server = _iocContainer.Get<Server>();
+            _server = new Server();
         }
 
         #region Public Methods
@@ -115,7 +115,6 @@ namespace Utopia
 
         private void StartDirectXWindow(Server _server)
         {
-            //Create the NInject IoC container
             using (UtopiaRender main = new UtopiaRender(_iocContainer, _server))
             {
                 main.Run();

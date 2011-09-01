@@ -54,8 +54,8 @@ namespace Utopia
             iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();
             iocContainer.Bind<ItemRenderer>().ToSelf().InSingletonScope();
 
-            iocContainer.Bind<IDrawableComponent>().To<SkyStars>().Named("Stars");
-            iocContainer.Bind<IDrawableComponent>().To<Clouds>().Named("Clouds");
+            iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
+            iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");
 
             iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InSingletonScope().Named("SolidCubeMeshFactory");
             iocContainer.Bind<ICubeMeshFactory>().To<LiquidCubeMashFactory>().InSingletonScope().Named("LiquidCubeMeshFactory");
@@ -76,9 +76,9 @@ namespace Utopia
 
             iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();
 
-            iocContainer.Bind<ISkyDome>().To<RegularSkyDome>();
+            iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
             iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();
-            iocContainer.Bind<IWorld>().To<World>();
+            iocContainer.Bind<IWorld>().To<World>().InSingletonScope();
             iocContainer.Bind<ILivingEntity>().To<Player>().InSingletonScope(); 
             iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
             iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
@@ -90,7 +90,7 @@ namespace Utopia
             iocContainer.Bind<UtopiaRender>().ToConstant(this); 
             //this is required for any component depending on game (having game in constructor params) 
             // or else the component gets a new game instance
-            // normally/currently, only DebugComponent uses this for accedding to game.exit , _game.VSync  etc...
+            // normally/currently, only DebugComponent uses this for accedding to game.exit , _game.VSynSc  etc...
             iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();

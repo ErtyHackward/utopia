@@ -111,7 +111,7 @@ namespace Utopia.Worlds.Chunks
             //Subscribe to chunk modifications
             _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
 
-            Initialize();
+            //Initialize();
         }
 
         #region Public methods

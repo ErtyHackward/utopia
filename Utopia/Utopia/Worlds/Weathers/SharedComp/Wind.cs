@@ -46,7 +46,7 @@ namespace Utopia.Worlds.Weather
         }
         #endregion
 
-        #region
+        #region Private Methods
         private float GetFlowRnd()
         {
             return (float)(_rndWindFlowing.NextDouble() * 2) - 1;

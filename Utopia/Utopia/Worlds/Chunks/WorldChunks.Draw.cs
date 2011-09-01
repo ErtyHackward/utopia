@@ -81,7 +81,7 @@ namespace Utopia.Worlds.Chunks
 
                     if (!chunk.isFrustumCulled)
                     {
-                        _worldFocusManager.CenterOnFocus(ref chunk.World, ref worldFocus);
+                        _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                         _terraEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _terraEffect.CBPerDraw.Values.popUpYOffset = 0;
                         _terraEffect.CBPerDraw.IsDirty = true;
@@ -122,7 +122,7 @@ namespace Utopia.Worlds.Chunks
                     //Only If I have something to draw !
                     if (chunk.LiquidCubeVB != null)
                     {
-                        _worldFocusManager.CenterOnFocus(ref chunk.World, ref worldFocus);
+                        _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                         _liquidEffect.CBPerDraw.Values.popUpYOffset = 0;
                         _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _liquidEffect.CBPerDraw.IsDirty = true;
