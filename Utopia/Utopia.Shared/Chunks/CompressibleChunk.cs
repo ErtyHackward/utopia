@@ -37,6 +37,9 @@ namespace Utopia.Shared.Chunks
         {
             if (BlockData == null)
                 throw new ArgumentNullException();
+
+            if (!CompressedDirty && CompressedBytes != null)
+                return CompressedBytes;
             
             var ms = new MemoryStream();
             using (var zip = new GZipStream(ms, CompressionMode.Compress))
