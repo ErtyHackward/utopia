@@ -184,6 +184,7 @@
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\IFlatGuiGraphics.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\OpeningLocator.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\IGuiVisualizer.cs" />
+    <Compile Include="Network\ClientEntityManager.cs" />
     <Compile Include="Network\EntityMessageTranslator.cs" />
     <Compile Include="Resources\SuaveSkinResources.Designer.cs">
       <AutoGen>True</AutoGen>

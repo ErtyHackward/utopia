@@ -116,23 +116,23 @@ namespace Utopia.Net.Connections
         /// <summary>
         /// Occurs when PlayerPositionMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<PlayerPositionMessage>> MessagePosition;
+        public event EventHandler<ProtocolMessageEventArgs<EntityPositionMessage>> MessagePosition;
 
-        protected void OnMessagePosition(PlayerPositionMessage ea)
+        protected void OnMessagePosition(EntityPositionMessage ea)
         {
             if (MessagePosition != null)
-                MessagePosition(this, new ProtocolMessageEventArgs<PlayerPositionMessage> { Message = ea });
+                MessagePosition(this, new ProtocolMessageEventArgs<EntityPositionMessage> { Message = ea });
         }
 
         /// <summary>
         /// Occurs when PlayerDirectionMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<PlayerDirectionMessage>> MessageDirection;
+        public event EventHandler<ProtocolMessageEventArgs<EntityDirectionMessage>> MessageDirection;
 
-        protected void OnMessageDirection(PlayerDirectionMessage ea)
+        protected void OnMessageDirection(EntityDirectionMessage ea)
         {
             if (MessageDirection != null)
-                MessageDirection(this, new ProtocolMessageEventArgs<PlayerDirectionMessage> { Message = ea });
+                MessageDirection(this, new ProtocolMessageEventArgs<EntityDirectionMessage> { Message = ea });
         }
 
         /// <summary>
@@ -161,23 +161,23 @@ namespace Utopia.Net.Connections
         /// <summary>
         /// Occurs when PlayerInMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<PlayerInMessage>> MessagePlayerIn;
+        public event EventHandler<ProtocolMessageEventArgs<EntityInMessage>> MessageEntityIn;
 
-        protected void OnMessagePlayerIn(PlayerInMessage ea)
+        protected void OnMessageEntityIn(EntityInMessage ea)
         {
-            if (MessagePlayerIn != null)
-                MessagePlayerIn(this, new ProtocolMessageEventArgs<PlayerInMessage> { Message = ea });
+            if (MessageEntityIn != null)
+                MessageEntityIn(this, new ProtocolMessageEventArgs<EntityInMessage> { Message = ea });
         }
 
         /// <summary>
         /// Occurs when PlayerOutMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<PlayerOutMessage>> MessagePlayerOut;
+        public event EventHandler<ProtocolMessageEventArgs<EntityOutMessage>> MessageEntityOut;
 
-        protected void OnMessagePlayerOut(PlayerOutMessage ea)
+        protected void OnMessageEntityOut(EntityOutMessage ea)
         {
-            if (MessagePlayerOut != null)
-                MessagePlayerOut(this, new ProtocolMessageEventArgs<PlayerOutMessage> { Message = ea });
+            if (MessageEntityOut != null)
+                MessageEntityOut(this, new ProtocolMessageEventArgs<EntityOutMessage> { Message = ea });
         }
 
         /// <summary>
@@ -189,6 +189,17 @@ namespace Utopia.Net.Connections
         {
             if (MessageDateTime != null)
                 MessageDateTime(this, new ProtocolMessageEventArgs<DateTimeMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when EntityUseMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityUseMessage>> MessageEntityUse;
+
+        protected void OnMessageEntityUse(EntityUseMessage ea)
+        {
+            if (MessageEntityUse != null)
+                MessageEntityUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
         }
 
         #endregion
@@ -349,23 +360,26 @@ namespace Utopia.Net.Connections
                 case MessageTypes.BlockChange:
                     OnMessageBlockChange((BlockChangeMessage)msg);
                     break;
-                case MessageTypes.PlayerPosition:
-                    OnMessagePosition((PlayerPositionMessage)msg);
+                case MessageTypes.EntityPosition:
+                    OnMessagePosition((EntityPositionMessage)msg);
                     break;
-                case MessageTypes.PlayerDirection:
-                    OnMessageDirection((PlayerDirectionMessage)msg);
+                case MessageTypes.EntityDirection:
+                    OnMessageDirection((EntityDirectionMessage)msg);
                     break;
                 case MessageTypes.ChunkData:
                     OnMessageChunkData((ChunkDataMessage)msg);
                     break;
-                case MessageTypes.PlayerIn:
-                    OnMessagePlayerIn((PlayerInMessage)msg);
+                case MessageTypes.EntityIn:
+                    OnMessageEntityIn((EntityInMessage)msg);
                     break;
-                case MessageTypes.PlayerOut:
-                    OnMessagePlayerOut((PlayerOutMessage)msg);
+                case MessageTypes.EntityOut:
+                    OnMessageEntityOut((EntityOutMessage)msg);
                     break;
                 case MessageTypes.LoginResult:
                     OnMessageLoginResult((LoginResultMessage)msg);
+                    break;
+                case MessageTypes.EntityUse:
+                    OnMessageEntityUse((EntityUseMessage)msg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("msg","Invalid message received from server");

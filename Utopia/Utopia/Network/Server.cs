@@ -43,8 +43,8 @@ namespace Utopia.Network
             ServerConnection.MessageDirection += _server_MessageDirection;
             ServerConnection.MessageError += _server_MessageError;
             ServerConnection.MessageGameInformation += _server_MessageGameInformation;
-            ServerConnection.MessagePlayerIn += _server_MessagePlayerIn;
-            ServerConnection.MessagePlayerOut += _server_MessagePlayerOut;
+            ServerConnection.MessageEntityIn += _server_MessagePlayerIn;
+            ServerConnection.MessageEntityOut += _server_MessagePlayerOut;
             ServerConnection.MessagePosition += _server_MessagePosition;
         }
 
@@ -57,19 +57,19 @@ namespace Utopia.Network
             }
         }
 
-        void _server_MessagePosition(object sender, ProtocolMessageEventArgs<Net.Messages.PlayerPositionMessage> e)
+        void _server_MessagePosition(object sender, ProtocolMessageEventArgs<Net.Messages.EntityPositionMessage> e)
         {
             throw new NotImplementedException();
         }
 
-        void _server_MessagePlayerOut(object sender, ProtocolMessageEventArgs<Net.Messages.PlayerOutMessage> e)
+        void _server_MessagePlayerOut(object sender, ProtocolMessageEventArgs<Net.Messages.EntityOutMessage> e)
         {
             throw new NotImplementedException();
         }
 
-        void _server_MessagePlayerIn(object sender, ProtocolMessageEventArgs<Net.Messages.PlayerInMessage> e)
+        void _server_MessagePlayerIn(object sender, ProtocolMessageEventArgs<Net.Messages.EntityInMessage> e)
         {
-            Console.WriteLine("_server_MessagePlayerIn : " + e.Message.Login);
+            Console.WriteLine("_server_MessagePlayerIn : " + e.Message.Entity.DisplayName);
         }
 
         void _server_MessageGameInformation(object sender, ProtocolMessageEventArgs<Net.Messages.GameInformationMessage> e)
@@ -82,7 +82,7 @@ namespace Utopia.Network
             Console.WriteLine("_server_MessageGameInformation : " + e.Message.Message.ToString());
         }
 
-        void _server_MessageDirection(object sender, ProtocolMessageEventArgs<Net.Messages.PlayerDirectionMessage> e)
+        void _server_MessageDirection(object sender, ProtocolMessageEventArgs<Net.Messages.EntityDirectionMessage> e)
         {
             throw new NotImplementedException();
         }

@@ -18,5 +18,13 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// Gets a displayed entity name
         /// </summary>
         string DisplayName { get; }
+
+        /// <summary>
+        /// Gets an unique entity identificator
+        /// </summary>
+        uint EntityId { get; }
+
+
+        void Save(System.IO.BinaryWriter writer);
     }
 }

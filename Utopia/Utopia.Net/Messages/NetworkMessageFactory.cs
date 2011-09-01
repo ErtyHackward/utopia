@@ -38,12 +38,11 @@ namespace Utopia.Net.Messages
                 case MessageTypes.GetChunks: return GetChunksMessage.Read(reader);
                 case MessageTypes.Login: return LoginMessage.Read(reader);
                 case MessageTypes.LoginResult: return LoginResultMessage.Read(reader);
-                case MessageTypes.PlayerDirection: return PlayerDirectionMessage.Read(reader);
-                case MessageTypes.PlayerIn: return PlayerInMessage.Read(reader);
-                case MessageTypes.PlayerOut: return PlayerOutMessage.Read(reader);
-                case MessageTypes.PlayerPosition: return PlayerPositionMessage.Read(reader);
+                case MessageTypes.EntityDirection: return EntityDirectionMessage.Read(reader);
+                case MessageTypes.EntityIn: return EntityInMessage.Read(reader);
+                case MessageTypes.EntityOut: return EntityOutMessage.Read(reader);
+                case MessageTypes.EntityPosition: return EntityPositionMessage.Read(reader);
                 case MessageTypes.EntityUse: return EntityUseMessage.Read(reader);
-                case MessageTypes.ToolUseMessage: return ToolUseMessage.Read(reader);
                 default:
                     return null;
                     //throw new ArgumentException("");
