@@ -48,7 +48,8 @@ namespace Utopia.Worlds.Chunks
         public VertexBuffer<VertexCubeLiquid> LiquidCubeVB; //Liquid cube vertex Buffer
         public IndexBuffer<ushort> LiquidCubeIB;            //Liquid cube index Buffer
 
-        public IntVector2 ChunkPosition { get; private set; } // Gets or sets current chunk position
+        public IntVector2 ChunkPositionBlockUnit { get; private set; } // Gets or sets current chunk position in Block Unit
+        public IntVector2 ChunkPosition { get; private set; } // Gets or sets current chunk position in Chunk Unit
         public ChunkState State { get; set; }                 // Chunk State
         public ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
         public WorkItemPriority ThreadPriority { get; set; }  // Thread Priority value
@@ -102,7 +103,7 @@ namespace Utopia.Worlds.Chunks
 
         public void RefreshBorderChunk()
         {
-            BorderChunk = isBorderChunk(ChunkPosition.X, ChunkPosition.Y);
+            BorderChunk = isBorderChunk(ChunkPositionBlockUnit.X, ChunkPositionBlockUnit.Y);
         }
 
 
@@ -254,7 +255,8 @@ namespace Utopia.Worlds.Chunks
         {
             ChunkID = (((Int64)_cubeRange.Min.X) << 32) + _cubeRange.Min.Z;
 
-            ChunkPosition = new IntVector2() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
+            ChunkPositionBlockUnit = new IntVector2() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
+            ChunkPosition = new IntVector2() { X = _cubeRange.Min.X / AbstractChunk.ChunkSize.X, Y = _cubeRange.Min.Z / AbstractChunk.ChunkSize.Z };
             RefreshWorldMatrix();
         }
 

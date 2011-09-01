@@ -227,7 +227,7 @@ namespace Utopia
             GameConsole.Initialize(_d3dEngine);
 
             //Add the server if multiplayer mode
-            if (!IoCContainer.Get<Server>().Deactivated) GameComponents.Add(IoCContainer.Get<Server>());
+            if (IoCContainer.Get<Server>().Connected) GameComponents.Add(IoCContainer.Get<Server>());
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 

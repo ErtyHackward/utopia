@@ -39,7 +39,7 @@ namespace Utopia.Shared.Chunks
             //return extractedCubes;
 
             byte[] extractedCubes = new byte[AbstractChunk.ChunkBlocksByteLength];
-            int index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
+            int index = ChunkCubes.Index(DataProviderUser.ChunkPositionBlockUnit.X, 0, DataProviderUser.ChunkPositionBlockUnit.Y);
             Array.Copy(ChunkCubes.Cubes, index, extractedCubes, 0, AbstractChunk.ChunkBlocksByteLength);
             return extractedCubes;
         }
@@ -51,9 +51,9 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public override byte GetBlock(Location3<int> inChunkPosition)
         {
-            return ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPosition.X,
+            return ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPositionBlockUnit.X,
                                                      inChunkPosition.Y,
-                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)].Id;
+                                                     inChunkPosition.Z + DataProviderUser.ChunkPositionBlockUnit.Y)].Id;
         }
 
         /// <summary>
@@ -63,9 +63,9 @@ namespace Utopia.Shared.Chunks
         /// <param name="blockValue"></param>
         public override void SetBlock(Location3<int> inChunkPosition, byte blockValue)
         {
-            ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPosition.X,
+            ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPositionBlockUnit.X,
                                                      inChunkPosition.Y,
-                                                     inChunkPosition.Z + DataProviderUser.ChunkPosition.Y)] = new TerraCube(blockValue);
+                                                     inChunkPosition.Z + DataProviderUser.ChunkPositionBlockUnit.Y)] = new TerraCube(blockValue);
 
             //Init ChunkCubes.CubesMetaData[] ???
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { inChunkPosition }, Bytes = new[] { blockValue } });
@@ -80,9 +80,9 @@ namespace Utopia.Shared.Chunks
         {
             for (int i = 0; i < positions.Length; i++)
             {
-                ChunkCubes.Cubes[ChunkCubes.Index(positions[i].X + DataProviderUser.ChunkPosition.X,
+                ChunkCubes.Cubes[ChunkCubes.Index(positions[i].X + DataProviderUser.ChunkPositionBlockUnit.X,
                                          positions[i].Y,
-                                         positions[i].Z + DataProviderUser.ChunkPosition.Y)] = new TerraCube(values[i]);
+                                         positions[i].Z + DataProviderUser.ChunkPositionBlockUnit.Y)] = new TerraCube(values[i]);
             }
 
             //Init ChunkCubes.CubesMetaData[] ???
@@ -98,7 +98,7 @@ namespace Utopia.Shared.Chunks
         public override void SetBlockBytes(byte[] bytes)
         {
             int byteArrayIndex = 0;
-            int baseCubeIndex = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
+            int baseCubeIndex = ChunkCubes.Index(DataProviderUser.ChunkPositionBlockUnit.X, 0, DataProviderUser.ChunkPositionBlockUnit.Y);
             int CubeIndexX = baseCubeIndex;
             int CubeIndexZ = baseCubeIndex;
             int cubeIndex = baseCubeIndex;

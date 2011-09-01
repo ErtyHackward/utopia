@@ -143,7 +143,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //Check to see if the face needs to be generated or not !
                         //Border Chunk test ! ==> Don't generate faces that are "border" chunks
                         //BorderChunk value is true if the chunk is at the border of the visible world.
-                        int neightborCubeIndexTest;
                         switch (cubeFace)
                         {
                             case CubeFace.Back:
