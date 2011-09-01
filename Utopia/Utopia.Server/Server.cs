@@ -307,7 +307,7 @@ namespace Utopia.Server
                     {
                         Position = pos,
                         Flag = ChunkDataMessageFlag.ChunkWasModified,
-                        Data = chunk.CompressedBytes
+                        Data = chunk.Compress()
                     });
 
                 });
