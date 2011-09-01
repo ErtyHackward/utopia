@@ -39,7 +39,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
   //   on the virtualized graphics device here.
 
   /// <summary>Draws traditional flat GUIs using 2D bitmaps</summary>
-  public class FlatGuiVisualizer : IGuiVisualizer, IDisposable {
+  public class FlatGuiVisualizer : IGuiVisualizer {
 
     #region struct ControlWithBounds
 

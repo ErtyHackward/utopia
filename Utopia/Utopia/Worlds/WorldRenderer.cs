@@ -34,14 +34,14 @@ namespace Utopia.Worlds
         #region Public methods
         public override void Initialize()
         {
-        }
-
-        public override void LoadContent()
-        {
             _world.WorldClock.Initialize();
             _world.WorldWeather.Initialize();
             _world.WorldSkyDome.Initialize();
             _world.WorldChunks.Initialize();
+        }
+
+        public override void LoadContent()
+        {
         }
 
         public override void UnloadContent()

@@ -327,6 +327,7 @@ namespace Utopia.Net.Connections
                 IBinaryMessage msg;
                 if (_concurrentQueue.TryDequeue(out msg))
                 {
+                    Console.WriteLine("Received Message Id : " + msg.MessageId);
                     InvokeEvent(msg);
                 }
             }
@@ -421,6 +422,7 @@ namespace Utopia.Net.Connections
                             // using Factory here makes additional box\unbox operation to pass strucutre by interface
                             // need to profile in real conditions
                             var message = NetworkMessageFactory.Instance.ReadMessage(idByte, reader);
+
                             _concurrentQueue.Enqueue(message);
                         }
                     }

@@ -59,7 +59,6 @@ namespace Utopia.Worlds.SkyDomes
 
         public virtual void Dispose()
         {
-            _clock.Dispose();
         }
 
         #endregion

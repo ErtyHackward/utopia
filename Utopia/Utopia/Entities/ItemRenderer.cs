@@ -17,6 +17,7 @@ using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities
 {
@@ -64,6 +65,8 @@ namespace Utopia.Entities
         public override void UnloadContent()
         {
             if (_itemEffect != null) _itemEffect.Dispose();
+            foreach (var buffer in ItemVBs) if (buffer != null) buffer.Dispose();
+            foreach (var item in Items) if (item != null) item.Dispose();
         }
 
         public override void Update(ref GameTime TimeSpend)
@@ -130,12 +133,10 @@ namespace Utopia.Entities
                 }
 
                 VertexBuffer<VertexPositionColor> vb = ItemVBs[i];
-                
-                Matrix worldFocused = Matrix.Identity;
-                Matrix world = Matrix.Scaling(1f/16f)*Matrix.Translation(item.Position);
 
-                _worldFocusManager.CenterOnFocus(ref world, ref worldFocused);
-                _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocused);
+                Matrix world = Matrix.Scaling(1f / 16f) * Matrix.RotationY(MathHelper.PiOver4) * Matrix.Translation(item.Position);
+                world = _worldFocusManager.CenterOnFocus(ref world);
+                _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
 
                 vb.SetToDevice(0);
                 _d3DEngine.Context.Draw(vb.VertexCount, 0);

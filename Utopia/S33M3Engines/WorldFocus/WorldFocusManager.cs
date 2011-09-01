@@ -30,13 +30,26 @@ namespace S33M3Engines.WorldFocus
         }
 
         #region Public methods
-        //Apply matrix translation based on the world focus 
-        // == Apply the inverse of the world focus location.
-        public void CenterOnFocus(ref Matrix WorldMatrix, ref Matrix WorldFocusedMatrix)
+        /// <summary>
+        /// Function used to center a Translation ONLY world matrix around the focus world point.
+        /// </summary>
+        /// <param name="WorldTranslationMatrix"></param>
+        /// <param name="WorldFocusedMatrix"></param>
+        public void CenterTranslationMatrixOnFocus(ref Matrix WorldTranslationMatrix, ref Matrix WorldFocusedMatrix)
         {
-            WorldFocusedMatrix.M41 = WorldMatrix.M41 - (float)_worldFocus.FocusPoint.ActualValue.X;
-            WorldFocusedMatrix.M42 = WorldMatrix.M42 - (float)_worldFocus.FocusPoint.ActualValue.Y;
-            WorldFocusedMatrix.M43 = WorldMatrix.M43 - (float)_worldFocus.FocusPoint.ActualValue.Z;
+                WorldFocusedMatrix.M41 = WorldTranslationMatrix.M41 - (float)_worldFocus.FocusPoint.ActualValue.X;
+                WorldFocusedMatrix.M42 = WorldTranslationMatrix.M42 - (float)_worldFocus.FocusPoint.ActualValue.Y;
+                WorldFocusedMatrix.M43 = WorldTranslationMatrix.M43 - (float)_worldFocus.FocusPoint.ActualValue.Z;
+        }
+
+        /// <summary>
+        /// Function used to center a world matrix around the focus world point.
+        /// </summary>
+        /// <param name="WorldTranslationMatrix"></param>
+        /// <param name="WorldFocusedMatrix"></param>
+        public Matrix CenterOnFocus(ref Matrix WorldMatrix)
+        {
+            return WorldMatrix * _worldFocus.FocusPointMatrix.ActualValue;
         }
         #endregion
 

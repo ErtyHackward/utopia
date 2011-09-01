@@ -226,7 +226,11 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         if (this.spriteRenderer != null)
         {
             this.spriteRenderer.Dispose();
-      }
+        }
+
+        foreach (var kvp in fonts) kvp.Value.Dispose();
+        foreach (var kvp in bitmaps) kvp.Value.Dispose();
+
     }
 
     /// <summary>
