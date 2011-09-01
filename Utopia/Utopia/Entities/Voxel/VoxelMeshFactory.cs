@@ -15,101 +15,61 @@ namespace Utopia.Entities.Voxel
     {
         //TODO (Simon) VoxelMeshFactory generic implementation with <VertexPositionColor> or <VertexPositionColorTexture>
 
-        public VertexBuffer<VertexPositionColor> VertexBuffer;
-        private readonly List<VertexPositionColor> _vertexList = new List<VertexPositionColor>();
-        public ByteVector3 Size;
-        public byte[,,] Blocks;
         private readonly D3DEngine _d3DEngine;
-
+       
         public VoxelMeshFactory(D3DEngine d3DEngine)
         {
             _d3DEngine = d3DEngine;
         }
 
-        public void GenCubesFaces()
+        public  List<VertexPositionColor> GenCubesFaces(byte[,,] blocks)
         {
-            for (int x = 0; x < Blocks.GetLength(0); x++)
+            List<VertexPositionColor> vertexList  = new List<VertexPositionColor>();
+            
+            for (int x = 0; x < blocks.GetLength(0); x++)
             {
-                for (int y = 0; y < Blocks.GetLength(1); y++)
+                for (int y = 0; y < blocks.GetLength(1); y++)
                 {
-                    for (int z = 0; z < Blocks.GetLength(2); z++)
+                    for (int z = 0; z < blocks.GetLength(2); z++)
                     {
-                        byte blockType = Blocks[x, y, z];
+                        byte blockType = blocks[x, y, z];
 
                         if (blockType == 0) continue;
 
-                        BuildBlockVertices(_vertexList, blockType, x, y, z);
+                        BuildBlockVertices(blocks,ref vertexList, blockType, x, y, z);
                     }
                 }
             }
+
+            return vertexList;
         }
+  
 
-
-        //Temporary method, drawing will be in a separate class
-        public void SendMeshToGraphicCard()
+        private void BuildBlockVertices(byte[, ,] blocks, ref List<VertexPositionColor> vertice, byte blockType, int x, int y, int z)
         {
-            //if (_vertexList.Count == 0)
-            //{
-            //    if (VertexBuffer != null) VertexBuffer.Dispose();
-            //    VertexBuffer = null;
-            //    return;
-            //}
-
-            //if (VertexBuffer == null)
-            //{
-            //    VertexBuffer = new VertexBuffer<VertexPositionColor>(_d3DEngine, _vertexList.Count,
-            //                                                          VertexPositionColor.VertexDeclaration,
-            //                                                          PrimitiveTopology.TriangleList,
-            //                                                          ResourceUsage.Default, 10);
-            //}
-            //VertexBuffer.SetData(_vertexList.ToArray());
-            //_vertexList.Clear();
-
-
-
-            if (VertexBuffer == null && _vertexList.Count != 0)
-            {
-                VertexBuffer = new VertexBuffer<VertexPositionColor>(_d3DEngine, _vertexList.Count,
-                                                                      VertexPositionColor.VertexDeclaration,
-                                                                      PrimitiveTopology.TriangleList,
-                                                                      ResourceUsage.Default, 10);
-                VertexBuffer.SetData(_vertexList.ToArray());
-                _vertexList.Clear();
-            }
-
-        }
-
-        protected void BuildBlockVertices(List<VertexPositionColor> vertexList, byte blockType, int x, int y, int z)
-        {
-            byte blockXDecreasing = BlockAt(x - 1, y, z);
-            byte blockXIncreasing = BlockAt(x + 1, y, z);
-            byte blockYDecreasing = BlockAt(x, y - 1, z);
-            byte blockYIncreasing = BlockAt(x, y + 1, z);
-            byte blockZDecreasing = BlockAt(x, y, z - 1);
-            byte blockZIncreasing = BlockAt(x, y, z + 1);
+               
+            byte blockXDecreasing = x == 0 ? (byte)0 : blocks[x - 1, y, z];
+            byte blockXIncreasing = x == blocks.GetLength(0)-1 ? (byte)0 : blocks[x + 1, y, z];
+            byte blockYDecreasing = y == 0 ? (byte)0 : blocks[x, y - 1, z];
+            byte blockYIncreasing = y == blocks.GetLength(1)-1 ? (byte)0 : blocks[x, y + 1, z];
+            byte blockZDecreasing = z == 0 ? (byte)0 : blocks[x, y, z - 1];
+            byte blockZIncreasing = z == blocks.GetLength(2)-1 ? (byte)0 : blocks[x, y, z + 1];
 
             if (blockXDecreasing == 0)
-                BuildFaceVertices(x, y, z, CubeFace.Left, blockType); //X-
+                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Left, blockType); //X-
             if (blockXIncreasing == 0)
-                BuildFaceVertices(x, y, z, CubeFace.Right, blockType); //X+
+                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Right, blockType); //X+
             if (blockYDecreasing == 0)
-                BuildFaceVertices(x, y, z, CubeFace.Bottom, blockType); //Y-
+                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Bottom, blockType); //Y-
             if (blockYIncreasing == 0)
-                BuildFaceVertices(x, y, z, CubeFace.Top, blockType); //Y+
+                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Top, blockType); //Y+
             if (blockZDecreasing == 0)
-                BuildFaceVertices(x, y, z, CubeFace.Front, blockType); //Z-
+                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Front, blockType); //Z-
             if (blockZIncreasing == 0)
-                BuildFaceVertices(x, y, z, CubeFace.Back, blockType); //Z+
+                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Back, blockType); //Z+
         }
 
-        private byte BlockAt(int x, int y, int z)
-        {
-            if (x < 0 || y < 0 || z < 0) return 0;
-            if (x > Blocks.GetLength(0) - 1 || y > Blocks.GetLength(1) - 1 || z > Blocks.GetLength(2) - 1) return 0;
-            return Blocks[x, y, z];
-        }
-
-        private void BuildFaceVertices(int x, int y, int z, CubeFace faceDir, byte blockType)
+        private void BuildFaceVertices(ref List<VertexPositionColor> vertice, int x, int y, int z, CubeFace faceDir, byte blockType )
         {
             //actually only handles 64 colors, so all blockType> 63 will have default color
             Color color = ColorLookup.Colours[blockType];
@@ -118,88 +78,72 @@ namespace Utopia.Entities.Voxel
             {
                 case CubeFace.Right: //X+
                     {
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
                     }
                     break;
 
                 case CubeFace.Left: //X-
                     {
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
                     }
                     break;
 
                 case CubeFace.Top: //Y+
                     {
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
                     }
                     break;
 
                 case CubeFace.Bottom: //Y-
                     {
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
                     }
                     break;
 
                 case CubeFace.Back: //Z+
                     {
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
                     }
                     break;
 
                 case CubeFace.Front: //Z-
                     {
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
-                        _vertexList.Add(new VertexPositionColor(new Vector3(x, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
                     }
                     break;
             }
         }
 
-        public void RandomFill(int emptyProbabilityPercent)
-        {
-            Random r = new Random();
-            for (uint x = 0; x < Blocks.GetLength(0); x++)
-            {
-                for (uint y = 0; y < Blocks.GetLength(1); y++)
-                {
-                    for (uint z = 0; z < Blocks.GetLength(2); z++)
-                    {
-                        if (r.Next(100) < emptyProbabilityPercent)
-                            Blocks[x, y, z] = 0;
-                        else
-                            Blocks[x, y, z] = (byte) r.Next(63);
-                    }
-                }
-            }
-        }
+       
     }
 }

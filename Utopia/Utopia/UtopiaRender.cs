@@ -188,6 +188,7 @@ namespace Utopia
             _entityRender.Entities.Add(_player); //Add the main player to Entities
             GameComponents.Add(_entityRender);
 
+            GameComponents.Add(IoCContainer.Get<ItemRenderer>());
 
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
             camera.CameraPlugin = _player;
