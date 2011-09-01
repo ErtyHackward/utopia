@@ -91,6 +91,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="ms"></param>
         public void Deserialize(MemoryStream ms)
         {
+            ms.Position = 0;
             var reader = new BinaryReader(ms);
             BlockData.SetBlockBytes(reader.ReadBytes(ChunkBlocksByteLength));
             Entities.Clear();

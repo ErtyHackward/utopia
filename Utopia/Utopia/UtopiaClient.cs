@@ -97,10 +97,11 @@ namespace Utopia
                 case FormRequestedAction.ExitGame:
                     return;
                 case FormRequestedAction.StartSinglePlayer:
-                    _iocContainer.Get<Server>().Deactivated = true;
+                    _iocContainer.Get<Server>().Connected = false;
                     StartDirectXWindow();
                     break;
                 case FormRequestedAction.StartMultiPlayer:
+                    _iocContainer.Get<Server>().Connected = true;
                     StartDirectXWindow();
                     break;
             }

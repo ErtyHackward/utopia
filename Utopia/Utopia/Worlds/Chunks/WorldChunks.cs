@@ -21,6 +21,7 @@ using Ninject;
 using S33M3Engines.WorldFocus;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
+using Utopia.Network;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -60,6 +61,7 @@ namespace Utopia.Worlds.Chunks
         private ILightingManager _lightingManager;
         private ILandscapeManager _landscapeManager;
         private IChunkMeshManager _chunkMeshManager;
+        private Server _server;
         #endregion
 
         #region Public Property/Variables
@@ -90,8 +92,10 @@ namespace Utopia.Worlds.Chunks
                            ILandscapeManager landscapeManager,
                            IChunkMeshManager chunkMeshManager,
                            IChunksWrapper chunkWrapper,
-                           ILightingManager lightingManager)
+                           ILightingManager lightingManager,
+                           Server server)
         {
+            _server = server;
             _d3dEngine = d3dEngine;
             _worldFocusManager = worldFocusManager;
             _gameStates = gameStates;
@@ -287,6 +291,17 @@ namespace Utopia.Worlds.Chunks
                     Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
                     SortedChunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
                 }
+            }
+
+            //Request the Full landscape chunks if server connected
+            if (_server.Connected)
+            {
+                _server.ServerConnection.SendAsync(new Utopia.Net.Messages.GetChunksMessage()
+                    {
+                        StartPosition = new Shared.Structs.IntVector2((VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X), (VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z)),
+                        EndPosition = new Shared.Structs.IntVector2((VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X) + VisualWorldParameters.WorldParameters.WorldChunkSize.X + 1, (VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z) + VisualWorldParameters.WorldParameters.WorldChunkSize.Z + 1),
+                        Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData
+                    });
             }
 
             ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).

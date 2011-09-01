@@ -16,13 +16,13 @@ namespace Utopia.Network
         #region Public properties/variables
         public string Address { get; set; }
         public int Port { get; set; }
-        public bool Deactivated { get; set; }
+        public bool Connected { get; set; }
         public ServerConnection ServerConnection { get; set; }
         #endregion
 
         public Server()
         {
-            Deactivated = false;
+            Connected = false;
             this.CallDraw = false; //Disable Draw calls
         }
 
@@ -135,23 +135,9 @@ namespace Utopia.Network
             }
         }
 
-        private bool oneShot = true;
         public override void Update(ref GameTime TimeSpend)
         {
-            ServerConnection.FetchPendingMessages(1);
-
-            //Ask once a chunks via the server ! ==> Testing !
-            if(oneShot)
-            {
-                ServerConnection.SendAsync(new Utopia.Net.Messages.GetChunksMessage() 
-                { 
-                    StartPosition = new Shared.Structs.IntVector2(0, 0), 
-                    EndPosition = new Shared.Structs.IntVector2(1, 1), 
-                    Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData 
-                });
-                oneShot = false;
-            }
-
+            ServerConnection.FetchPendingMessages(5);
         }
 
         #endregion
