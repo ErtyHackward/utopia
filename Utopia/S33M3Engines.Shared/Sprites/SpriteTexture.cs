@@ -8,7 +8,7 @@ using S33M3Engines.Shared.Delegates;
 
 namespace S33M3Engines.Shared.Sprites
 {
-    public class SpriteTexture
+    public class SpriteTexture : IDisposable
     {
         public ShaderResourceView Texture;
         public bool _textureDispose = true;

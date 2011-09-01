@@ -26,7 +26,6 @@ namespace Utopia.GUI.D3D
         /// <summary>The GUI screen representing the desktop</summary>
         private readonly Screen _screen;
 
-
         private SpriteRenderer _spriteRender;
         private SpriteTexture _crosshair;
         private SpriteFont _font;
@@ -53,6 +52,11 @@ namespace Utopia.GUI.D3D
         public override void UnloadContent()
         {
             // TODO (Simon) dispose NuclexUI resources
+            if(_spriteRender != null) _spriteRender.Dispose();
+            if (_crosshair != null) _crosshair.Dispose();
+            if (_font != null) _font.Dispose();
+            if (_guiVisualizer != null) _guiVisualizer.Dispose();
+
         }
 
         public override void Update(ref GameTime timeSpent)

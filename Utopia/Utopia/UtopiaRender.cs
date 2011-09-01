@@ -84,10 +84,6 @@ namespace Utopia
         const int H = 600;
 #endif
 
-#if DEBUG
-        private Axis _axis;
-#endif
-
         public UtopiaRender(IKernel iocContainer, Server server)
         {
             _iocContainer = iocContainer;
@@ -103,8 +99,8 @@ namespace Utopia
         {
             //Initialize the Thread Pool manager
             S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
-          
-            // DebugInit(_iocContainer); //To use for testing Debug initializer
+
+            //DebugInit(_iocContainer); //To use for testing Debug initializer
             Init(_iocContainer);
 
 #if DEBUG

@@ -45,8 +45,7 @@ namespace Utopia.Net.Messages
                 case MessageTypes.EntityUse: return EntityUseMessage.Read(reader);
                 case MessageTypes.ToolUseMessage: return ToolUseMessage.Read(reader);
                 default:
-                    return null;
-                    //throw new ArgumentException("");
+                    throw new ArgumentException("");
             }
         }
     }

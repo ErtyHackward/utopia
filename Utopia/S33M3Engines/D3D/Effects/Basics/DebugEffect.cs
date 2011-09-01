@@ -22,7 +22,8 @@ namespace S33M3Engines.D3D.Effects.Basics
         }
         public static void Dispose()
         {
-            if (_debugEffect != null) _debugEffect.Dispose();
+            if (_debugEffect != null) 
+                _debugEffect.Dispose();
         }
     }
 }
