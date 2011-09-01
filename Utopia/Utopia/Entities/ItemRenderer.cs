@@ -53,6 +53,7 @@ namespace Utopia.Entities
             item.Blocks = new byte[16,16,16];
             item.RandomFill(5);
             Items.Add(item);
+            ItemVBs.Add(null); //hold the two collections in one class ?
             //note render item icons to one texture when player opens inventory. an idea that needs more thinking
         }
 
@@ -103,8 +104,10 @@ namespace Utopia.Entities
 
         private void DrawItems()
         {
+            //TODO : frustum culling of items in view
+
             _itemEffect.Begin();
-            
+
             _itemEffect.CBPerDraw.IsDirty = true;
             _itemEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
             _itemEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
@@ -118,23 +121,27 @@ namespace Utopia.Entities
                 if (item.Altered)
                 {
                     List<VertexPositionColor> vertice = _voxelMeshFactory.GenCubesFaces(item.Blocks);
-                    VertexBuffer<VertexPositionColor> newVb = new VertexBuffer<VertexPositionColor>(_d3DEngine, vertice.Count,
-                                                               VertexPositionColor.VertexDeclaration,
-                                                               PrimitiveTopology.TriangleList,
-                                                               ResourceUsage.Default, 10);
-                    if (vertice.Count != 0)
+
+                    if (ItemVBs[i] == null)
                     {
-                        newVb.SetData(vertice.ToArray());
+                        ItemVBs[i] = new VertexBuffer<VertexPositionColor>(_d3DEngine, vertice.Count,
+                                                                           VertexPositionColor.VertexDeclaration,
+                                                                           PrimitiveTopology.TriangleList,
+                                                                           ResourceUsage.Default, 10);
                     }
 
-                    ItemVBs.Add(newVb);
+                    if (vertice.Count != 0)
+                    {
+                        ItemVBs[i].SetData(vertice.ToArray());
+                    }
 
                     item.Altered = false;
                 }
 
                 VertexBuffer<VertexPositionColor> vb = ItemVBs[i];
 
-                Matrix world = Matrix.Scaling(1f / 16f) * Matrix.RotationY(MathHelper.PiOver4) * Matrix.Translation(item.Position);
+                Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
+                               Matrix.Translation(item.Position);
                 world = _worldFocusManager.CenterOnFocus(ref world);
                 _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
 
