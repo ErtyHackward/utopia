@@ -40,9 +40,8 @@ namespace Utopia.Server
             _iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
             _iocContainer.Bind<IUsersStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
             _iocContainer.Bind<IChunksStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
-
+            _iocContainer.Bind<IEntityStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
             
-
         }
 
         static void Main(string[] args)
@@ -57,7 +56,8 @@ namespace Utopia.Server
                 _iocContainer.Get<XmlSettingsManager<ServerSettings>>(),  
                 _iocContainer.Get<WorldGenerator>(),
                 _iocContainer.Get<IUsersStorage>(),
-                _iocContainer.Get<IChunksStorage>()
+                _iocContainer.Get<IChunksStorage>(),
+                _iocContainer.Get<IEntityStorage>()
                 );
 
             _server.Listen();

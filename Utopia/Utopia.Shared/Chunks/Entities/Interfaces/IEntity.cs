@@ -1,3 +1,4 @@
+using System.IO;
 using SharpDX;
 
 namespace Utopia.Shared.Chunks.Entities.Interfaces
@@ -25,6 +26,7 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         uint EntityId { get; }
 
 
-        void Save(System.IO.BinaryWriter writer);
+        void Save(BinaryWriter writer);
+        void Load(BinaryReader reader);
     }
 }

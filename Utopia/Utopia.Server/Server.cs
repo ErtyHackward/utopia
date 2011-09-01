@@ -10,6 +10,7 @@ using Utopia.Server.Managers;
 using Utopia.Server.Structs;
 using Utopia.Server.Utils;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Config;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
@@ -72,6 +73,11 @@ namespace Utopia.Server
         public WorldGenerator WorldGenerator { get; private set; }
 
         /// <summary>
+        /// Gets main entity storage
+        /// </summary>
+        public IEntityStorage EntityStorage { get; private set; }
+
+        /// <summary>
         /// Gets entity manager
         /// </summary>
         public EntityManager EntityManager { get; private set; }
@@ -79,19 +85,27 @@ namespace Utopia.Server
         /// <summary>
         /// Create new instance of the Server class
         /// </summary>
-        public Server(XmlSettingsManager<ServerSettings> settingsManager, WorldGenerator worldGenerator, IUsersStorage usersStorage, IChunksStorage chunksStorage)
+        public Server(
+            XmlSettingsManager<ServerSettings> settingsManager, 
+            WorldGenerator worldGenerator, 
+            IUsersStorage usersStorage, 
+            IChunksStorage chunksStorage, 
+            IEntityStorage entityStorage
+            )
         {
             // dependency injection
             SettingsManager = settingsManager;
             ChunksStorage = chunksStorage;
             UsersStorage = usersStorage;
             WorldGenerator = worldGenerator;
+            EntityStorage = entityStorage;
 
             // memory storage for chunks
             Chunks = new Dictionary<IntVector2, ServerChunk>();
 
             EntityManager = new EntityManager();
             
+            EntityFactory.Instance.SetLastId(EntityStorage.GetMaximumId()+1);
 
             // connections
             Listener = new TcpConnectionListener(SettingsManager.Settings.ServerPort);
@@ -151,7 +165,6 @@ namespace Utopia.Server
         {
             e.Connection.MessageLogin -= ConnectionMessageLogin;
             e.Connection.MessageGetChunks -= ConnectionMessageGetChunks;
-            e.Connection.MessageBlockChange -= ConnectionMessageBlockChange;
             e.Connection.MessagePosition -= ConnectionMessagePosition;
             e.Connection.MessageDirection -= ConnectionMessageDirection;
             e.Connection.MessageChat -= ConnectionMessageChat;
@@ -159,7 +172,11 @@ namespace Utopia.Server
             
             if (e.Connection.Authorized)
             {
-                ConnectionManager.Broadcast(new EntityOutMessage { EntityId = e.Connection.Entity.EntityId });
+                // saving the entity
+                EntityStorage.SaveEntity(e.Connection.Entity);
+
+                // tell everybody that this player is gone
+                EntityManager.RemoveEntity(e.Connection.Entity);
             }
 
         }
@@ -175,7 +192,6 @@ namespace Utopia.Server
         {
             e.Connection.MessageLogin += ConnectionMessageLogin;
             e.Connection.MessageGetChunks += ConnectionMessageGetChunks;
-            e.Connection.MessageBlockChange += ConnectionMessageBlockChange;
             e.Connection.MessagePosition += ConnectionMessagePosition;
             e.Connection.MessageDirection += ConnectionMessageDirection;
             e.Connection.MessageChat += ConnectionMessageChat;
@@ -186,7 +202,6 @@ namespace Utopia.Server
             var connection = sender as ClientConnection;
             if (connection != null && e.Message.EntityId == connection.Entity.EntityId)
             {
-                ConnectionManager.Broadcast(e.Message);
                 connection.Entity.Rotation = e.Message.Direction;
             }
         }
@@ -196,29 +211,8 @@ namespace Utopia.Server
             var connection = sender as ClientConnection;
             if (connection != null && e.Message.EntityId == connection.Entity.EntityId)
             {
-                ConnectionManager.Broadcast(e.Message);
                 connection.Entity.Position = e.Message.Position;
             }
-        }
-
-        void ConnectionMessageBlockChange(object sender, ProtocolMessageEventArgs<BlockChangeMessage> e)
-        {
-            var vector = e.Message.BlockPosition;
-            Console.WriteLine("BlockChanged {0} {1} {2}", vector.X,vector.Y,vector.Z );
-
-            var chunkPos = BlockHelper.BlockToChunkPosition(e.Message.BlockPosition);
-
-            var chunk = GetChunk(chunkPos);
-
-            var inchunkpos = BlockHelper.GlobalToInternalChunkPosition(e.Message.BlockPosition);
-
-            if (!chunk.NeedSave)
-                lock (_saveList)
-                    _saveList.Add(chunk);
-
-            chunk.BlockData.SetBlock(inchunkpos, e.Message.BlockType);
-
-            ConnectionManager.Broadcast(e.Message);
         }
 
         /// <summary>
@@ -330,6 +324,7 @@ namespace Utopia.Server
         {
             var connection = sender as ClientConnection;
 
+            // check if user want to register and this login is busy
             if (e.Message.Register)
             {
                 if (!UsersStorage.Register(e.Message.Login, e.Message.Password, 0))
@@ -343,6 +338,7 @@ namespace Utopia.Server
                 }
             }
 
+            // check client version
             if (e.Message.Version != ServerProtocolVersion)
             {
                 var error = new ErrorMessage { 
@@ -355,6 +351,7 @@ namespace Utopia.Server
                 return;
             }
 
+            // checking login and password
             LoginData? loginData;
             if (UsersStorage.Login(e.Message.Login, e.Message.Password, out loginData))
             {
@@ -364,16 +361,43 @@ namespace Utopia.Server
                 connection.UserId = loginData.Value.UserId;
                 connection.Login = e.Message.Login;
 
-                // todo: need to initilize entity object here properly
-                connection.Entity = new PlayerCharacter { CharacterName = e.Message.Login, EntityId = 1 };
+                IDynamicEntity playerEntity;
 
-                connection.Send(new LoginResultMessage {Logged = true});
+                if (loginData.Value.State == null)
+                {
+                    // create new message
+                    playerEntity = new ServerPlayerCharacterEntity(connection);
+                    
+                    var state = new UserState();
+                    state.EntityId = playerEntity.EntityId;
+
+                    UsersStorage.SetData(e.Message.Login, state.Save());
+                }
+                else
+                {
+                    var state = UserState.Load(loginData.Value.State );
+                    // load player entity
+                    playerEntity = new ServerPlayerCharacterEntity(connection);
+                    
+                    var bytes = EntityStorage.LoadEntityBytes(state.EntityId);
+
+                    using (var ms = new MemoryStream(bytes))
+                    {
+                        var reader = new BinaryReader(ms);
+                        playerEntity.Load(reader);
+                    }
+
+                }
+
+                connection.Entity = playerEntity;
+
+                connection.Send(new LoginResultMessage { Logged = true });
 
                 var gameInfo = new GameInformationMessage { ChunkSize = new Location3<int>(16, 128, 16), MaxViewRange = 32 };
                 connection.Send(gameInfo);
                 
-                ConnectionManager.Broadcast(new EntityInMessage { Entity = connection.Entity });
-
+                // adding entity to world
+                EntityManager.AddEntity(connection.Entity);
             }
             else
             {

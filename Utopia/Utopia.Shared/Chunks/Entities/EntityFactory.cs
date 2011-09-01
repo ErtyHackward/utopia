@@ -24,6 +24,20 @@ namespace Utopia.Shared.Chunks.Entities
         private uint _lastId;
 
         /// <summary>
+        /// Sets the maximum id value to generate unique EntityId values
+        /// </summary>
+        /// <param name="id"></param>
+        public void SetLastId(uint id)
+        {
+            _lastId = id;
+        }
+
+        public uint GetUniqueEntityId()
+        {
+            return ++_lastId;
+        }
+
+        /// <summary>
         /// Returns new entity object by its classId
         /// </summary>
         /// <param name="classId">Entity class identificator</param>
@@ -44,7 +58,7 @@ namespace Utopia.Shared.Chunks.Entities
                     throw new ArgumentOutOfRangeException("classId");
             }
 
-            entity.EntityId = ++_lastId;
+            entity.EntityId = GetUniqueEntityId();
 
             return entity;
         }
@@ -65,6 +79,15 @@ namespace Utopia.Shared.Chunks.Entities
             entity.Load(reader);
 
             return entity;
+        }
+
+        public Entity CreateFromBytes(byte[] bytes)
+        {
+            using (var ms = new MemoryStream(bytes))
+            {
+                var reader = new BinaryReader(ms);
+                return CreateFromBytes(reader);
+            }
         }
 
     }
