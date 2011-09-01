@@ -377,7 +377,8 @@ namespace Utopia.Server.Managers
             {
                 if (reader.Read())
                 {
-                    var maxNumber = reader.GetInt64(0);
+                    if (reader.IsDBNull(0)) return 0;
+                    var maxNumber = reader.GetInt32(0);
                     return (uint) maxNumber;
                 } return 0;
             }
