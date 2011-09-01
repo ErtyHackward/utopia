@@ -274,7 +274,7 @@ namespace Utopia.Worlds.SkyDomes
         {
             Matrix World = Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.X, -(float)_camManager.ActiveCamera.WorldPosition.Y, (float)_camManager.ActiveCamera.WorldPosition.Z);
 
-            _worldFocusManager.CenterOnFocus(ref World, ref World);
+            _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
             //Set States.
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullFront, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
@@ -327,7 +327,7 @@ namespace Utopia.Worlds.SkyDomes
                             Matrix.Translation(LightDirection.X * 1900, LightDirection.Y * 1900, LightDirection.Z * 1900) *
                             Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.X, -(float)_camManager.ActiveCamera.WorldPosition.Y, (float)_camManager.ActiveCamera.WorldPosition.Z);
 
-            _worldFocusManager.CenterOnFocus(ref World, ref World);
+            _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
             _posiTextureEffect.Begin();
             _posiTextureEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
@@ -358,7 +358,7 @@ namespace Utopia.Worlds.SkyDomes
                     Matrix.Translation(LightDirection.X * 1700, LightDirection.Y * 1700, LightDirection.Z * 1700) *
                     Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.X, -(float)_camManager.ActiveCamera.WorldPosition.Y, (float)_camManager.ActiveCamera.WorldPosition.Z);
 
-            _worldFocusManager.CenterOnFocus(ref World, ref World);
+            _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
             _posiTextureEffect.CBPerDraw.Values.World = Matrix.Transpose(World);
             _posiTextureEffect.CBPerDraw.IsDirty = true;

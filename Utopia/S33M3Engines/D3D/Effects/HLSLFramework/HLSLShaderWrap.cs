@@ -79,6 +79,8 @@ namespace S33M3Engines.D3D.Effects
             _filePathName = filePathName;
             _d3dEngine = d3dEngine;
             _vertexDeclaration = VertexDeclaration;
+
+            //Console.WriteLine(_filePathName + " Shader created");
         }
 
         protected void LoadShaders(EntryPoints shaderEntryPoints)
@@ -269,6 +271,9 @@ namespace S33M3Engines.D3D.Effects
                 _cBuffers[i].Dispose();
             }
             DisposeInputLayout();
+
+            //Console.WriteLine(_filePathName + " Shader Disposed");
+
         }
 
         private void DisposeInputLayout()

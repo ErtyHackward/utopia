@@ -276,6 +276,11 @@ namespace Utopia.Worlds.Chunks
 #if DEBUG
             ChunkBoundingBoxDisplay.Dispose();
 #endif
+            if (SolidCubeVB != null) SolidCubeVB.Dispose();
+            if (SolidCubeIB != null) SolidCubeIB.Dispose();
+            if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
+            if (LiquidCubeIB != null) LiquidCubeIB.Dispose();
+
         }
     }
 }

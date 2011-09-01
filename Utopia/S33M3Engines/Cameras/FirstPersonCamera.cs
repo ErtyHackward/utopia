@@ -49,6 +49,8 @@ namespace S33M3Engines.Cameras
 
                 //Set the new Computed focus point
                 base.FocusPoint.Value = _worldPosition.Value; // == Position of my camera !
+                //Compute the derived translation matrix
+                base.FocusPointMatrix.Value = Matrix.Translation(-1 * _worldPosition.Value.AsVector3());
 
                 //Compute new View matrix based on the Position and Orientation from a Quaternion (No Euler angles, to have the possibility to slerps those value)
                 Matrix MTranslation = Matrix.Translation(-(_worldPosition.Value - _worldFocusManager.WorldFocus.FocusPoint.Value).AsVector3());
@@ -73,6 +75,7 @@ namespace S33M3Engines.Cameras
             DVector3.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolation_hd, out _worldPosition.ValueInterp);
 
             base.FocusPoint.ValueInterp = _worldPosition.ValueInterp;
+            base.FocusPointMatrix.ValueInterp = Matrix.Translation(-1 * _worldPosition.ValueInterp.AsVector3());
 
             Quaternion.Slerp(ref _cameraOrientation.ValuePrev, ref _cameraOrientation.Value, (float)interpolation_ld, out _cameraOrientation.ValueInterp);
 

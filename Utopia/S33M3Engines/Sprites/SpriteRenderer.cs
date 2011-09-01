@@ -16,7 +16,7 @@ using Utopia.Shared.Structs;
 
 namespace S33M3Engines.Sprites
 {
-    public class SpriteRenderer
+    public class SpriteRenderer : IDisposable
     {
         public static int MaxBatchSize = 1000;
 

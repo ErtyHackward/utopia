@@ -42,6 +42,7 @@ namespace S33M3Engines.Cameras
         private ICameraPlugin _cameraPlugin;
 
         private FTSValue<DVector3> _focusPoint = new FTSValue<DVector3>();
+        private FTSValue<Matrix> _focusPointMatrix = new FTSValue<Matrix>();
 
         protected D3DEngine _d3dEngine;
         #endregion
@@ -129,6 +130,14 @@ namespace S33M3Engines.Cameras
             get
             {
                 return _focusPoint;
+            }
+        }
+
+        public FTSValue<Matrix> FocusPointMatrix
+        {
+            get
+            {
+                return _focusPointMatrix;
             }
         }
 
