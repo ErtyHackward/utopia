@@ -26,7 +26,8 @@ namespace Utopia
         {
             //_iocContainer =  new StandardKernel(new NinjectSettings { UseReflectionBasedInjection = true }); ==> More debug infor with this if binding problems, but slower !
             _iocContainer = new StandardKernel();
-            _server = new Server();
+            _iocContainer.Bind<Server>().ToSelf().InSingletonScope();
+            _server = _iocContainer.Get<Server>();
         }
 
         #region Public Methods
@@ -96,10 +97,11 @@ namespace Utopia
                 case FormRequestedAction.ExitGame:
                     return;
                 case FormRequestedAction.StartSinglePlayer:
+                    _iocContainer.Get<Server>().Deactivated = true;
                     StartDirectXWindow();
                     break;
                 case FormRequestedAction.StartMultiPlayer:
-                    StartDirectXWindow(_server);
+                    StartDirectXWindow();
                     break;
             }
 
@@ -107,15 +109,9 @@ namespace Utopia
             ShowWelcomeScreen(false);
         }
 
-        //Start the DirectX Render Loop
         private void StartDirectXWindow()
         {
-            StartDirectXWindow(null);
-        }
-
-        private void StartDirectXWindow(Server _server)
-        {
-            using (UtopiaRender main = new UtopiaRender(_iocContainer, _server))
+            using (UtopiaRender main = new UtopiaRender(_iocContainer))
             {
                 main.Run();
             }

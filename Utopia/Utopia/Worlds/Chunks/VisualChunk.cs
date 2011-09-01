@@ -15,6 +15,7 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using UtopiaContent.ModelComp;
 using S33M3Engines.WorldFocus;
+using Utopia.Shared.World;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -24,7 +25,7 @@ namespace Utopia.Worlds.Chunks
     public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IThreadStatus, IDisposable
     {
         #region Private variables
-        private WorldChunks _world;
+        private VisualWorldParameters _visualWorldParameters;
         private Range<int> _cubeRange;
         private D3DEngine _d3dEngine;
 
@@ -79,7 +80,7 @@ namespace Utopia.Worlds.Chunks
 
         #endregion
 
-        public VisualChunk(D3DEngine d3dEngine, WorldFocusManager worldFocusManager, WorldChunks world, ref Range<int> cubeRange, SingleArrayChunkContainer singleArrayContainer)
+        public VisualChunk(D3DEngine d3dEngine, WorldFocusManager worldFocusManager, VisualWorldParameters visualWorldParameter, ref Range<int> cubeRange, SingleArrayChunkContainer singleArrayContainer)
             : base(new SingleArrayDataProvider(singleArrayContainer))
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
@@ -88,7 +89,7 @@ namespace Utopia.Worlds.Chunks
             _chunkBoundingBoxDisplay = new BoundingBox3D(d3dEngine, worldFocusManager, new Vector3((float)(cubeRange.Max.X - cubeRange.Min.X), (float)(cubeRange.Max.Y - cubeRange.Min.Y), (float)(cubeRange.Max.Z - cubeRange.Min.Z)), S33M3Engines.D3D.Effects.Basics.DebugEffect.DebugEffectVPC, Color.Tomato);
 #endif
             _d3dEngine = d3dEngine;
-            _world = world;
+            _visualWorldParameters = visualWorldParameter;
             CubeRange = cubeRange;
             State = ChunkState.Empty;
             Ready2Draw = false;
@@ -225,10 +226,10 @@ namespace Utopia.Worlds.Chunks
         /// <returns>True if the chunk is at border</returns>
         private bool isBorderChunk(int X, int Z)
         {
-            if (X == _world.VisualWorldParameters.WorldRange.Min.X ||
-               Z == _world.VisualWorldParameters.WorldRange.Min.Z ||
-               X == _world.VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
-               Z == _world.VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
+            if (X == _visualWorldParameters.WorldRange.Min.X ||
+               Z == _visualWorldParameters.WorldRange.Min.Z ||
+               X == _visualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
+               Z == _visualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
             {
                 return true;
             }

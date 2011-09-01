@@ -16,11 +16,13 @@ namespace Utopia.Network
         #region Public properties/variables
         public string Address { get; set; }
         public int Port { get; set; }
+        public bool Deactivated { get; set; }
         public ServerConnection ServerConnection { get; set; }
         #endregion
 
         public Server()
         {
+            Deactivated = false;
             this.CallDraw = false; //Disable Draw calls
         }
 
@@ -94,7 +96,7 @@ namespace Utopia.Network
 
         void _server_MessageChunkData(object sender, ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("_server_MessageChunkData : " + e.Message.Position.ToString() + " " + e.Message.Data.Length + " bytes");
         }
 
         void _server_MessageChat(object sender, ProtocolMessageEventArgs<Net.Messages.ChatMessage> e)

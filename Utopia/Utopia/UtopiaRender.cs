@@ -57,8 +57,6 @@ namespace Utopia
         private WorldFocusManager _worldFocusManager;
         private EntityRenderer _entityRender;
 
-        private Server _server;
-
         //Debug tools
         private FPS _fps; //FPS computing object
 
@@ -84,10 +82,9 @@ namespace Utopia
         const int H = 600;
 #endif
 
-        public UtopiaRender(IKernel iocContainer, Server server)
+        public UtopiaRender(IKernel iocContainer)
         {
             _iocContainer = iocContainer;
-            _server = server;
             S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
             S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
             VSync = true;                                              // Vsync ON (default)
@@ -230,7 +227,7 @@ namespace Utopia
             GameConsole.Initialize(_d3dEngine);
 
             //Add the server if multiplayer mode
-            if (_server != null) GameComponents.Add(_server);
+            if (!IoCContainer.Get<Server>().Deactivated) GameComponents.Add(IoCContainer.Get<Server>());
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Utopia.Shared.World;
 using Utopia.Shared.Chunks;
 using Amib.Threading;
+using Utopia.Network;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
@@ -16,6 +17,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private CreateLandScapeDelegate _createLandScapeDelegate;
         private delegate object CreateLandScapeDelegate(object chunk);
         private WorldGenerator _worldGenerator;
+        private Server _server;
         #endregion
 
         #region Public variables/properties
@@ -24,11 +26,16 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             get { return _worldGenerator; }
             set { _worldGenerator = value; }
         }
-
         #endregion
 
-        public LandscapeManager()
+        public LandscapeManager(Server server)
         {
+            if (!server.Deactivated)
+            {
+                _server = server;
+                _server.ServerConnection.MessageChunkData += ServerConnection_MessageChunkData;
+            }
+
             Intialize();
         }
 
@@ -60,6 +67,13 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private void Intialize()
         {
             _createLandScapeDelegate = new CreateLandScapeDelegate(createLandScape_threaded);
+        }
+
+        //New chunk Received !
+        private void ServerConnection_MessageChunkData(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
+        {
+            //Bufferize the Data here
+            Console.WriteLine("== New Chunk data receive ==");
         }
 
         //Create the landscape for the chunk
