@@ -399,7 +399,12 @@ namespace Utopia.Server
 
                 connection.Send(new LoginResultMessage { Logged = true });
 
-                var gameInfo = new GameInformationMessage { ChunkSize = new Location3<int>(16, 128, 16), MaxViewRange = 32 };
+                var gameInfo = new GameInformationMessage { 
+                    ChunkSize = new Location3<int>(16, 128, 16), 
+                    MaxViewRange = 32,
+                    WorldSeed = WorldGenerator.WorldParametes.Seed,
+                    WaterLevel = WorldGenerator.WorldParametes.SeaLevel
+                };
                 connection.Send(gameInfo);
                 
                 // adding entity to world
