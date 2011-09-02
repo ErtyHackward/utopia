@@ -286,6 +286,7 @@ namespace Utopia.Worlds.Chunks
 
                     //Create the new VisualChunk
                     chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder);
+                    if (_server.Connected) chunk.IsServerRequested = true;
 
                     //Store this chunk inside the arrays.
                     Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
@@ -299,8 +300,8 @@ namespace Utopia.Worlds.Chunks
                 _server.ServerConnection.SendAsync(new Utopia.Net.Messages.GetChunksMessage()
                     {
                         StartPosition = new Shared.Structs.IntVector2((VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X), (VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z)),
-                        EndPosition = new Shared.Structs.IntVector2((VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X) + VisualWorldParameters.WorldParameters.WorldChunkSize.X + 1, (VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z) + VisualWorldParameters.WorldParameters.WorldChunkSize.Z + 1),
-                        Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData
+                        EndPosition = new Shared.Structs.IntVector2((VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X) + VisualWorldParameters.WorldParameters.WorldChunkSize.X, (VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z) + VisualWorldParameters.WorldParameters.WorldChunkSize.Z),
+                        Flag = Net.Messages.GetChunksMessageFlag.DontSendChunkDataIfNotModified
                     });
             }
 
