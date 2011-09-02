@@ -5,12 +5,16 @@ using System.Text;
 using Utopia.Net.Connections;
 using Utopia.Shared.ClassExt;
 using S33M3Engines.D3D;
+using Utopia.Shared.Structs;
+using Utopia.Shared.Chunks;
+using Utopia.Net.Messages;
 
 namespace Utopia.Network
 {
     public class Server : GameComponent
     {
         #region Private variables
+        private SingleArrayChunkContainer _chunkContainer;
         #endregion
 
         #region Public properties/variables
@@ -18,6 +22,18 @@ namespace Utopia.Network
         public int Port { get; set; }
         public bool Connected { get; set; }
         public ServerConnection ServerConnection { get; set; }
+        public int MaxServerViewRange { get; set; }
+        public Location3<int> ChunkSize { get; set; }
+
+        public SingleArrayChunkContainer ChunkContainer
+        {
+            get { return _chunkContainer; }
+            set
+            {
+                _chunkContainer = value;
+                _chunkContainer.BlockDataChanged += ChunkContainer_BlockDataChanged;
+            }
+        }
         #endregion
 
         public Server()
@@ -53,10 +69,10 @@ namespace Utopia.Network
         #region Events Handlings Methods
         void _server_MessageLoginResult(object sender, ProtocolMessageEventArgs<Net.Messages.LoginResultMessage> e)
         {
-            if (e.Message.Logged)
-            {
-                Console.WriteLine("I'm Logged");
-            }
+            //if (e.Message.Logged)
+            //{
+            //    Console.WriteLine("I'm Logged");
+            //}
         }
 
         void _server_MessagePosition(object sender, ProtocolMessageEventArgs<Net.Messages.EntityPositionMessage> e)
@@ -76,7 +92,7 @@ namespace Utopia.Network
 
         void _server_MessageGameInformation(object sender, ProtocolMessageEventArgs<Net.Messages.GameInformationMessage> e)
         {
-            Console.WriteLine("_server_MessageGameInformation : " + e.Message.ChunkSize.ToString());
+            //Console.WriteLine("_server_MessageGameInformation : " + e.Message.ChunkSize.ToString());
         }
 
         void _server_MessageError(object sender, ProtocolMessageEventArgs<Net.Messages.ErrorMessage> e)
@@ -96,7 +112,7 @@ namespace Utopia.Network
 
         void _server_MessageChunkData(object sender, ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
         {
-            Console.WriteLine("_server_MessageChunkData : " + e.Message.Position.ToString() + " " + e.Message.Data.Length + " bytes");
+            //Console.WriteLine("_server_MessageChunkData : " + e.Message.Position.ToString() + " " + e.Message.Data.Length + " bytes");
         }
 
         void _server_MessageChat(object sender, ProtocolMessageEventArgs<Net.Messages.ChatMessage> e)
@@ -111,8 +127,7 @@ namespace Utopia.Network
 
         void _server_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
         {
-            Console.WriteLine("_server_ConnectionStatusChanged : " + e.Reason + " status : " + e.Status);
-            //throw new NotImplementedException();
+            //Console.WriteLine("_server_ConnectionStatusChanged : " + e.Reason + " status : " + e.Status);
         }
 
         #endregion
@@ -146,9 +161,24 @@ namespace Utopia.Network
         #endregion
 
         #region Private Methods
+        //Server connection done
         private void ConnectAsyncCallBack(IAsyncResult result)
         {
             ServerConnection.FetchPendingMessages(1);
+        }
+
+        //Raise when a block has been changed ==> To be sent to the server
+        private void ChunkContainer_BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
+        {
+            for(int blockChangeIndex = 0; blockChangeIndex < e.Count; blockChangeIndex++)
+            {
+                ServerConnection.SendAsync(new BlockChangeMessage()
+                {
+                    BlockPosition = e.Locations[blockChangeIndex],
+                    BlockType = e.Bytes[blockChangeIndex]
+                });
+                Console.WriteLine("Fired");
+            }
         }
         #endregion
     }

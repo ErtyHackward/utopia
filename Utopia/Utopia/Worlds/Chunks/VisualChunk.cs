@@ -62,6 +62,8 @@ namespace Utopia.Worlds.Chunks
         public Matrix World;                                  // The chunk World matrix ==> Not a property, to be sure it will be direct variables acces !!
         public BoundingBox ChunkWorldBoundingBox;             // The chunk World BoundingBox ==> Not a property, to be sure it will be direct variables acces !!
 
+        public bool IsServerRequested { get; set; }           //If the chunk has been requested to the server
+
         public Location2<int> LightPropagateBorderOffset;
 
         public Range<int> CubeRange

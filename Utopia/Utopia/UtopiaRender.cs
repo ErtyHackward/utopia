@@ -116,6 +116,21 @@ namespace Utopia
             //=======================================================================================
             //Create the world components ===========================================================
 
+            //If Server mode set the chunk Side
+            Server server = IoCContainer.Get<Server>();
+            if (server.Connected)
+            {
+                if (AbstractChunk.ChunkSize != server.ChunkSize)
+                {
+                    throw new Exception("Client chunkSize is different from server !");
+                }
+
+                //Change Visible WorldSize if client parameter > Server !
+                if (ClientSettings.Current.Settings.GraphicalParameters.WorldSize > server.MaxServerViewRange)
+                {
+                    ClientSettings.Current.Settings.GraphicalParameters.WorldSize = server.MaxServerViewRange;
+                }
+            }
 
             //Variables initialisation ==================================================================
             Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
@@ -228,7 +243,11 @@ namespace Utopia
             GameConsole.Initialize(_d3dEngine);
 
             //Add the server if multiplayer mode
-            if (IoCContainer.Get<Server>().Connected) GameComponents.Add(IoCContainer.Get<Server>());
+            if (server.Connected)
+            {
+                server.ChunkContainer = IoCContainer.Get<SingleArrayChunkContainer>();
+                GameComponents.Add(server);
+            }
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 
@@ -250,6 +269,7 @@ namespace Utopia
             #endregion
 
         }
+
 
         public override void LoadContent()
         {

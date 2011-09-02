@@ -338,7 +338,6 @@ namespace Utopia.Net.Connections
                 IBinaryMessage msg;
                 if (_concurrentQueue.TryDequeue(out msg))
                 {
-                    Console.WriteLine("Received Message Id : " + msg.MessageId);
                     InvokeEvent(msg);
                 }
             }
