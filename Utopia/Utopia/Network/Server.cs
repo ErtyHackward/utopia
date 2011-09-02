@@ -120,6 +120,9 @@ namespace Utopia.Network
         #region Public Methods
         public void ConnectToServer(string UserName, string Password, bool withRegistering)
         {
+            if(ServerConnection.LoggedOn)
+                ServerConnection.Disconnect();
+            
             ServerConnection.Login = UserName;
             ServerConnection.Password = Password.GetMd5Hash();
             ServerConnection.ClientVersion = 1;

@@ -44,7 +44,7 @@ namespace Utopia.Net.Messages
                 case MessageTypes.EntityPosition: return EntityPositionMessage.Read(reader);
                 case MessageTypes.EntityUse: return EntityUseMessage.Read(reader);
                 default:
-                    throw new ArgumentException("");
+                    throw new ArgumentException("Invalid message id received");
             }
         }
     }

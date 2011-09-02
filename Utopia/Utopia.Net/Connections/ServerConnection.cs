@@ -222,6 +222,17 @@ namespace Utopia.Net.Connections
         {
             StartSendThread();
              remoteAddress = ParseAddress(address);
+
+             this.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
+        }
+
+        void ServerConnection_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
+        {
+            if (e.Status == ConnectionStatus.Disconnected)
+            {
+                LoggedOn = false;
+            }
+
         }
 
         private void StartSendThread()
