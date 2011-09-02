@@ -19,7 +19,7 @@ namespace Utopia.Shared.World.Processors
         //Noise functions used to create the landscape
         private SimplexNoise _baseTerran, _landHeight, _landNoise, _landRiver, _landOcean;
         private Random _rnd;
-        private VisualWorldParameters _visibleWorldParameters;
+        private WorldParameters _worldParameters;
         #endregion
 
         #region Public properties/Variables
@@ -48,9 +48,9 @@ namespace Utopia.Shared.World.Processors
         }
         #endregion
 
-        public s33m3WorldProcessor(VisualWorldParameters visibleWorldParameters)
+        public s33m3WorldProcessor(WorldParameters worldParameters)
         {
-            _visibleWorldParameters = visibleWorldParameters;
+            _worldParameters = worldParameters;
             Initialize();
         }
 
@@ -86,7 +86,7 @@ namespace Utopia.Shared.World.Processors
         private void Initialize()
         {
             //Create a rnd generator based on the seed.
-            _rnd = new Random(_visibleWorldParameters.WorldParameters.Seed);
+            _rnd = new Random(_worldParameters.Seed);
             _baseTerran = new SimplexNoise(_rnd);
             _landHeight = new SimplexNoise(_rnd);
             _landNoise = new SimplexNoise(_rnd);
@@ -219,7 +219,7 @@ namespace Utopia.Shared.World.Processors
                     for (int Y = 0; Y <= YSamplingCount; Y++)
                     {
                         //Si mon altitude est en dessous de la moitire de ma hauteur max + 5 && JE suis sur une rivière
-                        if ((Y * YPointLerpedCount <= (_visibleWorldParameters.WorldParameters.SeaLevel) + 5 && RiverOceanDepth > 0) || endOfWorld > 0)
+                        if ((Y * YPointLerpedCount <= (_worldParameters.SeaLevel) + 5 && RiverOceanDepth > 0) || endOfWorld > 0)
                         {
                             sealevel = basesealevel - RiverOceanDepth;
                         }
@@ -315,14 +315,14 @@ namespace Utopia.Shared.World.Processors
                                     cube = CubeId.Air;
 
                                     //Don't put block at Higest level Y ==> Will be air !
-                                    if ((SampledpointY * YPointLerpedCount) + Y == _visibleWorldParameters.WorldVisibleSize.Y - 1) continue;
+                                    if ((SampledpointY * YPointLerpedCount) + Y == AbstractChunk.ChunkSize.Y - 1) continue;
 
                                     if (Noise3 > 0 || (SampledpointY * YPointLerpedCount) + Y == 0)
                                     {
                                         cube = CubeId.Stone;
                                     }
 
-                                    if ((SampledpointY * YPointLerpedCount) + Y == _visibleWorldParameters.WorldParameters.SeaLevel && cube == CubeId.Air)
+                                    if ((SampledpointY * YPointLerpedCount) + Y == _worldParameters.SeaLevel && cube == CubeId.Air)
                                     {
                                         cube = CubeId.WaterSource;
                                     }
