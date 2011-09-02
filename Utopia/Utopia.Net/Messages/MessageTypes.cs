@@ -60,6 +60,10 @@
         /// <summary>
         /// Entity impact
         /// </summary>
-        EntityUse = 14
+        EntityUse = 14,
+        /// <summary>
+        /// Ping command. To detect quality of the connection
+        /// </summary>
+        Ping = 15
     }
 }
