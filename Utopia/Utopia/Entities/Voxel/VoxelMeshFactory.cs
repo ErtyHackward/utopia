@@ -16,16 +16,16 @@ namespace Utopia.Entities.Voxel
         //TODO (Simon) VoxelMeshFactory generic implementation with <VertexPositionColor> or <VertexPositionColorTexture>
 
         private readonly D3DEngine _d3DEngine;
-       
+
         public VoxelMeshFactory(D3DEngine d3DEngine)
         {
             _d3DEngine = d3DEngine;
         }
 
-        public  List<VertexPositionColor> GenCubesFaces(byte[,,] blocks)
+        public List<VertexPositionColor> GenCubesFaces(byte[,,] blocks)
         {
-            List<VertexPositionColor> vertexList  = new List<VertexPositionColor>();
-            
+            List<VertexPositionColor> vertexList = new List<VertexPositionColor>();
+
             for (int x = 0; x < blocks.GetLength(0); x++)
             {
                 for (int y = 0; y < blocks.GetLength(1); y++)
@@ -36,40 +36,41 @@ namespace Utopia.Entities.Voxel
 
                         if (blockType == 0) continue;
 
-                        BuildBlockVertices(blocks,ref vertexList, blockType, x, y, z);
+                        BuildBlockVertices(blocks, ref vertexList, blockType, x, y, z);
                     }
                 }
             }
 
             return vertexList;
         }
-  
 
-        private void BuildBlockVertices(byte[, ,] blocks, ref List<VertexPositionColor> vertice, byte blockType, int x, int y, int z)
+
+        private static void BuildBlockVertices(byte[,,] blocks, ref List<VertexPositionColor> vertice, byte blockType, int x,
+                                        int y, int z)
         {
-               
-            byte blockXDecreasing = x == 0 ? (byte)0 : blocks[x - 1, y, z];
-            byte blockXIncreasing = x == blocks.GetLength(0)-1 ? (byte)0 : blocks[x + 1, y, z];
-            byte blockYDecreasing = y == 0 ? (byte)0 : blocks[x, y - 1, z];
-            byte blockYIncreasing = y == blocks.GetLength(1)-1 ? (byte)0 : blocks[x, y + 1, z];
-            byte blockZDecreasing = z == 0 ? (byte)0 : blocks[x, y, z - 1];
-            byte blockZIncreasing = z == blocks.GetLength(2)-1 ? (byte)0 : blocks[x, y, z + 1];
+            byte blockXDecreasing = x == 0 ? (byte) 0 : blocks[x - 1, y, z];
+            byte blockXIncreasing = x == blocks.GetLength(0) - 1 ? (byte) 0 : blocks[x + 1, y, z];
+            byte blockYDecreasing = y == 0 ? (byte) 0 : blocks[x, y - 1, z];
+            byte blockYIncreasing = y == blocks.GetLength(1) - 1 ? (byte) 0 : blocks[x, y + 1, z];
+            byte blockZDecreasing = z == 0 ? (byte) 0 : blocks[x, y, z - 1];
+            byte blockZIncreasing = z == blocks.GetLength(2) - 1 ? (byte) 0 : blocks[x, y, z + 1];
 
             if (blockXDecreasing == 0)
-                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Left, blockType); //X-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Left, blockType); //X-
             if (blockXIncreasing == 0)
-                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Right, blockType); //X+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Right, blockType); //X+
             if (blockYDecreasing == 0)
-                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Bottom, blockType); //Y-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Bottom, blockType); //Y-
             if (blockYIncreasing == 0)
-                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Top, blockType); //Y+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Top, blockType); //Y+
             if (blockZDecreasing == 0)
-                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Front, blockType); //Z-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Front, blockType); //Z-
             if (blockZIncreasing == 0)
-                BuildFaceVertices(ref vertice,x, y, z, CubeFace.Back, blockType); //Z+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Back, blockType); //Z+
         }
 
-        private void BuildFaceVertices(ref List<VertexPositionColor> vertice, int x, int y, int z, CubeFace faceDir, byte blockType )
+        private static void BuildFaceVertices(ref List<VertexPositionColor> vertice, int x, int y, int z, CubeFace faceDir,
+                                       byte blockType)
         {
             //actually only handles 64 colors, so all blockType> 63 will have default color
             Color color = ColorLookup.Colours[blockType];
@@ -144,6 +145,13 @@ namespace Utopia.Entities.Voxel
             }
         }
 
-       
+
+        public VertexBuffer<VertexPositionColor> InitBuffer(List<VertexPositionColor> vertice)
+        {
+            return new VertexBuffer<VertexPositionColor>(_d3DEngine, vertice.Count,
+                                                         VertexPositionColor.VertexDeclaration,
+                                                         PrimitiveTopology.TriangleList,
+                                                         ResourceUsage.Default, 10);
+        }
     }
 }

@@ -1,30 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using S33M3Engines;
-using S33M3Engines.Buffers;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
 using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.InputHandler;
+using S33M3Engines.Shared.Math;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.WorldFocus;
 using SharpDX;
-using SharpDX.Direct3D;
-using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
-using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities
 {
     public class ItemRenderer : GameComponent
     {
-        public List<Item> Items = new List<Item>(); //TODO populate/fetch items to render from server 
-        public List<VertexBuffer<VertexPositionColor>> ItemVBs = new List<VertexBuffer<VertexPositionColor>>();
+        public List<VisualEntity> Items = new List<VisualEntity>(); //TODO populate/fetch items to render from server 
 
         private HLSLVertexPositionColor _itemEffect;
         private readonly D3DEngine _d3DEngine;
@@ -51,10 +44,9 @@ namespace Utopia.Entities
             Item item = new Shovel(); //just an example, i need a concrete item class ! 
 
             item.Blocks = new byte[16,16,16];
-            item.RandomFill(5);
-            Items.Add(item);
-            ItemVBs.Add(null); //hold the two collections in one class ?
-            //note render item icons to one texture when player opens inventory. an idea that needs more thinking
+            item.RandomFill(5);//would come filled from server
+            Items.Add(new VisualEntity(_voxelMeshFactory, item));
+            //XXX render item icons to one texture when player opens inventory. an idea that needs more thinking
         }
 
         public override void LoadContent()
@@ -66,89 +58,39 @@ namespace Utopia.Entities
         public override void UnloadContent()
         {
             if (_itemEffect != null) _itemEffect.Dispose();
-            foreach (var buffer in ItemVBs) if (buffer != null) buffer.Dispose();
             foreach (var item in Items) if (item != null) item.Dispose();
         }
 
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpent)
         {
-            InputHandler(false);
+            HandleInput(false);
         }
 
         private bool _keyInsertBuffer;
 
-        private void InputHandler(bool bufferMode)
+        private void HandleInput(bool bufferMode)
         {
-            if (_inputHandler.IsKeyPressed(Keys.Insert) || _keyInsertBuffer)
+            if (!_inputHandler.IsKeyPressed(Keys.Insert) && !_keyInsertBuffer) return;
+            if (bufferMode)
             {
-                if (bufferMode)
-                {
-                    _keyInsertBuffer = true;
-                    return;
-                }
-                else _keyInsertBuffer = false;
-
-                Items[0].Position = _camManager.ActiveCamera.WorldPosition.AsVector3();
-                //TODO (team talk) camera double position vs entiy float position
+                _keyInsertBuffer = true;
+                return;
             }
+            _keyInsertBuffer = false;
+
+            Items[0].Position = _camManager.ActiveCamera.WorldPosition.AsVector3();
+            //TODO (team talk) camera double position vs entiy float position
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-            InputHandler(true);
+            HandleInput(true);
         }
 
         public override void DrawDepth0()
         {
         }
 
-        private void DrawItems()
-        {
-            //TODO : frustum culling of items in view
-
-            _itemEffect.Begin();
-
-            _itemEffect.CBPerDraw.IsDirty = true;
-            _itemEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
-            _itemEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
-            _itemEffect.CBPerFrame.IsDirty = true;
-            _itemEffect.Apply();
-
-            for (int i = 0; i < Items.Count; i++)
-            {
-                var item = Items[i];
-
-                if (item.Altered)
-                {
-                    List<VertexPositionColor> vertice = _voxelMeshFactory.GenCubesFaces(item.Blocks);
-
-                    if (ItemVBs[i] == null)
-                    {
-                        ItemVBs[i] = new VertexBuffer<VertexPositionColor>(_d3DEngine, vertice.Count,
-                                                                           VertexPositionColor.VertexDeclaration,
-                                                                           PrimitiveTopology.TriangleList,
-                                                                           ResourceUsage.Default, 10);
-                    }
-
-                    if (vertice.Count != 0)
-                    {
-                        ItemVBs[i].SetData(vertice.ToArray());
-                    }
-
-                    item.Altered = false;
-                }
-
-                VertexBuffer<VertexPositionColor> vb = ItemVBs[i];
-
-                Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
-                               Matrix.Translation(item.Position);
-                world = _worldFocusManager.CenterOnFocus(ref world);
-                _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
-
-                vb.SetToDevice(0);
-                _d3DEngine.Context.Draw(vb.VertexCount, 0);
-            }
-        }
 
         public override void DrawDepth1()
         {
@@ -162,6 +104,35 @@ namespace Utopia.Entities
         #endregion
 
         #region Private Methods
+
+        private void DrawItems()
+        {
+            //TODO : frustum culling of items in view
+
+            _itemEffect.Begin();
+
+            _itemEffect.CBPerDraw.IsDirty = true;
+            _itemEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
+            _itemEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
+            _itemEffect.CBPerFrame.IsDirty = true;
+            _itemEffect.Apply();
+
+            foreach (var item in Items)
+            {
+                if (item.Altered)
+                {
+                    item.Update();
+                }
+
+                Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
+                               Matrix.Translation(item.Position);
+                world = _worldFocusManager.CenterOnFocus(ref world);
+                _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+
+                item.VertexBuffer.SetToDevice(0);
+                _d3DEngine.Context.Draw(item.VertexBuffer.VertexCount, 0);
+            }
+        }
 
         #endregion
     }
