@@ -33,6 +33,11 @@ namespace Utopia.Net.Messages
         }
 
         /// <summary>
+        /// Value filled in with the datetime at message creation time
+        /// </summary>
+        public System.DateTime MessageRecTime { get; set; }
+
+        /// <summary>
         /// Gets or sets chunk position
         /// </summary>
         public IntVector2 Position
@@ -77,11 +82,12 @@ namespace Utopia.Net.Messages
 
         public static ChunkDataMessage Read(BinaryReader reader)
         {
-            ChunkDataMessage msg;
+            ChunkDataMessage msg = new ChunkDataMessage();
 
             msg._position.X = reader.ReadInt32();
             msg._position.Y = reader.ReadInt32();
             msg._flag = (ChunkDataMessageFlag)reader.ReadByte();
+            msg.MessageRecTime = System.DateTime.Now;
 
             var bytesCount = reader.ReadInt32();
 
