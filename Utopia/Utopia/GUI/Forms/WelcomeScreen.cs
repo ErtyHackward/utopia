@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using Utopia.GUI.Forms.CustControls;
 using Utopia.Network;
+using System.Threading;
 
 namespace Utopia.GUI.Forms
 {
@@ -21,8 +22,10 @@ namespace Utopia.GUI.Forms
         private MultiPlayer _multiChild = new MultiPlayer();
         private Config _configChild = new Config();
         private Server _server;
+        private TimerCallback _timerDelegate;
+        private System.Threading.Timer _serverTime;
 
-        Timer m_TimerFadeIn = new Timer()
+        System.Windows.Forms.Timer m_TimerFadeIn = new System.Windows.Forms.Timer()
         {
             Interval = 50
         };
@@ -30,6 +33,8 @@ namespace Utopia.GUI.Forms
         public WelcomeScreen(Server server, bool withFadeIn)
         {
             InitializeComponent();
+
+            _timerDelegate = new TimerCallback(ServerTime_Tick);
 
             _server = server;
             _singleChild = new SinglePlayer();
@@ -42,7 +47,7 @@ namespace Utopia.GUI.Forms
         }
 
         void btConnect_Click(object sender, EventArgs e)
-        {
+        {            
             _server.BindingServer(_multiChild.txtSrvAdress.Text, 4815);
             RegisterEvents();
             _server.ConnectToServer(_multiChild.txtUser.Text, _multiChild.txtPassword.Text, _multiChild.chkRegistering.Checked);
@@ -50,8 +55,24 @@ namespace Utopia.GUI.Forms
 
         private void RegisterEvents()
         {
+            _server.ServerConnection.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
             _server.ServerConnection.MessageError += ServerConnection_MessageError;
             _server.ServerConnection.MessageLoginResult += ServerConnection_MessageLoginResult;
+            _server.ServerConnection.MessageGameInformation += ServerConnection_MessageGameInformation;
+        }
+
+        void ServerConnection_MessageGameInformation(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.GameInformationMessage> e)
+        {
+            AddTextToListBox("Game Information received - starting game ... ");
+            _server.MaxServerViewRange = e.Message.MaxViewRange;
+            _server.ChunkSize = e.Message.ChunkSize;
+            _serverTime.Dispose();
+            HideWindows();
+        }
+
+        void ServerConnection_ConnectionStatusChanged(object sender, Net.Connections.ConnectionStatusEventArgs e)
+        {
+            AddTextToListBox("Connection status : " + e.Status.ToString());
         }
 
         //Handle server Error Message
@@ -62,7 +83,14 @@ namespace Utopia.GUI.Forms
 
         void ServerConnection_MessageLoginResult(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.LoginResultMessage> e)
         {
-            if (e.Message.Logged) HideWindows();
+            AddTextToListBox("Login succesful : " + e.Message.Logged.ToString());
+
+            _serverTime = new System.Threading.Timer(_timerDelegate, null, 100, 100 );
+        }
+
+        private void ServerTime_Tick(object stateInfo)
+        {
+            _server.ServerConnection.FetchPendingMessages(1);
         }
 
         private void HideWindows()
@@ -179,7 +207,6 @@ namespace Utopia.GUI.Forms
             Data = new FormData();
             Data.RequestAction = FormRequestedAction.ExitGame;
         }
-
     }
 
     public enum FormRequestedAction
