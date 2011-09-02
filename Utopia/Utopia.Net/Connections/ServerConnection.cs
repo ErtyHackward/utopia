@@ -202,6 +202,17 @@ namespace Utopia.Net.Connections
                 MessageEntityUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when PingMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<PingMessage>> MessagePing;
+
+        protected void OnMessagePing(PingMessage ea)
+        {
+            if (MessagePing != null)
+                MessagePing(this, new ProtocolMessageEventArgs<PingMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -392,6 +403,9 @@ namespace Utopia.Net.Connections
                 case MessageTypes.EntityUse:
                     OnMessageEntityUse((EntityUseMessage)msg);
                     break;
+                case MessageTypes.Ping:
+                    OnMessagePing((PingMessage)msg);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException("msg","Invalid message received from server");
             }
@@ -428,6 +442,11 @@ namespace Utopia.Net.Connections
                             var idByte = (MessageTypes)reader.ReadByte();
 
                             // if we need some message not to go into the buffer then it should be done here using InvokeEvent()
+
+                            if (idByte == MessageTypes.Ping)
+                            {
+
+                            }
 
                             // using Factory here makes additional box\unbox operation to pass strucutre by interface
                             // need to profile in real conditions

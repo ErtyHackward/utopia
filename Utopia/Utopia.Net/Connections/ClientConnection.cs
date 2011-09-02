@@ -136,6 +136,17 @@ namespace Utopia.Net.Connections
                 MessageToolUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when PingMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<PingMessage>> MessagePing;
+
+        protected void OnMessagePing(PingMessage ea)
+        {
+            if (MessagePing != null)
+                MessagePing(this, new ProtocolMessageEventArgs<PingMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -240,6 +251,9 @@ namespace Utopia.Net.Connections
                                     break;
                                 case MessageTypes.EntityUse:
                                     OnMessageEntityUse(EntityUseMessage.Read(reader));
+                                    break;
+                                case MessageTypes.Ping:
+                                    OnMessagePing(PingMessage.Read(reader));
                                     break;
                                 default:
                                     throw new ArgumentException("Invalid message id");

@@ -195,6 +195,19 @@ namespace Utopia.Server
             e.Connection.MessagePosition += ConnectionMessagePosition;
             e.Connection.MessageDirection += ConnectionMessageDirection;
             e.Connection.MessageChat += ConnectionMessageChat;
+            e.Connection.MessagePing += ConnectionMessagePing;
+        }
+
+        void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
+        {
+            var connection = sender as ClientConnection;
+            // we need respond as fast as possible
+            if (e.Message.Request)
+            {
+                var msg = e.Message;
+                msg.Request = false;
+                connection.Send(msg);
+            }
         }
 
         void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
@@ -367,8 +380,8 @@ namespace Utopia.Server
                 if (loginData.Value.State == null)
                 {
                     // create new message
-                    var serverChar= new ServerPlayerCharacterEntity(connection);
-
+                    var serverChar = new ServerPlayerCharacterEntity(connection);
+                    serverChar.EntityId = EntityFactory.Instance.GetUniqueEntityId();
                     serverChar.CharacterName = "Chuck norris";
 
                     playerEntity = serverChar;

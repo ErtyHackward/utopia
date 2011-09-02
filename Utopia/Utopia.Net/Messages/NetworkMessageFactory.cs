@@ -43,6 +43,7 @@ namespace Utopia.Net.Messages
                 case MessageTypes.EntityOut: return EntityOutMessage.Read(reader);
                 case MessageTypes.EntityPosition: return EntityPositionMessage.Read(reader);
                 case MessageTypes.EntityUse: return EntityUseMessage.Read(reader);
+                case MessageTypes.Ping: return PingMessage.Read(reader);
                 default:
                     throw new ArgumentException("Invalid message id received");
             }
