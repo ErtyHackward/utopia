@@ -66,6 +66,8 @@ namespace Utopia.GUI.Forms
             AddTextToListBox("Game Information received - starting game ... ");
             _server.MaxServerViewRange = e.Message.MaxViewRange;
             _server.ChunkSize = e.Message.ChunkSize;
+            _server.SeaLevel = e.Message.WaterLevel;
+            _server.WorldSeed = e.Message.WorldSeed;
             _serverTime.Dispose();
             HideWindows();
         }

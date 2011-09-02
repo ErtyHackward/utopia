@@ -23,6 +23,9 @@ namespace Utopia.Network
         public bool Connected { get; set; }
         public ServerConnection ServerConnection { get; set; }
         public int MaxServerViewRange { get; set; }
+        public int SeaLevel { get; set; }
+        public int WorldSeed { get; set; }
+
         public Location3<int> ChunkSize { get; set; }
 
         public SingleArrayChunkContainer ChunkContainer
@@ -170,15 +173,15 @@ namespace Utopia.Network
         //Raise when a block has been changed ==> To be sent to the server
         private void ChunkContainer_BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
         {
-            for(int blockChangeIndex = 0; blockChangeIndex < e.Count; blockChangeIndex++)
-            {
-                ServerConnection.SendAsync(new BlockChangeMessage()
-                {
-                    BlockPosition = e.Locations[blockChangeIndex],
-                    BlockType = e.Bytes[blockChangeIndex]
-                });
-                Console.WriteLine("Fired");
-            }
+            //for(int blockChangeIndex = 0; blockChangeIndex < e.Count; blockChangeIndex++)
+            //{
+            //    ServerConnection.SendAsync(new BlockChangeMessage()
+            //    {
+            //        BlockPosition = e.Locations[blockChangeIndex],
+            //        BlockType = e.Bytes[blockChangeIndex]
+            //    });
+            //    Console.WriteLine("Fired");
+            //}
         }
         #endregion
     }

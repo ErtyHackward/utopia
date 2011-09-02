@@ -301,7 +301,7 @@ namespace Utopia.Worlds.Chunks
                     {
                         StartPosition = new Shared.Structs.IntVector2((VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X), (VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z)),
                         EndPosition = new Shared.Structs.IntVector2((VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X) + VisualWorldParameters.WorldParameters.WorldChunkSize.X, (VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z) + VisualWorldParameters.WorldParameters.WorldChunkSize.Z),
-                        Flag = Net.Messages.GetChunksMessageFlag.DontSendChunkDataIfNotModified
+                        Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData
                     });
             }
 
