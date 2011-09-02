@@ -26,5 +26,12 @@ namespace Utopia.Shared.World
         /// Sea height Level (blocks)
         /// </summary>
         public int SeaLevel { get; set; }
+
+        public WorldParameters()
+        {
+            //Define default values
+            SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2;
+            Seed = 12695360;
+        }
     }
 }

@@ -399,8 +399,8 @@ namespace Utopia.Server
 
                 connection.Send(new LoginResultMessage { Logged = true });
 
-                var gameInfo = new GameInformationMessage { 
-                    ChunkSize = new Location3<int>(16, 128, 16), 
+                var gameInfo = new GameInformationMessage {
+                    ChunkSize = Utopia.Shared.Chunks.AbstractChunk.ChunkSize, 
                     MaxViewRange = 32,
                     WorldSeed = WorldGenerator.WorldParametes.Seed,
                     WaterLevel = WorldGenerator.WorldParametes.SeaLevel
