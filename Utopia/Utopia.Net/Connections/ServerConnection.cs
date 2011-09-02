@@ -203,7 +203,7 @@ namespace Utopia.Net.Connections
         }
 
         /// <summary>
-        /// Occurs when PingMessage is received
+        /// Occurs when PingMessage is received (another thread)
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<PingMessage>> MessagePing;
 
@@ -442,17 +442,16 @@ namespace Utopia.Net.Connections
                             var idByte = (MessageTypes)reader.ReadByte();
 
                             // if we need some message not to go into the buffer then it should be done here using InvokeEvent()
-
-                            if (idByte == MessageTypes.Ping)
-                            {
-
-                            }
-
+                            
                             // using Factory here makes additional box\unbox operation to pass strucutre by interface
                             // need to profile in real conditions
                             var message = NetworkMessageFactory.Instance.ReadMessage(idByte, reader);
 
-                            _concurrentQueue.Enqueue(message);
+                            if (idByte == MessageTypes.Ping)
+                            {
+                                InvokeEvent(message);
+                            }
+                            else _concurrentQueue.Enqueue(message);
                         }
                     }
                     catch (EndOfStreamException)
