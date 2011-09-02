@@ -111,6 +111,9 @@ namespace Utopia
         //Default Utopia Init method.
         private void Init(IKernel IoCContainer)
         {
+            int Seed = 0;
+            int SeaLevel = AbstractChunk.ChunkSize.Y / 2;
+
             //=======================================================================================
             //New Class structure Acces =============================================================
             //=======================================================================================
@@ -130,14 +133,17 @@ namespace Utopia
                 {
                     ClientSettings.Current.Settings.GraphicalParameters.WorldSize = server.MaxServerViewRange;
                 }
+
+                Seed = server.WorldSeed;
+                SeaLevel = server.SeaLevel;
             }
 
             //Variables initialisation ==================================================================
             Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
             {
                 IsInfinite = true,
-                Seed = 12695360,
-                SeaLevel = AbstractChunk.ChunkSize.Y / 2,
+                Seed = Seed,
+                SeaLevel = SeaLevel,
                 WorldChunkSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };

@@ -105,7 +105,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                 {
                     StartPosition = chunk.ChunkPosition,
                     EndPosition = chunk.ChunkPosition + 1,
-                    Flag = Net.Messages.GetChunksMessageFlag.DontSendChunkDataIfNotModified
+                    Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData
                 });
             }
         }
