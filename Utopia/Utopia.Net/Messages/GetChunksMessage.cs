@@ -115,7 +115,10 @@ namespace Utopia.Net.Messages
                 {
                     msg._positions[i].X = reader.ReadInt32();
                     msg._positions[i].Y = reader.ReadInt32();
-                    msg._md5Hashes[i] = new Md5Hash(reader.ReadBytes(16));
+                    var bytes = reader.ReadBytes(16);
+                    if (bytes.Length != 16) 
+                        throw new EndOfStreamException();
+                    msg._md5Hashes[i] = new Md5Hash(bytes);
                 }
             }
             else

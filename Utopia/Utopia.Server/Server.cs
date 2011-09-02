@@ -363,6 +363,7 @@ namespace Utopia.Server
 
                 IDynamicEntity playerEntity;
 
+                #region Getting players character entity
                 if (loginData.Value.State == null)
                 {
                     // create new message
@@ -392,6 +393,7 @@ namespace Utopia.Server
                     }
 
                 }
+                #endregion
 
                 connection.Entity = playerEntity;
 
