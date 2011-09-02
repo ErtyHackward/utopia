@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Ninject;
 using Nuclex.UserInterface;
+using Utopia.Editor;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.Worlds.GameClocks;
@@ -95,6 +96,9 @@ namespace Utopia
 
             iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
+
+            iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
+
         }
     }
 }

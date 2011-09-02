@@ -25,6 +25,9 @@
 
         //alive
         PlayerCharacter = 3000,
-        NonPlayerCharacter = 3001
+        NonPlayerCharacter = 3001,
+
+        //Special case
+        EditableEntity = 10001
     }
 }

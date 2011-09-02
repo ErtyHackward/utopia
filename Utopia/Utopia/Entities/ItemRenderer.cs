@@ -41,11 +41,7 @@ namespace Utopia.Entities
 
         public override void Initialize()
         {
-            Item item = new Shovel(); //just an example, i need a concrete item class ! 
-
-            item.Blocks = new byte[16,16,16];
-            item.RandomFill(5);//would come filled from server
-            Items.Add(new VisualEntity(_voxelMeshFactory, item));
+           
             //XXX render item icons to one texture when player opens inventory. an idea that needs more thinking
         }
 
@@ -78,7 +74,13 @@ namespace Utopia.Entities
             }
             _keyInsertBuffer = false;
 
-            Items[0].Position = _camManager.ActiveCamera.WorldPosition.AsVector3();
+            Item item = new Shovel(); //just an example, i need a concrete item class ! 
+            item.Blocks = new byte[16, 16, 16];
+            item.RandomFill(5);//would come filled from server
+            item.Position = _camManager.ActiveCamera.WorldPosition.AsVector3();
+            
+            Items.Add(new VisualEntity(_voxelMeshFactory, item));
+
             //TODO (team talk) camera double position vs entiy float position
         }
 

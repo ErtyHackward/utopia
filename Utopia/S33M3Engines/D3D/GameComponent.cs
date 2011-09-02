@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using S33M3Engines.Struct;
-using SharpDX;
 
 namespace S33M3Engines.D3D
 {
@@ -16,8 +11,8 @@ namespace S33M3Engines.D3D
     public interface IUpdatableComponent : IDisposable
     {
         void Initialize();
-        void Update(ref GameTime TimeSpend);
-        void Interpolation(ref double interpolation_hd, ref float interpolation_ld);
+        void Update(ref GameTime timeSpent);
+        void Interpolation(ref double interpolationHd, ref float interpolationLd);
     }
 
     public interface IGameComponent
@@ -27,8 +22,8 @@ namespace S33M3Engines.D3D
         void Initialize();
         void LoadContent();
         void UnloadContent();
-        void Update(ref GameTime TimeSpend);
-        void Interpolation(ref double interpolation_hd, ref float interpolation_ld);
+        void Update(ref GameTime timeSpent);
+        void Interpolation(ref double interpolationHd, ref float interpolationLd);
         void DrawDepth0();
         void DrawDepth1();
         void DrawDepth2();
@@ -63,11 +58,11 @@ namespace S33M3Engines.D3D
         {
         }
 
-        public virtual void Update(ref GameTime TimeSpend)
+        public virtual void Update(ref GameTime timeSpent)
         {
         }
 
-        public virtual void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public virtual void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
         }
 

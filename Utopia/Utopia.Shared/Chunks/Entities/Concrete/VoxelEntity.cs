@@ -11,19 +11,16 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
     {
         public byte[, ,] Blocks;//XXX this will be optimized later, maybe one dimensional array 
       
-        //public Texture2D icon;
-        //Icon can be a 2d projection of the voxel array
-
         // we need to override save and load!
 
         public void RandomFill(int emptyProbabilityPercent)
         {
             Random r = new Random();
-            for (uint x = 0; x < Blocks.GetLength(0); x++)
+            for (int x = 0; x < Blocks.GetLength(0); x++)
             {
-                for (uint y = 0; y < Blocks.GetLength(1); y++)
+                for (int y = 0; y < Blocks.GetLength(1); y++)
                 {
-                    for (uint z = 0; z < Blocks.GetLength(2); z++)
+                    for (int z = 0; z < Blocks.GetLength(2); z++)
                     {
                         if (r.Next(100) < emptyProbabilityPercent)
                             Blocks[x, y, z] = 0;

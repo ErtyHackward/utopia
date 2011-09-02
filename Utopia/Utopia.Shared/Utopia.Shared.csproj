@@ -77,6 +77,7 @@
     <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\Entities\CharacterEntity.cs" />
+    <Compile Include="Chunks\Entities\Concrete\EditableVoxelEntity.cs" />
     <Compile Include="Chunks\Entities\Events\DynamicEntityEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityLeaveAreaEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityMoveEventArgs.cs" />
