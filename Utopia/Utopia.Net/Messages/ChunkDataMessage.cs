@@ -87,6 +87,9 @@ namespace Utopia.Net.Messages
 
             msg._data = bytesCount > 0 ? reader.ReadBytes(bytesCount) : null;
 
+            if (msg._data != null && bytesCount != msg._data.Length)
+                throw new EndOfStreamException();
+
             return msg;
         }
 

@@ -241,6 +241,8 @@ namespace Utopia.Net.Connections
                                 case MessageTypes.EntityUse:
                                     OnMessageEntityUse(EntityUseMessage.Read(reader));
                                     break;
+                                default:
+                                    throw new ArgumentException("Invalid message id");
                             }
                         }
                     }
