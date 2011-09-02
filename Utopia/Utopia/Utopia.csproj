@@ -102,6 +102,7 @@
     <Compile Include="Entities\ItemRenderer.cs" />
     <Compile Include="Entities\EntityRenderer.cs" />
     <Compile Include="Entities\Voxel\ColorLookup.cs" />
+    <Compile Include="Entities\Voxel\VisualEntity.cs" />
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
     <Compile Include="GameStates\GameStatesManager.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />

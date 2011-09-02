@@ -10,8 +10,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
     public abstract class VoxelEntity : Entity
     {
         public byte[, ,] Blocks;//XXX this will be optimized later, maybe one dimensional array 
-        public bool Altered = true;
-
+      
         //public Texture2D icon;
         //Icon can be a 2d projection of the voxel array
 
