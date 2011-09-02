@@ -159,15 +159,18 @@ namespace Utopia.Net.Connections
         /// <param name="msg"></param>
         public void Send(IBinaryMessage msg)
         {
-            try
+            lock (_synObject)
             {
-                Writer.Write(msg.MessageId);
-                msg.Write(Writer);
-                Writer.Flush();
-            }
-            catch (IOException)
-            {
+                try
+                {
+                    Writer.Write(msg.MessageId);
+                    msg.Write(Writer);
+                    Writer.Flush();
+                }
+                catch (IOException)
+                {
 
+                }
             }
         }
 
@@ -177,12 +180,15 @@ namespace Utopia.Net.Connections
         /// <param name="messages"></param>
         public void Send(params IBinaryMessage[] messages)
         {
-            foreach (var msg in messages)
+            lock (_synObject)
             {
-                Writer.Write(msg.MessageId);
-                msg.Write(Writer);
+                foreach (var msg in messages)
+                {
+                    Writer.Write(msg.MessageId);
+                    msg.Write(Writer);
+                }
+                Writer.Flush();
             }
-            Writer.Flush();
         }
 
         /// <summary>
