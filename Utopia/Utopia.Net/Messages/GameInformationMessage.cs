@@ -20,6 +20,9 @@ namespace Utopia.Net.Messages
         /// </summary>
         private Location3<int> _chunkSize;
 
+        private int _worldSeed;
+        private int _waterLevel;
+
         /// <summary>
         /// Gets message id
         /// </summary>
@@ -46,15 +49,27 @@ namespace Utopia.Net.Messages
             set { _chunkSize = value; }
         }
 
+        public int WorldSeed
+        {
+            get { return _worldSeed; }
+            set { _worldSeed = value; }
+        }
+        
+        public int WaterLevel
+        {
+            get { return _waterLevel; }
+            set { _waterLevel = value; }
+        }
+
         public static GameInformationMessage Read(BinaryReader reader)
         {
             GameInformationMessage gi;
 
             gi._maxViewRange = reader.ReadInt32();
 
-            gi._chunkSize.X = reader.ReadInt32();
-            gi._chunkSize.Y = reader.ReadInt32();
-            gi._chunkSize.Z = reader.ReadInt32();
+            gi._chunkSize = reader.ReadIntLocation3();
+            gi._worldSeed = reader.ReadInt32();
+            gi._waterLevel = reader.ReadInt32();
             
             return gi;
         }
@@ -62,9 +77,9 @@ namespace Utopia.Net.Messages
         public static void Write(BinaryWriter writer, GameInformationMessage info)
         {
             writer.Write(info._maxViewRange);
-            writer.Write(info._chunkSize.X);
-            writer.Write(info._chunkSize.Y);
-            writer.Write(info._chunkSize.Z);
+            writer.Write(info._chunkSize);
+            writer.Write(info._worldSeed);
+            writer.Write(info._waterLevel);
         }
         
         public void Write(BinaryWriter writer)
