@@ -9,6 +9,7 @@ using S33M3Engines.InputHandler.KeyboardHelper;
 using System.Windows.Forms;
 using SharpDX.Direct3D11;
 using S33M3Engines.Cameras;
+using Utopia.Editor;
 using Utopia.GUI.D3D;
 using UtopiaContent.ModelComp;
 using SharpDX;
@@ -234,6 +235,9 @@ namespace Utopia
             GameComponents.Add(IoCContainer.Get<Hud>());
 
             GameComponents.Add(IoCContainer.Get<GuiManager>());
+
+            //this one is disabled by default, can be enabled with F12 UI 
+            GameComponents.Add(IoCContainer.Get<EntityEditor>());
 
             // TODO (Simon) wire all binded components in one shot with ninject : GameComponents.AddRange(IoCContainer.GetAll<IGameComponent>());
             // BUT we cant handle the add order ourselves: an updateOrder int + sorted components collection like in XNA would be good
