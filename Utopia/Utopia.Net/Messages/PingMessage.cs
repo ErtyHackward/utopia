@@ -8,13 +8,13 @@ namespace Utopia.Net.Messages
     /// </summary>
     public struct PingMessage : IBinaryMessage
     {
-        private int _token;
+        private long _token;
         private bool _request;
 
         /// <summary>
-        /// Any integer number to verify ping command
+        /// Any long number to verify ping command
         /// </summary>
-        public int Token
+        public long Token
         {
             get { return _token; }
             set { _token = value; }
@@ -39,8 +39,7 @@ namespace Utopia.Net.Messages
             PingMessage msg;
 
             msg._request = reader.ReadBoolean();
-            msg._token = reader.ReadInt32();
-            
+            msg._token = reader.ReadInt64();
 
             return msg;
         }
