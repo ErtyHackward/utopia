@@ -29,6 +29,17 @@ namespace Utopia.Server.Structs
         /// </summary>
         public bool NeedSave { get; set; }
 
+        /// <summary>
+        /// Occurs when some of containing blocks was changed
+        /// </summary>
+        public event EventHandler<ChunkDataProviderDataChangedEventArgs> BlocksChanged;
+
+        private void OnBlocksChanged(ChunkDataProviderDataChangedEventArgs e)
+        {
+            var handler = BlocksChanged;
+            if (handler != null) handler(this, e);
+        }
+
         public ServerChunk() : base(new InsideDataProvider())
         {
             InstantCompress = true;
@@ -45,14 +56,17 @@ namespace Utopia.Server.Structs
             InstantCompress = true;
         }
 
-        protected override void BlockBufferChanged(object sender, ChunkDataProviderBufferChangedEventArgs e)
-        {
-            base.BlockBufferChanged(sender, e);
-        }
-
+        /// <summary>
+        /// Handling of chunk blocks data change
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected override void BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
         {
             PureGenerated = false;
+
+            OnBlocksChanged(e);
+
             base.BlockDataChanged(sender, e);
         }
     }

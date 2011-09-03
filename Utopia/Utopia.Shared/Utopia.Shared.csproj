@@ -78,6 +78,7 @@
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\Entities\CharacterEntity.cs" />
     <Compile Include="Chunks\Entities\Concrete\EditableVoxelEntity.cs" />
+    <Compile Include="Chunks\Entities\Events\BlocksChangedEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\DynamicEntityEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityLeaveAreaEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityMoveEventArgs.cs" />
@@ -91,7 +92,6 @@
     <Compile Include="Chunks\Entities\Inventory\ToolbarSlot.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityEffect.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityState.cs" />
-    <Compile Include="Chunks\Entities\Management\BlockChangeEventArgs.cs" />
     <Compile Include="Chunks\Entities\Management\MapArea.cs" />
     <Compile Include="Chunks\Entities\PlayerCharacter.cs" />
     <Compile Include="Chunks\Entities\SpecialCharacterEntity.cs" />

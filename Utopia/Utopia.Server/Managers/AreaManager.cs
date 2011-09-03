@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using SharpDX;
 using Utopia.Shared.Chunks.Entities.Events;
@@ -14,7 +13,7 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Manages the dynamic entites
     /// </summary>
-    public class EntityManager
+    public class AreaManager
     {
         private readonly ConcurrentDictionary<IntVector2, MapArea> _areas = new ConcurrentDictionary<IntVector2, MapArea>();
         private readonly HashSet<IDynamicEntity> _allEntities = new HashSet<IDynamicEntity>();
@@ -36,9 +35,9 @@ namespace Utopia.Server.Managers
         /// <summary>
         /// Occurs when new entity was added somewhere on map
         /// </summary>
-        public event EventHandler<EntityManagerEventArgs> EntityAdded;
+        public event EventHandler<AreaEntityEventArgs> EntityAdded;
 
-        private void OnEntityAdded(EntityManagerEventArgs e)
+        private void OnEntityAdded(AreaEntityEventArgs e)
         {
             var handler = EntityAdded;
             if (handler != null) handler(this, e);
@@ -47,9 +46,9 @@ namespace Utopia.Server.Managers
         /// <summary>
         /// Occurs when entity was removed from map
         /// </summary>
-        public event EventHandler<EntityManagerEventArgs> EntityRemoved;
+        public event EventHandler<AreaEntityEventArgs> EntityRemoved;
 
-        private void OnEntityRemoved(EntityManagerEventArgs e)
+        private void OnEntityRemoved(AreaEntityEventArgs e)
         {
             var handler = EntityRemoved;
             if (handler != null) handler(this, e);
@@ -57,6 +56,14 @@ namespace Utopia.Server.Managers
 
         #endregion
 
+        /// <summary>
+        /// Tells entities about blocks change event
+        /// </summary>
+        /// <param name="e"></param>
+        public void InvokeBlocksChanged(BlocksChangedEventArgs e)
+        {
+            GetArea(new Vector3(e.ChunkPosition.X,0,e.ChunkPosition.Y)).OnBlocksChanged(e);
+        }
 
         private MapArea GetArea(Vector3 position)
         {
@@ -151,7 +158,7 @@ namespace Utopia.Server.Managers
                 }
             }
 
-            OnEntityAdded(new EntityManagerEventArgs { Entity = entity });
+            OnEntityAdded(new AreaEntityEventArgs { Entity = entity });
         }
 
         public void RemoveEntity(IDynamicEntity entity)
@@ -178,7 +185,7 @@ namespace Utopia.Server.Managers
                 }
             }
 
-            OnEntityRemoved(new EntityManagerEventArgs { Entity = entity });
+            OnEntityRemoved(new AreaEntityEventArgs { Entity = entity });
         }
 
         public void Update(DateTime gameTime)

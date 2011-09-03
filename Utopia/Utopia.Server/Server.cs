@@ -10,6 +10,7 @@ using Utopia.Server.Managers;
 using Utopia.Server.Structs;
 using Utopia.Server.Utils;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Config;
 using Utopia.Shared.Interfaces;
@@ -80,7 +81,7 @@ namespace Utopia.Server
         /// <summary>
         /// Gets entity manager
         /// </summary>
-        public EntityManager EntityManager { get; private set; }
+        public AreaManager AreaManager { get; private set; }
 
         /// <summary>
         /// Create new instance of the Server class
@@ -103,7 +104,7 @@ namespace Utopia.Server
             // memory storage for chunks
             Chunks = new Dictionary<IntVector2, ServerChunk>();
 
-            EntityManager = new EntityManager();
+            AreaManager = new AreaManager();
             
             EntityFactory.Instance.SetLastId(EntityStorage.GetMaximumId());
 
@@ -120,7 +121,26 @@ namespace Utopia.Server
             _saveTimer = new Timer(SaveChunks, null, SettingsManager.Settings.SaveInterval, SettingsManager.Settings.SaveInterval);
             
         }
-        
+
+        private void OnChunkAdded(ServerChunk chunk)
+        {
+            chunk.BlocksChanged += ChunkBlocksChanged;
+        }
+
+        void ChunkBlocksChanged(object sender, Shared.Chunks.ChunkDataProviderDataChangedEventArgs e)
+        {
+            var chunk = (ServerChunk)sender;
+
+            chunk.LastAccess = DateTime.Now;
+            // tell entities about blocks change
+            AreaManager.InvokeBlocksChanged(new BlocksChangedEventArgs { ChunkPosition = chunk.Position, BlockValues = e.Bytes, Locations = e.Locations });
+        }
+
+        private void OnChunkRemoved(ServerChunk chunk)
+        {
+            chunk.BlocksChanged -= ChunkBlocksChanged;
+        }
+
         // this functions executes in other thread
         private void SaveChunks(object obj)
         {
@@ -151,12 +171,13 @@ namespace Utopia.Server
 
             lock (Chunks)
             {
-                    
+                // remove all chunks that was used very long time ago                    
                 chunksToRemove.AddRange(Chunks.Values.Where(chunk => chunk.LastAccess < DateTime.Now.AddMinutes(-SettingsManager.Settings.ChunkLiveTimeMinutes)));
 
                 foreach (var chunk in chunksToRemove)
                 {
                     Chunks.Remove(chunk.Position);
+                    OnChunkRemoved(chunk);
                 }
             }
         }
@@ -176,7 +197,7 @@ namespace Utopia.Server
                 EntityStorage.SaveEntity(e.Connection.Entity);
 
                 // tell everybody that this player is gone
-                EntityManager.RemoveEntity(e.Connection.Entity);
+                AreaManager.RemoveEntity(e.Connection.Entity);
             }
 
         }
@@ -261,11 +282,12 @@ namespace Utopia.Server
                         }
                         else
                         {
-                            chunk = new ServerChunk { CompressedBytes = data };
+                            chunk = new ServerChunk { CompressedBytes = data };                            
                             chunk.Decompress();
                         }
 
                         Chunks.Add(position, chunk);
+                        OnChunkAdded(chunk);
                     }
                     else chunk = Chunks[position];
                 }
@@ -421,7 +443,7 @@ namespace Utopia.Server
                 connection.Send(gameInfo);
                 
                 // adding entity to world
-                EntityManager.AddEntity(connection.Entity);
+                AreaManager.AddEntity(connection.Entity);
             }
             else
             {

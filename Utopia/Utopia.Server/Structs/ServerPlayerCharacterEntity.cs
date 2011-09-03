@@ -31,6 +31,7 @@ namespace Utopia.Server.Structs
             area.EntityRemoved += AreaEntityRemoved;
             area.EntityAdded += AreaEntityAdded;
             area.EntityUse += AreaEntityUse;
+            area.BlocksChanged += area_BlocksChanged;
 
             foreach (var entity in area.Enumerate())
             {
@@ -45,6 +46,7 @@ namespace Utopia.Server.Structs
             area.EntityRemoved -= AreaEntityRemoved;
             area.EntityAdded -= AreaEntityAdded;
             area.EntityUse -= AreaEntityUse;
+            area.BlocksChanged -= area_BlocksChanged;
 
             foreach (var dynamicEntity in area.Enumerate())
             {
@@ -100,7 +102,10 @@ namespace Utopia.Server.Structs
             }
         }
 
-
+        void area_BlocksChanged(object sender, BlocksChangedEventArgs e)
+        {
+            Connection.Send(new BlocksChangedMessage { ChunkPosition = e.ChunkPosition, BlockValues = e.BlockValues, BlockPositions = e.Locations });
+        }
 
     }
 }
