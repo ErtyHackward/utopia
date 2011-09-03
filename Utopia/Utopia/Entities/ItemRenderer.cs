@@ -76,7 +76,8 @@ namespace Utopia.Entities
 
             Item item = new Shovel(); //just an example, i need a concrete item class ! 
             item.Blocks = new byte[16, 16, 16];
-            item.RandomFill(5);//would come filled from server
+            //item.RandomFill(5);//would come filled from server
+            item.BordersFill();
             item.Position = _camManager.ActiveCamera.WorldPosition.AsVector3();
             
             Items.Add(new VisualEntity(_voxelMeshFactory, item));

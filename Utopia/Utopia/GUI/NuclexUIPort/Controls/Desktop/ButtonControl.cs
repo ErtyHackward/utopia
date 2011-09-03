@@ -40,5 +40,4 @@ namespace Nuclex.UserInterface.Controls.Desktop {
     public string Text;
 
   }
-
 } // namespace Nuclex.UserInterface.Controls.Desktop

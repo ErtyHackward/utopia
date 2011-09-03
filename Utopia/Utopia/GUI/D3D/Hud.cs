@@ -72,5 +72,16 @@ namespace Utopia.GUI.D3D
             _spriteRender.End();
 
         }
+
+        protected override void OnDisable()
+        {
+            _screen.Desktop.Children.Remove(_toolbarUi);
+        }
+
+        protected override void OnEnable()
+        {
+            if (!_screen.Desktop.Children.Contains(_toolbarUi))
+                _screen.Desktop.Children.Add(_toolbarUi);
+        }
     }
 }

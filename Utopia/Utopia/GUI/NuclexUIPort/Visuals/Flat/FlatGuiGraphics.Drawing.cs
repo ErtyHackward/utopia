@@ -111,12 +111,13 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         /// <summary>Draws a GUI element onto the drawing buffer</summary>
         /// <param name="frameName">Class of the element to draw</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
+        /// <param name="color">color</param>
         /// <remarks>
         ///   <para>
         ///     GUI elements are the basic building blocks of a GUI: 
         ///   </para>
         /// </remarks>
-        public void DrawElement(string frameName, RectangleF bounds)
+        public void DrawElement(string frameName, RectangleF bounds,Color color)
         {
             Frame frame = lookupFrame(frameName);
 
@@ -128,9 +129,15 @@ namespace Nuclex.UserInterface.Visuals.Flat {
                 Rectangle destinationRegion = calculateDestinationRectangle(ref bounds, ref frame.Regions[index].DestinationRegion);
 
                 //this.spriteRenderer.Render(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion, Color.White);
-                this.spriteRenderer.RenderBatch(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion, Color.White);
+                this.spriteRenderer.RenderBatch(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion,color);
             }
         }
+
+         public void DrawElement(string frameName, RectangleF bounds)
+         {
+             DrawElement(frameName, bounds, Color.White);
+         }
+
         //the 2 DrawCustomTexture methods were added by Simon ! 
         public void DrawCustomTexture(SpriteTexture customTex, RectangleF bounds)
         {

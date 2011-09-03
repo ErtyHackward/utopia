@@ -45,8 +45,9 @@ namespace Utopia.Entities.Voxel
         }
 
 
-        private static void BuildBlockVertices(byte[,,] blocks, ref List<VertexPositionColor> vertice, byte blockType, int x,
-                                        int y, int z)
+        private static void BuildBlockVertices(byte[,,] blocks, ref List<VertexPositionColor> vertice, byte blockType,
+                                               int x,
+                                               int y, int z)
         {
             byte blockXDecreasing = x == 0 ? (byte) 0 : blocks[x - 1, y, z];
             byte blockXIncreasing = x == blocks.GetLength(0) - 1 ? (byte) 0 : blocks[x + 1, y, z];
@@ -59,18 +60,21 @@ namespace Utopia.Entities.Voxel
                 BuildFaceVertices(ref vertice, x, y, z, CubeFace.Left, blockType); //X-
             if (blockXIncreasing == 0)
                 BuildFaceVertices(ref vertice, x, y, z, CubeFace.Right, blockType); //X+
+           
             if (blockYDecreasing == 0)
                 BuildFaceVertices(ref vertice, x, y, z, CubeFace.Bottom, blockType); //Y-
             if (blockYIncreasing == 0)
                 BuildFaceVertices(ref vertice, x, y, z, CubeFace.Top, blockType); //Y+
-            if (blockZDecreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Front, blockType); //Z-
+
             if (blockZIncreasing == 0)
                 BuildFaceVertices(ref vertice, x, y, z, CubeFace.Back, blockType); //Z+
-        }
+            if (blockZDecreasing == 0)
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Front, blockType); //Z-
+            }
 
-        private static void BuildFaceVertices(ref List<VertexPositionColor> vertice, int x, int y, int z, CubeFace faceDir,
-                                       byte blockType)
+        private static void BuildFaceVertices(ref List<VertexPositionColor> vertice, int x, int y, int z,
+                                              CubeFace faceDir,
+                                              byte blockType)
         {
             //actually only handles 64 colors, so all blockType> 63 will have default color
             Color color = ColorLookup.Colours[blockType];

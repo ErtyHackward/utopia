@@ -21,7 +21,7 @@ License along with this library
 using System; using SharpDX;
 using System.Collections.Generic;
 using SharpDX.Direct3D11;
-
+using Utopia.Shared.Structs;
 using Rectangle = System.Drawing.Rectangle;
 using S33M3Engines.Sprites;
 using S33M3Engines.Shared.Sprites;
@@ -98,6 +98,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
       string frameName, RectangleF bounds, string text, Vector2 position
     );
 
+      void DrawElement(string frameName, RectangleF controlBounds, Color color);
   }
 
 } // namespace Nuclex.UserInterface.Visuals.Flat

@@ -11,6 +11,9 @@ namespace Utopia.GUI.D3D.Inventory
 {
     public class ContainerControl : Control
     {
+        /// <summary>
+        /// Optional background picture
+        /// </summary>
         public SpriteTexture background;
     }
 }

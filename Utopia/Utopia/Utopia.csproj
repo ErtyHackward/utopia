@@ -146,6 +146,7 @@
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IThumbLocator.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ListControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\OptionControl.cs" />
+    <Compile Include="Editor\PaletteButtonControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\SliderControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\VerticalSliderControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\WindowControl.cs" />
@@ -186,6 +187,7 @@
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\IFlatControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\IFlatGuiGraphics.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\OpeningLocator.cs" />
+    <Compile Include="Editor\PaletteButtonControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\IGuiVisualizer.cs" />
     <Compile Include="Network\ClientEntityManager.cs" />
     <Compile Include="Network\EntityMessageTranslator.cs" />
