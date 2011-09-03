@@ -10,7 +10,7 @@ namespace Utopia.Tests.EntityManagement
     [TestClass]
     public class EntityManagerTest
     {
-        EntityManager _manager = new EntityManager();
+        AreaManager _manager = new AreaManager();
 
         [TestMethod]
         public void PerfomanceTest1000()

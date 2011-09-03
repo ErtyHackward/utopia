@@ -29,7 +29,7 @@ namespace Utopia.Net.Messages
         {
             switch (id)
             {
-                case MessageTypes.BlockChange: return BlockChangeMessage.Read(reader);
+                case MessageTypes.BlockChange: return BlocksChangedMessage.Read(reader);
                 case MessageTypes.Chat: return ChatMessage.Read(reader);
                 case MessageTypes.ChunkData: return ChunkDataMessage.Read(reader);
                 case MessageTypes.DateTime: return DateTimeMessage.Read(reader);

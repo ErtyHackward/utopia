@@ -103,13 +103,13 @@ namespace Utopia.Shared.Chunks.Entities.Management
         }
 
         /// <summary>
-        /// Occurs when any block in any of chunks in that area was chanded
+        /// Occurs when one or more blocks in any of chunks in that area was chanded
         /// </summary>
-        public event EventHandler<BlockChangeEventArgs> BlockChanged;
+        public event EventHandler<BlocksChangedEventArgs> BlocksChanged;
 
-        public void OnBlockChanged(BlockChangeEventArgs e)
+        public void OnBlocksChanged(BlocksChangedEventArgs e)
         {
-            var handler = BlockChanged;
+            var handler = BlocksChanged;
             if (handler != null) handler(this, e);
         }
 

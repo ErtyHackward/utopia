@@ -105,12 +105,12 @@ namespace Utopia.Net.Connections
         /// <summary>
         /// Occurs when BlockChnageMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<BlockChangeMessage>> MessageBlockChange;
+        public event EventHandler<ProtocolMessageEventArgs<BlocksChangedMessage>> MessageBlockChange;
 
-        protected void OnMessageBlockChange(BlockChangeMessage ea)
+        protected void OnMessageBlockChange(BlocksChangedMessage ea)
         {
             if (MessageBlockChange != null)
-                MessageBlockChange(this, new ProtocolMessageEventArgs<BlockChangeMessage> { Message = ea });
+                MessageBlockChange(this, new ProtocolMessageEventArgs<BlocksChangedMessage> { Message = ea });
         }
 
         /// <summary>
@@ -380,7 +380,7 @@ namespace Utopia.Net.Connections
                     OnMessageGameInformation((GameInformationMessage)msg);
                     break;
                 case MessageTypes.BlockChange:
-                    OnMessageBlockChange((BlockChangeMessage)msg);
+                    OnMessageBlockChange((BlocksChangedMessage)msg);
                     break;
                 case MessageTypes.EntityPosition:
                     OnMessagePosition((EntityPositionMessage)msg);

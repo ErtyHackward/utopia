@@ -123,7 +123,7 @@ namespace Utopia.Network
             throw new NotImplementedException();
         }
 
-        void _server_MessageBlockChange(object sender, ProtocolMessageEventArgs<Net.Messages.BlockChangeMessage> e)
+        void _server_MessageBlockChange(object sender, ProtocolMessageEventArgs<Net.Messages.BlocksChangedMessage> e)
         {
             throw new NotImplementedException();
         }

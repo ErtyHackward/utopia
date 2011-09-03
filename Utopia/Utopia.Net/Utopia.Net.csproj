@@ -47,7 +47,7 @@
     <Compile Include="Connections\ProtocolMessageEventArgs.cs" />
     <Compile Include="Connections\ServerConnection.cs" />
     <Compile Include="Interfaces\IBinaryMessage.cs" />
-    <Compile Include="Messages\BlockChangeMessage.cs" />
+    <Compile Include="Messages\BlocksChangedMessage.cs" />
     <Compile Include="Messages\ChatMessage.cs" />
     <Compile Include="Messages\ChunkDataMessage.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />

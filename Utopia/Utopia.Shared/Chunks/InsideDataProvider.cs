@@ -67,7 +67,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Sets a group of blocks
         /// </summary>
-        /// <param name="positions"></param>
+        /// <param name="positions">internal chunk positions</param>
         /// <param name="values"></param>
         public override void SetBlocks(Location3<int>[] positions, byte[] values)
         {
