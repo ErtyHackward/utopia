@@ -102,6 +102,17 @@ namespace Utopia.Shared.Chunks.Entities.Management
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Occurs when any block in any of chunks in that area was chanded
+        /// </summary>
+        public event EventHandler<BlockChangeEventArgs> BlockChanged;
+
+        public void OnBlockChanged(BlockChangeEventArgs e)
+        {
+            var handler = BlockChanged;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         /// <summary>

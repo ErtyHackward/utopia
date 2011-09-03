@@ -91,6 +91,7 @@
     <Compile Include="Chunks\Entities\Inventory\ToolbarSlot.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityEffect.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityState.cs" />
+    <Compile Include="Chunks\Entities\Management\BlockChangeEventArgs.cs" />
     <Compile Include="Chunks\Entities\Management\MapArea.cs" />
     <Compile Include="Chunks\Entities\PlayerCharacter.cs" />
     <Compile Include="Chunks\Entities\SpecialCharacterEntity.cs" />
