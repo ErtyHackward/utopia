@@ -25,7 +25,29 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
                         if (r.Next(100) < emptyProbabilityPercent)
                             Blocks[x, y, z] = 0;
                         else
-                            Blocks[x, y, z] = (byte)r.Next(63);
+                            Blocks[x, y, z] = (byte)r.Next(1, 63);
+                    }
+                }
+            }
+        }
+
+        public void BordersFill()
+        {
+            Random r = new Random();
+
+            int xmax = Blocks.GetLength(0) - 1;
+            int ymax = Blocks.GetLength(1) - 1;
+            int zmax = Blocks.GetLength(2) - 1;
+            for (int x = 0; x < Blocks.GetLength(0); x++)
+            {
+                for (int y = 0; y < Blocks.GetLength(1); y++)
+                {
+                    for (int z = 0; z < Blocks.GetLength(2); z++)
+                    {
+                        if (x == 0 || y == 0 || z == 0 || x == xmax || y == ymax || z == zmax)
+                            Blocks[x, y, z] = (byte)r.Next(1,63);
+                        else
+                            Blocks[x, y, z] = 0;
                     }
                 }
             }

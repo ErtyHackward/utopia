@@ -37,7 +37,21 @@ namespace S33M3Engines.D3D
         #endregion
 
         #region Public properties
-        public bool CallUpdate { get { return _callUpdate; } set { _callUpdate = value; } }
+        public bool CallUpdate { get { return _callUpdate; }
+            set
+        {
+                if ( ! _callUpdate && value)
+                {
+                    OnEnable();
+                } else if ( _callUpdate && ! value)
+                {
+                    OnDisable();
+                }
+
+            _callUpdate = value;
+        } 
+        }
+
         public bool CallDraw { get { return _callDraw; } set { _callDraw = value; } }
         #endregion
 
@@ -75,6 +89,20 @@ namespace S33M3Engines.D3D
         }
 
         public virtual void DrawDepth2()
+        {
+        }
+
+        /// <summary>
+        /// Called when component is disabled : CallDraw is changed from true to false
+        /// </summary>
+        protected virtual void OnDisable()
+        {
+        }
+
+        /// <summary>
+        /// Called when component is enabled : CallDraw is changed from false to true
+        /// </summary>        
+        protected virtual void OnEnable()
         {
         }
 

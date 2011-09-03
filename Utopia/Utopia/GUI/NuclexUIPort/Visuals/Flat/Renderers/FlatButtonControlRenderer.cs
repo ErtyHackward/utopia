@@ -74,5 +74,4 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
     };
 
   }
-
 } // namespace Nuclex.UserInterface.Visuals.Flat.Renderers

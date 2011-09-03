@@ -9,6 +9,7 @@ using S33M3Engines.Struct.Vertex;
 using S33M3Engines.WorldFocus;
 using SharpDX;
 using Utopia.Entities.Voxel;
+using Utopia.GUI.D3D;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Screen = Nuclex.UserInterface.Screen;
 
@@ -26,10 +27,11 @@ namespace Utopia.Editor
         private readonly VoxelMeshFactory _voxelMeshFactory;
         private readonly EntityEditorUi _ui;
         private readonly InputHandlerManager _inputHandler;
+        private readonly Hud _hudComponent;
 
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
-                            InputHandlerManager inputHandler)
+                            InputHandlerManager inputHandler, Hud hudComponent)
         {
             _screen = screen;
             _inputHandler = inputHandler;
@@ -37,12 +39,13 @@ namespace Utopia.Editor
             _voxelMeshFactory = voxelMeshFactory;
             _camManager = camManager;
             _d3DEngine = d3DEngine;
+            _hudComponent = hudComponent;
             _ui = new EntityEditorUi(this);
 
             VoxelEntity entity = new EditableVoxelEntity();
 
             entity.Blocks = new byte[16,16,16];
-            entity.RandomFill(5);
+            entity.BordersFill();
             _editedEntity = new VisualEntity(_voxelMeshFactory, entity);
             _editedEntity.Position = _camManager.ActiveCamera.WorldPosition.AsVector3() + new Vector3(0, 0, 2);
 
@@ -64,11 +67,6 @@ namespace Utopia.Editor
 
         public override void Update(ref GameTime timeSpent)
         {
-            if (!_screen.Desktop.Children.Contains(_ui))
-                _screen.Desktop.Children.Add(_ui);
-
-            //TODO implement CallUpdateChanged event like in xna for being able to remove UI when disabled 
-
             HandleInput(false);
         }
 
@@ -80,6 +78,27 @@ namespace Utopia.Editor
         public override void DrawDepth2()
         {
             DrawItems();
+        }
+
+        protected override void OnDisable()
+        {
+            foreach (var control in _ui.Children)
+                _screen.Desktop.Children.Remove(control);
+            _hudComponent.CallUpdate= true;
+
+        }
+
+        protected override void OnEnable()
+        {
+            _hudComponent.CallUpdate = false;
+
+            foreach (var control in _ui.Children)
+            {
+                if (!_screen.Desktop.Children.Contains(control))
+                {
+                    _screen.Desktop.Children.Add(control);
+                }
+            }
         }
 
         private void DrawItems()
@@ -131,24 +150,24 @@ namespace Utopia.Editor
                 else _lButtonBuffer = false;
 
 
-                byte[, ,] blocks = _editedEntity.VoxelEntity.Blocks;
+                byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
-                if (_y == blocks.GetLength(1)) return;
+                if (_y == blocks.GetLength(1)) _y = 0;
 
-                //just for demo prototype i remove a y slice each mouseclick
+                //just for demo prototype i color a y slice each mouseclick
 
                 for (int x = 0; x < blocks.GetLength(0); x++)
                 {
                     for (int z = 0; z < blocks.GetLength(2); z++)
                     {
-                        blocks[x, _y, z] = 0;
+                        blocks[x, _y, z] = _ui.SelectedColor;
                     }
                 }
 
                 _editedEntity.Altered = true;
                 _editedEntity.Update();
 
-                 _y++;
+                _y++;
             }
         }
     }
