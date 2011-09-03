@@ -46,7 +46,7 @@ namespace Utopia.Shared.World.Processors
             _chunksDone = 0;
             generationRange.Foreach(pos =>
             {
-                var chunk = chunks[pos.X - generationRange.Min.X, pos.Y - generationRange.Min.Y];
+                var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
 
                 var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
 

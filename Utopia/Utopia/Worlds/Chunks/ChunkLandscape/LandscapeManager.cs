@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using S33M3Engines.Threading;
 using System.Threading.Tasks;
+using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.Chunks;
 using Amib.Threading;
@@ -101,11 +102,10 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             {
                 chunk.IsServerRequested = true;
                 //Request the chunk data to the server
-                _server.ServerConnection.SendAsync(new Utopia.Net.Messages.GetChunksMessage()
+                _server.ServerConnection.SendAsync(new GetChunksMessage
                 {
-                    StartPosition = chunk.ChunkPosition,
-                    EndPosition = chunk.ChunkPosition + 1,
-                    Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData
+                    Range = new Range2(chunk.ChunkPosition, IntVector2.One),
+                    Flag = GetChunksMessageFlag.AlwaysSendChunkData
                 });
             }
         }

@@ -187,5 +187,13 @@ namespace Utopia.Shared.Structs
         }
 
         #endregion
+
+        /// <summary>
+        /// Gets IntVector2 with values x = 1, y = 1
+        /// </summary>
+        public static IntVector2 One
+        {
+            get { return new IntVector2(1, 1); }
+        }
     }
 }

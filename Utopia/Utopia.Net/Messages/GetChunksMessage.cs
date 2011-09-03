@@ -11,8 +11,7 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct GetChunksMessage : IBinaryMessage
     {
-        private IntVector2 _startPosition;
-        private IntVector2 _endPosition;
+        private Range2 _range;
         /// <summary>
         /// Request mode
         /// </summary>
@@ -39,23 +38,14 @@ namespace Utopia.Net.Messages
         }
 
         /// <summary>
-        /// Gets or sets region start position
+        /// Gets or sets chunks range
         /// </summary>
-        public IntVector2 StartPosition
+        public Range2 Range
         {
-            get { return _startPosition; }
-            set { _startPosition = value; }
+            get { return _range; }
+            set { _range = value; }
         }
-
-        /// <summary>
-        /// Gets or sets region end position
-        /// </summary>
-        public IntVector2 EndPosition
-        {
-            get { return _endPosition; }
-            set { _endPosition = value; }
-        }
-
+        
         /// <summary>
         /// Gets or sets request mode flag
         /// </summary>
@@ -96,12 +86,8 @@ namespace Utopia.Net.Messages
         {
             GetChunksMessage msg;
             
-            msg._startPosition.X = reader.ReadInt32();
-            msg._startPosition.Y = reader.ReadInt32();
+            msg._range = reader.ReadRange2();
             
-            msg._endPosition.X = reader.ReadInt32();
-            msg._endPosition.Y = reader.ReadInt32();
-
             msg._flag = (GetChunksMessageFlag)reader.ReadByte();
 
             msg._hashesCount = reader.ReadInt32();
@@ -132,10 +118,7 @@ namespace Utopia.Net.Messages
 
         public static void Write(BinaryWriter writer, GetChunksMessage msg)
         {
-            writer.Write(msg._startPosition.X);
-            writer.Write(msg._startPosition.Y);
-            writer.Write(msg._endPosition.X);
-            writer.Write(msg._endPosition.Y);
+            writer.Write(msg._range);
             writer.Write((byte)msg._flag);
 
             if (msg._positions != null)

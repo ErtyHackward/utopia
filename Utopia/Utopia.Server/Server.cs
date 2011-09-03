@@ -279,7 +279,7 @@ namespace Utopia.Server
 
             try
             {
-                var range = new Range2 { Min = e.Message.StartPosition, Max = e.Message.EndPosition };
+                var range = e.Message.Range;
 
                 // list to get indicies
                 var positionsList = e.Message.Positions == null ? null : new List<IntVector2>(e.Message.Positions);
