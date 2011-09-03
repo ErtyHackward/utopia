@@ -9,20 +9,36 @@ namespace Utopia.Shared.Structs
     /// </summary>
     public struct Range2 : IEnumerable<IntVector2>
     {
-        public IntVector2 Min { get; set; }
-        public IntVector2 Max { get; set; }
+        private IntVector2 _position;
+        private IntVector2 _size;
 
         /// <summary>
-        /// Gets size of the range
+        /// Creates new Range2
         /// </summary>
-        public Location2<int> Size
+        /// <param name="position">Range top left position</param>
+        /// <param name="size">Range size</param>
+        public Range2(IntVector2 position, IntVector2 size)
         {
-            get {
-                Location2<int> rangeSize;
-                rangeSize.X = Max.X - Min.X;
-                rangeSize.Z = Max.Y - Min.Y;
-                return rangeSize;
-            }
+            _position = position;
+            _size = size;
+        }
+        
+        /// <summary>
+        /// Gets or sets top left position of the range
+        /// </summary>
+        public IntVector2 Position
+        {
+            get { return _position; }
+            set { _position = value; }
+        }
+        
+        /// <summary>
+        /// Gets or sets size of this range
+        /// </summary>
+        public IntVector2 Size
+        {
+            get { return _size; }
+            set { _size = value; }
         }
 
         /// <summary>
@@ -31,9 +47,9 @@ namespace Utopia.Shared.Structs
         /// <param name="action"></param>
         public void Foreach(Action<IntVector2> action)
         {
-            for (int x = Min.X; x < Max.X; x++)
+            for (int x = _position.X; x < _position.X + _size.X; x++)
             {
-                for (int y = Min.Y; y < Max.Y; y++)
+                for (int y = _position.Y; y < _position.Y + _size.Y; y++)
                 {
                     IntVector2 loc;
                     loc.X = x;
@@ -50,9 +66,9 @@ namespace Utopia.Shared.Structs
         public void Foreach(Action<IntVector2,int> action)
         {
             int index = 0;
-            for (int x = Min.X; x < Max.X; x++)
+            for (int x = _position.X; x < _position.X + _size.X; x++)
             {
-                for (int y = Min.Y; y < Max.Y; y++)
+                for (int y = _position.Y; y < _position.Y + _size.Y; y++)
                 {
                     IntVector2 loc;
                     loc.X = x;
@@ -65,7 +81,7 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// Gets total items count
         /// </summary>
-        public int Count { get { return (Max.X - Min.X)*(Max.Y - Min.Y); } }
+        public int Count { get { return _size.X * _size.Y; } }
 
         /// <summary>
         /// Indicates if range contains some point
@@ -74,14 +90,14 @@ namespace Utopia.Shared.Structs
         /// <returns></returns>
         public bool Contains(IntVector2 position)
         {
-            return Min.X <= position.X && Max.X > position.X && Min.Y <= position.Y && Max.Y > position.Y;
+            return _position.X <= position.X && _position.X + _size.X > position.X && _position.Y <= position.Y && _position.Y + _size.Y > position.Y;
         }
 
         public IEnumerator<IntVector2> GetEnumerator()
         {
-            for (int x = Min.X; x < Max.X; x++)
+            for (int x = _position.X; x < _position.X + _size.X; x++)
             {
-                for (int y = Min.Y; y < Max.Y; y++)
+                for (int y = _position.Y; y < _position.Y + _size.Y; y++)
                 {
                     IntVector2 loc;
                     loc.X = x;

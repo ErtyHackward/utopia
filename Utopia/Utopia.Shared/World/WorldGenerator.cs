@@ -78,11 +78,11 @@ namespace Utopia.Shared.World
 
             int chunkIndex = 0;
 
-            for (int x = range.Min.X; x < range.Max.X; x++)
+            for (int x = 0; x < range.Size.X; x++)
             {
-                for (int z = range.Min.Y; z < range.Max.Y; z++)
+                for (int z = 0; z < range.Size.Y; z++)
                 {
-                    var chunk = chunks[x - range.Min.X, z - range.Min.Y];
+                    var chunk = chunks[x, z];
                     var chunkData = chunk.BlockData.GetBlocksBytes();
                     var chunkEntities = chunk.Entities;
 
@@ -99,13 +99,13 @@ namespace Utopia.Shared.World
             if (Stages.Count == 0)
                 throw new InvalidOperationException("Add at least one genereation process (stage) before starting");
 
-            var chunks = new GeneratedChunk[range.Size.X, range.Size.Z];
+            var chunks = new GeneratedChunk[range.Size.X, range.Size.Y];
             
-            for (int x = range.Min.X; x < range.Max.X; x++)
+            for (int x = 0; x < range.Size.X; x++)
             {
-                for (int z = range.Min.Y; z < range.Max.Y; z++)
+                for (int z = 0; z < range.Size.Y; z++)
                 {
-                    chunks[x - range.Min.X, z - range.Min.Y] = new GeneratedChunk();
+                    chunks[x, z] = new GeneratedChunk();
                 }
             }
 
@@ -124,7 +124,7 @@ namespace Utopia.Shared.World
         /// <returns></returns>
         public GeneratedChunk GetChunk(IntVector2 position)
         {
-            var chunks = Generate(new Range2 { Min = position, Max = position + 1 });
+            var chunks = Generate(new Range2 { Position = position, Size = IntVector2.One });
 
             return chunks[0, 0];
         }

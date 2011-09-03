@@ -297,12 +297,20 @@ namespace Utopia.Worlds.Chunks
             //Request the Full landscape chunks if server connected
             if (_server.Connected)
             {
-                _server.ServerConnection.SendAsync(new Utopia.Net.Messages.GetChunksMessage()
-                    {
-                        StartPosition = new Shared.Structs.IntVector2((VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X), (VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z)),
-                        EndPosition = new Shared.Structs.IntVector2((VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X) + VisualWorldParameters.WorldParameters.WorldChunkSize.X, (VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z) + VisualWorldParameters.WorldParameters.WorldChunkSize.Z),
-                        Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData
-                    });
+                _server.ServerConnection.SendAsync(new Net.Messages.GetChunksMessage
+                                                       {
+                                                           Range = new Range2(
+                                                               new IntVector2(
+                                                                   VisualWorldParameters.WorldChunkStartUpPosition.X/AbstractChunk.ChunkSize.X,
+                                                                   VisualWorldParameters.WorldChunkStartUpPosition.Z/AbstractChunk.ChunkSize.Z
+                                                                   ),
+                                                               new IntVector2(
+                                                                   VisualWorldParameters.WorldParameters.WorldChunkSize.X,
+                                                                   VisualWorldParameters.WorldParameters.WorldChunkSize.Z
+                                                                   )
+                                                               ),
+                                                           Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData
+                                                       });
             }
 
             ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
