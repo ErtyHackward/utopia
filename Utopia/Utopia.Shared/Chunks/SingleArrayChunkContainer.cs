@@ -227,7 +227,7 @@ namespace Utopia.Shared.Chunks
 
             //Validate the index
 
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 8; i++)
             {
                 if (ForceIndexSafe)
                 {

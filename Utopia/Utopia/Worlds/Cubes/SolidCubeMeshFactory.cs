@@ -382,7 +382,7 @@ namespace Utopia.Worlds.Cubes
             //Get the index of the current cube.
             int baseIndex = _cubesHolder.Index(ref cubePosiInWorld);
 
-            int[] ind = new int[9];
+            int[] ind = new int[8];
 
             switch (cubeFace)
             {
@@ -400,16 +400,6 @@ namespace Utopia.Worlds.Cubes
                     ByteColor BackRightTop_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.UpRightIndex]].EmissiveColor;
                     ByteColor BackLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor BackRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
-
-                    //ByteColor Back_Cube = _cubesHolder.Cubes[_cubesHolder.ValidateIndex(baseIndex + _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BackLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BackRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BackTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BackBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BackLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BackRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BackLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BackRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
 
                     topLeft = cubePosition + new ByteVector4(0, 1, 1, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(1, 1, 1, cubeFaceType);
@@ -480,17 +470,6 @@ namespace Utopia.Worlds.Cubes
                     ByteColor FrontLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor FrontRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
 
-                    ////Get the 9 Facing cubes to the face
-                    //ByteColor Front_Cube = _cubesHolder.Cubes[_cubesHolder.ValidateIndex(baseIndex - _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor FrontLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor FrontRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor FrontTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor FrontBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor FrontLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor FrontRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor FrontLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor FrontRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-
                     topLeft = cubePosition + new ByteVector4(1, 1, 0, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(0, 1, 0, cubeFaceType);
                     bottomLeft = cubePosition + new ByteVector4(1, 0, 0, cubeFaceType);
@@ -559,17 +538,6 @@ namespace Utopia.Worlds.Cubes
                     ByteColor BottomRightTop_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.UpRightIndex]].EmissiveColor;
                     ByteColor BottomLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor BottomRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
-
-                    ////Get the 9 Facing cubes to the face
-                    //ByteColor Bottom_Cube = _cubesHolder.Cubes[_cubesHolder.ValidateIndex(baseIndex + _cubesHolder.MoveY)].EmissiveColor;
-                    //ByteColor BottomLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
-                    //ByteColor BottomRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
-                    //ByteColor BottomTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BottomBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BottomLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BottomRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BottomLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor BottomRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
 
                     topLeft = cubePosition + new ByteVector4(0, 1, 0, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(1, 1, 0, cubeFaceType);
@@ -640,17 +608,6 @@ namespace Utopia.Worlds.Cubes
                     ByteColor TopLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor TopRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
 
-                    ////Get the 9 Facing cubes to the face
-                    //ByteColor Top_Cube = _cubesHolder.Cubes[_cubesHolder.ValidateIndex(baseIndex - _cubesHolder.MoveY)].EmissiveColor;
-                    //ByteColor TopLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
-                    //ByteColor TopRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
-                    //ByteColor TopTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor TopBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor TopLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor TopRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor TopLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor TopRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-
                     topLeft = cubePosition + new ByteVector4(0, 0, 1, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(1, 0, 1, cubeFaceType);
                     bottomLeft = cubePosition + new ByteVector4(0, 0, 0, cubeFaceType);
@@ -708,9 +665,9 @@ namespace Utopia.Worlds.Cubes
                 case CubeFace.Left:
 
                     //Get the 9 Facing cubes to the face
-                    _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Z, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.X, ind, true);
+                    _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.X, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.X, ind, true);
 
-                    ByteColor Right_Cube = _cubesHolder.Cubes[_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Z, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1, true)].EmissiveColor;
+                    ByteColor Right_Cube = _cubesHolder.Cubes[_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.X, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1, true)].EmissiveColor;
                     ByteColor RightLeft_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.LeftIndex]].EmissiveColor;
                     ByteColor RightRight_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.RightIndex]].EmissiveColor;
                     ByteColor RightTop_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.UpIndex]].EmissiveColor;
@@ -719,17 +676,6 @@ namespace Utopia.Worlds.Cubes
                     ByteColor RightRightTop_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.UpRightIndex]].EmissiveColor;
                     ByteColor RightLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor RightRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
-
-                    ////Get the 9 Facing cubes to the face
-                    //ByteColor Right_Cube = _cubesHolder.Cubes[_cubesHolder.ValidateIndex(baseIndex - _cubesHolder.MoveX)].EmissiveColor;
-                    //ByteColor RightLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor RightRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor RightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
-                    //ByteColor RightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
-                    //ByteColor RightLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor RightRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor RightLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor RightRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, -_cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
 
                     topLeft = cubePosition + new ByteVector4(0, 1, 0, cubeFaceType);
                     bottomRight = cubePosition + new ByteVector4(0, 0, 1, cubeFaceType);
@@ -787,9 +733,9 @@ namespace Utopia.Worlds.Cubes
                 case CubeFace.Right:
 
                     //Get the 9 Facing cubes to the face
-                    _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Z, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.X, ind, true);
+                    _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.X, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.X, ind, true);
 
-                    ByteColor Left_Cube = _cubesHolder.Cubes[_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Z, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1, true)].EmissiveColor;
+                    ByteColor Left_Cube = _cubesHolder.Cubes[_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.X, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1, true)].EmissiveColor;
                     ByteColor LeftLeft_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.LeftIndex]].EmissiveColor;
                     ByteColor LefttRight_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.RightIndex]].EmissiveColor;
                     ByteColor LeftTop_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.UpIndex]].EmissiveColor;
@@ -798,17 +744,6 @@ namespace Utopia.Worlds.Cubes
                     ByteColor LeftRightTop_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.UpRightIndex]].EmissiveColor;
                     ByteColor LeftLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor LeftRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
-
-                    ////Get the 9 Facing cubes to the face
-                    //ByteColor Left_Cube = _cubesHolder.Cubes[_cubesHolder.ValidateIndex(baseIndex + _cubesHolder.MoveX)].EmissiveColor;
-                    //ByteColor LeftLeft_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor LefttRight_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor LeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY)].EmissiveColor;
-                    //ByteColor LeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY)].EmissiveColor;
-                    //ByteColor LeftLeftTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor LeftRightTop_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, _cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor LeftLeftBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, _cubesHolder.MoveZ)].EmissiveColor;
-                    //ByteColor LeftRightBottom_Cube = _cubesHolder.Cubes[_cubesHolder.IndexMoves(baseIndex, _cubesHolder.MoveX, -_cubesHolder.MoveY, -_cubesHolder.MoveZ)].EmissiveColor;
 
                     topLeft = cubePosition + new ByteVector4(1, 1, 1, cubeFaceType);
                     topRight = cubePosition + new ByteVector4(1, 1, 0, cubeFaceType);
