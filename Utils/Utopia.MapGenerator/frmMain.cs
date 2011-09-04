@@ -8,7 +8,7 @@ using S33M3Engines.Shared.Math.Noises;
 
 namespace Utopia.MapGenerator
 {
-    public partial class Form1 : Form
+    public partial class frmMain : Form
     {
         private List<Vector> _datapoints;
 
@@ -16,7 +16,7 @@ namespace Utopia.MapGenerator
 
         private Polygon _selectedPolygon;
 
-        public Form1()
+        public frmMain()
         {
             InitializeComponent();
 
@@ -48,6 +48,18 @@ namespace Utopia.MapGenerator
             }
         }
 
+        private Color GetColorFromElevation(int elevation)
+        {
+            Color col;
+            if (elevation > 127)
+            {
+                //earth
+                col = Color.FromArgb((byte)(100 - elevation), (byte)(80 - elevation), (byte)(50 - elevation));
+            }
+            else col = Color.FromArgb((byte)elevation, (byte)elevation, (byte)255);
+            return col;
+        }
+
         private void DrawGraph(Map map)
         {
             Bitmap bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -67,25 +79,21 @@ namespace Utopia.MapGenerator
                     }
                     if (_selectedPolygon == polygon)
                     {
-                        g.FillPolygon(Brushes.BurlyWood, polygon.points);
+                        g.FillPolygon(new SolidBrush(GetColorFromElevation(polygon.Elevation)), polygon.points);
+                        g.DrawPolygon(new Pen(Color.Black,2), polygon.points);
                         if(bordersCheckBox.Checked)
                             g.DrawEllipse(Pens.Green, polygon.Center.X - 2, polygon.Center.Y - 2, 4, 4);
                     }
                     else
                     {
-                        Color col;
-                        if (polygon.Elevation > 127)
-                        {
-                            //earth
-                            col = Color.FromArgb((byte)(100 - polygon.Elevation), (byte)(80 - polygon.Elevation), (byte)(50 - polygon.Elevation));
-                        }
-                        else col = Color.FromArgb((byte)polygon.Elevation, (byte)polygon.Elevation, (byte)255);
+                        Color col = GetColorFromElevation(polygon.Elevation);
 
-                        if (_selectedPolygon != null && _selectedPolygon.Neighbors.Contains(polygon))
-                        {
-                            g.FillPolygon(Brushes.Coral, polygon.points);
-                        }
-                        else g.FillPolygon(new SolidBrush(col), polygon.points); 
+                        //if (_selectedPolygon != null && _selectedPolygon.Neighbors.Contains(polygon))
+                        //{
+                        //    g.FillPolygon(Brushes.Coral, polygon.points);
+                        //}
+                        //else 
+                        g.FillPolygon(new SolidBrush(col), polygon.points); 
 
                         if (bordersCheckBox.Checked)
                             g.DrawEllipse(Pens.Brown, polygon.Center.X - 2, polygon.Center.Y - 2, 4, 4);    
@@ -135,74 +143,82 @@ namespace Utopia.MapGenerator
                 
             }
 
+            if (centerElevationCheck.Checked)
+            {
+                var poly = _map.GetAtPoint(new Point(pictureBox1.Width / 2, pictureBox1.Height / 2));
+                poly.Elevation = 200;
+                StartPropagation(poly, 15);
+            }
+
             if (makeIsandcheck.Checked)
             {
                 //r = new Random((int)voronoiSeedNumeric.Value);
-
+                var borderElevation = 80;
+                var step = 20;
                 for (int x = 0; x < pictureBox1.Width; x++)
                 {
                     var poly = _map.GetAtPoint(new Point(x, 0));
-                    if (poly.Elevation > 127)
-                    {
-                        poly.Elevation = 80;// r.Next(0, 100);
-                        PropagateValue(poly, 20, r.Next(0, 100));
-                    }
+
+                    poly.Elevation = borderElevation;// r.Next(0, 100);
+                    StartPropagation(poly, step);
+                    
 
                     poly = _map.GetAtPoint(new Point(x, pictureBox1.Height));
-                    if (poly.Elevation > 127)
-                    {
-                        poly.Elevation = 80;// r.Next(0, 100);
-                        PropagateValue(poly, 20, r.Next(0, 100));
-                    }
+                    poly.Elevation = borderElevation;// r.Next(0, 100);
+                    StartPropagation(poly, step);
+                    
                 }
 
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
                     var poly = _map.GetAtPoint(new Point(0, y));
-                    if (poly.Elevation > 127)
-                    {
-                        poly.Elevation = 80;// r.Next(0, 100);
-                        PropagateValue(poly, 20, r.Next(0, 100));
-                    }
+
+                    poly.Elevation = borderElevation;// r.Next(0, 100);
+                    StartPropagation(poly, step);
+                    
 
                     poly = _map.GetAtPoint(new Point(pictureBox1.Width, y));
-                    if (poly.Elevation > 127)
-                    {
-                        poly.Elevation = 80;// r.Next(0, 100);
-                        PropagateValue(poly, 20, r.Next(0, 100));
-                    }
-                }
-            }
 
-            if (centerElevationCheck.Checked)
-            {
-                var poly = _map.GetAtPoint(new Point(pictureBox1.Width / 2, pictureBox1.Height / 2));
-                poly.Elevation = 200;
-                PropagateValue(poly, 20, r.Next(0, 100));
+                    poly.Elevation = borderElevation;// r.Next(0, 100);
+                    StartPropagation(poly, step);
+                    
+                }
             }
 
             DrawGraph(_map);
         }
+        private Dictionary<Point,int> _propagationLayers = new Dictionary<Point, int>();
+
+        private void StartPropagation(Polygon p, int thresold)
+        {
+            _propagationLayers.Clear();
+            _propagationLayers[p.Center] = 6;
+            PropagateValue(p, thresold, 5);
+        }
 
         private void PropagateValue(Polygon p, int thresold, int token)
         {
-            p.Token = token;
-
             var list = new List<Polygon>();
 
             foreach (var poly in p.Neighbors)
             {
-                if (poly.Token == token)
-                    continue;
+                if(_propagationLayers.ContainsKey(poly.Center))
+                {
+                    if(_propagationLayers[poly.Center] > token)
+                        continue;
+                }
+                
                 if (poly.Elevation - p.Elevation > thresold)
                 {
                     poly.Elevation = p.Elevation + thresold;
+                    _propagationLayers[poly.Center] = token - 1;
                     list.Add(poly);
                     //PropagateValue(poly, thresold, token);
                 }
                 if (poly.Elevation - p.Elevation < -thresold)
                 {
                     poly.Elevation = p.Elevation - thresold;
+                    _propagationLayers[poly.Center] = token - 1;
                     list.Add(poly);
                     //PropagateValue(poly, thresold, token);
                 }
@@ -210,7 +226,7 @@ namespace Utopia.MapGenerator
 
             foreach (var polygon in list)
             {
-                PropagateValue(polygon, thresold, token);
+                PropagateValue(polygon, thresold, token - 1);
             }
         }
 
@@ -378,8 +394,6 @@ namespace Utopia.MapGenerator
         public int Elevation { get; set; }
 
         public int Moisture { get; set; }
-
-        public int Token { get; set; }
 
         public List<Polygon> Neighbors = new List<Polygon>();
 

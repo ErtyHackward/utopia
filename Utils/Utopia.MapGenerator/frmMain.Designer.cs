@@ -1,6 +1,6 @@
 ﻿namespace Utopia.MapGenerator
 {
-    partial class Form1
+    partial class frmMain
     {
         /// <summary>
         /// Required designer variable.
@@ -75,7 +75,7 @@
             this.voronoiPolyNumeric.Size = new System.Drawing.Size(120, 20);
             this.voronoiPolyNumeric.TabIndex = 1;
             this.voronoiPolyNumeric.Value = new decimal(new int[] {
-            300,
+            600,
             0,
             0,
             0});
@@ -95,6 +95,11 @@
             // voronoiSeedNumeric
             // 
             this.voronoiSeedNumeric.Location = new System.Drawing.Point(12, 139);
+            this.voronoiSeedNumeric.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
             this.voronoiSeedNumeric.Name = "voronoiSeedNumeric";
             this.voronoiSeedNumeric.Size = new System.Drawing.Size(120, 20);
             this.voronoiSeedNumeric.TabIndex = 3;
@@ -104,18 +109,18 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(9, 120);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 13);
+            this.label1.Size = new System.Drawing.Size(52, 13);
             this.label1.TabIndex = 4;
-            this.label1.Text = "Seed";
+            this.label1.Text = "Grid seed";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(14, 35);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(36, 13);
+            this.label2.Size = new System.Drawing.Size(80, 13);
             this.label2.TabIndex = 5;
-            this.label2.Text = "Points";
+            this.label2.Text = "Polygons count";
             // 
             // voronoiRelaxNumeric
             // 
@@ -144,7 +149,7 @@
             this.noiseButton.Name = "noiseButton";
             this.noiseButton.Size = new System.Drawing.Size(75, 23);
             this.noiseButton.TabIndex = 8;
-            this.noiseButton.Text = "Noise";
+            this.noiseButton.Text = "Show noise";
             this.noiseButton.UseVisualStyleBackColor = true;
             this.noiseButton.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -197,16 +202,26 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(9, 335);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(32, 13);
+            this.label5.Size = new System.Drawing.Size(79, 13);
             this.label5.TabIndex = 13;
-            this.label5.Text = "Seed";
+            this.label5.Text = "Elevation Seed";
             // 
             // noiseSeedNumeric
             // 
             this.noiseSeedNumeric.Location = new System.Drawing.Point(12, 354);
+            this.noiseSeedNumeric.Maximum = new decimal(new int[] {
+            100000000,
+            0,
+            0,
+            0});
             this.noiseSeedNumeric.Name = "noiseSeedNumeric";
             this.noiseSeedNumeric.Size = new System.Drawing.Size(120, 20);
             this.noiseSeedNumeric.TabIndex = 12;
+            this.noiseSeedNumeric.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             // 
             // bordersCheckBox
             // 
@@ -242,7 +257,7 @@
             this.centerElevationCheck.Text = "center elevation";
             this.centerElevationCheck.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -264,7 +279,7 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.voronoiPolyNumeric);
             this.Controls.Add(this.button1);
-            this.Name = "Form1";
+            this.Name = "frmMain";
             this.Text = "Utopia world planner";
             ((System.ComponentModel.ISupportInitialize)(this.voronoiPolyNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
