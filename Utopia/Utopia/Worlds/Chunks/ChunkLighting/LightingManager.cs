@@ -232,7 +232,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     return;
                 }
                 //Avoid to be outside the Array ==> Trick to remove the need to check for border limit, but could lead to small graphical artifact with lighting !
-                index = _cubesHolder.ValidateIndex(index);
+                index = _cubesHolder.MakeIndexSafe(index);
                 //End Inlining ===============================================================================================
 
                 //End propagation ?

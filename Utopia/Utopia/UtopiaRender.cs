@@ -111,7 +111,7 @@ namespace Utopia
         //Default Utopia Init method.
         private void Init(IKernel IoCContainer)
         {
-            int Seed = 0;
+            int Seed = 12695360;
             int SeaLevel = AbstractChunk.ChunkSize.Y / 2;
 
             //=======================================================================================
