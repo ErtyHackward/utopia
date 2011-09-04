@@ -20,6 +20,8 @@ namespace Utopia.Shared.World
         public Range<int> WorldRange;
         public Location2<int> WrapEnd;
         public Location3<int> WorldVisibleSize;
+        public int WorldVisibleSizeXY;
+        public int WorldVisibleSizeXYZ;
         public Location2<int> WorldChunkStartUpPosition;
 
         public VisualWorldParameters(WorldParameters worldParameters)
@@ -35,6 +37,9 @@ namespace Utopia.Shared.World
                 Y = AbstractChunk.ChunkSize.Y,
                 Z = AbstractChunk.ChunkSize.Z * _worldParameters.WorldChunkSize.Z,
             };
+
+            WorldVisibleSizeXY = WorldVisibleSize.X * WorldVisibleSize.Y;
+            WorldVisibleSizeXYZ = WorldVisibleSize.X * WorldVisibleSize.Y * WorldVisibleSize.Z;
 
             ChunkPOWsize = (int)Math.Log(AbstractChunk.ChunkSize.X, 2);
         }
