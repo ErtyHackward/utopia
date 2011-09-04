@@ -50,6 +50,9 @@ namespace Utopia.Entities.Living
         HLSLVertexPositionColor _cursorEffect;
         Color _cursorColor = Color.Red; //Color.FromNonPremultiplied(30,30,30, 255);
         WorldFocusManager _worldFocusManager;
+
+        TerraCube _pCube;
+
         #endregion
 
         #region public properties
@@ -149,7 +152,7 @@ namespace Utopia.Entities.Living
 
                     _playerPotentialNewBlock = new BoundingBox(new Vector3(_newCubePlace.X, _newCubePlace.Y, _newCubePlace.Z), new Vector3(_newCubePlace.X + 1, _newCubePlace.Y + 1, _newCubePlace.Z + 1));
                     _isBlockPicked = true;
-
+                    _pCube = CubesHolder.Cubes[CubesHolder.Index(_newCubePlace.X, _newCubePlace.Y, _newCubePlace.Z)];
 
                     break;
                 }
@@ -337,7 +340,7 @@ namespace Utopia.Entities.Living
 
         public override string GetInfo()
         {
-            return string.Concat("<IPerson : Player (", _name, ")> X : ", (WorldPosition.ActualValue.X - _visualWorldParameters.WorldChunkStartUpPosition.X).ToString("0.0"), " Y : ", WorldPosition.ActualValue.Y.ToString("0.0"), " Z : ", (WorldPosition.ActualValue.Z - _visualWorldParameters.WorldChunkStartUpPosition.Z).ToString("0.0"), " Block Focus : ", _isBlockPicked ? _pickedBlock.ToString() : "None", " Block Add : ", _isBlockPicked ? _newCubePlace.ToString() : "None", " CubeType : ", _buildingCube.Name);
+            return string.Concat("<IPerson : Player (", _name, ")> X : ", (WorldPosition.ActualValue.X - _visualWorldParameters.WorldChunkStartUpPosition.X).ToString("0.0"), " Y : ", WorldPosition.ActualValue.Y.ToString("0.0"), " Z : ", (WorldPosition.ActualValue.Z - _visualWorldParameters.WorldChunkStartUpPosition.Z).ToString("0.0"), " Block Focus : ", _isBlockPicked ? _pickedBlock.ToString() : "None", " Block Add : ", _isBlockPicked ? _newCubePlace.ToString() : "None", " CubeType : ", _buildingCube.Name, _isBlockPicked ? _pCube.EmissiveColor.SunLight.ToString(): "");
         }
         #endregion
 

@@ -35,6 +35,22 @@ namespace Utopia.Shared.Chunks
             None
         }
 
+        public enum Axis
+        {
+            X,
+            Y,
+            Z
+        }
+
+        public static int UpIndex = 0;
+        public static int DownIndex = 1;
+        public static int RightIndex = 2;
+        public static int LeftIndex = 3;
+        public static int UpRightIndex = 4;
+        public static int UpLeftIndex = 5;
+        public static int DownRightIndex = 6;
+        public static int DownLeftIndex = 7;
+
         private int _bigArraySize;
         private VisualWorldParameters _visualWorldParam;
 
@@ -164,7 +180,65 @@ namespace Utopia.Shared.Chunks
         {
             index = index + Modification1;
             index = index + Modification2;
-            return ValidateIndex(index);
+            return MakeIndexSafe(index);
+        }
+
+
+        public void SurroundingAxisIndex(int baseIndex, int X, int Y, int Z, Axis workingAxis, int[] Indices, bool ForceIndexSafe = false)
+        {
+            switch (workingAxis)
+            {
+                case Axis.X:
+                    //Fixed X
+                    Indices[UpIndex] = FastIndex(baseIndex, Y, IdxRelativeMove.Y_Plus1);
+                    Indices[DownIndex] = FastIndex(baseIndex, Y, IdxRelativeMove.Y_Minus1);
+                    Indices[RightIndex] = FastIndex(baseIndex, Z, IdxRelativeMove.Z_Plus1);
+                    Indices[LeftIndex] = FastIndex(baseIndex, Z, IdxRelativeMove.Z_Minus1);
+                    Indices[UpRightIndex] = FastIndex(UpIndex, Z + 1, IdxRelativeMove.Z_Plus1);
+                    Indices[UpLeftIndex] = FastIndex(UpIndex, Z - 1, IdxRelativeMove.Z_Minus1);
+                    Indices[DownRightIndex] = FastIndex(DownIndex, Z + 1, IdxRelativeMove.Z_Plus1);
+                    Indices[DownLeftIndex] = FastIndex(DownIndex, Z - 1, IdxRelativeMove.Z_Minus1);
+                    break;
+                case Axis.Y:
+                    //Fixed Y
+                    Indices[UpIndex] = FastIndex(baseIndex, Z, IdxRelativeMove.Z_Minus1);
+                    Indices[DownIndex] = FastIndex(baseIndex, Z, IdxRelativeMove.Z_Plus1);
+                    Indices[RightIndex] = FastIndex(baseIndex, X, IdxRelativeMove.X_Plus1);
+                    Indices[LeftIndex] = FastIndex(baseIndex, X, IdxRelativeMove.X_Minus1);
+                    Indices[UpRightIndex] = FastIndex(UpIndex, X + 1, IdxRelativeMove.X_Plus1);
+                    Indices[UpLeftIndex] = FastIndex(UpIndex, X - 1, IdxRelativeMove.X_Minus1);
+                    Indices[DownRightIndex] = FastIndex(DownIndex, X + 1, IdxRelativeMove.X_Plus1);
+                    Indices[DownLeftIndex] = FastIndex(DownIndex, X - 1, IdxRelativeMove.X_Minus1);
+                    break;
+                case Axis.Z:
+                    //Fixed Z
+                    Indices[UpIndex] = FastIndex(baseIndex, Y, IdxRelativeMove.Y_Plus1);
+                    Indices[DownIndex] = FastIndex(baseIndex, Y, IdxRelativeMove.Y_Minus1);
+                    Indices[RightIndex] = FastIndex(baseIndex, X, IdxRelativeMove.X_Plus1);
+                    Indices[LeftIndex] = FastIndex(baseIndex, X, IdxRelativeMove.X_Minus1);
+                    Indices[UpRightIndex] = FastIndex(UpIndex, X + 1, IdxRelativeMove.X_Plus1);
+                    Indices[UpLeftIndex] = FastIndex(UpIndex, X - 1, IdxRelativeMove.X_Minus1);
+                    Indices[DownRightIndex] = FastIndex(DownIndex, X + 1, IdxRelativeMove.X_Plus1);
+                    Indices[DownLeftIndex] = FastIndex(DownIndex, X - 1, IdxRelativeMove.X_Minus1);
+                    break;
+                default:
+                    break;
+            }
+
+            //Validate the index
+
+            for (int i = 0; i < 9; i++)
+            {
+                if (ForceIndexSafe)
+                {
+                    Indices[i] = MakeIndexSafe(Indices[i]);
+                }
+                else
+                {
+                    if (Indices[i] < 0 || Indices[i] >= _bigArraySize) Indices[i] = int.MaxValue;
+                }
+            }
+
         }
 
         /// <summary>
@@ -179,7 +253,7 @@ namespace Utopia.Shared.Chunks
             index = index + Modification1;
             index = index + Modification2;
             index = index + Modification3;
-            return ValidateIndex(index);
+            return MakeIndexSafe(index);
         }
 
         public bool isIndexInError(int index)
@@ -188,14 +262,28 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
-        public int ValidateIndex(int index)
+        /// <summary>
+        /// The index will be forced to be inside the big array
+        /// !!!! WARNING : This could send back "wrong" index !!!!
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public int MakeIndexSafe(int index)
         {
             index = index % _bigArraySize;
             if (index < 0) index += _bigArraySize;
             return index;
         }
 
-        public int FastIndex(int baseIndex, int Position, IdxRelativeMove idxmove)
+        public bool MakeIndexSafe(int index, out int indexResult)
+        {
+            indexResult = index % _bigArraySize;
+            if (indexResult < 0) indexResult += _bigArraySize;
+            if (indexResult != index) return true;
+            return false;
+        }
+
+        public int FastIndex(int baseIndex, int Position, IdxRelativeMove idxmove, bool validated = false)
         {
             int value;
             switch (idxmove)
@@ -204,19 +292,19 @@ namespace Utopia.Shared.Chunks
                     return baseIndex;
                 case IdxRelativeMove.X_Minus1:
                     value = baseIndex - _visualWorldParam.WorldVisibleSize.Y;
-                    if (Position == _visualWorldParam.WrapEnd.X) value += _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
+                    if (Position == _visualWorldParam.WrapEnd.X) value += _visualWorldParam.WorldVisibleSizeXY; //_visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
                     break;
                 case IdxRelativeMove.X_Plus1:
                     value = baseIndex + _visualWorldParam.WorldVisibleSize.Y;
-                    if (Position == _visualWorldParam.WrapEnd.X - 1) value -= _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
+                    if (Position == _visualWorldParam.WrapEnd.X - 1) value -= _visualWorldParam.WorldVisibleSizeXY; //_visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
                     break;
                 case IdxRelativeMove.Z_Minus1:
                     value = baseIndex - _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
-                    if (Position == _visualWorldParam.WrapEnd.Z) value += _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
+                    if (Position == _visualWorldParam.WrapEnd.Z) value += _visualWorldParam.WorldVisibleSizeXYZ; //_visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
                     break;
                 case IdxRelativeMove.Z_Plus1:
                     value = baseIndex + _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
-                    if (Position == _visualWorldParam.WrapEnd.Z - 1) value -= _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
+                    if (Position == _visualWorldParam.WrapEnd.Z - 1) value -= _visualWorldParam.WorldVisibleSizeXYZ; // _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
                     break;
                 case IdxRelativeMove.Y_Minus1:
                     value = baseIndex - 1;
@@ -228,6 +316,13 @@ namespace Utopia.Shared.Chunks
                     value = int.MaxValue;
                     break;
             }
+
+            if (validated)
+            {
+                value = value % _bigArraySize;
+                if (value < 0) value += _bigArraySize;
+            }
+
             return value;
         }
 
