@@ -50,6 +50,7 @@ namespace Utopia.Shared.Chunks
         public static int UpLeftIndex = 5;
         public static int DownRightIndex = 6;
         public static int DownLeftIndex = 7;
+        public static int BaseIndex = 8;
 
         private int _bigArraySize;
         private VisualWorldParameters _visualWorldParam;
@@ -186,18 +187,20 @@ namespace Utopia.Shared.Chunks
 
         public void SurroundingAxisIndex(int baseIndex, int X, int Y, int Z, Axis workingAxis, int[] Indices, bool ForceIndexSafe = false)
         {
+            Indices[BaseIndex] = baseIndex;
+
             switch (workingAxis)
             {
                 case Axis.X:
                     //Fixed X
                     Indices[UpIndex] = FastIndex(baseIndex, Y, IdxRelativeMove.Y_Plus1);
                     Indices[DownIndex] = FastIndex(baseIndex, Y, IdxRelativeMove.Y_Minus1);
-                    Indices[RightIndex] = FastIndex(baseIndex, Z, IdxRelativeMove.Z_Plus1);
-                    Indices[LeftIndex] = FastIndex(baseIndex, Z, IdxRelativeMove.Z_Minus1);
-                    Indices[UpRightIndex] = FastIndex(UpIndex, Z + 1, IdxRelativeMove.Z_Plus1);
-                    Indices[UpLeftIndex] = FastIndex(UpIndex, Z - 1, IdxRelativeMove.Z_Minus1);
-                    Indices[DownRightIndex] = FastIndex(DownIndex, Z + 1, IdxRelativeMove.Z_Plus1);
-                    Indices[DownLeftIndex] = FastIndex(DownIndex, Z - 1, IdxRelativeMove.Z_Minus1);
+                    Indices[LeftIndex] = FastIndex(baseIndex, Z, IdxRelativeMove.Z_Plus1);
+                    Indices[RightIndex] = FastIndex(baseIndex, Z, IdxRelativeMove.Z_Minus1);
+                    Indices[UpLeftIndex] = FastIndex(Indices[UpIndex], Z + 1, IdxRelativeMove.Z_Plus1);
+                    Indices[UpRightIndex] = FastIndex(Indices[UpIndex], Z - 1, IdxRelativeMove.Z_Minus1);
+                    Indices[DownLeftIndex] = FastIndex(Indices[DownIndex], Z + 1, IdxRelativeMove.Z_Plus1);
+                    Indices[DownRightIndex] = FastIndex(Indices[DownIndex], Z - 1, IdxRelativeMove.Z_Minus1);
                     break;
                 case Axis.Y:
                     //Fixed Y
@@ -205,10 +208,10 @@ namespace Utopia.Shared.Chunks
                     Indices[DownIndex] = FastIndex(baseIndex, Z, IdxRelativeMove.Z_Plus1);
                     Indices[RightIndex] = FastIndex(baseIndex, X, IdxRelativeMove.X_Plus1);
                     Indices[LeftIndex] = FastIndex(baseIndex, X, IdxRelativeMove.X_Minus1);
-                    Indices[UpRightIndex] = FastIndex(UpIndex, X + 1, IdxRelativeMove.X_Plus1);
-                    Indices[UpLeftIndex] = FastIndex(UpIndex, X - 1, IdxRelativeMove.X_Minus1);
-                    Indices[DownRightIndex] = FastIndex(DownIndex, X + 1, IdxRelativeMove.X_Plus1);
-                    Indices[DownLeftIndex] = FastIndex(DownIndex, X - 1, IdxRelativeMove.X_Minus1);
+                    Indices[UpRightIndex] = FastIndex(Indices[UpIndex], X + 1, IdxRelativeMove.X_Plus1);
+                    Indices[UpLeftIndex] = FastIndex(Indices[UpIndex], X - 1, IdxRelativeMove.X_Minus1);
+                    Indices[DownRightIndex] = FastIndex(Indices[DownIndex], X + 1, IdxRelativeMove.X_Plus1);
+                    Indices[DownLeftIndex] = FastIndex(Indices[DownIndex], X - 1, IdxRelativeMove.X_Minus1);
                     break;
                 case Axis.Z:
                     //Fixed Z
@@ -216,18 +219,17 @@ namespace Utopia.Shared.Chunks
                     Indices[DownIndex] = FastIndex(baseIndex, Y, IdxRelativeMove.Y_Minus1);
                     Indices[RightIndex] = FastIndex(baseIndex, X, IdxRelativeMove.X_Plus1);
                     Indices[LeftIndex] = FastIndex(baseIndex, X, IdxRelativeMove.X_Minus1);
-                    Indices[UpRightIndex] = FastIndex(UpIndex, X + 1, IdxRelativeMove.X_Plus1);
-                    Indices[UpLeftIndex] = FastIndex(UpIndex, X - 1, IdxRelativeMove.X_Minus1);
-                    Indices[DownRightIndex] = FastIndex(DownIndex, X + 1, IdxRelativeMove.X_Plus1);
-                    Indices[DownLeftIndex] = FastIndex(DownIndex, X - 1, IdxRelativeMove.X_Minus1);
+                    Indices[UpRightIndex] = FastIndex(Indices[UpIndex], X + 1, IdxRelativeMove.X_Plus1);
+                    Indices[UpLeftIndex] = FastIndex(Indices[UpIndex], X - 1, IdxRelativeMove.X_Minus1);
+                    Indices[DownRightIndex] = FastIndex(Indices[DownIndex], X + 1, IdxRelativeMove.X_Plus1);
+                    Indices[DownLeftIndex] = FastIndex(Indices[DownIndex], X - 1, IdxRelativeMove.X_Minus1);
                     break;
                 default:
                     break;
             }
 
             //Validate the index
-
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 9; i++)
             {
                 if (ForceIndexSafe)
                 {
