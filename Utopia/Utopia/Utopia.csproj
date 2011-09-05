@@ -236,6 +236,11 @@
     <Compile Include="Worlds\Chunks\ChunkLighting\LightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
+    <Compile Include="Worlds\Storage\IStorageManager.cs" />
+    <Compile Include="Worlds\Storage\SQLite\SQLiteHelper.cs" />
+    <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
+    <Compile Include="Worlds\Storage\SQLiteStorageManager.cs" />
+    <Compile Include="Worlds\Storage\IChunkStorageManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\IChunksWrapper.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\WorldChunksWrapper.cs" />
     <Compile Include="Worlds\Chunks\Enums\CubesFaces.cs" />
@@ -261,6 +266,7 @@
     <Compile Include="Worlds\SkyDomes\SkyDome.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\SkyStars.cs" />
+    <Compile Include="Worlds\Storage\Structs\CubeRequest.cs" />
     <Compile Include="Worlds\Weathers\IWeather.cs" />
     <Compile Include="Worlds\Weathers\SharedComp\IWind.cs" />
     <Compile Include="Worlds\Weathers\Weather.cs" />
