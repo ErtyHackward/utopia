@@ -42,6 +42,7 @@ using Utopia.Shared.World;
 using Utopia.Shared.Interfaces;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Network;
+using Utopia.Worlds.Storage;
 
 namespace Utopia
 {
@@ -57,6 +58,7 @@ namespace Utopia
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
         private EntityRenderer _entityRender;
+        private IStorageManager _storageManager;
 
         //Debug tools
         private FPS _fps; //FPS computing object
@@ -254,6 +256,9 @@ namespace Utopia
                 server.ChunkContainer = IoCContainer.Get<SingleArrayChunkContainer>();
                 GameComponents.Add(server);
             }
+
+            //Storage Manager
+            _storageManager = IoCContainer.Get<IStorageManager>(new ConstructorArgument("forceNew", false));
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 
