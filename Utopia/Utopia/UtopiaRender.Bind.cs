@@ -31,6 +31,7 @@ using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Shared.World.WorldConfigs;
 using Utopia.Entities;
+using Utopia.Worlds.Storage;
 
 namespace Utopia
 {
@@ -98,6 +99,8 @@ namespace Utopia
             iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
+
+            iocContainer.Bind<IStorageManager>().To<SQLiteStorageManager>().InSingletonScope(); 
 
         }
     }
