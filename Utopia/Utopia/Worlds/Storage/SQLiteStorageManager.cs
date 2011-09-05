@@ -2,30 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Shared.World;
-using System.Threading;
-using System.Windows.Forms;
-using System.IO;
-using Utopia.Worlds.Storage.SQLite;
 using System.Data.SQLite;
-using Utopia.Worlds.Storage.Structs;
+using System.Data;
+using System.IO;
+using System.Threading;
 using System.Collections.Concurrent;
+using Utopia.Worlds.Storage.Structs;
+using Utopia.Shared.World;
 
 namespace Utopia.Worlds.Storage
 {
-    /// <summary>
-    /// Use to store the game data locally.
-    /// It is linked to a specific world
-    /// </summary>
-    public class SQLiteStorageManager : IStorageManager
+    public class SQLiteStorageManager : SQLiteManager, IChunkStorageManager, IDisposable
     {
-        #region private variable
+        #region Private variables
         private Thread _storageThread;
-        private WorldParameters _worldParameters;
-        private string _worldPath;
-        private SQLiteHelper _sqLiteHelper = new SQLiteHelper();
-        private SQLiteConnection _dbConnection;
-
         private readonly static int _nbrTicket = 2000;
         private Queue<int> _requestTickets;
         private ConcurrentQueue<CubeRequest> _dataRequestQueue;
@@ -34,62 +24,39 @@ namespace Utopia.Worlds.Storage
         private SQLiteCommand _landscapeInsertCmd;
         #endregion
 
-        #region Public properties / Variables
+        #region Public Properties/Variables
+        public bool IsRunning { get; set; }
         public ChunkDataStorage[] Data { get; private set; }
-
-        private bool IsRunning { get; set; }
-        public WorldParameters WorldParameters
+        #endregion
+        /// <summary>
+        /// Sqlite Manager
+        /// </summary>
+        /// <param name="path">The SQLite database path</param>
+        public SQLiteStorageManager(WorldParameters worldParameters, bool forceNew = false)
+            : base(worldParameters, forceNew)
         {
-            get { return _worldParameters; }
-            set { _worldParameters = value; ChangeDBFile(); }
+            Init();
+        }
+
+        #region Public Methods
+        protected override void CreateDataBase(SQLiteConnection conn)
+        {
+            var command = conn.CreateCommand();
+            command.CommandText = @"CREATE TABLE CHUNKS([ChunkId] BIGINT PRIMARY KEY NOT NULL, [X] integer NOT NULL, [Z] integer NOT NULL, [md5] integer NOT NULL, [data] blob NOT NULL);";
+            command.CommandType = CommandType.Text;
+            command.ExecuteNonQuery();
         }
         #endregion
 
-        public SQLiteStorageManager(WorldParameters worldParameters, bool forceNew = false)
-        {
-            Initilialize(forceNew);
-
-            WorldParameters = worldParameters;
-        }
-
         #region Private Methods
-        private void Initilialize(bool forceNew = false)
+        private void Init()
         {
-            //Check if the save directory does exist
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Utopia\Storage";
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            _worldPath = path + @"\Worlds";
-            if (forceNew && Directory.Exists(_worldPath))
-            {
-                Directory.Delete(_worldPath, true);
-            }
-            Directory.CreateDirectory(_worldPath);
-
             //Initiliaz the IChunkStorageManager
             IChunkStorageManager_Init();
 
             IsRunning = true;
             _storageThread = new Thread(new ThreadStart(StorageMainLoop)); //Start the main loop
             _storageThread.Start();
-        }
-
-        private void ChangeDBFile()
-        {
-            string currentDBFile = _worldPath + @"\Chunks_" + _worldParameters.Seed.ToString() + ".sqlite";
-
-            //Does the file Exist ?
-            if (!File.Exists(currentDBFile))
-            {
-                //If not create the database !
-                _sqLiteHelper.CreateNewPlanetDataBase(currentDBFile);
-            }
-
-            if (_dbConnection != null && _dbConnection.State != System.Data.ConnectionState.Closed) _dbConnection.Close();
-            _dbConnection = _sqLiteHelper.OpenConnection(currentDBFile, false);
         }
 
         private void StorageMainLoop()
@@ -132,7 +99,6 @@ namespace Utopia.Worlds.Storage
             string _landscapeInsert = "INSERT OR REPLACE INTO CHUNKS ([ChunkId],[X], [Z], [md5], [data]) VALUES ";
             _landscapeInsert += "(@CHUNKID, @X, @Z, @MD5, @DATA)";
 
-            
             _landscapeInsertCmd = new SQLiteCommand(_landscapeInsert);
             _landscapeInsertCmd.Parameters.Add("@CHUNKID", System.Data.DbType.Int64);
             _landscapeInsertCmd.Parameters.Add("@X", System.Data.DbType.SByte);
@@ -221,11 +187,12 @@ namespace Utopia.Worlds.Storage
 
         #endregion
 
-        public void Dispose()
+        public override void Dispose()
         {
             IsRunning = false;
-            _dbConnection.Close();
-            _dbConnection.Dispose();
+            _landscapeInsertCmd.Dispose();
+            _landscapeGetCmd.Dispose();
+            base.Dispose();
         }
     }
 }

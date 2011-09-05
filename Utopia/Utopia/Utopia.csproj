@@ -236,10 +236,9 @@
     <Compile Include="Worlds\Chunks\ChunkLighting\LightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
-    <Compile Include="Worlds\Storage\IStorageManager.cs" />
-    <Compile Include="Worlds\Storage\SQLite\SQLiteHelper.cs" />
-    <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
+    <Compile Include="Worlds\Storage\SQLiteManager.cs" />
     <Compile Include="Worlds\Storage\SQLiteStorageManager.cs" />
+    <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
     <Compile Include="Worlds\Storage\IChunkStorageManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\IChunksWrapper.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\WorldChunksWrapper.cs" />
