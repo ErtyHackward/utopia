@@ -58,7 +58,7 @@ namespace Utopia
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
         private EntityRenderer _entityRender;
-        private IStorageManager _storageManager;
+        private IChunkStorageManager _chunkStorageManager;
 
         //Debug tools
         private FPS _fps; //FPS computing object
@@ -258,7 +258,7 @@ namespace Utopia
             }
 
             //Storage Manager
-            _storageManager = IoCContainer.Get<IStorageManager>(new ConstructorArgument("forceNew", false));
+            _chunkStorageManager = IoCContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false));
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 
