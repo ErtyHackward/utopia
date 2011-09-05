@@ -100,6 +100,24 @@ namespace Utopia.MapGenerator
                     }
                     
                 }
+
+                foreach (var polygon in map)
+                {
+                    // draw rivers
+                    foreach (var edge in polygon.Edges)
+                    {
+                        if (edge.WaterFlow > 0)
+                        {
+                            g.DrawLine(new Pen(Color.Blue, 1 /*edge.WaterFlow*/),edge.Start, edge.End);
+                        }
+                    }
+                }
+
+                foreach (var corners in _corners)
+                {
+                    g.DrawEllipse(Pens.Black, corners.Point.X - 2, corners.Point.Y - 2, 4, 4);
+                }
+
             }
             
             pictureBox1.Image = bmp;
@@ -131,16 +149,28 @@ namespace Utopia.MapGenerator
             {
                 // adding elevation data
 
-                SimplexNoise noise = new SimplexNoise(new Random((int)noiseSeedNumeric.Value));
-                noise.SetParameters((double)noiseZoomNumeric.Value, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne );
+                var elevationNoise = new SimplexNoise(new Random((int)noiseSeedNumeric.Value));
+                elevationNoise.SetParameters((double)noiseZoomNumeric.Value, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne );
 
                 foreach (var poly in _map)
                 {
-                    var noiseVal = noise.GetNoise2DValue(poly.Center.X, poly.Center.Y, 4, 0.8);
+                    var noiseVal = elevationNoise.GetNoise2DValue(poly.Center.X, poly.Center.Y, 4, 0.8);
                     var col = 255 / noiseVal.MaxValue * noiseVal.Value;
                     poly.Elevation = (int)col;
                 }
-                
+
+                // elevate each corner
+
+                foreach (var poly in _map)
+                {
+                    foreach (var corner in poly.Corners)
+                    {
+                        if (corner.Elevation == 0)
+                        {
+                            corner.Elevation = (int) corner.Polygons.Average(p => p.Elevation);
+                        }
+                    }
+                }
             }
 
             if (centerElevationCheck.Checked)
@@ -185,9 +215,76 @@ namespace Utopia.MapGenerator
                 }
             }
 
+            if (moisturizeCheck.Checked)
+            {
+                var noise = new SimplexNoise(new Random((int)noiseSeedNumeric.Value));
+                noise.SetParameters((double)0.0002, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
+
+                foreach (var poly in _map)
+                {
+                    var noiseVal = noise.GetNoise2DValue(poly.Center.X, poly.Center.Y, 4, 0.8);
+                    var col = 255 / noiseVal.MaxValue * noiseVal.Value;
+                    poly.Moisture = 127;// (int)col;
+
+                    foreach (var corner in poly.Corners)
+                    {
+                        noiseVal = noise.GetNoise2DValue(corner.Point.X, corner.Point.Y, 4, 0.8);
+                        col = 255 / noiseVal.MaxValue * noiseVal.Value;
+                        corner.WaterFlow = 127;// (int)col;
+                    }
+
+                }
+
+                
+                // calculate rivers
+                _corners = new HashSet<Corner>();
+
+                // get unique corners
+                foreach (var poly in _map)
+                {
+                    foreach (var corner in poly.Corners)
+                    {
+                        if (!_corners.Contains(corner) && corner.Polygons.Find(p => p.Elevation <= 127) == null)
+                        {
+                            _corners.Add(corner);
+                        }
+                    }
+                }
+
+                var list = new List<Corner>(_corners);
+                list.Sort(new CornerHeightComparer());
+
+                // propagate flow
+                foreach (var corner in list)
+                {
+                    // find lowest edge
+                    Edge lowestEdge = corner.Edges[0];
+                    int height = lowestEdge.GetOpposite(corner).Elevation;
+                    for (int i = 0; i < corner.Edges.Count; i++)
+                    {
+                        var tmp = corner.Edges[i].GetOpposite(corner).Elevation;
+                        if (tmp < height)
+                        {
+                            height = tmp;
+                            lowestEdge = corner.Edges[i];
+                        }
+                    }
+
+                    // get water flow
+                    var en = corner.Polygons.Where(p => p.Elevation >= corner.Elevation);
+                    if (en.Count() > 0)
+                    {
+                        lowestEdge.WaterFlow = (int)en.Average(p => p.Moisture);
+                        lowestEdge.GetOpposite(corner).WaterFlow += lowestEdge.WaterFlow;
+                    }
+                }
+
+            }
+
             DrawGraph(_map);
         }
         private Dictionary<Point,int> _propagationLayers = new Dictionary<Point, int>();
+        private HashSet<Corner> _corners;
 
         private void StartPropagation(Polygon p, int thresold)
         {
@@ -268,193 +365,55 @@ namespace Utopia.MapGenerator
 
         }
 
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            var r = new Random((int)noiseSeedNumeric.Value);
+            var noise = new SimplexNoise(r);
+            noise.SetParameters((double)0.0002, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
+
+            Bitmap bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+
+            for (int x = 0; x < pictureBox1.Width; x++)
+            {
+                for (int y = 0; y < pictureBox1.Height; y++)
+                {
+                    var val = noise.GetNoise2DValue(x, y, 4, 0.8);
+
+                    var col = 255 / val.MaxValue * val.Value;
+
+                    //bmp.SetPixel(x, y, Color.FromArgb((byte)col, (byte)col, (byte)col));
+
+                    //if (col > 127)
+                    //{
+                    //    //earth
+                    //    bmp.SetPixel(x, y, Color.FromArgb((byte)(100 - col), (byte)(80 - col), (byte)(50 - col)));
+                    //}
+                    //else 
+                        
+                        bmp.SetPixel(x, y, Color.FromArgb((byte)col, (byte)col, (byte)255));
+
+                }
+            }
+
+            pictureBox1.Image = bmp;
+        }
+
 
     }
 
-    public class Map : IEnumerable<Polygon>
+    public class CornerHeightComparer : IComparer<Corner>
     {
-        private Dictionary<Point, Polygon> _polygons = new Dictionary<Point, Polygon>();
-
-        public Dictionary<Point, Polygon> Polygons
+        public int Compare(Corner x, Corner y)
         {
-            get { return _polygons; }
-        }
-
-        public void FillMap(VoronoiGraph graph)
-        {
-            foreach (VoronoiEdge edge in graph.Edges)
-            {
-                if (!double.IsNaN(edge.VVertexA[0]) && !double.IsNaN(edge.VVertexA[1]) && !double.IsNaN(edge.VVertexB[0]) && !double.IsNaN(edge.VVertexB[1]))
-                {
-                    var e = new Edge(edge.VVertexA, edge.VVertexB);
-                    var p1 = AddEdge(new Point((int)edge.LeftData[0], (int)edge.LeftData[1]), e);
-                    var p2 = AddEdge(new Point((int)edge.RightData[0], (int)edge.RightData[1]), e);
-                    p1.AddNeighbor(p2);
-                    p2.AddNeighbor(p1);
-                }
-            }
-
-            GetPoints();
-        }
-
-        private Polygon AddEdge(Point center, Edge edge)
-        {
-            Polygon p = null;
-            if (!_polygons.ContainsKey(center))
-            {
-                _polygons.Add(center, p = new Polygon() { Center = center });
-            }
-            else p = _polygons[center];
-
-            _polygons[center].Edges.Add(edge);
-            return p;
-        }
-
-        public void GetPoints()
-        {
-            foreach (var polygon in Polygons)
-            {
-                polygon.Value.GetPoints();
-            }
-        }
-
-        public Polygon GetAtPoint(Point p)
-        {
-            Polygon selected = null;
-            double distance = 0;
-            foreach (var poly in _polygons.Values)
-            {
-                if (selected == null)
-                {
-                    selected = poly;
-                    distance = Distance(p, poly.Center);
-                    continue;
-                }
-
-                var d = Distance(p, poly.Center);
-
-                if (d < distance)
-                {
-                    selected = poly;
-                    distance = d;
-                }
-            }
-            return selected;
-        }
-
-        private double Distance(Point p1, Point p2)
-        {
-            var dx = p1.X - p2.X;
-            var dy = p1.Y - p2.Y;
-            return Math.Sqrt(dx * dx + dy * dy);
-        }
-
-        public IEnumerator<Polygon> GetEnumerator()
-        {
-            foreach (var polygon in _polygons)
-            {
-                yield return polygon.Value;
-            }
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            foreach (var polygon in _polygons)
-            {
-                yield return polygon.Value;
-            }
+            return -1 * x.Elevation.CompareTo(y.Elevation);
         }
     }
 
-    public struct Edge
+    public static class VectorExtensions
     {
-        public readonly Point Start;
-        public readonly Point End;
-
-        public Edge(Vector v1, Vector v2)
+        public static Point ToPoint(this Vector v)
         {
-            Start = new Point((int)v1[0], (int)v1[1]);
-            End = new Point((int)v2[0], (int)v2[1]);
-        }
-
-
-
-        public override int GetHashCode()
-        {
-            return Start.GetHashCode() + End.GetHashCode() << 8;
-        }
-    }
-
-    public class Polygon
-    {
-        public Point Center { get; set; }
-
-        public Point[] points;
-
-        public int Elevation { get; set; }
-
-        public int Moisture { get; set; }
-
-        public List<Polygon> Neighbors = new List<Polygon>();
-
-        public void AddNeighbor(Polygon p)
-        {
-            if(!Neighbors.Contains(p) && p != this)
-                Neighbors.Add(p);
-        }
-
-        public Polygon()
-        {
-            Edges = new HashSet<Edge>();
-        }
-
-        public HashSet<Edge> Edges { get; set; }
-
-        public void GetPoints()
-        {
-            var _points = new List<Point>(Edges.Count);
-
-            var tmpSet = new HashSet<Edge>(Edges);
-
-            var edge = tmpSet.First();
-
-            _points.Add(edge.Start);
-            Point lastPoint = edge.End;
-            tmpSet.Remove(edge);
-            while (tmpSet.Count > 0)
-            {
-                Point point = lastPoint;
-                var en = tmpSet.Where(e => e.Start == point || e.End == point);
-
-                if (en.Count() > 0)
-                {
-                    edge = en.First();
-
-                    if (edge.Start == point)
-                    {
-                        lastPoint = edge.End;
-                        _points.Add(edge.Start);
-                    }
-                    else
-                    {
-                        lastPoint = edge.Start;
-                        _points.Add(edge.End);
-                    }
-                }
-                else
-                {
-                    break;
-                }
-
-                tmpSet.Remove(edge);
-            }
-
-            points = _points.ToArray();
-        }
-
-        public override int GetHashCode()
-        {
-            return Center.GetHashCode();
+            return new Point((int)v[0], (int)v[1]);
         }
     }
 }

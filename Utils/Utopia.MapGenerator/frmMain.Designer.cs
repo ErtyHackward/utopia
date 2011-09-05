@@ -45,6 +45,8 @@
             this.bordersCheckBox = new System.Windows.Forms.CheckBox();
             this.makeIsandcheck = new System.Windows.Forms.CheckBox();
             this.centerElevationCheck = new System.Windows.Forms.CheckBox();
+            this.moisturizeCheck = new System.Windows.Forms.CheckBox();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.voronoiPolyNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.voronoiSeedNumeric)).BeginInit();
@@ -55,9 +57,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 234);
+            this.button1.Location = new System.Drawing.Point(12, 257);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(120, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "Generate";
             this.button1.UseVisualStyleBackColor = true;
@@ -147,9 +149,9 @@
             // 
             this.noiseButton.Location = new System.Drawing.Point(12, 422);
             this.noiseButton.Name = "noiseButton";
-            this.noiseButton.Size = new System.Drawing.Size(75, 23);
+            this.noiseButton.Size = new System.Drawing.Size(120, 23);
             this.noiseButton.TabIndex = 8;
-            this.noiseButton.Text = "Show noise";
+            this.noiseButton.Text = "Show elevation noise";
             this.noiseButton.UseVisualStyleBackColor = true;
             this.noiseButton.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -257,11 +259,33 @@
             this.centerElevationCheck.Text = "center elevation";
             this.centerElevationCheck.UseVisualStyleBackColor = true;
             // 
+            // moisturizeCheck
+            // 
+            this.moisturizeCheck.AutoSize = true;
+            this.moisturizeCheck.Location = new System.Drawing.Point(12, 234);
+            this.moisturizeCheck.Name = "moisturizeCheck";
+            this.moisturizeCheck.Size = new System.Drawing.Size(72, 17);
+            this.moisturizeCheck.TabIndex = 17;
+            this.moisturizeCheck.Text = "moisturize";
+            this.moisturizeCheck.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(12, 452);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(120, 23);
+            this.button2.TabIndex = 18;
+            this.button2.Text = "Show moiture noise";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click_1);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(891, 534);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.moisturizeCheck);
             this.Controls.Add(this.centerElevationCheck);
             this.Controls.Add(this.makeIsandcheck);
             this.Controls.Add(this.bordersCheckBox);
@@ -311,6 +335,8 @@
         private System.Windows.Forms.CheckBox bordersCheckBox;
         private System.Windows.Forms.CheckBox makeIsandcheck;
         private System.Windows.Forms.CheckBox centerElevationCheck;
+        private System.Windows.Forms.CheckBox moisturizeCheck;
+        private System.Windows.Forms.Button button2;
     }
 }
 
