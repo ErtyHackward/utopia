@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.Worlds.Storage.Structs;
+using Utopia.Shared.Structs;
+using System.Collections.Concurrent;
 
 namespace Utopia.Worlds.Storage
 {
@@ -15,5 +17,8 @@ namespace Utopia.Worlds.Storage
 
         //Async Store chunk data
         void StoreData_async(ChunkDataStorage data);
+
+        //Contains the list of all chunks inside the DB, this remove the needs to query/wait the database to get the MD5 hash
+        ConcurrentDictionary<long, Md5Hash> ChunkHashes { get; }
     }
 }
