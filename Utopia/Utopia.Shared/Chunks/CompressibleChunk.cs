@@ -63,18 +63,20 @@ namespace Utopia.Shared.Chunks
         /// Performs decompression and deserialization of the chunk using compressed bytes
         /// </summary>
         /// <param name="compressedBytes"></param>
-        public void Decompress(byte[] compressedBytes)
+        /// <param name="getHash">Do we need to take md5hash of the chunk?</param>
+        public void Decompress(byte[] compressedBytes, bool getHash = false)
         {
             if (compressedBytes == null) throw new ArgumentNullException("compressedBytes");
             CompressedBytes = compressedBytes;
-            Decompress();
+            Decompress(getHash);
             CompressedBytes = null;
         }
 
         /// <summary>
         /// Tries to decompress and deserialize data from CompressedBytes property
         /// </summary>
-        public void Decompress()
+        /// <param name="getHash">Do we need to take md5hash of the chunk?</param>
+        public void Decompress(bool getHash = false)
         {
             if (CompressedBytes == null)
                 throw new InvalidOperationException("Set CompressedBytes property before decompression");
@@ -84,6 +86,11 @@ namespace Utopia.Shared.Chunks
             {
                 var decompressed = new MemoryStream();
                 zip.CopyTo(decompressed);
+                if (getHash)
+                {
+                    Md5HashData = CalculateHash(decompressed);
+                    decompressed.Position = 0;
+                }
                 Deserialize(decompressed);
                 CompressedDirty = false;
             }

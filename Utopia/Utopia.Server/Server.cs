@@ -324,7 +324,7 @@ namespace Utopia.Server
                         {
                             if (e.Message.Md5Hashes[hashIndex] == chunk.GetMd5Hash())
                             {
-                                connection.Send(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkMd5Equal });
+                                connection.Send(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkMd5Equal, ChunkHash = chunk.GetMd5Hash() });
                                 return;
                             }
                         }
@@ -332,7 +332,7 @@ namespace Utopia.Server
                     
                     if (chunk.PureGenerated)
                     {
-                        connection.Send(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkCanBeGenerated, Data = chunk.GetMd5Hash().Bytes });
+                        connection.Send(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkCanBeGenerated, ChunkHash = chunk.GetMd5Hash() });
                         return;
                     }
 
@@ -341,6 +341,7 @@ namespace Utopia.Server
                     connection.Send(new ChunkDataMessage
                     {
                         Position = pos,
+                        ChunkHash = chunk.GetMd5Hash(),
                         Flag = ChunkDataMessageFlag.ChunkWasModified,
                         Data = chunk.Compress()
                     });

@@ -23,6 +23,7 @@ namespace Utopia.Net.Messages
         /// Variable amount of bytes, can be the chunk data or md5 hash (depends on flag state)
         /// </summary>
         private byte[] _data;
+        private Md5Hash _chunkHash;
 
         /// <summary>
         /// Gets message id
@@ -44,6 +45,15 @@ namespace Utopia.Net.Messages
         {
             get { return _position; }
             set { _position = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets chunk md5 hash
+        /// </summary>
+        public Md5Hash ChunkHash
+        {
+            get { return _chunkHash; }
+            set { _chunkHash = value; }
         }
 
         /// <summary>
@@ -69,6 +79,12 @@ namespace Utopia.Net.Messages
             writer.Write(msg._position.X);
             writer.Write(msg._position.Y);
             writer.Write((byte)msg._flag);
+
+            if (msg._chunkHash == null || msg._chunkHash.Bytes == null)
+                throw new InvalidDataException("Chunk md5 hash is not valid");
+
+            writer.Write(msg._chunkHash.Bytes);
+
             if (msg._data != null)
             {
                 writer.Write(msg._data.Length);
@@ -88,6 +104,13 @@ namespace Utopia.Net.Messages
             msg._position.Y = reader.ReadInt32();
             msg._flag = (ChunkDataMessageFlag)reader.ReadByte();
             msg.MessageRecTime = System.DateTime.Now;
+            
+            var hashBytes = reader.ReadBytes(16);
+
+            if(hashBytes.Length != 16)
+                throw new EndOfStreamException();
+
+            msg._chunkHash = new Md5Hash(hashBytes);
 
             var bytesCount = reader.ReadInt32();
 
