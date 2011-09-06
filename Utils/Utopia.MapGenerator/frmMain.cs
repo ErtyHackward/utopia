@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using BenTools.Mathematics;
@@ -106,14 +107,21 @@ namespace Utopia.MapGenerator
                     // draw rivers
                     foreach (var edge in polygon.Edges)
                     {
-                        if (edge.WaterFlow > 0)
+                        if (edge.WaterFlow > 1)
                         {
-                            g.DrawLine(new Pen(Color.Blue, 1 /*edge.WaterFlow*/),edge.Start, edge.End);
+                            var strong = (int)Math.Sqrt(edge.WaterFlow);
+                            var p = new Pen(Color.Blue, strong);
+                            p.EndCap = LineCap.ArrowAnchor;
+                            
+                            if(edge.StartCorner.Elevation > edge.EndCorner.Elevation)
+                                g.DrawLine(p,edge.Start, edge.End);
+                            else
+                                g.DrawLine(p, edge.End, edge.Start);
                         }
                     }
                 }
 
-                foreach (var corners in _corners)
+                foreach (var corners in _waterCorners)
                 {
                     g.DrawEllipse(Pens.Black, corners.Point.X - 2, corners.Point.Y - 2, 4, 4);
                 }
@@ -121,6 +129,20 @@ namespace Utopia.MapGenerator
             }
             
             pictureBox1.Image = bmp;
+        }
+
+        private void ElevateCorners()
+        {
+            foreach (var poly in _map)
+            {
+                foreach (var corner in poly.Corners)
+                {
+                    if (corner.Elevation == 0)
+                    {
+                        corner.Elevation = (int)corner.Polygons.Average(p => p.Elevation);
+                    }
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -160,17 +182,9 @@ namespace Utopia.MapGenerator
                 }
 
                 // elevate each corner
+                if(!centerElevationCheck.Checked)
+                    ElevateCorners();
 
-                foreach (var poly in _map)
-                {
-                    foreach (var corner in poly.Corners)
-                    {
-                        if (corner.Elevation == 0)
-                        {
-                            corner.Elevation = (int) corner.Polygons.Average(p => p.Elevation);
-                        }
-                    }
-                }
             }
 
             if (centerElevationCheck.Checked)
@@ -178,6 +192,7 @@ namespace Utopia.MapGenerator
                 var poly = _map.GetAtPoint(new Point(pictureBox1.Width / 2, pictureBox1.Height / 2));
                 poly.Elevation = 200;
                 StartPropagation(poly, 15);
+                ElevateCorners();
             }
 
             if (makeIsandcheck.Checked)
@@ -224,18 +239,30 @@ namespace Utopia.MapGenerator
                 {
                     var noiseVal = noise.GetNoise2DValue(poly.Center.X, poly.Center.Y, 4, 0.8);
                     var col = 255 / noiseVal.MaxValue * noiseVal.Value;
-                    poly.Moisture = 127;// (int)col;
+                    poly.Moisture = 1;// (int)col;
 
                     foreach (var corner in poly.Corners)
                     {
                         noiseVal = noise.GetNoise2DValue(corner.Point.X, corner.Point.Y, 4, 0.8);
                         col = 255 / noiseVal.MaxValue * noiseVal.Value;
-                        corner.WaterFlow = 127;// (int)col;
+                        corner.WaterFlow = 1;// (int)col;
                     }
 
                 }
 
-                
+                // fix heights
+
+                foreach (var poly in _map)
+                {
+                    foreach (var neighbor in poly.Neighbors)
+                    {
+                        if (poly.Elevation == neighbor.Elevation)
+                        {
+                            neighbor.Elevation = (int)neighbor.Neighbors.Average(n => n.Elevation);
+                        }
+                    }
+                }
+
                 // calculate rivers
                 _corners = new HashSet<Corner>();
 
@@ -270,12 +297,42 @@ namespace Utopia.MapGenerator
                         }
                     }
 
-                    // get water flow
-                    var en = corner.Polygons.Where(p => p.Elevation >= corner.Elevation);
-                    if (en.Count() > 0)
+                    lowestEdge.WaterFlow += corner.WaterFlow;
+                    lowestEdge.GetOpposite(corner).WaterFlow += corner.WaterFlow;
+                }
+
+                // remove rivers that not going to oceans
+
+                _waterCorners = new List<Corner>();
+
+                foreach (var poly in _map)
+                {
+                    foreach (var corner in poly.Corners)
                     {
-                        lowestEdge.WaterFlow = (int)en.Average(p => p.Moisture);
-                        lowestEdge.GetOpposite(corner).WaterFlow += lowestEdge.WaterFlow;
+                        int solid = corner.Polygons.Count(p => p.Elevation > 127);
+
+                        if (solid == 2)
+                        {
+                            _waterCorners.Add(corner);
+                        }
+                    }
+                }
+
+                // collect all correct edges
+                _rivers.Clear();
+
+                foreach (var waterCorner in _waterCorners)
+                {
+                    CollectRiver(waterCorner);
+                }
+                
+                // remove all nonriver
+                foreach (var poly in _map)
+                {
+                    foreach (var edge in poly.Edges)
+                    {
+                        if (edge.WaterFlow > 0 && !_rivers.Contains(edge))
+                            edge.WaterFlow = 0;
                     }
                 }
 
@@ -283,8 +340,28 @@ namespace Utopia.MapGenerator
 
             DrawGraph(_map);
         }
+
+        private void CollectRiver(Corner c)
+        {
+            foreach (var edge in c.Edges)
+            {
+                if (edge.WaterFlow > 1)
+                {
+                    if (!_rivers.Contains(edge))
+                    {
+                        _rivers.Add(edge);
+                        CollectRiver(edge.GetOpposite(c));
+                    }
+                }
+            }
+        }
+
+        private HashSet<Edge> _rivers = new HashSet<Edge>(); 
+
+
         private Dictionary<Point,int> _propagationLayers = new Dictionary<Point, int>();
         private HashSet<Corner> _corners;
+        private List<Corner> _waterCorners;
 
         private void StartPropagation(Polygon p, int thresold)
         {
@@ -329,7 +406,20 @@ namespace Utopia.MapGenerator
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
+            // try to find corner
+            Rectangle r = new Rectangle(e.X-4,e.Y-4,8,8);
+            foreach (var corner in _corners)
+            {
+                if (r.Contains(corner.Point))
+                {
+                    label6.Text = string.Format("Corner {0} Elevation: {1} Moisture: {2}", corner.Point.ToString(), corner.Elevation, corner.WaterFlow);
+                    return;
+                }
+            }
+
+
             _selectedPolygon = _map.GetAtPoint(e.Location);
+            label6.Text = string.Format("Polygon {0} Elevation: {1} Moisture: {2}", _selectedPolygon.Center.ToString(), _selectedPolygon.Elevation, _selectedPolygon.Moisture);
             DrawGraph(_map);
         }
 
