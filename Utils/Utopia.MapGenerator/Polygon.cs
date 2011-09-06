@@ -85,5 +85,7 @@ namespace Utopia.MapGenerator
         {
             return Center.GetHashCode();
         }
+
+        public BiomeType Biome { get; set; }
     }
 }
