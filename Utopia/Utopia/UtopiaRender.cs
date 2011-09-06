@@ -199,6 +199,10 @@ namespace Utopia
                                                       new ConstructorArgument("headRotationSpeed", 10f));
             ((Player)_player).Mode = LivingEntityMode.FreeFirstPerson;
 
+            //Storage Manager
+            _chunkStorageManager = IoCContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false),
+                                                                          new ConstructorArgument("serverMode", server.Connected));
+
             //Create the Entity Renderer
             //A simple object wrapping a collectin of Entities, and wiring them for update/draw/...
             _entityRender = IoCContainer.Get<EntityRenderer>();
@@ -236,7 +240,7 @@ namespace Utopia
             GameComponents.Add(_worldRenderer);             //Bind worldRendered to main loop.
 
             //TODO Incoroporate EntityImpect inside Enitty framework as a single class ==> Not static !
-            EntityImpact.Init(IoCContainer.Get<SingleArrayChunkContainer>(), IoCContainer.Get<ILightingManager>(), IoCContainer.Get<IWorldChunks>());
+            EntityImpact.Init(IoCContainer.Get<SingleArrayChunkContainer>(), IoCContainer.Get<ILightingManager>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<IChunkStorageManager>(), server);
 
             //GUI components
             _fps = new FPS();
@@ -256,9 +260,6 @@ namespace Utopia
                 server.ChunkContainer = IoCContainer.Get<SingleArrayChunkContainer>();
                 GameComponents.Add(server);
             }
-
-            //Storage Manager
-            _chunkStorageManager = IoCContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false));
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 

@@ -9,6 +9,8 @@ using Utopia.Worlds.Chunks;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Worlds.Cubes;
+using Utopia.Worlds.Storage;
+using Utopia.Network;
 
 namespace Utopia.Entities
 {
@@ -23,9 +25,13 @@ namespace Utopia.Entities
         private static SingleArrayChunkContainer _cubesHolder;
         private static ILightingManager _lightManager;
         private static IWorldChunks _worldChunks;
+        private static IChunkStorageManager _chunkStorageManager;
+        private static Server _server;
 
-        public static void Init(SingleArrayChunkContainer cubesHolder, ILightingManager lightManager, IWorldChunks worldChunks)
+        public static void Init(SingleArrayChunkContainer cubesHolder, ILightingManager lightManager, IWorldChunks worldChunks, IChunkStorageManager chunkStorageManager, Server server)
         {
+            _server = server;
+            _chunkStorageManager = chunkStorageManager;
             _cubesHolder = cubesHolder;
             _lightManager = lightManager;
             _worldChunks = worldChunks;
@@ -49,6 +55,13 @@ namespace Utopia.Entities
 
             _cubesHolder.SetCube(ref cubeCoordinates, ref newCube);
             LigthingImpact(ref cubeCoordinates, replacementCubeId);
+
+            //Save the modified Chunk if single Player
+            if (!_server.Connected)
+            {
+                VisualChunk neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
+                _chunkStorageManager.StoreData_async(new Worlds.Storage.Structs.ChunkDataStorage() { ChunkId = neightboorChunk.ChunkID, ChunkX = neightboorChunk.ChunkPosition.X, ChunkZ = neightboorChunk.ChunkPosition.Y, Md5Hash = null, CubeData = neightboorChunk.BlockData.GetBlocksBytes()});
+            }
         }
 
         private static void LigthingImpact(ref Location3<int> cubeCoordinates, ushort replacementCubeId)

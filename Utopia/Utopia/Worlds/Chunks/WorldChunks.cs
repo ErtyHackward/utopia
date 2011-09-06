@@ -309,7 +309,7 @@ namespace Utopia.Worlds.Chunks
                                                                    VisualWorldParameters.WorldParameters.WorldChunkSize.Z
                                                                    )
                                                                ),
-                                                           Flag = Net.Messages.GetChunksMessageFlag.AlwaysSendChunkData
+                                                           Flag = Net.Messages.GetChunksMessageFlag.DontSendChunkDataIfNotModified
                                                        });
             }
 

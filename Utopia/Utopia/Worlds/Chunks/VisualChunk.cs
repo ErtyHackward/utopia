@@ -66,6 +66,8 @@ namespace Utopia.Worlds.Chunks
 
         public Location2<int> LightPropagateBorderOffset;
 
+        public int StorageRequestTicket { get; set; }
+
         public Range<int> CubeRange
         {
             get { return _cubeRange; }

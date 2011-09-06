@@ -26,21 +26,32 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public override byte[] GetBlocksBytes()
         {
-            //byte[] extractedCubes = new byte[AbstractChunk.ChunkBlocksByteLength];
-
-            //int index = ChunkCubes.Index(DataProviderUser.ChunkPosition.X, 0, DataProviderUser.ChunkPosition.Y);
-            ////Depending of the layout of the byte !! (Order)
-            //for (int i = 0; i < AbstractChunk.ChunkBlocksByteLength; i++)
-            //{
-            //    extractedCubes[index] = ChunkCubes.Cubes[index].Id;
-            //    index++;
-            //}
-
-            //return extractedCubes;
+            int byteArrayIndex = 0;
+            int baseCubeIndex = ChunkCubes.Index(DataProviderUser.ChunkPositionBlockUnit.X, 0, DataProviderUser.ChunkPositionBlockUnit.Y);
+            int CubeIndexX = baseCubeIndex;
+            int CubeIndexZ = baseCubeIndex;
+            int cubeIndex = baseCubeIndex;
 
             byte[] extractedCubes = new byte[AbstractChunk.ChunkBlocksByteLength];
-            int index = ChunkCubes.Index(DataProviderUser.ChunkPositionBlockUnit.X, 0, DataProviderUser.ChunkPositionBlockUnit.Y);
-            Array.Copy(ChunkCubes.Cubes, index, extractedCubes, 0, AbstractChunk.ChunkBlocksByteLength);
+
+            for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
+            {
+                if (Z != 0) { CubeIndexZ += ChunkCubes.MoveZ; CubeIndexX = CubeIndexZ; cubeIndex = CubeIndexZ; }
+
+                for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
+                {
+                    if (X != 0) { CubeIndexX += ChunkCubes.MoveX; cubeIndex = CubeIndexX; }
+
+                    for (int Y = 0; Y < AbstractChunk.ChunkSize.Y; Y++)
+                    {
+                        if (Y != 0) { cubeIndex += ChunkCubes.MoveY; }
+
+                        extractedCubes[byteArrayIndex] = ChunkCubes.Cubes[cubeIndex].Id;
+                        byteArrayIndex++;
+                    }
+                }
+            }
+
             return extractedCubes;
         }
 
