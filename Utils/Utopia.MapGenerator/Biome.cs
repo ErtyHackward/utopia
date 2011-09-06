@@ -16,4 +16,15 @@
         TropicalSeasonalForest,
         SubtropicalDesert
     }
+
+    public class Biome
+    {
+        public 
+    }
+
+    public struct ParameterVariation
+    {
+        public int Minimum { get; set; }
+        public int Maximum { get; set; }
+    }
 }
