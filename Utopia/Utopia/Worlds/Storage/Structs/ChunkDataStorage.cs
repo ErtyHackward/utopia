@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Worlds.Storage.Structs
 {
@@ -10,7 +11,7 @@ namespace Utopia.Worlds.Storage.Structs
         public int ChunkX;
         public int ChunkZ;
         public long ChunkId;
-        public int md5;
+        public Md5Hash Md5Hash;
         public byte[] CubeData;
     }
 }

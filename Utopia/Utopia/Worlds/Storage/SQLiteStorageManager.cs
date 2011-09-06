@@ -20,6 +20,7 @@ namespace Utopia.Worlds.Storage
         private Queue<int> _requestTickets;
         private ConcurrentQueue<CubeRequest> _dataRequestQueue;
         private ConcurrentQueue<ChunkDataStorage> _dataStoreQueue;
+        private SQLiteCommand _landscapeGetHash;
         private SQLiteCommand _landscapeGetCmd;
         private SQLiteCommand _landscapeInsertCmd;
         #endregion
@@ -42,9 +43,12 @@ namespace Utopia.Worlds.Storage
         protected override void CreateDataBase(SQLiteConnection conn)
         {
             var command = conn.CreateCommand();
-            command.CommandText = @"CREATE TABLE CHUNKS([ChunkId] BIGINT PRIMARY KEY NOT NULL, [X] integer NOT NULL, [Z] integer NOT NULL, [md5] integer NOT NULL, [data] blob NOT NULL);";
+            command.CommandText = @"CREATE TABLE CHUNKS([ChunkId] BIGINT PRIMARY KEY NOT NULL, [X] integer NOT NULL, [Z] integer NOT NULL, [md5hash] blob NOT NULL, [data] blob NOT NULL);";
             command.CommandType = CommandType.Text;
             command.ExecuteNonQuery();
+            Guid t;
+
+
         }
         #endregion
 
@@ -92,18 +96,23 @@ namespace Utopia.Worlds.Storage
                 Data[i] = null;
             }
 
-            string CommandText = "SELECT [ChunkId], [X], [Z], [data] FROM CHUNKS WHERE (CHUNKID = @CHUNKID)";
+            string CommandText;
+            //Get a specific chunk
+            CommandText = "SELECT [ChunkId], [X], [Z], [md5hash], [data] FROM CHUNKS WHERE (CHUNKID = @CHUNKID)";
             _landscapeGetCmd = new SQLiteCommand(CommandText);
             _landscapeGetCmd.Parameters.Add("@CHUNKID", System.Data.DbType.Int64);
 
-            string _landscapeInsert = "INSERT OR REPLACE INTO CHUNKS ([ChunkId],[X], [Z], [md5], [data]) VALUES ";
-            _landscapeInsert += "(@CHUNKID, @X, @Z, @MD5, @DATA)";
+            //Get All modified chunks Hashs
+            CommandText = "SELECT [ChunkId], [md5hash] FROM CHUNKS";
+            _landscapeGetHash = new SQLiteCommand(CommandText);
 
-            _landscapeInsertCmd = new SQLiteCommand(_landscapeInsert);
+            //Upsert a specific chunk
+            CommandText = "INSERT OR REPLACE INTO CHUNKS ([ChunkId],[X], [Z], [md5hash], [data]) VALUES (@CHUNKID, @X, @Z, @MD5, @DATA)";
+            _landscapeInsertCmd = new SQLiteCommand(CommandText);
             _landscapeInsertCmd.Parameters.Add("@CHUNKID", System.Data.DbType.Int64);
-            _landscapeInsertCmd.Parameters.Add("@X", System.Data.DbType.SByte);
-            _landscapeInsertCmd.Parameters.Add("@Z", System.Data.DbType.SByte);
-            _landscapeInsertCmd.Parameters.Add("@MD5", System.Data.DbType.SByte);
+            _landscapeInsertCmd.Parameters.Add("@X", System.Data.DbType.Int32);
+            _landscapeInsertCmd.Parameters.Add("@Z", System.Data.DbType.Int32);
+            _landscapeInsertCmd.Parameters.Add("@MD5", System.Data.DbType.Binary);
             _landscapeInsertCmd.Parameters.Add("@DATA", System.Data.DbType.Binary);
         }
 
@@ -147,7 +156,7 @@ namespace Utopia.Worlds.Storage
                         ChunkId = dataReader.GetInt64(0),
                         ChunkX = dataReader.GetInt32(1),
                         ChunkZ = dataReader.GetInt32(2),
-                        md5 = dataReader.GetInt32(3),
+                        Md5Hash = new Shared.Structs.Md5Hash((byte[])dataReader.GetValue(3)),
                         CubeData = (byte[])dataReader.GetValue(4)
                     };
                 }
@@ -169,7 +178,8 @@ namespace Utopia.Worlds.Storage
             ChunkDataStorage data;
             if (_dataStoreQueue.TryDequeue(out data))
             {
-                SaveObject(ref data);
+                //SaveObject(ref data);
+                Console.WriteLine("Chunk save" + data.ChunkId);
             }
         }
 
@@ -178,7 +188,7 @@ namespace Utopia.Worlds.Storage
             _landscapeInsertCmd.Parameters[0].Value = data.ChunkId;
             _landscapeInsertCmd.Parameters[1].Value = data.ChunkX;
             _landscapeInsertCmd.Parameters[2].Value = data.ChunkZ;
-            _landscapeInsertCmd.Parameters[3].Value = data.md5;
+            _landscapeInsertCmd.Parameters[3].Value = data.Md5Hash.Bytes;
             _landscapeInsertCmd.Parameters[4].Value = data.CubeData;
 
             _landscapeInsertCmd.ExecuteNonQuery();
@@ -192,6 +202,7 @@ namespace Utopia.Worlds.Storage
             IsRunning = false;
             _landscapeInsertCmd.Dispose();
             _landscapeGetCmd.Dispose();
+            _landscapeGetHash.Dispose();
             base.Dispose();
         }
     }

@@ -10,6 +10,7 @@ using Utopia.Shared.Chunks;
 using Amib.Threading;
 using Utopia.Network;
 using Utopia.Net.Messages;
+using Utopia.Worlds.Storage;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
@@ -22,6 +23,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private Server _server;
         private bool _serverCreation;
         private Dictionary<long, ChunkDataMessage> _receivedServerChunks;
+        private IChunkStorageManager _chunkStorageManager;
         #endregion
 
         #region Public variables/properties
@@ -32,8 +34,10 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         }
         #endregion
 
-        public LandscapeManager(Server server)
+        public LandscapeManager(Server server, IChunkStorageManager chunkStorageManager)
         {
+            _chunkStorageManager = chunkStorageManager;
+
             if (server.Connected)
             {
                 _server = server;
@@ -81,10 +85,19 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                         //In this case the message contains the data from the landscape !
                         case ChunkDataMessageFlag.ChunkWasModified:
                             chunk.Decompress(message.Data); //Set the data into the "Big Array"
-                            _receivedServerChunks.Remove(chunk.ChunkID);
+                            _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
                             chunk.RefreshBorderChunk();
                             chunk.State = ChunkState.LandscapeCreated;
                             chunk.ThreadStatus = ThreadStatus.Idle;
+                            
+                            //Save the modified chunk landscape data locally
+                            _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage() { ChunkId = chunk.ChunkID ,
+                                                                                                          ChunkX = chunk.ChunkPosition.X,
+                                                                                                          ChunkZ = chunk.ChunkPosition.Y,
+                                                                                                          Md5Hash = chunk.GetMd5Hash(),
+                                                                                                          CubeData = message.Data}
+                                                                 );
+
                             break;
                         case ChunkDataMessageFlag.ChunkCanBeGenerated:
                             CreateLandscapeFromGenerator(chunk, Async);
@@ -157,6 +170,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         {
             VisualChunk visualChunk = (VisualChunk)chunk;
             GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
+            
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
 
             visualChunk.State = ChunkState.LandscapeCreated;
