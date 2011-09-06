@@ -39,7 +39,7 @@ namespace Utopia.Worlds.Cubes
 
             int cubeFaceType = (int)cubeFace;
 
-            Vector4 vertexInfo2 = new Vector4(0, 0, 0, 0);
+            Vector4 vertexInfo2 = new Vector4(-0.2f, 0, 0, 0);
             ByteVector4 vertexInfo1 = new ByteVector4((byte)cubeFace,
                                                       (byte)cubeProfile.LiquidType,
                 //cubeFace == CubeFace.Top || (cube.FloodingData == (byte)TerraFlooding.FloodDirection.Fall && cubeFace != CubeFace.Top && cubeFace != CubeFace.Bottom) ? (byte)cube.FloodingData : (byte)0,
