@@ -139,6 +139,17 @@ namespace Utopia.Shared.Chunks
             return new Md5Hash(provider.ComputeHash(bytes));
         }
 
+        protected Md5Hash CalculateHash(MemoryStream ms)
+        {
+            if (ms == null || ms.Length == 0)
+            {
+                return null;
+            }
+            var provider = new MD5CryptoServiceProvider();
+
+            return new Md5Hash(provider.ComputeHash(ms));
+        }
+
         /// <summary>
         /// Handling of chunk blocks data change
         /// </summary>

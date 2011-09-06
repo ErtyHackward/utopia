@@ -18,6 +18,8 @@ namespace Utopia.MapGenerator
 
         public List<Corner> Corners = new List<Corner>();
 
+        public bool Ocean { get; set; }
+
         public void AddNeighbor(Polygon p)
         {
             if(!Neighbors.Contains(p) && p != this)
