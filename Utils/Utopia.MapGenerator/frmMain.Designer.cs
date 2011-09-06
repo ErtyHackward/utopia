@@ -48,17 +48,24 @@
             this.moisturizeCheck = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
+            this.biomesCheck = new System.Windows.Forms.CheckBox();
+            this.octavesNumeric = new System.Windows.Forms.NumericUpDown();
+            this.persistanceNumeric = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.voronoiPolyNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.voronoiSeedNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.voronoiRelaxNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.noiseZoomNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.noiseSeedNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.octavesNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.persistanceNumeric)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 257);
+            this.button1.Location = new System.Drawing.Point(15, 279);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(120, 23);
             this.button1.TabIndex = 0;
@@ -148,7 +155,7 @@
             // 
             // noiseButton
             // 
-            this.noiseButton.Location = new System.Drawing.Point(12, 422);
+            this.noiseButton.Location = new System.Drawing.Point(12, 472);
             this.noiseButton.Name = "noiseButton";
             this.noiseButton.Size = new System.Drawing.Size(120, 23);
             this.noiseButton.TabIndex = 8;
@@ -164,7 +171,7 @@
             0,
             0,
             0});
-            this.noiseZoomNumeric.Location = new System.Drawing.Point(12, 396);
+            this.noiseZoomNumeric.Location = new System.Drawing.Point(12, 374);
             this.noiseZoomNumeric.Maximum = new decimal(new int[] {
             1,
             0,
@@ -182,7 +189,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 377);
+            this.label4.Location = new System.Drawing.Point(9, 355);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(34, 13);
             this.label4.TabIndex = 10;
@@ -203,7 +210,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 335);
+            this.label5.Location = new System.Drawing.Point(9, 316);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(79, 13);
             this.label5.TabIndex = 13;
@@ -211,7 +218,7 @@
             // 
             // noiseSeedNumeric
             // 
-            this.noiseSeedNumeric.Location = new System.Drawing.Point(12, 354);
+            this.noiseSeedNumeric.Location = new System.Drawing.Point(12, 332);
             this.noiseSeedNumeric.Maximum = new decimal(new int[] {
             100000000,
             0,
@@ -263,6 +270,8 @@
             // moisturizeCheck
             // 
             this.moisturizeCheck.AutoSize = true;
+            this.moisturizeCheck.Checked = true;
+            this.moisturizeCheck.CheckState = System.Windows.Forms.CheckState.Checked;
             this.moisturizeCheck.Location = new System.Drawing.Point(12, 234);
             this.moisturizeCheck.Name = "moisturizeCheck";
             this.moisturizeCheck.Size = new System.Drawing.Size(72, 17);
@@ -272,7 +281,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(12, 452);
+            this.button2.Location = new System.Drawing.Point(12, 502);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(120, 23);
             this.button2.TabIndex = 18;
@@ -289,11 +298,91 @@
             this.label6.TabIndex = 19;
             this.label6.Text = "label6";
             // 
+            // biomesCheck
+            // 
+            this.biomesCheck.AutoSize = true;
+            this.biomesCheck.Checked = true;
+            this.biomesCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.biomesCheck.Location = new System.Drawing.Point(12, 256);
+            this.biomesCheck.Name = "biomesCheck";
+            this.biomesCheck.Size = new System.Drawing.Size(76, 17);
+            this.biomesCheck.TabIndex = 20;
+            this.biomesCheck.Text = "set biomes";
+            this.biomesCheck.UseVisualStyleBackColor = true;
+            // 
+            // octavesNumeric
+            // 
+            this.octavesNumeric.Increment = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.octavesNumeric.Location = new System.Drawing.Point(12, 413);
+            this.octavesNumeric.Maximum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.octavesNumeric.Name = "octavesNumeric";
+            this.octavesNumeric.Size = new System.Drawing.Size(120, 20);
+            this.octavesNumeric.TabIndex = 21;
+            this.octavesNumeric.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            // 
+            // persistanceNumeric
+            // 
+            this.persistanceNumeric.DecimalPlaces = 6;
+            this.persistanceNumeric.Increment = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.persistanceNumeric.Location = new System.Drawing.Point(12, 448);
+            this.persistanceNumeric.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.persistanceNumeric.Name = "persistanceNumeric";
+            this.persistanceNumeric.Size = new System.Drawing.Size(120, 20);
+            this.persistanceNumeric.TabIndex = 22;
+            this.persistanceNumeric.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            65536});
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 397);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(47, 13);
+            this.label7.TabIndex = 23;
+            this.label7.Text = "Octaves";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(10, 434);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(62, 13);
+            this.label8.TabIndex = 24;
+            this.label8.Text = "Persistance";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(891, 534);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.persistanceNumeric);
+            this.Controls.Add(this.octavesNumeric);
+            this.Controls.Add(this.biomesCheck);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.moisturizeCheck);
@@ -322,6 +411,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.voronoiRelaxNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.noiseZoomNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.noiseSeedNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.octavesNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.persistanceNumeric)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -349,6 +440,11 @@
         private System.Windows.Forms.CheckBox moisturizeCheck;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox biomesCheck;
+        private System.Windows.Forms.NumericUpDown octavesNumeric;
+        private System.Windows.Forms.NumericUpDown persistanceNumeric;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
     }
 }
 

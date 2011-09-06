@@ -17,6 +17,8 @@ namespace Utopia.MapGenerator
 
         private Polygon _selectedPolygon;
 
+        private Biome _biome = new Biome(new ParameterVariation(127,255), new ParameterVariation(0,150));
+
         public frmMain()
         {
             InitializeComponent();
@@ -55,7 +57,12 @@ namespace Utopia.MapGenerator
             if (polygon.Elevation > 127)
             {
                 //earth
-                col = Color.FromArgb((byte)(100 - polygon.Elevation), (byte)(80 - polygon.Elevation), (byte)(50 - polygon.Elevation));
+                if (polygon.Biome != BiomeType.None)
+                {
+
+                    col = Biome.GetBiomeColor(polygon.Biome);
+                }
+                else col = Color.FromArgb((byte)(100 - polygon.Elevation), (byte)(80 - polygon.Elevation), (byte)(50 - polygon.Elevation));
             }
             else
             {
@@ -66,8 +73,7 @@ namespace Utopia.MapGenerator
                 }
                 else
                 {
-                    col = Color.FromArgb((byte)(polygon.Elevation), (byte)(polygon.Elevation),
-                     (byte)(255));
+                    col = Color.FromArgb((byte)(polygon.Elevation), (byte)(polygon.Elevation), (byte)(255));
                 }
             }
 
@@ -242,17 +248,17 @@ namespace Utopia.MapGenerator
             if (moisturizeCheck.Checked)
             {
                 var noise = new SimplexNoise(new Random((int)noiseSeedNumeric.Value));
-                noise.SetParameters((double)0.0002, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
+                noise.SetParameters((double)0.0008, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
 
                 foreach (var poly in _map)
                 {
-                    var noiseVal = noise.GetNoise2DValue(poly.Center.X, poly.Center.Y, 4, 0.8);
-                    var col = 2 / noiseVal.MaxValue * noiseVal.Value;
+                    var noiseVal = noise.GetNoise2DValue(poly.Center.X, poly.Center.Y, 2, 0.8);
+                    var col = 100 / noiseVal.MaxValue * noiseVal.Value;
                     poly.Moisture = (int)col;
 
                     foreach (var corner in poly.Corners)
                     {
-                        noiseVal = noise.GetNoise2DValue(corner.Point.X, corner.Point.Y, 4, 0.8);
+                        noiseVal = noise.GetNoise2DValue(corner.Point.X, corner.Point.Y, 2, 0.8);
                         col = 2 / noiseVal.MaxValue * noiseVal.Value;
                         corner.WaterFlow = (int)col;
                     }
@@ -360,6 +366,20 @@ namespace Utopia.MapGenerator
                     }
                 }
 
+                // update moisture for polygons
+                foreach (var poly in _map)
+                {
+                    if (poly.Elevation > 127)
+                    {
+                        poly.Moisture = poly.Neighbors.Sum(p => 
+                        {
+                            var v = p.Neighbors.Sum(n => n.Edges.Sum(ed => ed.WaterFlow > 0 ? 1 : 0));
+                            v = v + p.Neighbors.Sum(n => n.Elevation < 127 && !n.Ocean ? 3 : 0);
+                            return p.Edges.Sum(ed => ed.WaterFlow > 0 ? 1 : 0) + v;
+                        });
+                    }
+                }
+
             }
 
             // detect ocean
@@ -368,6 +388,17 @@ namespace Utopia.MapGenerator
                 SetOcean(_map.GetAtPoint(new Point(pictureBox1.Width, 0)));
                 SetOcean(_map.GetAtPoint(new Point(0, pictureBox1.Height)));
                 SetOcean(_map.GetAtPoint(new Point(pictureBox1.Width, pictureBox1.Height)));
+            }
+
+            if (biomesCheck.Checked)
+            {
+                foreach (var poly in _map)
+                {
+                    if (poly.Elevation > 127)
+                    {
+                        poly.Biome = _biome.GetBiomeWith(poly.Elevation, poly.Moisture > _biome.Moisture.Maximum ? _biome.Moisture.Maximum : poly.Moisture);
+                    }
+                }
             }
 
             DrawGraph(_map);
@@ -486,7 +517,7 @@ namespace Utopia.MapGenerator
 
 
             _selectedPolygon = _map.GetAtPoint(e.Location);
-            label6.Text = string.Format("Polygon {0} Elevation: {1} Moisture: {2}", _selectedPolygon.Center.ToString(), _selectedPolygon.Elevation, _selectedPolygon.Moisture);
+            label6.Text = string.Format("Polygon {0} Elevation: {1} Moisture: {2} Biome: {3}", _selectedPolygon.Center.ToString(), _selectedPolygon.Elevation, _selectedPolygon.Moisture, _selectedPolygon.Biome);
             DrawGraph(_map);
         }
 
@@ -526,7 +557,7 @@ namespace Utopia.MapGenerator
         {
             var r = new Random((int)noiseSeedNumeric.Value);
             var noise = new SimplexNoise(r);
-            noise.SetParameters((double)0.0007, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
+            noise.SetParameters((double)noiseZoomNumeric.Value, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
 
             Bitmap bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
 
@@ -534,7 +565,7 @@ namespace Utopia.MapGenerator
             {
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
-                    var val = noise.GetNoise2DValue(x, y, 4, 0.8);
+                    var val = noise.GetNoise2DValue(x, y,(int) octavesNumeric.Value, (double)persistanceNumeric.Value);
 
                     var col = 255 / val.MaxValue * val.Value;
 
