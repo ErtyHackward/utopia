@@ -89,8 +89,6 @@ namespace Utopia.Shared.Chunks
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs() { Bytes = values, Count = values.Length, Locations = positions} );
         }
 
-
-
         /// <summary>
         /// Sets a full block buffer for a chunk
         /// </summary>
