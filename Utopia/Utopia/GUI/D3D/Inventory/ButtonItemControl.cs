@@ -33,7 +33,8 @@ namespace Utopia.GUI.D3D.Inventory
         protected override void OnMouseEntered()
         {
             base.OnMouseEntered();
-            if (MouseOverControl != null) Debug.WriteLine("---> " + MouseOverControl.Name);
+            //if (MouseOverControl != null) 
+            //    Debug.WriteLine("---> " + MouseOverControl.Name);
 
         }
 

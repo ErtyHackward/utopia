@@ -8,6 +8,6 @@ namespace Utopia.Actions
     public enum enuKeyboardTriggerMode
     {
         KeyDown,
-        KeyReleased
+        KeyDownUp
     }
 }

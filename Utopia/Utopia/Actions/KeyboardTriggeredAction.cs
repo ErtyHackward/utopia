@@ -9,7 +9,7 @@ namespace Utopia.Actions
     public struct KeyboardTriggeredAction
     {
         public enuActions Action;
-        public enuKeyboardTriggerMode Trigger;
+        public enuKeyboardTriggerMode TriggerType;
         public KeyWithModifier Binding;
     }
 }

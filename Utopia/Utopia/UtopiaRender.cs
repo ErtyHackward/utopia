@@ -43,6 +43,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Network;
 using Utopia.Worlds.Storage;
+using Utopia.Actions;
 
 namespace Utopia
 {
@@ -59,6 +60,7 @@ namespace Utopia
         private WorldFocusManager _worldFocusManager;
         private EntityRenderer _entityRender;
         private IChunkStorageManager _chunkStorageManager;
+        private ActionsManager _actionManager;
 
         //Debug tools
         private FPS _fps; //FPS computing object
@@ -170,6 +172,7 @@ namespace Utopia
             if (!_d3dEngine.UnlockedMouse) System.Windows.Forms.Cursor.Hide();      //Hide the mouse by default !
 
             _inputHandler = IoCContainer.Get<InputHandlerManager>();
+            _actionManager = IoCContainer.Get<ActionsManager>();
             DXStates.CreateStates(_d3dEngine);  //Create all States that could by used by the game.
 
             //-- Get Camera --
@@ -269,6 +272,9 @@ namespace Utopia
             //this one is disabled by default, can be enabled with F12 UI 
             GameComponents.Add(IoCContainer.Get<EntityEditor>());
 
+            //Bind Actions to inputs events
+            BindActions();
+
             // TODO (Simon) wire all binded components in one shot with ninject : GameComponents.AddRange(IoCContainer.GetAll<IGameComponent>());
             // BUT we cant handle the add order ourselves: an updateOrder int + sorted components collection like in XNA would be good
             
@@ -279,6 +285,12 @@ namespace Utopia
 #endif
             #endregion
 
+        }
+
+        private void BindActions()
+        {
+            _actionManager.AddActions(new KeyboardTriggeredAction() { Action = enuActions.Move_Forward, TriggerType = enuKeyboardTriggerMode.KeyDown, Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Forward});
+            _actionManager.AddActions(new KeyboardTriggeredAction() { Action = enuActions.Move_Backward, TriggerType = enuKeyboardTriggerMode.KeyDownUp, Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Backward});
         }
 
 
@@ -295,6 +307,9 @@ namespace Utopia
 
         public override void Update(ref GameTime TimeSpend)
         {
+            _actionManager.Update();
+
+            //if (_actionManager.isTriggered(enuActions.Move_Forward)) Console.WriteLine("Ok");
             base.Update(ref TimeSpend);
         }
 
@@ -307,10 +322,7 @@ namespace Utopia
         {
             _d3dEngine.Context.ClearRenderTargetView(_d3dEngine.RenderTarget, BackBufferColor);
             _d3dEngine.Context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
-
             base.Draw();
-
-
             base.Present();
         }
 

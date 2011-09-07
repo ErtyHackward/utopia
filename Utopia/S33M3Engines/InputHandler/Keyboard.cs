@@ -24,6 +24,7 @@ namespace S33M3Engines.InputHandler
             {
                 throw new Exception("Error getting keyboard state!");
             }
+
             KeyboardState state = new KeyboardState();
 
             for (int i = 0; i < 256; i++)
