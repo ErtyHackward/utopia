@@ -39,16 +39,27 @@ namespace Utopia.Worlds.Storage
                 if (_path == ":memory:" || !File.Exists(_path))
                 {
                     _connection = CreateDataBase(_path);
+                    SetPragma(_connection);
                     return _connection;
                 }
                 var csb = new SQLiteConnectionStringBuilder();
+                csb.SyncMode = SynchronizationModes.Normal;
                 csb.DataSource = _path;
 
                 _connection = new SQLiteConnection(csb.ToString());
                 _connection.Open();
-
+                SetPragma(_connection);
             }
             return _connection;
+        }
+
+        private void SetPragma(SQLiteConnection connection)
+        {
+            var command = connection.CreateCommand();
+            //PRAGMA Configuration
+            command.CommandText = "PRAGMA JOURNAL_MODE=WAL";
+            command.CommandType = CommandType.Text;
+            command.ExecuteNonQuery();
         }
 
         public virtual void Dispose()
@@ -86,11 +97,15 @@ namespace Utopia.Worlds.Storage
                         System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
                     SQLiteConnection.CreateFile(path);
                 }
-                var conn = new SQLiteConnection("Data Source = " + _path);
+                var csb = new SQLiteConnectionStringBuilder();
+                csb.SyncMode = SynchronizationModes.Normal;
+                csb.DataSource = _path;
+
+                var conn = new SQLiteConnection(csb.ToString());
                 conn.Open();
                 CreateDataBase(conn);
                 return conn;
-            }
+            }   
             catch (Exception) { }
             return null;
         }

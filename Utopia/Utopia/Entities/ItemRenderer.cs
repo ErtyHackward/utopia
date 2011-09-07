@@ -12,6 +12,7 @@ using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
+using Utopia.Action;
 
 namespace Utopia.Entities
 {
@@ -23,16 +24,16 @@ namespace Utopia.Entities
         private readonly D3DEngine _d3DEngine;
         private readonly WorldFocusManager _worldFocusManager;
         private readonly CameraManager _camManager;
-        private readonly InputHandlerManager _inputHandler; //temporary, for spawning item
+        private readonly ActionsManager _actions; //temporary, for spawning item
         private readonly VoxelMeshFactory _voxelMeshFactory;
 
 
         public ItemRenderer(D3DEngine d3DEngine, WorldFocusManager worldFocusManager, CameraManager camManager,
-                            InputHandlerManager inputHandler, VoxelMeshFactory voxelItem)
+                            ActionsManager actions, VoxelMeshFactory voxelItem)
         {
             _d3DEngine = d3DEngine;
             _voxelMeshFactory = voxelItem;
-            _inputHandler = inputHandler;
+            _actions = actions;
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
         }
@@ -59,35 +60,26 @@ namespace Utopia.Entities
 
         public override void Update(ref GameTime timeSpent)
         {
-            HandleInput(false);
+            HandleInput();
         }
 
-        private bool _keyInsertBuffer;
-
-        private void HandleInput(bool bufferMode)
+        private void HandleInput()
         {
-            if (!_inputHandler.IsKeyPressed(Keys.Insert) && !_keyInsertBuffer) return;
-            if (bufferMode)
+            if (_actions.isTriggered(Actions.DebugUI_Insert))
             {
-                _keyInsertBuffer = true;
-                return;
+                Item item = new Shovel(); //just an example, i need a concrete item class ! 
+                item.Blocks = new byte[16, 16, 16];
+                //item.RandomFill(5);//would come filled from server
+                item.BordersFill();
+                item.Position = _camManager.ActiveCamera.WorldPosition.AsVector3();
+
+                Items.Add(new VisualEntity(_voxelMeshFactory, item));
             }
-            _keyInsertBuffer = false;
-
-            Item item = new Shovel(); //just an example, i need a concrete item class ! 
-            item.Blocks = new byte[16, 16, 16];
-            //item.RandomFill(5);//would come filled from server
-            item.BordersFill();
-            item.Position = _camManager.ActiveCamera.WorldPosition.AsVector3();
-            
-            Items.Add(new VisualEntity(_voxelMeshFactory, item));
-
             //TODO (team talk) camera double position vs entiy float position
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-            HandleInput(true);
         }
 
 

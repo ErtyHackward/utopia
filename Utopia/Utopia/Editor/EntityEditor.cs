@@ -12,6 +12,7 @@ using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Screen = Nuclex.UserInterface.Screen;
+using Utopia.Action;
 
 namespace Utopia.Editor
 {
@@ -26,15 +27,15 @@ namespace Utopia.Editor
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VoxelMeshFactory _voxelMeshFactory;
         private readonly EntityEditorUi _ui;
-        private readonly InputHandlerManager _inputHandler;
+        private readonly ActionsManager _actions;
         private readonly Hud _hudComponent;
 
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
-                            InputHandlerManager inputHandler, Hud hudComponent)
+                            ActionsManager actions, Hud hudComponent)
         {
             _screen = screen;
-            _inputHandler = inputHandler;
+            _actions = actions;
             _worldFocusManager = worldFocusManager;
             _voxelMeshFactory = voxelMeshFactory;
             _camManager = camManager;
@@ -67,7 +68,7 @@ namespace Utopia.Editor
 
         public override void Update(ref GameTime timeSpent)
         {
-            HandleInput(false);
+            HandleInput();
         }
 
         public override void Draw()
@@ -134,19 +135,10 @@ namespace Utopia.Editor
 
         private int _y = 0;
 
-        private void HandleInput(bool bufferMode)
+        private void HandleInput()
         {
-            if ((_inputHandler.PrevKeyboardState.IsKeyUp(Keys.LButton) &&
-                 _inputHandler.CurKeyboardState.IsKeyDown(Keys.LButton)) || _lButtonBuffer)
+            if(_actions.isTriggered(Actions.Block_Add))
             {
-                if (bufferMode)
-                {
-                    _lButtonBuffer = true;
-                    return;
-                }
-                else _lButtonBuffer = false;
-
-
                 byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
                 if (_y == blocks.GetLength(1)) _y = 0;

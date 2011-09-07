@@ -6,6 +6,7 @@ using S33M3Engines.D3D;
 using Utopia.Settings;
 using S33M3Engines;
 using S33M3Engines.InputHandler;
+using Utopia.Action;
 
 namespace Utopia.Worlds.GameClocks
 {
@@ -15,7 +16,7 @@ namespace Utopia.Worlds.GameClocks
         private float _startTime;
         private float _deltaAngleTime;
         private bool _frozenTime;
-        private InputHandlerManager _inputHandler;
+        private ActionsManager _actions;
         #endregion
 
         #region Public variable/properties
@@ -28,9 +29,9 @@ namespace Utopia.Worlds.GameClocks
         /// <param name="game">Base tools class</param>
         /// <param name="clockSpeed">The Ingame time speed in "Nbr of second ingame for each realtime seconds"; ex : 1 = Real time, 60 = 60times faster than realtime</param>
         /// <param name="gameTimeStatus">The startup time</param>
-        public WorldClock(InputHandlerManager input, float clockSpeed, float startTime)
+        public WorldClock(ActionsManager actions, float clockSpeed, float startTime)
         {
-            _inputHandler = input;
+            _actions = actions;
             _startTime = startTime;
             ClockSpeed = clockSpeed;
         }
@@ -50,7 +51,7 @@ namespace Utopia.Worlds.GameClocks
 
         public override void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
         {
-            InputHandler(false);
+            InputHandler();
 
             if (_frozenTime) return;
 
@@ -76,8 +77,6 @@ namespace Utopia.Worlds.GameClocks
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
-            InputHandler(true);
-
             base.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
 
@@ -89,12 +88,10 @@ namespace Utopia.Worlds.GameClocks
 
         #region Private methods
         bool _freezeTimeBuffer;
-        private void InputHandler(bool bufferMode)
+        private void InputHandler()
         {
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.FreezeTime) || _freezeTimeBuffer)
+            if (_actions.isTriggered(Actions.World_FreezeTime))
             {
-                if (bufferMode) { _freezeTimeBuffer = true; return; } else _freezeTimeBuffer = false;
-
                 _frozenTime = !_frozenTime;
             }
         }

@@ -62,9 +62,6 @@ namespace S33M3Engines.D3D
                 S33M3Engines.D3DEngine.FIXED_TIMESTEP_ENABLED = value;
             }
         }
-
-        protected InputHandlerManager _inputHandler { get; set; }
-
         #endregion
 
         #region Private Variable
@@ -199,8 +196,6 @@ namespace S33M3Engines.D3D
 
         public virtual void Update(ref GameTime TimeSpend)
         {
-            systemInputStates();
-
             _currentlyUpdatingComponents.Clear();
             _currentlyUpdatingComponents.AddRange(_enabledUpdateable);
 
@@ -212,8 +207,6 @@ namespace S33M3Engines.D3D
 
         public virtual void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-            systemInputStates();
-
             for (int i = 0; i < _currentlyUpdatingComponents.Count; i++)
             {
                 _currentlyUpdatingComponents[i].Interpolation(ref interpolationHd, ref interpolationLd);
@@ -234,12 +227,6 @@ namespace S33M3Engines.D3D
 
             HLSLShaderWrap.ResetEffectStateTracker();
             VertexBuffer.ResetVertexStateTracker();
-        }
-
-        //Keyboard and Mouse system watch up
-        private void systemInputStates()
-        {
-            _inputHandler.ReshreshStates();
         }
 
         #region Game Component Collection Methods
@@ -356,7 +343,6 @@ namespace S33M3Engines.D3D
 
         public virtual void Dispose()
         {
-            _inputHandler.CleanUp();
         }
 
         #endregion

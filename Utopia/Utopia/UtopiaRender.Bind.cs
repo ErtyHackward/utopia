@@ -32,7 +32,7 @@ using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Shared.World.WorldConfigs;
 using Utopia.Entities;
 using Utopia.Worlds.Storage;
-using Utopia.Actions;
+using Utopia.Action;
 
 namespace Utopia
 {
@@ -46,7 +46,6 @@ namespace Utopia
 
             iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope();
-            iocContainer.Bind<InputHandlerManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope();
             iocContainer.Bind<CameraManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<WorldRenderer>().ToSelf().InSingletonScope();

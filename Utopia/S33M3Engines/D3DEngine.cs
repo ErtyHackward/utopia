@@ -105,6 +105,10 @@ namespace S33M3Engines
             };
             WindowHandle = _renderForm.Handle;
             _renderForm.KeyUp += new System.Windows.Forms.KeyEventHandler(_renderForm_KeyUp);
+
+            //Link the mouse to the windows handle
+            S33M3Engines.InputHandler.Mouse.mouseMessageHooker.WindowHandle = D3DEngine.WindowHandle;
+
         }
 
         //Remove default F10 (Open menu) Form key push !
@@ -359,6 +363,8 @@ namespace S33M3Engines
             StaggingBackBuffer.Dispose();
             Context.Dispose();
             Device.Dispose();
+
+            S33M3Engines.InputHandler.Mouse.CleanUp();
         }
 
         #endregion

@@ -23,6 +23,7 @@ using S33M3Engines;
 using S33M3Engines.Cameras;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
+using Utopia.Action;
 
 namespace Utopia.Entities.Living
 {
@@ -50,7 +51,7 @@ namespace Utopia.Entities.Living
         private LivingEntityMode _moveMode = LivingEntityMode.WalkingFirstPerson;
         private float _groundBelowEntity;
         private bool _headInsideWater = false;
-        protected InputHandlerManager _inputHandler;
+        protected ActionsManager _actions;
         float _gravityInfluence;
 
         private VerletSimulator _physicSimu;
@@ -93,14 +94,14 @@ namespace Utopia.Entities.Living
 
         #endregion
 
-        public LivingEntity(D3DEngine d3dEngine, CameraManager camManager, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed, SingleArrayChunkContainer cubesHolder)
+        public LivingEntity(D3DEngine d3dEngine, CameraManager camManager, ActionsManager actions, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed, SingleArrayChunkContainer cubesHolder)
             : base(startUpWorldPosition, size)
         {
             _camManager = camManager;
             _d3dEngine = d3dEngine;
             _refreshHeadUnderWater = CheckHeadUnderWater;
 
-            _inputHandler = inputHandler;
+            _actions = actions;
 
             _walkingSpeed = walkingSpeed;
             _flyingSpeed = flyingSpeed;
@@ -210,22 +211,22 @@ namespace Utopia.Entities.Living
 
         private void FreeFirstPersonMove()
         {
-            if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.Forward) || (_inputHandler.CurMouseState.LeftButton == ButtonState.Pressed && _inputHandler.CurMouseState.RightButton == ButtonState.Pressed))
+            if (_actions.isTriggered(Actions.Move_Forward)) 
                 WorldPosition.Value += _lookAt * _moveDelta;
 
-            if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.Backward))
+            if (_actions.isTriggered(Actions.Move_Backward))
                 WorldPosition.Value -= _lookAt * _moveDelta;
 
-            if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeLeft))
+            if (_actions.isTriggered(Actions.Move_StrafeLeft))
                 WorldPosition.Value -= _entityHeadXAxis * _moveDelta;
 
-            if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeRight))
+            if (_actions.isTriggered(Actions.Move_StrafeRight))
                 WorldPosition.Value += _entityHeadXAxis * _moveDelta;
 
-            if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.Down))
+            if (_actions.isTriggered(Actions.Move_Down))
                 WorldPosition.Value += MVector3.Down * _moveDelta;
 
-            if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.Up))
+            if (_actions.isTriggered(Actions.Move_Up))
                 WorldPosition.Value += MVector3.Up * _moveDelta;
         }
 
@@ -233,25 +234,24 @@ namespace Utopia.Entities.Living
         {
             _physicSimu.Freeze(true, false, true);
 
+            //Move 3 time slower if not touching ground
             if (!_physicSimu.OnGround) _moveDelta /= 3f;
 
-            if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.Forward) || (_inputHandler.CurMouseState.LeftButton == ButtonState.Pressed && _inputHandler.CurMouseState.RightButton == ButtonState.Pressed))
-                if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f;
+            if (_actions.isTriggered(Actions.Move_Forward))
+                if(_actions.isTriggered(Actions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f;
                 else _physicSimu.PrevPosition += _entityZAxis * _moveDelta;
 
-            if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.Backward))
+            if (_actions.isTriggered(Actions.Move_Backward))
                 _physicSimu.PrevPosition -= _entityZAxis * _moveDelta;
 
-            if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeLeft))
+            if (_actions.isTriggered(Actions.Move_StrafeLeft))
                 _physicSimu.PrevPosition += _entityXAxis * _moveDelta;
 
-            if (_inputHandler.CurKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeRight))
+            if (_actions.isTriggered(Actions.Move_StrafeRight))
                 _physicSimu.PrevPosition -= _entityXAxis * _moveDelta;
 
-            if (_inputHandler.PrevKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.Move.Jump))
-                //Only If I'm on the ground !
-                if (_physicSimu.OnGround)
-                    _physicSimu.Impulses.Add(new Impulse(ref TimeSpend) { ForceApplied = new DVector3(0, 300, 0) });
+            if (_physicSimu.OnGround && _actions.isTriggered(Actions.Move_Jump))
+                _physicSimu.Impulses.Add(new Impulse(ref TimeSpend) { ForceApplied = new DVector3(0, 300, 0) });
         }
         #endregion
 
@@ -263,7 +263,8 @@ namespace Utopia.Entities.Living
             int centerY = (int)_camManager.ActiveCamera.Viewport.Height / 2;
             if (_d3dEngine.UnlockedMouse == false)
             {
-                _inputHandler.GetCurrentMouseState(out mouseState); //To be sure the take the latest place of the mouse cursor !
+                //_inputHandler.GetCurrentMouseState(out mouseState); //To be sure the take the latest place of the mouse cursor !
+                mouseState = Mouse.GetState();
                 Mouse.SetPosition(centerX, centerY);
                 Rotate((mouseState.X - centerX), (mouseState.Y - centerY), 0.0f, mode);
             }
