@@ -45,7 +45,7 @@ namespace S33M3Engines.D3D
         //this is for having the possibility to remove components at runtime, while iterating on the list
         //exemple : enabling the editor disables the normal Hud. without the _currentlyxxx collections you get invalid operation modify list while iterating 
         private readonly List<IUpdateableComponent> _currentlyUpdatingComponents = new List<IUpdateableComponent>();
-        private readonly List<IDrawableComponent> _currentlyDrawingComponents = new List<IDrawableComponent>();
+        //private readonly List<IDrawableComponent> _currentlyDrawingComponents = new List<IDrawableComponent>();
 
         public bool VSync
         {
@@ -118,38 +118,35 @@ namespace S33M3Engines.D3D
 
             //The Pump !
             RenderLoop.Run(_d3dEngine.GameWindow, () =>
-                                                      {
-                                                          if (_isFormClosed) return;
+            {
+                if (_isFormClosed) return;
 
-                                                          if (FixedTimeSteps)
-                                                          {
-                                                              _updateWithoutrenderingCount = 0;
-                                                              while (Stopwatch.GetTimestamp() > _next_game_update &&
-                                                                     _updateWithoutrenderingCount < _maxRenderFrameSkip)
-                                                              {
-                                                                  _gameTime.Update(FixedTimeSteps);
-                                                                  Update(ref _gameTime);
+                if (FixedTimeSteps)
+                {
+                    _updateWithoutrenderingCount = 0;
+                    while (Stopwatch.GetTimestamp() > _next_game_update &&
+                            _updateWithoutrenderingCount < _maxRenderFrameSkip)
+                    {
+                        _gameTime.Update(FixedTimeSteps);
+                        Update(ref _gameTime);
 
-                                                                  _next_game_update += GameUpdateDelta;
-                                                                  _updateWithoutrenderingCount++;
-                                                              }
+                        _next_game_update += GameUpdateDelta;
+                        _updateWithoutrenderingCount++;
+                    }
 
-                                                              _interpolation_hd =
-                                                                  (double)
-                                                                  (Stopwatch.GetTimestamp() + GameUpdateDelta -
-                                                                   _next_game_update)/GameUpdateDelta;
-                                                              _interpolation_ld = (float) _interpolation_hd;
-                                                              Interpolation(ref _interpolation_hd, ref _interpolation_ld);
-                                                                  //Call before each Draw !
-                                                          }
-                                                          else
-                                                          {
-                                                              _gameTime.Update(FixedTimeSteps);
-                                                              Update(ref _gameTime);
-                                                          }
+                    _interpolation_hd = (double) (Stopwatch.GetTimestamp() + GameUpdateDelta - _next_game_update) / GameUpdateDelta;
+                    _interpolation_ld = (float)_interpolation_hd;
+                    Interpolation(ref _interpolation_hd, ref _interpolation_ld);
+                    //Call before each Draw !
+                }
+                else
+                {
+                    _gameTime.Update(FixedTimeSteps);
+                    Update(ref _gameTime);
+                }
 
-                                                          Draw();
-                                                      });
+                Draw();
+            });
 
             UnloadContent();
             //Dispose();
@@ -203,79 +200,33 @@ namespace S33M3Engines.D3D
         public virtual void Update(ref GameTime TimeSpend)
         {
             systemInputStates();
-            
-            foreach (var updateableComponent in _enabledUpdateable)
-                _currentlyUpdatingComponents.Add(updateableComponent);
 
-            foreach (var updateableComponent in _currentlyUpdatingComponents)
-            {
-                updateableComponent.Update(ref TimeSpend);
-            }
             _currentlyUpdatingComponents.Clear();
-            /*
-            for (int i = 0; i < GameComponents.Count; i++)
+            _currentlyUpdatingComponents.AddRange(_enabledUpdateable);
+
+            for (int i = 0; i < _currentlyUpdatingComponents.Count; i++)
             {
-                if (GameComponents[i].Enabled) GameComponents[i].Update(ref TimeSpend);
-            }*/
+                _currentlyUpdatingComponents[i].Update(ref TimeSpend);
+            }
         }
 
         public virtual void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
             systemInputStates();
 
-            /*  for (int i = 0; i < GameComponents.Count; i++)
+            for (int i = 0; i < _currentlyUpdatingComponents.Count; i++)
             {
-                if (GameComponents[i].Enabled) GameComponents[i].Interpolation(ref interpolation_hd, ref interpolation_ld);
-            }*/
-           
-            foreach (var updateableComponent in _enabledUpdateable)
-                _currentlyUpdatingComponents.Add(updateableComponent);
-           
-            foreach (var updateableComponent in _enabledUpdateable)
-            {
-                updateableComponent.Interpolation(ref interpolationHd, ref interpolationLd);
+                _currentlyUpdatingComponents[i].Interpolation(ref interpolationHd, ref interpolationLd);
             }
-            _currentlyUpdatingComponents.Clear();
         }
 
         public virtual void Draw()
         {
-            foreach (IDrawableComponent drawable in _visibleDrawable)
-                _currentlyDrawingComponents.Add(drawable);
-
-            foreach (IDrawableComponent drawable in _currentlyDrawingComponents)
+            for (int i = 0; i < _visibleDrawable.Count; i++)
             {
-                drawable.Draw();
+                _visibleDrawable[i].Draw();
             }
-
-             _currentlyDrawingComponents.Clear();
-            _d3dEngine.RefreshBackBufferAsTexture();
-
-            /*
-            //Depth 0 drawing
-            for (int i = 0; i < GameComponents.Count; i++)
-            {
-                if (GameComponents[i].Visible) GameComponents[i].Draw();
-            }
-
-            //TODO FIXME Take a snapshot of the backbuffer before beginning to draw seethrough polygons !
-            _d3dEngine.RefreshBackBufferAsTexture();
-
-            //Depth 1 drawing
-            for (int i = 0; i < GameComponents.Count; i++)
-            {
-                if (GameComponents[i].CallDraw) GameComponents[i].Draw();
-            }*/
         }
-
-        /*   public void DrawInterfaces()
-        {
-            //Depth 2 drawing
-            for (int i = 0; i < GameComponents.Count; i++)
-            {
-                if (GameComponents[i].CallDraw) GameComponents[i].Draw();
-            }
-        }*/
 
         public void Present()
         {
@@ -283,7 +234,6 @@ namespace S33M3Engines.D3D
 
             HLSLShaderWrap.ResetEffectStateTracker();
             VertexBuffer.ResetVertexStateTracker();
-            //StatesMnger.ApplyStates(DefaultRenderStates.All);
         }
 
         //Keyboard and Mouse system watch up

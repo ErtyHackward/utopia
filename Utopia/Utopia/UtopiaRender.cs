@@ -273,7 +273,7 @@ namespace Utopia
             // BUT we cant handle the add order ourselves: an updateOrder int + sorted components collection like in XNA would be good
             
             // TODO (Simon)  debug vs release is currently a mess : no debug text in debug mode, no UI in debug mode, is debug mode of any use fir us ?
-                #region Debug Components
+            #region Debug Components
 #if DEBUG
             DebugEffect.Init(_d3dEngine);             // Default Effect used by debug componant (will be shared)
 #endif
@@ -284,21 +284,17 @@ namespace Utopia
 
         public override void LoadContent()
         {
-
             base.LoadContent();
         }
 
         public override void UnloadContent()
         {
             base.UnloadContent();
-
             DXStates.Dispose();
-            //UtopiaSaveManager.StopUSM();
         }
 
         public override void Update(ref GameTime TimeSpend)
         {
-            //Update Internal Components
             base.Update(ref TimeSpend);
         }
 
@@ -306,8 +302,6 @@ namespace Utopia
         {
             base.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
-
-    
 
         public override void Draw()
         {
