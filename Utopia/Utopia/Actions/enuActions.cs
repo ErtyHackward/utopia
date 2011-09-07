@@ -7,9 +7,9 @@ namespace Utopia.Actions
 {
     public enum enuActions
     {
-        MoveForward,
-        MoveBackward,
-        StrafeLeft,
-        StrafeRight
+        Move_Forward,
+        Move_Backward,
+        Move_StrafeLeft,
+        Move_StrafeRight
     }
 }
