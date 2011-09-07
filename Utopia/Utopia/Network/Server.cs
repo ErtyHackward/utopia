@@ -42,7 +42,7 @@ namespace Utopia.Network
         public Server()
         {
             Connected = false;
-            this.CallDraw = false; //Disable Draw calls
+            this.Enabled = false; //Disable Draw calls
         }
 
         public void BindingServer(string address, int port)

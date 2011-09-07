@@ -12,7 +12,7 @@ namespace Utopia.Worlds
     /// <summary>
     /// Is responsible to render the world binded to it !
     /// </summary>
-    public class WorldRenderer : GameComponent, IDebugInfo
+    public class WorldRenderer : DrawableGameComponent, IDebugInfo
     {
         #region Private variables
         private IWorld _world;
@@ -68,21 +68,10 @@ namespace Utopia.Worlds
             _world.WorldSkyDome.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
 
-        //First draw pass
-        public override void DrawDepth0()
+        public override void Draw()
         {
             _world.WorldSkyDome.Draw();
             _world.WorldChunks.Draw();
-        }
-
-        //Draw second draw pass
-        public override void DrawDepth1()
-        {
-        }
-
-        //Draw reserved mainly for GUI
-        public override void DrawDepth2()
-        {
         }
 
         #endregion

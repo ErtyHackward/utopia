@@ -13,7 +13,7 @@ namespace Utopia.GUI.D3D
     /// Heads up display = crosshair + toolbar(s) / icons + life + mana + ... 
     /// </summary>
       
-    public class Hud : GameComponent
+    public class Hud : DrawableGameComponent
     {
         private SpriteRenderer _spriteRender;
         private SpriteTexture _crosshair;
@@ -25,12 +25,13 @@ namespace Utopia.GUI.D3D
         /// <summary>
         /// _toolbarUI is part of the hud 
         /// </summary>
-        ToolBarUI _toolbarUi;
+        ToolBarUi _toolbarUi;
 
         public Hud(Screen screen, D3DEngine d3DEngine)
         {
             _screen = screen;
             _d3DEngine = d3DEngine;
+         
         }
 
         public override void LoadContent()
@@ -43,7 +44,7 @@ namespace Utopia.GUI.D3D
             _font = new SpriteFont();
             _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
 
-            _toolbarUi = new ToolBarUI();
+            _toolbarUi = new ToolBarUi();
             _screen.Desktop.Children.Add(_toolbarUi);
             //the guimanager will draw the GUI screen, not the Hud !
         }
@@ -65,7 +66,7 @@ namespace Utopia.GUI.D3D
         }
 
         //Draw at 2d level ! (Last draw called)
-        public override void DrawDepth2()
+        public override void Draw()
         {
             _spriteRender.Begin(SpriteRenderer.FilterMode.Linear);
             _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
@@ -73,15 +74,18 @@ namespace Utopia.GUI.D3D
 
         }
 
-        protected override void OnDisable()
+        protected override void OnEnabledChanged(object sender, System.EventArgs args)
         {
-            _screen.Desktop.Children.Remove(_toolbarUi);
-        }
-
-        protected override void OnEnable()
-        {
-            if (!_screen.Desktop.Children.Contains(_toolbarUi))
-                _screen.Desktop.Children.Add(_toolbarUi);
+            base.OnEnabledChanged(sender, args);
+            if (Enabled)
+            {
+                if (!_screen.Desktop.Children.Contains(_toolbarUi))
+                    _screen.Desktop.Children.Add(_toolbarUi);
+            }
+            else
+            {
+                _screen.Desktop.Children.Remove(_toolbarUi);
+            }
         }
     }
 }

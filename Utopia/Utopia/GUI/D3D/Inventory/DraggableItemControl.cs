@@ -85,7 +85,7 @@ namespace Utopia.GUI.D3D.Inventory
         //returns null if no match
         private IDropTarget findDropTarget(Control parent)
         {
-            if (parent is ToolBarUI)
+            if (parent is ToolBarUi)
             {
                 Console.WriteLine();
             }

@@ -63,10 +63,9 @@ namespace Utopia
         //Debug tools
         private FPS _fps; //FPS computing object
 
-        //Game componants
+        //Game components
         private Entities.Living.ILivingEntity _player;
-        private GUI.D3D.GuiManager _guiManager;
-
+       
         private GameStatesManager _gameStateManagers;
 
         //Debug Tool
@@ -316,7 +315,7 @@ namespace Utopia
             _d3dEngine.Context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
 
             base.Draw();
-            base.DrawInterfaces();
+
 
             base.Present();
         }

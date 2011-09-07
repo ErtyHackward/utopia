@@ -14,8 +14,7 @@ namespace Utopia.Editor
        
 
         private readonly EntityEditor _editorComponent;
-        private HLSLVertexPositionColor _itemEffect;
-
+    
         public byte SelectedColor { get; set; }
 
         public List<Control> Children = new List<Control>();

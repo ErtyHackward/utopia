@@ -21,7 +21,7 @@ using Utopia.Shared.Chunks;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
-    public class Clouds : IDrawableComponent
+    public class Clouds : DrawableGameComponent
     {
         #region Private Variables
         private D3DEngine _d3dEngine;
@@ -59,22 +59,22 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         }
 
         #region Public methods
-        public void Initialize()
+        public override void Initialize()
         {
             _nbrLayer = ClientSettings.Current.Settings.GraphicalParameters.CloudsLayers;
             _cloudMap = ShaderResourceView.FromFile(_d3dEngine.Device, @"Textures\Weather\clouds.png");
             Init2D();
         }
 
-        public void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime TimeSpend)
         {
         }
 
-        public void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
         }
 
-        public void Draw()
+        public override void Draw()
         {
             if (_camManager.ActiveCamera.WorldPosition.Y > 500) return;
             //Matrix.Translation((float)_game.ActivCamera.WorldPosition.X, 0, (float)_game.ActivCamera.WorldPosition.Z, out _world);
@@ -99,7 +99,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _cloudMap.Dispose();
             _cloudEffect2D.Dispose();

@@ -13,7 +13,7 @@ namespace Utopia.Entities
     // - World Position
     // - World Rotation
     // - A Bounding Box
-    public abstract class Entity : GameComponent, IEntity
+    public abstract class Entity : DrawableGameComponent, IEntity
     {
         protected BoundingBox _boundingBox;
         protected DVector3 _entityEyeOffset;

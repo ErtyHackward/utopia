@@ -7,7 +7,7 @@ using SharpDX;
 
 namespace Utopia.Worlds.Weathers.SharedComp
 {
-    public interface IWind : IUpdatableComponent
+    public interface IWind : IGameComponent,IUpdateableComponent
     {
         Vector3 WindFlow { get; set; }
     }

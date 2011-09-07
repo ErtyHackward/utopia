@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using S33M3Engines.D3D.DebugTools;
@@ -11,7 +12,7 @@ using S33M3Engines.Maths.Graphics;
 
 namespace S33M3Engines.Cameras
 {
-    public interface ICamera : IUpdatableComponent, IDebugInfo
+    public interface ICamera : IGameComponent, IUpdateableComponent, IDebugInfo
     {
         Matrix View { get; }
         Matrix Projection3D { get; }

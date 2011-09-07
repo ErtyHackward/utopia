@@ -10,7 +10,7 @@ using S33M3Engines.Maths;
 
 namespace Utopia.Entities
 {
-    public interface IEntity : IGameComponent, ICameraPlugin
+    public interface IEntity : IDrawableComponent, IGameComponent,  ICameraPlugin
     {
         FTSValue<DVector3> WorldPosition { get; }
         FTSValue<Quaternion> WorldRotation { get; }

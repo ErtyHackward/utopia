@@ -12,18 +12,18 @@ using S33M3Engines.D3D;
 
 namespace Utopia.GUI.D3D.Inventory
 {
-    public class ToolBarUI : ContainerControl
+    public class ToolBarUi : ContainerControl
     {
-        const int _buttonSize = 46;
+        const int ButtonSize = 46;
 
-        private ButtonItemControl leftButton;
-        private ButtonItemControl rightButton;
+        //private ButtonItemControl leftButton;
+        //private ButtonItemControl rightButton;
 
-        private List<ButtonItemControl> buttons;
+        private readonly List<ButtonItemControl> _buttons;
 
         //private PlayerInventory _inventory;
 
-        public ToolBarUI(/*PlayerInventory inventory*/)
+        public ToolBarUi(/*PlayerInventory inventory*/)
         {
             //FIXME uniscalar relative positions doe not work, surely due to rectangle ordering  
             //this.Bounds = new UniRectangle(0.0f, new UniScalar(.5f, 0f), new UniScalar(1, 0), 80.0f);
@@ -50,14 +50,14 @@ namespace Utopia.GUI.D3D.Inventory
             //);
             //this.Children.Add(rightButton);
 
-            buttons = new List<ButtonItemControl>(15);
+            _buttons = new List<ButtonItemControl>(15);
 
             for (int x = 3; x < 19; x++)
             {
                 ButtonItemControl btn = new ButtonItemControl(null);
-                btn.Bounds = new UniRectangle(x * _buttonSize, 0, _buttonSize, _buttonSize);
+                btn.Bounds = new UniRectangle(x * ButtonSize, 0, ButtonSize, ButtonSize);
                 btn.IsLink = true;
-                buttons.Add(btn);
+                _buttons.Add(btn);
                 btn.Pressed += delegate(object sender, EventArgs e)
                                    {
                                        //inventory.LeftTool = btn.Item as Tool;

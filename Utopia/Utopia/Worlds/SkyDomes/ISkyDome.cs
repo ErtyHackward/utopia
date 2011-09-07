@@ -7,7 +7,7 @@ using SharpDX;
 
 namespace Utopia.Worlds.SkyDomes
 {
-    public interface ISkyDome : IDrawableComponent, IDisposable
+    public interface ISkyDome : IDrawableComponent, IGameComponent
     {
         Vector3 LightDirection { get; }
     }

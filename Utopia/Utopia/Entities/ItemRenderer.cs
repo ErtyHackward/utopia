@@ -15,7 +15,7 @@ using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
 namespace Utopia.Entities
 {
-    public class ItemRenderer : GameComponent
+    public class ItemRenderer : DrawableGameComponent
     {
         public List<VisualEntity> Items = new List<VisualEntity>(); //TODO populate/fetch items to render from server 
 
@@ -90,16 +90,8 @@ namespace Utopia.Entities
             HandleInput(true);
         }
 
-        public override void DrawDepth0()
-        {
-        }
 
-
-        public override void DrawDepth1()
-        {
-        }
-
-        public override void DrawDepth2()
+        public override void Draw()
         {
             DrawItems();
         }

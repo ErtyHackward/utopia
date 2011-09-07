@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 using S33M3Engines.D3D;
+using S33M3Engines.InputHandler.KeyboardHelper;
 using S33M3Engines.Sprites;
 using SharpDX;
-using Nuclex.UserInterface;
 using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.InputHandler;
-using Nuclex.UserInterface.Input;
 using Utopia.GUI.D3D.Inventory;
 using S33M3Engines.Shared.Sprites;
 using S33M3Engines;
+using ButtonState = S33M3Engines.InputHandler.MouseHelper.ButtonState;
+using MouseButtons = Nuclex.UserInterface.Input.MouseButtons;
+using Screen = Nuclex.UserInterface.Screen;
 
 namespace Utopia.GUI.D3D
 {
@@ -18,7 +22,7 @@ namespace Utopia.GUI.D3D
     /// No one should reference this class apart from the game initialization (ninject bind and get)
     ///
     /// </summary>
-    public class GuiManager : GameComponent
+    public class GuiManager : DrawableGameComponent
     {
         /// <summary>Draws the GUI</summary>
         private Nuclex.UserInterface.Visuals.IGuiVisualizer _guiVisualizer;
@@ -26,17 +30,16 @@ namespace Utopia.GUI.D3D
         /// <summary>The GUI screen representing the desktop</summary>
         private readonly Screen _screen;
 
-        private SpriteRenderer _spriteRender;
-        private SpriteTexture _crosshair;
-        private SpriteFont _font;
-
         private readonly D3DEngine _d3DEngine;
         private MouseState _prevMouseState;
+        private KeyboardState _prevKeybState;
 
         public GuiManager(Screen screen, D3DEngine d3DEngine)
         {
             _screen = screen;
             _d3DEngine = d3DEngine;
+
+            DrawOrder = 10000;
         }
 
         public override void Initialize()
@@ -51,12 +54,7 @@ namespace Utopia.GUI.D3D
 
         public override void UnloadContent()
         {
-            // TODO (Simon) dispose NuclexUI resources
-            if(_spriteRender != null) _spriteRender.Dispose();
-            if (_crosshair != null) _crosshair.Dispose();
-            if (_font != null) _font.Dispose();
             if (_guiVisualizer != null) _guiVisualizer.Dispose();
-
         }
 
         public override void Update(ref GameTime timeSpent)
@@ -69,7 +67,7 @@ namespace Utopia.GUI.D3D
         }
 
         //Draw at 2d level ! (Last draw called)
-        public override void DrawDepth2()
+        public override void Draw()
         {
             _guiVisualizer.Draw(_screen);
         }
@@ -85,9 +83,30 @@ namespace Utopia.GUI.D3D
             if (_prevMouseState.LeftButton == ButtonState.Pressed && mouseState.LeftButton == ButtonState.Released)
                 _screen.InjectMouseRelease(MouseButtons.Left);
 
+
             _screen.InjectMouseMove(mouseState.X, mouseState.Y);
 
             _prevMouseState = Mouse.GetState();
+
+            KeyboardState keybState = Keyboard.GetState();
+
+            Keys[] keys = keybState.GetPressedKeys();
+
+            foreach (var key in keys)
+            {
+                if (_prevKeybState.IsKeyUp(key) )
+                {
+                    if (key >= Keys.D0 && key <= Keys.D9)
+                    {
+                        char c = (char)key; //HACK done at midnight 
+                        _screen.InjectCharacter((char)key);
+                    }
+                    
+                }
+           
+            }
+
+            _prevKeybState = Keyboard.GetState();
         }
     }
 }

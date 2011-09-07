@@ -497,7 +497,7 @@ namespace Nuclex.UserInterface.Controls {
     /// <summary>Number of keyboard keys being held down</summary>
     private int heldKeyCount;
     /// <summary>Number of game pad buttons being held down</summary>
-    private int heldButtonCount;
+    private int heldButtonCount = 0;
     /// <summary>Control the mouse is currently hovering over</summary>
     private Control mouseOverControl;
     /// <summary>Control the mouse was pressed down on</summary>

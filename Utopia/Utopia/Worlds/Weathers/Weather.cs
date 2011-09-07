@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3Engines.D3D;
 using Utopia.Worlds.Weathers.SharedComp;
 using Utopia.Worlds.GameClocks;
 
 namespace Utopia.Worlds.Weather
 {
-    public class Weather : IWeather
+    public class Weather : GameComponent, IWeather
     {
         #region Private variable
         public IClock _clock { get; set; }
@@ -24,22 +25,22 @@ namespace Utopia.Worlds.Weather
         }
 
         #region Public Methods
-        public void Initialize()
+        public override void Initialize()
         {
             Wind.Initialize();
         }
 
-        public void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
+        public override void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
         {
             Wind.Update(ref TimeSpend);
         }
 
-        public void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
             Wind.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Wind.Dispose();
         }

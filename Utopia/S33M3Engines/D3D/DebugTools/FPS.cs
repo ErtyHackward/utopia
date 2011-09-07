@@ -6,9 +6,10 @@ using S33M3Engines.Threading;
 
 namespace S33M3Engines.D3D.DebugTools
 {
-    public class FPS : GameComponent, IDebugInfo
+    public class FPS : DrawableGameComponent, IDebugInfo
     {
         #region Private Variables
+
         private float _fps;
         private float _Updts;
 
@@ -19,9 +20,11 @@ namespace S33M3Engines.D3D.DebugTools
         private DateTime _prevRealTimeFPS = DateTime.Now;
 
         private DateTime _prevRealTimeUpdts = DateTime.Now;
+
         #endregion
 
         #region Public Methods
+
         public float Fps
         {
             get { return _fps; }
@@ -35,53 +38,30 @@ namespace S33M3Engines.D3D.DebugTools
         }
 
         public bool ShowInGameBar { get; set; }
+
         #endregion
 
         public FPS()
         {
         }
 
-        /// <summary>
-        /// Allows the game component to perform any initialization it needs to before starting
-        /// to run.  This is where it can query for any required services and load content.
-        /// </summary>
-        public override void Initialize()
-        {
-            //ShowInGameBar = true;
-            base.Initialize();
-        }
-
-        /// <summary>
-        /// Allows the game component to update itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        public override void Update(ref GameTime TimeSpend)
-        {
-            base.Update(ref TimeSpend);
-        }
-
-        /// <summary>
-        /// Allows the game component to update itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        public override void DrawDepth0()
+        public override void Draw()
         {
             DateTime currentRealTime = DateTime.Now;
             TimeSpan elapsedRealTime = currentRealTime - _prevRealTimeFPS;
             _prevRealTimeFPS = currentRealTime;
 
-            float elapsed = (float)elapsedRealTime.TotalSeconds;
+            float elapsed = (float) elapsedRealTime.TotalSeconds;
             _framecountFPS++;
             _timeSinceLastUpdateFPS += elapsed;
             if (_timeSinceLastUpdateFPS > _updateInterval)
             {
-                _fps = _framecountFPS / _timeSinceLastUpdateFPS;
+                _fps = _framecountFPS/_timeSinceLastUpdateFPS;
 
                 //Game.GameWindow.Text = "FPS: " + _fps.ToString();
                 _framecountFPS = 0;
                 _timeSinceLastUpdateFPS -= _updateInterval;
             }
-
         }
 
         #region IDebugInfo Members

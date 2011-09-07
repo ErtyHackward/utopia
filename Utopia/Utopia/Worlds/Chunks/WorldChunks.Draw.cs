@@ -34,7 +34,7 @@ namespace Utopia.Worlds.Chunks
 
         #region Public methods
 
-        public void Draw()
+        public override void Draw()
         {
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 

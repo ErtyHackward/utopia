@@ -15,7 +15,7 @@ using Screen = Nuclex.UserInterface.Screen;
 
 namespace Utopia.Editor
 {
-    public class EntityEditor : GameComponent
+    public class EntityEditor : DrawableGameComponent
     {
         private readonly Screen _screen;
 
@@ -50,8 +50,8 @@ namespace Utopia.Editor
             _editedEntity.Position = _camManager.ActiveCamera.WorldPosition.AsVector3() + new Vector3(0, 0, 2);
 
             // inactive by default, use F12 UI to enable :)
-            this.CallDraw = false;
-            this.CallUpdate = false;
+            this.Visible = false;
+            this.Enabled = false;
         }
 
         public override void Initialize()
@@ -70,34 +70,31 @@ namespace Utopia.Editor
             HandleInput(false);
         }
 
-
-        public override void DrawDepth1()
-        {
-        }
-
-        public override void DrawDepth2()
+        public override void Draw()
         {
             DrawItems();
         }
 
-        protected override void OnDisable()
+        protected override void OnEnabledChanged(object sender, System.EventArgs args)
         {
+            base.OnEnabledChanged(sender, args);
+        
+            if (Enabled)
+            {
+                _hudComponent.Enabled = false;
+
+                foreach (var control in _ui.Children)
+                {
+                    if (!_screen.Desktop.Children.Contains(control))
+                    {
+                        _screen.Desktop.Children.Add(control);
+                    }
+                }
+            }
+            else {
             foreach (var control in _ui.Children)
                 _screen.Desktop.Children.Remove(control);
-            _hudComponent.CallUpdate= true;
-
-        }
-
-        protected override void OnEnable()
-        {
-            _hudComponent.CallUpdate = false;
-
-            foreach (var control in _ui.Children)
-            {
-                if (!_screen.Desktop.Children.Contains(control))
-                {
-                    _screen.Desktop.Children.Add(control);
-                }
+            _hudComponent.Enabled= true;
             }
         }
 
@@ -133,7 +130,7 @@ namespace Utopia.Editor
         {
         }
 
-        private bool KeyMBuffer, _lButtonBuffer, RButtonBuffer, WheelForward, WheelBackWard;
+        private bool _lButtonBuffer;//,KeyMBuffer, , RButtonBuffer, WheelForward, WheelBackWard;
 
         private int _y = 0;
 
