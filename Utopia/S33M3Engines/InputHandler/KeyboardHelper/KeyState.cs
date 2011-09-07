@@ -8,6 +8,7 @@ namespace S33M3Engines.InputHandler.KeyboardHelper
     public enum KeyState
     {
         Up,
-        Down
+        Down,
+        Pressed
     }
 }

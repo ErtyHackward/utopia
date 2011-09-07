@@ -8,7 +8,6 @@ using S33M3Engines.D3D;
 using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.GameStates;
 using S33M3Engines.InputHandler;
-using Utopia.GameStates;
 using Utopia.Settings;
 using Screen = Nuclex.UserInterface.Screen;
 using Utopia.GUI.D3D.DebugUI;
@@ -118,8 +117,6 @@ namespace Utopia
                     //made this without ninject to keep it explicit, but debugui could be injected into debugcomponent !
                     _screen.Desktop.Children.Add(_debugUi);
                 }
-                
-                
             }
         
 

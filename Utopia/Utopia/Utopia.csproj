@@ -98,6 +98,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\ActionsManager.cs" />
+    <Compile Include="Actions\enuKeyboardTriggerMode.cs" />
+    <Compile Include="Actions\enuActions.cs" />
+    <Compile Include="Actions\KeyboardTriggeredAction.cs" />
     <Compile Include="DebugComponent.cs" />
     <Compile Include="Editor\EntityEditor.cs" />
     <Compile Include="Editor\EntityEditorUI.cs" />
@@ -106,7 +110,6 @@
     <Compile Include="Entities\Voxel\ColorLookup.cs" />
     <Compile Include="Entities\Voxel\VisualEntity.cs" />
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
-    <Compile Include="GameStates\GameStatesManager.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
     <Compile Include="GUI\D3D\Hud.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControl.cs" />
