@@ -9,18 +9,19 @@ using SharpDX;
 using System.Windows.Forms;
 using S33M3Engines.Maths;
 using S33M3Engines;
+using Utopia.Action;
 
 namespace Utopia.Entities.Admin
 {
     public class Wisp : Entity, IEntity
     {
-        InputHandlerManager _inputHandler;
+        ActionsManager _actions;
         Vector3 _entityXAxis, _entityYAxis, _entityZAxis;
 
-        public Wisp(string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition)
+        public Wisp(string Name, ICamera camera, ActionsManager actions, DVector3 startUpWorldPosition)
             : base(startUpWorldPosition, new Vector3(0, 0, 0))
         {
-            _inputHandler = inputHandler;
+            _actions = actions;
         }
 
         public override void Initialize()
@@ -48,9 +49,6 @@ namespace Utopia.Entities.Admin
 
         private void InputHandler()
         {
-            if (_inputHandler.CurKeyboardState.IsKeyUp(Keys.D) && _inputHandler.PrevKeyboardState.IsKeyDown(Keys.D))
-            {
-            }
         }
     }
 }

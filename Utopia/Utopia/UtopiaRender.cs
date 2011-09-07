@@ -43,11 +43,10 @@ using Utopia.Shared.Interfaces;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Network;
 using Utopia.Worlds.Storage;
-using Utopia.Actions;
+using Utopia.Action;
 
 namespace Utopia
 {
-
     public partial class UtopiaRender : Game
     {
         private WorldRenderer _worldRenderer;
@@ -171,7 +170,6 @@ namespace Utopia
             _d3dEngine.GameWindow.Closed += (o, args) => { _isFormClosed = true; }; //Subscribe to Close event
             if (!_d3dEngine.UnlockedMouse) System.Windows.Forms.Cursor.Hide();      //Hide the mouse by default !
 
-            _inputHandler = IoCContainer.Get<InputHandlerManager>();
             _actionManager = IoCContainer.Get<ActionsManager>();
             DXStates.CreateStates(_d3dEngine);  //Create all States that could by used by the game.
 
@@ -219,8 +217,7 @@ namespace Utopia
 
 
             //-- Clock --
-            _worldClock = IoCContainer.Get<IClock>(new ConstructorArgument("input", _inputHandler),
-                                                   new ConstructorArgument("clockSpeed", 1f),
+            _worldClock = IoCContainer.Get<IClock>(new ConstructorArgument("clockSpeed", 1f),
                                                    new ConstructorArgument("startTime", (float)Math.PI * 1f));
             //-- Weather --
             _weather = IoCContainer.Get<IWeather>();
@@ -289,10 +286,153 @@ namespace Utopia
 
         private void BindActions()
         {
-            _actionManager.AddActions(new KeyboardTriggeredAction() { Action = enuActions.Move_Forward, TriggerType = enuKeyboardTriggerMode.KeyDown, Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Forward});
-            _actionManager.AddActions(new KeyboardTriggeredAction() { Action = enuActions.Move_Backward, TriggerType = enuKeyboardTriggerMode.KeyDownUp, Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Backward});
-        }
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Move_Forward,
+                TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Forward
+            });
 
+            _actionManager.AddActions(new MouseTriggeredAction()
+            {
+                Action = Actions.Move_Forward,
+                TriggerType = MouseTriggerMode.Pressed,
+                Binding = MouseButton.LeftAndRightButton
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Move_Backward,
+                TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Backward
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Move_StrafeLeft,
+                TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeLeft
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Move_StrafeRight,
+                TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeRight
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Move_Down,
+                TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Down
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Move_Up,
+                TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Up
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Move_Jump,
+                TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Jump
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Move_Mode,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Mode
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Move_Run,
+                TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Run
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Engine_FullScreen,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.FullScreen
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Engine_LockMouseCursor,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.LockMouseCursor
+            });
+
+            _actionManager.AddActions(new MouseTriggeredAction()
+            {
+                Action = Actions.Block_Add,
+                TriggerType = MouseTriggerMode.Clicked,
+                Binding = MouseButton.LeftButton
+            });
+
+            _actionManager.AddActions(new MouseTriggeredAction()
+            {
+                Action = Actions.Block_Remove,
+                TriggerType = MouseTriggerMode.Clicked,
+                Binding = MouseButton.RightButton
+            });
+
+            _actionManager.AddActions(new MouseTriggeredAction()
+            {
+                Action = Actions.Block_SelectNext,
+                TriggerType = MouseTriggerMode.ScrollWheelForward,
+                Binding = MouseButton.ScrollWheel
+            });
+
+            _actionManager.AddActions(new MouseTriggeredAction()
+            {
+                Action = Actions.Block_SelectPrevious,
+                TriggerType = MouseTriggerMode.ScrollWheelBackWard,
+                Binding = MouseButton.ScrollWheel
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.World_FreezeTime,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.FreezeTime
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Engine_VSync,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.VSync
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Engine_ShowDebugUI,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = new KeyWithModifier() { MainKey = Keys.F12 }
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Engine_Exit,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = new KeyWithModifier() { MainKey = Keys.Escape }
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.DebugUI_Insert,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = new KeyWithModifier() { MainKey = Keys.Insert }
+            });
+        }
 
         public override void LoadContent()
         {
@@ -307,14 +447,14 @@ namespace Utopia
 
         public override void Update(ref GameTime TimeSpend)
         {
+            _actionManager.FetchInputs();
             _actionManager.Update();
-
-            //if (_actionManager.isTriggered(enuActions.Move_Forward)) Console.WriteLine("Ok");
             base.Update(ref TimeSpend);
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
+            _actionManager.FetchInputs();
             base.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
 

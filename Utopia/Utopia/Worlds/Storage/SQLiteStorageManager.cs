@@ -45,6 +45,7 @@ namespace Utopia.Worlds.Storage
         protected override void CreateDataBase(SQLiteConnection conn)
         {
             var command = conn.CreateCommand();
+            command = conn.CreateCommand();
             command.CommandText = @"CREATE TABLE CHUNKS([ChunkId] BIGINT PRIMARY KEY NOT NULL, [X] integer NOT NULL, [Z] integer NOT NULL, [md5hash] blob, [data] blob NOT NULL);";
             command.CommandType = CommandType.Text;
             command.ExecuteNonQuery();

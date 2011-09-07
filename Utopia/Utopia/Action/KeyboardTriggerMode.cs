@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Utopia.Actions
+namespace Utopia.Action
 {
-    public enum enuKeyboardTriggerMode
+    public enum KeyboardTriggerMode
     {
         KeyDown,
         KeyDownUp

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Config;
 
-namespace Utopia.Actions
+namespace Utopia.Action
 {
     public struct KeyboardTriggeredAction
     {
-        public enuActions Action;
-        public enuKeyboardTriggerMode TriggerType;
+        public Actions Action;
+        public KeyboardTriggerMode TriggerType;
         public KeyWithModifier Binding;
     }
 }

@@ -11,12 +11,13 @@ using S33M3Engines.InputHandler;
 using Utopia.Settings;
 using Screen = Nuclex.UserInterface.Screen;
 using Utopia.GUI.D3D.DebugUI;
+using Utopia.Action;
 
 namespace Utopia
 {
     public class DebugComponent : GameComponent
     {
-        private readonly InputHandlerManager _inputHandler;
+        private readonly ActionsManager _actions;
         private readonly D3DEngine _d3DEngine;
         private readonly UtopiaRender _game;
         private readonly GameStatesManager _gameStateManagers;
@@ -24,12 +25,12 @@ namespace Utopia
         private readonly Screen _screen;
 
         private DebugUi _debugUi;
-        
-        public DebugComponent(DebugInfo debugInfo, GameStatesManager gameStateManagers, UtopiaRender game, D3DEngine d3DEngine, InputHandlerManager inputHandler, Screen screen)
+
+        public DebugComponent(DebugInfo debugInfo, GameStatesManager gameStateManagers, UtopiaRender game, D3DEngine d3DEngine, ActionsManager actions, Screen screen)
         {
 
             _debugInfo = debugInfo;
-            _inputHandler = inputHandler;
+            _actions = actions;
             _d3DEngine = d3DEngine;
             _game = game;
             _gameStateManagers = gameStateManagers;
@@ -44,68 +45,67 @@ namespace Utopia
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-            KeyboardStateHandling();
         }
 
         private void KeyboardStateHandling()
         {
-            if (_inputHandler.PrevKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) &&
-                _inputHandler.PrevKeyboardState.IsKeyDown(Keys.LControlKey) &&
-                _inputHandler.CurKeyboardState.IsKeyUp(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) &&
-                _inputHandler.CurKeyboardState.IsKeyDown(Keys.LControlKey))
-            {
-                _game.FixedTimeSteps = !_game.FixedTimeSteps;
-                GameConsole.Write("FixeTimeStep Mode : " + _game.FixedTimeSteps.ToString());
-            }
+            //if (_inputHandler.PrevKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) &&
+            //    _inputHandler.PrevKeyboardState.IsKeyDown(Keys.LControlKey) &&
+            //    _inputHandler.CurKeyboardState.IsKeyUp(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) &&
+            //    _inputHandler.CurKeyboardState.IsKeyDown(Keys.LControlKey))
+            //{
+            //    _game.FixedTimeSteps = !_game.FixedTimeSteps;
+            //    GameConsole.Write("FixeTimeStep Mode : " + _game.FixedTimeSteps.ToString());
+            //}
 
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.FullScreen))
-                _d3DEngine.isFullScreen = !_d3DEngine.isFullScreen; //Go full screen !
+            //if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.FullScreen))
+            //    _d3DEngine.isFullScreen = !_d3DEngine.isFullScreen; //Go full screen !
 
-            if (_inputHandler.PrevKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) &&
-                !_inputHandler.PrevKeyboardState.IsKeyDown(Keys.LControlKey) &&
-                _inputHandler.CurKeyboardState.IsKeyUp(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) &&
-                !_inputHandler.CurKeyboardState.IsKeyDown(Keys.LControlKey))
-            {
-                _gameStateManagers.DebugActif = !_gameStateManagers.DebugActif;
-                if (!_game.DebugActif)
-                {
-                    _gameStateManagers.DebugDisplay = 0;
-                }
-            }
-            if (_inputHandler.IsKeyPressed(Keys.Up))
-            {
-                if (!_gameStateManagers.DebugActif) return;
-                _gameStateManagers.DebugDisplay++;
-                if (_gameStateManagers.DebugDisplay > 2) _gameStateManagers.DebugDisplay = 2;
-            }
-            if (_inputHandler.IsKeyPressed(Keys.Down))
-            {
-                if (!_gameStateManagers.DebugActif) return;
-                _gameStateManagers.DebugDisplay--;
-                if (_gameStateManagers.DebugDisplay < 0) _gameStateManagers.DebugDisplay = 0;
-            }
+            //if (_inputHandler.PrevKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) &&
+            //    !_inputHandler.PrevKeyboardState.IsKeyDown(Keys.LControlKey) &&
+            //    _inputHandler.CurKeyboardState.IsKeyUp(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) &&
+            //    !_inputHandler.CurKeyboardState.IsKeyDown(Keys.LControlKey))
+            //{
+            //    _gameStateManagers.DebugActif = !_gameStateManagers.DebugActif;
+            //    if (!_game.DebugActif)
+            //    {
+            //        _gameStateManagers.DebugDisplay = 0;
+            //    }
+            //}
+            //if (_inputHandler.IsKeyPressed(Keys.Up))
+            //{
+            //    if (!_gameStateManagers.DebugActif) return;
+            //    _gameStateManagers.DebugDisplay++;
+            //    if (_gameStateManagers.DebugDisplay > 2) _gameStateManagers.DebugDisplay = 2;
+            //}
+            //if (_inputHandler.IsKeyPressed(Keys.Down))
+            //{
+            //    if (!_gameStateManagers.DebugActif) return;
+            //    _gameStateManagers.DebugDisplay--;
+            //    if (_gameStateManagers.DebugDisplay < 0) _gameStateManagers.DebugDisplay = 0;
+            //}
 
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.LockMouseCursor))
+            if(_actions.isTriggered(Actions.Engine_LockMouseCursor))
             {
                 _d3DEngine.UnlockedMouse = !_d3DEngine.UnlockedMouse;
             }
 
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.VSync))
+            if (_actions.isTriggered(Actions.Engine_VSync))
             {
                 _game.VSync = !_game.VSync;
             }
 
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.DebugInfo))
-            {
-                _debugInfo.Activated = !_debugInfo.Activated;
-            }
+            //if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.DebugInfo))
+            //{
+            //    _debugInfo.Activated = !_debugInfo.Activated;
+            //}
 
-            if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.Console))
-            {
-                GameConsole.Show = !GameConsole.Show;
-            }
-            
-            if (_inputHandler.IsKeyPressed(Keys.F12))
+            //if (_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.Console))
+            //{
+            //    GameConsole.Show = !GameConsole.Show;
+            //}
+
+            if (_actions.isTriggered(Actions.Engine_ShowDebugUI))
             {
                 if (_screen.Desktop.Children.Contains(_debugUi))
                 {
@@ -121,8 +121,7 @@ namespace Utopia
         
 
         //Exit application
-            if (_inputHandler.IsKeyPressed(Keys.Escape)) _game.Exit();
-
+            if (_actions.isTriggered(Actions.Engine_Exit)) _game.Exit();
         }
     }
 }

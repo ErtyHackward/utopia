@@ -12,6 +12,7 @@
     <AssemblyName>S33M3Engines</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -120,7 +120,6 @@
     <Compile Include="StatesManager\StatesRepository.cs" />
     <Compile Include="Struct\FTSValue.cs" />
     <Compile Include="Struct\GameTime.cs" />
-    <Compile Include="InputHandler\InputHandler.cs" />
     <Compile Include="InputHandler\Keyboard.cs" />
     <Compile Include="InputHandler\KeyboardHelper\KeyboardState.cs" />
     <Compile Include="InputHandler\KeyboardHelper\KeyState.cs" />

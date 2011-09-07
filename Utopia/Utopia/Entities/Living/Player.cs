@@ -27,6 +27,7 @@ using Utopia.Shared.Chunks;
 using Utopia.Worlds.Cubes;
 using Utopia.Shared.World;
 using Utopia.Shared.Cubes;
+using Utopia.Action;
 
 namespace Utopia.Entities.Living
 {
@@ -64,8 +65,8 @@ namespace Utopia.Entities.Living
 
         #endregion
 
-        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, string Name, ICamera camera, InputHandlerManager inputHandler, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed, SingleArrayChunkContainer cubesHolder, VisualWorldParameters visualWorldParameters)
-            : base(d3dEngine, camManager, inputHandler, startUpWorldPosition, size, walkingSpeed, flyingSpeed, headRotationSpeed, cubesHolder)
+        public Player(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, string Name, ICamera camera, ActionsManager actions, DVector3 startUpWorldPosition, Vector3 size, float walkingSpeed, float flyingSpeed, float headRotationSpeed, SingleArrayChunkContainer cubesHolder, VisualWorldParameters visualWorldParameters)
+            : base(d3dEngine, camManager, actions, startUpWorldPosition, size, walkingSpeed, flyingSpeed, headRotationSpeed, cubesHolder)
         {
             _visualWorldParameters = visualWorldParameters;
             _worldFocusManager = worldFocusManager;
@@ -164,13 +165,10 @@ namespace Utopia.Entities.Living
         }
 
         bool KeyMBuffer, LButtonBuffer, RButtonBuffer, WheelForward, WheelBackWard;
-        private void InputHandler(bool bufferMode)
+        private void InputHandler()
         {
-
-            if ((_inputHandler.IsKeyPressed(ClientSettings.Current.Settings.KeyboardMapping.Move.Mode)) || KeyMBuffer)
+            if(_actions.isTriggered(Actions.Move_Mode))
             {
-                if (bufferMode) { KeyMBuffer = true; return; } else KeyMBuffer = false;
-
                 if (Mode == LivingEntityMode.FreeFirstPerson)
                 {
                     Mode = LivingEntityMode.WalkingFirstPerson;
@@ -185,10 +183,8 @@ namespace Utopia.Entities.Living
                 //GameConsole.Write(Name + " : Mode change : " + Mode.ToString());
             }
 
-            if ((_inputHandler.PrevKeyboardState.IsKeyUp(Keys.LButton) && _inputHandler.CurKeyboardState.IsKeyDown(Keys.LButton)) || LButtonBuffer)
+            if (_actions.isTriggered(Actions.Block_Add))
             {
-                if (bufferMode) { LButtonBuffer = true; return; } else LButtonBuffer = false;
-
                 if (_isBlockPicked)
                 {
                     //Location3<int>? newPlace;
@@ -217,9 +213,8 @@ namespace Utopia.Entities.Living
                 }
             }
 
-            if ((_inputHandler.PrevKeyboardState.IsKeyUp(Keys.RButton) && _inputHandler.CurKeyboardState.IsKeyDown(Keys.RButton)) || RButtonBuffer)
+            if (_actions.isTriggered(Actions.Block_Remove))
             {
-                if (bufferMode) { RButtonBuffer = true; return; } else RButtonBuffer = false;
 
                 //if (_isBlockPicked && Inventory.RightTool.NeedsPick)
                 //{
@@ -255,33 +250,20 @@ namespace Utopia.Entities.Living
             }
 
             //Did I use the scrollWheel
-            if (((_inputHandler.CurMouseState.ScrollWheelTicks - _inputHandler.PrevMouseState.ScrollWheelTicks) != 0) || WheelForward || WheelBackWard)
+            if (_actions.isTriggered(Actions.Block_SelectNext))
             {
-                if (bufferMode)
-                {
-                    if (_inputHandler.CurMouseState.ScrollWheelTicks > _inputHandler.PrevMouseState.ScrollWheelTicks) WheelForward = true;
-                    else WheelBackWard = true;
-                    return;
-                }
+                _buildingCubeIndex++;
+                if (_buildingCubeIndex >= VisualCubeProfile.CubesProfile.Length) _buildingCubeIndex = 1;
 
-                if (_inputHandler.CurMouseState.ScrollWheelTicks > _inputHandler.PrevMouseState.ScrollWheelTicks || WheelForward)
-                {
-                    _buildingCubeIndex++;
-                    if (_buildingCubeIndex >= VisualCubeProfile.CubesProfile.Length) _buildingCubeIndex = 1;
-
-                    _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
-                }
-                else
-                {
-                    _buildingCubeIndex--;
-                    if (_buildingCubeIndex <= 0) _buildingCubeIndex = VisualCubeProfile.CubesProfile.Length - 1;
-                    _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
-                }
-
-                WheelForward = false;
-                WheelBackWard = false;
+                _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
             }
 
+            if (_actions.isTriggered(Actions.Block_SelectPrevious))
+            {
+                _buildingCubeIndex--;
+                if (_buildingCubeIndex <= 0) _buildingCubeIndex = VisualCubeProfile.CubesProfile.Length - 1;
+                _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
+            }
 
         }
         #endregion
@@ -313,7 +295,7 @@ namespace Utopia.Entities.Living
             ind = CubesHolder.Index(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z);
 
             //Handle Specific User Keyboard/Mouse Action !
-            InputHandler(false);
+            InputHandler();
 
             //Head Under Water ??
             RefreshHeadUnderWater();
@@ -329,9 +311,6 @@ namespace Utopia.Entities.Living
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
-            //Handle Specific User Keyboard/Mouse Action !
-            InputHandler(true);
-
             base.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
 
