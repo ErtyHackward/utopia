@@ -7,7 +7,7 @@ using S33M3Engines.D3D.DebugTools;
 
 namespace Utopia.Worlds.GameClocks
 {
-    public interface IClock : IUpdatableComponent, IDebugInfo
+    public interface IClock : IUpdateableComponent, IGameComponent, IDebugInfo
     {
         Clock.VisualClockTime ClockTime { get; set; }
     }

@@ -347,7 +347,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <summary>Types of frames the painter can draw</summary>
     private Dictionary<string, Frame> frames;
     /// <summary>Rasterizer state used for drawing the GUI</summary>
-    private RasterizerState rasterizerState;
+    //private RasterizerState rasterizerState;
   }
 
 } // namespace Nuclex.UserInterface.Visuals.Flat

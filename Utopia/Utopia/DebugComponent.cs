@@ -35,13 +35,8 @@ namespace Utopia
             _game = game;
             _gameStateManagers = gameStateManagers;
             _screen = screen;
-        }
+         }
 
-
-        public override void Initialize()
-        {
-            base.Initialize();
-        }
 
         public override void Update(ref GameTime timeSpent)
         {

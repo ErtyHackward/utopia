@@ -6,7 +6,7 @@ using S33M3Engines.D3D;
 
 namespace Utopia.Entities
 {
-    public class EntityRenderer : GameComponent
+    public class EntityRenderer : DrawableGameComponent
     {
         #region Private variables
         #endregion
@@ -56,27 +56,11 @@ namespace Utopia.Entities
             }
         }
 
-        public override void DrawDepth0()
+        public override void Draw()
         {
             for (int i = 0; i < Entities.Count; i++)
             {
-                Entities[i].DrawDepth0();
-            }
-        }
-
-        public override void DrawDepth1()
-        {
-            for (int i = 0; i < Entities.Count; i++)
-            {
-                Entities[i].DrawDepth1();
-            }
-        }
-
-        public override void DrawDepth2()
-        {
-            for (int i = 0; i < Entities.Count; i++)
-            {
-                Entities[i].DrawDepth2();
+                Entities[i].Draw();
             }
         }
         #endregion

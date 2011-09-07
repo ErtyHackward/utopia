@@ -9,7 +9,7 @@ using S33M3Engines.D3D.DebugTools;
 
 namespace Utopia.Worlds.GameClocks
 {
-    public abstract class Clock : IClock
+    public abstract class Clock : GameComponent, IClock
     {
         #region Inner struct/Class
         //Handle several different possibility to display the time
@@ -75,27 +75,23 @@ namespace Utopia.Worlds.GameClocks
         }
         #endregion
 
-        public Clock()
-        {
-        }
-
         #region Public methods
         //Allocate resources
-        public virtual void Initialize()
+        public override void Initialize()
         {
             ClockTime = new VisualClockTime();
         }
 
         //Dispose resources
-        public virtual void Dispose()
+        public override void Dispose()
         {
         }
 
-        public virtual void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
+        public override void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
         {
         }
 
-        public virtual void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
             float recomputedClock = _clockTime.Value;
             if (_clockTime.Value < _clockTime.ValuePrev)

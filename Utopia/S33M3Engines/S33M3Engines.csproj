@@ -89,6 +89,7 @@
     <Compile Include="Cameras\ICamera.cs" />
     <Compile Include="Cameras\ICameraPlugin.cs" />
     <Compile Include="D3D\DebugTools\PerfTimer.cs" />
+    <Compile Include="D3D\DrawableGameComponent.cs" />
     <Compile Include="D3D\Effects\Basics\DebugEffect.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLSprites.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLVertexPositionColor.cs" />
@@ -104,6 +105,10 @@
     <Compile Include="D3D\DebugTools\FPS.cs" />
     <Compile Include="D3D\Game.cs" />
     <Compile Include="D3D\GameComponent.cs" />
+    <Compile Include="D3D\GameComponentCollection.cs" />
+    <Compile Include="D3D\IDrawableComponent.cs" />
+    <Compile Include="D3D\IGameComponent.cs" />
+    <Compile Include="D3D\IUpdateableComponent.cs" />
     <Compile Include="D3D\Tools\Resource.cs" />
     <Compile Include="GameStates\GameStatesManager.cs" />
     <Compile Include="Maths\DVector3.cs" />

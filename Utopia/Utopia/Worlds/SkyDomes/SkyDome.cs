@@ -12,7 +12,7 @@ using S33M3Engines;
 
 namespace Utopia.Worlds.SkyDomes
 {
-    public abstract class SkyDome : ISkyDome
+    public abstract class SkyDome : DrawableGameComponent, ISkyDome
     {
         #region Private variable
         protected D3DEngine _d3dEngine;
@@ -35,29 +35,29 @@ namespace Utopia.Worlds.SkyDomes
 
         #region Public methods
 
-        public virtual void Draw()
+        public override void Draw()
         {
         }
 
-        public virtual void Initialize()
+        public override void Initialize()
         {
             _lightDirection = new FTSValue<Vector3>() { Value = new Vector3(100.0f, 100.0f, 100.0f) };
         }
 
-        public virtual void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
+        public override void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
         {
             _lightDirection.BackUpValue();
             _lightDirection.Value = this.GetDirection();
             _lightDirection.Value.Normalize();
         }
 
-        public virtual void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
             _lightDirection.ValueInterp = Vector3.Lerp(_lightDirection.ValuePrev, _lightDirection.Value, interpolation_ld);
             _lightDirection.ValueInterp.Normalize();
         }
 
-        public virtual void Dispose()
+        public override void Dispose()
         {
         }
 

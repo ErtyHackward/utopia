@@ -7,7 +7,7 @@ using Utopia.Worlds.Weathers.SharedComp;
 
 namespace Utopia.Worlds.Weather
 {
-    public interface IWeather : IUpdatableComponent
+    public interface IWeather : IUpdateableComponent,IGameComponent
     {
         IWind Wind { get; set; }
     }

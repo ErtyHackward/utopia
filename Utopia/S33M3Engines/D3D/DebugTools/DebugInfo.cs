@@ -18,7 +18,7 @@ namespace S33M3Engines.D3D.DebugTools
         string GetInfo();
     }
 
-    public class DebugInfo : GameComponent
+    public class DebugInfo : DrawableGameComponent
     {
         SpriteFont _font;
         SpriteRenderer _spriteRender;
@@ -72,7 +72,7 @@ namespace S33M3Engines.D3D.DebugTools
         }
 
 
-        public override void DrawDepth2()
+        public override void Draw()
         {
             //Afficher la console, ou bien les infos !
             if (GameConsole.Show)

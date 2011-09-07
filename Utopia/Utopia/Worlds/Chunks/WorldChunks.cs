@@ -47,7 +47,7 @@ namespace Utopia.Worlds.Chunks
     /// <summary>
     /// Will contains world block landscape stored as Chunks.
     /// </summary>
-    public partial class WorldChunks : IWorldChunks
+    public partial class WorldChunks : DrawableGameComponent, IWorldChunks
     {
         #region Private variables
         private D3DEngine _d3dEngine;
@@ -120,7 +120,7 @@ namespace Utopia.Worlds.Chunks
 
         #region Public methods
 
-        public void Initialize()
+        public override void Initialize()
         {
             InitChunks();
             InitWrappingVariables();
@@ -128,7 +128,7 @@ namespace Utopia.Worlds.Chunks
             IntilializeUpdateble();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             foreach (VisualChunk chunk in Chunks)
             {

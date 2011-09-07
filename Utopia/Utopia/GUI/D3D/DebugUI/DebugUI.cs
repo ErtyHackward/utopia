@@ -11,17 +11,18 @@ using S33M3Engines.GameStates;
 
 namespace Utopia.GUI.D3D.DebugUI
 {
-     public class DebugUi : WindowControl
+    public class DebugUi : WindowControl
     {
-        private readonly List<IGameComponent> _gameComponentCollection;
+        private readonly GameComponentCollection _gameComponentCollection;
 
         private readonly UtopiaRender _game;
         private readonly D3DEngine _d3DEngine;
         private readonly GameStatesManager _gameStateManagers;
 
-        const float Step = 20f;
+        private const float Step = 20f;
 
-        public DebugUi(UtopiaRender game, List<IGameComponent> gameComponentCollection, D3DEngine d3DEngine, GameStatesManager gameStateManagers)
+        public DebugUi(UtopiaRender game, GameComponentCollection gameComponentCollection, D3DEngine d3DEngine,
+                       GameStatesManager gameStateManagers)
             : base()
         {
             _gameComponentCollection = gameComponentCollection;
@@ -39,18 +40,17 @@ namespace Utopia.GUI.D3D.DebugUI
             ButtonControl closeButton = new ButtonControl();
             closeButton.Bounds = new UniRectangle(
                 new UniScalar(1.0f, -90.0f), new UniScalar(1.0f, -40.0f), 80, 24
-            );
+                );
             closeButton.Text = "Close";
             closeButton.Pressed += (sender, e) => Close();
 
             Children.Add(closeButton);
-
         }
 
         private void InitGameFlags()
         {
             float y = 40f;
-            
+
             OptionControl fixedTimeStep = new OptionControl();
             fixedTimeStep.Bounds = new UniRectangle(360f, y, 40.0f, 16.0f);
             fixedTimeStep.Text = "FixeTimeStep Mode";
@@ -81,49 +81,60 @@ namespace Utopia.GUI.D3D.DebugUI
             debugActif.Changed += (sender, e) => _gameStateManagers.DebugActif = !_gameStateManagers.DebugActif;
             debugActif.Selected = _gameStateManagers.DebugActif;
             Children.Add(debugActif);
-            
         }
-
 
 
         private void InitGameComponents()
         {
             float y = 40f;
-          
+
             foreach (IGameComponent component in _gameComponentCollection)
             {
-
                 LabelControl nameLbl = new LabelControl();
-                nameLbl.Bounds = new UniRectangle(10.0f, y, 200.0f, 16.0f);
+                nameLbl.Bounds = new UniRectangle(10.0f, y, 110.0f, 16.0f);
                 nameLbl.Text = component.GetType().Name;
                 Children.Add(nameLbl);
 
-                OptionControl enable = new OptionControl();
-                enable.Bounds = new UniRectangle(220.0f, y, 40.0f, 16.0f);
-                enable.Text = "E";
-                IGameComponent component1 = component;
-                enable.Changed += delegate(object sender, EventArgs e)
-               {
-                   component1.CallUpdate = !component1.CallUpdate;
-               };
-                enable.Selected = component.CallUpdate;
 
-                Children.Add(enable);
-
-                OptionControl view = new OptionControl();
-                view.Bounds = new UniRectangle(260.0f, y, 40.0f, 16.0f);
-                view.Text = "V";
-                view.Selected = component.CallDraw;
-                IGameComponent component2 = component;
-                view.Changed += delegate(object sender, EventArgs e)
+                IUpdateableComponent updateableComponent = component as IUpdateableComponent;
+                if (updateableComponent != null)
                 {
-                    component2.CallDraw = !component2.CallDraw;
-                };
-                Children.Add(view);
+                    OptionControl enable = new OptionControl();
+                    enable.Bounds = new UniRectangle(120.0f, y, 20.0f, 16.0f);
+                    enable.Text = "E";
 
+                    enable.Changed +=
+                        (sender, e) => updateableComponent.Enabled = !updateableComponent.Enabled;
+
+                    enable.Selected = updateableComponent.Enabled;
+                    Children.Add(enable);
+
+                    InputControl updateOrder = new InputControl();
+                    updateOrder.Bounds = new UniRectangle(150.0f, y, 40.0f, 16.0f);
+                    updateOrder.Text = updateableComponent.UpdateOrder.ToString();
+                    Children.Add(updateOrder);
+                }
+
+                IDrawableComponent drawableComponent = component as IDrawableComponent;
+                if (drawableComponent != null)
+                {
+                    OptionControl view = new OptionControl();
+                    view.Bounds = new UniRectangle(200.0f, y, 20.0f, 16.0f);
+                    view.Text = "V";
+                    view.Selected = drawableComponent.Visible;
+
+                    view.Changed +=
+                        (sender, e) => drawableComponent.Visible = !drawableComponent.Visible;
+
+                    Children.Add(view);
+
+                    InputControl draworder = new InputControl();
+                    draworder.Bounds = new UniRectangle(230.0f, y, 40.0f, 16.0f);
+                    draworder.Text = drawableComponent.DrawOrder.ToString();
+                    Children.Add(draworder);
+                }
                 y = y + Step;
             }
         }
     }
 }
-

@@ -242,7 +242,7 @@ namespace Utopia.Entities.Living
                 //}
 
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
-                Location3<int>? newPlace;
+                //Location3<int>? newPlace;
                 //Avoid the player to add a block where he is located !
                 if (_isBlockPicked)
                 {
@@ -319,12 +319,12 @@ namespace Utopia.Entities.Living
             RefreshHeadUnderWater();
         }
 
-        public override void DrawDepth2()
+        public override void Draw()
         {
             if (_isBlockPicked)
                 _blocCursor.Draw(_camManager.ActiveCamera, _worldFocusManager.WorldFocus);
 
-            base.DrawDepth2();
+            base.Draw();
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)

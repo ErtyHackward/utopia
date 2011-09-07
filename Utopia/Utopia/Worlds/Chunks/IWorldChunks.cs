@@ -11,7 +11,7 @@ using S33M3Engines.D3D.DebugTools;
 
 namespace Utopia.Worlds.Chunks
 {
-    public interface IWorldChunks : IDrawableComponent, IDebugInfo
+    public interface IWorldChunks : IDrawableComponent, IGameComponent, IDebugInfo
     {
         /// <summary> The chunk collection </summary>
         VisualChunk[] Chunks { get; set; }

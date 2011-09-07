@@ -231,13 +231,13 @@ namespace Nuclex.UserInterface.Controls {
    // public Buttons? ShortcutButton;
 
     /// <summary>Whether the command is pressed down using the space key</summary>
-    private bool pressedDownByKeyboard;
+    private bool pressedDownByKeyboard=false;
     /// <summary>Whether the command is pressed down using the keyboard shortcut</summary>
-    private bool pressedDownByKeyboardShortcut;
+    private bool pressedDownByKeyboardShortcut=false;
     /// <summary>Whether the command is pressed down using the game pad shortcut</summary>
-    private bool pressedDownByGamepadShortcut;
+    private bool pressedDownByGamepadShortcut=false;
     /// <summary>Whether the command is pressed down using the mouse</summary>
-    private bool pressedDownByMouse;
+    private bool pressedDownByMouse=false;
     /// <summary>Whether the mouse is hovering over the command</summary>
     private bool mouseHovering;
 

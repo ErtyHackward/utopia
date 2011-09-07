@@ -8,7 +8,7 @@ using Utopia.Worlds.Weathers.SharedComp;
 
 namespace Utopia.Worlds.Weather
 {
-    public class Wind : IWind
+    public class Wind : GameComponent, IWind
     {
         #region Private Variables
         private Random _rndWindFlowing;
@@ -20,7 +20,7 @@ namespace Utopia.Worlds.Weather
         #endregion
 
         #region Public methods
-        public void Initialize()
+        public override void Initialize()
         {
             _rndWindFlowing = new Random();
             _rndWindFlowChange = new Random(_rndWindFlowing.Next());
@@ -29,7 +29,7 @@ namespace Utopia.Worlds.Weather
             //WindFlow = new Vector3(0, 0, 0);
         }
 
-        public void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime TimeSpend)
         {
             if (_rndWindFlowing.Next(0, 10000) == 0)
             {
@@ -37,11 +37,11 @@ namespace Utopia.Worlds.Weather
             }
         }
 
-        public void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
         }
         #endregion

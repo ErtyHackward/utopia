@@ -17,7 +17,7 @@ using S33M3Engines.Cameras;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
-    public class SkyStars : IDrawableComponent
+    public class SkyStars : DrawableGameComponent
     {
         #region private variables
         private int _nbrStars = 1000;
@@ -42,28 +42,28 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         }
 
         #region public methods
-        public void Initialize()
+        public override void Initialize()
         {
             _effectStars = new HLSLStars(_d3dEngine, @"Effects\SkyDome\Stars.hlsl", VertexPositionColor.VertexDeclaration);
             CreateBuffer();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _effectStars.Dispose();
             _vb.Dispose();
         }
 
-        public void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime TimeSpend)
         {
         }
 
 
-        public void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
         }
 
-        public void Draw()
+        public override  void Draw()
         {
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled);
 

@@ -21,7 +21,7 @@ namespace UtopiaContent.ModelComp
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
-    public class Axis : GameComponent
+    public class Axis : DrawableGameComponent
     {
         float _axisSize;
         D3DEngine _d3dEngine;
@@ -83,7 +83,7 @@ namespace UtopiaContent.ModelComp
             base.Update(ref TimeSpend);
         }
 
-        public override void DrawDepth0()
+        public override void Draw()
         {
             if (_gameStates.DebugDisplay == 1)
             {
