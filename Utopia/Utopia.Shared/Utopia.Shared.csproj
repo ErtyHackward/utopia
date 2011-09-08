@@ -78,6 +78,7 @@
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\Entities\CharacterEntity.cs" />
     <Compile Include="Chunks\Entities\Concrete\EditableVoxelEntity.cs" />
+    <Compile Include="Chunks\Entities\EntityDisplacementModes.cs" />
     <Compile Include="Chunks\Entities\Events\BlocksChangedEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\DynamicEntityEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityLeaveAreaEventArgs.cs" />

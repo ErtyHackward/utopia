@@ -36,6 +36,7 @@ using Utopia.Action;
 using Utopia.Network;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.InputManager;
 
 namespace Utopia
 {
@@ -49,6 +50,8 @@ namespace Utopia
             iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
+
+            iocContainer.Bind<InputsManager>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IEntityManager>().To<EntityManager>().InSingletonScope();
 

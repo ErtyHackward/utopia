@@ -44,6 +44,7 @@ using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Network;
 using Utopia.Worlds.Storage;
 using Utopia.Action;
+using Utopia.InputManager;
 
 namespace Utopia
 {
@@ -174,6 +175,8 @@ namespace Utopia
             _actionManager = IoCContainer.Get<ActionsManager>();
             DXStates.CreateStates(_d3dEngine);  //Create all States that could by used by the game.
 
+            
+
             //-- Get Camera --
             ICamera camera = IoCContainer.Get<ICamera>(); // Create a firstPersonCamera viewer
 
@@ -210,6 +213,8 @@ namespace Utopia
             _entityRender.Entities.Add(_player); //Add the main player to Entities
             _entityRender.UpdateOrder = 0;
             GameComponents.Add(_entityRender);
+
+            //GameComponents.Add(IoCContainer.Get<InputsManager>());
 
             GameComponents.Add(IoCContainer.Get<ItemRenderer>());
 

@@ -69,6 +69,11 @@ namespace Utopia.Shared.Chunks.Entities
         /// </summary>
         public float RotationSpeed { get; set; }
 
+        /// <summary>
+        /// The displacement mode use by this entity (Walk, swim, fly, ...)
+        /// </summary>
+        public EntityDisplacementModes DisplacementMode { get; set; }
+
         public override SharpDX.Vector3 Position
         {
             get
@@ -125,6 +130,7 @@ namespace Utopia.Shared.Chunks.Entities
         {
             base.Load(reader);
 
+            DisplacementMode = (EntityDisplacementModes)reader.ReadByte();
             MoveSpeed = reader.ReadSingle();
             RotationSpeed = reader.ReadSingle();
         }
@@ -133,6 +139,7 @@ namespace Utopia.Shared.Chunks.Entities
         {
             base.Save(writer);
 
+            writer.Write((byte)DisplacementMode);
             writer.Write(MoveSpeed);
             writer.Write(RotationSpeed);
         }
