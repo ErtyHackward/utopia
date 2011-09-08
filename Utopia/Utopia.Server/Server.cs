@@ -442,7 +442,7 @@ namespace Utopia.Server
                     WaterLevel = WorldGenerator.WorldParametes.SeaLevel
                 };
                 connection.Send(gameInfo);
-                
+                connection.Send(new EntityInMessage { Entity = playerEntity });
                 // adding entity to world
                 AreaManager.AddEntity(connection.Entity);
             }

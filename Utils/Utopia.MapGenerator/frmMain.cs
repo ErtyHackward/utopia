@@ -535,7 +535,13 @@ namespace Utopia.MapGenerator
                 {
                     var val = noise.GetNoise2DValue(x, y, 4, 0.8);
 
-                    var col = 255 / val.MaxValue * val.Value;
+                    var col = 255 / val.MaxValue * val.Value - (255/2) ;
+
+                    var minVal = 255 * (double)x / pictureBox1.Width;
+
+                    col = col + minVal;
+                    if (col > 255) col = 255;
+                    if (col < 0) col = 0;
 
                     //bmp.SetPixel(x, y, Color.FromArgb((byte)col, (byte)col, (byte)col));
 
