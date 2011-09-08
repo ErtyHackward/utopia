@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using SharpDX;
 
 namespace Utopia.Shared.Chunks.Entities.Concrete
 {
@@ -31,7 +32,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
             }
         }
 
-        public void BordersFill()
+        public void PlainCubeFill()
         {
             Random r = new Random();
 
@@ -44,10 +45,23 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
                 {
                     for (int z = 0; z < Blocks.GetLength(2); z++)
                     {
-                        if (x == 0 || y == 0 || z == 0 || x == xmax || y == ymax || z == zmax)
-                            Blocks[x, y, z] = (byte)r.Next(1,63);
-                        else
-                            Blocks[x, y, z] = 0;
+                        //if (x == 0 || y == 0 || z == 0 || x == xmax || y == ymax || z == zmax)
+                         //   Blocks[x, y, z] = (byte)r.Next(1,63);
+                        
+                        if (x == 0 )
+                           Blocks[x, y, z] = 1; 
+                        else if (y == 0)
+                            Blocks[x, y, z] = 4;
+                        else if (z == 0) 
+                            Blocks[x, y, z] = 8;
+                        else if (x == xmax) 
+                            Blocks[x, y, z] = 12;
+                        else if (y == ymax)
+                            Blocks[x, y, z] = 16;
+                        else if (z == zmax)
+                           Blocks[x, y, z] = 20;
+                        else 
+                            Blocks[x, y, z] = 63;
                     }
                 }
             }
