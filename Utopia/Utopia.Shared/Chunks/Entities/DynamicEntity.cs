@@ -62,17 +62,12 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// The speed at wich the dynamic entity can walk
         /// </summary>
-        public float WalkingSpeed { get; set; }
-
-        /// <summary>
-        /// The speed at wich the dynamic entity can Fly
-        /// </summary>
-        public float FlyingSpeed { get; set; }
+        public float MoveSpeed { get; set; }
 
         /// <summary>
         /// The speed at wich the dynamic is doing move rotation
         /// </summary>
-        public float MoveRotationSpeed { get; set; }
+        public float RotationSpeed { get; set; }
 
         public override SharpDX.Vector3 Position
         {
@@ -130,18 +125,16 @@ namespace Utopia.Shared.Chunks.Entities
         {
             base.Load(reader);
 
-            WalkingSpeed = reader.ReadSingle();
-            FlyingSpeed = reader.ReadSingle();
-            MoveRotationSpeed = reader.ReadSingle();
+            MoveSpeed = reader.ReadSingle();
+            RotationSpeed = reader.ReadSingle();
         }
 
         public override void Save(System.IO.BinaryWriter writer)
         {
             base.Save(writer);
 
-            writer.Write(WalkingSpeed);
-            writer.Write(FlyingSpeed);
-            writer.Write(MoveRotationSpeed);
+            writer.Write(MoveSpeed);
+            writer.Write(RotationSpeed);
         }
     }
 }

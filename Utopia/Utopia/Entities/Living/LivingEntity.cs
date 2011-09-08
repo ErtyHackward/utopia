@@ -125,8 +125,6 @@ namespace Utopia.Entities.Living
 
             _physicSimu = new VerletSimulator(ref base._boundingBox) { WithCollisionBounsing = false };
             _physicSimu.ConstraintFct += isCollidingWithTerrain;
-
-
         }
 
         public override void Initialize()
@@ -158,7 +156,7 @@ namespace Utopia.Entities.Living
         {
             //Compute the amount of movement to take into account for this Update !
             
-            //Compute Gravity Influence 
+            //Compute Gravity Influence ==> It makes the gravity more powerfull with height !
             _gravityInfluence = MathHelper.FullLerp(1, 10, 0, 300, Math.Min(Math.Max((float)_camManager.ActiveCamera.WorldPosition.Y - 300, 0),300));
 
             _moveDelta = _moveSpeed * _gravityInfluence * TimeSpend.ElapsedGameTimeInS_LD;
@@ -356,6 +354,7 @@ namespace Utopia.Entities.Living
 
             UpdateHeadData();
         }
+
         private void UpdateHeadData()
         {
             Matrix.RotationQuaternion(ref _lookAtDirection.Value, out _headRotation);
