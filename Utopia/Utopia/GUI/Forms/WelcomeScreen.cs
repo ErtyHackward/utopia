@@ -60,12 +60,18 @@ namespace Utopia.GUI.Forms
             _server.ServerConnection.MessageLoginResult += ServerConnection_MessageLoginResult;
             _server.ServerConnection.MessageGameInformation += ServerConnection_MessageGameInformation;
             _server.ServerConnection.MessagePing += ServerConnection_MessagePing;
+            _server.ServerConnection.MessageEntityIn += ServerConnection_MessageEntityIn;
+        }
+
+        void ServerConnection_MessageEntityIn(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.EntityInMessage> e)
+        {
+            _server.Player = (Utopia.Shared.Chunks.Entities.PlayerCharacter)e.Message.Entity;
+            _server.ServerConnection.SendAsync(new Utopia.Net.Messages.PingMessage() { Request = true, Token = System.Diagnostics.Stopwatch.GetTimestamp() });
         }
 
         void ServerConnection_MessagePing(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.PingMessage> e)
         {
             Console.WriteLine("Ping Time : " + (double)(System.Diagnostics.Stopwatch.GetTimestamp() - e.Message.Token) / System.Diagnostics.Stopwatch.Frequency + " sec.");
-
             _serverTime.Dispose();
             HideWindows();
         }
@@ -77,8 +83,6 @@ namespace Utopia.GUI.Forms
             _server.ChunkSize = e.Message.ChunkSize;
             _server.SeaLevel = e.Message.WaterLevel;
             _server.WorldSeed = e.Message.WorldSeed;
-
-            _server.ServerConnection.SendAsync(new Utopia.Net.Messages.PingMessage() { Request = true, Token = System.Diagnostics.Stopwatch.GetTimestamp()});
         }
 
         void ServerConnection_ConnectionStatusChanged(object sender, Net.Connections.ConnectionStatusEventArgs e)

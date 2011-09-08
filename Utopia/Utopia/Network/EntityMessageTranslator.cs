@@ -3,6 +3,7 @@ using Utopia.Net.Connections;
 using Utopia.Net.Messages;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Entities;
 
 namespace Utopia.Network
 {
@@ -12,7 +13,7 @@ namespace Utopia.Network
     public class EntityMessageTranslator
     {
         private readonly ServerConnection _connection;
-        private readonly IClientEntityManager _clientEntityManager;
+        private readonly IEntityManager _entityManager;
         private IDynamicEntity _playerEntity;
 
         /// <summary>
@@ -49,44 +50,43 @@ namespace Utopia.Network
         /// <param name="connection"></param>
         /// <param name="playerEntity"></param>
         /// <param name="clientEntityManager"></param>
-        public EntityMessageTranslator(ServerConnection connection, IDynamicEntity playerEntity, IClientEntityManager clientEntityManager)
+        public EntityMessageTranslator(Server connection, IDynamicEntity playerEntity, IEntityManager clientEntityManager)
         {
             if (connection == null) throw new ArgumentNullException("connection");
-            _connection = connection;
+            _connection = connection.ServerConnection;
 
+            //Handle Entity received Message from Server
             _connection.MessageEntityIn += ConnectionMessageEntityIn;
             _connection.MessageEntityOut += ConnectionMessageEntityOut;
             _connection.MessagePosition += ConnectionMessagePosition;
             _connection.MessageDirection += ConnectionMessageDirection;
 
             if (clientEntityManager == null) throw new ArgumentNullException("clientEntityManager");
-            _clientEntityManager = clientEntityManager;
+            _entityManager = clientEntityManager;
 
             if (playerEntity == null) throw new ArgumentNullException("playerEntity");
             PlayerEntity = playerEntity;
-
         }
 
         void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
         {
-            _clientEntityManager.GetEntityById(e.Message.EntityId).Rotation = e.Message.Direction;
+            _entityManager.GetEntityById(e.Message.EntityId).Rotation = e.Message.Direction;
         }
 
         void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
         {
-            _clientEntityManager.GetEntityById(e.Message.EntityId).Position = e.Message.Position;
+            _entityManager.GetEntityById(e.Message.EntityId).Position = e.Message.Position;
         }
 
         void ConnectionMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
         {
-            _clientEntityManager.RemoveEntityById(e.Message.EntityId);
+            _entityManager.RemoveEntityById(e.Message.EntityId);
         }
 
         void ConnectionMessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
         {
-            _clientEntityManager.AddEntity(e.Message.Entity);
+            _entityManager.AddEntity(e.Message.Entity);
         }
-
 
         private void PlayerEntityUse(object sender, EntityUseEventArgs e)
         {

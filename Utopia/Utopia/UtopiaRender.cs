@@ -60,6 +60,7 @@ namespace Utopia
         private EntityRenderer _entityRender;
         private IChunkStorageManager _chunkStorageManager;
         private ActionsManager _actionManager;
+        private EntityMessageTranslator _entityMessageTranslator;
 
         //Debug tools
         private FPS _fps; //FPS computing object
@@ -207,12 +208,14 @@ namespace Utopia
             //A simple object wrapping a collectin of Entities, and wiring them for update/draw/...
             _entityRender = IoCContainer.Get<EntityRenderer>();
             _entityRender.Entities.Add(_player); //Add the main player to Entities
+            _entityRender.UpdateOrder = 0;
             GameComponents.Add(_entityRender);
 
             GameComponents.Add(IoCContainer.Get<ItemRenderer>());
 
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
             camera.CameraPlugin = _player;
+            _camManager.UpdateOrder = 1;
             GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
 
 
@@ -236,6 +239,7 @@ namespace Utopia
 
             //Send the world to render
             _worldRenderer = IoCContainer.Get<WorldRenderer>();
+            _worldRenderer.UpdateOrder = 2;
             GameComponents.Add(_worldRenderer);             //Bind worldRendered to main loop.
 
             //TODO Incoroporate EntityImpect inside Enitty framework as a single class ==> Not static !
@@ -257,6 +261,10 @@ namespace Utopia
             if (server.Connected)
             {
                 server.ChunkContainer = IoCContainer.Get<SingleArrayChunkContainer>();
+
+                //Create the EntityMessageTRanslator
+                _entityMessageTranslator = IoCContainer.Get<EntityMessageTranslator>();
+
                 GameComponents.Add(server);
             }
 
