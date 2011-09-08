@@ -10,6 +10,11 @@ using S33M3Engines.D3D;
 using Utopia.Action;
 using Utopia.Shared.Chunks;
 using S33M3Engines.InputHandler.MouseHelper;
+using Utopia.InputManager;
+using S33M3Engines;
+using Utopia.Entities.Living;
+using Utopia.Shared.Chunks.Entities;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities
 {
@@ -30,16 +35,22 @@ namespace Utopia.Entities
 
         private FTSValue<Vector3> _worldPosition = new FTSValue<Vector3>();           //World Position
         private FTSValue<Quaternion> _lookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
+        private FTSValue<Quaternion> _moveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
 
         private Vector3 _boundingMinPoint, _boundingMaxPoint;
 
         private ActionsManager _actions;
+        private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
         private Vector3 _entityHeadXAxis, _entityHeadYAxis, _entityHeadZAxis;
+        private Vector3 _entityXAxis, _entityYAxis, _entityZAxis;
         private Vector3 _lookAt;
         private Matrix _headRotation;
+        private Matrix _entityRotation;
         private float _rotationDelta;
         private float _moveDelta;
+        private D3DEngine _engine;
+        private float _accumPitchDegrees;
         #endregion
 
         #region Public Variables/Properties
@@ -55,10 +66,12 @@ namespace Utopia.Entities
         }
         #endregion
 
-        public VisualDynamicEntity(Vector3 size, IDynamicEntity dynamicEntity, ActionsManager actions, SingleArrayChunkContainer cubesHolder)
+        public VisualDynamicEntity(D3DEngine engine, Vector3 size, IDynamicEntity dynamicEntity, ActionsManager actions, InputsManager inputsManager, SingleArrayChunkContainer cubesHolder)
             :base()
         {
+            _engine = engine;
             _actions = actions;
+            _inputsManager = inputsManager;
             _cubesHolder = cubesHolder;
             _dynamicEntity = dynamicEntity;
             _size = size;
@@ -81,30 +94,30 @@ namespace Utopia.Entities
 
         public override void Update(ref GameTime timeSpent)
         {
-            ////Compute the delta following the time elapsed : Speed * Time = Distance (Over the elapsed time).
-            //_moveDelta = _dynamicEntity.MoveSpeed * timeSpent.ElapsedGameTimeInS_LD;
-            //_rotationDelta = _dynamicEntity.RotationSpeed * timeSpent.ElapsedGameTimeInS_LD;
+            //Compute the delta following the time elapsed : Speed * Time = Distance (Over the elapsed time).
+            _moveDelta = _dynamicEntity.MoveSpeed * timeSpent.ElapsedGameTimeInS_LD;
+            _rotationDelta = _dynamicEntity.RotationSpeed * timeSpent.ElapsedGameTimeInS_LD;
 
-            ////Backup previous values
-            //_lookAtDirection.BackUpValue();
-            //_worldPosition.BackUpValue();
+            //Backup previous values
+            _lookAtDirection.BackUpValue();
+            _worldPosition.BackUpValue();
 
-            ////Rotation with mouse
-            //EntityRotationsOnEvents(Mode);
+            //Compute Rotation with mouse
+            EntityRotations();
 
-            ////Keybord Movement
-            //EntityMovementsOnEvents(Mode, ref TimeSpend);
+            //Keybord Movement
+            EntityMovements(ref timeSpent);
 
-            ////Physic simulation !
-            //PhysicOnEntity(Mode, ref TimeSpend);
+            //Physic simulation !
+            //PhysicOnEntity(ref timeSpent);
 
-            ////Take into account the physics
+            //Take into account the physics
 
-            ////Refresh location and Rotations compoent with the new values
-            //RefreshBoundingBox();
-            //UpdateLookAt();
-            ////Send the Actual Position to the Dynamic Entity
-            //_dynamicEntity.Position = _worldPosition.Value;
+            //Refresh location and Rotations compoent with the new values
+            RefreshBoundingBox();
+            UpdateLookAt();
+            //Send the Actual Position to the Dynamic Entity
+            _dynamicEntity.Position = _worldPosition.Value;
         }
 
         public override void Dispose()
@@ -119,6 +132,131 @@ namespace Utopia.Entities
                                           _boundingMaxPoint + _worldPosition.Value);
         }
 
+        #region Entity Movement management
+        private void EntityMovements(ref GameTime TimeSpend)
+        {
+            switch (_dynamicEntity.DisplacementMode)
+            {
+                case EntityDisplacementModes.Flying:
+                    FreeFirstPersonMove();
+                    break;
+                case EntityDisplacementModes.Walking:
+                    WalkingFirstPerson(ref TimeSpend);
+                    break;
+                case EntityDisplacementModes.Swiming:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void FreeFirstPersonMove()
+        {
+            if (_actions.isTriggered(Actions.Move_Forward))
+                _worldPosition.Value += _lookAt * _moveDelta;
+
+            if (_actions.isTriggered(Actions.Move_Backward))
+                _worldPosition.Value -= _lookAt * _moveDelta;
+
+            if (_actions.isTriggered(Actions.Move_StrafeLeft))
+                _worldPosition.Value -= _entityHeadXAxis * _moveDelta;
+
+            if (_actions.isTriggered(Actions.Move_StrafeRight))
+                _worldPosition.Value += _entityHeadXAxis * _moveDelta;
+
+            if (_actions.isTriggered(Actions.Move_Down))
+                _worldPosition.Value += MVector3.Down * _moveDelta;
+
+            if (_actions.isTriggered(Actions.Move_Up))
+                _worldPosition.Value += MVector3.Up * _moveDelta;
+        }
+
+        private void WalkingFirstPerson(ref GameTime TimeSpend)
+        {
+            //_physicSimu.Freeze(true, false, true);
+
+            ////Move 3 time slower if not touching ground
+            //if (!_physicSimu.OnGround) _moveDelta /= 3f;
+
+            //if (_actions.isTriggered(Actions.Move_Forward))
+            //    if (_actions.isTriggered(Actions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f;
+            //    else _physicSimu.PrevPosition += _entityZAxis * _moveDelta;
+
+            //if (_actions.isTriggered(Actions.Move_Backward))
+            //    _physicSimu.PrevPosition -= _entityZAxis * _moveDelta;
+
+            //if (_actions.isTriggered(Actions.Move_StrafeLeft))
+            //    _physicSimu.PrevPosition += _entityXAxis * _moveDelta;
+
+            //if (_actions.isTriggered(Actions.Move_StrafeRight))
+            //    _physicSimu.PrevPosition -= _entityXAxis * _moveDelta;
+
+            //if (_physicSimu.OnGround && _actions.isTriggered(Actions.Move_Jump))
+            //    _physicSimu.Impulses.Add(new Impulse(ref TimeSpend) { ForceApplied = new DVector3(0, 300, 0) });
+        }
+        #endregion
+
+        #region Entity Rotation management
+        private void EntityRotations()
+        {
+            if (_engine.UnlockedMouse == false)
+            {
+                Rotate(_inputsManager.MouseMoveDelta.X, _inputsManager.MouseMoveDelta.Y, 0.0f, _dynamicEntity.DisplacementMode);
+            }
+        }
+
+        private void Rotate(float headingDegrees, float pitchDegrees, float rollDegrees, EntityDisplacementModes mode)
+        {
+            if (headingDegrees == 0 && pitchDegrees == 0 && rollDegrees == 0) return;
+
+            headingDegrees *= _rotationDelta;
+            pitchDegrees *= _rotationDelta;
+            rollDegrees *= _rotationDelta;
+
+            Rotate(headingDegrees, pitchDegrees, mode);
+        }
+
+        private void Rotate(float headingDegrees, float pitchDegrees, EntityDisplacementModes mode)
+        {
+            _accumPitchDegrees += pitchDegrees;
+
+            if (_accumPitchDegrees > 90.0f)
+            {
+                pitchDegrees = 90.0f - (_accumPitchDegrees - pitchDegrees);
+                _accumPitchDegrees = 90.0f;
+            }
+
+            if (_accumPitchDegrees < -90.0f)
+            {
+                pitchDegrees = -90.0f - (_accumPitchDegrees - pitchDegrees);
+                _accumPitchDegrees = -90.0f;
+            }
+
+            float heading = MathHelper.ToRadians(headingDegrees);
+            float pitch = MathHelper.ToRadians(pitchDegrees);
+            Quaternion rotation;
+
+            // Rotate the camera about the world Y axis.
+            if (heading != 0.0f)
+            {
+                Quaternion.RotationAxis(ref MVector3.Up, heading, out rotation);
+                _lookAtDirection.Value = rotation * _lookAtDirection.Value;
+                _moveDirection.Value = rotation * _moveDirection.Value;
+                _moveDirection.Value.Normalize();
+            }
+
+            // Rotate the camera about its local X axis.
+            if (pitch != 0.0f)
+            {
+                Quaternion.RotationAxis(ref MVector3.Right, pitch, out rotation);
+                _lookAtDirection.Value = _lookAtDirection.Value * rotation;
+            }
+            _lookAtDirection.Value.Normalize();
+
+            UpdateLookAt();
+            UpdateEntityRotation();
+        }
+
         private void UpdateLookAt()
         {
             Matrix.RotationQuaternion(ref _lookAtDirection.Value, out _headRotation);
@@ -131,20 +269,16 @@ namespace Utopia.Entities
             _lookAt.Normalize();
         }
 
-
-        private void EntityRotationsOnEvents()
+        private void UpdateEntityRotation()
         {
-            //MouseState mouseState;
-            //int centerX = (int)_camManager.ActiveCamera.Viewport.Width / 2; // Largeur Viewport pour centrer la souris !
-            //int centerY = (int)_camManager.ActiveCamera.Viewport.Height / 2;
-            //if (_d3dEngine.UnlockedMouse == false)
-            //{
-            //    //_inputHandler.GetCurrentMouseState(out mouseState); //To be sure the take the latest place of the mouse cursor !
-            //    mouseState = Mouse.GetState();
-            //    Mouse.SetPosition(centerX, centerY);
-            //    Rotate((mouseState.X - centerX), (mouseState.Y - centerY), 0.0f, mode);
-            //}
+            Matrix.RotationQuaternion(ref _moveDirection.Value, out _entityRotation);
+
+            _entityXAxis = new Vector3(_entityRotation.M11, _entityRotation.M21, _entityRotation.M31);
+            _entityYAxis = new Vector3(_entityRotation.M12, _entityRotation.M22, _entityRotation.M32);
+            _entityZAxis = new Vector3(_entityRotation.M13, _entityRotation.M23, _entityRotation.M33);
         }
+        #endregion
+
         #endregion
 
     }

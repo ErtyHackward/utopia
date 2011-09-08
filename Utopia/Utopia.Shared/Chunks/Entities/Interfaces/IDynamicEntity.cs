@@ -50,5 +50,10 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// Perform dynamic update (AI logic)
         /// </summary>
         void Update(DateTime gameTime);
+
+        /// <summary>
+        /// Entity displacement mode
+        /// </summary>
+        EntityDisplacementModes DisplacementMode { get; set; }
     }
 }
