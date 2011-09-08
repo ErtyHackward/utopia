@@ -33,6 +33,9 @@ using Utopia.Shared.World.WorldConfigs;
 using Utopia.Entities;
 using Utopia.Worlds.Storage;
 using Utopia.Action;
+using Utopia.Network;
+using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia
 {
@@ -41,8 +44,13 @@ namespace Utopia
         private void ContainersBindings(IKernel iocContainer, WorldParameters worldParam)
         {
             iocContainer.Bind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
+            iocContainer.Bind<IDynamicEntity>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope(); //Register the current Player.
+
             iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
+            iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
+
+            iocContainer.Bind<IEntityManager>().To<EntityManager>().InSingletonScope();
 
             iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope();

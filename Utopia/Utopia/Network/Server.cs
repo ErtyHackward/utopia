@@ -8,6 +8,7 @@ using S33M3Engines.D3D;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Net.Messages;
+using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia.Network
 {
@@ -22,9 +23,13 @@ namespace Utopia.Network
         public int Port { get; set; }
         public bool Connected { get; set; }
         public ServerConnection ServerConnection { get; set; }
+
+        //Initilialization received Data, should be move inside a proper class/struct !
         public int MaxServerViewRange { get; set; }
         public int SeaLevel { get; set; }
         public int WorldSeed { get; set; }
+        public PlayerCharacter Player { get; set; }
+        //===============================================================================================
 
         public Location3<int> ChunkSize { get; set; }
 
@@ -42,7 +47,6 @@ namespace Utopia.Network
         public Server()
         {
             Connected = false;
-            this.Enabled = false; //Disable Draw calls
         }
 
         public void BindingServer(string address, int port)

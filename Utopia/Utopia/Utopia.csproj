@@ -108,8 +108,11 @@
     <Compile Include="DebugComponent.cs" />
     <Compile Include="Editor\EntityEditor.cs" />
     <Compile Include="Editor\EntityEditorUI.cs" />
+    <Compile Include="Entities\EntityManager.cs" />
+    <Compile Include="Entities\IEntityManager.cs" />
     <Compile Include="Entities\ItemRenderer.cs" />
     <Compile Include="Entities\EntityRenderer.cs" />
+    <Compile Include="Entities\VisualDynamicEntity.cs" />
     <Compile Include="Entities\Voxel\ColorLookup.cs" />
     <Compile Include="Entities\Voxel\VisualEntity.cs" />
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
@@ -195,7 +198,6 @@
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\OpeningLocator.cs" />
     <Compile Include="Editor\PaletteButtonControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\IGuiVisualizer.cs" />
-    <Compile Include="Network\ClientEntityManager.cs" />
     <Compile Include="Network\EntityMessageTranslator.cs" />
     <Compile Include="Resources\SuaveSkinResources.Designer.cs">
       <AutoGen>True</AutoGen>

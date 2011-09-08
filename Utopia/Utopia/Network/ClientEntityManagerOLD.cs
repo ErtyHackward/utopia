@@ -17,7 +17,7 @@ namespace Utopia.Network
     /// <summary>
     /// This is just example of client entity manager
     /// </summary>
-    public class ClientEntityManager : IClientEntityManager
+    public class ClientEntityManagerOLD : IClientEntityManager
     {
         // enumerate this entities to draw
         Dictionary<uint, IDynamicEntity> _dynamicEntities = new Dictionary<uint,IDynamicEntity>();
