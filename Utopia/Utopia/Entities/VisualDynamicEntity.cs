@@ -43,17 +43,16 @@ namespace Utopia.Entities
         }
         #endregion
 
-        public VisualDynamicEntity(Vector3 startUpWorldPosition, Vector3 size, IDynamicEntity dynamicEntity)
+        public VisualDynamicEntity(Vector3 size, IDynamicEntity dynamicEntity)
             :base()
         {
             _dynamicEntity = dynamicEntity;
-            _worldPosition.Value = startUpWorldPosition;
-            _worldPosition.ValueInterp = startUpWorldPosition;
+            _worldPosition.Value = _dynamicEntity.Position;
+            _worldPosition.ValueInterp = _dynamicEntity.Position;
             _boundingMinPoint = new Vector3(-(size.X / 2.0f), 0, -(size.Z / 2.0f));
             _boundingMaxPoint = new Vector3(+(size.X / 2.0f), size.Y, +(size.Z / 2.0f));
 
-            _boundingBox = new BoundingBox(_boundingMinPoint + startUpWorldPosition,
-                                          _boundingMaxPoint + startUpWorldPosition);
+            RefreshBoundingBox();
 
             _entityEyeOffset = new Vector3(0, size.Y / 100 * 80, 0);
         }

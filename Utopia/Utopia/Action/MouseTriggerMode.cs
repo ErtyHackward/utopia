@@ -7,8 +7,9 @@ namespace Utopia.Action
 {
     public enum MouseTriggerMode
     {
-        Pressed,
-        Clicked,
+        ButtonDown,
+        ButtonDownUp,
+        ButtonUpDown,
         ScrollWheelForward,
         ScrollWheelBackWard
     }

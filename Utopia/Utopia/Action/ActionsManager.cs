@@ -140,7 +140,7 @@ namespace Utopia.Action
 
                 switch (_mouseAction.TriggerType)
                 {
-                    case MouseTriggerMode.Pressed:
+                    case MouseTriggerMode.ButtonDown:
                         //Set the Action Flag if required
                         switch (_mouseAction.Binding)
 	                    {
@@ -164,7 +164,7 @@ namespace Utopia.Action
                                 break;
 	                    }
                         break;
-                    case MouseTriggerMode.Clicked:
+                    case MouseTriggerMode.ButtonDownUp:
                         //Set the Action Flag if required
                         switch (_mouseAction.Binding)
                         {
@@ -185,6 +185,30 @@ namespace Utopia.Action
                                 break;
                             case MouseButton.LeftAndRightButton:
                                 if (_curMouseState.LeftButton == ButtonState.Released && _prevMouseState.LeftButton == ButtonState.Pressed && _curMouseState.RightButton == ButtonState.Released && _prevMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                break;
+                        }
+                        break;
+                    case MouseTriggerMode.ButtonUpDown:
+                        //Set the Action Flag if required
+                        switch (_mouseAction.Binding)
+                        {
+                            case MouseButton.LeftButton:
+                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                break;
+                            case MouseButton.MiddleButton:
+                                if (_prevMouseState.MiddleButton == ButtonState.Released && _curMouseState.MiddleButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                break;
+                            case MouseButton.RightButton:
+                                if (_prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                break;
+                            case MouseButton.XButton1:
+                                if (_prevMouseState.XButton1 == ButtonState.Released && _curMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                break;
+                            case MouseButton.XButton2:
+                                if (_prevMouseState.XButton2 == ButtonState.Released && _curMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                break;
+                            case MouseButton.LeftAndRightButton:
+                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed && _prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
                                 break;
                         }
                         break;
@@ -221,6 +245,14 @@ namespace Utopia.Action
                         //Set the Action Flag if required
 
                         if (_prevKeyboardState.IsKeyDown(_keyboardAction.Binding) && _curKeyboardState.IsKeyUp(_keyboardAction.Binding))
+                        {
+                            _bufferedActionsInProgress[(int)_keyboardAction.Action] = true;
+                        }
+                        break;
+                    case KeyboardTriggerMode.KeyUpDown:
+                        //Set the Action Flag if required
+
+                        if (_curKeyboardState.IsKeyDown(_keyboardAction.Binding) && _prevKeyboardState.IsKeyUp(_keyboardAction.Binding))
                         {
                             _bufferedActionsInProgress[(int)_keyboardAction.Action] = true;
                         }

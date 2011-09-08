@@ -366,7 +366,6 @@ namespace Nuclex.UserInterface.Visuals.Flat {
       // so we can efficiently render everything
       loadResources(skinDocument);
       loadFrames(skinDocument);
-
     }
 
     /// <summary>Loads the resources contained in a skin document</summary>
