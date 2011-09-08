@@ -25,6 +25,16 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         event EventHandler<EntityUseEventArgs> Use;
 
         /// <summary>
+        /// The speed at wich the dynamic entity can walk
+        /// </summary>
+        float MoveSpeed { get; set; }
+
+        /// <summary>
+        /// The speed at wich the dynamic is doing move rotation
+        /// </summary>
+        float RotationSpeed { get; set; }
+
+        /// <summary>
         /// Perform actions when getting closer to area. Entity should add all needed event handlers
         /// </summary>
         /// <param name="area"></param>
