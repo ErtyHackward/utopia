@@ -59,6 +59,21 @@ namespace Utopia.Shared.Chunks.Entities
         /// </summary>
         public DynamicEntityState EntityState { get; set; }
 
+        /// <summary>
+        /// The speed at wich the dynamic entity can walk
+        /// </summary>
+        public float WalkingSpeed { get; set; }
+
+        /// <summary>
+        /// The speed at wich the dynamic entity can Fly
+        /// </summary>
+        public float FlyingSpeed { get; set; }
+
+        /// <summary>
+        /// The speed at wich the dynamic is doing move rotation
+        /// </summary>
+        public float MoveRotationSpeed { get; set; }
+
         public override SharpDX.Vector3 Position
         {
             get
@@ -110,5 +125,23 @@ namespace Utopia.Shared.Chunks.Entities
         /// Perform dynamic update (AI logic)
         /// </summary>
         public abstract void Update(DateTime gameTime);
+
+        public override void Load(System.IO.BinaryReader reader)
+        {
+            base.Load(reader);
+
+            WalkingSpeed = reader.ReadSingle();
+            FlyingSpeed = reader.ReadSingle();
+            MoveRotationSpeed = reader.ReadSingle();
+        }
+
+        public override void Save(System.IO.BinaryWriter writer)
+        {
+            base.Save(writer);
+
+            writer.Write(WalkingSpeed);
+            writer.Write(FlyingSpeed);
+            writer.Write(MoveRotationSpeed);
+        }
     }
 }

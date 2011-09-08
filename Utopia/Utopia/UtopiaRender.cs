@@ -304,7 +304,7 @@ namespace Utopia
             _actionManager.AddActions(new MouseTriggeredAction()
             {
                 Action = Actions.Move_Forward,
-                TriggerType = MouseTriggerMode.Pressed,
+                TriggerType = MouseTriggerMode.ButtonDown,
                 Binding = MouseButton.LeftAndRightButton
             });
 
@@ -381,14 +381,14 @@ namespace Utopia
             _actionManager.AddActions(new MouseTriggeredAction()
             {
                 Action = Actions.Block_Add,
-                TriggerType = MouseTriggerMode.Clicked,
+                TriggerType = MouseTriggerMode.ButtonUpDown,
                 Binding = MouseButton.LeftButton
             });
 
             _actionManager.AddActions(new MouseTriggeredAction()
             {
                 Action = Actions.Block_Remove,
-                TriggerType = MouseTriggerMode.Clicked,
+                TriggerType = MouseTriggerMode.ButtonUpDown,
                 Binding = MouseButton.RightButton
             });
 
