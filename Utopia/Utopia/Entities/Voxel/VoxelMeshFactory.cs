@@ -83,23 +83,23 @@ namespace Utopia.Entities.Voxel
             {
                 case CubeFace.Right: //X+
                     {
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
                         vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
                         vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
                         vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
                     }
                     break;
 
                 case CubeFace.Left: //X-
                     {
                         vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
                         vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
                         vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
                         vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
                     }
                     break;
 
@@ -129,21 +129,21 @@ namespace Utopia.Entities.Voxel
                     {
                         vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
                         vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
                         vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
                     }
                     break;
 
                 case CubeFace.Front: //Z-
                     {
-                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
-                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
                         vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
                         vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
                     }
                     break;
             }

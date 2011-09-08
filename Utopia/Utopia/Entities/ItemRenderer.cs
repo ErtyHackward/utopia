@@ -13,6 +13,7 @@ using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using Utopia.Action;
+using S33M3Engines.StatesManager;
 
 namespace Utopia.Entities
 {
@@ -96,13 +97,15 @@ namespace Utopia.Entities
         {
             //TODO : frustum culling of items in view
 
+            //Applying Correct Render States
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+
+
             _itemEffect.Begin();
 
-            _itemEffect.CBPerDraw.IsDirty = true;
             _itemEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
             _itemEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
             _itemEffect.CBPerFrame.IsDirty = true;
-            _itemEffect.Apply();
 
             foreach (var item in Items)
             {
@@ -115,6 +118,8 @@ namespace Utopia.Entities
                                Matrix.Translation(item.Position);
                 world = _worldFocusManager.CenterOnFocus(ref world);
                 _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+                _itemEffect.CBPerDraw.IsDirty = true;
+                _itemEffect.Apply();
 
                 item.VertexBuffer.SetToDevice(0);
                 _d3DEngine.Context.Draw(item.VertexBuffer.VertexCount, 0);

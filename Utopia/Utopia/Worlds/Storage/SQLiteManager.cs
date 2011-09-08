@@ -46,7 +46,7 @@ namespace Utopia.Worlds.Storage
                 csb.SyncMode = SynchronizationModes.Normal;
                 csb.DataSource = _path;
 
-                _connection = new SQLiteConnection(csb.ToString());
+                _connection = new SQLiteConnection(csb.ToString() + @";COMPRESS=TRUE");
                 _connection.Open();
                 SetPragma(_connection);
             }
@@ -57,7 +57,7 @@ namespace Utopia.Worlds.Storage
         {
             var command = connection.CreateCommand();
             //PRAGMA Configuration
-            command.CommandText = "PRAGMA JOURNAL_MODE=WAL";
+            command.CommandText = "PRAGMA LOCKING_MODE=EXCLUSIVE;PRAGMA JOURNAL_MODE=WAL;";
             command.CommandType = CommandType.Text;
             command.ExecuteNonQuery();
         }
@@ -101,7 +101,7 @@ namespace Utopia.Worlds.Storage
                 csb.SyncMode = SynchronizationModes.Normal;
                 csb.DataSource = _path;
 
-                var conn = new SQLiteConnection(csb.ToString());
+                var conn = new SQLiteConnection(csb.ToString() + @";COMPRESS=TRUE");
                 conn.Open();
                 CreateDataBase(conn);
                 return conn;
