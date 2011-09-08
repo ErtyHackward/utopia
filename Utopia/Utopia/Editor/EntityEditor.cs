@@ -1,16 +1,20 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
 using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.InputHandler;
+using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.WorldFocus;
 using SharpDX;
+using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.Shared.Chunks.Entities.Concrete;
+using Utopia.Shared.Structs;
 using Screen = Nuclex.UserInterface.Screen;
 using Utopia.Action;
 
@@ -30,6 +34,8 @@ namespace Utopia.Editor
         private readonly ActionsManager _actions;
         private readonly Hud _hudComponent;
 
+        private const float _scale = 1f/16f;
+
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
                             ActionsManager actions, Hud hudComponent)
@@ -46,13 +52,14 @@ namespace Utopia.Editor
             VoxelEntity entity = new EditableVoxelEntity();
 
             entity.Blocks = new byte[16,16,16];
-            entity.BordersFill();
+            entity.PlainCubeFill();
             _editedEntity = new VisualEntity(_voxelMeshFactory, entity);
-            _editedEntity.Position = _camManager.ActiveCamera.WorldPosition.AsVector3() + new Vector3(0, 0, 2);
+            _editedEntity.Position = _camManager.ActiveCamera.WorldPosition.AsVector3() + new Vector3(-1, 0, -3);
 
             // inactive by default, use F12 UI to enable :)
             this.Visible = false;
             this.Enabled = false;
+            DrawOrder = 5000;
         }
 
         public override void Initialize()
@@ -69,6 +76,7 @@ namespace Utopia.Editor
         public override void Update(ref GameTime timeSpent)
         {
             HandleInput();
+            //setSelection();
         }
 
         public override void Draw()
@@ -79,7 +87,7 @@ namespace Utopia.Editor
         protected override void OnEnabledChanged(object sender, System.EventArgs args)
         {
             base.OnEnabledChanged(sender, args);
-        
+
             if (Enabled)
             {
                 _hudComponent.Enabled = false;
@@ -92,10 +100,11 @@ namespace Utopia.Editor
                     }
                 }
             }
-            else {
-            foreach (var control in _ui.Children)
-                _screen.Desktop.Children.Remove(control);
-            _hudComponent.Enabled= true;
+            else
+            {
+                foreach (var control in _ui.Children)
+                    _screen.Desktop.Children.Remove(control);
+                _hudComponent.Enabled = true;
             }
         }
 
@@ -131,17 +140,25 @@ namespace Utopia.Editor
         {
         }
 
-        private bool _lButtonBuffer;//,KeyMBuffer, , RButtonBuffer, WheelForward, WheelBackWard;
-
-        private int _y = 0;
+//        private int _y = 0;
+        private Location3<int> _currentSelectionBlock;
+        private DVector3 _currentSelectionWorld;
 
         private void HandleInput()
         {
-            if(_actions.isTriggered(Actions.Block_Add))
+            if (_actions.isTriggered(Actions.Block_Add))
             {
                 byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
-                if (_y == blocks.GetLength(1)) _y = 0;
+
+                int x = _currentSelectionBlock.X;
+                int y = _currentSelectionBlock.Y;
+                int z = _currentSelectionBlock.Z;
+
+                blocks[x, y, z] = _ui.SelectedColor;
+
+
+                /*               if (_y == blocks.GetLength(1)) _y = 0;
 
                 //just for demo prototype i color a y slice each mouseclick
 
@@ -151,13 +168,50 @@ namespace Utopia.Editor
                     {
                         blocks[x, _y, z] = _ui.SelectedColor;
                     }
-                }
+                }*/
 
                 _editedEntity.Altered = true;
                 _editedEntity.Update();
 
-                _y++;
+                // _y++;
             }
+        }
+
+        //not in use, need to debug the rendering first ! 
+        private void setSelection()
+        {
+            ICamera cam = _camManager.ActiveCamera;
+            byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
+
+             Vector3 mousePos = new Vector3(Mouse.GetState().X,
+                               Mouse.GetState().Y,
+                               cam.Viewport.MinDepth);
+
+            Vector3 unproject = Vector3.Unproject(mousePos, cam.Viewport.TopLeftX, cam.Viewport.TopLeftY, cam.Viewport.Width,
+                              cam.Viewport.Height, cam.Viewport.MinDepth, cam.Viewport.MaxDepth,
+                               Matrix.Translation(cam.WorldPosition.AsVector3())*cam.ViewProjection3D);
+
+           // Console.WriteLine(unproject);
+            /*
+            for (float x = 0.5f; x < 8f; x += 0.1f)
+            {
+                DVector3 targetPoint = (cam.WorldPosition + (cam.LookAt*x))/_scale;
+
+                int i = (int) (targetPoint.X);
+                int j = (int) (targetPoint.Y);
+                int k = (int) (targetPoint.Z);
+                if (i >= 0 && j >= 0 && k >= 0 && i < blocks.GetLength(0) && j < blocks.GetLength(1) &&
+                    k < blocks.GetLength(2))
+                {
+                    //if _model.blocks[i,j,k]
+
+                    _currentSelectionBlock = new Location3<int>(i, j, k);
+
+                    _currentSelectionWorld = targetPoint;
+                    // Debug.WriteLine("{0} -- {1}", _currentSelectionBlock, _currentSelectionWorld);
+                    break;
+                }
+            }*/
         }
     }
 }
