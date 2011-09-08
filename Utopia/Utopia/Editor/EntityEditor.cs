@@ -17,6 +17,7 @@ using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Structs;
 using Screen = Nuclex.UserInterface.Screen;
 using Utopia.Action;
+using S33M3Engines.StatesManager;
 
 namespace Utopia.Editor
 {
@@ -110,19 +111,22 @@ namespace Utopia.Editor
 
         private void DrawItems()
         {
+            //Applying Correct Render States
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+
             _itemEffect.Begin();
 
-            _itemEffect.CBPerDraw.IsDirty = true;
             _itemEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
             _itemEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
             _itemEffect.CBPerFrame.IsDirty = true;
-            _itemEffect.Apply();
 
             Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
                            Matrix.Translation(_editedEntity.Position);
 
             world = _worldFocusManager.CenterOnFocus(ref world);
             _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+            _itemEffect.CBPerDraw.IsDirty = true;
+            _itemEffect.Apply();
 
             _editedEntity.VertexBuffer.SetToDevice(0);
             _d3DEngine.Context.Draw(_editedEntity.VertexBuffer.VertexCount, 0);
