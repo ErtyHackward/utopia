@@ -17,8 +17,8 @@ namespace Utopia.Entities.Voxel
     public class VisualEntity : IDisposable
     {
         public readonly VoxelEntity VoxelEntity;
-        public VertexBuffer<VertexPositionColorTexture> VertexBuffer;
-        public List<VertexPositionColorTexture> Vertice;
+        public VertexBuffer<VertexCubeSolid> VertexBuffer;
+        public List<VertexCubeSolid> Vertice;
        
         /// <summary>
         /// Altered by server or user and needs vertice update (you need to call Update yourself)

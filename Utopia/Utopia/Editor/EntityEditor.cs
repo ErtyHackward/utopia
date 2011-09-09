@@ -8,6 +8,7 @@ using S33M3Engines.InputHandler;
 using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.Struct.Vertex;
+using S33M3Engines.Textures;
 using S33M3Engines.WorldFocus;
 using SharpDX;
 using SharpDX.Direct3D11;
@@ -15,6 +16,8 @@ using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Structs;
+using Utopia.Shared.World;
+using UtopiaContent.Effects.Terran;
 using Screen = Nuclex.UserInterface.Screen;
 using Utopia.Action;
 using S33M3Engines.StatesManager;
@@ -27,7 +30,7 @@ namespace Utopia.Editor
 
         private readonly VisualEntity _editedEntity;
         private readonly D3DEngine _d3DEngine;
-        private HLSLVertexPositionColorTexture _itemEffect;
+        private HLSLTerran _itemEffect;
         private readonly CameraManager _camManager;
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VoxelMeshFactory _voxelMeshFactory;
@@ -70,13 +73,15 @@ namespace Utopia.Editor
 
         public override void LoadContent()
         {
-            _itemEffect = new HLSLVertexPositionColorTexture(_d3DEngine, @"D3D/Effects/Basics/VertexPositionColorTexture.hlsl",
-                                                      VertexPositionColorTexture.VertexDeclaration);
+
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, out _texture);
+
+            _itemEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
+
+            _itemEffect.TerraTexture.Value = _texture;
+            
             _itemEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
-            _texture = ShaderResourceView.FromFile(_d3DEngine.Device, @"Textures\Gui\Editor.png");
-
-            _itemEffect.DiffuseTexture.Value = _texture;
             
         }
 
@@ -122,16 +127,18 @@ namespace Utopia.Editor
 
             _itemEffect.Begin();
 
-            _itemEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
-            _itemEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
-            _itemEffect.CBPerFrame.Values.Alpha = .5f;
+            _itemEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _itemEffect.CBPerFrame.Values.SunColor = Vector3.One;
+            _itemEffect.CBPerFrame.Values.dayTime = 0.5f;
+            _itemEffect.CBPerFrame.Values.fogdist = 100;//TODO FOGDIST in editor
             _itemEffect.CBPerFrame.IsDirty = true;
 
             Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
                            Matrix.Translation(_editedEntity.Position);
 
             world = _worldFocusManager.CenterOnFocus(ref world);
-            _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);            
+            _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+            _itemEffect.CBPerDraw.Values.popUpYOffset = 0;
             _itemEffect.CBPerDraw.IsDirty = true;
             _itemEffect.Apply();
 
