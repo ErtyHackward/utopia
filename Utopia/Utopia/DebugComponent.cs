@@ -85,10 +85,7 @@ namespace Utopia
             //    if (_gameStateManagers.DebugDisplay < 0) _gameStateManagers.DebugDisplay = 0;
             //}
 
-            if(_actions.isTriggered(Actions.Engine_LockMouseCursor))
-            {
-                _d3DEngine.UnlockedMouse = !_d3DEngine.UnlockedMouse;
-            }
+
 
             if (_actions.isTriggered(Actions.Engine_VSync))
             {
@@ -118,10 +115,7 @@ namespace Utopia
                     _screen.Desktop.Children.Add(_debugUi);
                 }
             }
-        
 
-        //Exit application
-            if (_actions.isTriggered(Actions.Engine_Exit)) _game.Exit();
         }
     }
 }

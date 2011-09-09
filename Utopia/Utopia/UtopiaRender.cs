@@ -65,7 +65,8 @@ namespace Utopia
         private ActionsManager _actionManager;
         private EntityMessageTranslator _entityMessageTranslator;
         private IDynamicEntity _player;
-
+        private ActionsManager _actions;
+        private D3DEngine _engine;
         //Debug tools
         private FPS _fps; //FPS computing object
 
@@ -191,17 +192,7 @@ namespace Utopia
             //-- Get Camera manager --
             _camManager = IoCContainer.Get<CameraManager>();
 
-            //-- Create Entity Player --
-
-
-            //TODO : Create an entity manager that will be responsible to render the various entities instead of leaving each entity to render itself.
-            //_player = IoCContainer.Get<ILivingEntity>(new ConstructorArgument("Name", ClientSettings.Current.Settings.GameParameters.NickName),
-            //                                          new ConstructorArgument("startUpWorldPosition", new DVector3((worldParam.WorldChunkSize.X * AbstractChunk.ChunkSize.X / 2.0) + worldStartUp.X, 90, (worldParam.WorldChunkSize.Z * AbstractChunk.ChunkSize.Z / 2.0f) + worldStartUp.Z)),
-            //                                          new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)),
-            //                                          new ConstructorArgument("walkingSpeed", 5f),
-            //                                          new ConstructorArgument("flyingSpeed", 30f),
-            //                                          new ConstructorArgument("headRotationSpeed", 10f));
-            //((Player)_player).Mode = LivingEntityMode.FreeFirstPerson;
+            _engine = IoCContainer.Get<D3DEngine>();
 
             //Storage Manager
             _chunkStorageManager = IoCContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false),
@@ -227,6 +218,8 @@ namespace Utopia
             VisualDynamicEntity Player = IoCContainer.Get<VisualDynamicEntity>(new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)));
             camera.CameraPlugin = Player;
             GameComponents.Add(Player);
+
+            _actions = IoCContainer.Get<ActionsManager>();
 
             //-- Clock --
             _worldClock = IoCContainer.Get<IClock>(new ConstructorArgument("clockSpeed", 1f),
@@ -469,6 +462,9 @@ namespace Utopia
             _actionManager.FetchInputs();
             _actionManager.Update();
             base.Update(ref TimeSpend);
+
+            //After all update are done, Check against "System" keys like Exit, ...
+            InputHandling();
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
@@ -483,6 +479,15 @@ namespace Utopia
             _d3dEngine.Context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
             base.Draw();
             base.Present();
+        }
+
+
+        private void InputHandling()
+        {
+            //Exit application
+            if (_actions.isTriggered(Actions.Engine_Exit)) Exit();
+            if (_actions.isTriggered(Actions.Engine_LockMouseCursor)) _engine.UnlockedMouse = !_engine.UnlockedMouse;
+            if (_actions.isTriggered(Actions.Engine_FullScreen)) _engine.isFullScreen = !_engine.isFullScreen;
         }
 
         public override void Dispose()
