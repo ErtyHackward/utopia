@@ -77,6 +77,7 @@ namespace Utopia.Editor
             _texture = ShaderResourceView.FromFile(_d3DEngine.Device, @"Textures\Gui\Editor.png");
 
             _itemEffect.DiffuseTexture.Value = _texture;
+            
         }
 
         public override void Update(ref GameTime timeSpent)
@@ -123,13 +124,14 @@ namespace Utopia.Editor
 
             _itemEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
             _itemEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
+            _itemEffect.CBPerFrame.Values.Alpha = .5f;
             _itemEffect.CBPerFrame.IsDirty = true;
 
             Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
                            Matrix.Translation(_editedEntity.Position);
 
             world = _worldFocusManager.CenterOnFocus(ref world);
-            _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+            _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);            
             _itemEffect.CBPerDraw.IsDirty = true;
             _itemEffect.Apply();
 
