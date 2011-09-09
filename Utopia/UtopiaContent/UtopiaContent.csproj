@@ -233,6 +233,9 @@
     <Content Include="Textures\charactersheet.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Textures\Gui\Editor.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Textures\pickaxe-icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

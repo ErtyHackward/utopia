@@ -90,6 +90,7 @@
     <Compile Include="Cameras\ICameraPlugin.cs" />
     <Compile Include="D3D\DebugTools\PerfTimer.cs" />
     <Compile Include="D3D\DrawableGameComponent.cs" />
+    <Compile Include="D3D\Effects\Basics\HLSLVertexPositionColorTexture.cs" />
     <Compile Include="D3D\Effects\Basics\DebugEffect.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLSprites.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLVertexPositionColor.cs" />
@@ -169,6 +170,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="D3D\Effects\Basics\VertexPositionColor.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="D3D\Effects\Basics\VertexPositionColorTexture.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="D3D\Effects\Basics\VertexPositionTexture.hlsl">

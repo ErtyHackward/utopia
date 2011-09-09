@@ -27,7 +27,7 @@ namespace Utopia.Editor
 
         private readonly VisualEntity _editedEntity;
         private readonly D3DEngine _d3DEngine;
-        private HLSLVertexPositionColor _itemEffect;
+        private HLSLVertexPositionColorTexture _itemEffect;
         private readonly CameraManager _camManager;
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VoxelMeshFactory _voxelMeshFactory;
@@ -70,8 +70,13 @@ namespace Utopia.Editor
 
         public override void LoadContent()
         {
-            _itemEffect = new HLSLVertexPositionColor(_d3DEngine, @"D3D/Effects/Basics/VertexPositionColor.hlsl",
-                                                      VertexPositionColor.VertexDeclaration);
+            _itemEffect = new HLSLVertexPositionColorTexture(_d3DEngine, @"D3D/Effects/Basics/VertexPositionColorTexture.hlsl",
+                                                      VertexPositionColorTexture.VertexDeclaration);
+            _itemEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+
+            _texture = ShaderResourceView.FromFile(_d3DEngine.Device, @"Textures\Gui\Editor.png");
+
+            _itemEffect.DiffuseTexture.Value = _texture;
         }
 
         public override void Update(ref GameTime timeSpent)
@@ -147,6 +152,7 @@ namespace Utopia.Editor
 //        private int _y = 0;
         private Location3<int> _currentSelectionBlock;
         private DVector3 _currentSelectionWorld;
+        private ShaderResourceView _texture;//it's a field for being able to dispose the resource
 
         private void HandleInput()
         {
@@ -216,6 +222,15 @@ namespace Utopia.Editor
                     break;
                 }
             }*/
+        }
+
+        public override void Dispose()
+        {
+            
+            _itemEffect.Dispose();
+            _texture.Dispose();
+
+            base.Dispose();
         }
     }
 }
