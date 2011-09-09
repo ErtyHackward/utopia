@@ -47,7 +47,5 @@ namespace Utopia.Entities
         {
         }
         #endregion
-
-
     }
 }

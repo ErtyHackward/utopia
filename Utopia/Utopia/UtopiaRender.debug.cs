@@ -34,7 +34,6 @@ using S33M3Engines.GameStates;
 using S33M3Engines;
 using Size = System.Drawing.Size;
 using S33M3Engines.Threading;
-using Utopia.Entities.Living;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
 using Utopia.Worlds.Cubes;

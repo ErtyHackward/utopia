@@ -14,7 +14,6 @@ using S33M3Engines.GameStates;
 using S33M3Engines;
 using S33M3Engines.InputHandler;
 using S33M3Engines.Cameras;
-using Utopia.Entities.Living;
 using Utopia.Worlds.SkyDomes.SharedComp;
 using S33M3Engines.D3D;
 using Utopia.Worlds.SkyDomes;
@@ -64,8 +63,6 @@ namespace Utopia
             iocContainer.Bind<WorldRenderer>().ToSelf().InSingletonScope();
             iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();
 
-            iocContainer.Bind<EntityRenderer>().ToSelf().InSingletonScope();
-
             iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();
             iocContainer.Bind<ItemRenderer>().ToSelf().InSingletonScope();
 
@@ -94,7 +91,6 @@ namespace Utopia
             iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
             iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();
             iocContainer.Bind<IWorld>().To<World>().InSingletonScope();
-            iocContainer.Bind<ILivingEntity>().To<Player>().InSingletonScope(); 
             iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
             iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
             iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope();

@@ -111,11 +111,11 @@ namespace Utopia.Entities
             {
                 if (item.Altered)
                 {
-                    item.Update();
+                    item.RefreshBodyMesh();
                 }
 
                 Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
-                               Matrix.Translation(item.Position.AsVector3());
+                               Matrix.Translation(item.Entity.Position.AsVector3());
                 world = _worldFocusManager.CenterOnFocus(ref world);
                 _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
                 _itemEffect.CBPerDraw.IsDirty = true;

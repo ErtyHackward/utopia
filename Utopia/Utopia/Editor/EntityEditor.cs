@@ -55,7 +55,7 @@ namespace Utopia.Editor
             entity.Blocks = new byte[16,16,16];
             entity.PlainCubeFill();
             _editedEntity = new VisualEntity(_voxelMeshFactory, entity);
-            _editedEntity.Position = _camManager.ActiveCamera.WorldPosition + new Vector3(-1, 0, -3);
+            _editedEntity.Entity.Position = _camManager.ActiveCamera.WorldPosition + new Vector3(-1, 0, -3);
 
             // inactive by default, use F12 UI to enable :)
             this.Visible = false;
@@ -126,7 +126,7 @@ namespace Utopia.Editor
             _itemEffect.CBPerFrame.IsDirty = true;
 
             Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
-                           Matrix.Translation(_editedEntity.Position.AsVector3());
+                           Matrix.Translation(_editedEntity.Entity.Position.AsVector3());
 
             world = _worldFocusManager.CenterOnFocus(ref world);
             _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
@@ -158,7 +158,7 @@ namespace Utopia.Editor
         {
             if (_actions.isTriggered(Actions.Block_Add))
             {
-                byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
+                byte[, ,] blocks = _editedEntity.Entity.Blocks;
 
 
                 int x = _currentSelectionBlock.X;
@@ -181,7 +181,7 @@ namespace Utopia.Editor
                 }*/
 
                 _editedEntity.Altered = true;
-                _editedEntity.Update();
+                _editedEntity.RefreshBodyMesh();
 
                 // _y++;
             }
@@ -191,7 +191,7 @@ namespace Utopia.Editor
         private void setSelection()
         {
             ICamera cam = _camManager.ActiveCamera;
-            byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
+            byte[, ,] blocks = _editedEntity.Entity.Blocks;
 
              Vector3 mousePos = new Vector3(Mouse.GetState().X,
                                Mouse.GetState().Y,
