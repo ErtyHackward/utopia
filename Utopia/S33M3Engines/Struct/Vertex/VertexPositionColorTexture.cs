@@ -5,11 +5,11 @@ using System.Text;
 using System.Runtime.InteropServices;
 using S33M3Engines.Struct.Vertex.Helper;
 using SharpDX;
-using System.Drawing;
 using S33M3Engines.Windows;
 using System.Globalization;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
+using Utopia.Shared.Structs;
 
 namespace S33M3Engines.Struct.Vertex
 {
