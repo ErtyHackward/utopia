@@ -13,7 +13,6 @@ using Utopia.Worlds.GameClocks;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.GameStates;
-using Utopia.Entities.Living;
 using Utopia.Worlds.Chunks.ChunkLandscape;
 using Utopia.Worlds.Chunks.ChunkMesh;
 using Utopia.Worlds.Cubes;

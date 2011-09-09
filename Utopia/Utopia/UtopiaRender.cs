@@ -22,7 +22,6 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared;
 using Utopia.Settings;
 using Utopia.Shared.Config;
-using Utopia.Entities.Living;
 using S33M3Engines;
 using Ninject;
 using S33M3Engines.GameStates;
@@ -60,7 +59,6 @@ namespace Utopia
         private IWeather _weather;
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
-        private EntityRenderer _entityRender;
         private IChunkStorageManager _chunkStorageManager;
         private ActionsManager _actionManager;
         private EntityMessageTranslator _entityMessageTranslator;
@@ -198,13 +196,6 @@ namespace Utopia
             _chunkStorageManager = IoCContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false),
                                                                           new ConstructorArgument("serverMode", server.Connected));
 
-            //Create the Entity Renderer
-            //A simple object wrapping a collectin of Entities, and wiring them for update/draw/...
-            _entityRender = IoCContainer.Get<EntityRenderer>();
-            //_entityRender.Entities.Add(_player); //Add the main player to Entities
-            _entityRender.UpdateOrder = 0;
-            GameComponents.Add(_entityRender);
-
             GameComponents.Add(IoCContainer.Get<InputsManager>());
 
             GameComponents.Add(IoCContainer.Get<ItemRenderer>());
@@ -217,7 +208,7 @@ namespace Utopia
             //The Player !
             VisualDynamicEntity Player = IoCContainer.Get<VisualDynamicEntity>(new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)));
             camera.CameraPlugin = Player;
-            GameComponents.Add(Player);
+            //GameComponents.Add(Player);
 
             _actions = IoCContainer.Get<ActionsManager>();
 

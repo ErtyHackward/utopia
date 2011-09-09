@@ -111,10 +111,12 @@
     <Compile Include="Entities\EntityManager.cs" />
     <Compile Include="Entities\IEntityManager.cs" />
     <Compile Include="Entities\ItemRenderer.cs" />
-    <Compile Include="Entities\EntityRenderer.cs" />
+    <Compile Include="Entities\VisualCharacterEntity.cs" />
     <Compile Include="Entities\VisualDynamicEntity.cs" />
+    <Compile Include="Entities\VisualPlayerCharacter.cs" />
+    <Compile Include="Entities\VisualSpecialCharacterEntity.cs" />
     <Compile Include="Entities\Voxel\ColorLookup.cs" />
-    <Compile Include="Entities\Voxel\VisualEntity.cs" />
+    <Compile Include="Entities\VisualEntity.cs" />
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
     <Compile Include="GUI\D3D\Hud.cs" />
@@ -206,11 +208,6 @@
       <DependentUpon>SuaveSkinResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings\ClientSettings.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\IEntity.cs" />
-    <Compile Include="Entities\Living\ILivingEntity.cs" />
-    <Compile Include="Entities\Living\LivingEntity.cs" />
-    <Compile Include="Entities\Admin\Wisp.cs" />
     <Compile Include="GameDXStates\DXStates.cs" />
     <Compile Include="GUI\Forms\CustControls\MultiPlayer.cs">
       <SubType>UserControl</SubType>
@@ -234,7 +231,6 @@
     <Compile Include="Entities\EntityImpact.cs" />
     <Compile Include="UtopiaClient.cs" />
     <Compile Include="UtopiaRender.cs" />
-    <Compile Include="Entities\Living\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UtopiaRender.debug.cs" />

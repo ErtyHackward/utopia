@@ -2,10 +2,8 @@
 
 namespace S33M3Engines.D3D
 {
-    public interface IUpdateableComponent : IGameComponent, IDisposable
+    public interface IUpdateableComponent : IGameComponent, IUpdatable, IDisposable
     {
-        void Update(ref GameTime timeSpent);
-        void Interpolation(ref double interpolationHd, ref float interpolationLd);
         event EventHandler<EventArgs> UpdateOrderChanged;
         event EventHandler<EventArgs> EnabledChanged;
         bool Enabled { get; set; }

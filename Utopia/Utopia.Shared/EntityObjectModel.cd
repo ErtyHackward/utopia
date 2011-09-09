@@ -15,14 +15,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Utopia.Shared.Chunks.Entities.Concrete.NoEntity" Collapsed="true">
-    <Position X="7.25" Y="1.75" Width="1.5" />
+    <Position X="5.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAkIAgEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Chunks\Entities\Concrete\NoEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Utopia.Shared.Chunks.Entities.Concrete.VoxelEntity" Collapsed="true">
-    <Position X="9" Y="1.75" Width="1.5" />
+    <Position X="7.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEgIAAAAAAAAAAAgAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
       <FileName>Chunks\Entities\Concrete\VoxelEntity.cs</FileName>
@@ -201,7 +201,7 @@
   <Class Name="Utopia.Shared.Chunks.Entities.DynamicEntity">
     <Position X="13" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABQAgAAAAACAAIAgAAAAAAAAEAAFAAAAAKAAAAAAAAA=</HashCode>
+      <HashCode>ADQAgIAAAACAAJAgAAAAAAAAEAAFAAAAAKAAAAAAQAA=</HashCode>
       <FileName>Chunks\Entities\DynamicEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />

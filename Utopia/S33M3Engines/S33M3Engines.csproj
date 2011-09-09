@@ -107,8 +107,10 @@
     <Compile Include="D3D\Game.cs" />
     <Compile Include="D3D\GameComponent.cs" />
     <Compile Include="D3D\GameComponentCollection.cs" />
+    <Compile Include="D3D\IDrawable.cs" />
     <Compile Include="D3D\IDrawableComponent.cs" />
     <Compile Include="D3D\IGameComponent.cs" />
+    <Compile Include="D3D\IUpdatable.cs" />
     <Compile Include="D3D\IUpdateableComponent.cs" />
     <Compile Include="D3D\Tools\Resource.cs" />
     <Compile Include="GameStates\GameStatesManager.cs" />

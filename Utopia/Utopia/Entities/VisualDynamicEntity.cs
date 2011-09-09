@@ -12,7 +12,6 @@ using Utopia.Shared.Chunks;
 using S33M3Engines.InputHandler.MouseHelper;
 using Utopia.InputManager;
 using S33M3Engines;
-using Utopia.Entities.Living;
 using Utopia.Shared.Chunks.Entities;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.Cameras;
@@ -20,6 +19,8 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Cubes;
 using S33M3Physics.Verlet;
 using S33M3Physics;
+using Utopia.Shared.Chunks.Entities.Concrete;
+using Utopia.Entities.Voxel;
 
 namespace Utopia.Entities
 {
@@ -27,12 +28,11 @@ namespace Utopia.Entities
     /// Visual Class Wrapping a IDynamicEntity
     /// Could be Player, Monsters, ...
     /// </summary>
-    public class VisualDynamicEntity : GameComponent, ICameraPlugin, IDisposable
+    public abstract class VisualDynamicEntity : VisualEntity, ICameraPlugin, IDisposable
     {
         #region Private variables
-        private IDynamicEntity _dynamicEntity;
 
-        //=======Should be moved inside VisualVertexEntity when the schema will bind the Dynamicentity to voxelentity, if we go this way !
+        //=======Should be moved inside VisualEntity when the schema will bind the Dynamicentity to voxelentity, if we go this way !
         private BoundingBox _boundingBox;
         private Vector3 _entityEyeOffset;         //Offset of the camera Placement inside the entity, from entity center point.
         private Vector3 _size;                    // ==> Should be extracted from the boundingbox around the voxel entity
@@ -41,9 +41,7 @@ namespace Utopia.Entities
         private FTSValue<DVector3> _worldPosition = new FTSValue<DVector3>();           //World Position
         private FTSValue<Quaternion> _lookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
         private FTSValue<Quaternion> _moveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
-
         private Vector3 _boundingMinPoint, _boundingMaxPoint;
-
         private ActionsManager _actions;
         private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
@@ -58,12 +56,8 @@ namespace Utopia.Entities
         private double _accumPitchDegrees;
         private double _gravityInfluence;
         private float _groundBelowEntity;
-
         private VerletSimulator _physicSimu;
-
         private EntityDisplacementModes _displacementMode;
-
-
         private Location3<int> _pickedBlock, _previousPickedBlock, _newCubePlace;
         private bool _isBlockPicked;
         private Utopia.Shared.Structs.Landscape.TerraCube _pickedCube;
@@ -71,6 +65,9 @@ namespace Utopia.Entities
         #endregion
 
         #region Public Variables/Properties
+        /// <summary> The Core component </summary>
+        public readonly IDynamicEntity DynamicEntity;
+
         //Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual DVector3 CameraWorldPosition
         {
@@ -81,7 +78,6 @@ namespace Utopia.Entities
         {
             get { return _lookAtDirection.ActualValue; }
         }
-
 
         public EntityDisplacementModes Mode
         {
@@ -101,34 +97,44 @@ namespace Utopia.Entities
         }
         #endregion
 
-        public VisualDynamicEntity(D3DEngine engine, Vector3 size, IDynamicEntity dynamicEntity, ActionsManager actions, InputsManager inputsManager, SingleArrayChunkContainer cubesHolder)
-            : base()
+        public VisualDynamicEntity(D3DEngine engine, 
+                                   Vector3 size, 
+                                   IDynamicEntity dynamicEntity, 
+                                   ActionsManager actions, 
+                                   InputsManager inputsManager, 
+                                   SingleArrayChunkContainer cubesHolder, 
+                                   VoxelMeshFactory voxelMeshFactory, 
+                                   VoxelEntity voxelEntity)
+
+            : base(voxelMeshFactory, voxelEntity)
         {
             _engine = engine;
             _actions = actions;
             _inputsManager = inputsManager;
             _cubesHolder = cubesHolder;
-            _dynamicEntity = dynamicEntity;
+            DynamicEntity = dynamicEntity;
             _size = size;
 
-            _moveDirection.Value = Quaternion.Identity;
+            //_moveDirection.Value = Quaternion.Identity;
 
             //Check the position, if the possition is 0,0,0, find the better spawning Y value !
-            if (_dynamicEntity.Position == DVector3.Zero)
+            if (DynamicEntity.Position == DVector3.Zero)
             {
-                _dynamicEntity.Position = new DVector3(0, AbstractChunk.ChunkSize.Y, 0);
+                DynamicEntity.Position = new DVector3(0, AbstractChunk.ChunkSize.Y, 0);
             }
 
-            _worldPosition.Value = _dynamicEntity.Position;
+            _worldPosition.Value = DynamicEntity.Position;
             _worldPosition.ValueInterp = _worldPosition.Value;
 
             //Take back only the saved Yaw rotation (Or Heading) and only using it;
-            _lookAtDirection.Value = _dynamicEntity.Rotation;
+            _lookAtDirection.Value = DynamicEntity.Rotation;
             double playerSavedYaw = MQuaternion.getYaw(ref _lookAtDirection.Value);
             //Quaternion rotation;
             Quaternion.RotationAxis(ref MVector3.Up, (float)playerSavedYaw, out _lookAtDirection.Value);
             _lookAtDirection.ValueInterp = _lookAtDirection.Value;
-            
+
+            _moveDirection.Value = _lookAtDirection.Value;
+
             _physicSimu = new VerletSimulator(ref _boundingBox) { WithCollisionBounsing = false };
             _physicSimu.ConstraintFct += isCollidingWithTerrain;
 
@@ -136,7 +142,9 @@ namespace Utopia.Entities
 
         }
         #region Public Methods
-        public override void Initialize()
+
+        
+        public void Initialize()
         {
             //Will be used to update the bounding box with world coordinate when the entity is moving
             _boundingMinPoint = new Vector3(-(_size.X / 2.0f), 0, -(_size.Z / 2.0f));
@@ -145,6 +153,11 @@ namespace Utopia.Entities
             RefreshBoundingBox(ref _worldPosition.Value, out _boundingBox);
 
             _entityEyeOffset = new Vector3(0, _size.Y / 100 * 80, 0);
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
         }
 
         public override void Update(ref GameTime timeSpent)
@@ -167,8 +180,8 @@ namespace Utopia.Entities
             }
 
             //Compute the delta following the time elapsed : Speed * Time = Distance (Over the elapsed time).
-            _moveDelta = _dynamicEntity.MoveSpeed * _gravityInfluence * timeSpent.ElapsedGameTimeInS_HD;
-            _rotationDelta = _dynamicEntity.RotationSpeed * timeSpent.ElapsedGameTimeInS_HD;
+            _moveDelta = DynamicEntity.MoveSpeed * _gravityInfluence * timeSpent.ElapsedGameTimeInS_HD;
+            _rotationDelta = DynamicEntity.RotationSpeed * timeSpent.ElapsedGameTimeInS_HD;
 
 
             //Backup previous values
@@ -188,24 +201,29 @@ namespace Utopia.Entities
             RefreshBoundingBox(ref _worldPosition.Value, out _boundingBox);
 
             //Send the Actual Position to the Dynamic Entity
-            _dynamicEntity.Position = _worldPosition.Value;
-            _dynamicEntity.Rotation = _lookAtDirection.Value;
-
+            DynamicEntity.Position = _worldPosition.Value;
+            DynamicEntity.Rotation = _lookAtDirection.Value;
 
             //Block Picking !?
             GetSelectedBlock();
 
             CheckHeadUnderWater();
+
+            base.Update(ref timeSpent);
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
             DVector3.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
             Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
+
+            base.Interpolation(ref interpolationHd, ref interpolationLd);
+
         }
 
         public override void Dispose()
         {
+            base.Dispose();
         }
         #endregion
 
