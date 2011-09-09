@@ -154,12 +154,12 @@ namespace Utopia.Entities.Living
 
         public override void Update(ref GameTime TimeSpend)
         {
-            ////Backup values
-            //LookAtDirection.BackUpValue();
-            //WorldPosition.BackUpValue();
-            //WorldRotation.BackUpValue();
-            //base.Update(ref TimeSpend);
-            //return;
+            //Backup values
+            LookAtDirection.BackUpValue();
+            WorldPosition.BackUpValue();
+            WorldRotation.BackUpValue();
+            base.Update(ref TimeSpend);
+            return;
 
             //Compute the amount of movement to take into account for this Update !
             

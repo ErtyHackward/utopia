@@ -22,6 +22,7 @@ using S33M3Engines.WorldFocus;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Network;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -53,7 +54,6 @@ namespace Utopia.Worlds.Chunks
         private D3DEngine _d3dEngine;
         private CameraManager _camManager;
         private GameStatesManager _gameStates;
-        private ILivingEntity _player;
         private SingleArrayChunkContainer _cubesHolder;
         private IClock _gameClock;
         private WorldFocusManager _worldFocusManager;
@@ -62,6 +62,7 @@ namespace Utopia.Worlds.Chunks
         private ILandscapeManager _landscapeManager;
         private IChunkMeshManager _chunkMeshManager;
         private Server _server;
+        private IDynamicEntity _player;
         #endregion
 
         #region Public Property/Variables
@@ -87,13 +88,13 @@ namespace Utopia.Worlds.Chunks
                            WorldFocusManager worldFocusManager,
                            GameStatesManager gameStates, 
                            IClock gameClock, 
-                           ILivingEntity player,
                            SingleArrayChunkContainer cubesHolder,
                            ILandscapeManager landscapeManager,
                            IChunkMeshManager chunkMeshManager,
                            IChunksWrapper chunkWrapper,
                            ILightingManager lightingManager,
-                           Server server)
+                           Server server,
+                           IDynamicEntity player)
         {
             _server = server;
             _d3dEngine = d3dEngine;
@@ -101,13 +102,13 @@ namespace Utopia.Worlds.Chunks
             _gameStates = gameStates;
             _camManager = camManager;
             _gameClock = gameClock;
-            _player = player;
             VisualWorldParameters = visualWorldParameters;
             _cubesHolder = cubesHolder;
             _chunkWrapper = chunkWrapper;
             _landscapeManager = landscapeManager;
             _chunkMeshManager = chunkMeshManager;
             _lightingManager = lightingManager;
+            _player = player;
 
             //Self injecting inside components
             _chunkWrapper.WorldChunks = this;

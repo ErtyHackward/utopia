@@ -112,10 +112,10 @@ namespace Utopia.Network
 
         private void PlayerEntityPositionChanged(object sender, EntityMoveEventArgs e)
         {
-            _connection.SendAsync(new EntityPositionMessage 
-            { 
-                Position = e.Entity.Position, 
-                EntityId = e.Entity.EntityId 
+            _connection.SendAsync(new EntityPositionMessage
+            {
+                Position = e.Entity.Position,
+                EntityId = e.Entity.EntityId
             });
         }
 

@@ -52,9 +52,9 @@ namespace Utopia.Net.Messages
             EntityPositionMessage msg;
 
             msg._entityId = reader.ReadUInt32();
-            msg._position.X = reader.ReadSingle();
-            msg._position.Y = reader.ReadSingle();
-            msg._position.Z = reader.ReadSingle();
+            msg._position.X = reader.ReadDouble();
+            msg._position.Y = reader.ReadDouble();
+            msg._position.Z = reader.ReadDouble();
 
             return msg;
         }

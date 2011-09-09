@@ -164,7 +164,6 @@ namespace Utopia.Entities.Living
             }
         }
 
-        bool KeyMBuffer, LButtonBuffer, RButtonBuffer, WheelForward, WheelBackWard;
         private void InputHandler()
         {
             if(_actions.isTriggered(Actions.Move_Mode))

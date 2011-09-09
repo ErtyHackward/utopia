@@ -49,13 +49,14 @@
             // 
             // btSinglePlayer
             // 
+            this.btSinglePlayer.Enabled = false;
             this.btSinglePlayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btSinglePlayer.Location = new System.Drawing.Point(25, 151);
             this.btSinglePlayer.Name = "btSinglePlayer";
             this.btSinglePlayer.Size = new System.Drawing.Size(134, 53);
             this.btSinglePlayer.TabIndex = 2;
             this.btSinglePlayer.Text = "Single Player";
-            this.btSinglePlayer.UseVisualStyleBackColor = true;
+            this.btSinglePlayer.UseVisualStyleBackColor = false;
             this.btSinglePlayer.Click += new System.EventHandler(this.btSinglePlayer_Click);
             // 
             // btMultiPlayer

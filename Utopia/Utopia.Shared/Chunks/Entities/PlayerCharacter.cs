@@ -1,6 +1,7 @@
 ﻿using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.Chunks.Entities
 {
