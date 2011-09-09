@@ -56,6 +56,22 @@ namespace Utopia.MapGenerator
                 }
             }
 
+            // split edges
+
+            Random r = new Random(0);
+
+            foreach (var poly in this)
+            {
+                foreach (var edge in poly.Edges)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if (edge.points.Length < 3)
+                            edge.Split(r, 1);
+                    }
+                }
+            }
+
             GetPoints();
         }
 
