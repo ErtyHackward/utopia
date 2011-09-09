@@ -133,5 +133,12 @@ namespace S33M3Engines.Maths
             data.Y = (float)Math.Round(data.Y, decimals);
             data.Z = (float)Math.Round(data.Z, decimals);
         }
+
+        public static void Round(ref DVector3 data, int decimals)
+        {
+            data.X = Math.Round(data.X, decimals);
+            data.Y = Math.Round(data.Y, decimals);
+            data.Z = Math.Round(data.Z, decimals);
+        }
     }
 }

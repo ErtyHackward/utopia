@@ -368,6 +368,21 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
+        public bool isPickable(ref DVector3 position, out TerraCube cube)
+        {
+            int cubeIndex;
+
+            if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
+            {
+                cube = Cubes[cubeIndex];
+                // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == CubeId.Air) cube = new TerraCube(CubeId.Error);
+                return CubeProfile.CubesProfile[cube.Id].IsPickable;
+            }
+
+            cube = new TerraCube(CubeId.Error);
+            return false;
+        }
+
         public bool isPickable(ref Vector3 position, Tool withTool, out TerraCube cube)
         {
             int cubeIndex;
