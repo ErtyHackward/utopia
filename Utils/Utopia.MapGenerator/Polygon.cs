@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace Utopia.MapGenerator
 
             var edge = tmpSet.First();
 
-            _points.Add(edge.Start);
+            _points.AddRange(edge.points);
             Point lastPoint = edge.End;
             tmpSet.Remove(edge);
             while (tmpSet.Count > 0)
@@ -62,12 +63,14 @@ namespace Utopia.MapGenerator
                     if (edge.Start == point)
                     {
                         lastPoint = edge.End;
-                        _points.Add(edge.Start);
+                        //_points.Add(edge.Start);
+                        _points.AddRange(edge.points);
                     }
                     else
                     {
                         lastPoint = edge.Start;
-                        _points.Add(edge.End);
+                        //_points.Add(edge.End);
+                        _points.AddRange(edge.points.Reverse());
                     }
                 }
                 else
