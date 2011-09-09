@@ -15,6 +15,7 @@ using S33M3Engines;
 using Utopia.Entities.Living;
 using Utopia.Shared.Chunks.Entities;
 using S33M3Engines.Shared.Math;
+using S33M3Engines.Cameras;
 
 namespace Utopia.Entities
 {
@@ -22,7 +23,7 @@ namespace Utopia.Entities
     /// Visual Class Wrapping a IDynamicEntity
     /// Could be Player, Monsters, ...
     /// </summary>
-    public class VisualDynamicEntity : GameComponent, IDisposable
+    public class VisualDynamicEntity : GameComponent, ICameraPlugin, IDisposable
     {
         #region Private variables
         private IDynamicEntity _dynamicEntity;
@@ -33,7 +34,7 @@ namespace Utopia.Entities
         private Vector3 _size;                    // ==> Should be extracted from the boundingbox around the voxel entity
         //================================================================================================================================
 
-        private FTSValue<Vector3> _worldPosition = new FTSValue<Vector3>();           //World Position
+        private FTSValue<DVector3> _worldPosition = new FTSValue<DVector3>();           //World Position
         private FTSValue<Quaternion> _lookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
         private FTSValue<Quaternion> _moveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
 
@@ -42,20 +43,20 @@ namespace Utopia.Entities
         private ActionsManager _actions;
         private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
-        private Vector3 _entityHeadXAxis, _entityHeadYAxis, _entityHeadZAxis;
-        private Vector3 _entityXAxis, _entityYAxis, _entityZAxis;
-        private Vector3 _lookAt;
+        private DVector3 _entityHeadXAxis, _entityHeadYAxis, _entityHeadZAxis;
+        private DVector3 _entityXAxis, _entityYAxis, _entityZAxis;
+        private DVector3 _lookAt;
         private Matrix _headRotation;
         private Matrix _entityRotation;
-        private float _rotationDelta;
-        private float _moveDelta;
+        private double _rotationDelta;
+        private double _moveDelta;
         private D3DEngine _engine;
-        private float _accumPitchDegrees;
+        private double _accumPitchDegrees;
         #endregion
 
         #region Public Variables/Properties
         //Implement the interface Needed when a Camera is "plugged" inside this entity
-        public virtual Vector3 CameraWorldPosition
+        public virtual DVector3 CameraWorldPosition
         {
             get { return _worldPosition.ActualValue + _entityEyeOffset; }
         }
@@ -67,7 +68,7 @@ namespace Utopia.Entities
         #endregion
 
         public VisualDynamicEntity(D3DEngine engine, Vector3 size, IDynamicEntity dynamicEntity, ActionsManager actions, InputsManager inputsManager, SingleArrayChunkContainer cubesHolder)
-            :base()
+            : base()
         {
             _engine = engine;
             _actions = actions;
@@ -75,10 +76,14 @@ namespace Utopia.Entities
             _cubesHolder = cubesHolder;
             _dynamicEntity = dynamicEntity;
             _size = size;
+
+            _lookAtDirection.Value = Quaternion.Identity;
+            _lookAtDirection.ValueInterp = Quaternion.Identity;
+
             _worldPosition.Value = _dynamicEntity.Position;
             _worldPosition.ValueInterp = _dynamicEntity.Position;
-            _lookAtDirection.Value = _dynamicEntity.Rotation;
-            _lookAtDirection.ValueInterp = _dynamicEntity.Rotation;
+            //_lookAtDirection.Value = _dynamicEntity.Rotation;
+            //_lookAtDirection.ValueInterp = _dynamicEntity.Rotation;
         }
         #region Public Methods
         public override void Initialize()
@@ -95,8 +100,8 @@ namespace Utopia.Entities
         public override void Update(ref GameTime timeSpent)
         {
             //Compute the delta following the time elapsed : Speed * Time = Distance (Over the elapsed time).
-            _moveDelta = _dynamicEntity.MoveSpeed * timeSpent.ElapsedGameTimeInS_LD;
-            _rotationDelta = _dynamicEntity.RotationSpeed * timeSpent.ElapsedGameTimeInS_LD;
+            _moveDelta = _dynamicEntity.MoveSpeed * timeSpent.ElapsedGameTimeInS_HD;
+            _rotationDelta = _dynamicEntity.RotationSpeed * timeSpent.ElapsedGameTimeInS_HD;
 
             //Backup previous values
             _lookAtDirection.BackUpValue();
@@ -120,6 +125,12 @@ namespace Utopia.Entities
             _dynamicEntity.Position = _worldPosition.Value;
         }
 
+        public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
+        {
+            DVector3.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
+            Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
+        }
+
         public override void Dispose()
         {
         }
@@ -128,8 +139,8 @@ namespace Utopia.Entities
         #region Private Methods
         private void RefreshBoundingBox()
         {
-            _boundingBox = new BoundingBox(_boundingMinPoint + _worldPosition.Value,
-                                          _boundingMaxPoint + _worldPosition.Value);
+            _boundingBox = new BoundingBox(_boundingMinPoint + _worldPosition.Value.AsVector3(),
+                                          _boundingMaxPoint + _worldPosition.Value.AsVector3());
         }
 
         #region Entity Movement management
@@ -165,10 +176,10 @@ namespace Utopia.Entities
                 _worldPosition.Value += _entityHeadXAxis * _moveDelta;
 
             if (_actions.isTriggered(Actions.Move_Down))
-                _worldPosition.Value += MVector3.Down * _moveDelta;
+                _worldPosition.Value += DVector3.Down * _moveDelta;
 
             if (_actions.isTriggered(Actions.Move_Up))
-                _worldPosition.Value += MVector3.Up * _moveDelta;
+                _worldPosition.Value += DVector3.Up * _moveDelta;
         }
 
         private void WalkingFirstPerson(ref GameTime TimeSpend)
@@ -205,7 +216,7 @@ namespace Utopia.Entities
             }
         }
 
-        private void Rotate(float headingDegrees, float pitchDegrees, float rollDegrees, EntityDisplacementModes mode)
+        private void Rotate(double headingDegrees, double pitchDegrees, double rollDegrees, EntityDisplacementModes mode)
         {
             if (headingDegrees == 0 && pitchDegrees == 0 && rollDegrees == 0) return;
 
@@ -216,7 +227,7 @@ namespace Utopia.Entities
             Rotate(headingDegrees, pitchDegrees, mode);
         }
 
-        private void Rotate(float headingDegrees, float pitchDegrees, EntityDisplacementModes mode)
+        private void Rotate(double headingDegrees, double pitchDegrees, EntityDisplacementModes mode)
         {
             _accumPitchDegrees += pitchDegrees;
 
@@ -232,23 +243,23 @@ namespace Utopia.Entities
                 _accumPitchDegrees = -90.0f;
             }
 
-            float heading = MathHelper.ToRadians(headingDegrees);
-            float pitch = MathHelper.ToRadians(pitchDegrees);
+            double heading = MathHelper.ToRadians(headingDegrees);
+            double pitch = MathHelper.ToRadians(pitchDegrees);
             Quaternion rotation;
 
-            // Rotate the camera about the world Y axis.
+            // Rotate the camera around the world Y axis.
             if (heading != 0.0f)
             {
-                Quaternion.RotationAxis(ref MVector3.Up, heading, out rotation);
+                Quaternion.RotationAxis(ref MVector3.Up, (float)heading, out rotation);
                 _lookAtDirection.Value = rotation * _lookAtDirection.Value;
                 _moveDirection.Value = rotation * _moveDirection.Value;
                 _moveDirection.Value.Normalize();
             }
 
-            // Rotate the camera about its local X axis.
+            // Rotate the camera around its local X axis.
             if (pitch != 0.0f)
             {
-                Quaternion.RotationAxis(ref MVector3.Right, pitch, out rotation);
+                Quaternion.RotationAxis(ref MVector3.Right, (float)pitch, out rotation);
                 _lookAtDirection.Value = _lookAtDirection.Value * rotation;
             }
             _lookAtDirection.Value.Normalize();
@@ -261,11 +272,12 @@ namespace Utopia.Entities
         {
             Matrix.RotationQuaternion(ref _lookAtDirection.Value, out _headRotation);
 
-            _entityHeadXAxis = new Vector3(_headRotation.M11, _headRotation.M21, _headRotation.M31);
-            _entityHeadYAxis = new Vector3(_headRotation.M12, _headRotation.M22, _headRotation.M32);
-            _entityHeadZAxis = new Vector3(_headRotation.M13, _headRotation.M23, _headRotation.M33);
+            _entityHeadXAxis = new DVector3(_headRotation.M11, _headRotation.M21, _headRotation.M31);
+            _entityHeadYAxis = new DVector3(_headRotation.M12, _headRotation.M22, _headRotation.M32);
+            _entityHeadZAxis = new DVector3(_headRotation.M13, _headRotation.M23, _headRotation.M33);
 
-            _lookAt = new Vector3(-_entityHeadZAxis.X, -_entityHeadZAxis.Y, -_entityHeadZAxis.Z);
+
+            _lookAt = new DVector3(-_entityHeadZAxis.X, -_entityHeadZAxis.Y, -_entityHeadZAxis.Z);
             _lookAt.Normalize();
         }
 
@@ -273,13 +285,12 @@ namespace Utopia.Entities
         {
             Matrix.RotationQuaternion(ref _moveDirection.Value, out _entityRotation);
 
-            _entityXAxis = new Vector3(_entityRotation.M11, _entityRotation.M21, _entityRotation.M31);
-            _entityYAxis = new Vector3(_entityRotation.M12, _entityRotation.M22, _entityRotation.M32);
-            _entityZAxis = new Vector3(_entityRotation.M13, _entityRotation.M23, _entityRotation.M33);
+            _entityXAxis = new DVector3(_entityRotation.M11, _entityRotation.M21, _entityRotation.M31);
+            _entityYAxis = new DVector3(_entityRotation.M12, _entityRotation.M22, _entityRotation.M32);
+            _entityZAxis = new DVector3(_entityRotation.M13, _entityRotation.M23, _entityRotation.M33);
         }
         #endregion
 
         #endregion
-
     }
 }

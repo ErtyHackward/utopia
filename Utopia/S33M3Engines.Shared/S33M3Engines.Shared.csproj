@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Delegates\D3DEngineDelegates.cs" />
+    <Compile Include="Math\DVector3.cs" />
     <Compile Include="Math\MathHelper.cs" />
     <Compile Include="Math\Noises\NoiseMath.cs" />
     <Compile Include="Math\Noises\SimplexNoise.cs" />

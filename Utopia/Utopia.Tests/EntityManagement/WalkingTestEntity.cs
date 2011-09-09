@@ -6,6 +6,7 @@ using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Management;
 using Utopia.Shared.ClassExt;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Tests.EntityManagement
 {
@@ -61,7 +62,7 @@ namespace Utopia.Tests.EntityManagement
 
         void AreaEntityMoved(object sender, EntityMoveEventArgs e)
         {
-            if (Vector3.Distance(Position, e.Entity.Position) < 10)
+            if (DVector3.Distance(Position, e.Entity.Position) < 10)
             {
                 if (!Entities.Contains(e.Entity))
                 {
@@ -85,13 +86,13 @@ namespace Utopia.Tests.EntityManagement
             _lastUpdate = gameTime;
 
             var previousPosition = Position;
-            Position = new Vector3(Position.X + MoveVector.X, Position.Y, Position.Z + MoveVector.Y);
+            Position = new DVector3(Position.X + MoveVector.X, Position.Y, Position.Z + MoveVector.Y);
 
-            if (!WalkRange.Contains(Position))
+            if (!WalkRange.Contains(Position.AsVector3()))
             {
                 // reverse the vector
                 MoveVector = new Vector2(-MoveVector.X, -MoveVector.Y);
-                Position = new Vector3(Position.X + MoveVector.X, Position.Y, Position.Z + MoveVector.Y);
+                Position = new DVector3(Position.X + MoveVector.X, Position.Y, Position.Z + MoveVector.Y);
             }
             else OnPositionChanged(new EntityMoveEventArgs { Entity = this, PreviousPosition = previousPosition });
         }

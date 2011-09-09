@@ -4,6 +4,7 @@ using S33M3Engines.Buffers;
 using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using Utopia.Shared.Chunks.Entities.Concrete;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities.Voxel
 {
@@ -44,7 +45,7 @@ namespace Utopia.Entities.Voxel
             Update();
         }
 
-        public Vector3 Position
+        public DVector3 Position
         {
             get { return VoxelEntity.Position; }
             set { VoxelEntity.Position = value; }

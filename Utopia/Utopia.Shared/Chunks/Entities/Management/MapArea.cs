@@ -183,7 +183,7 @@ namespace Utopia.Shared.Chunks.Entities.Management
             OnEntityMoved(e);
             
             // we need to tell area manager that entity leaves us, to put it into new area
-            if (!_rectangle.Contains(e.Entity.Position))
+            if (!_rectangle.Contains(e.Entity.Position.AsVector3()))
             {
                 OnEntityLeave(new EntityLeaveAreaEventArgs {Entity = e.Entity, PreviousPosition = e.PreviousPosition});
                 RemoveEntity(e.Entity);

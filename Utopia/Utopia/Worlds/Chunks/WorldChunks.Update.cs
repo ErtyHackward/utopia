@@ -9,6 +9,7 @@ using Utopia.Worlds.Chunks.ChunkWrapper;
 using System.Threading;
 using Utopia.Shared.Chunks;
 using Amib.Threading;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Worlds.Chunks
 {

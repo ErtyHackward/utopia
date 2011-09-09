@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using SharpDX;
 using Utopia.Net.Interfaces;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Net.Messages
 {
@@ -18,7 +19,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Current position of the entity
         /// </summary>
-        private Vector3 _position;
+        private DVector3 _position;
 
         /// <summary>
         /// Gets message id
@@ -40,7 +41,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Gets or sets a current position of the player
         /// </summary>
-        public Vector3 Position
+        public DVector3 Position
         {
             get { return _position; }
             set { _position = value; }

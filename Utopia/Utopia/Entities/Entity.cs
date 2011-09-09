@@ -6,6 +6,7 @@ using S33M3Engines.D3D;
 using SharpDX;
 using S33M3Engines.Struct;
 using S33M3Engines.Maths;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities
 {

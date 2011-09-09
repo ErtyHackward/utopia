@@ -18,6 +18,7 @@ using Utopia.Shared.Structs;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using Utopia.Shared.Chunks;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {

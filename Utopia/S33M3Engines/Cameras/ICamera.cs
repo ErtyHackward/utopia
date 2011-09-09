@@ -9,6 +9,7 @@ using S33M3Engines.Maths;
 using SharpDX;
 using SharpDX.Direct3D11;
 using S33M3Engines.Maths.Graphics;
+using S33M3Engines.Shared.Math;
 
 namespace S33M3Engines.Cameras
 {

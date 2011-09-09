@@ -45,6 +45,7 @@ using Utopia.Network;
 using Utopia.Worlds.Storage;
 using Utopia.Action;
 using Utopia.InputManager;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia
 {
@@ -175,8 +176,6 @@ namespace Utopia
             _actionManager = IoCContainer.Get<ActionsManager>();
             DXStates.CreateStates(_d3dEngine);  //Create all States that could by used by the game.
 
-            
-
             //-- Get Camera --
             ICamera camera = IoCContainer.Get<ICamera>(); // Create a firstPersonCamera viewer
 
@@ -272,6 +271,9 @@ namespace Utopia
 
                 GameComponents.Add(server);
             }
+
+            //VisualDynamicEntity Player = IoCContainer.Get<VisualDynamicEntity>(new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)));
+            //camera.CameraPlugin = Player;
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 
