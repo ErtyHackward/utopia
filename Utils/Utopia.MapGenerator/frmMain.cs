@@ -109,11 +109,6 @@ namespace Utopia.MapGenerator
                     {
                         Color col = GetPolygonColor(polygon);
 
-                        //if (_selectedPolygon != null && _selectedPolygon.Neighbors.Contains(polygon))
-                        //{
-                        //    g.FillPolygon(Brushes.Coral, polygon.points);
-                        //}
-                        //else 
                         g.FillPolygon(new SolidBrush(col), polygon.points); 
 
                         if (bordersCheckBox.Checked)
@@ -121,7 +116,7 @@ namespace Utopia.MapGenerator
                     }
                     
                 }
-
+                
                 foreach (var polygon in map)
                 {
                     // draw rivers
@@ -134,9 +129,13 @@ namespace Utopia.MapGenerator
                             //p.EndCap = LineCap.ArrowAnchor;
                             
                             if(edge.StartCorner.Elevation > edge.EndCorner.Elevation)
-                                g.DrawLine(p,edge.Start, edge.End);
-                            else
-                                g.DrawLine(p, edge.End, edge.Start);
+                            {
+                                g.DrawLines(p,edge.points);
+                            }
+
+                            //g.DrawLine(p,edge.Start, edge.End);
+                            //else
+                            //    g.DrawLine(p, edge.End, edge.Start);
                         }
                     }
                 }
@@ -401,6 +400,8 @@ namespace Utopia.MapGenerator
                 }
             }
 
+
+
             DrawGraph(_map);
         }
 
@@ -533,7 +534,7 @@ namespace Utopia.MapGenerator
             {
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
-                    var val = noise.GetNoise2DValue(x, y, 4, 0.8);
+                    var val = noise.GetNoise2DValue(x, y, (int)octavesNumeric.Value, (double)persistanceNumeric.Value);
 
                     var col = 255 / val.MaxValue * val.Value - (255/2) ;
 
@@ -548,15 +549,51 @@ namespace Utopia.MapGenerator
                     if (col > 127)
                     {
                         //earth
-                        bmp.SetPixel(x, y, Color.FromArgb((byte)(100-col), (byte)(80-col), (byte)(50-col)));
+                        bmp.SetPixel(x, y, Color.White); // Color.FromArgb((byte)(100-col), (byte)(80-col), (byte)(50-col)));
                     }
-                    else bmp.SetPixel(x, y, Color.FromArgb((byte)col, (byte)col, (byte)255));
+                    else bmp.SetPixel(x, y, Color.Black); // Color.FromArgb((byte)col, (byte)col, (byte)255));
 
                 }
             }
-            
+
+            var xi = pictureBox1.Width / 2;
+            var yi = 0;
+            // find point
+            for (yi = 0; yi < pictureBox1.Height; yi++)
+            {
+                var val = bmp.GetPixel(xi, yi).R;
+                if (val > 127)
+                {
+                    
+                    xi--;
+                }
+                else
+                {
+
+                    break;
+                }
+            }
+
+            if (xi != pictureBox1.Width / 2)
+            {
+                for (int y = 0; y < yi; y++)
+                {
+                    MakeWhite(bmp, pictureBox1.Width / 2, y);
+                }
+            }
+
+
+
             pictureBox1.Image = bmp;
 
+        }
+
+        private void MakeWhite(Bitmap bmp, int  x, int y)
+        {
+            for (int i = 0; i < x; i++)
+            {
+                bmp.SetPixel(i,y, Color.Black);
+            }
         }
 
         private void button2_Click_1(object sender, EventArgs e)
@@ -590,6 +627,54 @@ namespace Utopia.MapGenerator
             }
 
             pictureBox1.Image = bmp;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            GraphicsPath p = new GraphicsPath();
+
+            var pointsCount = 6;
+
+            var startPoint = new Point(pictureBox1.Width / 2, 0);
+            var endpoint = new Point(pictureBox1.Width / 2, pictureBox1.Height);
+
+            var points = new Point[pointsCount];
+
+            points[0] = startPoint;
+            points[pointsCount - 1] = endpoint;
+
+            var ystep = pictureBox1.Height / (pointsCount);
+
+            Random r = new Random();
+
+
+
+            var lastX = pictureBox1.Width / 2 + r.Next(-40, 40);
+
+            for (int i = 1; i < pointsCount-1; i++)
+            {
+                points[i] = new Point(lastX + r.Next(-40, 40), (i ) * ystep);
+            }
+
+            p.AddCurve(points);
+
+            Bitmap bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+
+            using (var g = Graphics.FromImage(bmp))
+            {
+                //g.ScaleTransform(1,-0.8f);
+                //g.TranslateTransform(0, + 150);
+
+                g.FillPath(Brushes.Black, p);
+
+                foreach (var point in points)
+                {
+                    g.DrawEllipse(Pens.Red, point.X - 2, point.Y - 2, 4, 4);
+                }
+
+            }
+            pictureBox1.Image = bmp;
+
         }
 
 
