@@ -20,6 +20,12 @@ namespace S33M3Physics.Verlet
         private BoundingBox _boundingBox;
         private bool _isRunning;
 
+        public bool IsRunning
+        {
+            get { return _isRunning; }
+            set { _isRunning = value; }
+        }
+
         bool _subjectToGravity = true;
         bool _withCollisionBounsing = false;
         bool _onGround;

@@ -5,6 +5,8 @@ using System.Text;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Chunks.Entities.Interfaces;
+using S33M3Engines.Shared.Math;
 namespace Utopia.Shared.World
 {
     public class VisualWorldParameters
@@ -24,9 +26,15 @@ namespace Utopia.Shared.World
         public int WorldVisibleSizeXYZ;
         public Location2<int> WorldChunkStartUpPosition;
 
-        public VisualWorldParameters(WorldParameters worldParameters)
+        public VisualWorldParameters(WorldParameters worldParameters, IDynamicEntity player)
         {
             WorldParameters = worldParameters;
+
+            //Find the chunk location
+            int X = (MathHelper.Fastfloor(player.Position.X / 16) * 16) - ((worldParameters.WorldChunkSize.X / 2) * 16);
+            int Z = (MathHelper.Fastfloor(player.Position.Z / 16) * 16) - ((worldParameters.WorldChunkSize.Z / 2) * 16);
+
+            WorldChunkStartUpPosition = new Location2<int>(X, Z);
         }
 
         private void newWorldParameters()

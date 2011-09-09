@@ -159,6 +159,7 @@ namespace Utopia.Network
             else
             {
                 ServerConnection.Authenticate();
+                ServerConnection.FetchPendingMessages(1);
             }
         }
 

@@ -46,6 +46,7 @@ using Utopia.Worlds.Storage;
 using Utopia.Action;
 using Utopia.InputManager;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia
 {
@@ -63,12 +64,13 @@ namespace Utopia
         private IChunkStorageManager _chunkStorageManager;
         private ActionsManager _actionManager;
         private EntityMessageTranslator _entityMessageTranslator;
+        private IDynamicEntity _player;
 
         //Debug tools
         private FPS _fps; //FPS computing object
 
         //Game components
-        private Entities.Living.ILivingEntity _player;
+        //private Entities.Living.ILivingEntity _player;
        
         private GameStatesManager _gameStateManagers;
 
@@ -76,7 +78,7 @@ namespace Utopia
         private DebugInfo _debugInfo;
 
         //TODO validate the way to access player properties from other components / eventually remove casts
-        public Player Player {get {return (Player) _player;}}
+        //public Player Player {get {return (Player) _player;}}
 
         private IKernel _iocContainer;
 
@@ -153,8 +155,6 @@ namespace Utopia
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
             Location2<int> worldStartUp = new Location2<int>(0 * AbstractChunk.ChunkSize.X, 0 * AbstractChunk.ChunkSize.Z);
-            //Debug Lighting near position 350;86;248
-            //Location2<int> worldStartUp = new Location2<int>(20 * AbstractChunk.ChunkSize.X, 15 * AbstractChunk.ChunkSize.Z);
             //===========================================================================================
 
             //Creating the IoC Bindings
@@ -193,14 +193,15 @@ namespace Utopia
 
             //-- Create Entity Player --
 
+
             //TODO : Create an entity manager that will be responsible to render the various entities instead of leaving each entity to render itself.
-            _player = IoCContainer.Get<ILivingEntity>(new ConstructorArgument("Name", ClientSettings.Current.Settings.GameParameters.NickName),
-                                                      new ConstructorArgument("startUpWorldPosition", new DVector3((worldParam.WorldChunkSize.X * AbstractChunk.ChunkSize.X / 2.0) + worldStartUp.X, 90, (worldParam.WorldChunkSize.Z * AbstractChunk.ChunkSize.Z / 2.0f) + worldStartUp.Z)),
-                                                      new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)),
-                                                      new ConstructorArgument("walkingSpeed", 5f),
-                                                      new ConstructorArgument("flyingSpeed", 30f),
-                                                      new ConstructorArgument("headRotationSpeed", 10f));
-            ((Player)_player).Mode = LivingEntityMode.FreeFirstPerson;
+            //_player = IoCContainer.Get<ILivingEntity>(new ConstructorArgument("Name", ClientSettings.Current.Settings.GameParameters.NickName),
+            //                                          new ConstructorArgument("startUpWorldPosition", new DVector3((worldParam.WorldChunkSize.X * AbstractChunk.ChunkSize.X / 2.0) + worldStartUp.X, 90, (worldParam.WorldChunkSize.Z * AbstractChunk.ChunkSize.Z / 2.0f) + worldStartUp.Z)),
+            //                                          new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)),
+            //                                          new ConstructorArgument("walkingSpeed", 5f),
+            //                                          new ConstructorArgument("flyingSpeed", 30f),
+            //                                          new ConstructorArgument("headRotationSpeed", 10f));
+            //((Player)_player).Mode = LivingEntityMode.FreeFirstPerson;
 
             //Storage Manager
             _chunkStorageManager = IoCContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false),
@@ -209,19 +210,23 @@ namespace Utopia
             //Create the Entity Renderer
             //A simple object wrapping a collectin of Entities, and wiring them for update/draw/...
             _entityRender = IoCContainer.Get<EntityRenderer>();
-            _entityRender.Entities.Add(_player); //Add the main player to Entities
+            //_entityRender.Entities.Add(_player); //Add the main player to Entities
             _entityRender.UpdateOrder = 0;
             GameComponents.Add(_entityRender);
 
-            //GameComponents.Add(IoCContainer.Get<InputsManager>());
+            GameComponents.Add(IoCContainer.Get<InputsManager>());
 
             GameComponents.Add(IoCContainer.Get<ItemRenderer>());
 
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
-            camera.CameraPlugin = _player;
+            //camera.CameraPlugin = _player;
             _camManager.UpdateOrder = 1;
             GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
 
+            //The Player !
+            VisualDynamicEntity Player = IoCContainer.Get<VisualDynamicEntity>(new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)));
+            camera.CameraPlugin = Player;
+            GameComponents.Add(Player);
 
             //-- Clock --
             _worldClock = IoCContainer.Get<IClock>(new ConstructorArgument("clockSpeed", 1f),
@@ -256,7 +261,7 @@ namespace Utopia
          
             _debugInfo = new DebugInfo(_d3dEngine);
             _debugInfo.Activated = true;
-            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), _player, IoCContainer.Get<IWorldChunks>());
+            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>());
             GameComponents.Add(_debugInfo);
 
             GameConsole.Initialize(_d3dEngine);
@@ -272,8 +277,7 @@ namespace Utopia
                 GameComponents.Add(server);
             }
 
-            //VisualDynamicEntity Player = IoCContainer.Get<VisualDynamicEntity>(new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)));
-            //camera.CameraPlugin = Player;
+
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 

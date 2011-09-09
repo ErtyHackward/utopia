@@ -50,8 +50,10 @@ namespace Utopia.Worlds.Chunks
             _terraEffect.CBPerFrame.IsDirty = true;
             _sunColorBase = GetSunColor();
 
-            if (_player.HeadInsideWater) _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
-            else _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
+            //if (_player.HeadInsideWater) _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
+            //else _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
+
+            _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
 
             DrawSolidFaces();
 
@@ -110,8 +112,10 @@ namespace Utopia.Worlds.Chunks
 
             _liquidEffect.Begin();
             _liquidEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
-            if (_player.HeadInsideWater) _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
-            else _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
+            //if (_player.HeadInsideWater) _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
+            //else _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
+            _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
+
             _liquidEffect.CBPerFrame.IsDirty = true;
 
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)

@@ -274,13 +274,13 @@ namespace Utopia.Worlds.Chunks
 
             // Get World Border line ! => Highest and lowest X et Z chunk components
             //Compute Player position against WorldRange
-            var resultmin = new DVector3(_player.WorldPosition.Value.X - VisualWorldParameters.WorldRange.Min.X,
-                                        _player.WorldPosition.Value.Y - VisualWorldParameters.WorldRange.Min.Y,
-                                        _player.WorldPosition.Value.Z - VisualWorldParameters.WorldRange.Min.Z);
+            var resultmin = new DVector3(_player.Position.X - VisualWorldParameters.WorldRange.Min.X,
+                                        _player.Position.Y - VisualWorldParameters.WorldRange.Min.Y,
+                                        _player.Position.Z - VisualWorldParameters.WorldRange.Min.Z);
 
-            var resultmax = new DVector3(VisualWorldParameters.WorldRange.Max.X - _player.WorldPosition.Value.X,
-                                        VisualWorldParameters.WorldRange.Max.Y - _player.WorldPosition.Value.Y,
-                                        VisualWorldParameters.WorldRange.Max.Z - _player.WorldPosition.Value.Z);
+            var resultmax = new DVector3(VisualWorldParameters.WorldRange.Max.X - _player.Position.X,
+                                        VisualWorldParameters.WorldRange.Max.Y - _player.Position.Y,
+                                        VisualWorldParameters.WorldRange.Max.Z - _player.Position.Z);
 
             float wrapOrder = float.MaxValue;
             ChunkWrapType operation = ChunkWrapType.Z_Plus1;

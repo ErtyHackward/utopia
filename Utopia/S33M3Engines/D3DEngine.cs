@@ -108,7 +108,6 @@ namespace S33M3Engines
 
             //Link the mouse to the windows handle
             S33M3Engines.InputHandler.Mouse.mouseMessageHooker.WindowHandle = D3DEngine.WindowHandle;
-
         }
 
         //Remove default F10 (Open menu) Form key push !
