@@ -103,6 +103,16 @@ namespace S33M3Engines.Shared.Math
             return (degrees * 0.01745329f);
         }
 
+        public static double ToDegrees(double radians)
+        {
+            return (radians * 57.29578);
+        }
+
+        public static double ToRadians(double degrees)
+        {
+            return (degrees * 0.01745329);
+        }
+
         public static float WrapAngle(float angle)
         {
             angle = (float)System.Math.IEEERemainder((double)angle, 6.2831854820251465);

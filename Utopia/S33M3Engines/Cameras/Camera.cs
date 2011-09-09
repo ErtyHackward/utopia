@@ -9,6 +9,7 @@ using S33M3Engines.Struct;
 using S33M3Engines.WorldFocus;
 using SharpDX;
 using SharpDX.Direct3D11;
+using S33M3Engines.Shared.Math;
 
 #endregion
 

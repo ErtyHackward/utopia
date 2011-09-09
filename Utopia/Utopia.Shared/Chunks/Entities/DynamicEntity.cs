@@ -2,6 +2,7 @@
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Management;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -74,7 +75,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// </summary>
         public EntityDisplacementModes DisplacementMode { get; set; }
 
-        public override SharpDX.Vector3 Position
+        public override DVector3 Position
         {
             get
             {

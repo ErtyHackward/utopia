@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX;
 using Utopia.Server.Managers;
 using Utopia.Shared.Chunks.Entities.Management;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Tests.EntityManagement
 {
@@ -36,7 +37,7 @@ namespace Utopia.Tests.EntityManagement
                     if (entity.MoveVector.X != 0f || entity.MoveVector.Y != 0f) break; 
                 }
                 // random entity position
-                entity.Position = new Vector3(r.Next(-MapArea.AreaSize.X, MapArea.AreaSize.X), 0, r.Next(-MapArea.AreaSize.Z, MapArea.AreaSize.Z));
+                entity.Position = new DVector3(r.Next(-MapArea.AreaSize.X, MapArea.AreaSize.X), 0, r.Next(-MapArea.AreaSize.Z, MapArea.AreaSize.Z));
                 _manager.AddEntity(entity);
             }
 

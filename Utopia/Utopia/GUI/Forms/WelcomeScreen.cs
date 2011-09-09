@@ -47,9 +47,11 @@ namespace Utopia.GUI.Forms
         }
 
         void btConnect_Click(object sender, EventArgs e)
-        {            
-            _server.BindingServer(_multiChild.txtSrvAdress.Text, 4815);
-            RegisterEvents();
+        {
+            if (_server.BindingServer(_multiChild.txtSrvAdress.Text, 4815))
+            {
+                RegisterEvents();
+            }
             _server.ConnectToServer(_multiChild.txtUser.Text, _multiChild.txtPassword.Text, _multiChild.chkRegistering.Checked);
         }
 

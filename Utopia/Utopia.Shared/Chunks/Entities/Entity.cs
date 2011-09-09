@@ -2,6 +2,7 @@
 using SharpDX;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -28,7 +29,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Gets or sets entity position
         /// </summary>
-        public virtual Vector3 Position { get; set; }
+        public virtual DVector3 Position { get; set; }
 
         /// <summary>
         /// Gets or sets entity rotation information
@@ -52,10 +53,10 @@ namespace Utopia.Shared.Chunks.Entities
             Type = (EntityType)reader.ReadByte();
             EntityId = reader.ReadUInt32();
 
-            Vector3 position;
-            position.X = reader.ReadSingle();
-            position.Y = reader.ReadSingle();
-            position.Z = reader.ReadSingle();
+            DVector3 position;
+            position.X = reader.ReadDouble();
+            position.Y = reader.ReadDouble();
+            position.Z = reader.ReadDouble();
             Position = position;
 
             Quaternion quaternion;

@@ -11,6 +11,7 @@ using S33M3Engines.Maths.Graphics;
 using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.Struct;
 using S33M3Engines.WorldFocus;
+using S33M3Engines.Shared.Math;
 
 namespace S33M3Engines.Cameras
 {

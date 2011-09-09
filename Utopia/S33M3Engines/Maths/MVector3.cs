@@ -5,6 +5,7 @@ using System.Text;
 using SharpDX;
 using S33M3Engines.Struct;
 using Utopia.Shared.Structs;
+using S33M3Engines.Shared.Math;
 
 namespace S33M3Engines.Maths
 {

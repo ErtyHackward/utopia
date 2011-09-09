@@ -12,6 +12,9 @@ namespace Utopia.Shared.Chunks.Entities
         public PlayerCharacter()
         {
             Toolbar = new SlotContainer<ToolbarSlot>(new Location2<byte>(10,1));
+
+            MoveSpeed = 5f;
+            RotationSpeed = 10f;
         }
 
         public SlotContainer<ToolbarSlot> Toolbar { get; set; }

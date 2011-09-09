@@ -1,5 +1,6 @@
 using System.IO;
 using SharpDX;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.Chunks.Entities.Interfaces
 {
@@ -8,7 +9,7 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// <summary>
         /// Gets or sets entity position
         /// </summary>
-        Vector3 Position { get; set; }
+        DVector3 Position { get; set; }
 
         /// <summary>
         /// Gets or sets entity rotation information

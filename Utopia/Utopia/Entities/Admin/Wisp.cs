@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using S33M3Engines.Maths;
 using S33M3Engines;
 using Utopia.Action;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities.Admin
 {

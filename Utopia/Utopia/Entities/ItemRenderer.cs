@@ -72,7 +72,7 @@ namespace Utopia.Entities
                 item.Blocks = new byte[16, 16, 16];
                 //item.RandomFill(5);//would come filled from server
                 item.PlainCubeFill();
-                item.Position = _camManager.ActiveCamera.WorldPosition.AsVector3();
+                item.Position = _camManager.ActiveCamera.WorldPosition;
 
                 Items.Add(new VisualEntity(_voxelMeshFactory, item));
             }
@@ -115,7 +115,7 @@ namespace Utopia.Entities
                 }
 
                 Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
-                               Matrix.Translation(item.Position);
+                               Matrix.Translation(item.Position.AsVector3());
                 world = _worldFocusManager.CenterOnFocus(ref world);
                 _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
                 _itemEffect.CBPerDraw.IsDirty = true;

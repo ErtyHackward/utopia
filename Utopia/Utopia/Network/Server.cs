@@ -49,9 +49,9 @@ namespace Utopia.Network
             Connected = false;
         }
 
-        public void BindingServer(string address, int port)
+        public bool BindingServer(string address, int port)
         {
-            if (Address == address && Port == port) return;
+            if (Address == address && Port == port) return false;
             if (ServerConnection != null && ServerConnection.ConnectionStatus == ConnectionStatus.Connected) ServerConnection.Disconnect();
 
             Address = address;
@@ -71,6 +71,8 @@ namespace Utopia.Network
             ServerConnection.MessageEntityIn += _server_MessagePlayerIn;
             ServerConnection.MessageEntityOut += _server_MessagePlayerOut;
             ServerConnection.MessagePosition += _server_MessagePosition;
+
+            return true;
         }
 
         #region Events Handlings Methods

@@ -113,7 +113,6 @@
     <Compile Include="D3D\Tools\Resource.cs" />
     <Compile Include="GameStates\GameStatesManager.cs" />
     <Compile Include="InputHandler\KeyboardHelper\KeyboardBuffer.cs" />
-    <Compile Include="Maths\DVector3.cs" />
     <Compile Include="Maths\GMathHelper.cs" />
     <Compile Include="Sprites\SpriteFont.cs" />
     <Compile Include="Sprites\SpriteRenderer.cs" />
