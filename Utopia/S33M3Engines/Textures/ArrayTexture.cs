@@ -15,20 +15,31 @@ namespace S33M3Engines.Textures
         /// Create A shaderViewresource on a TextureArray object created from image files
         /// </summary>
         /// <param name="device">The graphic device</param>
-        /// <param name="FileNames">The files names that will be used to create the array, this filename can use * or ?, ... the file name will be sorted by name for the array index</param>
-        /// <param name="MIPfilterFlag">Filter used to create the mipmap lvl from the loaded images</param>
-        /// <param name="ArrayTextureView">The create textureArray view that can directly be used inside shaders</param>
-        public static void CreateTexture2DFromFiles(Device device, string Directory, string FileNames, FilterFlags MIPfilterFlag, out ShaderResourceView TextureArrayView)
+        /// <param name="directories">where to look</param>
+        /// <param name="fileNames">The files names that will be used to create the array, this filename can use * or ?, ... the file name will be sorted by name for the array index</param>
+        /// <param name="miPfilterFlag">Filter used to create the mipmap lvl from the loaded images</param>
+        /// <param name="textureArrayView">The created textureArray view that can directly be used inside shaders</param>       
+        public static void CreateTexture2DFromFiles(Device device, string[] directories, string fileNames, FilterFlags miPfilterFlag, out ShaderResourceView textureArrayView)
         {
-            DirectoryInfo dinfo = new DirectoryInfo(Directory);
             List<string> fileCollection = new List<string>();
-            foreach (FileInfo fi in dinfo.GetFiles(FileNames).OrderBy(x => x.Name))
+            foreach (var dir in directories)
             {
-                fileCollection.Add(Directory + fi.Name);
-            }
+                DirectoryInfo dinfo = new DirectoryInfo(dir);
+               
+                foreach (FileInfo fi in dinfo.GetFiles(fileNames).OrderBy(x => x.Name))
+                {
+                    fileCollection.Add(dir + fi.Name);
+                }
 
-            CreateTexture2DFromFiles(device, fileCollection.ToArray(), MIPfilterFlag, out TextureArrayView);
+            }                      
+            CreateTexture2DFromFiles(device, fileCollection.ToArray(), miPfilterFlag, out textureArrayView);
         }
+
+         public static void CreateTexture2DFromFiles(Device device, string directory, string fileNames, FilterFlags miPfilterFlag, out ShaderResourceView textureArrayView)
+         {
+             CreateTexture2DFromFiles(device, new string[] {directory}, fileNames, miPfilterFlag, out textureArrayView);
+         }
+
 
         /// <summary>
         /// Create A shaderViewresource on a TextureArray object created from image files

@@ -79,7 +79,7 @@ namespace Utopia.Entities.Voxel
           
             //TODO indices : good for perf & ram 
 
-            int cubeid = 4;
+            int cubeid = blockType;
 
             int face = (int) faceDir;
             byte tex = VisualCubeProfile.CubesProfile[cubeid].Textures[face];
