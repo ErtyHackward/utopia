@@ -5,7 +5,11 @@ using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.D3D.Effects.Basics;
+using S33M3Engines.Shared.Sprites;
+using SharpDX;
+using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
+using Utopia.Worlds.Cubes;
 
 namespace Utopia.Editor
 {
@@ -26,10 +30,12 @@ namespace Utopia.Editor
             //TODO remove all magic hardcoded numbers
 
             this.Children.Add(InitToolBar());
-            this.Children.Add(InitPalette());
+            this.Children.Add(InitColorPalette());
+            this.Children.Add(InitTexturePalette());
+
         }
 
-        private WindowControl InitPalette()
+        private WindowControl InitColorPalette()
         {
             const int rows = 16;
             const int cols = 4;
@@ -55,6 +61,43 @@ namespace Utopia.Editor
                     btn.Color = color;
                     int associatedindex = index; //for access inside closure 
                     btn.Pressed += (sender, e) => SelectedColor = (byte) associatedindex;
+                    palette.Children.Add(btn);
+                    index++;
+                }
+            }
+            return palette;
+        }
+
+      
+
+        private WindowControl InitTexturePalette()
+        {
+           ShaderResourceView arrayResourceView = _editorComponent._texture;
+
+           int count = arrayResourceView.Description.Texture2DArray.ArraySize;
+
+            const int rows = 16;
+            const int cols = 4;
+            const int btnSize = 20;
+
+            const int y0 = 20;
+            const int x0 = 0;
+
+            WindowControl palette = new WindowControl();
+            palette.Bounds = new UniRectangle(100, 0, (cols) * btnSize, (rows + 1) * btnSize);
+
+            int index = 0;
+            for (int x = 0; x < cols; x++)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    if (index == count) break;
+
+                    PaletteButtonControl btn = new PaletteButtonControl();
+                    btn.Bounds = new UniRectangle(x0 + x * btnSize, y0 + y * btnSize, btnSize, btnSize);
+                    btn.Texture = new SpriteTexture(btnSize, btnSize, arrayResourceView, Vector2.Zero);
+                    int associatedindex = index; //for access inside closure 
+                    btn.Pressed += (sender, e) => SelectedColor = (byte)associatedindex;
                     palette.Children.Add(btn);
                     index++;
                 }

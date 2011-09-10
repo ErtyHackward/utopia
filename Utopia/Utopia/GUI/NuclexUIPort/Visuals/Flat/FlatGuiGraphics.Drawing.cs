@@ -147,7 +147,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
               ref bounds, ref offset
             );
 
-            this.spriteRenderer.RenderBatch(customTex, destinationRegion, new SharpDX.Rectangle(0 ,0 , customTex.TextureDescr.Width, customTex.TextureDescr.Height) ,Color.White);
+            this.spriteRenderer.RenderBatch(customTex, destinationRegion, new SharpDX.Rectangle(0 ,0 , customTex.Width, customTex.Height) ,Color.White);
         }
 
         public void DrawCustomTexture(SpriteTexture customTex, Rectangle textureSourceRect, RectangleF bounds)
