@@ -41,6 +41,14 @@ namespace Utopia.Worlds.Cubes
                 profile.Tex_Back = byte.Parse(cubeProfil.ItemArray[dt.Columns["Tex_Back"].Ordinal].ToString());
                 profile.Tex_Left = byte.Parse(cubeProfil.ItemArray[dt.Columns["Tex_Left"].Ordinal].ToString());
                 profile.Tex_Right = byte.Parse(cubeProfil.ItemArray[dt.Columns["Tex_Right"].Ordinal].ToString());
+
+                profile.Textures[(int)CubeFace.Back] = profile.Tex_Back;
+                profile.Textures[(int)CubeFace.Front] = profile.Tex_Front;
+                profile.Textures[(int)CubeFace.Bottom] = profile.Tex_Bottom;
+                profile.Textures[(int)CubeFace.Top] = profile.Tex_Top;
+                profile.Textures[(int)CubeFace.Left] = profile.Tex_Left;
+                profile.Textures[(int)CubeFace.Right] = profile.Tex_Right;
+
                 profile.IsBlockingLight = cubeProfil.ItemArray[dt.Columns["IsBlockingLight"].Ordinal].ToString() == "true";
                 profile.IsPickable = cubeProfil.ItemArray[dt.Columns["IsPickable"].Ordinal].ToString() == "true";
                 profile.IsSolidToEntity = cubeProfil.ItemArray[dt.Columns["IsSolidToEntity"].Ordinal].ToString() == "true";
@@ -127,5 +135,6 @@ namespace Utopia.Worlds.Cubes
         public enuLiquidType LiquidType;
         //Texture id foreach face
         public byte Tex_Front, Tex_Back, Tex_Left, Tex_Right, Tex_Top, Tex_Bottom;
+        public byte[] Textures = new byte[6];
     }
 }

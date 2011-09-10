@@ -44,6 +44,14 @@ namespace S33M3Engines.Struct.Vertex
             this.Position.W = textureArrayId;
         }
 
+        public VertexCubeSolid(ByteVector4 position, Byte textureArrayId, ref ByteColor lighting, ref ByteVector4 vertexInfo)
+        {
+            this.VertexInfo = vertexInfo;
+            this.Color = lighting;
+            this.Position = position;
+            this.Position.W = textureArrayId;
+        }
+
         public VertexCubeSolid(ref ByteVector4 position, Byte textureArrayId, ref ByteColor lighting, ref ByteVector4 vertexInfo)
         {
             this.VertexInfo = vertexInfo;
