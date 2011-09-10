@@ -173,7 +173,7 @@ namespace S33M3Engines.Sprites
             _effect.Begin();
 
             _effect.CBPerDraw.Values.ViewportSize = new Vector2(_d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height);
-            if (sourceRectInTextCoord) _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            if (sourceRectInTextCoord) _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.Width, spriteTexture.Height);
             else _effect.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
             
             _effect.CBPerDraw.IsDirty = true;
@@ -183,7 +183,7 @@ namespace S33M3Engines.Sprites
             _effect.CBPerInstance.Values.Color = color;
             if (sourceRect == default(RectangleF))
             {
-                if (sourceRectInTextCoord) _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+                if (sourceRectInTextCoord) _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, spriteTexture.Width, spriteTexture.Height);
                 else _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, 1, 1);
             }
             else
@@ -259,7 +259,7 @@ namespace S33M3Engines.Sprites
             //Set Par Batch Constant
             _effectInstanced.Begin();
             _effectInstanced.CBPerDraw.Values.ViewportSize = new Vector2(_d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height);
-            if(sourceRectInTextCoord)_effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            if(sourceRectInTextCoord)_effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.Width, spriteTexture.Height);
             else _effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
             _effectInstanced.CBPerDraw.IsDirty = true;
             _effectInstanced.SpriteTexture.Value = spriteTexture.Texture;
@@ -270,10 +270,10 @@ namespace S33M3Engines.Sprites
             //for (int i = drawOffset; i < drawData.Length - drawOffset; ++i)
             //{
             //    Vector4 drawRect = drawData[i].SourceRect;
-            //    if (drawRect.X < 0 || drawRect.X >= spriteTexture.TextureDescr.Width ||
-            //        drawRect.Y >= 0 && drawRect.Y < spriteTexture.TextureDescr.Height ||
-            //        drawRect.Z > 0 && drawRect.X + drawRect.Z <= spriteTexture.TextureDescr.Width ||
-            //        drawRect.W > 0 && drawRect.Y + drawRect.W <= spriteTexture.TextureDescr.Height)
+            //    if (drawRect.X < 0 || drawRect.X >= spriteTexture.Width ||
+            //        drawRect.Y >= 0 && drawRect.Y < spriteTexture.Height ||
+            //        drawRect.Z > 0 && drawRect.X + drawRect.Z <= spriteTexture.Width ||
+            //        drawRect.W > 0 && drawRect.Y + drawRect.W <= spriteTexture.Height)
             //    {
             //        Console.WriteLine("ERREUR Rectangle source en dehors texture !!!!");
             //    }
