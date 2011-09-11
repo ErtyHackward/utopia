@@ -46,6 +46,8 @@ namespace S33M3Engines.D3D.Effects.Basics
             public Color4 Color;
             [FieldOffset(80)]
             public RectangleF SourceRect;
+        /*    [FieldOffset(96)]
+            public uint TextureArrayIndex;*/
         }
         public CBuffer<CBPerInstance_Struct> CBPerInstance;
         #endregion

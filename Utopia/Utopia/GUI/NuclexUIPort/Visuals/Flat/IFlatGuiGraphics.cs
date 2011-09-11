@@ -61,7 +61,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// </remarks>
     void DrawElement(string frameName, RectangleF bounds);
 
-    void DrawCustomTexture(SpriteTexture custom, RectangleF bounds);
+    void DrawCustomTexture(SpriteTexture custom, RectangleF bounds,int textureArrayIndex=0);
     void DrawCustomTexture(SpriteTexture customTex, Rectangle textureSourceRect, RectangleF bounds);
 
     /// <summary>Draws text into the drawing buffer for the specified element</summary>

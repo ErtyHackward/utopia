@@ -207,16 +207,16 @@ namespace S33M3Engines.Sprites
         /// <param name="spriteTexture"></param>
         /// <param name="numSprites"></param>
         /// <param name="sourceRectInTextCoord"></param>
-        public void RenderBatch(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color, bool sourceRectInTextCoord = true)
+        public void RenderBatch(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color, bool sourceRectInTextCoord = true, int textureArrayIndex=0)
         {
             Matrix transform = Matrix.Scaling((float)destRect.Width / srcRect.Width, (float)destRect.Height / srcRect.Height, 0) *
                                Matrix.Translation(destRect.Left, destRect.Top, 0);
-
             VertexSpriteInstanced newSpriteInstace = new VertexSpriteInstanced()
                                         {
                                             Tranform = transform,
                                             SourceRect = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height),
-                                            Color = new Color4(color.ToVector4())
+                                            Color = new Color4(color.ToVector4()),
+                                            TextureArrayIndex = textureArrayIndex
                                         };
 
             //Texture change ==> Flush the accomulator by creation a batched draw call
