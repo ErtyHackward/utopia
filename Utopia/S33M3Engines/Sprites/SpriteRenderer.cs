@@ -180,6 +180,7 @@ namespace S33M3Engines.Sprites
             
             // Set per-instance data
             _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
+            _effect.CBPerInstance.Values.TextureArrayIndex = 0;
             _effect.CBPerInstance.Values.Color = color;
             if (sourceRect == default(RectangleF))
             {
