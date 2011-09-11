@@ -12,13 +12,15 @@ cbuffer PerInstance
     matrix Transform;
     float4 Color;
     float4 SourceRect;
+	uint TexIndex;
 };
 
 //======================================================================================
 // Samplers
 //======================================================================================
 
-Texture2D    SpriteTexture;
+//Texture2D    SpriteTexture;
+Texture2DArray SpriteTexture;
 SamplerState SpriteSampler;
 
 //--------------------------------------------------------------------------------------
@@ -37,13 +39,14 @@ struct VSInputInstanced
     float4x4 Transform : TRANSFORM;
     float4 Color : COLOR;
     float4 SourceRect : SOURCERECT;
+	uint TexIndex : TEXINDEX;
 };
 
 //Pixel Shader input
 struct VSOutput
 {
     float4 Position : SV_Position;
-    float2 TexCoord : TEXCOORD;
+    float3 TexCoord : TEXCOORD;
     float4 Color : COLOR;
 };
 
@@ -54,7 +57,8 @@ VSOutput SpriteVSCommon(float2 position,
                         float2 texCoord, 
                         float4x4 transform, 
                         float4 color, 
-                        float4 sourceRect)
+                        float4 sourceRect,
+						uint texIndex)
 {
     // Scale the quad so that it's texture-sized    
     float4 positionSS = float4(position * sourceRect.zw, 0.0f, 1.0f);
@@ -69,7 +73,12 @@ VSOutput SpriteVSCommon(float2 position,
     positionDS.y *= -1;
 
     // Figure out the texture coordinates
-    float2 outTexCoord = texCoord;
+    float3 outTexCoord = float3(
+						texCoord.x, 
+						texCoord.y,
+						texIndex
+						);
+
     outTexCoord.xy *= sourceRect.zw / TextureSize;
     outTexCoord.xy += sourceRect.xy / TextureSize;
 
@@ -86,7 +95,7 @@ VSOutput SpriteVSCommon(float2 position,
 //======================================================================================
 VSOutput SpriteVS(in VSInput input)
 {
-    return SpriteVSCommon(input.Position, input.TexCoord, Transform, Color, SourceRect);
+    return SpriteVSCommon(input.Position, input.TexCoord, Transform, Color, SourceRect,0);
 }
 
 //======================================================================================
@@ -95,7 +104,7 @@ VSOutput SpriteVS(in VSInput input)
 VSOutput SpriteInstancedVS(in VSInputInstanced input)
 {
     return SpriteVSCommon(input.Position, input.TexCoord, 
-                            transpose(input.Transform), input.Color, input.SourceRect); 
+                            transpose(input.Transform), input.Color, input.SourceRect,input.TexIndex); 
 }
 
 //======================================================================================

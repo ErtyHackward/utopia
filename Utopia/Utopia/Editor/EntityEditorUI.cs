@@ -96,7 +96,8 @@ namespace Utopia.Editor
                     PaletteButtonControl btn = new PaletteButtonControl();
                     btn.Bounds = new UniRectangle(x0 + x * btnSize, y0 + y * btnSize, btnSize, btnSize);
                     btn.Texture = new SpriteTexture(btnSize, btnSize, arrayResourceView, Vector2.Zero);
-                    int associatedindex = index; //for access inside closure 
+                    btn.Texture.Index = index;
+                    int associatedindex = index; //new variable for access inside btn.pressed closure 
                     btn.Pressed += (sender, e) => SelectedColor = (byte)associatedindex;
                     palette.Children.Add(btn);
                     index++;

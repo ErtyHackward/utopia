@@ -28,7 +28,7 @@ namespace Utopia.Editor
       if (control.Color.HasValue)
           graphics.DrawElement(states[stateIndex], controlBounds, control.Color.Value);
       else
-          graphics.DrawCustomTexture(control.Texture,controlBounds);
+          graphics.DrawCustomTexture(control.Texture,controlBounds,control.Texture.Index);
 
       // If there's text assigned to the button, draw it into the button
       if(!string.IsNullOrEmpty(control.Text)) {

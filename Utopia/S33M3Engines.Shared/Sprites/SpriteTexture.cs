@@ -19,6 +19,11 @@ namespace S33M3Engines.Shared.Sprites
 
         public Matrix ScreenPosition;
 
+        /// <summary>
+        /// otional index of texture in texture array
+        /// </summary>
+        public int Index; 
+
         public SpriteTexture(Device device, string texturePath, ref D3DEngineDelegates.ViewPortUpdated viewPortUpdtEvent,
                              Viewport currentViewPort)
         {
