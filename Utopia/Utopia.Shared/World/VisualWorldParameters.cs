@@ -7,6 +7,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Chunks.Entities;
 namespace Utopia.Shared.World
 {
     public class VisualWorldParameters
@@ -26,7 +27,7 @@ namespace Utopia.Shared.World
         public int WorldVisibleSizeXYZ;
         public Location2<int> WorldChunkStartUpPosition;
 
-        public VisualWorldParameters(WorldParameters worldParameters, IDynamicEntity player)
+        public VisualWorldParameters(WorldParameters worldParameters, PlayerCharacter player)
         {
             WorldParameters = worldParameters;
 

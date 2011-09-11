@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.Shared.Chunks.Entities.Interfaces;
+using S33M3Engines.D3D;
 
 namespace Utopia.Entities
 {
-    public interface IEntityManager
+    public interface IEntityManager : IGameComponent
     {
         void AddEntity(IDynamicEntity entity);
         void RemoveEntity(IDynamicEntity entity);
