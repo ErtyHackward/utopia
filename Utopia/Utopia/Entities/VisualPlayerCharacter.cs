@@ -26,14 +26,13 @@ namespace Utopia.Entities
 
         public VisualPlayerCharacter(D3DEngine engine,
                                      Vector3 size,
-                                     IDynamicEntity dynamicEntity,
                                      ActionsManager actions,
                                      InputsManager inputsManager,
                                      SingleArrayChunkContainer cubesHolder,
                                      VoxelMeshFactory voxelMeshFactory,
-                                     VoxelEntity voxelEntity,
-                                     PlayerCharacter entity)
-            : base(engine, size, dynamicEntity, actions, inputsManager, cubesHolder, voxelMeshFactory, voxelEntity, entity)
+                                     PlayerCharacter entity) 
+                                     //VoxelEntity voxelEntity = null)
+            : base(engine, size, actions, inputsManager, cubesHolder, voxelMeshFactory, null, entity)
         {
             PlayerCharacter = entity;
         }

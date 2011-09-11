@@ -46,6 +46,7 @@ using Utopia.Action;
 using Utopia.InputManager;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Chunks.Entities.Concrete;
 
 namespace Utopia
 {
@@ -65,6 +66,7 @@ namespace Utopia
         private IDynamicEntity _player;
         private ActionsManager _actions;
         private D3DEngine _engine;
+        private IEntityManager _entityManager;
         //Debug tools
         private FPS _fps; //FPS computing object
 
@@ -206,7 +208,10 @@ namespace Utopia
             GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
 
             //The Player !
-            VisualDynamicEntity Player = IoCContainer.Get<VisualDynamicEntity>(new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)));
+            VisualPlayerCharacter Player = IoCContainer.Get<VisualPlayerCharacter>(new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)));
+            Player.Initialize();
+            _entityManager = IoCContainer.Get<IEntityManager>(new ConstructorArgument("player", Player));
+            GameComponents.Add(_entityManager);
             camera.CameraPlugin = Player;
             //GameComponents.Add(Player);
 
@@ -261,8 +266,7 @@ namespace Utopia
                 GameComponents.Add(server);
             }
 
-
-
+                
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 
             GameComponents.Add(IoCContainer.Get<Hud>());

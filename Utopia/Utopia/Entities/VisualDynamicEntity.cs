@@ -197,7 +197,7 @@ namespace Utopia.Entities
             //Physic simulation !
             PhysicOnEntity(_displacementMode, ref timeSpent);
 
-            //Refresh location and Rotations compoent with the new values
+            //Refresh location and Rotations component with the new values
             RefreshBoundingBox(ref _worldPosition.Value, out _boundingBox);
 
             //Send the Actual Position to the Dynamic Entity
@@ -234,7 +234,6 @@ namespace Utopia.Entities
             boundingBox = new BoundingBox(_boundingMinPoint + worldPosition.AsVector3(),
                                           _boundingMaxPoint + worldPosition.AsVector3());
         }
-
 
         #region Movement Management
         private void EntityMovementsOnEvents(EntityDisplacementModes mode, ref GameTime TimeSpend)
@@ -390,7 +389,6 @@ namespace Utopia.Entities
             }
 
             _lookAtDirection.Value.Normalize();
-
             UpdateHeadData();
         }
 

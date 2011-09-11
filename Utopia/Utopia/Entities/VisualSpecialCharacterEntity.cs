@@ -26,14 +26,13 @@ namespace Utopia.Entities
 
         public VisualSpecialCharacterEntity(D3DEngine engine,
                                            Vector3 size,
-                                           IDynamicEntity dynamicEntity,
                                            ActionsManager actions,
                                            InputsManager inputsManager,
                                            SingleArrayChunkContainer cubesHolder,
                                            VoxelMeshFactory voxelMeshFactory,
                                            VoxelEntity voxelEntity,
                                            SpecialCharacterEntity entity)
-            : base(engine, size, dynamicEntity, actions, inputsManager, cubesHolder, voxelMeshFactory, voxelEntity, entity)
+            : base(engine, size, actions, inputsManager, cubesHolder, voxelMeshFactory, voxelEntity, entity)
         {
             SpecialCharacterEntity = entity;
         }

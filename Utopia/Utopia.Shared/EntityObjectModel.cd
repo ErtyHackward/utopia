@@ -28,8 +28,8 @@
       <FileName>Chunks\Entities\Concrete\VoxelEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Entity" Collapsed="true">
-    <Position X="9" Y="0.5" Width="1.5" />
+  <Class Name="Utopia.Shared.Chunks.Entities.Entity">
+    <Position X="9.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAkIAgAAIAAIAggAAAAAAAAAAAAIAAAQAAAAAAAAA=</HashCode>
       <FileName>Chunks\Entities\Entity.cs</FileName>

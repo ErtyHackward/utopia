@@ -7,6 +7,11 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
     public interface IEntity
     {
         /// <summary>
+        /// Gets entity class id
+        /// </summary>
+        EntityClassId ClassId { get; }
+
+        /// <summary>
         /// Gets or sets entity position
         /// </summary>
         DVector3 Position { get; set; }
