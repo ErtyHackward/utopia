@@ -37,7 +37,7 @@ namespace S33M3Engines.D3D.Effects.Basics
         }
         public CBuffer<CBPerBatch_Struct> CBPerDraw;
 
-        [StructLayout(LayoutKind.Explicit, Size = 96)]
+        [StructLayout(LayoutKind.Explicit, Size = 128)]
         public struct CBPerInstance_Struct
         {
             [FieldOffset(0)]
@@ -46,9 +46,10 @@ namespace S33M3Engines.D3D.Effects.Basics
             public Color4 Color;
             [FieldOffset(80)]
             public RectangleF SourceRect;
-        /*    [FieldOffset(96)]
-            public uint TextureArrayIndex;*/
+            [FieldOffset(96)]
+            public uint TextureArrayIndex;
         }
+
         public CBuffer<CBPerInstance_Struct> CBPerInstance;
         #endregion
 

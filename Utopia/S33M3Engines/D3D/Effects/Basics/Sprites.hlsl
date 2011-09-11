@@ -18,8 +18,6 @@ cbuffer PerInstance
 //======================================================================================
 // Samplers
 //======================================================================================
-
-//Texture2D    SpriteTexture;
 Texture2DArray SpriteTexture;
 SamplerState SpriteSampler;
 
@@ -95,7 +93,7 @@ VSOutput SpriteVSCommon(float2 position,
 //======================================================================================
 VSOutput SpriteVS(in VSInput input)
 {
-    return SpriteVSCommon(input.Position, input.TexCoord, Transform, Color, SourceRect,0);
+    return SpriteVSCommon(input.Position, input.TexCoord, Transform, Color, SourceRect, TexIndex);
 }
 
 //======================================================================================
