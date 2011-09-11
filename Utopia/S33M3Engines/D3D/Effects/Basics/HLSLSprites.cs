@@ -27,7 +27,7 @@ namespace S33M3Engines.D3D.Effects.Basics
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 32)]
+        [StructLayout(LayoutKind.Explicit, Size = 16)]
         public struct CBPerBatch_Struct
         {
             [FieldOffset(0)]
@@ -37,7 +37,7 @@ namespace S33M3Engines.D3D.Effects.Basics
         }
         public CBuffer<CBPerBatch_Struct> CBPerDraw;
 
-        [StructLayout(LayoutKind.Explicit, Size = 128)]
+        [StructLayout(LayoutKind.Explicit, Size = 112)]
         public struct CBPerInstance_Struct
         {
             [FieldOffset(0)]
