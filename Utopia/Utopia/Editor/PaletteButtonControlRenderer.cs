@@ -25,12 +25,15 @@ namespace Utopia.Editor
       }
 
       // Draw the button's frame
-      if (control.Color.HasValue)
-          graphics.DrawElement(states[stateIndex], controlBounds, control.Color.Value);
-      else
-          graphics.DrawCustomTexture(control.Texture,controlBounds,control.Texture.Index);
+        graphics.DrawElement(states[stateIndex], controlBounds, control.Color);
 
-      // If there's text assigned to the button, draw it into the button
+        RectangleF innerBounds = controlBounds;
+        innerBounds.Inflate(-1f, -1f);
+
+        if (control.Texture != null)
+            graphics.DrawCustomTexture(control.Texture, innerBounds, control.Texture.Index);
+
+        // If there's text assigned to the button, draw it into the button
       if(!string.IsNullOrEmpty(control.Text)) {
         graphics.DrawString(states[stateIndex], controlBounds, control.Text);
       }

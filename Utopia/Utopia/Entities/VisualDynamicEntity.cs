@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Shared.Chunks.Entities.Interfaces;
-using SharpDX;
-using S33M3Engines.Maths;
-using S33M3Engines.Struct;
-using S33M3Engines.D3D;
-using Utopia.Action;
-using Utopia.Shared.Chunks;
-using S33M3Engines.InputHandler.MouseHelper;
-using Utopia.InputManager;
 using S33M3Engines;
-using Utopia.Entities.Living;
-using Utopia.Shared.Chunks.Entities;
-using S33M3Engines.Shared.Math;
 using S33M3Engines.Cameras;
+using S33M3Engines.D3D;
+using S33M3Engines.Maths;
+using S33M3Engines.Shared.Math;
+using S33M3Engines.Struct;
+using SharpDX;
+using Utopia.Action;
+using Utopia.InputManager;
+using Utopia.Shared.Chunks;
+using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia.Entities
 {

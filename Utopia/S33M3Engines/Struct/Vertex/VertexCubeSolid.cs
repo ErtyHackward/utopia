@@ -18,7 +18,7 @@ namespace S33M3Engines.Struct.Vertex
 
         public ByteVector4 Position;
         public ByteColor Color;
-        public ByteVector4 VertexInfo;  //X = Vertex Y offset; Y = Still not use
+        public ByteVector4 VertexInfo;  //X = Vertex Y offset; Y = texture index;Z=Additional Texture Index
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
