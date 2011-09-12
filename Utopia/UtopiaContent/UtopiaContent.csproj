@@ -120,6 +120,9 @@
     <None Include="Effects\SkyDome\Stars.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Effects\Terran\TerranEditor.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Effects\Terran\Liquid.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -231,6 +234,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Textures\charactersheet.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Textures\Editor\ct01.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Textures\Editor\ct00.png">

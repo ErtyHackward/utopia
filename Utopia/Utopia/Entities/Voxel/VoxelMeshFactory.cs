@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using S33M3Engines;
 using S33M3Engines.Buffers;
 using S33M3Engines.Struct.Vertex;
@@ -19,7 +20,7 @@ namespace Utopia.Entities.Voxel
             _d3DEngine = d3DEngine;
         }
 
-        public List<VertexCubeSolid> GenCubesFaces(byte[,,] blocks)
+        public List<VertexCubeSolid> GenCubesFaces(byte[,,] blocks,byte[,,] overlays)
         {
             List<VertexCubeSolid> vertexList = new List<VertexCubeSolid>();
 
@@ -30,10 +31,11 @@ namespace Utopia.Entities.Voxel
                     for (int z = 0; z < blocks.GetLength(2); z++)
                     {
                         byte blockType = blocks[x, y, z];
+                        byte overlay = overlays[x, y, z];
 
                         if (blockType == 0) continue;
 
-                        BuildBlockVertices(blocks, ref vertexList, blockType, x, y, z);
+                        BuildBlockVertices(blocks, ref vertexList, blockType, x, y, z,overlay);
                     }
                 }
             }
@@ -44,7 +46,7 @@ namespace Utopia.Entities.Voxel
 
         private static void BuildBlockVertices(byte[,,] blocks, ref List<VertexCubeSolid> vertice, byte blockType,
                                                int x,
-                                               int y, int z)
+                                               int y, int z, byte overlay)
         {
             byte blockXDecreasing = x == 0 ? (byte) 0 : blocks[x - 1, y, z];
             byte blockXIncreasing = x == blocks.GetLength(0) - 1 ? (byte) 0 : blocks[x + 1, y, z];
@@ -54,24 +56,24 @@ namespace Utopia.Entities.Voxel
             byte blockZIncreasing = z == blocks.GetLength(2) - 1 ? (byte) 0 : blocks[x, y, z + 1];
 
             if (blockXDecreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Left, blockType); //X-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Left, blockType, overlay); //X-
             if (blockXIncreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Right, blockType); //X+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Right, blockType, overlay); //X+
            
             if (blockYDecreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Bottom, blockType); //Y-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Bottom, blockType, overlay); //Y-
             if (blockYIncreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Top, blockType); //Y+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Top, blockType, overlay); //Y+
 
             if (blockZIncreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Back, blockType); //Z+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Back, blockType, overlay); //Z+
             if (blockZDecreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Front, blockType); //Z-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Front, blockType, overlay); //Z-
             }
 
         private static void BuildFaceVertices(ref List<VertexCubeSolid> vertice, int x, int y, int z,
                                               CubeFace faceDir,
-                                              byte blockType)
+                                              byte blockType,byte overlay)
         {
             //actually only handles 64 colors, so all blockType> 63 will have default color
             Color tmpColor = ColorLookup.Colours[blockType];
@@ -79,12 +81,14 @@ namespace Utopia.Entities.Voxel
           
             //TODO indices : good for perf & ram 
 
-            int cubeid = blockType;
+            int cubeid =  blockType;
 
             int face = (int) faceDir;
             byte tex = VisualCubeProfile.CubesProfile[cubeid].Textures[face];
 
-            ByteVector4 vertexInfo = new ByteVector4((byte)0, (byte)faceDir, (byte)0, (byte)0);
+            if (overlay == 0) overlay = tex;//TODO find another way to ignore overlay 0 than lerping between 2 same values 
+
+            ByteVector4 vertexInfo = new ByteVector4((byte)0, (byte)faceDir, overlay, (byte)0);
 
 
             switch (faceDir)

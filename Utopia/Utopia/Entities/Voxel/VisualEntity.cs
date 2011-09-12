@@ -27,18 +27,25 @@ namespace Utopia.Entities.Voxel
         public Boolean Altered;
 
         private readonly VoxelMeshFactory _voxelMeshFactory;
-        
+
+        /// <summary>
+        /// overlays are indices in a texture2dArray that will allow overdrawing a texture over the cube texture
+        /// used for editors selection 
+        /// </summary>
+        private readonly byte[,,] _overlays;
+
         /// <summary>
         /// creates a VisualEntity ready to render with filled vertice List and vertexBuffer
         /// </summary>
         /// <param name="voxelMeshFactory">voxelMeshFactory responsible to create mesh</param>
         /// <param name="wrapped">wrapped VoxelEntity from server</param>
-        public VisualEntity(VoxelMeshFactory voxelMeshFactory, VoxelEntity wrapped)
+        /// <param name="overlays">array of texture id to overlay</param>
+        public VisualEntity(VoxelMeshFactory voxelMeshFactory, VoxelEntity wrapped,byte[, ,] overlays=null)
         {
             VoxelEntity = wrapped;
             _voxelMeshFactory = voxelMeshFactory;
-
-            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks);
+            _overlays = overlays;
+            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks, _overlays);
             VertexBuffer = _voxelMeshFactory.InitBuffer(Vertice);
             
             Altered = true;
@@ -69,7 +76,7 @@ namespace Utopia.Entities.Voxel
         {
             if (!Altered) return; 
 
-            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks);
+            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks,_overlays);
 
             if (Vertice.Count != 0)
             {
@@ -77,6 +84,12 @@ namespace Utopia.Entities.Voxel
             }
 
             Altered = false;
+        }
+
+        public void AlterOverlay(int x,int y, int z, byte overlay)
+        {
+            _overlays[x, y, z] = overlay;
+            Altered = true;
         }
     }
 }

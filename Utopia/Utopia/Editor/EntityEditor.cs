@@ -1,26 +1,22 @@
 ﻿using System;
-using System.Windows.Forms;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
-using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.InputHandler;
-using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
+using S33M3Engines.StatesManager;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.Textures;
 using S33M3Engines.WorldFocus;
 using SharpDX;
 using SharpDX.Direct3D11;
+using Utopia.Action;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Structs;
-using Utopia.Shared.World;
 using UtopiaContent.Effects.Terran;
 using Screen = Nuclex.UserInterface.Screen;
-using Utopia.Action;
-using S33M3Engines.StatesManager;
 
 namespace Utopia.Editor
 {
@@ -38,7 +34,7 @@ namespace Utopia.Editor
         private readonly ActionsManager _actions;
         private readonly Hud _hudComponent;
 
-        private const float _scale = 1f/16f;
+        private const float Scale = 1f/16f;
 
         private Location3<int> _currentSelectionBlock;
         private DVector3 _currentSelectionWorld;
@@ -61,9 +57,22 @@ namespace Utopia.Editor
 
             entity.Blocks = new byte[16,16,16];
             entity.PlainCubeFill();
-            _editedEntity = new VisualEntity(_voxelMeshFactory, entity);
-            _editedEntity.Position = _camManager.ActiveCamera.WorldPosition + new Vector3(-1, 0, -3);
 
+
+            int x = entity.Blocks.GetLength(0);
+            int y = entity.Blocks.GetLength(1);
+            int z = entity.Blocks.GetLength(2);
+            byte[,,] overlays = new byte[x,y,z];
+            for (int i = 0; i < 16; i++)
+            {
+                overlays[i, 8, 0]= 22;
+                overlays[8, i, 0]= 22;
+                overlays[0, 8, i]=22;
+            }
+
+            _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays);
+            _editedEntity.Position = _camManager.ActiveCamera.WorldPosition + new Vector3(-1, 0, -3);
+     
             // inactive by default, use F12 UI to enable :)
             this.Visible = false;
             this.Enabled = false;
@@ -81,7 +90,7 @@ namespace Utopia.Editor
 
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point, out _texture);
 
-            _itemEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
+            _itemEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/TerranEditor.hlsl", VertexCubeSolid.VertexDeclaration);
 
             _itemEffect.TerraTexture.Value = _texture;
            
@@ -93,7 +102,7 @@ namespace Utopia.Editor
 
         public override void Update(ref GameTime timeSpent)
         {
-            HandleInput();
+            //HandleInput();
             //setSelection();
         }
 
@@ -181,7 +190,7 @@ namespace Utopia.Editor
                 int y = _currentSelectionBlock.Y;
                 int z = _currentSelectionBlock.Z;
 
-                blocks[x, y, z] = _ui.SelectedColor;
+                blocks[x, y, z] = _ui.SelectedIndex;
 
 
                 /*               if (_y == blocks.GetLength(1)) _y = 0;
