@@ -14,8 +14,9 @@ namespace Utopia.Shared.Chunks.Entities
         {
             Toolbar = new SlotContainer<ToolbarSlot>(new Location2<byte>(10,1));
 
-            MoveSpeed = 5f;
-            RotationSpeed = 10f;
+            MoveSpeed = 5f;               //Default player MoveSpeed
+            RotationSpeed = 10f;          //Default Player Rotation Speed
+            Size = new SharpDX.Vector3(0.5f, 1.9f, 0.5f); //Default player size
         }
 
         public SlotContainer<ToolbarSlot> Toolbar { get; set; }
