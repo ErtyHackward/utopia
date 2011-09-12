@@ -47,6 +47,8 @@ namespace Utopia
             iocContainer.Bind<IDynamicEntity>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope().Named("Player"); //Register the current Player.
             iocContainer.Bind<PlayerCharacter>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope(); //Register the current Player.
 
+            iocContainer.Bind<VisualPlayerCharacter>().ToSelf().InSingletonScope();
+
             iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
@@ -111,6 +113,7 @@ namespace Utopia
             iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IChunkStorageManager>().To<SQLiteStorageManager>().InSingletonScope();
+            
 
             iocContainer.Bind<ActionsManager>().ToSelf().InSingletonScope();
 

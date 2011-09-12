@@ -75,7 +75,7 @@ namespace Utopia.Network
 
         void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
         {
-            _entityManager.GetEntityById(e.Message.EntityId).Position = e.Message.Position;
+                _entityManager.GetEntityById(e.Message.EntityId).Position = e.Message.Position;
         }
 
         void ConnectionMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)

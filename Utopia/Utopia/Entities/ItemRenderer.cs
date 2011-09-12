@@ -14,6 +14,7 @@ using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using Utopia.Action;
 using S33M3Engines.StatesManager;
+using Utopia.Shared.Chunks.Entities.Concrete;
 
 namespace Utopia.Entities
 {
@@ -74,7 +75,7 @@ namespace Utopia.Entities
                 item.PlainCubeFill();
                 item.Position = _camManager.ActiveCamera.WorldPosition;
 
-                Items.Add(new VisualEntity(_voxelMeshFactory, item));
+                Items.Add(new VisualEntity(_d3DEngine, _camManager, _worldFocusManager, _voxelMeshFactory, item, item));
             }
             //TODO (team talk) camera double position vs entiy float position
         }
@@ -115,7 +116,7 @@ namespace Utopia.Entities
                 }
 
                 Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
-                               Matrix.Translation(item.Entity.Position.AsVector3());
+                               Matrix.Translation(item.VoxelEntity.Position.AsVector3());
                 world = _worldFocusManager.CenterOnFocus(ref world);
                 _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
                 _itemEffect.CBPerDraw.IsDirty = true;

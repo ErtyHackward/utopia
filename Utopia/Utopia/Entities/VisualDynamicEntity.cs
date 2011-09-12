@@ -21,6 +21,7 @@ using S33M3Physics.Verlet;
 using S33M3Physics;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Entities.Voxel;
+using S33M3Engines.WorldFocus;
 
 namespace Utopia.Entities
 {
@@ -32,22 +33,13 @@ namespace Utopia.Entities
     {
         #region Private variables
 
-        //=======Should be moved inside VisualEntity when the schema will bind the Dynamicentity to voxelentity, if we go this way !
-        private BoundingBox _boundingBox;
-        private Vector3 _entityEyeOffset;         //Offset of the camera Placement inside the entity, from entity center point.
-        private Vector3 _size;                    // ==> Should be extracted from the boundingbox around the voxel entity
-        //================================================================================================================================
-
-        private FTSValue<DVector3> _worldPosition = new FTSValue<DVector3>();           //World Position
         private FTSValue<Quaternion> _lookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
         private FTSValue<Quaternion> _moveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
-        private Vector3 _boundingMinPoint, _boundingMaxPoint;
         private ActionsManager _actions;
         private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
         private DVector3 _entityHeadXAxis, _entityHeadYAxis, _entityHeadZAxis;
         private DVector3 _entityXAxis, _entityYAxis, _entityZAxis;
-        private DVector3 _lookAt;
         private Matrix _headRotation;
         private Matrix _entityRotation;
         private double _rotationDelta;
@@ -58,25 +50,31 @@ namespace Utopia.Entities
         private float _groundBelowEntity;
         private VerletSimulator _physicSimu;
         private EntityDisplacementModes _displacementMode;
-        private Location3<int> _pickedBlock, _previousPickedBlock, _newCubePlace;
-        private bool _isBlockPicked;
-        private Utopia.Shared.Structs.Landscape.TerraCube _pickedCube;
-        private BoundingBox _playerSelectedBox, _playerPotentialNewBlock;
         #endregion
 
         #region Public Variables/Properties
+        public DVector3 LookAt;
+
+        bool _headInsideWater;
+
+        public bool HeadInsideWater
+        {
+            get { return _headInsideWater; }
+            set { _headInsideWater = value; }
+        }
+
         /// <summary> The Core component </summary>
         public readonly IDynamicEntity DynamicEntity;
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual DVector3 CameraWorldPosition
         {
-            get { return _worldPosition.ActualValue + _entityEyeOffset; }
+            get { return WorldPosition.Value + EntityEyeOffset; }
         }
 
         public virtual Quaternion CameraOrientation
         {
-            get { return _lookAtDirection.ActualValue; }
+            get { return _lookAtDirection.Value; }
         }
 
         public EntityDisplacementModes Mode
@@ -87,7 +85,7 @@ namespace Utopia.Entities
                 _displacementMode = value;
                 if (_displacementMode == EntityDisplacementModes.Walking)
                 {
-                    _physicSimu.StartSimulation(ref _worldPosition.Value, ref _worldPosition.Value);
+                    _physicSimu.StartSimulation(ref WorldPosition.Value, ref WorldPosition.Value);
                 }
                 else
                 {
@@ -98,61 +96,53 @@ namespace Utopia.Entities
         #endregion
 
         public VisualDynamicEntity(D3DEngine engine, 
-                                   Vector3 size, 
+                                   CameraManager cameraManager,
+                                   WorldFocusManager worldFocusManager,
                                    IDynamicEntity dynamicEntity, 
                                    ActionsManager actions, 
                                    InputsManager inputsManager, 
                                    SingleArrayChunkContainer cubesHolder, 
                                    VoxelMeshFactory voxelMeshFactory, 
                                    VoxelEntity voxelEntity)
-
-            : base(voxelMeshFactory, voxelEntity)
+            : base(engine, cameraManager, worldFocusManager, voxelMeshFactory, voxelEntity, dynamicEntity)
         {
             _engine = engine;
             _actions = actions;
             _inputsManager = inputsManager;
             _cubesHolder = cubesHolder;
             DynamicEntity = dynamicEntity;
-            _size = size;
 
-            //_moveDirection.Value = Quaternion.Identity;
+            _physicSimu = new VerletSimulator(ref BoundingBox) { WithCollisionBounsing = false };
+            _physicSimu.ConstraintFct += isCollidingWithTerrain;
 
+            Mode = dynamicEntity.DisplacementMode;
+
+            Init();
+        }
+        #region Public Methods
+
+        public void Init()
+        {
             //Check the position, if the possition is 0,0,0, find the better spawning Y value !
             if (DynamicEntity.Position == DVector3.Zero)
             {
                 DynamicEntity.Position = new DVector3(0, AbstractChunk.ChunkSize.Y, 0);
             }
 
-            _worldPosition.Value = DynamicEntity.Position;
-            _worldPosition.ValueInterp = _worldPosition.Value;
+            //Set Position
+            //Set the entity world position following the position received from server
+            WorldPosition.Value = DynamicEntity.Position;
+            WorldPosition.ValuePrev = DynamicEntity.Position;
 
-            //Take back only the saved Yaw rotation (Or Heading) and only using it;
+            //Set LookAt
+            //Take back only the saved server Yaw rotation (Or Heading) and only using it;
             _lookAtDirection.Value = DynamicEntity.Rotation;
             double playerSavedYaw = MQuaternion.getYaw(ref _lookAtDirection.Value);
-            //Quaternion rotation;
             Quaternion.RotationAxis(ref MVector3.Up, (float)playerSavedYaw, out _lookAtDirection.Value);
-            _lookAtDirection.ValueInterp = _lookAtDirection.Value;
+            _lookAtDirection.ValuePrev = _lookAtDirection.Value;
 
+            //Set Move direction = to LookAtDirection
             _moveDirection.Value = _lookAtDirection.Value;
-
-            _physicSimu = new VerletSimulator(ref _boundingBox) { WithCollisionBounsing = false };
-            _physicSimu.ConstraintFct += isCollidingWithTerrain;
-
-            Mode = dynamicEntity.DisplacementMode;
-
-            Initialize();
-        }
-        #region Public Methods
-
-        private void Initialize()
-        {
-            //Will be used to update the bounding box with world coordinate when the entity is moving
-            _boundingMinPoint = new Vector3(-(_size.X / 2.0f), 0, -(_size.Z / 2.0f));
-            _boundingMaxPoint = new Vector3(+(_size.X / 2.0f), _size.Y, +(_size.Z / 2.0f));
-
-            RefreshBoundingBox(ref _worldPosition.Value, out _boundingBox);
-
-            _entityEyeOffset = new Vector3(0, _size.Y / 100 * 80, 0);
         }
 
         public override void Draw()
@@ -162,63 +152,65 @@ namespace Utopia.Entities
 
         public override void Update(ref GameTime timeSpent)
         {
-            inputHandler();
-
-            switch (_displacementMode)
+            if (IsPlayerConstroled)
             {
-                case EntityDisplacementModes.Flying:
-                    _gravityInfluence = 6;
-                    break;
-                case EntityDisplacementModes.Walking:
-                    _gravityInfluence = 1;
-                    break;
-                case EntityDisplacementModes.Swiming:
-                    _gravityInfluence = 1 / 2;
-                    break;
-                default:
-                    break;
+
+                inputHandler();
+
+                switch (_displacementMode)
+                {
+                    case EntityDisplacementModes.Flying:
+                        _gravityInfluence = 6;  // We will move 6 times faster if flying
+                        break;
+                    case EntityDisplacementModes.Walking:
+                        _gravityInfluence = 1;
+                        break;
+                    case EntityDisplacementModes.Swiming:
+                        _gravityInfluence = 1 / 2; // We will move 2 times slower when swimming
+                        break;
+                    default:
+                        break;
+                }
+
+                //Compute the delta following the time elapsed : Speed * Time = Distance (Over the elapsed time).
+                _moveDelta = DynamicEntity.MoveSpeed * _gravityInfluence * timeSpent.ElapsedGameTimeInS_HD;
+                _rotationDelta = DynamicEntity.RotationSpeed * timeSpent.ElapsedGameTimeInS_HD;
+
+                //Backup previous values
+                _lookAtDirection.BackUpValue();
+                WorldPosition.BackUpValue();
+
+                //Rotation with mouse
+                EntityRotationsOnEvents(_displacementMode);
+
+                //Movement
+                EntityMovementsOnEvents(_displacementMode, ref timeSpent);
+
+                //Physic simulation !
+                PhysicOnEntity(_displacementMode, ref timeSpent);
+
+                //Send the Actual Position to the Entity object only of it has change !!!
+                if (DynamicEntity.Position != WorldPosition.Value) DynamicEntity.Position = WorldPosition.Value;
+                if (DynamicEntity.Rotation != _lookAtDirection.Value) DynamicEntity.Rotation = _lookAtDirection.Value;
+
             }
+            else
+            {
+                _lookAtDirection.BackUpValue();
+                WorldPosition.BackUpValue();
 
-            //Compute the delta following the time elapsed : Speed * Time = Distance (Over the elapsed time).
-            _moveDelta = DynamicEntity.MoveSpeed * _gravityInfluence * timeSpent.ElapsedGameTimeInS_HD;
-            _rotationDelta = DynamicEntity.RotationSpeed * timeSpent.ElapsedGameTimeInS_HD;
-
-
-            //Backup previous values
-            _lookAtDirection.BackUpValue();
-            _worldPosition.BackUpValue();
-
-            //Compute Rotation with mouse
-            EntityRotationsOnEvents(_displacementMode);
-
-            //Keybord Movement
-            EntityMovementsOnEvents(_displacementMode, ref timeSpent);
-
-            //Physic simulation !
-            PhysicOnEntity(_displacementMode, ref timeSpent);
-
-            //Refresh location and Rotations component with the new values
-            RefreshBoundingBox(ref _worldPosition.Value, out _boundingBox);
-
-            //Send the Actual Position to the Dynamic Entity
-            DynamicEntity.Position = _worldPosition.Value;
-            DynamicEntity.Rotation = _lookAtDirection.Value;
-
-            //Block Picking !?
-            GetSelectedBlock();
-
-            CheckHeadUnderWater();
+                WorldPosition.Value = DynamicEntity.Position;
+                _lookAtDirection.Value = DynamicEntity.Rotation;
+            }
 
             base.Update(ref timeSpent);
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-            DVector3.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
             Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
-
+            DVector3.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
             base.Interpolation(ref interpolationHd, ref interpolationLd);
-
         }
 
         public override void Dispose()
@@ -229,10 +221,19 @@ namespace Utopia.Entities
 
         #region Private Methods
 
-        public void RefreshBoundingBox(ref DVector3 worldPosition, out BoundingBox boundingBox)
+        private void inputHandler()
         {
-            boundingBox = new BoundingBox(_boundingMinPoint + worldPosition.AsVector3(),
-                                          _boundingMaxPoint + worldPosition.AsVector3());
+            if (_actions.isTriggered(Actions.Move_Mode))
+            {
+                if (_displacementMode == EntityDisplacementModes.Flying)
+                {
+                    Mode = EntityDisplacementModes.Walking;
+                }
+                else
+                {
+                    Mode = EntityDisplacementModes.Flying;
+                }
+            }
         }
 
         #region Movement Management
@@ -254,22 +255,22 @@ namespace Utopia.Entities
         private void FreeFirstPersonMove()
         {
             if (_actions.isTriggered(Actions.Move_Forward))
-                _worldPosition.Value += _lookAt * _moveDelta;
+                WorldPosition.Value += LookAt * _moveDelta;
 
             if (_actions.isTriggered(Actions.Move_Backward))
-                _worldPosition.Value -= _lookAt * _moveDelta;
+                WorldPosition.Value -= LookAt * _moveDelta;
 
             if (_actions.isTriggered(Actions.Move_StrafeLeft))
-                _worldPosition.Value -= _entityHeadXAxis * _moveDelta;
+                WorldPosition.Value -= _entityHeadXAxis * _moveDelta;
 
             if (_actions.isTriggered(Actions.Move_StrafeRight))
-                _worldPosition.Value += _entityHeadXAxis * _moveDelta;
+                WorldPosition.Value += _entityHeadXAxis * _moveDelta;
 
             if (_actions.isTriggered(Actions.Move_Down))
-                _worldPosition.Value += DVector3.Down * _moveDelta;
+                WorldPosition.Value += DVector3.Down * _moveDelta;
 
             if (_actions.isTriggered(Actions.Move_Up))
-                _worldPosition.Value += DVector3.Up * _moveDelta;
+                WorldPosition.Value += DVector3.Up * _moveDelta;
         }
 
         private void WalkingFirstPerson(ref GameTime TimeSpend)
@@ -400,12 +401,12 @@ namespace Utopia.Entities
             _entityHeadYAxis = new DVector3(_headRotation.M12, _headRotation.M22, _headRotation.M32);
             _entityHeadZAxis = new DVector3(_headRotation.M13, _headRotation.M23, _headRotation.M33);
 
-            _lookAt = new DVector3(-_entityHeadZAxis.X, -_entityHeadZAxis.Y, -_entityHeadZAxis.Z);
-            _lookAt.Normalize();
+            LookAt = new DVector3(-_entityHeadZAxis.X, -_entityHeadZAxis.Y, -_entityHeadZAxis.Z);
+            LookAt.Normalize();
         }
         #endregion
 
-        #region EarlyPhysic Simulation
+        #region Physic Simulation
         private void PhysicOnEntity(EntityDisplacementModes mode, ref GameTime TimeSpend)
         {
             switch (mode)
@@ -426,16 +427,16 @@ namespace Utopia.Entities
             Location3<int> GroundDirection = new Location3<int>(0, -1, 0);
             DVector3 newWorldPosition;
 
-            _cubesHolder.GetNextSolidBlockToPlayer(ref _boundingBox, ref GroundDirection, out groundCube);
+            _cubesHolder.GetNextSolidBlockToPlayer(ref BoundingBox, ref GroundDirection, out groundCube);
             if (groundCube.Cube.Id != CubeId.Error)
             {
                 _groundBelowEntity = groundCube.Position.Y + 1;
             }
 
             _physicSimu.Simulate(ref TimeSpend, out newWorldPosition);
-            _worldPosition.Value = newWorldPosition;
+            WorldPosition.Value = newWorldPosition;
 
-            if (_worldPosition.Value.Y > _groundBelowEntity)
+            if (WorldPosition.Value.Y > _groundBelowEntity)
             {
                 _physicSimu.OnGround = false;
             }
@@ -484,142 +485,6 @@ namespace Utopia.Entities
             newPosition2Evaluate = newPositionWithColliding;
         }
         #endregion
-
-
-        private void GetSelectedBlock()
-        {
-            _isBlockPicked = false;
-
-            _previousPickedBlock = _pickedBlock;
-
-            DVector3 pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
-            //Sample 500 points in the view direction vector
-            for (int ptNbr = 0; ptNbr < 500; ptNbr++)
-            {
-                pickingPointInLine += _lookAt * 0.02;
-
-                if (_cubesHolder.isPickable(ref pickingPointInLine, out _pickedCube))
-                {
-
-                    _pickedBlock.X = MathHelper.Fastfloor(pickingPointInLine.X);
-                    _pickedBlock.Y = MathHelper.Fastfloor(pickingPointInLine.Y);
-                    _pickedBlock.Z = MathHelper.Fastfloor(pickingPointInLine.Z);
-
-                    //Find the face picked up !
-                    float FaceDistance;
-                    Ray newRay = new Ray((_worldPosition.Value + _entityEyeOffset).AsVector3(), _lookAt.AsVector3());
-                    BoundingBox bBox = new SharpDX.BoundingBox(new Vector3(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z), new Vector3(_pickedBlock.X + 1, _pickedBlock.Y + 1, _pickedBlock.Z + 1));
-                    newRay.Intersects(ref bBox, out FaceDistance);
-
-                    DVector3 CollisionPoint = _worldPosition.Value + _entityEyeOffset + (_lookAt * FaceDistance);
-                    MVector3.Round(ref CollisionPoint, 4);
-
-                    _newCubePlace = new Location3<int>(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z);
-                    if (CollisionPoint.X == _pickedBlock.X) _newCubePlace.X--;
-                    else
-                        if (CollisionPoint.X == _pickedBlock.X + 1) _newCubePlace.X++;
-                        else
-                            if (CollisionPoint.Y == _pickedBlock.Y) _newCubePlace.Y--;
-                            else
-                                if (CollisionPoint.Y == _pickedBlock.Y + 1) _newCubePlace.Y++;
-                                else
-                                    if (CollisionPoint.Z == _pickedBlock.Z) _newCubePlace.Z--;
-                                    else
-                                        if (CollisionPoint.Z == _pickedBlock.Z + 1) _newCubePlace.Z++;
-
-
-                    _playerPotentialNewBlock = new BoundingBox(new Vector3(_newCubePlace.X, _newCubePlace.Y, _newCubePlace.Z), new Vector3(_newCubePlace.X + 1, _newCubePlace.Y + 1, _newCubePlace.Z + 1));
-                    _isBlockPicked = true;
-
-                    break;
-                }
-            }
-
-            ////Create the bounding box around the cube !
-            //if (_previousPickedBlock != _pickedBlock && _isBlockPicked)
-            //{
-            //    _playerSelectedBox = new BoundingBox(new Vector3(_pickedBlock.X - 0.002f, _pickedBlock.Y - 0.002f, _pickedBlock.Z - 0.002f), new Vector3(_pickedBlock.X + 1.002f, _pickedBlock.Y + 1.002f, _pickedBlock.Z + 1.002f));
-            //    _blocCursor.Update(ref _playerSelectedBox);
-            //}
-        }
-
-        int _headCubeIndex;
-        Utopia.Shared.Structs.Landscape.TerraCube _headCube;
-        bool HeadInsideWater;
-        private void CheckHeadUnderWater()
-        {
-            if (_cubesHolder.IndexSafe(MathHelper.Fastfloor(CameraWorldPosition.X), MathHelper.Fastfloor(CameraWorldPosition.Y), MathHelper.Fastfloor(CameraWorldPosition.Z), out _headCubeIndex))
-            {
-                //Get the cube at the camera position !
-                _headCube = _cubesHolder.Cubes[_headCubeIndex];
-                if (_headCube.Id == CubeId.Water || _headCube.Id == CubeId.WaterSource)
-                {
-                    //TODO Take into account the Offseting in case of Offseted Water !
-                    HeadInsideWater = true;
-                }
-                else
-                {
-                    HeadInsideWater = false;
-                }
-            }
-        }
-
-        private void inputHandler()
-        {
-            if (_actions.isTriggered(Actions.Move_Mode))
-            {
-                if (_displacementMode == EntityDisplacementModes.Flying)
-                {
-                    Mode = EntityDisplacementModes.Walking;
-                }
-                else
-                {
-                    Mode = EntityDisplacementModes.Flying;
-                }
-            }
-
-            if (_actions.isTriggered(Actions.Block_Add))
-            {
-                //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
-                if (_isBlockPicked)
-                {
-                    EntityImpact.ReplaceBlock(ref _pickedBlock, CubeId.Air);
-                }
-                //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
-            }
-
-            if (_actions.isTriggered(Actions.Block_Remove))
-            {
-
-                //Avoid the player to add a block where he is located !
-                if (_isBlockPicked)
-                {
-                    if (!MBoundingBox.Intersects(ref _boundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= AbstractChunk.ChunkSize.Y - 2)
-                    {
-                        EntityImpact.ReplaceBlock(ref _newCubePlace, CubeId.Gravel);
-                    }
-                }
-                //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
-            }
-
-            //Did I use the scrollWheel
-            //if (_actions.isTriggered(Actions.Block_SelectNext))
-            //{
-            //    _buildingCubeIndex++;
-            //    if (_buildingCubeIndex >= VisualCubeProfile.CubesProfile.Length) _buildingCubeIndex = 1;
-
-            //    _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
-            //}
-
-            //if (_actions.isTriggered(Actions.Block_SelectPrevious))
-            //{
-            //    _buildingCubeIndex--;
-            //    if (_buildingCubeIndex <= 0) _buildingCubeIndex = VisualCubeProfile.CubesProfile.Length - 1;
-            //    _buildingCube = VisualCubeProfile.CubesProfile[_buildingCubeIndex];
-            //}
-
-        }
-
         #endregion
     }
 }

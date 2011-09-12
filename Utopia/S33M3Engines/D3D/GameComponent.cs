@@ -11,7 +11,7 @@ namespace S33M3Engines.D3D
         #region Private variables
 
         private bool _enabled = true;
-        private int _updateOrder;
+        private int _updateOrder = 10;
 
         #endregion
 

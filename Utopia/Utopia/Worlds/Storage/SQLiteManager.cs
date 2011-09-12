@@ -20,9 +20,9 @@ namespace Utopia.Worlds.Storage
         #region Public Variable
         #endregion
 
-        public SQLiteManager(WorldParameters worldParameters, bool serverMode ,bool forceNew)
+        public SQLiteManager(WorldParameters worldParameters, string UserName, bool forceNew)
         {
-            Init(worldParameters, serverMode);
+            Init(worldParameters, UserName);
             if (forceNew && File.Exists(_path)) File.Delete(_path);
             GetConnection(); //Get a connection to The DB
         }
@@ -70,11 +70,12 @@ namespace Utopia.Worlds.Storage
         #endregion
 
         #region Private Methods
-        private void Init(WorldParameters worldParameters, bool serverMode)
+        private void Init(WorldParameters worldParameters, string UserName)
         {
-            string LocalMode = serverMode ? @"Server\" : @"Local\";
+            //TODO ensure the logging name can be used to as directory name
+            string UserNameDirectory = UserName.Replace(@"\", "_") + @"\";
             //Check if the save directory does exist
-            _path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Utopia\Storage\" + LocalMode + @"Worlds\";
+            _path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Utopia\Storage\" + UserNameDirectory + @"Worlds\";
             if (!Directory.Exists(_path))
             {
                 Directory.CreateDirectory(_path);

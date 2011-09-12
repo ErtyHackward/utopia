@@ -10,7 +10,14 @@ namespace S33M3Engines.Cameras
 {
     public interface ICameraPlugin
     {
+        /// <summary>
+        /// Must point to the real Position, not the interpolated one !
+        /// </summary>
         DVector3 CameraWorldPosition { get; }
+
+        /// <summary>
+        /// Must point to the real Orientation, not the interpolated one !
+        /// </summary>
         Quaternion CameraOrientation { get; }
     }
 

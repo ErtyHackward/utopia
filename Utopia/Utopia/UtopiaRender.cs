@@ -47,6 +47,7 @@ using Utopia.InputManager;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Concrete;
+using Utopia.Shared.Chunks.Entities.Voxel;
 
 namespace Utopia
 {
@@ -193,10 +194,10 @@ namespace Utopia
             _camManager = IoCContainer.Get<CameraManager>();
 
             _engine = IoCContainer.Get<D3DEngine>();
-
+          
             //Storage Manager
             _chunkStorageManager = IoCContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false),
-                                                                          new ConstructorArgument("serverMode", server.Connected));
+                                                                          new ConstructorArgument("UserName", server.ServerConnection.Login));
 
             GameComponents.Add(IoCContainer.Get<InputsManager>());
 
@@ -208,12 +209,15 @@ namespace Utopia
             GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
 
             //The Player !
-            VisualPlayerCharacter Player = IoCContainer.Get<VisualPlayerCharacter>(new ConstructorArgument("size", new Vector3(0.5f, 1.9f, 0.5f)));
-            Player.Initialize();
-            _entityManager = IoCContainer.Get<IEntityManager>(new ConstructorArgument("player", Player));
+            VisualPlayerCharacter Player = IoCContainer.Get<VisualPlayerCharacter>(new ConstructorArgument("voxelEntity", new PlayerCharacterBody()));
+            Player.UpdateOrder = 0;
+            Player.IsPlayerConstroled = true;
+            camera.CameraPlugin = IoCContainer.Get<VisualPlayerCharacter>();
+
+            _entityManager = IoCContainer.Get<IEntityManager>();
             GameComponents.Add(_entityManager);
-            camera.CameraPlugin = Player;
-            //GameComponents.Add(Player);
+
+            GameComponents.Add(Player);
 
             _actions = IoCContainer.Get<ActionsManager>();
 
@@ -237,7 +241,7 @@ namespace Utopia
 
             //Send the world to render
             _worldRenderer = IoCContainer.Get<WorldRenderer>();
-            _worldRenderer.UpdateOrder = 2;
+            _worldRenderer.UpdateOrder = 11;
             GameComponents.Add(_worldRenderer);             //Bind worldRendered to main loop.
 
             //TODO Incoroporate EntityImpect inside Enitty framework as a single class ==> Not static !
@@ -266,7 +270,6 @@ namespace Utopia
                 GameComponents.Add(server);
             }
 
-                
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 
             GameComponents.Add(IoCContainer.Get<Hud>());

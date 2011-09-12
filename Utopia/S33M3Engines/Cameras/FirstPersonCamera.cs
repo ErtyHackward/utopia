@@ -67,7 +67,6 @@ namespace S33M3Engines.Cameras
             {
                 //S33M3Engines.D3D.DebugTools.GameConsole.Write("The Camera is not Attached to en entity!!!");
             }
-
         }
 
         //Called once before the drawing sequence ==> Computed interpolated values here !

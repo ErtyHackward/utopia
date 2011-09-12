@@ -22,6 +22,7 @@ using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Network;
 using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Entities;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -61,7 +62,7 @@ namespace Utopia.Worlds.Chunks
         private ILandscapeManager _landscapeManager;
         private IChunkMeshManager _chunkMeshManager;
         private Server _server;
-        private IDynamicEntity _player;
+        private VisualPlayerCharacter _player;
         #endregion
 
         #region Public Property/Variables
@@ -93,7 +94,7 @@ namespace Utopia.Worlds.Chunks
                            IChunksWrapper chunkWrapper,
                            ILightingManager lightingManager,
                            Server server,
-                           IDynamicEntity player)
+                           VisualPlayerCharacter player)
         {
             _server = server;
             _d3dEngine = d3dEngine;

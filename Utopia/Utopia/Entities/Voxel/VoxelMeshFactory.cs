@@ -22,9 +22,9 @@ namespace Utopia.Entities.Voxel
             _d3DEngine = d3DEngine;
         }
 
-        public List<VertexPositionColorTexture> GenCubesFaces(byte[,,] blocks)
+        public List<VertexPositionColor> GenCubesFaces(byte[,,] blocks)
         {
-            List<VertexPositionColorTexture> vertexList = new List<VertexPositionColorTexture>();
+            List<VertexPositionColor> vertexList = new List<VertexPositionColor>();
 
             for (int x = 0; x < blocks.GetLength(0); x++)
             {
@@ -45,7 +45,7 @@ namespace Utopia.Entities.Voxel
         }
 
 
-        private static void BuildBlockVertices(byte[,,] blocks, ref List<VertexPositionColorTexture> vertice, byte blockType,
+        private static void BuildBlockVertices(byte[,,] blocks, ref List<VertexPositionColor> vertice, byte blockType,
                                                int x,
                                                int y, int z)
         {
@@ -72,94 +72,89 @@ namespace Utopia.Entities.Voxel
                 BuildFaceVertices(ref vertice, x, y, z, CubeFace.Front, blockType); //Z-
             }
 
-        private static void BuildFaceVertices(ref List<VertexPositionColorTexture> vertice, int x, int y, int z,
+        private static void BuildFaceVertices(ref List<VertexPositionColor> vertice, int x, int y, int z,
                                               CubeFace faceDir,
                                               byte blockType)
         {
             //actually only handles 64 colors, so all blockType> 63 will have default color
             Color color = ColorLookup.Colours[blockType];
 
-            Vector2 texUpperLeft = new Vector2(0.0f, 0.0f);
-            Vector2 texUpperRight = new Vector2(1.0f, 0.0f);
-            Vector2 texLowerLeft = new Vector2(0.0f, 1.0f);
-            Vector2 texLowerRight = new Vector2(1.0f, 1.0f);
-            Vector2 tex = new Vector2(1.0f, 1.0f);
             //TODO indices : good for perf & ram & simplifies uv mapping ! 
             switch (faceDir)
             {
                 case CubeFace.Right: //X+
                     {
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y + 1, z), color, texUpperLeft));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y, z), color, texLowerLeft));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y, z + 1), color, texLowerRight));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y + 1, z + 1), color, texUpperRight));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y + 1, z), color, texUpperLeft));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y, z + 1), color, texLowerRight));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
                     }
                     break;
 
                 case CubeFace.Left: //X-
                     {
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y + 1, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y + 1, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y + 1, z), color, tex));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
                     }
                     break;
 
                 case CubeFace.Top: //Y+
                     {
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y + 1, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y + 1, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y + 1, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y + 1, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y + 1, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y + 1, z + 1), color, tex));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
                     }
                     break;
 
                 case CubeFace.Bottom: //Y-
                     {
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y, z), color, tex));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
                     }
                     break;
 
                 case CubeFace.Back: //Z+
                     {
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y + 1, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y + 1, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y + 1, z + 1), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y, z + 1), color, tex));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z + 1), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z + 1), color));
                     }
                     break;
 
                 case CubeFace.Front: //Z-
                     {
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y + 1, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y + 1, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x, y, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y, z), color, tex));
-                        vertice.Add(new VertexPositionColorTexture(new Vector3(x + 1, y + 1, z), color, tex));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y, z), color));
+                        vertice.Add(new VertexPositionColor(new Vector3(x + 1, y + 1, z), color));
                     }
                     break;
             }
         }
 
 
-        public VertexBuffer<VertexPositionColorTexture> InitBuffer(List<VertexPositionColorTexture> vertice)
+        public VertexBuffer<VertexPositionColor> InitBuffer(List<VertexPositionColor> vertice)
         {
-            return new VertexBuffer<VertexPositionColorTexture>(_d3DEngine, vertice.Count,
-                                                         VertexPositionColorTexture.VertexDeclaration,
+            return new VertexBuffer<VertexPositionColor>(_d3DEngine, vertice.Count,
+                                                         VertexPositionColor.VertexDeclaration,
                                                          PrimitiveTopology.TriangleList,
                                                          ResourceUsage.Default, 10);
         }

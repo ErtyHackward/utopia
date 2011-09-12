@@ -35,8 +35,8 @@ namespace Utopia.Worlds.Storage
         /// Sqlite Manager
         /// </summary>
         /// <param name="path">The SQLite database path</param>
-        public SQLiteStorageManager(WorldParameters worldParameters, bool serverMode ,bool forceNew = false)
-            : base(worldParameters, serverMode, forceNew)
+        public SQLiteStorageManager(WorldParameters worldParameters, string UserName, bool forceNew = false)
+            : base(worldParameters, UserName, forceNew)
         {
             Init();
         }

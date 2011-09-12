@@ -70,8 +70,8 @@ namespace Utopia.Worlds
 
         public override void Draw()
         {
-            _world.WorldChunks.Draw();
             _world.WorldSkyDome.Draw();
+            _world.WorldChunks.Draw();
         }
 
         #endregion

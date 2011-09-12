@@ -86,12 +86,12 @@ namespace Utopia.Network
 
         void _server_MessagePosition(object sender, ProtocolMessageEventArgs<Net.Messages.EntityPositionMessage> e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         void _server_MessagePlayerOut(object sender, ProtocolMessageEventArgs<Net.Messages.EntityOutMessage> e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         void _server_MessagePlayerIn(object sender, ProtocolMessageEventArgs<Net.Messages.EntityInMessage> e)
@@ -111,12 +111,12 @@ namespace Utopia.Network
 
         void _server_MessageDirection(object sender, ProtocolMessageEventArgs<Net.Messages.EntityDirectionMessage> e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         void _server_MessageDateTime(object sender, ProtocolMessageEventArgs<Net.Messages.DateTimeMessage> e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         void _server_MessageChunkData(object sender, ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
@@ -126,12 +126,12 @@ namespace Utopia.Network
 
         void _server_MessageChat(object sender, ProtocolMessageEventArgs<Net.Messages.ChatMessage> e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         void _server_MessageBlockChange(object sender, ProtocolMessageEventArgs<Net.Messages.BlocksChangedMessage> e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         void _server_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
