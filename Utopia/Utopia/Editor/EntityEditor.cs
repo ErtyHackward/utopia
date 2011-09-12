@@ -1,24 +1,22 @@
 ﻿using System;
-using System.Windows.Forms;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
-using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.InputHandler;
-using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
+using S33M3Engines.StatesManager;
 using S33M3Engines.Struct.Vertex;
+using S33M3Engines.Textures;
 using S33M3Engines.WorldFocus;
 using SharpDX;
 using SharpDX.Direct3D11;
+using Utopia.Action;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Structs;
+using UtopiaContent.Effects.Terran;
 using Screen = Nuclex.UserInterface.Screen;
-using Utopia.Action;
-using S33M3Engines.StatesManager;
-using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia.Editor
 {
@@ -28,15 +26,19 @@ namespace Utopia.Editor
 
         private readonly VisualEntity _editedEntity;
         private readonly D3DEngine _d3DEngine;
-        private HLSLVertexPositionColorTexture _itemEffect;
+        private HLSLTerran _itemEffect;
         private readonly CameraManager _camManager;
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VoxelMeshFactory _voxelMeshFactory;
-        private readonly EntityEditorUi _ui;
+        private  EntityEditorUi _ui;
         private readonly ActionsManager _actions;
         private readonly Hud _hudComponent;
 
-        private const float _scale = 1f/16f;
+        private const float Scale = 1f/16f;
+
+        private Location3<int> _currentSelectionBlock;
+        private DVector3 _currentSelectionWorld;
+        public ShaderResourceView _texture; //it's a field for being able to dispose the resource
 
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
@@ -49,15 +51,28 @@ namespace Utopia.Editor
             _camManager = camManager;
             _d3DEngine = d3DEngine;
             _hudComponent = hudComponent;
-            _ui = new EntityEditorUi(this);
+         
 
             VoxelEntity entity = new EditableVoxelEntity();
 
             entity.Blocks = new byte[16,16,16];
             entity.PlainCubeFill();
-            _editedEntity = new VisualEntity(_d3DEngine, _camManager, _worldFocusManager,_voxelMeshFactory, entity, new NoEntity());
-            _editedEntity.VoxelEntity.Position = _camManager.ActiveCamera.WorldPosition + new Vector3(-1, 0, -3);
 
+
+            int x = entity.Blocks.GetLength(0);
+            int y = entity.Blocks.GetLength(1);
+            int z = entity.Blocks.GetLength(2);
+            byte[,,] overlays = new byte[x,y,z];
+            for (int i = 0; i < 16; i++)
+            {
+                overlays[i, 8, 0]= 22;
+                overlays[8, i, 0]= 22;
+                overlays[0, 8, i]=22;
+            }
+
+            _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays);
+            _editedEntity.Position = _camManager.ActiveCamera.WorldPosition + new Vector3(-1, 0, -3);
+     
             // inactive by default, use F12 UI to enable :)
             this.Visible = false;
             this.Enabled = false;
@@ -71,18 +86,23 @@ namespace Utopia.Editor
 
         public override void LoadContent()
         {
-            _itemEffect = new HLSLVertexPositionColorTexture(_d3DEngine, @"D3D/Effects/Basics/VertexPositionColorTexture.hlsl",
-                                                      VertexPositionColorTexture.VertexDeclaration);
-            _itemEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+            String[] dirs = new String[] {@"Textures/Terran/", @"Textures/Editor/"};
 
-            _texture = ShaderResourceView.FromFile(_d3DEngine.Device, @"Textures\Gui\Editor.png");
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point, out _texture);
 
-            _itemEffect.DiffuseTexture.Value = _texture;
+            _itemEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/TerranEditor.hlsl", VertexCubeSolid.VertexDeclaration);
+
+            _itemEffect.TerraTexture.Value = _texture;
+           
+            _itemEffect.SamplerDiffuse.Value =
+                StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+
+            _ui = new EntityEditorUi(this);
         }
 
         public override void Update(ref GameTime timeSpent)
         {
-            HandleInput();
+            //HandleInput();
             //setSelection();
         }
 
@@ -107,8 +127,9 @@ namespace Utopia.Editor
                     }
                 }
             }
-            else
+            else if (_ui !=null)
             {
+                
                 foreach (var control in _ui.Children)
                     _screen.Desktop.Children.Remove(control);
                 _hudComponent.Enabled = true;
@@ -118,19 +139,24 @@ namespace Utopia.Editor
         private void DrawItems()
         {
             //Applying Correct Render States
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet,
+                                         GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             _itemEffect.Begin();
 
-            _itemEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
-            _itemEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
+            _itemEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _itemEffect.CBPerFrame.Values.SunColor = Vector3.One;
+            _itemEffect.CBPerFrame.Values.dayTime = 0.5f;
+            _itemEffect.CBPerFrame.Values.fogdist = 100; //TODO FOGDIST in editor
+            
             _itemEffect.CBPerFrame.IsDirty = true;
 
             Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
-                           Matrix.Translation(_editedEntity.VoxelEntity.Position.AsVector3());
+                           Matrix.Translation(_editedEntity.Position.AsVector3());
 
             world = _worldFocusManager.CenterOnFocus(ref world);
             _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+            _itemEffect.CBPerDraw.Values.popUpYOffset = 0;
             _itemEffect.CBPerDraw.IsDirty = true;
             _itemEffect.Apply();
 
@@ -151,22 +177,20 @@ namespace Utopia.Editor
         }
 
 //        private int _y = 0;
-        private Location3<int> _currentSelectionBlock;
-        private DVector3 _currentSelectionWorld;
-        private ShaderResourceView _texture;//it's a field for being able to dispose the resource
+       
 
         private void HandleInput()
         {
             if (_actions.isTriggered(Actions.Block_Add))
             {
-                byte[, ,] blocks = _editedEntity.VoxelEntity.Blocks;
+                byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
 
                 int x = _currentSelectionBlock.X;
                 int y = _currentSelectionBlock.Y;
                 int z = _currentSelectionBlock.Z;
 
-                blocks[x, y, z] = _ui.SelectedColor;
+                blocks[x, y, z] = _ui.SelectedIndex;
 
 
                 /*               if (_y == blocks.GetLength(1)) _y = 0;
@@ -182,7 +206,7 @@ namespace Utopia.Editor
                 }*/
 
                 _editedEntity.Altered = true;
-                _editedEntity.RefreshBodyMesh();
+                _editedEntity.Update();
 
                 // _y++;
             }
@@ -192,17 +216,18 @@ namespace Utopia.Editor
         private void setSelection()
         {
             ICamera cam = _camManager.ActiveCamera;
-            byte[, ,] blocks = _editedEntity.VoxelEntity.Blocks;
+            byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
-             Vector3 mousePos = new Vector3(Mouse.GetState().X,
-                               Mouse.GetState().Y,
-                               cam.Viewport.MinDepth);
+            Vector3 mousePos = new Vector3(Mouse.GetState().X,
+                                           Mouse.GetState().Y,
+                                           cam.Viewport.MinDepth);
 
-            Vector3 unproject = Vector3.Unproject(mousePos, cam.Viewport.TopLeftX, cam.Viewport.TopLeftY, cam.Viewport.Width,
-                              cam.Viewport.Height, cam.Viewport.MinDepth, cam.Viewport.MaxDepth,
-                               Matrix.Translation(cam.WorldPosition.AsVector3())*cam.ViewProjection3D);
+            Vector3 unproject = Vector3.Unproject(mousePos, cam.Viewport.TopLeftX, cam.Viewport.TopLeftY,
+                                                  cam.Viewport.Width,
+                                                  cam.Viewport.Height, cam.Viewport.MinDepth, cam.Viewport.MaxDepth,
+                                                  Matrix.Translation(cam.WorldPosition.AsVector3())*cam.ViewProjection3D);
 
-           // Console.WriteLine(unproject);
+            // Console.WriteLine(unproject);
             /*
             for (float x = 0.5f; x < 8f; x += 0.1f)
             {
@@ -227,7 +252,6 @@ namespace Utopia.Editor
 
         public override void Dispose()
         {
-            
             _itemEffect.Dispose();
             _texture.Dispose();
 

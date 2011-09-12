@@ -58,9 +58,7 @@ PS_IN VS( VS_IN input )
 //--------------------------------------------------------------------------------------
 float4 PS( PS_IN input ) : SV_Target
 {
-	float4 color = DiffuseTexture.Sample(SamplerDiffuse, input.UV);
-	color.a *= Alpha;
-	color*=input.Col;
-
+	float4 color = DiffuseTexture.Sample(SamplerDiffuse, input.UV);	
+	color = lerp(color, input.Col, Alpha);	
 	return color;
 }

@@ -173,17 +173,18 @@ namespace S33M3Engines.Sprites
             _effect.Begin();
 
             _effect.CBPerDraw.Values.ViewportSize = new Vector2(_d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height);
-            if (sourceRectInTextCoord) _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            if (sourceRectInTextCoord) _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.Width, spriteTexture.Height);
             else _effect.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
             
             _effect.CBPerDraw.IsDirty = true;
             
             // Set per-instance data
             _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
+            _effect.CBPerInstance.Values.TextureArrayIndex = 0;
             _effect.CBPerInstance.Values.Color = color;
             if (sourceRect == default(RectangleF))
             {
-                if (sourceRectInTextCoord) _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+                if (sourceRectInTextCoord) _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, spriteTexture.Width, spriteTexture.Height);
                 else _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, 1, 1);
             }
             else
@@ -207,16 +208,16 @@ namespace S33M3Engines.Sprites
         /// <param name="spriteTexture"></param>
         /// <param name="numSprites"></param>
         /// <param name="sourceRectInTextCoord"></param>
-        public void RenderBatch(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color, bool sourceRectInTextCoord = true)
+        public void RenderBatch(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color, bool sourceRectInTextCoord = true, int textureArrayIndex=0)
         {
             Matrix transform = Matrix.Scaling((float)destRect.Width / srcRect.Width, (float)destRect.Height / srcRect.Height, 0) *
                                Matrix.Translation(destRect.Left, destRect.Top, 0);
-
             VertexSpriteInstanced newSpriteInstace = new VertexSpriteInstanced()
                                         {
                                             Tranform = transform,
                                             SourceRect = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height),
-                                            Color = new Color4(color.ToVector4())
+                                            Color = new Color4(color.ToVector4()),
+                                            TextureArrayIndex = textureArrayIndex
                                         };
 
             //Texture change ==> Flush the accomulator by creation a batched draw call
@@ -259,7 +260,7 @@ namespace S33M3Engines.Sprites
             //Set Par Batch Constant
             _effectInstanced.Begin();
             _effectInstanced.CBPerDraw.Values.ViewportSize = new Vector2(_d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height);
-            if(sourceRectInTextCoord)_effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.TextureDescr.Width, spriteTexture.TextureDescr.Height);
+            if(sourceRectInTextCoord)_effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.Width, spriteTexture.Height);
             else _effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
             _effectInstanced.CBPerDraw.IsDirty = true;
             _effectInstanced.SpriteTexture.Value = spriteTexture.Texture;
@@ -270,10 +271,10 @@ namespace S33M3Engines.Sprites
             //for (int i = drawOffset; i < drawData.Length - drawOffset; ++i)
             //{
             //    Vector4 drawRect = drawData[i].SourceRect;
-            //    if (drawRect.X < 0 || drawRect.X >= spriteTexture.TextureDescr.Width ||
-            //        drawRect.Y >= 0 && drawRect.Y < spriteTexture.TextureDescr.Height ||
-            //        drawRect.Z > 0 && drawRect.X + drawRect.Z <= spriteTexture.TextureDescr.Width ||
-            //        drawRect.W > 0 && drawRect.Y + drawRect.W <= spriteTexture.TextureDescr.Height)
+            //    if (drawRect.X < 0 || drawRect.X >= spriteTexture.Width ||
+            //        drawRect.Y >= 0 && drawRect.Y < spriteTexture.Height ||
+            //        drawRect.Z > 0 && drawRect.X + drawRect.Z <= spriteTexture.Width ||
+            //        drawRect.W > 0 && drawRect.Y + drawRect.W <= spriteTexture.Height)
             //    {
             //        Console.WriteLine("ERREUR Rectangle source en dehors texture !!!!");
             //    }

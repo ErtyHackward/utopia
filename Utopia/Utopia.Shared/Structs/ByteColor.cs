@@ -26,10 +26,10 @@ namespace Utopia.Shared.Structs
         {
             ByteColor result;
 
-            result.R = (byte)(a.R + b.R);
-            result.G = (byte)(a.G + b.G);
-            result.B = (byte)(a.B + b.B);
-            result.SunLight = (byte)(a.SunLight + b.SunLight);
+            result.R = (byte) (a.R + b.R);
+            result.G = (byte) (a.G + b.G);
+            result.B = (byte) (a.B + b.B);
+            result.SunLight = (byte) (a.SunLight + b.SunLight);
 
             return result;
         }
@@ -49,8 +49,7 @@ namespace Utopia.Shared.Structs
                 b += colors[i].B;
             }
 
-            return new ByteColor((byte)(r / nbrColors), (byte)(g / nbrColors), (byte)(b / nbrColors), (byte)(a / nbrColors));
-
+            return new ByteColor((byte) (r/nbrColors), (byte) (g/nbrColors), (byte) (b/nbrColors), (byte) (a/nbrColors));
         }
 
         public override int GetHashCode()
@@ -60,6 +59,11 @@ namespace Utopia.Shared.Structs
                 int value = SunLight + (R << 8) + (G << 16) + (B << 24);
                 return value;
             }
+        }
+
+        public override String ToString()
+        {
+            return R.ToString() + ',' + G + ',' + B + ',' + SunLight;
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SharpDX.Direct3D11;
-using SharpDX;
+﻿#region
+
+using System;
 using S33M3Engines.Shared.Delegates;
+using SharpDX;
+using SharpDX.Direct3D11;
+
+#endregion
 
 namespace S33M3Engines.Shared.Sprites
 {
@@ -12,59 +13,76 @@ namespace S33M3Engines.Shared.Sprites
     {
         public ShaderResourceView Texture;
         public bool _textureDispose = true;
-        public Texture2DDescription TextureDescr;
+
+        public int Width;
+        public int Height;
+
         public Matrix ScreenPosition;
 
-        public SpriteTexture(Device device, string TexturePath, ref D3DEngineDelegates.ViewPortUpdated viewPortUpdtEvent, Viewport currentViewPort)
-        {
-            Texture2D tex = Texture2D.FromFile<Texture2D>(device, TexturePath);
-            CreateResource(device, tex, new Vector2((currentViewPort.Width / 2) - (tex.Description.Width / 2), (currentViewPort.Height) / 2 - (tex.Description.Height / 2)));
+        /// <summary>
+        /// otional index of texture in texture array
+        /// </summary>
+        public int Index; 
 
-            viewPortUpdtEvent += new D3DEngineDelegates.ViewPortUpdated(D3dEngine_ViewPort_Updated);
+        public SpriteTexture(Device device, string texturePath, ref D3DEngineDelegates.ViewPortUpdated viewPortUpdtEvent,
+                             Viewport currentViewPort)
+        {
+            Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath);
+            CreateResource(device, tex,
+                           new Vector2((currentViewPort.Width/2) - (tex.Description.Width/2),
+                                       (currentViewPort.Height)/2 - (tex.Description.Height/2)));
+
+            viewPortUpdtEvent += D3dEngine_ViewPort_Updated;
+            Width = tex.Description.Width;
+            Height = tex.Description.Height;
 
             tex.Dispose();
         }
 
         //Refresh Sprite Centering when the viewPort size change !
-        void D3dEngine_ViewPort_Updated(Viewport viewport)
+        private void D3dEngine_ViewPort_Updated(Viewport viewport)
         {
-            this.ScreenPosition.M41 = (viewport.Width / 2) - (TextureDescr.Width / 2);
-            this.ScreenPosition.M42 = (viewport.Height / 2) - (TextureDescr.Height / 2);
+            ScreenPosition.M41 = (viewport.Width/2) - (Width/2);
+            ScreenPosition.M42 = (viewport.Height/2) - (Height/2);
         }
 
-        public SpriteTexture(Device device, string TexturePath, Vector2 ScreenPosition)
+        public SpriteTexture(Device device, string texturePath, Vector2 screenPosition)
         {
-            Texture2D tex = Texture2D.FromFile<Texture2D>(device, TexturePath);
-            CreateResource(device, tex, ScreenPosition);
+            Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath);
+            CreateResource(device, tex, screenPosition);
             tex.Dispose();
         }
 
-        public SpriteTexture(Device device, Texture2D texture, Vector2 ScreenPosition)
+        public SpriteTexture(Device device, Texture2D texture, Vector2 screenPosition)
         {
-            CreateResource(device, texture, ScreenPosition);
+            CreateResource(device, texture, screenPosition);
         }
 
-        public SpriteTexture(Texture2D texture, ShaderResourceView textureShader, Vector2 ScreenPosition)
+        public SpriteTexture(Texture2D texture, ShaderResourceView textureShader, Vector2 screenPosition)
         {
             _textureDispose = false;
             Texture = textureShader;
-            TextureDescr = texture.Description;
-            this.ScreenPosition = Matrix.Translation(ScreenPosition.X, ScreenPosition.Y, 0);
+            Width = texture.Description.Width;
+            Height = texture.Description.Height;
+            ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
         }
 
-        public SpriteTexture(Texture2DDescription textureDescr, ShaderResourceView textureShader, Vector2 ScreenPosition)
+        public SpriteTexture(int width, int height, ShaderResourceView textureShader, Vector2 screenPosition)
         {
             _textureDispose = false;
             Texture = textureShader;
-            TextureDescr = textureDescr;
-            this.ScreenPosition = Matrix.Translation(ScreenPosition.X, ScreenPosition.Y, 0);
+            Width = width;
+            Height = height
+                ;
+            ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
         }
 
-        private void CreateResource(Device device, Texture2D texture, Vector2 ScreenPosition)
+        private void CreateResource(Device device, Texture2D texture, Vector2 screenPosition)
         {
-            this.ScreenPosition = Matrix.Translation(ScreenPosition.X, ScreenPosition.Y, 0);
+            ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
             Texture = new ShaderResourceView(device, texture);
-            TextureDescr = texture.Description;
+            Width = texture.Description.Width;
+            Height = texture.Description.Height;
         }
 
         public void Dispose()

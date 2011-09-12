@@ -34,41 +34,32 @@
             this.voronoiSeedNumeric = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.voronoiRelaxNumeric = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.noiseButton = new System.Windows.Forms.Button();
-            this.noiseZoomNumeric = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.elevateCheckBox = new System.Windows.Forms.CheckBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.noiseSeedNumeric = new System.Windows.Forms.NumericUpDown();
-            this.bordersCheckBox = new System.Windows.Forms.CheckBox();
-            this.makeIsandcheck = new System.Windows.Forms.CheckBox();
             this.centerElevationCheck = new System.Windows.Forms.CheckBox();
-            this.moisturizeCheck = new System.Windows.Forms.CheckBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
-            this.biomesCheck = new System.Windows.Forms.CheckBox();
-            this.octavesNumeric = new System.Windows.Forms.NumericUpDown();
-            this.persistanceNumeric = new System.Windows.Forms.NumericUpDown();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label3 = new System.Windows.Forms.Label();
+            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.button2 = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.voronoiPolyNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.voronoiSeedNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.voronoiRelaxNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noiseZoomNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noiseSeedNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.octavesNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.persistanceNumeric)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(15, 279);
+            this.button1.Location = new System.Drawing.Point(5, 505);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(117, 23);
+            this.button1.Size = new System.Drawing.Size(140, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "Generate";
             this.button1.UseVisualStyleBackColor = true;
@@ -76,7 +67,7 @@
             // 
             // voronoiPolyNumeric
             // 
-            this.voronoiPolyNumeric.Location = new System.Drawing.Point(12, 54);
+            this.voronoiPolyNumeric.Location = new System.Drawing.Point(6, 66);
             this.voronoiPolyNumeric.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -96,16 +87,19 @@
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(155, 19);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(724, 509);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
+            this.pictureBox1.Resize += new System.EventHandler(this.pictureBox1_Resize);
             // 
             // voronoiSeedNumeric
             // 
-            this.voronoiSeedNumeric.Location = new System.Drawing.Point(12, 139);
+            this.voronoiSeedNumeric.Location = new System.Drawing.Point(5, 105);
             this.voronoiSeedNumeric.Maximum = new decimal(new int[] {
             1000000000,
             0,
@@ -118,177 +112,32 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 120);
+            this.label1.Location = new System.Drawing.Point(6, 89);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(52, 13);
+            this.label1.Size = new System.Drawing.Size(61, 13);
             this.label1.TabIndex = 4;
-            this.label1.Text = "Grid seed";
+            this.label1.Text = "World seed";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(14, 35);
+            this.label2.Location = new System.Drawing.Point(3, 50);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(80, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "Polygons count";
-            // 
-            // voronoiRelaxNumeric
-            // 
-            this.voronoiRelaxNumeric.Location = new System.Drawing.Point(12, 97);
-            this.voronoiRelaxNumeric.Name = "voronoiRelaxNumeric";
-            this.voronoiRelaxNumeric.Size = new System.Drawing.Size(120, 20);
-            this.voronoiRelaxNumeric.TabIndex = 6;
-            this.voronoiRelaxNumeric.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 81);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 13);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Relax count";
-            // 
-            // noiseButton
-            // 
-            this.noiseButton.Location = new System.Drawing.Point(12, 472);
-            this.noiseButton.Name = "noiseButton";
-            this.noiseButton.Size = new System.Drawing.Size(120, 23);
-            this.noiseButton.TabIndex = 8;
-            this.noiseButton.Text = "Show elevation noise";
-            this.noiseButton.UseVisualStyleBackColor = true;
-            this.noiseButton.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // noiseZoomNumeric
-            // 
-            this.noiseZoomNumeric.DecimalPlaces = 6;
-            this.noiseZoomNumeric.Increment = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.noiseZoomNumeric.Location = new System.Drawing.Point(12, 374);
-            this.noiseZoomNumeric.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.noiseZoomNumeric.Name = "noiseZoomNumeric";
-            this.noiseZoomNumeric.Size = new System.Drawing.Size(120, 20);
-            this.noiseZoomNumeric.TabIndex = 9;
-            this.noiseZoomNumeric.Value = new decimal(new int[] {
-            8,
-            0,
-            0,
-            262144});
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 355);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(34, 13);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "Zoom";
-            // 
-            // elevateCheckBox
-            // 
-            this.elevateCheckBox.AutoSize = true;
-            this.elevateCheckBox.Checked = true;
-            this.elevateCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.elevateCheckBox.Location = new System.Drawing.Point(12, 166);
-            this.elevateCheckBox.Name = "elevateCheckBox";
-            this.elevateCheckBox.Size = new System.Drawing.Size(61, 17);
-            this.elevateCheckBox.TabIndex = 11;
-            this.elevateCheckBox.Text = "elevate";
-            this.elevateCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 316);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(79, 13);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "Elevation Seed";
-            // 
-            // noiseSeedNumeric
-            // 
-            this.noiseSeedNumeric.Location = new System.Drawing.Point(12, 332);
-            this.noiseSeedNumeric.Maximum = new decimal(new int[] {
-            100000000,
-            0,
-            0,
-            0});
-            this.noiseSeedNumeric.Name = "noiseSeedNumeric";
-            this.noiseSeedNumeric.Size = new System.Drawing.Size(120, 20);
-            this.noiseSeedNumeric.TabIndex = 12;
-            this.noiseSeedNumeric.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            // 
-            // bordersCheckBox
-            // 
-            this.bordersCheckBox.AutoSize = true;
-            this.bordersCheckBox.Location = new System.Drawing.Point(79, 165);
-            this.bordersCheckBox.Name = "bordersCheckBox";
-            this.bordersCheckBox.Size = new System.Drawing.Size(61, 17);
-            this.bordersCheckBox.TabIndex = 14;
-            this.bordersCheckBox.Text = "borders";
-            this.bordersCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // makeIsandcheck
-            // 
-            this.makeIsandcheck.AutoSize = true;
-            this.makeIsandcheck.Checked = true;
-            this.makeIsandcheck.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.makeIsandcheck.Location = new System.Drawing.Point(12, 188);
-            this.makeIsandcheck.Name = "makeIsandcheck";
-            this.makeIsandcheck.Size = new System.Drawing.Size(82, 17);
-            this.makeIsandcheck.TabIndex = 15;
-            this.makeIsandcheck.Text = "make island";
-            this.makeIsandcheck.UseVisualStyleBackColor = true;
             // 
             // centerElevationCheck
             // 
             this.centerElevationCheck.AutoSize = true;
             this.centerElevationCheck.Checked = true;
             this.centerElevationCheck.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.centerElevationCheck.Location = new System.Drawing.Point(12, 211);
+            this.centerElevationCheck.Location = new System.Drawing.Point(6, 131);
             this.centerElevationCheck.Name = "centerElevationCheck";
             this.centerElevationCheck.Size = new System.Drawing.Size(102, 17);
             this.centerElevationCheck.TabIndex = 16;
             this.centerElevationCheck.Text = "center elevation";
             this.centerElevationCheck.UseVisualStyleBackColor = true;
-            // 
-            // moisturizeCheck
-            // 
-            this.moisturizeCheck.AutoSize = true;
-            this.moisturizeCheck.Checked = true;
-            this.moisturizeCheck.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.moisturizeCheck.Location = new System.Drawing.Point(12, 234);
-            this.moisturizeCheck.Name = "moisturizeCheck";
-            this.moisturizeCheck.Size = new System.Drawing.Size(72, 17);
-            this.moisturizeCheck.TabIndex = 17;
-            this.moisturizeCheck.Text = "moisturize";
-            this.moisturizeCheck.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(12, 502);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(120, 23);
-            this.button2.TabIndex = 18;
-            this.button2.Text = "Show moiture noise";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click_1);
             // 
             // label6
             // 
@@ -299,132 +148,142 @@
             this.label6.TabIndex = 19;
             this.label6.Text = "label6";
             // 
-            // biomesCheck
+            // tabControl1
             // 
-            this.biomesCheck.AutoSize = true;
-            this.biomesCheck.Checked = true;
-            this.biomesCheck.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.biomesCheck.Location = new System.Drawing.Point(12, 256);
-            this.biomesCheck.Name = "biomesCheck";
-            this.biomesCheck.Size = new System.Drawing.Size(76, 17);
-            this.biomesCheck.TabIndex = 20;
-            this.biomesCheck.Text = "set biomes";
-            this.biomesCheck.UseVisualStyleBackColor = true;
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Location = new System.Drawing.Point(1, 3);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(148, 496);
+            this.tabControl1.TabIndex = 26;
             // 
-            // octavesNumeric
+            // tabPage1
             // 
-            this.octavesNumeric.Increment = new decimal(new int[] {
-            0,
+            this.tabPage1.Controls.Add(this.button2);
+            this.tabPage1.Controls.Add(this.label3);
+            this.tabPage1.Controls.Add(this.numericUpDown2);
+            this.tabPage1.Controls.Add(this.numericUpDown1);
+            this.tabPage1.Controls.Add(this.button4);
+            this.tabPage1.Controls.Add(this.button3);
+            this.tabPage1.Controls.Add(this.label2);
+            this.tabPage1.Controls.Add(this.voronoiPolyNumeric);
+            this.tabPage1.Controls.Add(this.voronoiSeedNumeric);
+            this.tabPage1.Controls.Add(this.label1);
+            this.tabPage1.Controls.Add(this.centerElevationCheck);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(140, 470);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "General";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(7, 3);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(58, 13);
+            this.label3.TabIndex = 25;
+            this.label3.Text = "World Size";
+            // 
+            // numericUpDown2
+            // 
+            this.numericUpDown2.Location = new System.Drawing.Point(73, 27);
+            this.numericUpDown2.Maximum = new decimal(new int[] {
+            16000,
             0,
             0,
             0});
-            this.octavesNumeric.Location = new System.Drawing.Point(12, 413);
-            this.octavesNumeric.Maximum = new decimal(new int[] {
-            16,
+            this.numericUpDown2.Minimum = new decimal(new int[] {
+            100,
             0,
             0,
             0});
-            this.octavesNumeric.Name = "octavesNumeric";
-            this.octavesNumeric.Size = new System.Drawing.Size(120, 20);
-            this.octavesNumeric.TabIndex = 21;
-            this.octavesNumeric.Value = new decimal(new int[] {
-            4,
+            this.numericUpDown2.Name = "numericUpDown2";
+            this.numericUpDown2.Size = new System.Drawing.Size(58, 20);
+            this.numericUpDown2.TabIndex = 24;
+            this.numericUpDown2.Value = new decimal(new int[] {
+            1080,
             0,
             0,
             0});
             // 
-            // persistanceNumeric
+            // numericUpDown1
             // 
-            this.persistanceNumeric.DecimalPlaces = 6;
-            this.persistanceNumeric.Increment = new decimal(new int[] {
-            0,
+            this.numericUpDown1.Location = new System.Drawing.Point(9, 27);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            16000,
             0,
             0,
             0});
-            this.persistanceNumeric.Location = new System.Drawing.Point(12, 448);
-            this.persistanceNumeric.Maximum = new decimal(new int[] {
-            1000,
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            100,
             0,
             0,
             0});
-            this.persistanceNumeric.Name = "persistanceNumeric";
-            this.persistanceNumeric.Size = new System.Drawing.Size(120, 20);
-            this.persistanceNumeric.TabIndex = 22;
-            this.persistanceNumeric.Value = new decimal(new int[] {
-            8,
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(58, 20);
+            this.numericUpDown1.TabIndex = 23;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            1920,
             0,
             0,
-            65536});
+            0});
             // 
-            // label7
+            // button4
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 397);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(47, 13);
-            this.label7.TabIndex = 23;
-            this.label7.Text = "Octaves";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(10, 434);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(62, 13);
-            this.label8.TabIndex = 24;
-            this.label8.Text = "Persistance";
+            this.button4.Location = new System.Drawing.Point(7, 410);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(128, 23);
+            this.button4.TabIndex = 22;
+            this.button4.Text = "Save map";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(95, 306);
+            this.button3.Location = new System.Drawing.Point(7, 381);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(37, 23);
-            this.button3.TabIndex = 25;
-            this.button3.Text = "button3";
+            this.button3.Size = new System.Drawing.Size(128, 23);
+            this.button3.TabIndex = 21;
+            this.button3.Text = "Export as bitmap";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(7, 439);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(128, 23);
+            this.button2.TabIndex = 26;
+            this.button2.Text = "Load map";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(891, 534);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.persistanceNumeric);
-            this.Controls.Add(this.octavesNumeric);
-            this.Controls.Add(this.biomesCheck);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.moisturizeCheck);
-            this.Controls.Add(this.centerElevationCheck);
-            this.Controls.Add(this.makeIsandcheck);
-            this.Controls.Add(this.bordersCheckBox);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.noiseSeedNumeric);
-            this.Controls.Add(this.elevateCheckBox);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.noiseZoomNumeric);
-            this.Controls.Add(this.noiseButton);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.voronoiRelaxNumeric);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.voronoiSeedNumeric);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.voronoiPolyNumeric);
             this.Controls.Add(this.button1);
             this.Name = "frmMain";
             this.Text = "Utopia world planner";
             ((System.ComponentModel.ISupportInitialize)(this.voronoiPolyNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.voronoiSeedNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.voronoiRelaxNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noiseZoomNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.noiseSeedNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.octavesNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.persistanceNumeric)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -438,26 +297,18 @@
         private System.Windows.Forms.NumericUpDown voronoiSeedNumeric;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.NumericUpDown voronoiRelaxNumeric;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button noiseButton;
-        private System.Windows.Forms.NumericUpDown noiseZoomNumeric;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.CheckBox elevateCheckBox;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown noiseSeedNumeric;
-        private System.Windows.Forms.CheckBox bordersCheckBox;
-        private System.Windows.Forms.CheckBox makeIsandcheck;
         private System.Windows.Forms.CheckBox centerElevationCheck;
-        private System.Windows.Forms.CheckBox moisturizeCheck;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.CheckBox biomesCheck;
-        private System.Windows.Forms.NumericUpDown octavesNumeric;
-        private System.Windows.Forms.NumericUpDown persistanceNumeric;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

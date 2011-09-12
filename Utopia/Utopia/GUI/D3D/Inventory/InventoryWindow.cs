@@ -52,7 +52,7 @@ namespace Utopia.GUI.D3D.Inventory
             Children.Add(this._okButton);
 
             buildCharacterSheet(back);
-            buildGrid(back.TextureDescr.Width + 5);
+            buildGrid(back.Width + 5);
 
         }
 
@@ -60,7 +60,7 @@ namespace Utopia.GUI.D3D.Inventory
         {
             ContainerControl characterSheet = new ContainerControl();
             characterSheet.background = back;
-            characterSheet.Bounds = new UniRectangle(0, 0, back.TextureDescr.Width, back.TextureDescr.Height);
+            characterSheet.Bounds = new UniRectangle(0, 0, back.Width, back.Height);
             Children.Add(characterSheet);
 
             buildBodyslot(characterSheet, EquipmentSlotType.Head, 74, 2);
