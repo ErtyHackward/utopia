@@ -61,5 +61,6 @@ float4 PS( PS_IN input ) : SV_Target
 	float4 color = DiffuseTexture.Sample(SamplerDiffuse, input.UV);
 	color.a *= Alpha;
 	color*=input.Col;
+
 	return color;
 }

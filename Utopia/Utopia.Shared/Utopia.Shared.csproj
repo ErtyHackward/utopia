@@ -120,6 +120,7 @@
     <Compile Include="Chunks\Entities\Inventory\Tools\ToolImpact.cs" />
     <Compile Include="Chunks\Entities\Inventory\Weapon.cs" />
     <Compile Include="Chunks\Entities\DynamicEntity.cs" />
+    <Compile Include="Chunks\Entities\Voxel\PlayerCharacterBody.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
     <Compile Include="Chunks\SingleArrayChunkContainer.cs" />

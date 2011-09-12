@@ -6,28 +6,50 @@ using SharpDX;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.D3D;
+using Utopia.Shared.Chunks.Entities.Interfaces;
+using S33M3Engines.Struct;
+using S33M3Engines.StatesManager;
+using S33M3Engines.D3D.Effects.Basics;
+using S33M3Engines;
+using S33M3Engines.Cameras;
+using S33M3Engines.WorldFocus;
+using SharpDX.Direct3D11;
 
 namespace Utopia.Entities.Voxel
 {
     /// <summary>
     ///  This Class is responsible for the Entity Rendering into the world 
     /// </summary>
-    public class VisualEntity : IDrawable, IDisposable
+    public class VisualEntity : DrawableGameComponent, IDisposable
     {
         #region Private variables
         //The helper for building body mesh
         private readonly VoxelMeshFactory _voxelMeshFactory;
+        private Vector3 _boundingMinPoint, _boundingMaxPoint;
+
+        private HLSLVertexPositionColor _entityEffect;
+        private D3DEngine _d3DEngine;
+        private CameraManager _camManager;
+        private WorldFocusManager _worldFocusManager;
         #endregion
 
         #region Public variables/Properties
         //Entity Body data holding collections
-        public VertexBuffer<VertexPositionColorTexture> VertexBuffer;
-        public List<VertexPositionColorTexture> Vertice;
+        public VertexBuffer<VertexPositionColor> VertexBuffer;
+        public List<VertexPositionColor> Vertice;
+        public FTSValue<DVector3> WorldPosition = new FTSValue<DVector3>(); //World Position
+        public BoundingBox BoundingBox;
+        public Vector3 EntityEyeOffset;                                     //Offset of the camera Placement inside the entity, from entity center point.
+
+        public bool IsPlayerConstroled { get; set; }
 
         /// <summary>
         /// Voxel core data
         /// </summary>
-        public readonly VoxelEntity Entity;
+        public readonly VoxelEntity VoxelEntity;
+
+        public readonly IEntity Entity;
+
         /// <summary>
         /// Altered by server or user and needs vertice update (you need to call Update yourself)
         /// </summary>
@@ -39,30 +61,36 @@ namespace Utopia.Entities.Voxel
         /// </summary>
         /// <param name="voxelMeshFactory">voxelMeshFactory responsible to create mesh</param>
         /// <param name="wrapped">wrapped VoxelEntity from server</param>
-        public VisualEntity(VoxelMeshFactory voxelMeshFactory, VoxelEntity wrapped)
+        public VisualEntity(D3DEngine d3DEngine, CameraManager camManager, WorldFocusManager worldFocusManager, VoxelMeshFactory voxelMeshFactory, VoxelEntity voxelEntity, IEntity entity)
         {
-            Entity = wrapped;
+            VoxelEntity = voxelEntity;
+            Entity = entity;
             _voxelMeshFactory = voxelMeshFactory;
+            _d3DEngine = d3DEngine;
+            _camManager = camManager;
+            _worldFocusManager = worldFocusManager;
 
-            //Vertice = _voxelMeshFactory.GenCubesFaces(Entity.Blocks);
-            //VertexBuffer = _voxelMeshFactory.InitBuffer(Vertice);
+            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks);
+            VertexBuffer = _voxelMeshFactory.InitBuffer(Vertice);
 
-            //Altered = true;
+            Altered = true;
+
+            Initialize();
             RefreshBodyMesh();
         }
 
         public void RefreshBodyMesh()
         {
-            //if (!Altered) return;
+            if (!Altered) return;
 
-            //Vertice = _voxelMeshFactory.GenCubesFaces(Entity.Blocks);
+            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks);
 
-            //if (Vertice.Count != 0)
-            //{
-            //    VertexBuffer.SetData(Vertice.ToArray());
-            //}
+            if (Vertice.Count != 0)
+            {
+                VertexBuffer.SetData(Vertice.ToArray());
+            }
 
-            //Altered = false;
+            Altered = false;
         }
         #region Private Methods
         /// <summary>
@@ -70,6 +98,24 @@ namespace Utopia.Entities.Voxel
         /// No effect if Altered is false
         /// </summary>
         /// 
+        public override void Initialize()
+        {
+            //Will be used to update the bounding box with world coordinate when the entity is moving
+            _boundingMinPoint = new Vector3(-(Entity.Size.X / 2.0f), 0, -(Entity.Size.Z / 2.0f));
+            _boundingMaxPoint = new Vector3(+(Entity.Size.X / 2.0f), Entity.Size.Y, +(Entity.Size.Z / 2.0f));
+
+            RefreshBoundingBox(ref WorldPosition.Value, out BoundingBox);
+
+            EntityEyeOffset = new Vector3(0, Entity.Size.Y / 100 * 80, 0);
+
+            _entityEffect = new HLSLVertexPositionColor(_d3DEngine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
+        }
+
+        protected void RefreshBoundingBox(ref DVector3 worldPosition, out BoundingBox boundingBox)
+        {
+            boundingBox = new BoundingBox(_boundingMinPoint + worldPosition.AsVector3(),
+                                          _boundingMaxPoint + worldPosition.AsVector3());
+        }
 
         #endregion
 
@@ -79,21 +125,50 @@ namespace Utopia.Entities.Voxel
             //send modified blocks back to server / disk storage
         }
 
-        public virtual void Draw()
+        public override void Draw()
+        {
+            //Applying Correct Render States
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Disabled , GameDXStates.DXStates.DepthStencils.DepthEnabled);
+
+            _entityEffect.Begin();
+
+            _entityEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
+            _entityEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
+            _entityEffect.CBPerFrame.IsDirty = true;
+
+            if (WorldPosition.ActualValue.X == _camManager.ActiveCamera.WorldPosition.X && WorldPosition.ActualValue.Z == _camManager.ActiveCamera.WorldPosition.Z) return;
+
+            Vector3 entityCenteredPosition = WorldPosition.ActualValue.AsVector3();
+            entityCenteredPosition.X -= Entity.Size.X / 2;
+            entityCenteredPosition.Z -= Entity.Size.Z / 2;
+
+            Matrix world = Matrix.Scaling(Entity.Size) * Matrix.Translation(entityCenteredPosition);
+
+            world = _worldFocusManager.CenterOnFocus(ref world);
+
+            _entityEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+            _entityEffect.CBPerDraw.IsDirty = true;
+            _entityEffect.Apply();
+
+            VertexBuffer.SetToDevice(0);
+            _d3DEngine.Context.Draw(VertexBuffer.VertexCount, 0);
+        }
+
+        public override void Update(ref GameTime timeSpent)
+        {
+            //Refresh location and Rotations component with the new values
+            RefreshBoundingBox(ref WorldPosition.Value, out BoundingBox);
+        }
+
+        public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
         }
 
-        public virtual void Update(ref GameTime timeSpent)
+        public override void Dispose()
         {
-        }
-
-        public virtual void Interpolation(ref double interpolationHd, ref float interpolationLd)
-        {
-        }
-
-        public virtual void Dispose()
-        {
+            if (_entityEffect != null) _entityEffect.Dispose();
             if (VertexBuffer != null) VertexBuffer.Dispose();
+
         }
         #endregion
     }

@@ -12,6 +12,8 @@ using Utopia.InputManager;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using S33M3Engines.D3D;
+using S33M3Engines.Cameras;
+using S33M3Engines.WorldFocus;
 
 namespace Utopia.Entities
 {
@@ -25,14 +27,15 @@ namespace Utopia.Entities
         #endregion
 
         public VisualSpecialCharacterEntity(D3DEngine engine,
-                                           Vector3 size,
+                                           CameraManager cameraManager,
+                                           WorldFocusManager worldFocusManager,
                                            ActionsManager actions,
                                            InputsManager inputsManager,
                                            SingleArrayChunkContainer cubesHolder,
                                            VoxelMeshFactory voxelMeshFactory,
                                            VoxelEntity voxelEntity,
                                            SpecialCharacterEntity entity)
-            : base(engine, size, actions, inputsManager, cubesHolder, voxelMeshFactory, voxelEntity, entity)
+            : base(engine, cameraManager, worldFocusManager, actions, inputsManager, cubesHolder, voxelMeshFactory, voxelEntity, entity)
         {
             SpecialCharacterEntity = entity;
         }
