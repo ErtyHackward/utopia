@@ -140,11 +140,11 @@ namespace Utopia.Entities
 
             Mode = dynamicEntity.DisplacementMode;
 
+            Initialize();
         }
         #region Public Methods
 
-        
-        public void Initialize()
+        private void Initialize()
         {
             //Will be used to update the bounding box with world coordinate when the entity is moving
             _boundingMinPoint = new Vector3(-(_size.X / 2.0f), 0, -(_size.Z / 2.0f));

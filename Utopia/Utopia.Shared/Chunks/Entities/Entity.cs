@@ -25,7 +25,12 @@ namespace Utopia.Shared.Chunks.Entities
         /// Unique entity identification number
         /// </summary>
         public uint EntityId { get; set; }
-        
+
+        /// <summary>
+        /// Entity maximum size
+        /// </summary>
+        public virtual Vector3 Size { get; set; }
+
         /// <summary>
         /// Gets or sets entity position
         /// </summary>
@@ -53,6 +58,12 @@ namespace Utopia.Shared.Chunks.Entities
             Type = (EntityType)reader.ReadByte();
             EntityId = reader.ReadUInt32();
 
+            Vector3 entitySize;
+            entitySize.X = reader.ReadSingle();
+            entitySize.Y = reader.ReadSingle();
+            entitySize.Z = reader.ReadSingle();
+            Size = entitySize;
+
             DVector3 position;
             position.X = reader.ReadDouble();
             position.Y = reader.ReadDouble();
@@ -77,6 +88,10 @@ namespace Utopia.Shared.Chunks.Entities
 
             writer.Write((byte)Type);
             writer.Write(EntityId);
+
+            writer.Write(Size.X);
+            writer.Write(Size.Y);
+            writer.Write(Size.Z);
 
             writer.Write(Position.X);
             writer.Write(Position.Y);
