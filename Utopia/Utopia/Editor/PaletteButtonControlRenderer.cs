@@ -1,6 +1,7 @@
-﻿using Nuclex.UserInterface;
+﻿using System.Drawing;
 using Nuclex.UserInterface.Visuals.Flat;
 using Nuclex.UserInterface.Visuals.Flat.Renderers;
+using RectangleF = Nuclex.UserInterface.RectangleF;
 
 namespace Utopia.Editor
 {
@@ -24,9 +25,15 @@ namespace Utopia.Editor
       }
 
       // Draw the button's frame
-      graphics.DrawElement(states[stateIndex], controlBounds, control.Color);
+        graphics.DrawElement(states[stateIndex], controlBounds, control.Color);
 
-      // If there's text assigned to the button, draw it into the button
+        RectangleF innerBounds = controlBounds;
+        innerBounds.Inflate(-1f, -1f);
+
+        if (control.Texture != null)
+            graphics.DrawCustomTexture(control.Texture, innerBounds, control.Texture.Index);
+
+        // If there's text assigned to the button, draw it into the button
       if(!string.IsNullOrEmpty(control.Text)) {
         graphics.DrawString(states[stateIndex], controlBounds, control.Text);
       }

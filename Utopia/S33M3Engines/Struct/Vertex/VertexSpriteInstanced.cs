@@ -19,21 +19,33 @@ namespace S33M3Engines.Struct.Vertex
         public Matrix Tranform;
         public Color4 Color;
         public RectangleF SourceRect;
+        public int TextureArrayIndex;
         public static readonly VertexDeclaration VertexDeclaration;
 
-        public VertexSpriteInstanced(Matrix Tranform, Color4 Color, RectangleF SourceRect)
+        public VertexSpriteInstanced(Matrix tranform, Color4 color, RectangleF sourceRect)
         {
-            this.Tranform = Tranform;
-            this.Color = Color;
-            this.SourceRect = SourceRect;
+            this.Tranform = tranform;
+            this.Color = color;
+            this.SourceRect = sourceRect;
+            TextureArrayIndex = 0;
         }
 
-        public VertexSpriteInstanced(Matrix Tranform, Color4 Color)
+        public VertexSpriteInstanced(Matrix tranform, Color4 color)
         {
-            this.Tranform = Tranform;
-            this.Color = Color;
+            this.Tranform = tranform;
+            this.Color = color;
             this.SourceRect = default(RectangleF);
+            TextureArrayIndex = 0;
         }
+
+        public VertexSpriteInstanced(Matrix tranform, Color4 color,int textureArrayIndex )
+        {
+            this.Tranform = tranform;
+            this.Color = color;
+            this.SourceRect = default(RectangleF);
+            TextureArrayIndex = textureArrayIndex;
+        }
+
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
@@ -58,8 +70,10 @@ namespace S33M3Engines.Struct.Vertex
                                                             new InputElement("TRANSFORM", 2, Format.R32G32B32A32_Float, 32, 1, InputClassification.PerInstanceData, 1),
                                                             new InputElement("TRANSFORM", 3, Format.R32G32B32A32_Float, 48, 1, InputClassification.PerInstanceData, 1),
                                                             new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 64, 1, InputClassification.PerInstanceData, 1),
-                                                            new InputElement("SOURCERECT", 0, Format.R32G32B32A32_Float, 80, 1, InputClassification.PerInstanceData, 1)
-                                                            };
+                                                            new InputElement("SOURCERECT", 0, Format.R32G32B32A32_Float, 80, 1, InputClassification.PerInstanceData, 1),
+                                                            new InputElement("TEXINDEX", 0, Format.R32_UInt, 96, 1, InputClassification.PerInstanceData, 1)
+                                                                                                            
+            };
 
             VertexDeclaration = new VertexDeclaration(elements);
         }
