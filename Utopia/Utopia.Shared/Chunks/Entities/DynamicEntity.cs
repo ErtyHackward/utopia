@@ -75,6 +75,11 @@ namespace Utopia.Shared.Chunks.Entities
         /// </summary>
         public EntityDisplacementModes DisplacementMode { get; set; }
 
+        /// <summary>
+        /// Gets or sets current entity area
+        /// </summary>
+        public virtual MapArea CurrentArea { get; set; }
+
         public override DVector3 Position
         {
             get

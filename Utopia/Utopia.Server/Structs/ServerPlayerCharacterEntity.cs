@@ -14,6 +14,33 @@ namespace Utopia.Server.Structs
     {
         public ClientConnection Connection { get; private set; }
 
+        public override MapArea CurrentArea
+        {
+            get
+            {
+                return base.CurrentArea;
+            }
+            set
+            {
+                if (base.CurrentArea != value)
+                {
+                    if (base.CurrentArea != null)
+                    {
+                        base.CurrentArea.EntityInViewRange -= AreaEntityInViewRange;
+                        base.CurrentArea.EntityOutOfViewRange -= AreaEntityOutOfViewRange;
+                    }
+
+                    base.CurrentArea = value;
+
+                    if (base.CurrentArea != null)
+                    {
+                        base.CurrentArea.EntityInViewRange += AreaEntityInViewRange;
+                        base.CurrentArea.EntityOutOfViewRange += AreaEntityOutOfViewRange;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Creates new instance of Server player entity that translates Entity Object Model events to player via network
         /// </summary>
@@ -36,6 +63,22 @@ namespace Utopia.Server.Structs
             foreach (var entity in area.Enumerate())
             {
                 Connection.Send(new EntityInMessage { Entity = entity });
+            }
+        }
+
+        void AreaEntityOutOfViewRange(object sender, DynamicEntityEventArgs e)
+        {
+            if (e.Entity != this)
+            {
+                Connection.Send(new EntityOutMessage { EntityId = e.Entity.EntityId });
+            }
+        }
+
+        void AreaEntityInViewRange(object sender, DynamicEntityEventArgs e)
+        {
+            if (e.Entity != this)
+            {
+                Connection.Send(new EntityInMessage { Entity = e.Entity });
             }
         }
 
@@ -72,18 +115,12 @@ namespace Utopia.Server.Structs
 
         void AreaEntityAdded(object sender, DynamicEntityEventArgs e)
         {
-            if (e.Entity != this)
-            {
-                Connection.Send(new EntityInMessage { Entity = e.Entity });
-            }
+
         }
 
         void AreaEntityRemoved(object sender, DynamicEntityEventArgs e)
         {
-            if (e.Entity != this)
-            {
-                Connection.Send(new EntityOutMessage { EntityId = e.Entity.EntityId });
-            }
+
         }
 
         void AreaEntityMoved(object sender, EntityMoveEventArgs e)

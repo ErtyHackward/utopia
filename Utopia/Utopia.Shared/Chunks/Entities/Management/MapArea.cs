@@ -113,6 +113,28 @@ namespace Utopia.Shared.Chunks.Entities.Management
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Occurs when some entity get far away
+        /// </summary>
+        public event EventHandler<DynamicEntityEventArgs> EntityOutOfViewRange;
+
+        public void OnEntityOutOfViewRange(IDynamicEntity iDynamicEntity)
+        {
+            var handler = EntityOutOfViewRange;
+            if (handler != null) handler(this, new DynamicEntityEventArgs { Entity = iDynamicEntity });
+        }
+
+        /// <summary>
+        /// Occurs when some entity is close enough to listen to
+        /// </summary>
+        public event EventHandler<DynamicEntityEventArgs> EntityInViewRange;
+        
+        public void OnEntityInViewRange(IDynamicEntity iDynamicEntity)
+        {
+            var handler = EntityInViewRange;
+            if (handler != null) handler(this, new DynamicEntityEventArgs { Entity = iDynamicEntity });
+        }
+
         #endregion
 
         /// <summary>
@@ -146,7 +168,10 @@ namespace Utopia.Shared.Chunks.Entities.Management
                 entity.ViewChanged += EntityViewChanged;
                 entity.Use += EntityUseHandler;
 
+                entity.CurrentArea = this;
+
                 OnEntityAdded(new DynamicEntityEventArgs {Entity = entity});
+
             }
         }
 
@@ -185,7 +210,7 @@ namespace Utopia.Shared.Chunks.Entities.Management
             // we need to tell area manager that entity leaves us, to put it into new area
             if (!_rectangle.Contains(e.Entity.Position.AsVector3()))
             {
-                OnEntityLeave(new EntityLeaveAreaEventArgs {Entity = e.Entity, PreviousPosition = e.PreviousPosition});
+                OnEntityLeave(new EntityLeaveAreaEventArgs { Entity = e.Entity, PreviousPosition = e.PreviousPosition });
                 RemoveEntity(e.Entity);
             }
         }
@@ -212,5 +237,7 @@ namespace Utopia.Shared.Chunks.Entities.Management
         {
             return _entities.ContainsKey(iDynamicEntity);
         }
+
+
     }
 }
