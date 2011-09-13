@@ -123,12 +123,6 @@ namespace Utopia.Entities
 
         public void Init()
         {
-            //Check the position, if the possition is 0,0,0, find the better spawning Y value !
-            if (DynamicEntity.Position == DVector3.Zero)
-            {
-                DynamicEntity.Position = new DVector3(0, AbstractChunk.ChunkSize.Y, 0);
-            }
-
             //Set Position
             //Set the entity world position following the position received from server
             WorldPosition.Value = DynamicEntity.Position;
