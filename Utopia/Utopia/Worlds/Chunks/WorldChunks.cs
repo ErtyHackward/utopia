@@ -62,7 +62,7 @@ namespace Utopia.Worlds.Chunks
         private ILandscapeManager _landscapeManager;
         private IChunkMeshManager _chunkMeshManager;
         private Server _server;
-        private VisualPlayerCharacter _player;
+        private PlayerEntityManager _playerManager;
         #endregion
 
         #region Public Property/Variables
@@ -94,7 +94,7 @@ namespace Utopia.Worlds.Chunks
                            IChunksWrapper chunkWrapper,
                            ILightingManager lightingManager,
                            Server server,
-                           VisualPlayerCharacter player)
+                           PlayerEntityManager player)
         {
             _server = server;
             _d3dEngine = d3dEngine;
@@ -108,7 +108,7 @@ namespace Utopia.Worlds.Chunks
             _landscapeManager = landscapeManager;
             _chunkMeshManager = chunkMeshManager;
             _lightingManager = lightingManager;
-            _player = player;
+            _playerManager = player;
 
             //Self injecting inside components
             _chunkWrapper.WorldChunks = this;

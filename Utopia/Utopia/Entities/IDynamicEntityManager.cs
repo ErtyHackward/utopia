@@ -7,7 +7,7 @@ using S33M3Engines.D3D;
 
 namespace Utopia.Entities
 {
-    public interface IEntityManager : IGameComponent
+    public interface IDynamicEntityManager : IGameComponent
     {
         void AddEntity(IDynamicEntity entity);
         void RemoveEntity(IDynamicEntity entity);

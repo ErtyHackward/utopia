@@ -22,7 +22,7 @@ namespace Utopia.Entities
     /// <summary>
     ///  This Class is responsible for the Entity Rendering into the world 
     /// </summary>
-    public class VisualEntity : DrawableGameComponent, IDisposable
+    public class VisualEntityOLD : DrawableGameComponent, IDisposable
     {
         #region Private variables
         //The helper for building body mesh
@@ -63,7 +63,7 @@ namespace Utopia.Entities
         /// </summary>
         /// <param name="voxelMeshFactory">voxelMeshFactory responsible to create mesh</param>
         /// <param name="wrapped">wrapped VoxelEntity from server</param>
-        public VisualEntity(D3DEngine d3DEngine, CameraManager camManager, WorldFocusManager worldFocusManager, VoxelMeshFactory voxelMeshFactory, VoxelEntity voxelEntity, IEntity entity)
+        public VisualEntityOLD(D3DEngine d3DEngine, CameraManager camManager, WorldFocusManager worldFocusManager, VoxelMeshFactory voxelMeshFactory, VoxelEntity voxelEntity, IEntity entity)
         {
             VoxelEntity = voxelEntity;
             Entity = entity;
