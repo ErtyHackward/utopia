@@ -3,13 +3,14 @@ using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Management;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Chunks.Entities.Concrete;
 
 namespace Utopia.Shared.Chunks.Entities
 {
     /// <summary>
     /// Represents dynamic entity (players, robots, animals, NPC)
     /// </summary>
-    public abstract class DynamicEntity : Entity, IDynamicEntity
+    public abstract class DynamicEntity : VoxelEntity, IDynamicEntity
     {
         #region Events
 

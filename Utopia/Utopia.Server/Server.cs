@@ -421,7 +421,7 @@ namespace Utopia.Server
                 else
                 {
                     var state = UserState.Load(loginData.Value.State );
-                    // load player entity
+                    // load new player entity
                     playerEntity = new ServerPlayerCharacterEntity(connection);
                     
                     var bytes = EntityStorage.LoadEntityBytes(state.EntityId);

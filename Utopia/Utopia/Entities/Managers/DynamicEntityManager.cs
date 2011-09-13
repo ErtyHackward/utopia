@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using S33M3Engines.D3D;
 using Utopia.Shared.Chunks.Entities.Interfaces;
-using Utopia.Shared.Chunks.Entities.Voxel;
 using Utopia.Entities.Voxel;
 using Utopia.Entities.Renderer;
 using Ninject;
@@ -41,7 +40,7 @@ namespace Utopia.Entities.Managers
         {
             VisualDynamicEntity vEntity;
 
-            vEntity = new VisualDynamicEntity(entity, new Voxel.VisualEntity(_voxelMeshFactory, new PlayerCharacterBody()));
+            vEntity = new VisualDynamicEntity(entity, new Voxel.VisualEntity(_voxelMeshFactory, entity));
 
             return vEntity;
         }
@@ -73,15 +72,6 @@ namespace Utopia.Entities.Managers
             foreach (var entity in _dynamicEntitiesDico.Values)
             {
                 entity.Interpolation(ref interpolationHd, ref interpolationLd);
-
-                //TODO To remove when Voxel Entity erge will done with Entity
-                //Update the position and World Matrix of the Voxel body of the Entity.
-                entity.VisualEntity.Position = entity.WorldPosition.ValueInterp;
-                Vector3 entityCenteredPosition = entity.WorldPosition.ValueInterp.AsVector3();
-                entityCenteredPosition.X -= entity.DynamicEntity.Size.X / 2;
-                entityCenteredPosition.Z -= entity.DynamicEntity.Size.Z / 2;
-                entity.VisualEntity.World = Matrix.Scaling(entity.DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
-                //===================================================================================================================================
             }
         }
 

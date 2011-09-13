@@ -668,7 +668,6 @@ namespace Utopia.Entities.Managers
 
             //TODO To remove when Voxel Entity erge will done with Entity
             //Update the position and World Matrix of the Voxel body of the Entity.
-            VisualEntity.Position = _worldPosition.ValueInterp;
             Vector3 entityCenteredPosition = _worldPosition.ValueInterp.AsVector3();
             entityCenteredPosition.X -= Player.Size.X / 2;
             entityCenteredPosition.Z -= Player.Size.Z / 2;

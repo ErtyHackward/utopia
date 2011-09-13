@@ -7,7 +7,7 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
     /// <summary>
     /// Describes dynamic entity. Dynamic entity can listen events of entities from surrounding areas and perform AI logic in update
     /// </summary>
-    public interface IDynamicEntity : IEntity
+    public interface IDynamicEntity : IVoxelEntity
     {
         /// <summary>
         /// Occurs when entity changes its position

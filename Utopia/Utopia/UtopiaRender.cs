@@ -47,9 +47,9 @@ using Utopia.InputManager;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Concrete;
-using Utopia.Shared.Chunks.Entities.Voxel;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Voxel;
+using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia
 {
@@ -209,11 +209,10 @@ namespace Utopia
             GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
 
             //Create the Player manager
-            PlayerEntityManager Player = IoCContainer.Get<PlayerEntityManager>(new ConstructorArgument("visualEntity", new VisualEntity(IoCContainer.Get<VoxelMeshFactory>(), new PlayerCharacterBody())));
+            PlayerEntityManager Player = IoCContainer.Get<PlayerEntityManager>(new ConstructorArgument("visualEntity", new VisualEntity(IoCContainer.Get<VoxelMeshFactory>(), IoCContainer.Get<PlayerCharacter>())));
             Player.UpdateOrder = 0;
             camera.CameraPlugin = Player;
             GameComponents.Add(Player);
-
 
             _dynamicEntityManager = IoCContainer.Get<IDynamicEntityManager>();
             GameComponents.Add(_dynamicEntityManager);
