@@ -138,8 +138,13 @@ namespace Utopia.Editor
                 ButtonControl btn = new ButtonControl();
                 btn.Bounds = new UniRectangle(x*buttonSize, margin, buttonSize, buttonSize);
                 buttons.Add(btn);
-                btn.Pressed += delegate { };
-
+                
+                if (x==0)
+                {
+                    ButtonControl btn0 = btn;
+                    btn0.Text = "Spawn";
+                    btn.Pressed += delegate { _editorComponent.SpawnEntity(); };
+                }
                 toolBar.Children.Add(btn);
             }
             return toolBar;
