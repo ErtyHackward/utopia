@@ -15,6 +15,12 @@ using S33M3Engines.Shared.Math;
 
 namespace S33M3Engines.Cameras
 {
+
+    public enum CameraType
+    {
+        FirstPerson
+    }
+
     public abstract class Camera : GameComponent, ICamera, IWorldFocus
     {
         #region Private TimeDepending Variable ===> Will be LERPED, SLERPED or recomputed
@@ -52,6 +58,8 @@ namespace S33M3Engines.Cameras
         #endregion
 
         #region Properties
+
+        public CameraType CameraType { get; set; }
 
         public Matrix View
         {

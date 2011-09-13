@@ -26,10 +26,12 @@ using S33M3Engines.Buffers;
 using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using S33M3Engines.StatesManager;
+using Utopia.Entities.Renderer;
+using Ninject;
 
-namespace Utopia.Entities
+namespace Utopia.Entities.Managers
 {
-    public class PlayerEntityManager : DrawableGameComponent, ICameraPlugin
+    public class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualEntityContainer
     {
         #region Private variables
         //Engine System variables
@@ -39,7 +41,6 @@ namespace Utopia.Entities
         private ActionsManager _actions;
         private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
-        private VoxelMeshFactory _voxelMeshFactory;
 
         //Block Picking variables
         private bool _isBlockPicked;
@@ -73,11 +74,8 @@ namespace Utopia.Entities
         private DVector3 _entityHeadXAxis, _entityHeadYAxis, _entityHeadZAxis;
         private DVector3 _entityXAxis, _entityYAxis, _entityZAxis;
 
-        //Draw Variables
-        private HLSLTerran _playerEffect;
-        private VertexBuffer<VertexCubeSolid> _vertexBuffer;
-        private List<VertexCubeSolid> _vertice;
-        private bool _altered;
+        //Drawing component
+        private IEntitiesRenderer _playerRenderer;
 
         #endregion
 
@@ -89,7 +87,7 @@ namespace Utopia.Entities
         /// <summary>
         /// The Player Voxel body
         /// </summary>
-        public readonly VoxelEntity VoxelEntity;
+        public VisualEntity VisualEntity { get; set; }
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual DVector3 CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
@@ -122,9 +120,9 @@ namespace Utopia.Entities
                                    ActionsManager actions,
                                    InputsManager inputsManager,
                                    SingleArrayChunkContainer cubesHolder,
-                                   VoxelMeshFactory voxelMeshFactory,
-                                   VoxelEntity voxelEntity,
-                                   PlayerCharacter player)
+                                   VisualEntity visualEntity,
+                                   PlayerCharacter player,
+                                   [Named("PlayerEntityRenderer")] IEntitiesRenderer playerRenderer)
         {
             _d3DEngine = engine;
             _cameraManager = cameraManager;
@@ -132,9 +130,12 @@ namespace Utopia.Entities
             _actions = actions;
             _inputsManager = inputsManager;
             _cubesHolder = cubesHolder;
-            _voxelMeshFactory = voxelMeshFactory;
+            _playerRenderer = playerRenderer;
             this.Player = player;
-            this.VoxelEntity = voxelEntity;
+            this.VisualEntity = visualEntity;
+
+            //Give the Renderer acces to the Voxel buffers, ...
+            _playerRenderer.VisualEntity = this;
         }
 
         #region Private Methods
@@ -592,21 +593,6 @@ namespace Utopia.Entities
 
         #endregion
 
-        #region Player Drawing
-        private void RefreshBodyMesh()
-        {
-            if (!_altered) return;
-
-            _vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks);
-
-            if (_vertice.Count != 0)
-            {
-                _vertexBuffer.SetData(_vertice.ToArray());
-            }
-
-            _altered = false;
-        }
-        #endregion
         #endregion
 
         #region Public Methods
@@ -643,10 +629,6 @@ namespace Utopia.Entities
 
             //Set Move direction = to LookAtDirection
             _moveDirection.Value = _lookAtDirection.Value;
-
-            //initilize Draw buffers
-            _vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks);
-            _altered = true;
         }
 
         /// <summary>
@@ -654,17 +636,11 @@ namespace Utopia.Entities
         /// </summary>
         public override void LoadContent()
         {
-            _vertexBuffer = _voxelMeshFactory.InitBuffer(_vertice);
-            _playerEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
-
-            //Create the Voxel body
-            RefreshBodyMesh();
         }
 
         public override void Dispose()
         {
-            if (_playerEffect != null) _playerEffect.Dispose();
-            if (_vertexBuffer != null) _vertexBuffer.Dispose();
+            _playerRenderer.Dispose();
         }
 
         public override void Update(ref GameTime timeSpent)
@@ -679,40 +655,30 @@ namespace Utopia.Entities
 
             //Refresh the player Bounding box
             RefreshBoundingBox(ref _worldPosition.Value, out _playerBoundingBox);
+
+            _playerRenderer.Update(ref timeSpent);
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
             Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
             DVector3.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
+
+            _playerRenderer.Interpolation(ref interpolationHd, ref interpolationLd);
+
+            //TODO To remove when Voxel Entity erge will done with Entity
+            //Update the position and World Matrix of the Voxel body of the Entity.
+            VisualEntity.Position = _worldPosition.ValueInterp;
+            Vector3 entityCenteredPosition = _worldPosition.ValueInterp.AsVector3();
+            entityCenteredPosition.X -= Player.Size.X / 2;
+            entityCenteredPosition.Z -= Player.Size.Z / 2;
+            VisualEntity.World = Matrix.Scaling(Player.Size) * Matrix.Translation(entityCenteredPosition);
+            //===================================================================================================================================
         }
 
         public override void Draw()
         {
-            //Applying Correct Render States
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-
-            _playerEffect.Begin();
-
-            _playerEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
-            _playerEffect.CBPerFrame.IsDirty = true;
-
-            if (_worldPosition.ActualValue.X == _cameraManager.ActiveCamera.WorldPosition.X && _worldPosition.ActualValue.Z == _cameraManager.ActiveCamera.WorldPosition.Z) return;
-
-            Vector3 entityCenteredPosition = _worldPosition.ActualValue.AsVector3();
-            entityCenteredPosition.X -= Player.Size.X / 2;
-            entityCenteredPosition.Z -= Player.Size.Z / 2;
-
-            Matrix world = Matrix.Scaling(Player.Size) * Matrix.Translation(entityCenteredPosition);
-
-            world = _worldFocusManager.CenterOnFocus(ref world);
-
-            _playerEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
-            _playerEffect.CBPerDraw.IsDirty = true;
-            _playerEffect.Apply();
-
-            _vertexBuffer.SetToDevice(0);
-            _d3DEngine.Context.Draw(_vertexBuffer.VertexCount, 0);
+            _playerRenderer.Draw();
         }
 
         #endregion

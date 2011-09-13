@@ -24,5 +24,6 @@ namespace S33M3Engines.Cameras
         Viewport Viewport { get; set; }
         BoundingFrustum Frustum { get; }
         ICameraPlugin CameraPlugin { get; set; }
+        CameraType CameraType { get; set; }
     }
 }

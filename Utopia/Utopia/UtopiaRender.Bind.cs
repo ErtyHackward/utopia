@@ -36,6 +36,8 @@ using Utopia.Network;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.InputManager;
+using Utopia.Entities.Managers;
+using Utopia.Entities.Renderer;
 
 namespace Utopia
 {
@@ -48,6 +50,10 @@ namespace Utopia
             iocContainer.Bind<PlayerCharacter>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope(); //Register the current Player.
 
             iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();
+
+            iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");
+            iocContainer.Bind<IEntitiesRenderer>().To<DefaultEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");
+            
 
             iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
@@ -67,7 +73,6 @@ namespace Utopia
             iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();
-            iocContainer.Bind<ItemRendererOLD>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
             iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");

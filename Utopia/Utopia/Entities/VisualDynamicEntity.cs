@@ -8,10 +8,11 @@ using Utopia.Shared.Chunks.Entities.Interfaces;
 using SharpDX;
 using S33M3Engines.Struct;
 using S33M3Engines.Shared.Math;
+using Utopia.Entities.Voxel;
 
 namespace Utopia.Entities
 {
-    public class VisualDynamicEntity
+    public class VisualDynamicEntity : IVisualEntityContainer
     {
         #region Private variables
         //Player Visual characteristics (Not insde the PlayerCharacter object)
@@ -30,13 +31,13 @@ namespace Utopia.Entities
         /// <summary>
         /// The Player Voxel body
         /// </summary>
-        public readonly VoxelEntity VoxelEntity;
+        public VisualEntity VisualEntity { get; set; }
         #endregion
 
-        public VisualDynamicEntity(IDynamicEntity dynamicEntity, VoxelEntity voxelEntity)
+        public VisualDynamicEntity(IDynamicEntity dynamicEntity, VisualEntity visualEntity)
         {
             this.DynamicEntity = dynamicEntity;
-            this.VoxelEntity = voxelEntity;
+            this.VisualEntity = visualEntity;
 
             Initialize();
         }

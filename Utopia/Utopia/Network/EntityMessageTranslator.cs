@@ -4,6 +4,7 @@ using Utopia.Net.Messages;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Entities;
+using Utopia.Entities.Managers;
 
 namespace Utopia.Network
 {

@@ -29,6 +29,7 @@ namespace S33M3Engines.Cameras
             : base(d3dEngine)
         {
             _worldFocusManager = worldFocusManager;
+            this.CameraType = Cameras.CameraType.FirstPerson;
         }
 
         #region Private Methods

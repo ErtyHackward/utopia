@@ -5,8 +5,11 @@ using System.Text;
 using S33M3Engines.D3D;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Voxel;
+using Utopia.Entities.Voxel;
+using Utopia.Entities.Renderer;
+using Ninject;
 
-namespace Utopia.Entities
+namespace Utopia.Entities.Managers
 {
     /// <summary>
     /// Will keep a collection of IDynamicEntity received from server.
@@ -15,18 +18,29 @@ namespace Utopia.Entities
     public class DynamicEntityManager : DrawableGameComponent, IDynamicEntityManager
     {
         #region Private variables
-        private Dictionary<uint, VisualDynamicEntity> _dynamicEntities;
+        private Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
+        private List<IVisualEntityContainer> _dynamicEntities = new List<IVisualEntityContainer>();
+        private IEntitiesRenderer _dynamicEntityRenderer;
+        private VoxelMeshFactory _voxelMeshFactory;
         #endregion
 
         #region Public variables/properties
         #endregion
+
+        public DynamicEntityManager([Named("DefaultEntityRenderer")] IEntitiesRenderer dynamicEntityRenderer, VoxelMeshFactory voxelMeshFactory)
+        {
+            _voxelMeshFactory = voxelMeshFactory;
+            _dynamicEntityRenderer = dynamicEntityRenderer;
+
+            _dynamicEntityRenderer.VisualEntities = _dynamicEntities;
+        }
 
         #region Private Methods
         private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
         {
             VisualDynamicEntity vEntity;
 
-            vEntity = new VisualDynamicEntity(entity, new PlayerCharacterBody());
+            vEntity = new VisualDynamicEntity(entity, new Voxel.VisualEntity(_voxelMeshFactory, new PlayerCharacterBody()));
 
             return vEntity;
         }
@@ -35,7 +49,6 @@ namespace Utopia.Entities
         #region Public Methods
         public override void Initialize()
         {
-            _dynamicEntities = new Dictionary<uint, VisualDynamicEntity>();
         }
 
         public override void LoadContent()
@@ -48,7 +61,7 @@ namespace Utopia.Entities
 
         public override void Update(ref GameTime timeSpent)
         {
-            foreach (var entity in _dynamicEntities.Values)
+            foreach (var entity in _dynamicEntitiesDico.Values)
             {
                 entity.Update(ref timeSpent);
             }
@@ -56,7 +69,7 @@ namespace Utopia.Entities
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-            foreach (var entity in _dynamicEntities.Values)
+            foreach (var entity in _dynamicEntitiesDico.Values)
             {
                 entity.Interpolation(ref interpolationHd, ref interpolationLd);
             }
@@ -64,30 +77,31 @@ namespace Utopia.Entities
 
         public override void Draw()
         {
-            foreach (var entity in _dynamicEntities.Values)
-            {
-                //entity.Draw();
-            }
+            _dynamicEntityRenderer.Draw();
         }
 
         public void AddEntity(IDynamicEntity entity)
         {
-            _dynamicEntities.Add(entity.EntityId, CreateVisualEntity(entity));
+            VisualDynamicEntity newEntity = CreateVisualEntity(entity);
+            _dynamicEntitiesDico.Add(entity.EntityId, newEntity);
+            _dynamicEntities.Add(newEntity);
         }
 
         public void RemoveEntity(IDynamicEntity entity)
         {
-            _dynamicEntities.Remove(entity.EntityId);
+            _dynamicEntities.Remove(_dynamicEntitiesDico[entity.EntityId]);
+            _dynamicEntitiesDico.Remove(entity.EntityId);
         }
 
         public void RemoveEntityById(uint entityId)
         {
-            _dynamicEntities.Remove(entityId);
+            _dynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
+            _dynamicEntitiesDico.Remove(entityId);
         }
 
         public IDynamicEntity GetEntityById(uint p)
         {
-            return _dynamicEntities[p].DynamicEntity;
+            return _dynamicEntitiesDico[p].DynamicEntity;
         }
         #endregion
     }

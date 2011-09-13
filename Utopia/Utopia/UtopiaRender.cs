@@ -48,6 +48,8 @@ using S33M3Engines.Shared.Math;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Chunks.Entities.Voxel;
+using Utopia.Entities.Managers;
+using Utopia.Entities.Voxel;
 
 namespace Utopia
 {
@@ -201,15 +203,13 @@ namespace Utopia
 
             GameComponents.Add(IoCContainer.Get<InputsManager>());
 
-            GameComponents.Add(IoCContainer.Get<ItemRendererOLD>());
-
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
             //camera.CameraPlugin = _player;
             _camManager.UpdateOrder = 1;
             GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
 
             //Create the Player manager
-            PlayerEntityManager Player = IoCContainer.Get<PlayerEntityManager>(new ConstructorArgument("voxelEntity", new PlayerCharacterBody()));
+            PlayerEntityManager Player = IoCContainer.Get<PlayerEntityManager>(new ConstructorArgument("visualEntity", new VisualEntity(IoCContainer.Get<VoxelMeshFactory>(), new PlayerCharacterBody())));
             Player.UpdateOrder = 0;
             camera.CameraPlugin = Player;
             GameComponents.Add(Player);
