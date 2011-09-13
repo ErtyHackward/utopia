@@ -55,5 +55,10 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// Entity displacement mode
         /// </summary>
         EntityDisplacementModes DisplacementMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets area there entity is now (not stored)
+        /// </summary>
+        MapArea CurrentArea { get; set; }
     }
 }
