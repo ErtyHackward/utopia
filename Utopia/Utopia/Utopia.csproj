@@ -108,9 +108,12 @@
     <Compile Include="DebugComponent.cs" />
     <Compile Include="Editor\EntityEditor.cs" />
     <Compile Include="Editor\EntityEditorUI.cs" />
+    <Compile Include="Entities\DynamicEntityManager.cs" />
     <Compile Include="Entities\EntityManager.cs" />
     <Compile Include="Entities\IEntityManager.cs" />
     <Compile Include="Entities\ItemRenderer.cs" />
+    <Compile Include="Entities\PlayerEntityManager.cs" />
+    <Compile Include="Entities\StaticEntityManager.cs" />
     <Compile Include="Entities\VisualCharacterEntity.cs" />
     <Compile Include="Entities\VisualDynamicEntity.cs" />
     <Compile Include="Entities\VisualPlayerCharacter.cs" />
