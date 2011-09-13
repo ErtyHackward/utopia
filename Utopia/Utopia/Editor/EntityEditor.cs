@@ -24,7 +24,7 @@ namespace Utopia.Editor
     {
         private readonly Screen _screen;
 
-        private readonly VisualEntity _editedEntity;
+        private VisualEntity _editedEntity;
         private readonly D3DEngine _d3DEngine;
         private HLSLTerran _itemEffect;
         private readonly CameraManager _camManager;
@@ -50,9 +50,16 @@ namespace Utopia.Editor
             _voxelMeshFactory = voxelMeshFactory;
             _camManager = camManager;
             _d3DEngine = d3DEngine;
-            _hudComponent = hudComponent;
-         
+            _hudComponent = hudComponent;  
 
+            // inactive by default, use F12 UI to enable :)
+            this.Visible = false;
+            this.Enabled = false;
+            DrawOrder = 5000;
+        }
+
+        public void SpawnEntity()
+        {
             VoxelEntity entity = new EditableVoxelEntity();
 
             entity.Blocks = new byte[16,16,16];
@@ -72,11 +79,6 @@ namespace Utopia.Editor
 
             _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays);
             _editedEntity.Position = _camManager.ActiveCamera.WorldPosition + new Vector3(-1, 0, -3);
-     
-            // inactive by default, use F12 UI to enable :)
-            this.Visible = false;
-            this.Enabled = false;
-            DrawOrder = 5000;
         }
 
         public override void Initialize()
@@ -138,6 +140,8 @@ namespace Utopia.Editor
 
         private void DrawItems()
         {
+            if (_editedEntity == null) return;
+
             //Applying Correct Render States
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet,
                                          GameDXStates.DXStates.DepthStencils.DepthEnabled);
