@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using S33M3Engines.Buffers;
 using S33M3Engines.Struct.Vertex;
 using SharpDX;
+using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.D3D;
@@ -14,8 +15,9 @@ using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.WorldFocus;
 using SharpDX.Direct3D11;
+using UtopiaContent.Effects.Terran;
 
-namespace Utopia.Entities.Voxel
+namespace Utopia.Entities
 {
     /// <summary>
     ///  This Class is responsible for the Entity Rendering into the world 
@@ -27,7 +29,7 @@ namespace Utopia.Entities.Voxel
         private readonly VoxelMeshFactory _voxelMeshFactory;
         private Vector3 _boundingMinPoint, _boundingMaxPoint;
 
-        private HLSLVertexPositionColor _entityEffect;
+        private HLSLTerran _entityEffect;
         private D3DEngine _d3DEngine;
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
@@ -35,8 +37,8 @@ namespace Utopia.Entities.Voxel
 
         #region Public variables/Properties
         //Entity Body data holding collections
-        public VertexBuffer<VertexPositionColor> VertexBuffer;
-        public List<VertexPositionColor> Vertice;
+        public VertexBuffer<VertexCubeSolid> VertexBuffer;
+        public List<VertexCubeSolid> Vertice;
         public FTSValue<DVector3> WorldPosition = new FTSValue<DVector3>(); //World Position
         public BoundingBox BoundingBox;
         public Vector3 EntityEyeOffset;                                     //Offset of the camera Placement inside the entity, from entity center point.
@@ -98,7 +100,7 @@ namespace Utopia.Entities.Voxel
         /// No effect if Altered is false
         /// </summary>
         /// 
-        public override void Initialize()
+        public override sealed void Initialize()
         {
             //Will be used to update the bounding box with world coordinate when the entity is moving
             _boundingMinPoint = new Vector3(-(Entity.Size.X / 2.0f), 0, -(Entity.Size.Z / 2.0f));
@@ -108,7 +110,7 @@ namespace Utopia.Entities.Voxel
 
             EntityEyeOffset = new Vector3(0, Entity.Size.Y / 100 * 80, 0);
 
-            _entityEffect = new HLSLVertexPositionColor(_d3DEngine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
+            _entityEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
         }
 
         protected void RefreshBoundingBox(ref DVector3 worldPosition, out BoundingBox boundingBox)
@@ -132,8 +134,7 @@ namespace Utopia.Entities.Voxel
 
             _entityEffect.Begin();
 
-            _entityEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
-            _entityEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
+            _entityEffect.CBPerFrame.Values.ViewProjection  = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
             _entityEffect.CBPerFrame.IsDirty = true;
 
             if (WorldPosition.ActualValue.X == _camManager.ActiveCamera.WorldPosition.X && WorldPosition.ActualValue.Z == _camManager.ActiveCamera.WorldPosition.Z) return;

@@ -117,6 +117,7 @@
     <Compile Include="Entities\VisualSpecialCharacterEntity.cs" />
     <Compile Include="Entities\Voxel\ColorLookup.cs" />
     <Compile Include="Entities\VisualEntity.cs" />
+    <Compile Include="Entities\Voxel\VisualEntity.cs" />
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
     <Compile Include="GUI\D3D\Hud.cs" />
