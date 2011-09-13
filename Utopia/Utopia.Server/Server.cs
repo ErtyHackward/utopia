@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Net.Connections;
 using Utopia.Net.Messages;
@@ -198,6 +199,8 @@ namespace Utopia.Server
 
                 // tell everybody that this player is gone
                 AreaManager.RemoveEntity(e.Connection.Entity);
+
+                e.Connection.Entity.CurrentArea = null;
             }
 
         }
@@ -405,6 +408,7 @@ namespace Utopia.Server
                     // create new message
                     var serverChar = new ServerPlayerCharacterEntity(connection);
                     serverChar.EntityId = EntityFactory.Instance.GetUniqueEntityId();
+                    serverChar.Position = new DVector3(10, 128, 10);
                     serverChar.CharacterName = "Chuck norris";
 
                     playerEntity = serverChar;

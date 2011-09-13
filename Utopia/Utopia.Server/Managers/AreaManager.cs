@@ -121,6 +121,9 @@ namespace Utopia.Server.Managers
                     {
                         // area is too far away, stop listening it
                         e.Entity.RemoveArea(prev);
+
+                        // tell them that entity goes away
+                        prev.OnEntityOutOfViewRange(e.Entity);
                     }
                     
                     var now = GetArea(new DVector3(e.Entity.Position.X + x*MapArea.AreaSize.X, 0,
@@ -130,6 +133,9 @@ namespace Utopia.Server.Managers
                     {
                         // area is too far away from previous center, listen it
                         e.Entity.AddArea(now);
+
+                        // tell them that they should listen new entity
+                        now.OnEntityInViewRange(e.Entity);
                     }
                 }
             }
@@ -157,6 +163,7 @@ namespace Utopia.Server.Managers
                     entity.AddArea(area);
                     if (x == 0 && z == 0)
                         area.AddEntity(entity);
+                    area.OnEntityInViewRange(entity);
                 }
             }
 
@@ -182,6 +189,8 @@ namespace Utopia.Server.Managers
                                                    entity.Position.Z + z * MapArea.AreaSize.Z));
                     if (x == 0 && z == 0)
                         area.RemoveEntity(entity);
+
+                    area.OnEntityOutOfViewRange(entity);
 
                     entity.RemoveArea(area);
                 }
