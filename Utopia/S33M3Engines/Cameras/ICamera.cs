@@ -20,7 +20,7 @@ namespace S33M3Engines.Cameras
         Matrix Projection2D { get; }
         Matrix ViewProjection3D { get; }
         DVector3 WorldPosition { get; set; }
-        Vector3 LookAt { get; set; }
+        Quaternion Orientation { get; set; }
         Viewport Viewport { get; set; }
         BoundingFrustum Frustum { get; }
         ICameraPlugin CameraPlugin { get; set; }

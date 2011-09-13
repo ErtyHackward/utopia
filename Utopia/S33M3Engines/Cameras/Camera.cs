@@ -24,13 +24,11 @@ namespace S33M3Engines.Cameras
     public abstract class Camera : GameComponent, ICamera, IWorldFocus
     {
         #region Private TimeDepending Variable ===> Will be LERPED, SLERPED or recomputed
-
         protected FTSValue<DVector3> _worldPosition = new FTSValue<DVector3>();
         protected FTSValue<Quaternion> _cameraOrientation = new FTSValue<Quaternion>();
-
         #endregion
 
-        #region Private Variable
+        #region Private Variable    
 
         protected Viewport? _viewport;
         protected Vector3 _lookAt;
@@ -40,7 +38,6 @@ namespace S33M3Engines.Cameras
         protected float _farPlane = 3000f;
 
         protected Matrix _projection3D;
-        protected Matrix _closeProjection3D;
         protected Matrix _viewPorjection3D;
 
         protected Matrix _projection2D;
@@ -103,16 +100,6 @@ namespace S33M3Engines.Cameras
             get { return _viewPorjection3D; }
         }
 
-        public Vector3 LookAt
-        {
-            get { return _lookAt; }
-            set
-            {
-                _lookAt = value;
-                CameraInitialize();
-            }
-        }
-
         public float NearPlane
         {
             get { return _nearPlane; }
@@ -134,10 +121,15 @@ namespace S33M3Engines.Cameras
         }
 
         public DVector3 WorldPosition
-
         {
             get { return _worldPosition.ActualValue; }
             set { _worldPosition.Value = value; }
+        }
+
+        public Quaternion Orientation
+        {
+            get { return _cameraOrientation.ActualValue; }
+            set { _cameraOrientation.Value = value; }
         }
 
         public ICameraPlugin CameraPlugin
@@ -192,7 +184,6 @@ namespace S33M3Engines.Cameras
             float aspectRatio = Viewport.Width/Viewport.Height;
 
             Matrix.PerspectiveFovRH((float) Math.PI/3, aspectRatio, NearPlane, FarPlane, out _projection3D);
-            Matrix.PerspectiveFovRH((float) Math.PI/3, aspectRatio, NearPlane, 80, out _closeProjection3D);
             Matrix.OrthoRH(Viewport.Width, Viewport.Height, NearPlane, FarPlane, out _projection2D);
 
             //Set Mouse position
