@@ -1,0 +1,85 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UtopiaContent.Effects.Terran;
+using S33M3Engines;
+using S33M3Engines.WorldFocus;
+using S33M3Engines.Cameras;
+using Utopia.Entities.Voxel;
+using S33M3Engines.Struct.Vertex;
+using S33M3Engines.StatesManager;
+using SharpDX;
+using S33M3Engines.D3D;
+
+namespace Utopia.Entities.Renderer
+{
+    public class DefaultEntityRenderer : IEntitiesRenderer
+    {
+         #region Private variables
+        private HLSLTerran _entityEffect;
+        private D3DEngine _d3DEngine;
+        private CameraManager _camManager;
+        private WorldFocusManager _worldFocusManager;
+        #endregion
+
+        #region Public variables/properties
+        public List<IVisualEntityContainer> VisualEntities { get; set; }
+        public IVisualEntityContainer VisualEntity { get; set; }
+        #endregion
+
+        public DefaultEntityRenderer(D3DEngine d3DEngine,
+                                    CameraManager camManager,
+                                    WorldFocusManager worldFocusManager)
+        {
+            _d3DEngine = d3DEngine;
+            _camManager = camManager;
+            _worldFocusManager = worldFocusManager;
+            Initialize();   
+        }
+
+        #region Private Methods
+        private void Initialize()
+        {
+            _entityEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
+        }
+        #endregion
+
+        #region Public Methods
+        public void Draw()
+        {
+            //Applying Correct Render States
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+
+            _entityEffect.Begin();
+
+            _entityEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _entityEffect.CBPerFrame.IsDirty = true;
+
+            for (int i = 0; i < VisualEntities.Count; i++)
+            {
+                Matrix world = _worldFocusManager.CenterOnFocus(ref VisualEntities[i].VisualEntity.World);
+
+                _entityEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+                _entityEffect.CBPerDraw.IsDirty = true;
+                _entityEffect.Apply();
+
+                VisualEntities[i].VisualEntity.VertexBuffer.SetToDevice(0);
+                _d3DEngine.Context.Draw(VisualEntities[i].VisualEntity.VertexBuffer.VertexCount, 0);
+            }
+        }
+
+        public void Update(ref GameTime timeSpent)
+        {
+        }
+
+        public void Interpolation(ref double interpolationHd, ref float interpolationLd)
+        {
+        }
+
+        public void Dispose()
+        {
+        }
+        #endregion
+    }
+}

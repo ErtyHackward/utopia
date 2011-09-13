@@ -58,6 +58,11 @@ namespace Utopia.Entities.Voxel
             set { VoxelEntity.Position = value; }
         }
 
+        /// <summary>
+        /// The World Matrix of the entity
+        /// </summary>
+        public Matrix World;
+
         public void Commit()
         {
             //send modified blocks back to server / disk storage

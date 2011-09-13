@@ -23,6 +23,7 @@ using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Network;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Entities;
+using Utopia.Entities.Managers;
 
 namespace Utopia.Worlds.Chunks
 {

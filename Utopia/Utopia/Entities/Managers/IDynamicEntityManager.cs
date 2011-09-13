@@ -5,7 +5,7 @@ using System.Text;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using S33M3Engines.D3D;
 
-namespace Utopia.Entities
+namespace Utopia.Entities.Managers
 {
     public interface IDynamicEntityManager : IGameComponent
     {
