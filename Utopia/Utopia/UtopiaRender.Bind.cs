@@ -47,7 +47,7 @@ namespace Utopia
             iocContainer.Bind<IDynamicEntity>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope().Named("Player"); //Register the current Player.
             iocContainer.Bind<PlayerCharacter>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope(); //Register the current Player.
 
-            iocContainer.Bind<VisualPlayerCharacter>().ToSelf().InSingletonScope();
+            iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
@@ -57,7 +57,7 @@ namespace Utopia
 
             iocContainer.Bind<InputsManager>().ToSelf().InSingletonScope();
 
-            iocContainer.Bind<IEntityManager>().To<EntityManager>().InSingletonScope();
+            iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();
 
             iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope();
@@ -67,7 +67,7 @@ namespace Utopia
             iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();
-            iocContainer.Bind<ItemRenderer>().ToSelf().InSingletonScope();
+            iocContainer.Bind<ItemRendererOLD>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
             iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");

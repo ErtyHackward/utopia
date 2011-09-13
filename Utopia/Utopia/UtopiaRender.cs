@@ -67,7 +67,7 @@ namespace Utopia
         private IDynamicEntity _player;
         private ActionsManager _actions;
         private D3DEngine _engine;
-        private IEntityManager _entityManager;
+        private IDynamicEntityManager _dynamicEntityManager;
         //Debug tools
         private FPS _fps; //FPS computing object
 
@@ -201,23 +201,23 @@ namespace Utopia
 
             GameComponents.Add(IoCContainer.Get<InputsManager>());
 
-            GameComponents.Add(IoCContainer.Get<ItemRenderer>());
+            GameComponents.Add(IoCContainer.Get<ItemRendererOLD>());
 
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
             //camera.CameraPlugin = _player;
             _camManager.UpdateOrder = 1;
             GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
 
-            //The Player !
-            VisualPlayerCharacter Player = IoCContainer.Get<VisualPlayerCharacter>(new ConstructorArgument("voxelEntity", new PlayerCharacterBody()));
+            //Create the Player manager
+            PlayerEntityManager Player = IoCContainer.Get<PlayerEntityManager>(new ConstructorArgument("voxelEntity", new PlayerCharacterBody()));
             Player.UpdateOrder = 0;
-            Player.IsPlayerConstroled = true;
-            camera.CameraPlugin = IoCContainer.Get<VisualPlayerCharacter>();
-
-            _entityManager = IoCContainer.Get<IEntityManager>();
-            GameComponents.Add(_entityManager);
-
+            camera.CameraPlugin = Player;
             GameComponents.Add(Player);
+
+
+            _dynamicEntityManager = IoCContainer.Get<IDynamicEntityManager>();
+            GameComponents.Add(_dynamicEntityManager);
+
 
             _actions = IoCContainer.Get<ActionsManager>();
 

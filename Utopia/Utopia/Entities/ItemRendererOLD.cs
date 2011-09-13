@@ -18,9 +18,9 @@ using Utopia.Shared.Chunks.Entities.Concrete;
 
 namespace Utopia.Entities
 {
-    public class ItemRenderer : DrawableGameComponent
+    public class ItemRendererOLD : DrawableGameComponent
     {
-        public List<VisualEntity> Items = new List<VisualEntity>(); //TODO populate/fetch items to render from server 
+        public List<VisualEntityOLD> Items = new List<VisualEntityOLD>(); //TODO populate/fetch items to render from server 
 
         private HLSLVertexPositionColor _itemEffect;
         private readonly D3DEngine _d3DEngine;
@@ -30,7 +30,7 @@ namespace Utopia.Entities
         private readonly VoxelMeshFactory _voxelMeshFactory;
 
 
-        public ItemRenderer(D3DEngine d3DEngine, WorldFocusManager worldFocusManager, CameraManager camManager,
+        public ItemRendererOLD(D3DEngine d3DEngine, WorldFocusManager worldFocusManager, CameraManager camManager,
                             ActionsManager actions, VoxelMeshFactory voxelItem)
         {
             _d3DEngine = d3DEngine;
@@ -75,7 +75,7 @@ namespace Utopia.Entities
                 item.PlainCubeFill();
                 item.Position = _camManager.ActiveCamera.WorldPosition;
 
-                Items.Add(new VisualEntity(_d3DEngine, _camManager, _worldFocusManager, _voxelMeshFactory, item, item));
+                Items.Add(new VisualEntityOLD(_d3DEngine, _camManager, _worldFocusManager, _voxelMeshFactory, item, item));
             }
         }
 

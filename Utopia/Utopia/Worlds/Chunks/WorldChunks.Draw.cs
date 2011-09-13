@@ -50,14 +50,14 @@ namespace Utopia.Worlds.Chunks
             _terraEffect.CBPerFrame.IsDirty = true;
             _sunColorBase = GetSunColor();
 
-            if (_player.HeadInsideWater) _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
+            if (_playerManager.IsHeadInsideWater) _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
             else _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
 
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             DrawSolidFaces();
 
-            if (!_player.HeadInsideWater)
+            if (!_playerManager.IsHeadInsideWater)
             {
                 //Head not inside Water => Draw water front Faces
                 StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
@@ -121,7 +121,7 @@ namespace Utopia.Worlds.Chunks
 
             _liquidEffect.Begin();
             _liquidEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
-            if (_player.HeadInsideWater) _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
+            if (_playerManager.IsHeadInsideWater) _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
             else _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
 
             _liquidEffect.CBPerFrame.IsDirty = true;

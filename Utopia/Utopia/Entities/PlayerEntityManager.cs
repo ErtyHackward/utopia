@@ -21,6 +21,11 @@ using S33M3Engines.Shared.Math;
 using S33M3Engines.Struct;
 using S33M3Physics.Verlet;
 using S33M3Physics;
+using UtopiaContent.Effects.Terran;
+using S33M3Engines.Buffers;
+using S33M3Engines.Struct.Vertex;
+using Utopia.Shared.Chunks.Entities.Concrete;
+using S33M3Engines.StatesManager;
 
 namespace Utopia.Entities
 {
@@ -28,7 +33,7 @@ namespace Utopia.Entities
     {
         #region Private variables
         //Engine System variables
-        private D3DEngine _engine;
+        private D3DEngine _d3DEngine;
         private CameraManager _cameraManager;
         private WorldFocusManager _worldFocusManager;
         private ActionsManager _actions;
@@ -67,13 +72,24 @@ namespace Utopia.Entities
         private Matrix _entityRotation;
         private DVector3 _entityHeadXAxis, _entityHeadYAxis, _entityHeadZAxis;
         private DVector3 _entityXAxis, _entityYAxis, _entityZAxis;
+
+        //Draw Variables
+        private HLSLTerran _playerEffect;
+        private VertexBuffer<VertexCubeSolid> _vertexBuffer;
+        private List<VertexCubeSolid> _vertice;
+        private bool _altered;
+
         #endregion
 
         #region Public variables/properties
         /// <summary>
         /// The Player
         /// </summary>
-        public PlayerCharacter Player;
+        public readonly PlayerCharacter Player;
+        /// <summary>
+        /// The Player Voxel body
+        /// </summary>
+        public readonly VoxelEntity VoxelEntity;
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual DVector3 CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
@@ -81,7 +97,7 @@ namespace Utopia.Entities
 
         public bool IsHeadInsideWater { get; set; }
 
-        public EntityDisplacementModes Mode
+        public EntityDisplacementModes DisplacementMode
         {
             get { return _displacementMode; }
             set
@@ -107,9 +123,10 @@ namespace Utopia.Entities
                                    InputsManager inputsManager,
                                    SingleArrayChunkContainer cubesHolder,
                                    VoxelMeshFactory voxelMeshFactory,
+                                   VoxelEntity voxelEntity,
                                    PlayerCharacter player)
         {
-            _engine = engine;
+            _d3DEngine = engine;
             _cameraManager = cameraManager;
             _worldFocusManager = worldFocusManager;
             _actions = actions;
@@ -117,6 +134,7 @@ namespace Utopia.Entities
             _cubesHolder = cubesHolder;
             _voxelMeshFactory = voxelMeshFactory;
             this.Player = player;
+            this.VoxelEntity = voxelEntity;
         }
 
         #region Private Methods
@@ -126,7 +144,7 @@ namespace Utopia.Entities
         /// </summary>
         /// <param name="worldPosition"></param>
         /// <param name="boundingBox"></param>
-        protected void RefreshBoundingBox(ref DVector3 worldPosition, out BoundingBox boundingBox)
+        private void RefreshBoundingBox(ref DVector3 worldPosition, out BoundingBox boundingBox)
         {
             boundingBox = new BoundingBox(_boundingMinPoint + worldPosition.AsVector3(),
                                           _boundingMaxPoint + worldPosition.AsVector3());
@@ -134,10 +152,22 @@ namespace Utopia.Entities
 
         #region Player InputHandling
         /// <summary>
-        /// Handle Player input handling
+        /// Handle Player input handling - Movement and rotation input are not handled here
         /// </summary>
         private void inputHandler()
         {
+
+            if (_actions.isTriggered(Actions.Move_Mode))
+            {
+                if (_displacementMode == EntityDisplacementModes.Flying)
+                {
+                    DisplacementMode = EntityDisplacementModes.Walking;
+                }
+                else
+                {
+                    DisplacementMode = EntityDisplacementModes.Flying;
+                }
+            }
 
             if (_actions.isTriggered(Actions.Block_Add))
             {
@@ -348,6 +378,48 @@ namespace Utopia.Entities
         }
         #endregion
 
+        #region Entity Movement + rotation
+
+        private void RefreshEntityMovementAndRotation(ref GameTime timeSpent)
+        {
+            switch (_displacementMode)
+            {
+                case EntityDisplacementModes.Flying:
+                    _gravityInfluence = 6;  // We will move 6 times faster if flying
+                    break;
+                case EntityDisplacementModes.Walking:
+                    _gravityInfluence = 1;
+                    break;
+                case EntityDisplacementModes.Swiming:
+                    _gravityInfluence = 1 / 2; // We will move 2 times slower when swimming
+                    break;
+                default:
+                    break;
+            }
+
+            //Compute the delta following the time elapsed : Speed * Time = Distance (Over the elapsed time).
+            _moveDelta = Player.MoveSpeed * _gravityInfluence * timeSpent.ElapsedGameTimeInS_HD;
+            _rotationDelta = Player.RotationSpeed * timeSpent.ElapsedGameTimeInS_HD;
+
+            //Backup previous values
+            _lookAtDirection.BackUpValue();
+            _worldPosition.BackUpValue();
+
+            //Rotation with mouse
+            EntityRotationsOnEvents(_displacementMode);
+
+            //Movement
+            EntityMovementsOnEvents(_displacementMode, ref timeSpent);
+
+            //Physic simulation !
+            PhysicOnEntity(_displacementMode, ref timeSpent);
+
+            //Send the Actual Position to the Entity object only of it has change !!!
+            //The Change check is done at DynamicEntity level
+            Player.Position = _worldPosition.Value;
+            Player.Rotation = _lookAtDirection.Value;
+        }
+
         #region Movement Management
         private void EntityMovementsOnEvents(EntityDisplacementModes mode, ref GameTime TimeSpend)
         {
@@ -413,7 +485,7 @@ namespace Utopia.Entities
         #region Head + Body Rotation management
         private void EntityRotationsOnEvents(EntityDisplacementModes mode)
         {
-            if (_engine.UnlockedMouse == false)
+            if (_d3DEngine.UnlockedMouse == false)
             {
                 Rotate(_inputsManager.MouseMoveDelta.X, _inputsManager.MouseMoveDelta.Y, 0.0f, mode);
             }
@@ -520,19 +592,42 @@ namespace Utopia.Entities
 
         #endregion
 
+        #region Player Drawing
+        private void RefreshBodyMesh()
+        {
+            if (!_altered) return;
+
+            _vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks);
+
+            if (_vertice.Count != 0)
+            {
+                _vertexBuffer.SetData(_vertice.ToArray());
+            }
+
+            _altered = false;
+        }
+        #endregion
+        #endregion
+
         #region Public Methods
         public override void Initialize()
         {
+            //Init Velret physic simulator
             _physicSimu = new VerletSimulator(ref _playerBoundingBox) { WithCollisionBounsing = false };
             _physicSimu.ConstraintFct += isCollidingWithTerrain;
 
-            Mode = Player.DisplacementMode;
+            //Set displacement mode
+            DisplacementMode = Player.DisplacementMode;
 
-            //Check the position, if the possition is 0,0,0, find the better spawning Y value !
-            if (Player.Position == DVector3.Zero)
-            {
-                Player.Position = new DVector3(0, AbstractChunk.ChunkSize.Y, 0);
-            }
+            //Compute the Eye position into the entity
+            _entityEyeOffset = new Vector3(0, Player.Size.Y / 100 * 80, 0);
+
+            //Will be used to update the bounding box with world coordinate when the entity is moving
+            _boundingMinPoint = new Vector3(-(Player.Size.X / 2.0f), 0, -(Player.Size.Z / 2.0f));
+            _boundingMaxPoint = new Vector3(+(Player.Size.X / 2.0f), Player.Size.Y, +(Player.Size.Z / 2.0f));
+
+            //Compute the initial Player world bounding box
+            RefreshBoundingBox(ref _worldPosition.Value, out _playerBoundingBox);
 
             //Set Position
             //Set the entity world position following the position received from server
@@ -548,14 +643,28 @@ namespace Utopia.Entities
 
             //Set Move direction = to LookAtDirection
             _moveDirection.Value = _lookAtDirection.Value;
+
+            //initilize Draw buffers
+            _vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks);
+            _altered = true;
         }
 
+        /// <summary>
+        /// The allocated object here must be disposed
+        /// </summary>
         public override void LoadContent()
         {
+            _vertexBuffer = _voxelMeshFactory.InitBuffer(_vertice);
+            _playerEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
+
+            //Create the Voxel body
+            RefreshBodyMesh();
         }
 
         public override void Dispose()
         {
+            if (_playerEffect != null) _playerEffect.Dispose();
+            if (_vertexBuffer != null) _vertexBuffer.Dispose();
         }
 
         public override void Update(ref GameTime timeSpent)
@@ -565,14 +674,45 @@ namespace Utopia.Entities
             GetSelectedBlock();         //Player Block Picking handling
 
             CheckHeadUnderWater();      //Under water head test
+
+            RefreshEntityMovementAndRotation(ref timeSpent);   //Refresh player Movement + rotation
+
+            //Refresh the player Bounding box
+            RefreshBoundingBox(ref _worldPosition.Value, out _playerBoundingBox);
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
+            Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
+            DVector3.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
         }
 
         public override void Draw()
         {
+            //Applying Correct Render States
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+
+            _playerEffect.Begin();
+
+            _playerEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
+            _playerEffect.CBPerFrame.IsDirty = true;
+
+            if (_worldPosition.ActualValue.X == _cameraManager.ActiveCamera.WorldPosition.X && _worldPosition.ActualValue.Z == _cameraManager.ActiveCamera.WorldPosition.Z) return;
+
+            Vector3 entityCenteredPosition = _worldPosition.ActualValue.AsVector3();
+            entityCenteredPosition.X -= Player.Size.X / 2;
+            entityCenteredPosition.Z -= Player.Size.Z / 2;
+
+            Matrix world = Matrix.Scaling(Player.Size) * Matrix.Translation(entityCenteredPosition);
+
+            world = _worldFocusManager.CenterOnFocus(ref world);
+
+            _playerEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+            _playerEffect.CBPerDraw.IsDirty = true;
+            _playerEffect.Apply();
+
+            _vertexBuffer.SetToDevice(0);
+            _d3DEngine.Context.Draw(_vertexBuffer.VertexCount, 0);
         }
 
         #endregion
