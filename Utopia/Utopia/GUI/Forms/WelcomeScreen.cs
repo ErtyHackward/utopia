@@ -65,10 +65,23 @@ namespace Utopia.GUI.Forms
             _server.ServerConnection.MessageEntityIn += ServerConnection_MessageEntityIn;
         }
 
+        private void UnregisterEvents()
+        {
+            _server.ServerConnection.ConnectionStatusChanged -= ServerConnection_ConnectionStatusChanged;
+            _server.ServerConnection.MessageError -= ServerConnection_MessageError;
+            _server.ServerConnection.MessageLoginResult -= ServerConnection_MessageLoginResult;
+            _server.ServerConnection.MessageGameInformation -= ServerConnection_MessageGameInformation;
+            _server.ServerConnection.MessagePing -= ServerConnection_MessagePing;
+            _server.ServerConnection.MessageEntityIn -= ServerConnection_MessageEntityIn;
+        }
+
         void ServerConnection_MessageEntityIn(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.EntityInMessage> e)
         {
             _server.Player = (Utopia.Shared.Chunks.Entities.PlayerCharacter)e.Message.Entity;
-            _server.ServerConnection.SendAsync(new Utopia.Net.Messages.PingMessage() { Request = true, Token = System.Diagnostics.Stopwatch.GetTimestamp() });
+            UnregisterEvents();
+            _serverTime.Dispose();
+             HideWindows();
+            //_server.ServerConnection.SendAsync(new Utopia.Net.Messages.PingMessage() { Request = true, Token = System.Diagnostics.Stopwatch.GetTimestamp() });
         }
 
         void ServerConnection_MessagePing(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.PingMessage> e)
