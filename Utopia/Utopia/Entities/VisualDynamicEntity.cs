@@ -98,6 +98,13 @@ namespace Utopia.Entities
         {
             Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
             DVector3.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
+
+            //Refresh the VisualEntity World matrix based on the latest interpolated values
+            Vector3 entityCenteredPosition = WorldPosition.ValueInterp.AsVector3();
+            entityCenteredPosition.X -= DynamicEntity.Size.X / 2;
+            entityCenteredPosition.Z -= DynamicEntity.Size.Z / 2;
+            VisualEntity.World = Matrix.Scaling(DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
+            //===================================================================================================================================
         }
         #endregion
     }

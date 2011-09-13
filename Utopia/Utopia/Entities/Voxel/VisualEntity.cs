@@ -5,6 +5,7 @@ using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia.Entities.Voxel
 {
@@ -17,7 +18,7 @@ namespace Utopia.Entities.Voxel
     /// </summary>
     public class VisualEntity : IDisposable
     {
-        public readonly VoxelEntity VoxelEntity;
+        public readonly IVoxelEntity VoxelEntity;
         public VertexBuffer<VertexCubeSolid> VertexBuffer;
         public List<VertexCubeSolid> Vertice;
        
@@ -40,7 +41,7 @@ namespace Utopia.Entities.Voxel
         /// <param name="voxelMeshFactory">voxelMeshFactory responsible to create mesh</param>
         /// <param name="wrapped">wrapped VoxelEntity from server</param>
         /// <param name="overlays">array of texture id to overlay</param>
-        public VisualEntity(VoxelMeshFactory voxelMeshFactory, VoxelEntity wrapped,byte[, ,] overlays=null)
+        public VisualEntity(VoxelMeshFactory voxelMeshFactory, IVoxelEntity wrapped,byte[, ,] overlays=null)
         {
             VoxelEntity = wrapped;
             _voxelMeshFactory = voxelMeshFactory;
@@ -60,6 +61,10 @@ namespace Utopia.Entities.Voxel
 
         /// <summary>
         /// The World Matrix of the entity
+        /// It needs to be updated when the entity workd position is changing ! (Translation)
+        /// When the entity is rotating (Rotation)
+        /// When the entity is changing size (Scaling)
+        /// This world Matrix should only be used at Drawing time, it means it could come from interpolated value !
         /// </summary>
         public Matrix World;
 

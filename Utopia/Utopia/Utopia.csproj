@@ -306,6 +306,7 @@
       <LastGenOutput>SuaveSkinResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="Content\Layouts\MainMenu.layout">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
