@@ -62,7 +62,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #region Public methods
         public override void Initialize()
         {
-            _nbrLayer = ClientSettings.Current.Settings.GraphicalParameters.CloudsLayers;
+            _nbrLayer = 1;// 
             _cloudMap = ShaderResourceView.FromFile(_d3dEngine.Device, @"Textures\Weather\clouds.png");
             Init2D();
         }

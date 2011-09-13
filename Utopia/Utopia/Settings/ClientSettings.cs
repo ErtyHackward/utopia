@@ -26,7 +26,7 @@ namespace Utopia.Settings
     public class GraphicalParameters
     {
         public int WorldSize { get; set; }
-        public int CloudsLayers { get; set; }
+        public int CloudsQuality { get; set; }
         public int AllocatedThreadsModifier { get; set; }
         public int LightPropagateSteps { get; set; }
     }
@@ -124,9 +124,9 @@ namespace Utopia.Settings
                     GraphicalParameters = new GraphicalParameters
                     {
                         WorldSize = 32,
-                            CloudsLayers = 1,
-                            AllocatedThreadsModifier = 0,
-                            LightPropagateSteps = 8
+                        CloudsQuality = 1,
+                        AllocatedThreadsModifier = 0,
+                        LightPropagateSteps = 8
                     },
                     KeyboardMapping = new KeyboardMapping
                     {

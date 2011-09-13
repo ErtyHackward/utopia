@@ -38,6 +38,7 @@ using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.InputManager;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Renderer;
+using Utopia.Settings;
 
 namespace Utopia
 {
@@ -75,7 +76,14 @@ namespace Utopia
             iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
-            iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");
+            if (ClientSettings.Current.Settings.GraphicalParameters.CloudsQuality <= 0)
+            {
+                iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");
+            }
+            else
+            {
+                iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds");
+            }
 
             iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InSingletonScope().Named("SolidCubeMeshFactory");
             iocContainer.Bind<ICubeMeshFactory>().To<LiquidCubeMashFactory>().InSingletonScope().Named("LiquidCubeMeshFactory");

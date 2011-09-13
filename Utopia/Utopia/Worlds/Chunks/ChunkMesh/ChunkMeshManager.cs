@@ -146,12 +146,12 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         switch (cubeFace)
                         {
                             case CubeFace.Back:
-                                if (chunk.BorderChunk && (ZWorld - 1 < _visualWorldParameters.WorldRange.Min.Z)) continue;
+                                if (ZWorld - 1 < _visualWorldParameters.WorldRange.Min.Z) continue;
                                 //neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1);
                                 break;
                             case CubeFace.Front:
-                                if (chunk.BorderChunk && (ZWorld + 1 >= _visualWorldParameters.WorldRange.Max.Z)) continue;
+                                if (ZWorld + 1 >= _visualWorldParameters.WorldRange.Max.Z) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1);
                                 break;
                             case CubeFace.Bottom:
@@ -165,12 +165,12 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 
                                 break;
                             case CubeFace.Left:
-                                if (chunk.BorderChunk && (XWorld - 1 < _visualWorldParameters.WorldRange.Min.X)) continue;
+                                if (XWorld - 1 < _visualWorldParameters.WorldRange.Min.X) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1);
                                 
                                 break;
                             case CubeFace.Right:
-                                if (chunk.BorderChunk && (XWorld + 1 >= _visualWorldParameters.WorldRange.Max.X)) continue;
+                                if (XWorld + 1 >= _visualWorldParameters.WorldRange.Max.X) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1);
                                 break;
                             default:
