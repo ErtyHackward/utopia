@@ -77,7 +77,6 @@ namespace Utopia.Entities
 
                 Items.Add(new VisualEntity(_d3DEngine, _camManager, _worldFocusManager, _voxelMeshFactory, item, item));
             }
-            //TODO (team talk) camera double position vs entiy float position
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)

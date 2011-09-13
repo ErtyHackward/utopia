@@ -30,7 +30,7 @@ namespace Utopia.GUI.D3D.DebugUI
             _d3DEngine = d3DEngine;
             _game = game;
 
-            this.Bounds = new UniRectangle(90.0f, 70.0f, 500.0f, 250.0f);
+            this.Bounds = new UniRectangle(90.0f, 70.0f, 500.0f, (_gameComponentCollection.Count+2)*Step);
             this.Title = "Debug options";
 
             InitGameComponents();
