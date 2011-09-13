@@ -33,7 +33,7 @@ namespace S33M3Engines.Buffers
         #region Public Properties
         #endregion
 
-        public IndexBuffer(D3DEngine d3dEngine, int IndicesCount, Format indexFormat, int AutoResizePerc = 0)
+        public IndexBuffer(D3DEngine d3dEngine, int IndicesCount, Format indexFormat, int AutoResizePerc = 0, ResourceUsage usage = ResourceUsage.Default)
         {
             _indicesCount = IndicesCount;
             _bufferCount = _indicesCount + (_indicesCount * _autoResizePerc / 100);
@@ -48,10 +48,10 @@ namespace S33M3Engines.Buffers
             _description = new BufferDescription()
             {
                 BindFlags = BindFlags.IndexBuffer,
-                CpuAccessFlags = CpuAccessFlags.None,
+                CpuAccessFlags = usage == ResourceUsage.Default || usage == ResourceUsage.Immutable ? CpuAccessFlags.None : CpuAccessFlags.Write,
                 OptionFlags = ResourceOptionFlags.None,
                 SizeInBytes = _bufferCount * _indexStride,
-                Usage = ResourceUsage.Default
+                Usage = usage
             };
         }
 

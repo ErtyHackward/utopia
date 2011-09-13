@@ -243,6 +243,7 @@
     <Compile Include="Worlds\Chunks\ChunkLighting\LightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
+    <Compile Include="Worlds\SkyDomes\SharedComp\Clouds3D.cs" />
     <Compile Include="Worlds\Storage\SQLiteManager.cs" />
     <Compile Include="Worlds\Storage\SQLiteStorageManager.cs" />
     <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
@@ -306,7 +307,6 @@
       <LastGenOutput>SuaveSkinResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="Content\Layouts\MainMenu.layout">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
