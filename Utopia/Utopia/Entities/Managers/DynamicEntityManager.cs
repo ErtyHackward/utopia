@@ -8,6 +8,7 @@ using Utopia.Shared.Chunks.Entities.Voxel;
 using Utopia.Entities.Voxel;
 using Utopia.Entities.Renderer;
 using Ninject;
+using SharpDX;
 
 namespace Utopia.Entities.Managers
 {
@@ -72,6 +73,15 @@ namespace Utopia.Entities.Managers
             foreach (var entity in _dynamicEntitiesDico.Values)
             {
                 entity.Interpolation(ref interpolationHd, ref interpolationLd);
+
+                //TODO To remove when Voxel Entity erge will done with Entity
+                //Update the position and World Matrix of the Voxel body of the Entity.
+                entity.VisualEntity.Position = entity.WorldPosition.ValueInterp;
+                Vector3 entityCenteredPosition = entity.WorldPosition.ValueInterp.AsVector3();
+                entityCenteredPosition.X -= entity.DynamicEntity.Size.X / 2;
+                entityCenteredPosition.Z -= entity.DynamicEntity.Size.Z / 2;
+                entity.VisualEntity.World = Matrix.Scaling(entity.DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
+                //===================================================================================================================================
             }
         }
 

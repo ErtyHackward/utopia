@@ -18,9 +18,6 @@ namespace Utopia.Entities
         //Player Visual characteristics (Not insde the PlayerCharacter object)
         private BoundingBox _playerBoundingBox;
         private Vector3 _boundingMinPoint, _boundingMaxPoint;                         //Use to recompute the bounding box in world coordinate
-        private FTSValue<DVector3> _worldPosition = new FTSValue<DVector3>();         //World Position
-        private FTSValue<Quaternion> _lookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
-        private FTSValue<Quaternion> _moveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
         #endregion
 
         #region Public variables/properties
@@ -32,6 +29,10 @@ namespace Utopia.Entities
         /// The Player Voxel body
         /// </summary>
         public VisualEntity VisualEntity { get; set; }
+
+        public FTSValue<DVector3> WorldPosition = new FTSValue<DVector3>();         //World Position
+        public FTSValue<Quaternion> LookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
+        public FTSValue<Quaternion> MoveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
         #endregion
 
         public VisualDynamicEntity(IDynamicEntity dynamicEntity, VisualEntity visualEntity)
@@ -50,19 +51,19 @@ namespace Utopia.Entities
             _boundingMaxPoint = new Vector3(+(DynamicEntity.Size.X / 2.0f), DynamicEntity.Size.Y, +(DynamicEntity.Size.Z / 2.0f));
 
             //Compute the initial Player world bounding box
-            RefreshBoundingBox(ref _worldPosition.Value, out _playerBoundingBox);
+            RefreshBoundingBox(ref WorldPosition.Value, out _playerBoundingBox);
 
             //Set Position
             //Set the entity world position following the position received from server
-            _worldPosition.Value = DynamicEntity.Position;
-            _worldPosition.ValuePrev = DynamicEntity.Position;
+            WorldPosition.Value = DynamicEntity.Position;
+            WorldPosition.ValuePrev = DynamicEntity.Position;
 
             //Set LookAt
-            _lookAtDirection.Value = DynamicEntity.Rotation;
-            _lookAtDirection.ValuePrev = _lookAtDirection.Value;
+            LookAtDirection.Value = DynamicEntity.Rotation;
+            LookAtDirection.ValuePrev = LookAtDirection.Value;
 
             //Set Move direction = to LookAtDirection
-            _moveDirection.Value = _lookAtDirection.Value;
+            MoveDirection.Value = LookAtDirection.Value;
         }
 
         /// <summary>
@@ -78,11 +79,11 @@ namespace Utopia.Entities
 
         private void RefreshEntityMovementAndRotation()
         {
-            _lookAtDirection.BackUpValue();
-            _worldPosition.BackUpValue();
+            LookAtDirection.BackUpValue();
+            WorldPosition.BackUpValue();
 
-            _worldPosition.Value = DynamicEntity.Position;
-            _lookAtDirection.Value = DynamicEntity.Rotation;
+            WorldPosition.Value = DynamicEntity.Position;
+            LookAtDirection.Value = DynamicEntity.Rotation;
         }
 
         #endregion
@@ -95,8 +96,8 @@ namespace Utopia.Entities
 
         public void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-            Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
-            DVector3.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
+            Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
+            DVector3.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
         }
         #endregion
     }
