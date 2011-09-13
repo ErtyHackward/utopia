@@ -47,13 +47,13 @@ namespace Utopia.Shared.Structs
         }
 
         public Color(float r, float g, float b)
+            :this((int)r, (int)g, (int)b)
         {
-            this.packedValue = PackHelper(r, g, b, 1f);
         }
 
         public Color(float r, float g, float b, float a)
+            : this((int)r, (int)g, (int)b, (int)a)
         {
-            this.packedValue = PackHelper(r, g, b, a);
         }
 
         public Color(Vector3 vector)
