@@ -34,9 +34,28 @@ namespace NoiseVisualizer
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
                     var val = noise.GetNoise2DValue(x, y, (int)numericUpDown4.Value, (double)numericUpDown6.Value);
-                    var col = MathHelper.FullLerp(0, 255, val, true); // Make the noise result between 0 and 255.
+                    Color color;
+                    double colorcomp;
+                    if (checkBox2.Checked)
+                    {
+                        if (checkBox1.Checked)
+                        {
+                            if (MathHelper.FullLerp(0, 1, val, true) > (double)numericUpDown1.Value) color = Color.White;
+                            else color = Color.Black;
+                        }
+                        else
+                        {
+                            if (MathHelper.FullLerp(0, 1, val, true) < (double)numericUpDown1.Value) color = Color.White;
+                            else color = Color.Black;
+                        }
+                    }
+                    else
+                    {
+                        colorcomp = MathHelper.FullLerp(0, 255, val, true); // Make the noise result between 0 and 255.
+                        color = Color.FromArgb((byte)colorcomp, (byte)colorcomp, (byte)colorcomp);
+                    }
 
-                    bmp.SetPixel(x, y, Color.FromArgb((byte)col, (byte)col, (byte)col));
+                    bmp.SetPixel(x, y, color);
                 }
             }
 
