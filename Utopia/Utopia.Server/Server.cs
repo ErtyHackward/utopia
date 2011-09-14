@@ -359,6 +359,15 @@ namespace Utopia.Server
             }
         }
 
+        private ServerPlayerCharacterEntity GetNewPlayerEntity(ClientConnection clientConnection, uint entityId)
+        {
+            var serverChar = new ServerPlayerCharacterEntity(clientConnection);
+            serverChar.EntityId = entityId;
+            serverChar.Position = new DVector3(10, 128, 10);
+            serverChar.CharacterName = "Chuck norris";
+            return serverChar;
+        }
+
         void ConnectionMessageLogin(object sender, ProtocolMessageEventArgs<LoginMessage> e)
         {
             var connection = sender as ClientConnection;
@@ -394,7 +403,13 @@ namespace Utopia.Server
             LoginData? loginData;
             if (UsersStorage.Login(e.Message.Login, e.Message.Password, out loginData))
             {
-                Console.WriteLine("{1} logged as ({0}) ", e.Message.Login, connection.Id);
+                var oldConnection = ConnectionManager.Find(c => c.UserId == loginData.Value.UserId);
+                if (oldConnection != null)
+                {
+                    oldConnection.Send(new ErrorMessage { ErrorCode = ErrorCodes.AnotherInstanceLogged, Message = "Another instance of you was connected. You will be disconnected." });
+                    oldConnection.Disconnect();
+                }
+
 
                 connection.Authorized = true;
                 connection.UserId = loginData.Value.UserId;
@@ -406,12 +421,9 @@ namespace Utopia.Server
                 if (loginData.Value.State == null)
                 {
                     // create new message
-                    var serverChar = new ServerPlayerCharacterEntity(connection);
-                    serverChar.EntityId = EntityFactory.Instance.GetUniqueEntityId();
-                    serverChar.Position = new DVector3(10, 128, 10);
-                    serverChar.CharacterName = "Chuck norris";
 
-                    playerEntity = serverChar;
+
+                    playerEntity = GetNewPlayerEntity(connection,  EntityFactory.Instance.GetUniqueEntityId());
 
                     var state = new UserState();
                     state.EntityId = playerEntity.EntityId;
@@ -426,19 +438,27 @@ namespace Utopia.Server
                     
                     var bytes = EntityStorage.LoadEntityBytes(state.EntityId);
 
-                    using (var ms = new MemoryStream(bytes))
+                    if (bytes == null)
                     {
-                        var reader = new BinaryReader(ms);
-                        playerEntity.Load(reader);
+                        Console.WriteLine("{0} entity was corrupted, creating new one...", e.Message.Login);
+                        playerEntity = GetNewPlayerEntity(connection, state.EntityId);
                     }
-
+                    else
+                    {
+                        using (var ms = new MemoryStream(bytes))
+                        {
+                            var reader = new BinaryReader(ms);
+                            playerEntity.Load(reader);
+                        }
+                        
+                    }
                 }
                 #endregion
 
                 connection.Entity = playerEntity;
 
                 connection.Send(new LoginResultMessage { Logged = true });
-
+                Console.WriteLine("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.Entity.EntityId);
                 var gameInfo = new GameInformationMessage {
                     ChunkSize = Utopia.Shared.Chunks.AbstractChunk.ChunkSize, 
                     MaxViewRange = 32,
