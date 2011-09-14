@@ -26,6 +26,7 @@
         //alive
         PlayerCharacter = 3000,
         NonPlayerCharacter = 3001,
+        Zombie = 3002,
 
         //Special case
         EditableEntity = 10001

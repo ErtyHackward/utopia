@@ -4,12 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using S33M3Engines.Shared.Math;
-using SharpDX;
 using Utopia.Net.Connections;
 using Utopia.Net.Messages;
 using Utopia.Server.Managers;
 using Utopia.Server.Structs;
-using Utopia.Server.Utils;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
@@ -85,6 +84,16 @@ namespace Utopia.Server
         public AreaManager AreaManager { get; private set; }
 
         /// <summary>
+        /// Gets server game services
+        /// </summary>
+        public ServiceManager Services { get; private set; }
+
+        /// <summary>
+        /// Gets landscape manager
+        /// </summary>
+        public LandscapeManager LandscapeManager { get; private set; }
+
+        /// <summary>
         /// Create new instance of the Server class
         /// </summary>
         public Server(
@@ -116,6 +125,10 @@ namespace Utopia.Server
             ConnectionManager = new ConnectionManager();
             ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
             ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
+
+            Services = new ServiceManager(this);
+
+            LandscapeManager = new LandscapeManager(this);
             
             // async server events (saving modified chunks, unloading unused chunks)
             _cleanUpTimer = new Timer(CleanUp, null, SettingsManager.Settings.CleanUpInterval, SettingsManager.Settings.CleanUpInterval);
@@ -224,7 +237,7 @@ namespace Utopia.Server
 
         void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
         {
-            var connection = sender as ClientConnection;
+            var connection = (ClientConnection)sender;
             // we need respond as fast as possible
             if (e.Message.Request)
             {
@@ -300,7 +313,7 @@ namespace Utopia.Server
 
         void ConnectionMessageGetChunks(object sender, ProtocolMessageEventArgs<GetChunksMessage> e)
         {
-            var connection = sender as ClientConnection;
+            var connection = (ClientConnection)sender;
 
             try
             {
@@ -370,8 +383,8 @@ namespace Utopia.Server
 
         void ConnectionMessageLogin(object sender, ProtocolMessageEventArgs<LoginMessage> e)
         {
-            var connection = sender as ClientConnection;
-
+            var connection = (ClientConnection)sender;
+            
             // check if user want to register and this login is busy
             if (e.Message.Register)
             {
@@ -380,7 +393,7 @@ namespace Utopia.Server
                     connection.Send(new ErrorMessage
                                         {
                                             ErrorCode = ErrorCodes.LoginAlreadyRegistered,
-                                            Message = "Such login already registered"
+                                            Message = "Such login is already registered"
                                         });
                     return;
                 }
@@ -460,7 +473,7 @@ namespace Utopia.Server
                 connection.Send(new LoginResultMessage { Logged = true });
                 Console.WriteLine("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.Entity.EntityId);
                 var gameInfo = new GameInformationMessage {
-                    ChunkSize = Utopia.Shared.Chunks.AbstractChunk.ChunkSize, 
+                    ChunkSize = AbstractChunk.ChunkSize, 
                     MaxViewRange = 32,
                     WorldSeed = WorldGenerator.WorldParametes.Seed,
                     WaterLevel = WorldGenerator.WorldParametes.SeaLevel
