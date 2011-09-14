@@ -55,7 +55,7 @@ namespace Utopia.Editor
             // inactive by default, use F12 UI to enable :)
             this.Visible = false;
             this.Enabled = false;
-            DrawOrder = 5000;
+            DrawOrders.UpdateIndex(0, 5000);
         }
 
         public void SpawnEntity()
@@ -108,7 +108,7 @@ namespace Utopia.Editor
             //setSelection();
         }
 
-        public override void Draw()
+        public override void Draw(int Index)
         {
             DrawItems();
         }

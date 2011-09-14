@@ -131,12 +131,12 @@ namespace Utopia.Worlds.SkyDomes
             base.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
 
-        public override void Draw()
+        public override void Draw(int Index)
         {
             DrawingDome();
             DrawingMoon();
-            _skyStars.Draw();
-            _clouds.Draw();
+            _skyStars.Draw(Index);
+            _clouds.Draw(Index);
         }
         #endregion
 

@@ -35,10 +35,6 @@ namespace Utopia.Worlds.SkyDomes
 
         #region Public methods
 
-        public override void Draw()
-        {
-        }
-
         public override void Initialize()
         {
             _lightDirection = new FTSValue<Vector3>() { Value = new Vector3(100.0f, 100.0f, 100.0f) };

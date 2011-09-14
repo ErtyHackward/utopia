@@ -34,7 +34,7 @@ namespace Utopia.Worlds.Chunks
 
         #region Public methods
 
-        public override void Draw()
+        public override void Draw(int Index)
         {
             
 
@@ -55,23 +55,29 @@ namespace Utopia.Worlds.Chunks
 
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
-            DrawSolidFaces();
-
-            if (!_playerManager.IsHeadInsideWater)
+            if (Index == SOLID_DRAW)
             {
-                //Head not inside Water => Draw water front Faces
-                StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                DrawSolidFaces();
+#if DEBUG
+                DrawDebug();
+#endif
             }
             else
             {
-                //Head inside Water block, draw back faces only
-                StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullFront, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-            }
+                //Only 2 index registered, no need to test the value of the index here it is for transparent one !
+                if (!_playerManager.IsHeadInsideWater)
+                {
+                    //Head not inside Water => Draw water front Faces
+                    StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                }
+                else
+                {
+                    //Head inside Water block, draw back faces only
+                    StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullFront, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                }
 
-            DefaultDrawLiquid(); //After Solid faces
-#if DEBUG
-            DrawDebug();
-#endif
+                DefaultDrawLiquid(); 
+            }
 
         }
         #endregion

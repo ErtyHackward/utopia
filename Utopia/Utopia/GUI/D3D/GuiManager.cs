@@ -39,7 +39,7 @@ namespace Utopia.GUI.D3D
             _screen = screen;
             _d3DEngine = d3DEngine;
 
-            DrawOrder = 10000;
+            DrawOrders.UpdateIndex(0, 10000);
         }
 
         public override void Initialize()
@@ -67,7 +67,7 @@ namespace Utopia.GUI.D3D
         }
 
         //Draw at 2d level ! (Last draw called)
-        public override void Draw()
+        public override void Draw(int Index)
         {
             _guiVisualizer.Draw(_screen);
         }

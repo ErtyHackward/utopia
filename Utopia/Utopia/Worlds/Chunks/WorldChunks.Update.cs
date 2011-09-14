@@ -34,10 +34,6 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
         #region private method

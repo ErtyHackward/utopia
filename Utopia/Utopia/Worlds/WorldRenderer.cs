@@ -26,18 +26,20 @@ namespace Utopia.Worlds
         }
         #endregion
 
-        public WorldRenderer(IWorld world)
+        public WorldRenderer(IWorld world, UtopiaRender mainRenderer)
         {
             _world = world;
+
+            //Register the various passed in component to be rendered
+            mainRenderer.GameComponents.Add(_world.WorldClock);
+            mainRenderer.GameComponents.Add(_world.WorldWeather);
+            mainRenderer.GameComponents.Add(_world.WorldSkyDome);
+            mainRenderer.GameComponents.Add(_world.WorldChunks);
         }
 
         #region Public methods
         public override void Initialize()
         {
-            _world.WorldClock.Initialize();
-            _world.WorldWeather.Initialize();
-            _world.WorldSkyDome.Initialize();
-            _world.WorldChunks.Initialize();
         }
 
         public override void LoadContent()
@@ -46,32 +48,27 @@ namespace Utopia.Worlds
 
         public override void UnloadContent()
         {
-            //They have not been created here, so no need to dispose them !
-            //_world.WorldClock.Dispose();
-            //_world.WorldWeather.Dispose();
-            //_world.WorldSkyDome.Dispose();
-            //_world.WorldChunks.Dispose();
         }
 
         public override void Update(ref GameTime TimeSpend)
         {
-            _world.WorldClock.Update(ref TimeSpend);
-            _world.WorldWeather.Update(ref TimeSpend);
-            _world.WorldSkyDome.Update(ref TimeSpend);
-            _world.WorldChunks.Update(ref TimeSpend);
+            //_world.WorldClock.Update(ref TimeSpend);
+            //_world.WorldWeather.Update(ref TimeSpend);
+            //_world.WorldSkyDome.Update(ref TimeSpend);
+            //_world.WorldChunks.Update(ref TimeSpend);
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
-            _world.WorldClock.Interpolation(ref interpolation_hd, ref interpolation_ld);
-            _world.WorldWeather.Interpolation(ref interpolation_hd, ref interpolation_ld);
-            _world.WorldSkyDome.Interpolation(ref interpolation_hd, ref interpolation_ld);
+            //_world.WorldClock.Interpolation(ref interpolation_hd, ref interpolation_ld);
+            //_world.WorldWeather.Interpolation(ref interpolation_hd, ref interpolation_ld);
+            //_world.WorldSkyDome.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
 
-        public override void Draw()
+        public override void Draw(int Index)
         {
-            _world.WorldChunks.Draw();
-            _world.WorldSkyDome.Draw();
+            //_world.WorldChunks.Draw();
+            //_world.WorldSkyDome.Draw();
         }
 
         #endregion

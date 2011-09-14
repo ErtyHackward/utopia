@@ -89,7 +89,9 @@
     <Compile Include="Cameras\ICamera.cs" />
     <Compile Include="Cameras\ICameraPlugin.cs" />
     <Compile Include="D3D\DebugTools\PerfTimer.cs" />
+    <Compile Include="D3D\DrawableComponentHolder.cs" />
     <Compile Include="D3D\DrawableGameComponent.cs" />
+    <Compile Include="D3D\DrawOrders.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLVertexPositionColorTexture.cs" />
     <Compile Include="D3D\Effects\Basics\DebugEffect.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLSprites.cs" />

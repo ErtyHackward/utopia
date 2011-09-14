@@ -51,6 +51,9 @@ namespace Utopia.Worlds.Chunks
     /// </summary>
     public partial class WorldChunks : DrawableGameComponent, IWorldChunks
     {
+        private const int SOLID_DRAW = 0;
+        private const int TRANSPARENT_DRAW = 1;
+
         #region Private variables
         private D3DEngine _d3dEngine;
         private CameraManager _camManager;
@@ -117,7 +120,8 @@ namespace Utopia.Worlds.Chunks
             //Subscribe to chunk modifications
             _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
 
-            //Initialize();
+            DrawOrders.UpdateIndex(SOLID_DRAW, 10); //not needed but its for the sample (This index is already created by default)
+            DrawOrders.AddIndex(TRANSPARENT_DRAW, 1000); //not needed but its for the sample (This index is already created by default)
         }
 
         #region Public methods
