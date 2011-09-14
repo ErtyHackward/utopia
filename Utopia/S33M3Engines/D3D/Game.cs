@@ -197,7 +197,7 @@ namespace S33M3Engines.D3D
         public virtual void Update(ref GameTime TimeSpend)
         {
             _currentlyUpdatingComponents.Clear();
-            _currentlyUpdatingComponents.AddRange(_enabledUpdateable);
+            for (int i = 0; i < _enabledUpdateable.Count; i++) _currentlyUpdatingComponents.Add(_enabledUpdateable[i]);
 
             for (int i = 0; i < _currentlyUpdatingComponents.Count; i++)
             {

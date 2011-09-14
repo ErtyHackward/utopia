@@ -177,9 +177,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                         for (int j = 0; j < 4; j++)
                         {
                             _faces[j].Position += pos;
+                            _vertices.Add(_faces[j]);
                         }
-
-                        _vertices.AddRange(_faces);
 
                         _indices.Add((ushort)(2 + verticesCount));
                         _indices.Add((ushort)(1 + verticesCount));
