@@ -50,7 +50,7 @@ namespace Utopia.Network
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="playerEntity"></param>
-        /// <param name="clientEntityManager"></param>
+        /// <param name="dynamicEntityManager"></param>
         public EntityMessageTranslator(Server connection, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager)
         {
             if (connection == null) throw new ArgumentNullException("connection");
@@ -62,7 +62,7 @@ namespace Utopia.Network
             _connection.MessagePosition += ConnectionMessagePosition;
             _connection.MessageDirection += ConnectionMessageDirection;
 
-            if (dynamicEntityManager == null) throw new ArgumentNullException("clientEntityManager");
+            if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             _dynamicEntityManager = dynamicEntityManager;
 
             if (playerEntity == null) throw new ArgumentNullException("playerEntity");

@@ -14,33 +14,6 @@ namespace Utopia.Server.Structs
     {
         public ClientConnection Connection { get; private set; }
 
-        public override MapArea CurrentArea
-        {
-            get
-            {
-                return base.CurrentArea;
-            }
-            set
-            {
-                if (base.CurrentArea != value)
-                {
-                    if (base.CurrentArea != null)
-                    {
-                        base.CurrentArea.EntityInViewRange -= AreaEntityInViewRange;
-                        base.CurrentArea.EntityOutOfViewRange -= AreaEntityOutOfViewRange;
-                    }
-
-                    base.CurrentArea = value;
-
-                    if (base.CurrentArea != null)
-                    {
-                        base.CurrentArea.EntityInViewRange += AreaEntityInViewRange;
-                        base.CurrentArea.EntityOutOfViewRange += AreaEntityOutOfViewRange;
-                    }
-                }
-            }
-        }
-
         /// <summary>
         /// Creates new instance of Server player entity that translates Entity Object Model events to player via network
         /// </summary>
@@ -71,7 +44,7 @@ namespace Utopia.Server.Structs
 
         }
 
-        void AreaEntityOutOfViewRange(object sender, DynamicEntityEventArgs e)
+        protected override void AreaEntityOutOfViewRange(object sender, DynamicEntityEventArgs e)
         {
             if (e.Entity != this)
             {
@@ -80,7 +53,7 @@ namespace Utopia.Server.Structs
             }
         }
 
-        void AreaEntityInViewRange(object sender, DynamicEntityEventArgs e)
+        protected override void AreaEntityInViewRange(object sender, DynamicEntityEventArgs e)
         {
             if (e.Entity != this)
             {

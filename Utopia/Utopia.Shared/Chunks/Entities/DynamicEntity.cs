@@ -76,10 +76,37 @@ namespace Utopia.Shared.Chunks.Entities
         /// </summary>
         public EntityDisplacementModes DisplacementMode { get; set; }
 
+        private MapArea _currentArea;
+
         /// <summary>
         /// Gets or sets current entity area
         /// </summary>
-        public virtual MapArea CurrentArea { get; set; }
+        public MapArea CurrentArea
+        {
+            get
+            {
+                return _currentArea;
+            }
+            set
+            {
+                if (_currentArea != value)
+                {
+                    if (_currentArea != null)
+                    {
+                        _currentArea.EntityInViewRange -= AreaEntityInViewRange;
+                        _currentArea.EntityOutOfViewRange -= AreaEntityOutOfViewRange;
+                    }
+
+                    _currentArea = value;
+
+                    if (_currentArea != null)
+                    {
+                        _currentArea.EntityInViewRange += AreaEntityInViewRange;
+                        _currentArea.EntityOutOfViewRange += AreaEntityOutOfViewRange;
+                    }
+                }
+            }
+        }
 
         public override DVector3 Position
         {
@@ -115,6 +142,26 @@ namespace Utopia.Shared.Chunks.Entities
         }
 
         #endregion
+
+        /// <summary>
+        /// Called when some entity goes out of view range
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void AreaEntityOutOfViewRange(object sender, DynamicEntityEventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Called when some entity get closer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void AreaEntityInViewRange(object sender, DynamicEntityEventArgs e)
+        {
+
+        }
 
         /// <summary>
         /// Perform actions when getting closer to area. Entity should add all needed event handlers
