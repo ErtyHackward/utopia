@@ -8,25 +8,16 @@ namespace S33M3Engines.D3D
     public class DrawableGameComponent : GameComponent, IDrawableComponent
     {
         #region Private Fields
-
-        private int _drawOrder = 10;
+        private DrawOrders _drawOrder;
         private bool _visible = true;
 
-        #endregion Private Fields
+        #endregion
 
         #region Public Properties
 
-        public int DrawOrder
+        public DrawOrders DrawOrders
         {
             get { return _drawOrder; }
-            set
-            {
-                if (_drawOrder != value)
-                {
-                    _drawOrder = value;
-                    OnDrawOrderChanged(this, EventArgs.Empty);
-                }
-            }
         }
 
         public bool Visible
@@ -42,9 +33,14 @@ namespace S33M3Engines.D3D
             }
         }
 
-        #endregion Public Properties
+        #endregion
 
-        protected virtual void OnDrawOrderChanged(object sender, EventArgs args)
+        public DrawableGameComponent()
+        {
+            _drawOrder = new DrawOrders(this);
+        }
+
+        public virtual void OnDrawOrderChanged(object sender, EventArgs args)
         {
             if (DrawOrderChanged != null)
                 DrawOrderChanged(sender, args);
@@ -58,7 +54,7 @@ namespace S33M3Engines.D3D
 
         #region Public Events
 
-        public virtual void Draw()
+        public virtual void Draw(int Index)
         {
         }
 

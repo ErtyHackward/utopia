@@ -75,7 +75,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
         }
 
-        public override void Draw()
+        public override void Draw(int Index)
         {
             if (_camManager.ActiveCamera.WorldPosition.Y > 500) return;
             //Matrix.Translation((float)_game.ActivCamera.WorldPosition.X, 0, (float)_game.ActivCamera.WorldPosition.Z, out _world);

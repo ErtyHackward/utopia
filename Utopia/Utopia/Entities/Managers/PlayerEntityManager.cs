@@ -675,9 +675,9 @@ namespace Utopia.Entities.Managers
             //===================================================================================================================================
         }
 
-        public override void Draw()
+        public override void Draw(int Index)
         {
-            _playerRenderer.Draw();
+            _playerRenderer.Draw(Index);
         }
 
         #endregion

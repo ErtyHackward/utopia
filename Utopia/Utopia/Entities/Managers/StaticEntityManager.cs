@@ -38,7 +38,7 @@ namespace Utopia.Entities.Managers
         {
         }
 
-        public override void Draw()
+        public override void Draw(int Index)
         {
         }
 

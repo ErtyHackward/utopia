@@ -129,8 +129,14 @@ namespace Utopia.GUI.D3D.DebugUI
                     Children.Add(view);
 
                     InputControl draworder = new InputControl();
-                    draworder.Bounds = new UniRectangle(230.0f, y, 40.0f, 16.0f);
-                    draworder.Text = drawableComponent.DrawOrder.ToString();
+                    draworder.Bounds = new UniRectangle(230.0f, y, 100.0f, 16.0f);
+                    string drawOrders = string.Empty;
+                    foreach (var item in drawableComponent.DrawOrders.GetAllDrawOrder())
+                    {
+                        if (drawOrders != string.Empty) drawOrders += ";";
+                        drawOrders += item.Order;
+                    }
+                    draworder.Text = drawOrders;
                     Children.Add(draworder);
                 }
                 y = y + Step;

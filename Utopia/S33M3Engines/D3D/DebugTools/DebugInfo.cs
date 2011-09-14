@@ -33,7 +33,7 @@ namespace S33M3Engines.D3D.DebugTools
         public DebugInfo(D3DEngine d3dEngine)
         {
             _d3dEngine = d3dEngine;
-            this.DrawOrder = 100;
+            DrawOrders.UpdateIndex(0, 100);
         }
 
         public void SetComponants(params IDebugInfo[] args)
@@ -73,7 +73,7 @@ namespace S33M3Engines.D3D.DebugTools
         }
 
 
-        public override void Draw()
+        public override void Draw(int Index)
         {
             //Afficher la console, ou bien les infos !
             if (GameConsole.Show)

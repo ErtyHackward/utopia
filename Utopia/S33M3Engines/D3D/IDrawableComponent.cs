@@ -6,7 +6,8 @@ namespace S33M3Engines.D3D
     {
         event EventHandler<EventArgs> DrawOrderChanged;
         event EventHandler<EventArgs> VisibleChanged;
+        void OnDrawOrderChanged(object sender, EventArgs args);
         bool Visible { get; set; }
-        int DrawOrder { get; set; }
+        DrawOrders DrawOrders { get; }
     }
 }

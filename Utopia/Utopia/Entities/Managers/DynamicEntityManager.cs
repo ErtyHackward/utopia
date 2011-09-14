@@ -75,9 +75,9 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public override void Draw()
+        public override void Draw(int Index)
         {
-            _dynamicEntityRenderer.Draw();
+            _dynamicEntityRenderer.Draw(Index);
         }
 
         public void AddEntity(IDynamicEntity entity)

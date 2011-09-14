@@ -40,7 +40,7 @@ namespace S33M3Engines.D3D
         }
 
         //two lists are necessary for having two sortings : one is sorted by draworder and the other by updateorder 
-        private readonly List<IDrawableComponent> _visibleDrawable;
+        private readonly List<DrawableComponentHolder> _visibleDrawable;
         private readonly List<IUpdateableComponent> _enabledUpdateable;
         //this is for having the possibility to remove components at runtime, while iterating on the list
         //exemple : enabling the editor disables the normal Hud. without the _currentlyxxx collections you get invalid operation modify list while iterating 
@@ -87,12 +87,11 @@ namespace S33M3Engines.D3D
         private Color4 _backBufferColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
         private GameTime _gameTime = new GameTime();
         private int _vSync = 1;
-
         #endregion
 
         public Game()
         {
-            _visibleDrawable = new List<IDrawableComponent>();
+            _visibleDrawable = new List<DrawableComponentHolder>();
             _enabledUpdateable = new List<IUpdateableComponent>();
 
             _gameComponents = new GameComponentCollection();
@@ -218,7 +217,8 @@ namespace S33M3Engines.D3D
         {
             for (int i = 0; i < _visibleDrawable.Count; i++)
             {
-                _visibleDrawable[i].Draw();
+                DrawableComponentHolder drawComponent = _visibleDrawable[i];
+                drawComponent.DrawableComponent.Draw(drawComponent.DrawOrder.DrawID);
             }
         }
 
@@ -264,7 +264,9 @@ namespace S33M3Engines.D3D
                 d.VisibleChanged -= DrawableVisibleChanged;
 
                 if (d.Visible)
-                    _visibleDrawable.Remove(d);
+                {
+                    _visibleDrawable.RemoveAll(x => x.DrawOrder.GetHashCode() == d.GetHashCode());
+                }
             }
 
             IUpdateableComponent u = e.GameComponent as IUpdateableComponent;
@@ -311,7 +313,11 @@ namespace S33M3Engines.D3D
 
         private void AddDrawable(IDrawableComponent d)
         {
-            _visibleDrawable.Add(d);
+            //Add all Draw call linked to this Component
+            foreach (var drawOrder in d.DrawOrders.GetAllDrawOrder())
+            {
+                _visibleDrawable.Add(new DrawableComponentHolder(d, drawOrder));
+            }
             _visibleDrawable.Sort(DrawableComparison);
         }
 
@@ -319,9 +325,15 @@ namespace S33M3Engines.D3D
         {
             IDrawableComponent d = (IDrawableComponent) sender;
             if (d.Visible)
-                AddDrawable(d);
+            {
+                foreach (var drawOrder in d.DrawOrders.GetAllDrawOrder())
+                {
+                    _visibleDrawable.Add(new DrawableComponentHolder(d, drawOrder));
+                }
+                _visibleDrawable.Sort(DrawableComparison);
+            }
             else
-                _visibleDrawable.Remove(d);
+                _visibleDrawable.RemoveAll(x => x.DrawOrder.GetHashCode() == d.GetHashCode());
         }
 
         private void DrawableDrawOrderChanged(object sender, EventArgs e)
@@ -329,9 +341,9 @@ namespace S33M3Engines.D3D
             _visibleDrawable.Sort(DrawableComparison);
         }
 
-        private static int DrawableComparison(IDrawableComponent x, IDrawableComponent y)
+        private static int DrawableComparison(DrawableComponentHolder x, DrawableComponentHolder y)
         {
-            return x.DrawOrder - y.DrawOrder;
+            return x.DrawOrder.Order - y.DrawOrder.Order;
         }
 
         #endregion Drawable Methods

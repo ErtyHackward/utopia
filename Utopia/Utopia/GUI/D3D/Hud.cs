@@ -66,7 +66,7 @@ namespace Utopia.GUI.D3D
         }
 
         //Draw at 2d level ! (Last draw called)
-        public override void Draw()
+        public override void Draw(int Index)
         {
             _spriteRender.Begin(SpriteRenderer.FilterMode.Linear);
             _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
