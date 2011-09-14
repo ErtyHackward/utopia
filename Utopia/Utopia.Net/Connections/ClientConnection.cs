@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using SharpDX;
+using System.Threading;
 using Utopia.Net.Interfaces;
 using Utopia.Net.Messages;
 using Utopia.Shared.Chunks.Entities.Interfaces;
@@ -163,6 +163,31 @@ namespace Utopia.Net.Connections
             Stream = new NetworkStream(socket);
             Writer = new BinaryWriter(new BufferedStream(Stream, 1024 * 18));
         }
+
+
+        private delegate void SendDelegate(IBinaryMessage msg);
+
+        // todo: check method perfomance
+        public void LockFreeSend(IBinaryMessage msg)
+        {
+            if (Monitor.TryEnter(_synObject))
+            {
+                try
+                {
+                    Send(msg);
+                }
+                finally
+                {
+                    Monitor.Exit(_synObject);
+                }
+            }
+            else
+            {
+                new SendDelegate(Send).BeginInvoke(msg, null, null);
+            }
+        }
+
+        
         
         /// <summary>
         /// Sends a message to client

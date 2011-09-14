@@ -81,14 +81,11 @@ namespace Utopia.GUI.Forms
             UnregisterEvents();
             _serverTime.Dispose();
              HideWindows();
-            //_server.ServerConnection.SendAsync(new Utopia.Net.Messages.PingMessage() { Request = true, Token = System.Diagnostics.Stopwatch.GetTimestamp() });
         }
 
         void ServerConnection_MessagePing(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.PingMessage> e)
         {
             Console.WriteLine("Ping Time : " + (double)(System.Diagnostics.Stopwatch.GetTimestamp() - e.Message.Token) / System.Diagnostics.Stopwatch.Frequency + " sec.");
-            _serverTime.Dispose();
-            HideWindows();
         }
 
         void ServerConnection_MessageGameInformation(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.GameInformationMessage> e)
