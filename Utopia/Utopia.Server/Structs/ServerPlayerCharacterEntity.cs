@@ -60,17 +60,23 @@ namespace Utopia.Server.Structs
             area.EntityUse += AreaEntityUse;
             area.BlocksChanged += area_BlocksChanged;
 
-            foreach (var entity in area.Enumerate())
+            foreach (var dynamicEntity in area.Enumerate())
             {
-                Connection.Send(new EntityInMessage { Entity = entity });
+                if (dynamicEntity != this)
+                {
+                    Console.WriteLine("TO: {0}, entity {1} in", Connection.Entity.EntityId, dynamicEntity.EntityId);
+                    Connection.LockFreeSend(new EntityInMessage { Entity = dynamicEntity });
+                }
             }
+
         }
 
         void AreaEntityOutOfViewRange(object sender, DynamicEntityEventArgs e)
         {
             if (e.Entity != this)
             {
-                Connection.Send(new EntityOutMessage { EntityId = e.Entity.EntityId });
+                Console.WriteLine("TO: {0},  {1} entity out of view", Connection.Entity.EntityId, e.Entity.EntityId);
+                Connection.LockFreeSend(new EntityOutMessage { EntityId = e.Entity.EntityId });
             }
         }
 
@@ -78,7 +84,8 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != this)
             {
-                Connection.Send(new EntityInMessage { Entity = e.Entity });
+                Console.WriteLine("TO: {0},  {1} entity in view", Connection.Entity.EntityId, e.Entity.EntityId);
+                Connection.LockFreeSend(new EntityInMessage { Entity = e.Entity });
             }
         }
 
@@ -93,7 +100,11 @@ namespace Utopia.Server.Structs
 
             foreach (var dynamicEntity in area.Enumerate())
             {
-                Connection.Send(new EntityOutMessage { EntityId = dynamicEntity.EntityId});
+                if (dynamicEntity != this)
+                {
+                    Console.WriteLine("TO: {0}, entity {1} out (remove)", Connection.Entity.EntityId, dynamicEntity.EntityId);
+                    Connection.LockFreeSend(new EntityOutMessage { EntityId = dynamicEntity.EntityId });
+                }
             }
         }
 
@@ -101,7 +112,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != this)
             {
-                Connection.Send(new EntityUseMessage 
+                Connection.LockFreeSend(new EntityUseMessage 
                 { 
                     EntityId = e.Entity.EntityId, 
                     NewBlockPosition = e.NewBlockPosition, 
@@ -127,7 +138,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != this)
             {
-                Connection.Send(new EntityPositionMessage { EntityId = e.Entity.EntityId, Position = e.Entity.Position});
+                Connection.LockFreeSend(new EntityPositionMessage { EntityId = e.Entity.EntityId, Position = e.Entity.Position });
             }
         }
 
@@ -135,13 +146,13 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != this)
             {
-                Connection.Send(new EntityDirectionMessage { EntityId = e.Entity.EntityId, Direction = e.Entity.Rotation});
+                Connection.LockFreeSend(new EntityDirectionMessage { EntityId = e.Entity.EntityId, Direction = e.Entity.Rotation });
             }
         }
 
         void area_BlocksChanged(object sender, BlocksChangedEventArgs e)
         {
-            Connection.Send(new BlocksChangedMessage { ChunkPosition = e.ChunkPosition, BlockValues = e.BlockValues, BlockPositions = e.Locations });
+            Connection.LockFreeSend(new BlocksChangedMessage { ChunkPosition = e.ChunkPosition, BlockValues = e.BlockValues, BlockPositions = e.Locations });
         }
 
     }
