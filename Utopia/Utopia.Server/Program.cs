@@ -72,6 +72,7 @@ namespace Utopia.Server
                         _server.Dispose();
                         return;
                     case "status":
+                        Console.WriteLine("Currently {0} entities", _server.AreaManager.EntitiesCount);
                         break;
                 }
             }

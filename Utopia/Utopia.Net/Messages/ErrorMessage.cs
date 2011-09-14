@@ -78,6 +78,7 @@ namespace Utopia.Net.Messages
         LoginPasswordIncorrect,
         LoginAlreadyRegistered,
         VersionMissmatch,
-        ChunkTooFar
+        ChunkTooFar,
+        AnotherInstanceLogged
     }
 }

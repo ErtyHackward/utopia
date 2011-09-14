@@ -168,10 +168,7 @@ namespace Utopia.Shared.Chunks.Entities.Management
                 entity.ViewChanged += EntityViewChanged;
                 entity.Use += EntityUseHandler;
 
-                entity.CurrentArea = this;
-
                 OnEntityAdded(new DynamicEntityEventArgs {Entity = entity});
-
             }
         }
 

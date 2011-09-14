@@ -39,6 +39,14 @@ namespace Utopia.Server.Managers
         /// </summary>
         public event EventHandler<AreaEntityEventArgs> EntityAdded;
 
+        /// <summary>
+        /// Gets total count of entities
+        /// </summary>
+        public int EntitiesCount
+        {
+            get { return _allEntities.Count; }
+        }
+
         private void OnEntityAdded(AreaEntityEventArgs e)
         {
             var handler = EntityAdded;
@@ -153,6 +161,8 @@ namespace Utopia.Server.Managers
                 _allEntities.Add(entity);
             }
 
+            MapArea entityArea = null;
+
             // listen all 9 areas and add at center area
             for (int x = -1; x < 2; x++)
             {
@@ -162,10 +172,14 @@ namespace Utopia.Server.Managers
                                                    entity.Position.Z + z * MapArea.AreaSize.Z));
                     entity.AddArea(area);
                     if (x == 0 && z == 0)
+                    {
                         area.AddEntity(entity);
+                        entityArea = area;
+                    }
                     area.OnEntityInViewRange(entity);
                 }
             }
+            entity.CurrentArea = entityArea;
 
             OnEntityAdded(new AreaEntityEventArgs { Entity = entity });
         }

@@ -12,7 +12,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
     public abstract class VoxelEntity : Entity, IVoxelEntity
     {
         public byte[, ,] Blocks { get; set; }//XXX this will be optimized later, maybe one dimensional array 
-      
+
         // we need to override save and load!
 
         public void RandomFill(int emptyProbabilityPercent)

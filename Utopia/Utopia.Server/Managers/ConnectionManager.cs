@@ -157,5 +157,18 @@ namespace Utopia.Server.Managers
                 }
             }
         }
+
+        public ClientConnection Find(Predicate<ClientConnection> condition)
+        {
+            lock (_syncRoot)
+            {
+                foreach (var connection in _connections.Values)
+                {
+                    if (condition(connection))
+                        return connection;
+                }
+            }
+            return null;
+        }
     }
 }
