@@ -35,8 +35,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private WorldFocusManager _worldFocusManager;
 
         private int _cloudMap_size;
-        private float _cloud_size = 50;
-        private float _cloud_Height = 4;
+        private float _cloud_size = 40;
+        private float _cloud_Height = 5;
         private float _brightness = 0.9f;
         private float _cloudLayerHeight = 140;
 
@@ -47,9 +47,10 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private List<ushort> _indices;
         private List<VertexPositionColor> _vertices;
         private HLSLVertexPositionColor _effect;
-        private FTSValue<float> _timeHours;
-        private Vector2 _cloud_speed;
+        private FTSValue<Vector2> _cloud_MapOffset;
         private Color _topFace, _side1Face, _side2Face, _bottomFace;
+
+        private VertexPositionColor[] _faces;
         #endregion
 
         #region Public properties
@@ -61,15 +62,15 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _weather = weather;
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
-            _timeHours = new FTSValue<float>();
-            _cloudMap_size = (int)(worldParam.WorldVisibleSize.X / _cloud_size * 5);
+            _cloud_MapOffset = new FTSValue<Vector2>();
+            _cloudMap_size = (int)(worldParam.WorldVisibleSize.X / _cloud_size * 4);
         }
 
         #region Public methods
         public override void Initialize()
         {
-            _noise = new SimplexNoise(new Random(262));
-            _noise.SetParameters(0.03, SimplexNoise.InflectionMode.ABSFct, SimplexNoise.ResultScale.ZeroToOne);
+            _noise = new SimplexNoise(new Random());
+            _noise.SetParameters(0.075, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
             _effect = new HLSLVertexPositionColor(_d3dEngine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
 
             _indices = new List<ushort>();
@@ -79,20 +80,22 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _side1Face = new Color(_brightness * 230, _brightness * 230, _brightness * 255, 200);
             _side2Face = new Color(_brightness * 220, _brightness * 220, _brightness * 245, 200);
             _bottomFace = new Color(_brightness * 205, _brightness * 205, _brightness * 230, 200);
+
+            _faces = new VertexPositionColor[4];
         }
 
         public override void Update(ref GameTime TimeSpend)
         {
-            _timeHours.BackUpValue();
+            _cloud_MapOffset.BackUpValue();
 
-            _timeHours.Value += TimeSpend.ElapsedGameTimeInS_LD / 3600;
-
-            _cloud_speed = new Vector2(_weather.Wind.WindFlow.X * 5000, _weather.Wind.WindFlow.Z * 5000); //Les nuages n'avance que sur un axe, celui des X
+            _cloud_MapOffset.Value.X += TimeSpend.ElapsedGameTimeInS_LD * _weather.Wind.WindFlow.X * 7;
+            _cloud_MapOffset.Value.Y += TimeSpend.ElapsedGameTimeInS_LD * _weather.Wind.WindFlow.Z * 7;
+            //_weather.Wind.WindFlow.X
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
-            _timeHours.ValueInterp = MathHelper.Lerp(_timeHours.ValuePrev, _timeHours.Value, interpolation_ld);
+            Vector2.Lerp(ref _cloud_MapOffset.ValuePrev, ref _cloud_MapOffset.Value, interpolation_ld, out _cloud_MapOffset.ValueInterp);
         }
 
         public override void Draw()
@@ -100,7 +103,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             Vector2 m_camera_pos = new Vector2((float)_camManager.ActiveCamera.WorldPosition.X, (float)_camManager.ActiveCamera.WorldPosition.Z); //Position de la caméra en X et Z, sans la composante Y
 
-            Vector2 CloudsMapOffset = (_timeHours.ActualValue * _cloud_speed) - m_camera_pos;                      //Speed * Time = Distance
+            Vector2 CloudsMapOffset = _cloud_MapOffset.ActualValue - m_camera_pos;                      //Speed * Time = Distance
             Vector2 CloudsMapOffsetWithCamera = -(CloudsMapOffset - m_camera_pos); //Je retire la position de ma caméra, pour compenser le mouvement de la caméra
             Location2<int> center_of_drawing_in_noise_i = new Location2<int>((int)(CloudsMapOffsetWithCamera.X / _cloud_size), (int)(CloudsMapOffsetWithCamera.Y / _cloud_size));
             Vector2 world_center_of_drawing_in_noise_f = new Vector2(center_of_drawing_in_noise_i.X * _cloud_size, center_of_drawing_in_noise_i.Z * _cloud_size) + CloudsMapOffset;
@@ -117,18 +120,10 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
                     Vector2 p0 = new Vector2(xi, zi) * _cloud_size + world_center_of_drawing_in_noise_f;
 
-                    var noiseResult = _noise.GetNoise2DValue(p_in_noise_i.X * _cloud_size, p_in_noise_i.Z * _cloud_size, 2, 0.8);
+                    var noiseResult = _noise.GetNoise2DValue(p_in_noise_i.X, p_in_noise_i.Z, 2, 0.9);
                     float noiseValue = MathHelper.FullLerp(0, 1, noiseResult);
 
-                    if (noiseValue > 0.2) continue;
-
-                    VertexPositionColor[] v = new VertexPositionColor[4]
-                    {
-                        new VertexPositionColor(new Vector3(0,0,0), _topFace),
-                        new VertexPositionColor(new Vector3(0,0,0), _topFace),
-                        new VertexPositionColor(new Vector3(0,0,0), _topFace),
-                        new VertexPositionColor(new Vector3(0,0,0), _topFace)
-                    };
+                    if (noiseValue > 0.3) continue;
 
                     float rx = _cloud_size / 2;
                     float ry = _cloud_Height;
@@ -139,40 +134,40 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                         switch (i)
                         {
                             case 0:	// top
-                                v[0].Position.X = -rx; v[0].Position.Y = ry; v[0].Position.Z = -rz; v[0].Color = _topFace;
-                                v[1].Position.X = -rx; v[1].Position.Y = ry; v[1].Position.Z = rz; v[1].Color = _topFace;
-                                v[2].Position.X = rx; v[2].Position.Y = ry; v[2].Position.Z = rz; v[2].Color = _topFace;
-                                v[3].Position.X = rx; v[3].Position.Y = ry; v[3].Position.Z = -rz; v[3].Color = _topFace;
+                                _faces[0].Position.X = -rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = -rz; _faces[0].Color = _topFace;
+                                _faces[1].Position.X = -rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = rz; _faces[1].Color = _topFace;
+                                _faces[2].Position.X = rx; _faces[2].Position.Y = ry; _faces[2].Position.Z = rz; _faces[2].Color = _topFace;
+                                _faces[3].Position.X = rx; _faces[3].Position.Y = ry; _faces[3].Position.Z = -rz; _faces[3].Color = _topFace;
                                 break;
                             case 1: // back
-                                v[0].Position.X = -rx; v[0].Position.Y = ry; v[0].Position.Z = -rz; v[0].Color = _side1Face;
-                                v[1].Position.X = rx; v[1].Position.Y = ry; v[1].Position.Z = -rz; v[1].Color = _side1Face;
-                                v[2].Position.X = rx; v[2].Position.Y = -ry; v[2].Position.Z = -rz; v[2].Color = _side1Face;
-                                v[3].Position.X = -rx; v[3].Position.Y = -ry; v[3].Position.Z = -rz; v[3].Color = _side1Face;
+                                _faces[0].Position.X = -rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = -rz; _faces[0].Color = _side1Face;
+                                _faces[1].Position.X = rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = -rz; _faces[1].Color = _side1Face;
+                                _faces[2].Position.X = rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = -rz; _faces[2].Color = _side1Face;
+                                _faces[3].Position.X = -rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = -rz; _faces[3].Color = _side1Face;
                                 break;
                             case 2: //right
-                                v[0].Position.X = rx; v[0].Position.Y = ry; v[0].Position.Z = -rz; v[0].Color = _side2Face;
-                                v[1].Position.X = rx; v[1].Position.Y = ry; v[1].Position.Z = rz; v[1].Color = _side2Face;
-                                v[2].Position.X = rx; v[2].Position.Y = -ry; v[2].Position.Z = rz; v[2].Color = _side2Face;
-                                v[3].Position.X = rx; v[3].Position.Y = -ry; v[3].Position.Z = -rz; v[3].Color = _side2Face;
+                                _faces[0].Position.X = rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = -rz; _faces[0].Color = _side2Face;
+                                _faces[1].Position.X = rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = rz; _faces[1].Color = _side2Face;
+                                _faces[2].Position.X = rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = rz; _faces[2].Color = _side2Face;
+                                _faces[3].Position.X = rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = -rz; _faces[3].Color = _side2Face;
                                 break;
                             case 3: // front
-                                v[0].Position.X = rx; v[0].Position.Y = ry; v[0].Position.Z = rz; v[0].Color = _side1Face;
-                                v[1].Position.X = -rx; v[1].Position.Y = ry; v[1].Position.Z = rz; v[1].Color = _side1Face;
-                                v[2].Position.X = -rx; v[2].Position.Y = -ry; v[2].Position.Z = rz; v[2].Color = _side1Face;
-                                v[3].Position.X = rx; v[3].Position.Y = -ry; v[3].Position.Z = rz; v[3].Color = _side1Face;
+                                _faces[0].Position.X = rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = rz; _faces[0].Color = _side1Face;
+                                _faces[1].Position.X = -rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = rz; _faces[1].Color = _side1Face;
+                                _faces[2].Position.X = -rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = rz; _faces[2].Color = _side1Face;
+                                _faces[3].Position.X = rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = rz; _faces[3].Color = _side1Face;
                                 break;
                             case 4: // left
-                                v[0].Position.X = -rx; v[0].Position.Y = ry; v[0].Position.Z = rz; v[0].Color = _side2Face;
-                                v[1].Position.X = -rx; v[1].Position.Y = ry; v[1].Position.Z = -rz; v[1].Color = _side2Face;
-                                v[2].Position.X = -rx; v[2].Position.Y = -ry; v[2].Position.Z = -rz; v[2].Color = _side2Face;
-                                v[3].Position.X = -rx; v[3].Position.Y = -ry; v[3].Position.Z = rz; v[3].Color = _side2Face;
+                                _faces[0].Position.X = -rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = rz; _faces[0].Color = _side2Face;
+                                _faces[1].Position.X = -rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = -rz; _faces[1].Color = _side2Face;
+                                _faces[2].Position.X = -rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = -rz; _faces[2].Color = _side2Face;
+                                _faces[3].Position.X = -rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = rz; _faces[3].Color = _side2Face;
                                 break;
                             case 5: // bottom
-                                v[0].Position.X = rx; v[0].Position.Y = -ry; v[0].Position.Z = rz; v[0].Color = _bottomFace;
-                                v[1].Position.X = -rx; v[1].Position.Y = -ry; v[1].Position.Z = rz; v[1].Color = _bottomFace;
-                                v[2].Position.X = -rx; v[2].Position.Y = -ry; v[2].Position.Z = -rz; v[2].Color = _bottomFace;
-                                v[3].Position.X = rx; v[3].Position.Y = -ry; v[3].Position.Z = -rz; v[3].Color = _bottomFace;
+                                _faces[0].Position.X = rx; _faces[0].Position.Y = -ry; _faces[0].Position.Z = rz; _faces[0].Color = _bottomFace;
+                                _faces[1].Position.X = -rx; _faces[1].Position.Y = -ry; _faces[1].Position.Z = rz; _faces[1].Color = _bottomFace;
+                                _faces[2].Position.X = -rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = -rz; _faces[2].Color = _bottomFace;
+                                _faces[3].Position.X = rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = -rz; _faces[3].Color = _bottomFace;
                                 break;
                         }
 
@@ -181,10 +176,10 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
                         for (int j = 0; j < 4; j++)
                         {
-                            v[j].Position += pos;
+                            _faces[j].Position += pos;
                         }
 
-                        _vertices.AddRange(v);
+                        _vertices.AddRange(_faces);
 
                         _indices.Add((ushort)(2 + verticesCount));
                         _indices.Add((ushort)(1 + verticesCount));
@@ -220,6 +215,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _effect.CBPerDraw.IsDirty = true;
 
             _effect.Apply();
+
             //Set the buffer to the graphical card
             _cloudIB.SetToDevice(0);
             _cloudVB.SetToDevice(0);
