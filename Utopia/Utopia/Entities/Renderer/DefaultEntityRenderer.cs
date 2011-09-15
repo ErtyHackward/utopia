@@ -11,6 +11,8 @@ using S33M3Engines.Struct.Vertex;
 using S33M3Engines.StatesManager;
 using SharpDX;
 using S33M3Engines.D3D;
+using S33M3Engines.Textures;
+using SharpDX.Direct3D11;
 
 namespace Utopia.Entities.Renderer
 {
@@ -21,6 +23,7 @@ namespace Utopia.Entities.Renderer
         private D3DEngine _d3DEngine;
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
+        private ShaderResourceView _cubeTexture_View;
         #endregion
 
         #region Public variables/properties
@@ -42,6 +45,10 @@ namespace Utopia.Entities.Renderer
         private void Initialize()
         {
             _entityEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, out _cubeTexture_View);
+
+            _entityEffect.TerraTexture.Value = _cubeTexture_View;
+            _entityEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
         }
         #endregion
 
@@ -79,6 +86,7 @@ namespace Utopia.Entities.Renderer
 
         public void Dispose()
         {
+            _cubeTexture_View.Dispose();
         }
         #endregion
     }
