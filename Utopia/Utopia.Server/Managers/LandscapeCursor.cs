@@ -25,6 +25,12 @@ namespace Utopia.Server.Managers
             {
                 _position = value;
                 _internalPosition = new Location3<int>(_position.X % AbstractChunk.ChunkSize.X, _position.Y, _position.Z % AbstractChunk.ChunkSize.Z);
+
+                if (_internalPosition.X < 0)
+                    _internalPosition.X = AbstractChunk.ChunkSize.X + _internalPosition.X;
+                if (_internalPosition.Z < 0)
+                    _internalPosition.Z = AbstractChunk.ChunkSize.Z + _internalPosition.Z;
+
                 _currentChunk = _manager.GetChunk(new IntVector2((int)Math.Floor((double)_position.X / AbstractChunk.ChunkSize.X), (int)Math.Floor((double)_position.Z / AbstractChunk.ChunkSize.Z)));
             }
         }

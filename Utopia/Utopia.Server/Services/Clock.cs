@@ -46,7 +46,22 @@ namespace Utopia.Server.Services
                 _dayLength = TimeSpan.FromSeconds(TimeSpan.FromDays(1).TotalSeconds/value);
             }
         }
-        
+
+        /// <summary>
+        /// Converts real time span to game time span
+        /// </summary>
+        /// <param name="realTimeSpan"></param>
+        /// <returns></returns>
+        public TimeSpan RealToGameSpan(TimeSpan realTimeSpan)
+        {
+            return TimeSpan.FromSeconds(realTimeSpan.TotalSeconds * _timeFactor);
+        }
+
+        public TimeSpan GameToReal(TimeSpan gameSpan)
+        {
+            return TimeSpan.FromSeconds(gameSpan.TotalSeconds / _timeFactor);
+        }
+
         protected Clock()
         {
             _clockStartTime = DateTime.Now;

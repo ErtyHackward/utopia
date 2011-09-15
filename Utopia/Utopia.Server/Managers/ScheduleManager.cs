@@ -22,9 +22,11 @@ namespace Utopia.Server.Managers
         /// <summary>
         /// Creates new instance of scheduler
         /// </summary>
-        /// <param name="timerInterval">Internal timer interval</param>
-        public ScheduleManager(int timerInterval = 100)
+        /// <param name="clock">Clock for scheduler</param>
+        /// <param name="timerInterval">Timer interval (real time)</param>
+        public ScheduleManager(Clock clock, int timerInterval = 100)
         {
+            Clock = clock;
             _timer = new Timer(TimerCallback, null, 0, timerInterval);
         }
 
