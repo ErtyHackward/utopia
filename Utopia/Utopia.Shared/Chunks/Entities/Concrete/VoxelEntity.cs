@@ -73,14 +73,19 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
             // first we need to load base information
             base.Load(reader);
 
+            var len = reader.ReadInt32();
 
-            for (int x = 0; x < Blocks.GetLength(0); x++)
+            if (len > 0)
             {
-                for (int y = 0; y < Blocks.GetLength(1); y++)
+                Blocks = new byte[len, len, len];
+                for (int x = 0; x < Blocks.GetLength(0); x++)
                 {
-                    for (int z = 0; z < Blocks.GetLength(2); z++)
+                    for (int y = 0; y < Blocks.GetLength(1); y++)
                     {
-                        Blocks[x, y, z] = reader.ReadByte();
+                        for (int z = 0; z < Blocks.GetLength(2); z++)
+                        {
+                            Blocks[x, y, z] = reader.ReadByte();
+                        }
                     }
                 }
             }
@@ -90,17 +95,23 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
         {
             // first we need to save base information
             base.Save(writer);
-            
-            for (int x = 0; x < Blocks.GetLength(0); x++ )
+
+            if (Blocks != null)
             {
-                for (int y = 0; y < Blocks.GetLength(1); y++)
+                writer.Write(Blocks.GetLength(0));
+                for (int x = 0; x < Blocks.GetLength(0); x++)
                 {
-                    for (int z = 0; z < Blocks.GetLength(2); z++)
+                    for (int y = 0; y < Blocks.GetLength(1); y++)
                     {
-                        writer.Write(Blocks[x,y,z]);
+                        for (int z = 0; z < Blocks.GetLength(2); z++)
+                        {
+                            writer.Write(Blocks[x, y, z]);
+                        }
                     }
                 }
             }
+            else writer.Write(0);
+
 
         }
     }

@@ -55,6 +55,7 @@ namespace Utopia.Shared.Chunks.Entities
                 case EntityClassId.Shovel: entity = new Shovel(); break;
                 case EntityClassId.Survey: entity = new Survey(); break;
                 case EntityClassId.PlayerCharacter: entity = new PlayerCharacter(); break;
+                case EntityClassId.Zombie: entity = new Zombie(); break; 
                 default:
                     throw new ArgumentOutOfRangeException("classId");
             }

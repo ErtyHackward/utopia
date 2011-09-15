@@ -8,18 +8,24 @@ using Utopia.Server.Structs;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Management;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Server.Entities
 {
-    public class Zombie : DynamicEntity
+    /// <summary>
+    /// Experimental server mob
+    /// </summary>
+    public class ServerZombie : CharacterEntity
     {
         private readonly Server _server;
         private List<MapArea> _mapAreas = new List<MapArea>();
         private Vector2 _moveDirection;
+        private DateTime _lastupdate;
 
-        public Zombie(Server server)
+        public ServerZombie(Server server, string name)
         {
             _server = server;
+            CharacterName = name;
         }
 
         public override void AddArea(MapArea area)
@@ -34,10 +40,35 @@ namespace Utopia.Server.Entities
 
         public override void Update(DateTime gameTime)
         {
-            ServerChunk chunk;
-            Location3<int> pos;
-            _server.LandscapeManager.GetBlockAndChunk(Position+new DVector3(0,-1,0), out chunk, out pos );
-            // todo: implement zombie logic
+            if((gameTime - _lastupdate).TotalSeconds < 0.5)
+                return;
+            _lastupdate = gameTime;
+
+            if(_moveDirection.X == 0 && _moveDirection.Y == 0)
+            {
+                var r = new Random(DateTime.Now.Millisecond);
+                _moveDirection = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
+                _moveDirection.Normalize();
+            }
+            
+            var nextPosition = Position + new DVector3(_moveDirection.X, 0, _moveDirection.Y) * (gameTime - _lastupdate).TotalSeconds;
+
+            // check if we can go to desired position
+            var cursor = _server.LandscapeManager.GetCursor(nextPosition);
+
+            var next = cursor.Value;
+            var nextDown = cursor.PeekDown();
+            var nextUp = cursor.PeekUp();
+            // next down cube should be solid, and two upper cubes should be transparent
+            if (!CubeProfile.CubesProfile[next].IsSolidToEntity && CubeProfile.CubesProfile[nextDown].IsSolidToEntity && !CubeProfile.CubesProfile[nextUp].IsSolidToEntity)
+            {
+                // move 
+                Position = nextPosition;
+            }
+            else
+            {
+                _moveDirection = new Vector2();
+            }
         }
 
         public override EntityClassId ClassId
