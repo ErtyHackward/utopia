@@ -10,6 +10,7 @@ namespace Utopia.Net.Messages
     public struct DateTimeMessage : IBinaryMessage
     {
         private DateTime _dateTime;
+        private double _timeFactor;
 
         /// <summary>
         /// Gets message id
@@ -28,18 +29,28 @@ namespace Utopia.Net.Messages
             set { _dateTime = value; }
         }
 
+        /// <summary>
+        /// Gets or sets how many game seconds in one real second
+        /// </summary>
+        public double TimeFactor
+        {
+            get { return _timeFactor; }
+            set { _timeFactor = value; }
+        }
+
         public static DateTimeMessage Read(BinaryReader reader)
         {
             DateTimeMessage msg;
 
             msg._dateTime = DateTime.FromBinary(reader.ReadInt64());
-
+            msg._timeFactor = reader.ReadDouble();
             return msg;
         }
 
         public static void Write(BinaryWriter writer, DateTimeMessage msg)
         {
             writer.Write(msg._dateTime.ToBinary());
+            writer.Write(msg._timeFactor);
         }
 
         public void Write(BinaryWriter writer)

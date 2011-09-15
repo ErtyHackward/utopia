@@ -52,7 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Zombie.cs" />
+    <Compile Include="Entities\ServerZombie.cs" />
     <Compile Include="Events\ConnectionEventArgs.cs" />
     <Compile Include="Managers\ConnectionManager.cs" />
     <Compile Include="Managers\AreaManager.cs" />

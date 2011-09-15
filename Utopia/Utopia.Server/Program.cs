@@ -7,6 +7,7 @@ using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Shared.Config;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.WorldConfigs;
@@ -47,7 +48,9 @@ namespace Utopia.Server
         static void Main(string[] args)
         {
             _iocContainer = new StandardKernel(new NinjectSettings());
-            
+
+            CubeProfile.InitCubeProfiles();
+
             IocBind(new WorldParameters());
 
             Console.WriteLine("Welcome to Utopia game server v{1} Protocol: v{0}", Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);

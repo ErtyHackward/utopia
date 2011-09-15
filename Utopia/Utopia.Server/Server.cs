@@ -6,6 +6,7 @@ using S33M3Engines.Shared.Math;
 using Utopia.Net.Connections;
 using Utopia.Net.Messages;
 using Utopia.Server.Managers;
+using Utopia.Server.Services;
 using Utopia.Server.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
@@ -28,14 +29,14 @@ namespace Utopia.Server
         /// </summary>
         public const int ServerProtocolVersion = 1;
         
-        #region fields
 
 
         // ReSharper disable NotAccessedField.Local
         private Timer _cleanUpTimer;
         private Timer _saveTimer;
+        private Timer _entityUpdateTimer;
         // ReSharper restore NotAccessedField.Local        
-        #endregion
+        private readonly object _areaManagerSyncRoot = new object();
 
 
 
@@ -80,6 +81,14 @@ namespace Utopia.Server
         public LandscapeManager LandscapeManager { get; private set; }
 
         /// <summary>
+        /// Gets schedule manager for dalayed and periodic operations.
+        /// </summary>
+        public ScheduleManager Scheduler { get; private set; }
+
+
+        public Clock Clock { get; private set; }
+
+        /// <summary>
         /// Create new instance of the Server class
         /// </summary>
         public Server(
@@ -113,10 +122,34 @@ namespace Utopia.Server
             LandscapeManager.ChunkLoaded += LandscapeManagerChunkLoaded;
             LandscapeManager.ChunkUnloaded += LandscapeManagerChunkUnloaded;
             
+            Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
+
+            Scheduler = new ScheduleManager(Clock);
+            
             // async server events (saving modified chunks, unloading unused chunks)
             _cleanUpTimer = new Timer(CleanUp, null, SettingsManager.Settings.CleanUpInterval, SettingsManager.Settings.CleanUpInterval);
             _saveTimer = new Timer(SaveChunks, null, SettingsManager.Settings.SaveInterval, SettingsManager.Settings.SaveInterval);
-            
+            _entityUpdateTimer = new Timer(UpdateDynamic, null, 0, 100);
+        }
+
+        // update dynamic entities
+        private void UpdateDynamic(object o)
+        {
+            if (Monitor.TryEnter(_areaManagerSyncRoot))
+            {
+                try
+                {
+                    AreaManager.Update(Clock.Now);
+                }
+                finally
+                {
+                    Monitor.Exit(_areaManagerSyncRoot);
+                }
+            }
+            else
+            {
+                Console.Write("Warning! Server is overloaded. Try to decrease dynamic entities count");
+            }
         }
 
         // another thread
@@ -386,6 +419,7 @@ namespace Utopia.Server
                     WaterLevel = LandscapeManager.WorldGenerator.WorldParametes.SeaLevel
                 };
                 connection.Send(gameInfo);
+                connection.Send(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
                 connection.Send(new EntityInMessage { Entity = playerEntity });
                 // adding entity to world
                 AreaManager.AddEntity(connection.Entity);
