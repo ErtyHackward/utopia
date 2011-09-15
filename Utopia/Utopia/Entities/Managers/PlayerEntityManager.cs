@@ -170,8 +170,9 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (_actions.isTriggered(Actions.Block_Add))
+            if (! _d3DEngine.UnlockedMouse && _actions.isTriggered(Actions.Use_Left))
             {
+
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
                 if (_isBlockPicked)
                 {
@@ -180,9 +181,8 @@ namespace Utopia.Entities.Managers
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
             }
 
-            if (_actions.isTriggered(Actions.Block_Remove))
+            if (_actions.isTriggered(Actions.Use_Right))
             {
-
                 //Avoid the player to add a block where he is located !
                 if (_isBlockPicked)
                 {
@@ -259,6 +259,15 @@ namespace Utopia.Entities.Managers
 
                     break;
                 }
+
+                uint todo = 0;//todo PickedEntityId (when an entity is picked, not when a terrain cube is picked)
+                Player.EntityState = new DynamicEntityState()
+                {
+                    PickedBlockPosition = _pickedBlock,
+                    NewBlockPosition = _newCubePlace,
+                    PickedEntityId = todo,
+                    SpaceVector = _lookAt.AsVector3()//TODO SpaceVector should be Dvector3, surely other server vectors too 
+                };
             }
 
             ////Create the bounding box around the cube !

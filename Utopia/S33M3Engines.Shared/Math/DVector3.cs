@@ -123,6 +123,14 @@ namespace S33M3Engines.Shared.Math
             this.Z = value;
         }
 
+        public DVector3(Vector3 floatVector3)
+        {
+            this.X = floatVector3.X;
+            this.Y = floatVector3.Y;
+            this.Z = floatVector3.Z;
+        }
+
+
         public double Length()
         {
             double y = this.Y;

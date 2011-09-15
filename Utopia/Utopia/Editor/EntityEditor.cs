@@ -13,7 +13,9 @@ using SharpDX.Direct3D11;
 using Utopia.Action;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
+using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Concrete;
+using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 using UtopiaContent.Effects.Terran;
 using Screen = Nuclex.UserInterface.Screen;
@@ -30,31 +32,36 @@ namespace Utopia.Editor
         private readonly CameraManager _camManager;
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VoxelMeshFactory _voxelMeshFactory;
-        private  EntityEditorUi _ui;
+        private EntityEditorUi _ui;
         private readonly ActionsManager _actions;
         private readonly Hud _hudComponent;
+        private readonly PlayerCharacter _player;
 
         private const float Scale = 1f/16f;
 
-        private Location3<int> _currentSelectionBlock;
+        private Location3<int>? _currentSelectionBlock;
         private DVector3 _currentSelectionWorld;
         public ShaderResourceView _texture; //it's a field for being able to dispose the resource
 
+        private Tool _leftToolbeforeEnteringEditor;
+
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
-                            ActionsManager actions, Hud hudComponent)
+                            ActionsManager actions, Hud hudComponent, PlayerCharacter player)
         {
             _screen = screen;
+            _player = player;
             _actions = actions;
             _worldFocusManager = worldFocusManager;
             _voxelMeshFactory = voxelMeshFactory;
             _camManager = camManager;
             _d3DEngine = d3DEngine;
-            _hudComponent = hudComponent;  
+            _hudComponent = hudComponent;
 
             // inactive by default, use F12 UI to enable :)
             this.Visible = false;
             this.Enabled = false;
+
             DrawOrders.UpdateIndex(0, 5000);
         }
 
@@ -70,15 +77,26 @@ namespace Utopia.Editor
             int y = entity.Blocks.GetLength(1);
             int z = entity.Blocks.GetLength(2);
             byte[,,] overlays = new byte[x,y,z];
-            for (int i = 0; i < 16; i++)
+            /*  for (int i = 0; i < 16; i++)
             {
                 overlays[i, 8, 0]= 22;
                 overlays[8, i, 0]= 22;
                 overlays[0, 8, i]=22;
-            }
+            }*/
 
             _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays);
-            _editedEntity.Position = _camManager.ActiveCamera.WorldPosition + new Vector3(-1, 0, -3);
+
+
+            _editedEntity.Position = new DVector3((int) _player.Position.X, (int) _player.Position.Y,
+                                                  (int) _player.Position.Z);
+
+            /* Matrix worldTranslation = Matrix.Translation(_player.EntityState.PickedBlockPosition.X, _player.EntityState.PickedBlockPosition.Y, _player.EntityState.PickedBlockPosition.Z);
+            
+            Matrix focused = Matrix.Identity;
+            _worldFocusManager.CenterTranslationMatrixOnFocus(ref worldTranslation,ref focused);
+
+            _editedEntity.Position = new DVector3(focused.TranslationVector);
+            */
         }
 
         public override void Initialize()
@@ -92,10 +110,11 @@ namespace Utopia.Editor
 
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point, out _texture);
 
-            _itemEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/TerranEditor.hlsl", VertexCubeSolid.VertexDeclaration);
+            _itemEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/TerranEditor.hlsl",
+                                         VertexCubeSolid.VertexDeclaration);
 
             _itemEffect.TerraTexture.Value = _texture;
-           
+
             _itemEffect.SamplerDiffuse.Value =
                 StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
@@ -104,11 +123,24 @@ namespace Utopia.Editor
 
         public override void Update(ref GameTime timeSpent)
         {
+            if (_editedEntity == null) return;
+
+            Location3<int>? selection = SetSelection();
+            if (_currentSelectionBlock != null &&
+                (selection.HasValue && _currentSelectionBlock.Value != selection.Value))
+            {
+                int x = _currentSelectionBlock.Value.X;
+                int y = _currentSelectionBlock.Value.Y;
+                int z = _currentSelectionBlock.Value.Z;
+                _editedEntity.AlterOverlay(x, y, z, 22);
+                _currentSelectionBlock = selection;
+                _editedEntity.Altered = true;
+            }
+
             //HandleInput();
-            //setSelection();
         }
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             DrawItems();
         }
@@ -120,7 +152,8 @@ namespace Utopia.Editor
             if (Enabled)
             {
                 _hudComponent.Enabled = false;
-
+                _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
+                _player.Equipment.LeftTool = null;
                 foreach (var control in _ui.Children)
                 {
                     if (!_screen.Desktop.Children.Contains(control))
@@ -129,12 +162,15 @@ namespace Utopia.Editor
                     }
                 }
             }
-            else if (_ui !=null)
+            else
             {
-                
-                foreach (var control in _ui.Children)
-                    _screen.Desktop.Children.Remove(control);
-                _hudComponent.Enabled = true;
+                _player.Equipment.LeftTool = _leftToolbeforeEnteringEditor;
+                if (_ui != null)
+                {
+                    foreach (var control in _ui.Children)
+                        _screen.Desktop.Children.Remove(control);
+                    _hudComponent.Enabled = true;
+                }
             }
         }
 
@@ -152,13 +188,14 @@ namespace Utopia.Editor
             _itemEffect.CBPerFrame.Values.SunColor = Vector3.One;
             _itemEffect.CBPerFrame.Values.dayTime = 0.5f;
             _itemEffect.CBPerFrame.Values.fogdist = 100; //TODO FOGDIST in editor
-            
+
             _itemEffect.CBPerFrame.IsDirty = true;
 
-            Matrix world = Matrix.Scaling(1f/16f)*Matrix.RotationY(MathHelper.PiOver4)*
+            Matrix world = Matrix.Scaling(1f/16f)*
                            Matrix.Translation(_editedEntity.Position.AsVector3());
 
             world = _worldFocusManager.CenterOnFocus(ref world);
+
             _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
             _itemEffect.CBPerDraw.Values.popUpYOffset = 0;
             _itemEffect.CBPerDraw.IsDirty = true;
@@ -181,18 +218,18 @@ namespace Utopia.Editor
         }
 
 //        private int _y = 0;
-       
+
 
         private void HandleInput()
         {
-            if (_actions.isTriggered(Actions.Block_Add))
+            if (_actions.isTriggered(Actions.Use_Left))
             {
                 byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
 
-                int x = _currentSelectionBlock.X;
-                int y = _currentSelectionBlock.Y;
-                int z = _currentSelectionBlock.Z;
+                int x = _currentSelectionBlock.Value.X;
+                int y = _currentSelectionBlock.Value.Y;
+                int z = _currentSelectionBlock.Value.Z;
 
                 blocks[x, y, z] = _ui.SelectedIndex;
 
@@ -217,25 +254,39 @@ namespace Utopia.Editor
         }
 
         //not in use, need to debug the rendering first ! 
-        private void setSelection()
+        private Location3<int>? SetSelection()
         {
-            ICamera cam = _camManager.ActiveCamera;
+            FirstPersonCamera cam = (FirstPersonCamera) _camManager.ActiveCamera;
             byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
             Vector3 mousePos = new Vector3(Mouse.GetState().X,
                                            Mouse.GetState().Y,
                                            cam.Viewport.MinDepth);
 
-            Vector3 unproject = Vector3.Unproject(mousePos, cam.Viewport.TopLeftX, cam.Viewport.TopLeftY,
-                                                  cam.Viewport.Width,
-                                                  cam.Viewport.Height, cam.Viewport.MinDepth, cam.Viewport.MaxDepth,
-                                                  Matrix.Translation(cam.WorldPosition.AsVector3())*cam.ViewProjection3D);
+            DVector3 unproject = new DVector3(Vector3.Unproject(mousePos, cam.Viewport.TopLeftX, cam.Viewport.TopLeftY,
+                                                                cam.Viewport.Width,
+                                                                cam.Viewport.Height, cam.Viewport.MinDepth,
+                                                                cam.Viewport.MaxDepth,
+                                                                Matrix.Translation(cam.WorldPosition.AsVector3())*
+                                                                cam.ViewProjection3D));
 
             // Console.WriteLine(unproject);
-            /*
+            Quaternion dir = cam.Orientation;
+            Matrix rotation;
+            Matrix.RotationQuaternion(ref dir, out rotation);
+            //DVector3 xAxis = new DVector3(rotation.M11, rotation.M21, rotation.M31);
+            // DVector3 yAxis = new DVector3(rotation.M12, rotation.M22, rotation.M32);
+            DVector3 zAxis = new DVector3(rotation.M13, rotation.M23, rotation.M33);
+
+            DVector3 lookAt = new DVector3(-zAxis.X, -zAxis.Y, -zAxis.Z);
+            lookAt.Normalize();
+
+            DVector3 pos = cam.WorldPosition - _editedEntity.Position;
+
             for (float x = 0.5f; x < 8f; x += 0.1f)
             {
-                DVector3 targetPoint = (cam.WorldPosition + (cam.LookAt*x))/_scale;
+                DVector3 targetPoint = (pos + (lookAt*x))/Scale;
+                //DVector3 targetPoint = (unproject + (lookAt * x)) / Scale;
 
                 int i = (int) (targetPoint.X);
                 int j = (int) (targetPoint.Y);
@@ -245,13 +296,14 @@ namespace Utopia.Editor
                 {
                     //if _model.blocks[i,j,k]
 
-                    _currentSelectionBlock = new Location3<int>(i, j, k);
+                    return new Location3<int>(i, j, k);
 
-                    _currentSelectionWorld = targetPoint;
+                    //_currentSelectionWorld = targetPoint;
                     // Debug.WriteLine("{0} -- {1}", _currentSelectionBlock, _currentSelectionWorld);
                     break;
                 }
-            }*/
+            }
+            return null;
         }
 
         public override void Dispose()
