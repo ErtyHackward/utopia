@@ -24,6 +24,9 @@ namespace Utopia.Entities.Voxel
         {
             List<VertexCubeSolid> vertexList = new List<VertexCubeSolid>();
 
+            if (blocks == null)
+                return vertexList;
+
             for (int x = 0; x < blocks.GetLength(0); x++)
             {
                 for (int y = 0; y < blocks.GetLength(1); y++)

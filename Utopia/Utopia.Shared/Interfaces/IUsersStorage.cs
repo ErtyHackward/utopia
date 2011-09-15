@@ -30,7 +30,7 @@ namespace Utopia.Shared.Interfaces
         /// <param name="passwordHash">User md5 password hash</param>
         /// <param name="data">Filled login data structure if login succeed</param>
         /// <returns>true if login succeed otherwise false</returns>
-        bool Login(string login, string passwordHash, out LoginData? data);
+        bool Login(string login, string passwordHash, out LoginData data);
 
         /// <summary>
         /// Sets corresponding data to login. This function can be used to store any user specific information.

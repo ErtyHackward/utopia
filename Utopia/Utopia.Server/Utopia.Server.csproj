@@ -58,7 +58,9 @@
     <Compile Include="Managers\AreaManager.cs" />
     <Compile Include="Managers\AreaEntityEventArgs.cs" />
     <Compile Include="Managers\IEntityStorage.cs" />
+    <Compile Include="Managers\LandscapeCursor.cs" />
     <Compile Include="Managers\LandscapeManager.cs" />
+    <Compile Include="Managers\LandscapeManagerChunkEventArgs.cs" />
     <Compile Include="Managers\ScheduleCallType.cs" />
     <Compile Include="Managers\ScheduleManager.cs" />
     <Compile Include="Managers\ScheduleTask.cs" />

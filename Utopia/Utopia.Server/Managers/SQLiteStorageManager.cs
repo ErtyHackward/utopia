@@ -278,11 +278,11 @@ namespace Utopia.Server.Managers
         /// <param name="passwordHash">User md5 password hash</param>
         /// <param name="data">Filled login data structure if login succeed</param>
         /// <returns>true if login succeed otherwise false</returns>
-        public bool Login(string login, string passwordHash, out LoginData? data)
+        public bool Login(string login, string passwordHash, out LoginData data)
         {
             using (var reader = Query(string.Format("SELECT id, role, state FROM users WHERE login = '{0}' AND password = '{1}'", login, passwordHash)))
             {
-                data = null;
+                data = new LoginData();
 
                 if (!reader.HasRows)
                     return false;
