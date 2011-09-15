@@ -200,8 +200,10 @@ namespace S33M3Engines.Sprites
 
             ShaderResourceViewDescription srDesc = new ShaderResourceViewDescription();
             srDesc.Format = Format.B8G8R8A8_UNorm;
-            srDesc.Dimension = ShaderResourceViewDimension.Texture2D;
-            srDesc.Texture2D = new ShaderResourceViewDescription.Texture2DResource() { MipLevels = 1, MostDetailedMip = 0 };
+            //srDesc.Dimension = ShaderResourceViewDimension.Texture2D;
+            //srDesc.Texture2D = new ShaderResourceViewDescription.Texture2DResource() { MipLevels = 1, MostDetailedMip = 0 };
+            srDesc.Dimension = ShaderResourceViewDimension.Texture2DArray;
+            srDesc.Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource() { MostDetailedMip = 0, MipLevels = 1, FirstArraySlice = 0, ArraySize = 1 };
 
             _srView = new ShaderResourceView(device, texture, srDesc);
 

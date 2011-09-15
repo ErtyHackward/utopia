@@ -4,6 +4,7 @@ using System;
 using S33M3Engines.Shared.Delegates;
 using SharpDX;
 using SharpDX.Direct3D11;
+using SharpDX.Direct3D;
 
 #endregion
 
@@ -80,7 +81,22 @@ namespace S33M3Engines.Shared.Sprites
         private void CreateResource(Device device, Texture2D texture, Vector2 screenPosition)
         {
             ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
-            Texture = new ShaderResourceView(device, texture);
+            //By default all textures will need to be single array texture
+
+            ShaderResourceViewDescription viewDesc = new ShaderResourceViewDescription()
+            {
+                Format = texture.Description.Format,
+                Dimension = ShaderResourceViewDimension.Texture2DArray,
+                Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource()
+                {
+                    MostDetailedMip = 0,
+                    MipLevels = texture.Description.MipLevels,
+                    FirstArraySlice = 0,
+                    ArraySize = 1
+                }
+            };
+
+            Texture = new ShaderResourceView(device, texture, viewDesc);
             Width = texture.Description.Width;
             Height = texture.Description.Height;
         }

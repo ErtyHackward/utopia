@@ -259,6 +259,7 @@ namespace S33M3Engines.Sprites
         {
             //Set Par Batch Constant
             _effectInstanced.Begin();
+
             _effectInstanced.CBPerDraw.Values.ViewportSize = new Vector2(_d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height);
             if(sourceRectInTextCoord)_effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.Width, spriteTexture.Height);
             else _effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
