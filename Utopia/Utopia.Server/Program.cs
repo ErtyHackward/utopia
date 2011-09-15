@@ -60,6 +60,8 @@ namespace Utopia.Server
                 _iocContainer.Get<IEntityStorage>()
                 );
 
+            _server.Services.Add(new ZombieService());
+
             _server.Listen();
             
             while (true)
