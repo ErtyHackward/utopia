@@ -381,14 +381,14 @@ namespace Utopia
 
             _actionManager.AddActions(new MouseTriggeredAction()
             {
-                Action = Actions.Block_Add,
+                Action = Actions.Use_Left,
                 TriggerType = MouseTriggerMode.ButtonUpDown,
                 Binding = MouseButton.LeftButton
             });
 
             _actionManager.AddActions(new MouseTriggeredAction()
             {
-                Action = Actions.Block_Remove,
+                Action = Actions.Use_Right,
                 TriggerType = MouseTriggerMode.ButtonUpDown,
                 Binding = MouseButton.RightButton
             });

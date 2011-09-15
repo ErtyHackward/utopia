@@ -31,11 +31,9 @@ namespace Utopia.Entities.Voxel
                     for (int z = 0; z < blocks.GetLength(2); z++)
                     {
                         byte blockType = blocks[x, y, z];
-                        if (blockType == 0) continue;
-
-
+                     
                         byte overlay = overlays == null ? (byte) 0 : overlays[x, y, z];
-
+                        // if (blockType == 0) continue;
                         BuildBlockVertices(blocks, ref vertexList, blockType, x, y, z, overlay);
                     }
                 }
