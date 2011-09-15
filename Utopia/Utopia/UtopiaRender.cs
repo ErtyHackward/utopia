@@ -253,7 +253,7 @@ namespace Utopia
          
             _debugInfo = new DebugInfo(_d3dEngine);
             _debugInfo.Activated = true;
-            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>());
+            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<PlayerEntityManager>());
             GameComponents.Add(_debugInfo);
 
             GameConsole.Initialize(_d3dEngine);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines.D3D;
+using S33M3Engines.D3D.DebugTools;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities;
 using S33M3Engines;
@@ -31,7 +32,7 @@ using Ninject;
 
 namespace Utopia.Entities.Managers
 {
-    public class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualEntityContainer
+    public class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualEntityContainer, IDebugInfo
     {
         #region Private variables
         //Engine System variables
@@ -690,5 +691,10 @@ namespace Utopia.Entities.Managers
         }
 
         #endregion
+
+        public string GetInfo()
+        {
+            return string.Format("Player {0} Pos: ({1}, {2}, {3})", Player.CharacterName, Math.Round(Player.Position.X, 1), Math.Round(Player.Position.Y, 1), Math.Round(Player.Position.Z, 1));
+        }
     }
 }

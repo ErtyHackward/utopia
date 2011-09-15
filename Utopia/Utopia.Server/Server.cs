@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using S33M3Engines.Shared.Math;
 using Utopia.Net.Connections;
@@ -31,17 +30,14 @@ namespace Utopia.Server
         
         #region fields
 
-        private readonly List<ServerChunk> _saveList = new List<ServerChunk>();
+
         // ReSharper disable NotAccessedField.Local
         private Timer _cleanUpTimer;
         private Timer _saveTimer;
         // ReSharper restore NotAccessedField.Local        
         #endregion
 
-        /// <summary>
-        /// Gets main server memory chunk storage.
-        /// </summary>
-        public Dictionary<IntVector2, ServerChunk> Chunks { get; private set; }
+
 
         /// <summary>
         /// Gets connection listener. Allows to accept client connections
@@ -59,19 +55,9 @@ namespace Utopia.Server
         public ConnectionManager ConnectionManager { get; private set; }
         
         /// <summary>
-        /// Gets main chunks storage
-        /// </summary>
-        public IChunksStorage ChunksStorage { get; private set; }
-
-        /// <summary>
         /// Gets main users storage
         /// </summary>
         public IUsersStorage UsersStorage { get; private set; }
-
-        /// <summary>
-        /// Gets servers world generator
-        /// </summary>
-        public WorldGenerator WorldGenerator { get; private set; }
 
         /// <summary>
         /// Gets main entity storage
@@ -106,13 +92,8 @@ namespace Utopia.Server
         {
             // dependency injection
             SettingsManager = settingsManager;
-            ChunksStorage = chunksStorage;
             UsersStorage = usersStorage;
-            WorldGenerator = worldGenerator;
             EntityStorage = entityStorage;
-
-            // memory storage for chunks
-            Chunks = new Dictionary<IntVector2, ServerChunk>();
 
             AreaManager = new AreaManager();
             
@@ -128,7 +109,9 @@ namespace Utopia.Server
 
             Services = new ServiceManager(this);
 
-            LandscapeManager = new LandscapeManager(this);
+            LandscapeManager = new LandscapeManager(chunksStorage, worldGenerator);
+            LandscapeManager.ChunkLoaded += LandscapeManagerChunkLoaded;
+            LandscapeManager.ChunkUnloaded += LandscapeManagerChunkUnloaded;
             
             // async server events (saving modified chunks, unloading unused chunks)
             _cleanUpTimer = new Timer(CleanUp, null, SettingsManager.Settings.CleanUpInterval, SettingsManager.Settings.CleanUpInterval);
@@ -136,12 +119,29 @@ namespace Utopia.Server
             
         }
 
-        private void OnChunkAdded(ServerChunk chunk)
+        // another thread
+        private void CleanUp(object o)
         {
-            chunk.BlocksChanged += ChunkBlocksChanged;
+            LandscapeManager.CleanUp(SettingsManager.Settings.ChunkLiveTimeMinutes);
         }
 
-        void ChunkBlocksChanged(object sender, Shared.Chunks.ChunkDataProviderDataChangedEventArgs e)
+        // this functions executes in other thread
+        private void SaveChunks(object obj)
+        {
+            LandscapeManager.SaveChunks();
+        }
+
+        void LandscapeManagerChunkUnloaded(object sender, LandscapeManagerChunkEventArgs e)
+        {
+            e.Chunk.BlocksChanged -= ChunkBlocksChanged;
+        }
+
+        void LandscapeManagerChunkLoaded(object sender, LandscapeManagerChunkEventArgs e)
+        {
+            e.Chunk.BlocksChanged += ChunkBlocksChanged;
+        }
+
+        void ChunkBlocksChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
         {
             var chunk = (ServerChunk)sender;
 
@@ -149,53 +149,7 @@ namespace Utopia.Server
             // tell entities about blocks change
             AreaManager.InvokeBlocksChanged(new BlocksChangedEventArgs { ChunkPosition = chunk.Position, BlockValues = e.Bytes, Locations = e.Locations });
         }
-
-        private void OnChunkRemoved(ServerChunk chunk)
-        {
-            chunk.BlocksChanged -= ChunkBlocksChanged;
-        }
-
-        // this functions executes in other thread
-        private void SaveChunks(object obj)
-        {
-            if (_saveList.Count == 0)
-                return;
-
-            lock (_saveList)
-            {
-                var positions = new IntVector2[_saveList.Count];
-                var datas = new List<byte[]>(_saveList.Count);
-
-                for (int i = 0; i < _saveList.Count; i++)
-                {
-                    _saveList[i].NeedSave = false;
-                    positions[i] = _saveList[i].Position;
-                    datas.Add(_saveList[i].CompressedBytes);
-                }
-
-                ChunksStorage.SaveChunksData(positions, datas.ToArray());
-                _saveList.Clear();
-            }
-        }
-
-        // this functions executes in other thread
-        private void CleanUp(object obj)
-        {
-            var chunksToRemove = new List<ServerChunk>(); 
-
-            lock (Chunks)
-            {
-                // remove all chunks that was used very long time ago                    
-                chunksToRemove.AddRange(Chunks.Values.Where(chunk => chunk.LastAccess < DateTime.Now.AddMinutes(-SettingsManager.Settings.ChunkLiveTimeMinutes)));
-
-                foreach (var chunk in chunksToRemove)
-                {
-                    Chunks.Remove(chunk.Position);
-                    OnChunkRemoved(chunk);
-                }
-            }
-        }
-
+        
         void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
         {
             e.Connection.MessageLogin -= ConnectionMessageLogin;
@@ -264,53 +218,7 @@ namespace Utopia.Server
                 connection.Entity.Position = e.Message.Position;
             }
         }
-
-        /// <summary>
-        /// Gets chunk. First it tries to get cached in memory value, then it checks the database, and then it generates the chunk
-        /// </summary>
-        /// <param name="position"></param>
-        /// <returns></returns>
-        public ServerChunk GetChunk(IntVector2 position)
-        {
-            ServerChunk chunk = null;
-            // search chunk in memory or load it
-            if (Chunks.ContainsKey(position))
-            {
-                chunk = Chunks[position];
-                chunk.LastAccess = DateTime.Now;
-            }
-            else
-            {
-                lock (Chunks)
-                {
-                    if (!Chunks.ContainsKey(position))
-                    {
-                        var data = ChunksStorage.LoadChunkData(position);
-
-                        if (data == null)
-                        {
-                            var generatedChunk = WorldGenerator.GetChunk(position);
-                            
-                            if (generatedChunk != null)
-                            {
-                                chunk = new ServerChunk(generatedChunk) { Position = position, LastAccess = DateTime.Now };
-                            }
-                        }
-                        else
-                        {
-                            chunk = new ServerChunk { CompressedBytes = data };                            
-                            chunk.Decompress();
-                        }
-
-                        Chunks.Add(position, chunk);
-                        OnChunkAdded(chunk);
-                    }
-                    else chunk = Chunks[position];
-                }
-            }
-            return chunk;
-        }
-
+        
         void ConnectionMessageGetChunks(object sender, ProtocolMessageEventArgs<GetChunksMessage> e)
         {
             var connection = (ClientConnection)sender;
@@ -324,7 +232,7 @@ namespace Utopia.Server
 
                 range.Foreach( pos => {
 
-                    var chunk = GetChunk(pos);
+                    var chunk = LandscapeManager.GetChunk(pos);
                     
                     if (e.Message.Flag == GetChunksMessageFlag.AlwaysSendChunkData)
                     {
@@ -332,7 +240,7 @@ namespace Utopia.Server
                     }
                     
                     // do we have hashes from client?
-                    if (e.Message.HashesCount > 0)
+                    if (e.Message.HashesCount > 0 && positionsList != null)
                     {
                         int hashIndex = positionsList.IndexOf(pos);
 
@@ -366,7 +274,7 @@ namespace Utopia.Server
 
 
             }
-            catch (IOException ex)
+            catch (IOException)
             {
                 // client was disconnected
             }
@@ -413,10 +321,10 @@ namespace Utopia.Server
             }
 
             // checking login and password
-            LoginData? loginData;
+            LoginData loginData;
             if (UsersStorage.Login(e.Message.Login, e.Message.Password, out loginData))
             {
-                var oldConnection = ConnectionManager.Find(c => c.UserId == loginData.Value.UserId);
+                var oldConnection = ConnectionManager.Find(c => c.UserId == loginData.UserId);
                 if (oldConnection != null)
                 {
                     oldConnection.Send(new ErrorMessage { ErrorCode = ErrorCodes.AnotherInstanceLogged, Message = "Another instance of you was connected. You will be disconnected." });
@@ -425,27 +333,26 @@ namespace Utopia.Server
 
 
                 connection.Authorized = true;
-                connection.UserId = loginData.Value.UserId;
+                connection.UserId = loginData.UserId;
                 connection.Login = e.Message.Login;
 
                 IDynamicEntity playerEntity;
 
                 #region Getting players character entity
-                if (loginData.Value.State == null)
+                if (loginData.State == null)
                 {
                     // create new message
 
 
                     playerEntity = GetNewPlayerEntity(connection,  EntityFactory.Instance.GetUniqueEntityId());
 
-                    var state = new UserState();
-                    state.EntityId = playerEntity.EntityId;
+                    var state = new UserState { EntityId = playerEntity.EntityId };
 
                     UsersStorage.SetData(e.Message.Login, state.Save());
                 }
                 else
                 {
-                    var state = UserState.Load(loginData.Value.State );
+                    var state = UserState.Load(loginData.State );
                     // load new player entity
                     playerEntity = new ServerPlayerCharacterEntity(connection);
                     
@@ -475,8 +382,8 @@ namespace Utopia.Server
                 var gameInfo = new GameInformationMessage {
                     ChunkSize = AbstractChunk.ChunkSize, 
                     MaxViewRange = 32,
-                    WorldSeed = WorldGenerator.WorldParametes.Seed,
-                    WaterLevel = WorldGenerator.WorldParametes.SeaLevel
+                    WorldSeed = LandscapeManager.WorldGenerator.WorldParametes.Seed,
+                    WaterLevel = LandscapeManager.WorldGenerator.WorldParametes.SeaLevel
                 };
                 connection.Send(gameInfo);
                 connection.Send(new EntityInMessage { Entity = playerEntity });
@@ -525,8 +432,7 @@ namespace Utopia.Server
         {
             ConnectionManager.Dispose();
             Listener.Dispose();
-            Chunks.Clear();
-            WorldGenerator.Dispose();
+            LandscapeManager.Dispose();
         }
     }
 }

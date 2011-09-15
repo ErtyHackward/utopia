@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3Engines.Shared.Math;
+using Utopia.Server.Entities;
 
 namespace Utopia.Server.Services
 {
@@ -15,8 +17,7 @@ namespace Utopia.Server.Services
         public override void Initialize(Server server)
         {
             // need to find a place to put entity to
-
-
+            server.AreaManager.AddEntity(new ServerZombie(server, "Bob") { Position = new DVector3(40, 72, -60), Blocks = new [,,] { { {(byte)15}} }, Size = new SharpDX.Vector3(0.5f, 1.9f, 0.5f)});
         }
     }
 }

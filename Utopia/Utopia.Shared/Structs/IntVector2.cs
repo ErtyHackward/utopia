@@ -195,5 +195,10 @@ namespace Utopia.Shared.Structs
         {
             get { return new IntVector2(1, 1); }
         }
+
+        public bool IsZero()
+        {
+            return X == 0 && Y == 0;
+        }
     }
 }
