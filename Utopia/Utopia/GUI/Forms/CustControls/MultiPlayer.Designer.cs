@@ -71,7 +71,7 @@
             this.txtSrvAdress.Name = "txtSrvAdress";
             this.txtSrvAdress.Size = new System.Drawing.Size(180, 20);
             this.txtSrvAdress.TabIndex = 10;
-            this.txtSrvAdress.Text = "127.0.0.1";
+            this.txtSrvAdress.Text = "194.168.0.71";
             // 
             // label3
             // 
