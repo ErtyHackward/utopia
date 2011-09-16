@@ -35,6 +35,8 @@ namespace Utopia.Worlds
             mainRenderer.GameComponents.Add(_world.WorldWeather);
             mainRenderer.GameComponents.Add(_world.WorldSkyDome);
             mainRenderer.GameComponents.Add(_world.WorldChunks);
+
+            //Visible = false;
         }
 
         #region Public methods
@@ -80,6 +82,20 @@ namespace Utopia.Worlds
         public string GetInfo()
         {
             throw new NotImplementedException();
+        }
+
+        protected override void OnVisibleChanged(object sender, EventArgs args)
+        {
+           _world.WorldSkyDome.Visible = this.Visible;
+           _world.WorldChunks.Visible = this.Visible;
+        }
+
+        protected override void OnEnabledChanged(object sender, EventArgs args)
+        {
+            _world.WorldClock.Enabled = this.Enabled;
+            _world.WorldWeather.Enabled= this.Enabled;
+            _world.WorldSkyDome.Enabled= this.Enabled;
+            _world.WorldChunks.Enabled = this.Enabled;
         }
     }
 }

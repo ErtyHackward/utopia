@@ -260,8 +260,9 @@ namespace Utopia.Entities.Managers
 
                     break;
                 }
+            }
 
-                uint todo = 0;//todo PickedEntityId (when an entity is picked, not when a terrain cube is picked)
+              uint todo = 0;//todo PickedEntityId (when an entity is picked, not when a terrain cube is picked)
                 Player.EntityState = new DynamicEntityState()
                 {
                     PickedBlockPosition = _pickedBlock,
@@ -269,7 +270,6 @@ namespace Utopia.Entities.Managers
                     PickedEntityId = todo,
                     SpaceVector = _lookAt.AsVector3()//TODO SpaceVector should be Dvector3, surely other server vectors too 
                 };
-            }
 
             ////Create the bounding box around the cube !
             //if (_previousPickedBlock != _pickedBlock && _isBlockPicked)
