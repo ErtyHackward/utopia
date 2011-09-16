@@ -120,7 +120,7 @@ namespace Utopia.Entities
             if (distance > 1.0)
             {
                 //Interpolation too slow
-                interpolationRate += 0.01;
+                //interpolationRate += 0.01;
                 currentLocation = stateLocation;
             }
             else
@@ -134,7 +134,7 @@ namespace Utopia.Entities
                     //Going here is "Bad" if the entity movement is continuous, it will make the entity make a small "Stop".
                     //it means that my interpolation is too fast.
                     //Only if the entity is moving !
-                    if (distance > 0) interpolationRate -= 0.001;
+                    //if (distance > 0) interpolationRate -= 0.001;
                 }
             }
 
