@@ -64,6 +64,11 @@ namespace Utopia.Entities
 
             //Set Move direction = to LookAtDirection
             MoveDirection.Value = LookAtDirection.Value;
+
+
+            previousLocation = WorldPosition.Value;
+            currentLocation = WorldPosition.Value;
+            interpolatedLocation = WorldPosition.Value;
         }
 
         /// <summary>
@@ -84,6 +89,12 @@ namespace Utopia.Entities
 
             WorldPosition.Value = DynamicEntity.Position;
             LookAtDirection.Value = DynamicEntity.Rotation;
+
+            if (currentLocation != DynamicEntity.Position)
+            {
+                previousLocation = currentLocation;
+                currentLocation = DynamicEntity.Position;
+            }
         }
 
         #endregion
@@ -94,13 +105,37 @@ namespace Utopia.Entities
             RefreshEntityMovementAndRotation(); 
         }
 
+        private DVector3 previousLocation;
+        private DVector3 currentLocation;
+        private DVector3 interpolatedLocation;
+        private DVector3 deltaPosition;
+
+        //Draw interpolation (Before each Drawing)
         public void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
+            //lerping Received location value
+            deltaPosition = currentLocation - previousLocation; //Delta between the old and the new position.
+            double distance = deltaPosition.Length();
+            if (distance > 2.0)
+            {
+                interpolatedLocation = currentLocation;
+            }
+            else
+            {
+                if (distance > 0.1)
+                {
+                    interpolatedLocation += deltaPosition * 0.1;
+                }
+            }
+
+            //Make the
+
+
             Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
-            DVector3.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
+            //DVector3.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
 
             //Refresh the VisualEntity World matrix based on the latest interpolated values
-            Vector3 entityCenteredPosition = WorldPosition.ValueInterp.AsVector3();
+            Vector3 entityCenteredPosition = interpolatedLocation.AsVector3();
             entityCenteredPosition.X -= DynamicEntity.Size.X / 2;
             entityCenteredPosition.Z -= DynamicEntity.Size.Z / 2;
             VisualEntity.World = Matrix.Scaling(DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
