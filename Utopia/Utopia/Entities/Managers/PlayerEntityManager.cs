@@ -138,6 +138,11 @@ namespace Utopia.Entities.Managers
             _playerRenderer.VisualEntity = this;
         }
 
+        void inputsManager_OnKeyPressed(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            Console.WriteLine(e.KeyChar);
+        }
+
         #region Private Methods
 
         /// <summary>
@@ -172,7 +177,6 @@ namespace Utopia.Entities.Managers
 
             if (! _d3DEngine.UnlockedMouse && _actions.isTriggered(Actions.Use_Left))
             {
-
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
                 if (_isBlockPicked)
                 {
@@ -183,6 +187,7 @@ namespace Utopia.Entities.Managers
 
             if (_actions.isTriggered(Actions.Use_Right))
             {
+                
                 //Avoid the player to add a block where he is located !
                 if (_isBlockPicked)
                 {

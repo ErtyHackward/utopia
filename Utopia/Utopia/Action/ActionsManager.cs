@@ -37,6 +37,8 @@ namespace Utopia.Action
         #endregion
 
         #region Public variables/properties
+        public bool KeyboardActionsProcessing { get; set; }
+        public bool MouseActionsProcessing { get; set; }
         #endregion
 
         public ActionsManager()
@@ -49,6 +51,9 @@ namespace Utopia.Action
             _actions = _bufferedActions1;
             _bufferedActionsInProgress = _bufferedActions2;
             _isAction1Exposed = true;
+
+            KeyboardActionsProcessing = true;
+            MouseActionsProcessing = true;
         }
 
         #region Public methods
@@ -123,8 +128,8 @@ namespace Utopia.Action
         #region Private methods
         private void ProcessInputs()
         {
-            ProcessKeyboardStates();
-            ProcessMouseStates();
+            if(KeyboardActionsProcessing) ProcessKeyboardStates();
+            if(MouseActionsProcessing) ProcessMouseStates();
         }
 
         private void ProcessMouseStates()
@@ -261,7 +266,5 @@ namespace Utopia.Action
             }
         }
         #endregion
-
-
     }
 }
