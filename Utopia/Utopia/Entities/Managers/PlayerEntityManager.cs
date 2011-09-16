@@ -77,7 +77,6 @@ namespace Utopia.Entities.Managers
 
         //Drawing component
         private IEntitiesRenderer _playerRenderer;
-
         #endregion
 
         #region Public variables/properties

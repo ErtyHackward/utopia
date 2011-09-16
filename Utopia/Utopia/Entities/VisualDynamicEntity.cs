@@ -18,6 +18,11 @@ namespace Utopia.Entities
         //Player Visual characteristics (Not insde the PlayerCharacter object)
         private BoundingBox _playerBoundingBox;
         private Vector3 _boundingMinPoint, _boundingMaxPoint;                         //Use to recompute the bounding box in world coordinate
+
+        //Server interpolated variables
+        private NetworkValue<DVector3> _netLocation;
+        private double _interpolationRate = 0.035;
+        private int _distanceLimit = 3;
         #endregion
 
         #region Public variables/properties
@@ -65,9 +70,14 @@ namespace Utopia.Entities
             //Set Move direction = to LookAtDirection
             MoveDirection.Value = LookAtDirection.Value;
 
+            //Change the default value when Player => The player message arrive much more faster !
+            if (DynamicEntity.ClassId == Shared.Chunks.Entities.EntityClassId.PlayerCharacter)
+            {
+                _interpolationRate = 0.1;
+                _distanceLimit = 5;
+            }
 
-            stateLocation = WorldPosition.Value;
-            currentLocation = WorldPosition.Value;
+            _netLocation = new NetworkValue<DVector3>() { Value = WorldPosition.Value, Interpolated = WorldPosition.Value };
         }
 
         /// <summary>
@@ -84,18 +94,30 @@ namespace Utopia.Entities
         private void RefreshEntityMovementAndRotation()
         {
             LookAtDirection.BackUpValue();
-            WorldPosition.BackUpValue();
 
-            WorldPosition.Value = DynamicEntity.Position;
+            _netLocation.Value = DynamicEntity.Position;
             LookAtDirection.Value = DynamicEntity.Rotation;
 
-            if (currentLocation != DynamicEntity.Position)
-            {
-                //Server updateded variable
-                //Where I'm with my interpolation ?
+            Networkinterpolation();
+        }
 
-                stateLocation = DynamicEntity.Position;
+        private void Networkinterpolation()
+        {
+            WorldPosition.BackUpValue();
+
+            _netLocation.DeltaValue = _netLocation.Value - _netLocation.Interpolated;
+            _netLocation.Distance = _netLocation.DeltaValue.Length();
+            if (_netLocation.Distance > _distanceLimit)
+            {
+                    _netLocation.Interpolated = _netLocation.Value;
             }
+            else
+                if (_netLocation.Distance > 0.1)
+                {
+                    _netLocation.Interpolated += _netLocation.DeltaValue * _interpolationRate;
+                }
+
+            WorldPosition.Value = _netLocation.Interpolated;
         }
 
         #endregion
@@ -103,46 +125,19 @@ namespace Utopia.Entities
         #region Public Methods
         public void Update(ref GameTime timeSpent)
         {
+            if (DynamicEntity.ClassId != Shared.Chunks.Entities.EntityClassId.PlayerCharacter) return;
             RefreshEntityMovementAndRotation(); 
         }
 
-        private DVector3 stateLocation;
-        private DVector3 currentLocation;
-        private DVector3 deltaPosition;
-
-        double interpolationRate = 0.07;
         //Draw interpolation (Before each Drawing)
         public void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-            //lerping Received location value
-            deltaPosition = stateLocation - currentLocation; //Delta between the old and the new position.
-            double distance = deltaPosition.Length();
-            if (distance > 1.0)
-            {
-                //Interpolation too slow
-                //interpolationRate += 0.01;
-                currentLocation = stateLocation;
-            }
-            else
-            {
-                if (distance > 0.1)
-                {
-                    currentLocation += deltaPosition * interpolationRate;
-                }
-                else
-                {
-                    //Going here is "Bad" if the entity movement is continuous, it will make the entity make a small "Stop".
-                    //it means that my interpolation is too fast.
-                    //Only if the entity is moving !
-                    //if (distance > 0) interpolationRate -= 0.001;
-                }
-            }
 
             Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
-            //DVector3.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
+            DVector3.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
 
             //Refresh the VisualEntity World matrix based on the latest interpolated values
-            Vector3 entityCenteredPosition = currentLocation.AsVector3();
+            Vector3 entityCenteredPosition = WorldPosition.ValueInterp.AsVector3(); //currentLocation.AsVector3();
             entityCenteredPosition.X -= DynamicEntity.Size.X / 2;
             entityCenteredPosition.Z -= DynamicEntity.Size.Z / 2;
             VisualEntity.World = Matrix.Scaling(DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);

@@ -165,7 +165,7 @@ namespace Utopia.Network
 
         public override void Update(ref GameTime TimeSpend)
         {
-            ServerConnection.FetchPendingMessages(5);
+            ServerConnection.FetchPendingMessages();
         }
 
         #endregion
