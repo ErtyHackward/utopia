@@ -59,8 +59,8 @@ namespace S33M3Engines.Cameras
                 Matrix MRotation = Matrix.RotationQuaternion(_cameraOrientation.Value);
                 Matrix.Multiply(ref MTranslation, ref MRotation, out _view);
 
-                _viewPorjection3D = _view * this.Projection3D;
-
+                _viewProjection3D = _view * this.Projection3D;
+                
                 //Compute the Frustum
                 _frustum = new BoundingFrustum(Matrix.Translation(-_worldPosition.Value.AsVector3()) * MRotation * _projection3D);
             }
@@ -85,7 +85,7 @@ namespace S33M3Engines.Cameras
             Matrix MRotation = Matrix.RotationQuaternion(_cameraOrientation.ValueInterp);
             Matrix.Multiply(ref MTranslation, ref MRotation, out _view);
 
-            _viewPorjection3D = _view * this.Projection3D;
+            _viewProjection3D = _view * this.Projection3D;
 
             _frustum = new BoundingFrustum(Matrix.Translation(-_worldPosition.ValueInterp.AsVector3()) * MRotation * _projection3D);
         }
