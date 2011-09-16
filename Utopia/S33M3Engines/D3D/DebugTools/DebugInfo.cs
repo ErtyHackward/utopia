@@ -33,7 +33,7 @@ namespace S33M3Engines.D3D.DebugTools
         public DebugInfo(D3DEngine d3dEngine)
         {
             _d3dEngine = d3dEngine;
-            DrawOrders.UpdateIndex(0, 100);
+            DrawOrders.UpdateIndex(0, 10000);
         }
 
         public void SetComponants(params IDebugInfo[] args)

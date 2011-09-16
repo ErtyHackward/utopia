@@ -38,7 +38,7 @@ namespace Utopia.Editor
         private readonly Hud _hudComponent;
         private readonly PlayerCharacter _player;
 
-        private const float Scale = 1f/16f;
+        private const float Scale = 1;//1f/16f;
 
         private Location3<int>? _prevPickedBlock;
         public ShaderResourceView _texture; //it's a field for being able to dispose the resource
@@ -126,6 +126,46 @@ namespace Utopia.Editor
             _ui = new EntityEditorUi(this);
         }
 
+
+        private void UnprojectMouseCursor(out DVector3 MouseWorldPosition, out DVector3 MouseLookAt)
+        {
+            //Get mouse Position on the screen
+            var mouseState = Mouse.GetState();
+
+            Vector3 nearClipVector = new Vector3(mouseState.X, mouseState.Y, 0);
+            Vector3 farClipVector = new Vector3(mouseState.X, mouseState.Y, 1);
+
+            Matrix cameraWVP = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.AsVector3()) *
+                               _camManager.ActiveCamera.View *
+                               _camManager.ActiveCamera.ViewProjection3D;
+
+            Vector3 UnprojecNearClipVector;
+            Vector3.Unproject(ref nearClipVector,
+                              _d3DEngine.ViewPort.TopLeftX,
+                              _d3DEngine.ViewPort.TopLeftY,
+                              _d3DEngine.ViewPort.Width,
+                              _d3DEngine.ViewPort.Height,
+                              _d3DEngine.ViewPort.MinDepth,
+                              _d3DEngine.ViewPort.MaxDepth,
+                              ref cameraWVP,
+                              out UnprojecNearClipVector);
+
+            Vector3 UnprojecFarClipVector;
+            Vector3.Unproject(ref farClipVector,
+                              _d3DEngine.ViewPort.TopLeftX,
+                              _d3DEngine.ViewPort.TopLeftY,
+                              _d3DEngine.ViewPort.Width,
+                              _d3DEngine.ViewPort.Height,
+                              _d3DEngine.ViewPort.MinDepth,
+                              _d3DEngine.ViewPort.MaxDepth,
+                              ref cameraWVP,
+                              out UnprojecFarClipVector);
+
+            //To apply From Camera Position !
+            MouseWorldPosition = new DVector3(UnprojecNearClipVector * -1);
+            MouseLookAt = new DVector3(Vector3.Normalize(UnprojecFarClipVector - UnprojecNearClipVector));
+        }
+
         public override void Update(ref GameTime timeSpent)
         {
             if (_editedEntity == null) return;
@@ -204,8 +244,9 @@ namespace Utopia.Editor
 
             _itemEffect.CBPerFrame.IsDirty = true;
 
-            Matrix world = Matrix.Scaling(1f/16f)*
-                           Matrix.Translation(_editedEntity.Position.AsVector3());
+            //Matrix world = Matrix.Scaling(1f/16f)*
+            //               Matrix.Translation(_editedEntity.Position.AsVector3());
+            Matrix world = Matrix.Translation(_editedEntity.Position.AsVector3());
 
             world = _worldFocusManager.CenterOnFocus(ref world);
 
@@ -231,8 +272,6 @@ namespace Utopia.Editor
         }
 
 //        private int _y = 0;
-
-
         private void HandleInput()
         {
             if (_actions.isTriggered(Actions.Use_Left))
@@ -266,34 +305,32 @@ namespace Utopia.Editor
             }
         }
 
-
+        DVector3 CastedFrom, CastedTo;
         private void GetSelectedBlock()
         {
             FirstPersonCamera cam = (FirstPersonCamera) _camManager.ActiveCamera;
             byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
-            DVector3 unproject = UnprojectMouse(cam);
+            DVector3 mouseWorldPosition, mouseLookAt;
+            UnprojectMouseCursor(out mouseWorldPosition, out mouseLookAt);
+            //Create a ray from MouseWorldPosition to a specific size (That we will increment) and then check if we intersect an existing cube !
 
-            // Console.WriteLine(unproject);
-            DVector3 lookAt = GetLookAt();
-
-            DVector3 pos = _editedEntity.Position - _player.Position;
-
-            for (float x = 0.5f; x < 8f; x += 0.1f)
+            for (float x = 0.0f; x < 10f; x += 0.1f)
             {
-                DVector3 targetPoint = (pos + (lookAt*x)) /Scale;
+                DVector3 targetPoint = (mouseWorldPosition + (mouseLookAt * x));// / Scale;
+                if (x == 0) CastedFrom = targetPoint;
+                CastedTo = targetPoint;
+                //Console.WriteLine(x + " : " + targetPoint);
 
-                int i =  (int)(targetPoint.X);
-                int j = (int)(targetPoint.Y);
-                int k = (int)(targetPoint.Z);
-
-                if (i >= 0 && j >= 0 && k >= 0 && i < blocks.GetLength(0) && j < blocks.GetLength(1) &&
-                    k < blocks.GetLength(2))
+                if (targetPoint.X >= _editedEntity.Position.X && targetPoint.Y >= _editedEntity.Position.Y && targetPoint.Z >= _editedEntity.Position.Z &&
+                    targetPoint.X < blocks.GetLength(0) + _editedEntity.Position.X && targetPoint.Y < blocks.GetLength(1) + _editedEntity.Position.Y && targetPoint.Z < blocks.GetLength(2) + _editedEntity.Position.Z)
                 {
-                   _pickedBlock= new Location3<int>(i, j, k);
+                   //_pickedBlock= new Location3<int>(i, j, k);
                     break;
                 }
             }
+
+            Console.WriteLine("from : " + CastedFrom + " TO : " + CastedTo + " with Direction : " + mouseLookAt);
           
         }
 

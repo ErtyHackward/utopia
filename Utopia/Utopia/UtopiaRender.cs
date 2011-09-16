@@ -250,7 +250,6 @@ namespace Utopia
             //GUI components
             _fps = new FPS();
             GameComponents.Add(_fps);
-
          
             _debugInfo = new DebugInfo(_d3dEngine);
             _debugInfo.Activated = true;

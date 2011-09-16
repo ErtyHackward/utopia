@@ -400,7 +400,7 @@ namespace Utopia.Entities.Managers
             switch (_displacementMode)
             {
                 case EntityDisplacementModes.Flying:
-                    _gravityInfluence = 6;  // We will move 6 times faster if flying
+                    _gravityInfluence = 1;  // We will move 6 times faster if flying
                     break;
                 case EntityDisplacementModes.Walking:
                     _gravityInfluence = 1;
