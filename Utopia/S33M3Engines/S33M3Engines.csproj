@@ -138,6 +138,7 @@
     <Compile Include="Maths\MBoundingSphere.cs" />
     <Compile Include="Maths\MVector2.cs" />
     <Compile Include="Maths\MVector3.cs" />
+    <Compile Include="Struct\NetworkValue.cs" />
     <Compile Include="Struct\Vertex\Helper\FormatSize.cs" />
     <Compile Include="Struct\Vertex\Helper\Interfaces.cs" />
     <Compile Include="Struct\Vertex\Helper\Enums.cs" />
