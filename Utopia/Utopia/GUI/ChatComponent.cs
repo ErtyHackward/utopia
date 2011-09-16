@@ -59,7 +59,6 @@ namespace Utopia.GUI
             _imanager.OnKeyPressed += _imanager_OnKeyPressed;
             _d3dEngine.ViewPort_Updated += LocateChat;
 
-            engine.GameWindow.KeyPress += GameWindow_KeyPress;
             LocateChat(_d3dEngine.ViewPort);
 
             // make it drawn on top
@@ -82,34 +81,31 @@ namespace Utopia.GUI
 
         void _imanager_OnKeyPressed(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (char)Keys.Enter)
+            if (Activated)
             {
-                _actionManager.KeyboardActionsProcessing = true;
-                _imanager.KeyBoardListening = false;
-                if (!string.IsNullOrWhiteSpace(Input))
+                if (e.KeyChar == (char)Keys.Enter)
                 {
-                    _server.ServerConnection.SendAsync(new ChatMessage { Login = _server.Player.DisplayName, Message = Input });
+                    _actionManager.KeyboardActionsProcessing = true;
+                    _imanager.KeyBoardListening = false;
+                    if (!string.IsNullOrWhiteSpace(Input))
+                    {
+                        _server.ServerConnection.SendAsync(new ChatMessage { Login = _server.Player.DisplayName, Message = Input });
+                    }
+
+                    Input = string.Empty;
+                    return;
                 }
-                
-                Input = string.Empty;
-                return;
-            }
-            if (e.KeyChar == (char)Keys.Back)
-            {
-                if (Input.Length > 0)
+                if (e.KeyChar == (char)Keys.Back)
                 {
-                    Input = Input.Remove(Input.Length - 1);
+                    if (Input.Length > 0)
+                    {
+                        Input = Input.Remove(Input.Length - 1);
+                    }
+                    return;
                 }
-                return;
+
+                Input += e.KeyChar;
             }
-
-            Input += e.KeyChar;
-
-        }
-
-        void GameWindow_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            
         }
 
         private void LocateChat(Viewport viewport)
@@ -138,6 +134,8 @@ namespace Utopia.GUI
                 if (Activated)
                 {
                     Activated = false;
+                    _imanager.KeyBoardListening = false;
+                    _actionManager.KeyboardActionsProcessing = true;
                 }
                 else
                 {
