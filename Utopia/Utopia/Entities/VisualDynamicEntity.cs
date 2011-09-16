@@ -91,6 +91,9 @@ namespace Utopia.Entities
 
             if (currentLocation != DynamicEntity.Position)
             {
+                //Server updateded variable
+                //Where I'm with my interpolation ?
+
                 stateLocation = DynamicEntity.Position;
             }
         }
@@ -117,7 +120,7 @@ namespace Utopia.Entities
             if (distance > 1.0)
             {
                 //Interpolation too slow
-                interpolationRate += 0.001;
+                interpolationRate += 0.01;
                 currentLocation = stateLocation;
             }
             else
