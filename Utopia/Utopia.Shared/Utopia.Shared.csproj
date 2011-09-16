@@ -147,6 +147,7 @@
     <Compile Include="Structs\ByteVector4.cs" />
     <Compile Include="Structs\Color.cs" />
     <Compile Include="ClassExt\BinaryExtensions.cs" />
+    <Compile Include="Structs\DynamicUpdateState.cs" />
     <Compile Include="Structs\Helpers\HalfUtils.cs" />
     <Compile Include="Structs\HalfVector2.cs" />
     <Compile Include="Structs\HalfVector4.cs" />

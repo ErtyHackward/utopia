@@ -1,6 +1,7 @@
 using System;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Management;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities.Interfaces
 {
@@ -49,7 +50,7 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// <summary>
         /// Perform dynamic update (AI logic)
         /// </summary>
-        void Update(DateTime gameTime);
+        void Update(DynamicUpdateState gameTime);
 
         /// <summary>
         /// Entity displacement mode

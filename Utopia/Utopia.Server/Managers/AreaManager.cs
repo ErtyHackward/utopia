@@ -213,12 +213,12 @@ namespace Utopia.Server.Managers
             OnEntityRemoved(new AreaEntityEventArgs { Entity = entity });
         }
 
-        public void Update(DateTime gameTime)
+        public void Update(DynamicUpdateState gameTime)
         {
             Parallel.ForEach(_areas, a => UpdateArea(a.Value, gameTime));
         }
 
-        private void UpdateArea(MapArea area, DateTime gameTime)
+        private void UpdateArea(MapArea area, DynamicUpdateState gameTime)
         {
             foreach (var entity in area.Enumerate())
             {

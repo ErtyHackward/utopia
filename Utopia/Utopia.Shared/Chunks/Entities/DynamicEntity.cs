@@ -4,6 +4,7 @@ using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Management;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Chunks.Entities.Concrete;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -178,7 +179,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Perform dynamic update (AI logic)
         /// </summary>
-        public abstract void Update(DateTime gameTime);
+        public abstract void Update(DynamicUpdateState gameTime);
 
         public override void Load(System.IO.BinaryReader reader)
         {
