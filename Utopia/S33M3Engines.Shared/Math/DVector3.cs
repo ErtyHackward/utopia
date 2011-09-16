@@ -139,6 +139,14 @@ namespace S33M3Engines.Shared.Math
             return (double)System.Math.Sqrt(((x * x) + (y * y)) + (z * z));
         }
 
+        public double LengthAbs()
+        {
+            double y = System.Math.Abs(this.Y);
+            double x = System.Math.Abs(this.X);
+            double z = System.Math.Abs(this.Z);
+            return (double)System.Math.Sqrt(((x * x) + (y * y)) + (z * z));
+        }
+
         public double LengthSquared()
         {
             double y = this.Y;
