@@ -132,6 +132,8 @@ namespace Utopia.Server
             _entityUpdateTimer = new Timer(UpdateDynamic, null, 0, 100);
         }
 
+        private DateTime _lastUpdate = DateTime.MinValue;
+
         // update dynamic entities
         private void UpdateDynamic(object o)
         {
@@ -139,7 +141,14 @@ namespace Utopia.Server
             {
                 try
                 {
-                    AreaManager.Update(Clock.Now);
+                    var state = new DynamicUpdateState
+                                    {
+                                        ElapsedTime = _lastUpdate == DateTime.MinValue ? TimeSpan.Zero : Clock.Now - _lastUpdate,
+                                        CurrentTime = Clock.Now
+                                    };
+
+                    _lastUpdate = Clock.Now;
+                    AreaManager.Update(state);
                 }
                 finally
                 {
