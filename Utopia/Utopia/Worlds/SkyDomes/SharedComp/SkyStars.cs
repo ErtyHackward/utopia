@@ -69,7 +69,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _effectStars.Begin();
             _effectStars.CBPerDraw.Values.World = Matrix.Transpose(_world);
-            _effectStars.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _effectStars.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
 
             //Compute Vibility !
             if (_gameClock.ClockTime.ClockTimeNormalized < 0.25) _visibility = 1;     // Before 06:00 am

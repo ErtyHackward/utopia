@@ -11,6 +11,8 @@ using S33M3Engines.Cameras;
 using SharpDX.Direct3D11;
 using Utopia.Shared.Structs;
 using System.Windows.Forms;
+using S33M3Engines.Shared.Math;
+using SharpDX;
 
 namespace Utopia.InputManager
 {
@@ -74,6 +76,48 @@ namespace Utopia.InputManager
             _curMouseState = Mouse.GetState();
 
             ProcessMouseStates();
+        }
+
+        /// <summary>
+        /// Will tranform the mouse screen position into world coordinate + a direction vector called "MouseLookat"
+        /// </summary>
+        /// <param name="MouseWorldPosition"></param>
+        /// <param name="MouseLookAt"></param>
+        public void UnprojectMouseCursor(out DVector3 MouseWorldPosition, out DVector3 MouseLookAt)
+        {
+            //Get mouse Position on the screen
+            var mouseState = Mouse.GetState();
+
+            Vector3 nearClipVector = new Vector3(mouseState.X, mouseState.Y, 0);
+            Vector3 farClipVector = new Vector3(mouseState.X, mouseState.Y, 1);
+
+            Matrix cameraWVP = _cameraManager.ActiveCamera.ViewProjection3D;
+
+            Vector3 UnprojecNearClipVector;
+            Vector3.Unproject(ref nearClipVector,
+                              _engine.ViewPort.TopLeftX,
+                              _engine.ViewPort.TopLeftY,
+                              _engine.ViewPort.Width,
+                              _engine.ViewPort.Height,
+                              _engine.ViewPort.MinDepth,
+                              _engine.ViewPort.MaxDepth,
+                              ref cameraWVP,
+                              out UnprojecNearClipVector);
+
+            Vector3 UnprojecFarClipVector;
+            Vector3.Unproject(ref farClipVector,
+                              _engine.ViewPort.TopLeftX,
+                              _engine.ViewPort.TopLeftY,
+                              _engine.ViewPort.Width,
+                              _engine.ViewPort.Height,
+                              _engine.ViewPort.MinDepth,
+                              _engine.ViewPort.MaxDepth,
+                              ref cameraWVP,
+                              out UnprojecFarClipVector);
+
+            //To apply From Camera Position !
+            MouseWorldPosition = new DVector3(UnprojecNearClipVector);
+            MouseLookAt = new DVector3(Vector3.Normalize(UnprojecFarClipVector - UnprojecNearClipVector));
         }
         #endregion
 

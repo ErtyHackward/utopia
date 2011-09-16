@@ -58,7 +58,7 @@ namespace Utopia.Entities.Renderer
 
             _entityEffect.Begin();
 
-            _entityEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _entityEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _entityEffect.CBPerFrame.IsDirty = true;
 
             Matrix world = _worldFocusManager.CenterOnFocus(ref VisualEntity.VisualEntity.World);
