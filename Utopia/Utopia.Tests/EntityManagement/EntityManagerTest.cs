@@ -50,7 +50,7 @@ namespace Utopia.Tests.EntityManagement
 
             for (int i = 0; i < takes; i++)
             {
-                _manager.Update(DateTime.Now);
+                _manager.Update(new Shared.Structs.DynamicUpdateState { CurrentTime = DateTime.Now });
             }
 
             sw.Stop();
