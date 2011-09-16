@@ -38,12 +38,14 @@ namespace S33M3Engines.Cameras
         protected float _farPlane = 3000f;
 
         protected Matrix _projection3D;
+        protected Matrix _viewProjection3D_focused;
         protected Matrix _viewProjection3D;
+        protected Matrix _worldViewMatrix;
 
         protected Matrix _projection2D;
 
         protected BoundingFrustum _frustum;
-        protected Matrix _view;
+        protected Matrix _view_focused;
 
         private ICameraPlugin _cameraPlugin;
 
@@ -58,9 +60,9 @@ namespace S33M3Engines.Cameras
 
         public CameraType CameraType { get; set; }
 
-        public Matrix View
+        public Matrix View_focused
         {
-            get { return _view; }
+            get { return _view_focused; }
         }
 
         public BoundingFrustum Frustum
@@ -93,6 +95,11 @@ namespace S33M3Engines.Cameras
         public Matrix Projection2D
         {
             get { return _projection2D; }
+        }
+
+        public Matrix ViewProjection3D_focused
+        {
+            get { return _viewProjection3D_focused; }
         }
 
         public Matrix ViewProjection3D

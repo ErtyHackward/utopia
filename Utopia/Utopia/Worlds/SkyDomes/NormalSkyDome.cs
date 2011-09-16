@@ -282,7 +282,7 @@ namespace Utopia.Worlds.SkyDomes
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullFront, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             _skyDomeEffect.Begin();
-            _skyDomeEffect.CBPerDraw.Values.ViewProj = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _skyDomeEffect.CBPerDraw.Values.ViewProj = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _skyDomeEffect.CBPerDraw.Values.CameraWorldPosition = _camManager.ActiveCamera.WorldPosition.AsVector3();
             _skyDomeEffect.CBPerDraw.Values.time = _clock.ClockTime.ClockTimeNormalized;
             _skyDomeEffect.CBPerDraw.Values.World = Matrix.Transpose(World);
@@ -333,7 +333,7 @@ namespace Utopia.Worlds.SkyDomes
 
             _posiTextureEffect.Begin();
             _posiTextureEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
-            _posiTextureEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
+            _posiTextureEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View_focused);
             _posiTextureEffect.CBPerFrame.IsDirty = true;
             _posiTextureEffect.CBPerDraw.Values.World = Matrix.Transpose(World);
             if (LightDirection.Y > 0)

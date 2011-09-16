@@ -99,8 +99,8 @@ namespace Utopia.Entities.Voxel
 
         public void AlterOverlay(int x,int y, int z, byte overlay)
         {
-            //_overlays[x, y, z] = overlay;
-            //Altered = true;
+            _overlays[x, y, z] = overlay;
+            Altered = true;
         }
     }
 }

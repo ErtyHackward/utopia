@@ -202,7 +202,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             _effect.Begin();
-            _effect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View);
+            _effect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View_focused);
             _effect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
             _effect.CBPerFrame.IsDirty = true;
 

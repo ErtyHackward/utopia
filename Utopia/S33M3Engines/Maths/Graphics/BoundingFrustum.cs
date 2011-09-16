@@ -31,6 +31,10 @@ namespace S33M3Engines.Maths.Graphics
             this.cornerArray = new Vector3[8];
         }
 
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="value">view × projection matrix.</param>
         public BoundingFrustum(Matrix value)
         {
             this.planes = new Plane[6];

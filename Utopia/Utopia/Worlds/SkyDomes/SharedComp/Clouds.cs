@@ -180,7 +180,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private void Draw2D()
         {
             _cloudEffect2D.Begin();
-            _cloudEffect2D.CBPerDraw.Values.WorldViewProj = Matrix.Transpose(_world * _camManager.ActiveCamera.ViewProjection3D);
+            _cloudEffect2D.CBPerDraw.Values.WorldViewProj = Matrix.Transpose(_world * _camManager.ActiveCamera.ViewProjection3D_focused);
             _cloudEffect2D.CBPerDraw.Values.UVOffset = _uvOffset;
             if (_nbrLayer == 1) _cloudEffect2D.CBPerDraw.Values.nbrLayers = 2; else _cloudEffect2D.CBPerDraw.Values.nbrLayers = _nbrLayer;
             _cloudEffect2D.CBPerDraw.IsDirty = true;

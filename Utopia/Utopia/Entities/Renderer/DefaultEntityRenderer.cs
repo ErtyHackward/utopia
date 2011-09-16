@@ -60,7 +60,7 @@ namespace Utopia.Entities.Renderer
 
             _entityEffect.Begin();
 
-            _entityEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _entityEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _entityEffect.CBPerFrame.IsDirty = true;
 
             for (int i = 0; i < VisualEntities.Count; i++)

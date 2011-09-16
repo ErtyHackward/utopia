@@ -15,10 +15,11 @@ namespace S33M3Engines.Cameras
 {
     public interface ICamera : IGameComponent, IUpdateableComponent, IDebugInfo
     {
-        Matrix View { get; }
+        Matrix View_focused { get; }
         Matrix Projection3D { get; }
         Matrix Projection2D { get; }
         Matrix ViewProjection3D { get; }
+        Matrix ViewProjection3D_focused { get; }
         DVector3 WorldPosition { get; set; }
         Quaternion Orientation { get; set; }
         Viewport Viewport { get; set; }
