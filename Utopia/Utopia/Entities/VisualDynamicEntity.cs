@@ -125,7 +125,6 @@ namespace Utopia.Entities
         #region Public Methods
         public void Update(ref GameTime timeSpent)
         {
-            if (DynamicEntity.ClassId != Shared.Chunks.Entities.EntityClassId.PlayerCharacter) return;
             RefreshEntityMovementAndRotation(); 
         }
 
