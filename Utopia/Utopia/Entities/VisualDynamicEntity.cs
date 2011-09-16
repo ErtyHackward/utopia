@@ -107,28 +107,33 @@ namespace Utopia.Entities
         private DVector3 currentLocation;
         private DVector3 deltaPosition;
 
+        double interpolationRate = 0.07;
         //Draw interpolation (Before each Drawing)
         public void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
             //lerping Received location value
             deltaPosition = stateLocation - currentLocation; //Delta between the old and the new position.
             double distance = deltaPosition.Length();
-            if (distance > 2.0)
+            if (distance > 1.0)
             {
+                //Interpolation too slow
+                interpolationRate += 0.001;
                 currentLocation = stateLocation;
             }
             else
             {
                 if (distance > 0.1)
                 {
-                    currentLocation += deltaPosition * 0.07;
+                    currentLocation += deltaPosition * interpolationRate;
                 }
                 else
                 {
-                    currentLocation = currentLocation;
+                    //Going here is "Bad" if the entity movement is continuous, it will make the entity make a small "Stop".
+                    //it means that my interpolation is too fast.
+                    //Only if the entity is moving !
+                    if (distance > 0) interpolationRate -= 0.001;
                 }
             }
-
 
             Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
             //DVector3.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
