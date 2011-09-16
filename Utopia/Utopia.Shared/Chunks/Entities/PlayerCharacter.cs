@@ -73,7 +73,7 @@ namespace Utopia.Shared.Chunks.Entities
             
         }
 
-        public override void Update(System.DateTime gameTime)
+        public override void Update(DynamicUpdateState gameTime)
         {
             // no need to do something here
         }

@@ -20,7 +20,6 @@ namespace Utopia.Server.Entities
         private readonly Server _server;
         private List<MapArea> _mapAreas = new List<MapArea>();
         private Vector2 _moveDirection;
-        private DateTime _lastupdate;
         
         public ServerZombie(Server server, string name)
         {
@@ -38,15 +37,12 @@ namespace Utopia.Server.Entities
             _mapAreas.Remove(area);
         }
 
-        public override void Update(DateTime gameTime)
+        public override void Update(DynamicUpdateState gameTime)
         {
-            var diff = (gameTime - _lastupdate);
-
-            if (diff.TotalSeconds < 2)
+            if (gameTime.ElapsedTime.TotalSeconds < 2)
                 return;
-            if (diff.TotalSeconds > 100)
+            if (gameTime.ElapsedTime.TotalSeconds > 100)
             {
-                _lastupdate = gameTime;
                 return;
             }
 
@@ -59,7 +55,7 @@ namespace Utopia.Server.Entities
                 _moveDirection.Normalize();
             }
 
-            var nextPosition = Position + new DVector3(_moveDirection.X, 0, _moveDirection.Y) * _server.Clock.GameToReal(gameTime - _lastupdate).TotalSeconds;
+            var nextPosition = Position + new DVector3(_moveDirection.X, 0, _moveDirection.Y) * _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds;
 
             // check if we can go to desired position
             var cursor = _server.LandscapeManager.GetCursor(nextPosition);
@@ -78,7 +74,6 @@ namespace Utopia.Server.Entities
                 _moveDirection = new Vector2();
             }
 
-            _lastupdate = gameTime;
         }
 
         public override EntityClassId ClassId

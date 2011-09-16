@@ -7,6 +7,7 @@ using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Management;
 using Utopia.Shared.ClassExt;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Tests.EntityManagement
 {
@@ -77,13 +78,13 @@ namespace Utopia.Tests.EntityManagement
         /// <summary>
         /// Perform dynamic update (AI logic)
         /// </summary>
-        public override void Update(DateTime gameTime)
+        public override void Update(DynamicUpdateState gameTime)
         {
             // we need to skip duplicate updates calls
-            if(_lastUpdate == gameTime)
+            if(_lastUpdate == gameTime.CurrentTime)
                 return;
 
-            _lastUpdate = gameTime;
+            _lastUpdate = gameTime.CurrentTime;
 
             var previousPosition = Position;
             Position = new DVector3(Position.X + MoveVector.X, Position.Y, Position.Z + MoveVector.Y);

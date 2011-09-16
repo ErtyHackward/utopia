@@ -1,4 +1,5 @@
 ﻿using System;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities.Concrete
 {
@@ -14,7 +15,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
             
         }
 
-        public override void Update(DateTime gameTime)
+        public override void Update(DynamicUpdateState gameTime)
         {
             
         }
