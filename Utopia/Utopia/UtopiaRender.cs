@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using SharpDX.Direct3D11;
 using S33M3Engines.Cameras;
 using Utopia.Editor;
+using Utopia.GUI;
 using Utopia.GUI.D3D;
 using UtopiaContent.ModelComp;
 using SharpDX;
@@ -256,6 +257,9 @@ namespace Utopia
             _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<PlayerEntityManager>());
             GameComponents.Add(_debugInfo);
 
+            // chat
+            GameComponents.Add(new ChatComponent(_d3dEngine, _actions, IoCContainer.Get<InputsManager>(), server));
+
             GameConsole.Initialize(_d3dEngine);
 
             //Add the server if multiplayer mode
@@ -440,6 +444,13 @@ namespace Utopia
                 Action = Actions.DebugUI_Insert,
                 TriggerType = KeyboardTriggerMode.KeyDownUp,
                 Binding = new KeyWithModifier() { MainKey = Keys.Insert }
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction
+            {
+                Action = Actions.Toggle_Chat,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Chat
             });
         }
 

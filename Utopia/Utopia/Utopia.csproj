@@ -120,6 +120,7 @@
     <Compile Include="Entities\Voxel\IVisualEntityContainer.cs" />
     <Compile Include="Entities\Voxel\VisualEntity.cs" />
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
+    <Compile Include="GUI\ChatComponent.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
     <Compile Include="GUI\D3D\Hud.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControl.cs" />

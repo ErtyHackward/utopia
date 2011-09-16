@@ -79,6 +79,10 @@ namespace Utopia.Settings
         public KeyWithModifier DebugInfo;
         public KeyWithModifier VSync;
         public KeyWithModifier Console;
+        /// <summary>
+        /// Open/close game chat
+        /// </summary>
+        public KeyWithModifier Chat;
 
         /// <summary>
         /// Stop/start World Clock
@@ -148,7 +152,8 @@ namespace Utopia.Settings
                         FullScreen = new KeyWithModifier { MainKey = Keys.F11, Modifier = Keys.None, Info = "Fullscreen switcher" },
                         DebugMode = new KeyWithModifier { MainKey = Keys.F2, Modifier = Keys.None, Info = "Enter graphical debug mode" },
                         DebugInfo = new KeyWithModifier { MainKey = Keys.F3, Modifier = Keys.None, Info = "Diplay technical informations" },
-                        FreezeTime = new KeyWithModifier { MainKey = Keys.F10, Modifier = Keys.None, Info = "Stop World Clock" }
+                        FreezeTime = new KeyWithModifier { MainKey = Keys.F10, Modifier = Keys.None, Info = "Stop World Clock" },
+                        Chat = new KeyWithModifier { MainKey = Keys.Enter, Modifier = Keys.None, Info = "Open/Close the chat" }
                     }
                 };
             }
