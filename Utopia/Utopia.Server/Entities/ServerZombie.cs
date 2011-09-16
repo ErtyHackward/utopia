@@ -20,6 +20,12 @@ namespace Utopia.Server.Entities
         private readonly Server _server;
         private List<MapArea> _mapAreas = new List<MapArea>();
         private Vector2 _moveDirection;
+
+        public Vector2 MoveVector
+        {
+            get { return _moveDirection; }
+            set { _moveDirection = value; }
+        }
         
         public ServerZombie(Server server, string name)
         {
