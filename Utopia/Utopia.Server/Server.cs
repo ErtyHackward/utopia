@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using S33M3Engines.Shared.Math;
@@ -148,7 +149,12 @@ namespace Utopia.Server
                                     };
 
                     _lastUpdate = Clock.Now;
+
+                    //var sw = Stopwatch.StartNew();
                     AreaManager.Update(state);
+                    //sw.Stop();
+                    //Console.WriteLine("cycle take {0}", sw.ElapsedTicks / ((double)Stopwatch.Frequency/1000));
+
                 }
                 finally
                 {
@@ -157,7 +163,7 @@ namespace Utopia.Server
             }
             else
             {
-                Console.Write("Warning! Server is overloaded. Try to decrease dynamic entities count");
+                Console.WriteLine("Warning! Server is overloaded. Try to decrease dynamic entities count");
             }
         }
 
