@@ -3,6 +3,7 @@ using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
 using S33M3Engines.InputHandler;
+using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.StatesManager;
 using S33M3Engines.Struct.Vertex;
@@ -39,11 +40,13 @@ namespace Utopia.Editor
 
         private const float Scale = 1f/16f;
 
-        private Location3<int>? _currentSelectionBlock;
-        private DVector3 _currentSelectionWorld;
+        private Location3<int>? _prevPickedBlock;
         public ShaderResourceView _texture; //it's a field for being able to dispose the resource
 
         private Tool _leftToolbeforeEnteringEditor;
+
+        private Location3<int>? _newCubePlace;
+        private Location3<int>? _pickedBlock;
 
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
@@ -59,8 +62,8 @@ namespace Utopia.Editor
             _hudComponent = hudComponent;
 
             // inactive by default, use F12 UI to enable :)
-            this.Visible = false;
-            this.Enabled = false;
+            Visible = false;
+            Enabled = false;
 
             DrawOrders.UpdateIndex(0, 5000);
         }
@@ -72,6 +75,8 @@ namespace Utopia.Editor
             entity.Blocks = new byte[16,16,16];
             entity.PlainCubeFill();
 
+            entity.Blocks[0, 0, 0] = 2;
+            entity.Blocks[1, 0, 0] = 3;
 
             int x = entity.Blocks.GetLength(0);
             int y = entity.Blocks.GetLength(1);
@@ -106,7 +111,7 @@ namespace Utopia.Editor
 
         public override void LoadContent()
         {
-            String[] dirs = new String[] {@"Textures/Terran/", @"Textures/Editor/"};
+            String[] dirs = new[] {@"Textures/Terran/", @"Textures/Editor/"};
 
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point, out _texture);
 
@@ -125,19 +130,27 @@ namespace Utopia.Editor
         {
             if (_editedEntity == null) return;
 
-            Location3<int>? selection = SetSelection();
-            if (_currentSelectionBlock != null &&
-                (selection.HasValue && _currentSelectionBlock.Value != selection.Value))
+            GetSelectedBlock();
+
+            if (_pickedBlock.HasValue && _pickedBlock != _prevPickedBlock)
             {
-                int x = _currentSelectionBlock.Value.X;
-                int y = _currentSelectionBlock.Value.Y;
-                int z = _currentSelectionBlock.Value.Z;
+                int x = _pickedBlock.Value.X;
+                int y = _pickedBlock.Value.Y;
+                int z = _pickedBlock.Value.Z;
+
                 _editedEntity.AlterOverlay(x, y, z, 22);
-                _currentSelectionBlock = selection;
-                _editedEntity.Altered = true;
+                
+                if (_prevPickedBlock.HasValue)
+                    _editedEntity.AlterOverlay(_prevPickedBlock.Value.X, _prevPickedBlock.Value.Y, _prevPickedBlock.Value.Z, 0);
+
+                _prevPickedBlock = _pickedBlock;
+                _editedEntity.Altered = true;             
             }
 
             //HandleInput();
+
+
+            _editedEntity.Update();
         }
 
         public override void Draw(int index)
@@ -145,7 +158,7 @@ namespace Utopia.Editor
             DrawItems();
         }
 
-        protected override void OnEnabledChanged(object sender, System.EventArgs args)
+        protected override void OnEnabledChanged(object sender, EventArgs args)
         {
             base.OnEnabledChanged(sender, args);
 
@@ -227,9 +240,9 @@ namespace Utopia.Editor
                 byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
 
-                int x = _currentSelectionBlock.Value.X;
-                int y = _currentSelectionBlock.Value.Y;
-                int z = _currentSelectionBlock.Value.Z;
+                int x = _prevPickedBlock.Value.X;
+                int y = _prevPickedBlock.Value.Y;
+                int z = _prevPickedBlock.Value.Z;
 
                 blocks[x, y, z] = _ui.SelectedIndex;
 
@@ -253,24 +266,54 @@ namespace Utopia.Editor
             }
         }
 
-        //not in use, need to debug the rendering first ! 
-        private Location3<int>? SetSelection()
+
+        private void GetSelectedBlock()
         {
             FirstPersonCamera cam = (FirstPersonCamera) _camManager.ActiveCamera;
             byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
+            DVector3 unproject = UnprojectMouse(cam);
+
+            // Console.WriteLine(unproject);
+            DVector3 lookAt = GetLookAt();
+
+            DVector3 pos = _editedEntity.Position - _player.Position;
+
+            for (float x = 0.5f; x < 8f; x += 0.1f)
+            {
+                DVector3 targetPoint = (pos + (lookAt*x)) /Scale;
+
+                int i =  (int)(targetPoint.X);
+                int j = (int)(targetPoint.Y);
+                int k = (int)(targetPoint.Z);
+
+                if (i >= 0 && j >= 0 && k >= 0 && i < blocks.GetLength(0) && j < blocks.GetLength(1) &&
+                    k < blocks.GetLength(2))
+                {
+                   _pickedBlock= new Location3<int>(i, j, k);
+                    break;
+                }
+            }
+          
+        }
+
+        private DVector3 UnprojectMouse(FirstPersonCamera cam)
+        {
             Vector3 mousePos = new Vector3(Mouse.GetState().X,
                                            Mouse.GetState().Y,
                                            cam.Viewport.MinDepth);
 
-            DVector3 unproject = new DVector3(Vector3.Unproject(mousePos, cam.Viewport.TopLeftX, cam.Viewport.TopLeftY,
-                                                                cam.Viewport.Width,
-                                                                cam.Viewport.Height, cam.Viewport.MinDepth,
-                                                                cam.Viewport.MaxDepth,
-                                                                Matrix.Translation(cam.WorldPosition.AsVector3())*
-                                                                cam.ViewProjection3D));
+            return new DVector3(Vector3.Unproject(mousePos, cam.Viewport.TopLeftX, cam.Viewport.TopLeftY,
+                                                  cam.Viewport.Width,
+                                                  cam.Viewport.Height, cam.Viewport.MinDepth,
+                                                  cam.Viewport.MaxDepth,
+                                                  Matrix.Translation(cam.WorldPosition.AsVector3())*
+                                                  cam.ViewProjection3D));
+        }
 
-            // Console.WriteLine(unproject);
+        private DVector3 GetLookAt()
+        {
+            FirstPersonCamera cam = (FirstPersonCamera) _camManager.ActiveCamera;
             Quaternion dir = cam.Orientation;
             Matrix rotation;
             Matrix.RotationQuaternion(ref dir, out rotation);
@@ -280,30 +323,60 @@ namespace Utopia.Editor
 
             DVector3 lookAt = new DVector3(-zAxis.X, -zAxis.Y, -zAxis.Z);
             lookAt.Normalize();
+            return lookAt;
+        }
 
-            DVector3 pos = cam.WorldPosition - _editedEntity.Position;
 
-            for (float x = 0.5f; x < 8f; x += 0.1f)
+        private void GetSelectedBlock2()
+        {
+
+            DVector3? worldPosition = _editedEntity.Position - _player.Position; 
+
+            Vector3 entityEyeOffset= new Vector3(0, _player.Size.Y / 100 * 80, 0);//unproject here
+
+            DVector3 lookAt = GetLookAt();
+
+            byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
+
+            DVector3 pickingPointInLine = worldPosition.Value + entityEyeOffset;
+            //Sample 500 points in the view direction vector
+            for (int ptNbr = 0; ptNbr < 500; ptNbr++)
             {
-                DVector3 targetPoint = (pos + (lookAt*x))/Scale;
-                //DVector3 targetPoint = (unproject + (lookAt * x)) / Scale;
+                pickingPointInLine += lookAt*0.02;
+                //pickingPointInLine = pickingPointInLine / Scale;
 
-                int i = (int) (targetPoint.X);
-                int j = (int) (targetPoint.Y);
-                int k = (int) (targetPoint.Z);
-                if (i >= 0 && j >= 0 && k >= 0 && i < blocks.GetLength(0) && j < blocks.GetLength(1) &&
-                    k < blocks.GetLength(2))
+                int x = MathHelper.Fastfloor(pickingPointInLine.X);
+                int y = MathHelper.Fastfloor(pickingPointInLine.Y);
+                int z = MathHelper.Fastfloor(pickingPointInLine.Z);
+
+                if (x >= 0 && y >= 0 && z >= 0
+                    && x < blocks.GetLength(0) && y < blocks.GetLength(1) && z < blocks.GetLength(2)
+                    && _editedEntity.VoxelEntity.Blocks[x, y, z] != 0
+                    )
                 {
-                    //if _model.blocks[i,j,k]
+                    _pickedBlock = new Location3<int>(x, y, z);
 
-                    return new Location3<int>(i, j, k);
+                    //Find the face picked up !
+                    float faceDistance;
+                    Ray newRay = new Ray((worldPosition.Value + entityEyeOffset).AsVector3(), lookAt.AsVector3());
+                    BoundingBox bBox = new BoundingBox(new Vector3(x, y, z), new Vector3(x + 1, y + 1, z + 1));
+                    newRay.Intersects(ref bBox, out faceDistance);
 
-                    //_currentSelectionWorld = targetPoint;
-                    // Debug.WriteLine("{0} -- {1}", _currentSelectionBlock, _currentSelectionWorld);
+                    DVector3 collisionPoint = worldPosition.Value + entityEyeOffset + (lookAt*faceDistance);
+                    MVector3.Round(ref collisionPoint, 4);
+
+                    Location3<int> newCubePlace = new Location3<int>(x, y, z);
+                    if (collisionPoint.X == x) newCubePlace.X--;
+                    else if (collisionPoint.X == x + 1) newCubePlace.X++;
+                    else if (collisionPoint.Y == y) newCubePlace.Y--;
+                    else if (collisionPoint.Y == y + 1) newCubePlace.Y++;
+                    else if (collisionPoint.Z == z) newCubePlace.Z--;
+                    else if (collisionPoint.Z == z + 1) newCubePlace.Z++;
+                    _newCubePlace = newCubePlace;
+
                     break;
                 }
             }
-            return null;
         }
 
         public override void Dispose()

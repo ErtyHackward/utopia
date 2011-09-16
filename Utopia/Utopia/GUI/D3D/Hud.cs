@@ -31,7 +31,7 @@ namespace Utopia.GUI.D3D
         {
             _screen = screen;
             _d3DEngine = d3DEngine;
-         
+            DrawOrders.UpdateIndex(0, 9000);
         }
 
         public override void LoadContent()
