@@ -20,10 +20,11 @@ using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 using UtopiaContent.Effects.Terran;
 using Screen = Nuclex.UserInterface.Screen;
+using S33M3Engines.D3D.DebugTools;
 
 namespace Utopia.Editor
 {
-    public class EntityEditor : DrawableGameComponent
+    public class EntityEditor : DrawableGameComponent, IDebugInfo
     {
         private readonly Screen _screen;
 
@@ -135,8 +136,8 @@ namespace Utopia.Editor
             Vector3 nearClipVector = new Vector3(mouseState.X, mouseState.Y, 0);
             Vector3 farClipVector = new Vector3(mouseState.X, mouseState.Y, 1);
 
-            Matrix cameraWVP = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.AsVector3()) *
-                               _camManager.ActiveCamera.View *
+            Matrix cameraWVP = Matrix.Translation(-_camManager.ActiveCamera.WorldPosition.AsVector3()) *
+                               Matrix.RotationQuaternion(_camManager.ActiveCamera.Orientation) *
                                _camManager.ActiveCamera.ViewProjection3D;
 
             Vector3 UnprojecNearClipVector;
@@ -162,7 +163,7 @@ namespace Utopia.Editor
                               out UnprojecFarClipVector);
 
             //To apply From Camera Position !
-            MouseWorldPosition = new DVector3(UnprojecNearClipVector * -1);
+            MouseWorldPosition = new DVector3(UnprojecNearClipVector);
             MouseLookAt = new DVector3(Vector3.Normalize(UnprojecFarClipVector - UnprojecNearClipVector));
         }
 
@@ -315,22 +316,25 @@ namespace Utopia.Editor
             UnprojectMouseCursor(out mouseWorldPosition, out mouseLookAt);
             //Create a ray from MouseWorldPosition to a specific size (That we will increment) and then check if we intersect an existing cube !
 
-            for (float x = 0.0f; x < 10f; x += 0.1f)
+            for (float x = 0.5f; x < 10f; x += 0.1f)
             {
                 DVector3 targetPoint = (mouseWorldPosition + (mouseLookAt * x));// / Scale;
-                if (x == 0) CastedFrom = targetPoint;
+                if (x == 0.5) CastedFrom = targetPoint;
                 CastedTo = targetPoint;
-                //Console.WriteLine(x + " : " + targetPoint);
 
                 if (targetPoint.X >= _editedEntity.Position.X && targetPoint.Y >= _editedEntity.Position.Y && targetPoint.Z >= _editedEntity.Position.Z &&
                     targetPoint.X < blocks.GetLength(0) + _editedEntity.Position.X && targetPoint.Y < blocks.GetLength(1) + _editedEntity.Position.Y && targetPoint.Z < blocks.GetLength(2) + _editedEntity.Position.Z)
                 {
-                   //_pickedBlock= new Location3<int>(i, j, k);
-                    break;
+                    _pickedBlock = new Location3<int>((int)(targetPoint.X - mouseWorldPosition.X),
+                                                       (int)(targetPoint.Y - mouseWorldPosition.Y),
+                                                       (int)(targetPoint.Z - mouseWorldPosition.Z));
+
+                    Console.WriteLine("Selected");
+                   break;
                 }
             }
 
-            Console.WriteLine("from : " + CastedFrom + " TO : " + CastedTo + " with Direction : " + mouseLookAt);
+            debugdata = "from : " + CastedFrom + " TO : " + CastedTo + " with Direction : " + mouseLookAt + " mouse pointer location : " + mouseWorldPosition;
           
         }
 
@@ -422,6 +426,12 @@ namespace Utopia.Editor
             _texture.Dispose();
 
             base.Dispose();
+        }
+
+        string debugdata;
+        public string GetInfo()
+        {
+            return debugdata;
         }
     }
 }

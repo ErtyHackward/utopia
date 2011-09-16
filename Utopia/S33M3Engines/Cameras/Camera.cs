@@ -38,7 +38,7 @@ namespace S33M3Engines.Cameras
         protected float _farPlane = 3000f;
 
         protected Matrix _projection3D;
-        protected Matrix _viewPorjection3D;
+        protected Matrix _viewProjection3D;
 
         protected Matrix _projection2D;
 
@@ -97,7 +97,7 @@ namespace S33M3Engines.Cameras
 
         public Matrix ViewProjection3D
         {
-            get { return _viewPorjection3D; }
+            get { return _viewProjection3D; }
         }
 
         public float NearPlane

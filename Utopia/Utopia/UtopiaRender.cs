@@ -251,10 +251,7 @@ namespace Utopia
             _fps = new FPS();
             GameComponents.Add(_fps);
          
-            _debugInfo = new DebugInfo(_d3dEngine);
-            _debugInfo.Activated = true;
-            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<PlayerEntityManager>());
-            GameComponents.Add(_debugInfo);
+
 
             // chat
             GameComponents.Add(new ChatComponent(_d3dEngine, _actions, IoCContainer.Get<InputsManager>(), server));
@@ -280,6 +277,12 @@ namespace Utopia
 
             //this one is disabled by default, can be enabled with F12 UI 
             GameComponents.Add(IoCContainer.Get<EntityEditor>());
+
+
+            _debugInfo = new DebugInfo(_d3dEngine);
+            _debugInfo.Activated = true;
+            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<PlayerEntityManager>(), IoCContainer.Get<EntityEditor>());
+            GameComponents.Add(_debugInfo);
 
             //Bind Actions to inputs events
             BindActions();
