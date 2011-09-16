@@ -215,6 +215,8 @@ namespace Utopia.Server
                 // tell everybody that this player is gone
                 AreaManager.RemoveEntity(e.Connection.Entity);
 
+                ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} has left the game.", e.Connection.Entity.DisplayName) });
+
                 e.Connection.Entity.CurrentArea = null;
             }
 
@@ -333,7 +335,7 @@ namespace Utopia.Server
             var serverChar = new ServerPlayerCharacterEntity(clientConnection);
             serverChar.EntityId = entityId;
             serverChar.Position = new DVector3(10, 128, 10);
-            serverChar.CharacterName = "Chuck norris";
+            serverChar.CharacterName = clientConnection.Login;
             return serverChar;
         }
 
@@ -436,6 +438,10 @@ namespace Utopia.Server
                 connection.Send(gameInfo);
                 connection.Send(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
                 connection.Send(new EntityInMessage { Entity = playerEntity });
+
+                ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", e.Message.Login) });
+                connection.Send(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login) });
+
                 // adding entity to world
                 AreaManager.AddEntity(connection.Entity);
             }
