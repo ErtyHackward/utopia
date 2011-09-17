@@ -3,6 +3,7 @@ using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
 using S33M3Engines.InputHandler;
+using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.StatesManager;
@@ -153,7 +154,7 @@ namespace Utopia.Editor
                 _editedEntity.Altered = true;             
             }
 
-            //HandleInput();
+            HandleInput();
 
             _editedEntity.Update();
         }
@@ -236,38 +237,20 @@ namespace Utopia.Editor
         {
         }
 
-//        private int _y = 0;
         private void HandleInput()
         {
             if (_actions.isTriggered(Actions.Use_Left))
             {
                 byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
-
-                int x = _prevPickedBlock.Value.X;
-                int y = _prevPickedBlock.Value.Y;
-                int z = _prevPickedBlock.Value.Z;
+                int x = _pickedBlock.Value.X;
+                int y = _pickedBlock.Value.Y;
+                int z = _pickedBlock.Value.Z;
 
                 blocks[x, y, z] = _ui.SelectedIndex;
 
-
-                /*               if (_y == blocks.GetLength(1)) _y = 0;
-
-                //just for demo prototype i color a y slice each mouseclick
-
-                for (int x = 0; x < blocks.GetLength(0); x++)
-                {
-                    for (int z = 0; z < blocks.GetLength(2); z++)
-                    {
-                        blocks[x, _y, z] = _ui.SelectedColor;
-                    }
-                }*/
-
                 _editedEntity.Altered = true;
-                _editedEntity.Update();
-
-                // _y++;
-            }
+               }
         }
 
         DVector3 CastedFrom, CastedTo;
@@ -275,17 +258,23 @@ namespace Utopia.Editor
         {
             byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
 
+            //XXX avoid unnecessay picking loops. but not just mousestate changes , you can still pick in freelook mode. 
+
             DVector3 mouseWorldPosition, mouseLookAt;
             _inputManager.UnprojectMouseCursor(out mouseWorldPosition, out mouseLookAt);
 
             //Create a ray from MouseWorldPosition to a specific size (That we will increment) and then check if we intersect an existing cube !
             int nbrpt = 0;
-            for (double x = 0.5; x < 40; x += 0.1)
+
+            double start = 0; //how far you need to be from the edited cube. 0 means you can pick right in your eye (ouch) 
+            double end = start + 40; //todo magic number 40 for editor picking, should be related to scale and block array size  
+
+            for (double x = start; x < end; x += 0.08) //for scale=1, was0.5 40 0.1  40 seems a high pick distance ! 
             {
                 nbrpt++;
                 DVector3 targetPoint = (mouseWorldPosition + (mouseLookAt*x));
               
-                if (x == 0.5) CastedFrom = targetPoint;
+                if (x == start) CastedFrom = targetPoint;
                 CastedTo = targetPoint;
 
                 double startX = _editedEntity.Position.X;
