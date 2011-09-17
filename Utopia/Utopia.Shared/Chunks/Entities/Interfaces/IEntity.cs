@@ -12,7 +12,7 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         EntityClassId ClassId { get; }
 
         /// <summary>
-        /// Entity maximum size
+        /// Entity size
         /// </summary>
         Vector3 Size { get; set; }
 
