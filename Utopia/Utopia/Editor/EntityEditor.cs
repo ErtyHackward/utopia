@@ -42,7 +42,7 @@ namespace Utopia.Editor
         private readonly PlayerCharacter _player;
 
 
-        private const float Scale = 1;//1f/16f;
+        private const double Scale = 1f/16f;
 
 
         private Location3<int>? _prevPickedBlock;
@@ -209,9 +209,9 @@ namespace Utopia.Editor
 
             _itemEffect.CBPerFrame.IsDirty = true;
 
-            //Matrix world = Matrix.Scaling(1f/16f)*
-            //               Matrix.Translation(_editedEntity.Position.AsVector3());
-            Matrix world = Matrix.Translation(_editedEntity.Position.AsVector3());
+            Matrix world = Matrix.Scaling((float)Scale)*
+                           Matrix.Translation(_editedEntity.Position.AsVector3());
+            //Matrix world = Matrix.Translation(_editedEntity.Position.AsVector3());
 
             world = _worldFocusManager.CenterOnFocus(ref world);
 
@@ -280,19 +280,28 @@ namespace Utopia.Editor
 
             //Create a ray from MouseWorldPosition to a specific size (That we will increment) and then check if we intersect an existing cube !
             int nbrpt = 0;
-            for (float x = 0.5f; x < 40f; x += 0.1f)
+            for (double x = 0.5; x < 40; x += 0.1)
             {
                 nbrpt++;
-                DVector3 targetPoint = (mouseWorldPosition + (mouseLookAt * x));// / Scale;
+                DVector3 targetPoint = (mouseWorldPosition + (mouseLookAt*x));
+              
                 if (x == 0.5) CastedFrom = targetPoint;
                 CastedTo = targetPoint;
 
-                if (targetPoint.X >= _editedEntity.Position.X && targetPoint.Y >= _editedEntity.Position.Y && targetPoint.Z >= _editedEntity.Position.Z &&
-                    targetPoint.X < blocks.GetLength(0) + _editedEntity.Position.X && targetPoint.Y < blocks.GetLength(1) + _editedEntity.Position.Y && targetPoint.Z < blocks.GetLength(2) + _editedEntity.Position.Z)
+                double startX = _editedEntity.Position.X;
+                double startY = _editedEntity.Position.Y;
+                double startZ = _editedEntity.Position.Z;
+
+                double endX = blocks.GetLength(0)*Scale + startX;
+                double endY = blocks.GetLength(1)*Scale + startY;
+                double endZ = blocks.GetLength(2)*Scale + startZ;
+
+                if (targetPoint.X >= startX && targetPoint.Y >= startY && targetPoint.Z >= startZ
+                    && targetPoint.X < endX && targetPoint.Y < endY && targetPoint.Z < endZ)
                 {
-                    _pickedBlock = new Location3<int>((int)(targetPoint.X - _editedEntity.Position.X),
-                                                       (int)(targetPoint.Y - _editedEntity.Position.Y),
-                                                       (int)(targetPoint.Z - _editedEntity.Position.Z));
+                    _pickedBlock = new Location3<int>((int)((targetPoint.X - startX) / Scale),
+                                                       (int)((targetPoint.Y  - startY)/ Scale),
+                                                       (int)((targetPoint.Z - startZ) / Scale));
                    break;
                 }
             }
