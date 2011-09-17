@@ -30,15 +30,40 @@ namespace Utopia.Server.Services
             {
                 var move = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
                 move.Normalize();
+                //// need to find a place to put entity to
+                //server.AreaManager.AddEntity(new ServerZombie(server, name)
+                //{
+                //    MoveVector = move,
+                //    EntityId = EntityFactory.Instance.GetUniqueEntityId(),
+                //    Position = new DVector3(40, 72, -60),
+                //    Blocks = new[, ,] { { { (byte)15 } } },
+                //    Size = new SharpDX.Vector3(0.5f, 1.9f, 0.5f)
+                //});
+
                 // need to find a place to put entity to
-                server.AreaManager.AddEntity(new ServerZombie(server, name)
+                var zomby = new ServerZombie(server, name)
                 {
                     MoveVector = move,
                     EntityId = EntityFactory.Instance.GetUniqueEntityId(),
                     Position = new DVector3(40, 72, -60),
-                    Blocks = new[, ,] { { { (byte)15 } } },
-                    Size = new SharpDX.Vector3(0.5f, 1.9f, 0.5f)
-                });
+                    Size = new SharpDX.Vector3(2f, 3f, 2f)
+                };
+
+                zomby.Blocks = new byte[2, 3, 2];// { { { (byte)15 } } },
+                zomby.Blocks[0, 0, 0] = (byte)15;
+                zomby.Blocks[1, 0, 0] = (byte)0;
+                zomby.Blocks[0, 0, 1] = (byte)15;
+                zomby.Blocks[1, 0, 1] = (byte)0;
+                zomby.Blocks[0, 1, 0] = (byte)15;
+                zomby.Blocks[1, 1, 0] = (byte)0;
+                zomby.Blocks[0, 1, 1] = (byte)15;
+                zomby.Blocks[1, 1, 1] = (byte)0;
+                zomby.Blocks[0, 2, 0] = (byte)14;
+                zomby.Blocks[1, 2, 0] = (byte)15;
+                zomby.Blocks[0, 2, 1] = (byte)14;
+                zomby.Blocks[1, 2, 1] = (byte)15;
+
+                server.AreaManager.AddEntity(zomby);
             }
         }
     }

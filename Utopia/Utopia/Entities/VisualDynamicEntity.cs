@@ -103,6 +103,7 @@ namespace Utopia.Entities
 
         private void Networkinterpolation()
         {
+            //Interpolate received world position.
             WorldPosition.BackUpValue();
 
             _netLocation.DeltaValue = _netLocation.Value - _netLocation.Interpolated;
@@ -131,15 +132,14 @@ namespace Utopia.Entities
         //Draw interpolation (Before each Drawing)
         public void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-
             Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
             DVector3.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
 
             //Refresh the VisualEntity World matrix based on the latest interpolated values
             Vector3 entityCenteredPosition = WorldPosition.ValueInterp.AsVector3(); //currentLocation.AsVector3();
-            entityCenteredPosition.X -= DynamicEntity.Size.X / 2;
-            entityCenteredPosition.Z -= DynamicEntity.Size.Z / 2;
-            VisualEntity.World = Matrix.Scaling(DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
+            //entityCenteredPosition.X -= DynamicEntity.Size.X / 2;
+            //entityCenteredPosition.Z -= DynamicEntity.Size.Z / 2;
+            VisualEntity.World = Matrix.RotationQuaternion(LookAtDirection.ValueInterp) * Matrix.Translation(entityCenteredPosition);  //Matrix.Scaling(DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
             //===================================================================================================================================
         }
         #endregion

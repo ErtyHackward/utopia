@@ -77,7 +77,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
 
             if (len > 0)
             {
-                Blocks = new byte[len, len, len];
+                Blocks = new byte[reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32()];
                 for (int x = 0; x < Blocks.GetLength(0); x++)
                 {
                     for (int y = 0; y < Blocks.GetLength(1); y++)
@@ -98,7 +98,10 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
 
             if (Blocks != null)
             {
+                writer.Write(Blocks.GetLength(0) * Blocks.GetLength(1) * Blocks.GetLength(2));
                 writer.Write(Blocks.GetLength(0));
+                writer.Write(Blocks.GetLength(1));
+                writer.Write(Blocks.GetLength(2));
                 for (int x = 0; x < Blocks.GetLength(0); x++)
                 {
                     for (int y = 0; y < Blocks.GetLength(1); y++)

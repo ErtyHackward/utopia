@@ -46,7 +46,7 @@ namespace Utopia.Entities.Voxel
             VoxelEntity = wrapped;
             _voxelMeshFactory = voxelMeshFactory;
             _overlays = overlays;
-            
+
             Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks, _overlays);
             VertexBuffer = _voxelMeshFactory.InitBuffer(Vertice);
             
