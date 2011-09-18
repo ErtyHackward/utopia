@@ -2,6 +2,7 @@
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -19,7 +20,7 @@ namespace Utopia.Shared.Chunks.Entities
             Size = new SharpDX.Vector3(0.5f, 1.9f, 0.5f); //Default player size
             //Default Player Voxel Body
             Blocks = new byte[1, 1, 1];
-            Blocks[0, 0, 0] = 15;
+            Blocks[0, 0, 0] = CubeId.PlayerHead;
         }
 
         public SlotContainer<ToolbarSlot> Toolbar { get; set; }

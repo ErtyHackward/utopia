@@ -93,7 +93,6 @@ namespace Utopia.Entities.Voxel
 
             ByteVector4 vertexInfo = new ByteVector4((byte) 0, (byte) faceDir, overlay, (byte) 0);
 
-
             switch (faceDir)
             {
                 case CubeFace.Right: //X+
