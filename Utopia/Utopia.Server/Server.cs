@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using S33M3Engines.Shared.Math;
 using Utopia.Net.Connections;
@@ -36,6 +37,10 @@ namespace Utopia.Server
         private Timer _cleanUpTimer;
         private Timer _saveTimer;
         private Timer _entityUpdateTimer;
+
+        private Queue<double> _updateCyclesPerfomance = new Queue<double>();
+        private Stopwatch _updateStopwatch = new Stopwatch();
+
         // ReSharper restore NotAccessedField.Local        
         private readonly object _areaManagerSyncRoot = new object();
 
@@ -88,6 +93,22 @@ namespace Utopia.Server
 
 
         public Clock Clock { get; private set; }
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when users sends a command
+        /// </summary>
+        public event EventHandler<PlayerCommandEventArgs> PlayerCommand;
+
+        private void OnPlayerCommand(PlayerCommandEventArgs e)
+        {
+            var handler = PlayerCommand;
+            if (handler != null) handler(this, e);
+        }
+
+        #endregion
+
 
         /// <summary>
         /// Create new instance of the Server class
@@ -150,9 +171,15 @@ namespace Utopia.Server
 
                     _lastUpdate = Clock.Now;
 
-                    //var sw = Stopwatch.StartNew();
+                    _updateStopwatch.Restart();
                     AreaManager.Update(state);
-                    //sw.Stop();
+                    _updateStopwatch.Stop();
+
+                    _updateCyclesPerfomance.Enqueue(_updateStopwatch.ElapsedTicks / ((double)Stopwatch.Frequency / 1000));
+                    if (_updateCyclesPerfomance.Count > 10)
+                        _updateCyclesPerfomance.Dequeue();
+
+
                     //Console.WriteLine("cycle take {0}", sw.ElapsedTicks / ((double)Stopwatch.Frequency/1000));
 
                 }
@@ -215,7 +242,7 @@ namespace Utopia.Server
                 // tell everybody that this player is gone
                 AreaManager.RemoveEntity(e.Connection.Entity);
 
-                ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} has left the game.", e.Connection.Entity.DisplayName) });
+                ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} has left the game.", e.Connection.Entity.DisplayName), Operator = true });
 
                 e.Connection.Entity.CurrentArea = null;
             }
@@ -224,9 +251,39 @@ namespace Utopia.Server
 
         void ConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
         {
-            var connection = sender as ClientConnection;
-            if (connection != null && e.Message.Login == connection.Login)
+            var connection = (ClientConnection)sender;
+            if (e.Message.Login == connection.Login)
+            {
+                var msg = e.Message.Message;
+
+                if (string.IsNullOrWhiteSpace(msg))
+                    return;
+
+                if (msg[0] == '/')
+                {
+                    if (msg.StartsWith("/services"))
+                    {
+                        SendChatMessage("Currenty active services: " + string.Join(", ", (from s in Services select s.ServiceName)));
+                        return;
+                    }
+
+                    if (msg == "/uperf")
+                    {
+                        SendChatMessage(string.Format("Average cycle perfomance: {0} msec", Math.Round(_updateCyclesPerfomance.Average(), 2)));
+                        return;
+                    }
+
+                    OnPlayerCommand(new PlayerCommandEventArgs { Connection = connection, Command = msg.Remove(0, 1) });
+                    return;
+                }
+
                 ConnectionManager.Broadcast(e.Message);
+            }
+        }
+
+        public void SendChatMessage(string message)
+        {
+            ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message= message });
         }
 
         void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
@@ -439,8 +496,8 @@ namespace Utopia.Server
                 connection.Send(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
                 connection.Send(new EntityInMessage { Entity = playerEntity });
 
-                ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", e.Message.Login) });
-                connection.Send(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login) });
+                ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", e.Message.Login), Operator = true });
+                connection.Send(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });
 
                 // adding entity to world
                 AreaManager.AddEntity(connection.Entity);

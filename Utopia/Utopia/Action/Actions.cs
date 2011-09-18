@@ -27,6 +27,7 @@ namespace Utopia.Action
         Block_SelectPrevious,
         World_FreezeTime,
         DebugUI_Insert,
-        Toggle_Chat
+        Toggle_Chat,
+        EntityUse
     }
 }

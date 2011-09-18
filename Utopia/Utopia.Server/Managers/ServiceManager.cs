@@ -7,7 +7,7 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Performs server services management
     /// </summary>
-    public class ServiceManager
+    public class ServiceManager : IEnumerable<Service>
     {
         private readonly Server _parentServer;
         private readonly List<Service> _services = new List<Service>();
@@ -30,5 +30,15 @@ namespace Utopia.Server.Managers
             s.Dispose();
         }
 
+
+        public IEnumerator<Service> GetEnumerator()
+        {
+            return _services.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return _services.GetEnumerator();
+        }
     }
 }

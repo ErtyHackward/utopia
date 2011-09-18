@@ -67,7 +67,11 @@ namespace Utopia.GUI
 
         void ServerConnection_MessageChat(object sender, Net.Connections.ProtocolMessageEventArgs<ChatMessage> e)
         {
-            AddMessage(string.Format("<{0}> {1}", e.Message.Login, e.Message.Message));
+            if (e.Message.Action)
+            {
+                AddMessage(string.Format("* {0} {1}", e.Message.Login, e.Message.Message));
+            }
+            else AddMessage(string.Format("<{0}> {1}", e.Message.Login, e.Message.Message));
         }
 
         public void AddMessage(string message)
@@ -89,7 +93,14 @@ namespace Utopia.GUI
                     _imanager.KeyBoardListening = false;
                     if (!string.IsNullOrWhiteSpace(Input))
                     {
-                        _server.ServerConnection.SendAsync(new ChatMessage { Login = _server.Player.DisplayName, Message = Input });
+                        var msg = new ChatMessage { Login = _server.Player.DisplayName, Message = Input };
+                        if (Input.StartsWith("/me ", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            msg.Action = true;
+                            msg.Message = Input.Remove(0, 4);
+                        }
+
+                        _server.ServerConnection.SendAsync(msg);
                     }
 
                     Input = string.Empty;
@@ -116,7 +127,7 @@ namespace Utopia.GUI
         public override void LoadContent()
         {
             _font = new SpriteFont();
-            _font.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
+            _font.Initialize("Lucida Console", 13f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
             _spriteRender = new SpriteRenderer();
             _spriteRender.Initialize(_d3dEngine);
         }

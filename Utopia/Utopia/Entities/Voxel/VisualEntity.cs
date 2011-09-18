@@ -21,7 +21,7 @@ namespace Utopia.Entities.Voxel
         public readonly IVoxelEntity VoxelEntity;
         public VertexBuffer<VertexCubeSolid> VertexBuffer;
         public List<VertexCubeSolid> Vertice;
-       
+
         /// <summary>
         /// Altered by server or user and needs vertice update (you need to call Update yourself)
         /// </summary>
@@ -35,6 +35,8 @@ namespace Utopia.Entities.Voxel
         /// </summary>
         private readonly byte[,,] _overlays;
 
+
+
         /// <summary>
         /// creates a VisualEntity ready to render with filled vertice List and vertexBuffer
         /// </summary>
@@ -44,6 +46,7 @@ namespace Utopia.Entities.Voxel
         public VisualEntity(VoxelMeshFactory voxelMeshFactory, IVoxelEntity wrapped,byte[, ,] overlays=null)
         {
             VoxelEntity = wrapped;
+
             _voxelMeshFactory = voxelMeshFactory;
             _overlays = overlays;
 
@@ -57,7 +60,9 @@ namespace Utopia.Entities.Voxel
         public DVector3 Position
         {
             get { return VoxelEntity.Position; }
-            set { VoxelEntity.Position = value; }
+            set { 
+                VoxelEntity.Position = value;
+            }
         }
 
         /// <summary>

@@ -18,6 +18,8 @@ namespace Utopia.Net.Messages
         /// Actual message text
         /// </summary>
         private string _message;
+        private bool _action;
+        private bool _operator;
 
         /// <summary>
         /// Gets current message Id
@@ -35,6 +37,24 @@ namespace Utopia.Net.Messages
             get { return _login; }
             set { _login = value; }
         }
+        
+        /// <summary>
+        /// Indicates if message should be displayed in format: * nick message
+        /// </summary>
+        public bool Action
+        {
+            get { return _action; }
+            set { _action = value; }
+        }
+
+        /// <summary>
+        /// Indicates if user is operator
+        /// </summary>
+        public bool Operator
+        {
+            get { return _operator; }
+            set { _operator = value; }
+        }
 
         /// <summary>
         /// Gets or sets actual message text
@@ -49,6 +69,8 @@ namespace Utopia.Net.Messages
         {
             ChatMessage msg;
 
+            msg._action = reader.ReadBoolean();
+            msg._operator = reader.ReadBoolean();
             msg._login = reader.ReadString();
             msg._message = reader.ReadString();
 
@@ -57,6 +79,8 @@ namespace Utopia.Net.Messages
 
         public static void Write(BinaryWriter writer, ChatMessage msg)
         {
+            writer.Write(msg._action);
+            writer.Write(msg._operator);
             writer.Write(msg._login);
             writer.Write(msg._message);
         }
