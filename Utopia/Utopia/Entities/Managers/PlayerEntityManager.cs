@@ -517,12 +517,12 @@ namespace Utopia.Entities.Managers
             switch (mode)
             {
                 case EntityDisplacementModes.Flying:
-                    RotateLookAt(headingDegrees, pitchDegrees);
-                    RotateMove(headingDegrees);
+                    RotateLookAt(-headingDegrees, -pitchDegrees);
+                    RotateMove(-headingDegrees);
                     break;
                 case EntityDisplacementModes.Walking:
-                    RotateLookAt(headingDegrees, pitchDegrees);
-                    RotateMove(headingDegrees);
+                    RotateLookAt(-headingDegrees, -pitchDegrees);
+                    RotateMove(-headingDegrees);
                     break;
                 default:
                     break;
@@ -538,7 +538,7 @@ namespace Utopia.Entities.Managers
             if (heading != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Up, (float)heading, out rotation);
-                _moveDirection.Value = rotation * _moveDirection.Value;
+                _moveDirection.Value = _moveDirection.Value * rotation;
             }
 
             _moveDirection.Value.Normalize();
@@ -548,6 +548,7 @@ namespace Utopia.Entities.Managers
         private void UpdateEntityData()
         {
             Matrix.RotationQuaternion(ref _moveDirection.Value, out _entityRotation);
+            Matrix.Invert(ref _entityRotation, out _entityRotation);
 
             _entityXAxis = new DVector3(_entityRotation.M11, _entityRotation.M21, _entityRotation.M31);
             _entityYAxis = new DVector3(_entityRotation.M12, _entityRotation.M22, _entityRotation.M32);
@@ -578,14 +579,14 @@ namespace Utopia.Entities.Managers
             if (heading != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Up, (float)heading, out rotation);
-                _lookAtDirection.Value = rotation * _lookAtDirection.Value;
+                _lookAtDirection.Value = _lookAtDirection.Value * rotation;
             }
 
             // Rotate the camera about its local X axis.
             if (pitch != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Right, (float)pitch, out rotation);
-                _lookAtDirection.Value = _lookAtDirection.Value * rotation;
+                _lookAtDirection.Value = rotation * _lookAtDirection.Value;
             }
 
             _lookAtDirection.Value.Normalize();
@@ -595,6 +596,7 @@ namespace Utopia.Entities.Managers
         private void UpdateHeadData()
         {
             Matrix.RotationQuaternion(ref _lookAtDirection.Value, out _headRotation);
+            Matrix.Invert(ref _headRotation, out _headRotation);
 
             _entityHeadXAxis = new DVector3(_headRotation.M11, _headRotation.M21, _headRotation.M31);
             _entityHeadYAxis = new DVector3(_headRotation.M12, _headRotation.M22, _headRotation.M32);
@@ -604,9 +606,7 @@ namespace Utopia.Entities.Managers
             _lookAt.Normalize();
         }
         #endregion
-
         #endregion
-
         #endregion
 
         #region Public Methods
@@ -637,6 +637,7 @@ namespace Utopia.Entities.Managers
             //Set LookAt
             //Take back only the saved server Yaw rotation (Or Heading) and only using it;
             _lookAtDirection.Value = Player.Rotation;
+
             double playerSavedYaw = MQuaternion.getYaw(ref _lookAtDirection.Value);
             Quaternion.RotationAxis(ref MVector3.Up, (float)playerSavedYaw, out _lookAtDirection.Value);
             _lookAtDirection.ValuePrev = _lookAtDirection.Value;
@@ -685,7 +686,8 @@ namespace Utopia.Entities.Managers
             Vector3 entityCenteredPosition = _worldPosition.ValueInterp.AsVector3();
             //entityCenteredPosition.X -= Player.Size.X / 2;
             //entityCenteredPosition.Z -= Player.Size.Z / 2;
-            VisualEntity.World = Matrix.Scaling(Player.Size) * Matrix.Translation(entityCenteredPosition);
+            VisualEntity.World = Matrix.Scaling(Player.Size) * Matrix.RotationQuaternion(_lookAtDirection.ValueInterp) * Matrix.Translation(entityCenteredPosition);
+            //VisualEntity.World = Matrix.Scaling(Player.Size) * Matrix.Translation(entityCenteredPosition);
             //===================================================================================================================================
         }
 

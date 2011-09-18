@@ -475,4 +475,21 @@
     <CubeFamilly>Liquid</CubeFamilly>
     <LiquidType>Ocean</LiquidType>
   </Cube>
+  <Cube>
+    <Name>Player</Name>
+    <Id>27</Id>
+    <Tex_Top>20</Tex_Top>
+    <Tex_Bottom>20</Tex_Bottom>
+    <Tex_Front>22</Tex_Front>
+    <Tex_Back>20</Tex_Back>
+    <Tex_Left>20</Tex_Left>
+    <Tex_Right>20</Tex_Right>
+    <IsBlockingLight>true</IsBlockingLight>
+    <IsPickable>true</IsPickable>
+    <IsSolidToEntity>true</IsSolidToEntity>
+    <IsBlockingWater>true</IsBlockingWater>
+    <IsFlooding>false</IsFlooding>
+    <IsFloodPropagation>false</IsFloodPropagation>
+    <CubeFamilly>Solid</CubeFamilly>
+  </Cube>
 </Config>

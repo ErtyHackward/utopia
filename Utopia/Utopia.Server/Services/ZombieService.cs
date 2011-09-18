@@ -61,7 +61,7 @@ namespace Utopia.Server.Services
 
             _server.PlayerCommand += ServerPlayerCommand;
             var r = new Random();
-            for (int i = 0; i < 3000; i++)
+            for (int i = 0; i < 3; i++)
             {
                 var z = CreateZombie(r.Next(_names), new DVector3(r.Next(-500, 500), 125, r.Next(-500, 500))); //new DVector3(40, 72, -60));
                 z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
