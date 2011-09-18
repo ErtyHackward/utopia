@@ -82,27 +82,52 @@ namespace Utopia.Entities.Managers
 
         public void AddEntity(IDynamicEntity entity)
         {
-            VisualDynamicEntity newEntity = CreateVisualEntity(entity);
-            _dynamicEntitiesDico.Add(entity.EntityId, newEntity);
-            _dynamicEntities.Add(newEntity);
+            if (!_dynamicEntitiesDico.ContainsKey(entity.EntityId))
+            {
+                VisualDynamicEntity newEntity = CreateVisualEntity(entity);
+                _dynamicEntitiesDico.Add(entity.EntityId, newEntity);
+                _dynamicEntities.Add(newEntity);
+            }
         }
 
         public void RemoveEntity(IDynamicEntity entity)
         {
-            _dynamicEntities.Remove(_dynamicEntitiesDico[entity.EntityId]);
-            _dynamicEntitiesDico.Remove(entity.EntityId);
+            if (_dynamicEntitiesDico.ContainsKey(entity.EntityId))
+            {
+                _dynamicEntities.Remove(_dynamicEntitiesDico[entity.EntityId]);
+                _dynamicEntitiesDico.Remove(entity.EntityId);
+            }
         }
 
         public void RemoveEntityById(uint entityId)
         {
-            _dynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
-            _dynamicEntitiesDico.Remove(entityId);
+            if (_dynamicEntitiesDico.ContainsKey(entityId))
+            {
+                _dynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
+                _dynamicEntitiesDico.Remove(entityId);
+            }
         }
 
         public IDynamicEntity GetEntityById(uint p)
         {
-            return _dynamicEntitiesDico[p].DynamicEntity;
+            VisualDynamicEntity e;
+            if (_dynamicEntitiesDico.TryGetValue(p,out e))
+            {
+                return e.DynamicEntity;
+            }
+            return null;
         }
         #endregion
+
+        public IEnumerator<VisualEntity> EnumerateVisualEntities()
+        {
+            foreach (var visualEntityContainer in _dynamicEntities)
+            {
+                yield return visualEntityContainer.VisualEntity;    
+            }
+            
+        }
+
+
     }
 }

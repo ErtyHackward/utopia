@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -20,6 +21,8 @@ namespace Utopia.Net.Connections
         private byte[] _tail;
         protected NetworkStream Stream;
         protected BinaryWriter Writer;
+
+        private readonly ConcurrentQueue<IBinaryMessage> _delayedMessages = new ConcurrentQueue<IBinaryMessage>();
 
         #endregion
 
@@ -54,6 +57,7 @@ namespace Utopia.Net.Connections
         /// Gets or sets player dynamic entity
         /// </summary>
         public IDynamicEntity Entity { get; set; }
+        
 
         #endregion
 
@@ -164,36 +168,47 @@ namespace Utopia.Net.Connections
             Writer = new BinaryWriter(new BufferedStream(Stream, 1024 * 18));
         }
 
-
-        private delegate void SendDelegate(IBinaryMessage msg);
-
-        // todo: check method perfomance
-        public void LockFreeSend(IBinaryMessage msg)
+        public void SendAsync(IBinaryMessage msg)
         {
-            if (Monitor.TryEnter(_synObject))
+            _delayedMessages.Enqueue(msg);
+            if (!_sendThreadActive)
             {
-                try
-                {
-                    Send(msg);
-                }
-                finally
-                {
-                    Monitor.Exit(_synObject);
-                }
-            }
-            else
-            {
-                new SendDelegate(Send).BeginInvoke(msg, null, null);
+                _sendThreadActive = true;
+                new ThreadStart(SendDelayed).BeginInvoke(null, null);
             }
         }
 
-        
-        
+        private volatile bool _sendThreadActive;
+
+        private void SendDelayed()
+        {
+            _sendThreadActive = true;
+            lock (_synObject)
+            {
+                IBinaryMessage msg;
+                while (_delayedMessages.TryDequeue(out msg))
+                {
+                    if (!Send(msg)) return;
+                }
+
+                _sendThreadActive = false;
+
+                // we need to try get messages again because we may lose next thread start when setting _sendThreadActive = false
+
+                while (_delayedMessages.TryDequeue(out msg))
+                {
+                    if (!Send(msg)) return;
+                }
+
+            }
+        }
+
+
         /// <summary>
         /// Sends a message to client
         /// </summary>
         /// <param name="msg"></param>
-        public void Send(IBinaryMessage msg)
+        public bool Send(IBinaryMessage msg)
         {
             lock (_synObject)
             {
@@ -202,10 +217,11 @@ namespace Utopia.Net.Connections
                     Writer.Write(msg.MessageId);
                     msg.Write(Writer);
                     Writer.Flush();
+                    return true;
                 }
                 catch (IOException)
                 {
-
+                    return false;
                 }
             }
         }
@@ -214,16 +230,24 @@ namespace Utopia.Net.Connections
         /// Sends a group of messages to client
         /// </summary>
         /// <param name="messages"></param>
-        public void Send(params IBinaryMessage[] messages)
+        public bool Send(params IBinaryMessage[] messages)
         {
             lock (_synObject)
             {
-                foreach (var msg in messages)
+                try
                 {
-                    Writer.Write(msg.MessageId);
-                    msg.Write(Writer);
+                    foreach (var msg in messages)
+                    {
+                        Writer.Write(msg.MessageId);
+                        msg.Write(Writer);
+                    }
+                    Writer.Flush();
+                    return true;
                 }
-                Writer.Flush();
+                catch (IOException)
+                {
+                    return false;
+                }
             }
         }
 

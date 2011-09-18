@@ -17,7 +17,7 @@ namespace Utopia.Shared.Chunks.Entities.Management
         /// <summary>
         /// Size of each Area
         /// </summary>
-        public static Location2<int> AreaSize = new Location2<int>(16 * 20, 16 * 20);
+        public static Location2<int> AreaSize = new Location2<int>(16 * 8, 16 * 8);
 
         private readonly object _syncRoot = new object();
         private readonly ConcurrentDictionary<IDynamicEntity, IDynamicEntity> _entities = new ConcurrentDictionary<IDynamicEntity, IDynamicEntity>();

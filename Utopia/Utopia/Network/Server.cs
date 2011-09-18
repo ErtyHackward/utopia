@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3Engines.D3D.DebugTools;
 using Utopia.Net.Connections;
+using Utopia.Shared;
 using Utopia.Shared.ClassExt;
 using S33M3Engines.D3D;
 using Utopia.Shared.Structs;
@@ -12,7 +14,7 @@ using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia.Network
 {
-    public class Server : GameComponent
+    public class Server : GameComponent, IDebugInfo
     {
         #region Private variables
         private SingleArrayChunkContainer _chunkContainer;
@@ -191,5 +193,10 @@ namespace Utopia.Network
             //}
         }
         #endregion
+
+        public string GetInfo()
+        {
+            return string.Format("Received: {1} Receive speed: {0}", BytesHelper.FormatBytes(ServerConnection.AverageReceiveSpeed), BytesHelper.FormatBytes(ServerConnection.TotalBytesReceived));
+        }
     }
 }

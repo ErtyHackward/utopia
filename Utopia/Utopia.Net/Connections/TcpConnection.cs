@@ -181,6 +181,48 @@ namespace Utopia.Net.Connections
             }
         }
 
+        #region speed calculation
+        protected long lastReceivedBytes = 0;
+        protected long lastCalcReceivedSpeed = DateTime.Now.Ticks;
+        protected long lastCalcSendSpeed = DateTime.Now.Ticks;
+        protected long lastAverageReceived = 0;
+        protected long lastAverageCalc = DateTime.Now.Ticks;
+        protected long lastAverageReceived1min = 0;
+        protected long lastAverageCalc1min = DateTime.Now.Ticks;
+
+        protected void UpdateAverage()
+        {
+            if (DateTime.Now.AddSeconds(-10).Ticks > lastAverageCalc1min)
+            {
+                lastAverageReceived = lastAverageReceived1min;
+                lastAverageReceived1min = TotalBytesReceived;
+                lastAverageCalc = lastAverageCalc1min;
+                lastAverageCalc1min = DateTime.Now.Ticks;
+            }
+        }
+
+        public double AverageReceiveSpeed
+        {
+            get
+            {
+                UpdateAverage();
+                long tmpBytes = TotalBytesReceived - lastAverageReceived;
+
+                long now = DateTime.Now.Ticks;
+                // Get how long time has passed since last time
+                var tmpTime = new TimeSpan(now - lastAverageCalc);
+                if (tmpBytes <= 0)
+                    return 0;   // No new data
+                double value = tmpBytes / tmpTime.TotalSeconds;
+                if (double.IsInfinity(value))
+                {
+                    return -1;
+                }
+                return value;
+            }
+        }
+        #endregion
+
         #endregion
         #region Constructor(s)/Deconstructor/Dispose
         /// <summary>

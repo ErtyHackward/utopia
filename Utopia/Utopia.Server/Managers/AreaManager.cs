@@ -215,6 +215,11 @@ namespace Utopia.Server.Managers
 
         public void Update(DynamicUpdateState gameTime)
         {
+            //foreach (var mapArea in _areas)
+            //{
+            //    UpdateArea(mapArea.Value, gameTime);
+            //}
+
             Parallel.ForEach(_areas, a => UpdateArea(a.Value, gameTime));
         }
 

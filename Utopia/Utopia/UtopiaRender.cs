@@ -281,7 +281,7 @@ namespace Utopia
 
             _debugInfo = new DebugInfo(_d3dEngine);
             _debugInfo.Activated = true;
-            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<PlayerEntityManager>());
+            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<PlayerEntityManager>(), server);
             GameComponents.Add(_debugInfo);
 
             //Bind Actions to inputs events
@@ -453,6 +453,13 @@ namespace Utopia
                 Action = Actions.Toggle_Chat,
                 TriggerType = KeyboardTriggerMode.KeyDownUp,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Chat
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction
+            {
+                Action = Actions.EntityUse,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Use
             });
         }
 

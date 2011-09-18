@@ -65,6 +65,7 @@
     <Compile Include="Managers\ScheduleManager.cs" />
     <Compile Include="Managers\ScheduleTask.cs" />
     <Compile Include="Managers\ServiceManager.cs" />
+    <Compile Include="PlayerCommandEventArgs.cs" />
     <Compile Include="ServerSettings.cs" />
     <Compile Include="Services\Clock.cs" />
     <Compile Include="Services\Service.cs" />

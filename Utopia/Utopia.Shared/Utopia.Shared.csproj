@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BytesHelper.cs" />
     <Compile Include="Chunks\AbstractChunk.cs" />
     <Compile Include="Chunks\ChunkDataProvider.cs" />
     <Compile Include="Chunks\ChunkDataProviderBufferChangedEventArgs.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="Chunks\InsideDataProvider.cs" />
     <Compile Include="Chunks\SingleArrayChunkContainer.cs" />
     <Compile Include="Chunks\SingleArrayDataProvider.cs" />
+    <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
     <Compile Include="Config\KeyWithModifier.cs" />

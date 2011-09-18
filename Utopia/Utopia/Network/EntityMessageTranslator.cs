@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Utopia.Net.Connections;
 using Utopia.Net.Messages;
 using Utopia.Shared.Chunks.Entities.Events;
@@ -71,12 +72,24 @@ namespace Utopia.Network
 
         void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
         {
-            _dynamicEntityManager.GetEntityById(e.Message.EntityId).Rotation = e.Message.Direction;
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
+            if (entity != null)
+                entity.Rotation = e.Message.Direction;
+            else
+            {
+                Debug.WriteLine("Unable to update direction of an entity");
+            }
         }
 
         void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
         {
-            _dynamicEntityManager.GetEntityById(e.Message.EntityId).Position = e.Message.Position;
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
+            if (entity != null)
+                entity.Position = e.Message.Position;
+            else
+            {
+                Debug.WriteLine("Unable to update position of an entity");
+            }
         }
 
         void ConnectionMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)

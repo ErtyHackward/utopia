@@ -88,6 +88,11 @@ namespace Utopia.Settings
         /// Stop/start World Clock
         /// </summary>
         public KeyWithModifier FreezeTime;
+
+        /// <summary>
+        /// use picked entity
+        /// </summary>
+        public KeyWithModifier Use;
     }
 
     /// <summary>
@@ -153,7 +158,8 @@ namespace Utopia.Settings
                         DebugMode = new KeyWithModifier { MainKey = Keys.F2, Modifier = Keys.None, Info = "Enter graphical debug mode" },
                         DebugInfo = new KeyWithModifier { MainKey = Keys.F3, Modifier = Keys.None, Info = "Diplay technical informations" },
                         FreezeTime = new KeyWithModifier { MainKey = Keys.F10, Modifier = Keys.None, Info = "Stop World Clock" },
-                        Chat = new KeyWithModifier { MainKey = Keys.Enter, Modifier = Keys.None, Info = "Open/Close the chat" }
+                        Chat = new KeyWithModifier { MainKey = Keys.Enter, Modifier = Keys.None, Info = "Open/Close the chat" },
+                        Use = new KeyWithModifier { MainKey = Keys.E, Modifier = Keys.None, Info = "Use" },
                     }
                 };
             }
