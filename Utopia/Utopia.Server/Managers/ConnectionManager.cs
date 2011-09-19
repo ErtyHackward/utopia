@@ -62,7 +62,7 @@ namespace Utopia.Server.Managers
                 foreach (var connection in _connections.Values)
                 {
                     if(connection.Authorized)
-                        connection.Send(message);
+                        connection.SendAsync(message);
                 }
             }
         }
