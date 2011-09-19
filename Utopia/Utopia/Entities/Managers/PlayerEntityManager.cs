@@ -174,7 +174,7 @@ namespace Utopia.Entities.Managers
                     DisplacementMode = EntityDisplacementModes.Flying;
                 }
             }
-
+            //TODO _d3DEngine.UnlockedMouse for disabling actions in playerentitymanager is a quick hack, needs a proper action recipient system
             if (! _d3DEngine.UnlockedMouse && _actions.isTriggered(Actions.Use_Left))
             {
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
@@ -185,7 +185,7 @@ namespace Utopia.Entities.Managers
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
             }
 
-            if (_actions.isTriggered(Actions.Use_Right))
+            if (!_d3DEngine.UnlockedMouse && _actions.isTriggered(Actions.Use_Right))
             {
                 
                 //Avoid the player to add a block where he is located !

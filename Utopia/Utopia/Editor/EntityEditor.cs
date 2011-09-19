@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
@@ -51,13 +52,33 @@ namespace Utopia.Editor
 
         private Tool _leftToolbeforeEnteringEditor;
 
-        private Location3<int>? _newCubePlace;
-        private Location3<int>? _pickedBlock;
+        public Location3<int>? NewCubePlace;
+        public Location3<int>? PickedCube;
+        public List<Location3<int>> Selected;
+
+        public byte SelectedIndex { get; set; }
+        public bool IsTexture { get; set; }
+
+        public bool IsColor
+        {
+            get { return !IsTexture; }
+            set { IsTexture = !value; }
+        }
+
+        public byte[, ,] Blocks
+        {
+            get {return _editedEntity.VoxelEntity.Blocks;}
+        }
+
+        public EditorTool LeftTool;
+        public EditorTool RightTool;
 
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
                             ActionsManager actions, Hud hudComponent, PlayerCharacter player, InputsManager inputsManager)
         {
+            LeftTool = new EditorRemove(this);
+            RightTool = new EditorAdd(this);
             _screen = screen;
             _player = player;
             _actions = actions;
@@ -139,18 +160,18 @@ namespace Utopia.Editor
 
             GetSelectedBlock();
 
-            if (_pickedBlock.HasValue && _pickedBlock != _prevPickedBlock)
+            if (PickedCube.HasValue && PickedCube != _prevPickedBlock)
             {
-                int x = _pickedBlock.Value.X;
-                int y = _pickedBlock.Value.Y;
-                int z = _pickedBlock.Value.Z;
+                int x = PickedCube.Value.X;
+                int y = PickedCube.Value.Y;
+                int z = PickedCube.Value.Z;
 
-                _editedEntity.AlterOverlay(x, y, z, 22);
+                _editedEntity.AlterOverlay(x, y, z, 21);
                 
                 if (_prevPickedBlock.HasValue)
                     _editedEntity.AlterOverlay(_prevPickedBlock.Value.X, _prevPickedBlock.Value.Y, _prevPickedBlock.Value.Z, 0);
 
-                _prevPickedBlock = _pickedBlock;
+                _prevPickedBlock = PickedCube;
                 _editedEntity.Altered = true;             
             }
 
@@ -191,6 +212,18 @@ namespace Utopia.Editor
                     _hudComponent.Enabled = true;
                 }
             }
+        }
+
+        public void UpdatePickedCube(byte value)
+        {
+            if (PickedCube.HasValue)
+                Blocks[PickedCube.Value.X, PickedCube.Value.Y, PickedCube.Value.Z] = value;
+        }
+        
+        public void UpdateNewPlace(byte value)
+        {
+            if (NewCubePlace.HasValue)
+                Blocks[NewCubePlace.Value.X, NewCubePlace.Value.Y, NewCubePlace.Value.Z] = value;
         }
 
         private void DrawItems()
@@ -238,19 +271,18 @@ namespace Utopia.Editor
         }
 
         private void HandleInput()
-        {
+        {   
             if (_actions.isTriggered(Actions.Use_Left))
             {
-                byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
-
-                int x = _pickedBlock.Value.X;
-                int y = _pickedBlock.Value.Y;
-                int z = _pickedBlock.Value.Z;
-
-                blocks[x, y, z] = _ui.SelectedIndex;
-
+                LeftTool.Use();
                 _editedEntity.Altered = true;
                }
+            if (_actions.isTriggered(Actions.Use_Right))
+            {
+                RightTool.Use();
+                _editedEntity.Altered = true;
+            }
+
         }
 
         DVector3 CastedFrom, CastedTo;
@@ -288,7 +320,7 @@ namespace Utopia.Editor
                 if (targetPoint.X >= startX && targetPoint.Y >= startY && targetPoint.Z >= startZ
                     && targetPoint.X < endX && targetPoint.Y < endY && targetPoint.Z < endZ)
                 {
-                    _pickedBlock = new Location3<int>((int)((targetPoint.X - startX) / Scale),
+                    PickedCube = new Location3<int>((int)((targetPoint.X - startX) / Scale),
                                                        (int)((targetPoint.Y  - startY)/ Scale),
                                                        (int)((targetPoint.Z - startZ) / Scale));
                    break;
@@ -309,6 +341,16 @@ namespace Utopia.Editor
         public string GetInfo()
         {
             return string.Empty;
+        }
+
+        public bool SafeSetBlock(int x, int y, int z, byte value)
+        {
+            if (x >= 0 && y >= 0 && z >= 0 && x < Blocks.GetLength(0) && y < Blocks.GetLength(1) && z < Blocks.GetLength(2))
+            {
+                Blocks[x, y, z] = value;
+                return true;
+            }
+            return false;
         }
     }
 }

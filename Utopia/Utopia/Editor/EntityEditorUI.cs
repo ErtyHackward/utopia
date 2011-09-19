@@ -18,14 +18,7 @@ namespace Utopia.Editor
     {
         private readonly EntityEditor _editorComponent;
 
-        public byte SelectedIndex { get; set; }
-        public bool IsTexture { get; set; }
-
-        public bool IsColor
-        {
-            get { return !IsTexture; }
-            set { IsTexture = !value; }
-        }
+       
 
         public List<Control> Children = new List<Control>();
 
@@ -67,8 +60,8 @@ namespace Utopia.Editor
                     int associatedindex = index; //for access inside closure 
                     btn.Pressed += (sender, e) =>
                                        {
-                                           SelectedIndex = (byte) associatedindex;
-                                           IsColor = true;
+                                           _editorComponent.SelectedIndex = (byte)associatedindex;
+                                           _editorComponent.IsColor = true;
                                        };
 
                     palette.Children.Add(btn);
@@ -109,8 +102,8 @@ namespace Utopia.Editor
                     int associatedindex = index; //new variable for access inside btn.pressed closure 
                     btn.Pressed += (sender, e) =>
                                        {
-                                           SelectedIndex = (byte) associatedindex;
-                                           IsTexture = true;
+                                           _editorComponent.SelectedIndex = (byte)associatedindex;
+                                           _editorComponent.IsTexture = true;
                                        };
                     palette.Children.Add(btn);
                     index++;

@@ -157,6 +157,7 @@
     <Compile Include="Structs\IntVector2.cs" />
     <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />
+    <Compile Include="Structs\Located.cs" />
     <Compile Include="Structs\Location2.cs" />
     <Compile Include="Structs\Location3.cs" />
     <Compile Include="Structs\LoginData.cs" />
