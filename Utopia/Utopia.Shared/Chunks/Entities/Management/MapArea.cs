@@ -214,6 +214,7 @@ namespace Utopia.Shared.Chunks.Entities.Management
 
         public IEnumerable<IDynamicEntity> Enumerate()
         {
+            
             foreach (var entity in _entities)
             {
                 yield return entity.Key;
