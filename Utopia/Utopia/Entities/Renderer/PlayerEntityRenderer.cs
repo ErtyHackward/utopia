@@ -43,7 +43,7 @@ namespace Utopia.Entities.Renderer
         #region Private Methods
         private void Initialize()
         {
-            _entityEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
+            _entityEffect = new HLSLTerran(_d3DEngine, @"Effects/Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration);
         }
         #endregion
 
