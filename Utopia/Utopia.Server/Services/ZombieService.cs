@@ -36,19 +36,19 @@ namespace Utopia.Server.Services
                 Size = new SharpDX.Vector3(2f, 3f, 2f)
             };
 
-            zombie.Blocks = new byte[2, 3, 2];// { { { (byte)15 } } },
-            zombie.Blocks[0, 0, 0] = (byte)15;
-            zombie.Blocks[1, 0, 0] = (byte)0;
-            zombie.Blocks[0, 0, 1] = (byte)15;
-            zombie.Blocks[1, 0, 1] = (byte)0;
-            zombie.Blocks[0, 1, 0] = (byte)15;
-            zombie.Blocks[1, 1, 0] = (byte)0;
-            zombie.Blocks[0, 1, 1] = (byte)15;
-            zombie.Blocks[1, 1, 1] = (byte)0;
-            zombie.Blocks[0, 2, 0] = (byte)14;
-            zombie.Blocks[1, 2, 0] = (byte)15;
-            zombie.Blocks[0, 2, 1] = (byte)14;
-            zombie.Blocks[1, 2, 1] = (byte)15;
+            zombie.Blocks = new byte[1, 1, 1];// { { { (byte)15 } } },
+            zombie.Blocks[0, 0, 0] = (byte)27;
+            //zombie.Blocks[1, 0, 0] = (byte)0;
+            //zombie.Blocks[0, 0, 1] = (byte)15;
+            //zombie.Blocks[1, 0, 1] = (byte)0;
+            //zombie.Blocks[0, 1, 0] = (byte)15;
+            //zombie.Blocks[1, 1, 0] = (byte)0;
+            //zombie.Blocks[0, 1, 1] = (byte)15;
+            //zombie.Blocks[1, 1, 1] = (byte)0;
+            //zombie.Blocks[0, 2, 0] = (byte)14;
+            //zombie.Blocks[1, 2, 0] = (byte)15;
+            //zombie.Blocks[0, 2, 1] = (byte)14;
+            //zombie.Blocks[1, 2, 1] = (byte)15;
 
             _server.AreaManager.AddEntity(zombie);
             _totalZombies++;
