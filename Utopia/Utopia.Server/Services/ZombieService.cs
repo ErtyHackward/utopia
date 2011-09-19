@@ -12,9 +12,10 @@ namespace Utopia.Server.Services
 {
     public class ZombieService : Service
     {
-        private int _totalZombies = 0;
         private Server _server;
         private string[] _names = new[] { "Bob", "Ivan", "Steve", "Sayid", "Chuck", "Matvey", "Mattias", "George", "Master Yoda", "Homer" };
+
+        private List<ServerZombie> _aliveZombies = new List<ServerZombie>();
 
         public override string ServiceName
         {
@@ -49,9 +50,8 @@ namespace Utopia.Server.Services
             //zombie.Blocks[1, 2, 0] = (byte)15;
             //zombie.Blocks[0, 2, 1] = (byte)14;
             //zombie.Blocks[1, 2, 1] = (byte)15;
-
+            _aliveZombies.Add(zombie);
             _server.AreaManager.AddEntity(zombie);
-            _totalZombies++;
             return zombie;
         }
 
@@ -61,9 +61,9 @@ namespace Utopia.Server.Services
 
             _server.PlayerCommand += ServerPlayerCommand;
             var r = new Random();
-            for (int i = 0; i < 300; i++)
+            for (int i = 0; i < 600; i++)
             {
-                var z = CreateZombie(r.Next(_names), new DVector3(r.Next(-500, 500), 125, r.Next(-500, 500))); //new DVector3(40, 72, -60));
+                var z = CreateZombie(r.Next(_names), new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200))); //new DVector3(40, 72, -60));
                 z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
                 z.Seed = r.Next(0, 100000);
             }
@@ -81,7 +81,18 @@ namespace Utopia.Server.Services
             if (cmd == "addzombie")
             {
                 var z = CreateZombie(r.Next(_names), e.Connection.Entity.Position);
-                _server.SendChatMessage(string.Format("Zombie {0} added {1}", z.DisplayName, _totalZombies));
+                _server.SendChatMessage(string.Format("Zombie {0} added {1}", z.DisplayName, _aliveZombies.Count));
+            }
+
+            if (cmd == "removezombies")
+            {
+                for (int i = _aliveZombies.Count - 1; i >= 0; i--)
+                {
+                    _server.AreaManager.RemoveEntity(_aliveZombies[i]);
+                }
+                _aliveZombies.Clear();
+
+                _server.SendChatMessage("All zombies removed");
             }
 
             if (cmd.StartsWith("addzombies"))
@@ -95,7 +106,7 @@ namespace Utopia.Server.Services
                     var z = CreateZombie(r.Next(_names), e.Connection.Entity.Position);
                     z.Seed = r.Next(0, 100000);
                 }
-                _server.SendChatMessage(string.Format("{0} zombies added ({1} total)", count, _totalZombies));
+                _server.SendChatMessage(string.Format("{0} zombies added ({1} total)", count, _aliveZombies.Count));
             }
         }
     }

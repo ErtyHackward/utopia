@@ -355,7 +355,7 @@ namespace Utopia.Server
                         {
                             if (e.Message.Md5Hashes[hashIndex] == chunk.GetMd5Hash())
                             {
-                                connection.Send(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkMd5Equal, ChunkHash = chunk.GetMd5Hash() });
+                                connection.SendAsync(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkMd5Equal, ChunkHash = chunk.GetMd5Hash() });
                                 return;
                             }
                         }
@@ -363,13 +363,13 @@ namespace Utopia.Server
                     
                     if (chunk.PureGenerated)
                     {
-                        connection.Send(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkCanBeGenerated, ChunkHash = chunk.GetMd5Hash() });
+                        connection.SendAsync(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkCanBeGenerated, ChunkHash = chunk.GetMd5Hash() });
                         return;
                     }
 
                     sendAllData:
                     // send data anyway
-                    connection.Send(new ChunkDataMessage
+                    connection.SendAsync(new ChunkDataMessage
                     {
                         Position = pos,
                         ChunkHash = chunk.GetMd5Hash(),
@@ -405,7 +405,7 @@ namespace Utopia.Server
             {
                 if (!UsersStorage.Register(e.Message.Login, e.Message.Password, 0))
                 {
-                    connection.Send(new ErrorMessage
+                    connection.SendAsync(new ErrorMessage
                                         {
                                             ErrorCode = ErrorCodes.LoginAlreadyRegistered,
                                             Message = "Such login is already registered"
@@ -484,7 +484,7 @@ namespace Utopia.Server
 
                 connection.Entity = playerEntity;
 
-                connection.Send(new LoginResultMessage { Logged = true });
+                connection.SendAsync(new LoginResultMessage { Logged = true });
                 Console.WriteLine("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.Entity.EntityId);
                 var gameInfo = new GameInformationMessage {
                     ChunkSize = AbstractChunk.ChunkSize, 
@@ -492,12 +492,12 @@ namespace Utopia.Server
                     WorldSeed = LandscapeManager.WorldGenerator.WorldParametes.Seed,
                     WaterLevel = LandscapeManager.WorldGenerator.WorldParametes.SeaLevel
                 };
-                connection.Send(gameInfo);
-                connection.Send(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
-                connection.Send(new EntityInMessage { Entity = playerEntity });
+                connection.SendAsync(gameInfo);
+                connection.SendAsync(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
+                connection.SendAsync(new EntityInMessage { Entity = playerEntity });
 
                 ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", e.Message.Login), Operator = true });
-                connection.Send(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });
+                connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });
 
                 // adding entity to world
                 AreaManager.AddEntity(connection.Entity);
