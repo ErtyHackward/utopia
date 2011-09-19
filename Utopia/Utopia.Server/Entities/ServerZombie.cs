@@ -90,6 +90,7 @@ namespace Utopia.Server.Entities
                                                  (float)(_target.Position.Z - Position.Z));
                     _moveDirection.Normalize();
                     Rotation = Quaternion.RotationMatrix(Matrix.LookAtRH(Position.AsVector3(), Position.AsVector3() + new Vector3(_moveDirection.X, 0, _moveDirection.Y), DVector3.Up.AsVector3()));
+                    Rotation = Quaternion.Invert(Rotation); //Transform the rotation from a world rotatino to a local rotation
                 }
                 else
                 {
@@ -125,6 +126,7 @@ namespace Utopia.Server.Entities
                 _moveDirection = new Vector2(_random.Next(-100, 100) / 100f, _random.Next(-100, 100) / 100f);
                 _moveDirection.Normalize();
                 Rotation = Quaternion.RotationMatrix(Matrix.LookAtRH(Position.AsVector3(), Position.AsVector3() + new Vector3(_moveDirection.X, 0, _moveDirection.Y), DVector3.Up.AsVector3()));
+                Rotation = Quaternion.Invert(Rotation);
             }
 
             var nextPosition = Position + new DVector3(_moveDirection.X, 0, _moveDirection.Y) * _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds * 1.5;

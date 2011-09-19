@@ -99,6 +99,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Effects\Entities\DynamicEntity.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Effects\SkyDome\PlanetSkyDome.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

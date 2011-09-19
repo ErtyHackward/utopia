@@ -196,7 +196,8 @@ namespace Utopia.Network
 
         public override void Dispose()
         {
-            if(ServerConnection.ConnectionStatus != ConnectionStatus.Disconnected &&
+            if (ServerConnection != null &&
+               ServerConnection.ConnectionStatus != ConnectionStatus.Disconnected &&
                ServerConnection.ConnectionStatus != ConnectionStatus.Disconnecting)
             {
                 ServerConnection.Disconnect();
