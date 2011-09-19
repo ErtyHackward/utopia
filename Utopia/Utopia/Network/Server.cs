@@ -14,7 +14,7 @@ using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia.Network
 {
-    public class Server : GameComponent, IDebugInfo
+    public class Server : GameComponent, IDisposable ,IDebugInfo
     {
         #region Private variables
         private SingleArrayChunkContainer _chunkContainer;
@@ -61,18 +61,18 @@ namespace Utopia.Network
 
             ServerConnection = new ServerConnection(address, port);
             //Register Login Events
-            ServerConnection.MessageLoginResult += _server_MessageLoginResult;
-            ServerConnection.ConnectionStatusChanged += _server_ConnectionStatusChanged;
-            ServerConnection.MessageBlockChange += _server_MessageBlockChange;
-            ServerConnection.MessageChat += _server_MessageChat;
-            ServerConnection.MessageChunkData += _server_MessageChunkData;
-            ServerConnection.MessageDateTime += _server_MessageDateTime;
-            ServerConnection.MessageDirection += _server_MessageDirection;
-            ServerConnection.MessageError += _server_MessageError;
-            ServerConnection.MessageGameInformation += _server_MessageGameInformation;
-            ServerConnection.MessageEntityIn += _server_MessagePlayerIn;
-            ServerConnection.MessageEntityOut += _server_MessagePlayerOut;
-            ServerConnection.MessagePosition += _server_MessagePosition;
+            //ServerConnection.MessageLoginResult += _server_MessageLoginResult;
+            //ServerConnection.ConnectionStatusChanged += _server_ConnectionStatusChanged;
+            //ServerConnection.MessageBlockChange += _server_MessageBlockChange;
+            //ServerConnection.MessageChat += _server_MessageChat;
+            //ServerConnection.MessageChunkData += _server_MessageChunkData;
+            //ServerConnection.MessageDateTime += _server_MessageDateTime;
+            //ServerConnection.MessageDirection += _server_MessageDirection;
+            //ServerConnection.MessageError += _server_MessageError;
+            //ServerConnection.MessageGameInformation += _server_MessageGameInformation;
+            //ServerConnection.MessageEntityIn += _server_MessagePlayerIn;
+            //ServerConnection.MessageEntityOut += _server_MessagePlayerOut;
+            //ServerConnection.MessagePosition += _server_MessagePosition;
 
             return true;
         }
@@ -193,6 +193,15 @@ namespace Utopia.Network
             //}
         }
         #endregion
+
+        public override void Dispose()
+        {
+            if(ServerConnection.ConnectionStatus != ConnectionStatus.Disconnected &&
+               ServerConnection.ConnectionStatus != ConnectionStatus.Disconnecting)
+            {
+                ServerConnection.Disconnect();
+            }
+        }
 
         public string GetInfo()
         {
