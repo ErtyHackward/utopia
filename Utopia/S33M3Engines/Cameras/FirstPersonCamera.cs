@@ -57,7 +57,7 @@ namespace S33M3Engines.Cameras
                 //Compute new View matrix based on the Position and Orientation from a Quaternion (No Euler angles, to have the possibility to slerps those value)
                 //To compute the view camera matrix, we need to take the inverse of the World position of the camera (it explains the * - 1)
                 Matrix MTranslation = Matrix.Translation(-1 * (_worldPosition.Value - _worldFocusManager.WorldFocus.FocusPoint.Value).AsVector3());
-                Matrix MRotation = Matrix.Invert(Matrix.RotationQuaternion(_cameraOrientation.Value));
+                Matrix MRotation = Matrix.Transpose(Matrix.RotationQuaternion(_cameraOrientation.Value));
                 Matrix.Multiply(ref MTranslation, ref MRotation, out _view_focused);
 
                 _viewProjection3D_focused = _view_focused * this.Projection3D;
@@ -86,7 +86,7 @@ namespace S33M3Engines.Cameras
 
             //Recompute the interpolated View Matrix
             Matrix MTranslation = Matrix.Translation(-(_worldPosition.ValueInterp - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3());
-            Matrix MRotation = Matrix.Invert(Matrix.RotationQuaternion(_cameraOrientation.ValueInterp));
+            Matrix MRotation = Matrix.Transpose(Matrix.RotationQuaternion(_cameraOrientation.ValueInterp));
             Matrix.Multiply(ref MTranslation, ref MRotation, out _view_focused);
 
             _viewProjection3D_focused = _view_focused * this.Projection3D;

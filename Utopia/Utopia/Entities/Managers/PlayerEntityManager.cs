@@ -548,7 +548,7 @@ namespace Utopia.Entities.Managers
         private void UpdateEntityData()
         {
             Matrix.RotationQuaternion(ref _moveDirection.Value, out _entityRotation);
-            Matrix.Invert(ref _entityRotation, out _entityRotation);
+            Matrix.Transpose(ref _entityRotation, out _entityRotation);
 
             _entityXAxis = new DVector3(_entityRotation.M11, _entityRotation.M21, _entityRotation.M31);
             _entityYAxis = new DVector3(_entityRotation.M12, _entityRotation.M22, _entityRotation.M32);
@@ -596,7 +596,7 @@ namespace Utopia.Entities.Managers
         private void UpdateHeadData()
         {
             Matrix.RotationQuaternion(ref _lookAtDirection.Value, out _headRotation);
-            Matrix.Invert(ref _headRotation, out _headRotation);
+            Matrix.Transpose(ref _headRotation, out _headRotation);
 
             _entityHeadXAxis = new DVector3(_headRotation.M11, _headRotation.M21, _headRotation.M31);
             _entityHeadYAxis = new DVector3(_headRotation.M12, _headRotation.M22, _headRotation.M32);
