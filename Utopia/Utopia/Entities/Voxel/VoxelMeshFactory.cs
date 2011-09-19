@@ -36,7 +36,7 @@ namespace Utopia.Entities.Voxel
                         byte blockType = blocks[x, y, z];
                      
                         byte overlay = overlays == null ? (byte) 0 : overlays[x, y, z];
-                        // if (blockType == 0) continue;
+                        if (blockType == 0) continue;
                         BuildBlockVertices(blocks, ref vertexList, blockType, x, y, z, overlay);
                     }
                 }

@@ -106,6 +106,7 @@
     <Compile Include="Action\MouseTriggeredAction.cs" />
     <Compile Include="Action\MouseTriggerMode.cs" />
     <Compile Include="DebugComponent.cs" />
+    <Compile Include="Editor\EditorTool.cs" />
     <Compile Include="Editor\EntityEditor.cs" />
     <Compile Include="Editor\EntityEditorUI.cs" />
     <Compile Include="Entities\Renderer\DefaultEntityRenderer.cs" />

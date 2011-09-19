@@ -60,9 +60,9 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
                         else if (y == ymax)
                             Blocks[x, y, z] = 13;
                         else if (z == zmax)
-                           Blocks[x, y, z] = 18;
+                           Blocks[x, y, z] = 7;
                         else 
-                            Blocks[x, y, z] = 63;
+                            Blocks[x, y, z] = 8;
                     }
                 }
             }
