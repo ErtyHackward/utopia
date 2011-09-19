@@ -25,9 +25,6 @@ namespace Utopia
         public UtopiaClient()
         {
             //_iocContainer =  new StandardKernel(new NinjectSettings { UseReflectionBasedInjection = true }); ==> More debug infor with this if binding problems, but slower !
-            _iocContainer = new StandardKernel();
-            _iocContainer.Bind<Server>().ToSelf().InSingletonScope();
-            _server = _iocContainer.Get<Server>();
         }
 
         #region Public Methods
@@ -74,6 +71,9 @@ namespace Utopia
 
         private void ShowWelcomeScreen(bool withFadeIn)
         {
+            _iocContainer = new StandardKernel();
+            _iocContainer.Bind<Server>().ToSelf().InSingletonScope();
+            _server = _iocContainer.Get<Server>();
 
             _welcomeForm = new WelcomeScreen(_server, withFadeIn);
             _welcomeForm.Text = "Utopia Client Alpha " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -117,13 +117,15 @@ namespace Utopia
                 main.Run();
             }
 
+            _iocContainer.Dispose();
+
         }
         #endregion
 
         #region CleanUp
         public void Dispose()
         {
-            _iocContainer.Dispose(); // Will also disposed all singleton objects that have been registered !
+            if(_iocContainer != null && !_iocContainer.IsDisposed) _iocContainer.Dispose(); // Will also disposed all singleton objects that have been registered !
         }
         #endregion
     }
