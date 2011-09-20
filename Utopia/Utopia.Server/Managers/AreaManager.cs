@@ -28,7 +28,7 @@ namespace Utopia.Server.Managers
         /// Use only for test purposes. Thread safty is NOT guaranteed.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<IDynamicEntity> EnumerateEntities()
+        public IEnumerable<ServerDynamicEntity> EnumerateEntities()
         {
             return _allEntities;
         }
