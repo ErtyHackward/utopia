@@ -62,10 +62,13 @@ namespace S33M3Engines.D3D
                 S33M3Engines.D3DEngine.FIXED_TIMESTEP_ENABLED = value;
             }
         }
+
+        public GameExitReasonMessage GameExitReason;
         #endregion
 
         #region Private Variable
 
+        private delegate void WinformInvockCallBack();
         protected D3DEngine _d3dEngine;
         public static int TargetedGameUpdatePerSecond = 40; //Number of targeted update per seconds
 
@@ -157,8 +160,9 @@ namespace S33M3Engines.D3D
         }
 
         //Close Window to stop the Window Pump !
-        public void Exit()
+        public void Exit(GameExitReasonMessage msg)
         {
+            GameExitReason = msg;
             Threading.WorkQueue.ThreadPool.Shutdown(true, 1000);
             while (Threading.WorkQueue.ThreadPool.InUseThreads > 0)
             {
@@ -166,7 +170,21 @@ namespace S33M3Engines.D3D
             }
 
             if (_d3dEngine.isFullScreen) _d3dEngine.isFullScreen = false;
-            _d3dEngine.GameWindow.Close();
+            CloseWinform();
+        }
+
+        private void CloseWinform()
+        {
+            if (_d3dEngine.GameWindow.InvokeRequired)
+            {
+                WinformInvockCallBack d = new WinformInvockCallBack(CloseWinform);
+                _d3dEngine.GameWindow.Invoke(d);
+            }
+            else
+            {
+                //Create the Single Player NEW world data message
+                _d3dEngine.GameWindow.Close();
+            }
         }
 
         //Game Initialize

@@ -117,6 +117,8 @@ namespace Utopia.Entities.Managers
             }
             return null;
         }
+
+        
         #endregion
 
         public IEnumerator<VisualEntity> EnumerateVisualEntities()
