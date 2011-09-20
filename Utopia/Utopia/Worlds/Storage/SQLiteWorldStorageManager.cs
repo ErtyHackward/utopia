@@ -10,10 +10,11 @@ using System.Collections.Concurrent;
 using Utopia.Worlds.Storage.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
+using Utopia.SQLite;
 
 namespace Utopia.Worlds.Storage
 {
-    public class SQLiteStorageManager : SQLiteManager, IChunkStorageManager, IDisposable
+    public class SQLiteWorldStorageManager : SQLiteManager, IChunkStorageManager, IDisposable
     {
         #region Private variables
         private Thread _storageThread;
@@ -35,8 +36,10 @@ namespace Utopia.Worlds.Storage
         /// Sqlite Manager
         /// </summary>
         /// <param name="path">The SQLite database path</param>
-        public SQLiteStorageManager(WorldParameters worldParameters, string UserName, bool forceNew = false)
-            : base(worldParameters, UserName, forceNew)
+        public SQLiteWorldStorageManager(WorldParameters worldParameters, string UserName, bool forceNew = false)
+            : base(@"Chunk_" + worldParameters.Seed + ".dat",
+                   Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Utopia\Storage\" + UserName.Replace(@"\", "_") + @"\" + @"Worlds\", 
+                   forceNew)
         {
             Init();
         }

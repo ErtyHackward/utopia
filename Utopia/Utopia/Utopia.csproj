@@ -240,6 +240,7 @@
     </Compile>
     <Compile Include="Network\Server.cs" />
     <Compile Include="Entities\EntityImpact.cs" />
+    <Compile Include="Settings\SQLiteSettingsManager.cs" />
     <Compile Include="UtopiaClient.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Program.cs" />
@@ -253,8 +254,8 @@
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds3D.cs" />
-    <Compile Include="Worlds\Storage\SQLiteManager.cs" />
-    <Compile Include="Worlds\Storage\SQLiteStorageManager.cs" />
+    <Compile Include="SQLite\SQLiteManager.cs" />
+    <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
     <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
     <Compile Include="Worlds\Storage\IChunkStorageManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\IChunksWrapper.cs" />
