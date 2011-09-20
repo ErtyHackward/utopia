@@ -60,6 +60,8 @@ namespace Utopia.Net.Connections
             get { return _totalReceived; }
         }
 
+        public int ConnexionTimeOut { get; set; }
+
         private static long _totalSent;
         /// <summary>
         /// Gets total bytes sent from all connections
@@ -271,18 +273,21 @@ namespace Utopia.Net.Connections
         /// </summary>
         /// <param name="address">String representation of a IP/DNS address</param>
         /// <param name="prt">Int port representation</param>
+        [DebuggerStepThrough()]
         public TcpConnection(string address, int prt)
-            :this()
+            : this()
         {
             System.Net.IPAddress addy = null;
             try
             {
-                addy = System.Net.IPAddress.Parse(address);
+                if (!System.Net.IPAddress.TryParse(address, out addy))
+                {
+                    addy = System.Net.Dns.GetHostEntry(address).AddressList[0];
+                }
             }
             catch (System.Exception)
             {
-                // We are not going to try to catch this as developer that used this class made something wrong if this has to be thrown.
-                addy = System.Net.Dns.GetHostEntry(address).AddressList[0];
+                return;
             }
             remoteAddress = new IPEndPoint(addy, prt);
         }
@@ -292,6 +297,7 @@ namespace Utopia.Net.Connections
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
+        [DebuggerStepThrough()]
         protected IPEndPoint ParseAddress(string address)
         {
             int port = 4815;
@@ -304,11 +310,14 @@ namespace Utopia.Net.Connections
             IPAddress addy = null;
             try
             {
-                addy = IPAddress.Parse(address);
+                if (!System.Net.IPAddress.TryParse(address, out addy))
+                {
+                    addy = System.Net.Dns.GetHostEntry(address).AddressList[0];
+                }
             }
             catch (System.Exception)
             {
-                addy = Dns.GetHostEntry(address).AddressList[0];
+                return null;
             }
             return new IPEndPoint(addy, port);
         }
@@ -425,10 +434,17 @@ namespace Utopia.Net.Connections
             // Change Connection status.
             SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Connecting });
 
+            if (remoteAddress == null)
+            {
+                SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Disconnected, Exception = new Exception("Invalid IP address !!") });
+                return;
+            }
+
             try
             {
                 // Establish Connection
                 socket = new Socket(remoteAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                
                 importedSocket = false;
                 #region LocalPortBinding
                 if (LocalPorts != null)
@@ -460,8 +476,23 @@ namespace Utopia.Net.Connections
                 connectionDone.Reset();
                 
                 socket.BeginConnect(remoteAddress, connectCallback, socket);
+                
                 // Waits until we have a connection...
-                connectionDone.WaitOne();
+                //Connect with time out
+                if (ConnexionTimeOut > 0)
+                {
+                    if (!connectionDone.WaitOne(ConnexionTimeOut, false))
+                    {
+                        // Time Out !
+                        SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Disconnected, Exception = new Exception("Server connection timeout") });
+                        return;
+                    }
+                }
+                else
+                {
+                    connectionDone.WaitOne();
+                }
+
                 // tell everyone that we done
                 SetConnectionStatus(new ConnectionStatusEventArgs { Status = socket.Connected ? ConnectionStatus.Connected : ConnectionStatus.Disconnected });
 
@@ -504,8 +535,6 @@ namespace Utopia.Net.Connections
         /// <param name="reason">Message that will be sent out in the ConnectionStatusChange event</param>
         public virtual void Disconnect(DisconnectReason reason)
         {
-            Debug.WriteLine(remoteAddress + " Disconnecing " + reason);
-
             if (ConnectionStatus == ConnectionStatus.Disconnected || ConnectionStatus == ConnectionStatus.Disconnecting)
             {
                 return;
@@ -605,6 +634,11 @@ namespace Utopia.Net.Connections
                 // Check if we got any data
                 try
                 {
+                    if (!sock.Connected)
+                    {
+                        SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Disconnected });
+                        return;
+                    }
                     nBytesRec = sock.EndReceive(ar);
                     if (nBytesRec > 0)
                     {

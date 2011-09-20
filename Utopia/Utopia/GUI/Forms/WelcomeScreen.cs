@@ -16,6 +16,7 @@ namespace Utopia.GUI.Forms
     {
         internal FormData Data;
 
+        private delegate void SetBoolCallback(bool text);
         private delegate void SetTextCallback(string text);
         private delegate void DefaultCallback();
         private SinglePlayer _singleChild = new SinglePlayer();
@@ -24,6 +25,7 @@ namespace Utopia.GUI.Forms
         private Server _server;
         private TimerCallback _timerDelegate;
         private System.Threading.Timer _serverTime;
+        private bool tryingToConnect = false;
 
         System.Windows.Forms.Timer m_TimerFadeIn = new System.Windows.Forms.Timer()
         {
@@ -48,7 +50,10 @@ namespace Utopia.GUI.Forms
 
         void btConnect_Click(object sender, EventArgs e)
         {
-            if (_server.BindingServer(_multiChild.txtSrvAdress.Text, 4815))
+            _multiChild.btConnect.Enabled = false;
+
+            //Validate the TCP IP adress
+            if (_server.BindingServer(_multiChild.txtSrvAdress.Text))
             {
                 RegisterEvents();
             }
@@ -99,7 +104,13 @@ namespace Utopia.GUI.Forms
 
         void ServerConnection_ConnectionStatusChanged(object sender, Net.Connections.ConnectionStatusEventArgs e)
         {
-            AddTextToListBox("Connection status : " + e.Status.ToString());
+            string ErrorString = "";
+            if (e.Exception != null)
+            {
+                ErrorString = " => " + e.Exception.Message;
+                NetworkConnectBtState(true);
+            }
+            AddTextToListBox("Connection status : " + e.Status.ToString() + ErrorString);
         }
 
         //Handle server Error Message
@@ -110,7 +121,7 @@ namespace Utopia.GUI.Forms
 
         void ServerConnection_MessageLoginResult(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.LoginResultMessage> e)
         {
-            AddTextToListBox("Login succesful : " + e.Message.Logged.ToString());
+            AddTextToListBox("Login successful : " + e.Message.Logged.ToString());
 
             _serverTime = new System.Threading.Timer(_timerDelegate, null, 100, 100 );
         }
@@ -158,6 +169,20 @@ namespace Utopia.GUI.Forms
                 _multiChild.lstServerCom.SelectedIndex = -1;
             }
         }
+
+        private void NetworkConnectBtState(bool state)
+        {
+            if (_multiChild.btConnect.InvokeRequired)
+            {
+                SetBoolCallback d = new SetBoolCallback(NetworkConnectBtState);
+                this.Invoke(d, new object[] { state });
+            }
+            else
+            {
+                _multiChild.btConnect.Enabled = state;
+            }
+        }
+
 
         private void FadeInWinForm()
         {
