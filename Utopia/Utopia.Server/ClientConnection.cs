@@ -1,15 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Utopia.Net.Connections;
 using Utopia.Net.Interfaces;
 using Utopia.Net.Messages;
+using Utopia.Server.Structs;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 
-namespace Utopia.Net.Connections
+namespace Utopia.Server
 {
     /// <summary>
     /// Represents a tcp connection from server to client. Should be used on server side.
@@ -56,7 +58,7 @@ namespace Utopia.Net.Connections
         /// <summary>
         /// Gets or sets player dynamic entity
         /// </summary>
-        public IDynamicEntity Entity { get; set; }
+        public ServerDynamicEntity ServerEntity { get; set; }
         
 
         #endregion
@@ -151,6 +153,17 @@ namespace Utopia.Net.Connections
                 MessagePing(this, new ProtocolMessageEventArgs<PingMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when EntityVoxelModelMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityVoxelModelMessage>> MessageEntityVoxelModel;
+
+        protected void OnMessageEntityVoxelModel(EntityVoxelModelMessage ea)
+        {
+            if (MessageEntityVoxelModel != null)
+                MessageEntityVoxelModel(this, new ProtocolMessageEventArgs<EntityVoxelModelMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -183,7 +196,7 @@ namespace Utopia.Net.Connections
         private void SendDelayed()
         {
             _sendThreadActive = true;
-            lock (_synObject)
+            lock (SyncRoot)
             {
                 IBinaryMessage msg;
                 while (_delayedMessages.TryDequeue(out msg))
@@ -210,7 +223,7 @@ namespace Utopia.Net.Connections
         /// <param name="msg"></param>
         public bool Send(IBinaryMessage msg)
         {
-            lock (_synObject)
+            lock (SyncRoot)
             {
                 try
                 {
@@ -232,7 +245,7 @@ namespace Utopia.Net.Connections
         /// <param name="messages"></param>
         public bool Send(params IBinaryMessage[] messages)
         {
-            lock (_synObject)
+            lock (SyncRoot)
             {
                 try
                 {
@@ -303,6 +316,9 @@ namespace Utopia.Net.Connections
                                     break;
                                 case MessageTypes.Ping:
                                     OnMessagePing(PingMessage.Read(reader));
+                                    break;
+                                case MessageTypes.EntityVoxelModel:
+                                    OnMessageEntityVoxelModel(EntityVoxelModelMessage.Read(reader));
                                     break;
                                 default:
                                     throw new ArgumentException("Invalid message id");

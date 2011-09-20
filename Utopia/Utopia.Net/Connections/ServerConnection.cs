@@ -213,6 +213,17 @@ namespace Utopia.Net.Connections
                 MessagePing(this, new ProtocolMessageEventArgs<PingMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when EntityVoxelModelMessage is received (another thread)
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityVoxelModelMessage>> MessageEntityVoxelModel;
+
+        protected void OnMessageEntityVoxelModel(EntityVoxelModelMessage ea)
+        {
+            if (MessageEntityVoxelModel != null)
+                MessageEntityVoxelModel(this, new ProtocolMessageEventArgs<EntityVoxelModelMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -405,6 +416,9 @@ namespace Utopia.Net.Connections
                     break;
                 case MessageTypes.Ping:
                     OnMessagePing((PingMessage)msg);
+                    break;
+                case MessageTypes.EntityVoxelModel:
+                    OnMessageEntityVoxelModel((EntityVoxelModelMessage)msg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("msg","Invalid message received from server");

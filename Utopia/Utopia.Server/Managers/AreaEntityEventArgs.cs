@@ -1,10 +1,10 @@
 ﻿using System;
-using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Server.Structs;
 
 namespace Utopia.Server.Managers
 {
     public class AreaEntityEventArgs : EventArgs
     {
-        public IDynamicEntity Entity { get; set; }
+        public ServerDynamicEntity Entity { get; set; }
     }
 }

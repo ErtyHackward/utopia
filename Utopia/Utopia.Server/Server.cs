@@ -237,14 +237,14 @@ namespace Utopia.Server
             if (e.Connection.Authorized)
             {
                 // saving the entity
-                EntityStorage.SaveEntity(e.Connection.Entity);
+                EntityStorage.SaveEntity(e.Connection.ServerEntity.DynamicEntity);
 
                 // tell everybody that this player is gone
-                AreaManager.RemoveEntity(e.Connection.Entity);
+                AreaManager.RemoveEntity(e.Connection.ServerEntity);
 
-                ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} has left the game.", e.Connection.Entity.DisplayName), Operator = true });
+                ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} has left the game.", e.Connection.ServerEntity.DynamicEntity.DisplayName), Operator = true });
 
-                e.Connection.Entity.CurrentArea = null;
+                e.Connection.ServerEntity.CurrentArea = null;
             }
 
         }
@@ -311,18 +311,18 @@ namespace Utopia.Server
         void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
         {
             var connection = sender as ClientConnection;
-            if (connection != null && e.Message.EntityId == connection.Entity.EntityId)
+            if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.EntityId)
             {
-                connection.Entity.Rotation = e.Message.Direction;
+                connection.ServerEntity.DynamicEntity.Rotation = e.Message.Direction;
             }
         }
 
         void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
         {
             var connection = sender as ClientConnection;
-            if (connection != null && e.Message.EntityId == connection.Entity.EntityId)
+            if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.EntityId)
             {
-                connection.Entity.Position = e.Message.Position;
+                connection.ServerEntity.DynamicEntity.Position = e.Message.Position;
             }
         }
         
@@ -389,10 +389,12 @@ namespace Utopia.Server
 
         private ServerPlayerCharacterEntity GetNewPlayerEntity(ClientConnection clientConnection, uint entityId)
         {
-            var serverChar = new ServerPlayerCharacterEntity(clientConnection);
-            serverChar.EntityId = entityId;
-            serverChar.Position = new DVector3(10, 128, 10);
-            serverChar.CharacterName = clientConnection.Login;
+            var dEntity = new PlayerCharacter();
+            dEntity.EntityId = entityId;
+            dEntity.Position = new DVector3(10, 128, 10);
+            dEntity.CharacterName = clientConnection.Login;
+
+            var serverChar = new ServerPlayerCharacterEntity(clientConnection, dEntity);
             return serverChar;
         }
 
@@ -443,7 +445,7 @@ namespace Utopia.Server
                 connection.UserId = loginData.UserId;
                 connection.Login = e.Message.Login;
 
-                IDynamicEntity playerEntity;
+                ServerDynamicEntity playerEntity;
 
                 #region Getting players character entity
                 if (loginData.State == null)
@@ -453,7 +455,7 @@ namespace Utopia.Server
 
                     playerEntity = GetNewPlayerEntity(connection,  EntityFactory.Instance.GetUniqueEntityId());
 
-                    var state = new UserState { EntityId = playerEntity.EntityId };
+                    var state = new UserState { EntityId = playerEntity.DynamicEntity.EntityId };
 
                     UsersStorage.SetData(e.Message.Login, state.Save());
                 }
@@ -461,7 +463,7 @@ namespace Utopia.Server
                 {
                     var state = UserState.Load(loginData.State );
                     // load new player entity
-                    playerEntity = new ServerPlayerCharacterEntity(connection);
+                    playerEntity = new ServerPlayerCharacterEntity(connection, new PlayerCharacter());
                     
                     var bytes = EntityStorage.LoadEntityBytes(state.EntityId);
 
@@ -475,17 +477,17 @@ namespace Utopia.Server
                         using (var ms = new MemoryStream(bytes))
                         {
                             var reader = new BinaryReader(ms);
-                            playerEntity.Load(reader);
+                            playerEntity.DynamicEntity.Load(reader);
                         }
                         
                     }
                 }
                 #endregion
 
-                connection.Entity = playerEntity;
+                connection.ServerEntity = playerEntity;
 
                 connection.SendAsync(new LoginResultMessage { Logged = true });
-                Console.WriteLine("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.Entity.EntityId);
+                Console.WriteLine("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.EntityId);
                 var gameInfo = new GameInformationMessage {
                     ChunkSize = AbstractChunk.ChunkSize, 
                     MaxViewRange = 32,
@@ -494,13 +496,13 @@ namespace Utopia.Server
                 };
                 connection.SendAsync(gameInfo);
                 connection.SendAsync(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
-                connection.SendAsync(new EntityInMessage { Entity = playerEntity });
+                connection.SendAsync(new EntityInMessage { Entity = playerEntity.DynamicEntity });
 
                 ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", e.Message.Login), Operator = true });
                 connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });
 
                 // adding entity to world
-                AreaManager.AddEntity(connection.Entity);
+                AreaManager.AddEntity(playerEntity);
             }
             else
             {

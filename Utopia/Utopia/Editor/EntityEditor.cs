@@ -67,7 +67,7 @@ namespace Utopia.Editor
 
         public byte[, ,] Blocks
         {
-            get {return _editedEntity.VoxelEntity.Blocks;}
+            get {return _editedEntity.VoxelEntity.Model.Blocks;}
         }
 
         public EditorTool LeftTool;
@@ -101,9 +101,9 @@ namespace Utopia.Editor
 
         public void SpawnEntity(VoxelEntity entity)
         { 
-            int x = entity.Blocks.GetLength(0);
-            int y = entity.Blocks.GetLength(1);
-            int z = entity.Blocks.GetLength(2);
+            int x = entity.Model.Blocks.GetLength(0);
+            int y = entity.Model.Blocks.GetLength(1);
+            int z = entity.Model.Blocks.GetLength(2);
             byte[,,] overlays = new byte[x,y,z];
             
             _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays);
@@ -268,7 +268,7 @@ namespace Utopia.Editor
         DVector3 CastedFrom, CastedTo;
         private void GetSelectedBlock()
         {
-            byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
+            byte[,,] blocks = _editedEntity.VoxelEntity.Model.Blocks;
 
             //XXX avoid unnecessay picking loops. but not just mousestate changes , you can still pick in freelook mode. 
 
