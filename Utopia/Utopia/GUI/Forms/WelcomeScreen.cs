@@ -58,6 +58,8 @@ namespace Utopia.GUI.Forms
                 RegisterEvents();
             }
             _server.ConnectToServer(_multiChild.txtUser.Text, _multiChild.txtPassword.Text, _multiChild.chkRegistering.Checked);
+
+            _serverTime = new System.Threading.Timer(_timerDelegate, null, 100, 100);
         }
 
         private void RegisterEvents()
@@ -122,9 +124,8 @@ namespace Utopia.GUI.Forms
 
         void ServerConnection_MessageLoginResult(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.LoginResultMessage> e)
         {
-            AddTextToListBox("Login successful : " + e.Message.Logged.ToString());
-
-            _serverTime = new System.Threading.Timer(_timerDelegate, null, 100, 100 );
+            AddTextToListBox("Login result : " + e.Message.Logged.ToString());
+            //_serverTime = new System.Threading.Timer(_timerDelegate, null, 100, 100 );
         }
 
         private void ServerTime_Tick(object stateInfo)

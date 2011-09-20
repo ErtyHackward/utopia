@@ -96,7 +96,7 @@ namespace Utopia.Network
 
         void _server_MessagePlayerIn(object sender, ProtocolMessageEventArgs<Net.Messages.EntityInMessage> e)
         {
-            Console.WriteLine("_server_MessagePlayerIn : " + e.Message.Entity.DisplayName);
+            //Console.WriteLine("_server_MessagePlayerIn : " + e.Message.Entity.DisplayName);
         }
 
         void _server_MessageGameInformation(object sender, ProtocolMessageEventArgs<Net.Messages.GameInformationMessage> e)
@@ -111,7 +111,7 @@ namespace Utopia.Network
 
         void _server_MessageDirection(object sender, ProtocolMessageEventArgs<Net.Messages.EntityDirectionMessage> e)
         {
-            //throw new NotImplementedException();
+            //Console.WriteLine("_server_MessageGameInformation : " + e.Message.Message.ToString());
         }
 
         void _server_MessageDateTime(object sender, ProtocolMessageEventArgs<Net.Messages.DateTimeMessage> e)
@@ -121,7 +121,7 @@ namespace Utopia.Network
 
         void _server_MessageChunkData(object sender, ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
         {
-            //Console.WriteLine("_server_MessageChunkData : " + e.Message.Position.ToString() + " " + e.Message.Data.Length + " bytes");
+            Console.WriteLine("_server_MessageChunkData : " + e.Message.Position.ToString() + " " + e.Message.Data.Length + " bytes");
         }
 
         void _server_MessageChat(object sender, ProtocolMessageEventArgs<Net.Messages.ChatMessage> e)
@@ -158,12 +158,11 @@ namespace Utopia.Network
 
             if (ServerConnection.ConnectionStatus != ConnectionStatus.Connected)
             {
-                ServerConnection.ConnectAsync(new AsyncCallback(ConnectAsyncCallBack), null);
+                ServerConnection.ConnectAsync();
             }
             else
             {
                 ServerConnection.Authenticate();
-                ServerConnection.FetchPendingMessages(1);
             }
         }
 
@@ -175,12 +174,6 @@ namespace Utopia.Network
         #endregion
 
         #region Private Methods
-        //Server connection done
-        private void ConnectAsyncCallBack(IAsyncResult result)
-        {
-            ServerConnection.FetchPendingMessages(1);
-        }
-
         //Raise when a block has been changed ==> To be sent to the server
         private void ChunkContainer_BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
         {
