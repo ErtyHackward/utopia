@@ -2,7 +2,7 @@ using System;
 using Utopia.Net.Messages;
 using Utopia.Shared.Chunks.Entities;
 
-namespace Utopia.Server.Structs
+namespace Utopia.Server.Events
 {
     public class AreaVoxelModelEventArgs : EventArgs
     {

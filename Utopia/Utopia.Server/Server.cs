@@ -7,6 +7,7 @@ using System.Threading;
 using S33M3Engines.Shared.Math;
 using Utopia.Net.Connections;
 using Utopia.Net.Messages;
+using Utopia.Server.Events;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Server.Structs;

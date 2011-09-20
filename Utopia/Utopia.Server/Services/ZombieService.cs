@@ -5,6 +5,7 @@ using System.Text;
 using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Server.Entities;
+using Utopia.Server.Events;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.ClassExt;
@@ -37,8 +38,8 @@ namespace Utopia.Server.Services
             
             zombie.DynamicEntity.Position = position;
             zombie.DynamicEntity.Size = new SharpDX.Vector3(2f, 3f, 2f);
-            
 
+            zombie.DynamicEntity.Model = new VoxelModel();
             zombie.DynamicEntity.Model.Blocks = new byte[1, 1, 1];// { { { (byte)15 } } },
             zombie.DynamicEntity.Model.Blocks[0, 0, 0] = (byte)27;
             //zombie.Blocks[1, 0, 0] = (byte)0;

@@ -1,7 +1,6 @@
 using System;
-using Utopia.Net.Connections;
 
-namespace Utopia.Server
+namespace Utopia.Server.Events
 {
     public class PlayerCommandEventArgs : EventArgs
     {

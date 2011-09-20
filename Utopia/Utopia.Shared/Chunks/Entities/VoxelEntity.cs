@@ -37,6 +37,11 @@ namespace Utopia.Shared.Chunks.Entities
             }
         }
 
+        public VoxelEntity()
+        {
+            Model = new VoxelModel();
+        }
+
         // we need to override save and load!
         public override void Load(System.IO.BinaryReader reader)
         {
