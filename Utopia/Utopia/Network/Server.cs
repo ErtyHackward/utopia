@@ -22,7 +22,6 @@ namespace Utopia.Network
 
         #region Public properties/variables
         public string Address { get; set; }
-        public int Port { get; set; }
         public bool Connected { get; set; }
         public ServerConnection ServerConnection { get; set; }
 
@@ -51,15 +50,14 @@ namespace Utopia.Network
             Connected = false;
         }
 
-        public bool BindingServer(string address, int port)
+        public bool BindingServer(string address)
         {
-            if (Address == address && Port == port) return false;
+            if (Address == address) return false;
             if (ServerConnection != null && ServerConnection.ConnectionStatus == ConnectionStatus.Connected) ServerConnection.Disconnect();
 
             Address = address;
-            Port = port;
 
-            ServerConnection = new ServerConnection(address, port);
+            ServerConnection = new ServerConnection(address);
             //Register Login Events
             //ServerConnection.MessageLoginResult += _server_MessageLoginResult;
             //ServerConnection.ConnectionStatusChanged += _server_ConnectionStatusChanged;
@@ -138,7 +136,11 @@ namespace Utopia.Network
 
         void _server_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
         {
-            //Console.WriteLine("_server_ConnectionStatusChanged : " + e.Reason + " status : " + e.Status);
+            if (e.Status == ConnectionStatus.Disconnected)
+            {
+                //Display Error message !!! 
+                
+            }
         }
 
         #endregion
