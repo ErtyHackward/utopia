@@ -51,6 +51,7 @@ using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Net.Connections;
 
 namespace Utopia
 {
@@ -133,22 +134,22 @@ namespace Utopia
 
             //If Server mode set the chunk Side
             Server server = IoCContainer.Get<Server>();
-            if (server.Connected)
+
+            server.ServerConnection.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
+
+            if (AbstractChunk.ChunkSize != server.ChunkSize)
             {
-                if (AbstractChunk.ChunkSize != server.ChunkSize)
-                {
-                    throw new Exception("Client chunkSize is different from server !");
-                }
-
-                //Change Visible WorldSize if client parameter > Server !
-                if (ClientSettings.Current.Settings.GraphicalParameters.WorldSize > server.MaxServerViewRange)
-                {
-                    ClientSettings.Current.Settings.GraphicalParameters.WorldSize = server.MaxServerViewRange;
-                }
-
-                Seed = server.WorldSeed;
-                SeaLevel = server.SeaLevel;
+                throw new Exception("Client chunkSize is different from server !");
             }
+
+            //Change Visible WorldSize if client parameter > Server !
+            if (ClientSettings.Current.Settings.GraphicalParameters.WorldSize > server.MaxServerViewRange)
+            {
+                ClientSettings.Current.Settings.GraphicalParameters.WorldSize = server.MaxServerViewRange;
+            }
+
+            Seed = server.WorldSeed;
+            SeaLevel = server.SeaLevel;
 
             //Variables initialisation ==================================================================
             Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
@@ -259,15 +260,12 @@ namespace Utopia
             GameConsole.Initialize(_d3dEngine);
 
             //Add the server if multiplayer mode
-            if (server.Connected)
-            {
-                server.ChunkContainer = IoCContainer.Get<SingleArrayChunkContainer>();
+            server.ChunkContainer = IoCContainer.Get<SingleArrayChunkContainer>();
 
-                //Create the EntityMessageTRanslator
-                _entityMessageTranslator = IoCContainer.Get<EntityMessageTranslator>();
+            //Create the EntityMessageTRanslator
+            _entityMessageTranslator = IoCContainer.Get<EntityMessageTranslator>();
 
-                GameComponents.Add(server);
-            }
+            GameComponents.Add(server);
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 
@@ -297,6 +295,25 @@ namespace Utopia
 #endif
             #endregion
 
+        }
+
+        /// <summary>
+        /// Check server connection change state !!
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void ServerConnection_ConnectionStatusChanged(object sender, Net.Connections.ConnectionStatusEventArgs e)
+        {
+            if (e.Status == ConnectionStatus.Disconnected && e.Exception != null)
+            {
+                GameExitReasonMessage msg = new GameExitReasonMessage()
+                {
+                    GameExitReason = ExitReason.Error,
+                    MainMessage = "Server connection lost",
+                    DetailedMessage = "Reason : " + e.Reason.ToString() + Environment.NewLine + "Detail : " + e.Exception.Message
+                };
+                Exit(msg);
+            }
         }
 
         private void BindActions()
@@ -502,7 +519,15 @@ namespace Utopia
         private void InputHandling()
         {
             //Exit application
-            if (_actions.isTriggered(Actions.Engine_Exit)) Exit();
+            if (_actions.isTriggered(Actions.Engine_Exit))
+            {
+                GameExitReasonMessage msg = new GameExitReasonMessage()
+                {
+                    GameExitReason = ExitReason.UserRequest,
+                    MainMessage = "User Requested exit"
+                };
+                Exit(msg);
+            }
             if (_actions.isTriggered(Actions.Engine_LockMouseCursor)) _engine.UnlockedMouse = !_engine.UnlockedMouse;
             if (_actions.isTriggered(Actions.Engine_FullScreen)) _engine.isFullScreen = !_engine.isFullScreen;
         }

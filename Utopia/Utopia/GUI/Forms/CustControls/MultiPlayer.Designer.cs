@@ -146,16 +146,17 @@
             // lstServerCom
             // 
             this.lstServerCom.FormattingEnabled = true;
-            this.lstServerCom.Location = new System.Drawing.Point(110, 255);
+            this.lstServerCom.HorizontalScrollbar = true;
+            this.lstServerCom.Location = new System.Drawing.Point(15, 255);
             this.lstServerCom.Name = "lstServerCom";
-            this.lstServerCom.Size = new System.Drawing.Size(423, 147);
+            this.lstServerCom.Size = new System.Drawing.Size(518, 147);
             this.lstServerCom.TabIndex = 20;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Location = new System.Drawing.Point(107, 239);
+            this.label7.Location = new System.Drawing.Point(15, 239);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(119, 13);
             this.label7.TabIndex = 21;
