@@ -10,9 +10,10 @@ namespace Utopia.Editor
     {
         protected EntityEditor Editor;
 
-        protected byte SelectedCube;
-        protected byte SelectedColor;
-
+       // protected byte SelectedCube; XXX implement later selectedCube in palette per tool
+        //protected byte SelectedColor;
+        public string Name { get; set; }
+        public string Status { get; set; }
 
         protected EditorTool(EntityEditor editor)
         {
@@ -24,7 +25,10 @@ namespace Utopia.Editor
 
     public class EditorAdd : EditorTool
     {
-        public EditorAdd(EntityEditor editor) : base(editor){}
+        public EditorAdd(EntityEditor editor) : base(editor)
+        {
+            Name = "Add";
+        }
 
         public override void Use()
         {
@@ -34,7 +38,7 @@ namespace Utopia.Editor
     
     public class EditorRemove : EditorTool
     {
-        public EditorRemove(EntityEditor editor): base(editor){}
+        public EditorRemove(EntityEditor editor) : base(editor) { Name = "Remove"; }
 
         public override void Use()
         {
@@ -67,5 +71,15 @@ namespace Utopia.Editor
         }
     }
 
+    public class Symetry : EditorTool
+    {
+        public Symetry(EntityEditor editor) : base(editor) { Name = "Y Symetry"; }
+
+        public override void Use()
+        {
+            Editor.VerticalSymetryEnabled =!Editor.VerticalSymetryEnabled;
+            Status = Editor.VerticalSymetryEnabled ? "ON" : "OFF";
+        }
+    }
     
 }

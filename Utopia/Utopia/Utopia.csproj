@@ -109,6 +109,7 @@
     <Compile Include="Editor\EditorTool.cs" />
     <Compile Include="Editor\EntityEditor.cs" />
     <Compile Include="Editor\EntityEditorUI.cs" />
+    <Compile Include="Editor\Spawn.cs" />
     <Compile Include="Entities\Renderer\DefaultEntityRenderer.cs" />
     <Compile Include="Entities\Managers\DynamicEntityManager.cs" />
     <Compile Include="Entities\Managers\IDynamicEntityManager.cs" />
