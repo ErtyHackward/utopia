@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Utopia.Net.Connections;
 using Utopia.Net.Messages;
+using Utopia.Server.Events;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 
@@ -32,8 +32,8 @@ namespace Utopia.Server.Structs
             area.EntityView += AreaEntityView;
             area.EntityMoved += AreaEntityMoved;
             area.EntityUse += AreaEntityUse;
-            area.BlocksChanged += area_BlocksChanged;
-            area.EntityModelChanged += area_EntityModelChanged;
+            area.BlocksChanged += AreaBlocksChanged;
+            area.EntityModelChanged += AreaEntityModelChanged;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -46,7 +46,7 @@ namespace Utopia.Server.Structs
 
         }
 
-        void area_EntityModelChanged(object sender, AreaVoxelModelEventArgs e)
+        void AreaEntityModelChanged(object sender, AreaVoxelModelEventArgs e)
         {
             if (e.Entity != DynamicEntity)
             {
@@ -83,7 +83,7 @@ namespace Utopia.Server.Structs
             area.EntityView -= AreaEntityView;
             area.EntityMoved -= AreaEntityMoved;
             area.EntityUse -= AreaEntityUse;
-            area.BlocksChanged -= area_BlocksChanged;
+            area.BlocksChanged -= AreaBlocksChanged;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -132,7 +132,7 @@ namespace Utopia.Server.Structs
             }
         }
 
-        void area_BlocksChanged(object sender, BlocksChangedEventArgs e)
+        void AreaBlocksChanged(object sender, BlocksChangedEventArgs e)
         {
             Connection.SendAsync(new BlocksChangedMessage { ChunkPosition = e.ChunkPosition, BlockValues = e.BlockValues, BlockPositions = e.Locations });
         }
