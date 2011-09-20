@@ -73,6 +73,9 @@ namespace Utopia.Editor
         public EditorTool LeftTool;
         public EditorTool RightTool;
 
+        public bool HorizontalSymetryEnabled;
+        public bool VerticalSymetryEnabled; 
+
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
                             ActionsManager actions, Hud hudComponent, PlayerCharacter player, InputsManager inputsManager)
@@ -96,40 +99,17 @@ namespace Utopia.Editor
             DrawOrders.UpdateIndex(0, 5000);
         }
 
-        public void SpawnEntity()
-        {
-            VoxelEntity entity = new EditableVoxelEntity();
-
-            entity.Blocks = new byte[16,16,16];
-            entity.PlainCubeFill();
-
-            entity.Blocks[0, 0, 0] = 2;
-            entity.Blocks[1, 0, 0] = 3;
-
+        public void SpawnEntity(VoxelEntity entity)
+        { 
             int x = entity.Blocks.GetLength(0);
             int y = entity.Blocks.GetLength(1);
             int z = entity.Blocks.GetLength(2);
             byte[,,] overlays = new byte[x,y,z];
-            /*  for (int i = 0; i < 16; i++)
-            {
-                overlays[i, 8, 0]= 22;
-                overlays[8, i, 0]= 22;
-                overlays[0, 8, i]=22;
-            }*/
-
+            
             _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays);
-
 
             _editedEntity.Position = new DVector3((int) _player.Position.X, (int) _player.Position.Y,
                                                   (int) _player.Position.Z);
-
-            /* Matrix worldTranslation = Matrix.Translation(_player.EntityState.PickedBlockPosition.X, _player.EntityState.PickedBlockPosition.Y, _player.EntityState.PickedBlockPosition.Z);
-            
-            Matrix focused = Matrix.Identity;
-            _worldFocusManager.CenterTranslationMatrixOnFocus(ref worldTranslation,ref focused);
-
-            _editedEntity.Position = new DVector3(focused.TranslationVector);
-            */
         }
 
         public override void Initialize()
@@ -217,13 +197,13 @@ namespace Utopia.Editor
         public void UpdatePickedCube(byte value)
         {
             if (PickedCube.HasValue)
-                Blocks[PickedCube.Value.X, PickedCube.Value.Y, PickedCube.Value.Z] = value;
+                SafeSetBlock(PickedCube.Value.X, PickedCube.Value.Y, PickedCube.Value.Z, value);
         }
         
         public void UpdateNewPlace(byte value)
         {
             if (NewCubePlace.HasValue)
-                Blocks[NewCubePlace.Value.X, NewCubePlace.Value.Y, NewCubePlace.Value.Z] = value;
+                SafeSetBlock(NewCubePlace.Value.X, NewCubePlace.Value.Y, NewCubePlace.Value.Z,value);
         }
 
         private void DrawItems()
@@ -348,6 +328,12 @@ namespace Utopia.Editor
             if (x >= 0 && y >= 0 && z >= 0 && x < Blocks.GetLength(0) && y < Blocks.GetLength(1) && z < Blocks.GetLength(2))
             {
                 Blocks[x, y, z] = value;
+
+                if (VerticalSymetryEnabled)
+                {   
+                    int xMirror =Blocks.GetLength(0)-1 - x;
+                    Blocks[xMirror, y, z] = value;
+                }
                 return true;
             }
             return false;

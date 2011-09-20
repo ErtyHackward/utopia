@@ -18,7 +18,6 @@ namespace Utopia.Editor
     {
         private readonly EntityEditor _editorComponent;
 
-       
 
         public List<Control> Children = new List<Control>();
 
@@ -60,7 +59,7 @@ namespace Utopia.Editor
                     int associatedindex = index; //for access inside closure 
                     btn.Pressed += (sender, e) =>
                                        {
-                                           _editorComponent.SelectedIndex = (byte)associatedindex;
+                                           _editorComponent.SelectedIndex = (byte) associatedindex;
                                            _editorComponent.IsColor = true;
                                        };
 
@@ -102,7 +101,7 @@ namespace Utopia.Editor
                     int associatedindex = index; //new variable for access inside btn.pressed closure 
                     btn.Pressed += (sender, e) =>
                                        {
-                                           _editorComponent.SelectedIndex = (byte)associatedindex;
+                                           _editorComponent.SelectedIndex = (byte) associatedindex;
                                            _editorComponent.IsTexture = true;
                                        };
                     palette.Children.Add(btn);
@@ -115,29 +114,37 @@ namespace Utopia.Editor
 
         private WindowControl InitToolBar()
         {
-            const int buttonSize = 46;
-            const int buttonsNbr = 5;
+            const int buttonSize = 64;
+
             const int margin = 20;
+
+            List<EditorTool> tools = new List<EditorTool>();
+            tools.Add(new Symetry(_editorComponent));
+            tools.Add(new EditorAdd(_editorComponent));
+            tools.Add(new EditorRemove(_editorComponent));
+            tools.Add(new EditorPaste(_editorComponent));
+            tools.Add(new Spawn(_editorComponent));
+            tools.Add(new SpawnPlain(_editorComponent));
+            tools.Add(new SpawnBorder(_editorComponent));
+
+            int buttonsNbr = tools.Count;
 
             WindowControl toolBar = new WindowControl();
             toolBar.Bounds = new UniRectangle(0.0f, 0, buttonsNbr*buttonSize, buttonSize + margin);
             toolBar.Title = "Edit tools";
 
-            List<ButtonControl> buttons = new List<ButtonControl>(5);
-
-
-            for (int x = 0; x < buttonsNbr; x++)
+            for (int x = 0; x < tools.Count; x++)
             {
+                EditorTool tool = tools[x];
                 ButtonControl btn = new ButtonControl();
                 btn.Bounds = new UniRectangle(x*buttonSize, margin, buttonSize, buttonSize);
-                buttons.Add(btn);
-                
-                if (x==0)
-                {
-                    ButtonControl btn0 = btn;
-                    btn0.Text = "Spawn";
-                    btn.Pressed += delegate { _editorComponent.SpawnEntity(); };
-                }
+                btn.Text = tool.Name;
+                btn.Pressed += delegate
+                                   {
+                                       tool.Use();
+                                       btn.Text += tool.Status;
+                                   };
+
                 toolBar.Children.Add(btn);
             }
             return toolBar;

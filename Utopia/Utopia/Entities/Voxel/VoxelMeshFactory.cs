@@ -81,6 +81,8 @@ namespace Utopia.Entities.Voxel
             Color tmpColor = ColorLookup.Colours[blockType];
             ByteColor color = new ByteColor(tmpColor.R, tmpColor.G, tmpColor.B, tmpColor.A);
 
+            //if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackTop_Cube, BackLeftTop_Cube);
+
             //TODO indices : good for perf & ram 
 
             int cubeid = blockType;
@@ -88,9 +90,11 @@ namespace Utopia.Entities.Voxel
             int face = (int) faceDir;
             byte tex = VisualCubeProfile.CubesProfile[cubeid].Textures[face];
 
-            if (overlay == 0)
-                overlay = tex; //TODO find another way to ignore overlay 0 than lerping between 2 same values 
-
+            if (blockType == 0)//BuildFaceVertices is normally not called with blocktype 0 but let's handle it anyway
+                overlay = 0;
+            else if (overlay == 0)
+                overlay = tex; //TODO find another way to ignore overlay 0 than lerping between 2 same values in shader 
+            
             ByteVector4 vertexInfo = new ByteVector4((byte) 0, (byte) faceDir, overlay, (byte) 0);
 
             switch (faceDir)
