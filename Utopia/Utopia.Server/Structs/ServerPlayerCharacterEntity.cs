@@ -1,26 +1,29 @@
 ﻿using System;
+using System.IO;
 using Utopia.Net.Connections;
 using Utopia.Net.Messages;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Management;
 
 namespace Utopia.Server.Structs
 {
     /// <summary>
     /// This class sends all events from entity model to player
     /// </summary>
-    public class ServerPlayerCharacterEntity : PlayerCharacter
+    public class ServerPlayerCharacterEntity : ServerDynamicEntity
     {
+        
         public ClientConnection Connection { get; private set; }
 
         /// <summary>
         /// Creates new instance of Server player entity that translates Entity Object Model events to player via network
         /// </summary>
         /// <param name="connection"></param>
-        public ServerPlayerCharacterEntity(ClientConnection connection)
+        /// <param name="entity"></param>
+        public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity) : base(entity)
         {
             if (connection == null) throw new ArgumentNullException("connection");
+            if (entity == null) throw new ArgumentNullException("entity");
             Connection = connection;
         }
 
@@ -28,37 +31,50 @@ namespace Utopia.Server.Structs
         {
             area.EntityView += AreaEntityView;
             area.EntityMoved += AreaEntityMoved;
-            area.EntityRemoved += AreaEntityRemoved;
-            area.EntityAdded += AreaEntityAdded;
             area.EntityUse += AreaEntityUse;
             area.BlocksChanged += area_BlocksChanged;
+            area.EntityModelChanged += area_EntityModelChanged;
 
-            foreach (var dynamicEntity in area.Enumerate())
+            foreach (var serverEntity in area.Enumerate())
             {
-                if (dynamicEntity != this)
+                if (serverEntity != this)
                 {
                     //Console.WriteLine("TO: {0}, entity {1} in", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.SendAsync(new EntityInMessage { Entity = dynamicEntity });
+                    Connection.SendAsync(new EntityInMessage { Entity = serverEntity.DynamicEntity });
                 }
             }
 
         }
 
-        protected override void AreaEntityOutOfViewRange(object sender, DynamicEntityEventArgs e)
+        void area_EntityModelChanged(object sender, AreaVoxelModelEventArgs e)
         {
-            if (e.Entity != this)
+            if (e.Entity != DynamicEntity)
             {
-                //Console.WriteLine("TO: {0},  {1} entity out of view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.EntityId });
+                var ms = new MemoryStream();
+                using (var writer = new BinaryWriter(ms))
+                {
+                    e.Entity.Model.Save(writer);
+                }
+
+                Connection.SendAsync(new EntityVoxelModelMessage { EntityModel = e.Entity.EntityId, Bytes = ms.ToArray() });
             }
         }
 
-        protected override void AreaEntityInViewRange(object sender, DynamicEntityEventArgs e)
+        protected override void AreaEntityOutOfViewRange(object sender, ServerDynamicEntityEventArgs e)
         {
-            if (e.Entity != this)
+            if (e.Entity != DynamicEntity)
+            {
+                //Console.WriteLine("TO: {0},  {1} entity out of view", Connection.Entity.EntityId, e.Entity.EntityId);
+                Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.DynamicEntity.EntityId });
+            }
+        }
+
+        protected override void AreaEntityInViewRange(object sender, ServerDynamicEntityEventArgs e)
+        {
+            if (e.Entity != DynamicEntity)
             {
                 //Console.WriteLine("TO: {0},  {1} entity in view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.SendAsync(new EntityInMessage { Entity = e.Entity });
+                Connection.SendAsync(new EntityInMessage { Entity = e.Entity.DynamicEntity });
             }
         }
 
@@ -66,24 +82,27 @@ namespace Utopia.Server.Structs
         {
             area.EntityView -= AreaEntityView;
             area.EntityMoved -= AreaEntityMoved;
-            area.EntityRemoved -= AreaEntityRemoved;
-            area.EntityAdded -= AreaEntityAdded;
             area.EntityUse -= AreaEntityUse;
             area.BlocksChanged -= area_BlocksChanged;
 
-            foreach (var dynamicEntity in area.Enumerate())
+            foreach (var serverEntity in area.Enumerate())
             {
-                if (dynamicEntity != this)
+                if (serverEntity != DynamicEntity)
                 {
                     //Console.WriteLine("TO: {0}, entity {1} out (remove)", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.SendAsync(new EntityOutMessage { EntityId = dynamicEntity.EntityId });
+                    Connection.SendAsync(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.EntityId });
                 }
             }
         }
 
+        public override void Update(Shared.Structs.DynamicUpdateState gameTime)
+        {
+            // no need to update something on real player
+        }
+
         void AreaEntityUse(object sender, EntityUseEventArgs e)
         {
-            if (e.Entity != this)
+            if (e.Entity != DynamicEntity)
             {
                 Connection.SendAsync(new EntityUseMessage 
                 { 
@@ -97,19 +116,9 @@ namespace Utopia.Server.Structs
             }
         }
 
-        void AreaEntityAdded(object sender, DynamicEntityEventArgs e)
-        {
-
-        }
-
-        void AreaEntityRemoved(object sender, DynamicEntityEventArgs e)
-        {
-
-        }
-
         void AreaEntityMoved(object sender, EntityMoveEventArgs e)
         {
-            if (e.Entity != this)
+            if (e.Entity != DynamicEntity)
             {
                 Connection.SendAsync(new EntityPositionMessage { EntityId = e.Entity.EntityId, Position = e.Entity.Position });
             }
@@ -117,7 +126,7 @@ namespace Utopia.Server.Structs
 
         void AreaEntityView(object sender, EntityViewEventArgs e)
         {
-            if (e.Entity != this)
+            if (e.Entity != DynamicEntity)
             {
                 Connection.SendAsync(new EntityDirectionMessage { EntityId = e.Entity.EntityId, Direction = e.Entity.Rotation });
             }

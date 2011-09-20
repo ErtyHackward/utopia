@@ -1,4 +1,5 @@
 ﻿using System;
+using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Concrete;
 
 namespace Utopia.Editor
@@ -14,32 +15,32 @@ namespace Utopia.Editor
         {
             Name = "Spawn";
             Entity = new EditableVoxelEntity();
-            Entity.Blocks = new byte[16,16,16];
-            Xmax = Entity.Blocks.GetLength(0) - 1;
-            Ymax = Entity.Blocks.GetLength(1) - 1;
-            Zmax = Entity.Blocks.GetLength(2) - 1;
+            Entity.Model.Blocks = new byte[16,16,16];
+            Xmax = Entity.Model.Blocks.GetLength(0) - 1;
+            Ymax = Entity.Model.Blocks.GetLength(1) - 1;
+            Zmax = Entity.Model.Blocks.GetLength(2) - 1;
         }
 
 
         protected virtual void FillFunction(int x, int y, int z)
         {
             if (x == 0)
-                Entity.Blocks[x, y, z] = 1;
+                Entity.Model.Blocks[x, y, z] = 1;
             else if (y == 0)
-                Entity.Blocks[x, y, z] = 4;
+                Entity.Model.Blocks[x, y, z] = 4;
             else if (z == 0)
-                Entity.Blocks[x, y, z] = 7;
+                Entity.Model.Blocks[x, y, z] = 7;
             else if (x == Xmax)
-                Entity.Blocks[x, y, z] = 9;
+                Entity.Model.Blocks[x, y, z] = 9;
             else if (y == Ymax)
-                Entity.Blocks[x, y, z] = 13;
+                Entity.Model.Blocks[x, y, z] = 13;
             else if (z == Zmax)
-                Entity.Blocks[x, y, z] = 7;
+                Entity.Model.Blocks[x, y, z] = 7;
             else
-                Entity.Blocks[x, y, z] = 8;
+                Entity.Model.Blocks[x, y, z] = 8;
 
-            Entity.Blocks[0, 0, 0] = 2;
-            Entity.Blocks[1, 0, 0] = 3;
+            Entity.Model.Blocks[0, 0, 0] = 2;
+            Entity.Model.Blocks[1, 0, 0] = 3;
         }
 
 
@@ -52,11 +53,11 @@ namespace Utopia.Editor
 
         private static void Fill(VoxelEntity entity, Action<int, int, int> fillFunction)
         {
-            for (int x = 0; x < entity.Blocks.GetLength(0); x++)
+            for (int x = 0; x < entity.Model.Blocks.GetLength(0); x++)
             {
-                for (int y = 0; y < entity.Blocks.GetLength(1); y++)
+                for (int y = 0; y < entity.Model.Blocks.GetLength(1); y++)
                 {
-                    for (int z = 0; z < entity.Blocks.GetLength(2); z++)
+                    for (int z = 0; z < entity.Model.Blocks.GetLength(2); z++)
                     {
                         fillFunction(x, y, z);
                     }
@@ -74,7 +75,7 @@ namespace Utopia.Editor
 
         protected override void FillFunction(int x, int y, int z)
         {
-            Entity.Blocks[x, y, z] = Editor.SelectedIndex;
+            Entity.Model.Blocks[x, y, z] = Editor.SelectedIndex;
         }
     }
 
@@ -97,10 +98,10 @@ namespace Utopia.Editor
             if (z == Zmax) n++;
             if (n > 1)
             {
-                Entity.Blocks[x, y, z] = Editor.SelectedIndex;
+                Entity.Model.Blocks[x, y, z] = Editor.SelectedIndex;
             }
             else
-                Entity.Blocks[x, y, z] = 0;
+                Entity.Model.Blocks[x, y, z] = 0;
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace Utopia.Shared.Interfaces
 {
     /// <summary>
-    /// Provides possibility so store object in binary form
+    /// Provides possibility so store object in binary form.
     /// </summary>
     public interface IBinaryStorable
     {

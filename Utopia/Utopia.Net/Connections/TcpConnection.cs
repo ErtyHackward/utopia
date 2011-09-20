@@ -181,6 +181,11 @@ namespace Utopia.Net.Connections
             }
         }
 
+        public object SyncRoot
+        {
+            get { return _synObject; }
+        }
+
         #region speed calculation
         protected long lastReceivedBytes = 0;
         protected long lastCalcReceivedSpeed = DateTime.Now.Ticks;
