@@ -117,6 +117,7 @@ namespace Utopia.GUI.Forms
         void ServerConnection_MessageError(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.ErrorMessage> e)
         {
             AddTextToListBox(e.Message.Message);
+            NetworkConnectBtState(true);
         }
 
         void ServerConnection_MessageLoginResult(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.LoginResultMessage> e)
