@@ -22,6 +22,8 @@ namespace Utopia.Entities.Voxel
         public VertexBuffer<VertexCubeSolid> VertexBuffer;
         public List<VertexCubeSolid> Vertice;
 
+        private readonly bool _isColorOnly;
+
         /// <summary>
         /// Altered by server or user and needs vertice update (you need to call Update yourself)
         /// </summary>
@@ -36,21 +38,22 @@ namespace Utopia.Entities.Voxel
         private readonly byte[,,] _overlays;
 
 
-
         /// <summary>
         /// creates a VisualEntity ready to render with filled vertice List and vertexBuffer
         /// </summary>
         /// <param name="voxelMeshFactory">voxelMeshFactory responsible to create mesh</param>
         /// <param name="wrapped">wrapped VoxelEntity from server</param>
         /// <param name="overlays">array of texture id to overlay</param>
-        public VisualEntity(VoxelMeshFactory voxelMeshFactory, IVoxelEntity wrapped,byte[, ,] overlays=null)
+        /// <param name="isColorOnly">for an entity made of colored cubes not textures</param>
+        public VisualEntity(VoxelMeshFactory voxelMeshFactory, IVoxelEntity wrapped,byte[, ,] overlays=null,bool isColorOnly=false)
         {
             VoxelEntity = wrapped;
+            _isColorOnly = isColorOnly;
 
             _voxelMeshFactory = voxelMeshFactory;
             _overlays = overlays;
 
-            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks, _overlays);
+            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks, _overlays, _isColorOnly);
             VertexBuffer = _voxelMeshFactory.InitBuffer(Vertice);
             
             Altered = true;
@@ -90,9 +93,9 @@ namespace Utopia.Entities.Voxel
         /// </summary>
         internal void Update()
         {
-            if (!Altered) return; 
+            if (!Altered) return;
 
-            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks,_overlays);
+            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks, _overlays, _isColorOnly);
 
             if (Vertice.Count != 0)
             {

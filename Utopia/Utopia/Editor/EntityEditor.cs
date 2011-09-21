@@ -106,7 +106,7 @@ namespace Utopia.Editor
             int z = entity.Model.Blocks.GetLength(2);
             byte[,,] overlays = new byte[x,y,z];
             
-            _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays);
+            _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays,IsColor);
 
             _editedEntity.Position = new DVector3((int) _player.Position.X, (int) _player.Position.Y,
                                                   (int) _player.Position.Z);
