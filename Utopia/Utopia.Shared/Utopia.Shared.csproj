@@ -83,10 +83,10 @@
     <Compile Include="Chunks\Entities\EntityDisplacementModes.cs" />
     <Compile Include="Chunks\Entities\Events\BlocksChangedEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\DynamicEntityEventArgs.cs" />
-    <Compile Include="Chunks\Entities\Events\EntityLeaveAreaEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityMoveEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityViewEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityUseEventArgs.cs" />
+    <Compile Include="Chunks\Entities\Events\VoxelModelEventArgs.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IDynamicEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\ISlotContainer.cs" />
@@ -96,7 +96,6 @@
     <Compile Include="Chunks\Entities\Inventory\ToolbarSlot.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityEffect.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityState.cs" />
-    <Compile Include="Chunks\Entities\Management\MapArea.cs" />
     <Compile Include="Chunks\Entities\PlayerCharacter.cs" />
     <Compile Include="Chunks\Entities\SpecialCharacterEntity.cs" />
     <Compile Include="Chunks\Entities\Concrete\ContainerEntity.cs" />
@@ -112,7 +111,6 @@
     <Compile Include="Chunks\Entities\Inventory\ContainedSlot.cs" />
     <Compile Include="Chunks\Entities\Inventory\EquipmentSlotType.cs" />
     <Compile Include="Chunks\Entities\Inventory\Item.cs" />
-    <Compile Include="Chunks\Entities\Concrete\VoxelEntity.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tool.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Wally.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\BlockRemover.cs" />
@@ -123,6 +121,8 @@
     <Compile Include="Chunks\Entities\Inventory\Tools\ToolImpact.cs" />
     <Compile Include="Chunks\Entities\Inventory\Weapon.cs" />
     <Compile Include="Chunks\Entities\DynamicEntity.cs" />
+    <Compile Include="Chunks\Entities\VoxelEntity.cs" />
+    <Compile Include="Chunks\Entities\VoxelModel.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
     <Compile Include="Chunks\SingleArrayChunkContainer.cs" />

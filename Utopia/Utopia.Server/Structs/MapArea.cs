@@ -2,12 +2,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using SharpDX;
+using Utopia.Server.Events;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Structs;
 
-namespace Utopia.Shared.Chunks.Entities.Management
+namespace Utopia.Server.Structs
 {
     /// <summary>
     /// Threadsafe map area. Contains dynamic entities.
@@ -20,7 +21,7 @@ namespace Utopia.Shared.Chunks.Entities.Management
         public static Location2<int> AreaSize = new Location2<int>(16 * 8, 16 * 8);
 
         private readonly object _syncRoot = new object();
-        private readonly ConcurrentDictionary<IDynamicEntity, IDynamicEntity> _entities = new ConcurrentDictionary<IDynamicEntity, IDynamicEntity>();
+        private readonly ConcurrentDictionary<int, ServerDynamicEntity> _entities = new ConcurrentDictionary<int, ServerDynamicEntity>();
         private Rectangle _rectangle;
 
         public object SyncRoot
@@ -83,9 +84,9 @@ namespace Utopia.Shared.Chunks.Entities.Management
         /// <summary>
         /// Occurs when some entity was added to this area
         /// </summary>
-        public event EventHandler<DynamicEntityEventArgs> EntityAdded;
+        public event EventHandler<ServerDynamicEntityEventArgs> EntityAdded;
 
-        private void OnEntityAdded(DynamicEntityEventArgs e)
+        private void OnEntityAdded(ServerDynamicEntityEventArgs e)
         {
             var handler = EntityAdded;
             if (handler != null) handler(this, e);
@@ -94,9 +95,9 @@ namespace Utopia.Shared.Chunks.Entities.Management
         /// <summary>
         /// Occurs when some entity was removed from this area
         /// </summary>
-        public event EventHandler<DynamicEntityEventArgs> EntityRemoved;
+        public event EventHandler<ServerDynamicEntityEventArgs> EntityRemoved;
 
-        private void OnEntityRemoved(DynamicEntityEventArgs e)
+        private void OnEntityRemoved(ServerDynamicEntityEventArgs e)
         {
             var handler = EntityRemoved;
             if (handler != null) handler(this, e);
@@ -116,23 +117,34 @@ namespace Utopia.Shared.Chunks.Entities.Management
         /// <summary>
         /// Occurs when some entity get far away
         /// </summary>
-        public event EventHandler<DynamicEntityEventArgs> EntityOutOfViewRange;
+        public event EventHandler<ServerDynamicEntityEventArgs> EntityOutOfViewRange;
 
-        public void OnEntityOutOfViewRange(IDynamicEntity iDynamicEntity)
+        public void OnEntityOutOfViewRange(ServerDynamicEntity iDynamicEntity)
         {
             var handler = EntityOutOfViewRange;
-            if (handler != null) handler(this, new DynamicEntityEventArgs { Entity = iDynamicEntity });
+            if (handler != null) handler(this, new ServerDynamicEntityEventArgs { Entity = iDynamicEntity });
         }
 
         /// <summary>
         /// Occurs when some entity is close enough to listen to
         /// </summary>
-        public event EventHandler<DynamicEntityEventArgs> EntityInViewRange;
-        
-        public void OnEntityInViewRange(IDynamicEntity iDynamicEntity)
+        public event EventHandler<ServerDynamicEntityEventArgs> EntityInViewRange;
+
+        public void OnEntityInViewRange(ServerDynamicEntity iDynamicEntity)
         {
             var handler = EntityInViewRange;
-            if (handler != null) handler(this, new DynamicEntityEventArgs { Entity = iDynamicEntity });
+            if (handler != null) handler(this, new ServerDynamicEntityEventArgs { Entity = iDynamicEntity });
+        }
+
+        /// <summary>
+        /// Occurs when some entity at this area changes its model
+        /// </summary>
+        public event EventHandler<AreaVoxelModelEventArgs> EntityModelChanged;
+
+        private void OnEntityModelChanged(AreaVoxelModelEventArgs e)
+        {
+            var handler = EntityModelChanged;
+            if (handler != null) handler(this, e);
         }
 
         #endregion
@@ -159,31 +171,32 @@ namespace Utopia.Shared.Chunks.Entities.Management
                                       topLeftPoint.Y + AreaSize.Z);
         }
 
-        public void AddEntity(IDynamicEntity entity)
+        public void AddEntity(ServerDynamicEntity entity)
         {
-            if (_entities.TryAdd(entity, entity))
+            if (_entities.TryAdd(entity.GetHashCode(), entity))
             {
                 // add events to retranslate
                 entity.PositionChanged += EntityPositionChanged;
-                entity.ViewChanged += EntityViewChanged;
-                entity.Use += EntityUseHandler;
+                entity.DynamicEntity.ViewChanged += EntityViewChanged;
+                entity.DynamicEntity.Use += EntityUseHandler;
+                entity.DynamicEntity.VoxelModelChanged += EntityVoxelModelChanged;
 
-                OnEntityAdded(new DynamicEntityEventArgs {Entity = entity});
+                OnEntityAdded(new ServerDynamicEntityEventArgs {Entity = entity});
             }
         }
-
-        public void RemoveEntity(IDynamicEntity entity)
+        
+        public void RemoveEntity(int entityId)
         {
-            IDynamicEntity e;
-            if (_entities.TryRemove(entity, out e))
+            ServerDynamicEntity e;
+            if (_entities.TryRemove(entityId, out e))
             {
-
                 // remove events from re-translating
-                entity.PositionChanged -= EntityPositionChanged;
-                entity.ViewChanged -= EntityViewChanged;
-                entity.Use -= EntityUseHandler;
+                e.PositionChanged -= EntityPositionChanged;
+                e.DynamicEntity.ViewChanged -= EntityViewChanged;
+                e.DynamicEntity.Use -= EntityUseHandler;
+                e.DynamicEntity.VoxelModelChanged -= EntityVoxelModelChanged;
 
-                OnEntityRemoved(new DynamicEntityEventArgs {Entity = entity});
+                OnEntityRemoved(new ServerDynamicEntityEventArgs { Entity = e });
             }
         }
 
@@ -199,25 +212,35 @@ namespace Utopia.Shared.Chunks.Entities.Management
             OnEntityView(e);
         }
 
-        private void EntityPositionChanged(object sender, EntityMoveEventArgs e)
+        void EntityVoxelModelChanged(object sender, VoxelModelEventArgs e)
         {
             // retranslate
-            OnEntityMoved(e);
+            //var ea = new AreaVoxelModelEventArgs{ Entity = (VoxelEntity)sender, Message = new 
+
+           
+
+            //OnEntityModelChanged(e);
+        }
+
+        private void EntityPositionChanged(object sender, ServerDynamicEntityMoveEventArgs e)
+        {
+            // retranslate
+            OnEntityMoved(new EntityMoveEventArgs { Entity = e.ServerDynamicEntity.DynamicEntity, PreviousPosition = e.PreviousPosition });
             
             // we need to tell area manager that entity leaves us, to put it into new area
-            if (!_rectangle.Contains(e.Entity.Position.AsVector3()))
+            if (!_rectangle.Contains(e.ServerDynamicEntity.DynamicEntity.Position.AsVector3()))
             {
-                OnEntityLeave(new EntityLeaveAreaEventArgs { Entity = e.Entity, PreviousPosition = e.PreviousPosition });
-                RemoveEntity(e.Entity);
+                OnEntityLeave(new EntityLeaveAreaEventArgs { Entity = e.ServerDynamicEntity, PreviousPosition = e.PreviousPosition });
+
+                RemoveEntity(e.ServerDynamicEntity.GetHashCode());
             }
         }
 
-        public IEnumerable<IDynamicEntity> Enumerate()
+        public IEnumerable<ServerDynamicEntity> Enumerate()
         {
-            
             foreach (var entity in _entities)
             {
-                yield return entity.Key;
+                yield return entity.Value;
             }
         }
 
@@ -231,11 +254,16 @@ namespace Utopia.Shared.Chunks.Entities.Management
             return Position.Equals(obj);
         }
         
-        public bool ContainsEntity(IDynamicEntity iDynamicEntity)
+        public bool ContainsEntity(uint entityId)
         {
-            return _entities.ContainsKey(iDynamicEntity);
+            return _entities.ContainsKey((int)entityId);
         }
 
 
+    }
+
+    public class ServerDynamicEntityEventArgs : EventArgs
+    {
+        public ServerDynamicEntity Entity { get; set; }
     }
 }

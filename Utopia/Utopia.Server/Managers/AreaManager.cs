@@ -3,9 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharpDX;
+using Utopia.Server.Events;
+using Utopia.Server.Structs;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
-using Utopia.Shared.Chunks.Entities.Management;
 using Utopia.Shared.Structs;
 using System.Threading;
 using S33M3Engines.Shared.Math;
@@ -18,7 +19,7 @@ namespace Utopia.Server.Managers
     public class AreaManager
     {
         private readonly ConcurrentDictionary<IntVector2, MapArea> _areas = new ConcurrentDictionary<IntVector2, MapArea>();
-        private readonly HashSet<IDynamicEntity> _allEntities = new HashSet<IDynamicEntity>();
+        private readonly HashSet<ServerDynamicEntity> _allEntities = new HashSet<ServerDynamicEntity>();
 
 #if DEBUG
         public volatile int entityAreaChangesCount;
@@ -27,7 +28,7 @@ namespace Utopia.Server.Managers
         /// Use only for test purposes. Thread safty is NOT guaranteed.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<IDynamicEntity> EnumerateEntities()
+        public IEnumerable<ServerDynamicEntity> EnumerateEntities()
         {
             return _allEntities;
         }
@@ -112,8 +113,8 @@ namespace Utopia.Server.Managers
 
             double tooFarAway = MapArea.AreaSize.X * MapArea.AreaSize.X + MapArea.AreaSize.Z * MapArea.AreaSize.Z;
 
-            var currentArea = GetArea(new DVector3(e.Entity.Position.X, 0,
-                                                  e.Entity.Position.Z));
+            var currentArea = GetArea(new DVector3(e.Entity.DynamicEntity.Position.X, 0,
+                                                  e.Entity.DynamicEntity.Position.Z));
 
             var previousArea = GetArea(new DVector3(e.PreviousPosition.X, 0,
                                                    e.PreviousPosition.Z));
@@ -134,8 +135,8 @@ namespace Utopia.Server.Managers
                         prev.OnEntityOutOfViewRange(e.Entity);
                     }
                     
-                    var now = GetArea(new DVector3(e.Entity.Position.X + x*MapArea.AreaSize.X, 0,
-                                                  e.Entity.Position.Z + z*MapArea.AreaSize.Z));
+                    var now = GetArea(new DVector3(e.Entity.DynamicEntity.Position.X + x*MapArea.AreaSize.X, 0,
+                                                  e.Entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Z));
 
                     if(IntVector2.DistanceSquared(previousArea.Position, now.Position) > tooFarAway)
                     {
@@ -151,7 +152,7 @@ namespace Utopia.Server.Managers
             currentArea.AddEntity(e.Entity);
         }
 
-        public void AddEntity(IDynamicEntity entity)
+        public void AddEntity(ServerDynamicEntity entity)
         {
             lock (_allEntities)
             {
@@ -168,8 +169,8 @@ namespace Utopia.Server.Managers
             {
                 for (int z = -1; z < 2; z++)
                 {
-                    var area = GetArea(new DVector3(entity.Position.X + x * MapArea.AreaSize.X, 0,
-                                                   entity.Position.Z + z * MapArea.AreaSize.Z));
+                    var area = GetArea(new DVector3(entity.DynamicEntity.Position.X + x * MapArea.AreaSize.X, 0,
+                                                   entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Z));
                     entity.AddArea(area);
                     if (x == 0 && z == 0)
                     {
@@ -184,7 +185,7 @@ namespace Utopia.Server.Managers
             OnEntityAdded(new AreaEntityEventArgs { Entity = entity });
         }
 
-        public void RemoveEntity(IDynamicEntity entity)
+        public void RemoveEntity(ServerDynamicEntity entity)
         {
             bool removed;
             lock (_allEntities)
@@ -199,10 +200,10 @@ namespace Utopia.Server.Managers
             {
                 for (int z = -1; z < 2; z++)
                 {
-                    var area = GetArea(new DVector3(entity.Position.X + x * MapArea.AreaSize.X, 0,
-                                                   entity.Position.Z + z * MapArea.AreaSize.Z));
+                    var area = GetArea(new DVector3(entity.DynamicEntity.Position.X + x * MapArea.AreaSize.X, 0,
+                                                   entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Z));
                     if (x == 0 && z == 0)
-                        area.RemoveEntity(entity);
+                        area.RemoveEntity((int)entity.DynamicEntity.EntityId);
 
                     area.OnEntityOutOfViewRange(entity);
 

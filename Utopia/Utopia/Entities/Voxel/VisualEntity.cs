@@ -50,7 +50,7 @@ namespace Utopia.Entities.Voxel
             _voxelMeshFactory = voxelMeshFactory;
             _overlays = overlays;
 
-            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks, _overlays);
+            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks, _overlays);
             VertexBuffer = _voxelMeshFactory.InitBuffer(Vertice);
             
             Altered = true;
@@ -92,7 +92,7 @@ namespace Utopia.Entities.Voxel
         {
             if (!Altered) return; 
 
-            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Blocks,_overlays);
+            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks,_overlays);
 
             if (Vertice.Count != 0)
             {

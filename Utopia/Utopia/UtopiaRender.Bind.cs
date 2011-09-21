@@ -125,7 +125,7 @@ namespace Utopia
 
             iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
 
-            iocContainer.Bind<IChunkStorageManager>().To<SQLiteStorageManager>().InSingletonScope();
+            iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope();
             
 
             iocContainer.Bind<ActionsManager>().ToSelf().InSingletonScope();

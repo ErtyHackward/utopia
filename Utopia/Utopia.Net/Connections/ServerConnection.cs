@@ -213,6 +213,17 @@ namespace Utopia.Net.Connections
                 MessagePing(this, new ProtocolMessageEventArgs<PingMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when EntityVoxelModelMessage is received (another thread)
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityVoxelModelMessage>> MessageEntityVoxelModel;
+
+        protected void OnMessageEntityVoxelModel(EntityVoxelModelMessage ea)
+        {
+            if (MessageEntityVoxelModel != null)
+                MessageEntityVoxelModel(this, new ProtocolMessageEventArgs<EntityVoxelModelMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -222,6 +233,9 @@ namespace Utopia.Net.Connections
         /// <param name="port"></param>
         public ServerConnection(string address, int port) : base(address, port)
         {
+            //Set default server connection timeout
+            this.ConnexionTimeOut = 5000; //5 secondes by default
+
             StartSendThread();
         }
 
@@ -231,6 +245,8 @@ namespace Utopia.Net.Connections
         /// <param name="address"></param>
         public ServerConnection(string address)
         {
+            this.ConnexionTimeOut = 5000; //5 secondes by default
+
             StartSendThread();
              remoteAddress = ParseAddress(address);
 
@@ -239,7 +255,7 @@ namespace Utopia.Net.Connections
 
         void ServerConnection_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
         {
-            if (e.Status == ConnectionStatus.Disconnected)
+            if (e.Status == ConnectionStatus.Disconnected || e.Status == ConnectionStatus.Disconnecting)
             {
                 LoggedOn = false;
             }
@@ -290,9 +306,23 @@ namespace Utopia.Net.Connections
         {
             lock (_synObject)
             {
-                Writer.Write(msg.MessageId);
-                msg.Write(Writer);
-                Writer.Flush();
+                try
+                {
+                    if (socket.Connected)
+                    {
+                        Writer.Write(msg.MessageId);
+                        msg.Write(Writer);
+                        Writer.Flush();
+                    }
+                    else
+                    {
+                        SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Disconnected, Reason =  DisconnectReason.Unknown });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Disconnected, Exception = ex });
+                }
             }
         }
 
@@ -405,6 +435,9 @@ namespace Utopia.Net.Connections
                     break;
                 case MessageTypes.Ping:
                     OnMessagePing((PingMessage)msg);
+                    break;
+                case MessageTypes.EntityVoxelModel:
+                    OnMessageEntityVoxelModel((EntityVoxelModelMessage)msg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("msg","Invalid message received from server");

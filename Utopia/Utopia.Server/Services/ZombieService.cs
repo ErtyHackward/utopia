@@ -5,7 +5,9 @@ using System.Text;
 using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Server.Entities;
+using Utopia.Server.Events;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.ClassExt;
 
 namespace Utopia.Server.Services
@@ -30,15 +32,16 @@ namespace Utopia.Server.Services
         /// <returns></returns>
         public ServerZombie CreateZombie(string name, DVector3 position)
         {
-            var zombie = new ServerZombie(_server, name)
-            {
-                EntityId = EntityFactory.Instance.GetUniqueEntityId(),
-                Position = position,
-                Size = new SharpDX.Vector3(2f, 3f, 2f)
-            };
+            var z = new Zombie { CharacterName = name, EntityId = EntityFactory.Instance.GetUniqueEntityId() };
 
-            zombie.Blocks = new byte[1, 1, 1];// { { { (byte)15 } } },
-            zombie.Blocks[0, 0, 0] = (byte)27;
+            var zombie = new ServerZombie(_server, z);
+            
+            zombie.DynamicEntity.Position = position;
+            zombie.DynamicEntity.Size = new SharpDX.Vector3(2f, 3f, 2f);
+
+            zombie.DynamicEntity.Model = new VoxelModel();
+            zombie.DynamicEntity.Model.Blocks = new byte[1, 1, 1];// { { { (byte)15 } } },
+            zombie.DynamicEntity.Model.Blocks[0, 0, 0] = (byte)27;
             //zombie.Blocks[1, 0, 0] = (byte)0;
             //zombie.Blocks[0, 0, 1] = (byte)15;
             //zombie.Blocks[1, 0, 1] = (byte)0;
@@ -80,8 +83,8 @@ namespace Utopia.Server.Services
             var r = new Random(DateTime.Now.Millisecond);
             if (cmd == "addzombie")
             {
-                var z = CreateZombie(r.Next(_names), e.Connection.Entity.Position);
-                _server.SendChatMessage(string.Format("Zombie {0} added {1}", z.DisplayName, _aliveZombies.Count));
+                var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
+                _server.SendChatMessage(string.Format("Zombie {0} added {1}", z.DynamicEntity.DisplayName, _aliveZombies.Count));
             }
 
             if (cmd == "removezombies")
@@ -103,7 +106,7 @@ namespace Utopia.Server.Services
 
                 for (int i = 0; i < count; i++)
                 {
-                    var z = CreateZombie(r.Next(_names), e.Connection.Entity.Position);
+                    var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
                     z.Seed = r.Next(0, 100000);
                 }
                 _server.SendChatMessage(string.Format("{0} zombies added ({1} total)", count, _aliveZombies.Count));

@@ -19,8 +19,10 @@ namespace Utopia.Shared.Chunks.Entities
             RotationSpeed = 10f;          //Default Player Rotation Speed
             Size = new SharpDX.Vector3(0.5f, 1.9f, 0.5f); //Default player size
             //Default Player Voxel Body
-            Blocks = new byte[1, 1, 1];
-            Blocks[0, 0, 0] = CubeId.PlayerHead;
+            Model = new VoxelModel();
+
+            Model.Blocks = new byte[1, 1, 1];
+            Model.Blocks[0, 0, 0] = CubeId.PlayerHead;
         }
 
         public SlotContainer<ToolbarSlot> Toolbar { get; set; }
@@ -62,21 +64,6 @@ namespace Utopia.Shared.Chunks.Entities
                 var args = EntityUseEventArgs.FromState(EntityState);
                 OnUse(args);
             }
-        }
-
-        public override void AddArea(Management.MapArea area)
-        {
-            
-        }
-
-        public override void RemoveArea(Management.MapArea area)
-        {
-            
-        }
-
-        public override void Update(DynamicUpdateState gameTime)
-        {
-            // no need to do something here
         }
     }
 }

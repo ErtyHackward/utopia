@@ -145,6 +145,12 @@
     <Compile Include="GUI\Forms\CustControls\Config.Designer.cs">
       <DependentUpon>Config.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Forms\ShowMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\ShowMessage.Designer.cs">
+      <DependentUpon>ShowMessage.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\NuclexUIPort\Controls\Arcade\CommandControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Arcade\PanelControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Control.cs" />
@@ -234,6 +240,7 @@
     </Compile>
     <Compile Include="Network\Server.cs" />
     <Compile Include="Entities\EntityImpact.cs" />
+    <Compile Include="Settings\SQLiteSettingsManager.cs" />
     <Compile Include="UtopiaClient.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Program.cs" />
@@ -247,8 +254,8 @@
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds3D.cs" />
-    <Compile Include="Worlds\Storage\SQLiteManager.cs" />
-    <Compile Include="Worlds\Storage\SQLiteStorageManager.cs" />
+    <Compile Include="SQLite\SQLiteManager.cs" />
+    <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
     <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
     <Compile Include="Worlds\Storage\IChunkStorageManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\IChunksWrapper.cs" />
@@ -291,6 +298,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\Forms\CustControls\SinglePlayer.resx">
       <DependentUpon>SinglePlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Forms\ShowMessage.resx">
+      <DependentUpon>ShowMessage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\Forms\WelcomeScreen.resx">
       <DependentUpon>WelcomeScreen.cs</DependentUpon>

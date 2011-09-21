@@ -53,7 +53,7 @@ namespace Utopia.Editor
         private Tool _leftToolbeforeEnteringEditor;
 
         public Location3<int>? NewCubePlace;
-        public Location3<int>? PickedCubeLoc;
+        public Location3<int>? PickedCube;
         public List<Location3<int>> Selected;
 
         public byte SelectedIndex { get; set; }
@@ -67,7 +67,7 @@ namespace Utopia.Editor
 
         public byte[, ,] Blocks
         {
-            get {return _editedEntity.VoxelEntity.Blocks;}
+            get {return _editedEntity.VoxelEntity.Model.Blocks;}
         }
 
         public EditorTool LeftTool;
@@ -101,9 +101,9 @@ namespace Utopia.Editor
 
         public void SpawnEntity(VoxelEntity entity)
         { 
-            int x = entity.Blocks.GetLength(0);
-            int y = entity.Blocks.GetLength(1);
-            int z = entity.Blocks.GetLength(2);
+            int x = entity.Model.Blocks.GetLength(0);
+            int y = entity.Model.Blocks.GetLength(1);
+            int z = entity.Model.Blocks.GetLength(2);
             byte[,,] overlays = new byte[x,y,z];
             
             _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays);
@@ -140,18 +140,18 @@ namespace Utopia.Editor
 
             GetSelectedBlock();
 
-            if (PickedCubeLoc.HasValue && PickedCubeLoc != _prevPickedBlock)
+            if (PickedCube.HasValue && PickedCube != _prevPickedBlock)
             {
-                int x = PickedCubeLoc.Value.X;
-                int y = PickedCubeLoc.Value.Y;
-                int z = PickedCubeLoc.Value.Z;
+                int x = PickedCube.Value.X;
+                int y = PickedCube.Value.Y;
+                int z = PickedCube.Value.Z;
 
                 _editedEntity.AlterOverlay(x, y, z, 21);
                 
                 if (_prevPickedBlock.HasValue)
                     _editedEntity.AlterOverlay(_prevPickedBlock.Value.X, _prevPickedBlock.Value.Y, _prevPickedBlock.Value.Z, 0);
 
-                _prevPickedBlock = PickedCubeLoc;
+                _prevPickedBlock = PickedCube;
                 _editedEntity.Altered = true;             
             }
 
@@ -196,8 +196,8 @@ namespace Utopia.Editor
 
         public void UpdatePickedCube(byte value)
         {
-            if (PickedCubeLoc.HasValue)
-                SafeSetBlock(PickedCubeLoc.Value.X, PickedCubeLoc.Value.Y, PickedCubeLoc.Value.Z, value);
+            if (PickedCube.HasValue)
+                SafeSetBlock(PickedCube.Value.X, PickedCube.Value.Y, PickedCube.Value.Z, value);
         }
         
         public void UpdateNewPlace(byte value)
@@ -268,7 +268,7 @@ namespace Utopia.Editor
         DVector3 CastedFrom, CastedTo;
         private void GetSelectedBlock()
         {
-            byte[,,] blocks = _editedEntity.VoxelEntity.Blocks;
+            byte[,,] blocks = _editedEntity.VoxelEntity.Model.Blocks;
 
             //XXX avoid unnecessay picking loops. but not just mousestate changes , you can still pick in freelook mode. 
 
@@ -300,28 +300,15 @@ namespace Utopia.Editor
                 if (targetPoint.X >= startX && targetPoint.Y >= startY && targetPoint.Z >= startZ
                     && targetPoint.X < endX && targetPoint.Y < endY && targetPoint.Z < endZ)
                 {
-                   Location3<int> hit =  new Location3<int>((int)((targetPoint.X - startX) / Scale),
+                    PickedCube = new Location3<int>((int)((targetPoint.X - startX) / Scale),
                                                        (int)((targetPoint.Y  - startY)/ Scale),
                                                        (int)((targetPoint.Z - startZ) / Scale));
-                    if (Pickable(hit))
-                    {
-                        PickedCubeLoc = hit;
-                        break;
-                    }  
+                   break;
                 }
             }
         }
 
-        /// <summary>
-        /// check if a hit is pickable
-        /// </summary>
-        /// <param name="hit">picking possibility</param>
-        /// <returns>true if acceptable for picking</returns>
-        private bool Pickable(Location3<int> hit)
-        {
-            return Blocks[hit.X, hit.Y, hit.Z] != 0;
-        }
-
+       
 
         public override void Dispose()
         {

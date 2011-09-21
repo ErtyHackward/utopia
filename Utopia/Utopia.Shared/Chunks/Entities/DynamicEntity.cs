@@ -1,9 +1,7 @@
 ﻿using System;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
-using Utopia.Shared.Chunks.Entities.Management;
 using S33M3Engines.Shared.Math;
-using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities
@@ -77,38 +75,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// </summary>
         public EntityDisplacementModes DisplacementMode { get; set; }
 
-        private MapArea _currentArea;
-
-        /// <summary>
-        /// Gets or sets current entity area
-        /// </summary>
-        public MapArea CurrentArea
-        {
-            get
-            {
-                return _currentArea;
-            }
-            set
-            {
-                if (_currentArea != value)
-                {
-                    if (_currentArea != null)
-                    {
-                        _currentArea.EntityInViewRange -= AreaEntityInViewRange;
-                        _currentArea.EntityOutOfViewRange -= AreaEntityOutOfViewRange;
-                    }
-
-                    _currentArea = value;
-
-                    if (_currentArea != null)
-                    {
-                        _currentArea.EntityInViewRange += AreaEntityInViewRange;
-                        _currentArea.EntityOutOfViewRange += AreaEntityOutOfViewRange;
-                    }
-                }
-            }
-        }
-
+        
         public override DVector3 Position
         {
             get
@@ -143,44 +110,7 @@ namespace Utopia.Shared.Chunks.Entities
         }
 
         #endregion
-
-        /// <summary>
-        /// Called when some entity goes out of view range
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected virtual void AreaEntityOutOfViewRange(object sender, DynamicEntityEventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// Called when some entity get closer
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected virtual void AreaEntityInViewRange(object sender, DynamicEntityEventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// Perform actions when getting closer to area. Entity should add all needed event handlers
-        /// </summary>
-        /// <param name="area"></param>
-        public abstract void AddArea(MapArea area);
-
-        /// <summary>
-        /// Perform actions when area is far away, entity should remove any event hadler it has
-        /// </summary>
-        /// <param name="area"></param>
-        public abstract void RemoveArea(MapArea area);
-
-        /// <summary>
-        /// Perform dynamic update (AI logic)
-        /// </summary>
-        public abstract void Update(DynamicUpdateState gameTime);
-
+        
         public override void Load(System.IO.BinaryReader reader)
         {
             base.Load(reader);

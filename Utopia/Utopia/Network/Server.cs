@@ -22,7 +22,6 @@ namespace Utopia.Network
 
         #region Public properties/variables
         public string Address { get; set; }
-        public int Port { get; set; }
         public bool Connected { get; set; }
         public ServerConnection ServerConnection { get; set; }
 
@@ -51,15 +50,14 @@ namespace Utopia.Network
             Connected = false;
         }
 
-        public bool BindingServer(string address, int port)
+        public bool BindingServer(string address)
         {
-            if (Address == address && Port == port) return false;
+            if (Address == address) return false;
             if (ServerConnection != null && ServerConnection.ConnectionStatus == ConnectionStatus.Connected) ServerConnection.Disconnect();
 
             Address = address;
-            Port = port;
 
-            ServerConnection = new ServerConnection(address, port);
+            ServerConnection = new ServerConnection(address);
             //Register Login Events
             //ServerConnection.MessageLoginResult += _server_MessageLoginResult;
             //ServerConnection.ConnectionStatusChanged += _server_ConnectionStatusChanged;
@@ -98,7 +96,7 @@ namespace Utopia.Network
 
         void _server_MessagePlayerIn(object sender, ProtocolMessageEventArgs<Net.Messages.EntityInMessage> e)
         {
-            Console.WriteLine("_server_MessagePlayerIn : " + e.Message.Entity.DisplayName);
+            //Console.WriteLine("_server_MessagePlayerIn : " + e.Message.Entity.DisplayName);
         }
 
         void _server_MessageGameInformation(object sender, ProtocolMessageEventArgs<Net.Messages.GameInformationMessage> e)
@@ -113,7 +111,7 @@ namespace Utopia.Network
 
         void _server_MessageDirection(object sender, ProtocolMessageEventArgs<Net.Messages.EntityDirectionMessage> e)
         {
-            //throw new NotImplementedException();
+            //Console.WriteLine("_server_MessageGameInformation : " + e.Message.Message.ToString());
         }
 
         void _server_MessageDateTime(object sender, ProtocolMessageEventArgs<Net.Messages.DateTimeMessage> e)
@@ -123,7 +121,7 @@ namespace Utopia.Network
 
         void _server_MessageChunkData(object sender, ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
         {
-            //Console.WriteLine("_server_MessageChunkData : " + e.Message.Position.ToString() + " " + e.Message.Data.Length + " bytes");
+            Console.WriteLine("_server_MessageChunkData : " + e.Message.Position.ToString() + " " + e.Message.Data.Length + " bytes");
         }
 
         void _server_MessageChat(object sender, ProtocolMessageEventArgs<Net.Messages.ChatMessage> e)
@@ -138,7 +136,11 @@ namespace Utopia.Network
 
         void _server_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
         {
-            //Console.WriteLine("_server_ConnectionStatusChanged : " + e.Reason + " status : " + e.Status);
+            if (e.Status == ConnectionStatus.Disconnected)
+            {
+                //Display Error message !!! 
+                
+            }
         }
 
         #endregion
@@ -156,12 +158,11 @@ namespace Utopia.Network
 
             if (ServerConnection.ConnectionStatus != ConnectionStatus.Connected)
             {
-                ServerConnection.ConnectAsync(new AsyncCallback(ConnectAsyncCallBack), null);
+                ServerConnection.ConnectAsync();
             }
             else
             {
                 ServerConnection.Authenticate();
-                ServerConnection.FetchPendingMessages(1);
             }
         }
 
@@ -173,12 +174,6 @@ namespace Utopia.Network
         #endregion
 
         #region Private Methods
-        //Server connection done
-        private void ConnectAsyncCallBack(IAsyncResult result)
-        {
-            ServerConnection.FetchPendingMessages(1);
-        }
-
         //Raise when a block has been changed ==> To be sent to the server
         private void ChunkContainer_BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
         {
