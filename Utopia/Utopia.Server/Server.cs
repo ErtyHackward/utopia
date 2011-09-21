@@ -14,7 +14,6 @@ using Utopia.Server.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Config;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
@@ -39,8 +38,8 @@ namespace Utopia.Server
         private Timer _saveTimer;
         private Timer _entityUpdateTimer;
 
-        private Queue<double> _updateCyclesPerfomance = new Queue<double>();
-        private Stopwatch _updateStopwatch = new Stopwatch();
+        private readonly Queue<double> _updateCyclesPerfomance = new Queue<double>();
+        private readonly Stopwatch _updateStopwatch = new Stopwatch();
 
         // ReSharper restore NotAccessedField.Local        
         private readonly object _areaManagerSyncRoot = new object();
@@ -305,7 +304,7 @@ namespace Utopia.Server
             {
                 var msg = e.Message;
                 msg.Request = false;
-                connection.Send(msg);
+                connection.SendAsync(msg);
             }
         }
 
@@ -330,6 +329,8 @@ namespace Utopia.Server
         void ConnectionMessageGetChunks(object sender, ProtocolMessageEventArgs<GetChunksMessage> e)
         {
             var connection = (ClientConnection)sender;
+
+            Console.WriteLine("GetChunks!" + e.Message.Range.Position+ " " + e.Message.Range.Size );
 
             try
             {
@@ -425,7 +426,7 @@ namespace Utopia.Server
                     Data = ServerProtocolVersion, 
                     Message = "Wrong client version, expected " + ServerProtocolVersion 
                 };
-                connection.Send(error);
+                connection.SendAsync(error);
                 connection.Disconnect();
                 return;
             }
@@ -437,7 +438,7 @@ namespace Utopia.Server
                 var oldConnection = ConnectionManager.Find(c => c.UserId == loginData.UserId);
                 if (oldConnection != null)
                 {
-                    oldConnection.Send(new ErrorMessage { ErrorCode = ErrorCodes.AnotherInstanceLogged, Message = "Another instance of you was connected. You will be disconnected." });
+                    oldConnection.SendAsync(new ErrorMessage { ErrorCode = ErrorCodes.AnotherInstanceLogged, Message = "Another instance of you was connected. You will be disconnected." });
                     oldConnection.Disconnect();
                 }
 
@@ -516,7 +517,7 @@ namespace Utopia.Server
                 Console.WriteLine("Incorrect login information {0} ({1})", e.Message.Login,
                                   connection.Id);
 
-                connection.Send(error, new LoginResultMessage { Logged = false });
+                connection.SendAsync(error, new LoginResultMessage { Logged = false });
             }
         }
 
