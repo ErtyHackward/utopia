@@ -148,6 +148,7 @@ namespace Utopia.Server.Managers
                     }
                 }
             }
+            e.Entity.CurrentArea = currentArea;
 
             currentArea.AddEntity(e.Entity);
         }

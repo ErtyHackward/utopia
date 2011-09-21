@@ -42,7 +42,8 @@ namespace Utopia.Net.Connections
         protected long bufferSize = 128 * 1024;
         protected byte[] Buffer = null;
         protected volatile bool disposed = false;
-        protected readonly object _synObject = new object();
+        protected readonly object _sendSynObject = new object();
+        protected readonly object _receiveSynObject = new object();
 
         // bandwidth limit
         protected static long blBytesSent;
@@ -183,9 +184,14 @@ namespace Utopia.Net.Connections
             }
         }
 
-        public object SyncRoot
+        public object SendSyncRoot
         {
-            get { return _synObject; }
+            get { return _sendSynObject; }
+        }
+
+        public object ReceiveSyncRoot
+        {
+            get { return _receiveSynObject; }
         }
 
         #region speed calculation
@@ -360,22 +366,25 @@ namespace Utopia.Net.Connections
             {
                 if (disposing)
                 {
-                    lock (_synObject)
+                    lock (_sendSynObject)
                     {
-                        Disconnect(DisconnectReason.Dispose);
+                        lock (_receiveSynObject)
+                        {
+                            Disconnect(DisconnectReason.Dispose);
 
-                        Buffer = null;
-                        localAddress = null;
-                        remoteAddress = null;
+                            Buffer = null;
+                            localAddress = null;
+                            remoteAddress = null;
 
-                        connectionDone.Dispose();
-                        receiveDone.Dispose();
-                        sendDone.Dispose();
+                            connectionDone.Dispose();
+                            receiveDone.Dispose();
+                            sendDone.Dispose();
 
 
-                        socket = null;
+                            socket = null;
 
-                        disposed = true;
+                            disposed = true;
+                        }
                     }
                 }
             }
@@ -555,7 +564,8 @@ namespace Utopia.Net.Connections
                 socket.Close();
 
                 // possible there is active Protocol processing in another thread, we need to wait before it finishes
-                Monitor.Enter(_synObject);
+                Monitor.Enter(_sendSynObject);
+                Monitor.Enter(_receiveSynObject);
                 locked = true;
                 SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Disconnected, Reason = reason });
             }
@@ -566,7 +576,10 @@ namespace Utopia.Net.Connections
             finally
             {
                 if (locked)
-                    Monitor.Exit(_synObject);
+                {
+                    Monitor.Exit(_receiveSynObject);
+                    Monitor.Exit(_sendSynObject);
+                }
             }
         }
 
@@ -630,7 +643,7 @@ namespace Utopia.Net.Connections
         protected virtual void OnRecievedData(IAsyncResult ar)
         {
             if (disposed) return;
-            lock (_synObject)
+            lock (_receiveSynObject)
             {
                 if (disposed) return;
                 // Socket was the passed in object
@@ -713,7 +726,7 @@ namespace Utopia.Net.Connections
         /// </summary>
         public virtual void Listen()
         {
-            lock (_synObject)
+            lock (_receiveSynObject)
             {
 
                 if (!importedSocket)
@@ -737,7 +750,7 @@ namespace Utopia.Net.Connections
         /// <param name="msg">Message where </param>
         public virtual bool Send(byte[] bytes, int length)
         {
-            lock (_synObject)
+            lock (_sendSynObject)
             {
                 return InternalSend(bytes, length, false);
             }
@@ -758,7 +771,7 @@ namespace Utopia.Net.Connections
                 return false;
 
             if (lockResource)
-                Monitor.Enter(_synObject);
+                Monitor.Enter(_sendSynObject);
 
             try
             {
@@ -799,7 +812,7 @@ namespace Utopia.Net.Connections
             finally
             {
                 if (lockResource)
-                    Monitor.Exit(_synObject);
+                    Monitor.Exit(_sendSynObject);
                     //System.Threading.Monitor.Exit(synObject);
             }
             return false;
