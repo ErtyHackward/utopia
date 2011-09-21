@@ -128,8 +128,7 @@ namespace Utopia.Editor
 
             _itemEffect.TerraTexture.Value = _texture;
 
-            _itemEffect.SamplerDiffuse.Value =
-                StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+            _itemEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
             _ui = new EntityEditorUi(this);
         }

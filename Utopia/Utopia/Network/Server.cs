@@ -17,7 +17,6 @@ namespace Utopia.Network
     public class Server : GameComponent, IDisposable ,IDebugInfo
     {
         #region Private variables
-        private SingleArrayChunkContainer _chunkContainer;
         #endregion
 
         #region Public properties/variables
@@ -33,16 +32,6 @@ namespace Utopia.Network
         //===============================================================================================
 
         public Location3<int> ChunkSize { get; set; }
-
-        public SingleArrayChunkContainer ChunkContainer
-        {
-            get { return _chunkContainer; }
-            set
-            {
-                _chunkContainer = value;
-                _chunkContainer.BlockDataChanged += ChunkContainer_BlockDataChanged;
-            }
-        }
         #endregion
 
         public Server()
@@ -73,6 +62,18 @@ namespace Utopia.Network
             //ServerConnection.MessagePosition += _server_MessagePosition;
 
             return true;
+        }
+
+        public override void Dispose()
+        {
+            if (ServerConnection != null &&
+               ServerConnection.ConnectionStatus != ConnectionStatus.Disconnected &&
+               ServerConnection.ConnectionStatus != ConnectionStatus.Disconnecting)
+            {
+                ServerConnection.Disconnect();
+            }
+
+            if (ServerConnection != null) ServerConnection.Dispose();
         }
 
         #region Events Handlings Methods
@@ -189,15 +190,7 @@ namespace Utopia.Network
         }
         #endregion
 
-        public override void Dispose()
-        {
-            if (ServerConnection != null &&
-               ServerConnection.ConnectionStatus != ConnectionStatus.Disconnected &&
-               ServerConnection.ConnectionStatus != ConnectionStatus.Disconnecting)
-            {
-                ServerConnection.Disconnect();
-            }
-        }
+
 
         public string GetInfo()
         {

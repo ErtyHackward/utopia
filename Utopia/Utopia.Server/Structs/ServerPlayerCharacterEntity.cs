@@ -57,6 +57,7 @@ namespace Utopia.Server.Structs
                 }
 
                 Connection.SendAsync(new EntityVoxelModelMessage { EntityModel = e.Entity.EntityId, Bytes = ms.ToArray() });
+                ms.Dispose();
             }
         }
 

@@ -91,7 +91,9 @@ namespace Utopia
             if (data == null) return;
             //Close and cleanUP welcome screen;
             _welcomeForm.Close();
+            _welcomeForm.CleanUp();
             _welcomeForm.Dispose();
+            _welcomeForm = null;
             
             switch (data.RequestAction)
             {
@@ -124,6 +126,9 @@ namespace Utopia
             AnalyseExitReason(exitRease);
 
             _iocContainer.Dispose();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
 
         }
 

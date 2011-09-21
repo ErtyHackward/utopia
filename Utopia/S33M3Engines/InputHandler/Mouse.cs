@@ -55,6 +55,7 @@ namespace S33M3Engines.InputHandler
         public static void CleanUp()
         {
             mouseMessageHooker.Dispose();
+            mouseMessageHooker = null;
         }
 
     }

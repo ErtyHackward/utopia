@@ -96,6 +96,7 @@ namespace Utopia.Shared.Chunks
             BlockData.SetBlockBytes(reader.ReadBytes(ChunkBlocksByteLength));
             Entities.Clear();
             Entities.LoadEntities(EntityFactory.Instance, ms, ChunkBlocksByteLength, (int)(ms.Length - ChunkBlocksByteLength));
+            ms.Dispose();
         }
 
         /// <summary>
