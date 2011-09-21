@@ -25,6 +25,13 @@ static const float texmul2[6] = {  0,  0,  0,  0, -1,  1};
 static const float texmul3[6] = { -1, -1,  0,  0, -1, -1};		
 static const float texmul4[6] = {  0,  0,  1,  1,  0,  0};
 
+
+//	cube face						ba	F	Bo	T	L   R
+static const float normalsX[6] = {  0,  0,  0,  0, -1,  1};
+static const float normalsY[6] = {  0,  0, -1,  1,  0,  0};
+static const float normalsZ[6] = {  1, -1,  0,  0,  0,  0};		
+
+
 //--------------------------------------------------------------------------------------
 // Texture Samplers
 //--------------------------------------------------------------------------------------
@@ -47,6 +54,7 @@ struct PS_IN
 	float fogPower				: VARIOUS0;
 	float3 EmissiveLight		: Light0;
 	float3 UVWOverlay			: TEXCOORD1;
+	float3 normal				: NORMAL0;
 };
 
 //--------------------------------------------------------------------------------------
@@ -80,12 +88,25 @@ PS_IN VS(VS_IN input)
 						input.VertexInfo.z );
 						
 
-	output.EmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
+	
 
 	output.fogPower = 0; //clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 
+	float3 normal = float3(normalsX[facetype],normalsY[facetype],normalsZ[facetype]);
+		
+	float3 lightDirection = float3(0,1,1);
+	
+	//emmissiveLight is what was done in terran.hlsl
+	float3 emmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
+
+	float DiffuseIntensity =0.4;
+	float3 DiffuseColor = float3( 1, 1, 1);
+
+	float3 diffuse = dot( normal, lightDirection ) * DiffuseIntensity * DiffuseColor;
+
+	output.EmissiveLight=saturate(emmissiveLight+diffuse);
     return output;
-}
+}	
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader
@@ -98,10 +119,11 @@ float4 PS(PS_IN input) : SV_Target
 	//maybe i just want to take color if coloroverlay is transparent(alpha=0) instead of lerping
 	color = lerp(color,colorOverlay,0.25);
 
-	float4 Finalfogcolor = {SunColor / 1.5, color.a};
-	color = lerp(color, Finalfogcolor, input.fogPower);
-
+	//float4 Finalfogcolor = {SunColor / 1.5, color.a};
+	
 	// Apply fog on output color
+	//color = lerp(color, Finalfogcolor, input.fogPower);
+		
     return color;
 }
 

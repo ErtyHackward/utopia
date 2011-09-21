@@ -54,9 +54,9 @@ namespace Utopia.Editor
         {
             List<Located<Byte>> copied = new List<Located<byte>>();
             
-            if (!Editor.PickedCube.HasValue) return;
+            if (!Editor.PickedCubeLoc.HasValue) return;
 
-            Location3<int> origin = Editor.PickedCube.Value;
+            Location3<int> origin = Editor.PickedCubeLoc.Value;
 
             foreach (var copiedCube in copied)
             {
