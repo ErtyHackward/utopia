@@ -9,7 +9,6 @@ using Utopia.Net.Connections;
 using Utopia.Net.Interfaces;
 using Utopia.Net.Messages;
 using Utopia.Server.Structs;
-using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia.Server
 {
@@ -24,7 +23,7 @@ namespace Utopia.Server
         protected NetworkStream Stream;
         protected BinaryWriter Writer;
 
-        private readonly ConcurrentQueue<IBinaryMessage> _delayedMessages = new ConcurrentQueue<IBinaryMessage>();
+        internal readonly ConcurrentQueue<IBinaryMessage> _delayedMessages = new ConcurrentQueue<IBinaryMessage>();
 
         #endregion
 
@@ -178,7 +177,7 @@ namespace Utopia.Server
             Id = string.Format("{0}:{1}", endPoint.Address, endPoint.Port);
             VisibleGroup = new List<ClientConnection>();
             Stream = new NetworkStream(socket);
-            Writer = new BinaryWriter(new BufferedStream(Stream, 1024 * 18));
+            Writer = new BinaryWriter(new BufferedStream(Stream, 1024 * 32));
         }
 
         public void SendAsync(IBinaryMessage msg)
@@ -191,28 +190,58 @@ namespace Utopia.Server
             }
         }
 
+        public void SendAsync(params IBinaryMessage[] msgs)
+        {
+            for (int i = 0; i < msgs.Length; i++)
+            {
+                _delayedMessages.Enqueue(msgs[i]);    
+            }
+            if (!_sendThreadActive)
+            {
+                _sendThreadActive = true;
+                new ThreadStart(SendDelayed).BeginInvoke(null, null);
+            }
+        }
+
         private volatile bool _sendThreadActive;
 
         private void SendDelayed()
         {
-            _sendThreadActive = true;
-            lock (SyncRoot)
+            lock (SendSyncRoot)
             {
+                start:
+
+                _sendThreadActive = true;
                 IBinaryMessage msg;
                 while (_delayedMessages.TryDequeue(out msg))
                 {
-                    if (!Send(msg)) return;
-                }
+                    try
+                    {
+                        Writer.Write(msg.MessageId);
+                        msg.Write(Writer);
+                        
+                    }
+                    catch (IOException io)
+                    {
+                        Console.WriteLine("Send fail... " + io.Message);
+                        return;
+                    }
 
+                    //if (!Send(msg))
+                    //{
+                    //    Console.WriteLine("Send thread is terminated!");
+                    //    return;
+                    //}
+                }
+                Writer.Flush();
+                // allow next thread to start
                 _sendThreadActive = false;
 
                 // we need to try get messages again because we may lose next thread start when setting _sendThreadActive = false
-
-                while (_delayedMessages.TryDequeue(out msg))
+                if (!_delayedMessages.IsEmpty)
                 {
-                    if (!Send(msg)) return;
+                    goto start;
                 }
-
             }
         }
 
@@ -221,9 +250,9 @@ namespace Utopia.Server
         /// Sends a message to client
         /// </summary>
         /// <param name="msg"></param>
-        public bool Send(IBinaryMessage msg)
+        protected bool Send(IBinaryMessage msg)
         {
-            lock (SyncRoot)
+            lock (SendSyncRoot)
             {
                 try
                 {
@@ -232,8 +261,9 @@ namespace Utopia.Server
                     Writer.Flush();
                     return true;
                 }
-                catch (IOException)
+                catch (IOException io)
                 {
+                    Console.WriteLine("Send fail... " + io.Message);
                     return false;
                 }
             }
@@ -243,9 +273,9 @@ namespace Utopia.Server
         /// Sends a group of messages to client
         /// </summary>
         /// <param name="messages"></param>
-        public bool Send(params IBinaryMessage[] messages)
+        protected bool Send(params IBinaryMessage[] messages)
         {
-            lock (SyncRoot)
+            lock (SendSyncRoot)
             {
                 try
                 {
@@ -257,8 +287,9 @@ namespace Utopia.Server
                     Writer.Flush();
                     return true;
                 }
-                catch (IOException)
+                catch (IOException io)
                 {
+                    Console.WriteLine("Send fail... "+ io.Message);
                     return false;
                 }
             }

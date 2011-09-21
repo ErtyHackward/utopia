@@ -304,7 +304,7 @@ namespace Utopia.Net.Connections
         /// <param name="msg"></param>
         public void Send(IBinaryMessage msg)
         {
-            lock (_synObject)
+            lock (_sendSynObject)
             {
                 try
                 {

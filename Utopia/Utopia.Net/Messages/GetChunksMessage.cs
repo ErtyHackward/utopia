@@ -99,8 +99,7 @@ namespace Utopia.Net.Messages
                 
                 for (int i = 0; i < msg._hashesCount; i++)
                 {
-                    msg._positions[i].X = reader.ReadInt32();
-                    msg._positions[i].Y = reader.ReadInt32();
+                    msg._positions[i] = reader.ReadIntVector2();
                     var bytes = reader.ReadBytes(16);
                     if (bytes.Length != 16) 
                         throw new EndOfStreamException();
@@ -126,8 +125,7 @@ namespace Utopia.Net.Messages
                 writer.Write(msg._positions.Length);
                 for (int i = 0; i < msg._positions.Length; i++)
                 {
-                    writer.Write(msg._positions[i].X);
-                    writer.Write(msg._positions[i].Y);
+                    writer.Write(msg._positions[i]);
                     writer.Write(msg._md5Hashes[i].Bytes);
                 }
             }
