@@ -88,10 +88,14 @@ namespace Utopia.Entities.Voxel
                 textureArrayId = 25;
             } else
             {
-                color=new ByteColor(255,255,255,127);
-
-                //textureArrayId = blockType;//coherent with palette but lacks special face case like grass /dirt
-                textureArrayId = VisualCubeProfile.CubesProfile[cubeid].Textures[face];//TODO BUG here , cubeprofile index vs palette
+                VisualCubeProfile profile = VisualCubeProfile.CubesProfile[cubeid];
+                if (profile.IsEmissiveColorLightSource)
+                    color = new ByteColor(profile.EmissiveColor);
+                else
+                {
+                    color = new ByteColor(255, 255, 255, 127);
+                }
+                textureArrayId = profile.Textures[face];
             }
             
             //TODO indices : good for perf & ram 
