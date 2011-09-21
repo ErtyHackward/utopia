@@ -521,6 +521,7 @@ namespace Utopia
                     GameExitReason = ExitReason.UserRequest,
                     MainMessage = "User Requested exit"
                 };
+            
                 Exit(msg);
             }
             if (_actions.isTriggered(Actions.Engine_LockMouseCursor)) _engine.UnlockedMouse = !_engine.UnlockedMouse;

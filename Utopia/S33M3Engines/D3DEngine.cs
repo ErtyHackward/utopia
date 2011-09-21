@@ -352,6 +352,9 @@ namespace S33M3Engines
 
         public void Dispose()
         {
+            Context.ClearState();
+            Context.Flush();
+
             //Dispose the created states
             _backBuffer.Dispose();
             _dx11factory.Dispose();

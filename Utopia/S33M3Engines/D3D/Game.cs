@@ -148,6 +148,8 @@ namespace S33M3Engines.D3D
                 Draw();
             });
 
+            if (_d3dEngine.UnlockedMouse) _d3dEngine.UnlockedMouse = false;
+
             UnloadContent();
             //Dispose();
         }
