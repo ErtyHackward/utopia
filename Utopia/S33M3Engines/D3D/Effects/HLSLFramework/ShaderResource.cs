@@ -21,7 +21,10 @@ namespace S33M3Engines.D3D.Effects
         public ShaderResourceView Value
         {
             get { return _resourceView; }
-            set { _resourceView = value; _isDirty = true; }
+            set
+            {
+                _resourceView = value; _isDirty = true;
+            }
         }
         public Shaders ShadersImpacted
         {
