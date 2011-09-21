@@ -22,6 +22,14 @@ namespace Utopia.Shared.Structs
             this.SunLight = a;
         }
 
+        public ByteColor(Color c)
+        {
+            this.R = c.R;
+            this.G = c.G;
+            this.B = c.B;
+            this.SunLight = c.A;
+        }
+
         public static ByteColor operator +(ByteColor a, ByteColor b)
         {
             ByteColor result;
