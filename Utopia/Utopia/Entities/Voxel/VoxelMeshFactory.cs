@@ -20,7 +20,7 @@ namespace Utopia.Entities.Voxel
             _d3DEngine = d3DEngine;
         }
 
-        public List<VertexCubeSolid> GenCubesFaces(byte[,,] blocks, byte[,,] overlays = null)
+        public List<VertexCubeSolid> GenCubesFaces(byte[,,] blocks, byte[,,] overlays = null,bool colorMode=false)
         {
             List<VertexCubeSolid> vertexList = new List<VertexCubeSolid>();
 
@@ -37,7 +37,7 @@ namespace Utopia.Entities.Voxel
                      
                         byte overlay = overlays == null ? (byte) 0 : overlays[x, y, z];
                         if (blockType == 0) continue;
-                        BuildBlockVertices(blocks, ref vertexList, blockType, x, y, z, overlay);
+                        BuildBlockVertices(blocks, ref vertexList, blockType, x, y, z, overlay,colorMode);
                     }
                 }
             }
@@ -46,9 +46,7 @@ namespace Utopia.Entities.Voxel
         }
 
 
-        private static void BuildBlockVertices(byte[,,] blocks, ref List<VertexCubeSolid> vertice, byte blockType,
-                                               int x,
-                                               int y, int z, byte overlay)
+        private static void BuildBlockVertices(byte[,,] blocks, ref List<VertexCubeSolid> vertice, byte blockType, int x, int y, int z, byte overlay, bool colorMode)
         {
             byte blockXDecreasing = x == 0 ? (byte) 0 : blocks[x - 1, y, z];
             byte blockXIncreasing = x == blocks.GetLength(0) - 1 ? (byte) 0 : blocks[x + 1, y, z];
@@ -58,32 +56,38 @@ namespace Utopia.Entities.Voxel
             byte blockZIncreasing = z == blocks.GetLength(2) - 1 ? (byte) 0 : blocks[x, y, z + 1];
 
             if (blockXDecreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Left, blockType, overlay); //X-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Left, blockType, overlay, colorMode); //X-
             if (blockXIncreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Right, blockType, overlay); //X+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Right, blockType, overlay, colorMode); //X+
 
             if (blockYDecreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Bottom, blockType, overlay); //Y-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Bottom, blockType, overlay, colorMode); //Y-
             if (blockYIncreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Top, blockType, overlay); //Y+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Top, blockType, overlay, colorMode); //Y+
 
             if (blockZIncreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Back, blockType, overlay); //Z+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Back, blockType, overlay, colorMode); //Z+
             if (blockZDecreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Front, blockType, overlay); //Z-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Front, blockType, overlay, colorMode); //Z-
         }
 
         private static void BuildFaceVertices(ref List<VertexCubeSolid> vertice, int x, int y, int z,
                                               CubeFace faceDir,
-                                              byte blockType, byte overlay)
+                                              byte blockType, byte overlay,bool colorMode)
         {
-            //actually only handles 64 colors, so all blockType> 63 will have default color
-            //Color tmpColor = ColorLookup.Colours[blockType];
-            //ByteColor color = new ByteColor(tmpColor.R, tmpColor.G, tmpColor.B, tmpColor.A);
-            ByteColor color = new ByteColor(0, 0, 255, 255);
+            ByteColor color;
 
-            //if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackTop_Cube, BackLeftTop_Cube);
-
+            if (colorMode)
+            {
+                //actually only handles 64 colors, so all blockType> 63 will have default color
+                Color tmpColor = ColorLookup.Colours[blockType];
+                color = new ByteColor(tmpColor.R, tmpColor.G, tmpColor.B, tmpColor.A);
+                blockType=255;
+            } else
+            {
+                color=new ByteColor(255,255,255,127);
+            }
+            
             //TODO indices : good for perf & ram 
 
             int cubeid = blockType;
