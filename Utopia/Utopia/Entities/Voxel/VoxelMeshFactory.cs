@@ -215,7 +215,9 @@ namespace Utopia.Entities.Voxel
             return new VertexBuffer<VertexCubeSolid>(_d3DEngine, vertice.Count,
                                                      VertexCubeSolid.VertexDeclaration,
                                                      PrimitiveTopology.TriangleList,
-                                                     ResourceUsage.Default, 10);
+                                                     "VoxelMeshFactory_VB",
+                                                     ResourceUsage.Default, 
+                                                     10);
         }
     }
 }

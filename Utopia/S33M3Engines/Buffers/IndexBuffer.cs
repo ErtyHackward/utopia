@@ -26,20 +26,20 @@ namespace S33M3Engines.Buffers
         int _indicesCount;
         int _autoResizePerc;
         int _bufferCount;
+        string _bufferName;
 
         public int IndicesCount { get { return _indicesCount; } }
         #endregion
 
         #region Public Properties
         #endregion
-
-        public IndexBuffer(D3DEngine d3dEngine, int IndicesCount, Format indexFormat, int AutoResizePerc = 0, ResourceUsage usage = ResourceUsage.Default)
+        public IndexBuffer(D3DEngine d3dEngine, int IndicesCount, Format indexFormat, string bufferName, int AutoResizePerc = 0, ResourceUsage usage = ResourceUsage.Default)
         {
             _indicesCount = IndicesCount;
             _bufferCount = _indicesCount + (_indicesCount * _autoResizePerc / 100);
 
             _autoResizePerc = AutoResizePerc;
-
+            _bufferName = bufferName;
             _d3dEngine = d3dEngine;
             _indexFormat = indexFormat;
             _indexStride = FormatSize.GetFormatSize(indexFormat);
@@ -79,6 +79,8 @@ namespace S33M3Engines.Buffers
                 //Create new Buffer
                 _description.SizeInBytes = _bufferCount * _indexStride;
                 _indexBuffer = new Buffer(_d3dEngine.Device, _indices, _description);
+                //Set resource Name, will only be done at debug time.
+                S33M3Engines.D3D.Tools.Resource.SetName(_indexBuffer, _bufferName);
             }
             else
             {

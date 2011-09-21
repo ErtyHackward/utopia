@@ -367,6 +367,8 @@ namespace S33M3Engines
             Device.Dispose();
 
             S33M3Engines.InputHandler.Mouse.CleanUp();
+
+            S33M3Engines.D3D.Tools.Resource.CleanUpSetNames();
         }
 
         #endregion

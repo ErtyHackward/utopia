@@ -70,7 +70,7 @@ namespace UtopiaContent.ModelComp
             ptList.AddRange(new Line3D(new Vector3(0, 0, 0) * _axisSize, new Vector3(0, 1f, 0) * _axisSize, Color.Green).PointsList);
             ptList.AddRange(new Line3D(new Vector3(0, 0, 0) * _axisSize, new Vector3(0, 0, 1f) * _axisSize, Color.Blue).PointsList);
 
-            _vertexBuffer = new VertexBuffer<VertexPositionColor>(_d3dEngine, 6, VertexPositionColor.VertexDeclaration, PrimitiveTopology.LineList);
+            _vertexBuffer = new VertexBuffer<VertexPositionColor>(_d3dEngine, 6, VertexPositionColor.VertexDeclaration, PrimitiveTopology.LineList, "Axis_vertexBuffer");
             _vertexBuffer.SetData(ptList.ToArray());
         }
 

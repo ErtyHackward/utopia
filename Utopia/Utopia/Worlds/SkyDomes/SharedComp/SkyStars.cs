@@ -21,7 +21,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
     {
         #region private variables
         private int _nbrStars = 1000;
-        private VertexBuffer<VertexPositionColor> _vb;
+        private VertexBuffer<VertexPositionColor> _skyStarVB;
 
         private HLSLStars _effectStars;
         private Matrix _world = Matrix.Identity;
@@ -51,7 +51,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         public override void Dispose()
         {
             _effectStars.Dispose();
-            _vb.Dispose();
+            _skyStarVB.Dispose();
         }
 
         public override void Update(ref GameTime TimeSpend)
@@ -89,8 +89,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _effectStars.Apply();
 
-            _vb.SetToDevice(0);
-            _d3dEngine.Context.Draw(_vb.VertexCount, 0);
+            _skyStarVB.SetToDevice(0);
+            _d3dEngine.Context.Draw(_skyStarVB.VertexCount, 0);
         }
         #endregion
 
@@ -98,8 +98,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private void CreateBuffer()
         {
             VertexPositionColor[] vertices = GenerateSpherePoints(_nbrStars, 1500);
-            _vb = new VertexBuffer<VertexPositionColor>(_d3dEngine, vertices.Length, VertexPositionColor.VertexDeclaration, PrimitiveTopology.PointList);
-            _vb.SetData(vertices);
+            _skyStarVB = new VertexBuffer<VertexPositionColor>(_d3dEngine, vertices.Length, VertexPositionColor.VertexDeclaration, PrimitiveTopology.PointList, "_skyStarVB");
+            _skyStarVB.SetData(vertices);
         }
 
         //http://www.cgafaq.info/wiki/Random_Points_On_Sphere

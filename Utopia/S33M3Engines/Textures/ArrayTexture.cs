@@ -19,7 +19,7 @@ namespace S33M3Engines.Textures
         /// <param name="fileNames">The files names that will be used to create the array, this filename can use * or ?, ... the file name will be sorted by name for the array index</param>
         /// <param name="miPfilterFlag">Filter used to create the mipmap lvl from the loaded images</param>
         /// <param name="textureArrayView">The created textureArray view that can directly be used inside shaders</param>       
-        public static void CreateTexture2DFromFiles(Device device, string[] directories, string fileNames, FilterFlags miPfilterFlag, out ShaderResourceView textureArrayView)
+        public static void CreateTexture2DFromFiles(Device device, string[] directories, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out ShaderResourceView textureArrayView)
         {
             List<string> fileCollection = new List<string>();
             foreach (var dir in directories)
@@ -32,12 +32,12 @@ namespace S33M3Engines.Textures
                 }
 
             }                      
-            CreateTexture2DFromFiles(device, fileCollection.ToArray(), miPfilterFlag, out textureArrayView);
+            CreateTexture2DFromFiles(device, fileCollection.ToArray(), miPfilterFlag, ResourceName, out textureArrayView);
         }
 
-         public static void CreateTexture2DFromFiles(Device device, string directory, string fileNames, FilterFlags miPfilterFlag, out ShaderResourceView textureArrayView)
+         public static void CreateTexture2DFromFiles(Device device, string directory, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out ShaderResourceView textureArrayView)
          {
-             CreateTexture2DFromFiles(device, new string[] {directory}, fileNames, miPfilterFlag, out textureArrayView);
+             CreateTexture2DFromFiles(device, new string[] {directory}, fileNames, miPfilterFlag, ResourceName, out textureArrayView);
          }
 
 
@@ -48,7 +48,7 @@ namespace S33M3Engines.Textures
         /// <param name="FileNames">The files names that will be used to create the array, the array's index will be based on the order of the file inside this collection</param>
         /// <param name="MIPfilterFlag">Filter used to create the mipmap lvl from the loaded images</param>
         /// <param name="ArrayTextureView">The create textureArray view that can directly be used inside shaders</param>
-        public static void CreateTexture2DFromFiles(Device device, string[] FileNames, FilterFlags MIPfilterFlag, out ShaderResourceView TextureArrayView)
+         public static void CreateTexture2DFromFiles(Device device, string[] FileNames, FilterFlags MIPfilterFlag, string ResourceName, out ShaderResourceView TextureArrayView)
         {
             int inputImagesCount = FileNames.Length;
 
@@ -138,6 +138,9 @@ namespace S33M3Engines.Textures
             };
 
             TextureArrayView = new ShaderResourceView(device, texArray, viewDesc);
+
+            //Set resource Name, will only be done at debug time.
+            S33M3Engines.D3D.Tools.Resource.SetName(TextureArrayView, ResourceName);
 
             //Disposing resources used to create the texture array
             texArray.Dispose();
