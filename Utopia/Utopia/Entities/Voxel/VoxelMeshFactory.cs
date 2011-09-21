@@ -78,8 +78,9 @@ namespace Utopia.Entities.Voxel
                                               byte blockType, byte overlay)
         {
             //actually only handles 64 colors, so all blockType> 63 will have default color
-            Color tmpColor = ColorLookup.Colours[blockType];
-            ByteColor color = new ByteColor(tmpColor.R, tmpColor.G, tmpColor.B, tmpColor.A);
+            //Color tmpColor = ColorLookup.Colours[blockType];
+            //ByteColor color = new ByteColor(tmpColor.R, tmpColor.G, tmpColor.B, tmpColor.A);
+            ByteColor color = new ByteColor(0, 0, 255, 255);
 
             //if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackTop_Cube, BackLeftTop_Cube);
 
