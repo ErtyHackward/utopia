@@ -73,7 +73,7 @@ namespace S33M3Engines.Sprites
                                           new VertexSprite(new Vector2(0.0f, 1.0f), new Vector2(0.0f, 1.0f)),
                                       };
 
-            _vBuffer = new VertexBuffer<VertexSprite>(_d3dEngine, vertices.Length, VertexSprite.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Immutable);
+            _vBuffer = new VertexBuffer<VertexSprite>(_d3dEngine, vertices.Length, VertexSprite.VertexDeclaration, PrimitiveTopology.TriangleList, "SpriteRenderer_vBuffer", ResourceUsage.Immutable);
             _vBuffer.SetData(vertices);
 
             _vBufferInstanced = new InstancedVertexBuffer<VertexSprite, VertexSpriteInstanced>(_d3dEngine, VertexSpriteInstanced.VertexDeclaration, PrimitiveTopology.TriangleList);
@@ -84,7 +84,7 @@ namespace S33M3Engines.Sprites
 
             // Create the index buffer
             short[] indices = { 0, 1, 2, 3, 0, 2 };
-            _iBuffer = new IndexBuffer<short>(_d3dEngine, indices.Length, SharpDX.DXGI.Format.R16_UInt);
+            _iBuffer = new IndexBuffer<short>(_d3dEngine, indices.Length, SharpDX.DXGI.Format.R16_UInt, "SpriteRenderer_iBuffer");
             _iBuffer.SetData(indices);
 
             // Create our constant buffers

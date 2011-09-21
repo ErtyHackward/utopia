@@ -138,6 +138,12 @@ namespace Utopia.Entities.Managers
             _playerRenderer.VisualEntity = this;
         }
 
+        public override void Dispose()
+        {
+            this.VisualEntity.Dispose();
+            _playerRenderer.Dispose();
+        }
+
         void inputsManager_OnKeyPressed(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
             Console.WriteLine(e.KeyChar);
@@ -651,11 +657,6 @@ namespace Utopia.Entities.Managers
         /// </summary>
         public override void LoadContent()
         {
-        }
-
-        public override void Dispose()
-        {
-            _playerRenderer.Dispose();
         }
 
         public override void Update(ref GameTime timeSpent)

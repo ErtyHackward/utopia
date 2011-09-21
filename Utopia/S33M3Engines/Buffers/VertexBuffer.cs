@@ -32,6 +32,7 @@ namespace S33M3Engines.Buffers
         VertexDeclaration _vertexDeclatation;
         DataBox _databox;
         BufferDescription _description;
+        string _bufferName;
         int _vertexCount;
         int _bufferCount;
         int _autoResizePerc;
@@ -42,12 +43,12 @@ namespace S33M3Engines.Buffers
 
         #region Public Properties
         #endregion
-        public VertexBuffer(D3DEngine d3dEngine, int vertexCount, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology, ResourceUsage usage = ResourceUsage.Default, int AutoResizePerc = 0)
+        public VertexBuffer(D3DEngine d3dEngine, int vertexCount, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology, string bufferName, ResourceUsage usage = ResourceUsage.Default, int AutoResizePerc = 0)
         {
             _autoResizePerc = AutoResizePerc;
             _vertexCount = vertexCount;
             _bufferCount = _vertexCount + ((int)(_vertexCount * AutoResizePerc / 100));
-
+            _bufferName = bufferName;
             _vertexDeclatation = vertexDeclatation;
             _primitiveTopology = primitiveTopology;
             _d3dEngine = d3dEngine;
@@ -88,6 +89,9 @@ namespace S33M3Engines.Buffers
                 //Create new Buffer
                 _description.SizeInBytes = _bufferCount * _vertexDeclatation.VertexStride;
                 _vertexBuffer = new Buffer(_d3dEngine.Device, _vertices, _description);
+
+                //Set resource Name, will only be done at debug time.
+                S33M3Engines.D3D.Tools.Resource.SetName(_vertexBuffer, _bufferName);
             }
             else
             {

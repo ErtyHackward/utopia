@@ -378,15 +378,15 @@ namespace Utopia.Worlds.SkyDomes
         {
             //Copy Dome to graphic buffers
             //SkyDome
-            _domeIndexBuffer = new IndexBuffer<short>(_d3dEngine, _domeIb.Length, SharpDX.DXGI.Format.R16_UInt);
+            _domeIndexBuffer = new IndexBuffer<short>(_d3dEngine, _domeIb.Length, SharpDX.DXGI.Format.R16_UInt, "_domeIndexBuffer");
             _domeIndexBuffer.SetData(_domeIb);
-            _domeVertexBuffer = new VertexBuffer<VertexPositionNormalTexture>(_d3dEngine, _domeVerts.Length, VertexPositionNormalTexture.VertexDeclaration, PrimitiveTopology.TriangleList);
+            _domeVertexBuffer = new VertexBuffer<VertexPositionNormalTexture>(_d3dEngine, _domeVerts.Length, VertexPositionNormalTexture.VertexDeclaration, PrimitiveTopology.TriangleList, "_domeVertexBuffer");
             _domeVertexBuffer.SetData(_domeVerts);
 
             //Moon
-            _moonVertexBuffer = new VertexBuffer<VertexPositionTexture>(_d3dEngine, _moonVerts.Length, VertexPositionTexture.VertexDeclaration, PrimitiveTopology.TriangleList);
+            _moonVertexBuffer = new VertexBuffer<VertexPositionTexture>(_d3dEngine, _moonVerts.Length, VertexPositionTexture.VertexDeclaration, PrimitiveTopology.TriangleList, "_moonVertexBuffer");
             _moonVertexBuffer.SetData(_moonVerts);
-            _moonIndexBuffer = new IndexBuffer<short>(_d3dEngine, _moonIb.Length, SharpDX.DXGI.Format.R16_UInt);
+            _moonIndexBuffer = new IndexBuffer<short>(_d3dEngine, _moonIb.Length, SharpDX.DXGI.Format.R16_UInt, "_moonIndexBuffer");
             _moonIndexBuffer.SetData(_moonIb);
         }
         #endregion

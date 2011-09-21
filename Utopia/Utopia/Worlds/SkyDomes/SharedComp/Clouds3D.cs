@@ -193,10 +193,10 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             if (_indices.Count == 0) return;
             //Create/Update the Buffer
-            if (_cloudIB == null) _cloudIB = new IndexBuffer<ushort>(_d3dEngine, _indices.Count, SharpDX.DXGI.Format.R16_UInt, 10, ResourceUsage.Dynamic);
+            if (_cloudIB == null) _cloudIB = new IndexBuffer<ushort>(_d3dEngine, _indices.Count, SharpDX.DXGI.Format.R16_UInt, "_cloudIB" ,10, ResourceUsage.Dynamic);
             _cloudIB.SetData(_indices.ToArray(), true);
 
-            if (_cloudVB == null) _cloudVB = new VertexBuffer<VertexPositionColor>(_d3dEngine, _vertices.Count, VertexPositionColor.VertexDeclaration, PrimitiveTopology.TriangleList, ResourceUsage.Dynamic, 10);
+            if (_cloudVB == null) _cloudVB = new VertexBuffer<VertexPositionColor>(_d3dEngine, _vertices.Count, VertexPositionColor.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB", ResourceUsage.Dynamic, 10);
             _cloudVB.SetData(_vertices.ToArray(), true);
 
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);

@@ -12,7 +12,7 @@ using Utopia.Entities.Voxel;
 
 namespace Utopia.Entities
 {
-    public class VisualDynamicEntity : IVisualEntityContainer
+    public class VisualDynamicEntity : IVisualEntityContainer, IDisposable
     {
         #region Private variables
         //Player Visual characteristics (Not insde the PlayerCharacter object)
@@ -46,6 +46,11 @@ namespace Utopia.Entities
             this.VisualEntity = visualEntity;
 
             Initialize();
+        }
+
+        public void Dispose()
+        {
+            VisualEntity.Dispose();
         }
 
         #region Private Methods
