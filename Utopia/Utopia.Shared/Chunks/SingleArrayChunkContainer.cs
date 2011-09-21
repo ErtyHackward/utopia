@@ -15,7 +15,7 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Class responsible to manage the acces to the circular array containing the Cubes
     /// </summary>
-    public class SingleArrayChunkContainer
+    public class SingleArrayChunkContainer: IDisposable
     {
         public struct SurroundingIndex
         {
@@ -87,6 +87,14 @@ namespace Utopia.Shared.Chunks
             //Initialize the Big Array
             Cubes = new TerraCube[_visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z];
             _bigArraySize = Cubes.Length;
+        }
+
+        /// <summary>
+        /// Not mandatory, but will help the Gac to handle the BigArray faster !
+        /// </summary>
+        public void Dispose()
+        {
+            Cubes = null;
         }
 
         /// <summary>
@@ -548,6 +556,5 @@ namespace Utopia.Shared.Chunks
 
             if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Location3<int> { X = X, Y = Y, Z = Z } }, Bytes = new[] { cube.Id } });
         }
-
     }
 }
