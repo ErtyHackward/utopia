@@ -12,7 +12,7 @@ namespace Utopia.Network
     /// <summary>
     /// Translates message from entity object model to the server and back
     /// </summary>
-    public class EntityMessageTranslator
+    public class EntityMessageTranslator : IDisposable
     {
         private readonly ServerConnection _connection;
         private readonly IDynamicEntityManager _dynamicEntityManager;
@@ -68,6 +68,14 @@ namespace Utopia.Network
 
             if (playerEntity == null) throw new ArgumentNullException("playerEntity");
             PlayerEntity = playerEntity;
+        }
+
+        public void Dispose()
+        {
+            _connection.MessageEntityIn -= ConnectionMessageEntityIn;
+            _connection.MessageEntityOut -= ConnectionMessageEntityOut;
+            _connection.MessagePosition -= ConnectionMessagePosition;
+            _connection.MessageDirection -= ConnectionMessageDirection;
         }
 
         void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
@@ -132,6 +140,5 @@ namespace Utopia.Network
                 EntityId = e.Entity.EntityId
             });
         }
-
     }
 }

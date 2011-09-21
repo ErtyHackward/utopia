@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace Utopia.GUI.Forms
 {
-    public partial class WelcomeScreen : Form
+    public partial class WelcomeScreen : Form, IDisposable
     {
         internal FormData Data;
 
@@ -25,7 +25,6 @@ namespace Utopia.GUI.Forms
         private Server _server;
         private TimerCallback _timerDelegate;
         private System.Threading.Timer _serverTime;
-        private bool tryingToConnect = false;
 
         System.Windows.Forms.Timer m_TimerFadeIn = new System.Windows.Forms.Timer()
         {
@@ -46,6 +45,18 @@ namespace Utopia.GUI.Forms
             if(withFadeIn) FadeInWinForm();
             _singleChild.btNew.Click += new EventHandler(btNew_Click);
             _multiChild.btConnect.Click += new EventHandler(btConnect_Click);
+        }
+
+        public void CleanUp()
+        {
+            _singleChild.btNew.Click -= btNew_Click;
+            _multiChild.btConnect.Click -= btConnect_Click;
+
+            _timerDelegate = null;
+            _server = null;
+            _singleChild = null;
+            _multiChild = null;
+            _configChild = null;
         }
 
         void btConnect_Click(object sender, EventArgs e)

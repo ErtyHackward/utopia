@@ -55,7 +55,7 @@ namespace Utopia.Shared.Chunks
                 CompressedBytes = bytes;
                 CompressedDirty = false;
             }
-
+            ms.Dispose();
             return bytes;
         }
 
@@ -92,8 +92,10 @@ namespace Utopia.Shared.Chunks
                     decompressed.Position = 0;
                 }
                 Deserialize(decompressed);
+                decompressed.Dispose();
                 CompressedDirty = false;
             }
+            ms.Dispose();
         }
 
         protected override void BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
