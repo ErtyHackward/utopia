@@ -141,7 +141,7 @@ namespace Utopia.Entities.Managers
         public override void Dispose()
         {
             this.VisualEntity.Dispose();
-            _playerRenderer.Dispose();
+            // _playerRenderer.Dispose(); ==> REgistered with Ninject
         }
 
         void inputsManager_OnKeyPressed(object sender, System.Windows.Forms.KeyPressEventArgs e)

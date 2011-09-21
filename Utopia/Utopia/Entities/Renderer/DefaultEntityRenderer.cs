@@ -86,6 +86,7 @@ namespace Utopia.Entities.Renderer
 
         public void Dispose()
         {
+            _entityEffect.Dispose();
             _cubeTexture_View.Dispose();
         }
         #endregion

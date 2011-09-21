@@ -100,7 +100,7 @@ namespace Utopia
         {
             _iocContainer = iocContainer;
             S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
-            S33M3Engines.D3DEngine.FULLDEBUGMODE = true;
+            S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
             VSync = true;                                              // Vsync ON (default)
 
             CubeProfile.InitCubeProfiles();                 // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
