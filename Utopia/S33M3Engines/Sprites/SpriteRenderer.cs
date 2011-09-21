@@ -349,7 +349,7 @@ namespace S33M3Engines.Sprites
 
         public void Dispose()
         {
-            _spriteSampler.Dispose();
+            //_spriteSampler.Dispose();
             _effect.Dispose();
             _effectInstanced.Dispose();
             _iBuffer.Dispose();
