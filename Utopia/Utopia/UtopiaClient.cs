@@ -121,8 +121,6 @@ namespace Utopia
             GameExitReasonMessage exitRease = main.GameExitReason;
             main.Dispose();
 
-            System.Windows.Forms.Cursor.Show();
-
             AnalyseExitReason(exitRease);
 
             _iocContainer.Dispose();

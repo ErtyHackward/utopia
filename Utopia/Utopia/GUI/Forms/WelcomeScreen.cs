@@ -122,6 +122,7 @@ namespace Utopia.GUI.Forms
             {
                 ErrorString = " => " + e.Exception.Message;
                 NetworkConnectBtState(true);
+                _serverTime.Dispose();
             }
             AddTextToListBox("Connection status : " + e.Status.ToString() + ErrorString);
         }
@@ -131,6 +132,7 @@ namespace Utopia.GUI.Forms
         {
             AddTextToListBox(e.Message.Message);
             NetworkConnectBtState(true);
+            _serverTime.Dispose();
         }
 
         void ServerConnection_MessageLoginResult(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.LoginResultMessage> e)
