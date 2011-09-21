@@ -16,7 +16,7 @@ namespace Utopia.Server.Structs
 
         private void OnPositionChanged(ServerDynamicEntityMoveEventArgs e)
         {
-            EventHandler<ServerDynamicEntityMoveEventArgs> handler = PositionChanged;
+            var handler = PositionChanged;
             if (handler != null) handler(this, e);
         }
 

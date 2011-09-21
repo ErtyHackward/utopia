@@ -79,6 +79,10 @@ namespace Utopia.Server
                     case "status":
                         Console.WriteLine("Currently {0} entities", _server.AreaManager.EntitiesCount);
                         break;
+                    case "test":
+
+                        _server.ConnectionManager.Foreach(c => Console.WriteLine(c._delayedMessages.Count));
+                        break;
                 }
             }
         }
