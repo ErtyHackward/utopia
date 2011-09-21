@@ -8,6 +8,7 @@ using Utopia.Shared.Config;
 using Utopia.Settings;
 using Utopia.Network;
 using Ninject;
+using S33M3Engines.D3D;
 
 namespace Utopia
 {
@@ -112,13 +113,29 @@ namespace Utopia
 
         private void StartDirectXWindow()
         {
-            using (UtopiaRender main = new UtopiaRender(_iocContainer))
-            {
-                main.Run();
-            }
+            UtopiaRender main = new UtopiaRender(_iocContainer);
+            main.Run();
+            //Get windows Exit reason
+            GameExitReasonMessage exitRease = main.GameExitReason;
+            main.Dispose();
+
+            System.Windows.Forms.Cursor.Show();
+
+            AnalyseExitReason(exitRease);
 
             _iocContainer.Dispose();
 
+        }
+
+        private void AnalyseExitReason(GameExitReasonMessage exitReason)
+        {
+            if (exitReason.GameExitReason == ExitReason.Error)
+            {
+                ShowMessage messageDisplayer = new ShowMessage();
+                messageDisplayer.Message.Text = exitReason.MainMessage;
+                messageDisplayer.MessageDetail.Text = exitReason.DetailedMessage;
+                messageDisplayer.ShowDialog();
+            }
         }
         #endregion
 

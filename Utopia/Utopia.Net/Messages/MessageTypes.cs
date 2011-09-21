@@ -64,6 +64,10 @@
         /// <summary>
         /// Ping command. To detect quality of the connection
         /// </summary>
-        Ping = 15
+        Ping = 15,
+        /// <summary>
+        /// Entity voxel model update
+        /// </summary>
+        EntityVoxelModel = 16
     }
 }

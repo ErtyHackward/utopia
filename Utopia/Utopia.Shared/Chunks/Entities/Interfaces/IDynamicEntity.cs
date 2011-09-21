@@ -1,6 +1,5 @@
 using System;
 using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Management;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities.Interfaces
@@ -36,30 +35,9 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         float RotationSpeed { get; set; }
 
         /// <summary>
-        /// Perform actions when getting closer to area. Entity should add all needed event handlers
-        /// </summary>
-        /// <param name="area"></param>
-        void AddArea(MapArea area);
-
-        /// <summary>
-        /// Perform actions when area is far away, entity should remove any event hadler it has
-        /// </summary>
-        /// <param name="area"></param>
-        void RemoveArea(MapArea area);
-
-        /// <summary>
-        /// Perform dynamic update (AI logic)
-        /// </summary>
-        void Update(DynamicUpdateState gameTime);
-
-        /// <summary>
         /// Entity displacement mode
         /// </summary>
         EntityDisplacementModes DisplacementMode { get; set; }
 
-        /// <summary>
-        /// Gets or sets area there entity is now (not stored)
-        /// </summary>
-        MapArea CurrentArea { get; set; }
     }
 }

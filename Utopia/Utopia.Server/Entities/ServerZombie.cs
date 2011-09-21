@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Server.Structs;
-using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Chunks.Entities.Interfaces;
-using Utopia.Shared.Chunks.Entities.Management;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 
@@ -16,7 +13,7 @@ namespace Utopia.Server.Entities
     /// <summary>
     /// Experimental server mob
     /// </summary>
-    public class ServerZombie : CharacterEntity
+    public class ServerZombie : ServerDynamicEntity
     {
         private readonly Server _server;
         private List<MapArea> _mapAreas = new List<MapArea>();
@@ -35,16 +32,6 @@ namespace Utopia.Server.Entities
             set { _moveDirection = value; }
         }
 
-        public override EntityClassId ClassId
-        {
-            get { return EntityClassId.Zombie; }
-        }
-
-        public override string DisplayName
-        {
-            get { return "Zombie Bob"; }
-        }
-
         public int Seed
         {
             get { return _seed; }
@@ -56,10 +43,9 @@ namespace Utopia.Server.Entities
             }
         }
         
-        public ServerZombie(Server server, string name)
+        public ServerZombie(Server server, Zombie z) : base(z)
         {
             _server = server;
-            CharacterName = name;
             Seed = 0;
         }
 
@@ -84,13 +70,13 @@ namespace Utopia.Server.Entities
 
             if (_target != null)
             {
-                if (DVector3.Distance(_target.Position, Position) < 10)
+                if (DVector3.Distance(_target.Position, DynamicEntity.Position) < 10)
                 {
-                    _moveDirection = new Vector2((float)(_target.Position.X - Position.X),
-                                                 (float)(_target.Position.Z - Position.Z));
+                    _moveDirection = new Vector2((float)(_target.Position.X - DynamicEntity.Position.X),
+                                                 (float)(_target.Position.Z - DynamicEntity.Position.Z));
                     _moveDirection.Normalize();
-                    Rotation = Quaternion.RotationMatrix(Matrix.LookAtRH(Position.AsVector3(), Position.AsVector3() + new Vector3(_moveDirection.X, 0, _moveDirection.Y), DVector3.Up.AsVector3()));
-                    Rotation = Quaternion.Invert(Rotation); //Transform the rotation from a world rotatino to a local rotation
+                    DynamicEntity.Rotation = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + new Vector3(_moveDirection.X, 0, _moveDirection.Y), DVector3.Up.AsVector3()));
+                    DynamicEntity.Rotation = Quaternion.Invert(DynamicEntity.Rotation); //Transform the rotation from a world rotatino to a local rotation
                 }
                 else
                 {
@@ -107,12 +93,12 @@ namespace Utopia.Server.Entities
                     // try to find target
                     _mapAreas.Find(area =>
                                        {
-                                           foreach (var dynamicEntity in area.Enumerate())
+                                           foreach (var serverEntity in area.Enumerate())
                                            {
-                                               if (dynamicEntity.GetType() != this.GetType() &&
-                                                   DVector3.Distance(dynamicEntity.Position, Position) < 10)
+                                               if (serverEntity.GetType() != this.GetType() &&
+                                                   DVector3.Distance(serverEntity.DynamicEntity.Position, DynamicEntity.Position) < 10)
                                                {
-                                                   _target = dynamicEntity;
+                                                   _target = serverEntity.DynamicEntity;
                                                    return true;
                                                }
                                            }
@@ -125,11 +111,11 @@ namespace Utopia.Server.Entities
             {
                 _moveDirection = new Vector2(_random.Next(-100, 100) / 100f, _random.Next(-100, 100) / 100f);
                 _moveDirection.Normalize();
-                Rotation = Quaternion.RotationMatrix(Matrix.LookAtRH(Position.AsVector3(), Position.AsVector3() + new Vector3(_moveDirection.X, 0, _moveDirection.Y), DVector3.Up.AsVector3()));
-                Rotation = Quaternion.Invert(Rotation);
+                DynamicEntity.Rotation = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + new Vector3(_moveDirection.X, 0, _moveDirection.Y), DVector3.Up.AsVector3()));
+                DynamicEntity.Rotation = Quaternion.Invert(DynamicEntity.Rotation);
             }
 
-            var nextPosition = Position + new DVector3(_moveDirection.X, 0, _moveDirection.Y) * _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds * 1.5;
+            var nextPosition = DynamicEntity.Position + new DVector3(_moveDirection.X, 0, _moveDirection.Y) * _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds * 1.5;
 
             // check if we can go to desired position
             var cursor = _server.LandscapeManager.GetCursor(nextPosition);
@@ -138,13 +124,13 @@ namespace Utopia.Server.Entities
             var nextDown = cursor.PeekDown();
             var nextUp = cursor.PeekUp();
 
-            var current = _server.LandscapeManager.GetCursor(Position);
+            var current = _server.LandscapeManager.GetCursor(DynamicEntity.Position);
             if (!CubeProfile.CubesProfile[current.PeekDown()].IsSolidToEntity)
             {
-                var pos = Position;
-                pos.Y = Math.Round(Position.Y);
+                var pos = DynamicEntity.Position;
+                pos.Y = Math.Round(DynamicEntity.Position.Y);
                 pos += new DVector3(0, -1, 0);
-                Position = pos;
+                DynamicEntity.Position = pos;
             }
 
 
@@ -152,17 +138,12 @@ namespace Utopia.Server.Entities
             if (!CubeProfile.CubesProfile[next].IsSolidToEntity && CubeProfile.CubesProfile[nextDown].IsSolidToEntity && !CubeProfile.CubesProfile[nextUp].IsSolidToEntity)
             {
                 // move 
-                Position = nextPosition;
+                DynamicEntity.Position = nextPosition;
             }
             else
             {
                 _moveDirection = new Vector2();
             }
-
-            
-
         }
-
-
     }
 }
