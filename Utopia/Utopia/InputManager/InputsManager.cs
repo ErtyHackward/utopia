@@ -64,6 +64,12 @@ namespace Utopia.InputManager
             engine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
         }
 
+        public override void Dispose()
+        {
+            _engine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
+            base.Dispose();
+        }
+
         #region Public Methods
         public override void Initialize()
         {

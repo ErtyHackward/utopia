@@ -83,6 +83,11 @@ namespace Utopia.Worlds.Cubes
             }
         }
 
+        public static void CleanUp()
+        {
+            CubesProfile = null;
+        }
+
         //Default Face Generation Checks !
         public static bool FaceGenerationCheck(ref TerraCube cube, ref Location3<int> cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
         {

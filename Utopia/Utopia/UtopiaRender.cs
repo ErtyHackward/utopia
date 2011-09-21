@@ -68,7 +68,7 @@ namespace Utopia
         private IChunkStorageManager _chunkStorageManager;
         private ActionsManager _actionManager;
         private EntityMessageTranslator _entityMessageTranslator;
-        private IDynamicEntity _player;
+        private Server _server;
         private ActionsManager _actions;
         private D3DEngine _engine;
         private IDynamicEntityManager _dynamicEntityManager;
@@ -133,23 +133,23 @@ namespace Utopia
             //Create the world components ===========================================================
 
             //If Server mode set the chunk Side
-            Server server = IoCContainer.Get<Server>();
+            _server = IoCContainer.Get<Server>();
 
-            server.ServerConnection.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
+            _server.ServerConnection.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
 
-            if (AbstractChunk.ChunkSize != server.ChunkSize)
+            if (AbstractChunk.ChunkSize != _server.ChunkSize)
             {
                 throw new Exception("Client chunkSize is different from server !");
             }
 
             //Change Visible WorldSize if client parameter > Server !
-            if (ClientSettings.Current.Settings.GraphicalParameters.WorldSize > server.MaxServerViewRange)
+            if (ClientSettings.Current.Settings.GraphicalParameters.WorldSize > _server.MaxServerViewRange)
             {
-                ClientSettings.Current.Settings.GraphicalParameters.WorldSize = server.MaxServerViewRange;
+                ClientSettings.Current.Settings.GraphicalParameters.WorldSize = _server.MaxServerViewRange;
             }
 
-            Seed = server.WorldSeed;
-            SeaLevel = server.SeaLevel;
+            Seed = _server.WorldSeed;
+            SeaLevel = _server.SeaLevel;
 
             //Variables initialisation ==================================================================
             Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
@@ -201,7 +201,7 @@ namespace Utopia
           
             //Storage Manager
             _chunkStorageManager = IoCContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false),
-                                                                          new ConstructorArgument("UserName", server.ServerConnection.Login));
+                                                                          new ConstructorArgument("UserName", _server.ServerConnection.Login));
 
             GameComponents.Add(IoCContainer.Get<InputsManager>());
 
@@ -246,26 +246,21 @@ namespace Utopia
             GameComponents.Add(_worldRenderer);             //Bind worldRendered to main loop.
 
             //TODO Incoroporate EntityImpect inside Enitty framework as a single class ==> Not static !
-            EntityImpact.Init(IoCContainer.Get<SingleArrayChunkContainer>(), IoCContainer.Get<ILightingManager>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<IChunkStorageManager>(), server);
+            EntityImpact.Init(IoCContainer.Get<SingleArrayChunkContainer>(), IoCContainer.Get<ILightingManager>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<IChunkStorageManager>(), _server);
 
             //GUI components
             _fps = new FPS();
             GameComponents.Add(_fps);
-         
-
 
             // chat
-            GameComponents.Add(new ChatComponent(_d3dEngine, _actions, IoCContainer.Get<InputsManager>(), server));
+            GameComponents.Add(IoCContainer.Get<ChatComponent>());
 
             GameConsole.Initialize(_d3dEngine);
-
-            //Add the server if multiplayer mode
-            server.ChunkContainer = IoCContainer.Get<SingleArrayChunkContainer>();
 
             //Create the EntityMessageTRanslator
             _entityMessageTranslator = IoCContainer.Get<EntityMessageTranslator>();
 
-            GameComponents.Add(server);
+            GameComponents.Add(_server);
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());
 
@@ -279,7 +274,7 @@ namespace Utopia
 
             _debugInfo = new DebugInfo(_d3dEngine);
             _debugInfo.Activated = true;
-            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<PlayerEntityManager>(), server);
+            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<PlayerEntityManager>(), _server);
             GameComponents.Add(_debugInfo);
 
             //Bind Actions to inputs events
@@ -537,6 +532,9 @@ namespace Utopia
 #if DEBUG
             DebugEffect.Dispose();
 #endif
+            _server.ServerConnection.ConnectionStatusChanged -= ServerConnection_ConnectionStatusChanged;
+            EntityImpact.CleanUp();
+            VisualCubeProfile.CleanUp();
             GameConsole.CleanUp();
             base.Dispose();
         }

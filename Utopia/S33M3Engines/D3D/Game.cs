@@ -298,6 +298,32 @@ namespace S33M3Engines.D3D
             }
         }
 
+        private void GameComponentCleaning()
+        {
+        //            private readonly List<DrawableComponentHolder> _visibleDrawable;
+        //private readonly List<IUpdateableComponent> _enabledUpdateable;
+            foreach (var component in _enabledUpdateable)
+            {
+                IUpdateableComponent u = component as IUpdateableComponent;
+                if (u != null)
+                {
+                    u.UpdateOrderChanged -= UpdatableUpdateOrderChanged;
+                    u.EnabledChanged -= UpdatableEnabledChanged;
+                }
+            }
+
+            foreach (var component in _visibleDrawable)
+            {
+                IDrawableComponent d = component as IDrawableComponent;
+                if (d != null)
+                {
+                    d.DrawOrderChanged -= DrawableDrawOrderChanged;
+                    d.VisibleChanged -= DrawableVisibleChanged;
+                }
+            }
+
+        }
+
         #region Updatable Methods
 
         private void AddUpdatable(IUpdateableComponent u)
@@ -374,6 +400,7 @@ namespace S33M3Engines.D3D
 
         public virtual void Dispose()
         {
+            GameComponentCleaning();
         }
 
         #endregion
