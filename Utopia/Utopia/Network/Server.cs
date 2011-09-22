@@ -50,7 +50,7 @@ namespace Utopia.Network
             //Register Login Events
             //ServerConnection.MessageLoginResult += _server_MessageLoginResult;
             //ServerConnection.ConnectionStatusChanged += _server_ConnectionStatusChanged;
-            //ServerConnection.MessageBlockChange += _server_MessageBlockChange;
+            ServerConnection.MessageBlockChange += _server_MessageBlockChange;
             //ServerConnection.MessageChat += _server_MessageChat;
             //ServerConnection.MessageChunkData += _server_MessageChunkData;
             //ServerConnection.MessageDateTime += _server_MessageDateTime;
@@ -60,7 +60,6 @@ namespace Utopia.Network
             //ServerConnection.MessageEntityIn += _server_MessagePlayerIn;
             //ServerConnection.MessageEntityOut += _server_MessagePlayerOut;
             //ServerConnection.MessagePosition += _server_MessagePosition;
-
             return true;
         }
 
@@ -70,6 +69,7 @@ namespace Utopia.Network
                ServerConnection.ConnectionStatus != ConnectionStatus.Disconnected &&
                ServerConnection.ConnectionStatus != ConnectionStatus.Disconnecting)
             {
+                ServerConnection.MessageBlockChange -= _server_MessageBlockChange;
                 ServerConnection.Disconnect();
             }
 
@@ -132,7 +132,7 @@ namespace Utopia.Network
 
         void _server_MessageBlockChange(object sender, ProtocolMessageEventArgs<Net.Messages.BlocksChangedMessage> e)
         {
-            //throw new NotImplementedException();
+            Console.WriteLine("_server_MessageBlockChange : ");
         }
 
         void _server_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)

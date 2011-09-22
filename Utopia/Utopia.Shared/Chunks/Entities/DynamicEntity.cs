@@ -58,7 +58,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Gets or sets entity state (this field should be refreshed before using the tool)
         /// </summary>
-        public DynamicEntityState EntityState { get; set; }
+        public DynamicEntityState EntityState;
 
         /// <summary>
         /// The speed at wich the dynamic entity can walk

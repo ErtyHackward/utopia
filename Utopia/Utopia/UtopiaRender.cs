@@ -413,6 +413,38 @@ namespace Utopia
 
             _actionManager.AddActions(new MouseTriggeredAction()
             {
+                Action = Actions.Use_LeftWhileCursorLocked,
+                TriggerType = MouseTriggerMode.ButtonUpDown,
+                Binding = MouseButton.LeftButton,
+                WithCursorLocked = true
+            });
+
+            _actionManager.AddActions(new MouseTriggeredAction()
+            {
+                Action = Actions.Use_RightWhileCursorLocked,
+                TriggerType = MouseTriggerMode.ButtonUpDown,
+                Binding = MouseButton.RightButton,
+                WithCursorLocked = true
+            });
+
+            _actionManager.AddActions(new MouseTriggeredAction()
+            {
+                Action = Actions.Use_LeftWhileCursorNotLocked,
+                TriggerType = MouseTriggerMode.ButtonUpDown,
+                Binding = MouseButton.LeftButton,
+                WithCursorLocked = false
+            });
+
+            _actionManager.AddActions(new MouseTriggeredAction()
+            {
+                Action = Actions.Use_RightWhileCursorNotLocked,
+                TriggerType = MouseTriggerMode.ButtonUpDown,
+                Binding = MouseButton.RightButton,
+                WithCursorLocked = false
+            });
+
+            _actionManager.AddActions(new MouseTriggeredAction()
+            {
                 Action = Actions.Block_SelectNext,
                 TriggerType = MouseTriggerMode.ScrollWheelForward,
                 Binding = MouseButton.ScrollWheel

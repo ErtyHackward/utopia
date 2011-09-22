@@ -93,6 +93,7 @@ namespace Utopia.Editor
             _inputManager = inputsManager;
 
             // inactive by default, use F12 UI to enable :)
+            _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
             Visible = false;
             Enabled = false;
 
