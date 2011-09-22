@@ -76,9 +76,6 @@ namespace Utopia.Editor
         {
             ShaderResourceView arrayResourceView = _editorComponent._texture;
 
-            int count = VisualCubeProfile.CubesProfile.Count();
-            //int count = arrayResourceView.Description.Texture2DArray.ArraySize;
-
             const int rows = 8;
             const int cols = 4;
             const int btnSize = 34;
@@ -89,28 +86,30 @@ namespace Utopia.Editor
             WindowControl palette = new WindowControl();
             palette.Bounds = new UniRectangle(100, 0, (cols)*btnSize, (rows + 1)*btnSize);
 
+            List<VisualCubeProfile> filtered =
+                VisualCubeProfile.CubesProfile.ToList().FindAll(p => ! p.IsEmissiveColorLightSource);
+            
             int cubeProfileIndex = 1;
             for (int x = 0; x < cols; x++)
             {
                 for (int y = 0; y < rows; y++)
                 {
-                    if (cubeProfileIndex == count) break;
-                    VisualCubeProfile profile = VisualCubeProfile.CubesProfile[cubeProfileIndex];
-                    if (! profile.IsEmissiveColorLightSource)
-                    {
-                        PaletteButtonControl btn = new PaletteButtonControl();
-                        btn.Bounds = new UniRectangle(x0 + x*btnSize, y0 + y*btnSize, btnSize, btnSize);
-                        btn.Texture = new SpriteTexture(btnSize, btnSize, arrayResourceView, Vector2.Zero);
+                    if (cubeProfileIndex == filtered.Count) break;
+                    VisualCubeProfile profile = filtered[cubeProfileIndex];
 
-                        btn.Texture.Index = profile.Tex_Front;
-                        int associatedindex = cubeProfileIndex; //new variable for access inside btn.pressed closure 
-                        btn.Pressed += (sender, e) =>
-                                           {
-                                               _editorComponent.SelectedIndex = (byte) associatedindex;
-                                               _editorComponent.IsTexture = true;
-                                           };
-                        palette.Children.Add(btn);
-                    }
+                    PaletteButtonControl btn = new PaletteButtonControl();
+                    btn.Bounds = new UniRectangle(x0 + x*btnSize, y0 + y*btnSize, btnSize, btnSize);
+                    btn.Texture = new SpriteTexture(btnSize, btnSize, arrayResourceView, Vector2.Zero);
+
+                    btn.Texture.Index = profile.Tex_Front;
+                    int associatedindex = profile.Id; //new variable for access inside btn.pressed closure 
+                    btn.Pressed += (sender, e) =>
+                                       {
+                                           _editorComponent.SelectedIndex = (byte) associatedindex;
+                                           _editorComponent.IsTexture = true;
+                                       };
+                    palette.Children.Add(btn);
+
                     cubeProfileIndex++;
                 }
             }
@@ -128,7 +127,10 @@ namespace Utopia.Editor
             tools.Add(new Symetry(_editorComponent));
             tools.Add(new EditorAdd(_editorComponent));
             tools.Add(new EditorRemove(_editorComponent));
-            tools.Add(new EditorPaste(_editorComponent));
+            tools.Add(new EditorSelect(_editorComponent));
+            EditorCopy copy = new EditorCopy(_editorComponent);
+            tools.Add(copy);
+            tools.Add(new EditorPaste(_editorComponent,copy));
             tools.Add(new Spawn(_editorComponent));
             tools.Add(new SpawnPlain(_editorComponent));
             tools.Add(new SpawnBorder(_editorComponent));
