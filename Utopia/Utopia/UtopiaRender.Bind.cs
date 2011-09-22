@@ -39,6 +39,7 @@ using Utopia.InputManager;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Renderer;
 using Utopia.Settings;
+using Utopia.GUI;
 
 namespace Utopia
 {
@@ -110,6 +111,8 @@ namespace Utopia
             iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
             iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
             iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope();
+            iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
+
 
             //Nuclex Screen (UI desktop) is a first class injectable now. any component who wants to draw something only needs the screen instance
             iocContainer.Bind<Screen>().ToSelf().InSingletonScope();

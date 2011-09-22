@@ -70,7 +70,7 @@ namespace UtopiaContent.ModelComp
             ptList[22] = new VertexPositionColor() { Position = new Vector3(0, 0, BBDimension.Z), Color = color };
             ptList[23] = new VertexPositionColor() { Position = new Vector3(0, BBDimension.Y, BBDimension.Z), Color = color };
 
-            _vertexBuffer = new VertexBuffer<VertexPositionColor>(_d3dEngine, 24, VertexPositionColor.VertexDeclaration, PrimitiveTopology.LineList);
+            _vertexBuffer = new VertexBuffer<VertexPositionColor>(_d3dEngine, 24, VertexPositionColor.VertexDeclaration, PrimitiveTopology.LineList, "BoundingBox3D_vertexBuffer");
             _vertexBuffer.SetData(ptList);
         }
 

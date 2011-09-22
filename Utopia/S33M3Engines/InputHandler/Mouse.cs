@@ -12,8 +12,14 @@ namespace S33M3Engines.InputHandler
     public static class Mouse
     {
         // Fields
-        internal static MouseMessageHooker mouseMessageHooker = new MouseMessageHooker();
+        private static MouseMessageHooker _mouseMessageHooker;
         
+        public static void SetMouseMessageHooker(IntPtr windowsHandle)
+        {
+            if (_mouseMessageHooker == null) _mouseMessageHooker = new MouseMessageHooker();
+            _mouseMessageHooker.WindowHandle = windowsHandle;
+        }
+
         // Methods
         public static unsafe MouseState GetState()
         {
@@ -54,7 +60,8 @@ namespace S33M3Engines.InputHandler
 
         public static void CleanUp()
         {
-            mouseMessageHooker.Dispose();
+            _mouseMessageHooker.Dispose();
+            _mouseMessageHooker = null;
         }
 
     }

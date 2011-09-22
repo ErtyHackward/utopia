@@ -12,6 +12,8 @@ namespace S33M3Engines.Shared.Sprites
 {
     public class SpriteTexture : IDisposable
     {
+        private D3DEngineDelegates.ViewPortUpdated _viewPortUpdtEvent;
+
         public ShaderResourceView Texture;
         public bool _textureDispose = true;
 
@@ -33,7 +35,8 @@ namespace S33M3Engines.Shared.Sprites
                            new Vector2((currentViewPort.Width/2) - (tex.Description.Width/2),
                                        (currentViewPort.Height)/2 - (tex.Description.Height/2)));
 
-            viewPortUpdtEvent += D3dEngine_ViewPort_Updated;
+            _viewPortUpdtEvent = viewPortUpdtEvent;
+            _viewPortUpdtEvent += D3dEngine_ViewPort_Updated;
             Width = tex.Description.Width;
             Height = tex.Description.Height;
 
@@ -104,6 +107,7 @@ namespace S33M3Engines.Shared.Sprites
         public void Dispose()
         {
             if (_textureDispose) Texture.Dispose();
+            _viewPortUpdtEvent -= D3dEngine_ViewPort_Updated;
         }
     }
 }

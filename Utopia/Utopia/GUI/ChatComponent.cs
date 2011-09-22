@@ -65,6 +65,13 @@ namespace Utopia.GUI
             DrawOrders.UpdateIndex(0, 1001);
         }
 
+        public override void Dispose()
+        {
+            _server.ServerConnection.MessageChat -= ServerConnection_MessageChat;
+            _d3dEngine.ViewPort_Updated -= LocateChat;
+            base.Dispose();
+        }
+
         void ServerConnection_MessageChat(object sender, Net.Connections.ProtocolMessageEventArgs<ChatMessage> e)
         {
             if (e.Message.Action)

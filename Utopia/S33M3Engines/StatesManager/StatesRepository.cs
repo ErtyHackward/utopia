@@ -24,6 +24,15 @@ namespace S33M3Engines.StatesManager
             _samplerStates = new SamplerState[0];
         }
 
+        public static void CleanUp()
+        {
+            _engine = null;
+            if (_rasterStates != null) foreach (RasterizerState obj in _rasterStates) obj.Dispose();
+            if (_blendStates != null) foreach (BlendState obj in _blendStates) obj.Dispose();
+            if (_depthStencilStates != null) foreach (DepthStencilState obj in _depthStencilStates) obj.Dispose();
+            if (_samplerStates != null) foreach (SamplerState obj in _samplerStates) obj.Dispose();
+        }
+
         //Raster States Management ======================================================================
         private static int _rasterApplied = -1;
         public static int AddRasterStates(RasterizerStateDescription RasterDescr)
@@ -83,14 +92,6 @@ namespace S33M3Engines.StatesManager
         public static SamplerState GetSamplerState(int id)
         {
             return _samplerStates[id];
-        }
-
-        public static void Dispose()
-        {
-            if (_rasterStates != null) foreach (RasterizerState obj in _rasterStates) obj.Dispose();
-            if (_blendStates != null) foreach (BlendState obj in _blendStates) obj.Dispose();
-            if (_depthStencilStates != null) foreach (DepthStencilState obj in _depthStencilStates) obj.Dispose();
-            if (_samplerStates != null) foreach (SamplerState obj in _samplerStates) obj.Dispose();
         }
 
         public static void ApplyStates(int RasterId = -1, int BlendId = -1, int DepthId = -1)

@@ -20,6 +20,7 @@ namespace Utopia.Net.Connections
         protected BinaryWriter Writer;
 
         // async block
+        private bool _isrunning = true;
         private readonly AutoResetEvent _needSend = new AutoResetEvent(false);
         private readonly Queue<IBinaryMessage> _messages = new Queue<IBinaryMessage>();
         private Thread _sendThread;
@@ -269,7 +270,7 @@ namespace Utopia.Net.Connections
 
         private void SendValuesThread()
         {
-            while (true)
+            while (_isrunning)
             {
                 _needSend.WaitOne();
 
@@ -349,12 +350,10 @@ namespace Utopia.Net.Connections
         /// </summary>
         protected override void Dispose(bool disposing)
         {
+
             if (disposing)
             {
-                if (_sendThread != null && _sendThread.IsAlive)
-                {
-                    _sendThread.Abort();
-                }
+                _isrunning = false;
                 _needSend.Dispose();
                 if(Writer != null)
                     Writer.Dispose();

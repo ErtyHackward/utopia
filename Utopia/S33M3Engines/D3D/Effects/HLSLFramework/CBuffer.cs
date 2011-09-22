@@ -77,6 +77,8 @@ namespace S33M3Engines.D3D.Effects
                                     }
             );
 
+            Tools.Resource.SetName(_CBuffer, "CBuffer : " + Name);
+
             _dataStream = new DataStream(_size, true, true);
         }
 

@@ -45,7 +45,7 @@ namespace Utopia.Entities.Renderer
         private void Initialize()
         {
             _entityEffect = new HLSLTerran(_d3DEngine, @"Effects/Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration);
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, out _cubeTexture_View);
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
 
             _entityEffect.TerraTexture.Value = _cubeTexture_View;
             _entityEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
@@ -86,6 +86,7 @@ namespace Utopia.Entities.Renderer
 
         public void Dispose()
         {
+            _entityEffect.Dispose();
             _cubeTexture_View.Dispose();
         }
         #endregion

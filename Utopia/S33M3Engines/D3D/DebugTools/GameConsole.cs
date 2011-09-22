@@ -78,6 +78,26 @@ namespace S33M3Engines.D3D.DebugTools
             backTexture.Dispose();
         }
 
+        public static void CleanUp()
+        {
+            if (_font != null)
+            {
+                _font.Dispose();
+                _font = null;
+            }
+            if (_spriteTexture != null)
+            {
+                _spriteTexture.Dispose();
+                _spriteTexture = null;
+            }
+            if (_spriteRender != null)
+            {
+                _spriteRender.Dispose();
+                _spriteRender = null;
+            }
+            _d3dEngine = null;
+        }
+
         public static void RunAction(string info)
         {
             if (Action_Started != null) Action_Started(info);
@@ -110,13 +130,6 @@ namespace S33M3Engines.D3D.DebugTools
                 line++;
             }
             _spriteRender.RenderText(_font, result, _textPosition, _colorText);
-        }
-
-        public static void CleanUp()
-        {
-            if (_font != null) _font.Dispose();
-            if (_spriteTexture != null) _spriteTexture.Dispose();
-            if(_spriteRender != null) _spriteRender.Dispose();
         }
     }
 }

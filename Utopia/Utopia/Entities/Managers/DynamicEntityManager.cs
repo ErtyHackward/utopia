@@ -35,6 +35,12 @@ namespace Utopia.Entities.Managers
             _dynamicEntityRenderer.VisualEntities = _dynamicEntities;
         }
 
+        public override void Dispose()
+        {
+            foreach (var item in _dynamicEntitiesDico.Values) item.Dispose();
+            base.Dispose();
+        }
+
         #region Private Methods
         private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
         {
@@ -52,10 +58,6 @@ namespace Utopia.Entities.Managers
         }
 
         public override void LoadContent()
-        {
-        }
-
-        public override void Dispose()
         {
         }
 
@@ -94,8 +96,10 @@ namespace Utopia.Entities.Managers
         {
             if (_dynamicEntitiesDico.ContainsKey(entity.EntityId))
             {
-                _dynamicEntities.Remove(_dynamicEntitiesDico[entity.EntityId]);
+                VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entity.EntityId];
+                _dynamicEntities.Remove(visualEntity);
                 _dynamicEntitiesDico.Remove(entity.EntityId);
+                visualEntity.Dispose();
             }
         }
 
@@ -103,8 +107,10 @@ namespace Utopia.Entities.Managers
         {
             if (_dynamicEntitiesDico.ContainsKey(entityId))
             {
+                VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entityId];
                 _dynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
                 _dynamicEntitiesDico.Remove(entityId);
+                visualEntity.Dispose();
             }
         }
 

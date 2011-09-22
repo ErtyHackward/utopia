@@ -8,6 +8,7 @@ using SharpDX.D3DCompiler;
 using Buffer = SharpDX.Direct3D11.Buffer;
 using SharpDX;
 using S33M3Engines.D3D.Effects.HLSLFramework;
+using System.IO;
 
 namespace S33M3Engines.D3D.Effects
 {
@@ -55,6 +56,7 @@ namespace S33M3Engines.D3D.Effects
 
         //Shaders
         string _filePathName;
+        string _fileName;
         VertexShader _vs;
         GeometryShader _gs;
         PixelShader _ps;
@@ -76,6 +78,9 @@ namespace S33M3Engines.D3D.Effects
         //Ctor
         public HLSLShaderWrap(D3DEngine d3dEngine, string filePathName, VertexDeclaration VertexDeclaration)
         {
+            //Extract FileName from Path
+            _fileName = Path.GetFileName(filePathName);
+
             _filePathName = filePathName;
             _d3dEngine = d3dEngine;
             _vertexDeclaration = VertexDeclaration;
@@ -120,6 +125,7 @@ namespace S33M3Engines.D3D.Effects
                     _inputLayout = new InputLayout(_d3dEngine.Device, _signature, _vertexDeclaration.Elements);
 
                     _vs = new VertexShader(_d3dEngine.Device, bytecode);
+                    D3D.Tools.Resource.SetName(_vs, "vs " + _fileName);
                     using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
                     {
                         ShaderReflection(Shaders.VS, ShaderIDs.VS, shaderMetaData);
@@ -136,10 +142,12 @@ namespace S33M3Engines.D3D.Effects
                 using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
                 {
                     _gs = new GeometryShader(_d3dEngine.Device, bytecode);
+                    D3D.Tools.Resource.SetName(_gs, "gs " + _fileName);
                     using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
                     {
                         ShaderReflection(Shaders.GS, ShaderIDs.GS, shaderMetaData);
                     }
+
                 }
             }
         }
@@ -152,6 +160,7 @@ namespace S33M3Engines.D3D.Effects
                 using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
                 {
                     _ps = new PixelShader(_d3dEngine.Device, bytecode);
+                    D3D.Tools.Resource.SetName(_ps, "ps " + _fileName);
                     using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
                     {
                         ShaderReflection(Shaders.PS, ShaderIDs.PS, shaderMetaData);
