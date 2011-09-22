@@ -105,7 +105,8 @@ namespace Utopia.Server.AStar
 		{
 			Console.WriteLine("Starting...");
 
-            var astar = new AStar<AStarNode2D>(new Comparer2d());
+            //var astar = new AStar<AStarNode2D>(new Comparer2d());
+            var astar = new AStar<AStarNode2D>();
 
             AStarNode2D GoalNode = new AStarNode2D(null, null, 0, 9, 9);
             AStarNode2D StartNode = new AStarNode2D(null, GoalNode, 0, 0, 0);
