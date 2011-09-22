@@ -240,7 +240,6 @@
     </Compile>
     <Compile Include="Network\Server.cs" />
     <Compile Include="Entities\EntityImpact.cs" />
-    <Compile Include="Settings\SQLiteSettingsManager.cs" />
     <Compile Include="UtopiaClient.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Program.cs" />

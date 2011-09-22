@@ -51,10 +51,14 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private Color _topFace, _side1Face, _side2Face, _bottomFace;
 
         private VertexPositionColor[] _faces;
+
+        private int _cloudMapSize;
+        private bool[] _cloudMap;
         #endregion
 
         #region Public properties
         #endregion
+
         public Clouds3D(D3DEngine d3dEngine, CameraManager camManager, IWeather weather, VisualWorldParameters worldParam, WorldFocusManager worldFocusManager)
         {
             _d3dEngine = d3dEngine;
@@ -64,6 +68,10 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _worldFocusManager = worldFocusManager;
             _cloud_MapOffset = new FTSValue<Vector2>();
             _cloudMap_size = (int)(worldParam.WorldVisibleSize.X / _cloud_size * 4);
+
+            //Create a virtual Cloud map of 1024 * 1024 size !
+            _cloudMapSize = 1024;
+            _cloudMap = new bool[_cloudMapSize * _cloudMapSize];
         }
 
         #region Public methods
@@ -82,6 +90,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _bottomFace = new Color(_brightness * 205, _brightness * 205, _brightness * 230, 200);
 
             _faces = new VertexPositionColor[4];
+
+            CreateCloudMap();
         }
 
         public override void Update(ref GameTime TimeSpend)
@@ -109,6 +119,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             Vector2 world_center_of_drawing_in_noise_f = new Vector2(center_of_drawing_in_noise_i.X * _cloud_size, center_of_drawing_in_noise_i.Z * _cloud_size) + CloudsMapOffset;
 
             int verticesCount = 0;
+            int _cloudMapXIndex, _cloudMapZIndex;
             _indices.Clear();
             _vertices.Clear();
 
@@ -120,10 +131,13 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
                     Vector2 p0 = new Vector2(xi, zi) * _cloud_size + world_center_of_drawing_in_noise_f;
 
-                    var noiseResult = _noise.GetNoise2DValue(p_in_noise_i.X, p_in_noise_i.Z, 2, 0.9);
-                    float noiseValue = MathHelper.FullLerp(0, 1, noiseResult);
+                    _cloudMapXIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize);
+                    _cloudMapZIndex = MathHelper.Mod(p_in_noise_i.Z, _cloudMapSize);
+                    if (!_cloudMap[_cloudMapXIndex + (_cloudMapZIndex*_cloudMapSize)]) continue;
+                    //var noiseResult = _noise.GetNoise2DValue(p_in_noise_i.X, p_in_noise_i.Z, 2, 0.9);
+                    //float noiseValue = MathHelper.FullLerp(0, 1, noiseResult);
 
-                    if (noiseValue > 0.3) continue;
+                    //if (noiseValue > 0.3) continue;
 
                     float rx = _cloud_size / 2;
                     float ry = _cloud_Height;
@@ -232,6 +246,24 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #endregion
 
         #region private methods
+        private void CreateCloudMap()
+        {
+            int arrayIndex;
+            for (int x = 0; x < _cloudMapSize; x++)
+            {
+                for (int z = 0; z < _cloudMapSize; z++)
+                {
+                    //Get Array index
+                    arrayIndex = x + (z * _cloudMapSize);
+                    var noiseResult = _noise.GetNoise2DValue(x, z, 2, 0.9);
+                    float noiseValue = MathHelper.FullLerp(0, 1, noiseResult);
+                    if (noiseValue > 0.3) 
+                        _cloudMap[arrayIndex] = false;
+                    else 
+                        _cloudMap[arrayIndex] = true;
+                }
+            }
+        }
         #endregion
     }
 }
