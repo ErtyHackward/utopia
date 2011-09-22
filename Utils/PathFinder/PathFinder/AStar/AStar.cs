@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using PathFinder.AStar;
 
 namespace Utopia.Server.AStar {
@@ -11,11 +12,9 @@ namespace Utopia.Server.AStar {
 	{
 		#region Private Fields
 
-        private SortedSet<T> items;
 		private T _fStartNode;
-		private T _fGoalNode;
-		private readonly SortedSet<T> _fOpenList;
-        private readonly SortedSet<T> _fClosedList;
+        private readonly AStarList<T> _fOpenList;
+        private readonly AStarList<T> _fClosedList;
         private readonly List<T> _fSuccessors;
 
         public event EventHandler NextNode;
@@ -53,10 +52,11 @@ namespace Utopia.Server.AStar {
 
 		public AStar()
 		{
-            _fOpenList = new SortedSet<T>();
-            _fClosedList = new SortedSet<T>();
+            _fOpenList = new AStarList<T>();
+            _fClosedList = new AStarList<T>();
 			_fSuccessors = new List<T>();
             Solution = new List<T>();
+            
 		}
 
 		#endregion
@@ -86,20 +86,19 @@ namespace Utopia.Server.AStar {
 		/// </summary>
 		/// <param name="aStartNode">Start node</param>
 		/// <param name="aGoalNode">Goal node</param>
-		public void FindPath(T aStartNode,T aGoalNode)
+		public void FindPath(T aStartNode)
 		{
 			_fStartNode = aStartNode;
-			_fGoalNode = aGoalNode;
 
 			_fOpenList.Add(_fStartNode);
+
 			while(_fOpenList.Count > 0) 
 			{
                 if (NextNode != null)
                     NextNode(this, null);
 
 				// Get the node with the lowest TotalCost
-				var nodeCurrent = _fOpenList.Min;
-                _fOpenList.Remove(nodeCurrent);
+				var nodeCurrent = _fOpenList.Pop();
 
                 if (NodeSelected != null)
                     NodeSelected(this, new AStarDebugEventArgs<T>() { Node = nodeCurrent });
@@ -120,7 +119,7 @@ namespace Utopia.Server.AStar {
 					// Test if the currect successor node is on the open list, if it is and
 					// the TotalCost is higher, we will throw away the current successor.
 					T nodeOpen = null;
-                    if (_fOpenList.Contains(nodeSuccessor))
+                    if (_fOpenList.Contains(nodeSuccessor, n => n.IsSameState(nodeSuccessor)))
                     {
                         continue;
                     }
@@ -128,7 +127,7 @@ namespace Utopia.Server.AStar {
 					// Test if the currect successor node is on the closed list, if it is and
 					// the TotalCost is higher, we will throw away the current successor.
 					T nodeClosed = null;
-                    if (_fClosedList.Contains(nodeSuccessor))
+                    if (_fClosedList.Contains(nodeSuccessor, n => n.IsSameState(nodeSuccessor)))
                     {
                         continue;
                     }

@@ -158,6 +158,11 @@ namespace Utopia.Server.AStar
             return string.Format("X:{0} Y:{1}", X, Y);
         }
 
+        public override int GetHashCode()
+        {
+            return X + (Y << 16) ;
+        }
+
         #endregion
     }
 }

@@ -44,8 +44,7 @@ namespace Utopia.GUI.D3D
 
         public override void Initialize()
         {
-            _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(_d3DEngine,
-                                                                                          "Resources\\Skins\\Suave\\Suave.skin.xml");
+            _guiVisualizer = Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer.FromFile(_d3DEngine, "Resources\\Skins\\Suave\\Suave.skin.xml");
         }
 
         public override void LoadContent()

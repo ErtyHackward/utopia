@@ -111,7 +111,7 @@ namespace Utopia.Server.AStar
             AStarNode2D StartNode = new AStarNode2D(null, GoalNode, 0, 0, 0);
 			StartNode.GoalNode = GoalNode;
             var sw = Stopwatch.StartNew();
-			astar.FindPath(StartNode,GoalNode);
+			astar.FindPath(StartNode);
             sw.Stop();
 			PrintSolution(astar.Solution);
 

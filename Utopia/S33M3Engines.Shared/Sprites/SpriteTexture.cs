@@ -27,6 +27,13 @@ namespace S33M3Engines.Shared.Sprites
         /// </summary>
         public int Index; 
 
+        /// <summary>
+        /// Use this Constructor the Force the centering of the spriteTexture to the ViewPort !
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="texturePath"></param>
+        /// <param name="viewPortUpdtEvent"></param>
+        /// <param name="currentViewPort"></param>
         public SpriteTexture(Device device, string texturePath, ref D3DEngineDelegates.ViewPortUpdated viewPortUpdtEvent,
                              Viewport currentViewPort)
         {
@@ -36,7 +43,7 @@ namespace S33M3Engines.Shared.Sprites
                                        (currentViewPort.Height)/2 - (tex.Description.Height/2)));
 
             _viewPortUpdtEvent = viewPortUpdtEvent;
-            _viewPortUpdtEvent += D3dEngine_ViewPort_Updated;
+            viewPortUpdtEvent += D3dEngine_ViewPort_Updated;
             Width = tex.Description.Width;
             Height = tex.Description.Height;
 
@@ -107,7 +114,7 @@ namespace S33M3Engines.Shared.Sprites
         public void Dispose()
         {
             if (_textureDispose) Texture.Dispose();
-            _viewPortUpdtEvent -= D3dEngine_ViewPort_Updated;
+            if(_viewPortUpdtEvent != null) _viewPortUpdtEvent -= D3dEngine_ViewPort_Updated;
         }
     }
 }

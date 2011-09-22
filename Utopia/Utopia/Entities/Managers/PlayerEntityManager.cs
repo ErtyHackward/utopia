@@ -44,9 +44,6 @@ namespace Utopia.Entities.Managers
         private SingleArrayChunkContainer _cubesHolder;
 
         //Block Picking variables
-        private bool _isBlockPicked;
-        private Location3<int> _pickedBlock, _previousPickedBlock, _newCubePlace;
-        private BoundingBox _playerSelectedBox, _playerPotentialNewBlock;
         private TerraCube _pickedCube;
 
         //Head UnderWater test
@@ -180,26 +177,32 @@ namespace Utopia.Entities.Managers
                     DisplacementMode = EntityDisplacementModes.Flying;
                 }
             }
-            //TODO _d3DEngine.UnlockedMouse for disabling actions in playerentitymanager is a quick hack, needs a proper action recipient system
-            if (! _d3DEngine.UnlockedMouse && _actions.isTriggered(Actions.Use_Left))
+
+            if (_actions.isTriggered(Actions.Use_LeftWhileCursorLocked))
             {
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
-                if (_isBlockPicked)
+                if (Player.EntityState.IsBlockPicked)
                 {
-                    EntityImpact.ReplaceBlock(ref _pickedBlock, CubeId.Air);
+                    //update the Entity "State" or not ?
+                    Player.LeftToolUse();
+                    //EntityImpact.ReplaceBlock(ref _pickedBlock, CubeId.Air);
                 }
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
             }
 
-            if (!_d3DEngine.UnlockedMouse && _actions.isTriggered(Actions.Use_Right))
+            if (_actions.isTriggered(Actions.Use_RightWhileCursorLocked))
             {
                 
                 //Avoid the player to add a block where he is located !
-                if (_isBlockPicked)
+                if (Player.EntityState.IsBlockPicked)
                 {
-                    if (!MBoundingBox.Intersects(ref _playerBoundingBox, ref _playerPotentialNewBlock) && _playerPotentialNewBlock.Maximum.Y <= AbstractChunk.ChunkSize.Y - 2)
+                    BoundingBox playerPotentialNewBlock;
+                    ComputeBlockBoundingBox(ref Player.EntityState.NewBlockPosition, out playerPotentialNewBlock);
+
+                    if (!MBoundingBox.Intersects(ref _playerBoundingBox, ref playerPotentialNewBlock))// && _playerPotentialNewBlock.Maximum.Y <= AbstractChunk.ChunkSize.Y - 2)
                     {
-                        EntityImpact.ReplaceBlock(ref _newCubePlace, CubeId.Gravel);
+                        Player.RightToolUse();
+                        //EntityImpact.ReplaceBlock(ref _newCubePlace, CubeId.Gravel);
                     }
                 }
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
@@ -226,9 +229,7 @@ namespace Utopia.Entities.Managers
         #region Player Block Picking
         private void GetSelectedBlock()
         {
-            _isBlockPicked = false;
-
-            _previousPickedBlock = _pickedBlock;
+            Player.EntityState.IsBlockPicked = false;
 
             DVector3 pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
             //Sample 500 points in the view direction vector
@@ -238,48 +239,43 @@ namespace Utopia.Entities.Managers
 
                 if (_cubesHolder.isPickable(ref pickingPointInLine, out _pickedCube))
                 {
-                    _pickedBlock.X = MathHelper.Fastfloor(pickingPointInLine.X);
-                    _pickedBlock.Y = MathHelper.Fastfloor(pickingPointInLine.Y);
-                    _pickedBlock.Z = MathHelper.Fastfloor(pickingPointInLine.Z);
+                    Player.EntityState.PickedBlockPosition.X = MathHelper.Fastfloor(pickingPointInLine.X);
+                    Player.EntityState.PickedBlockPosition.Y = MathHelper.Fastfloor(pickingPointInLine.Y);
+                    Player.EntityState.PickedBlockPosition.Z = MathHelper.Fastfloor(pickingPointInLine.Z);
 
                     //Find the face picked up !
                     float FaceDistance;
                     Ray newRay = new Ray((_worldPosition.Value + _entityEyeOffset).AsVector3(), _lookAt.AsVector3());
-                    BoundingBox bBox = new SharpDX.BoundingBox(new Vector3(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z), new Vector3(_pickedBlock.X + 1, _pickedBlock.Y + 1, _pickedBlock.Z + 1));
+                    
+                    BoundingBox bBox;
+                    ComputeBlockBoundingBox(ref Player.EntityState.PickedBlockPosition, out bBox);
+
                     newRay.Intersects(ref bBox, out FaceDistance);
 
                     DVector3 CollisionPoint = _worldPosition.Value + _entityEyeOffset + (_lookAt * FaceDistance);
                     MVector3.Round(ref CollisionPoint, 4);
 
-                    _newCubePlace = new Location3<int>(_pickedBlock.X, _pickedBlock.Y, _pickedBlock.Z);
-                    if (CollisionPoint.X == _pickedBlock.X) _newCubePlace.X--;
+                    Player.EntityState.NewBlockPosition = Player.EntityState.PickedBlockPosition;
+
+                    if (CollisionPoint.X == Player.EntityState.PickedBlockPosition.X) Player.EntityState.NewBlockPosition.X--;
                     else
-                        if (CollisionPoint.X == _pickedBlock.X + 1) _newCubePlace.X++;
+                        if (CollisionPoint.X == Player.EntityState.PickedBlockPosition.X + 1) Player.EntityState.NewBlockPosition.X++;
                         else
-                            if (CollisionPoint.Y == _pickedBlock.Y) _newCubePlace.Y--;
+                            if (CollisionPoint.Y == Player.EntityState.PickedBlockPosition.Y) Player.EntityState.NewBlockPosition.Y--;
                             else
-                                if (CollisionPoint.Y == _pickedBlock.Y + 1) _newCubePlace.Y++;
+                                if (CollisionPoint.Y == Player.EntityState.PickedBlockPosition.Y + 1) Player.EntityState.NewBlockPosition.Y++;
                                 else
-                                    if (CollisionPoint.Z == _pickedBlock.Z) _newCubePlace.Z--;
+                                    if (CollisionPoint.Z == Player.EntityState.PickedBlockPosition.Z) Player.EntityState.NewBlockPosition.Z--;
                                     else
-                                        if (CollisionPoint.Z == _pickedBlock.Z + 1) _newCubePlace.Z++;
+                                        if (CollisionPoint.Z == Player.EntityState.PickedBlockPosition.Z + 1) Player.EntityState.NewBlockPosition.Z++;
 
-
-                    _playerPotentialNewBlock = new BoundingBox(new Vector3(_newCubePlace.X, _newCubePlace.Y, _newCubePlace.Z), new Vector3(_newCubePlace.X + 1, _newCubePlace.Y + 1, _newCubePlace.Z + 1));
-                    _isBlockPicked = true;
-
+                                       
+                    Player.EntityState.IsBlockPicked = true;
                     break;
                 }
             }
 
-              uint todo = 0;//todo PickedEntityId (when an entity is picked, not when a terrain cube is picked)
-                Player.EntityState = new DynamicEntityState()
-                {
-                    PickedBlockPosition = _pickedBlock,
-                    NewBlockPosition = _newCubePlace,
-                    PickedEntityId = todo,
-                    SpaceVector = _lookAt.AsVector3()//TODO SpaceVector should be Dvector3, surely other server vectors too 
-                };
+            Player.EntityState.PickedEntityId = 0;
 
             ////Create the bounding box around the cube !
             //if (_previousPickedBlock != _pickedBlock && _isBlockPicked)
@@ -287,6 +283,11 @@ namespace Utopia.Entities.Managers
             //    _playerSelectedBox = new BoundingBox(new Vector3(_pickedBlock.X - 0.002f, _pickedBlock.Y - 0.002f, _pickedBlock.Z - 0.002f), new Vector3(_pickedBlock.X + 1.002f, _pickedBlock.Y + 1.002f, _pickedBlock.Z + 1.002f));
             //    _blocCursor.Update(ref _playerSelectedBox);
             //}
+        }
+
+        private void ComputeBlockBoundingBox(ref Location3<int> BlockPlace, out BoundingBox BlockBoundingBox)
+        {
+            BlockBoundingBox = new BoundingBox(new Vector3(BlockPlace.X, BlockPlace.Y, BlockPlace.Z), new Vector3(BlockPlace.X + 1, BlockPlace.Y + 1, BlockPlace.Z + 1));
         }
         #endregion
 
@@ -613,6 +614,7 @@ namespace Utopia.Entities.Managers
         }
         #endregion
         #endregion
+
         #endregion
 
         #region Public Methods
