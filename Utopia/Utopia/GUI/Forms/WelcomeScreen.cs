@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Utopia.GUI.Forms.CustControls;
 using Utopia.Network;
 using System.Threading;
+using Utopia.Settings;
 
 namespace Utopia.GUI.Forms
 {
@@ -45,13 +46,19 @@ namespace Utopia.GUI.Forms
             if(withFadeIn) FadeInWinForm();
             _singleChild.btNew.Click += new EventHandler(btNew_Click);
             _multiChild.btConnect.Click += new EventHandler(btConnect_Click);
+            _multiChild.btSave.Click += new EventHandler(btSave_Click);
+            _multiChild.srvList.KeyDown += new KeyEventHandler(srvList_KeyDown);
+            _multiChild.srvList.SelectedIndexChanged += new EventHandler(srvList_SelectedIndexChanged);
+            InitServerList();
         }
 
         public void CleanUp()
         {
             _singleChild.btNew.Click -= btNew_Click;
             _multiChild.btConnect.Click -= btConnect_Click;
-
+            _multiChild.btSave.Click -= btSave_Click;
+            _multiChild.srvList.KeyDown -= srvList_KeyDown;
+            _multiChild.srvList.SelectedIndexChanged -= srvList_SelectedIndexChanged;
             _timerDelegate = null;
             _server = null;
             _singleChild = null;
@@ -59,9 +66,24 @@ namespace Utopia.GUI.Forms
             _configChild = null;
         }
 
+        //MultiPlayer component =================================================================================
+
+        void srvList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_multiChild.srvList.SelectedIndex >= 0)
+            {
+                ServerSetting serverItem = (ServerSetting)_multiChild.srvList.Items[_multiChild.srvList.SelectedIndex];
+                _multiChild.txtSrvAdress.Text = serverItem.IPAddress;
+                _multiChild.txtServerName.Text = serverItem.ServerName;
+                _multiChild.txtUser.Text = serverItem.DefaultUser;
+                _multiChild.txtPassword.Text = "";
+            }
+        }
+
         void btConnect_Click(object sender, EventArgs e)
         {
             _multiChild.btConnect.Enabled = false;
+
 
             //Validate the TCP IP adress
             if (_server.BindingServer(_multiChild.txtSrvAdress.Text))
@@ -72,6 +94,83 @@ namespace Utopia.GUI.Forms
 
             _serverTime = new System.Threading.Timer(_timerDelegate, null, 100, 100);
         }
+
+        private void InitServerList()
+        {
+            if (ClientSettings.Current.Settings.ServersList == null) ClientSettings.Current.Settings.ServersList = new ServersList();
+            foreach (var server in ClientSettings.Current.Settings.ServersList.Servers)
+            {
+                AddServerToList(server);
+            }
+
+            if (_multiChild.srvList.Items.Count > 0)
+            {
+                _multiChild.srvList.SelectedIndex = 0;
+            }
+        }
+
+        void btSave_Click(object sender, EventArgs e)
+        {
+            AddServerToList();
+            SaveConfigurationFile();
+        }
+
+        private void AddServerToList(ServerSetting server = null)
+        {
+            if (server == null)
+            {
+                //Is the server already existing (With same IP) ??
+                if (ClientSettings.Current.Settings.ServersList.Servers.Where(x => x.IPAddress == _multiChild.txtSrvAdress.Text).Count() > 0)
+                {
+                    //Server already existing => Udpate it
+                    server = ClientSettings.Current.Settings.ServersList.Servers.Find(x => x.IPAddress == _multiChild.txtSrvAdress.Text);
+                    server.ServerName = _multiChild.txtServerName.Text;
+                    server.DefaultUser = _multiChild.txtUser.Text;
+
+                    foreach (var serverInListBoxItem in _multiChild.srvList.Items)
+                    {
+                        if (((ServerSetting)serverInListBoxItem).IPAddress == _multiChild.txtSrvAdress.Text)
+                        {
+                            ((ServerSetting)serverInListBoxItem).ServerName = _multiChild.txtServerName.Text;
+                            ((ServerSetting)serverInListBoxItem).DefaultUser = _multiChild.txtUser.Text;
+                            _multiChild.srvList.RefreshItems();
+                        }
+                    }
+
+                    return;
+                }
+
+                server = new ServerSetting() { IPAddress = _multiChild.txtSrvAdress.Text, ServerName = _multiChild.txtServerName.Text, DefaultUser = _multiChild.txtUser.Text };
+                ClientSettings.Current.Settings.ServersList.Servers.Add(server);
+            }
+
+            _multiChild.srvList.Items.Add(server);
+        }
+
+        void srvList_KeyDown(object sender, KeyEventArgs e)
+        {
+            //Get selected listbox item
+            if (e.KeyCode == Keys.Delete && _multiChild.srvList.SelectedIndex >= 0)
+            {
+                //Get Item
+                ServerSetting serverItem = (ServerSetting)_multiChild.srvList.Items[_multiChild.srvList.SelectedIndex];
+                _multiChild.srvList.Items.RemoveAt(_multiChild.srvList.SelectedIndex);
+
+                if (_multiChild.srvList.Items.Count > 0) _multiChild.srvList.SelectedIndex = 0;
+                else _multiChild.srvList.SelectedIndex = -1;
+
+                ClientSettings.Current.Settings.ServersList.Servers.RemoveAll(x => x.ServerName == serverItem.ServerName && x.IPAddress == serverItem.IPAddress);
+                SaveConfigurationFile();
+            }
+            e.Handled = true;
+        }
+
+        private void SaveConfigurationFile()
+        {
+            ClientSettings.Current.Save();
+        }
+
+        //MultiPlayer component =================================================================================
 
         private void RegisterEvents()
         {
