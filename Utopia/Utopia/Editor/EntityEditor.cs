@@ -54,7 +54,8 @@ namespace Utopia.Editor
 
         public Location3<int>? NewCubePlace;
         public Location3<int>? PickedCubeLoc;
-        public List<Location3<int>> Selected;
+
+        public List<Location3<int>> Selected = new List<Location3<int>>();
 
         public byte SelectedIndex { get; set; }
         public bool IsTexture { get; set; }
@@ -69,6 +70,9 @@ namespace Utopia.Editor
         {
             get {return _editedEntity.VoxelEntity.Model.Blocks;}
         }
+
+        public bool MultiSelectEnabled = false;
+
 
         public EditorTool LeftTool;
         public EditorTool RightTool;
@@ -147,8 +151,14 @@ namespace Utopia.Editor
 
                 _editedEntity.AlterOverlay(x, y, z, 21);
                 
-                if (_prevPickedBlock.HasValue)
-                    _editedEntity.AlterOverlay(_prevPickedBlock.Value.X, _prevPickedBlock.Value.Y, _prevPickedBlock.Value.Z, 0);
+                if (MultiSelectEnabled)
+                {
+                    Selected.Add(PickedCubeLoc.Value);
+                } else
+                {
+                    if (_prevPickedBlock.HasValue)
+                        _editedEntity.AlterOverlay(_prevPickedBlock.Value.X, _prevPickedBlock.Value.Y, _prevPickedBlock.Value.Z, 0);    
+                }
 
                 _prevPickedBlock = PickedCubeLoc;
                 _editedEntity.Altered = true;             
@@ -349,6 +359,11 @@ namespace Utopia.Editor
                 return true;
             }
             return false;
+        }
+
+        public byte BlockAt(Location3<int> loc)
+        {
+            return Blocks[loc.X, loc.Y, loc.Z];
         }
     }
 }
