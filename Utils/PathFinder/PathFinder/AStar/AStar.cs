@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using PathFinder.AStar;
 
 namespace Utopia.Server.AStar {
     /// <summary>
@@ -17,6 +18,10 @@ namespace Utopia.Server.AStar {
         private readonly SortedSet<T> _fClosedList;
         private readonly List<T> _fSuccessors;
 
+        public event EventHandler NextNode;
+
+        public event EventHandler<AStarDebugEventArgs<T>> NodeSelected;
+
 		#endregion
 
 		#region Properties
@@ -26,7 +31,23 @@ namespace Utopia.Server.AStar {
 	    /// </summary>
         public List<T> Solution { get; private set; }
 
-	    #endregion
+        public IEnumerable<T> EnumerateOpen()
+        {
+            foreach (var item in _fOpenList)
+            {
+                yield return item;
+            }
+        }
+
+        public IEnumerable<T> EnumerateClosed()
+        {
+            foreach (var item in _fClosedList)
+            {
+                yield return item;
+            }
+        }
+
+        #endregion
 		
 		#region Constructors
 
@@ -73,9 +94,15 @@ namespace Utopia.Server.AStar {
 			_fOpenList.Add(_fStartNode);
 			while(_fOpenList.Count > 0) 
 			{
+                if (NextNode != null)
+                    NextNode(this, null);
+
 				// Get the node with the lowest TotalCost
 				var nodeCurrent = _fOpenList.Min;
                 _fOpenList.Remove(nodeCurrent);
+
+                if (NodeSelected != null)
+                    NodeSelected(this, new AStarDebugEventArgs<T>() { Node = nodeCurrent });
 
 				// If the node is the goal copy the path to the solution array
 				if(nodeCurrent.IsGoal()) {
@@ -94,20 +121,18 @@ namespace Utopia.Server.AStar {
 					// the TotalCost is higher, we will throw away the current successor.
 					T nodeOpen = null;
                     if (_fOpenList.Contains(nodeSuccessor))
-                        nodeOpen = nodeSuccessor; //nodeOpen = (T)_fOpenList[_fOpenList.IndexOf(nodeSuccessor)];
-                    if (nodeOpen != null) // && (nodeSuccessor.TotalCost > nodeOpen.TotalCost))
+                    {
                         continue;
+                    }
 					
 					// Test if the currect successor node is on the closed list, if it is and
 					// the TotalCost is higher, we will throw away the current successor.
 					T nodeClosed = null;
                     if (_fClosedList.Contains(nodeSuccessor))
-                        nodeClosed = nodeSuccessor;
-                    if (nodeClosed != null) // && (nodeSuccessor.TotalCost > nodeClosed.TotalCost))
                     {
-
                         continue;
                     }
+
 
 				    // Remove the old successor from the open list
                     //_fOpenList.Remove(nodeSuccessor);

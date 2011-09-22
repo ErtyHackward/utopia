@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using PathFinder;
 
 namespace Utopia.Server.AStar
 {
@@ -65,17 +66,27 @@ namespace Utopia.Server.AStar
         /// <param name="AY">Y-coordinate</param>
         private void AddSuccessor(List<AStarNode2D> ASuccessors,int AX,int AY) 
         {
-            int CurrentCost = MainClass.GetMap(AX,AY);
-            if(CurrentCost == -1) 
+
+            int cost = GetMap(AX, AY);
+            if (cost == -1) 
             {
                 return;
             }
-            var newNode = new AStarNode2D(this,GoalNode,Cost + CurrentCost,AX,AY);
+            var newNode = new AStarNode2D(this, GoalNode, Cost + cost, AX, AY);
             if(newNode.IsSameState(Parent)) 
             {
                 return;
             }
             ASuccessors.Add(newNode);
+        }
+
+        private int GetMap(int x, int y)
+        {
+            if (x < 0 || x >= Form1.Map.GetUpperBound(0))
+                return -1;
+            if (y < 0 || y >= Form1.Map.GetUpperBound(1))
+                return -1;
+            return Form1.Map[x, y];
         }
 
         #endregion
@@ -140,6 +151,11 @@ namespace Utopia.Server.AStar
         public override void PrintNodeInfo()
         {
             Console.WriteLine("X:\t{0}\tY:\t{1}\tCost:\t{2}\tEst:\t{3}\tTotal:\t{4}",FX,FY,Cost,GoalEstimate,TotalCost);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("X:{0} Y:{1}", X, Y);
         }
 
         #endregion
