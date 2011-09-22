@@ -20,7 +20,7 @@ namespace Utopia.Entities.Voxel
             _d3DEngine = d3DEngine;
         }
 
-        public List<VertexCubeSolid> GenCubesFaces(byte[,,] blocks, byte[,,] overlays = null,bool colorMode=false)
+        public List<VertexCubeSolid> GenCubesFaces(byte[,,] blocks, byte[,,] overlays = null, bool colorMode = false)
         {
             List<VertexCubeSolid> vertexList = new List<VertexCubeSolid>();
 
@@ -34,10 +34,10 @@ namespace Utopia.Entities.Voxel
                     for (int z = 0; z < blocks.GetLength(2); z++)
                     {
                         byte blockType = blocks[x, y, z];
-                     
+
                         byte overlay = overlays == null ? (byte) 0 : overlays[x, y, z];
                         if (blockType == 0) continue;
-                        BuildBlockVertices(blocks, ref vertexList, blockType, x, y, z, overlay,colorMode);
+                        BuildBlockVertices(blocks, ref vertexList, blockType, x, y, z, overlay, colorMode);
                     }
                 }
             }
@@ -46,7 +46,8 @@ namespace Utopia.Entities.Voxel
         }
 
 
-        private static void BuildBlockVertices(byte[,,] blocks, ref List<VertexCubeSolid> vertice, byte blockType, int x, int y, int z, byte overlay, bool colorMode)
+        private static void BuildBlockVertices(byte[,,] blocks, ref List<VertexCubeSolid> vertice, byte blockType, int x,
+                                               int y, int z, byte overlay, bool colorMode)
         {
             byte blockXDecreasing = x == 0 ? (byte) 0 : blocks[x - 1, y, z];
             byte blockXIncreasing = x == blocks.GetLength(0) - 1 ? (byte) 0 : blocks[x + 1, y, z];
@@ -73,11 +74,11 @@ namespace Utopia.Entities.Voxel
 
         private static void BuildFaceVertices(ref List<VertexCubeSolid> vertice, int x, int y, int z,
                                               CubeFace faceDir,
-                                              byte blockType, byte overlay,bool colorMode)
+                                              byte blockType, byte overlay, bool colorMode)
         {
             ByteColor color;
             byte textureArrayId;
-            int face = (int)faceDir;
+            int face = (int) faceDir;
             int cubeid = blockType;
 
             if (colorMode)
@@ -86,7 +87,8 @@ namespace Utopia.Entities.Voxel
                 Color tmpColor = ColorLookup.Colours[blockType];
                 color = new ByteColor(tmpColor.R, tmpColor.G, tmpColor.B, tmpColor.A);
                 textureArrayId = 25;
-            } else
+            }
+            else
             {
                 VisualCubeProfile profile = VisualCubeProfile.CubesProfile[cubeid];
                 if (profile.IsEmissiveColorLightSource)
@@ -97,33 +99,38 @@ namespace Utopia.Entities.Voxel
                 }
                 textureArrayId = profile.Textures[face];
             }
-            
+
             //TODO indices : good for perf & ram 
 
-         
-            
-            if (blockType == 0)//BuildFaceVertices is normally not called with blocktype 0 but let's handle it anyway
+
+            if (blockType == 0) //BuildFaceVertices is normally not called with blocktype 0 but let's handle it anyway
                 overlay = 0;
             else if (overlay == 0)
-                overlay = textureArrayId; //TODO find another way to ignore overlay 0 than lerping between 2 same values in shader 
-            
+                overlay = textureArrayId;
+                    //TODO find another way to ignore overlay 0 than lerping between 2 same values in shader 
+
             ByteVector4 vertexInfo = new ByteVector4((byte) 0, (byte) faceDir, overlay, (byte) 0);
 
             switch (faceDir)
             {
                 case CubeFace.Right: //X+
                     {
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
                     }
                     break;
@@ -134,8 +141,10 @@ namespace Utopia.Entities.Voxel
                                                         ref vertexInfo));
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z + 1, face), textureArrayId, ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z, face), textureArrayId, ref color, ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z, face), textureArrayId, ref color,
+                                                        ref vertexInfo));
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z + 1, face), textureArrayId, ref color,
                                                         ref vertexInfo));
@@ -148,15 +157,19 @@ namespace Utopia.Entities.Voxel
                     {
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
                     }
                     break;
@@ -164,8 +177,9 @@ namespace Utopia.Entities.Voxel
                 case CubeFace.Bottom: //Y-
                     {
                         face = (int) CubeFace.Bottom;
-                     
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z + 1, face), textureArrayId, ref color,
+
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
@@ -175,23 +189,28 @@ namespace Utopia.Entities.Voxel
                                                         ref vertexInfo));
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z, face), textureArrayId, ref color, ref vertexInfo));
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z, face), textureArrayId, ref color,
+                                                        ref vertexInfo));
                     }
                     break;
 
                 case CubeFace.Back: //Z+
                     {
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z + 1, face), textureArrayId, ref color,
                                                         ref vertexInfo));
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z + 1, face), textureArrayId, ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z + 1, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z + 1, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
                     }
                     break;
@@ -200,13 +219,17 @@ namespace Utopia.Entities.Voxel
                     {
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z, face), textureArrayId, ref color, ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z, face), textureArrayId, ref color, ref vertexInfo));
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId,
+                                                        ref color,
+                                                        ref vertexInfo));
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x, y, z, face), textureArrayId, ref color,
+                                                        ref vertexInfo));
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
-                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId, ref color,
+                        vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId,
+                                                        ref color,
                                                         ref vertexInfo));
                     }
                     break;
