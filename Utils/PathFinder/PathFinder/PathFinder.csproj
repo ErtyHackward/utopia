@@ -52,6 +52,8 @@
     <Compile Include="AStar\AStarNode2D.cs" />
     <Compile Include="AStar\AStarNode3D.cs" />
     <Compile Include="AStar\Main.cs" />
+    <Compile Include="AStar\PriorityQueue.cs" />
+    <Compile Include="AStar\SortedListWithDuplicates.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
