@@ -96,11 +96,14 @@ PS_IN VS(VS_IN input)
 		
 	float3 lightDirection = float3(0,1,1);
 	
-	//emmissiveLight is what was done in terran.hlsl
-	float3 emmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
+	//emmissiveLight from terran.hlsl : bug, removes the color when a = 1 
+	//float3 emmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
+	
+	float3 emmissiveLight =input.Col.rgb;
 
 	float DiffuseIntensity =0.4;
 	float3 DiffuseColor = float3( 1, 1, 1);
+	//float3 DiffuseColor = input.Col.rgb;
 
 	float3 diffuse = dot( normal, lightDirection ) * DiffuseIntensity * DiffuseColor;
 

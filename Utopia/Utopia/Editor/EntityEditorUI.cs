@@ -75,7 +75,7 @@ namespace Utopia.Editor
         private WindowControl InitTexturePalette()
         {
             ShaderResourceView arrayResourceView = _editorComponent._texture;
-            
+
             int count = VisualCubeProfile.CubesProfile.Count();
             //int count = arrayResourceView.Description.Texture2DArray.ArraySize;
 
@@ -89,25 +89,28 @@ namespace Utopia.Editor
             WindowControl palette = new WindowControl();
             palette.Bounds = new UniRectangle(100, 0, (cols)*btnSize, (rows + 1)*btnSize);
 
-            int cubeProfileIndex = 0;
+            int cubeProfileIndex = 1;
             for (int x = 0; x < cols; x++)
             {
                 for (int y = 0; y < rows; y++)
                 {
                     if (cubeProfileIndex == count) break;
+                    VisualCubeProfile profile = VisualCubeProfile.CubesProfile[cubeProfileIndex];
+                    if (! profile.IsEmissiveColorLightSource)
+                    {
+                        PaletteButtonControl btn = new PaletteButtonControl();
+                        btn.Bounds = new UniRectangle(x0 + x*btnSize, y0 + y*btnSize, btnSize, btnSize);
+                        btn.Texture = new SpriteTexture(btnSize, btnSize, arrayResourceView, Vector2.Zero);
 
-                    PaletteButtonControl btn = new PaletteButtonControl();
-                    btn.Bounds = new UniRectangle(x0 + x*btnSize, y0 + y*btnSize, btnSize, btnSize);
-                    btn.Texture = new SpriteTexture(btnSize, btnSize, arrayResourceView, Vector2.Zero);
-
-                    btn.Texture.Index = VisualCubeProfile.CubesProfile[cubeProfileIndex].Tex_Front;
-                    int associatedindex = cubeProfileIndex; //new variable for access inside btn.pressed closure 
-                    btn.Pressed += (sender, e) =>
-                                       {
-                                           _editorComponent.SelectedIndex = (byte) associatedindex;
-                                           _editorComponent.IsTexture = true;
-                                       };
-                    palette.Children.Add(btn);
+                        btn.Texture.Index = profile.Tex_Front;
+                        int associatedindex = cubeProfileIndex; //new variable for access inside btn.pressed closure 
+                        btn.Pressed += (sender, e) =>
+                                           {
+                                               _editorComponent.SelectedIndex = (byte) associatedindex;
+                                               _editorComponent.IsTexture = true;
+                                           };
+                        palette.Children.Add(btn);
+                    }
                     cubeProfileIndex++;
                 }
             }
