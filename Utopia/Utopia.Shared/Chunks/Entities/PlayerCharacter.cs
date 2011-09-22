@@ -3,6 +3,7 @@ using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -16,6 +17,7 @@ namespace Utopia.Shared.Chunks.Entities
 
         #region Public variables/properties
         public SlotContainer<ToolbarSlot> Toolbar { get; set; }
+        
         public override EntityClassId ClassId
         {
             get { return EntityClassId.PlayerCharacter; }
@@ -32,6 +34,11 @@ namespace Utopia.Shared.Chunks.Entities
             //Define the default PlayerCharacter ToolBar
             Toolbar = new SlotContainer<ToolbarSlot>(new Location2<byte>(10,1));
             
+            //Create a default Tool for playerCharacter = its Hand !
+            Hand playerHand = new Hand();
+            Equipment.LeftTool = playerHand;
+            Equipment.RightTool = playerHand;
+
             MoveSpeed = 5f;               //Default player MoveSpeed
             RotationSpeed = 10f;          //Default Player Rotation Speed
             Size = new SharpDX.Vector3(0.5f, 1.9f, 0.5f); //Default player size

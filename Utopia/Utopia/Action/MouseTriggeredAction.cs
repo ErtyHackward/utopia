@@ -9,6 +9,7 @@ namespace Utopia.Action
     {
         public Actions Action;
         public MouseTriggerMode TriggerType;
+        public bool? WithCursorLocked;
         public MouseButton Binding;
     }
 }

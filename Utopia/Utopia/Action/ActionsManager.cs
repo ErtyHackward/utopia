@@ -28,6 +28,7 @@ namespace Utopia.Action
         private MouseState _prevMouseState;
         private MouseTriggeredAction _mouseAction;
         private List<MouseTriggeredAction> _mouseActions;
+        private D3DEngine _engine;
         
         private bool _isAction1Exposed;
         private bool[] _bufferedActions1;
@@ -41,8 +42,9 @@ namespace Utopia.Action
         public bool MouseActionsProcessing { get; set; }
         #endregion
 
-        public ActionsManager()
+        public ActionsManager(D3DEngine engine)
         {
+            _engine = engine;
             _keyboardActions = new List<KeyboardTriggeredAction>();
             _mouseActions = new List<MouseTriggeredAction>();
 
@@ -54,6 +56,10 @@ namespace Utopia.Action
 
             KeyboardActionsProcessing = true;
             MouseActionsProcessing = true;
+        }
+
+        public void Dispose()
+        {
         }
 
         #region Public methods
@@ -120,9 +126,6 @@ namespace Utopia.Action
             return _actions[(int)action];
         }
 
-        public void Dispose()
-        {
-        }
         #endregion
 
         #region Private methods
@@ -143,10 +146,14 @@ namespace Utopia.Action
             {
                 _mouseAction = _mouseActions[i];
 
+                if (_mouseAction.WithCursorLocked != null)
+                {
+                    if (_mouseAction.WithCursorLocked == _engine.UnlockedMouse) continue;
+                }
+
                 switch (_mouseAction.TriggerType)
                 {
                     case MouseTriggerMode.ButtonDown:
-                        //Set the Action Flag if required
                         switch (_mouseAction.Binding)
 	                    {
                             case MouseButton.LeftButton:

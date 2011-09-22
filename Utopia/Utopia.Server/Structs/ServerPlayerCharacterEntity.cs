@@ -111,7 +111,6 @@ namespace Utopia.Server.Structs
                     NewBlockPosition = e.NewBlockPosition, 
                     PickedBlockPosition = e.PickedBlockPosition, 
                     PickedEntityId = e.PickedEntityId, 
-                    SpaceVector = e.SpaceVector, 
                     ToolId = e.Tool.EntityId
                 });
             }

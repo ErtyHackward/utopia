@@ -118,7 +118,6 @@ namespace Utopia.Network
                 NewBlockPosition = e.NewBlockPosition, 
                 PickedBlockPosition = e.PickedBlockPosition, 
                 PickedEntityId = e.PickedEntityId, 
-                SpaceVector = e.SpaceVector, 
                 ToolId = e.Tool == null ? 0 : e.Tool.EntityId 
             });
         }
