@@ -9,24 +9,24 @@ namespace Utopia.Shared.Chunks.Entities
     public struct DynamicEntityState
     {
         /// <summary>
-        /// Gets character view vector at using moment
-        /// </summary>
-        public Vector3 SpaceVector { get; set; }
-
-        /// <summary>
         /// Global position of currently picked block
         /// </summary>
-        public Location3<int> PickedBlockPosition { get; set; }
+        public Location3<int> PickedBlockPosition;
+
+        /// <summary>
+        /// Is the entity a block at range, ready to by "picked-up"
+        /// </summary>
+        public bool IsBlockPicked;
 
         /// <summary>
         /// Global position of new block to be inserted
         /// </summary>
-        public Location3<int> NewBlockPosition { get; set; }
+        public Location3<int> NewBlockPosition;
 
         /// <summary>
         /// Gets entity that currently picked by entity
         /// </summary>
-        public uint PickedEntityId { get; set; }
+        public uint PickedEntityId;
     }
 
 }

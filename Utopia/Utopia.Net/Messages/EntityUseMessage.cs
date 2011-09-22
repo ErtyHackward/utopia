@@ -10,7 +10,6 @@ namespace Utopia.Net.Messages
     /// </summary>
     public struct EntityUseMessage : IBinaryMessage
     {
-        private Vector3 _spaceVector;
         private Location3<int> _pickedBlockPosition;
         private Location3<int> _newBlockPosition;
         private uint _pickedEntityId;
@@ -26,15 +25,6 @@ namespace Utopia.Net.Messages
             set { _entityId = value; }
         }
 
-        /// <summary>
-        /// Look vector at tool using moment
-        /// </summary>
-        public Vector3 SpaceVector
-        {
-            get { return _spaceVector; }
-            set { _spaceVector = value; }
-        }
-        
         public Location3<int> PickedBlockPosition
         {
             get { return _pickedBlockPosition; }
@@ -78,7 +68,6 @@ namespace Utopia.Net.Messages
             EntityUseMessage msg;
 
             msg._entityId = reader.ReadUInt32();
-            msg._spaceVector = reader.ReadVector3();
             msg._pickedBlockPosition = reader.ReadIntLocation3();
             msg._newBlockPosition = reader.ReadIntLocation3();
             msg._pickedEntityId = reader.ReadUInt32();
@@ -94,7 +83,6 @@ namespace Utopia.Net.Messages
         public void Write(BinaryWriter writer)
         {
             writer.Write(_entityId);
-            writer.Write(_spaceVector);
             writer.Write(_pickedBlockPosition);
             writer.Write(_newBlockPosition);
             writer.Write(_pickedEntityId);

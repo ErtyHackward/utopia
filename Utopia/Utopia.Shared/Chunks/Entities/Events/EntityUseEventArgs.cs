@@ -48,7 +48,6 @@ namespace Utopia.Shared.Chunks.Entities.Events
         {
             var e = new EntityUseEventArgs();
 
-            e.SpaceVector = state.SpaceVector;
             e.PickedBlockPosition = state.PickedBlockPosition;
             e.NewBlockPosition = state.NewBlockPosition;
             e.PickedEntityId = state.PickedEntityId;

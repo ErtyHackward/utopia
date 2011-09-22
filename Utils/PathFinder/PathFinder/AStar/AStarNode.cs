@@ -141,17 +141,17 @@ namespace Utopia.Server.AStar
         {
             var otherNode = (AStarNode<T>)obj;
 
-            if (IsSameState((T)obj))
-                return 0;
+            //if (IsSameState((T)obj))
+            //    return 0;
 
-            var costCompare = (TotalCost.CompareTo(otherNode.TotalCost));
+            var costCompare = otherNode.TotalCost.CompareTo(TotalCost);
 
-            if (costCompare != 0)
-            {
+            //if (costCompare != 0)
+            //{
                 return costCompare;
-            }
+            //}
 
-            return GetHashCode().CompareTo(obj.GetHashCode()) ;
+            //return GetHashCode().CompareTo(obj.GetHashCode()) ;
         }
 
         #endregion
