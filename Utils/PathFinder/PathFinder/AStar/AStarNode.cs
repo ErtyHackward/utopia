@@ -34,7 +34,7 @@ namespace Utopia.Server.AStar
                 return _fGoalEstimate;
             }
         }
-        private double _fGoalEstimate;
+        private double _fGoalEstimate = double.NaN;
 
         /// <summary>
         /// The cost plus the estimated cost to the goal from here.
@@ -59,7 +59,7 @@ namespace Utopia.Server.AStar
             set
             {
                 _fGoalNode = value;
-                _fGoalEstimate = Estimate();
+                //_fGoalEstimate = Estimate();
             }
         }
         private T _fGoalNode;
@@ -144,7 +144,7 @@ namespace Utopia.Server.AStar
             if (IsSameState((T)obj))
                 return 0;
 
-            var costCompare = (-TotalCost.CompareTo(((AStarNode<T>)obj).TotalCost));
+            var costCompare = (TotalCost.CompareTo(otherNode.TotalCost));
 
             if (costCompare != 0)
             {
