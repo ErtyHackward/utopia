@@ -159,7 +159,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                 _vb[nbrVertex] = new VertexCubeCloud(ref Posi, ref TextCoord, (byte)YlayerPosi);
                 nbrVertex++;
 
-                _cloudVB2D = new VertexBuffer<VertexCubeCloud>(_d3dEngine, 4, VertexCubeCloud.VertexDeclaration, PrimitiveTopology.TriangleList);
+                _cloudVB2D = new VertexBuffer<VertexCubeCloud>(_d3dEngine, 4, VertexCubeCloud.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB2D");
                 _cloudVB2D.SetData(_vb);
 
                 //Create Vertices
@@ -173,7 +173,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                 MeshVertexOffset = nbrVertex;
             }
 
-            _cloudIB = new IndexBuffer<ushort>(_d3dEngine, 6, SharpDX.DXGI.Format.R16_UInt);
+            _cloudIB = new IndexBuffer<ushort>(_d3dEngine, 6, SharpDX.DXGI.Format.R16_UInt, "_cloudIB");
             _cloudIB.SetData(_ib);
         }
 

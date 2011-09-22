@@ -52,7 +52,7 @@ namespace Utopia.GameDXStates
 
         public static void Dispose()
         {
-            StatesRepository.Dispose();
+            StatesRepository.CleanUp();
         }
 
         public static class Blenders

@@ -170,6 +170,12 @@ namespace S33M3Engines.Cameras
             d3dEngine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
         }
 
+        public override void Dispose()
+        {
+            _d3dEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
+            base.Dispose();
+        }
+
         public virtual string GetInfo()
         {
             return null;

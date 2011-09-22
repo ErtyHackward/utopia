@@ -56,6 +56,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         public void Dispose()
         {
+            _server.ServerConnection.MessageChunkData -= ServerConnection_MessageChunkData;
         }
 
         #region Public methods

@@ -37,6 +37,15 @@ namespace Utopia.Entities
             _worldChunks = worldChunks;
         }
 
+        public static void CleanUp()
+        {
+            _server = null;
+            _chunkStorageManager = null;
+            _cubesHolder = null;
+            _lightManager = null;
+            _worldChunks = null;
+        }
+
           public static void ReplaceBlocks(TerraCubeWithPosition[] coordinatesAndReplacement)
           {
               foreach (var locationBlock in coordinatesAndReplacement)

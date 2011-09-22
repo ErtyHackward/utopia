@@ -121,15 +121,14 @@ namespace Utopia.Editor
         {
             String[] dirs = new[] {@"Textures/Terran/", @"Textures/Editor/"};
 
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point, out _texture);
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point, "ArrayTexture_EntityEditor", out _texture);
 
             _itemEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/TerranEditor.hlsl",
                                          VertexCubeSolid.VertexDeclaration);
 
             _itemEffect.TerraTexture.Value = _texture;
 
-            _itemEffect.SamplerDiffuse.Value =
-                StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+            _itemEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
             _ui = new EntityEditorUi(this);
         }
@@ -327,7 +326,7 @@ namespace Utopia.Editor
         {
             _itemEffect.Dispose();
             _texture.Dispose();
-
+            if(_editedEntity != null) _editedEntity.Dispose();
             base.Dispose();
         }
 
