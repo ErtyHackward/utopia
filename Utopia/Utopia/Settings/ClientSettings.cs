@@ -2,12 +2,36 @@
 using Utopia.Shared.Config;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using System.Collections.Generic;
 
 namespace Utopia.Settings
 {
     public class ClientSettings
     {
         public static XmlSettingsManager<ClientConfig> Current;
+    }
+
+    /// <summary>
+    /// Game parameters section
+    /// </summary>
+    [Serializable]
+    public class ServersList
+    {
+        [XmlElement("Servers")]
+        public List<ServerSetting> Servers = new List<ServerSetting>();
+    }
+
+    [Serializable]
+    public class ServerSetting
+    {
+        public string IPAddress { get; set; }
+        public string ServerName { get; set; }
+        public string DefaultUser { get; set; }
+
+        public override string ToString()
+        {
+            return ServerName + " [" + IPAddress + "]";
+        }
     }
 
     /// <summary>
@@ -118,6 +142,11 @@ namespace Utopia.Settings
         public KeyboardMapping KeyboardMapping { get; set; }
 
         /// <summary>
+        /// Server Lists
+        /// </summary>
+        public ServersList ServersList { get; set; }
+
+        /// <summary>
         /// Gets default configuration for qwerty keyboard type
         /// </summary>
         public static ClientConfig DefaultQwerty
@@ -160,7 +189,8 @@ namespace Utopia.Settings
                         FreezeTime = new KeyWithModifier { MainKey = Keys.F10, Modifier = Keys.None, Info = "Stop World Clock" },
                         Chat = new KeyWithModifier { MainKey = Keys.Enter, Modifier = Keys.None, Info = "Open/Close the chat" },
                         Use = new KeyWithModifier { MainKey = Keys.E, Modifier = Keys.None, Info = "Use" },
-                    }
+                    },
+                    ServersList = new ServersList()
                 };
             }
         }
