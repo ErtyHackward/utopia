@@ -46,7 +46,7 @@ namespace PathFinder
             _selectedNode = e.Node;
             DrawMap();
             Application.DoEvents();
-            Thread.Sleep(400);
+            Thread.Sleep(1000);
         }
 
         void _pathFinder_NextNode(object sender, EventArgs e)
@@ -144,7 +144,7 @@ namespace PathFinder
         private void button1_Click(object sender, EventArgs e)
         {
             var goal = new AStarNode2D(null, null, 1, _goal.X, _goal.Y);
-            _pathFinder.FindPath(new AStarNode2D(null, goal, 1, _start.X, _start.Y), goal);
+            _pathFinder.FindPath(new AStarNode2D(null, goal, 1, _start.X, _start.Y));
         }
     }
 }
