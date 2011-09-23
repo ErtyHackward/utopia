@@ -52,6 +52,7 @@ using Utopia.Entities.Managers;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Net.Connections;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace Utopia
 {
@@ -72,6 +73,7 @@ namespace Utopia
         private ActionsManager _actions;
         private D3DEngine _engine;
         private IDynamicEntityManager _dynamicEntityManager;
+        private IChunkEntityImpactManager _chunkEntityImpactManager;
         //Debug tools
         private FPS _fps; //FPS computing object
 
@@ -224,6 +226,7 @@ namespace Utopia
                                                    new ConstructorArgument("startTime", (float)Math.PI * 1f));
             //-- Weather --
             _weather = IoCContainer.Get<IWeather>();
+
             //-- SkyDome --
             _skyDome = IoCContainer.Get<ISkyDome>();
             //-- Chunks -- Get chunks manager.
@@ -234,6 +237,9 @@ namespace Utopia
             //Attach a "Flat world generator"
             _chunks.LandscapeManager.WorldGenerator = new WorldGenerator(IoCContainer.Get<WorldParameters>(), IoCContainer.Get<IWorldProcessorConfig>("s33m3World"));
 
+            //Get the chunkEntityImpact
+            _chunkEntityImpactManager = IoCContainer.Get<IChunkEntityImpactManager>();
+
             //Create the World Components wrapper -----------------------
             _currentWorld = IoCContainer.Get<IWorld>();
 
@@ -241,9 +247,6 @@ namespace Utopia
             _worldRenderer = IoCContainer.Get<WorldRenderer>();
             _worldRenderer.UpdateOrder = 11;
             GameComponents.Add(_worldRenderer);             //Bind worldRendered to main loop.
-
-            //TODO Incoroporate EntityImpect inside Enitty framework as a single class ==> Not static !
-            EntityImpact.Init(IoCContainer.Get<SingleArrayChunkContainer>(), IoCContainer.Get<ILightingManager>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<IChunkStorageManager>(), _server);
 
             //GUI components
             _fps = new FPS();
@@ -574,7 +577,6 @@ namespace Utopia
             _d3dEngine.GameWindow.Closed -= GameWindow_Closed; //Subscribe to Close event
 
             _server.ServerConnection.ConnectionStatusChanged -= ServerConnection_ConnectionStatusChanged;
-            EntityImpact.CleanUp();
             VisualCubeProfile.CleanUp();
             GameConsole.CleanUp();
             base.Dispose();

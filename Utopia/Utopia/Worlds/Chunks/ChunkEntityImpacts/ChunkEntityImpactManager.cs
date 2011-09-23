@@ -2,78 +2,98 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.Struct;
+using Utopia.Network;
+using Utopia.Shared.Chunks;
+using Utopia.Net.Connections;
+using Utopia.Net.Messages;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
-using Utopia.Worlds.Chunks;
-using Utopia.Shared.Chunks;
+using Utopia.Worlds.Storage;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Worlds.Cubes;
-using Utopia.Worlds.Storage;
-using Utopia.Network;
 
-namespace Utopia.Entities
+namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
-    public static class EntityImpact
+    public class ChunkEntityImpactManager : IChunkEntityImpactManager
     {
-        [Flags]
-        public enum ReplaceBlockResult
-        {
-            LigthingImpact = 1
-        }
+        #region Private variables
+        private Server _server;
+        private SingleArrayChunkContainer _cubesHolder;
+        private IWorldChunks _worldChunks;
+        private IChunkStorageManager _chunkStorageManager;
+        private ILightingManager _lightManager;
+        #endregion
 
-        private static SingleArrayChunkContainer _cubesHolder;
-        private static ILightingManager _lightManager;
-        private static IWorldChunks _worldChunks;
-        private static IChunkStorageManager _chunkStorageManager;
-        private static Server _server;
+        #region Public variables/properties
+        #endregion
 
-        public static void Init(SingleArrayChunkContainer cubesHolder, ILightingManager lightManager, IWorldChunks worldChunks, IChunkStorageManager chunkStorageManager, Server server)
+        public ChunkEntityImpactManager(Server server,
+                                        SingleArrayChunkContainer cubesHolder,
+                                        IWorldChunks worldChunks,
+                                        IChunkStorageManager chunkStorageManager,
+                                        ILightingManager lightManager)
         {
             _server = server;
-            _chunkStorageManager = chunkStorageManager;
-            _cubesHolder = cubesHolder;
             _lightManager = lightManager;
             _worldChunks = worldChunks;
+            _chunkStorageManager = chunkStorageManager;
+            _server.ServerConnection.MessageBlockChange += ServerConnection_MessageBlockChange;
+            _cubesHolder = cubesHolder;
         }
 
-        public static void CleanUp()
+        public void Dispose()
         {
-            _server = null;
-            _chunkStorageManager = null;
-            _cubesHolder = null;
-            _lightManager = null;
-            _worldChunks = null;
+            _server.ServerConnection.MessageBlockChange -= ServerConnection_MessageBlockChange;
         }
 
-          public static void ReplaceBlocks(TerraCubeWithPosition[] coordinatesAndReplacement)
-          {
-              foreach (var locationBlock in coordinatesAndReplacement)
-              {
-                  //TODO here i have to copy the value to satisfy the use of ref in ReplaceBlock, cause i intended the location to be readonly  
-                  // Locations should not be modifiable here, so they should not be passed by ref ?? 
-                  Vector3I location = locationBlock.Position;
-
-                  ReplaceBlock(ref location, locationBlock.Cube.Id);
-              }
-          }
-
-        public static void ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId)
+        #region Private methods
+        /// <summary>
+        /// Event raise when receiving cube change from server
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ServerConnection_MessageBlockChange(object sender, ProtocolMessageEventArgs<BlocksChangedMessage> e)
         {
-            TerraCube newCube = new TerraCube(replacementCubeId);
-
-            _cubesHolder.SetCube(ref cubeCoordinates, ref newCube);
-            LigthingImpact(ref cubeCoordinates, replacementCubeId);
-
-            //Save the modified Chunk if single Player
-            if (!_server.Connected)
+            byte cubeId;
+            Vector3I cubePosition, cubeWorldPosition;
+            Vector2I chunkWorldPosition = new Vector2I(e.Message.ChunkPosition.X * AbstractChunk.ChunkSize.X, e.Message.ChunkPosition.Y * AbstractChunk.ChunkSize.Z);
+            //For each block modified transform the data to get both CubeID and Cube World position, then call the ReplaceBlock that will analyse
+            //whats the impact of the block replacement - Draw impact only - to know wish chunks must be refreshed.
+            for (int i = 0; i < e.Message.BlockValues.Length; i++)
             {
-                VisualChunk neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
-                _chunkStorageManager.StoreData_async(new Worlds.Storage.Structs.ChunkDataStorage() { ChunkId = neightboorChunk.ChunkID, ChunkX = neightboorChunk.ChunkPosition.X, ChunkZ = neightboorChunk.ChunkPosition.Y, Md5Hash = null, CubeData = neightboorChunk.BlockData.GetBlocksBytes()});
+                cubeId = e.Message.BlockValues[i];
+                cubePosition = e.Message.BlockPositions[i];
+                cubeWorldPosition = new Vector3I(cubePosition.X + chunkWorldPosition.X, cubePosition.Y, cubePosition.Z + chunkWorldPosition.Y);
             }
         }
 
-        private static void LigthingImpact(ref Vector3I cubeCoordinates, ushort replacementCubeId)
+        public void ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId)
+        {
+            //Create the new cube
+            TerraCube newCube = new TerraCube(replacementCubeId);
+
+            //Check if the cube is not already the same ? ! ?
+            TerraCube existingCube = _cubesHolder.Cubes[_cubesHolder.Index(ref cubeCoordinates)];
+            if (existingCube.Id == replacementCubeId) return;
+
+            //Change the cube in the big array
+            _cubesHolder.SetCube(ref cubeCoordinates, ref newCube);
+
+            CheckImpact(ref cubeCoordinates, replacementCubeId);
+
+            //Save the modified Chunk in local buffer DB
+            VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
+            _chunkStorageManager.StoreData_async(new Worlds.Storage.Structs.ChunkDataStorage() { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = null, CubeData = impactedChunk.BlockData.GetBlocksBytes() });
+        }
+
+        /// <summary>
+        /// Check the impact of the block replacement.
+        /// Mostly will check wish of the surrending visualchunks must be refresh (lighting or cube masked face reason).
+        /// This is only for drawing purpose, not landscape modification here.
+        /// </summary>
+        /// <param name="cubeCoordinates">The cube that has been modified</param>
+        /// <param name="replacementCubeId">The type of the modified cube</param>
+        private void CheckImpact(ref Vector3I cubeCoordinates, byte replacementCubeId)
         {
             Int64 mainChunkId;
 
@@ -95,7 +115,7 @@ namespace Utopia.Entities
 
             VisualCubeProfile profile = VisualCubeProfile.CubesProfile[replacementCubeId];
 
-            //Find the chunks that have been impacted = Max of 4
+            //Find the chunks that have been impacted around the 8 surrending chunks
             VisualChunk neightboorChunk;
             neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
             neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
@@ -177,6 +197,10 @@ namespace Utopia.Entities
             }
 
         }
+        #endregion
 
+        #region Public methods
+        #endregion
     }
 }
+

@@ -40,6 +40,7 @@ using Utopia.Entities.Managers;
 using Utopia.Entities.Renderer;
 using Utopia.Settings;
 using Utopia.GUI;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace Utopia
 {
@@ -86,6 +87,7 @@ namespace Utopia
                 iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds");
             }
 
+            iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope();
             iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InSingletonScope().Named("SolidCubeMeshFactory");
             iocContainer.Bind<ICubeMeshFactory>().To<LiquidCubeMashFactory>().InSingletonScope().Named("LiquidCubeMeshFactory");
 

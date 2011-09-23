@@ -24,6 +24,7 @@ using Utopia.Network;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace Utopia.Worlds.Chunks
 {
