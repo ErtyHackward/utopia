@@ -10,8 +10,8 @@ namespace Utopia.Net.Messages
     /// </summary>
     public struct EntityUseMessage : IBinaryMessage
     {
-        private Location3<int> _pickedBlockPosition;
-        private Location3<int> _newBlockPosition;
+        private Vector3I _pickedBlockPosition;
+        private Vector3I _newBlockPosition;
         private uint _pickedEntityId;
         private uint _toolId;
         private uint _entityId;
@@ -25,13 +25,13 @@ namespace Utopia.Net.Messages
             set { _entityId = value; }
         }
 
-        public Location3<int> PickedBlockPosition
+        public Vector3I PickedBlockPosition
         {
             get { return _pickedBlockPosition; }
             set { _pickedBlockPosition = value; }
         }
         
-        public Location3<int> NewBlockPosition
+        public Vector3I NewBlockPosition
         {
             get { return _newBlockPosition; }
             set { _newBlockPosition = value; }

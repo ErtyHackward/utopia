@@ -23,7 +23,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Corresponding positions array of size HashesCount
         /// </summary>
-        private IntVector2[] _positions;
+        private Vector2I[] _positions;
         /// <summary>
         /// Corresponding md5 hashes array of size HashesCount, each hash must be 16 bytes length
         /// </summary>
@@ -67,7 +67,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Gets or sets corresponding positions array of size HashesCount
         /// </summary>
-        public IntVector2[] Positions
+        public Vector2I[] Positions
         {
             get { return _positions; }
             set { _positions = value; }
@@ -94,7 +94,7 @@ namespace Utopia.Net.Messages
 
             if (msg._hashesCount > 0)
             {
-                msg._positions = new IntVector2[msg._hashesCount];
+                msg._positions = new Vector2I[msg._hashesCount];
                 msg._md5Hashes = new Md5Hash[msg._hashesCount];
                 
                 for (int i = 0; i < msg._hashesCount; i++)

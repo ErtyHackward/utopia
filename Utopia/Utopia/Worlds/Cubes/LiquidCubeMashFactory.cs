@@ -22,7 +22,7 @@ namespace Utopia.Worlds.Cubes
             _cubesHolder = cubesHolder;
         }
 
-        public void GenCubeFace(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk)
+        public void GenCubeFace(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)
         {
             int verticeCubeOffset = chunk.LiquidCubeVertices.Count;
             int indiceCubeOffset = chunk.LiquidCubeIndices.Count;

@@ -12,27 +12,27 @@ namespace Utopia.Server.Managers
     public class LandscapeCursor
     {
         private readonly LandscapeManager _manager;
-        private Location3<int> _internalPosition;
+        private Vector3I _internalPosition;
         private ServerChunk _currentChunk;
-        private Location3<int> _position;
+        private Vector3I _position;
 
         /// <summary>
         /// Gets or sets cursor global block position
         /// </summary>
-        public Location3<int> GlobalPosition
+        public Vector3I GlobalPosition
         {
             get { return _position; }
             set
             {
                 _position = value;
-                _internalPosition = new Location3<int>(_position.X % AbstractChunk.ChunkSize.X, _position.Y, _position.Z % AbstractChunk.ChunkSize.Z);
+                _internalPosition = new Vector3I(_position.X % AbstractChunk.ChunkSize.X, _position.Y, _position.Z % AbstractChunk.ChunkSize.Z);
 
                 if (_internalPosition.X < 0)
                     _internalPosition.X = AbstractChunk.ChunkSize.X + _internalPosition.X;
                 if (_internalPosition.Z < 0)
                     _internalPosition.Z = AbstractChunk.ChunkSize.Z + _internalPosition.Z;
 
-                _currentChunk = _manager.GetChunk(new IntVector2((int)Math.Floor((double)_position.X / AbstractChunk.ChunkSize.X), (int)Math.Floor((double)_position.Z / AbstractChunk.ChunkSize.Z)));
+                _currentChunk = _manager.GetChunk(new Vector2I((int)Math.Floor((double)_position.X / AbstractChunk.ChunkSize.X), (int)Math.Floor((double)_position.Z / AbstractChunk.ChunkSize.Z)));
             }
         }
 
@@ -54,7 +54,8 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="manager"></param>
         /// <param name="position"></param>
-        public LandscapeCursor(LandscapeManager manager, Location3<int> position) : this(manager)
+        public LandscapeCursor(LandscapeManager manager, Vector3I position)
+            : this(manager)
         {
             GlobalPosition = position;
         }
@@ -89,19 +90,19 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="moveVector">relative move</param>
         /// <returns></returns>
-        public bool IsSolid(Location3<int> moveVector)
+        public bool IsSolid(Vector3I moveVector)
         {
             return CubeProfile.CubesProfile[PeekValue(moveVector)].IsSolidToEntity;
         }
 
         public bool IsSolidUp()
         {
-            return IsSolid(new Location3<int>(0, 1, 0));
+            return IsSolid(new Vector3I(0, 1, 0));
         }
 
         public bool IsSolidDown()
         {
-            return IsSolid(new Location3<int>(0, -1, 0));
+            return IsSolid(new Vector3I(0, -1, 0));
         }
 
         /// <summary>
@@ -110,7 +111,7 @@ namespace Utopia.Server.Managers
         /// <returns></returns>
         public byte PeekDown()
         {
-            return PeekValue(new Location3<int>(0, -1, 0));
+            return PeekValue(new Vector3I(0, -1, 0));
         }
 
         /// <summary>
@@ -119,7 +120,7 @@ namespace Utopia.Server.Managers
         /// <returns></returns>
         public byte PeekUp()
         {
-            return PeekValue(new Location3<int>(0, 1, 0));
+            return PeekValue(new Vector3I(0, 1, 0));
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="moveVector"></param>
         /// <returns></returns>
-        public byte PeekValue(Location3<int> moveVector)
+        public byte PeekValue(Vector3I moveVector)
         {
             var peekPosition = _internalPosition + moveVector;
 
@@ -164,12 +165,12 @@ namespace Utopia.Server.Managers
 
         public LandscapeCursor MoveDown()
         {
-            return Move(new Location3<int>(0,-1,0));
+            return Move(new Vector3I(0, -1, 0));
         }
 
         public LandscapeCursor MoveUp()
         {
-            return Move(new Location3<int>(0, 1, 0));
+            return Move(new Vector3I(0, 1, 0));
         }
 
         /// <summary>
@@ -177,11 +178,13 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="moveVector"></param>
         /// <returns></returns>
-        public LandscapeCursor Move(Location3<int> moveVector)
+        public LandscapeCursor Move(Vector3I moveVector)
         {
             _internalPosition.X += moveVector.X;
             _internalPosition.Y += moveVector.Y;
             _internalPosition.Z += moveVector.Z;
+
+            _position += moveVector;
 
             var newChunkPos = _currentChunk.Position;
 

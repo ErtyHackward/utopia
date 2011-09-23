@@ -152,7 +152,7 @@ namespace Utopia.Server.Structs
         /// <summary>
         /// Gets area top left position
         /// </summary>
-        public IntVector2 Position { get; private set; }
+        public Vector2I Position { get; private set; }
         
         /// <summary>
         /// Bounding rectangle
@@ -163,7 +163,7 @@ namespace Utopia.Server.Structs
             private set { _rectangle = value; }
         }
 
-        public MapArea(IntVector2 topLeftPoint)
+        public MapArea(Vector2I topLeftPoint)
         {
             Position = topLeftPoint;
 

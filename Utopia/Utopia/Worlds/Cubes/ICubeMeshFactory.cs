@@ -12,6 +12,6 @@ namespace Utopia.Worlds.Cubes
 {
     public interface ICubeMeshFactory
     {
-        void GenCubeFace(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk);
+        void GenCubeFace(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk);
     }
 }

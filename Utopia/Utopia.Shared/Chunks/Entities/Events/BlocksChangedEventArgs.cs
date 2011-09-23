@@ -8,7 +8,7 @@ namespace Utopia.Shared.Chunks.Entities.Events
         /// <summary>
         /// Internal block locations
         /// </summary>
-        public Location3<int>[] Locations { get; set; }
+        public Vector3I[] Locations { get; set; }
 
         /// <summary>
         /// New blocks values
@@ -18,6 +18,6 @@ namespace Utopia.Shared.Chunks.Entities.Events
         /// <summary>
         /// Chunk position
         /// </summary>
-        public IntVector2 ChunkPosition { get; set; }
+        public Vector2I ChunkPosition { get; set; }
     }
 }

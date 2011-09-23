@@ -335,7 +335,7 @@ namespace Utopia.Server
 
 
             //    IntVector2 chunkPosition = Utopia.Server.Utils.BlockHelper.BlockToChunkPosition(e.Message.NewBlockPosition);
-            //    Location3<int>[] chunkBlockIndex = new Location3<int>[1];
+            //    Vector3I[] chunkBlockIndex = new Vector3I[1];
             //    chunkBlockIndex[0] = Utopia.Server.Utils.BlockHelper.GlobalToInternalChunkPosition(e.Message.NewBlockPosition);
 
             //    AreaManager.InvokeBlocksChanged(new BlocksChangedEventArgs { ChunkPosition = chunkPosition, BlockValues = new byte[] { 0 }, Locations = chunkBlockIndex });
@@ -391,7 +391,7 @@ namespace Utopia.Server
                 var range = e.Message.Range;
 
                 // list to get indicies
-                var positionsList = e.Message.Positions == null ? null : new List<IntVector2>(e.Message.Positions);
+                var positionsList = e.Message.Positions == null ? null : new List<Vector2I>(e.Message.Positions);
 
                 range.Foreach( pos => {
 

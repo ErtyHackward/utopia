@@ -60,6 +60,7 @@ namespace Utopia.Server.AStar {
 			_fStartNode = aStartNode;
 
 			_fOpenList.Add(_fStartNode);
+            _fOpenSet.Add(_fStartNode, _fStartNode);
 
 			while(_fOpenList.Count > 0) 
 			{
@@ -101,7 +102,7 @@ namespace Utopia.Server.AStar {
                     if (_fClosedList.TryGetValue(nodeSuccessor, out nodeClosed))
                     {
                         if (nodeClosed.Cost > nodeSuccessor.Cost)
-                            _fOpenSet[nodeSuccessor] = nodeSuccessor;
+                            _fClosedList[nodeSuccessor] = nodeSuccessor;
                         continue;
                     }
 					

@@ -5,9 +5,9 @@ namespace Utopia.Shared.Structs
     public struct TerraCubeWithPosition
     {
         public TerraCube Cube;
-        public Location3<int> Position;//XXX should be readonly and removing lots of ref in methods 
+        public Vector3I Position;//XXX should be readonly and removing lots of ref in methods 
         
-        public TerraCubeWithPosition(Location3<int> pos, TerraCube cube)
+        public TerraCubeWithPosition(Vector3I pos, TerraCube cube)
         {
             Position = pos;
             Cube = cube;

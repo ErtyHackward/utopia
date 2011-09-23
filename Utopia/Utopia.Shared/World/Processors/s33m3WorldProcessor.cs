@@ -65,7 +65,7 @@ namespace Utopia.Shared.World.Processors
                 var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
                 var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
 
-                chunkWorldRange = new Range<int>() { Min = new Location3<int>(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z), Max = new Location3<int>((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
+                chunkWorldRange = new Range<int>() { Min = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z), Max = new Vector3I((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
 
                 GenerateLayoutFrom3DNoise(chunkBytes, ref chunkWorldRange);
 

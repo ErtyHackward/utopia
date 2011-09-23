@@ -122,9 +122,9 @@ namespace Utopia.Shared.World
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
-        public GeneratedChunk GetChunk(IntVector2 position)
+        public GeneratedChunk GetChunk(Vector2I position)
         {
-            var chunks = Generate(new Range2 { Position = position, Size = IntVector2.One });
+            var chunks = Generate(new Range2 { Position = position, Size = Vector2I.One });
 
             return chunks[0, 0];
         }

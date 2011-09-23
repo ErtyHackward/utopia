@@ -41,21 +41,21 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <returns></returns>
-        public abstract byte GetBlock(Location3<int> inChunkPosition);
+        public abstract byte GetBlock(Vector3I inChunkPosition);
 
         /// <summary>
         /// Sets a single block into location specified
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
-        public abstract void SetBlock(Location3<int> inChunkPosition, byte blockValue);
+        public abstract void SetBlock(Vector3I inChunkPosition, byte blockValue);
 
         /// <summary>
         /// Seta a group of blocks
         /// </summary>
         /// <param name="positions"></param>
         /// <param name="values"></param>
-        public abstract void SetBlocks(Location3<int>[] positions, byte[] values);
+        public abstract void SetBlocks(Vector3I[] positions, byte[] values);
 
         /// <summary>
         /// Sets a full block buffer for a chunk
@@ -68,7 +68,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="position">Local position of the block</param>
         /// <returns></returns>
-        public byte this[Location3<int> position]
+        public byte this[Vector3I position]
         {
             get { return GetBlock(position); }
             set { SetBlock(position, value); }

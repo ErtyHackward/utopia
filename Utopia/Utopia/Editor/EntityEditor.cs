@@ -47,15 +47,15 @@ namespace Utopia.Editor
         private const double Scale = 1f/16f;
 
 
-        private Location3<int>? _prevPickedBlock;
+        private Vector3I? _prevPickedBlock;
         public ShaderResourceView Texture; //it's a field for being able to dispose the resource
 
         private Tool _leftToolbeforeEnteringEditor;
 
-        public Location3<int>? NewCubePlace;
-        public Location3<int>? PickedCubeLoc;
+        public Vector3I? NewCubePlace;
+        public Vector3I? PickedCubeLoc;
 
-        public List<Location3<int>> Selected = new List<Location3<int>>();
+        public List<Vector3I> Selected = new List<Vector3I>();
 
         public byte SelectedIndex { get; set; }
         public bool IsTexture { get; set; }
@@ -323,7 +323,7 @@ namespace Utopia.Editor
                 if (targetPoint.X >= startX && targetPoint.Y >= startY && targetPoint.Z >= startZ
                     && targetPoint.X < endX && targetPoint.Y < endY && targetPoint.Z < endZ)
                 {
-                    Location3<int> hit = new Location3<int>((int) ((targetPoint.X - startX)/Scale),
+                    Vector3I hit = new Vector3I((int) ((targetPoint.X - startX)/Scale),
                                                             (int) ((targetPoint.Y - startY)/Scale),
                                                             (int) ((targetPoint.Z - startZ)/Scale));
                     if (Pickable(hit))
@@ -342,7 +342,7 @@ namespace Utopia.Editor
         /// </summary>
         /// <param name="hit">picking possibility</param>
         /// <returns>true if acceptable for picking</returns>
-        private bool Pickable(Location3<int> hit)
+        private bool Pickable(Vector3I hit)
         {
             return Blocks[hit.X, hit.Y, hit.Z] != 0;
         }
@@ -379,7 +379,7 @@ namespace Utopia.Editor
             return false;
         }
 
-        public byte BlockAt(Location3<int> loc)
+        public byte BlockAt(Vector3I loc)
         {
             return Blocks[loc.X, loc.Y, loc.Z];
         }

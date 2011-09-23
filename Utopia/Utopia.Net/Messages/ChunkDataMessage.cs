@@ -14,7 +14,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Chunk position
         /// </summary>
-        private IntVector2 _position;
+        private Vector2I _position;
         /// <summary>
         /// Result type flag. See the flag members to details
         /// </summary>
@@ -41,7 +41,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Gets or sets chunk position
         /// </summary>
-        public IntVector2 Position
+        public Vector2I Position
         {
             get { return _position; }
             set { _position = value; }

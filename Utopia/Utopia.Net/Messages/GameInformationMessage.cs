@@ -18,7 +18,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Defines a chunk size used on the server
         /// </summary>
-        private Location3<int> _chunkSize;
+        private Vector3I _chunkSize;
 
         private int _worldSeed;
         private int _waterLevel;
@@ -43,7 +43,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Gets or sets a chunk size used on the server
         /// </summary>
-        public Location3<int> ChunkSize
+        public Vector3I ChunkSize
         {
             get { return _chunkSize; }
             set { _chunkSize = value; }

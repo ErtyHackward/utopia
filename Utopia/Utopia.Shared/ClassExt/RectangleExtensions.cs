@@ -11,7 +11,7 @@ namespace Utopia.Shared.ClassExt
         /// <param name="rect"></param>
         /// <param name="vect"></param>
         /// <returns></returns>
-        public static bool Contains(this Rectangle rect, IntVector2 vect)
+        public static bool Contains(this Rectangle rect, Vector2I vect)
         {
             return rect.Left <= vect.X && rect.Top <= vect.Y && rect.Right > vect.X && rect.Bottom > vect.Y;
         }

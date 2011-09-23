@@ -26,12 +26,12 @@ namespace Utopia.Shared.Chunks.Entities.Events
         /// <summary>
         /// Global position of currently picked block
         /// </summary>
-        public Location3<int> PickedBlockPosition { get; set; }
+        public Vector3I PickedBlockPosition { get; set; }
 
         /// <summary>
         /// Global position of new block to be inserted
         /// </summary>
-        public Location3<int> NewBlockPosition { get; set; }
+        public Vector3I NewBlockPosition { get; set; }
 
         /// <summary>
         /// Gets entity that currently picked by character

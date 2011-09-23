@@ -241,7 +241,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="Z"></param>
         /// <param name="worldRange"></param>
         /// <returns></returns>
-        public bool isBorderChunk(IntVector2 chunkPosition)
+        public bool isBorderChunk(Vector2I chunkPosition)
         {
             if (chunkPosition.X == VisualWorldParameters.WorldRange.Min.X ||
                chunkPosition.Y == VisualWorldParameters.WorldRange.Min.Z ||
@@ -265,8 +265,8 @@ namespace Utopia.Worlds.Chunks
             //Defining the World Offset, to be used to reference the 2d circular array of dim defined in chunk
             VisualWorldParameters.WorldRange = new Range<int>()
             {
-                Min = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X, 0, VisualWorldParameters.WorldChunkStartUpPosition.Z),
-                Max = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X + VisualWorldParameters.WorldVisibleSize.X, VisualWorldParameters.WorldVisibleSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Z + VisualWorldParameters.WorldVisibleSize.Z)
+                Min = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X, 0, VisualWorldParameters.WorldChunkStartUpPosition.Z),
+                Max = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + VisualWorldParameters.WorldVisibleSize.X, VisualWorldParameters.WorldVisibleSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Z + VisualWorldParameters.WorldVisibleSize.Z)
             };
 
             //Create the chunks that will be used as "Rendering" array
@@ -283,8 +283,8 @@ namespace Utopia.Worlds.Chunks
                 {
                     cubeRange = new Range<int>()
                     {
-                        Min = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, VisualWorldParameters.WorldChunkStartUpPosition.Z + (chunkZ * AbstractChunk.ChunkSize.Z)),
-                        Max = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X + ((chunkX + 1) * AbstractChunk.ChunkSize.X), AbstractChunk.ChunkSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Z + ((chunkZ + 1) * AbstractChunk.ChunkSize.Z))
+                        Min = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, VisualWorldParameters.WorldChunkStartUpPosition.Z + (chunkZ * AbstractChunk.ChunkSize.Z)),
+                        Max = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + ((chunkX + 1) * AbstractChunk.ChunkSize.X), AbstractChunk.ChunkSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Z + ((chunkZ + 1) * AbstractChunk.ChunkSize.Z))
                     };
 
                     arrayX = MathHelper.Mod(cubeRange.Min.X, VisualWorldParameters.WorldVisibleSize.X);
@@ -306,11 +306,11 @@ namespace Utopia.Worlds.Chunks
                 _server.ServerConnection.SendAsync(new Net.Messages.GetChunksMessage
                                                        {
                                                            Range = new Range2(
-                                                               new IntVector2(
+                                                               new Vector2I(
                                                                    VisualWorldParameters.WorldChunkStartUpPosition.X/AbstractChunk.ChunkSize.X,
                                                                    VisualWorldParameters.WorldChunkStartUpPosition.Z/AbstractChunk.ChunkSize.Z
                                                                    ),
-                                                               new IntVector2(
+                                                               new Vector2I(
                                                                    VisualWorldParameters.WorldParameters.WorldChunkSize.X,
                                                                    VisualWorldParameters.WorldParameters.WorldChunkSize.Z
                                                                    )

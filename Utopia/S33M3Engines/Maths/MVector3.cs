@@ -57,7 +57,7 @@ namespace S33M3Engines.Maths
             result = (float)Math.Sqrt((double)num4);
         }
 
-        public static float Distance(Location3<int> value1, Vector3D value2)
+        public static float Distance(Vector3I value1, Vector3D value2)
         {
             float num3 = value1.X - (float)value2.X;
             float num2 = value1.Y - (float)value2.Y;
@@ -82,17 +82,17 @@ namespace S33M3Engines.Maths
             result = ((num3 * num3) + (num2 * num2)) + (num * num);
         }
 
-        public static Vector3 Substract(ref Vector3 vectorValue, ref Location3<int> locationValue)
+        public static Vector3 Substract(ref Vector3 vectorValue, ref Vector3I locationValue)
         {
             return new Vector3(vectorValue.X - locationValue.X, vectorValue.Y - locationValue.Y, vectorValue.Z - locationValue.Z);
         }
 
-        public static Vector3 Substract(Vector3 vectorValue, Location3<int> locationValue)
+        public static Vector3 Substract(Vector3 vectorValue, Vector3I locationValue)
         {
             return new Vector3(vectorValue.X - locationValue.X, vectorValue.Y - locationValue.Y, vectorValue.Z - locationValue.Z);
         }
 
-        public static Vector3 Add(Vector3 vectorValue, Location3<int> locationValue)
+        public static Vector3 Add(Vector3 vectorValue, Vector3I locationValue)
         {
             return new Vector3(vectorValue.X + locationValue.X, vectorValue.Y + locationValue.Y, vectorValue.Z + locationValue.Z);
         }

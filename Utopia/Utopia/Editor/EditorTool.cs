@@ -105,7 +105,7 @@ namespace Utopia.Editor
         {
             if (!Editor.PickedCubeLoc.HasValue || _copyTool.Copied.Count==0) return;
 
-            Location3<int> origin = Editor.PickedCubeLoc.Value;
+            Vector3I origin = Editor.PickedCubeLoc.Value;
 
             foreach (var copiedCube in _copyTool.Copied)
             {

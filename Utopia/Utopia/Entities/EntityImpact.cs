@@ -52,13 +52,13 @@ namespace Utopia.Entities
               {
                   //TODO here i have to copy the value to satisfy the use of ref in ReplaceBlock, cause i intended the location to be readonly  
                   // Locations should not be modifiable here, so they should not be passed by ref ?? 
-                  Location3<int> location = locationBlock.Position;
+                  Vector3I location = locationBlock.Position;
 
                   ReplaceBlock(ref location, locationBlock.Cube.Id);
               }
           }
 
-        public static void ReplaceBlock(ref Location3<int> cubeCoordinates, byte replacementCubeId)
+        public static void ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId)
         {
             TerraCube newCube = new TerraCube(replacementCubeId);
 
@@ -73,15 +73,15 @@ namespace Utopia.Entities
             }
         }
 
-        private static void LigthingImpact(ref Location3<int> cubeCoordinates, ushort replacementCubeId)
+        private static void LigthingImpact(ref Vector3I cubeCoordinates, ushort replacementCubeId)
         {
             Int64 mainChunkId;
 
             //Compute the Range impacted by the cube change
             Range<int> cubeRange = new Range<int>()
             {
-                Min = new Location3<int>(cubeCoordinates.X - _lightManager.LightPropagateSteps, 0, cubeCoordinates.Z - _lightManager.LightPropagateSteps),
-                Max = new Location3<int>(cubeCoordinates.X + _lightManager.LightPropagateSteps, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, cubeCoordinates.Z + _lightManager.LightPropagateSteps)
+                Min = new Vector3I(cubeCoordinates.X - _lightManager.LightPropagateSteps, 0, cubeCoordinates.Z - _lightManager.LightPropagateSteps),
+                Max = new Vector3I(cubeCoordinates.X + _lightManager.LightPropagateSteps, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, cubeCoordinates.Z + _lightManager.LightPropagateSteps)
             };
 
             _lightManager.CreateLightSources(ref cubeRange);

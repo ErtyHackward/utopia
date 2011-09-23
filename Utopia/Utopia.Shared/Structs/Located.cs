@@ -4,7 +4,7 @@ namespace Utopia.Shared.Structs
 {
     public struct Located<T> where T : IEquatable<T>
     {
-        public Location3<int> Location;
+        public Vector3I Location;
         public T Value;
     }
 }

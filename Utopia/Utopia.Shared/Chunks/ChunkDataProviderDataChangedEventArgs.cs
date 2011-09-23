@@ -13,7 +13,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Gets locations array of the blocks
         /// </summary>
-        public Location3<int>[] Locations { get; set; }
+        public Vector3I[] Locations { get; set; }
 
         /// <summary>
         /// Gets values array of the blocks

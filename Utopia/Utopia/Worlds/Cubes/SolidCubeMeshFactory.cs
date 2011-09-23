@@ -20,7 +20,7 @@ namespace Utopia.Worlds.Cubes
             _cubesHolder = cubesHolder;
         }
 
-        public void GenCubeFace(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk)
+        public void GenCubeFace(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)
         {
             int verticeCubeOffset = chunk.SolidCubeVertices.Count;
             int indiceCubeOffset = chunk.SolidCubeIndices.Count;
@@ -465,7 +465,7 @@ namespace Utopia.Worlds.Cubes
             }
         }
 
-        //public void GenCubeFaceOLD(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Location3<int> cubePosiInWorld, VisualChunk chunk)
+        //public void GenCubeFaceOLD(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)
         //{
         //    int verticeCubeOffset = chunk.SolidCubeVertices.Count;
         //    int indiceCubeOffset = chunk.SolidCubeIndices.Count;

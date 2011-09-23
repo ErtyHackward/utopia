@@ -11,17 +11,17 @@ namespace Utopia.Server.AStar
         /// <summary>
         /// Start point of the path
         /// </summary>
-        public Location3<int> Start { get; set; }
+        public Vector3I Start { get; set; }
 
         /// <summary>
         /// Goal point of the path
         /// </summary>
-        public Location3<int> Goal { get; set; }
+        public Vector3I Goal { get; set; }
 
         /// <summary>
         /// List of points from start to goal or null if path 
         /// </summary>
-        public List<Location3<int>> Points { get; set; }
+        public List<Vector3I> Points { get; set; }
 
         public bool Exists
         {
