@@ -131,8 +131,8 @@ namespace Utopia.Action
         #region Private methods
         private void ProcessInputs()
         {
-            if(KeyboardActionsProcessing) ProcessKeyboardStates();
-            if(MouseActionsProcessing) ProcessMouseStates();
+            if(KeyboardActionsProcessing && _engine.HasFocus) ProcessKeyboardStates();
+            if (MouseActionsProcessing && _engine.HasFocus) ProcessMouseStates();
         }
 
         private void ProcessMouseStates()

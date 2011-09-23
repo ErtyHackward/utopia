@@ -27,6 +27,7 @@ namespace S33M3Engines
         #endregion
 
         #region Private variables
+        int _mouseHideCount = 0;
         bool _isResizing = false;
         bool _unlockedMouse = false;
         RenderForm _renderForm;
@@ -58,6 +59,8 @@ namespace S33M3Engines
 
         public DeviceContext Context;
 
+        public bool HasFocus;
+
         public bool isFullScreen
         {
             get
@@ -81,11 +84,11 @@ namespace S33M3Engines
             {
                 if (value)
                 {
-                    System.Windows.Forms.Cursor.Show();
+                    ShowMouseCursor();
                 }
                 else
                 {
-                    System.Windows.Forms.Cursor.Hide();
+                    HideMouseCursor();
                 }
                 _unlockedMouse = value;
             }
@@ -146,11 +149,18 @@ namespace S33M3Engines
             //Remove the some built-in fonctionnality of DXGI
             _dx11factory.MakeWindowAssociation(_renderForm.Handle, WindowAssociationFlags.IgnoreAll | WindowAssociationFlags.IgnoreAltEnter);
 
-            _renderForm.ResizeBegin += new EventHandler(_renderForm_ResizeBegin);
-            _renderForm.ResizeEnd += new EventHandler(_renderForm_ResizeEnd);
-            _renderForm.Resize += new EventHandler(_renderForm_Resize);
+            _renderForm.ResizeBegin += _renderForm_ResizeBegin;
+            _renderForm.ResizeEnd += _renderForm_ResizeEnd;
+            _renderForm.Resize += _renderForm_Resize;
+            _renderForm.LostFocus += GameWindow_LostFocus;
+            _renderForm.GotFocus += GameWindow_GotFocus;
+            _renderForm.Closed += _renderForm_Closed;
 
             _renderForm.Show();
+            _renderForm.Focus();
+            _renderForm.TopMost = true;
+            HasFocus = true;
+            _renderForm.TopMost = false;
         }
 
         public void ResetRenderTargetsAndViewPort()
@@ -197,6 +207,22 @@ namespace S33M3Engines
             }
         }
 
+        void GameWindow_GotFocus(object sender, EventArgs e)
+        {
+            HasFocus = true;
+            if (!UnlockedMouse) HideMouseCursor();
+        }
+
+        void GameWindow_LostFocus(object sender, EventArgs e)
+        {
+            HasFocus = false;
+            ShowMouseCursor();            
+        }
+
+        void _renderForm_Closed(object sender, EventArgs e)
+        {
+            ResetMouseCursor();
+        }
 
         private void CreateSwapChain()
         {
@@ -346,6 +372,41 @@ namespace S33M3Engines
             Context.OutputMerger.SetTargets(_depthStencil, _renderTarget);
         }
 
+        public void HideMouseCursor()
+        {
+            while (_mouseHideCount >= 0)
+            {
+                System.Windows.Forms.Cursor.Hide();
+                _mouseHideCount--;
+            }
+        }
+
+        public void ShowMouseCursor()
+        {
+            while (_mouseHideCount < 0)
+            {
+                System.Windows.Forms.Cursor.Show();
+                _mouseHideCount++;
+            }
+        }
+
+        public void ResetMouseCursor()
+        {
+            //System.Windows.Forms.Cursor.Hide();
+
+            while (_mouseHideCount < 0)
+            {
+                System.Windows.Forms.Cursor.Show();
+                _mouseHideCount++;
+            }
+
+            while (_mouseHideCount > 0)
+            {
+                System.Windows.Forms.Cursor.Hide();
+                _mouseHideCount--;
+            }
+        }
+
         #endregion
 
         #region IDisposable Members
@@ -354,6 +415,13 @@ namespace S33M3Engines
         {
             Context.ClearState();
             Context.Flush();
+
+            _renderForm.ResizeBegin -= _renderForm_ResizeBegin;
+            _renderForm.ResizeEnd -= _renderForm_ResizeEnd;
+            _renderForm.Resize -= _renderForm_Resize;
+            _renderForm.LostFocus -= GameWindow_LostFocus;
+            _renderForm.GotFocus -= GameWindow_GotFocus;
+            _renderForm.Closed -= _renderForm_Closed;
 
             //Dispose the created states
             _backBuffer.Dispose();
