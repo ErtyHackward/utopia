@@ -18,6 +18,8 @@ using Utopia.Shared.Config;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
+using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
 namespace Utopia.Server
 {
@@ -294,6 +296,58 @@ namespace Utopia.Server
             e.Connection.MessageDirection += ConnectionMessageDirection;
             e.Connection.MessageChat += ConnectionMessageChat;
             e.Connection.MessagePing += ConnectionMessagePing;
+            e.Connection.MessageEntityUse += Connection_MessageEntityUse;
+            e.Connection.MessageToolUse += Connection_MessageToolUse;
+        }
+
+        //A tool has been used by the entity
+        void Connection_MessageToolUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
+        {
+            //var connection = (ClientConnection)sender;
+            //try
+            //{
+            //    Tool usedTool; 
+            //    //Get the tool
+            //    switch ((EntityClassId)e.Message.ToolId)
+            //    {
+            //        case EntityClassId.None:
+            //            usedTool = null; 
+            //            break;
+            //        case EntityClassId.Sword:
+            //            usedTool = null; 
+            //            break;
+            //        case EntityClassId.PickAxe:
+            //            usedTool = new Pickaxe();
+            //            break;
+            //        case EntityClassId.Shovel:
+            //            break;
+            //        case EntityClassId.Hoe:
+            //            break;
+            //        case EntityClassId.Axe:
+            //            break;
+            //        case EntityClassId.Survey:
+            //            break;
+            //        case EntityClassId.Hand:
+            //            break;
+            //        default:
+            //            break;
+            //    }
+
+
+            //    IntVector2 chunkPosition = Utopia.Server.Utils.BlockHelper.BlockToChunkPosition(e.Message.NewBlockPosition);
+            //    Location3<int>[] chunkBlockIndex = new Location3<int>[1];
+            //    chunkBlockIndex[0] = Utopia.Server.Utils.BlockHelper.GlobalToInternalChunkPosition(e.Message.NewBlockPosition);
+
+            //    AreaManager.InvokeBlocksChanged(new BlocksChangedEventArgs { ChunkPosition = chunkPosition, BlockValues = new byte[] { 0 }, Locations = chunkBlockIndex });
+            //}
+            //catch (IOException)
+            //{
+            //}
+        }
+
+        //The entity has directly use something
+        void Connection_MessageEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
+        {
         }
 
         void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
