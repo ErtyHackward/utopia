@@ -10,6 +10,7 @@ using Utopia.GUI.Forms.CustControls;
 using Utopia.Network;
 using System.Threading;
 using Utopia.Settings;
+using S33M3Engines.D3D;
 
 namespace Utopia.GUI.Forms
 {
@@ -22,6 +23,7 @@ namespace Utopia.GUI.Forms
         private delegate void DefaultCallback();
         private SinglePlayer _singleChild = new SinglePlayer();
         private MultiPlayer _multiChild = new MultiPlayer();
+        private ErrorMessage _errorMsg = new ErrorMessage();
         private Config _configChild = new Config();
         private Server _server;
         private TimerCallback _timerDelegate;
@@ -31,6 +33,8 @@ namespace Utopia.GUI.Forms
         {
             Interval = 50
         };
+
+        public GameExitReasonMessage ExitReason { get; set; }
 
         public WelcomeScreen(Server server, bool withFadeIn)
         {
@@ -373,6 +377,25 @@ namespace Utopia.GUI.Forms
             Data = new FormData();
             Data.RequestAction = FormRequestedAction.ExitGame;
         }
+
+        private void AnalyseExitReason(GameExitReasonMessage exitReason)
+        {
+            if (exitReason.GameExitReason == S33M3Engines.D3D.ExitReason.Error)
+            {
+                this.ChildContainer.Controls.Clear();
+                this.ChildContainer.BackColor = Color.FromArgb(0, 255, 255, 255);
+                this.ChildContainer.Controls.Add(_errorMsg);
+
+                _errorMsg.Message.Text = exitReason.MainMessage;
+                _errorMsg.MessageDetail.Text = exitReason.DetailedMessage;
+            }
+        }
+
+        private void WelcomeScreen_Shown(object sender, EventArgs e)
+        {
+            AnalyseExitReason(ExitReason);
+        }
+
     }
 
     public enum FormRequestedAction

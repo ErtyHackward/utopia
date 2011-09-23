@@ -173,8 +173,8 @@ namespace Utopia
                                                      new ConstructorArgument("MaxNbrThreads", WorkQueue.ThreadPool.Concurrency));
 
             _d3dEngine.Initialize(); //Init the 3d Engine
-            _d3dEngine.GameWindow.Closed += (o, args) => { _isFormClosed = true; }; //Subscribe to Close event
-            if (!_d3dEngine.UnlockedMouse) System.Windows.Forms.Cursor.Hide();      //Hide the mouse by default !
+            _d3dEngine.GameWindow.Closed += GameWindow_Closed;
+            _d3dEngine.HideMouseCursor();   //Hide the mouse by default !
 
             _actionManager = IoCContainer.Get<ActionsManager>();
             DXStates.CreateStates(_d3dEngine);  //Create all States that could by used by the game.
@@ -288,6 +288,15 @@ namespace Utopia
             #endregion
 
         }
+
+        //Windows state management
+
+        void GameWindow_Closed(object sender, EventArgs e)
+        {
+            _isFormClosed = true; //Subscribe to Close event
+        }
+
+        //State management
 
         /// <summary>
         /// Check server connection change state !!
@@ -562,6 +571,8 @@ namespace Utopia
 #if DEBUG
             DebugEffect.Dispose();
 #endif
+            _d3dEngine.GameWindow.Closed -= GameWindow_Closed; //Subscribe to Close event
+
             _server.ServerConnection.ConnectionStatusChanged -= ServerConnection_ConnectionStatusChanged;
             EntityImpact.CleanUp();
             VisualCubeProfile.CleanUp();

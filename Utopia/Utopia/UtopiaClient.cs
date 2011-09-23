@@ -18,6 +18,7 @@ namespace Utopia
         private static WelcomeScreen _welcomeForm;
         private Server _server;
         private IKernel _iocContainer;
+        private GameExitReasonMessage _exitRease;
         #endregion
 
         #region Public Properties/Variables
@@ -26,6 +27,7 @@ namespace Utopia
         public UtopiaClient()
         {
             //_iocContainer =  new StandardKernel(new NinjectSettings { UseReflectionBasedInjection = true }); ==> More debug infor with this if binding problems, but slower !
+            _exitRease = new GameExitReasonMessage() { GameExitReason = ExitReason.UserRequest };
         }
 
         #region Public Methods
@@ -78,6 +80,7 @@ namespace Utopia
 
             _welcomeForm = new WelcomeScreen(_server, withFadeIn);
             _welcomeForm.Text = "Utopia Client Alpha " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            _welcomeForm.ExitReason = _exitRease;
             _welcomeForm.ShowDialog();
             if (_welcomeForm.IsDisposed == false)
             {
@@ -118,10 +121,10 @@ namespace Utopia
             UtopiaRender main = new UtopiaRender(_iocContainer);
             main.Run();
             //Get windows Exit reason
-            GameExitReasonMessage exitRease = main.GameExitReason;
+            _exitRease = main.GameExitReason;
             main.Dispose();
 
-            AnalyseExitReason(exitRease);
+            //AnalyseExitReason(exitRease);
 
             _iocContainer.Dispose();
 
@@ -130,16 +133,16 @@ namespace Utopia
 
         }
 
-        private void AnalyseExitReason(GameExitReasonMessage exitReason)
-        {
-            if (exitReason.GameExitReason == ExitReason.Error)
-            {
-                ShowMessage messageDisplayer = new ShowMessage();
-                messageDisplayer.Message.Text = exitReason.MainMessage;
-                messageDisplayer.MessageDetail.Text = exitReason.DetailedMessage;
-                messageDisplayer.ShowDialog();
-            }
-        }
+        //private void AnalyseExitReason(GameExitReasonMessage exitReason)
+        //{
+        //    if (exitReason.GameExitReason == ExitReason.Error)
+        //    {
+        //        ShowMessage messageDisplayer = new ShowMessage();
+        //        messageDisplayer.Message.Text = exitReason.MainMessage;
+        //        messageDisplayer.MessageDetail.Text = exitReason.DetailedMessage;
+        //        messageDisplayer.ShowDialog();
+        //    }
+        //}
         #endregion
 
         #region CleanUp

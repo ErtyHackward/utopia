@@ -109,6 +109,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Welcome";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WelcomeScreen_FormClosed);
+            this.Shown += new System.EventHandler(this.WelcomeScreen_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
