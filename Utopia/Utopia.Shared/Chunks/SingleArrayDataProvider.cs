@@ -60,7 +60,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <returns></returns>
-        public override byte GetBlock(Location3<int> inChunkPosition)
+        public override byte GetBlock(Vector3I inChunkPosition)
         {
             return ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPositionBlockUnit.X,
                                                      inChunkPosition.Y,
@@ -72,7 +72,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
-        public override void SetBlock(Location3<int> inChunkPosition, byte blockValue)
+        public override void SetBlock(Vector3I inChunkPosition, byte blockValue)
         {
             ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPositionBlockUnit.X,
                                                      inChunkPosition.Y,
@@ -87,7 +87,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="positions"></param>
         /// <param name="values"></param>
-        public override void SetBlocks(Location3<int>[] positions, byte[] values)
+        public override void SetBlocks(Vector3I[] positions, byte[] values)
         {
             for (int i = 0; i < positions.Length; i++)
             {

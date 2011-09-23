@@ -155,7 +155,7 @@
     <Compile Include="Structs\HalfVector2.cs" />
     <Compile Include="Structs\HalfVector4.cs" />
     <Compile Include="Structs\Helpers\PackUtils.cs" />
-    <Compile Include="Structs\IntVector2.cs" />
+    <Compile Include="Structs\Vector2I.cs" />
     <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />
     <Compile Include="Structs\Located.cs" />
@@ -167,6 +167,7 @@
     <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\TerraCubeWithPosition.cs" />
+    <Compile Include="Structs\Vector3I.cs" />
     <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
     <Compile Include="World\WorldConfigs\s33m3WorldConfig.cs" />

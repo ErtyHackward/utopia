@@ -11,8 +11,8 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct BlocksChangedMessage : IBinaryMessage
     {
-        private Location3<int>[] _blockPositions;
-        private IntVector2 _chunkPosition;
+        private Vector3I[] _blockPositions;
+        private Vector2I _chunkPosition;
         private byte[] _blockValues;
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Gets or sets local blocks position
         /// </summary>
-        public Location3<int>[] BlockPositions
+        public Vector3I[] BlockPositions
         {
             get { return _blockPositions; }
             set { _blockPositions = value; }
@@ -42,7 +42,7 @@ namespace Utopia.Net.Messages
         }
 
         
-        public IntVector2 ChunkPosition
+        public Vector2I ChunkPosition
         {
             get { return _chunkPosition; }
             set { _chunkPosition = value; }
@@ -55,7 +55,7 @@ namespace Utopia.Net.Messages
             bcm._chunkPosition = reader.ReadIntVector2();
             var count = reader.ReadInt32();
 
-            var positions = new Location3<int>[count];
+            var positions = new Vector3I[count];
             var values = new byte[count];
 
             for (int i = 0; i < count; i++)

@@ -21,7 +21,7 @@ namespace Utopia.Shared.Chunks
         {
             public int Index;
             public IdxRelativeMove IndexRelativePosition;
-            public Location3<int> Position;
+            public Vector3I Position;
         }
 
         public enum IdxRelativeMove : byte
@@ -104,7 +104,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="Y">world Y position</param>
         /// <param name="Z">world Z position</param>
         /// <returns></returns>
-        public int Index(ref Location3<int> cubePosition)
+        public int Index(ref Vector3I cubePosition)
         {
             int x, z;
             x = cubePosition.X % _visualWorldParam.WorldVisibleSize.X;
@@ -341,12 +341,12 @@ namespace Utopia.Shared.Chunks
             int cubeIndex = baseIndex;
             SurroundingIndex[] surroundingIndexes = new SurroundingIndex[6];
 
-            surroundingIndexes[0] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeXCoord, IdxRelativeMove.X_Plus1), IndexRelativePosition = IdxRelativeMove.X_Plus1, Position = new Location3<int>(CubeXCoord + 1, CubeYCoord, CubeZCoord) };
-            surroundingIndexes[1] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeXCoord, IdxRelativeMove.X_Minus1), IndexRelativePosition = IdxRelativeMove.X_Minus1, Position = new Location3<int>(CubeXCoord - 1, CubeYCoord, CubeZCoord) };
-            surroundingIndexes[2] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeZCoord, IdxRelativeMove.Z_Plus1), IndexRelativePosition = IdxRelativeMove.Z_Plus1, Position = new Location3<int>(CubeXCoord, CubeYCoord, CubeZCoord + 1) };
-            surroundingIndexes[3] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeZCoord, IdxRelativeMove.Z_Minus1), IndexRelativePosition = IdxRelativeMove.Z_Minus1, Position = new Location3<int>(CubeXCoord, CubeYCoord, CubeZCoord - 1) };
-            surroundingIndexes[4] = new SurroundingIndex() { Index = cubeIndex + MoveY , IndexRelativePosition = IdxRelativeMove.Y_Plus1, Position = new Location3<int>(CubeXCoord, CubeYCoord + 1, CubeZCoord) };
-            surroundingIndexes[5] = new SurroundingIndex() { Index = cubeIndex - MoveY , IndexRelativePosition = IdxRelativeMove.Y_Minus1, Position = new Location3<int>(CubeXCoord, CubeYCoord - 1, CubeZCoord) };
+            surroundingIndexes[0] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeXCoord, IdxRelativeMove.X_Plus1), IndexRelativePosition = IdxRelativeMove.X_Plus1, Position = new Vector3I(CubeXCoord + 1, CubeYCoord, CubeZCoord) };
+            surroundingIndexes[1] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeXCoord, IdxRelativeMove.X_Minus1), IndexRelativePosition = IdxRelativeMove.X_Minus1, Position = new Vector3I(CubeXCoord - 1, CubeYCoord, CubeZCoord) };
+            surroundingIndexes[2] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeZCoord, IdxRelativeMove.Z_Plus1), IndexRelativePosition = IdxRelativeMove.Z_Plus1, Position = new Vector3I(CubeXCoord, CubeYCoord, CubeZCoord + 1) };
+            surroundingIndexes[3] = new SurroundingIndex() { Index = FastIndex(cubeIndex, CubeZCoord, IdxRelativeMove.Z_Minus1), IndexRelativePosition = IdxRelativeMove.Z_Minus1, Position = new Vector3I(CubeXCoord, CubeYCoord, CubeZCoord - 1) };
+            surroundingIndexes[4] = new SurroundingIndex() { Index = cubeIndex + MoveY , IndexRelativePosition = IdxRelativeMove.Y_Plus1, Position = new Vector3I(CubeXCoord, CubeYCoord + 1, CubeZCoord) };
+            surroundingIndexes[5] = new SurroundingIndex() { Index = cubeIndex - MoveY , IndexRelativePosition = IdxRelativeMove.Y_Minus1, Position = new Vector3I(CubeXCoord, CubeYCoord - 1, CubeZCoord) };
             return surroundingIndexes;
         }
 
@@ -356,7 +356,7 @@ namespace Utopia.Shared.Chunks
             return GetSurroundingBlocksIndex(cubeIndex, CubeXCoord, CubeYCoord, CubeZCoord);
         }
 
-        public SurroundingIndex[] GetSurroundingBlocksIndex(ref Location3<int> CubeCoordinates)
+        public SurroundingIndex[] GetSurroundingBlocksIndex(ref Vector3I CubeCoordinates)
         {
             return GetSurroundingBlocksIndex(CubeCoordinates.X, CubeCoordinates.Y, CubeCoordinates.Z);
         }
@@ -476,7 +476,7 @@ namespace Utopia.Shared.Chunks
                             if (CubeProfile.CubesProfile[Cubes[index].Id].IsSolidToEntity)
                             {
                                 collidingcube.Cube = Cubes[index];
-                                collidingcube.Position = new Location3<int>(x, y, z);
+                                collidingcube.Position = new Vector3I(x, y, z);
                                 return true;
                             }
                         }
@@ -488,7 +488,7 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
-        public void GetNextSolidBlockToPlayer(ref Vector3 FromPosition, ref Location3<int> Direction, out TerraCubeWithPosition cubeWithPosition)
+        public void GetNextSolidBlockToPlayer(ref Vector3 FromPosition, ref Vector3I Direction, out TerraCubeWithPosition cubeWithPosition)
         {
             int index = 0;
             cubeWithPosition.Cube = new TerraCube(CubeId.Air);
@@ -515,10 +515,10 @@ namespace Utopia.Shared.Chunks
             }
 
 
-            cubeWithPosition.Position = new Location3<int>(X, Y, Z);
+            cubeWithPosition.Position = new Vector3I(X, Y, Z);
         }
 
-        public void GetNextSolidBlockToPlayer(ref BoundingBox FromBBPosition, ref Location3<int> Direction, out TerraCubeWithPosition cubeWithPosition)
+        public void GetNextSolidBlockToPlayer(ref BoundingBox FromBBPosition, ref Vector3I Direction, out TerraCubeWithPosition cubeWithPosition)
         {
             TerraCubeWithPosition testCube;
             Vector3 testPoint;
@@ -541,7 +541,7 @@ namespace Utopia.Shared.Chunks
         }
 
 
-        public void SetCube(ref Location3<int> cubeCoordinates, ref TerraCube cube)
+        public void SetCube(ref Vector3I cubeCoordinates, ref TerraCube cube)
         {
             int index = Index(cubeCoordinates.X, cubeCoordinates.Y, cubeCoordinates.Z);
             Cubes[index] = cube;
@@ -554,7 +554,7 @@ namespace Utopia.Shared.Chunks
             int index = Index(X, Y, Z);
             Cubes[index] = cube;
 
-            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Location3<int> { X = X, Y = Y, Z = Z } }, Bytes = new[] { cube.Id } });
+            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Vector3I { X = X, Y = Y, Z = Z } }, Bytes = new[] { cube.Id } });
         }
     }
 }

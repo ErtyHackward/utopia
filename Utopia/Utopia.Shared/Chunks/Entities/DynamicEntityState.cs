@@ -11,7 +11,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Global position of currently picked block
         /// </summary>
-        public Location3<int> PickedBlockPosition;
+        public Vector3I PickedBlockPosition;
 
         /// <summary>
         /// Is the entity a block at range, ready to by "picked-up"
@@ -21,7 +21,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Global position of new block to be inserted
         /// </summary>
-        public Location3<int> NewBlockPosition;
+        public Vector3I NewBlockPosition;
 
         /// <summary>
         /// Gets entity that currently picked by entity

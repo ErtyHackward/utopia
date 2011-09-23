@@ -16,7 +16,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
     public class Wally : BlockAdder
     {
-        //public override ToolImpact Use(TerraCubeWithPosition pickedBlock, Location3<int>? newCubePlace, TerraCube terraCube)
+        //public override ToolImpact Use(TerraCubeWithPosition pickedBlock, Vector3I? newCubePlace, TerraCube terraCube)
         //{
         //    if (newCubePlace.HasValue)
         //    {
@@ -27,7 +27,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
         //            for (int y = newCubePlace.Value.Y; y < newCubePlace.Value.Y + 5; y++)
         //            {
 
-        //                Location3<int> loc = new Location3<int>(x, y, newCubePlace.Value.Z);
+        //                Vector3I loc = new Vector3I(x, y, newCubePlace.Value.Z);
         //                poses.Add(new TerraCubeWithPosition(loc, terraCube));
         //            }
         //        }

@@ -17,7 +17,7 @@ namespace Utopia.Server.Structs
         /// <summary>
         /// Gets or sets current chunk position
         /// </summary>
-        public IntVector2 Position { get; set; }
+        public Vector2I Position { get; set; }
 
         /// <summary>
         /// DateTime stamp of the chunk. Determines whether the chunk can be unloaded from memory

@@ -111,7 +111,7 @@ namespace Utopia.Entities.Voxel
             _overlays[x, y, z] = overlay;
             Altered = true;
         }
-        public void AlterOverlay(Location3<int> loc, byte overlay)
+        public void AlterOverlay(Vector3I loc, byte overlay)
         {
             _overlays[loc.X, loc.Y, loc.Z] = overlay;
             Altered = true;

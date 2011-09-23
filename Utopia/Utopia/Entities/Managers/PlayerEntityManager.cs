@@ -285,7 +285,7 @@ namespace Utopia.Entities.Managers
             //}
         }
 
-        private void ComputeBlockBoundingBox(ref Location3<int> BlockPlace, out BoundingBox BlockBoundingBox)
+        private void ComputeBlockBoundingBox(ref Vector3I BlockPlace, out BoundingBox BlockBoundingBox)
         {
             BlockBoundingBox = new BoundingBox(new Vector3(BlockPlace.X, BlockPlace.Y, BlockPlace.Z), new Vector3(BlockPlace.X + 1, BlockPlace.Y + 1, BlockPlace.Z + 1));
         }
@@ -333,7 +333,7 @@ namespace Utopia.Entities.Managers
         private void PhysicSimulation(ref GameTime TimeSpend)
         {
             TerraCubeWithPosition groundCube;
-            Location3<int> GroundDirection = new Location3<int>(0, -1, 0);
+            Vector3I GroundDirection = new Vector3I(0, -1, 0);
             Vector3D newWorldPosition;
 
             _cubesHolder.GetNextSolidBlockToPlayer(ref _playerBoundingBox, ref GroundDirection, out groundCube);

@@ -83,7 +83,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             VisualCubeProfile cubeProfile;
 
             ByteVector4 cubePosiInChunk;
-            Location3<int> cubePosiInWorld;
+            Vector3I cubePosiInWorld;
             int XWorld, YWorld, ZWorld;
             int neightborCubeIndex;
 
@@ -137,7 +137,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //The Cube profile contain the value that are fixed for a block type.
                         cubeProfile = VisualCubeProfile.CubesProfile[currentCube.Id];
 
-                        cubePosiInWorld = new Location3<int>(XWorld, YWorld, ZWorld);
+                        cubePosiInWorld = new Vector3I(XWorld, YWorld, ZWorld);
                         cubePosiInChunk = new ByteVector4(x, y, z);
 
                         //Check to see if the face needs to be generated or not !

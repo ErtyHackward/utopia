@@ -22,7 +22,7 @@ namespace Utopia.Server.AStar
             if(GoalNode == null)
                 return double.PositiveInfinity;
 
-            return Location3<int>.DistanceSquared(Cursor.GlobalPosition, GoalNode.Cursor.GlobalPosition);
+            return Vector3I.DistanceSquared(Cursor.GlobalPosition, GoalNode.Cursor.GlobalPosition);
         }
 
         public override void GetSuccessors(List<AStarNode3D> aSuccessors)
@@ -37,12 +37,12 @@ namespace Utopia.Server.AStar
                 {
                     if (x == 0 && y == 0) 
                         continue;
-                    AddSuccessor(aSuccessors, new Location3<int>(x, 0, y));
+                    AddSuccessor(aSuccessors, new Vector3I(x, 0, y));
                 }
             }
         }
 
-        private void AddSuccessor(List<AStarNode3D> aSuccessors, Location3<int> move)
+        private void AddSuccessor(List<AStarNode3D> aSuccessors, Vector3I move)
         {
             // get landscape cursor of possible position
             var cursor = Cursor.Clone().Move(move);
@@ -61,12 +61,12 @@ namespace Utopia.Server.AStar
                 }
 
                 // or jump down?
-                if (cursor.IsSolid(new Location3<int>(0, -2, 0)))
+                if (cursor.IsSolid(new Vector3I(0, -2, 0)))
                 {
                     CreateNode(aSuccessors, cursor.MoveDown(), 2);
                 }
             }
-            else if (!cursor.IsSolid(new Location3<int>(0, 2, 0)))
+            else if (!cursor.IsSolid(new Vector3I(0, 2, 0)))
             {
                 // jump up!
                 CreateNode(aSuccessors, cursor.MoveUp(), 3);
@@ -87,6 +87,11 @@ namespace Utopia.Server.AStar
         public override int GetHashCode()
         {
             return Cursor.GlobalPosition.X + (Cursor.GlobalPosition.Y << 10) + (Cursor.GlobalPosition.Z << 20);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Node 3d [{0}]", Cursor.GlobalPosition);
         }
     }
 }

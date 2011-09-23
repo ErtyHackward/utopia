@@ -22,13 +22,13 @@ namespace Utopia.Server.Managers
         private readonly List<ServerChunk> _saveList = new List<ServerChunk>();
         private readonly Queue<AStar<AStarNode3D>> _pathPool = new Queue<AStar<AStarNode3D>>();
         
-        private delegate Path3D CalculatePathDelegate(Location3<int> start, Location3<int> goal);
+        private delegate Path3D CalculatePathDelegate(Vector3I start, Vector3I goal);
         public delegate void PathCalculatedDeleagte(Path3D path);
 
         /// <summary>
         /// Gets main server memory chunk storage.
         /// </summary>
-        private readonly Dictionary<IntVector2, ServerChunk> _chunks = new Dictionary<IntVector2, ServerChunk>();
+        private readonly Dictionary<Vector2I, ServerChunk> _chunks = new Dictionary<Vector2I, ServerChunk>();
         
         #region Events
 
@@ -69,7 +69,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
-        public ServerChunk GetChunk(IntVector2 position)
+        public ServerChunk GetChunk(Vector2I position)
         {
             ServerChunk chunk = null;
             // search chunk in memory or load it
@@ -134,7 +134,7 @@ namespace Utopia.Server.Managers
 
             lock (_saveList)
             {
-                var positions = new IntVector2[_saveList.Count];
+                var positions = new Vector2I[_saveList.Count];
                 var datas = new List<byte[]>(_saveList.Count);
 
                 for (int i = 0; i < _saveList.Count; i++)
@@ -155,13 +155,13 @@ namespace Utopia.Server.Managers
         /// <param name="position">Global position</param>
         /// <param name="chunk">a chunk containing this position</param>
         /// <param name="cubePosition">a cube position inside the chunk</param>
-        public void GetBlockAndChunk(Vector3D position, out ServerChunk chunk, out Location3<int> cubePosition)
+        public void GetBlockAndChunk(Vector3D position, out ServerChunk chunk, out Vector3I cubePosition)
         {
             cubePosition.X = (int)Math.Floor(position.X);
             cubePosition.Y = (int)Math.Floor(position.Y);
             cubePosition.Z = (int)Math.Floor(position.Z);
 
-            chunk = GetChunk(new IntVector2(cubePosition.X / AbstractChunk.ChunkSize.X, cubePosition.Z / AbstractChunk.ChunkSize.Z));
+            chunk = GetChunk(new Vector2I(cubePosition.X / AbstractChunk.ChunkSize.X, cubePosition.Z / AbstractChunk.ChunkSize.Z));
 
             cubePosition.X = cubePosition.X % AbstractChunk.ChunkSize.X;
             cubePosition.Z = cubePosition.Z % AbstractChunk.ChunkSize.Z;
@@ -172,14 +172,14 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="blockPosition">global block position</param>
         /// <returns></returns>
-        public LandscapeCursor GetCursor(Location3<int> blockPosition)
+        public LandscapeCursor GetCursor(Vector3I blockPosition)
         {
             return new LandscapeCursor(this, blockPosition);
         }
 
         public LandscapeCursor GetCursor(Vector3D entityPosition)
         {
-            return GetCursor(new Location3<int>((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
+            return GetCursor(new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
         }
 
         /// <summary>
@@ -187,9 +187,9 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="entityPosition"></param>
         /// <returns></returns>
-        public static Location3<int> EntityToBlockPosition(Vector3D entityPosition)
+        public static Vector3I EntityToBlockPosition(Vector3D entityPosition)
         {
-            return new Location3<int>((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z));
+            return new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z));
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace Utopia.Server.Managers
         /// <param name="start"></param>
         /// <param name="goal"></param>
         /// <param name="callback"></param>
-        public void CalculatePathAsync(Location3<int> start, Location3<int> goal, PathCalculatedDeleagte callback)
+        public void CalculatePathAsync(Vector3I start, Vector3I goal, PathCalculatedDeleagte callback)
         {
             var d = new CalculatePathDelegate(CalculatePath);
             d.BeginInvoke(start, goal, PathCalculated, callback);
@@ -218,7 +218,7 @@ namespace Utopia.Server.Managers
         /// <param name="start"></param>
         /// <param name="goal"></param>
         /// <returns></returns>
-        public Path3D CalculatePath(Location3<int> start, Location3<int> goal)
+        public Path3D CalculatePath(Vector3I start, Vector3I goal)
         {
             AStar<AStarNode3D> calculator = null;
             lock (_pathPool)
@@ -237,7 +237,7 @@ namespace Utopia.Server.Managers
 
             var path = new Path3D { Start = start, Goal = goal };
 
-            var list = new List<Location3<int>>();
+            var list = new List<Vector3I>();
 
             foreach (var node3D in calculator.Solution)
             {

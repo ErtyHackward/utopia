@@ -8,6 +8,6 @@ namespace Utopia.Shared.Interfaces
 {
     public interface ISingleArrayDataProviderUser
     {
-        IntVector2 ChunkPositionBlockUnit { get; }
+        Vector2I ChunkPositionBlockUnit { get; }
     }
 }

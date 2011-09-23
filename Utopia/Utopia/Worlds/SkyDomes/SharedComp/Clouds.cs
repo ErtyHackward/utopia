@@ -32,7 +32,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private IndexBuffer<ushort> _cloudIB;
         private IWeather _weather;
         private WorldParameters _worldParam;
-        private Location3<int> _visibleWorldSize;
+        private Vector3I _visibleWorldSize;
         private int _nbrLayer;
         private int _cloudThicknes = 3;
         private Matrix _world = Matrix.Identity;
@@ -51,7 +51,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _weather = weather;
             _camManager = camManager;
 
-            _visibleWorldSize = new Location3<int>()
+            _visibleWorldSize = new Vector3I()
             {
                 X = AbstractChunk.ChunkSize.X * worldParam.WorldChunkSize.X,
                 Y = AbstractChunk.ChunkSize.Y,

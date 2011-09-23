@@ -499,7 +499,7 @@ namespace Utopia.Net.Connections
 
     public class BlockDataEventArgs : EventArgs
     {
-        public IntVector2 Position { get; set; }
+        public Vector2I Position { get; set; }
         public byte[] Bytes { get; set; }
     }
 }

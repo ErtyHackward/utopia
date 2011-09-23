@@ -31,7 +31,7 @@ namespace Utopia.Network
         public PlayerCharacter Player { get; set; }
         //===============================================================================================
 
-        public Location3<int> ChunkSize { get; set; }
+        public Vector3I ChunkSize { get; set; }
         #endregion
 
         public Server()

@@ -5,16 +5,16 @@ namespace System.IO
 {
     public static class BinaryExtensions
     {
-        public static void Write(this BinaryWriter writer, Location3<int> loc)
+        public static void Write(this BinaryWriter writer, Vector3I loc)
         {
             writer.Write(loc.X);
             writer.Write(loc.Y);
             writer.Write(loc.Z);
         }
 
-        public static Location3<int> ReadIntLocation3(this BinaryReader reader)
+        public static Vector3I ReadIntLocation3(this BinaryReader reader)
         {
-            Location3<int> loc;
+            Vector3I loc;
 
             loc.X = reader.ReadInt32();
             loc.Y = reader.ReadInt32();
@@ -61,9 +61,9 @@ namespace System.IO
             writer.Write(quaternion.W);
         }
 
-        public static IntVector2 ReadIntVector2(this BinaryReader reader)
+        public static Vector2I ReadIntVector2(this BinaryReader reader)
         {
-            IntVector2 vec;
+            Vector2I vec;
 
             vec.X = reader.ReadInt32();
             vec.Y = reader.ReadInt32();
@@ -71,7 +71,7 @@ namespace System.IO
             return vec;
         }
 
-        public static void Write(this BinaryWriter writer, IntVector2 vec)
+        public static void Write(this BinaryWriter writer, Vector2I vec)
         {
             writer.Write(vec.X);
             writer.Write(vec.Y);

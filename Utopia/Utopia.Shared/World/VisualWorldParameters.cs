@@ -22,7 +22,7 @@ namespace Utopia.Shared.World
 
         public Range<int> WorldRange;
         public Location2<int> WrapEnd;
-        public Location3<int> WorldVisibleSize;
+        public Vector3I WorldVisibleSize;
         public int WorldVisibleSizeXY;
         public int WorldVisibleSizeXYZ;
         public Location2<int> WorldChunkStartUpPosition;
@@ -40,7 +40,7 @@ namespace Utopia.Shared.World
 
         private void newWorldParameters()
         {
-            WorldVisibleSize = new Location3<int>()
+            WorldVisibleSize = new Vector3I()
             {
                 X = AbstractChunk.ChunkSize.X * _worldParameters.WorldChunkSize.X,
                 Y = AbstractChunk.ChunkSize.Y,

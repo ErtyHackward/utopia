@@ -18,7 +18,7 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class AreaManager
     {
-        private readonly ConcurrentDictionary<IntVector2, MapArea> _areas = new ConcurrentDictionary<IntVector2, MapArea>();
+        private readonly ConcurrentDictionary<Vector2I, MapArea> _areas = new ConcurrentDictionary<Vector2I, MapArea>();
         private readonly HashSet<ServerDynamicEntity> _allEntities = new HashSet<ServerDynamicEntity>();
 
 #if DEBUG
@@ -78,7 +78,7 @@ namespace Utopia.Server.Managers
 
         private MapArea GetArea(Vector3D position)
         {
-            var pos = new IntVector2((int)Math.Floor((double)position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor((double)position.Z / (MapArea.AreaSize.Z)) * MapArea.AreaSize.Z);
+            var pos = new Vector2I((int)Math.Floor((double)position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor((double)position.Z / (MapArea.AreaSize.Z)) * MapArea.AreaSize.Z);
 
             MapArea area;            
             if (_areas.ContainsKey(pos))
@@ -126,7 +126,7 @@ namespace Utopia.Server.Managers
                     var prev = GetArea(new Vector3D(e.PreviousPosition.X + x * MapArea.AreaSize.X, 0,
                                                    e.PreviousPosition.Z + z*MapArea.AreaSize.Z));
                     
-                    if(IntVector2.DistanceSquared(currentArea.Position,prev.Position) > tooFarAway )
+                    if(Vector2I.DistanceSquared(currentArea.Position,prev.Position) > tooFarAway )
                     {
                         // area is too far away, stop listening it
                         e.Entity.RemoveArea(prev);
@@ -138,7 +138,7 @@ namespace Utopia.Server.Managers
                     var now = GetArea(new Vector3D(e.Entity.DynamicEntity.Position.X + x*MapArea.AreaSize.X, 0,
                                                   e.Entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Z));
 
-                    if(IntVector2.DistanceSquared(previousArea.Position, now.Position) > tooFarAway)
+                    if(Vector2I.DistanceSquared(previousArea.Position, now.Position) > tooFarAway)
                     {
                         // area is too far away from previous center, listen it
                         e.Entity.AddArea(now);

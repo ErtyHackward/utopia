@@ -59,7 +59,7 @@ namespace Utopia.Server.Entities
             Seed = 0;
         }
 
-        public void Goto(Location3<int> location)
+        public void Goto(Vector3I location)
         {
             _server.LandscapeManager.CalculatePathAsync(LandscapeManager.EntityToBlockPosition(this.DynamicEntity.Position), location, PathCalculated);
         }

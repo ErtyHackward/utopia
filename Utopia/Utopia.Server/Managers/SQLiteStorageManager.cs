@@ -163,12 +163,12 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="pos">Chunk position</param>
         /// <param name="data">Chunk data</param>
-        public void SaveChunk(IntVector2 pos, byte[] data)
+        public void SaveChunk(Vector2I pos, byte[] data)
         {
             SaveChunk(pos, data, GetConnection());
         }
 
-        private void SaveChunk(IntVector2 pos, byte[] data, SQLiteConnection conn)
+        private void SaveChunk(Vector2I pos, byte[] data, SQLiteConnection conn)
         {
             lock (this)
             {
@@ -197,7 +197,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="pos">Position of the block</param>
         /// <returns></returns>
-        public byte[] LoadChunkData(IntVector2 pos)
+        public byte[] LoadChunkData(Vector2I pos)
         {
             lock (this)
             {
@@ -216,7 +216,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="positions">Array of chunks positions</param>
         /// <param name="blocksData">corresponding array of chunks data</param>
-        public void SaveChunksData(IntVector2[] positions, byte[][] blocksData)
+        public void SaveChunksData(Vector2I[] positions, byte[][] blocksData)
         {
             using (var trans = GetConnection().BeginTransaction())
             {

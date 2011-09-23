@@ -6,12 +6,12 @@ namespace Utopia.Shared.Structs
     /// <summary>
     /// Defines a two component structure of System.Int32 type
     /// </summary>
-    public struct IntVector2 : IComparable<IntVector2>
+    public struct Vector2I : IComparable<Vector2I>
     {
         public int X;
         public int Y;
 
-        public IntVector2(int x, int y)
+        public Vector2I(int x, int y)
         {
             X = x;
             Y = y;
@@ -23,7 +23,7 @@ namespace Utopia.Shared.Structs
         /// <param name="first"></param>
         /// <param name="second"></param>
         /// <returns></returns>
-        public static double Distance(IntVector2 first, IntVector2 second)
+        public static double Distance(Vector2I first, Vector2I second)
         {
             var dx = first.X - second.X;
             var dy = first.Y - second.Y;
@@ -34,7 +34,7 @@ namespace Utopia.Shared.Structs
             return Math.Sqrt(dx + dy);
         }
         
-        public static double DistanceSquared(IntVector2 first, IntVector2 second)
+        public static double DistanceSquared(Vector2I first, Vector2I second)
         {
             var dx = first.X - second.X;
             var dy = first.Y - second.Y;
@@ -48,7 +48,7 @@ namespace Utopia.Shared.Structs
         {
             if (obj != null && obj.GetType() == GetType())
             {
-                return CompareTo((IntVector2)obj);
+                return CompareTo((Vector2I)obj);
             }
             return -1;
         }
@@ -57,7 +57,7 @@ namespace Utopia.Shared.Structs
 
         #region IComparable<ChunkPosition> Members
 
-        public int CompareTo(IntVector2 other)
+        public int CompareTo(Vector2I other)
         {
             if (X == other.X)
             {
@@ -73,7 +73,7 @@ namespace Utopia.Shared.Structs
         public override bool Equals(object obj)
         {
             if (obj == null || obj.GetType() != GetType()) return false;
-            var other = (IntVector2)obj;
+            var other = (Vector2I)obj;
             return X == other.X && Y == other.Y;
         }
 
@@ -96,7 +96,7 @@ namespace Utopia.Shared.Structs
             return (((Int64)(X * Utopia.Shared.Chunks.AbstractChunk.ChunkSize.X) << 32) + (Y * Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Z));
         }
 
-        public static implicit operator Location2<int>(IntVector2 pos)
+        public static implicit operator Location2<int>(Vector2I pos)
         {
             Location2<int> vec;
 
@@ -106,9 +106,9 @@ namespace Utopia.Shared.Structs
             return vec;
         }
 
-        public static implicit operator IntVector2(Location2<int> pos)
+        public static implicit operator Vector2I(Location2<int> pos)
         {
-            IntVector2 vec;
+            Vector2I vec;
 
             vec.X = pos.X;
             vec.Y = pos.Z;
@@ -116,7 +116,7 @@ namespace Utopia.Shared.Structs
             return vec;
         }
 
-        public static implicit operator Vector2(IntVector2 pos)
+        public static implicit operator Vector2(Vector2I pos)
         {
             Vector2 vec;
 
@@ -126,18 +126,18 @@ namespace Utopia.Shared.Structs
             return vec;
         }
 
-        public static explicit operator IntVector2(Vector2 vec)
+        public static explicit operator Vector2I(Vector2 vec)
         {
-            IntVector2 pos;
+            Vector2I pos;
             pos.X = (int)vec.X;
             pos.Y = (int)vec.Y;
 
             return pos;
         }
 
-        public static IntVector2 operator *(IntVector2 pos, int value)
+        public static Vector2I operator *(Vector2I pos, int value)
         {
-            IntVector2 res;
+            Vector2I res;
 
             res.X = pos.X * value;
             res.Y = pos.Y * value;
@@ -145,9 +145,9 @@ namespace Utopia.Shared.Structs
             return res;
         }
 
-        public static IntVector2 operator +(IntVector2 pos, IntVector2 value)
+        public static Vector2I operator +(Vector2I pos, Vector2I value)
         {
-            IntVector2 res;
+            Vector2I res;
 
             res.X = pos.X + value.X;
             res.Y = pos.Y + value.Y;
@@ -155,9 +155,9 @@ namespace Utopia.Shared.Structs
             return res;
         }
 
-        public static IntVector2 operator +(IntVector2 pos, int value)
+        public static Vector2I operator +(Vector2I pos, int value)
         {
-            IntVector2 res;
+            Vector2I res;
 
             res.X = pos.X + value;
             res.Y = pos.Y + value;
@@ -165,9 +165,9 @@ namespace Utopia.Shared.Structs
             return res;
         }
 
-        public static IntVector2 operator -(IntVector2 pos, int value)
+        public static Vector2I operator -(Vector2I pos, int value)
         {
-            IntVector2 res;
+            Vector2I res;
 
             res.X = pos.X - value;
             res.Y = pos.Y - value;
@@ -176,12 +176,12 @@ namespace Utopia.Shared.Structs
         }
 
 
-        public static bool operator ==(IntVector2 first, IntVector2 second)
+        public static bool operator ==(Vector2I first, Vector2I second)
         {
             return first.X == second.X && first.Y == second.Y;
         }
 
-        public static bool operator !=(IntVector2 first, IntVector2 second)
+        public static bool operator !=(Vector2I first, Vector2I second)
         {
             return !(first == second);
         }
@@ -191,9 +191,9 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// Gets IntVector2 with values x = 1, y = 1
         /// </summary>
-        public static IntVector2 One
+        public static Vector2I One
         {
-            get { return new IntVector2(1, 1); }
+            get { return new Vector2I(1, 1); }
         }
 
         public bool IsZero()

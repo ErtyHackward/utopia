@@ -27,13 +27,13 @@ namespace Utopia.InputManager
         private D3DEngine _engine;
         private CameraManager _cameraManager;
 
-        private IntVector2 _centerViewPort;
+        private Vector2I _centerViewPort;
 
         private bool _keyBoardListening;
         #endregion
 
         #region Public variables/Properties
-        public IntVector2 MouseMoveDelta = new IntVector2(0, 0);
+        public Vector2I MouseMoveDelta = new Vector2I(0, 0);
 
         public delegate void KeyPress(object sender, KeyPressEventArgs e);
         public event KeyPress OnKeyPressed;

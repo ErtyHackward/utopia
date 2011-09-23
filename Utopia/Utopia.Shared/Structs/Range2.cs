@@ -7,17 +7,17 @@ namespace Utopia.Shared.Structs
     /// <summary>
     /// Represents two component range
     /// </summary>
-    public struct Range2 : IEnumerable<IntVector2>
+    public struct Range2 : IEnumerable<Vector2I>
     {
-        private IntVector2 _position;
-        private IntVector2 _size;
+        private Vector2I _position;
+        private Vector2I _size;
 
         /// <summary>
         /// Creates new Range2
         /// </summary>
         /// <param name="position">Range top left position</param>
         /// <param name="size">Range size</param>
-        public Range2(IntVector2 position, IntVector2 size)
+        public Range2(Vector2I position, Vector2I size)
         {
             _position = position;
             _size = size;
@@ -26,7 +26,7 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// Gets or sets top left position of the range
         /// </summary>
-        public IntVector2 Position
+        public Vector2I Position
         {
             get { return _position; }
             set { _position = value; }
@@ -35,7 +35,7 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// Gets or sets size of this range
         /// </summary>
-        public IntVector2 Size
+        public Vector2I Size
         {
             get { return _size; }
             set { _size = value; }
@@ -45,13 +45,13 @@ namespace Utopia.Shared.Structs
         /// Performs action for each point in this range
         /// </summary>
         /// <param name="action"></param>
-        public void Foreach(Action<IntVector2> action)
+        public void Foreach(Action<Vector2I> action)
         {
             for (int x = _position.X; x < _position.X + _size.X; x++)
             {
                 for (int y = _position.Y; y < _position.Y + _size.Y; y++)
                 {
-                    IntVector2 loc;
+                    Vector2I loc;
                     loc.X = x;
                     loc.Y = y;
                     action(loc);
@@ -63,14 +63,14 @@ namespace Utopia.Shared.Structs
         /// Performs action for each point in this range
         /// </summary>
         /// <param name="action"></param>
-        public void Foreach(Action<IntVector2,int> action)
+        public void Foreach(Action<Vector2I,int> action)
         {
             int index = 0;
             for (int x = _position.X; x < _position.X + _size.X; x++)
             {
                 for (int y = _position.Y; y < _position.Y + _size.Y; y++)
                 {
-                    IntVector2 loc;
+                    Vector2I loc;
                     loc.X = x;
                     loc.Y = y;
                     action(loc, index++);
@@ -88,18 +88,18 @@ namespace Utopia.Shared.Structs
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
-        public bool Contains(IntVector2 position)
+        public bool Contains(Vector2I position)
         {
             return _position.X <= position.X && _position.X + _size.X > position.X && _position.Y <= position.Y && _position.Y + _size.Y > position.Y;
         }
 
-        public IEnumerator<IntVector2> GetEnumerator()
+        public IEnumerator<Vector2I> GetEnumerator()
         {
             for (int x = _position.X; x < _position.X + _size.X; x++)
             {
                 for (int y = _position.Y; y < _position.Y + _size.Y; y++)
                 {
-                    IntVector2 loc;
+                    Vector2I loc;
                     loc.X = x;
                     loc.Y = y;
                     yield return loc;
