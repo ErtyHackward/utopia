@@ -2,6 +2,7 @@ using System;
 using Utopia.Server.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Server.Managers
 {
@@ -43,28 +44,92 @@ namespace Utopia.Server.Managers
             get { return _currentChunk.BlockData[_internalPosition]; }
         }
 
-        public LandscapeCursor(LandscapeManager manager, Location3<int> position)
+        protected LandscapeCursor(LandscapeManager manager)
         {
             _manager = manager;
+        }
+        
+        /// <summary>
+        /// Creates new instance of landscape cursor 
+        /// </summary>
+        /// <param name="manager"></param>
+        /// <param name="position"></param>
+        public LandscapeCursor(LandscapeManager manager, Location3<int> position) : this(manager)
+        {
             GlobalPosition = position;
         }
 
+        /// <summary>
+        /// Creates a copy of current cursor
+        /// </summary>
+        /// <returns></returns>
+        public LandscapeCursor Clone()
+        {
+            var cursor = new LandscapeCursor(_manager)
+                             {
+                                 _position = _position,
+                                 _internalPosition = _internalPosition,
+                                 _currentChunk = _currentChunk
+                             };
+
+            return cursor;
+        }
+
+        /// <summary>
+        /// Returns whether this block is solid to entity
+        /// </summary>
+        /// <returns></returns>
+        public bool IsSolid()
+        {
+            return CubeProfile.CubesProfile[Value].IsSolidToEntity;
+        }
+
+        /// <summary>
+        /// Returns whether the block at current position is solid to entity
+        /// </summary>
+        /// <param name="moveVector">relative move</param>
+        /// <returns></returns>
+        public bool IsSolid(Location3<int> moveVector)
+        {
+            return CubeProfile.CubesProfile[PeekValue(moveVector)].IsSolidToEntity;
+        }
+
+        public bool IsSolidUp()
+        {
+            return IsSolid(new Location3<int>(0, 1, 0));
+        }
+
+        public bool IsSolidDown()
+        {
+            return IsSolid(new Location3<int>(0, -1, 0));
+        }
+
+        /// <summary>
+        /// Returns value downside the cursor
+        /// </summary>
+        /// <returns></returns>
         public byte PeekDown()
         {
             return PeekValue(new Location3<int>(0, -1, 0));
         }
 
+        /// <summary>
+        /// Returns value upside the cursor
+        /// </summary>
+        /// <returns></returns>
         public byte PeekUp()
         {
             return PeekValue(new Location3<int>(0, 1, 0));
         }
 
+        /// <summary>
+        /// Returns block value from cursor moved by vector specified
+        /// </summary>
+        /// <param name="moveVector"></param>
+        /// <returns></returns>
         public byte PeekValue(Location3<int> moveVector)
         {
-            var peekPosition = _internalPosition;
-            peekPosition.X += moveVector.X;
-            peekPosition.Y += moveVector.Y;
-            peekPosition.Z += moveVector.Z;
+            var peekPosition = _internalPosition + moveVector;
 
             var newChunkPos = _currentChunk.Position;
 
@@ -97,6 +162,21 @@ namespace Utopia.Server.Managers
             return _currentChunk.BlockData[peekPosition];
         }
 
+        public LandscapeCursor MoveDown()
+        {
+            return Move(new Location3<int>(0,-1,0));
+        }
+
+        public LandscapeCursor MoveUp()
+        {
+            return Move(new Location3<int>(0, 1, 0));
+        }
+
+        /// <summary>
+        /// Moves current cursor and returns itself (Fluent interface)
+        /// </summary>
+        /// <param name="moveVector"></param>
+        /// <returns></returns>
         public LandscapeCursor Move(Location3<int> moveVector)
         {
             _internalPosition.X += moveVector.X;
@@ -126,13 +206,15 @@ namespace Utopia.Server.Managers
                 _internalPosition.Z = -1 * _internalPosition.Z % AbstractChunk.ChunkSize.Z;
             }
 
-            if (!newChunkPos.IsZero())
+            if (newChunkPos != _currentChunk.Position)
             {
                 _currentChunk = _manager.GetChunk(newChunkPos);
             }
 
             return this;
         }
+
+
 
     }
 }
