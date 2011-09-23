@@ -13,9 +13,12 @@ namespace Utopia.Server.AStar {
 		#region Private Fields
 
 		private T _fStartNode;
-        private readonly AStarList<T> _fOpenList;
-        private readonly AStarList<T> _fClosedList;
-        private readonly List<T> _fSuccessors;
+        private readonly AStarList<T> _fOpenList = new AStarList<T>();
+        //private readonly AStarList<T> _fClosedList;
+        private readonly List<T> _fSuccessors = new List<T>();
+
+        private readonly Dictionary<T, T> _fClosedList = new Dictionary<T,T>();
+        private readonly Dictionary<T, T> _fOpenSet = new Dictionary<T, T>();
 
         public event EventHandler NextNode;
 
@@ -42,7 +45,7 @@ namespace Utopia.Server.AStar {
         {
             foreach (var item in _fClosedList)
             {
-                yield return item;
+                yield return item.Key;
             }
         }
 
@@ -52,29 +55,7 @@ namespace Utopia.Server.AStar {
 
 		public AStar()
 		{
-            _fOpenList = new AStarList<T>();
-            _fClosedList = new AStarList<T>();
-			_fSuccessors = new List<T>();
-            Solution = new List<T>();
-            
-		}
-
-		#endregion
-
-		#region Private Methods
-
-		/// <summary>
-		/// Prints all the nodes in a list
-		/// </summary>
-		/// <param name="aNodeList">List to print</param>
-		private void PrintNodeList(object aNodeList)
-		{
-			Console.WriteLine("Node list:");
-			foreach(AStarNode<T> n in (aNodeList as IEnumerable)) 
-			{
-				n.PrintNodeInfo();
-			}
-			Console.WriteLine("=====");
+            Solution = new List<T>();           
 		}
 
 		#endregion
@@ -85,9 +66,13 @@ namespace Utopia.Server.AStar {
 		/// Finds the shortest path from the start node to the goal node
 		/// </summary>
 		/// <param name="aStartNode">Start node</param>
-		/// <param name="aGoalNode">Goal node</param>
 		public void FindPath(T aStartNode)
 		{
+            Solution.Clear();
+            _fClosedList.Clear();
+            _fOpenList.Clear();
+            _fOpenSet.Clear();
+
 			_fStartNode = aStartNode;
 
 			_fOpenList.Add(_fStartNode);
@@ -98,14 +83,15 @@ namespace Utopia.Server.AStar {
                     NextNode(this, null);
 
 				// Get the node with the lowest TotalCost
-				var nodeCurrent = _fOpenList.Pop();
+                var nodeCurrent = _fOpenList.Pop();
+                _fOpenSet.Remove(nodeCurrent);
 
                 if (NodeSelected != null)
-                    NodeSelected(this, new AStarDebugEventArgs<T>() { Node = nodeCurrent });
+                    NodeSelected(this, new AStarDebugEventArgs<T> { Node = nodeCurrent });
 
 				// If the node is the goal copy the path to the solution array
 				if(nodeCurrent.IsGoal()) {
-					while(nodeCurrent != null) {
+                    while(nodeCurrent != null) {
                         Solution.Insert(0, nodeCurrent);
 						nodeCurrent = nodeCurrent.Parent;
 					}
@@ -118,32 +104,30 @@ namespace Utopia.Server.AStar {
 				{
 					// Test if the currect successor node is on the open list, if it is and
 					// the TotalCost is higher, we will throw away the current successor.
-					T nodeOpen = null;
-                    if (_fOpenList.Contains(nodeSuccessor, n => n.IsSameState(nodeSuccessor)))
+					T nodeOpen;
+                    if (_fOpenSet.TryGetValue(nodeSuccessor, out nodeOpen))
                     {
+                        if (nodeOpen.Cost > nodeSuccessor.Cost)
+                            _fOpenSet[nodeSuccessor] = nodeSuccessor;
                         continue;
                     }
 					
 					// Test if the currect successor node is on the closed list, if it is and
 					// the TotalCost is higher, we will throw away the current successor.
-					T nodeClosed = null;
-                    if (_fClosedList.Contains(nodeSuccessor, n => n.IsSameState(nodeSuccessor)))
+					T nodeClosed;
+                    if (_fClosedList.TryGetValue(nodeSuccessor, out nodeClosed)) //, n => n.IsSameState(nodeSuccessor)))
                     {
+                        if (nodeClosed.Cost > nodeSuccessor.Cost)
+                            _fOpenSet[nodeSuccessor] = nodeSuccessor;
                         continue;
                     }
-
-
-				    // Remove the old successor from the open list
-                    //_fOpenList.Remove(nodeSuccessor);
-
-					// Remove the old successor from the closed list
-                    //_fClosedList.Remove(nodeSuccessor);
 					
 					// Add the current successor to the open list
 					_fOpenList.Add(nodeSuccessor);
+                    _fOpenSet.Add(nodeSuccessor, nodeSuccessor);
 				}
 				// Add the current node to the closed list
-				_fClosedList.Add(nodeCurrent);
+				_fClosedList.Add(nodeCurrent, nodeCurrent);
 			}
 		}
 		

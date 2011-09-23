@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -35,8 +36,7 @@ namespace PathFinder
                 }
             }
 
-            _pathFinder.NextNode += _pathFinder_NextNode;
-            _pathFinder.NodeSelected += _pathFinder_NodeSelected;
+
 
             DrawMap();
         }
@@ -71,6 +71,9 @@ namespace PathFinder
 
                         if (Map[x, y] == -1)
                             g.FillRectangle(Brushes.Black, new Rectangle(p, _cellSize));
+
+                        if (Map[x, y] == 5)
+                            g.FillRectangle(Brushes.Gray, new Rectangle(p, _cellSize));
 
                         if (p == _start)
                             g.FillRectangle(Brushes.Green, new Rectangle(p, _cellSize));
@@ -132,6 +135,11 @@ namespace PathFinder
                 else Map[x, y] = 1;
             }
 
+            if (e.Button == System.Windows.Forms.MouseButtons.Middle)
+            {
+                Map[x, y] = 5;
+            }
+
             if (e.Button == MouseButtons.Right)
             {
                 _goal = new Point(x, y);
@@ -144,7 +152,35 @@ namespace PathFinder
         private void button1_Click(object sender, EventArgs e)
         {
             var goal = new AStarNode2D(null, null, 1, _goal.X, _goal.Y);
+            _pathFinder = new AStar<AStarNode2D>();
+            _pathFinder.NextNode += _pathFinder_NextNode;
+            _pathFinder.NodeSelected += _pathFinder_NodeSelected;
             _pathFinder.FindPath(new AStarNode2D(null, goal, 1, _start.X, _start.Y));
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            _pathFinder = new AStar<AStarNode2D>();
+            DrawMap();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            _pathFinder = new AStar<AStarNode2D>();
+
+
+            var goal = new AStarNode2D(null, null, 1, _goal.X, _goal.Y);
+
+            var sw = Stopwatch.StartNew();
+            for (int i = 0; i < numericUpDown1.Value; i++)
+            {
+                _pathFinder.FindPath(new AStarNode2D(null, goal, 1, _start.X, _start.Y));
+            }
+            sw.Stop();
+            DrawMap();
+            MessageBox.Show((sw.Elapsed.TotalMilliseconds / (double)numericUpDown1.Value).ToString() + "ms");
+
+
         }
     }
 }
