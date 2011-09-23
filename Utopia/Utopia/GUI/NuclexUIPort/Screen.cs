@@ -106,7 +106,7 @@ namespace Nuclex.UserInterface {
             return; // Also catches when focusedControl is not part of the tree
           }
 
-          // TODO: Should this be propagated down the control tree?
+          // exTODO: Should this be propagated down the control tree?
           focusedControl.ProcessCommand(command);
 
           break;
@@ -115,7 +115,7 @@ namespace Nuclex.UserInterface {
         // Change focus to another control
         case Command.SelectPrevious:
         case Command.SelectNext: {
-          // TODO: Implement focus switching
+          // exTODO: Implement focus switching
 
           break;
         }

@@ -13,7 +13,7 @@ namespace Utopia.Editor
 
         public Spawn(EntityEditor editor) : base(editor)
         {
-            Name = "Spawn";
+            Name = "Test";
             Entity = new EditableVoxelEntity();
             Entity.Model.Blocks = new byte[16,16,16];
             Xmax = Entity.Model.Blocks.GetLength(0) - 1;
@@ -70,7 +70,7 @@ namespace Utopia.Editor
     {
         public SpawnPlain(EntityEditor editor) : base(editor)
         {
-            Name = "S-Plain";
+            Name = "Filled";
         }
 
         protected override void FillFunction(int x, int y, int z)
@@ -84,7 +84,7 @@ namespace Utopia.Editor
         public SpawnBorder(EntityEditor editor)
             : base(editor)
         {
-            Name = "S-Border";
+            Name = "Borders";
         }
 
         protected override void FillFunction(int x, int y, int z)
@@ -99,6 +99,67 @@ namespace Utopia.Editor
             if (n > 1)
             {
                 Entity.Model.Blocks[x, y, z] = Editor.SelectedIndex;
+            }
+            else
+                Entity.Model.Blocks[x, y, z] = 0;
+        }
+    }
+
+    public class SpawnCenter : Spawn
+    {
+        public SpawnCenter(EntityEditor editor)
+            : base(editor)
+        {
+            Name = "Center";
+        }
+        public override void Use()
+        {
+            int xc = Entity.Model.Blocks.GetLength(0)/2;
+            int yc = Entity.Model.Blocks.GetLength(1)/2;
+            int zc = Entity.Model.Blocks.GetLength(2)/2;
+
+            for (int x = xc-1; x < xc+1; x++)
+            {
+                for (int y = yc-1; y < yc+1; y++)
+                {
+                    for (int z = zc-1; z < zc+1; z++)
+                    {
+                        Entity.Model.Blocks[x, y, z] = Editor.SelectedIndex;
+                    }
+                }
+            }
+
+            Editor.SpawnEntity(Entity);
+        }
+        protected override void FillFunction(int x, int y, int z)
+        {
+            throw new InvalidOperationException("no need to call fillFunctiuon with spawnOne");
+        }
+    }
+
+    public class SpawnAxis : Spawn
+    {
+        public SpawnAxis(EntityEditor editor)
+            : base(editor)
+        {
+            Name = "Axis";
+        }
+
+        protected override void FillFunction(int x, int y, int z)
+        {
+
+            int xc = Entity.Model.Blocks.GetLength(0) / 2;
+            int yc = Entity.Model.Blocks.GetLength(1) / 2;
+            int zc = Entity.Model.Blocks.GetLength(2) / 2;
+
+            int n = 0;//if someone wants to replace this hack by real boolean logic, please do ! im too tired atm !
+            if (x == xc || x == xc-1) n++;
+            if (y == yc || y == yc - 1) n++;
+            if (z == zc || z == zc - 1)n++;
+                
+            if (n>1)
+            {
+                Entity.Model.Blocks[x, y, z] = Editor.SelectedIndex;                
             }
             else
                 Entity.Model.Blocks[x, y, z] = 0;

@@ -185,7 +185,7 @@ namespace S33M3Engines.Sprites
             texDesc.Height = texHeight;
             texDesc.MipLevels = 1;
             texDesc.ArraySize = 1;
-            texDesc.Format = Format.B8G8R8A8_UNorm;
+            texDesc.Format = Format.R8G8B8A8_UNorm;
             texDesc.SampleDescription = new SampleDescription(1, 0);
             texDesc.Usage = ResourceUsage.Immutable;
             texDesc.BindFlags = BindFlags.ShaderResource;
@@ -199,7 +199,7 @@ namespace S33M3Engines.Sprites
             textBitmap.UnlockBits(bmData);
 
             ShaderResourceViewDescription srDesc = new ShaderResourceViewDescription();
-            srDesc.Format = Format.B8G8R8A8_UNorm;
+            srDesc.Format = Format.R8G8B8A8_UNorm;
             //srDesc.Dimension = ShaderResourceViewDimension.Texture2D;
             //srDesc.Texture2D = new ShaderResourceViewDescription.Texture2DResource() { MipLevels = 1, MostDetailedMip = 0 };
             srDesc.Dimension = ShaderResourceViewDimension.Texture2DArray;

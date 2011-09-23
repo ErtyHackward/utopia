@@ -55,7 +55,8 @@ namespace Utopia.Editor
             if  (Editor.MultiSelectEnabled )
             {
                 //disabling multi select cleans selection
-                Editor.Selected.Clear();
+                Editor.ClearSelected();
+                
             }
             Editor.MultiSelectEnabled = !Editor.MultiSelectEnabled;
             Status = Editor.MultiSelectEnabled ? "ON" : "OFF";
@@ -77,9 +78,9 @@ namespace Utopia.Editor
         {
             if (Editor.Selected.Count == 0) return;
 
+            Copied.Clear();
             foreach (var selectedPos in Editor.Selected)
             {
-               Copied.Clear();
                Copied.Add(new Located<byte>() { Location = selectedPos, Value = Editor.BlockAt(selectedPos) });
             }
             
