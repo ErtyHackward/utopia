@@ -703,7 +703,12 @@ namespace Utopia.Entities.Managers
 
         public string GetInfo()
         {
-            return string.Format("Player {0} Pos: ({1}, {2}, {3})", Player.CharacterName, Math.Round(Player.Position.X, 1), Math.Round(Player.Position.Y, 1), Math.Round(Player.Position.Z, 1));
+            return string.Format("Player {0} Pos:[{1}; {2}; {3}] PickedBlock:{4} NewBlockPlace:{5}", Player.CharacterName, 
+                                                                                  Math.Round(Player.Position.X, 1), 
+                                                                                  Math.Round(Player.Position.Y, 1), 
+                                                                                  Math.Round(Player.Position.Z, 1),
+                                                                                  Player._entityState.IsBlockPicked ? Player._entityState.PickedBlockPosition.ToString() : "None",
+                                                                                  Player._entityState.IsBlockPicked ? Player._entityState.NewBlockPosition.ToString() : "None");
         }
     }
 }
