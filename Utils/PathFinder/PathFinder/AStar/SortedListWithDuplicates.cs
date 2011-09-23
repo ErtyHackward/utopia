@@ -39,22 +39,27 @@ namespace PathFinder.AStar
 
         public bool Contains(T item, Predicate<T> sure)
         {
-            var index = _list.BinarySearch(item, Comparer);
-
-            if (index >= 0)
+            foreach (var i in _list)
             {
-                while (true)
-                {
-                    index++;
-                    if (index == _list.Count) return false;
-                    if (Comparer.Compare(_list[index], item) == 0)
-                    {
-                        if (sure(_list[index]))
-                            return true;
-                    }
-                    else return false;
-                }
+                if (sure(i)) return true;
             }
+            return false;
+            //var index = _list.BinarySearch(item, Comparer);
+
+            //if (index >= 0)
+            //{
+            //    while (true)
+            //    {
+            //        index++;
+            //        if (index == _list.Count) return false;
+            //        if (Comparer.Compare(_list[index], item) == 0)
+            //        {
+            //            if (sure(_list[index]))
+            //                return true;
+            //        }
+            //        else return false;
+            //    }
+            //}
             return false;
 
         }
@@ -74,6 +79,11 @@ namespace PathFinder.AStar
         public IEnumerator<T> GetEnumerator()
         {
             return _list.GetEnumerator();
+        }
+
+        public void Clear()
+        {
+            _list.Clear();
         }
     }
 }
