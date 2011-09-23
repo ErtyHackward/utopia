@@ -126,27 +126,10 @@ namespace Utopia.Server
 
         protected void OnMessageEntityUse(EntityUseMessage ea)
         {
-                if (MessageEntityUse != null)
-
-                if(ea.ToolId == null)
-                    //A tool has been used by the Entity
-                    MessageToolUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
-                else
-                    //The entity has directly use something without the help of a tool
-                    MessageEntityUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
+            if (MessageEntityUse != null)
+                MessageEntityUse(this, new ProtocolMessageEventArgs<EntityUseMessage> {Message = ea});
         }
-
-        /// <summary>
-        /// Occurs when a ToolUseMessage is received
-        /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<EntityUseMessage>> MessageToolUse;
-
-        protected void OnMessageToolUse(EntityUseMessage ea)
-        {
-            if (MessageToolUse != null)
-                MessageToolUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
-        }
-
+        
         /// <summary>
         /// Occurs when PingMessage is received
         /// </summary>
