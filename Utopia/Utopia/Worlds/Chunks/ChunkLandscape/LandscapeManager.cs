@@ -12,6 +12,7 @@ using Utopia.Network;
 using Utopia.Net.Messages;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Storage.Structs;
+using Utopia.Net.Connections;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
@@ -22,7 +23,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private delegate object CreateLandScapeDelegate(object chunk);
         private WorldGenerator _worldGenerator;
         private Server _server;
-        private bool _serverCreation;
         private Dictionary<long, ChunkDataMessage> _receivedServerChunks;
         private IChunkStorageManager _chunkStorageManager;
         #endregion
@@ -39,17 +39,9 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         {
             _chunkStorageManager = chunkStorageManager;
 
-            if (server.Connected)
-            {
-                _server = server;
-                _serverCreation = true;
-                _receivedServerChunks = new Dictionary<long, ChunkDataMessage>(1024);
-                _server.ServerConnection.MessageChunkData += ServerConnection_MessageChunkData;
-            }
-            else
-            {
-                _serverCreation = false;
-            }
+            _server = server;
+            _receivedServerChunks = new Dictionary<long, ChunkDataMessage>(1024);
+            _server.ServerConnection.MessageChunkData += ServerConnection_MessageChunkData;
 
             Initialize();
         }
@@ -63,48 +55,32 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         //Create the landscape for the chunk
         public void CreateLandScape(VisualChunk chunk, bool Async)
         {
-            if (_serverCreation == false)// Not server connected, the chunks will be auto generated
-            {
-                //Has the chunk already been Change ? 
-                if (!CheckSinglePlayerChunkGenerated(chunk))
-                {
-                    CreateLandscapeFromGenerator(chunk, Async);
-                }
-            }
-            else 
-            {
-                CheckServerReceivedData(chunk, Async);
-            }
+            CheckServerReceivedData(chunk, Async);
         }
 
-        private bool CheckSinglePlayerChunkGenerated(VisualChunk chunk)
-        {
-            if (chunk.StorageRequestTicket != 0 || _chunkStorageManager.ChunkHashes.ContainsKey(chunk.ChunkID))
-            {
-                //The chunk is stored inside the DB ==> Request the Data !
-                if (chunk.StorageRequestTicket == 0)
-                {
-                    chunk.StorageRequestTicket = _chunkStorageManager.RequestDataTicket_async(chunk.ChunkID);
-                }
-                else
-                {
-                    //Is the data received from DB ???
-                    ChunkDataStorage data = _chunkStorageManager.Data[chunk.StorageRequestTicket];
-                    if (data != null)
-                    {
-                        chunk.BlockData.SetBlockBytes(data.CubeData);
-                        chunk.RefreshBorderChunk();
-                        chunk.State = ChunkState.LandscapeCreated;
-                        chunk.ThreadStatus = ThreadStatus.Idle;
 
-                        _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
-                        chunk.StorageRequestTicket = 0;
-                    }
-                }
-                
-                return true;
-            }
-            return false;
+        #endregion
+
+        #region Private methods
+        private void Initialize()
+        {
+            _createLandScapeDelegate = new CreateLandScapeDelegate(createLandScape_threaded);
+        }
+
+        //New chunk Received !
+        private void ServerConnection_MessageChunkData(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
+        {
+            //Bufferize the Data here
+            //Console.WriteLine("== New Chunk data receive : " + e.Message.Position.ToString());
+            if(_receivedServerChunks.ContainsKey(e.Message.Position.GetID())) _receivedServerChunks.Remove(e.Message.Position.GetID());
+            _receivedServerChunks.Add(e.Message.Position.GetID(), e.Message);
+        }
+      
+        //TODO call from Time to Time ?? how ?? When ??
+        private void ChunkBufferCleanup()
+        {
+            IEnumerable<long> expiredIndex = _receivedServerChunks.Where(x => DateTime.Now.Subtract(x.Value.MessageRecTime).TotalSeconds > 10).Select(x => x.Key);
+            foreach (var index in expiredIndex) _receivedServerChunks.Remove(index);
         }
 
         private void CheckServerReceivedData(VisualChunk chunk, bool Async)
@@ -115,7 +91,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                 ChunkDataMessage message;
                 //Have we receive the Server data
                 if (_receivedServerChunks.TryGetValue(chunk.ChunkID, out message))
-                {                   
+                {
                     chunk.IsServerRequested = false;
                     switch (message.Flag)
                     {
@@ -126,7 +102,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             chunk.RefreshBorderChunk();
                             chunk.State = ChunkState.LandscapeCreated;
                             chunk.ThreadStatus = ThreadStatus.Idle;
-                            
+
                             //Save the modified chunk landscape data locally only if the local one is different from the server one
                             Md5Hash hash;
                             bool SaveChunk = true;
@@ -138,13 +114,13 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             if (SaveChunk)
                             {
                                 _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage()
-                                                                        {
-                                                                            ChunkId = chunk.ChunkID,
-                                                                            ChunkX = chunk.ChunkPosition.X,
-                                                                            ChunkZ = chunk.ChunkPosition.Y,
-                                                                            Md5Hash = message.ChunkHash,
-                                                                            CubeData = message.Data
-                                                                        }
+                                {
+                                    ChunkId = chunk.ChunkID,
+                                    ChunkX = chunk.ChunkPosition.X,
+                                    ChunkZ = chunk.ChunkPosition.Y,
+                                    Md5Hash = message.ChunkHash,
+                                    CubeData = message.Data
+                                }
                                                                      );
                             }
 
@@ -196,7 +172,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                 if (_chunkStorageManager.ChunkHashes.TryGetValue(chunk.ChunkID, out hash))
                 {
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
-                     chunk.StorageRequestTicket = _chunkStorageManager.RequestDataTicket_async(chunk.ChunkID);
+                    chunk.StorageRequestTicket = _chunkStorageManager.RequestDataTicket_async(chunk.ChunkID);
 
                     //We have already in the store manager a modified version of the chunk, do the server request with these information
                     _server.ServerConnection.SendAsync(new GetChunksMessage
@@ -222,29 +198,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             }
         }
 
-        #endregion
-
-        #region Private methods
-        private void Initialize()
-        {
-            _createLandScapeDelegate = new CreateLandScapeDelegate(createLandScape_threaded);
-        }
-
-        //New chunk Received !
-        private void ServerConnection_MessageChunkData(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
-        {
-            //Bufferize the Data here
-            //Console.WriteLine("== New Chunk data receive : " + e.Message.Position.ToString());
-            if(_receivedServerChunks.ContainsKey(e.Message.Position.GetID())) _receivedServerChunks.Remove(e.Message.Position.GetID());
-            _receivedServerChunks.Add(e.Message.Position.GetID(), e.Message);
-        }
-
-        //TODO call from Time to Time ?? how ?? When ??
-        private void ChunkBufferCleanup()
-        {
-            IEnumerable<long> expiredIndex = _receivedServerChunks.Where(x => DateTime.Now.Subtract(x.Value.MessageRecTime).TotalSeconds > 10).Select(x => x.Key);
-            foreach (var index in expiredIndex) _receivedServerChunks.Remove(index);
-        }
 
         //Auto generate a chunk
         private void CreateLandscapeFromGenerator(VisualChunk chunk, bool Async)

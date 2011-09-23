@@ -50,7 +50,7 @@ namespace Utopia.Network
             //Register Login Events
             //ServerConnection.MessageLoginResult += _server_MessageLoginResult;
             //ServerConnection.ConnectionStatusChanged += _server_ConnectionStatusChanged;
-            ServerConnection.MessageBlockChange += _server_MessageBlockChange;
+            //ServerConnection.MessageBlockChange += _server_MessageBlockChange;
             //ServerConnection.MessageChat += _server_MessageChat;
             //ServerConnection.MessageChunkData += _server_MessageChunkData;
             //ServerConnection.MessageDateTime += _server_MessageDateTime;
@@ -69,7 +69,7 @@ namespace Utopia.Network
                ServerConnection.ConnectionStatus != ConnectionStatus.Disconnected &&
                ServerConnection.ConnectionStatus != ConnectionStatus.Disconnecting)
             {
-                ServerConnection.MessageBlockChange -= _server_MessageBlockChange;
+                //ServerConnection.MessageBlockChange -= _server_MessageBlockChange;
                 ServerConnection.Disconnect();
             }
 
@@ -122,7 +122,7 @@ namespace Utopia.Network
 
         void _server_MessageChunkData(object sender, ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
         {
-            Console.WriteLine("_server_MessageChunkData : " + e.Message.Position.ToString() + " " + e.Message.Data.Length + " bytes");
+            //Console.WriteLine("_server_MessageChunkData : " + e.Message.Position.ToString() + " " + e.Message.Data.Length + " bytes");
         }
 
         void _server_MessageChat(object sender, ProtocolMessageEventArgs<Net.Messages.ChatMessage> e)
@@ -132,7 +132,7 @@ namespace Utopia.Network
 
         void _server_MessageBlockChange(object sender, ProtocolMessageEventArgs<Net.Messages.BlocksChangedMessage> e)
         {
-            Console.WriteLine("_server_MessageBlockChange : ");
+            //Console.WriteLine("_server_MessageBlockChange : ");
         }
 
         void _server_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
