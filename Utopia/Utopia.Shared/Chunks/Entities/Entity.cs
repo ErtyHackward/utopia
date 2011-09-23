@@ -34,7 +34,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Gets or sets entity position
         /// </summary>
-        public virtual DVector3 Position { get; set; }
+        public virtual Vector3D Position { get; set; }
 
         /// <summary>
         /// Gets or sets entity rotation information
@@ -64,7 +64,7 @@ namespace Utopia.Shared.Chunks.Entities
             entitySize.Z = reader.ReadSingle();
             Size = entitySize;
 
-            DVector3 position;
+            Vector3D position;
             position.X = reader.ReadDouble();
             position.Y = reader.ReadDouble();
             position.Z = reader.ReadDouble();

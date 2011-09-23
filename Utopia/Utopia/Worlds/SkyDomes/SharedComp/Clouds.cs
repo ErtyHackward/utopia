@@ -38,7 +38,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private Matrix _world = Matrix.Identity;
         private Vector2 _uvOffset = new Vector2();
         private float _moveOffset;
-        private DVector3 _previousCameraPosition;
+        private Vector3D _previousCameraPosition;
         private CameraManager _camManager;
         #endregion
 

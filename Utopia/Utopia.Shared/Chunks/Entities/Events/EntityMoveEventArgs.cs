@@ -9,6 +9,6 @@ namespace Utopia.Shared.Chunks.Entities.Events
     {
         public IDynamicEntity Entity { get; set; }
 
-        public DVector3 PreviousPosition { get; set; }
+        public Vector3D PreviousPosition { get; set; }
     }
 }

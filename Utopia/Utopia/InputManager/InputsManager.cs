@@ -90,7 +90,7 @@ namespace Utopia.InputManager
         /// <param name="MouseWorldPosition"></param>
         /// <param name="MouseLookAt"></param>
         /// <param name="fixToCenter">to bypass the mouse pick and use screen center instead, useful for debug</param>
-        public void UnprojectMouseCursor(out DVector3 MouseWorldPosition, out DVector3 MouseLookAt,bool fixToCenter=false)
+        public void UnprojectMouseCursor(out Vector3D MouseWorldPosition, out Vector3D MouseLookAt,bool fixToCenter=false)
         {
             //Get mouse Position on the screen
             var mouseState = Mouse.GetState();
@@ -133,8 +133,8 @@ namespace Utopia.InputManager
                               out UnprojecFarClipVector);
 
             //To apply From Camera Position !
-            MouseWorldPosition = new DVector3(UnprojecNearClipVector);
-            MouseLookAt = new DVector3(Vector3.Normalize(UnprojecFarClipVector - UnprojecNearClipVector));
+            MouseWorldPosition = new Vector3D(UnprojecNearClipVector);
+            MouseLookAt = new Vector3D(Vector3.Normalize(UnprojecFarClipVector - UnprojecNearClipVector));
         }
         #endregion
 

@@ -24,7 +24,7 @@ namespace S33M3Engines.Cameras
     public abstract class Camera : GameComponent, ICamera, IWorldFocus
     {
         #region Private TimeDepending Variable ===> Will be LERPED, SLERPED or recomputed
-        protected FTSValue<DVector3> _worldPosition = new FTSValue<DVector3>();
+        protected FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();
         protected FTSValue<Quaternion> _cameraOrientation = new FTSValue<Quaternion>();
         #endregion
 
@@ -49,7 +49,7 @@ namespace S33M3Engines.Cameras
 
         private ICameraPlugin _cameraPlugin;
 
-        private readonly FTSValue<DVector3> _focusPoint = new FTSValue<DVector3>();
+        private readonly FTSValue<Vector3D> _focusPoint = new FTSValue<Vector3D>();
         private readonly FTSValue<Matrix> _focusPointMatrix = new FTSValue<Matrix>();
 
         protected D3DEngine _d3dEngine;
@@ -127,7 +127,7 @@ namespace S33M3Engines.Cameras
             }
         }
 
-        public DVector3 WorldPosition
+        public Vector3D WorldPosition
         {
             get { return _worldPosition.ActualValue; }
             set { _worldPosition.Value = value; }
@@ -149,7 +149,7 @@ namespace S33M3Engines.Cameras
             }
         }
 
-        public FTSValue<DVector3> FocusPoint
+        public FTSValue<Vector3D> FocusPoint
         {
             get { return _focusPoint; }
         }

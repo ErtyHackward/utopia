@@ -376,7 +376,7 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
-        public bool isPickable(ref DVector3 position, out TerraCube cube)
+        public bool isPickable(ref Vector3D position, out TerraCube cube)
         {
             int cubeIndex;
 

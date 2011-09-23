@@ -31,7 +31,7 @@ namespace Utopia.Server.Services
         /// <param name="name"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public ServerZombie CreateZombie(string name, DVector3 position)
+        public ServerZombie CreateZombie(string name, Vector3D position)
         {
             var z = new Zombie { CharacterName = name, EntityId = EntityFactory.Instance.GetUniqueEntityId() };
 
@@ -67,7 +67,7 @@ namespace Utopia.Server.Services
             var r = new Random();
             for (int i = 0; i < 1; i++)
             {
-                var z = CreateZombie(r.Next(_names), new DVector3(40, 72, -60)); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
+                var z = CreateZombie(r.Next(_names), new Vector3D(40, 72, -60)); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
                 //z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
                 z.Seed = r.Next(0, 100000);
             }

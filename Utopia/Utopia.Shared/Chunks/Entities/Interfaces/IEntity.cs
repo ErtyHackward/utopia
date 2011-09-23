@@ -19,7 +19,7 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// <summary>
         /// Gets or sets entity position
         /// </summary>
-        DVector3 Position { get; set; }
+        Vector3D Position { get; set; }
 
         /// <summary>
         /// Gets or sets entity rotation information

@@ -11,7 +11,7 @@ namespace S33M3Engines.WorldFocus
 {
     public interface IWorldFocus
     {
-        FTSValue<DVector3> FocusPoint { get; }
+        FTSValue<Vector3D> FocusPoint { get; }
         FTSValue<Matrix> FocusPointMatrix { get; }
     }
 }

@@ -112,6 +112,6 @@ namespace Utopia.Server.Structs
     public class ServerDynamicEntityMoveEventArgs : EventArgs
     {
         public ServerDynamicEntity ServerDynamicEntity { get; set; }
-        public DVector3 PreviousPosition { get; set; } 
+        public Vector3D PreviousPosition { get; set; } 
     }
 }

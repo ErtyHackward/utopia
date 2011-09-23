@@ -11,7 +11,7 @@ namespace S33M3Physics
 {
     public class Impulse
     {
-        private DVector3 _forceApplied;
+        private Vector3D _forceApplied;
         private float _amountOfTime = 0.00001f;
         private GameTime _timeStep;
 
@@ -25,7 +25,7 @@ namespace S33M3Physics
             _timeStep = timeStep;
         }
 
-        public DVector3 ForceApplied
+        public Vector3D ForceApplied
         {
             get
             {
