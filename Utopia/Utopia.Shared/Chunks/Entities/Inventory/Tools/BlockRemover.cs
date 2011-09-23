@@ -16,7 +16,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
     {
         //BlockRemover base class can remove anyting
         protected HashSet<Byte> RemoveableCubeIds = new HashSet<byte>();
-        //TODO Gameplay decision : in xna code it was even _selectable blocks , you could not even select without the good tool (big change)
+        //TODO Gameplay decision : in xna code it was even _selectable blocks , you could not even select without the good tool (= not show the select box overlay)
 
         public BlockRemover()
         {

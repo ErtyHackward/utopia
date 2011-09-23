@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nuclex.UserInterface;
@@ -18,7 +19,9 @@ namespace Utopia.Editor
     public class EntityEditorUi
     {
         private readonly EntityEditor _editorComponent;
-
+        private WindowControl _texPalette;
+        private WindowControl _colorPalette;
+        private WindowControl _toolBar;
 
         public List<Control> Children = new List<Control>();
 
@@ -26,15 +29,18 @@ namespace Utopia.Editor
         {
             _editorComponent = editorComponent;
 
-            //TODO remove all magic hardcoded numbers
+            _toolBar=InitToolBar();
+            _colorPalette = InitColorPalette();
+            _texPalette = InitTexturePalette();
 
-            Children.Add(InitToolBar());
-            Children.Add(InitColorPalette());
-            Children.Add(InitTexturePalette());
+            Children.Add(_toolBar);
+            Children.Add(_colorPalette);
+            Children.Add(_texPalette);
         }
 
         private WindowControl InitColorPalette()
         {
+            //XXX parametrize UI sizes
             const int rows = 16;
             const int cols = 4;
             const int btnSize = 20;
@@ -74,7 +80,7 @@ namespace Utopia.Editor
 
         private WindowControl InitTexturePalette()
         {
-            ShaderResourceView arrayResourceView = _editorComponent._texture;
+            ShaderResourceView arrayResourceView = _editorComponent.Texture;
 
             const int rows = 8;
             const int cols = 4;
@@ -157,5 +163,5 @@ namespace Utopia.Editor
             }
             return toolBar;
         }
-    }
+   }
 }
