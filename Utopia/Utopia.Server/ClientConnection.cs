@@ -126,8 +126,14 @@ namespace Utopia.Server
 
         protected void OnMessageEntityUse(EntityUseMessage ea)
         {
-            if (MessageEntityUse != null)
-                MessageEntityUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
+                if (MessageEntityUse != null)
+
+                if(ea.ToolId == null)
+                    //A tool has been used by the Entity
+                    MessageToolUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
+                else
+                    //The entity has directly use something without the help of a tool
+                    MessageEntityUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
         }
 
         /// <summary>
