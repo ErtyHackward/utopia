@@ -147,12 +147,12 @@ namespace Utopia.Server.Managers
             if (peekPosition.X < 0)
             {
                 newChunkPos.X += (int)Math.Floor((double)peekPosition.X / AbstractChunk.ChunkSize.X);
-                peekPosition.X = -1 * peekPosition.X % AbstractChunk.ChunkSize.X;
+                peekPosition.X = AbstractChunk.ChunkSize.X + peekPosition.X;
             }
             if (peekPosition.Z < 0)
             {
                 newChunkPos.Y += (int)Math.Floor((double)peekPosition.Z / AbstractChunk.ChunkSize.Z);
-                peekPosition.Z = -1 * peekPosition.Z % AbstractChunk.ChunkSize.Z;
+                peekPosition.Z = AbstractChunk.ChunkSize.Z + peekPosition.Z;
             }
 
             if (!newChunkPos.IsZero())
@@ -201,12 +201,12 @@ namespace Utopia.Server.Managers
             if (_internalPosition.X < 0)
             {
                 newChunkPos.X += (int)Math.Floor((double)_internalPosition.X / AbstractChunk.ChunkSize.X);
-                _internalPosition.X = -1 * _internalPosition.X % AbstractChunk.ChunkSize.X;
+                _internalPosition.X = AbstractChunk.ChunkSize.X + _internalPosition.X;
             }
             if (_internalPosition.Z < 0)
             {
                 newChunkPos.Y += (int)Math.Floor((double)_internalPosition.Z / AbstractChunk.ChunkSize.Z);
-                _internalPosition.Z = -1 * _internalPosition.Z % AbstractChunk.ChunkSize.Z;
+                _internalPosition.Z = AbstractChunk.ChunkSize.Z + _internalPosition.Z;
             }
 
             if (newChunkPos != _currentChunk.Position)
