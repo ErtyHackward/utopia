@@ -1,7 +1,6 @@
 ﻿using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
-using S33M3Engines.Shared.Math;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
@@ -10,7 +9,7 @@ namespace Utopia.Shared.Chunks.Entities
     /// <summary>
     /// Represents a player character (it has a toolbar)
     /// </summary>
-    public class PlayerCharacter : SpecialCharacterEntity
+    public sealed class PlayerCharacter : SpecialCharacterEntity
     {
         #region Private variables
         #endregion
@@ -35,7 +34,7 @@ namespace Utopia.Shared.Chunks.Entities
             Toolbar = new SlotContainer<ToolbarSlot>(new Location2<byte>(10,1));
             
             //Create a default Tool for playerCharacter = its Hand !
-            Hand playerHand = new Hand();
+            var playerHand = new Hand();
             Equipment.LeftTool = playerHand;
             Equipment.RightTool = playerHand;
 
