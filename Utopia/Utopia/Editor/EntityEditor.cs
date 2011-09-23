@@ -66,9 +66,9 @@ namespace Utopia.Editor
             set { IsTexture = !value; }
         }
 
-        public byte[, ,] Blocks
+        public byte[,,] Blocks
         {
-            get {return _editedEntity.VoxelEntity.Model.Blocks;}
+            get { return _editedEntity.VoxelEntity.Model.Blocks; }
         }
 
         public bool MultiSelectEnabled = false;
@@ -78,11 +78,12 @@ namespace Utopia.Editor
         public EditorTool RightTool;
 
         public bool HorizontalSymetryEnabled;
-        public bool VerticalSymetryEnabled; 
+        public bool VerticalSymetryEnabled;
 
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
-                            ActionsManager actions, Hud hudComponent, PlayerCharacter player, InputsManager inputsManager)
+                            ActionsManager actions, Hud hudComponent, PlayerCharacter player,
+                            InputsManager inputsManager)
         {
             LeftTool = new EditorRemove(this);
             RightTool = new EditorAdd(this);
@@ -105,13 +106,13 @@ namespace Utopia.Editor
         }
 
         public void SpawnEntity(VoxelEntity entity)
-        { 
+        {
             int x = entity.Model.Blocks.GetLength(0);
             int y = entity.Model.Blocks.GetLength(1);
             int z = entity.Model.Blocks.GetLength(2);
             byte[,,] overlays = new byte[x,y,z];
-            
-            _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays,IsColor);
+
+            _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays, IsColor);
 
             _editedEntity.Position = new DVector3((int) _player.Position.X, (int) _player.Position.Y,
                                                   (int) _player.Position.Z);
@@ -126,14 +127,16 @@ namespace Utopia.Editor
         {
             String[] dirs = new[] {@"Textures/Terran/", @"Textures/Editor/"};
 
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point, "ArrayTexture_EntityEditor", out Texture);
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point,
+                                                  "ArrayTexture_EntityEditor", out Texture);
 
             _itemEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/TerranEditor.hlsl",
                                          VertexCubeSolid.VertexDeclaration);
 
             _itemEffect.TerraTexture.Value = Texture;
 
-            _itemEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+            _itemEffect.SamplerDiffuse.Value =
+                StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
             _ui = new EntityEditorUi(this);
         }
@@ -143,6 +146,10 @@ namespace Utopia.Editor
             if (_editedEntity == null) return;
 
             GetSelectedBlock();
+            if (!PickedCubeLoc.HasValue && _prevPickedBlock.HasValue)
+            {
+                _editedEntity.AlterOverlay(_prevPickedBlock.Value, 0);
+            }
 
             if (PickedCubeLoc.HasValue && PickedCubeLoc != _prevPickedBlock)
             {
@@ -151,19 +158,20 @@ namespace Utopia.Editor
                 int z = PickedCubeLoc.Value.Z;
 
                 _editedEntity.AlterOverlay(x, y, z, 21);
-                
-                if (MultiSelectEnabled)
+
+                if (MultiSelectEnabled && Mouse.GetState().LeftButton == ButtonState.Pressed)
                 {
-                    if (Mouse.GetState().LeftButton == ButtonState.Pressed)//XXX avoid direct mouseState ButtonState.Pressed in editor ?
-                        Selected.Add(PickedCubeLoc.Value);
-                } else
+                    //XXX avoid direct mouseState ButtonState.Pressed in editor ?
+                    Selected.Add(PickedCubeLoc.Value);
+                }
+                else
                 {
                     if (_prevPickedBlock.HasValue)
-                        _editedEntity.AlterOverlay(_prevPickedBlock.Value.X, _prevPickedBlock.Value.Y, _prevPickedBlock.Value.Z, 0);    
+                        _editedEntity.AlterOverlay(_prevPickedBlock.Value, 0);
                 }
 
                 _prevPickedBlock = PickedCubeLoc;
-                _editedEntity.Altered = true;             
+                _editedEntity.Altered = true;
             }
 
             HandleInput();
@@ -184,7 +192,6 @@ namespace Utopia.Editor
                 RightTool.Use();
                 _editedEntity.Altered = true;
             }
-
         }
 
         public override void Draw(int index)
@@ -226,11 +233,11 @@ namespace Utopia.Editor
             if (PickedCubeLoc.HasValue)
                 SafeSetBlock(PickedCubeLoc.Value.X, PickedCubeLoc.Value.Y, PickedCubeLoc.Value.Z, value);
         }
-        
+
         public void UpdateNewPlace(byte value)
         {
             if (NewCubePlace.HasValue)
-                SafeSetBlock(NewCubePlace.Value.X, NewCubePlace.Value.Y, NewCubePlace.Value.Z,value);
+                SafeSetBlock(NewCubePlace.Value.X, NewCubePlace.Value.Y, NewCubePlace.Value.Z, value);
         }
 
         private void DrawItems()
@@ -243,16 +250,17 @@ namespace Utopia.Editor
 
             _itemEffect.Begin();
 
-            _itemEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+            _itemEffect.CBPerFrame.Values.ViewProjection =
+                Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _itemEffect.CBPerFrame.Values.SunColor = Vector3.One;
             _itemEffect.CBPerFrame.Values.dayTime = 0.5f;
-            _itemEffect.CBPerFrame.Values.fogdist = 100; 
+            _itemEffect.CBPerFrame.Values.fogdist = 100;
 
             _itemEffect.CBPerFrame.IsDirty = true;
 
-            Matrix world = Matrix.Scaling((float)Scale)*
+            Matrix world = Matrix.Scaling((float) Scale)*
                            Matrix.Translation(_editedEntity.Position.AsVector3());
-          
+
             world = _worldFocusManager.CenterOnFocus(ref world);
 
             _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
@@ -276,9 +284,9 @@ namespace Utopia.Editor
         {
         }
 
-       
 
-        DVector3 CastedFrom, CastedTo;
+        private DVector3 CastedFrom, CastedTo;
+
         private void GetSelectedBlock()
         {
             byte[,,] blocks = _editedEntity.VoxelEntity.Model.Blocks;
@@ -291,14 +299,16 @@ namespace Utopia.Editor
             //Create a ray from MouseWorldPosition to a specific size (That we will increment) and then check if we intersect an existing cube !
             int nbrpt = 0;
 
-            double start = 0; //how far you need to be from the edited cube. 0 means you can pick right in your eye (ouch) 
-            double end = start + 40; //TODO magic number 40 for editor picking, should be related to scale and block array size  
+            double start = 0;
+                //how far you need to be from the edited cube. 0 means you can pick right in your eye (ouch) 
+            double end = start + 40;
+                //TODO magic number 40 for editor picking, should be related to scale and block array size  
 
             for (double x = start; x < end; x += 0.08) //for scale=1, was0.5 40 0.1  40 seems a high pick distance ! 
             {
                 nbrpt++;
                 DVector3 targetPoint = (mouseWorldPosition + (mouseLookAt*x));
-              
+
                 if (x == start) CastedFrom = targetPoint;
                 CastedTo = targetPoint;
 
@@ -313,16 +323,18 @@ namespace Utopia.Editor
                 if (targetPoint.X >= startX && targetPoint.Y >= startY && targetPoint.Z >= startZ
                     && targetPoint.X < endX && targetPoint.Y < endY && targetPoint.Z < endZ)
                 {
-                   Location3<int> hit =  new Location3<int>((int)((targetPoint.X - startX) / Scale),
-                                                       (int)((targetPoint.Y  - startY)/ Scale),
-                                                       (int)((targetPoint.Z - startZ) / Scale));
+                    Location3<int> hit = new Location3<int>((int) ((targetPoint.X - startX)/Scale),
+                                                            (int) ((targetPoint.Y - startY)/Scale),
+                                                            (int) ((targetPoint.Z - startZ)/Scale));
                     if (Pickable(hit))
                     {
                         PickedCubeLoc = hit;
-                        break;
-                    }  
+                        return;
+                    }
                 }
             }
+            PickedCubeLoc = null;
+
         }
 
         /// <summary>
@@ -339,9 +351,9 @@ namespace Utopia.Editor
         public override void Dispose()
         {
             _itemEffect.Dispose();
-            _ui = null;//TODO _ui references the texture, check if more dispose work is needed
+            _ui = null; //TODO _ui references the texture, check if more dispose work is needed
             Texture.Dispose();
-            if(_editedEntity != null) _editedEntity.Dispose();
+            if (_editedEntity != null) _editedEntity.Dispose();
             base.Dispose();
         }
 
@@ -352,13 +364,14 @@ namespace Utopia.Editor
 
         public bool SafeSetBlock(int x, int y, int z, byte value)
         {
-            if (x >= 0 && y >= 0 && z >= 0 && x < Blocks.GetLength(0) && y < Blocks.GetLength(1) && z < Blocks.GetLength(2))
+            if (x >= 0 && y >= 0 && z >= 0 && x < Blocks.GetLength(0) && y < Blocks.GetLength(1) &&
+                z < Blocks.GetLength(2))
             {
                 Blocks[x, y, z] = value;
 
                 if (VerticalSymetryEnabled)
-                {   
-                    int xMirror =Blocks.GetLength(0)-1 - x;
+                {
+                    int xMirror = Blocks.GetLength(0) - 1 - x;
                     Blocks[xMirror, y, z] = value;
                 }
                 return true;
@@ -378,7 +391,6 @@ namespace Utopia.Editor
                 _editedEntity.AlterOverlay(selectedPos.X, selectedPos.Y, selectedPos.Z, 0);
             }
             Selected.Clear();
-          
         }
     }
 }

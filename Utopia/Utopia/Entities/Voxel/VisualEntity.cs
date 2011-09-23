@@ -6,6 +6,7 @@ using SharpDX;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Entities.Voxel
 {
@@ -108,6 +109,11 @@ namespace Utopia.Entities.Voxel
         public void AlterOverlay(int x,int y, int z, byte overlay)
         {
             _overlays[x, y, z] = overlay;
+            Altered = true;
+        }
+        public void AlterOverlay(Location3<int> loc, byte overlay)
+        {
+            _overlays[loc.X, loc.Y, loc.Z] = overlay;
             Altered = true;
         }
     }
