@@ -83,7 +83,7 @@ namespace Utopia.GUI
 
         public void AddMessage(string message)
         {
-            _messages.Enqueue(string.Format("[{1}] {0}", message, DateTime.Now.TimeOfDay.ToString(@"h\:m\:s")));
+            _messages.Enqueue(string.Format("[{1}] {0}", message, DateTime.Now.TimeOfDay.ToString(@"hh\:mm\:ss")));
             if (_messages.Count > ChatLineLimit)
             {
                 _messages.Dequeue();
