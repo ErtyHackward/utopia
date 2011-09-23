@@ -18,6 +18,7 @@ namespace Utopia.Server.Entities
     public class ServerZombie : ServerDynamicEntity
     {
         public static Vector3D CubeCenter = new Vector3D(0.5d, 0.0d, 0.5d);
+        public static Vector3D Near = new Vector3D(0.01d);
 
         private readonly Server _server;
         private List<MapArea> _mapAreas = new List<MapArea>();
@@ -67,15 +68,26 @@ namespace Utopia.Server.Entities
         private void PathCalculated(Path3D path)
         {
             if (path.Exists)
+            {
                 _path = path;
 
-            State = ZombieState.FollowPath;
-            _targetPathNodeIndex = 0;
-            _pathTargetPoint = new Vector3D(_path.Points[0].X, _path.Points[0].Y, _path.Points[0].Z) + CubeCenter;
-            _moveDirection = _pathTargetPoint - DynamicEntity.Position;
-            _moveDirection.Normalize();
-            var q = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
-            DynamicEntity.Rotation = Quaternion.Invert(q); //Transform the rotation from a world rotatino to a local rotation
+
+                State = ZombieState.FollowPath;
+                _targetPathNodeIndex = 0;
+                _pathTargetPoint = new Vector3D(_path.Points[1].X, _path.Points[1].Y, _path.Points[1].Z) + CubeCenter;
+                _moveDirection = _pathTargetPoint - DynamicEntity.Position;
+                _moveDirection.Normalize();
+                var q =
+                    Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(),
+                                                              DynamicEntity.Position.AsVector3() +
+                                                              _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
+                DynamicEntity.Rotation = Quaternion.Invert(q);
+                //Transform the rotation from a world rotatino to a local rotation
+            }
+            else
+            {
+                _server.SendChatMessage("there is no path there...");
+            }
         }
 
         public override void AddArea(MapArea area)
@@ -96,6 +108,13 @@ namespace Utopia.Server.Entities
         /// <param name="gameTime"></param>
         public override void Update(DynamicUpdateState gameTime)
         {
+            if (gameTime.ElapsedTime.TotalSeconds < 2)
+                return;
+            if (gameTime.ElapsedTime.TotalSeconds > 100)
+            {
+                return;
+            }
+
             #region Falling
             var current = _server.LandscapeManager.GetCursor(DynamicEntity.Position);
             if (!current.IsSolidDown())
@@ -109,9 +128,9 @@ namespace Utopia.Server.Entities
 
             if (State == ZombieState.FollowPath)
             {
-                if (DynamicEntity.Position == _pathTargetPoint)
+                if ((DynamicEntity.Position - _pathTargetPoint).LengthSquared() < 0.1d)
                 {
-                    if (_targetPathNodeIndex++ == _path.Points.Count)
+                    if (++_targetPathNodeIndex == _path.Points.Count)
                     {
                         State = ZombieState.Staying;
                         return;
@@ -120,7 +139,7 @@ namespace Utopia.Server.Entities
                     {
                         var vec3d = _path.Points[_targetPathNodeIndex];
                         _pathTargetPoint = new Vector3D(vec3d.X, vec3d.Y, vec3d.Z) + CubeCenter;
-                        _moveDirection = _pathTargetPoint - DynamicEntity.Position;
+                        _moveDirection = _pathTargetPoint-DynamicEntity.Position;
                         _moveDirection.Normalize();
                         var q = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
                         DynamicEntity.Rotation = Quaternion.Invert(q); //Transform the rotation from a world rotatino to a local rotation

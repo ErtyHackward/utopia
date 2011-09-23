@@ -22,7 +22,7 @@ namespace Utopia.Server.AStar
             if(GoalNode == null)
                 return double.PositiveInfinity;
 
-            return Vector3I.DistanceSquared(Cursor.GlobalPosition, GoalNode.Cursor.GlobalPosition);
+            return Vector3I.Distance(Cursor.GlobalPosition, GoalNode.Cursor.GlobalPosition);
         }
 
         public override void GetSuccessors(List<AStarNode3D> aSuccessors)
