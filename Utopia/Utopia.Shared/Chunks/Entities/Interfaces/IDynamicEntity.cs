@@ -39,5 +39,10 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// </summary>
         EntityDisplacementModes DisplacementMode { get; set; }
 
+        /// <summary>
+        /// Gets or sets entity state
+        /// </summary>
+        DynamicEntityState EntityState { get; set; }
+
     }
 }
