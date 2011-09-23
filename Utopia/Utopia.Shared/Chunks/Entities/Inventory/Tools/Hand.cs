@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
+    /// <summary>
+    /// Every normal human-like NPC or player should have one or two
+    /// </summary>
     public class Hand : BlockRemover
     {
         public Hand()
-            : base()
         {
             //a hand can remove anything like base class except water
             RemoveableCubeIds.Remove(CubeId.Water);

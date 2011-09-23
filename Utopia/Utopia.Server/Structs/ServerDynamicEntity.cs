@@ -1,5 +1,7 @@
 ﻿using System;
 using S33M3Engines.Shared.Math;
+using Utopia.Net.Messages;
+using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Structs;
@@ -70,10 +72,10 @@ namespace Utopia.Server.Structs
         protected ServerDynamicEntity(IDynamicEntity entity)
         {
             DynamicEntity = entity;
-            entity.PositionChanged += entity_PositionChanged;
+            entity.PositionChanged += EntityPositionChanged;
         }
 
-        void entity_PositionChanged(object sender, EntityMoveEventArgs e)
+        void EntityPositionChanged(object sender, EntityMoveEventArgs e)
         {
             OnPositionChanged(new ServerDynamicEntityMoveEventArgs { ServerDynamicEntity = this, PreviousPosition = e.PreviousPosition });
         }
@@ -106,6 +108,22 @@ namespace Utopia.Server.Structs
         public override int GetHashCode()
         {
             return DynamicEntity.GetHashCode();
+        }
+
+        /// <summary>
+        /// Perform using (tool or toolless use)
+        /// </summary>
+        /// <param name="entityUseMessage"></param>
+        public virtual void Use(EntityUseMessage entityUseMessage)
+        {
+            // update entity state
+            var state = new DynamicEntityState
+            {
+                NewBlockPosition = entityUseMessage.NewBlockPosition,
+                PickedBlockPosition = entityUseMessage.PickedBlockPosition,
+                PickedEntityId = entityUseMessage.PickedEntityId,
+            };
+            DynamicEntity.EntityState = state;
         }
     }
 

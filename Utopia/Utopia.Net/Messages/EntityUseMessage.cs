@@ -17,7 +17,7 @@ namespace Utopia.Net.Messages
         private uint _entityId;
 
         /// <summary>
-        /// Identification number of entity that performs use operation
+        /// Identification number of entity that performs use operation (player or NPC)
         /// </summary>
         public uint EntityId
         {

@@ -197,7 +197,7 @@ namespace Utopia.Entities.Managers
                 if (Player.EntityState.IsBlockPicked)
                 {
                     BoundingBox playerPotentialNewBlock;
-                    ComputeBlockBoundingBox(ref Player.EntityState.NewBlockPosition, out playerPotentialNewBlock);
+                    ComputeBlockBoundingBox(ref Player._entityState.NewBlockPosition, out playerPotentialNewBlock);
 
                     if (!MBoundingBox.Intersects(ref _playerBoundingBox, ref playerPotentialNewBlock))// && _playerPotentialNewBlock.Maximum.Y <= AbstractChunk.ChunkSize.Y - 2)
                     {
@@ -229,7 +229,7 @@ namespace Utopia.Entities.Managers
         #region Player Block Picking
         private void GetSelectedBlock()
         {
-            Player.EntityState.IsBlockPicked = false;
+            Player._entityState.IsBlockPicked = false;
 
             Vector3D pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
             //Sample 500 points in the view direction vector
@@ -239,43 +239,43 @@ namespace Utopia.Entities.Managers
 
                 if (_cubesHolder.isPickable(ref pickingPointInLine, out _pickedCube))
                 {
-                    Player.EntityState.PickedBlockPosition.X = MathHelper.Fastfloor(pickingPointInLine.X);
-                    Player.EntityState.PickedBlockPosition.Y = MathHelper.Fastfloor(pickingPointInLine.Y);
-                    Player.EntityState.PickedBlockPosition.Z = MathHelper.Fastfloor(pickingPointInLine.Z);
+                    Player._entityState.PickedBlockPosition.X = MathHelper.Fastfloor(pickingPointInLine.X);
+                    Player._entityState.PickedBlockPosition.Y = MathHelper.Fastfloor(pickingPointInLine.Y);
+                    Player._entityState.PickedBlockPosition.Z = MathHelper.Fastfloor(pickingPointInLine.Z);
 
                     //Find the face picked up !
                     float FaceDistance;
                     Ray newRay = new Ray((_worldPosition.Value + _entityEyeOffset).AsVector3(), _lookAt.AsVector3());
                     
                     BoundingBox bBox;
-                    ComputeBlockBoundingBox(ref Player.EntityState.PickedBlockPosition, out bBox);
+                    ComputeBlockBoundingBox(ref Player._entityState.PickedBlockPosition, out bBox);
 
                     newRay.Intersects(ref bBox, out FaceDistance);
 
                     Vector3D CollisionPoint = _worldPosition.Value + _entityEyeOffset + (_lookAt * FaceDistance);
                     MVector3.Round(ref CollisionPoint, 4);
 
-                    Player.EntityState.NewBlockPosition = Player.EntityState.PickedBlockPosition;
+                    Player._entityState.NewBlockPosition = Player._entityState.PickedBlockPosition;
 
-                    if (CollisionPoint.X == Player.EntityState.PickedBlockPosition.X) Player.EntityState.NewBlockPosition.X--;
+                    if (CollisionPoint.X == Player._entityState.PickedBlockPosition.X) Player._entityState.NewBlockPosition.X--;
                     else
-                        if (CollisionPoint.X == Player.EntityState.PickedBlockPosition.X + 1) Player.EntityState.NewBlockPosition.X++;
+                        if (CollisionPoint.X == Player._entityState.PickedBlockPosition.X + 1) Player._entityState.NewBlockPosition.X++;
                         else
-                            if (CollisionPoint.Y == Player.EntityState.PickedBlockPosition.Y) Player.EntityState.NewBlockPosition.Y--;
+                            if (CollisionPoint.Y == Player._entityState.PickedBlockPosition.Y) Player._entityState.NewBlockPosition.Y--;
                             else
-                                if (CollisionPoint.Y == Player.EntityState.PickedBlockPosition.Y + 1) Player.EntityState.NewBlockPosition.Y++;
+                                if (CollisionPoint.Y == Player._entityState.PickedBlockPosition.Y + 1) Player._entityState.NewBlockPosition.Y++;
                                 else
-                                    if (CollisionPoint.Z == Player.EntityState.PickedBlockPosition.Z) Player.EntityState.NewBlockPosition.Z--;
+                                    if (CollisionPoint.Z == Player._entityState.PickedBlockPosition.Z) Player._entityState.NewBlockPosition.Z--;
                                     else
-                                        if (CollisionPoint.Z == Player.EntityState.PickedBlockPosition.Z + 1) Player.EntityState.NewBlockPosition.Z++;
+                                        if (CollisionPoint.Z == Player._entityState.PickedBlockPosition.Z + 1) Player._entityState.NewBlockPosition.Z++;
 
-                                       
-                    Player.EntityState.IsBlockPicked = true;
+
+                    Player._entityState.IsBlockPicked = true;
                     break;
                 }
             }
 
-            Player.EntityState.PickedEntityId = 0;
+            Player._entityState.PickedEntityId = 0;
 
             ////Create the bounding box around the cube !
             //if (_previousPickedBlock != _pickedBlock && _isBlockPicked)

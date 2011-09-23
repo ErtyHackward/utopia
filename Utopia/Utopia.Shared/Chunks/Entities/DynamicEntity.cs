@@ -2,7 +2,6 @@
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using S33M3Engines.Shared.Math;
-using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -55,10 +54,16 @@ namespace Utopia.Shared.Chunks.Entities
 
         #region Properties
 
+        public DynamicEntityState _entityState;
+
         /// <summary>
         /// Gets or sets entity state (this field should be refreshed before using the tool)
         /// </summary>
-        public DynamicEntityState EntityState;
+        public DynamicEntityState EntityState
+        {
+            get { return _entityState; }
+            set { _entityState = value; }
+        }
 
         /// <summary>
         /// The speed at wich the dynamic entity can walk

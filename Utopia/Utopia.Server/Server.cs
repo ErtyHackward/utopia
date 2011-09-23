@@ -18,8 +18,6 @@ using Utopia.Shared.Config;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
-using Utopia.Shared.Chunks.Entities.Inventory;
-using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
 namespace Utopia.Server
 {
@@ -226,14 +224,30 @@ namespace Utopia.Server
             // tell entities about blocks change
             AreaManager.InvokeBlocksChanged(new BlocksChangedEventArgs { ChunkPosition = chunk.Position, BlockValues = e.Bytes, Locations = e.Locations });
         }
-        
-        void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
+
+        private void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
         {
+            // note: do not forget to remove events!
+            e.Connection.MessageLogin += ConnectionMessageLogin;
+            e.Connection.MessageGetChunks += ConnectionMessageGetChunks;
+            e.Connection.MessagePosition += ConnectionMessagePosition;
+            e.Connection.MessageDirection += ConnectionMessageDirection;
+            e.Connection.MessageChat += ConnectionMessageChat;
+            e.Connection.MessagePing += ConnectionMessagePing;
+            e.Connection.MessageEntityUse += Connection_MessageEntityUse;
+        }
+
+        private void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
+        {
+            // stop listening
             e.Connection.MessageLogin -= ConnectionMessageLogin;
             e.Connection.MessageGetChunks -= ConnectionMessageGetChunks;
             e.Connection.MessagePosition -= ConnectionMessagePosition;
             e.Connection.MessageDirection -= ConnectionMessageDirection;
             e.Connection.MessageChat -= ConnectionMessageChat;
+            e.Connection.MessagePing -= ConnectionMessagePing;
+            e.Connection.MessageEntityUse -= Connection_MessageEntityUse;
+
             Console.WriteLine("{0} disconnected", e.Connection.RemoteAddress);
             
             if (e.Connection.Authorized)
@@ -287,67 +301,14 @@ namespace Utopia.Server
         {
             ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message= message });
         }
-
-        void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
+        
+        private void Connection_MessageEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
         {
-            e.Connection.MessageLogin += ConnectionMessageLogin;
-            e.Connection.MessageGetChunks += ConnectionMessageGetChunks;
-            e.Connection.MessagePosition += ConnectionMessagePosition;
-            e.Connection.MessageDirection += ConnectionMessageDirection;
-            e.Connection.MessageChat += ConnectionMessageChat;
-            e.Connection.MessagePing += ConnectionMessagePing;
-            e.Connection.MessageEntityUse += Connection_MessageEntityUse;
-            e.Connection.MessageToolUse += Connection_MessageToolUse;
-        }
-
-        //A tool has been used by the entity
-        void Connection_MessageToolUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
-        {
-            //var connection = (ClientConnection)sender;
-            //try
-            //{
-            //    Tool usedTool; 
-            //    //Get the tool
-            //    switch ((EntityClassId)e.Message.ToolId)
-            //    {
-            //        case EntityClassId.None:
-            //            usedTool = null; 
-            //            break;
-            //        case EntityClassId.Sword:
-            //            usedTool = null; 
-            //            break;
-            //        case EntityClassId.PickAxe:
-            //            usedTool = new Pickaxe();
-            //            break;
-            //        case EntityClassId.Shovel:
-            //            break;
-            //        case EntityClassId.Hoe:
-            //            break;
-            //        case EntityClassId.Axe:
-            //            break;
-            //        case EntityClassId.Survey:
-            //            break;
-            //        case EntityClassId.Hand:
-            //            break;
-            //        default:
-            //            break;
-            //    }
-
-
-            //    IntVector2 chunkPosition = Utopia.Server.Utils.BlockHelper.BlockToChunkPosition(e.Message.NewBlockPosition);
-            //    Vector3I[] chunkBlockIndex = new Vector3I[1];
-            //    chunkBlockIndex[0] = Utopia.Server.Utils.BlockHelper.GlobalToInternalChunkPosition(e.Message.NewBlockPosition);
-
-            //    AreaManager.InvokeBlocksChanged(new BlocksChangedEventArgs { ChunkPosition = chunkPosition, BlockValues = new byte[] { 0 }, Locations = chunkBlockIndex });
-            //}
-            //catch (IOException)
-            //{
-            //}
-        }
-
-        //The entity has directly use something
-        void Connection_MessageEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
-        {
+            // incoming use message by the player
+            // handling entity using (tool or just use)
+            
+            var connection = (ClientConnection)sender;
+            connection.ServerEntity.Use(e.Message);
         }
 
         void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
