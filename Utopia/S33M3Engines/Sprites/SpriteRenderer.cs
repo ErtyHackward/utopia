@@ -309,18 +309,23 @@ namespace S33M3Engines.Sprites
 
             int numCharsToDraw = Math.Min(length, MaxBatchSize);
             int currentDraw = 0;
+
             for (int i = 0; i < numCharsToDraw; ++i)
             {
                 char character = text[i];
                 if (character == ' ')
+                    //next character will be a little bit more right
                     textTransform.M41 += font.SpaceWidth;
                 else if (character == '\n')
                 {
+                    //next character will be at next line
                     textTransform.M42 += font.CharHeight;
                     textTransform.M41 = 0;
+                    transform.M41 = 0;
                 }
                 else
                 {
+                    //New character
                     S33M3Engines.Sprites.SpriteFont.CharDesc desc = font.CharDescriptors[character];
 
                     _textDrawData[currentDraw].Tranform = textTransform * transform;
@@ -339,7 +344,7 @@ namespace S33M3Engines.Sprites
             RenderBatch(font.SpriteTexture, _textDrawData, currentDraw);
 
             if (length > numCharsToDraw)
-                RenderText(font, text + numCharsToDraw, textTransform, color);
+                RenderText(font, text.Substring(numCharsToDraw - 1), textTransform * transform, color);
         }
 
         public void End()
