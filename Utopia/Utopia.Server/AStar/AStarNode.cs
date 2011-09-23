@@ -34,7 +34,7 @@ namespace Utopia.Server.AStar
                 return _fGoalEstimate;
             }
         }
-        private double _fGoalEstimate;
+        private double _fGoalEstimate = double.NaN;
 
         /// <summary>
         /// The cost plus the estimated cost to the goal from here.
@@ -43,26 +43,14 @@ namespace Utopia.Server.AStar
         {
             get 
             {
-                return(Cost + GoalEstimate);
+                return (Cost + GoalEstimate);
             }
         }
 
         /// <summary>
         /// The goal node.
         /// </summary>
-        public T GoalNode 
-        {
-            get
-            {
-                return _fGoalNode;
-            }
-            set
-            {
-                _fGoalNode = value;
-                _fGoalEstimate = Estimate();
-            }
-        }
-        private T _fGoalNode;
+        public T GoalNode { get; set; }
 
         #endregion
 
@@ -91,7 +79,7 @@ namespace Utopia.Server.AStar
         /// <returns>Returns true if current node is the goal</returns>
         public bool IsGoal()
         {
-            return IsSameState(_fGoalNode);
+            return IsSameState(GoalNode);
         }
 
         #endregion
@@ -116,14 +104,6 @@ namespace Utopia.Server.AStar
         /// <param name="aSuccessors">List in which the successors will be added</param>
         public abstract void GetSuccessors(List<T> aSuccessors);
 		
-
-        /// <summary>
-        /// Prints information about the current node
-        /// </summary>
-        public virtual void PrintNodeInfo()
-        {
-        }
-
         #endregion
 
         #region Overridden Methods
@@ -144,14 +124,7 @@ namespace Utopia.Server.AStar
             if (IsSameState((T)obj))
                 return 0;
 
-            var costCompare = (-TotalCost.CompareTo(((AStarNode<T>)obj).TotalCost));
-
-            if (costCompare != 0)
-            {
-                return costCompare;
-            }
-
-            return GetHashCode().CompareTo(obj.GetHashCode()) ;
+            return otherNode.TotalCost.CompareTo(TotalCost);
         }
 
         #endregion

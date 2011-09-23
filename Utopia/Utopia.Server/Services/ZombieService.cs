@@ -6,6 +6,7 @@ using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Server.Entities;
 using Utopia.Server.Events;
+using Utopia.Server.Managers;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.ClassExt;
@@ -64,10 +65,10 @@ namespace Utopia.Server.Services
 
             _server.PlayerCommand += ServerPlayerCommand;
             var r = new Random();
-            for (int i = 0; i < 400; i++)
+            for (int i = 0; i < 1; i++)
             {
-                var z = CreateZombie(r.Next(_names), new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200))); //new DVector3(40, 72, -60));
-                z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
+                var z = CreateZombie(r.Next(_names), new DVector3(40, 72, -60)); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
+                //z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
                 z.Seed = r.Next(0, 100000);
             }
         }
@@ -84,7 +85,8 @@ namespace Utopia.Server.Services
             if (cmd == "addzombie")
             {
                 var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
-                _server.SendChatMessage(string.Format("Zombie {0} added {1}", z.DynamicEntity.DisplayName, _aliveZombies.Count));
+                _server.SendChatMessage(string.Format("Zombie {0} added {1}", z.DynamicEntity.DisplayName,
+                                                      _aliveZombies.Count));
             }
 
             if (cmd == "removezombies")
@@ -111,6 +113,24 @@ namespace Utopia.Server.Services
                 }
                 _server.SendChatMessage(string.Format("{0} zombies added ({1} total)", count, _aliveZombies.Count));
             }
+
+            if (cmd == "comehere")
+            {
+                var blockPos = _server.LandscapeManager.GetCursor(e.Connection.ServerEntity.DynamicEntity.Position);
+                
+                if (!blockPos.IsSolid() && blockPos.IsSolidDown())
+                {
+                    foreach (var serverZombie in _aliveZombies)
+                    {
+                        serverZombie.Goto(blockPos.GlobalPosition);
+                    }
+                }
+                else
+                {
+                    _server.SendChatMessage(string.Format("Error: you need to stay on solid block to use this command"));
+                }
+            }
+
         }
     }
 }

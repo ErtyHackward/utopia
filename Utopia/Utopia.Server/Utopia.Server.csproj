@@ -54,11 +54,12 @@
   <ItemGroup>
     <Compile Include="AStar\AStar.cs" />
     <Compile Include="AStar\AStarNode.cs" />
-    <Compile Include="AStar\AStarNode2D.cs" />
     <Compile Include="AStar\AStarNode3D.cs" />
-    <Compile Include="AStar\Main.cs" />
+    <Compile Include="AStar\Path3D.cs" />
+    <Compile Include="AStar\SortedListWithDuplicates.cs" />
     <Compile Include="ClientConnection.cs" />
     <Compile Include="Entities\ServerZombie.cs" />
+    <Compile Include="Entities\ZombieState.cs" />
     <Compile Include="Events\AreaVoxelModelEventArgs.cs" />
     <Compile Include="Events\ConnectionEventArgs.cs" />
     <Compile Include="Events\EntityLeaveAreaEventArgs.cs" />

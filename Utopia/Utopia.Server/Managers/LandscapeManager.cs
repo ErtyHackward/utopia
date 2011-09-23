@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using S33M3Engines.Shared.Math;
+using Utopia.Server.AStar;
 using Utopia.Server.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
@@ -18,6 +20,10 @@ namespace Utopia.Server.Managers
         private readonly IChunksStorage _chunksStorage;
         private readonly WorldGenerator _generator;
         private readonly List<ServerChunk> _saveList = new List<ServerChunk>();
+        private readonly Queue<AStar<AStarNode3D>> _pathPool = new Queue<AStar<AStarNode3D>>();
+        
+        private delegate Path3D CalculatePathDelegate(Location3<int> start, Location3<int> goal);
+        public delegate void PathCalculatedDeleagte(Path3D path);
 
         /// <summary>
         /// Gets main server memory chunk storage.
@@ -175,7 +181,79 @@ namespace Utopia.Server.Managers
         {
             return GetCursor(new Location3<int>((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
         }
-        
+
+        /// <summary>
+        /// Returns block position based on entity position
+        /// </summary>
+        /// <param name="entityPosition"></param>
+        /// <returns></returns>
+        public static Location3<int> EntityToBlockPosition(DVector3 entityPosition)
+        {
+            return new Location3<int>((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z));
+        }
+
+        /// <summary>
+        /// Calculates path asynchronously and fires callback when done
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="goal"></param>
+        /// <param name="callback"></param>
+        public void CalculatePathAsync(Location3<int> start, Location3<int> goal, PathCalculatedDeleagte callback)
+        {
+            var d = new CalculatePathDelegate(CalculatePath);
+            d.BeginInvoke(start, goal, PathCalculated, callback);
+        }
+
+        private void PathCalculated(IAsyncResult result)
+        {
+            var d = (CalculatePathDelegate)((AsyncResult)result).AsyncDelegate;
+            var resultDelegate = (PathCalculatedDeleagte)result.AsyncState;
+            var path = d.EndInvoke(result);
+            resultDelegate(path);
+        }
+
+        /// <summary>
+        /// Calculates path in current thread and returns the result
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="goal"></param>
+        /// <returns></returns>
+        public Path3D CalculatePath(Location3<int> start, Location3<int> goal)
+        {
+            AStar<AStarNode3D> calculator = null;
+            lock (_pathPool)
+            {
+                if (_pathPool.Count > 0)
+                    calculator = _pathPool.Dequeue();
+            }
+
+            if (calculator == null)
+                calculator = new AStar<AStarNode3D>();
+
+            var goalNode = new AStarNode3D(GetCursor(goal), null, null, 1);
+            var startNode = new AStarNode3D(GetCursor(start), null, goalNode, 1);
+
+            calculator.FindPath(startNode);
+
+            var path = new Path3D { Start = start, Goal = goal };
+
+            var list = new List<Location3<int>>();
+
+            foreach (var node3D in calculator.Solution)
+            {
+                list.Add(node3D.Cursor.GlobalPosition);
+            }
+
+            path.Points = list;
+
+            lock (_pathPool)
+            {
+                _pathPool.Enqueue(calculator);
+            }
+
+            return path;
+        }
+
         public void Dispose()
         {
             lock (_chunks)
