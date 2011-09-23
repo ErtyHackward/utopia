@@ -61,7 +61,7 @@ namespace Utopia.Entities.Voxel
             Update();
         }
 
-        public DVector3 Position
+        public Vector3D Position
         {
             get { return VoxelEntity.Position; }
             set { 

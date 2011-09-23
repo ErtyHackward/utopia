@@ -76,7 +76,7 @@ namespace Utopia.Shared.Chunks.Entities
         public EntityDisplacementModes DisplacementMode { get; set; }
 
         
-        public override DVector3 Position
+        public override Vector3D Position
         {
             get
             {

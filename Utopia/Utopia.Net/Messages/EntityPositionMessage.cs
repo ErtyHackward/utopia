@@ -19,7 +19,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Current position of the entity
         /// </summary>
-        private DVector3 _position;
+        private Vector3D _position;
 
         /// <summary>
         /// Gets message id
@@ -41,7 +41,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Gets or sets a current position of the player
         /// </summary>
-        public DVector3 Position
+        public Vector3D Position
         {
             get { return _position; }
             set { _position = value; }

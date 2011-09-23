@@ -20,7 +20,7 @@ namespace Utopia.Entities
         private Vector3 _boundingMinPoint, _boundingMaxPoint;                         //Use to recompute the bounding box in world coordinate
 
         //Server interpolated variables
-        private NetworkValue<DVector3> _netLocation;
+        private NetworkValue<Vector3D> _netLocation;
         private double _interpolationRate = 0.035;
         private int _distanceLimit = 3;
         #endregion
@@ -35,7 +35,7 @@ namespace Utopia.Entities
         /// </summary>
         public VisualEntity VisualEntity { get; set; }
 
-        public FTSValue<DVector3> WorldPosition = new FTSValue<DVector3>();         //World Position
+        public FTSValue<Vector3D> WorldPosition = new FTSValue<Vector3D>();         //World Position
         public FTSValue<Quaternion> LookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
         public FTSValue<Quaternion> MoveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
         #endregion
@@ -82,7 +82,7 @@ namespace Utopia.Entities
                 _distanceLimit = 5;
             }
 
-            _netLocation = new NetworkValue<DVector3>() { Value = WorldPosition.Value, Interpolated = WorldPosition.Value };
+            _netLocation = new NetworkValue<Vector3D>() { Value = WorldPosition.Value, Interpolated = WorldPosition.Value };
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Utopia.Entities
         /// </summary>
         /// <param name="worldPosition"></param>
         /// <param name="boundingBox"></param>
-        private void RefreshBoundingBox(ref DVector3 worldPosition, out BoundingBox boundingBox)
+        private void RefreshBoundingBox(ref Vector3D worldPosition, out BoundingBox boundingBox)
         {
             boundingBox = new BoundingBox(_boundingMinPoint + worldPosition.AsVector3(),
                                           _boundingMaxPoint + worldPosition.AsVector3());
@@ -138,7 +138,7 @@ namespace Utopia.Entities
         public void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
             Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
-            DVector3.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
+            Vector3D.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
 
             //Refresh the VisualEntity World matrix based on the latest interpolated values
             Vector3 entityCenteredPosition = WorldPosition.ValueInterp.AsVector3(); //currentLocation.AsVector3();

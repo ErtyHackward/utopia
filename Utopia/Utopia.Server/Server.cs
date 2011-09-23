@@ -447,7 +447,7 @@ namespace Utopia.Server
         {
             var dEntity = new PlayerCharacter();
             dEntity.EntityId = entityId;
-            dEntity.Position = new DVector3(10, 128, 10);
+            dEntity.Position = new Vector3D(10, 128, 10);
             dEntity.CharacterName = clientConnection.Login;
 
             var serverChar = new ServerPlayerCharacterEntity(clientConnection, dEntity);

@@ -11,11 +11,11 @@ namespace S33M3Physics.Verlet
 {
     public class VerletSimulator
     {
-        private DVector3 _curPosition;
+        private Vector3D _curPosition;
 
-        private DVector3 _prevPosition;
+        private Vector3D _prevPosition;
 
-        private DVector3 _forcesAccum;
+        private Vector3D _forcesAccum;
 
         private BoundingBox _boundingBox;
         private bool _isRunning;
@@ -38,10 +38,10 @@ namespace S33M3Physics.Verlet
         public bool SubjectToGravity { get { return _subjectToGravity; } set { _subjectToGravity = value; } }
         public bool OnGround { get { return _onGround; } set { _onGround = value; } }
 
-        public DVector3 CurPosition { get { return _curPosition; } set { _curPosition = value; } }
-        public DVector3 PrevPosition { get { return _prevPosition; } set { _prevPosition = value; } }
+        public Vector3D CurPosition { get { return _curPosition; } set { _curPosition = value; } }
+        public Vector3D PrevPosition { get { return _prevPosition; } set { _prevPosition = value; } }
 
-        public delegate void CheckConstraintFct(ref DVector3 newPosition2Evaluate, ref DVector3 previousPosition);
+        public delegate void CheckConstraintFct(ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
         public CheckConstraintFct ConstraintFct;
 
         public VerletSimulator(ref BoundingBox boundingBox)
@@ -49,7 +49,7 @@ namespace S33M3Physics.Verlet
             _boundingBox = boundingBox;
         }
 
-        public void StartSimulation(ref DVector3 StartingPosition, ref DVector3 PreviousPosition)
+        public void StartSimulation(ref Vector3D StartingPosition, ref Vector3D PreviousPosition)
         {
             _isRunning = true;
             _prevPosition = PreviousPosition;
@@ -68,7 +68,7 @@ namespace S33M3Physics.Verlet
             if (Z) _prevPosition.Z = _curPosition.Z;
         }
 
-        public void Simulate(ref GameTime dt, out DVector3 newPosition)
+        public void Simulate(ref GameTime dt, out Vector3D newPosition)
         {
             if (_isRunning)
             {
@@ -78,7 +78,7 @@ namespace S33M3Physics.Verlet
             }
             else
             {
-                newPosition = DVector3.Zero;
+                newPosition = Vector3D.Zero;
             }
         }
 
@@ -105,14 +105,14 @@ namespace S33M3Physics.Verlet
 
         }
 
-        private void Verlet(ref GameTime dt, out DVector3 newPosition)
+        private void Verlet(ref GameTime dt, out Vector3D newPosition)
         {
             newPosition = _curPosition + _curPosition - _prevPosition + (_forcesAccum * dt.ElapsedGameTimeInS_HD * dt.ElapsedGameTimeInS_HD);
             _prevPosition = _curPosition;
             _curPosition = newPosition;
         }
 
-        private void SatisfyConstraints(ref DVector3 newPosition, ref DVector3 previousPosition)
+        private void SatisfyConstraints(ref Vector3D newPosition, ref Vector3D previousPosition)
         {
             foreach (CheckConstraintFct fct in ConstraintFct.GetInvocationList())
             {

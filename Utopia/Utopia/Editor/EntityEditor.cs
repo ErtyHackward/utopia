@@ -114,7 +114,7 @@ namespace Utopia.Editor
 
             _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays, IsColor);
 
-            _editedEntity.Position = new DVector3((int) _player.Position.X, (int) _player.Position.Y,
+            _editedEntity.Position = new Vector3D((int) _player.Position.X, (int) _player.Position.Y,
                                                   (int) _player.Position.Z);
         }
 
@@ -285,7 +285,7 @@ namespace Utopia.Editor
         }
 
 
-        private DVector3 CastedFrom, CastedTo;
+        private Vector3D CastedFrom, CastedTo;
 
         private void GetSelectedBlock()
         {
@@ -293,7 +293,7 @@ namespace Utopia.Editor
 
             //XXX avoid unnecessay picking loops. but not just mousestate changes , you can still pick in freelook mode. 
 
-            DVector3 mouseWorldPosition, mouseLookAt;
+            Vector3D mouseWorldPosition, mouseLookAt;
             _inputManager.UnprojectMouseCursor(out mouseWorldPosition, out mouseLookAt);
 
             //Create a ray from MouseWorldPosition to a specific size (That we will increment) and then check if we intersect an existing cube !
@@ -307,7 +307,7 @@ namespace Utopia.Editor
             for (double x = start; x < end; x += 0.08) //for scale=1, was0.5 40 0.1  40 seems a high pick distance ! 
             {
                 nbrpt++;
-                DVector3 targetPoint = (mouseWorldPosition + (mouseLookAt*x));
+                Vector3D targetPoint = (mouseWorldPosition + (mouseLookAt*x));
 
                 if (x == start) CastedFrom = targetPoint;
                 CastedTo = targetPoint;

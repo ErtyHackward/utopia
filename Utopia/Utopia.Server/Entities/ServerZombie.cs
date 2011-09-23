@@ -17,11 +17,11 @@ namespace Utopia.Server.Entities
     /// </summary>
     public class ServerZombie : ServerDynamicEntity
     {
-        public static DVector3 CubeCenter = new DVector3(0.5d, 0.0d, 0.5d);
+        public static Vector3D CubeCenter = new Vector3D(0.5d, 0.0d, 0.5d);
 
         private readonly Server _server;
         private List<MapArea> _mapAreas = new List<MapArea>();
-        private DVector3 _moveDirection;
+        private Vector3D _moveDirection;
 
         private int _seed;
 
@@ -32,11 +32,11 @@ namespace Utopia.Server.Entities
 
         private Path3D _path;
         private int _targetPathNodeIndex = -1;
-        DVector3 _pathTargetPoint;
+        Vector3D _pathTargetPoint;
 
         public ZombieState State { get; set; }
 
-        public DVector3 MoveVector
+        public Vector3D MoveVector
         {
             get { return _moveDirection; }
             set { _moveDirection = value; }
@@ -71,10 +71,10 @@ namespace Utopia.Server.Entities
 
             State = ZombieState.FollowPath;
             _targetPathNodeIndex = 0;
-            _pathTargetPoint = new DVector3(_path.Points[0].X, _path.Points[0].Y, _path.Points[0].Z) + CubeCenter;
+            _pathTargetPoint = new Vector3D(_path.Points[0].X, _path.Points[0].Y, _path.Points[0].Z) + CubeCenter;
             _moveDirection = _pathTargetPoint - DynamicEntity.Position;
             _moveDirection.Normalize();
-            var q = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), DVector3.Up.AsVector3()));
+            var q = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
             DynamicEntity.Rotation = Quaternion.Invert(q); //Transform the rotation from a world rotatino to a local rotation
         }
 
@@ -102,7 +102,7 @@ namespace Utopia.Server.Entities
             {
                 var pos = DynamicEntity.Position;
                 pos.Y = Math.Round(DynamicEntity.Position.Y);
-                pos += new DVector3(0, -1, 0);
+                pos += new Vector3D(0, -1, 0);
                 DynamicEntity.Position = pos;
             }
             #endregion
@@ -119,10 +119,10 @@ namespace Utopia.Server.Entities
                     else
                     {
                         var vec3d = _path.Points[_targetPathNodeIndex];
-                        _pathTargetPoint = new DVector3(vec3d.X, vec3d.Y, vec3d.Z) + CubeCenter;
+                        _pathTargetPoint = new Vector3D(vec3d.X, vec3d.Y, vec3d.Z) + CubeCenter;
                         _moveDirection = _pathTargetPoint - DynamicEntity.Position;
                         _moveDirection.Normalize();
-                        var q = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), DVector3.Up.AsVector3()));
+                        var q = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
                         DynamicEntity.Rotation = Quaternion.Invert(q); //Transform the rotation from a world rotatino to a local rotation
                     }
                 }

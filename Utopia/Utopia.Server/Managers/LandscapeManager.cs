@@ -155,7 +155,7 @@ namespace Utopia.Server.Managers
         /// <param name="position">Global position</param>
         /// <param name="chunk">a chunk containing this position</param>
         /// <param name="cubePosition">a cube position inside the chunk</param>
-        public void GetBlockAndChunk(DVector3 position, out ServerChunk chunk, out Location3<int> cubePosition)
+        public void GetBlockAndChunk(Vector3D position, out ServerChunk chunk, out Location3<int> cubePosition)
         {
             cubePosition.X = (int)Math.Floor(position.X);
             cubePosition.Y = (int)Math.Floor(position.Y);
@@ -177,7 +177,7 @@ namespace Utopia.Server.Managers
             return new LandscapeCursor(this, blockPosition);
         }
 
-        public LandscapeCursor GetCursor(DVector3 entityPosition)
+        public LandscapeCursor GetCursor(Vector3D entityPosition)
         {
             return GetCursor(new Location3<int>((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
         }
@@ -187,7 +187,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="entityPosition"></param>
         /// <returns></returns>
-        public static Location3<int> EntityToBlockPosition(DVector3 entityPosition)
+        public static Location3<int> EntityToBlockPosition(Vector3D entityPosition)
         {
             return new Location3<int>((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z));
         }

@@ -53,10 +53,10 @@ namespace Utopia.Entities.Managers
         //Player Visual characteristics (Not insde the PlayerCharacter object)
         private BoundingBox _playerBoundingBox;
         private Vector3 _boundingMinPoint, _boundingMaxPoint;                         //Use to recompute the bounding box in world coordinate
-        private FTSValue<DVector3> _worldPosition = new FTSValue<DVector3>();         //World Position
+        private FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();         //World Position
         private FTSValue<Quaternion> _lookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
         private FTSValue<Quaternion> _moveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
-        private DVector3 _lookAt;
+        private Vector3D _lookAt;
         private Vector3 _entityEyeOffset;                                     //Offset of the camera Placement inside the entity, from entity center point.
 
         //Mouvement handling variables
@@ -69,8 +69,8 @@ namespace Utopia.Entities.Managers
         private double _moveDelta;
         private Matrix _headRotation;
         private Matrix _entityRotation;
-        private DVector3 _entityHeadXAxis, _entityHeadYAxis, _entityHeadZAxis;
-        private DVector3 _entityXAxis, _entityYAxis, _entityZAxis;
+        private Vector3D _entityHeadXAxis, _entityHeadYAxis, _entityHeadZAxis;
+        private Vector3D _entityXAxis, _entityYAxis, _entityZAxis;
 
         //Drawing component
         private IEntitiesRenderer _playerRenderer;
@@ -87,7 +87,7 @@ namespace Utopia.Entities.Managers
         public VisualEntity VisualEntity { get; set; }
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
-        public virtual DVector3 CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
+        public virtual Vector3D CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
         public virtual Quaternion CameraOrientation { get { return _lookAtDirection.Value; } }
 
         public bool IsHeadInsideWater { get; set; }
@@ -153,7 +153,7 @@ namespace Utopia.Entities.Managers
         /// </summary>
         /// <param name="worldPosition"></param>
         /// <param name="boundingBox"></param>
-        private void RefreshBoundingBox(ref DVector3 worldPosition, out BoundingBox boundingBox)
+        private void RefreshBoundingBox(ref Vector3D worldPosition, out BoundingBox boundingBox)
         {
             boundingBox = new BoundingBox(_boundingMinPoint + worldPosition.AsVector3(),
                                           _boundingMaxPoint + worldPosition.AsVector3());
@@ -231,7 +231,7 @@ namespace Utopia.Entities.Managers
         {
             Player.EntityState.IsBlockPicked = false;
 
-            DVector3 pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
+            Vector3D pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
             //Sample 500 points in the view direction vector
             for (int ptNbr = 0; ptNbr < 500; ptNbr++)
             {
@@ -252,7 +252,7 @@ namespace Utopia.Entities.Managers
 
                     newRay.Intersects(ref bBox, out FaceDistance);
 
-                    DVector3 CollisionPoint = _worldPosition.Value + _entityEyeOffset + (_lookAt * FaceDistance);
+                    Vector3D CollisionPoint = _worldPosition.Value + _entityEyeOffset + (_lookAt * FaceDistance);
                     MVector3.Round(ref CollisionPoint, 4);
 
                     Player.EntityState.NewBlockPosition = Player.EntityState.PickedBlockPosition;
@@ -334,7 +334,7 @@ namespace Utopia.Entities.Managers
         {
             TerraCubeWithPosition groundCube;
             Location3<int> GroundDirection = new Location3<int>(0, -1, 0);
-            DVector3 newWorldPosition;
+            Vector3D newWorldPosition;
 
             _cubesHolder.GetNextSolidBlockToPlayer(ref _playerBoundingBox, ref GroundDirection, out groundCube);
             if (groundCube.Cube.Id != CubeId.Error)
@@ -356,11 +356,11 @@ namespace Utopia.Entities.Managers
         /// </summary>
         /// <param name="newPosition2Evaluate"></param>
         /// <param name="previousPosition"></param>
-        private void isCollidingWithTerrain(ref DVector3 newPosition2Evaluate, ref DVector3 previousPosition)
+        private void isCollidingWithTerrain(ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
 
             BoundingBox _boundingBox2Evaluate;
-            DVector3 newPositionWithColliding = previousPosition;
+            Vector3D newPositionWithColliding = previousPosition;
             //Create a Bounding box with my new suggested position, taking only the X that has been changed !
             //X Testing
             newPositionWithColliding.X = newPosition2Evaluate.X;
@@ -473,10 +473,10 @@ namespace Utopia.Entities.Managers
                 _worldPosition.Value += _entityHeadXAxis * _moveDelta;
 
             if (_actions.isTriggered(Actions.Move_Down))
-                _worldPosition.Value += DVector3.Down * _moveDelta;
+                _worldPosition.Value += Vector3D.Down * _moveDelta;
 
             if (_actions.isTriggered(Actions.Move_Up))
-                _worldPosition.Value += DVector3.Up * _moveDelta;
+                _worldPosition.Value += Vector3D.Up * _moveDelta;
         }
 
         private void WalkingFirstPerson(ref GameTime TimeSpend)
@@ -500,7 +500,7 @@ namespace Utopia.Entities.Managers
                 _physicSimu.PrevPosition -= _entityXAxis * _moveDelta;
 
             if (_physicSimu.OnGround && _actions.isTriggered(Actions.Move_Jump))
-                _physicSimu.Impulses.Add(new Impulse(ref TimeSpend) { ForceApplied = new DVector3(0, 300, 0) });
+                _physicSimu.Impulses.Add(new Impulse(ref TimeSpend) { ForceApplied = new Vector3D(0, 300, 0) });
         }
         #endregion
 
@@ -557,9 +557,9 @@ namespace Utopia.Entities.Managers
             Matrix.RotationQuaternion(ref _moveDirection.Value, out _entityRotation);
             Matrix.Transpose(ref _entityRotation, out _entityRotation);
 
-            _entityXAxis = new DVector3(_entityRotation.M11, _entityRotation.M21, _entityRotation.M31);
-            _entityYAxis = new DVector3(_entityRotation.M12, _entityRotation.M22, _entityRotation.M32);
-            _entityZAxis = new DVector3(_entityRotation.M13, _entityRotation.M23, _entityRotation.M33);
+            _entityXAxis = new Vector3D(_entityRotation.M11, _entityRotation.M21, _entityRotation.M31);
+            _entityYAxis = new Vector3D(_entityRotation.M12, _entityRotation.M22, _entityRotation.M32);
+            _entityZAxis = new Vector3D(_entityRotation.M13, _entityRotation.M23, _entityRotation.M33);
         }
 
         private void RotateLookAt(double headingDegrees, double pitchDegrees)
@@ -605,11 +605,11 @@ namespace Utopia.Entities.Managers
             Matrix.RotationQuaternion(ref _lookAtDirection.Value, out _headRotation);
             Matrix.Transpose(ref _headRotation, out _headRotation);
 
-            _entityHeadXAxis = new DVector3(_headRotation.M11, _headRotation.M21, _headRotation.M31);
-            _entityHeadYAxis = new DVector3(_headRotation.M12, _headRotation.M22, _headRotation.M32);
-            _entityHeadZAxis = new DVector3(_headRotation.M13, _headRotation.M23, _headRotation.M33);
+            _entityHeadXAxis = new Vector3D(_headRotation.M11, _headRotation.M21, _headRotation.M31);
+            _entityHeadYAxis = new Vector3D(_headRotation.M12, _headRotation.M22, _headRotation.M32);
+            _entityHeadZAxis = new Vector3D(_headRotation.M13, _headRotation.M23, _headRotation.M33);
 
-            _lookAt = new DVector3(-_entityHeadZAxis.X, -_entityHeadZAxis.Y, -_entityHeadZAxis.Z);
+            _lookAt = new Vector3D(-_entityHeadZAxis.X, -_entityHeadZAxis.Y, -_entityHeadZAxis.Z);
             _lookAt.Normalize();
         }
         #endregion
@@ -680,7 +680,7 @@ namespace Utopia.Entities.Managers
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
             Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
-            DVector3.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
+            Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 
             _playerRenderer.Interpolation(ref interpolationHd, ref interpolationLd);
 

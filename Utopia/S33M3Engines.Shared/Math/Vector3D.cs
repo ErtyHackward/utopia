@@ -9,12 +9,12 @@ using SharpDX;
 namespace S33M3Engines.Shared.Math
 {
     [Serializable, StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct DVector3 : IEquatable<DVector3>
+    public struct Vector3D : IEquatable<Vector3D>
     {
-        public static DVector3 Up = new DVector3(0, 1, 0);
-        public static DVector3 Down = new DVector3(0, -1, 0);
-        public static DVector3 Right = new DVector3(1, 0, 0);
-        public static DVector3 Left = new DVector3(-1, 0, 0);
+        public static Vector3D Up = new Vector3D(0, 1, 0);
+        public static Vector3D Down = new Vector3D(0, -1, 0);
+        public static Vector3D Right = new Vector3D(1, 0, 0);
+        public static Vector3D Left = new Vector3D(-1, 0, 0);
 
         public double X;
         public double Y;
@@ -60,70 +60,70 @@ namespace S33M3Engines.Shared.Math
                 }
             }
         }
-        public static DVector3 Zero
+        public static Vector3D Zero
         {
             get
             {
-                return new DVector3(0f, 0f, 0f);
+                return new Vector3D(0f, 0f, 0f);
             }
         }
-        public static DVector3 UnitX
+        public static Vector3D UnitX
         {
             get
             {
-                return new DVector3(1f, 0f, 0f);
+                return new Vector3D(1f, 0f, 0f);
             }
         }
-        public static DVector3 UnitY
+        public static Vector3D UnitY
         {
             get
             {
-                return new DVector3(0f, 1f, 0f);
+                return new Vector3D(0f, 1f, 0f);
             }
         }
-        public static DVector3 UnitZ
+        public static Vector3D UnitZ
         {
             get
             {
-                return new DVector3(0f, 0f, 1f);
+                return new Vector3D(0f, 0f, 1f);
             }
         }
         public static int SizeInBytes
         {
             get
             {
-                return Marshal.SizeOf(typeof(DVector3));
+                return Marshal.SizeOf(typeof(Vector3D));
             }
         }
-        public DVector3(double x, double y, double z)
+        public Vector3D(double x, double y, double z)
         {
             this.X = x;
             this.Y = y;
             this.Z = z;
         }
 
-        public DVector3(float x, float y, float z)
+        public Vector3D(float x, float y, float z)
         {
             this.X = x;
             this.Y = y;
             this.Z = z;
         }
 
-        public DVector3(Vector2 value, double z)
+        public Vector3D(Vector2 value, double z)
         {
             this.X = value.X;
             this.Y = value.Y;
             this.Z = z;
         }
 
-        public DVector3(double value)
+        public Vector3D(double value)
         {
             this.X = value;
             this.Y = value;
             this.Z = value;
         }
 
-        public DVector3(Vector3 floatVector3)
+        public Vector3D(Vector3 floatVector3)
         {
             this.X = floatVector3.X;
             this.Y = floatVector3.Y;
@@ -155,13 +155,13 @@ namespace S33M3Engines.Shared.Math
             return (double)(((x * x) + (y * y)) + (z * z));
         }
 
-        public static void Normalize(ref DVector3 vector, out DVector3 result)
+        public static void Normalize(ref Vector3D vector, out Vector3D result)
         {
             result = vector;
             result.Normalize();
         }
 
-        public static DVector3 Normalize(DVector3 vector)
+        public static Vector3D Normalize(Vector3D vector)
         {
             vector.Normalize();
             return vector;
@@ -184,99 +184,99 @@ namespace S33M3Engines.Shared.Math
             return new Vector3((float)X, (float)Y, (float)Z);
         }
 
-        public static void Add(ref DVector3 left, ref DVector3 right, out DVector3 result)
+        public static void Add(ref Vector3D left, ref Vector3D right, out Vector3D result)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = left.X + right.X;
             vector.Y = left.Y + right.Y;
             vector.Z = left.Z + right.Z;
             result = vector;
         }
 
-        public static DVector3 Add(DVector3 left, DVector3 right)
+        public static Vector3D Add(Vector3D left, Vector3D right)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = left.X + right.X;
             vector.Y = left.Y + right.Y;
             vector.Z = left.Z + right.Z;
             return vector;
         }
 
-        public static void Subtract(ref DVector3 left, ref DVector3 right, out DVector3 result)
+        public static void Subtract(ref Vector3D left, ref Vector3D right, out Vector3D result)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = left.X - right.X;
             vector.Y = left.Y - right.Y;
             vector.Z = left.Z - right.Z;
             result = vector;
         }
 
-        public static DVector3 Subtract(DVector3 left, DVector3 right)
+        public static Vector3D Subtract(Vector3D left, Vector3D right)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = left.X - right.X;
             vector.Y = left.Y - right.Y;
             vector.Z = left.Z - right.Z;
             return vector;
         }
 
-        public static void Multiply(ref DVector3 value, double scale, out DVector3 result)
+        public static void Multiply(ref Vector3D value, double scale, out Vector3D result)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = value.X * scale;
             vector.Y = value.Y * scale;
             vector.Z = value.Z * scale;
             result = vector;
         }
 
-        public static DVector3 Multiply(DVector3 value, double scale)
+        public static Vector3D Multiply(Vector3D value, double scale)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = value.X * scale;
             vector.Y = value.Y * scale;
             vector.Z = value.Z * scale;
             return vector;
         }
 
-        public static void Modulate(ref DVector3 left, ref DVector3 right, out DVector3 result)
+        public static void Modulate(ref Vector3D left, ref Vector3D right, out Vector3D result)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = left.X * right.X;
             vector.Y = left.Y * right.Y;
             vector.Z = left.Z * right.Z;
             result = vector;
         }
 
-        public static DVector3 Modulate(DVector3 left, DVector3 right)
+        public static Vector3D Modulate(Vector3D left, Vector3D right)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = left.X * right.X;
             vector.Y = left.Y * right.Y;
             vector.Z = left.Z * right.Z;
             return vector;
         }
 
-        public static void Divide(ref DVector3 value, double scale, out DVector3 result)
+        public static void Divide(ref Vector3D value, double scale, out Vector3D result)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = (double)(((double)value.X) / ((double)scale));
             vector.Y = (double)(((double)value.Y) / ((double)scale));
             vector.Z = (double)(((double)value.Z) / ((double)scale));
             result = vector;
         }
 
-        public static DVector3 Divide(DVector3 value, double scale)
+        public static Vector3D Divide(Vector3D value, double scale)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = (double)(((double)value.X) / ((double)scale));
             vector.Y = (double)(((double)value.Y) / ((double)scale));
             vector.Z = (double)(((double)value.Z) / ((double)scale));
             return vector;
         }
 
-        public static void Negate(ref DVector3 value, out DVector3 result)
+        public static void Negate(ref Vector3D value, out Vector3D result)
         {
-            DVector3 vector;
+            Vector3D vector;
             double num3 = -value.X;
             double num2 = -value.Y;
             double num = -value.Z;
@@ -286,9 +286,9 @@ namespace S33M3Engines.Shared.Math
             result = vector;
         }
 
-        public static DVector3 Negate(DVector3 value)
+        public static Vector3D Negate(Vector3D value)
         {
-            DVector3 vector;
+            Vector3D vector;
             double num3 = -value.X;
             double num2 = -value.Y;
             double num = -value.Z;
@@ -298,39 +298,39 @@ namespace S33M3Engines.Shared.Math
             return vector;
         }
 
-        public static void Barycentric(ref DVector3 value1, ref DVector3 value2, ref DVector3 value3, double amount1, double amount2, out DVector3 result)
+        public static void Barycentric(ref Vector3D value1, ref Vector3D value2, ref Vector3D value3, double amount1, double amount2, out Vector3D result)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = (((value2.X - value1.X) * amount1) + value1.X) + ((value3.X - value1.X) * amount2);
             vector.Y = (((value2.Y - value1.Y) * amount1) + value1.Y) + ((value3.Y - value1.Y) * amount2);
             vector.Z = (((value2.Z - value1.Z) * amount1) + value1.Z) + ((value3.Z - value1.Z) * amount2);
             result = vector;
         }
 
-        public static DVector3 Barycentric(DVector3 value1, DVector3 value2, DVector3 value3, double amount1, double amount2)
+        public static Vector3D Barycentric(Vector3D value1, Vector3D value2, Vector3D value3, double amount1, double amount2)
         {
-            DVector3 vector = new DVector3();
+            Vector3D vector = new Vector3D();
             vector.X = (((value2.X - value1.X) * amount1) + value1.X) + ((value3.X - value1.X) * amount2);
             vector.Y = (((value2.Y - value1.Y) * amount1) + value1.Y) + ((value3.Y - value1.Y) * amount2);
             vector.Z = (((value2.Z - value1.Z) * amount1) + value1.Z) + ((value3.Z - value1.Z) * amount2);
             return vector;
         }
 
-        public static void CatmullRom(ref DVector3 value1, ref DVector3 value2, ref DVector3 value3, ref DVector3 value4, double amount, out DVector3 result)
+        public static void CatmullRom(ref Vector3D value1, ref Vector3D value2, ref Vector3D value3, ref Vector3D value4, double amount, out Vector3D result)
         {
             double num = amount;
             double squared = (double)(num * num);
             double cubed = squared * amount;
-            DVector3 r = new DVector3();
+            Vector3D r = new Vector3D();
             r.X = (double)((((((((value1.X * 2.0) - (value2.X * 5.0)) + (value3.X * 4.0)) - value4.X) * squared) + (((value3.X - value1.X) * amount) + (value2.X * 2.0))) + (((((value2.X * 3.0) - value1.X) - (value3.X * 3.0)) + value4.X) * cubed)) * 0.5);
             r.Y = (double)((((((((value1.Y * 2.0) - (value2.Y * 5.0)) + (value3.Y * 4.0)) - value4.Y) * squared) + (((value3.Y - value1.Y) * amount) + (value2.Y * 2.0))) + (((((value2.Y * 3.0) - value1.Y) - (value3.Y * 3.0)) + value4.Y) * cubed)) * 0.5);
             r.Z = (double)((((((((value1.Z * 2.0) - (value2.Z * 5.0)) + (value3.Z * 4.0)) - value4.Z) * squared) + (((value3.Z - value1.Z) * amount) + (value2.Z * 2.0))) + (((((value2.Z * 3.0) - value1.Z) - (value3.Z * 3.0)) + value4.Z) * cubed)) * 0.5);
             result = r;
         }
 
-        public static DVector3 CatmullRom(DVector3 value1, DVector3 value2, DVector3 value3, DVector3 value4, double amount)
+        public static Vector3D CatmullRom(Vector3D value1, Vector3D value2, Vector3D value3, Vector3D value4, double amount)
         {
-            DVector3 vector = new DVector3();
+            Vector3D vector = new Vector3D();
             double num = amount;
             double squared = (double)(num * num);
             double cubed = squared * amount;
@@ -340,7 +340,7 @@ namespace S33M3Engines.Shared.Math
             return vector;
         }
 
-        public static void Clamp(ref DVector3 value, ref DVector3 min, ref DVector3 max, out DVector3 result)
+        public static void Clamp(ref Vector3D value, ref Vector3D min, ref Vector3D max, out Vector3D result)
         {
             double num;
             double num2;
@@ -348,7 +348,7 @@ namespace S33M3Engines.Shared.Math
             double num4;
             double num5;
             double num6;
-            DVector3 vector;
+            Vector3D vector;
             double x = value.X;
             if (x > max.X)
             {
@@ -406,7 +406,7 @@ namespace S33M3Engines.Shared.Math
             result = vector;
         }
 
-        public static DVector3 Clamp(DVector3 value, DVector3 min, DVector3 max)
+        public static Vector3D Clamp(Vector3D value, Vector3D min, Vector3D max)
         {
             double num;
             double num2;
@@ -414,7 +414,7 @@ namespace S33M3Engines.Shared.Math
             double num4;
             double num5;
             double num6;
-            DVector3 vector;
+            Vector3D vector;
             double x = value.X;
             if (x > max.X)
             {
@@ -472,7 +472,7 @@ namespace S33M3Engines.Shared.Math
             return vector;
         }
 
-        public static void Hermite(ref DVector3 value1, ref DVector3 tangent1, ref DVector3 value2, ref DVector3 tangent2, double amount, out DVector3 result)
+        public static void Hermite(ref Vector3D value1, ref Vector3D tangent1, ref Vector3D value2, ref Vector3D tangent2, double amount, out Vector3D result)
         {
             double num2 = amount;
             double squared = (double)(num2 * num2);
@@ -487,9 +487,9 @@ namespace S33M3Engines.Shared.Math
             result.Z = (((value2.Z * part2) + (value1.Z * part1)) + (tangent1.Z * part3)) + (tangent2.Z * part4);
         }
 
-        public static DVector3 Hermite(DVector3 value1, DVector3 tangent1, DVector3 value2, DVector3 tangent2, double amount)
+        public static Vector3D Hermite(Vector3D value1, Vector3D tangent1, Vector3D value2, Vector3D tangent2, double amount)
         {
-            DVector3 vector = new DVector3();
+            Vector3D vector = new Vector3D();
             double num2 = amount;
             double squared = (double)(num2 * num2);
             double cubed = squared * amount;
@@ -504,23 +504,23 @@ namespace S33M3Engines.Shared.Math
             return vector;
         }
 
-        public static void Lerp(ref DVector3 start, ref DVector3 end, double amount, out DVector3 result)
+        public static void Lerp(ref Vector3D start, ref Vector3D end, double amount, out Vector3D result)
         {
             result.X = ((end.X - start.X) * amount) + start.X;
             result.Y = ((end.Y - start.Y) * amount) + start.Y;
             result.Z = ((end.Z - start.Z) * amount) + start.Z;
         }
 
-        public static DVector3 Lerp(DVector3 start, DVector3 end, double amount)
+        public static Vector3D Lerp(Vector3D start, Vector3D end, double amount)
         {
-            DVector3 vector = new DVector3();
+            Vector3D vector = new Vector3D();
             vector.X = ((end.X - start.X) * amount) + start.X;
             vector.Y = ((end.Y - start.Y) * amount) + start.Y;
             vector.Z = ((end.Z - start.Z) * amount) + start.Z;
             return vector;
         }
 
-        public static void SmoothStep(ref DVector3 start, ref DVector3 end, double amount, out DVector3 result)
+        public static void SmoothStep(ref Vector3D start, ref Vector3D end, double amount, out Vector3D result)
         {
             double num;
             if (amount > 1f)
@@ -547,10 +547,10 @@ namespace S33M3Engines.Shared.Math
             result.Z = ((end.Z - start.Z) * amount) + start.Z;
         }
 
-        public static DVector3 SmoothStep(DVector3 start, DVector3 end, double amount)
+        public static Vector3D SmoothStep(Vector3D start, Vector3D end, double amount)
         {
             double num;
-            DVector3 vector = new DVector3();
+            Vector3D vector = new Vector3D();
             if (amount > 1f)
             {
                 num = 1f;
@@ -576,7 +576,7 @@ namespace S33M3Engines.Shared.Math
             return vector;
         }
 
-        public static double Distance(DVector3 value1, DVector3 value2)
+        public static double Distance(Vector3D value1, Vector3D value2)
         {
             double x = value1.X - value2.X;
             double y = value1.Y - value2.Y;
@@ -587,7 +587,7 @@ namespace S33M3Engines.Shared.Math
             return (double)System.Math.Sqrt(((num2 * num2) + (num3 * num3)) + (num * num));
         }
 
-        public static double DistanceSquared(DVector3 value1, DVector3 value2)
+        public static double DistanceSquared(Vector3D value1, Vector3D value2)
         {
             double x = value1.X - value2.X;
             double y = value1.Y - value2.Y;
@@ -598,30 +598,30 @@ namespace S33M3Engines.Shared.Math
             return (double)(((num2 * num2) + (num3 * num3)) + (num * num));
         }
 
-        public static double Dot(DVector3 left, DVector3 right)
+        public static double Dot(Vector3D left, Vector3D right)
         {
             return (((left.Y * right.Y) + (left.X * right.X)) + (left.Z * right.Z));
         }
 
-        public static void Cross(ref DVector3 left, ref DVector3 right, out DVector3 result)
+        public static void Cross(ref Vector3D left, ref Vector3D right, out Vector3D result)
         {
-            DVector3 r = new DVector3();
+            Vector3D r = new Vector3D();
             r.X = (left.Y * right.Z) - (left.Z * right.Y);
             r.Y = (left.Z * right.X) - (left.X * right.Z);
             r.Z = (left.X * right.Y) - (left.Y * right.X);
             result = r;
         }
 
-        public static DVector3 Cross(DVector3 left, DVector3 right)
+        public static Vector3D Cross(Vector3D left, Vector3D right)
         {
-            DVector3 result = new DVector3();
+            Vector3D result = new Vector3D();
             result.X = (right.Z * left.Y) - (left.Z * right.Y);
             result.Y = (left.Z * right.X) - (right.Z * left.X);
             result.Z = (right.Y * left.X) - (left.Y * right.X);
             return result;
         }
 
-        public static void Reflect(ref DVector3 vector, ref DVector3 normal, out DVector3 result)
+        public static void Reflect(ref Vector3D vector, ref Vector3D normal, out Vector3D result)
         {
             double dot = ((vector.Y * normal.Y) + (vector.X * normal.X)) + (vector.Z * normal.Z);
             double num = dot * 2.0;
@@ -630,9 +630,9 @@ namespace S33M3Engines.Shared.Math
             result.Z = vector.Z - ((double)(normal.Z * num));
         }
 
-        public static DVector3 Reflect(DVector3 vector, DVector3 normal)
+        public static Vector3D Reflect(Vector3D vector, Vector3D normal)
         {
-            DVector3 result = new DVector3();
+            Vector3D result = new Vector3D();
             double dot = ((vector.Y * normal.Y) + (vector.X * normal.X)) + (vector.Z * normal.Z);
             double num = dot * 2.0;
             result.X = vector.X - ((double)(normal.X * num));
@@ -641,7 +641,7 @@ namespace S33M3Engines.Shared.Math
             return result;
         }
 
-        public static Vector4[] Transform(DVector3[] vectors, ref Quaternion rotation)
+        public static Vector4[] Transform(Vector3D[] vectors, ref Quaternion rotation)
         {
             if (vectors == null)
             {
@@ -743,7 +743,7 @@ namespace S33M3Engines.Shared.Math
         }
 
 
-        public static void Minimize(ref DVector3 value1, ref DVector3 value2, out DVector3 result)
+        public static void Minimize(ref Vector3D value1, ref Vector3D value2, out Vector3D result)
         {
             double z;
             double y;
@@ -777,12 +777,12 @@ namespace S33M3Engines.Shared.Math
             result.Z = z;
         }
 
-        public static DVector3 Minimize(DVector3 value1, DVector3 value2)
+        public static Vector3D Minimize(Vector3D value1, Vector3D value2)
         {
             double z;
             double y;
             double x;
-            DVector3 vector = new DVector3();
+            Vector3D vector = new Vector3D();
             if (value1.X < value2.X)
             {
                 x = value1.X;
@@ -813,7 +813,7 @@ namespace S33M3Engines.Shared.Math
             return vector;
         }
 
-        public static void Maximize(ref DVector3 value1, ref DVector3 value2, out DVector3 result)
+        public static void Maximize(ref Vector3D value1, ref Vector3D value2, out Vector3D result)
         {
             double z;
             double y;
@@ -847,12 +847,12 @@ namespace S33M3Engines.Shared.Math
             result.Z = z;
         }
 
-        public static DVector3 Maximize(DVector3 value1, DVector3 value2)
+        public static Vector3D Maximize(Vector3D value1, Vector3D value2)
         {
             double z;
             double y;
             double x;
-            DVector3 vector = new DVector3();
+            Vector3D vector = new Vector3D();
             if (value1.X > value2.X)
             {
                 x = value1.X;
@@ -883,27 +883,27 @@ namespace S33M3Engines.Shared.Math
             return vector;
         }
 
-        public static DVector3 operator +(DVector3 left, DVector3 right)
+        public static Vector3D operator +(Vector3D left, Vector3D right)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = left.X + right.X;
             vector.Y = left.Y + right.Y;
             vector.Z = left.Z + right.Z;
             return vector;
         }
 
-        public static DVector3 operator +(DVector3 left, Vector3 right)
+        public static Vector3D operator +(Vector3D left, Vector3 right)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = left.X + right.X;
             vector.Y = left.Y + right.Y;
             vector.Z = left.Z + right.Z;
             return vector;
         }
 
-        public static DVector3 operator -(DVector3 value)
+        public static Vector3D operator -(Vector3D value)
         {
-            DVector3 vector;
+            Vector3D vector;
             double num3 = -value.X;
             double num2 = -value.Y;
             double num = -value.Z;
@@ -913,41 +913,41 @@ namespace S33M3Engines.Shared.Math
             return vector;
         }
 
-        public static DVector3 operator -(DVector3 left, DVector3 right)
+        public static Vector3D operator -(Vector3D left, Vector3D right)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = left.X - right.X;
             vector.Y = left.Y - right.Y;
             vector.Z = left.Z - right.Z;
             return vector;
         }
 
-        public static DVector3 operator -(DVector3 left, Vector3 right)
+        public static Vector3D operator -(Vector3D left, Vector3 right)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = left.X - right.X;
             vector.Y = left.Y - right.Y;
             vector.Z = left.Z - right.Z;
             return vector;
         }
 
-        public static DVector3 operator *(double scale, DVector3 vector)
+        public static Vector3D operator *(double scale, Vector3D vector)
         {
-            return (DVector3)(vector * scale);
+            return (Vector3D)(vector * scale);
         }
 
-        public static DVector3 operator *(DVector3 value, double scale)
+        public static Vector3D operator *(Vector3D value, double scale)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = value.X * scale;
             vector.Y = value.Y * scale;
             vector.Z = value.Z * scale;
             return vector;
         }
 
-        public static DVector3 operator /(DVector3 value, double scale)
+        public static Vector3D operator /(Vector3D value, double scale)
         {
-            DVector3 vector;
+            Vector3D vector;
             vector.X = (double)(((double)value.X) / ((double)scale));
             vector.Y = (double)(((double)value.Y) / ((double)scale));
             vector.Z = (double)(((double)value.Z) / ((double)scale));
@@ -955,13 +955,13 @@ namespace S33M3Engines.Shared.Math
         }
 
         [return: MarshalAs(UnmanagedType.U1)]
-        public static bool operator ==(DVector3 left, DVector3 right)
+        public static bool operator ==(Vector3D left, Vector3D right)
         {
             return Equals(ref left, ref right);
         }
 
         [return: MarshalAs(UnmanagedType.U1)]
-        public static bool operator !=(DVector3 left, DVector3 right)
+        public static bool operator !=(Vector3D left, Vector3D right)
         {
             return !Equals(ref left, ref right);
         }
@@ -982,7 +982,7 @@ namespace S33M3Engines.Shared.Math
         }
 
         [return: MarshalAs(UnmanagedType.U1)]
-        public static bool Equals(ref DVector3 value1, ref DVector3 value2)
+        public static bool Equals(ref Vector3D value1, ref Vector3D value2)
         {
             bool num;
             if (((value1.X == value2.X) && (value1.Y == value2.Y)) && (value1.Z == value2.Z))
@@ -997,7 +997,7 @@ namespace S33M3Engines.Shared.Math
         }
 
         [return: MarshalAs(UnmanagedType.U1)]
-        public bool Equals(DVector3 other)
+        public bool Equals(Vector3D other)
         {
             bool num;
             if (((this.X == other.X) && (this.Y == other.Y)) && (this.Z == other.Z))
@@ -1022,7 +1022,7 @@ namespace S33M3Engines.Shared.Math
             {
                 return false;
             }
-            return this.Equals((DVector3)obj);
+            return this.Equals((Vector3D)obj);
         }
     }
 }

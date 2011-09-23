@@ -7,6 +7,6 @@ namespace Utopia.Server.Events
     public class EntityLeaveAreaEventArgs : EventArgs
     {
         public ServerDynamicEntity Entity { get; set; }
-        public DVector3 PreviousPosition { get; set; }
+        public Vector3D PreviousPosition { get; set; }
     }
 }

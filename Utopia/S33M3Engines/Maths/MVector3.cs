@@ -57,7 +57,7 @@ namespace S33M3Engines.Maths
             result = (float)Math.Sqrt((double)num4);
         }
 
-        public static float Distance(Location3<int> value1, DVector3 value2)
+        public static float Distance(Location3<int> value1, Vector3D value2)
         {
             float num3 = value1.X - (float)value2.X;
             float num2 = value1.Y - (float)value2.Y;
@@ -134,7 +134,7 @@ namespace S33M3Engines.Maths
             data.Z = (float)Math.Round(data.Z, decimals);
         }
 
-        public static void Round(ref DVector3 data, int decimals)
+        public static void Round(ref Vector3D data, int decimals)
         {
             data.X = Math.Round(data.X, decimals);
             data.Y = Math.Round(data.Y, decimals);

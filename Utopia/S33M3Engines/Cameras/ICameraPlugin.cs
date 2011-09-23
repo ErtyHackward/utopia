@@ -13,7 +13,7 @@ namespace S33M3Engines.Cameras
         /// <summary>
         /// Must point to the real Position, not the interpolated one !
         /// </summary>
-        DVector3 CameraWorldPosition { get; }
+        Vector3D CameraWorldPosition { get; }
 
         /// <summary>
         /// Must point to the real Orientation, not the interpolated one !

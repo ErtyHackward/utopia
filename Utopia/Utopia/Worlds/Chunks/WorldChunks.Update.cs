@@ -270,11 +270,11 @@ namespace Utopia.Worlds.Chunks
 
             // Get World Border line ! => Highest and lowest X et Z chunk components
             //Compute Player position against WorldRange
-            var resultmin = new DVector3(_playerManager.Player.Position.X - VisualWorldParameters.WorldRange.Min.X,
+            var resultmin = new Vector3D(_playerManager.Player.Position.X - VisualWorldParameters.WorldRange.Min.X,
                                         _playerManager.Player.Position.Y - VisualWorldParameters.WorldRange.Min.Y,
                                         _playerManager.Player.Position.Z - VisualWorldParameters.WorldRange.Min.Z);
 
-            var resultmax = new DVector3(VisualWorldParameters.WorldRange.Max.X - _playerManager.Player.Position.X,
+            var resultmax = new Vector3D(VisualWorldParameters.WorldRange.Max.X - _playerManager.Player.Position.X,
                                         VisualWorldParameters.WorldRange.Max.Y - _playerManager.Player.Position.Y,
                                         VisualWorldParameters.WorldRange.Max.Z - _playerManager.Player.Position.Z);
 
