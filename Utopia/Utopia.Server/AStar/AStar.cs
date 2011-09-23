@@ -83,6 +83,7 @@ namespace Utopia.Server.AStar {
 				}
 
 				// Get successors to the current node
+                _fSuccessors.Clear();
 				nodeCurrent.GetSuccessors(_fSuccessors);
 				foreach(var nodeSuccessor in _fSuccessors) 
 				{

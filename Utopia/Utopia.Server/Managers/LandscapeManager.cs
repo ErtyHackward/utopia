@@ -237,14 +237,17 @@ namespace Utopia.Server.Managers
 
             var path = new Path3D { Start = start, Goal = goal };
 
-            var list = new List<Vector3I>();
-
-            foreach (var node3D in calculator.Solution)
+            if (calculator.Solution != null)
             {
-                list.Add(node3D.Cursor.GlobalPosition);
-            }
+                var list = new List<Vector3I>();
+                
+                foreach (var node3D in calculator.Solution)
+                {
+                    list.Add(node3D.Cursor.GlobalPosition);
+                }
 
-            path.Points = list;
+                path.Points = list;
+            }
 
             lock (_pathPool)
             {
