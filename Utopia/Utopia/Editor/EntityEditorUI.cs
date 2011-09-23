@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nuclex.UserInterface;
@@ -18,6 +19,10 @@ namespace Utopia.Editor
     public class EntityEditorUi
     {
         private readonly EntityEditor _editorComponent;
+        private WindowControl _texPalette;
+        private WindowControl _colorPalette;
+        private WindowControl _toolBar;
+        private WindowControl _spawnBar;
 
 
         public List<Control> Children = new List<Control>();
@@ -26,15 +31,100 @@ namespace Utopia.Editor
         {
             _editorComponent = editorComponent;
 
-            //TODO remove all magic hardcoded numbers
+            _toolBar = InitToolBar();
 
-            Children.Add(InitToolBar());
-            Children.Add(InitColorPalette());
-            Children.Add(InitTexturePalette());
+            _spawnBar = InitSpawnBar();
+
+            _colorPalette = InitColorPalette();
+            _texPalette = InitTexturePalette();
+
+            Children.Add(_toolBar);
+            Children.Add(_spawnBar);
+            Children.Add(_colorPalette);
+            Children.Add(_texPalette);
+        }
+
+        private WindowControl InitSpawnBar()
+        {
+            const int buttonSize = 64;
+
+            const int margin = 20;
+
+            List<EditorTool> tools = new List<EditorTool>
+                                         {
+                                             new Spawn(_editorComponent),
+                                             new SpawnPlain(_editorComponent),
+                                             new SpawnBorder(_editorComponent),
+                                             new SpawnCenter(_editorComponent),
+                                             new SpawnAxis(_editorComponent)
+                                         };
+
+            int buttonsNbr = tools.Count;
+
+            WindowControl toolBar = new WindowControl();
+            toolBar.Bounds = new UniRectangle(0.0f, 500, buttonsNbr*buttonSize, buttonSize + margin);
+            toolBar.Title = "Spawn";
+
+            for (int x = 0; x < tools.Count; x++)
+            {
+                EditorTool tool = tools[x];
+                ButtonControl btn = new ButtonControl();
+                btn.Bounds = new UniRectangle(x*buttonSize, margin, buttonSize, buttonSize);
+                btn.Text = tool.Name;
+                btn.Pressed += delegate
+                                   {
+                                       tool.Use();
+                                       btn.Text += tool.Status;
+                                   };
+
+                toolBar.Children.Add(btn);
+            }
+            return toolBar;
+        }
+
+        private WindowControl InitToolBar()
+        {
+            const int buttonSize = 64;
+
+            const int margin = 20;
+
+            EditorCopy editorCopy = new EditorCopy(_editorComponent);
+
+            List<EditorTool> tools = new List<EditorTool>
+                                         {
+                                             new Symetry(_editorComponent),
+                                             new EditorAdd(_editorComponent),
+                                             new EditorRemove(_editorComponent),
+                                             new EditorSelect(_editorComponent),
+                                             editorCopy,
+                                             new EditorPaste(_editorComponent, editorCopy)
+                                         };
+            int buttonsNbr = tools.Count;
+
+            WindowControl toolBar = new WindowControl();
+            toolBar.Bounds = new UniRectangle(0.0f, 0, buttonsNbr*buttonSize, buttonSize + margin);
+            toolBar.Title = "Edit tools";
+
+            for (int x = 0; x < tools.Count; x++)
+            {
+                EditorTool tool = tools[x];
+                ButtonControl btn = new ButtonControl();
+                btn.Bounds = new UniRectangle(x*buttonSize, margin, buttonSize, buttonSize);
+                btn.Text = tool.Name;
+                btn.Pressed += delegate
+                                   {
+                                       tool.Use();
+                                       btn.Text += tool.Status;
+                                   };
+
+                toolBar.Children.Add(btn);
+            }
+            return toolBar;
         }
 
         private WindowControl InitColorPalette()
         {
+            //XXX parametrize UI sizes
             const int rows = 16;
             const int cols = 4;
             const int btnSize = 20;
@@ -74,7 +164,7 @@ namespace Utopia.Editor
 
         private WindowControl InitTexturePalette()
         {
-            ShaderResourceView arrayResourceView = _editorComponent._texture;
+            ShaderResourceView arrayResourceView = _editorComponent.Texture;
 
             const int rows = 8;
             const int cols = 4;
@@ -88,7 +178,7 @@ namespace Utopia.Editor
 
             List<VisualCubeProfile> filtered =
                 VisualCubeProfile.CubesProfile.ToList().FindAll(p => ! p.IsEmissiveColorLightSource);
-            
+
             int cubeProfileIndex = 1;
             for (int x = 0; x < cols; x++)
             {
@@ -114,48 +204,6 @@ namespace Utopia.Editor
                 }
             }
             return palette;
-        }
-
-
-        private WindowControl InitToolBar()
-        {
-            const int buttonSize = 64;
-
-            const int margin = 20;
-
-            List<EditorTool> tools = new List<EditorTool>();
-            tools.Add(new Symetry(_editorComponent));
-            tools.Add(new EditorAdd(_editorComponent));
-            tools.Add(new EditorRemove(_editorComponent));
-            tools.Add(new EditorSelect(_editorComponent));
-            EditorCopy copy = new EditorCopy(_editorComponent);
-            tools.Add(copy);
-            tools.Add(new EditorPaste(_editorComponent,copy));
-            tools.Add(new Spawn(_editorComponent));
-            tools.Add(new SpawnPlain(_editorComponent));
-            tools.Add(new SpawnBorder(_editorComponent));
-
-            int buttonsNbr = tools.Count;
-
-            WindowControl toolBar = new WindowControl();
-            toolBar.Bounds = new UniRectangle(0.0f, 0, buttonsNbr*buttonSize, buttonSize + margin);
-            toolBar.Title = "Edit tools";
-
-            for (int x = 0; x < tools.Count; x++)
-            {
-                EditorTool tool = tools[x];
-                ButtonControl btn = new ButtonControl();
-                btn.Bounds = new UniRectangle(x*buttonSize, margin, buttonSize, buttonSize);
-                btn.Text = tool.Name;
-                btn.Pressed += delegate
-                                   {
-                                       tool.Use();
-                                       btn.Text += tool.Status;
-                                   };
-
-                toolBar.Children.Add(btn);
-            }
-            return toolBar;
         }
     }
 }
