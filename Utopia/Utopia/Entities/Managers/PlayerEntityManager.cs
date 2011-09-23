@@ -684,7 +684,7 @@ namespace Utopia.Entities.Managers
 
             _playerRenderer.Interpolation(ref interpolationHd, ref interpolationLd);
 
-            //TODO To remove when Voxel Entity erge will done with Entity
+            //TODO To remove when Voxel Entity merge will done with Entity
             //Update the position and World Matrix of the Voxel body of the Entity.
             Vector3 entityCenteredPosition = _worldPosition.ValueInterp.AsVector3();
             //entityCenteredPosition.X -= Player.Size.X / 2;

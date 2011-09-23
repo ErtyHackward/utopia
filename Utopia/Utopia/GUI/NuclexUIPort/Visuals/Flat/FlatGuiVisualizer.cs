@@ -33,7 +33,7 @@ using S33M3Engines;
 
 namespace Nuclex.UserInterface.Visuals.Flat {
 
-  // TODO: This implements the Drawable class but doesn't override Draw()
+  // exTODO: This implements the Drawable class but doesn't override Draw()
   //   Having two overloads of the Draw() method, one doing nothing, is confusing
   //   and should be avoided. Find a better solution. Perhaps we can rely completely
   //   on the virtualized graphics device here.

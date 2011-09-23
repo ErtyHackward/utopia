@@ -83,9 +83,6 @@ namespace Utopia
         //Debug Tool
         private DebugInfo _debugInfo;
 
-        //TODO validate the way to access player properties from other components / eventually remove casts
-        //public Player Player {get {return (Player) _player;}}
-
         private IKernel _iocContainer;
 
 #if STEALTH

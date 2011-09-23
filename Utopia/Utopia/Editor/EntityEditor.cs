@@ -48,7 +48,7 @@ namespace Utopia.Editor
 
 
         private Location3<int>? _prevPickedBlock;
-        public ShaderResourceView _texture; //it's a field for being able to dispose the resource
+        public ShaderResourceView Texture; //it's a field for being able to dispose the resource
 
         private Tool _leftToolbeforeEnteringEditor;
 
@@ -126,12 +126,12 @@ namespace Utopia.Editor
         {
             String[] dirs = new[] {@"Textures/Terran/", @"Textures/Editor/"};
 
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point, "ArrayTexture_EntityEditor", out _texture);
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point, "ArrayTexture_EntityEditor", out Texture);
 
             _itemEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/TerranEditor.hlsl",
                                          VertexCubeSolid.VertexDeclaration);
 
-            _itemEffect.TerraTexture.Value = _texture;
+            _itemEffect.TerraTexture.Value = Texture;
 
             _itemEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
@@ -154,7 +154,8 @@ namespace Utopia.Editor
                 
                 if (MultiSelectEnabled)
                 {
-                    Selected.Add(PickedCubeLoc.Value);
+                    if (Mouse.GetState().LeftButton == ButtonState.Pressed)//XXX avoid direct mouseState ButtonState.Pressed in editor ?
+                        Selected.Add(PickedCubeLoc.Value);
                 } else
                 {
                     if (_prevPickedBlock.HasValue)
@@ -168,6 +169,22 @@ namespace Utopia.Editor
             HandleInput();
 
             _editedEntity.Update();
+        }
+
+        private void HandleInput()
+        {
+            //XXX MultiSelectEnabled is handled quick and dirty, could be more tool oriented
+            if (! MultiSelectEnabled && _actions.isTriggered(Actions.Use_Left))
+            {
+                LeftTool.Use();
+                _editedEntity.Altered = true;
+            }
+            if (_actions.isTriggered(Actions.Use_Right))
+            {
+                RightTool.Use();
+                _editedEntity.Altered = true;
+            }
+
         }
 
         public override void Draw(int index)
@@ -229,14 +246,13 @@ namespace Utopia.Editor
             _itemEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _itemEffect.CBPerFrame.Values.SunColor = Vector3.One;
             _itemEffect.CBPerFrame.Values.dayTime = 0.5f;
-            _itemEffect.CBPerFrame.Values.fogdist = 100; //TODO FOGDIST in editor
+            _itemEffect.CBPerFrame.Values.fogdist = 100; 
 
             _itemEffect.CBPerFrame.IsDirty = true;
 
             Matrix world = Matrix.Scaling((float)Scale)*
                            Matrix.Translation(_editedEntity.Position.AsVector3());
-            //Matrix world = Matrix.Translation(_editedEntity.Position.AsVector3());
-
+          
             world = _worldFocusManager.CenterOnFocus(ref world);
 
             _itemEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
@@ -260,20 +276,7 @@ namespace Utopia.Editor
         {
         }
 
-        private void HandleInput()
-        {   
-            if (_actions.isTriggered(Actions.Use_Left))
-            {
-                LeftTool.Use();
-                _editedEntity.Altered = true;
-               }
-            if (_actions.isTriggered(Actions.Use_Right))
-            {
-                RightTool.Use();
-                _editedEntity.Altered = true;
-            }
-
-        }
+       
 
         DVector3 CastedFrom, CastedTo;
         private void GetSelectedBlock()
@@ -289,7 +292,7 @@ namespace Utopia.Editor
             int nbrpt = 0;
 
             double start = 0; //how far you need to be from the edited cube. 0 means you can pick right in your eye (ouch) 
-            double end = start + 40; //todo magic number 40 for editor picking, should be related to scale and block array size  
+            double end = start + 40; //TODO magic number 40 for editor picking, should be related to scale and block array size  
 
             for (double x = start; x < end; x += 0.08) //for scale=1, was0.5 40 0.1  40 seems a high pick distance ! 
             {
@@ -336,7 +339,8 @@ namespace Utopia.Editor
         public override void Dispose()
         {
             _itemEffect.Dispose();
-            _texture.Dispose();
+            _ui = null;//TODO _ui references the texture, check if more dispose work is needed
+            Texture.Dispose();
             if(_editedEntity != null) _editedEntity.Dispose();
             base.Dispose();
         }
@@ -365,6 +369,16 @@ namespace Utopia.Editor
         public byte BlockAt(Location3<int> loc)
         {
             return Blocks[loc.X, loc.Y, loc.Z];
+        }
+
+        public void ClearSelected()
+        {
+            foreach (var selectedPos in Selected)
+            {
+                _editedEntity.AlterOverlay(selectedPos.X, selectedPos.Y, selectedPos.Z, 0);
+            }
+            Selected.Clear();
+          
         }
     }
 }

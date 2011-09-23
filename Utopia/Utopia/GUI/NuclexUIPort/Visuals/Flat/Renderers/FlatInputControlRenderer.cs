@@ -68,7 +68,7 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
                 Style, controlBounds, text.Substring(0, control.CaretPosition)
               );
 
-              // TODO: Renderer should query the size of the control's frame
+              // exTODO: Renderer should query the size of the control's frame
               //   Otherwise text will be visible over the frame, which might look bad
               //   if a skin uses a frame wider than 2 pixels or in a different color
               //   than the text.
@@ -120,7 +120,7 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
       return this.graphics.GetClosestOpening("input.normal", bounds, text, position);
     }
 
-    // TODO: Find a better solution than remembering the graphics interface here
+    // exTODO: Find a better solution than remembering the graphics interface here
     //   Otherwise the renderer could try to renderer when no frame is being drawn.
     //   Also, the renderer makes the assumption that all drawing happens through
     //   one graphics interface only.

@@ -242,7 +242,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         {
             Frame frame = lookupFrame(frameName);
 
-            // TODO: Find the closest gap across multiple text anchors
+            // exTODO: Find the closest gap across multiple text anchors
             //   Frames can repeat their text in several places. Though this is probably
             //   not used very often (if at all), it should work here consistently.
 

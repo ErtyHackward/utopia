@@ -97,7 +97,7 @@ namespace Utopia.GUI.D3D
                 {
                     if (key >= Keys.D0 && key <= Keys.D9)
                     {
-                        char c = (char)key; //HACK done at midnight 
+                        char c = (char)key; //HACK passing keys to UI is a hack only badly working with number keys
                         _screen.InjectCharacter((char)key);
                     }
                     
