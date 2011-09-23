@@ -148,7 +148,7 @@ namespace S33M3Engines.D3D
                 Draw();
             });
 
-            if (_d3dEngine.UnlockedMouse) _d3dEngine.UnlockedMouse = false;
+            _d3dEngine.UnlockedMouse = false;
 
             UnloadContent();
             //Dispose();
@@ -165,12 +165,11 @@ namespace S33M3Engines.D3D
         public void Exit(GameExitReasonMessage msg)
         {
             GameExitReason = msg;
-            Threading.WorkQueue.ThreadPool.Shutdown(true, 1000);
+            Threading.WorkQueue.ThreadPool.Shutdown(true, 0);
             while (Threading.WorkQueue.ThreadPool.InUseThreads > 0)
             {
                 Thread.Sleep(100);
             }
-
             if (_d3dEngine.isFullScreen) _d3dEngine.isFullScreen = false;
             CloseWinform();
         }

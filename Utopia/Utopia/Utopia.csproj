@@ -145,11 +145,11 @@
     <Compile Include="GUI\Forms\CustControls\Config.Designer.cs">
       <DependentUpon>Config.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\Forms\ShowMessage.cs">
-      <SubType>Form</SubType>
+    <Compile Include="GUI\Forms\CustControls\ErrorMessage.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="GUI\Forms\ShowMessage.Designer.cs">
-      <DependentUpon>ShowMessage.cs</DependentUpon>
+    <Compile Include="GUI\Forms\CustControls\ErrorMessage.Designer.cs">
+      <DependentUpon>ErrorMessage.cs</DependentUpon>
     </Compile>
     <Compile Include="GUI\NuclexUIPort\Controls\Arcade\CommandControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Arcade\PanelControl.cs" />
@@ -292,14 +292,14 @@
     <EmbeddedResource Include="GUI\Forms\CustControls\Config.resx">
       <DependentUpon>Config.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Forms\CustControls\ErrorMessage.resx">
+      <DependentUpon>ErrorMessage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\Forms\CustControls\MultiPlayer.resx">
       <DependentUpon>MultiPlayer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\Forms\CustControls\SinglePlayer.resx">
       <DependentUpon>SinglePlayer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\Forms\ShowMessage.resx">
-      <DependentUpon>ShowMessage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\Forms\WelcomeScreen.resx">
       <DependentUpon>WelcomeScreen.cs</DependentUpon>

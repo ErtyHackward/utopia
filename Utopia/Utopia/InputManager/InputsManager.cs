@@ -157,7 +157,7 @@ namespace Utopia.InputManager
         private void ProcessMouseStates()
         {
             //If the mouse is hiden, then start tracking mouse mouvement, and recenter the mouse to the center of the screen at each update !
-            if (!_engine.UnlockedMouse)
+            if (!_engine.UnlockedMouse && _engine.HasFocus)
             {
                 //Set the mouse to the Center Screen
                 Mouse.SetPosition(_centerViewPort.X, _centerViewPort.Y);
