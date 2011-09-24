@@ -83,6 +83,7 @@
     <Compile Include="Chunks\Entities\EntityDisplacementModes.cs" />
     <Compile Include="Chunks\Entities\Events\BlocksChangedEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\DynamicEntityEventArgs.cs" />
+    <Compile Include="Chunks\Entities\Events\EntityFactoryEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityMoveEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityViewEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityUseEventArgs.cs" />
@@ -90,12 +91,15 @@
     <Compile Include="Chunks\Entities\Interfaces\IDynamicEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\ISlotContainer.cs" />
+    <Compile Include="Chunks\Entities\Interfaces\IToolImpact.cs" />
+    <Compile Include="Chunks\Entities\Interfaces\IToolLogic.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IUsableEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IVoxelEntity.cs" />
     <Compile Include="Chunks\Entities\Inventory\Slot.cs" />
     <Compile Include="Chunks\Entities\Inventory\ToolbarSlot.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityEffect.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityState.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tools\DirtAdder.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Hand.cs" />
     <Compile Include="Chunks\Entities\PlayerCharacter.cs" />
     <Compile Include="Chunks\Entities\SpecialCharacterEntity.cs" />

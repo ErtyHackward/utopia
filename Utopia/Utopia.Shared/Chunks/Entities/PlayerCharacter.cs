@@ -1,8 +1,7 @@
 ﻿using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Inventory;
-using Utopia.Shared.Structs;
 using Utopia.Shared.Cubes;
-using Utopia.Shared.Chunks.Entities.Inventory.Tools;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -32,11 +31,6 @@ namespace Utopia.Shared.Chunks.Entities
         {
             //Define the default PlayerCharacter ToolBar
             Toolbar = new SlotContainer<ToolbarSlot>(new Location2<byte>(10,1));
-            
-            //Create a default Tool for playerCharacter = its Hand !
-            var playerHand = new Hand();
-            Equipment.LeftTool = playerHand;
-            Equipment.RightTool = playerHand;
 
             MoveSpeed = 5f;               //Default player MoveSpeed
             RotationSpeed = 10f;          //Default Player Rotation Speed

@@ -18,11 +18,6 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
             RemoveableCubeIds.Remove(CubeId.WaterSource);
         }
 
-        public override bool Use()
-        {
-            throw new NotImplementedException();
-        }
-
         public override EntityClassId ClassId
         {
             get { return EntityClassId.PickAxe; }

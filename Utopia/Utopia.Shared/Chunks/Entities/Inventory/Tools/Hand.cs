@@ -1,28 +1,15 @@
 ﻿using System;
-using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
     /// <summary>
-    /// Every normal human-like NPC or player should have one or two
+    /// Test tool that can remove anything
     /// </summary>
-    public class Hand : BlockRemover
+    public class Annihilator : BlockRemover
     {
-        public Hand()
-        {
-            //a hand can remove anything like base class except water
-            RemoveableCubeIds.Remove(CubeId.Water);
-            RemoveableCubeIds.Remove(CubeId.WaterSource);
-        }
-
-        public override bool Use()
-        {
-            throw new NotImplementedException();
-        }
-
         public override EntityClassId ClassId
         {
-            get { return EntityClassId.Hand; }
+            get { return EntityClassId.Annihilator; }
         }
 
         public override int MaxStackSize
