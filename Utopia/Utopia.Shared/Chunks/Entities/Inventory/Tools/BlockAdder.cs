@@ -14,21 +14,8 @@ using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
-    public class BlockAdder : Tool
+    public abstract class BlockAdder : Tool
     {
-        public override bool Use()
-        {
-            throw new NotImplementedException();
-        }
 
-        public override EntityClassId ClassId
-        {
-            get { return EntityClassId.Sword; }
-        }
-
-        public override int MaxStackSize
-        {
-            get { return 1; }
-        }
     }
 }

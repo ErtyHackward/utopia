@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Utopia.Shared.Chunks.Entities.Concrete;
+using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
 namespace Utopia.Shared.Chunks.Entities
@@ -11,6 +12,7 @@ namespace Utopia.Shared.Chunks.Entities
     public class EntityFactory
     {
         private static EntityFactory _instance;
+        private readonly object _synObject = new object();
 
         /// <summary>
         /// Gets or sets instance of entity factory
@@ -29,16 +31,33 @@ namespace Utopia.Shared.Chunks.Entities
         /// <param name="id"></param>
         public void SetLastId(uint id)
         {
-            _lastId = id;
+            lock (_synObject)
+            {
+                _lastId = id;
+            }
         }
 
         public uint GetUniqueEntityId()
         {
-            return ++_lastId;
+            lock (_synObject)
+            {
+                return ++_lastId;
+            }
         }
 
         /// <summary>
-        /// Returns new entity object by its classId
+        /// Occurs when entity was created, this stage can be used to prepare entity for release
+        /// </summary>
+        public event EventHandler<EntityFactoryEventArgs> EntityCreated;
+
+        protected void OnEntityCreated(EntityFactoryEventArgs e)
+        {
+            var handler = EntityCreated;
+            if (handler != null) handler(this, e);
+        }
+
+        /// <summary>
+        /// Returns new entity object by its classId. New entity will have unique ID
         /// </summary>
         /// <param name="classId">Entity class identificator</param>
         /// <returns></returns>
@@ -56,12 +75,16 @@ namespace Utopia.Shared.Chunks.Entities
                 case EntityClassId.Survey: entity = new Survey(); break;
                 case EntityClassId.PlayerCharacter: entity = new PlayerCharacter(); break;
                 case EntityClassId.Zombie: entity = new Zombie(); break;
-                case EntityClassId.Hand: entity = new Hand(); break; 
+                case EntityClassId.Annihilator: entity = new Annihilator(); break;
+                case EntityClassId.DirtAdder: entity = new DirtAdder(); break;
                 default:
                     throw new ArgumentOutOfRangeException("classId");
             }
 
             entity.EntityId = GetUniqueEntityId();
+
+            // allow post produce prepare
+            OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
 
             return entity;
         }

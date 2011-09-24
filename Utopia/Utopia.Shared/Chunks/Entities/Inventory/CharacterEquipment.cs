@@ -23,7 +23,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// <param name="e"></param>
         public void OnItemEquipped(CharacterEquipmentEventArgs e)
         {
-            EventHandler<CharacterEquipmentEventArgs> handler = ItemEquipped;
+            var handler = ItemEquipped;
             if (handler != null) handler(this, e);
         }
 

@@ -43,6 +43,20 @@ namespace Utopia.Shared.Chunks.Entities
         /// </summary>
         public int MaxHealth { get; set; }
 
+        /// <summary>
+        /// Returns tool that can be used
+        /// </summary>
+        /// <param name="toolId"></param>
+        /// <returns>Tool instance or null</returns>
+        public Tool FindToolById(uint toolId)
+        {
+            if (Equipment.LeftTool != null && Equipment.LeftTool.EntityId == toolId)
+                return Equipment.LeftTool;
+            if (Equipment.RightTool != null && Equipment.RightTool.EntityId == toolId)
+                return Equipment.RightTool;
+            return null;
+        }
+
         public override void Load(System.IO.BinaryReader reader)
         {
             base.Load(reader);

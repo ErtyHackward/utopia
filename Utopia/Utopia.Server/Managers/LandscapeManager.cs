@@ -233,9 +233,17 @@ namespace Utopia.Server.Managers
             var goalNode = new AStarNode3D(GetCursor(goal), null, null, 1);
             var startNode = new AStarNode3D(GetCursor(start), null, goalNode, 1);
 
+#if DEBUG
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+#endif
             calculator.FindPath(startNode);
-
+#if DEBUG
+            sw.Stop();
+#endif
             var path = new Path3D { Start = start, Goal = goal };
+#if DEBUG
+            path.PathFindTime = sw.Elapsed.TotalMilliseconds;
+#endif
 
             if (calculator.Solution != null)
             {

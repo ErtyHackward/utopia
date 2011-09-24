@@ -8,7 +8,6 @@ using Utopia.Server.Structs;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Structs;
-using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Server.Entities
 {
@@ -18,7 +17,7 @@ namespace Utopia.Server.Entities
     public class ServerZombie : ServerDynamicEntity
     {
         public static Vector3D CubeCenter = new Vector3D(0.5d, 0.0d, 0.5d);
-        public static Vector3D Near = new Vector3D(0.01d);
+        public static Vector3D Near = new Vector3D(0.02d);
 
         private readonly Server _server;
         private List<MapArea> _mapAreas = new List<MapArea>();
@@ -70,7 +69,9 @@ namespace Utopia.Server.Entities
             if (path.Exists)
             {
                 _path = path;
-
+#if DEBUG
+                _server.SendChatMessage(string.Format("Path found at {0} ms", _path.PathFindTime));
+#endif
 
                 State = ZombieState.FollowPath;
                 _targetPathNodeIndex = 0;

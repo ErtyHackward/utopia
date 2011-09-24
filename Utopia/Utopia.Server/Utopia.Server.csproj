@@ -88,6 +88,7 @@
     <Compile Include="Structs\ServerDynamicEntity.cs" />
     <Compile Include="Structs\ServerPlayerCharacterEntity.cs" />
     <Compile Include="Structs\UserState.cs" />
+    <Compile Include="Tools\CubeToolLogic.cs" />
     <Compile Include="Utils\BlockHelper.cs" />
     <Compile Include="Utils\IniSettings.cs" />
     <Compile Include="Managers\SQLiteStorageManager.cs" />

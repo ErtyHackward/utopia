@@ -11,10 +11,13 @@ using Utopia.Server.Events;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Server.Structs;
+using Utopia.Server.Tools;
 using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
+using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using Utopia.Shared.Config;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
@@ -45,7 +48,8 @@ namespace Utopia.Server
         // ReSharper restore NotAccessedField.Local        
         private readonly object _areaManagerSyncRoot = new object();
 
-
+        //todo: remove to other class
+        private CubeToolLogic _logic;
 
         /// <summary>
         /// Gets connection listener. Allows to accept client connections
@@ -91,8 +95,10 @@ namespace Utopia.Server
         /// Gets schedule manager for dalayed and periodic operations.
         /// </summary>
         public ScheduleManager Scheduler { get; private set; }
-
-
+        
+        /// <summary>
+        /// Gets server clock
+        /// </summary>
         public Clock Clock { get; private set; }
 
         #region Events
@@ -130,6 +136,7 @@ namespace Utopia.Server
             AreaManager = new AreaManager();
             
             EntityFactory.Instance.SetLastId(EntityStorage.GetMaximumId());
+            EntityFactory.Instance.EntityCreated += InstanceEntityCreated;
 
             // connections
             Listener = new TcpConnectionListener(SettingsManager.Settings.ServerPort);
@@ -148,11 +155,23 @@ namespace Utopia.Server
             Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
 
             Scheduler = new ScheduleManager(Clock);
+
+            //todo: remove to other class
+            _logic = new CubeToolLogic(LandscapeManager);
             
             // async server events (saving modified chunks, unloading unused chunks)
             _cleanUpTimer = new Timer(CleanUp, null, SettingsManager.Settings.CleanUpInterval, SettingsManager.Settings.CleanUpInterval);
             _saveTimer = new Timer(SaveChunks, null, SettingsManager.Settings.SaveInterval, SettingsManager.Settings.SaveInterval);
             _entityUpdateTimer = new Timer(UpdateDynamic, null, 0, 100);
+        }
+
+        private void InstanceEntityCreated(object sender, EntityFactoryEventArgs e)
+        {
+            // set tool logic
+            if (e.Entity is Annihilator || e.Entity is DirtAdder)
+            {
+                (e.Entity as Tool).ToolLogic = _logic;
+            }
         }
 
         private DateTime _lastUpdate = DateTime.MinValue;
@@ -402,8 +421,6 @@ namespace Utopia.Server
                     });
 
                 });
-
-
             }
             catch (IOException)
             {
@@ -417,7 +434,9 @@ namespace Utopia.Server
             dEntity.EntityId = entityId;
             dEntity.Position = new Vector3D(10, 128, 10);
             dEntity.CharacterName = clientConnection.Login;
-
+            dEntity.Equipment.LeftTool = (Tool)EntityFactory.Instance.CreateEntity(EntityClassId.Annihilator);
+            dEntity.Equipment.RightTool = (Tool)EntityFactory.Instance.CreateEntity(EntityClassId.DirtAdder);
+            
             var serverChar = new ServerPlayerCharacterEntity(clientConnection, dEntity);
             return serverChar;
         }
