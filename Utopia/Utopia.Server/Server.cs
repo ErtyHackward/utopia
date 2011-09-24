@@ -339,7 +339,7 @@ namespace Utopia.Server
                     if (msg == "/save")
                     {
                         SaveChunks(null);
-                        connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Saved {1} chunks. Time: {0} ms", LandscapeManager.SaveTime, LandscapeManager.ChunksSaved) });
+                        //connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Saved {1} chunks. Time: {0} ms", LandscapeManager.SaveTime, LandscapeManager.ChunksSaved) });
                     }
 
                     if (msg.StartsWith("/services"))

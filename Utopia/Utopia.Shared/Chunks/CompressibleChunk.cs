@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks
 {
@@ -55,6 +56,30 @@ namespace Utopia.Shared.Chunks
                 CompressedBytes = bytes;
                 CompressedDirty = false;
             }
+            ms.Dispose();
+            return bytes;
+        }
+
+        /// <summary>
+        /// Performs serialization and compression of resulted bytes
+        /// </summary>
+        /// <param name="saveResult">Whether or not to save resulted bytes into CompressedBytes property</param>
+        /// <returns>Compressed bytes array</returns>
+        public byte[] CompressAndComputeHash(out Md5Hash hash)
+        {
+            if (BlockData == null)
+                throw new ArgumentNullException();
+
+            var ms = new MemoryStream();
+            using (var zip = new GZipStream(ms, CompressionMode.Compress))
+            {
+                var serializedBytes = Serialize();
+                hash = CalculateHash(serializedBytes);
+                zip.Write(serializedBytes, 0, serializedBytes.Length);
+            }
+
+            var bytes = ms.ToArray();
+
             ms.Dispose();
             return bytes;
         }

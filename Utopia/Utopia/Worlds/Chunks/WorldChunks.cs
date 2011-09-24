@@ -25,6 +25,8 @@ using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using Utopia.Net.Messages;
+using Utopia.Worlds.Storage;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -68,6 +70,7 @@ namespace Utopia.Worlds.Chunks
         private IChunkMeshManager _chunkMeshManager;
         private Server _server;
         private PlayerEntityManager _playerManager;
+        private IChunkStorageManager _chunkstorage;
         #endregion
 
         #region Public Property/Variables
@@ -98,10 +101,12 @@ namespace Utopia.Worlds.Chunks
                            IChunkMeshManager chunkMeshManager,
                            IChunksWrapper chunkWrapper,
                            ILightingManager lightingManager,
+                           IChunkStorageManager chunkstorage,
                            Server server,
                            PlayerEntityManager player)
         {
             _server = server;
+            _chunkstorage = chunkstorage;
             _d3dEngine = d3dEngine;
             _worldFocusManager = worldFocusManager;
             _gameStates = gameStates;
@@ -278,6 +283,11 @@ namespace Utopia.Worlds.Chunks
             int arrayX, arrayZ;   //Chunk Array indexes
             VisualChunk chunk;
 
+            //Chunk Server request variables
+            List<Vector2I> chunkPosition = new List<Vector2I>();
+            List<Md5Hash> chunkHash = new List<Md5Hash>();
+            Md5Hash chunkMD5;
+
             for (int chunkX = 0; chunkX < VisualWorldParameters.WorldParameters.WorldChunkSize.X; chunkX++)
             {
                 for (int chunkZ = 0; chunkZ < VisualWorldParameters.WorldParameters.WorldChunkSize.Z; chunkZ++)
@@ -298,27 +308,56 @@ namespace Utopia.Worlds.Chunks
                     //Store this chunk inside the arrays.
                     Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
                     SortedChunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
+
+                    chunkPosition.Add(new Vector2I((VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X)) / AbstractChunk.ChunkSize.X,
+                                                   (VisualWorldParameters.WorldChunkStartUpPosition.Z + (chunkZ * AbstractChunk.ChunkSize.Z)) / AbstractChunk.ChunkSize.Z));
+                    if (!_chunkstorage.ChunkHashes.TryGetValue(chunk.ChunkID, out chunkMD5))
+                    {
+                        chunkMD5 = new Md5Hash(new byte[16]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("");
+                    }
+                    chunkHash.Add(chunkMD5);
+
                 }
             }
 
-            //Request the Full landscape chunks if server connected
-            if (_server.Connected)
+            //Request the Full landscape chunks
+            //_server.ServerConnection.SendAsync(new GetChunksMessage
+            //                                        {
+            //                                            Range = new Range2(
+            //                                                new Vector2I(
+            //                                                    VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X,
+            //                                                    VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z
+            //                                                    ),
+            //                                                new Vector2I(
+            //                                                    VisualWorldParameters.WorldParameters.WorldChunkSize.X,
+            //                                                    VisualWorldParameters.WorldParameters.WorldChunkSize.Z
+            //                                                    )
+            //                                                ),
+            //                                            Flag = Net.Messages.GetChunksMessageFlag.DontSendChunkDataIfNotModified
+            //                                        });
+            _server.ServerConnection.SendAsync(
+            new GetChunksMessage()
             {
-                _server.ServerConnection.SendAsync(new Net.Messages.GetChunksMessage
-                                                       {
-                                                           Range = new Range2(
-                                                               new Vector2I(
-                                                                   VisualWorldParameters.WorldChunkStartUpPosition.X/AbstractChunk.ChunkSize.X,
-                                                                   VisualWorldParameters.WorldChunkStartUpPosition.Z/AbstractChunk.ChunkSize.Z
-                                                                   ),
-                                                               new Vector2I(
-                                                                   VisualWorldParameters.WorldParameters.WorldChunkSize.X,
-                                                                   VisualWorldParameters.WorldParameters.WorldChunkSize.Z
-                                                                   )
-                                                               ),
-                                                           Flag = Net.Messages.GetChunksMessageFlag.DontSendChunkDataIfNotModified
-                                                       });
+                Range = new Range2(
+                    new Vector2I(
+                        VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X,
+                        VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z
+                        ),
+                    new Vector2I(
+                        VisualWorldParameters.WorldParameters.WorldChunkSize.X,
+                        VisualWorldParameters.WorldParameters.WorldChunkSize.Z
+                        )
+                    ),
+                Md5Hashes = chunkHash.ToArray(),
+                Positions = chunkPosition.ToArray(),
+                HashesCount = chunkHash.Count,
+                Flag = Net.Messages.GetChunksMessageFlag.DontSendChunkDataIfNotModified
             }
+            );
 
             ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
         }

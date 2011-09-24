@@ -207,6 +207,8 @@ namespace Utopia.Worlds.Storage
             _landscapeInsertCmd.ExecuteNonQuery();
 
             //Add or update the Dictionnary
+            //The dictionnary reflect the Chunks saved on SQLite database.
+            //For a specified ChunkID it give the MD5Hash.
             if (ChunkHashes.ContainsKey(data.ChunkId))
             {
                 ChunkHashes[data.ChunkId] = data.Md5Hash;

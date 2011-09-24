@@ -133,7 +133,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                         case ChunkDataMessageFlag.ChunkCanBeGenerated:
                             CreateLandscapeFromGenerator(chunk, Async);
 
-
                             if (chunk.StorageRequestTicket != 0)
                             {
                                 _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
