@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace Utopia.MapGenerator
+namespace Utopia.Shared.World.PlanGenerator
 {
     [Serializable]
     public class Polygon
@@ -26,6 +26,11 @@ namespace Utopia.MapGenerator
         public BiomeType Biome { get; set; }
 
         public HashSet<Edge> Edges { get; set; }
+
+        [XmlIgnore]
+        public bool Coast { get; set; }
+        [XmlIgnore]
+        public bool HasPattern { get; set; }
 
         public void AddNeighbor(Polygon p)
         {

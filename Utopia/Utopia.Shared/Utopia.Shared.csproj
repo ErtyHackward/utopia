@@ -48,6 +48,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FortuneVoronoi">
+      <HintPath>..\Library\FortuneVoronoi.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Library\Ninject.dll</HintPath>
@@ -63,6 +66,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -159,6 +163,7 @@
     <Compile Include="Structs\HalfVector2.cs" />
     <Compile Include="Structs\HalfVector4.cs" />
     <Compile Include="Structs\Helpers\PackUtils.cs" />
+    <Compile Include="Structs\Line.cs" />
     <Compile Include="Structs\Vector2I.cs" />
     <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />
@@ -172,6 +177,17 @@
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\TerraCubeWithPosition.cs" />
     <Compile Include="Structs\Vector3I.cs" />
+    <Compile Include="World\PlanGenerator\Biome.cs" />
+    <Compile Include="World\PlanGenerator\BiomeType.cs" />
+    <Compile Include="World\PlanGenerator\Corner.cs" />
+    <Compile Include="World\PlanGenerator\CornerHeightComparer.cs" />
+    <Compile Include="World\PlanGenerator\Edge.cs" />
+    <Compile Include="World\PlanGenerator\GenerationParameters.cs" />
+    <Compile Include="World\PlanGenerator\WorldPlan.cs" />
+    <Compile Include="World\PlanGenerator\ParameterVariation.cs" />
+    <Compile Include="World\PlanGenerator\Polygon.cs" />
+    <Compile Include="World\PlanGenerator\RiverBranch.cs" />
+    <Compile Include="World\PlanGenerator\VectorExtensions.cs" />
     <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
     <Compile Include="World\WorldConfigs\s33m3WorldConfig.cs" />

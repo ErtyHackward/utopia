@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -7,49 +8,61 @@ using System.Xml.Serialization;
 using BenTools.Mathematics;
 using S33M3Engines.Shared.Math.Noises;
 
-namespace Utopia.MapGenerator
+namespace Utopia.Shared.World.PlanGenerator
 {
+    /// <summary>
+    /// Represents a main world plan object. Plan is based on Voronoi diagram polygons.
+    /// </summary>
     [Serializable]
-    public struct GenerationParameters
+    public class WorldPlan
     {
-        public int ElevationSeed { get; set; }
-        public int GridSeed { get; set; }
-        public int PolygonsCount { get; set; }
-        public int RelaxCount { get; set; }
-        public bool CenterElevation { get; set; }
-        public Size MapSize { get; set; }
-    }
-
-    [Serializable]
-    public class Map
-    {
-
-        private Biome _biome = new Biome(new ParameterVariation(127, 255), new ParameterVariation(0, 150));
+        private readonly Biome _biome = new Biome(new ParameterVariation(127, 255), new ParameterVariation(0, 150));
 
         // temp values for propagation function
-        private Dictionary<Point, int> _propagationLayers = new Dictionary<Point, int>();
+        private readonly Dictionary<Point, int> _propagationLayers = new Dictionary<Point, int>();
 
         // moisture stuff
-        private List<RiverBranch> _riverRoots = new List<RiverBranch>();
-        private HashSet<Edge> _rivers = new HashSet<Edge>();
+        private readonly List<RiverBranch> _riverRoots = new List<RiverBranch>();
+        private readonly HashSet<Edge> _rivers = new HashSet<Edge>();
         private HashSet<Corner> _corners1;
         private List<Corner> _waterCorners;
 
-        [XmlElement("Parameters")]
-        public GenerationParameters Parameters { get; set; }
-
-        private Dictionary<Point, Polygon> _polygons = new Dictionary<Point, Polygon>();
-
-        private Dictionary<Point, Corner> _corners = new Dictionary<Point, Corner>(); 
+        private readonly Dictionary<Point, Polygon> _polygons = new Dictionary<Point, Polygon>();
+        private readonly Dictionary<Point, Corner> _corners = new Dictionary<Point, Corner>(); 
         
+        /// <summary>
+        /// Collection of polygons where key is polygon center
+        /// </summary>
         [XmlIgnore]
         public Dictionary<Point, Polygon> Polygons
         {
             get { return _polygons; }
-            set { _polygons = value; }
         }
-        
 
+        /// <summary>
+        /// Gets or sets main plan generation parameters
+        /// </summary>
+        [XmlElement("Parameters")]
+        public GenerationParameters Parameters { get; set; }
+
+        [XmlIgnore]
+        public Image RenderMapTemplate { get; set; }
+
+        [XmlIgnore]
+        public Image RenderContinentTemplate { get; set; }
+
+        [XmlIgnore]
+        public Image[] RenderWavePatterns { get; set; }
+
+        [XmlIgnore]
+        public Image RenderForest { get; set; }
+
+        [XmlIgnore]
+        public Image RenderTropicalForest { get; set; }
+
+        /// <summary>
+        /// Do not use this in code
+        /// </summary>
         [XmlArray("PolygonsCollection")]
         public Polygon[] PolygonsCollectionForSerialization
         {
@@ -69,19 +82,32 @@ namespace Utopia.MapGenerator
 
         }
 
-        public Map()
+        /// <summary>
+        /// Creates new empty instance of world plan. For serialization purpose
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public WorldPlan()
         {
             
         }
 
-        public Map(GenerationParameters pars)
+        /// <summary>
+        /// Creates new instance of world plan
+        /// </summary>
+        /// <param name="pars"></param>
+        public WorldPlan(GenerationParameters pars)
         {
             Parameters = pars;   
         }
 
+        /// <summary>
+        /// Do not use this method in code
+        /// </summary>
+        /// <param name="o"></param>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public void Add(object o)
         {
-            Polygon p = o as Polygon;
+            var p = o as Polygon;
             if (p != null)
             {
                 if(!_polygons.ContainsKey(p.Center))
@@ -89,7 +115,7 @@ namespace Utopia.MapGenerator
             }
         }
 
-        public Corner GetCorner(Point p)
+        protected Corner GetCorner(Point p)
         {
             if (!_corners.ContainsKey(p))
                 _corners.Add(p, new Corner(p));
@@ -104,7 +130,7 @@ namespace Utopia.MapGenerator
                 var v1 = 0.0d;
                 var edgesCount = 0;
 
-                foreach (VoronoiEdge edge in graph.Edges)
+                foreach (var edge in graph.Edges)
                 {
                     if (edge.LeftData == vector || edge.RightData == vector)
                     {
@@ -121,6 +147,9 @@ namespace Utopia.MapGenerator
             }
         }
 
+        /// <summary>
+        /// Starts plan generation process 
+        /// </summary>
         public void Generate()
         {
             var datapoints = new List<Vector>(Parameters.PolygonsCount);
@@ -141,11 +170,11 @@ namespace Utopia.MapGenerator
             }
 
             FillMap(graph);
-
+            
             {
                 // adding elevation data
 
-                var elevationNoise = new SimplexNoise(new Random((int)Parameters.ElevationSeed));
+                var elevationNoise = new SimplexNoise(new Random(Parameters.ElevationSeed));
                 elevationNoise.SetParameters(0.0008, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
 
                 foreach (var poly in this)
@@ -174,7 +203,7 @@ namespace Utopia.MapGenerator
                 //r = new Random((int)voronoiSeedNumeric.Value);
                 var borderElevation = 80;
                 var step = 20;
-                for (int x = 0; x < Parameters.MapSize.Width; x++)
+                for (int x = 0; x < Parameters.MapSize.Width; x+=5)
                 {
                     var poly = GetAtPoint(new Point(x, 0));
 
@@ -188,7 +217,7 @@ namespace Utopia.MapGenerator
 
                 }
 
-                for (int y = 0; y < Parameters.MapSize.Height; y++)
+                for (int y = 0; y < Parameters.MapSize.Height; y+=5)
                 {
                     var poly = GetAtPoint(new Point(0, y));
 
@@ -207,7 +236,7 @@ namespace Utopia.MapGenerator
             #region Moisturizing
             {
                 var noise = new SimplexNoise(new Random(Parameters.ElevationSeed));
-                noise.SetParameters((double)0.0008, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
+                noise.SetParameters(0.0008d, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
 
                 foreach (var poly in this)
                 {
@@ -361,6 +390,23 @@ namespace Utopia.MapGenerator
                 }
             }
 
+            //find coastline
+            foreach (var polygon in this)
+            {
+                foreach (var edge in polygon.Edges)
+                {
+                    Polygon poly = null;
+                    Polygon poly2 = null;
+                    if (((poly = edge.Polygons.Find(p => p.Elevation > 127)) != null) && ((poly2 = edge.Polygons.Find((p => p.Elevation <= 127))) != null))
+                    {
+                        poly.Coast = true;
+                        poly2.Coast = true;
+                        edge.Coast = true;
+                    }
+                }
+
+            }
+
         }
 
         private void SetOcean(Polygon polygon)
@@ -377,7 +423,7 @@ namespace Utopia.MapGenerator
 
         private int FillRiver(RiverBranch branch)
         {
-            int flood = 0;
+            int flood;
             if (branch.Final)
             {
                 flood = 1;
@@ -405,7 +451,7 @@ namespace Utopia.MapGenerator
                 {
                     if (!_rivers.Contains(edge))
                     {
-                        var newBranch = new RiverBranch() { Edge = edge, ParentBranch = riverBranch };
+                        var newBranch = new RiverBranch { Edge = edge, ParentBranch = riverBranch };
                         riverBranch.Branches.Add(newBranch);
                         _rivers.Add(edge);
                         CollectRiver(edge.GetOpposite(c), newBranch);
@@ -471,8 +517,12 @@ namespace Utopia.MapGenerator
 
         public void FillMap(VoronoiGraph graph)
         {
+
+            var listEdge = new List<VoronoiEdge>();
+
             foreach (VoronoiEdge edge in graph.Edges)
             {
+                listEdge.Add(edge);
                 if (!double.IsNaN(edge.VVertexA[0]) && !double.IsNaN(edge.VVertexA[1]) && !double.IsNaN(edge.VVertexB[0]) && !double.IsNaN(edge.VVertexB[1]))
                 {
                     var e = new Edge(edge.VVertexA, edge.VVertexB);
@@ -505,9 +555,7 @@ namespace Utopia.MapGenerator
                 }
             }
 
-            // split edges
-
-            Random r = new Random(0);
+            var r = new Random(0);
 
             foreach (var poly in this)
             {
@@ -517,20 +565,22 @@ namespace Utopia.MapGenerator
                     for (int i = 0; i < 2; i++)
                     {
                         if (edge.Points.Length < 17)
-                            edge.Split(r);
+                            edge.Split(ref r);
                     }
                 }
             }
+
+            
 
             GetPoints();
         }
 
         private Polygon AddEdge(Point center, Edge edge)
         {
-            Polygon p = null;
+            Polygon p;
             if (!_polygons.ContainsKey(center))
             {
-                _polygons.Add(center, p = new Polygon() { Center = center });
+                _polygons.Add(center, p = new Polygon { Center = center });
             }
             else p = _polygons[center];
 
@@ -538,7 +588,7 @@ namespace Utopia.MapGenerator
             return p;
         }
 
-        public void GetPoints()
+        protected void GetPoints()
         {
             foreach (var polygon in Polygons)
             {
@@ -546,6 +596,11 @@ namespace Utopia.MapGenerator
             }
         }
 
+        /// <summary>
+        /// Performs search for polygon
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
         public Polygon GetAtPoint(Point p)
         {
             Polygon selected = null;
@@ -555,11 +610,11 @@ namespace Utopia.MapGenerator
                 if (selected == null)
                 {
                     selected = poly;
-                    distance = Distance(p, poly.Center);
+                    distance = DistanceSquared(p, poly.Center);
                     continue;
                 }
 
-                var d = Distance(p, poly.Center);
+                var d = DistanceSquared(p, poly.Center);
 
                 if (d < distance)
                 {
@@ -570,11 +625,11 @@ namespace Utopia.MapGenerator
             return selected;
         }
 
-        private double Distance(Point p1, Point p2)
+        private double DistanceSquared(Point p1, Point p2)
         {
-            var dx = p1.X - p2.X;
-            var dy = p1.Y - p2.Y;
-            return Math.Sqrt(dx * dx + dy * dy);
+            var dx = (uint)(p1.X - p2.X);
+            var dy = (uint)(p1.Y - p2.Y);
+            return dx * dx + dy * dy;
         }
 
         public IEnumerator<Polygon> GetEnumerator()
@@ -604,11 +659,11 @@ namespace Utopia.MapGenerator
                 {
                     //                    col = Color.FromArgb((byte) (2 + polygon.Elevation), (byte) (108 + polygon.Elevation),
                     //                     (byte) (85 + polygon.Elevation));
-                    col = Color.FromArgb((byte)(2), (byte)(108), (byte)(185));
+                    col = Color.FromArgb(2, 108, 185);
                 }
                 else
                 {
-                    col = Color.FromArgb((byte)(polygon.Elevation), (byte)(polygon.Elevation), (byte)(255));
+                    col = Color.FromArgb((byte)(polygon.Elevation), (byte)(polygon.Elevation), 255);
                 }
             }
 
@@ -616,14 +671,74 @@ namespace Utopia.MapGenerator
             return col;
         }
 
+        private GraphicsPath CollectPath(Edge e, List<Edge> edges)
+        {
+            var p = new GraphicsPath();
+
+            var currentEdge = e;
+            edges.Remove(currentEdge);
+            p.AddCurve(e.Points);
+
+            while (currentEdge == e || (e.Start != currentEdge.End && e.Start != currentEdge.Start))
+            {
+                bool reverse = false;
+                var nextEdge = currentEdge.EndCorner.Edges.Find(ed => ed != currentEdge && ed.Coast);
+
+                if (!edges.Contains(nextEdge))
+                {
+                    nextEdge = currentEdge.StartCorner.Edges.Find(ed => ed != currentEdge && ed.Coast);
+                    reverse = true;
+                }
+
+                currentEdge = nextEdge;
+
+                edges.Remove(currentEdge);
+                p.AddCurve(reverse ? currentEdge.Points.Reverse().Skip(1).ToArray() : currentEdge.Points.Skip(1).ToArray());
+            }
+
+            return p;
+        }
+
         public Image Render()
         {
             Bitmap bmp = new Bitmap(Parameters.MapSize.Width, Parameters.MapSize.Height);
+            
+            Random r = new Random(1);
 
+            #region Continent Path
+            //// to render solid border we need to collect all continents
+            
+            //// first collect all coast edges
+            //var _edges = new List<Edge>();
+            //foreach (var polygon in this)
+            //{
+            //    foreach (var edge in polygon.Edges)
+            //    {
+            //        if (edge.Coast && !_edges.Contains(edge))
+            //            _edges.Add(edge);
+            //    }
+            //}
+
+            //var continentsPaths = new List<GraphicsPath>();
+            ////then create continents
+            //while (_edges.Count > 0)
+            //{
+            //    continentsPaths.Add(CollectPath(_edges[0], _edges));
+            //}
+
+
+            #endregion
 
             using (var g = Graphics.FromImage(bmp))
             {
-                Random r = new Random();
+                if (RenderMapTemplate != null)
+                    g.DrawImage(RenderMapTemplate, new Rectangle(0, 0, Parameters.MapSize.Width, Parameters.MapSize.Height));
+
+                Brush polyBrush = new SolidBrush(Color.FromArgb(219, 164, 74));
+                if (RenderContinentTemplate != null)
+                    polyBrush = new TextureBrush(RenderContinentTemplate);
+                
+
                 foreach (var polygon in this)
                 {
                     //if (bordersCheckBox.Checked)
@@ -644,14 +759,57 @@ namespace Utopia.MapGenerator
                     {
                         Color col = GetPolygonColor(polygon);
 
-                        g.FillPolygon(new SolidBrush(col), polygon.points);
+                        try
+                        {
+                            //if(!polygon.Ocean && MapTemplate != null)
+                            //    g.FillPolygon(new SolidBrush(col), polygon.points);
 
+                            //if (polygon.Coast)
+                            //{
+                            //    var brush = new LinearGradientBrush(
+
+                            //    g.FillPolygon(polyBrush, polygon.points);
+                            //}
+                            if(!polygon.Ocean && polygon.Elevation > 127)
+                                g.FillPolygon(polyBrush, polygon.points);
+
+                            if (RenderWavePatterns != null)
+                            {
+                                if (polygon.Ocean && !polygon.Coast && !polygon.Neighbors.Exists(p => p.HasPattern) && r.NextDouble() > 0.5)
+                                {
+                                    polygon.HasPattern = true;
+                                    var center = polygon.Center;
+                                    center.Offset(-32, -16);
+                                    g.DrawImage(RenderWavePatterns[r.Next(0,RenderWavePatterns.Length)], new Rectangle(center, new Size(64, 32)));
+                                }
+                            }
+
+                            if (RenderForest != null && !polygon.Coast && polygon.Biome == BiomeType.TemperateDeciduousForest || polygon.Biome == BiomeType.TemperateRainForest)
+                            {
+                                                                    var center = polygon.Center;
+                                    center.Offset(-16, -16);
+                                    g.DrawImage(RenderForest, new Rectangle(center, new Size(32, 32)));
+                            }
+
+                            if (RenderTropicalForest != null && !polygon.Coast && polygon.Biome == BiomeType.TropicalRainForest || polygon.Biome == BiomeType.TropicalRainForest)
+                            {
+                                var center = polygon.Center;
+                                center.Offset(-16, -16);
+                                g.DrawImage(RenderTropicalForest, new Rectangle(center, new Size(32, 32)));
+                            }
+
+                        }
+                        catch (OverflowException)
+                        {
+
+                        }
                         //if (bordersCheckBox.Checked)
                         //    g.DrawEllipse(Pens.Brown, polygon.Center.X - 2, polygon.Center.Y - 2, 4, 4);
                     }
 
                 }
 
+               
 
                 //foreach (var polygon in this)
                 //{
@@ -664,7 +822,9 @@ namespace Utopia.MapGenerator
                 //        }
                 //    }
                 //}
-
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                var coastPen = new Pen(Brushes.Gray, 1);
+                
                 foreach (var polygon in this)
                 {
                     // draw rivers
@@ -673,19 +833,36 @@ namespace Utopia.MapGenerator
                         if (edge.WaterFlow > 0)
                         {
                             var strong = (int)Math.Sqrt(edge.WaterFlow);
-                            var p = new Pen(Color.Blue, strong);
+                            var p = new Pen(Color.FromArgb(83,68,44), strong);
                             //p.EndCap = LineCap.ArrowAnchor;
 
-
-                            g.DrawLines(p, edge.Points);
+                            g.DrawCurve(p, edge.Points);
+                            //g.DrawLines(p, edge.Points);
 
 
                             //g.DrawLine(p,edge.Start, edge.End);
                             //else
                             //    g.DrawLine(p, edge.End, edge.Start);
                         }
+
+                        if (edge.Coast)
+                        {
+                            g.DrawCurve(coastPen, edge.Points);
+                        }
+
                     }
                 }
+
+                //foreach (var continentsPath in continentsPaths)
+                //{
+                //    var pathBrush = new PathGradientBrush(continentsPath);
+                //    pathBrush.CenterColor = Color.Transparent;
+                //    pathBrush.SurroundColors = new[] { Color.FromArgb(82,65,44) };
+                //    pathBrush.FocusScales = new PointF(0.985f, 0.985f);
+                //    g.FillPath(pathBrush, continentsPath);
+                //}
+
+
 
             }
             return bmp;

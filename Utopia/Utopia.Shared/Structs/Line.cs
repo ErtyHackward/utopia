@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Drawing;
 
-namespace Utopia.MapGenerator
+namespace Utopia.Shared.Structs
 {
     ///<summary>
     /// Helper class contaning geometry of line

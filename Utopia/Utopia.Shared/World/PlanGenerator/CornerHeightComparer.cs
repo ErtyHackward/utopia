@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Utopia.MapGenerator
+namespace Utopia.Shared.World.PlanGenerator
 {
     public class CornerHeightComparer : IComparer<Corner>
     {

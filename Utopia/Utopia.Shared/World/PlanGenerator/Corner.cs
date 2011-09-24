@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Utopia.MapGenerator
+namespace Utopia.Shared.World.PlanGenerator
 {
     public class Corner
     {
