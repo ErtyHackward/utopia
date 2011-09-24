@@ -13,8 +13,9 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
 
         VoxelModel Model
         {
-            get;
-            set;
+            get;          
         }
+
+        void CommitModel();
     }
 }

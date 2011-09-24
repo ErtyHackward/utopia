@@ -81,6 +81,7 @@ namespace Utopia.Entities.Voxel
         public void Commit()
         {
             //send modified blocks back to server / disk storage
+            VoxelEntity.CommitModel();
         }
 
         public void Dispose()
