@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
+using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
-using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.StatesManager;
 using S33M3Engines.Struct.Vertex;
@@ -16,14 +17,12 @@ using SharpDX.Direct3D11;
 using Utopia.Action;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
+using Utopia.InputManager;
 using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 using UtopiaContent.Effects.Terran;
 using Screen = Nuclex.UserInterface.Screen;
-using S33M3Engines.D3D.DebugTools;
-using Utopia.InputManager;
 
 namespace Utopia.Editor
 {
@@ -47,13 +46,16 @@ namespace Utopia.Editor
         private const double Scale = 1f/16f;
 
 
-        private Vector3I? _prevPickedBlock;
+       
         public ShaderResourceView Texture; //it's a field for being able to dispose the resource
 
         private Tool _leftToolbeforeEnteringEditor;
 
         public Vector3I? NewCubePlace;
+        private Vector3I? _prevNewCubePlace;
+
         public Vector3I? PickedCubeLoc;
+        private Vector3I? _prevPickedBlock;
 
         public List<Vector3I> Selected = new List<Vector3I>();
 
@@ -118,11 +120,6 @@ namespace Utopia.Editor
                                                   (int) _player.Position.Z);
         }
 
-        public override void Initialize()
-        {
-            base.Initialize();
-        }
-
         public override void LoadContent()
         {
             String[] dirs = new[] {@"Textures/Terran/", @"Textures/Editor/"};
@@ -146,6 +143,7 @@ namespace Utopia.Editor
             if (_editedEntity == null) return;
 
             GetSelectedBlock();
+
             if (!PickedCubeLoc.HasValue && _prevPickedBlock.HasValue)
             {
                 _editedEntity.AlterOverlay(_prevPickedBlock.Value, 0);
@@ -171,6 +169,18 @@ namespace Utopia.Editor
                 }
 
                 _prevPickedBlock = PickedCubeLoc;
+                _editedEntity.Altered = true;
+            }
+
+            if (NewCubePlace.HasValue && NewCubePlace != _prevNewCubePlace)
+            {
+                _editedEntity.AlterOverlay(NewCubePlace.Value, 20);
+
+
+                if (_prevNewCubePlace.HasValue)
+                    _editedEntity.AlterOverlay(_prevNewCubePlace.Value, 0);
+
+                _prevNewCubePlace = NewCubePlace;
                 _editedEntity.Altered = true;
             }
 
@@ -272,20 +282,52 @@ namespace Utopia.Editor
             _d3DEngine.Context.Draw(_editedEntity.VertexBuffer.VertexCount, 0);
         }
 
-        public void ClearEntity()
-        {
-        }
+
+        private int _lastLoaded = -1;
 
         public void LoadEntity()
         {
+            //quick n dirty local disk load system : each time you call it you load a new file !
+            _lastLoaded++; 
+            String path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia", "entity_" + i + ".bin");
+            if (File.Exists(path))
+            {
+                using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open)))
+                {
+                    _editedEntity.VoxelEntity.Model.Load(reader);
+                }
+            } else
+            {
+                if (_lastLoaded == 0) return;//0 doesnt exist = you click load but you never saved
+
+                _lastLoaded = -1; //really quick n dirty
+                LoadEntity(); 
+            }
         }
 
         public void SaveEntity()
         {
+            //quick n dirty saving on local disk. each call saves a new copy. don't know if we will keep it or save on server only
+            string path="";
+            int i = 0;
+            do
+            {
+                path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"Utopia", "entity_"+i+".bin");
+                i++;
+            } while(File.Exists(path));
+
+          
+            using ( BinaryWriter writer = new BinaryWriter(File.Open(path,FileMode.CreateNew)))
+            {
+                _editedEntity.VoxelEntity.Model.Save(writer);    
+            }
+            
+            //TODO commit entity to server = _editedEntity.Commit();
         }
 
 
-        private Vector3D CastedFrom, CastedTo;
+        private Vector3D _castedFrom, _castedTo;
+       
 
         private void GetSelectedBlock()
         {
@@ -300,42 +342,66 @@ namespace Utopia.Editor
             int nbrpt = 0;
 
             double start = 0;
-                //how far you need to be from the edited cube. 0 means you can pick right in your eye (ouch) 
+            //how far you need to be from the edited cube. 0 means you can pick right in your eye (ouch) 
             double end = start + 40;
-                //TODO magic number 40 for editor picking, should be related to scale and block array size  
+            //TODO magic number 40 for editor picking, should be related to scale and block array size  
+
+            PickedCubeLoc = null;
+            //loose the state of the pickedBlock : the for loop must find a new one, we dont want a stale picked blocks 
+
+            double startX = _editedEntity.Position.X;
+            double startY = _editedEntity.Position.Y;
+            double startZ = _editedEntity.Position.Z;
+
+            double endX = blocks.GetLength(0)*Scale + startX;
+            double endY = blocks.GetLength(1)*Scale + startY;
+            double endZ = blocks.GetLength(2)*Scale + startZ;
+
+            double? found = null;
 
             for (double x = start; x < end; x += 0.08) //for scale=1, was0.5 40 0.1  40 seems a high pick distance ! 
             {
                 nbrpt++;
                 Vector3D targetPoint = (mouseWorldPosition + (mouseLookAt*x));
 
-                if (x == start) CastedFrom = targetPoint;
-                CastedTo = targetPoint;
-
-                double startX = _editedEntity.Position.X;
-                double startY = _editedEntity.Position.Y;
-                double startZ = _editedEntity.Position.Z;
-
-                double endX = blocks.GetLength(0)*Scale + startX;
-                double endY = blocks.GetLength(1)*Scale + startY;
-                double endZ = blocks.GetLength(2)*Scale + startZ;
+                if (x == start) _castedFrom = targetPoint;
+                _castedTo = targetPoint;
 
                 if (targetPoint.X >= startX && targetPoint.Y >= startY && targetPoint.Z >= startZ
                     && targetPoint.X < endX && targetPoint.Y < endY && targetPoint.Z < endZ)
                 {
                     Vector3I hit = new Vector3I((int) ((targetPoint.X - startX)/Scale),
-                                                            (int) ((targetPoint.Y - startY)/Scale),
-                                                            (int) ((targetPoint.Z - startZ)/Scale));
+                                                (int) ((targetPoint.Y - startY)/Scale),
+                                                (int) ((targetPoint.Z - startZ)/Scale));
                     if (Pickable(hit))
                     {
+                        found = x;
                         PickedCubeLoc = hit;
-                        return;
+                        break;
                     }
                 }
             }
-            PickedCubeLoc = null;
 
+            if (found == null) return;
+
+            NewCubePlace = null;
+            for (double x = found.Value; x > 0.01f; x -= 0.01f)
+            {
+                Vector3D targetPoint = (mouseWorldPosition + (mouseLookAt*x));
+
+                if (targetPoint.X >= startX && targetPoint.Y >= startY && targetPoint.Z >= startZ
+                    && targetPoint.X < endX && targetPoint.Y < endY && targetPoint.Z < endZ)
+                {
+                    Vector3I hit = new Vector3I((int) ((targetPoint.X - startX)/Scale),
+                                                (int) ((targetPoint.Y - startY)/Scale),
+                                                (int) ((targetPoint.Z - startZ)/Scale));
+
+                    NewCubePlace = hit;
+                    break;
+                }
+            }
         }
+
 
         /// <summary>
         /// check if a hit is pickable

@@ -9,7 +9,7 @@ namespace Utopia.Shared.Chunks.Entities
     /// </summary>
     public abstract class VoxelEntity : Entity, IVoxelEntity
     {
-        private VoxelModel _model;
+        private readonly VoxelModel _model;
 
         /// <summary>
         /// Occurs when entity voxel model was changed
@@ -23,23 +23,22 @@ namespace Utopia.Shared.Chunks.Entities
         }
         
         /// <summary>
-        /// Gets or sets voxel entity model
+        /// Gets voxel entity model
         /// </summary>
         public VoxelModel Model
         {
-            get { return _model; }
-            set {
-                if (_model != value)
-                {
-                    _model = value;
-                    OnVoxelModelChanged(new VoxelModelEventArgs { Model = _model });
-                }
-            }
+            get { return _model; }            
         }
+
+        public void CommitModel()
+        {
+          OnVoxelModelChanged(new VoxelModelEventArgs { Model = _model });         
+        }
+
 
         public VoxelEntity()
         {
-            Model = new VoxelModel();
+            _model = new VoxelModel();
         }
 
         // we need to override save and load!
