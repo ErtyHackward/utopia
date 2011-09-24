@@ -2,7 +2,6 @@
 using System.IO;
 using Utopia.Net.Messages;
 using Utopia.Server.Events;
-using Utopia.Server.Utils;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 
@@ -144,7 +143,7 @@ namespace Utopia.Server.Structs
             base.Use(entityUseMessage);
 
             // find tool
-            var playerCharacter = DynamicEntity as PlayerCharacter;
+            var playerCharacter = (PlayerCharacter)DynamicEntity;
 
             var tool = playerCharacter.FindToolById(entityUseMessage.ToolId);
 

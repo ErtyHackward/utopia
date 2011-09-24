@@ -7,8 +7,8 @@ namespace Utopia.Server.Services
     /// </summary>
     public class Clock
     {
-        private readonly DateTime _clockStartTime;
-        private readonly DateTime _gameStartTime;
+        private DateTime _clockStartTime;
+        private DateTime _gameStartTime;
         private double _timeFactor;
         private TimeSpan _dayLength;
 
@@ -77,5 +77,18 @@ namespace Utopia.Server.Services
             _gameStartTime = startGameTime;
             DayLength = dayLength;
         }
+
+        public void SetCurrentTime(DateTime time)
+        {
+            _clockStartTime = DateTime.Now;
+            _gameStartTime = time;
+        }
+
+        public void SetCurrentTimeOfDay(TimeSpan time)
+        {
+            SetCurrentTime(_gameStartTime.Date + time);
+            _clockStartTime = DateTime.Now;
+        }
+
     }
 }

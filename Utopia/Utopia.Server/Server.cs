@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using S33M3Engines.Shared.Math;
 using Utopia.Net.Connections;
@@ -47,6 +48,11 @@ namespace Utopia.Server
 
         // ReSharper restore NotAccessedField.Local        
         private readonly object _areaManagerSyncRoot = new object();
+        private readonly DateTime _dateStart;
+
+        PerformanceCounter _cpuCounter;
+        PerformanceCounter _ramCounter;
+
 
         //todo: remove to other class
         private CubeToolLogic _logic;
@@ -158,6 +164,16 @@ namespace Utopia.Server
 
             //todo: remove to other class
             _logic = new CubeToolLogic(LandscapeManager);
+
+            _dateStart = DateTime.Now;
+
+            _cpuCounter = new PerformanceCounter();
+
+            _cpuCounter.CategoryName = "Processor";
+            _cpuCounter.CounterName = "% Processor Time";
+            _cpuCounter.InstanceName = "_Total";
+
+            _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
             
             // async server events (saving modified chunks, unloading unused chunks)
             _cleanUpTimer = new Timer(CleanUp, null, SettingsManager.Settings.CleanUpInterval, SettingsManager.Settings.CleanUpInterval);
@@ -224,6 +240,10 @@ namespace Utopia.Server
         private void SaveChunks(object obj)
         {
             LandscapeManager.SaveChunks();
+            Console.WriteLine("Chunks saved");
+#if DEBUG
+            Console.WriteLine("Took: {0} ms, Chunks: {1}", LandscapeManager.SaveTime, LandscapeManager.ChunksSaved);
+#endif
         }
 
         void LandscapeManagerChunkUnloaded(object sender, LandscapeManagerChunkEventArgs e)
@@ -303,15 +323,44 @@ namespace Utopia.Server
 
                 if (msg[0] == '/')
                 {
+                    if (msg == "/status")
+                    {
+                        var sb = new StringBuilder();
+
+                        sb.AppendFormat("Server is up for {0}\n",(DateTime.Now - _dateStart).ToString(@"dd\.hh\:mm\:ss"));
+                        sb.AppendFormat("Chunks in memory: {0}\n",LandscapeManager.ChunksInMemory);
+                        sb.AppendFormat("Entities count: {0}\n", AreaManager.EntitiesCount);
+                        sb.AppendFormat("Perfomance: CPU usage {1}%, Free RAM {2}Mb, DynamicUpdate {0} msec", Math.Round(_updateCyclesPerfomance.Average(), 2), _cpuCounter.NextValue(), _ramCounter.NextValue());
+
+                        connection.SendAsync(new ChatMessage { Login = "server", Message = sb.ToString() });
+                        return;
+                    }
+
+                    if (msg == "/save")
+                    {
+                        SaveChunks(null);
+                        connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Saved {1} chunks. Time: {0} ms", LandscapeManager.SaveTime, LandscapeManager.ChunksSaved) });
+                    }
+
                     if (msg.StartsWith("/services"))
                     {
-                        SendChatMessage("Currenty active services: " + string.Join(", ", (from s in Services select s.ServiceName)));
+                        BroadCastChatMessage("Currenty active services: " + string.Join(", ", (from s in Services select s.ServiceName)));
                         return;
                     }
 
                     if (msg == "/uperf")
                     {
-                        SendChatMessage(string.Format("Average cycle perfomance: {0} msec", Math.Round(_updateCyclesPerfomance.Average(), 2)));
+                        BroadCastChatMessage(string.Format("Average cycle perfomance: {0} msec", Math.Round(_updateCyclesPerfomance.Average(), 2)));
+                        return;
+                    }
+
+                    if (msg.StartsWith("/settime") && msg.Length > 9)
+                    {
+                        var time = TimeSpan.Parse(msg.Remove(0, 9));
+
+                        Clock.SetCurrentTimeOfDay(time);
+                        ConnectionManager.Broadcast(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
+                        BroadCastChatMessage("Time updated");
                         return;
                     }
 
@@ -323,7 +372,7 @@ namespace Utopia.Server
             }
         }
 
-        public void SendChatMessage(string message)
+        public void BroadCastChatMessage(string message)
         {
             ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message= message });
         }
