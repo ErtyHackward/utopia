@@ -138,5 +138,25 @@ namespace Utopia.Server.Structs
             Connection.SendAsync(new BlocksChangedMessage { BlockValues = e.BlockValues, BlockPositions = e.GlobalLocations });
         }
 
+        public override void Use(EntityUseMessage entityUseMessage)
+        {
+            // update entity state
+            base.Use(entityUseMessage);
+
+            // find tool
+            var playerCharacter = DynamicEntity as PlayerCharacter;
+
+            var tool = playerCharacter.FindToolById(entityUseMessage.ToolId);
+
+            if (tool != null)
+            {
+                tool.Use();
+            }
+            else
+            {
+                Connection.SendAsync(new ChatMessage { Login = "toolsystem", Message = "Invalid toolid provided. Can not use the tool" });
+            }
+        }
+
     }
 }

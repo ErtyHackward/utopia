@@ -18,11 +18,23 @@ namespace Utopia.Server.AStar
         /// </summary>
         public Vector3I Goal { get; set; }
 
+        #region Debug
+
+        /// <summary>
+        /// Gets time that was taken to create this path (ms)
+        /// </summary>
+        public double PathFindTime { get; set; }
+
+        #endregion
+
         /// <summary>
         /// List of points from start to goal or null if path 
         /// </summary>
         public List<Vector3I> Points { get; set; }
 
+        /// <summary>
+        /// Indicates if path exists
+        /// </summary>
         public bool Exists
         {
             get { return Points != null; }

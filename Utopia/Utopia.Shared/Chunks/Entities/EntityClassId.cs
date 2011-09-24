@@ -13,7 +13,8 @@
         Hoe = 4,
         Axe = 5,
         Survey = 6,
-        Hand = 7,
+        Annihilator = 7,
+        DirtAdder = 8,
 
         // static
         Chest = 1000,

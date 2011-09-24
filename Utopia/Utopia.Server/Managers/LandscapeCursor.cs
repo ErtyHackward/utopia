@@ -37,11 +37,20 @@ namespace Utopia.Server.Managers
         }
 
         /// <summary>
-        /// Gets current block type at cursor position
+        /// Reads current block type at cursor position
         /// </summary>
-        public byte Value
+        public byte Read()
         {
-            get { return _currentChunk.BlockData[_internalPosition]; }
+            return _currentChunk.BlockData[_internalPosition];
+        }
+
+        /// <summary>
+        /// Writes specidfied value to current cursor position
+        /// </summary>
+        /// <param name="value"></param>
+        public void Write(byte value)
+        {
+            _currentChunk.BlockData[_internalPosition] = value;
         }
 
         protected LandscapeCursor(LandscapeManager manager)
@@ -82,7 +91,7 @@ namespace Utopia.Server.Managers
         /// <returns></returns>
         public bool IsSolid()
         {
-            return CubeProfile.CubesProfile[Value].IsSolidToEntity;
+            return CubeProfile.CubesProfile[Read()].IsSolidToEntity;
         }
 
         /// <summary>
@@ -216,8 +225,5 @@ namespace Utopia.Server.Managers
 
             return this;
         }
-
-
-
     }
 }

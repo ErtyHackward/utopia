@@ -38,6 +38,8 @@ namespace Utopia.Shared.Chunks.Entities.Events
         /// </summary>
         public uint PickedEntityId { get; set; }
 
+        public bool IsBlockPicked { get; set; }
+
         /// <summary>
         /// Creates event args from entity state
         /// </summary>
@@ -51,6 +53,7 @@ namespace Utopia.Shared.Chunks.Entities.Events
             e.PickedBlockPosition = state.PickedBlockPosition;
             e.NewBlockPosition = state.NewBlockPosition;
             e.PickedEntityId = state.PickedEntityId;
+            e.IsBlockPicked = state.IsBlockPicked;
 
             return e;
         }
