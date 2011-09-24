@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Xml.Serialization;
 using BenTools.Mathematics;
+using Utopia.Shared.Structs;
 
-namespace Utopia.MapGenerator
+namespace Utopia.Shared.World.PlanGenerator
 {
     [Serializable]
     public class Edge
@@ -36,6 +37,9 @@ namespace Utopia.MapGenerator
         [XmlAttribute]
         public int WaterFlow;
 
+        [XmlAttribute]
+        public bool Coast { get; set; }
+
         public Edge()
         {
             
@@ -52,7 +56,7 @@ namespace Utopia.MapGenerator
             Points = new[] { Start, End };
         }
 
-        public void Split(Random r)
+        public void Split(ref Random r)
         {
             var newPoints = new Point[Points.Length * 2 - 1];
 
@@ -70,7 +74,7 @@ namespace Utopia.MapGenerator
 
 
                 newPoints[i * 2] = Points[i];
-                newPoints[i * 2 + 1] = pl.GetRemotePoint(middlePoint, (float)r.Next(-len, len), r.NextDouble() > 0.5);
+                newPoints[i * 2 + 1] = pl.GetRemotePoint(middlePoint, r.Next(-len, len), r.NextDouble() > 0.5);
             }
             newPoints[newPoints.Length - 1] = Points[Points.Length - 1];
             Points = newPoints;
