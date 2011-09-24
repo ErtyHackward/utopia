@@ -15,10 +15,5 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     {
         public int Speed { get; set; }
         public int Damage { get; set; }
-
-        public override bool Use()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -1,33 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Shared.Structs;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
-    public struct ToolImpact
+    /// <summary>
+    /// Basic tool impact
+    /// </summary>
+    public class ToolImpact : IToolImpact
     {
-        public readonly String Message; //for displaying an information, see the survey tool for example
-        public readonly TerraCubeWithPosition[] CubesImpact;
-
-        public ToolImpact(TerraCubeWithPosition[] cubesImpact, string message = null)
-        {
-            Message = message;
-            CubesImpact = cubesImpact;
-        }
-
-        public ToolImpact(TerraCubeWithPosition cubeImpact, string message = null)
-        {
-            CubesImpact = new TerraCubeWithPosition[] { cubeImpact };
-            Message = message;
-        }
-
-        public ToolImpact(string message)
-        {
-            CubesImpact = null;
-            Message = message;
-
-        }
+        /// <summary>
+        /// Describes why tool can not be used
+        /// </summary>
+        public String Message { get; set; }
+        
+        /// <summary>
+        /// Indicates if tool use was succeed
+        /// </summary>
+        public bool Success { get; set; }
     }
 }

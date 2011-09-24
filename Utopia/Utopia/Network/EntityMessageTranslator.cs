@@ -114,6 +114,7 @@ namespace Utopia.Network
         {
             _connection.SendAsync(new EntityUseMessage 
             { 
+                IsBlockPicked =e.IsBlockPicked,
                 EntityId = _playerEntity.EntityId,
                 NewBlockPosition = e.NewBlockPosition, 
                 PickedBlockPosition = e.PickedBlockPosition, 

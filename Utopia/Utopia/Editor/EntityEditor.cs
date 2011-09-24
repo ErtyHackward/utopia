@@ -288,8 +288,8 @@ namespace Utopia.Editor
         public void LoadEntity()
         {
             //quick n dirty local disk load system : each time you call it you load a new file !
-            _lastLoaded++; 
-            String path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia", "entity_" + i + ".bin");
+            _lastLoaded++;
+            String path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia", "entity_" + _lastLoaded + ".bin");
             if (File.Exists(path))
             {
                 using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open)))

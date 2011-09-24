@@ -10,12 +10,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 
     //Survey gets you the number of blocks of selected cubeid under the selection cube. 
     public class Survey : Tool
-    {
-        public override bool Use()
-        {
-            throw new NotImplementedException();
-        }
-        
+    {        
         public override EntityClassId ClassId
         {
             get { return EntityClassId.Survey; }
