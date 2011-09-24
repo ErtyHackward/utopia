@@ -32,7 +32,7 @@ namespace Utopia.Editor
 
         public override void Use()
         {
-            Editor.UpdatePickedCube(Editor.SelectedIndex);           
+            Editor.UpdateNewPlace(Editor.SelectedIndex);           
         }
     }
     
@@ -130,5 +130,15 @@ namespace Utopia.Editor
             Status = Editor.VerticalSymetryEnabled ? "ON" : "OFF";
         }
     }
-    
+
+    public class Save : EditorTool
+    {
+        public Save(EntityEditor editor) : base(editor) { Name = "Save"; }
+
+        public override void Use()
+        {
+            Editor.SaveEntity();
+        }
+    }
+
 }
