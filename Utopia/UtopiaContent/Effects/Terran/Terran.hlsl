@@ -75,7 +75,7 @@ PS_IN VS(VS_IN input)
 
 	output.EmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
 
-	output.fogPower = 0; //clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
+	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 
     return output;
 }

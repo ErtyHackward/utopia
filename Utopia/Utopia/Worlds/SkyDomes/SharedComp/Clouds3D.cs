@@ -22,6 +22,7 @@ using S33M3Engines.Shared.Math.Noises;
 using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.WorldFocus;
 using S33M3Engines.Struct;
+using Utopia.Worlds.GameClocks;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -33,6 +34,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private IWeather _weather;
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
+        private IClock _worldclock;
 
         private int _cloudMap_size;
         private float _cloud_size = 40;
@@ -59,12 +61,13 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #region Public properties
         #endregion
 
-        public Clouds3D(D3DEngine d3dEngine, CameraManager camManager, IWeather weather, VisualWorldParameters worldParam, WorldFocusManager worldFocusManager)
+        public Clouds3D(D3DEngine d3dEngine, CameraManager camManager, IWeather weather, VisualWorldParameters worldParam, WorldFocusManager worldFocusManager, IClock worldclock)
         {
             _d3dEngine = d3dEngine;
             _worldParam = worldParam;
             _weather = weather;
             _camManager = camManager;
+            _worldclock = worldclock;
             _worldFocusManager = worldFocusManager;
             _cloud_MapOffset = new FTSValue<Vector2>();
             _cloudMap_size = (int)(worldParam.WorldVisibleSize.X / _cloud_size * 4);
@@ -122,6 +125,26 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             int _cloudMapXIndex, _cloudMapZIndex;
             _indices.Clear();
             _vertices.Clear();
+
+            _brightness = _worldclock.ClockTime.SmartTimeInterpolation(0.2f);
+
+            //Recompute the color taking into accound the current day time
+            _topFace.R = (byte)(_brightness * 240);
+            _topFace.G = (byte)(_brightness * 240);
+            _topFace.B = (byte)(_brightness * 255);
+
+            _side1Face.R = (byte)(_brightness * 230);
+            _side1Face.G = (byte)(_brightness * 230);
+            _side1Face.B = (byte)(_brightness * 255);
+
+            _side2Face.R = (byte)(_brightness * 220);
+            _side2Face.G = (byte)(_brightness * 220);
+            _side2Face.B = (byte)(_brightness * 245);
+
+            _bottomFace.R = (byte)(_brightness * 205);
+            _bottomFace.G = (byte)(_brightness * 205);
+            _bottomFace.B = (byte)(_brightness * 230);
+
 
             for (int zi = -_cloudMap_size; zi < _cloudMap_size; zi++)
             {

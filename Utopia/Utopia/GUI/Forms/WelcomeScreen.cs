@@ -184,6 +184,7 @@ namespace Utopia.GUI.Forms
             _server.ServerConnection.MessageGameInformation += ServerConnection_MessageGameInformation;
             _server.ServerConnection.MessagePing += ServerConnection_MessagePing;
             _server.ServerConnection.MessageEntityIn += ServerConnection_MessageEntityIn;
+            _server.ServerConnection.MessageDateTime += ServerConnection_MessageDateTime;
         }
 
         private void UnregisterEvents()
@@ -194,6 +195,7 @@ namespace Utopia.GUI.Forms
             _server.ServerConnection.MessageGameInformation -= ServerConnection_MessageGameInformation;
             _server.ServerConnection.MessagePing -= ServerConnection_MessagePing;
             _server.ServerConnection.MessageEntityIn -= ServerConnection_MessageEntityIn;
+            _server.ServerConnection.MessageDateTime -= ServerConnection_MessageDateTime;
         }
 
         void ServerConnection_MessageEntityIn(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.EntityInMessage> e)
@@ -202,6 +204,12 @@ namespace Utopia.GUI.Forms
             UnregisterEvents();
             _serverTime.Dispose();
              HideWindows();
+        }
+
+        void ServerConnection_MessageDateTime(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.DateTimeMessage> e)
+        {
+            _server.WorldDateTime = e.Message.DateTime;
+            _server.TimeFactor = e.Message.TimeFactor; 
         }
 
         void ServerConnection_MessagePing(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.PingMessage> e)

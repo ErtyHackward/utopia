@@ -7,20 +7,24 @@ using Utopia.Settings;
 using S33M3Engines;
 using S33M3Engines.InputHandler;
 using Utopia.Action;
+using Utopia.Network;
+using Utopia.Net.Connections;
+using Utopia.Net.Messages;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Worlds.GameClocks
 {
     public class WorldClock : Clock
     {
         #region Private variables
-        private float _startTime;
-        private float _deltaAngleTime;
+        private float _deltaTime;
         private bool _frozenTime;
         private ActionsManager _actions;
+        private Server _server;
         #endregion
 
         #region Public variable/properties
-        public float ClockSpeed { get; set; }
+        public float TimeFactor { get; set; }
         #endregion
 
         /// <summary>
@@ -29,23 +33,24 @@ namespace Utopia.Worlds.GameClocks
         /// <param name="game">Base tools class</param>
         /// <param name="clockSpeed">The Ingame time speed in "Nbr of second ingame for each realtime seconds"; ex : 1 = Real time, 60 = 60times faster than realtime</param>
         /// <param name="gameTimeStatus">The startup time</param>
-        public WorldClock(ActionsManager actions, float clockSpeed, float startTime)
+        public WorldClock(ActionsManager actions, Server server)
         {
+            _server = server;
             _actions = actions;
-            _startTime = startTime;
-            ClockSpeed = clockSpeed;
+            AssignTimeAndFactor(server.TimeFactor, server.WorldDateTime);
+            _server.ServerConnection.MessageDateTime += ServerConnection_MessageDateTime;
         }
 
         #region Public methods
         public override void Initialize()
         {
             _frozenTime = false;
-            base._clockTime.Value = _startTime;
             base.Initialize();
         }
 
         public override void Dispose()
         {
+            _server.ServerConnection.MessageDateTime -= ServerConnection_MessageDateTime;
             base.Dispose();
         }
 
@@ -55,11 +60,11 @@ namespace Utopia.Worlds.GameClocks
 
             if (_frozenTime) return;
 
-            _deltaAngleTime = ClockSpeed * TimeSpend.ElapsedGameTimeInS_LD * (float)Math.PI / 10800.0f;
+            _deltaTime = TimeFactor * TimeSpend.ElapsedGameTimeInS_LD * (float)Math.PI / 10800.0f;
 
             //Back UP previous values
             _clockTime.BackUpValue();
-            _clockTime.Value += _deltaAngleTime;
+            _clockTime.Value += _deltaTime;
 
             if (_clockTime.Value > Math.PI * 2)
             {
@@ -95,8 +100,29 @@ namespace Utopia.Worlds.GameClocks
                 _frozenTime = !_frozenTime;
             }
         }
+
+        //Synchronize hour with server
+        private void ServerConnection_MessageDateTime(object sender, ProtocolMessageEventArgs<DateTimeMessage> e)
+        {
+            AssignTimeAndFactor(e.Message.TimeFactor, e.Message.DateTime);
+        }
+
+        private void AssignTimeAndFactor(double timeFactor, DateTime worldDatetime)
+        {
+            TimeFactor = (float)timeFactor;
+            int Hour = worldDatetime.Hour;
+            int Minute = worldDatetime.Minute;
+            int Second = worldDatetime.Second;
+
+            Console.WriteLine(worldDatetime);
+
+            //86400 seconds/day
+            _clockTime.Value = ((Second + (Hour * 3600) + (Minute * 60)) / 86400.0f) * MathHelper.TwoPi;
+            _clockTime.ValuePrev = base._clockTime.Value;
+        }
         #endregion
 
 
     }
 }
+

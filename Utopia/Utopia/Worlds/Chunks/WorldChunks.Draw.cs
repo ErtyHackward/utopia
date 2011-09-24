@@ -127,6 +127,9 @@ namespace Utopia.Worlds.Chunks
 
             _liquidEffect.Begin();
             _liquidEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+            _liquidEffect.CBPerFrame.Values.dayTime = _gameClock.ClockTime.ClockTimeNormalized2;
+            _liquidEffect.CBPerFrame.Values.fogdist = ((VisualWorldParameters.WorldVisibleSize.X) / 2) - 48;
+
             if (_playerManager.IsHeadInsideWater) _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
             else _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
 

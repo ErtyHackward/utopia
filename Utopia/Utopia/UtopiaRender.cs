@@ -222,8 +222,7 @@ namespace Utopia
             _actions = IoCContainer.Get<ActionsManager>();
 
             //-- Clock --
-            _worldClock = IoCContainer.Get<IClock>(new ConstructorArgument("clockSpeed", 1f),
-                                                   new ConstructorArgument("startTime", (float)Math.PI * 1f));
+            _worldClock = IoCContainer.Get<IClock>();
             //-- Weather --
             _weather = IoCContainer.Get<IWeather>();
 
