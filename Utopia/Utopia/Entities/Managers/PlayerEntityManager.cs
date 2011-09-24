@@ -141,11 +141,6 @@ namespace Utopia.Entities.Managers
             // _playerRenderer.Dispose(); ==> REgistered with Ninject
         }
 
-        void inputsManager_OnKeyPressed(object sender, System.Windows.Forms.KeyPressEventArgs e)
-        {
-            Console.WriteLine(e.KeyChar);
-        }
-
         #region Private Methods
 
         /// <summary>
@@ -178,7 +173,7 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (_actions.isTriggered(Actions.Use_LeftWhileCursorLocked))
+            if (_actions.isTriggered(Actions.Use_Left))
             {
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
                 if (Player.EntityState.IsBlockPicked)
@@ -190,7 +185,7 @@ namespace Utopia.Entities.Managers
                 //Enable Single block impact ==> For Testing purpose, shoul dbe removed ==============================================
             }
 
-            if (_actions.isTriggered(Actions.Use_RightWhileCursorLocked))
+            if (_actions.isTriggered(Actions.Use_Right))
             {
                 
                 //Avoid the player to add a block where he is located !
@@ -229,6 +224,68 @@ namespace Utopia.Entities.Managers
         #region Player Block Picking
         private void GetSelectedBlock()
         {
+            if (!_d3DEngine.UnlockedMouse) BlockSelectLockedMode();
+            else BlockSelectUnLockedMode();
+        }
+
+        Vector3D CollisionPoint;
+        private void BlockSelectUnLockedMode()
+        {
+            Vector3D mouseWorldPosition;
+            Vector3D mouseLookAtPosition;
+            _inputsManager.UnprojectMouseCursor(out mouseWorldPosition, out mouseLookAtPosition);
+
+            Player._entityState.IsBlockPicked = false;
+
+            //Sample 500 points in the view direction vector
+            for (int ptNbr = 0; ptNbr < 500; ptNbr++)
+            {
+                mouseWorldPosition += mouseLookAtPosition * 0.02;
+
+                if (_cubesHolder.isPickable(ref mouseWorldPosition, out _pickedCube))
+                {
+                    Player._entityState.PickedBlockPosition.X = MathHelper.Fastfloor(mouseWorldPosition.X);
+                    Player._entityState.PickedBlockPosition.Y = MathHelper.Fastfloor(mouseWorldPosition.Y);
+                    Player._entityState.PickedBlockPosition.Z = MathHelper.Fastfloor(mouseWorldPosition.Z);
+
+                    //Find the face picked up !
+                    float FaceDistance;
+                    Ray newRay = new Ray(mouseWorldPosition.AsVector3(), mouseLookAtPosition.AsVector3());
+
+                    BoundingBox bBox;
+                    ComputeBlockBoundingBox(ref Player._entityState.PickedBlockPosition, out bBox);
+
+                    newRay.Intersects(ref bBox, out FaceDistance);
+
+                    CollisionPoint = mouseWorldPosition + (mouseLookAtPosition * FaceDistance);
+                    MVector3.Round(ref CollisionPoint, 1);
+
+                    Player._entityState.NewBlockPosition = Player._entityState.PickedBlockPosition;
+
+                    if (CollisionPoint.X == Player._entityState.PickedBlockPosition.X) Player._entityState.NewBlockPosition.X--;
+                    else
+                        if (CollisionPoint.X == Player._entityState.PickedBlockPosition.X + 1) Player._entityState.NewBlockPosition.X++;
+                        else
+                            if (CollisionPoint.Y == Player._entityState.PickedBlockPosition.Y) Player._entityState.NewBlockPosition.Y--;
+                            else
+                                if (CollisionPoint.Y == Player._entityState.PickedBlockPosition.Y + 1) Player._entityState.NewBlockPosition.Y++;
+                                else
+                                    if (CollisionPoint.Z == Player._entityState.PickedBlockPosition.Z) Player._entityState.NewBlockPosition.Z--;
+                                    else
+                                        if (CollisionPoint.Z == Player._entityState.PickedBlockPosition.Z + 1) Player._entityState.NewBlockPosition.Z++;
+
+
+                    Player._entityState.IsBlockPicked = true;
+                    break;
+                }
+            }
+
+            Player._entityState.PickedEntityId = 0;
+
+        }
+
+        private void BlockSelectLockedMode()
+        {
             Player._entityState.IsBlockPicked = false;
 
             Vector3D pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
@@ -246,7 +303,7 @@ namespace Utopia.Entities.Managers
                     //Find the face picked up !
                     float FaceDistance;
                     Ray newRay = new Ray((_worldPosition.Value + _entityEyeOffset).AsVector3(), _lookAt.AsVector3());
-                    
+
                     BoundingBox bBox;
                     ComputeBlockBoundingBox(ref Player._entityState.PickedBlockPosition, out bBox);
 
@@ -703,12 +760,14 @@ namespace Utopia.Entities.Managers
 
         public string GetInfo()
         {
-            return string.Format("Player {0} Pos:[{1}; {2}; {3}] PickedBlock:{4} NewBlockPlace:{5}", Player.CharacterName, 
+            return string.Format("Player {0} Pos:[{1}; {2}; {3}] PickedBlock:{4}; NewBlockPlace:{5}; Collision Point : {6}", Player.CharacterName, 
                                                                                   Math.Round(Player.Position.X, 1), 
                                                                                   Math.Round(Player.Position.Y, 1), 
                                                                                   Math.Round(Player.Position.Z, 1),
                                                                                   Player._entityState.IsBlockPicked ? Player._entityState.PickedBlockPosition.ToString() : "None",
-                                                                                  Player._entityState.IsBlockPicked ? Player._entityState.NewBlockPosition.ToString() : "None");
+                                                                                  Player._entityState.IsBlockPicked ? Player._entityState.NewBlockPosition.ToString() : "None",
+                                                                                  Player._entityState.IsBlockPicked ? CollisionPoint.ToString() : "None"
+                                                                                  );
         }
     }
 }
