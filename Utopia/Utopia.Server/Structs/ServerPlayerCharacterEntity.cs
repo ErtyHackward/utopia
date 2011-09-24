@@ -2,6 +2,7 @@
 using System.IO;
 using Utopia.Net.Messages;
 using Utopia.Server.Events;
+using Utopia.Server.Utils;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 
@@ -134,7 +135,7 @@ namespace Utopia.Server.Structs
 
         void AreaBlocksChanged(object sender, BlocksChangedEventArgs e)
         {
-            Connection.SendAsync(new BlocksChangedMessage { ChunkPosition = e.ChunkPosition, BlockValues = e.BlockValues, BlockPositions = e.Locations });
+            Connection.SendAsync(new BlocksChangedMessage { BlockValues = e.BlockValues, BlockPositions = e.GlobalLocations });
         }
 
     }

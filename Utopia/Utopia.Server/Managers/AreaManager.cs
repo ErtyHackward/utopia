@@ -73,7 +73,7 @@ namespace Utopia.Server.Managers
         /// <param name="e"></param>
         public void InvokeBlocksChanged(BlocksChangedEventArgs e)
         {
-            GetArea(new Vector3D(e.ChunkPosition.X,0,e.ChunkPosition.Y)).OnBlocksChanged(e);
+            GetArea(new Vector3D(e.ChunkPosition.X, 0, e.ChunkPosition.Y)).OnBlocksChanged(e);
         }
 
         private MapArea GetArea(Vector3D position)
