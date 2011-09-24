@@ -11,6 +11,11 @@ namespace Utopia.Shared.Chunks.Entities.Events
         public Vector3I[] Locations { get; set; }
 
         /// <summary>
+        /// Global positions
+        /// </summary>
+        public Vector3I[] GlobalLocations { get; set; }
+
+        /// <summary>
         /// New blocks values
         /// </summary>
         public byte[] BlockValues { get; set; }

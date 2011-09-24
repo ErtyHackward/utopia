@@ -11,6 +11,7 @@ using Utopia.Server.Events;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Server.Structs;
+using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
@@ -221,8 +222,14 @@ namespace Utopia.Server
             var chunk = (ServerChunk)sender;
 
             chunk.LastAccess = DateTime.Now;
+
+            var globalPos = new Vector3I[e.Locations.Length];
+
+            e.Locations.CopyTo(globalPos, 0);
+            BlockHelper.ConvertToGlobal(chunk.Position, globalPos);
+
             // tell entities about blocks change
-            AreaManager.InvokeBlocksChanged(new BlocksChangedEventArgs { ChunkPosition = chunk.Position, BlockValues = e.Bytes, Locations = e.Locations });
+            AreaManager.InvokeBlocksChanged(new BlocksChangedEventArgs { ChunkPosition = chunk.Position, BlockValues = e.Bytes, Locations = e.Locations, GlobalLocations = globalPos });
         }
 
         private void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
