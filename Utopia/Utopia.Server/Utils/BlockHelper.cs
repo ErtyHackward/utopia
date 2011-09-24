@@ -27,5 +27,21 @@ namespace Utopia.Server.Utils
 
             return vec3;
         }
+
+        /// <summary>
+        /// Converts set of local positions to global coordinates
+        /// </summary>
+        /// <param name="chunkPosition"></param>
+        /// <param name="blocksPositions"></param>
+        public static void ConvertToGlobal(Vector2I chunkPosition, Vector3I[] blocksPositions)
+        {
+            var dx = chunkPosition.X * ChunkSize.X;
+            var dz = chunkPosition.Y * ChunkSize.Z;
+            for (int i = 0; i < blocksPositions.Length; i++)
+            {
+                blocksPositions[i].X += dx;
+                blocksPositions[i].Z += dz;
+            }
+        }
     }
 }

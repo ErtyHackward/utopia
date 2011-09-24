@@ -55,15 +55,12 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         private void ServerConnection_MessageBlockChange(object sender, ProtocolMessageEventArgs<BlocksChangedMessage> e)
         {
             byte cubeId;
-            Vector3I cubePosition, cubeWorldPosition;
-            Vector2I chunkWorldPosition = new Vector2I(e.Message.ChunkPosition.X * AbstractChunk.ChunkSize.X, e.Message.ChunkPosition.Y * AbstractChunk.ChunkSize.Z);
+            Vector3I cubeWorldPosition;
             //For each block modified transform the data to get both CubeID and Cube World position, then call the ReplaceBlock that will analyse
             //whats the impact of the block replacement - Draw impact only - to know wish chunks must be refreshed.
             for (int i = 0; i < e.Message.BlockValues.Length; i++)
             {
-                cubeId = e.Message.BlockValues[i];
-                cubePosition = e.Message.BlockPositions[i];
-                cubeWorldPosition = new Vector3I(cubePosition.X + chunkWorldPosition.X, cubePosition.Y, cubePosition.Z + chunkWorldPosition.Y);
+                ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i]);
             }
         }
 
@@ -83,7 +80,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
             //Save the modified Chunk in local buffer DB
             VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
-            _chunkStorageManager.StoreData_async(new Worlds.Storage.Structs.ChunkDataStorage() { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = null, CubeData = impactedChunk.BlockData.GetBlocksBytes() });
+            _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = null, CubeData = impactedChunk.BlockData.GetBlocksBytes() });
         }
 
         /// <summary>

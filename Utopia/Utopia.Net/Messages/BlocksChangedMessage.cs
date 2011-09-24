@@ -12,7 +12,6 @@ namespace Utopia.Net.Messages
     public struct BlocksChangedMessage : IBinaryMessage
     {
         private Vector3I[] _blockPositions;
-        private Vector2I _chunkPosition;
         private byte[] _blockValues;
 
         /// <summary>
@@ -24,7 +23,7 @@ namespace Utopia.Net.Messages
         }
 
         /// <summary>
-        /// Gets or sets local blocks position
+        /// Gets or sets global blocks position
         /// </summary>
         public Vector3I[] BlockPositions
         {
@@ -40,19 +39,11 @@ namespace Utopia.Net.Messages
             get { return _blockValues; }
             set { _blockValues = value; }
         }
-
         
-        public Vector2I ChunkPosition
-        {
-            get { return _chunkPosition; }
-            set { _chunkPosition = value; }
-        }
-
         public static BlocksChangedMessage Read(BinaryReader reader)
         {
             BlocksChangedMessage bcm;
 
-            bcm._chunkPosition = reader.ReadIntVector2();
             var count = reader.ReadInt32();
 
             var positions = new Vector3I[count];
@@ -72,7 +63,6 @@ namespace Utopia.Net.Messages
 
         public static void Write(BinaryWriter writer, BlocksChangedMessage msg)
         {
-            writer.Write(msg._chunkPosition);
             writer.Write(msg._blockPositions.Length);
 
             for (int i = 0; i < msg._blockPositions.Length; i++)
