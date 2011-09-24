@@ -120,9 +120,9 @@ namespace Utopia.Editor
         }
     }
 
-    public class Symetry : EditorTool
+    public class EditorSymetry : EditorTool
     {
-        public Symetry(EntityEditor editor) : base(editor) { Name = "Y Symetry"; }
+        public EditorSymetry(EntityEditor editor) : base(editor) { Name = "Y Symetry"; }
 
         public override void Use()
         {
@@ -131,13 +131,23 @@ namespace Utopia.Editor
         }
     }
 
-    public class Save : EditorTool
+    public class EditorSave : EditorTool
     {
-        public Save(EntityEditor editor) : base(editor) { Name = "Save"; }
+        public EditorSave(EntityEditor editor) : base(editor) { Name = "Save"; }
 
         public override void Use()
         {
             Editor.SaveEntity();
+        }
+    }
+
+    public class EditorLoad : EditorTool
+    {
+        public EditorLoad(EntityEditor editor) : base(editor) { Name = "Load"; }
+
+        public override void Use()
+        {
+            Editor.LoadEntity();
         }
     }
 

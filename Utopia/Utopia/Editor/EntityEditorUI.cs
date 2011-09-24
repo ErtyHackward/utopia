@@ -23,8 +23,7 @@ namespace Utopia.Editor
         private WindowControl _colorPalette;
         private WindowControl _toolBar;
         private WindowControl _spawnBar;
-
-
+        
         public List<Control> Children = new List<Control>();
 
         public EntityEditorUi(EntityEditor editorComponent)
@@ -92,12 +91,14 @@ namespace Utopia.Editor
 
             List<EditorTool> tools = new List<EditorTool>
                                          {
-                                             new Symetry(_editorComponent),
+                                             new EditorSymetry(_editorComponent),
                                              new EditorAdd(_editorComponent),
                                              new EditorRemove(_editorComponent),
                                              new EditorSelect(_editorComponent),
                                              editorCopy,
-                                             new EditorPaste(_editorComponent, editorCopy)
+                                             new EditorPaste(_editorComponent, editorCopy),
+                                             new EditorLoad(_editorComponent),
+                                             new EditorSave(_editorComponent)
                                          };
             int buttonsNbr = tools.Count;
 

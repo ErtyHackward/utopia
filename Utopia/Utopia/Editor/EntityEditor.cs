@@ -288,8 +288,8 @@ namespace Utopia.Editor
         public void LoadEntity()
         {
             //quick n dirty local disk load system : each time you call it you load a new file !
-            _lastLoaded++; 
-            String path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia", "entity_" + i + ".bin");
+            _lastLoaded++;
+            String path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia", "entity_" + _lastLoaded + ".bin");
             if (File.Exists(path))
             {
                 using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open)))
@@ -343,8 +343,8 @@ namespace Utopia.Editor
 
             double start = 0;
             //how far you need to be from the edited cube. 0 means you can pick right in your eye (ouch) 
-            double end = start + 40;
-            //TODO magic number 40 for editor picking, should be related to scale and block array size  
+            double end = start + 16;
+            //TODO magic number for editor picking, should be related to scale and block array size  
 
             PickedCubeLoc = null;
             //loose the state of the pickedBlock : the for loop must find a new one, we dont want a stale picked blocks 
@@ -358,8 +358,9 @@ namespace Utopia.Editor
             double endZ = blocks.GetLength(2)*Scale + startZ;
 
             double? found = null;
+            const double step = 0.05d;
 
-            for (double x = start; x < end; x += 0.08) //for scale=1, was0.5 40 0.1  40 seems a high pick distance ! 
+            for (double x = start; x < end; x += step) //for scale=1, was0.5 40 0.1  40 seems a high pick distance ! 
             {
                 nbrpt++;
                 Vector3D targetPoint = (mouseWorldPosition + (mouseLookAt*x));
@@ -377,15 +378,18 @@ namespace Utopia.Editor
                     {
                         found = x;
                         PickedCubeLoc = hit;
+                        Console.WriteLine(@"{0} - {1} -  {2}",PickedCubeLoc,x,nbrpt);
                         break;
                     }
                 }
             }
 
             if (found == null) return;
-
+          
             NewCubePlace = null;
-            for (double x = found.Value; x > 0.01f; x -= 0.01f)
+
+            start = found.Value - step;
+            for (double x = start; x > 0.7d*Scale; x -= step)
             {
                 Vector3D targetPoint = (mouseWorldPosition + (mouseLookAt*x));
 
