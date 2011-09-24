@@ -12,7 +12,13 @@ cbuffer PerFrame
 {
 	matrix ViewProjection;
 	float3 SunColor;			  // Diffuse lighting color
+	float dayTime;
+	float fogdist;
 };
+
+static const float foglength = 45;
+static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
+static float3 Nightfogcolor = {0, 0, 0 };
 
 #define E 2.71828
 
@@ -50,6 +56,7 @@ struct PS_IN
 	float4 Position				: SV_POSITION;
 	float3 UVW					: TEXCOORD0;
 	float3 EmissiveLight		: Light0;
+	float fogPower				: VARIOUS0;
 };
 
 //--------------------------------------------------------------------------------------
@@ -78,6 +85,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 						input.Position.w );
 
 	output.EmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
+	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 
     return output;
 }
@@ -89,9 +97,9 @@ float4 PS(PS_IN input) : SV_Target
 {
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW) * float4(input.EmissiveLight, 1);
 
-	//Add AmbianColor
-	float4 colorwithLighting = color;
+	float4 Finalfogcolor = {SunColor / 1.5, color.a};
+	color = lerp(color, Finalfogcolor, input.fogPower);
 
-    return colorwithLighting;
+    return color;
 }
 

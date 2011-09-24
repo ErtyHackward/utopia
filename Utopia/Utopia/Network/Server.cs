@@ -29,6 +29,8 @@ namespace Utopia.Network
         public int SeaLevel { get; set; }
         public int WorldSeed { get; set; }
         public PlayerCharacter Player { get; set; }
+        public DateTime WorldDateTime { get; set; }
+        public double TimeFactor { get; set; }
         //===============================================================================================
 
         public Vector3I ChunkSize { get; set; }
@@ -60,6 +62,7 @@ namespace Utopia.Network
             //ServerConnection.MessageEntityIn += _server_MessagePlayerIn;
             //ServerConnection.MessageEntityOut += _server_MessagePlayerOut;
             //ServerConnection.MessagePosition += _server_MessagePosition;
+            //ServerConnection.MessageDateTime += new ServerConnection_MessageDateTime;
             return true;
         }
 
@@ -77,6 +80,12 @@ namespace Utopia.Network
         }
 
         #region Events Handlings Methods
+
+        void ServerConnection_MessageDateTime(object sender, ProtocolMessageEventArgs<DateTimeMessage> e)
+        {
+            Console.WriteLine("hours");
+        }
+
         void _server_MessageLoginResult(object sender, ProtocolMessageEventArgs<Net.Messages.LoginResultMessage> e)
         {
             //if (e.Message.Logged)

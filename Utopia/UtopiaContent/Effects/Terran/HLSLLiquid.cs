@@ -34,13 +34,17 @@ namespace UtopiaContent.Effects.Terran
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
 
-        [StructLayout(LayoutKind.Explicit, Size = 80)]
+        [StructLayout(LayoutKind.Explicit, Size = 96)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
             public Matrix ViewProjection;   //64 (4*4 float)
             [FieldOffset(64)]
             public Vector3 SunColor;        //12 (3 float)
+            [FieldOffset(76)]
+            public float dayTime;           //4 (float)
+            [FieldOffset(80)]
+            public float fogdist;           //4 (float)
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
         #endregion
