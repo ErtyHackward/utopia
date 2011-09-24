@@ -114,8 +114,6 @@ namespace Utopia.Worlds.GameClocks
             int Minute = worldDatetime.Minute;
             int Second = worldDatetime.Second;
 
-            Console.WriteLine(worldDatetime);
-
             //86400 seconds/day
             _clockTime.Value = ((Second + (Hour * 3600) + (Minute * 60)) / 86400.0f) * MathHelper.TwoPi;
             _clockTime.ValuePrev = base._clockTime.Value;

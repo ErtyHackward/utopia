@@ -128,7 +128,7 @@ namespace Utopia.Shared.Chunks
         {
             return Md5HashData ?? (Md5HashData = CalculateHash(Serialize()));
         }
-        
+
         protected Md5Hash CalculateHash(byte[] bytes)
         {
             if (bytes == null)
