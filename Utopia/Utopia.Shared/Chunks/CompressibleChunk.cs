@@ -126,6 +126,7 @@ namespace Utopia.Shared.Chunks
         {
             if (InstantCompress)
             {
+                CompressedDirty = true;
                 Compress();
             }
             else

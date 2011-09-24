@@ -42,7 +42,7 @@ namespace Utopia.Server.Structs
 
         public ServerChunk() : base(new InsideDataProvider())
         {
-            InstantCompress = true;
+            
         }
 
         /// <summary>

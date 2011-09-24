@@ -70,7 +70,7 @@ namespace Utopia.Server.Entities
             {
                 _path = path;
 #if DEBUG
-                _server.SendChatMessage(string.Format("Path found at {0} ms", _path.PathFindTime));
+                _server.BroadCastChatMessage(string.Format("Path found at {0} ms", _path.PathFindTime));
 #endif
 
                 State = ZombieState.FollowPath;
@@ -87,7 +87,7 @@ namespace Utopia.Server.Entities
             }
             else
             {
-                _server.SendChatMessage("there is no path there...");
+                _server.BroadCastChatMessage("there is no path there...");
             }
         }
 
@@ -129,7 +129,7 @@ namespace Utopia.Server.Entities
 
             if (State == ZombieState.FollowPath)
             {
-                if ((DynamicEntity.Position - _pathTargetPoint).LengthSquared() < 0.1d)
+                if ((DynamicEntity.Position - _pathTargetPoint).LengthSquared() < 0.2d)
                 {
                     if (++_targetPathNodeIndex == _path.Points.Count)
                     {

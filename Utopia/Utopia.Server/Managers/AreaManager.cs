@@ -40,14 +40,6 @@ namespace Utopia.Server.Managers
         /// </summary>
         public event EventHandler<AreaEntityEventArgs> EntityAdded;
 
-        /// <summary>
-        /// Gets total count of entities
-        /// </summary>
-        public int EntitiesCount
-        {
-            get { return _allEntities.Count; }
-        }
-
         private void OnEntityAdded(AreaEntityEventArgs e)
         {
             var handler = EntityAdded;
@@ -66,6 +58,14 @@ namespace Utopia.Server.Managers
         }
 
         #endregion
+
+        /// <summary>
+        /// Gets total count of entities
+        /// </summary>
+        public int EntitiesCount
+        {
+            get { return _allEntities.Count; }
+        }
 
         /// <summary>
         /// Tells entities about blocks change event

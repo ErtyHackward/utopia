@@ -19,7 +19,7 @@ namespace Utopia.Server.Managers
     {
         private readonly IChunksStorage _chunksStorage;
         private readonly WorldGenerator _generator;
-        private readonly List<ServerChunk> _saveList = new List<ServerChunk>();
+        private readonly HashSet<ServerChunk> _chunksToSave = new HashSet<ServerChunk>();
         private readonly Queue<AStar<AStarNode3D>> _pathPool = new Queue<AStar<AStarNode3D>>();
         
         private delegate Path3D CalculatePathDelegate(Vector3I start, Vector3I goal);
@@ -36,14 +36,31 @@ namespace Utopia.Server.Managers
 
         protected void OnChunkLoaded(LandscapeManagerChunkEventArgs e)
         {
+            e.Chunk.BlocksChanged += ChunkBlocksChanged;
+
             var handler = ChunkLoaded;
             if (handler != null) handler(this, e);
+        }
+
+        void ChunkBlocksChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
+        {
+            var serverChunk = (ServerChunk)sender;
+            serverChunk.NeedSave = true;
+
+            lock (_chunksToSave)
+            {
+                if(!_chunksToSave.Contains(serverChunk))
+                    _chunksToSave.Add(serverChunk);
+            }
+
         }
 
         public event EventHandler<LandscapeManagerChunkEventArgs> ChunkUnloaded;
 
         protected void OnChunkUnloaded(LandscapeManagerChunkEventArgs e)
         {
+            e.Chunk.BlocksChanged -= ChunkBlocksChanged;
+
             EventHandler<LandscapeManagerChunkEventArgs> handler = ChunkUnloaded;
             if (handler != null) handler(this, e);
         }
@@ -54,6 +71,22 @@ namespace Utopia.Server.Managers
         {
             get { return _generator; }
         }
+
+        public int ChunksInMemory
+        {
+            get { return _chunks.Count; }
+        }
+
+#if DEBUG
+        /// <summary>
+        /// Gets time of last executed save operation
+        /// </summary>
+        public double SaveTime { get; set; }
+        /// <summary>
+        /// Gets amount of chunks saved last time
+        /// </summary>
+        public int ChunksSaved { get; set; }
+#endif 
 
         public LandscapeManager(IChunksStorage chunksStorage, WorldGenerator generator)
         {
@@ -129,23 +162,35 @@ namespace Utopia.Server.Managers
 
         public void SaveChunks()
         {
-            if (_saveList.Count == 0)
+            if (_chunksToSave.Count == 0)
                 return;
 
-            lock (_saveList)
+            lock (_chunksToSave)
             {
-                var positions = new Vector2I[_saveList.Count];
-                var datas = new List<byte[]>(_saveList.Count);
+                if (_chunksToSave.Count == 0)
+                    return;
 
-                for (int i = 0; i < _saveList.Count; i++)
+#if DEBUG
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+#endif
+                var positions = new Vector2I[_chunksToSave.Count];
+                var datas = new List<byte[]>(_chunksToSave.Count);
+
+                int index = 0;
+                foreach (var serverChunk in _chunksToSave)
                 {
-                    _saveList[i].NeedSave = false;
-                    positions[i] = _saveList[i].Position;
-                    datas.Add(_saveList[i].CompressedBytes);
+                    serverChunk.NeedSave = false;
+                    positions[index] = serverChunk.Position;
+                    datas.Add(serverChunk.Compress());
+                    index++;
                 }
 
                 _chunksStorage.SaveChunksData(positions, datas.ToArray());
-                _saveList.Clear();
+                _chunksToSave.Clear();
+#if DEBUG
+                SaveTime = sw.Elapsed.TotalMilliseconds;
+                ChunksSaved = positions.Length;
+#endif
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
@@ -9,6 +10,7 @@ namespace Utopia.Shared.Config
     /// <summary>
     /// Allows to store user settings
     /// </summary>
+    [DebuggerStepThrough]
     public class XmlSettingsManager<T> where T : new()
     {
         private readonly XmlSerializer _xmlSerializer;

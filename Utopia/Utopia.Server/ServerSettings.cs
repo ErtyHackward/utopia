@@ -17,7 +17,7 @@ namespace Utopia.Server
         /// <summary>
         /// Interval between save operation executions. All modified chunks will be saved into database. 
         /// </summary>
-        [DefaultValue(10000)]
+        [DefaultValue(30000)]
         public int SaveInterval { get; set; }
         /// <summary>
         /// Defines maximum allowed chunk view range
