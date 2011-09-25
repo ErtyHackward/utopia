@@ -4,6 +4,7 @@ using Utopia.Net.Messages;
 using Utopia.Server.Events;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
+using Utopia.Shared.Chunks.Entities.Inventory;
 
 namespace Utopia.Server.Structs
 {
@@ -34,6 +35,7 @@ namespace Utopia.Server.Structs
             area.EntityUse += AreaEntityUse;
             area.BlocksChanged += AreaBlocksChanged;
             area.EntityModelChanged += AreaEntityModelChanged;
+            area.EntityEquipment += AreaEntityEquipment;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -44,6 +46,14 @@ namespace Utopia.Server.Structs
                 }
             }
 
+        }
+
+        void AreaEntityEquipment(object sender, CharacterEquipmentEventArgs e)
+        {
+            if (e.Entity != DynamicEntity)
+            {
+                Connection.SendAsync(new EntityEquipmentMessage { Items = new[] { new EquipmentItem(e.Slot, e.Item) } });
+            }
         }
 
         void AreaEntityModelChanged(object sender, AreaVoxelModelEventArgs e)
@@ -85,6 +95,8 @@ namespace Utopia.Server.Structs
             area.EntityMoved -= AreaEntityMoved;
             area.EntityUse -= AreaEntityUse;
             area.BlocksChanged -= AreaBlocksChanged;
+            area.EntityModelChanged -= AreaEntityModelChanged;
+            area.EntityEquipment -= AreaEntityEquipment;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -155,6 +167,67 @@ namespace Utopia.Server.Structs
             {
                 Connection.SendAsync(new ChatMessage { Login = "toolsystem", Message = "Invalid toolid provided. Can not use the tool" });
             }
+        }
+
+        public override void Equip(EntityEquipmentMessage entityEquipmentMessage)
+        {
+            // first check has the entity this item it want to equip
+            var playerCharacter = (PlayerCharacter)DynamicEntity;
+
+            foreach (var equipmentItem in entityEquipmentMessage.Items)
+            {
+                ContainedSlot itemSlot;
+                if ((itemSlot = playerCharacter.Inventory.Find(equipmentItem.Entity)) != null)
+                {
+                    // take item from inventory
+                    playerCharacter.Inventory.TakeItem(itemSlot);
+
+                    var oldItem = playerCharacter.Equipment.WearItem((Item)equipmentItem.Entity, equipmentItem.Slot);
+
+                    if (oldItem != null)
+                    {
+                        itemSlot.Item = oldItem;
+                        playerCharacter.Inventory.PutItem(itemSlot);
+                    }
+
+                }
+                else
+                {
+                    // impossible to equip
+                    Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Unable to equip this item, it should be inside the inventory" });
+                }
+            }
+        }
+
+        public override void ItemTransfer(ItemTransferMessage itemTransferMessage)
+        {
+            var playerCharacter = (PlayerCharacter)DynamicEntity;
+
+            // for first time we only allow to transfer items inside player own inventory
+            if (playerCharacter.EntityId == itemTransferMessage.SourceEntityId && itemTransferMessage.SourceEntityId == itemTransferMessage.DestinationEntityId)
+            {
+                var slot = new ContainedSlot { GridPosition = itemTransferMessage.SourceSlot, ItemsCount = itemTransferMessage.ItemsCount };
+                // check if we allow transfer
+                slot = playerCharacter.Inventory.TakeSlot(slot);
+
+                if (slot != null)
+                {
+                    if (!playerCharacter.Inventory.PutItem(slot))
+                    {
+                        Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Invalid transfer operation" });
+                    }
+                }
+                else
+                {
+                    Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Invalid transfer operation" });
+                }
+            }
+            else
+            {
+                // impossible to transfer
+                Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Invalid transfer operation" });
+            }
+
         }
 
     }

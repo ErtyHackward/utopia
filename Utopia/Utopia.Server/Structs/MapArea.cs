@@ -3,8 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using SharpDX;
 using Utopia.Server.Events;
+using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Structs;
 
@@ -147,6 +148,18 @@ namespace Utopia.Server.Structs
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Occurs when some entity at this area changes its equipment
+        /// </summary>
+        public event EventHandler<CharacterEquipmentEventArgs> EntityEquipment;
+
+        private void OnEntityEquipment(CharacterEquipmentEventArgs e)
+        {
+            var handler = EntityEquipment;
+            if (handler != null) handler(this, e);
+        }
+
+
         #endregion
 
         /// <summary>
@@ -180,11 +193,22 @@ namespace Utopia.Server.Structs
                 entity.DynamicEntity.ViewChanged += EntityViewChanged;
                 entity.DynamicEntity.Use += EntityUseHandler;
                 entity.DynamicEntity.VoxelModelChanged += EntityVoxelModelChanged;
-
+                
+                CharacterEntity charEntity;
+                if ((charEntity = entity.DynamicEntity as CharacterEntity) != null)
+                {
+                    charEntity.Equipment.ItemEquipped += EquipmentItemEquipped;
+                }
+                
                 OnEntityAdded(new ServerDynamicEntityEventArgs {Entity = entity});
             }
         }
-        
+
+        void EquipmentItemEquipped(object sender, CharacterEquipmentEventArgs e)
+        {
+            OnEntityEquipment(e);
+        }
+
         public void RemoveEntity(int entityId)
         {
             ServerDynamicEntity e;
@@ -195,6 +219,12 @@ namespace Utopia.Server.Structs
                 e.DynamicEntity.ViewChanged -= EntityViewChanged;
                 e.DynamicEntity.Use -= EntityUseHandler;
                 e.DynamicEntity.VoxelModelChanged -= EntityVoxelModelChanged;
+
+                CharacterEntity charEntity;
+                if ((charEntity = e.DynamicEntity as CharacterEntity) != null)
+                {
+                    charEntity.Equipment.ItemEquipped -= EquipmentItemEquipped;
+                }
 
                 OnEntityRemoved(new ServerDynamicEntityEventArgs { Entity = e });
             }

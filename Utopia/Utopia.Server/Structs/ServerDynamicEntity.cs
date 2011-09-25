@@ -126,6 +126,21 @@ namespace Utopia.Server.Structs
             };
             DynamicEntity.EntityState = state;
         }
+
+        /// <summary>
+        /// Perform equipment change
+        /// </summary>
+        /// <param name="entityEquipmentMessage"></param>
+        public virtual void Equip(EntityEquipmentMessage entityEquipmentMessage)
+        {
+            
+
+        }
+
+        public virtual void ItemTransfer(ItemTransferMessage itemTransferMessage)
+        {
+            
+        }
     }
 
     public class ServerDynamicEntityMoveEventArgs : EventArgs
