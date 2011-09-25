@@ -162,16 +162,25 @@ namespace S33M3Engines.D3D
         }
 
         //Close Window to stop the Window Pump !
+        [DebuggerStepThrough()]
         public void Exit(GameExitReasonMessage msg)
         {
-            GameExitReason = msg;
-            Threading.WorkQueue.ThreadPool.Shutdown(true, 0);
-            while (Threading.WorkQueue.ThreadPool.InUseThreads > 0)
+            try
             {
+                GameExitReason = msg;
+                Threading.WorkQueue.ThreadPool.Shutdown(false, 0);
                 Thread.Sleep(100);
+                Threading.WorkQueue.ThreadPool.Shutdown(true, 0);
             }
-            if (_d3dEngine.isFullScreen) _d3dEngine.isFullScreen = false;
-            CloseWinform();
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                if (_d3dEngine.isFullScreen) _d3dEngine.isFullScreen = false;
+                CloseWinform();
+            }
+
         }
 
         private void CloseWinform()

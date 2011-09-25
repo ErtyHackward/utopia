@@ -300,7 +300,7 @@ namespace S33M3Engines.Sprites
             RenderText(spriteFont, text, transform, new Color4(color.ToVector4()));//TODO color vs color4
         }
 
-        public void RenderText(SpriteFont font, string text, Matrix transform, Color4 color)
+        public void RenderText(SpriteFont font, string text, Matrix transform, Color4 color, float lineDefaultOffset = -1)
         {
             flushAccumulatedSprite();
 
@@ -309,6 +309,8 @@ namespace S33M3Engines.Sprites
 
             int numCharsToDraw = Math.Min(length, MaxBatchSize);
             int currentDraw = 0;
+
+            if(lineDefaultOffset == -1) lineDefaultOffset = transform.M41;
 
             for (int i = 0; i < numCharsToDraw; ++i)
             {
@@ -321,7 +323,7 @@ namespace S33M3Engines.Sprites
                     //next character will be at next line
                     textTransform.M42 += font.CharHeight;
                     textTransform.M41 = 0;
-                    transform.M41 = 0;
+                    transform.M41 = lineDefaultOffset;
                 }
                 else
                 {
@@ -344,7 +346,7 @@ namespace S33M3Engines.Sprites
             RenderBatch(font.SpriteTexture, _textDrawData, currentDraw);
 
             if (length > numCharsToDraw)
-                RenderText(font, text.Substring(numCharsToDraw - 1), textTransform * transform, color);
+                RenderText(font, text.Substring(numCharsToDraw - 1), textTransform * transform, color, lineDefaultOffset);
         }
 
         public void End()
