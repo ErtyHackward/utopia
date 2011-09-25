@@ -76,8 +76,8 @@ namespace Utopia.Net.Messages
             EntityUseMessage msg;
 
             msg._entityId = reader.ReadUInt32();
-            msg._pickedBlockPosition = reader.ReadIntLocation3();
-            msg._newBlockPosition = reader.ReadIntLocation3();
+            msg._pickedBlockPosition = reader.ReadVector3I();
+            msg._newBlockPosition = reader.ReadVector3I();
             msg._pickedEntityId = reader.ReadUInt32();
             msg._toolId = reader.ReadUInt32();
             msg._isBlockPicked = reader.ReadBoolean();

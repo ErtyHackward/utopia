@@ -12,7 +12,7 @@ namespace System.IO
             writer.Write(loc.Z);
         }
 
-        public static Vector3I ReadIntLocation3(this BinaryReader reader)
+        public static Vector3I ReadVector3I(this BinaryReader reader)
         {
             Vector3I loc;
 
@@ -61,7 +61,7 @@ namespace System.IO
             writer.Write(quaternion.W);
         }
 
-        public static Vector2I ReadIntVector2(this BinaryReader reader)
+        public static Vector2I ReadVector2I(this BinaryReader reader)
         {
             Vector2I vec;
 
@@ -79,12 +79,7 @@ namespace System.IO
 
         public static Range2 ReadRange2(this BinaryReader reader)
         {
-            var r = new Range2();
-
-            r.Position = reader.ReadIntVector2();
-            r.Size = reader.ReadIntVector2();
-
-            return r;
+            return new Range2(reader.ReadVector2I(), reader.ReadVector2I());
         }
 
         public static void Write(this BinaryWriter writer, Range2 range)

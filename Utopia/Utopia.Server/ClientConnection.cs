@@ -152,6 +152,28 @@ namespace Utopia.Server
                 MessageEntityVoxelModel(this, new ProtocolMessageEventArgs<EntityVoxelModelMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when EntityEquipmentMessage is received 
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityEquipmentMessage>> MessageEntityEquipment;
+
+        protected void OnMessageEntityEquipment(EntityEquipmentMessage ea)
+        {
+            if (MessageEntityEquipment != null)
+                MessageEntityEquipment(this, new ProtocolMessageEventArgs<EntityEquipmentMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when ItemTransferMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<ItemTransferMessage>> MessageItemTransfer;
+
+        protected void OnMessageItemTransfer(ItemTransferMessage ea)
+        {
+            if (MessageItemTransfer != null)
+                MessageItemTransfer(this, new ProtocolMessageEventArgs<ItemTransferMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -215,12 +237,6 @@ namespace Utopia.Server
                         Console.WriteLine("Send fail... " + io.Message);
                         return;
                     }
-
-                    //if (!Send(msg))
-                    //{
-                    //    Console.WriteLine("Send thread is terminated!");
-                    //    return;
-                    //}
                 }
                 Writer.Flush();
                 // allow next thread to start
@@ -339,6 +355,12 @@ namespace Utopia.Server
                                     break;
                                 case MessageTypes.EntityVoxelModel:
                                     OnMessageEntityVoxelModel(EntityVoxelModelMessage.Read(reader));
+                                    break;
+                                case MessageTypes.ItemTransfer:
+                                    OnMessageItemTransfer(ItemTransferMessage.Read(reader));
+                                    break;
+                                case MessageTypes.EntityEquipment:
+                                    OnMessageEntityEquipment(EntityEquipmentMessage.Read(reader));
                                     break;
                                 default:
                                     throw new ArgumentException("Invalid message id");

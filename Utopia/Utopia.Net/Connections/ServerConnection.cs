@@ -23,7 +23,9 @@ namespace Utopia.Net.Connections
         private bool _isrunning = true;
         private readonly AutoResetEvent _needSend = new AutoResetEvent(false);
         private readonly Queue<IBinaryMessage> _messages = new Queue<IBinaryMessage>();
+// ReSharper disable NotAccessedField.Local
         private Thread _sendThread;
+// ReSharper restore NotAccessedField.Local
         private readonly ConcurrentQueue<IBinaryMessage> _concurrentQueue = new ConcurrentQueue<IBinaryMessage>();
 
         /// <summary>
@@ -225,6 +227,28 @@ namespace Utopia.Net.Connections
                 MessageEntityVoxelModel(this, new ProtocolMessageEventArgs<EntityVoxelModelMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when EntityEquipmentMessage is received (another thread)
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityEquipmentMessage>> MessageEntityEquipment;
+
+        protected void OnMessageEntityEquipment(EntityEquipmentMessage ea)
+        {
+            if (MessageEntityEquipment != null)
+                MessageEntityEquipment(this, new ProtocolMessageEventArgs<EntityEquipmentMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when ItemTransferMessage is received (another thread)
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<ItemTransferMessage>> MessageItemTransfer;
+
+        protected void OnMessageItemTransfer(ItemTransferMessage ea)
+        {
+            if (MessageItemTransfer != null)
+                MessageItemTransfer(this, new ProtocolMessageEventArgs<ItemTransferMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -235,7 +259,7 @@ namespace Utopia.Net.Connections
         public ServerConnection(string address, int port) : base(address, port)
         {
             //Set default server connection timeout
-            this.ConnexionTimeOut = 5000; //5 secondes by default
+            ConnectionTimeOut = 5000; //5 secondes by default
 
             StartSendThread();
         }
@@ -246,15 +270,15 @@ namespace Utopia.Net.Connections
         /// <param name="address"></param>
         public ServerConnection(string address)
         {
-            this.ConnexionTimeOut = 5000; //5 secondes by default
+            ConnectionTimeOut = 5000; //5 secondes by default
 
             StartSendThread();
-             remoteAddress = ParseAddress(address);
+            remoteAddress = ParseAddress(address);
 
-             this.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
+            ConnectionStatusChanged += ServerConnectionConnectionStatusChanged;
         }
 
-        void ServerConnection_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
+        void ServerConnectionConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
         {
             if (e.Status == ConnectionStatus.Disconnected || e.Status == ConnectionStatus.Disconnecting)
             {
@@ -438,8 +462,14 @@ namespace Utopia.Net.Connections
                 case MessageTypes.EntityVoxelModel:
                     OnMessageEntityVoxelModel((EntityVoxelModelMessage)msg);
                     break;
+                case MessageTypes.ItemTransfer:
+                    OnMessageItemTransfer((ItemTransferMessage)msg);
+                    break;
+                case MessageTypes.EntityEquipment:
+                    OnMessageEntityEquipment((EntityEquipmentMessage)msg);
+                    break;
                 default:
-                    throw new ArgumentOutOfRangeException("msg","Invalid message received from server");
+                    throw new ArgumentOutOfRangeException("msg", "Invalid message received from server");
             }
         }
 

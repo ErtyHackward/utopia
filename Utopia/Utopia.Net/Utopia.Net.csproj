@@ -49,10 +49,12 @@
     <Compile Include="Messages\BlocksChangedMessage.cs" />
     <Compile Include="Messages\ChatMessage.cs" />
     <Compile Include="Messages\ChunkDataMessage.cs" />
+    <Compile Include="Messages\EntityEquipmentMessage.cs" />
     <Compile Include="Messages\EntityVoxelModelMessage.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />
     <Compile Include="Messages\GameInformationMessage.cs" />
     <Compile Include="Messages\GetChunksMessage.cs" />
+    <Compile Include="Messages\ItemTransferMessage.cs" />
     <Compile Include="Messages\LoginMessage.cs" />
     <Compile Include="Messages\LoginResultMessage.cs" />
     <Compile Include="Messages\MessageTypes.cs" />
