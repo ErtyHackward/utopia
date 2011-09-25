@@ -60,7 +60,7 @@ namespace Utopia.Worlds.GameClocks
 
             if (_frozenTime) return;
 
-            _deltaTime = TimeFactor * TimeSpend.ElapsedGameTimeInS_LD * (float)Math.PI / 10800.0f;
+            _deltaTime = TimeFactor * TimeSpend.ElapsedGameTimeInS_LD * (float)Math.PI / 43200.0f;
 
             //Back UP previous values
             _clockTime.BackUpValue();
@@ -92,7 +92,6 @@ namespace Utopia.Worlds.GameClocks
         #endregion
 
         #region Private methods
-        bool _freezeTimeBuffer;
         private void InputHandler()
         {
             if (_actions.isTriggered(Actions.World_FreezeTime))

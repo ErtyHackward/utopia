@@ -79,9 +79,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //Save the modified Chunk in local buffer DB
             //Is it Worth ????
             VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
+            impactedChunk.CompressedDirty = true;
             Md5Hash chunkHash;
             byte[] chunkDataCompressed = impactedChunk.CompressAndComputeHash(out chunkHash);
-
             _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
         }
 

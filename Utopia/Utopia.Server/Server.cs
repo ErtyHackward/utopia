@@ -457,6 +457,7 @@ namespace Utopia.Server
                     // do we have hashes from client?
                     if (e.Message.HashesCount > 0 && positionsList != null)
                     {
+                        //Has the position from the Range has been forwarded inside the location/hash arrays ??
                         int hashIndex = positionsList.IndexOf(pos);
 
                         if (hashIndex != -1) 

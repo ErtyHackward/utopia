@@ -101,6 +101,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
                             chunk.RefreshBorderChunk();
                             chunk.State = ChunkState.LandscapeCreated;
+                            chunk.CompressedBytes = message.Data;
                             chunk.ThreadStatus = ThreadStatus.Idle;
 
                             //Save the modified chunk landscape data locally only if the local one is different from the server one
