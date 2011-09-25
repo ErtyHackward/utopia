@@ -74,6 +74,13 @@ namespace Utopia.MapGenerator.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap mapbg {
+            get {
+                object obj = ResourceManager.GetObject("mapbg", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap seamap {
             get {
                 object obj = ResourceManager.GetObject("seamap", resourceCulture);

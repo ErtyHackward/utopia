@@ -61,20 +61,26 @@ namespace Utopia.Shared.Chunks
         }
 
         /// <summary>
-        /// Performs serialization and compression of resulted bytes
+        /// Performs serialization, take hash, and compression of resulted bytes
         /// </summary>
-        /// <param name="saveResult">Whether or not to save resulted bytes into CompressedBytes property</param>
+        /// <param name="hash"></param>
         /// <returns>Compressed bytes array</returns>
         public byte[] CompressAndComputeHash(out Md5Hash hash)
         {
             if (BlockData == null)
                 throw new ArgumentNullException();
 
+            if (!CompressedDirty && Md5HashData != null)
+            {
+                hash = Md5HashData;
+                return CompressedBytes;
+            }
+
             var ms = new MemoryStream();
             using (var zip = new GZipStream(ms, CompressionMode.Compress))
             {
                 var serializedBytes = Serialize();
-                hash = CalculateHash(serializedBytes);
+                Md5HashData = hash = CalculateHash(serializedBytes);
                 zip.Write(serializedBytes, 0, serializedBytes.Length);
             }
 

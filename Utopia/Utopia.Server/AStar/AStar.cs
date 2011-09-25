@@ -33,6 +33,14 @@ namespace Utopia.Server.AStar {
 	    /// </summary>
         public List<T> Solution { get; private set; }
 
+        /// <summary>
+        /// Gets total amount of iterations performed to find a path
+        /// </summary>
+        public int Iterations
+        {
+            get { return _iterations; }
+        }
+
         #endregion
 		
 		#region Constructors
@@ -117,5 +125,7 @@ namespace Utopia.Server.AStar {
 		}
 		
 		#endregion
-	}
+
+        
+    }
 }

@@ -70,7 +70,7 @@ namespace Utopia.Server.Entities
             {
                 _path = path;
 #if DEBUG
-                _server.BroadCastChatMessage(string.Format("Path found at {0} ms", _path.PathFindTime));
+                _server.BroadCastChatMessage(string.Format("Path found at {0} ms {1} iterations", _path.PathFindTime, _path.IterationsPerformed));
 #endif
 
                 State = ZombieState.FollowPath;
@@ -118,7 +118,7 @@ namespace Utopia.Server.Entities
 
             #region Falling
             var current = _server.LandscapeManager.GetCursor(DynamicEntity.Position);
-            if (!current.IsSolidDown())
+            if (State == ZombieState.Staying && !current.IsSolidDown())
             {
                 var pos = DynamicEntity.Position;
                 pos.Y = Math.Round(DynamicEntity.Position.Y);
