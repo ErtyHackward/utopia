@@ -25,7 +25,7 @@ namespace Utopia.Shared.Chunks
         protected Md5Hash Md5HashData;
 
         /// <summary>
-        /// Gets or sets a chunk blocks data provider
+        /// Gets a chunk blocks data provider
         /// </summary>
         public ChunkDataProvider BlockData
         {

@@ -130,7 +130,7 @@ namespace Utopia.Server.Managers
                         }
                         else
                         {
-                            chunk = new ServerChunk { CompressedBytes = data };
+                            chunk = new ServerChunk { Position = position, CompressedBytes = data };
                             chunk.Decompress();
                         }
 
@@ -162,15 +162,14 @@ namespace Utopia.Server.Managers
 
         public void SaveChunks()
         {
-            if (_chunksToSave.Count == 0)
-                return;
-
             lock (_chunksToSave)
             {
                 if (_chunksToSave.Count == 0)
                     return;
-
+                
 #if DEBUG
+                SaveTime = 0;
+                ChunksSaved = 0;
                 var sw = System.Diagnostics.Stopwatch.StartNew();
 #endif
                 var positions = new Vector2I[_chunksToSave.Count];
@@ -288,6 +287,7 @@ namespace Utopia.Server.Managers
             var path = new Path3D { Start = start, Goal = goal };
 #if DEBUG
             path.PathFindTime = sw.Elapsed.TotalMilliseconds;
+            path.IterationsPerformed = calculator.Iterations;
 #endif
 
             if (calculator.Solution != null)

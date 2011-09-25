@@ -39,7 +39,7 @@ namespace Utopia.MapGenerator
                 PolygonsCount = (int)voronoiPolyNumeric.Value, 
                 RelaxCount = 3});
 
-            _map.RenderMapTemplate = Resources.seamap;
+            _map.RenderMapTemplate = Resources.mapbg;
             _map.RenderContinentTemplate = Resources.brush;
             _map.RenderWavePatterns = new [] { Resources.wavePattern, Resources.wavePattern1, Resources.wavePattern2};
             _map.RenderForest = Resources.forest;

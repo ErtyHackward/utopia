@@ -25,6 +25,11 @@ namespace Utopia.Server.AStar
         /// </summary>
         public double PathFindTime { get; set; }
 
+        /// <summary>
+        /// Gets amount of iterations used to calculate the path
+        /// </summary>
+        public int IterationsPerformed { get; set; }
+
         #endregion
 
         /// <summary>
