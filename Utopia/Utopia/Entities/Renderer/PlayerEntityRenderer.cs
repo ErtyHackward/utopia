@@ -14,6 +14,9 @@ using S33M3Engines.Buffers;
 using S33M3Engines.Struct.Vertex;
 using SharpDX.Direct3D11;
 using S33M3Engines.Textures;
+using Utopia.Worlds.GameClocks;
+using Utopia.Worlds.SkyDomes;
+using Utopia.Shared.World;
 
 namespace Utopia.Entities.Renderer
 {
@@ -25,6 +28,8 @@ namespace Utopia.Entities.Renderer
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
         private ShaderResourceView _cubeTexture_View;
+        private ISkyDome _skydome;
+        private VisualWorldParameters _visualWorldParameters;
         #endregion
 
         #region Public variables/properties
@@ -34,7 +39,9 @@ namespace Utopia.Entities.Renderer
 
         public PlayerEntityRenderer(D3DEngine d3DEngine,
                                     CameraManager camManager,
-                                    WorldFocusManager worldFocusManager)
+                                    WorldFocusManager worldFocusManager,
+                                    ISkyDome skydome,
+                                    VisualWorldParameters visualWorldParameters)
         {
             _d3DEngine = d3DEngine;
             _camManager = camManager;
@@ -66,6 +73,8 @@ namespace Utopia.Entities.Renderer
             _entityEffect.Begin();
 
             _entityEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+            _entityEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
+            _entityEffect.CBPerFrame.Values.fogdist = ((_visualWorldParameters.WorldVisibleSize.X) / 2) - 48;
             _entityEffect.CBPerFrame.IsDirty = true;
 
             Matrix world = _worldFocusManager.CenterOnFocus(ref VisualEntity.VisualEntity.World);

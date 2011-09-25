@@ -122,6 +122,7 @@ namespace Utopia.Worlds.SkyDomes
         public override void Update(ref GameTime TimeSpend)
         {
             _clouds.Update(ref TimeSpend);
+            RefreshSunColor();
             base.Update(ref TimeSpend);
         }
 
@@ -141,6 +142,37 @@ namespace Utopia.Worlds.SkyDomes
         #endregion
 
         #region Private Methods
+        private void RefreshSunColor()
+        {
+            float SunColorBase;
+            if (_clock.ClockTime.ClockTimeNormalized <= 0.2083944 || _clock.ClockTime.ClockTimeNormalized > 0.9583824) // Between 23h00 and 05h00 => Dark night
+            {
+                SunColorBase = 0.05f;
+            }
+            else
+            {
+                if (_clock.ClockTime.ClockTimeNormalized > 0.2083944 && _clock.ClockTime.ClockTimeNormalized <= 0.4166951) // Between 05h00 and 10h00 => Go to Full Day
+                {
+                    SunColorBase = MathHelper.FullLerp(0.05f, 1, 0.2083944, 0.4166951, _clock.ClockTime.ClockTimeNormalized);
+                }
+                else
+                {
+                    if (_clock.ClockTime.ClockTimeNormalized > 0.4166951 && _clock.ClockTime.ClockTimeNormalized <= 0.6666929) // Between 10h00 and 16h00 => Full Day
+                    {
+                        SunColorBase = 1f;
+                    }
+                    else
+                    {
+                        SunColorBase = MathHelper.FullLerp(1, 0.05f, 0.6666929, 0.9583824, _clock.ClockTime.ClockTimeNormalized); //Go to Full night
+                    }
+                }
+            }
+
+            base._sunColor.X = SunColorBase;
+            base._sunColor.Y = SunColorBase;
+            base._sunColor.Z = SunColorBase;
+        }
+
         private void GenerateDome()
         {
             DomeN = 32;

@@ -13,6 +13,9 @@ using SharpDX;
 using S33M3Engines.D3D;
 using S33M3Engines.Textures;
 using SharpDX.Direct3D11;
+using Utopia.Worlds.GameClocks;
+using Utopia.Worlds.SkyDomes;
+using Utopia.Shared.World;
 
 namespace Utopia.Entities.Renderer
 {
@@ -24,6 +27,8 @@ namespace Utopia.Entities.Renderer
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
         private ShaderResourceView _cubeTexture_View;
+        private ISkyDome _skydome;
+        private VisualWorldParameters _visualWorldParameters;
         #endregion
 
         #region Public variables/properties
@@ -33,10 +38,14 @@ namespace Utopia.Entities.Renderer
 
         public DefaultEntityRenderer(D3DEngine d3DEngine,
                                     CameraManager camManager,
-                                    WorldFocusManager worldFocusManager)
+                                    WorldFocusManager worldFocusManager,
+                                    ISkyDome skydome,
+                                    VisualWorldParameters visualWorldParameters)
         {
             _d3DEngine = d3DEngine;
             _camManager = camManager;
+            _skydome = skydome;
+            _visualWorldParameters = visualWorldParameters;
             _worldFocusManager = worldFocusManager;
             Initialize();   
         }
@@ -61,6 +70,8 @@ namespace Utopia.Entities.Renderer
             _entityEffect.Begin();
 
             _entityEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+            _entityEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
+            _entityEffect.CBPerFrame.Values.fogdist = ((_visualWorldParameters.WorldVisibleSize.X) / 2) - 48;
             _entityEffect.CBPerFrame.IsDirty = true;
 
             for (int i = 0; i < VisualEntities.Count; i++)
