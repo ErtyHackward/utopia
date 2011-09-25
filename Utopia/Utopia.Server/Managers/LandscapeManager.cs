@@ -164,10 +164,10 @@ namespace Utopia.Server.Managers
         {
             lock (_chunksToSave)
             {
-#region DEBUG
+#if DEBUG
                 SaveTime = 0;
                 ChunksSaved = 0;
-#endregion
+#endif
 
                 if (_chunksToSave.Count == 0)
                     return;
