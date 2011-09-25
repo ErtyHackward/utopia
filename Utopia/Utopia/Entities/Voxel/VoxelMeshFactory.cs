@@ -92,10 +92,10 @@ namespace Utopia.Entities.Voxel
             {
                 VisualCubeProfile profile = VisualCubeProfile.CubesProfile[cubeid];
                 if (profile.IsEmissiveColorLightSource)
-                    color = new ByteColor(profile.EmissiveColor);
+                    color = new ByteColor(profile.EmissiveColor); //Only when the cube is emitting light !
                 else
                 {
-                    color = new ByteColor(255, 255, 255, 127);
+                    color = new ByteColor(0, 0, 0, 255); //By Default en entity is not a light source !
                 }
                 textureArrayId = profile.Textures[face];
             }

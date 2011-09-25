@@ -263,7 +263,6 @@ namespace Utopia.Editor
             _itemEffect.CBPerFrame.Values.ViewProjection =
                 Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _itemEffect.CBPerFrame.Values.SunColor = Vector3.One;
-            _itemEffect.CBPerFrame.Values.dayTime = 0.5f;
             _itemEffect.CBPerFrame.Values.fogdist = 100;
 
             _itemEffect.CBPerFrame.IsDirty = true;

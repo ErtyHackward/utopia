@@ -20,10 +20,12 @@ namespace Utopia.Worlds.SkyDomes
         protected IWeather _weather;
         protected FTSValue<Vector3> _lightDirection;
         protected float _fPhi = 0.0f;
+        protected Vector3 _sunColor = new Vector3(1, 1, 1);
         #endregion
 
         #region Public Variables
         public Vector3 LightDirection { get { return _lightDirection.ActualValue; } }
+        public Vector3 SunColor { get { return _sunColor; } }
         #endregion
 
         public SkyDome(D3DEngine d3dEngine, IClock clock, IWeather weather)
@@ -72,5 +74,6 @@ namespace Utopia.Worlds.SkyDomes
         }
 
         #endregion
+
     }
 }

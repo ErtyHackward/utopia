@@ -12,7 +12,6 @@ cbuffer PerFrame
 {
 	matrix ViewProjection;
 	float3 SunColor;			  // Diffuse lighting color
-	float dayTime;
 	float fogdist;
 };
 

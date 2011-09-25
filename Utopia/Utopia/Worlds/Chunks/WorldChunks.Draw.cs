@@ -25,7 +25,6 @@ namespace Utopia.Worlds.Chunks
         private HLSLTerran _terraEffect;
         private HLSLLiquid _liquidEffect;
         private int _chunkDrawByFrame;
-        private float _sunColorBase;
         public ShaderResourceView _terra_View;
         #endregion
 
@@ -45,13 +44,10 @@ namespace Utopia.Worlds.Chunks
 
             _terraEffect.Begin();
             _terraEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-            _terraEffect.CBPerFrame.Values.dayTime = _gameClock.ClockTime.ClockTimeNormalized2;
             _terraEffect.CBPerFrame.Values.fogdist = ((VisualWorldParameters.WorldVisibleSize.X) / 2) - 48;
             _terraEffect.CBPerFrame.IsDirty = true;
-            _sunColorBase = GetSunColor();
-
-            if (_playerManager.IsHeadInsideWater) _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
-            else _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
+            if (_playerManager.IsHeadInsideWater) _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_skydome.SunColor.X / 3, _skydome.SunColor.Y / 3, _skydome.SunColor.Z);
+            else _terraEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
 
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
@@ -127,11 +123,9 @@ namespace Utopia.Worlds.Chunks
 
             _liquidEffect.Begin();
             _liquidEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-            _liquidEffect.CBPerFrame.Values.dayTime = _gameClock.ClockTime.ClockTimeNormalized2;
             _liquidEffect.CBPerFrame.Values.fogdist = ((VisualWorldParameters.WorldVisibleSize.X) / 2) - 48;
-
-            if (_playerManager.IsHeadInsideWater) _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase / 3, _sunColorBase / 3, _sunColorBase);
-            else _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_sunColorBase, _sunColorBase, _sunColorBase);
+            if (_playerManager.IsHeadInsideWater) _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_skydome.SunColor.X / 3, _skydome.SunColor.Y / 3, _skydome.SunColor.Z);
+            else _liquidEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
 
             _liquidEffect.CBPerFrame.IsDirty = true;
 
@@ -152,35 +146,6 @@ namespace Utopia.Worlds.Chunks
                     }
                 }
             }
-        }
-
-        private float GetSunColor()
-        {
-            float SunColorBase;
-            if (_gameClock.ClockTime.ClockTimeNormalized <= 0.2083944 || _gameClock.ClockTime.ClockTimeNormalized > 0.9583824) // Between 23h00 and 05h00 => Dark night
-            {
-                SunColorBase = 0.05f;
-            }
-            else
-            {
-                if (_gameClock.ClockTime.ClockTimeNormalized > 0.2083944 && _gameClock.ClockTime.ClockTimeNormalized <= 0.4166951) // Between 05h00 and 10h00 => Go to Full Day
-                {
-                    SunColorBase = MathHelper.FullLerp(0.05f, 1, 0.2083944, 0.4166951, _gameClock.ClockTime.ClockTimeNormalized);
-                }
-                else
-                {
-                    if (_gameClock.ClockTime.ClockTimeNormalized > 0.4166951 && _gameClock.ClockTime.ClockTimeNormalized <= 0.6666929) // Between 10h00 and 16h00 => Full Day
-                    {
-                        SunColorBase = 1f;
-                    }
-                    else
-                    {
-                        SunColorBase = MathHelper.FullLerp(1, 0.05f, 0.6666929, 0.9583824, _gameClock.ClockTime.ClockTimeNormalized); //Go to Full night
-                    }
-                }
-            }
-
-            return SunColorBase;
         }
 
 #if DEBUG
@@ -247,8 +212,5 @@ namespace Utopia.Worlds.Chunks
             return string.Concat("<TerraCube Mod> BChunks : ", VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Z, "; BPrim : ", BprimitiveCount, " DChunks : ", _chunkDrawByFrame, " DPrim : ", VprimitiveCount);
         }
         #endregion
-        
-
-
     }
 }

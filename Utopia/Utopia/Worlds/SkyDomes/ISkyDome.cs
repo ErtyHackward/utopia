@@ -10,5 +10,6 @@ namespace Utopia.Worlds.SkyDomes
     public interface ISkyDome : IDrawableComponent, IGameComponent
     {
         Vector3 LightDirection { get; }
+        Vector3 SunColor { get; }
     }
 }

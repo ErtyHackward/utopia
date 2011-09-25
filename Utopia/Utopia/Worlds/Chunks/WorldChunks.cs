@@ -27,6 +27,7 @@ using Utopia.Entities.Managers;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Net.Messages;
 using Utopia.Worlds.Storage;
+using Utopia.Worlds.SkyDomes;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -71,6 +72,7 @@ namespace Utopia.Worlds.Chunks
         private Server _server;
         private PlayerEntityManager _playerManager;
         private IChunkStorageManager _chunkstorage;
+        private ISkyDome _skydome;
         #endregion
 
         #region Public Property/Variables
@@ -103,7 +105,8 @@ namespace Utopia.Worlds.Chunks
                            ILightingManager lightingManager,
                            IChunkStorageManager chunkstorage,
                            Server server,
-                           PlayerEntityManager player)
+                           PlayerEntityManager player,
+                           ISkyDome skydome)
         {
             _server = server;
             _chunkstorage = chunkstorage;
@@ -119,6 +122,7 @@ namespace Utopia.Worlds.Chunks
             _chunkMeshManager = chunkMeshManager;
             _lightingManager = lightingManager;
             _playerManager = player;
+            _skydome = skydome;
 
             //Self injecting inside components
             _chunkWrapper.WorldChunks = this;
