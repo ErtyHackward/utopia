@@ -45,6 +45,8 @@ namespace Utopia.Net.Messages
                 case MessageTypes.EntityUse: return EntityUseMessage.Read(reader);
                 case MessageTypes.Ping: return PingMessage.Read(reader);
                 case MessageTypes.EntityVoxelModel: return EntityVoxelModelMessage.Read(reader);
+                case MessageTypes.ItemTransfer: return ItemTransferMessage.Read(reader);
+                case MessageTypes.EntityEquipment: return EntityEquipmentMessage.Read(reader);
                 default:
                     throw new ArgumentException("Invalid message id received");
             }

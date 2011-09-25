@@ -99,7 +99,7 @@ namespace Utopia.Net.Messages
                 
                 for (int i = 0; i < msg._hashesCount; i++)
                 {
-                    msg._positions[i] = reader.ReadIntVector2();
+                    msg._positions[i] = reader.ReadVector2I();
                     var bytes = reader.ReadBytes(16);
                     if (bytes.Length != 16) 
                         throw new EndOfStreamException();

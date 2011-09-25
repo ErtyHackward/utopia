@@ -11,6 +11,10 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     /// </summary>
     public class SlotContainer<T> : ISlotContainer<T>, IBinaryStorable where T: ContainedSlot, new()
     {
+        private T[,] _items;
+        private Location2<byte> _gridSize;
+        private int _slotsCount;
+
         /// <summary>
         /// Occurs when the item was taken from the container
         /// </summary>
@@ -18,7 +22,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
         public void OnItemTaken(EntityContainerEventArgs<T> e)
         {
-            EventHandler<EntityContainerEventArgs<T>> handler = ItemTaken;
+            var handler = ItemTaken;
             if (handler != null) handler(this, e);
         }
 
@@ -29,13 +33,9 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
         public void OnItemPut(EntityContainerEventArgs<T> e)
         {
-            EventHandler<EntityContainerEventArgs<T>> handler = ItemPut;
+            var handler = ItemPut;
             if (handler != null) handler(this, e);
         }
-
-        private T[,] _items;
-        private Location2<byte> _gridSize;
-        private int _slotsCount;
 
         /// <summary>
         /// Creates new instance of container with gridSize specified

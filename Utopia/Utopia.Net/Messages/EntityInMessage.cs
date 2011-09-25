@@ -7,8 +7,6 @@ using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia.Net.Messages
 {
-    // todo: add entity instance fields
-
     /// <summary>
     /// Defines a message that informs player that another entity somewhere near, provides an entity object
     /// </summary>

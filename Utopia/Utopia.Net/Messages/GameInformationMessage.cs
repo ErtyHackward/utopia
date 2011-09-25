@@ -67,7 +67,7 @@ namespace Utopia.Net.Messages
 
             gi._maxViewRange = reader.ReadInt32();
 
-            gi._chunkSize = reader.ReadIntLocation3();
+            gi._chunkSize = reader.ReadVector3I();
             gi._worldSeed = reader.ReadInt32();
             gi._waterLevel = reader.ReadInt32();
             

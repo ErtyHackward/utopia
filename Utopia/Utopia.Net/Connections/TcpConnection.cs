@@ -61,7 +61,7 @@ namespace Utopia.Net.Connections
             get { return _totalReceived; }
         }
 
-        public int ConnexionTimeOut { get; set; }
+        public int ConnectionTimeOut { get; set; }
 
         private static long _totalSent;
         /// <summary>
@@ -493,9 +493,9 @@ namespace Utopia.Net.Connections
                 
                 // Waits until we have a connection...
                 //Connect with time out
-                if (ConnexionTimeOut > 0)
+                if (ConnectionTimeOut > 0)
                 {
-                    if (!connectionDone.WaitOne(ConnexionTimeOut, false))
+                    if (!connectionDone.WaitOne(ConnectionTimeOut, false))
                     {
                         // Time Out !
                         SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Disconnected, Exception = new Exception("Server connection timeout") });

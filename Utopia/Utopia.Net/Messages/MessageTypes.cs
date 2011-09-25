@@ -68,6 +68,14 @@
         /// <summary>
         /// Entity voxel model update
         /// </summary>
-        EntityVoxelModel = 16
+        EntityVoxelModel = 16,
+        /// <summary>
+        /// Item move from one place to another
+        /// </summary>
+        ItemTransfer = 17,
+        /// <summary>
+        /// Indicates that entity equipment was changed
+        /// </summary>
+        EntityEquipment = 18
     }
 }

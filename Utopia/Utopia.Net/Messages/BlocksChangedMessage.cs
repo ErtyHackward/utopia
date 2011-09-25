@@ -51,7 +51,7 @@ namespace Utopia.Net.Messages
 
             for (int i = 0; i < count; i++)
             {
-                positions[i] = reader.ReadIntLocation3();
+                positions[i] = reader.ReadVector3I();
                 values[i] = reader.ReadByte();
             }
 

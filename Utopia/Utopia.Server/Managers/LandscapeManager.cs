@@ -164,12 +164,15 @@ namespace Utopia.Server.Managers
         {
             lock (_chunksToSave)
             {
+#region DEBUG
+                SaveTime = 0;
+                ChunksSaved = 0;
+#endregion
+
                 if (_chunksToSave.Count == 0)
                     return;
                 
 #if DEBUG
-                SaveTime = 0;
-                ChunksSaved = 0;
                 var sw = System.Diagnostics.Stopwatch.StartNew();
 #endif
                 var positions = new Vector2I[_chunksToSave.Count];
