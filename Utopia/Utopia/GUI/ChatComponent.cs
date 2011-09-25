@@ -13,6 +13,7 @@ using Utopia.InputManager;
 using Utopia.Net.Messages;
 using Utopia.Network;
 using Utopia.Shared.Structs;
+using System.Diagnostics;
 
 namespace Utopia.GUI
 {
@@ -25,6 +26,9 @@ namespace Utopia.GUI
         SpriteRenderer _spriteRender;
         Matrix _textPosition = Matrix.Translation(5, 200, 0);
 
+        private bool _chatHiden;
+        private long _hideChatInTick;
+        private long _lastUpdateTick;
         private Color4 _fontColor = new Color4(Color.White.A, Color.White.R, Color.White.G, Color.White.B);
         private D3DEngine _d3dEngine;
         private readonly ActionsManager _actionManager;
@@ -36,8 +40,28 @@ namespace Utopia.GUI
         private float windowHeight;
 
         public int ChatLineLimit { get; set; }
-        
-        public bool Activated { get; private set; }
+
+        private bool _activated;
+
+        public bool Activated
+        {
+            get { return _activated; }
+            private set
+            {
+                _activated = value;
+                if (value)
+                {
+                    _actionManager.KeyboardActionsProcessing = false;
+                    _imanager.KeyBoardListening = true;
+                }
+                else
+                {
+                    _actionManager.KeyboardActionsProcessing = true;
+                    _imanager.KeyBoardListening = false;
+
+                }
+            }
+        }
 
         /// <summary>
         /// Current line 
@@ -55,6 +79,9 @@ namespace Utopia.GUI
             _server.ServerConnection.MessageChat += ServerConnection_MessageChat;
 
             ChatLineLimit = 30;
+            //For 5 seconds =
+            _hideChatInTick = 15 * Stopwatch.Frequency;
+            _chatHiden = false;
 
             _imanager.OnKeyPressed += _imanager_OnKeyPressed;
             _d3dEngine.ViewPort_Updated += LocateChat;
@@ -74,11 +101,17 @@ namespace Utopia.GUI
 
         void ServerConnection_MessageChat(object sender, Net.Connections.ProtocolMessageEventArgs<ChatMessage> e)
         {
-            if (e.Message.Action)
+            //Cut the received message by line feed
+            foreach (var msgText in e.Message.Message.Split('\n'))
             {
-                AddMessage(string.Format("* {0} {1}", e.Message.Login, e.Message.Message));
+                if (e.Message.Action)
+                {
+                    AddMessage(string.Format("* {0} {1}", e.Message.Login, msgText));
+                }
+                else AddMessage(string.Format("<{0}> {1}", e.Message.Login, msgText));
             }
-            else AddMessage(string.Format("<{0}> {1}", e.Message.Login, e.Message.Message));
+
+            _lastUpdateTick = Stopwatch.GetTimestamp();
         }
 
         public void AddMessage(string message)
@@ -86,7 +119,7 @@ namespace Utopia.GUI
             _messages.Enqueue(string.Format("[{1}] {0}", message, DateTime.Now.TimeOfDay.ToString(@"hh\:mm\:ss")));
             if (_messages.Count > ChatLineLimit)
             {
-                _messages.Dequeue();
+                _messages.Dequeue(); //Remove the Olds messages (FIFO collection)
             }
         }
 
@@ -115,14 +148,20 @@ namespace Utopia.GUI
                 }
                 if (e.KeyChar == (char)Keys.Back)
                 {
-                    if (Input.Length > 0)
+                    if (Input != null && Input.Length > 0)
                     {
                         Input = Input.Remove(Input.Length - 1);
+                    }
+                    else
+                    {
+                        Activated = false;
                     }
                     return;
                 }
 
                 Input += e.KeyChar;
+
+                _lastUpdateTick = Stopwatch.GetTimestamp();
             }
         }
 
@@ -147,20 +186,14 @@ namespace Utopia.GUI
 
         public override void Update(ref GameTime timeSpent)
         {
+            if (Stopwatch.GetTimestamp() > _lastUpdateTick + _hideChatInTick) _chatHiden = true;
+            else _chatHiden = false;
+
             if (_actionManager.isTriggered(Actions.Toggle_Chat))
             {
-                if (Activated)
-                {
-                    Activated = false;
-                    _imanager.KeyBoardListening = false;
-                    _actionManager.KeyboardActionsProcessing = true;
-                }
-                else
-                {
-                    Activated = true;
-                    _actionManager.KeyboardActionsProcessing = false;
-                    _imanager.KeyBoardListening = true;
-                }
+                _lastUpdateTick = Stopwatch.GetTimestamp();
+
+                Activated = !Activated;
             }
 
             if (Activated)
@@ -178,6 +211,8 @@ namespace Utopia.GUI
 
         public override void Draw(int Index)
         {
+            if (_chatHiden) return;
+
             _spriteRender.Begin(SpriteRenderer.FilterMode.Point);
 
             var builder = new StringBuilder();
