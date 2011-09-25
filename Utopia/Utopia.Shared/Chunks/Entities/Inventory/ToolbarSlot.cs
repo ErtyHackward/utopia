@@ -28,8 +28,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
             // saving toolbar slot position
 
-            writer.Write(GridPosition.X);
-            writer.Write(GridPosition.Z);
+            writer.Write(GridPosition);
 
             // we do not going to write empty subslots 
             // storage layout byte 0 - only left, 1 - only right, 2 - both slots
@@ -54,10 +53,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         public override void Load(BinaryReader reader)
         {
             // reading toolbar slot position
-            Location2<byte> location;
-            location.X = reader.ReadByte();
-            location.Z = reader.ReadByte();
-            GridPosition = location;
+            GridPosition = reader.ReadVector2I();
 
             //read layout byte
             var layout = reader.ReadByte();

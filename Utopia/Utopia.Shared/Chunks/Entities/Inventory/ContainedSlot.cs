@@ -11,7 +11,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// <summary>
         /// Gets or sets slot position in container grid
         /// </summary>
-        public Location2<byte> GridPosition { get; set; }
+        public Vector2I GridPosition { get; set; }
 
         public override void Load(BinaryReader reader)
         {
@@ -19,10 +19,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
             if (!IsEmpty)
             {
-                Location2<byte> location;
-                location.X = reader.ReadByte();
-                location.Z = reader.ReadByte();
-                GridPosition = location;
+                GridPosition = reader.ReadVector2I();
             }
         }
 
@@ -32,8 +29,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
             if (!IsEmpty)
             {
-                writer.Write(GridPosition.X);
-                writer.Write(GridPosition.Z);
+                writer.Write(GridPosition);
             }
         }
     }

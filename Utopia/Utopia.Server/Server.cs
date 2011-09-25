@@ -281,6 +281,8 @@ namespace Utopia.Server
             e.Connection.MessageChat += ConnectionMessageChat;
             e.Connection.MessagePing += ConnectionMessagePing;
             e.Connection.MessageEntityUse += Connection_MessageEntityUse;
+            e.Connection.MessageItemTransfer += Connection_MessageItemTransfer;
+            e.Connection.MessageEntityEquipment += Connection_MessageEntityEquipment;
         }
 
         private void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
@@ -293,6 +295,8 @@ namespace Utopia.Server
             e.Connection.MessageChat -= ConnectionMessageChat;
             e.Connection.MessagePing -= ConnectionMessagePing;
             e.Connection.MessageEntityUse -= Connection_MessageEntityUse;
+            e.Connection.MessageItemTransfer -= Connection_MessageItemTransfer;
+            e.Connection.MessageEntityEquipment -= Connection_MessageEntityEquipment;
 
             Console.WriteLine("{0} disconnected", e.Connection.RemoteAddress);
             
@@ -309,6 +313,18 @@ namespace Utopia.Server
                 e.Connection.ServerEntity.CurrentArea = null;
             }
 
+        }
+
+        void Connection_MessageEntityEquipment(object sender, ProtocolMessageEventArgs<EntityEquipmentMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+            connection.ServerEntity.Equip(e.Message);
+        }
+
+        void Connection_MessageItemTransfer(object sender, ProtocolMessageEventArgs<ItemTransferMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+            connection.ServerEntity.ItemTransfer(e.Message);
         }
 
         void ConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)

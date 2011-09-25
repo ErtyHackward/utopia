@@ -30,7 +30,7 @@ namespace Utopia.Shared.Chunks.Entities
         public PlayerCharacter()
         {
             //Define the default PlayerCharacter ToolBar
-            Toolbar = new SlotContainer<ToolbarSlot>(new Location2<byte>(10,1));
+            Toolbar = new SlotContainer<ToolbarSlot>(new Vector2I(10, 1));
 
             MoveSpeed = 5f;               //Default player MoveSpeed
             RotationSpeed = 10f;          //Default Player Rotation Speed

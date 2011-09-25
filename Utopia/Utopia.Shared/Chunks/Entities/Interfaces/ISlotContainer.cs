@@ -27,7 +27,7 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// <summary>
         /// Gets container grid size
         /// </summary>
-        Location2<byte> GridSize { get; }
+        Vector2I GridSize { get; }
         
         /// <summary>
         /// Tries to put item into slot specified
@@ -37,11 +37,18 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         bool PutItem(T slot);
 
         /// <summary>
-        /// Tries to get item from slot
+        /// Tries to get item from slot. Checks the Entity type 
         /// </summary>
         /// <param name="slot"></param>
         /// <returns>True if succeed otherwise false</returns>
-        bool GetItem(T slot);
+        bool TakeItem(T slot);
+
+        /// <summary>
+        /// Tries to get item from slot. Slot entity will be filled from slot position
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <returns></returns>
+        T TakeSlot(T slot);
 
     }
 

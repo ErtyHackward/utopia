@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Utopia.Shared.Chunks.Entities.Concrete;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory
@@ -23,6 +24,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// <param name="e"></param>
         public void OnItemEquipped(CharacterEquipmentEventArgs e)
         {
+            e.Entity = _parent;
             var handler = ItemEquipped;
             if (handler != null) handler(this, e);
         }
@@ -48,45 +50,59 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// </summary>
         /// <param name="item"></param>
         /// <param name="slot"></param>
-        public void WearItem(Item item, EquipmentSlotType slot)
+        /// <returns>Item was weared off</returns>
+        public Item WearItem(Item item, EquipmentSlotType slot)
         {
+            Item previous = null;
             switch (slot)
             {
                 case EquipmentSlotType.Head:
+                    previous = HeadGear;
                     HeadGear = item as Armor;
                     break;
                 case EquipmentSlotType.Torso:
+                    previous = Torso;
                     Torso = item as Armor;
                     break;
                 case EquipmentSlotType.Legs:
+                    previous = Legs;
                     Legs = item as Armor;
                     break;
                 case EquipmentSlotType.Feet:
+                    previous = Feet;
                     Feet = item as Armor;
                     break;
                 case EquipmentSlotType.Arms:
+                    previous = Arms;
                     Arms = item as Armor;
                     break;
                 case EquipmentSlotType.LeftHand:
+                    previous = LeftTool;
                     LeftTool = item as Tool;
                     break;
                 case EquipmentSlotType.RightHand:
+                    previous = RightTool;
                     RightTool = item as Tool;
                     break;
                 case EquipmentSlotType.LeftRing:
+                    previous = LeftRing;
                     LeftRing = item;
                     break;
                 case EquipmentSlotType.RightRing:
+                    previous = RightRing;
                     RightRing = item;
                     break;
                 case EquipmentSlotType.Bags:
                     break;
                 case EquipmentSlotType.Neck:
+                    previous = NeckLace;
                     NeckLace = item;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("slot");
             }
+
+            return previous;
         }
 
         public Armor HeadGear
@@ -265,6 +281,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
     public class CharacterEquipmentEventArgs : EventArgs
     {
+        public IDynamicEntity Entity { get; set; }
         public Item Item { get; set; }
         public EquipmentSlotType Slot { get; set; }
     }

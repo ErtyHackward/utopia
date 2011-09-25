@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using Utopia.Net.Interfaces;
 using Utopia.Shared.Chunks.Entities;
@@ -12,22 +13,12 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct EntityEquipmentMessage : IBinaryMessage
     {
-        private EquipmentSlotType[] _slots;
-        private Entity[] _items;
-
-        /// <summary>
-        /// Array of slots item. This array must have the same size and order as Items
-        /// </summary>
-        public EquipmentSlotType[] Slots
-        {
-            get { return _slots; }
-            set { _slots = value; }
-        }
+        private EquipmentItem[] _items;
         
         /// <summary>
-        /// Array of items are equipped. This array must have the same size and order as Slots
+        /// Array of items are equipped.
         /// </summary>
-        public Entity[] Items
+        public EquipmentItem[] Items
         {
             get { return _items; }
             set { _items = value; }
@@ -46,13 +37,11 @@ namespace Utopia.Net.Messages
             EntityEquipmentMessage msg;
             var count = reader.ReadInt32();
 
-            msg._slots = new EquipmentSlotType[count];
-            msg._items = new Item[count];
+            msg._items = new EquipmentItem[count];
 
             for (int i = 0; i < count; i++)
             {
-                msg._slots[i] = (EquipmentSlotType)reader.ReadUInt16();
-                msg._items[i] = EntityFactory.Instance.CreateFromBytes(reader);
+                msg._items[i] = new EquipmentItem((EquipmentSlotType)reader.ReadUInt16(), EntityFactory.Instance.CreateFromBytes(reader));
             }
 
             return msg;
@@ -64,13 +53,38 @@ namespace Utopia.Net.Messages
         /// <param name="writer"></param>
         public void Write(BinaryWriter writer)
         {
-            writer.Write(_slots.Length);
+            writer.Write(_items.Length);
 
-            for (int i = 0; i < _slots.Length; i++)
+            foreach (var t in _items)
             {
-                writer.Write((ushort)_slots[i]);
-                _items[i].Save(writer);
+                writer.Write((ushort)t.Slot);
+                t.Entity.Save(writer);
             }
+        }
+    }
+
+    public struct EquipmentItem
+    {
+        private Entity _entity;
+        private EquipmentSlotType _slot;
+
+        public EquipmentItem(EquipmentSlotType slot, Entity entity)
+        {
+            if (entity == null) throw new ArgumentNullException("entity");
+            _slot = slot;
+            _entity = entity;
+        }
+        
+        public EquipmentSlotType Slot
+        {
+            get { return _slot; }
+            set { _slot = value; }
+        }
+        
+        public Entity Entity
+        {
+            get { return _entity; }
+            set { _entity = value; }
         }
     }
 }
