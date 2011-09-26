@@ -42,6 +42,7 @@ using Utopia.Settings;
 using Utopia.GUI;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
+using S33M3Engines.Timers;
 
 namespace Utopia
 {
@@ -65,7 +66,8 @@ namespace Utopia
             iocContainer.Bind<VisualDynamicEntity>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<InputsManager>().ToSelf().InSingletonScope();
-
+            iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();
+            
             iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();
             iocContainer.Bind<IEntityPickingManager>().To<EntityPickingManager>().InSingletonScope();
 

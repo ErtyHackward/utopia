@@ -7,6 +7,7 @@ using SharpDX;
 using Utopia.Entities.Voxel;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.Maths;
+using S33M3Engines.Timers;
 
 namespace Utopia.Entities.Managers
 {
@@ -18,21 +19,40 @@ namespace Utopia.Entities.Managers
     {
         #region private variables
         private IDynamicEntityManager _dynamicEntityManager;
+        private S33M3Engines.Timers.TimerManager.GameTimer _timer;
         #endregion
 
         #region public variables
         #endregion
 
-        public EntityPickingManager(IDynamicEntityManager dynamicEntityManager)                                    
+        public EntityPickingManager(IDynamicEntityManager dynamicEntityManager, TimerManager timerManager)                                    
         {
             _dynamicEntityManager = dynamicEntityManager;
+            _timer = timerManager.AddTimer(1, 2000);
+            _timer.OnTimerRaised += _timer_OnTimerRaised;
         }
 
         public void Dispose()
         {
+            _timer.OnTimerRaised -= _timer_OnTimerRaised;
         }
 
         #region private methods
+        private void _timer_OnTimerRaised()
+        {
+            CollectSurrendingPlayerEntities();
+        }
+
+        private void CollectSurrendingPlayerEntities()
+        {
+            IVisualEntityContainer entity;
+            for (int i = 0; i < _dynamicEntityManager.DynamicEntities.Count; i++)
+            {
+                entity = _dynamicEntityManager.DynamicEntities[i];
+                //On Player Range OR not ?
+                //If yes ==> Store it, else skip it !
+            }
+        }
         #endregion
 
         #region public methods

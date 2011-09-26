@@ -5,6 +5,7 @@ using S33M3Engines.Sprites;
 using SharpDX;
 using Nuclex.UserInterface;
 using Utopia.GUI.D3D.Inventory;
+using SharpDX.Direct3D11;
 
 namespace Utopia.GUI.D3D
 {
@@ -32,6 +33,7 @@ namespace Utopia.GUI.D3D
             _screen = screen;
             _d3DEngine = d3DEngine;
             DrawOrders.UpdateIndex(0, 9000);
+            _d3DEngine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
         }
 
         public override void LoadContent()
@@ -45,8 +47,16 @@ namespace Utopia.GUI.D3D
             _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
 
             _toolbarUi = new ToolBarUi();
+            _toolbarUi.Bounds = new UniRectangle(0.0f, _d3DEngine.ViewPort.Height - 46, _d3DEngine.ViewPort.Width, 80.0f);
             _screen.Desktop.Children.Add(_toolbarUi);
             //the guimanager will draw the GUI screen, not the Hud !
+        }
+
+        //Refresh Sprite Centering when the viewPort size change !
+        private void D3dEngine_ViewPort_Updated(Viewport viewport)
+        {
+            _toolbarUi.Bounds = new UniRectangle(0.0f, viewport.Height - 46, viewport.Width, 80.0f);
+            _toolbarUi.Resized();
         }
 
         public override void UnloadContent()
@@ -54,6 +64,7 @@ namespace Utopia.GUI.D3D
             _spriteRender.Dispose();
             _crosshair.Dispose();
             _font.Dispose();
+            _d3DEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
         }
 
         public override void Update(ref GameTime timeSpent)
