@@ -252,7 +252,6 @@ namespace Utopia.Worlds.Chunks
 #if DEBUG
             ChunkBoundingBoxDisplay.Update(ref ChunkWorldBoundingBox);
 #endif
-
         }
 
         private void RangeChanged() // Start it also if the World offset Change !!!

@@ -79,15 +79,20 @@ namespace UtopiaContent.ModelComp
             BB3dworld = Matrix.Translation(bb.Minimum);
         }
 
+        public void Update(ref BoundingBox bb, Vector3 scalingSize)
+        {
+            BB3dworld = Matrix.Scaling(scalingSize) * Matrix.Translation(bb.Minimum);
+        }
+
         #region Private methods
         #endregion
 
         #region Public methods
         //My points are already on world space !
-        public void Draw(ICamera camera, IWorldFocus FocusPoint)
+        public void Draw(ICamera camera)
         {
             Matrix WorldFocused = Matrix.Identity;
-            _worldFocusManager.CenterTranslationMatrixOnFocus(ref BB3dworld, ref WorldFocused);
+            WorldFocused = _worldFocusManager.CenterOnFocus(ref BB3dworld);
 
             _wrappedEffect.Begin();
             _wrappedEffect.CBPerDraw.Values.World = Matrix.Transpose(WorldFocused);
