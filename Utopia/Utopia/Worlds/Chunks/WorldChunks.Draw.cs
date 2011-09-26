@@ -85,7 +85,7 @@ namespace Utopia.Worlds.Chunks
             Matrix worldFocus = Matrix.Identity;
 
             //Foreach faces type
-            for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Z; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Y; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
 
@@ -154,7 +154,7 @@ namespace Utopia.Worlds.Chunks
             VisualChunk chunk;
             Matrix worldFocus = Matrix.Identity;
 
-            for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Z; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Y; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
 
@@ -198,7 +198,7 @@ namespace Utopia.Worlds.Chunks
             int BprimitiveCount = 0;
             int VprimitiveCount = 0;
             //Run over all chunks to see their status, and take action accordingly.
-            for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Z; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Y; chunkIndice++)
             {
                 if (SortedChunks[chunkIndice].SolidCubeIB == null) continue;
                 if (!SortedChunks[chunkIndice].isFrustumCulled)
@@ -209,7 +209,7 @@ namespace Utopia.Worlds.Chunks
                 BprimitiveCount += SortedChunks[chunkIndice].SolidCubeIB.IndicesCount;
                 if (SortedChunks[chunkIndice].LiquidCubeIB != null) BprimitiveCount += (SortedChunks[chunkIndice].LiquidCubeIB.IndicesCount);
             }
-            return string.Concat("<TerraCube Mod> BChunks : ", VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Z, "; BPrim : ", BprimitiveCount, " DChunks : ", _chunkDrawByFrame, " DPrim : ", VprimitiveCount);
+            return string.Concat("<TerraCube Mod> BChunks : ", VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Y, "; BPrim : ", BprimitiveCount, " DChunks : ", _chunkDrawByFrame, " DPrim : ", VprimitiveCount);
         }
         #endregion
     }

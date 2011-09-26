@@ -78,7 +78,7 @@ namespace Utopia.Server.Managers
 
         private MapArea GetArea(Vector3D position)
         {
-            var pos = new Vector2I((int)Math.Floor((double)position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor((double)position.Z / (MapArea.AreaSize.Z)) * MapArea.AreaSize.Z);
+            var pos = new Vector2I((int)Math.Floor((double)position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor((double)position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);
 
             MapArea area;            
             if (_areas.ContainsKey(pos))
@@ -111,7 +111,7 @@ namespace Utopia.Server.Managers
 
             // erty: I'm not happy with next code, if you know how make it better, you are welcome!
 
-            double tooFarAway = MapArea.AreaSize.X * MapArea.AreaSize.X + MapArea.AreaSize.Z * MapArea.AreaSize.Z;
+            double tooFarAway = MapArea.AreaSize.X * MapArea.AreaSize.X + MapArea.AreaSize.Y * MapArea.AreaSize.Y;
 
             var currentArea = GetArea(new Vector3D(e.Entity.DynamicEntity.Position.X, 0,
                                                   e.Entity.DynamicEntity.Position.Z));
@@ -124,7 +124,7 @@ namespace Utopia.Server.Managers
                 for (int z = -1; z < 2; z++)
                 {
                     var prev = GetArea(new Vector3D(e.PreviousPosition.X + x * MapArea.AreaSize.X, 0,
-                                                   e.PreviousPosition.Z + z*MapArea.AreaSize.Z));
+                                                   e.PreviousPosition.Z + z*MapArea.AreaSize.Y));
                     
                     if(Vector2I.DistanceSquared(currentArea.Position,prev.Position) > tooFarAway )
                     {
@@ -136,7 +136,7 @@ namespace Utopia.Server.Managers
                     }
                     
                     var now = GetArea(new Vector3D(e.Entity.DynamicEntity.Position.X + x*MapArea.AreaSize.X, 0,
-                                                  e.Entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Z));
+                                                  e.Entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
 
                     if(Vector2I.DistanceSquared(previousArea.Position, now.Position) > tooFarAway)
                     {
@@ -171,7 +171,7 @@ namespace Utopia.Server.Managers
                 for (int z = -1; z < 2; z++)
                 {
                     var area = GetArea(new Vector3D(entity.DynamicEntity.Position.X + x * MapArea.AreaSize.X, 0,
-                                                   entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Z));
+                                                   entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
                     entity.AddArea(area);
                     if (x == 0 && z == 0)
                     {
@@ -202,7 +202,7 @@ namespace Utopia.Server.Managers
                 for (int z = -1; z < 2; z++)
                 {
                     var area = GetArea(new Vector3D(entity.DynamicEntity.Position.X + x * MapArea.AreaSize.X, 0,
-                                                   entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Z));
+                                                   entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
                     if (x == 0 && z == 0)
                         area.RemoveEntity((int)entity.DynamicEntity.EntityId);
 

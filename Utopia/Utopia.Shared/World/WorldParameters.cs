@@ -10,7 +10,7 @@ namespace Utopia.Shared.World
         /// <summary>
         /// World size in chunk unit (width and length)
         /// </summary>
-        public Location2<int> WorldChunkSize { get; set; }
+        public Vector2I WorldChunkSize { get; set; }
 
         /// <summary>
         /// Indicates if world is infinite of final
