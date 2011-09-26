@@ -8,6 +8,7 @@ using Utopia.Entities.Voxel;
 using Utopia.Entities.Renderer;
 using Ninject;
 using SharpDX;
+using Utopia.Entities.Managers.Interfaces;
 
 namespace Utopia.Entities.Managers
 {
@@ -19,20 +20,21 @@ namespace Utopia.Entities.Managers
     {
         #region Private variables
         private Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
-        private List<IVisualEntityContainer> _dynamicEntities = new List<IVisualEntityContainer>();
         private IEntitiesRenderer _dynamicEntityRenderer;
         private VoxelMeshFactory _voxelMeshFactory;
         #endregion
 
         #region Public variables/properties
+        public List<IVisualEntityContainer> DynamicEntities { get; set; }
         #endregion
 
         public DynamicEntityManager([Named("DefaultEntityRenderer")] IEntitiesRenderer dynamicEntityRenderer, VoxelMeshFactory voxelMeshFactory)
         {
+            DynamicEntities = new List<IVisualEntityContainer>();
             _voxelMeshFactory = voxelMeshFactory;
             _dynamicEntityRenderer = dynamicEntityRenderer;
 
-            _dynamicEntityRenderer.VisualEntities = _dynamicEntities;
+            _dynamicEntityRenderer.VisualEntities = DynamicEntities;
         }
 
         public override void Dispose()
@@ -79,6 +81,7 @@ namespace Utopia.Entities.Managers
 
         public override void Draw(int Index)
         {
+            //Only Draw the Entities that are in View Client scope !
             _dynamicEntityRenderer.Draw(Index);
         }
 
@@ -88,7 +91,7 @@ namespace Utopia.Entities.Managers
             {
                 VisualDynamicEntity newEntity = CreateVisualEntity(entity);
                 _dynamicEntitiesDico.Add(entity.EntityId, newEntity);
-                _dynamicEntities.Add(newEntity);
+                DynamicEntities.Add(newEntity);
             }
         }
 
@@ -97,7 +100,7 @@ namespace Utopia.Entities.Managers
             if (_dynamicEntitiesDico.ContainsKey(entity.EntityId))
             {
                 VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entity.EntityId];
-                _dynamicEntities.Remove(visualEntity);
+                DynamicEntities.Remove(visualEntity);
                 _dynamicEntitiesDico.Remove(entity.EntityId);
                 visualEntity.Dispose();
             }
@@ -108,7 +111,7 @@ namespace Utopia.Entities.Managers
             if (_dynamicEntitiesDico.ContainsKey(entityId))
             {
                 VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entityId];
-                _dynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
+                DynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
                 _dynamicEntitiesDico.Remove(entityId);
                 visualEntity.Dispose();
             }
@@ -129,7 +132,7 @@ namespace Utopia.Entities.Managers
 
         public IEnumerator<VisualEntity> EnumerateVisualEntities()
         {
-            foreach (var visualEntityContainer in _dynamicEntities)
+            foreach (var visualEntityContainer in DynamicEntities)
             {
                 yield return visualEntityContainer.VisualEntity;    
             }

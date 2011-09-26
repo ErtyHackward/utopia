@@ -41,6 +41,7 @@ using Utopia.Entities.Renderer;
 using Utopia.Settings;
 using Utopia.GUI;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using Utopia.Entities.Managers.Interfaces;
 
 namespace Utopia
 {
@@ -57,7 +58,6 @@ namespace Utopia
             iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");
             iocContainer.Bind<IEntitiesRenderer>().To<DefaultEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");
             
-
             iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
@@ -67,6 +67,9 @@ namespace Utopia
             iocContainer.Bind<InputsManager>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();
+            iocContainer.Bind<IEntityPickingManager>().To<EntityPickingManager>().InSingletonScope();
+
+            iocContainer.Bind<IPickingRenderer>().To<DefaultPickingRenderer>().InSingletonScope();
 
             iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope();

@@ -6,6 +6,7 @@ using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
+using Utopia.Entities.Managers.Interfaces;
 
 namespace Utopia.Network
 {

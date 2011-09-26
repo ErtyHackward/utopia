@@ -53,6 +53,8 @@ using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Net.Connections;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using Utopia.Entities.Renderer;
+using Utopia.Entities.Managers.Interfaces;
 
 namespace Utopia
 {
@@ -74,6 +76,7 @@ namespace Utopia
         private D3DEngine _engine;
         private IDynamicEntityManager _dynamicEntityManager;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
+        private IPickingRenderer _pickingRenderer;
         //Debug tools
         private FPS _fps; //FPS computing object
 
@@ -208,6 +211,9 @@ namespace Utopia
             //camera.CameraPlugin = _player;
             _camManager.UpdateOrder = 1;
             GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
+
+            _pickingRenderer = IoCContainer.Get<IPickingRenderer>();
+            GameComponents.Add(_pickingRenderer);
 
             //Create the Player manager
             PlayerEntityManager Player = IoCContainer.Get<PlayerEntityManager>(new ConstructorArgument("visualEntity", new VisualEntity(IoCContainer.Get<VoxelMeshFactory>(), IoCContainer.Get<PlayerCharacter>())));

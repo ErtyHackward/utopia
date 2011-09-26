@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using S33M3Engines.D3D;
+using Utopia.Entities.Voxel;
 
-namespace Utopia.Entities.Managers
+namespace Utopia.Entities.Managers.Interfaces
 {
     public interface IDynamicEntityManager : IGameComponent
     {
@@ -13,6 +14,8 @@ namespace Utopia.Entities.Managers
         void RemoveEntity(IDynamicEntity entity);
         void RemoveEntityById(uint entityId);
         IDynamicEntity GetEntityById(uint p);
+
+        List<IVisualEntityContainer> DynamicEntities { get; set; }
     }
 
 }

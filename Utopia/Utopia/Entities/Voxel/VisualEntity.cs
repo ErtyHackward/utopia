@@ -22,6 +22,11 @@ namespace Utopia.Entities.Voxel
         public readonly IVoxelEntity VoxelEntity;
         public VertexBuffer<VertexCubeSolid> VertexBuffer;
         public List<VertexCubeSolid> Vertice;
+        /// <summary>
+        /// The BBox surrending the Entity, it will be used for collision detections mainly !
+        /// </summary>
+        public BoundingBox WorldBBox;
+        public BoundingBox LocalBBox;
 
         private readonly bool _isColorOnly;
 
@@ -56,7 +61,14 @@ namespace Utopia.Entities.Voxel
 
             Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks, _overlays, _isColorOnly);
             VertexBuffer = _voxelMeshFactory.InitBuffer(Vertice);
-            
+
+            LocalBBox = new BoundingBox();
+            WorldBBox = new BoundingBox();
+
+            //Will be used to update the bounding box with world coordinate when the entity is moving
+            LocalBBox.Minimum = new Vector3(-(VoxelEntity.Size.X / 2.0f), 0, -(VoxelEntity.Size.Z / 2.0f));
+            LocalBBox.Maximum = new Vector3(+(VoxelEntity.Size.X / 2.0f), VoxelEntity.Size.Y, +(VoxelEntity.Size.Z / 2.0f));
+
             Altered = true;
             Update();
         }
@@ -116,6 +128,34 @@ namespace Utopia.Entities.Voxel
         {
             _overlays[loc.X, loc.Y, loc.Z] = overlay;
             Altered = true;
+        }
+
+        /// <summary>
+        /// Compute player bounding box in World coordinate
+        /// </summary>
+        /// <param name="worldPosition"></param>
+        /// <param name="boundingBox"></param>
+        public void RefreshWorldBoundingBox(ref Vector3D worldPosition)
+        {
+            WorldBBox = new BoundingBox(LocalBBox.Minimum + worldPosition.AsVector3(),
+                                          LocalBBox.Maximum + worldPosition.AsVector3());
+        }
+
+        /// <summary>
+        /// Compute player bounding box in World coordinate
+        /// </summary>
+        /// <param name="worldPosition"></param>
+        /// <param name="boundingBox"></param>
+        public BoundingBox ComputeWorldBoundingBox(ref Vector3D worldPosition)
+        {
+            return new BoundingBox(LocalBBox.Minimum + worldPosition.AsVector3(),
+                                          LocalBBox.Maximum + worldPosition.AsVector3());
+        }
+
+        public void ComputeWorldBoundingBox(ref Vector3D worldPosition, out BoundingBox worldBB)
+        {
+            worldBB = new BoundingBox(LocalBBox.Minimum + worldPosition.AsVector3(),
+                                          LocalBBox.Maximum + worldPosition.AsVector3());
         }
     }
 }

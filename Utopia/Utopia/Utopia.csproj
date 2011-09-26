@@ -110,10 +110,14 @@
     <Compile Include="Editor\EntityEditor.cs" />
     <Compile Include="Editor\EntityEditorUI.cs" />
     <Compile Include="Editor\Spawn.cs" />
+    <Compile Include="Entities\Managers\EntityPickingManager.cs" />
+    <Compile Include="Entities\Managers\Interfaces\IEntityPickingManager.cs" />
     <Compile Include="Entities\Renderer\DefaultEntityRenderer.cs" />
     <Compile Include="Entities\Managers\DynamicEntityManager.cs" />
-    <Compile Include="Entities\Managers\IDynamicEntityManager.cs" />
+    <Compile Include="Entities\Managers\Interfaces\IDynamicEntityManager.cs" />
     <Compile Include="Entities\Renderer\IEntitiesRenderer.cs" />
+    <Compile Include="Entities\Renderer\IPickingRenderer.cs" />
+    <Compile Include="Entities\Renderer\DefaultPickingRenderer.cs" />
     <Compile Include="Entities\Renderer\PlayerEntityRenderer.cs" />
     <Compile Include="Entities\VisualDynamicEntity.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.cs" />
