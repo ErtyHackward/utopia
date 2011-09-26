@@ -57,16 +57,16 @@ namespace Utopia.Entities
         private void Initialize()
         {
             //Will be used to update the bounding box with world coordinate when the entity is moving
-            _boundingMinPoint = new Vector3(-(DynamicEntity.Size.X / 2.0f), 0, -(DynamicEntity.Size.Z / 2.0f));
-            _boundingMaxPoint = new Vector3(+(DynamicEntity.Size.X / 2.0f), DynamicEntity.Size.Y, +(DynamicEntity.Size.Z / 2.0f));
-
-            //Compute the initial Player world bounding box
-            RefreshBoundingBox(ref WorldPosition.Value, out _playerBoundingBox);
+            VisualEntity.LocalBBox.Minimum = new Vector3(-(DynamicEntity.Size.X / 2.0f), 0, -(DynamicEntity.Size.Z / 2.0f));
+            VisualEntity.LocalBBox.Maximum = new Vector3(+(DynamicEntity.Size.X / 2.0f), DynamicEntity.Size.Y, +(DynamicEntity.Size.Z / 2.0f));
 
             //Set Position
             //Set the entity world position following the position received from server
             WorldPosition.Value = DynamicEntity.Position;
             WorldPosition.ValuePrev = DynamicEntity.Position;
+
+            //Compute the initial Player world bounding box
+            VisualEntity.RefreshWorldBoundingBox(ref WorldPosition.Value);
 
             //Set LookAt
             LookAtDirection.Value = DynamicEntity.Rotation;
@@ -83,17 +83,6 @@ namespace Utopia.Entities
             }
 
             _netLocation = new NetworkValue<Vector3D>() { Value = WorldPosition.Value, Interpolated = WorldPosition.Value };
-        }
-
-        /// <summary>
-        /// Compute player bounding box in World coordinate
-        /// </summary>
-        /// <param name="worldPosition"></param>
-        /// <param name="boundingBox"></param>
-        private void RefreshBoundingBox(ref Vector3D worldPosition, out BoundingBox boundingBox)
-        {
-            boundingBox = new BoundingBox(_boundingMinPoint + worldPosition.AsVector3(),
-                                          _boundingMaxPoint + worldPosition.AsVector3());
         }
 
         private void RefreshEntityMovementAndRotation()
@@ -116,11 +105,17 @@ namespace Utopia.Entities
             if (_netLocation.Distance > _distanceLimit)
             {
                     _netLocation.Interpolated = _netLocation.Value;
+
+                    //Refresh World Entity bounding box - only if entity did move !
+                    VisualEntity.RefreshWorldBoundingBox(ref _netLocation.Interpolated);
             }
             else
                 if (_netLocation.Distance > 0.1)
                 {
                     _netLocation.Interpolated += _netLocation.DeltaValue * _interpolationRate;
+
+                    //Refresh World Entity bounding box - only if entity did move !
+                    VisualEntity.RefreshWorldBoundingBox(ref _netLocation.Interpolated);
                 }
 
             WorldPosition.Value = _netLocation.Interpolated;

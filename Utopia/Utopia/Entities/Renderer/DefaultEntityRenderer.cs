@@ -21,7 +21,7 @@ namespace Utopia.Entities.Renderer
 {
     public class DefaultEntityRenderer : IEntitiesRenderer
     {
-         #region Private variables
+        #region Private variables
         private HLSLTerran _entityEffect;
         private D3DEngine _d3DEngine;
         private CameraManager _camManager;
@@ -29,6 +29,7 @@ namespace Utopia.Entities.Renderer
         private ShaderResourceView _cubeTexture_View;
         private ISkyDome _skydome;
         private VisualWorldParameters _visualWorldParameters;
+        private VisualEntity _entityToRender;
         #endregion
 
         #region Public variables/properties
@@ -76,14 +77,23 @@ namespace Utopia.Entities.Renderer
 
             for (int i = 0; i < VisualEntities.Count; i++)
             {
-                Matrix world = _worldFocusManager.CenterOnFocus(ref VisualEntities[i].VisualEntity.World);
+                _entityToRender = VisualEntities[i].VisualEntity;
 
-                _entityEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
-                _entityEffect.CBPerDraw.IsDirty = true;
-                _entityEffect.Apply();
+                //Draw only the entities that are in Client view range
+                if (_entityToRender.Position.X > _visualWorldParameters.WorldRange.Min.X &&
+                   _entityToRender.Position.X <= _visualWorldParameters.WorldRange.Max.X &&
+                   _entityToRender.Position.Z > _visualWorldParameters.WorldRange.Min.Z &&
+                   _entityToRender.Position.Z <= _visualWorldParameters.WorldRange.Max.Z)
+                {
+                    Matrix world = _worldFocusManager.CenterOnFocus(ref _entityToRender.World);
 
-                VisualEntities[i].VisualEntity.VertexBuffer.SetToDevice(0);
-                _d3DEngine.Context.Draw(VisualEntities[i].VisualEntity.VertexBuffer.VertexCount, 0);
+                    _entityEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+                    _entityEffect.CBPerDraw.IsDirty = true;
+                    _entityEffect.Apply();
+
+                    _entityToRender.VertexBuffer.SetToDevice(0);
+                    _d3DEngine.Context.Draw(VisualEntities[i].VisualEntity.VertexBuffer.VertexCount, 0);
+                }
             }
         }
 

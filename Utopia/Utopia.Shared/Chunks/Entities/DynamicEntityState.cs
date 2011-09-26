@@ -16,7 +16,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Is the entity a block at range, ready to by "picked-up"
         /// </summary>
-        public bool IsBlockPicked;
+        public bool IsPickingActive;
 
         /// <summary>
         /// Global position of new block to be inserted

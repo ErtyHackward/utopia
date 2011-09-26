@@ -31,7 +31,7 @@ namespace Utopia.Server.Tools
             var impact = new ToolImpact { Success = false };
             if (callerTool is Annihilator)
             {
-                if(entity.EntityState.IsBlockPicked)
+                if(entity.EntityState.IsPickingActive)
                 {
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
                     if (cursor.Read() != 0)
@@ -47,7 +47,7 @@ namespace Utopia.Server.Tools
 
             if (callerTool is DirtAdder)
             {
-                if (entity.EntityState.IsBlockPicked)
+                if (entity.EntityState.IsPickingActive)
                 {
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
                     if (cursor.Read() == 0)
