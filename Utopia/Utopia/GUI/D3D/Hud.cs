@@ -46,8 +46,7 @@ namespace Utopia.GUI.D3D
             _font = new SpriteFont();
             _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
 
-            _toolbarUi = new ToolBarUi();
-            _toolbarUi.Bounds = new UniRectangle(0.0f, _d3DEngine.ViewPort.Height - 46, _d3DEngine.ViewPort.Width, 80.0f);
+            _toolbarUi = new ToolBarUi(new UniRectangle(0.0f, _d3DEngine.ViewPort.Height - 46, _d3DEngine.ViewPort.Width, 80.0f));
             _screen.Desktop.Children.Add(_toolbarUi);
             //the guimanager will draw the GUI screen, not the Hud !
         }

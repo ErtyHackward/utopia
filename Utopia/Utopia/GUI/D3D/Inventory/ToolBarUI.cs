@@ -23,13 +23,13 @@ namespace Utopia.GUI.D3D.Inventory
 
         //private PlayerInventory _inventory;
 
-        public ToolBarUi(/*PlayerInventory inventory*/)
+        public ToolBarUi(UniRectangle Bounds)
         {
             //FIXME uniscalar relative positions doe not work, surely due to rectangle ordering  
             //this.Bounds = new UniRectangle(0.0f, new UniScalar(.5f, 0f), new UniScalar(1, 0), 80.0f);
             //TODO (simon) ToolBarUi remove all magic hardcoded numbers
-            this.Bounds = new UniRectangle(0.0f, 600-46, 1024, 80.0f);
-            
+            //this.Bounds = new UniRectangle(0.0f, 600-46, 1024, 80.0f);
+            this.Bounds = Bounds;
             this.Name = "Toolbar";
             //_inventory = inventory;
 
@@ -49,13 +49,15 @@ namespace Utopia.GUI.D3D.Inventory
             //  1024-46, 0, _buttonSize, _buttonSize
             //);
             //this.Children.Add(rightButton);
+            int nbrButton = 15;
+            _buttons = new List<ButtonItemControl>(nbrButton);
 
-            _buttons = new List<ButtonItemControl>(15);
+            float fromX = ((Bounds.Right.Offset - Bounds.Left.Offset) - (ButtonSize * nbrButton)) / 2;
 
-            for (int x = 3; x < 19; x++)
+            for (int x = 0; x < nbrButton; x++)
             {
                 ButtonItemControl btn = new ButtonItemControl(null);
-                btn.Bounds = new UniRectangle(x * ButtonSize, 0, ButtonSize, ButtonSize);
+                btn.Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize);
                 btn.IsLink = true;
                 _buttons.Add(btn);
                 btn.Pressed += delegate(object sender, EventArgs e)
