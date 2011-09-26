@@ -19,6 +19,8 @@ using Utopia.Entities.Managers;
 using Utopia.Net.Messages;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.SkyDomes;
+using S33M3Engines.Maths;
+using System.Linq;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -314,21 +316,9 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
-            //Request the Full landscape chunks
-            //_server.ServerConnection.SendAsync(new GetChunksMessage
-            //                                        {
-            //                                            Range = new Range2(
-            //                                                new Vector2I(
-            //                                                    VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X,
-            //                                                    VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z
-            //                                                    ),
-            //                                                new Vector2I(
-            //                                                    VisualWorldParameters.WorldParameters.WorldChunkSize.X,
-            //                                                    VisualWorldParameters.WorldParameters.WorldChunkSize.Z
-            //                                                    )
-            //                                                ),
-            //                                            Flag = Net.Messages.GetChunksMessageFlag.DontSendChunkDataIfNotModified
-            //                                        });
+            //Sort the chunks
+            Array.Sort<VisualChunk>(Chunks, ArraySort); 
+
             _server.ServerConnection.SendAsync(
             new GetChunksMessage()
             {
@@ -350,6 +340,14 @@ namespace Utopia.Worlds.Chunks
             );
 
             ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
+        }
+
+
+        private int ArraySort(VisualChunk x, VisualChunk y)
+        {
+            var distX = MVector3.Distance(x.CubeRange.Min, _camManager.ActiveCamera.WorldPosition);
+            var distY = MVector3.Distance(y.CubeRange.Min, _camManager.ActiveCamera.WorldPosition);
+            return distX.CompareTo(distY);
         }
 
         /// <summary>
