@@ -162,7 +162,7 @@ namespace Utopia.Worlds.Chunks
                 {
                     if (!chunk.isFrustumCulled)
                     {
-                        if (_gameStates.DebugDisplay == 1) chunk.ChunkBoundingBoxDisplay.Draw(_camManager.ActiveCamera, _worldFocusManager.WorldFocus);
+                        if (_gameStates.DebugDisplay == 1) chunk.ChunkBoundingBoxDisplay.Draw(_camManager.ActiveCamera);
                     }
 
                 }

@@ -131,7 +131,7 @@ namespace Utopia.Worlds.Chunks
             _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
 
             DrawOrders.UpdateIndex(SOLID_DRAW, 10); //not needed but its for the sample (This index is already created by default)
-            DrawOrders.AddIndex(TRANSPARENT_DRAW, 1000); //not needed but its for the sample (This index is already created by default)
+            DrawOrders.AddIndex(TRANSPARENT_DRAW, 1050); //not needed but its for the sample (This index is already created by default)
         }
 
         #region Public methods
