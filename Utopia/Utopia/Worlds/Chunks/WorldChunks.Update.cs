@@ -254,7 +254,7 @@ namespace Utopia.Worlds.Chunks
             if (!ChunkNeed2BeSorted || _camManager.ActiveCamera == null) return;
             int index = 0;
 
-            foreach (var chunk in Chunks.OrderBy(x => MVector3.Distance(x.CubeRange.Min, _camManager.ActiveCamera.WorldPosition)))
+            foreach (var chunk in Chunks.OrderBy(x => MVector3.Distance(x.CubeRange.Min, _playerManager.CameraWorldPosition)))
             {
                 SortedChunks[index] = chunk;
                 index++;

@@ -316,9 +316,6 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
-            //Sort the chunks
-            Array.Sort<VisualChunk>(SortedChunks, ArraySort); 
-
             _server.ServerConnection.SendAsync(
             new GetChunksMessage()
             {
@@ -340,13 +337,6 @@ namespace Utopia.Worlds.Chunks
             );
 
             ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
-        }
-
-        private int ArraySort(VisualChunk x, VisualChunk y)
-        {
-            var distX = MVector3.Distance(x.CubeRange.Min, _camManager.ActiveCamera.WorldPosition);
-            var distY = MVector3.Distance(y.CubeRange.Min, _camManager.ActiveCamera.WorldPosition);
-            return distX.CompareTo(distY);
         }
 
         /// <summary>
