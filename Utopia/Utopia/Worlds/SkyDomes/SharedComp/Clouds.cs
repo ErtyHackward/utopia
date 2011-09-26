@@ -55,7 +55,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             {
                 X = AbstractChunk.ChunkSize.X * worldParam.WorldChunkSize.X,
                 Y = AbstractChunk.ChunkSize.Y,
-                Z = AbstractChunk.ChunkSize.Z * worldParam.WorldChunkSize.Z,
+                Z = AbstractChunk.ChunkSize.Z * worldParam.WorldChunkSize.Y,
             };
         }
 

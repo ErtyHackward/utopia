@@ -12,12 +12,12 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// <summary>
         /// Inventory position of the left subslot
         /// </summary>
-        public Location2<byte>? Left { get; set; }
+        public Vector2I? Left { get; set; }
 
         /// <summary>
         /// Inventory position of the right subslot
         /// </summary>
-        public Location2<byte>? Right { get; set; }
+        public Vector2I? Right { get; set; }
 
         // overriding items and do whole writing by ourself
 
@@ -39,14 +39,12 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             // saving child slots location
             if (Left != null)
             {
-                writer.Write(Left.Value.X);
-                writer.Write(Left.Value.Z);
+                writer.Write(Left.Value);
             }
 
             if (Right != null)
             {
-                writer.Write(Right.Value.X);
-                writer.Write(Right.Value.Z);
+                writer.Write(Right.Value);
             }
         }
 
@@ -61,19 +59,13 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             if (layout == 0 || layout == 2)
             {
                 // left slot position
-                Location2<byte> leftPos;
-                leftPos.X = reader.ReadByte();
-                leftPos.Z = reader.ReadByte();
-                Left = leftPos;
+                Left = reader.ReadVector2I();
             }
 
             if (layout == 1 || layout == 2)
             {
                 // left slot position
-                Location2<byte> rightPos;
-                rightPos.X = reader.ReadByte();
-                rightPos.Z = reader.ReadByte();
-                Right = rightPos;
+                Right = reader.ReadVector2I(); ;
             }
 
         }

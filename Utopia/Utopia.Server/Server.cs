@@ -50,8 +50,8 @@ namespace Utopia.Server
         private readonly object _areaManagerSyncRoot = new object();
         private readonly DateTime _dateStart;
 
-        PerformanceCounter _cpuCounter;
-        PerformanceCounter _ramCounter;
+        private readonly PerformanceCounter _cpuCounter;
+        private readonly PerformanceCounter _ramCounter;
 
 
         //todo: remove to other class

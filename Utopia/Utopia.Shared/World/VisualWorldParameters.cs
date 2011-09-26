@@ -21,11 +21,11 @@ namespace Utopia.Shared.World
         }
 
         public Range<int> WorldRange;
-        public Location2<int> WrapEnd;
+        public Vector2I WrapEnd;
         public Vector3I WorldVisibleSize;
         public int WorldVisibleSizeXY;
         public int WorldVisibleSizeXYZ;
-        public Location2<int> WorldChunkStartUpPosition;
+        public Vector2I WorldChunkStartUpPosition;
 
         public VisualWorldParameters(WorldParameters worldParameters, PlayerCharacter player)
         {
@@ -33,9 +33,9 @@ namespace Utopia.Shared.World
 
             //Find the chunk location
             int X = (MathHelper.Fastfloor(player.Position.X / 16) * 16) - ((worldParameters.WorldChunkSize.X / 2) * 16);
-            int Z = (MathHelper.Fastfloor(player.Position.Z / 16) * 16) - ((worldParameters.WorldChunkSize.Z / 2) * 16);
+            int Z = (MathHelper.Fastfloor(player.Position.Z / 16) * 16) - ((worldParameters.WorldChunkSize.Y / 2) * 16);
 
-            WorldChunkStartUpPosition = new Location2<int>(X, Z);
+            WorldChunkStartUpPosition = new Vector2I(X, Z);
         }
 
         private void newWorldParameters()
@@ -44,7 +44,7 @@ namespace Utopia.Shared.World
             {
                 X = AbstractChunk.ChunkSize.X * _worldParameters.WorldChunkSize.X,
                 Y = AbstractChunk.ChunkSize.Y,
-                Z = AbstractChunk.ChunkSize.Z * _worldParameters.WorldChunkSize.Z,
+                Z = AbstractChunk.ChunkSize.Z * _worldParameters.WorldChunkSize.Y,
             };
 
             WorldVisibleSizeXY = WorldVisibleSize.X * WorldVisibleSize.Y;

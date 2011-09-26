@@ -19,7 +19,7 @@ namespace Utopia.Server.Structs
         /// <summary>
         /// Size of each Area
         /// </summary>
-        public static Location2<int> AreaSize = new Location2<int>(16 * 8, 16 * 8);
+        public static Vector2I AreaSize = new Vector2I(16 * 8, 16 * 8);
 
         private readonly object _syncRoot = new object();
         private readonly ConcurrentDictionary<int, ServerDynamicEntity> _entities = new ConcurrentDictionary<int, ServerDynamicEntity>();
@@ -181,7 +181,7 @@ namespace Utopia.Server.Structs
             Position = topLeftPoint;
 
             Rectangle = new Rectangle(topLeftPoint.X, topLeftPoint.Y, topLeftPoint.X + AreaSize.X,
-                                      topLeftPoint.Y + AreaSize.Z);
+                                      topLeftPoint.Y + AreaSize.Y);
         }
 
         public void AddEntity(ServerDynamicEntity entity)

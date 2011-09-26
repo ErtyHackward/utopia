@@ -310,11 +310,11 @@ namespace Utopia.Shared.Chunks
                     break;
                 case IdxRelativeMove.Z_Minus1:
                     value = baseIndex - _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
-                    if (Position == _visualWorldParam.WrapEnd.Z) value += _visualWorldParam.WorldVisibleSizeXYZ; //_visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
+                    if (Position == _visualWorldParam.WrapEnd.Y) value += _visualWorldParam.WorldVisibleSizeXYZ; //_visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
                     break;
                 case IdxRelativeMove.Z_Plus1:
                     value = baseIndex + _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y;
-                    if (Position == _visualWorldParam.WrapEnd.Z - 1) value -= _visualWorldParam.WorldVisibleSizeXYZ; // _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
+                    if (Position == _visualWorldParam.WrapEnd.Y - 1) value -= _visualWorldParam.WorldVisibleSizeXYZ; // _visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z;
                     break;
                 case IdxRelativeMove.Y_Minus1:
                     value = baseIndex - 1;
