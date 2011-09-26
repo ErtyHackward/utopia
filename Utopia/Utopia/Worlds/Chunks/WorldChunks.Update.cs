@@ -56,9 +56,9 @@ namespace Utopia.Worlds.Chunks
         {
             VisualChunk chunk;
 
-            for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
-                chunk = Chunks[chunkIndice];
+                chunk = SortedChunks[chunkIndice];
 
                 //Testing Frust
                 chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
@@ -76,9 +76,9 @@ namespace Utopia.Worlds.Chunks
         {
             VisualChunk chunk;
 
-            for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
-                chunk = Chunks[chunkIndice];
+                chunk = SortedChunks[chunkIndice];
                 if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
 
                 if (chunk.State == ChunkState.LandscapeCreated ||
@@ -95,9 +95,9 @@ namespace Utopia.Worlds.Chunks
             processInsync = isUpdateInSync(ChunksThreadSyncMode.UpdateReadyForLightPropagation);
 
             VisualChunk chunk;
-            for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
-                chunk = Chunks[chunkIndice];
+                chunk = SortedChunks[chunkIndice];
                 if (processInsync || chunk.ThreadPriority == WorkItemPriority.Highest)
                 {
                     if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
@@ -116,9 +116,9 @@ namespace Utopia.Worlds.Chunks
             processInsync = isUpdateInSync(ChunksThreadSyncMode.UpdateReadyForMeshCreation);
 
             VisualChunk chunk;
-            for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
-                chunk = Chunks[chunkIndice];
+                chunk = SortedChunks[chunkIndice];
                 if (processInsync || chunk.ThreadPriority == WorkItemPriority.Highest)
                 {
                     if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
@@ -137,9 +137,9 @@ namespace Utopia.Worlds.Chunks
             userOrder = CheckUserModifiedChunks();
 
             VisualChunk chunk;
-            for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
-                chunk = Chunks[chunkIndice];
+                chunk = SortedChunks[chunkIndice];
                 if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
 
                 if (chunk.UserChangeOrder != userOrder && chunk.ThreadPriority == WorkItemPriority.Highest)
@@ -165,9 +165,9 @@ namespace Utopia.Worlds.Chunks
             VisualChunk chunk;
             int nbrUserThreads = 0;
             int lowestOrder = int.MaxValue;
-            for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
-                chunk = Chunks[chunkIndice];
+                chunk = SortedChunks[chunkIndice];
                 if (chunk.ThreadPriority == WorkItemPriority.Highest && chunk.State != ChunkState.DisplayInSyncWithMeshes)
                     nbrUserThreads++;
                 if (chunk.State == ChunkState.MeshesChanged && chunk.ThreadPriority == WorkItemPriority.Highest)
@@ -192,9 +192,9 @@ namespace Utopia.Worlds.Chunks
             switch (syncMode)
             {
                 case ChunksThreadSyncMode.UpdateReadyForLightPropagation:
-                    for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+                    for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
                     {
-                        chunk = Chunks[chunkIndice];
+                        chunk = SortedChunks[chunkIndice];
                         if (chunk.State == ChunkState.Empty ||
                             chunk.State == ChunkState.LandscapeCreated || chunk.State == ChunkState.UserChanged)
                         {
@@ -204,9 +204,9 @@ namespace Utopia.Worlds.Chunks
                     }
                     break;
                 case ChunksThreadSyncMode.UpdateReadyForMeshCreation:
-                    for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+                    for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
                     {
-                        chunk = Chunks[chunkIndice];
+                        chunk = SortedChunks[chunkIndice];
                         if (chunk.State == ChunkState.Empty ||
                             chunk.State == ChunkState.LandscapeCreated ||
                             chunk.State == ChunkState.LandscapeLightsSourceCreated || chunk.State == ChunkState.UserChanged)
@@ -218,9 +218,9 @@ namespace Utopia.Worlds.Chunks
                     break;
                 case ChunksThreadSyncMode.HighPriorityReadyToBeSendToGraphicalCard:
                     nbrThread = 0;
-                    for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+                    for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
                     {
-                        chunk = Chunks[chunkIndice];
+                        chunk = SortedChunks[chunkIndice];
                         if (chunk.ThreadPriority == WorkItemPriority.Highest) nbrThread++;
                         if (chunk.State == ChunkState.MeshesChanged && chunk.ThreadPriority == WorkItemPriority.Highest)
                         {
@@ -231,9 +231,9 @@ namespace Utopia.Worlds.Chunks
                     }
                     break;
                 case ChunksThreadSyncMode.ReadyForWrapping:
-                    for (int chunkIndice = 0; chunkIndice < Chunks.Length; chunkIndice++)
+                    for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
                     {
-                        chunk = Chunks[chunkIndice];
+                        chunk = SortedChunks[chunkIndice];
                         if (chunk.State != ChunkState.DisplayInSyncWithMeshes)
                         {
                             inSync = false;

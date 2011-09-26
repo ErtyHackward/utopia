@@ -317,7 +317,7 @@ namespace Utopia.Worlds.Chunks
             }
 
             //Sort the chunks
-            Array.Sort<VisualChunk>(Chunks, ArraySort); 
+            Array.Sort<VisualChunk>(SortedChunks, ArraySort); 
 
             _server.ServerConnection.SendAsync(
             new GetChunksMessage()
@@ -341,7 +341,6 @@ namespace Utopia.Worlds.Chunks
 
             ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
         }
-
 
         private int ArraySort(VisualChunk x, VisualChunk y)
         {

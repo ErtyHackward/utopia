@@ -67,11 +67,20 @@ namespace Utopia.GUI.D3D.Inventory
             }
         }
 
+        public void Resized()
+        {
+            float fromX = ((Bounds.Right.Offset - Bounds.Left.Offset) - (ButtonSize * _buttons.Count)) / 2;
+            int btNbr = 0;
+            foreach (var bt in _buttons)
+            {
+                bt.Bounds = new UniRectangle(fromX + (btNbr * ButtonSize), 0, ButtonSize, ButtonSize);
+                btNbr++;
+            }
+        }
+
         //TODO (Simon) review ToolBarUI update, envent based may be better
         public void Update(ref GameTime gameTime)
         {
-           
-
             //for (int i = 0; i < _inventory.Toolbar.Count; i++)
             //{
             //    buttons[i].Item = _inventory.Toolbar[i];

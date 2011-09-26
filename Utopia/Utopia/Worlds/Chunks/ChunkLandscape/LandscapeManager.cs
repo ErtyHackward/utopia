@@ -13,6 +13,7 @@ using Utopia.Net.Messages;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Storage.Structs;
 using Utopia.Net.Connections;
+using S33M3Engines.Timers;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
@@ -25,6 +26,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private Server _server;
         private Dictionary<long, ChunkDataMessage> _receivedServerChunks;
         private IChunkStorageManager _chunkStorageManager;
+        private S33M3Engines.Timers.TimerManager.GameTimer _timer;
         #endregion
 
         #region Public variables/properties
@@ -35,7 +37,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         }
         #endregion
 
-        public LandscapeManager(Server server, IChunkStorageManager chunkStorageManager)
+        public LandscapeManager(Server server, IChunkStorageManager chunkStorageManager, TimerManager timerManager)
         {
             _chunkStorageManager = chunkStorageManager;
 
@@ -43,11 +45,16 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             _receivedServerChunks = new Dictionary<long, ChunkDataMessage>(1024);
             _server.ServerConnection.MessageChunkData += ServerConnection_MessageChunkData;
 
+            //Add a new Timer trigger
+            _timer = timerManager.AddTimer(0, 10000);
+            _timer.OnTimerRaised += _timer_OnTimerRaised;
+
             Initialize();
         }
 
         public void Dispose()
         {
+            _timer.OnTimerRaised -= _timer_OnTimerRaised;
             _server.ServerConnection.MessageChunkData -= ServerConnection_MessageChunkData;
         }
 
@@ -75,12 +82,21 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             if(_receivedServerChunks.ContainsKey(e.Message.Position.GetID())) _receivedServerChunks.Remove(e.Message.Position.GetID());
             _receivedServerChunks.Add(e.Message.Position.GetID(), e.Message);
         }
-      
+
+        //Perform Maintenance task every 10 seconds
+        void _timer_OnTimerRaised()
+        {
+            ChunkBufferCleanup();
+        }
         //TODO call from Time to Time ?? how ?? When ??
         private void ChunkBufferCleanup()
         {
-            IEnumerable<long> expiredIndex = _receivedServerChunks.Where(x => DateTime.Now.Subtract(x.Value.MessageRecTime).TotalSeconds > 10).Select(x => x.Key);
-            foreach (var index in expiredIndex) _receivedServerChunks.Remove(index);
+            var expiredIndex = _receivedServerChunks.Where(x => DateTime.Now.Subtract(x.Value.MessageRecTime).TotalSeconds > 60).ToList();
+
+            for (int i = 0; i < expiredIndex.Count; i++)
+            {
+                _receivedServerChunks.Remove(expiredIndex[i].Key);
+            }
         }
 
         private void CheckServerReceivedData(VisualChunk chunk, bool Async)

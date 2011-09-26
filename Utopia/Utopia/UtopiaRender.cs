@@ -55,6 +55,7 @@ using Utopia.Net.Connections;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Renderer;
 using Utopia.Entities.Managers.Interfaces;
+using S33M3Engines.Timers;
 
 namespace Utopia
 {
@@ -89,6 +90,8 @@ namespace Utopia
         private DebugInfo _debugInfo;
 
         private IKernel _iocContainer;
+
+        private TimerManager _timerManager;
 
 #if STEALTH
         const int W = 48;
@@ -174,7 +177,7 @@ namespace Utopia
 
             //-- Get the Main D3dEngine --
             _d3dEngine = IoCContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(W, H)),
-                                                     new ConstructorArgument("windowCaption", "Powered By S33m3 Engine ! Rulezzz"),
+                                                     new ConstructorArgument("windowCaption", "Utopia"),
                                                      new ConstructorArgument("MaxNbrThreads", WorkQueue.ThreadPool.Concurrency));
 
             _d3dEngine.Initialize(); //Init the 3d Engine
@@ -183,6 +186,9 @@ namespace Utopia
 
             _actionManager = IoCContainer.Get<ActionsManager>();
             DXStates.CreateStates(_d3dEngine);  //Create all States that could by used by the game.
+
+            _timerManager = IoCContainer.Get<TimerManager>();
+            GameComponents.Add(_timerManager);
 
             //-- Get Camera --
             ICamera camera = IoCContainer.Get<ICamera>(); // Create a firstPersonCamera viewer
