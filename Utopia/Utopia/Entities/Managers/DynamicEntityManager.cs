@@ -79,6 +79,7 @@ namespace Utopia.Entities.Managers
 
         public override void Draw(int Index)
         {
+            //Only Draw the Entities that are in View Client scope !
             _dynamicEntityRenderer.Draw(Index);
         }
 
