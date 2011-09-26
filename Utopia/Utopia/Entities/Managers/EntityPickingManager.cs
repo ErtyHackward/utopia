@@ -36,14 +36,14 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region public methods
-        public bool CheckEntityPicking(ref Vector3D pickingPoint, out VisualEntity pickedEntity)
+        public bool CheckEntityPicking(ref Vector3D pickingPoint, out IVisualEntityContainer pickedEntity)
         {
-            VisualEntity entity;
+            IVisualEntityContainer entity;
 
             for (int i = 0; i < _dynamicEntityManager.DynamicEntities.Count; i++)
             {
-                entity = _dynamicEntityManager.DynamicEntities[i].VisualEntity;
-                if (MCollision.BoxContainsPoint(ref entity.WorldBBox, ref pickingPoint) == ContainmentType.Contains)
+                entity = _dynamicEntityManager.DynamicEntities[i];
+                if (MCollision.BoxContainsPoint(ref entity.VisualEntity.WorldBBox, ref pickingPoint) == ContainmentType.Contains)
                 {
                     pickedEntity = entity;
                     return true;
