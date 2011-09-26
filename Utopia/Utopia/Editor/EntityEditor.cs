@@ -15,6 +15,7 @@ using S33M3Engines.WorldFocus;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Action;
+using Utopia.Entities.Renderer;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.InputManager;
@@ -33,6 +34,7 @@ namespace Utopia.Editor
         private VisualEntity _editedEntity;
         private readonly D3DEngine _d3DEngine;
         private readonly InputsManager _inputManager;
+        private readonly IPickingRenderer _pickingRenderer;
         private HLSLTerran _itemEffect;
         private readonly CameraManager _camManager;
         private readonly WorldFocusManager _worldFocusManager;
@@ -85,7 +87,7 @@ namespace Utopia.Editor
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
                             ActionsManager actions, Hud hudComponent, PlayerCharacter player,
-                            InputsManager inputsManager)
+                            InputsManager inputsManager,IPickingRenderer pickingRenderer)
         {
             LeftTool = new EditorRemove(this);
             RightTool = new EditorAdd(this);
@@ -98,6 +100,7 @@ namespace Utopia.Editor
             _d3DEngine = d3DEngine;
             _hudComponent = hudComponent;
             _inputManager = inputsManager;
+            _pickingRenderer = pickingRenderer;
 
             // inactive by default, use F12 UI to enable :)
             _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
@@ -216,6 +219,8 @@ namespace Utopia.Editor
             if (Enabled)
             {
                 _hudComponent.Enabled = false;
+                _pickingRenderer.Enabled = false;
+                _pickingRenderer.Visible = false;
                 _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
                 _player.Equipment.LeftTool = null;
                 foreach (var control in _ui.Children)
@@ -233,8 +238,11 @@ namespace Utopia.Editor
                 {
                     foreach (var control in _ui.Children)
                         _screen.Desktop.Children.Remove(control);
-                    _hudComponent.Enabled = true;
                 }
+                _hudComponent.Enabled = true;
+                _pickingRenderer.Enabled = true;
+                _pickingRenderer.Visible = true;
+
             }
         }
 
