@@ -52,7 +52,8 @@ namespace Utopia.Entities.Managers
         private TerraCube _headCube;
 
         //Player Visual characteristics (Not insde the PlayerCharacter object)
-        private VisualEntity _pickedUpEntity;
+        private IVisualEntityContainer _pickedUpEntity;
+        private Vector3D _pickedUpEntityPosition;
         
         private FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();         //World Position
         private FTSValue<Quaternion> _lookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
@@ -288,13 +289,14 @@ namespace Utopia.Entities.Managers
                 //Check if an entity is picked up HERE !
                 if (_entityPickingManager.CheckEntityPicking(ref pickingWorldPosition, out _pickedUpEntity))
                 {
-                    if (Player._entityState.PickedEntityId == _pickedUpEntity.VoxelEntity.EntityId)
-                    {
-                        Player._entityState.IsPickingActive = true;
-                        return false;
-                    }
+                    //if (Player._entityState.PickedEntityId == _pickedUpEntity.VisualEntity.VoxelEntity.EntityId && _pickedUpEntityPosition == _pickedUpEntity.VisualEntity.Position)
+                    //{
+                    //    Player._entityState.IsPickingActive = true;
+                    //    return false;
+                    //}
 
-                    Player._entityState.PickedEntityId = _pickedUpEntity.VoxelEntity.EntityId;
+                    _pickedUpEntityPosition = _pickedUpEntity.VisualEntity.Position;
+                    Player._entityState.PickedEntityId = _pickedUpEntity.VisualEntity.VoxelEntity.EntityId;
                     Player._entityState.IsPickingActive = true;
                     break;
                 }

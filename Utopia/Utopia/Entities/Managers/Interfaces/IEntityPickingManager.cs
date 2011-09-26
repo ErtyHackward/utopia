@@ -10,6 +10,6 @@ namespace Utopia.Entities.Managers.Interfaces
 {
     public interface IEntityPickingManager
     {
-        bool CheckEntityPicking(ref Vector3D pickingPoint, out VisualEntity pickedEntity);
+        bool CheckEntityPicking(ref Vector3D pickingPoint, out IVisualEntityContainer pickedEntity);
     }
 }
