@@ -38,6 +38,7 @@ namespace Utopia.Entities
         public FTSValue<Vector3D> WorldPosition = new FTSValue<Vector3D>();         //World Position
         public FTSValue<Quaternion> LookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
         public FTSValue<Quaternion> MoveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
+
         #endregion
 
         public VisualDynamicEntity(IDynamicEntity dynamicEntity, VisualEntity visualEntity)

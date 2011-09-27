@@ -57,14 +57,21 @@ namespace Utopia.Entities.Managers
             //Clear the list
             _entitiesNearPlayer.Clear();
 
-            IVisualEntityContainer entity;
+            VisualDynamicEntity entity;
             for (int i = 0; i < _dynamicEntityManager.DynamicEntities.Count; i++)
             {
-                entity = _dynamicEntityManager.DynamicEntities[i];
+                entity = _dynamicEntityManager.DynamicEntities[i] as VisualDynamicEntity;
 
-                if (Vector3D.Distance(entity.VisualEntity.Position, _player.Player.Position) <= _entityDistance)
+                if (entity != null)
                 {
-                    _entitiesNearPlayer.Add(entity);
+                    if (Vector3D.Distance(entity.VisualEntity.Position, _player.Player.Position) <= _entityDistance)
+                    {
+                        _entitiesNearPlayer.Add(entity);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Entity type not handled");
                 }
             }
 
@@ -98,7 +105,42 @@ namespace Utopia.Entities.Managers
                 entity = _entitiesNearPlayer[i];
                 if (MCollision.BoxContainsPoint(ref entity.VisualEntity.WorldBBox, ref newPosition2Evaluate) == ContainmentType.Contains)
                 {
-                    newPosition2Evaluate = previousPosition;
+                    //Player was moving ?
+                    if (newPosition2Evaluate != previousPosition)
+                    {
+                        
+                        Vector3D newPositionWithColliding = previousPosition;
+
+                        newPositionWithColliding.X = newPosition2Evaluate.X;
+                        if (MCollision.BoxContainsPoint(ref entity.VisualEntity.WorldBBox, ref newPositionWithColliding) == ContainmentType.Contains)
+                        {
+                            newPositionWithColliding.X = previousPosition.X;
+                        }
+
+                        newPositionWithColliding.Y = newPosition2Evaluate.Y;
+                        if (MCollision.BoxContainsPoint(ref entity.VisualEntity.WorldBBox, ref newPositionWithColliding) == ContainmentType.Contains)
+                        {
+                            newPositionWithColliding.Y = previousPosition.Y;
+                        }
+
+                        newPositionWithColliding.Z = newPosition2Evaluate.Z;
+                        if (MCollision.BoxContainsPoint(ref entity.VisualEntity.WorldBBox, ref newPositionWithColliding) == ContainmentType.Contains)
+                        {
+                            newPositionWithColliding.Z = previousPosition.Z;
+                        }
+
+                        newPosition2Evaluate = newPositionWithColliding;
+
+                    }
+                    else
+                    {
+                        Matrix entityRotation = Matrix.RotationQuaternion(entity.VisualEntity.VoxelEntity.Rotation);
+                        Matrix.Transpose(ref entityRotation, out entityRotation);
+                        Vector3D lookAt = new Vector3D(-entityRotation.M13, -entityRotation.M23, -entityRotation.M33);
+                        lookAt.Normalize();
+
+                        newPosition2Evaluate += lookAt * 0.1;
+                    }
                 }
             }
 
