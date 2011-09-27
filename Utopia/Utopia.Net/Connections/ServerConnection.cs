@@ -249,6 +249,39 @@ namespace Utopia.Net.Connections
                 MessageItemTransfer(this, new ProtocolMessageEventArgs<ItemTransferMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when WeatherMessage is received (another thread)
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<WeatherMessage>> MessageWeather;
+
+        protected void OnMessageWeather(WeatherMessage ea)
+        {
+            if (MessageWeather != null)
+                MessageWeather(this, new ProtocolMessageEventArgs<WeatherMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when EntityImpulseMessage is received (another thread)
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityImpulseMessage>> MessageEntityImpulse;
+
+        protected void OnMessageEntityImpulse(EntityImpulseMessage ea)
+        {
+            if (MessageEntityImpulse != null)
+                MessageEntityImpulse(this, new ProtocolMessageEventArgs<EntityImpulseMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when EntityLockResultMessage is received (another thread)
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityLockResultMessage>> MessageEntityLockResult;
+
+        protected void OnMessageEntityLockResult(EntityLockResultMessage ea)
+        {
+            if (MessageEntityLockResult != null)
+                MessageEntityLockResult(this, new ProtocolMessageEventArgs<EntityLockResultMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -467,6 +500,15 @@ namespace Utopia.Net.Connections
                     break;
                 case MessageTypes.EntityEquipment:
                     OnMessageEntityEquipment((EntityEquipmentMessage)msg);
+                    break;
+                case MessageTypes.Weather:
+                    OnMessageWeather((WeatherMessage)msg);
+                    break;
+                case MessageTypes.EntityImpulse:
+                    OnMessageEntityImpulse((EntityImpulseMessage)msg);
+                    break;
+                case MessageTypes.EntityLockResult:
+                    OnMessageEntityLockResult((EntityLockResultMessage)msg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("msg", "Invalid message received from server");
