@@ -36,8 +36,6 @@ namespace Utopia.Server
         /// </summary>
         public const int ServerProtocolVersion = 1;
         
-
-
         // ReSharper disable NotAccessedField.Local
         private Timer _cleanUpTimer;
         private Timer _saveTimer;
@@ -121,8 +119,7 @@ namespace Utopia.Server
         }
 
         #endregion
-
-
+        
         /// <summary>
         /// Create new instance of the Server class
         /// </summary>
@@ -167,12 +164,7 @@ namespace Utopia.Server
 
             _dateStart = DateTime.Now;
 
-            _cpuCounter = new PerformanceCounter();
-
-            _cpuCounter.CategoryName = "Processor";
-            _cpuCounter.CounterName = "% Processor Time";
-            _cpuCounter.InstanceName = "_Total";
-
+            _cpuCounter = new PerformanceCounter {CategoryName = "Processor", CounterName = "% Processor Time", InstanceName = "_Total"};
             _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
             
             // async server events (saving modified chunks, unloading unused chunks)
@@ -214,10 +206,6 @@ namespace Utopia.Server
                     _updateCyclesPerfomance.Enqueue(_updateStopwatch.ElapsedTicks / ((double)Stopwatch.Frequency / 1000));
                     if (_updateCyclesPerfomance.Count > 10)
                         _updateCyclesPerfomance.Dequeue();
-
-
-                    //Console.WriteLine("cycle take {0}", sw.ElapsedTicks / ((double)Stopwatch.Frequency/1000));
-
                 }
                 finally
                 {
@@ -240,10 +228,11 @@ namespace Utopia.Server
         private void SaveChunks(object obj)
         {
             LandscapeManager.SaveChunks();
-            Console.WriteLine("Chunks saved");
-#if DEBUG
-            Console.WriteLine("Took: {0} ms, Chunks: {1}", LandscapeManager.SaveTime, LandscapeManager.ChunksSaved);
-#endif
+            if (LandscapeManager.ChunksSaved > 0)
+            {
+                Console.WriteLine("Chunks saved: {1} Took: {0} ms", LandscapeManager.SaveTime,
+                                  LandscapeManager.ChunksSaved);
+            }
         }
 
         void LandscapeManagerChunkUnloaded(object sender, LandscapeManagerChunkEventArgs e)
@@ -372,11 +361,18 @@ namespace Utopia.Server
 
                     if (msg.StartsWith("/settime") && msg.Length > 9)
                     {
-                        var time = TimeSpan.Parse(msg.Remove(0, 9));
+                        try
+                        {
+                            var time = TimeSpan.Parse(msg.Remove(0, 9));
 
-                        Clock.SetCurrentTimeOfDay(time);
-                        ConnectionManager.Broadcast(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
-                        BroadCastChatMessage("Time updated");
+                            Clock.SetCurrentTimeOfDay(time);
+                            ConnectionManager.Broadcast(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
+                            BroadCastChatMessage("Time updated");
+                        }
+                        catch (OverflowException)
+                        {
+                            connection.SendAsync(new ChatMessage { Login = "server", Message = "wrong time value, try 9:00 or 21:00" });
+                        }
                         return;
                     }
 
@@ -503,7 +499,7 @@ namespace Utopia.Server
             dEntity.Equipment.LeftTool = (Tool)EntityFactory.Instance.CreateEntity(EntityClassId.Annihilator);
             dEntity.Equipment.RightTool = (Tool)EntityFactory.Instance.CreateEntity(EntityClassId.DirtAdder);
             
-            var serverChar = new ServerPlayerCharacterEntity(clientConnection, dEntity);
+            var serverChar = new ServerPlayerCharacterEntity(clientConnection, dEntity, this);
             return serverChar;
         }
 
@@ -572,7 +568,7 @@ namespace Utopia.Server
                 {
                     var state = UserState.Load(loginData.State );
                     // load new player entity
-                    playerEntity = new ServerPlayerCharacterEntity(connection, new PlayerCharacter());
+                    playerEntity = new ServerPlayerCharacterEntity(connection, new PlayerCharacter(), this);
                     
                     var bytes = EntityStorage.LoadEntityBytes(state.EntityId);
 
