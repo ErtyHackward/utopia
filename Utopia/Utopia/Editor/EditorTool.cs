@@ -151,4 +151,13 @@ namespace Utopia.Editor
         }
     }
 
+    public class EditorEditSelected : EditorTool
+    {
+        public EditorEditSelected(EntityEditor editor) : base(editor) { Name = "Edit"; }
+
+        public override void Use()
+        {
+            Editor.EditSelectedEntity();
+        }
+    }
 }
