@@ -1,4 +1,5 @@
-﻿using SharpDX;
+﻿using S33M3Engines.Shared.Math;
+using SharpDX;
 using Utopia.Shared.Structs;
 
 namespace System.IO
@@ -32,6 +33,24 @@ namespace System.IO
             loc.Z = reader.ReadSingle();
 
             return loc;
+        }
+
+        public static Vector3D ReadVector3D(this BinaryReader reader)
+        {
+            Vector3D loc;
+
+            loc.X = reader.ReadDouble();
+            loc.Y = reader.ReadDouble();
+            loc.Z = reader.ReadDouble();
+
+            return loc;
+        }
+
+        public static void Write(this BinaryWriter writer, Vector3D loc)
+        {
+            writer.Write(loc.X);
+            writer.Write(loc.Y);
+            writer.Write(loc.Z);
         }
 
         public static void Write(this BinaryWriter writer, Vector3 loc)

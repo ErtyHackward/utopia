@@ -76,6 +76,22 @@
         /// <summary>
         /// Indicates that entity equipment was changed
         /// </summary>
-        EntityEquipment = 18
+        EntityEquipment = 18,
+        /// <summary>
+        /// Informs about weather changes
+        /// </summary>
+        Weather = 19,
+        /// <summary>
+        /// Tries to apply the impulse for entity
+        /// </summary>
+        EntityImpulse = 20,
+        /// <summary>
+        /// Request for entity lock to perfrom some operations like items transfer
+        /// </summary>
+        EntityLock = 21,
+        /// <summary>
+        /// Informs about lock operation result
+        /// </summary>
+        EntityLockResult = 22 
     }
 }

@@ -174,6 +174,28 @@ namespace Utopia.Server
                 MessageItemTransfer(this, new ProtocolMessageEventArgs<ItemTransferMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when EntityImpulseMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityImpulseMessage>> MessageEntityImpulse;
+
+        protected void OnMessageEntityImpulse(EntityImpulseMessage ea)
+        {
+            if (MessageEntityImpulse != null)
+                MessageEntityImpulse(this, new ProtocolMessageEventArgs<EntityImpulseMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when EntityLockMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityLockMessage>> MessageEntityLock;
+
+        protected void OnMessageEntityLock(EntityLockMessage ea)
+        {
+            if (MessageEntityLock != null)
+                MessageEntityLock(this, new ProtocolMessageEventArgs<EntityLockMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -361,6 +383,12 @@ namespace Utopia.Server
                                     break;
                                 case MessageTypes.EntityEquipment:
                                     OnMessageEntityEquipment(EntityEquipmentMessage.Read(reader));
+                                    break;
+                                case MessageTypes.EntityImpulse:
+                                    OnMessageEntityImpulse(EntityImpulseMessage.Read(reader));
+                                    break;
+                                case MessageTypes.EntityLock:
+                                    OnMessageEntityLock(EntityLockMessage.Read(reader));
                                     break;
                                 default:
                                     throw new ArgumentException("Invalid message id");
