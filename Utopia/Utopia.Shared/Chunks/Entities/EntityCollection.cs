@@ -162,6 +162,32 @@ namespace Utopia.Shared.Chunks.Entities
             }
         }
 
+        /// <summary>
+        /// Detects if spicified entity in this collection
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public bool ContainsId(uint p)
+        {
+            lock (_syncRoot)
+            {
+                return _entities.Find(e => e.EntityId == p) != null;
+            }
+        }
+
+        public void RemoveById(uint p, out Entity entity)
+        {
+            lock (_syncRoot)
+            {
+                var index = _entities.FindIndex(e => e.EntityId == p);
+                if (index != -1)
+                {
+                    entity = _entities[index];
+                    _entities.RemoveAt(index);
+                }
+                else entity = null;
+            }
+        }
     }
 
 

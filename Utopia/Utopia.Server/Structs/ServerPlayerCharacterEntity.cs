@@ -236,12 +236,17 @@ namespace Utopia.Server.Structs
             {
                 if (itemTransferMessage.ItemEntityId != 0)
                 {
-                    Entity entity;
-                    // todo: finish the code
-                    //if (_server.LandscapeManager.SurroundChunks(playerCharacter.Position).First(c => c.Entities. ) != null)
-                    //{
-
-                    //}
+                    ServerChunk chunk;
+                    if ( (chunk = _server.LandscapeManager.SurroundChunks(playerCharacter.Position).First(c => c.Entities.ContainsId(itemTransferMessage.ItemEntityId))) != null)
+                    {
+                        Entity entity;
+                        chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, out entity);
+                        if (entity != null)
+                        {
+                            if (playerCharacter.Inventory.PutItem((Item)entity))
+                                return;
+                        }
+                    }
                 }
             }
             
