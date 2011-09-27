@@ -106,14 +106,14 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public void RemoveEntityById(uint entityId)
+        public void RemoveEntityById(uint entityId,bool dispose=true)
         {
             if (_dynamicEntitiesDico.ContainsKey(entityId))
             {
                 VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entityId];
                 DynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
                 _dynamicEntitiesDico.Remove(entityId);
-                visualEntity.Dispose();
+                if (dispose) visualEntity.Dispose();
             }
         }
 
