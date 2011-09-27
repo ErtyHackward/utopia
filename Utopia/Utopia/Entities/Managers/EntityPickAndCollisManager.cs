@@ -9,6 +9,9 @@ using S33M3Engines.Shared.Math;
 using S33M3Engines.Maths;
 using S33M3Engines.Timers;
 using Utopia.Shared.Chunks;
+using Utopia.Network;
+using Utopia.Net.Messages;
+using Utopia.Action;
 
 namespace Utopia.Entities.Managers
 {
@@ -16,7 +19,7 @@ namespace Utopia.Entities.Managers
     /// The Aim of this class is to help the player entity picking
     /// It will need a collection of entities that are "Near" the player, in order to test the collision against as less entities as possible !
     /// </summary>
-    public class EntityPickingManager : IEntityPickingManager, IDisposable
+    public class EntityPickAndCollisManager : IEntityPickingManager, IDisposable
     {
         #region private variables
         private IDynamicEntityManager _dynamicEntityManager;
@@ -24,6 +27,8 @@ namespace Utopia.Entities.Managers
         private List<IVisualEntityContainer> _entitiesNearPlayer = new List<IVisualEntityContainer>(1000);
         private PlayerEntityManager _player;
         private int _entityDistance = AbstractChunk.ChunkSize.X * 2;
+        private Server _server;
+        private ActionsManager _action;
         #endregion
 
         #region public variables
@@ -34,11 +39,16 @@ namespace Utopia.Entities.Managers
         }
         #endregion
 
-        public EntityPickingManager(IDynamicEntityManager dynamicEntityManager, TimerManager timerManager)                                    
+        public EntityPickAndCollisManager(IDynamicEntityManager dynamicEntityManager, 
+                                          TimerManager timerManager,
+                                          Server server,
+                                          ActionsManager action)                                     
         {
             _dynamicEntityManager = dynamicEntityManager;
             _timer = timerManager.AddTimer(1, 1000);
             _timer.OnTimerRaised += _timer_OnTimerRaised;
+            _action = action;
+            _server = server;
         }
 
         public void Dispose()
@@ -108,7 +118,6 @@ namespace Utopia.Entities.Managers
                     //Player was moving ?
                     if (newPosition2Evaluate != previousPosition)
                     {
-                        
                         Vector3D newPositionWithColliding = previousPosition;
 
                         newPositionWithColliding.X = newPosition2Evaluate.X;
@@ -131,14 +140,22 @@ namespace Utopia.Entities.Managers
 
                         newPosition2Evaluate = newPositionWithColliding;
 
+                        //Send an impulse message to the Entity, following my "LookAtVector" !
+                        float impulsePower = 1;
+                        if(_action.isTriggered(Actions.Move_Run)) impulsePower = 2;
+
+                        _server.ServerConnection.SendAsync(new EntityImpulseMessage()
+                        {
+                            EntityId = entity.VisualEntity.VoxelEntity.EntityId,
+                            Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.Rotation) * impulsePower
+                        }
+                        );
+
+
                     }
                     else
                     {
-                        Matrix entityRotation = Matrix.RotationQuaternion(entity.VisualEntity.VoxelEntity.Rotation);
-                        Matrix.Transpose(ref entityRotation, out entityRotation);
-                        Vector3D lookAt = new Vector3D(-entityRotation.M13, -entityRotation.M23, -entityRotation.M33);
-                        lookAt.Normalize();
-
+                        Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(entity.VisualEntity.VoxelEntity.Rotation);
                         newPosition2Evaluate += lookAt * 0.1;
                     }
                 }
