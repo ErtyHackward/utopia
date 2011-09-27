@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using S33M3Engines.Shared.Math;
@@ -21,6 +22,7 @@ namespace Utopia.Server.Managers
         private readonly WorldGenerator _generator;
         private readonly HashSet<ServerChunk> _chunksToSave = new HashSet<ServerChunk>();
         private readonly Queue<AStar<AStarNode3D>> _pathPool = new Queue<AStar<AStarNode3D>>();
+        private readonly Stopwatch _saveStopwatch = new Stopwatch();
         
         private delegate Path3D CalculatePathDelegate(Vector3I start, Vector3I goal);
         public delegate void PathCalculatedDeleagte(Path3D path);
@@ -77,7 +79,6 @@ namespace Utopia.Server.Managers
             get { return _chunks.Count; }
         }
 
-#if DEBUG
         /// <summary>
         /// Gets time of last executed save operation
         /// </summary>
@@ -86,7 +87,6 @@ namespace Utopia.Server.Managers
         /// Gets amount of chunks saved last time
         /// </summary>
         public int ChunksSaved { get; set; }
-#endif 
 
         public LandscapeManager(IChunksStorage chunksStorage, WorldGenerator generator)
         {
@@ -164,17 +164,14 @@ namespace Utopia.Server.Managers
         {
             lock (_chunksToSave)
             {
-#if DEBUG
+
                 SaveTime = 0;
                 ChunksSaved = 0;
-#endif
 
                 if (_chunksToSave.Count == 0)
                     return;
-                
-#if DEBUG
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-#endif
+
+                _saveStopwatch.Restart();
                 var positions = new Vector2I[_chunksToSave.Count];
                 var datas = new List<byte[]>(_chunksToSave.Count);
 
@@ -189,10 +186,11 @@ namespace Utopia.Server.Managers
 
                 _chunksStorage.SaveChunksData(positions, datas.ToArray());
                 _chunksToSave.Clear();
-#if DEBUG
-                SaveTime = sw.Elapsed.TotalMilliseconds;
+                _saveStopwatch.Stop();
+
+                SaveTime = _saveStopwatch.Elapsed.TotalMilliseconds;
                 ChunksSaved = positions.Length;
-#endif
+
             }
         }
 
@@ -318,6 +316,31 @@ namespace Utopia.Server.Managers
             lock (_chunks)
             {
                 _chunks.Clear();
+            }
+        }
+
+        public IEnumerable<ServerChunk> SurroundChunks(Vector3D vector3D, float radius = 10)
+        {
+            // first we check current chunk, then 8 surrounding, then 16
+
+            var chunkPosition = new Vector2I((int)Math.Floor(vector3D.X / AbstractChunk.ChunkSize.X), (int)Math.Floor(vector3D.Z / AbstractChunk.ChunkSize.Z));
+
+            yield return GetChunk(chunkPosition);
+
+
+            for (int i = 1; i * AbstractChunk.ChunkSize.X < radius; i++) // can be easily rewrited to handle situation when X and Z is not equal, hope it will not happen...
+            {
+                for (int x = -i; x <= i; x++)
+                {
+                    for (int y = -i; y <= i; y++)
+                    {
+                        // checking only border chunks
+                        if (x == -i || x == i || y == -i || y == i)
+                        {
+                            yield return GetChunk(new Vector2I(chunkPosition.X + x, chunkPosition.Y + y));
+                        }
+                    }
+                }
             }
         }
     }

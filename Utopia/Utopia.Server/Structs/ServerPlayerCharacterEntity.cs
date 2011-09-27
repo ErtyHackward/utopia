@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Utopia.Net.Messages;
 using Utopia.Server.Events;
 using Utopia.Shared.Chunks.Entities;
@@ -13,7 +14,8 @@ namespace Utopia.Server.Structs
     /// </summary>
     public class ServerPlayerCharacterEntity : ServerDynamicEntity
     {
-        
+        private readonly Server _server;
+
         public ClientConnection Connection { get; private set; }
 
         /// <summary>
@@ -21,11 +23,13 @@ namespace Utopia.Server.Structs
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="entity"></param>
-        public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity) : base(entity)
+        /// <param name="server"></param>
+        public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity, Server server) : base(entity)
         {
             if (connection == null) throw new ArgumentNullException("connection");
             if (entity == null) throw new ArgumentNullException("entity");
             Connection = connection;
+            _server = server;
         }
 
         public override void AddArea(MapArea area)
@@ -203,31 +207,46 @@ namespace Utopia.Server.Structs
         {
             var playerCharacter = (PlayerCharacter)DynamicEntity;
 
-            // for first time we only allow to transfer items inside player own inventory
-            if (playerCharacter.EntityId == itemTransferMessage.SourceEntityId && itemTransferMessage.SourceEntityId == itemTransferMessage.DestinationEntityId)
+            // internal inventory transfer?
+            if (playerCharacter.EntityId == itemTransferMessage.SourceContainerEntityId && itemTransferMessage.SourceContainerEntityId == itemTransferMessage.DestinationContainerEntityId)
             {
-                var slot = new ContainedSlot { GridPosition = itemTransferMessage.SourceSlot, ItemsCount = itemTransferMessage.ItemsCount };
+                var slot = new ContainedSlot { GridPosition = itemTransferMessage.SourceContainerSlot, ItemsCount = itemTransferMessage.ItemsCount };
                 // check if we allow transfer
                 slot = playerCharacter.Inventory.TakeSlot(slot);
 
                 if (slot != null)
                 {
-                    if (!playerCharacter.Inventory.PutItem(slot))
+                    slot.GridPosition = itemTransferMessage.DestinationContainerSlot;
+                    if (playerCharacter.Inventory.PutItem(slot))
                     {
-                        Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Invalid transfer operation" });
+                        // ok
+                        return;
+                    }
+                    else
+                    {
+                        // return back
+                        slot.GridPosition = itemTransferMessage.SourceContainerSlot;
+                        playerCharacter.Inventory.PutItem(slot);
                     }
                 }
-                else
+            }
+            
+            // take from world?
+            if (itemTransferMessage.SourceContainerEntityId == 0 && itemTransferMessage.DestinationContainerEntityId == playerCharacter.EntityId)
+            {
+                if (itemTransferMessage.ItemEntityId != 0)
                 {
-                    Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Invalid transfer operation" });
+                    Entity entity;
+                    // todo: finish the code
+                    //if (_server.LandscapeManager.SurroundChunks(playerCharacter.Position).First(c => c.Entities. ) != null)
+                    //{
+
+                    //}
                 }
             }
-            else
-            {
-                // impossible to transfer
-                Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Invalid transfer operation" });
-            }
-
+            
+            // impossible to transfer
+            Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Invalid transfer operation" });
         }
 
     }

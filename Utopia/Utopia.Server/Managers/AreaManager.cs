@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using SharpDX;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
+using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Structs;
@@ -19,7 +20,7 @@ namespace Utopia.Server.Managers
     public class AreaManager
     {
         private readonly ConcurrentDictionary<Vector2I, MapArea> _areas = new ConcurrentDictionary<Vector2I, MapArea>();
-        private readonly HashSet<ServerDynamicEntity> _allEntities = new HashSet<ServerDynamicEntity>();
+        private readonly HashSet<ServerDynamicEntity> _dynamicEntities = new HashSet<ServerDynamicEntity>();
 
 #if DEBUG
         public volatile int entityAreaChangesCount;
@@ -30,7 +31,7 @@ namespace Utopia.Server.Managers
         /// <returns></returns>
         public IEnumerable<ServerDynamicEntity> EnumerateEntities()
         {
-            return _allEntities;
+            return _dynamicEntities;
         }
 #endif
         #region Events
@@ -64,7 +65,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         public int EntitiesCount
         {
-            get { return _allEntities.Count; }
+            get { return _dynamicEntities.Count; }
         }
 
         /// <summary>
@@ -155,12 +156,12 @@ namespace Utopia.Server.Managers
 
         public void AddEntity(ServerDynamicEntity entity)
         {
-            lock (_allEntities)
+            lock (_dynamicEntities)
             {
-                if (_allEntities.Contains(entity))
+                if (_dynamicEntities.Contains(entity))
                     throw new InvalidOperationException("Such entity is already in manager");
 
-                _allEntities.Add(entity);
+                _dynamicEntities.Add(entity);
             }
 
             MapArea entityArea = null;
@@ -189,9 +190,9 @@ namespace Utopia.Server.Managers
         public void RemoveEntity(ServerDynamicEntity entity)
         {
             bool removed;
-            lock (_allEntities)
+            lock (_dynamicEntities)
             {
-                removed = _allEntities.Remove(entity);
+                removed = _dynamicEntities.Remove(entity);
             }
 
             if (!removed) return;
