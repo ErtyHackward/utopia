@@ -122,6 +122,34 @@ namespace Utopia.Shared.Chunks
         /// <param name="Y">world Y position</param>
         /// <param name="Z">world Z position</param>
         /// <returns></returns>
+        public bool Index(ref Vector3I cubePosition, bool isSafe, out int index)
+        {
+            if (isSafe)
+            {
+                if (cubePosition.X < _visualWorldParam.WorldRange.Min.X || cubePosition.X >= _visualWorldParam.WorldRange.Max.X || cubePosition.Z < _visualWorldParam.WorldRange.Min.Z || cubePosition.Z >= _visualWorldParam.WorldRange.Max.Z || cubePosition.Y < 0 || cubePosition.Y >= _visualWorldParam.WorldRange.Max.Y)
+                {
+                    index = int.MaxValue;
+                    return false;
+                }
+            }
+
+            int x, z;
+            x = cubePosition.X % _visualWorldParam.WorldVisibleSize.X;
+            if (x < 0) x += _visualWorldParam.WorldVisibleSize.X;
+            z = cubePosition.Z % _visualWorldParam.WorldVisibleSize.Z;
+            if (z < 0) z += _visualWorldParam.WorldVisibleSize.Z;
+
+            index = x * MoveX + z * MoveZ + cubePosition.Y;
+            return true;
+        }
+
+        /// <summary>
+        /// Get the Array Index of a cube
+        /// </summary>
+        /// <param name="X">world X position</param>
+        /// <param name="Y">world Y position</param>
+        /// <param name="Z">world Z position</param>
+        /// <returns></returns>
         public int Index(int X, int Y, int Z)
         {
             int x, z;
@@ -383,11 +411,26 @@ namespace Utopia.Shared.Chunks
             if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-                // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == CubeId.Air) cube = new TerraCube(CubeId.Error);
                 return CubeProfile.CubesProfile[cube.Id].IsPickable;
             }
 
             cube = new TerraCube(CubeId.Error);
+            return false;
+        }
+
+        public bool isPickable(ref Vector3D position, out TerraCubeWithPosition cubewithPosition)
+        {
+            int cubeIndex;
+
+            Vector3I cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
+
+            if (Index(ref cubePosition, true, out cubeIndex))
+            {
+                cubewithPosition = new TerraCubeWithPosition(cubePosition, Cubes[cubeIndex]);
+                return CubeProfile.CubesProfile[cubewithPosition.Cube.Id].IsPickable;
+            }
+
+            cubewithPosition = new TerraCubeWithPosition();
             return false;
         }
 
@@ -398,9 +441,6 @@ namespace Utopia.Shared.Chunks
             if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-
-                // withTool.
-                // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == CubeId.Air) cube = new TerraCube(CubeId.Error);
                 return CubeProfile.CubesProfile[cube.Id].IsPickable;
             }
 

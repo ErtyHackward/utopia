@@ -89,7 +89,7 @@ namespace Utopia.GUI
             LocateChat(_d3dEngine.ViewPort);
 
             // make it drawn on top
-            DrawOrders.UpdateIndex(0, 1001);
+            DrawOrders.UpdateIndex(0, 10001);
         }
 
         public override void Dispose()
