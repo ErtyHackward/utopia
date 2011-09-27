@@ -76,9 +76,7 @@ namespace Utopia.Entities.Voxel
         public Vector3D Position
         {
             get { return VoxelEntity.Position; }
-            set { 
-                VoxelEntity.Position = value;
-            }
+            set { VoxelEntity.Position = value; }
         }
 
         /// <summary>

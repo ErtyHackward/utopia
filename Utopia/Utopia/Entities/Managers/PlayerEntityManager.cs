@@ -137,6 +137,9 @@ namespace Utopia.Entities.Managers
             _pickingRenderer = pickingRenderer;
             _entityPickingManager = entityPickingManager;
 
+
+
+            entityPickingManager.Player = this;
             this.Player = player;
             this.VisualEntity = visualEntity;
 
@@ -363,7 +366,6 @@ namespace Utopia.Entities.Managers
         /// <param name="previousPosition"></param>
         private void isCollidingWithTerrain(ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
-
             BoundingBox _boundingBox2Evaluate;
             Vector3D newPositionWithColliding = previousPosition;
             //Create a Bounding box with my new suggested position, taking only the X that has been changed !
@@ -490,10 +492,10 @@ namespace Utopia.Entities.Managers
             _physicSimu.Freeze(true, false, true);
 
             //Move 3 time slower if not touching ground
-            if (!_physicSimu.OnGround) _moveDelta /= 3f;
+            if (!_physicSimu.OnGround) _moveDelta /= 2f;
 
             if (_actions.isTriggered(Actions.Move_Forward))
-                if (_actions.isTriggered(Actions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f;
+                if (_actions.isTriggered(Actions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f; //Running makes the entity go twice faster
                 else _physicSimu.PrevPosition += _entityZAxis * _moveDelta;
 
             if (_actions.isTriggered(Actions.Move_Backward))
@@ -629,6 +631,7 @@ namespace Utopia.Entities.Managers
             //Init Velret physic simulator
             _physicSimu = new VerletSimulator(ref VisualEntity.WorldBBox) { WithCollisionBounsing = false };
             _physicSimu.ConstraintFct += isCollidingWithTerrain;
+            _physicSimu.ConstraintFct += _entityPickingManager.isCollidingWithEntity;
 
             //Set displacement mode
             DisplacementMode = Player.DisplacementMode;
