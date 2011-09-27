@@ -45,7 +45,7 @@ namespace Utopia.Entities.Managers
         private SingleArrayChunkContainer _cubesHolder;
 
         //Block Picking variables
-        private TerraCube _pickedCube;
+        private TerraCubeWithPosition _pickedCube;
 
         //Head UnderWater test
         private int _headCubeIndex;
@@ -232,8 +232,6 @@ namespace Utopia.Entities.Managers
         //Will return true if a new Item has been picked up !
         private bool RefreshPicking(ref Vector3D pickingWorldPosition, ref Vector3D pickingLookAt, int rounding)
         {
-            Vector3D CollisionPoint;
-            Vector3I newPickedBlock;
 
             Player._entityState.IsPickingActive = false;
 
@@ -245,41 +243,27 @@ namespace Utopia.Entities.Managers
                 //Check if a block is picked up !
                 if (_cubesHolder.isPickable(ref pickingWorldPosition, out _pickedCube))
                 {
-                    newPickedBlock = new Vector3I(MathHelper.Fastfloor(pickingWorldPosition.X), MathHelper.Fastfloor(pickingWorldPosition.Y), MathHelper.Fastfloor(pickingWorldPosition.Z));
-                    if (newPickedBlock == Player._entityState.PickedBlockPosition)
+                    Player._entityState.PickedBlockPosition = _pickedCube.Position;
+
+                    //Find the Potential new block place, by roling back !
+                    while (ptNbr > 0)
+                    {
+                        pickingWorldPosition -= pickingLookAt * 0.02;
+
+                        if (_cubesHolder.isPickable(ref pickingWorldPosition, out _pickedCube) == false)
+                        {
+                            Player._entityState.NewBlockPosition = _pickedCube.Position;
+                            break;
+                        }
+                        ptNbr--;
+                    }
+
+                    if (_pickedCube.Position == Player._entityState.PickedBlockPosition)
                     {
                         Player._entityState.PickedEntityId = 0;
                         Player._entityState.IsPickingActive = true;
                         return false;
                     }
-
-                    Player._entityState.PickedBlockPosition = newPickedBlock;
-
-                    //Find the face picked up !
-                    float FaceDistance;
-                    Ray newRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt.AsVector3());
-
-                    BoundingBox bBox;
-                    ComputeBlockBoundingBox(ref Player._entityState.PickedBlockPosition, out bBox);
-
-                    newRay.Intersects(ref bBox, out FaceDistance);
-
-                    CollisionPoint = pickingWorldPosition + (pickingLookAt * FaceDistance);
-                    MVector3.Round(ref CollisionPoint, rounding);
-
-                    Player._entityState.NewBlockPosition = Player._entityState.PickedBlockPosition;
-
-                    if (CollisionPoint.X == Player._entityState.PickedBlockPosition.X) Player._entityState.NewBlockPosition.X--;
-                    else
-                        if (CollisionPoint.X == Player._entityState.PickedBlockPosition.X + 1) Player._entityState.NewBlockPosition.X++;
-                        else
-                            if (CollisionPoint.Y == Player._entityState.PickedBlockPosition.Y) Player._entityState.NewBlockPosition.Y--;
-                            else
-                                if (CollisionPoint.Y == Player._entityState.PickedBlockPosition.Y + 1) Player._entityState.NewBlockPosition.Y++;
-                                else
-                                    if (CollisionPoint.Z == Player._entityState.PickedBlockPosition.Z) Player._entityState.NewBlockPosition.Z--;
-                                    else
-                                        if (CollisionPoint.Z == Player._entityState.PickedBlockPosition.Z + 1) Player._entityState.NewBlockPosition.Z++;
 
                     Player._entityState.PickedEntityId = 0;
                     Player._entityState.IsPickingActive = true;
