@@ -12,7 +12,7 @@ namespace Utopia.Entities.Managers.Interfaces
     {
         void AddEntity(IDynamicEntity entity);
         void RemoveEntity(IDynamicEntity entity);
-        void RemoveEntityById(uint entityId);
+        void RemoveEntityById(uint entityId,bool dispose=true);
         IDynamicEntity GetEntityById(uint p);
 
         List<IVisualEntityContainer> DynamicEntities { get; set; }

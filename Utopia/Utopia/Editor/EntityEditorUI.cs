@@ -98,7 +98,8 @@ namespace Utopia.Editor
                                              editorCopy,
                                              new EditorPaste(_editorComponent, editorCopy),
                                              new EditorLoad(_editorComponent),
-                                             new EditorSave(_editorComponent)
+                                             new EditorSave(_editorComponent),
+                                             new EditorEditSelected(_editorComponent)
                                          };
             int buttonsNbr = tools.Count;
 
