@@ -15,11 +15,15 @@ using S33M3Engines.WorldFocus;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Action;
+using Utopia.Entities;
+using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.InputManager;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Concrete;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 using UtopiaContent.Effects.Terran;
@@ -35,6 +39,7 @@ namespace Utopia.Editor
         private readonly D3DEngine _d3DEngine;
         private readonly InputsManager _inputManager;
         private readonly IPickingRenderer _pickingRenderer;
+        private readonly IDynamicEntityManager _entityManager;
         private HLSLTerran _itemEffect;
         private readonly CameraManager _camManager;
         private readonly WorldFocusManager _worldFocusManager;
@@ -87,7 +92,7 @@ namespace Utopia.Editor
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
                             ActionsManager actions, Hud hudComponent, PlayerCharacter player,
-                            InputsManager inputsManager,IPickingRenderer pickingRenderer)
+                            InputsManager inputsManager,IPickingRenderer pickingRenderer,IDynamicEntityManager entityManager)
         {
             LeftTool = new EditorRemove(this);
             RightTool = new EditorAdd(this);
@@ -101,6 +106,7 @@ namespace Utopia.Editor
             _hudComponent = hudComponent;
             _inputManager = inputsManager;
             _pickingRenderer = pickingRenderer;
+            _entityManager = entityManager;
 
             // inactive by default, use F12 UI to enable :)
             _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
@@ -117,12 +123,42 @@ namespace Utopia.Editor
             int z = entity.Model.Blocks.GetLength(2);
             byte[,,] overlays = new byte[x,y,z];
 
-            _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays, IsColor);
-
-            _editedEntity.Position = new Vector3D((int) _player.Position.X, (int) _player.Position.Y,
-                                                  (int) _player.Position.Z);
+            if (_player.EntityState.PickedEntityId==0)
+            {
+                //a terrain block
+                Vector3I pos = _player.EntityState.PickedBlockPosition;
+                _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays, IsColor);
+                _editedEntity.Position = new Vector3D(pos.X, pos.Y, pos.Z);
+                _pickingRenderer.Enabled = false;
+                _pickingRenderer.Visible = false;
+            } else
+            {
+                 Console.WriteLine(@"cant spawn an entity over an entity");
+            } 
         }
 
+        internal void EditSelectedEntity()
+        {
+            if (_player.EntityState.PickedEntityId == 0)
+            {
+                //picked a terrain block
+                Vector3I pos = _player.EntityState.PickedBlockPosition;
+            } else
+            {
+                //picked an entity
+                uint id = _player.EntityState.PickedEntityId;
+                VoxelEntity voxel = (DynamicEntity)_entityManager.GetEntityById(id);
+                _entityManager.RemoveEntityById(id,false);
+                //becomes managed by the editor, TODO : should notify server the entity is in a suspended mode !                
+                int x = voxel.Model.Blocks.GetLength(0);
+                int y = voxel.Model.Blocks.GetLength(1);
+                int z = voxel.Model.Blocks.GetLength(2);
+                byte[, ,] overlays = new byte[x, y, z];
+                _editedEntity = new VisualEntity(_voxelMeshFactory, voxel, overlays, IsColor);
+
+                //after editing whether restore 'voxel' in _entityManager or dispose it at beginning and have server notify it changed 
+            }
+        }
         public override void LoadContent()
         {
             String[] dirs = new[] {@"Textures/Terran/", @"Textures/Editor/"};
@@ -219,8 +255,7 @@ namespace Utopia.Editor
             if (Enabled)
             {
                 _hudComponent.Enabled = false;
-                _pickingRenderer.Enabled = false;
-                _pickingRenderer.Visible = false;
+              
                 _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
                 _player.Equipment.LeftTool = null;
                 foreach (var control in _ui.Children)
@@ -469,5 +504,7 @@ namespace Utopia.Editor
             }
             Selected.Clear();
         }
+
+       
     }
 }
