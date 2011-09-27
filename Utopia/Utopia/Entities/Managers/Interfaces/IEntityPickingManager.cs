@@ -10,6 +10,8 @@ namespace Utopia.Entities.Managers.Interfaces
 {
     public interface IEntityPickingManager
     {
+        PlayerEntityManager Player { get; set; }
         bool CheckEntityPicking(ref Vector3D pickingPoint, out IVisualEntityContainer pickedEntity);
+        void isCollidingWithEntity(ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
     }
 }
