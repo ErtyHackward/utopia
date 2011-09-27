@@ -69,7 +69,7 @@ namespace Utopia
             iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();
             
             iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();
-            iocContainer.Bind<IEntityPickingManager>().To<EntityPickingManager>().InSingletonScope();
+            iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InSingletonScope();
 
             iocContainer.Bind<IPickingRenderer>().To<DefaultPickingRenderer>().InSingletonScope();
 

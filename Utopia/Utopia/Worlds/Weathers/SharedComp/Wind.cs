@@ -13,11 +13,17 @@ namespace Utopia.Worlds.Weather
         #region Private Variables
         private Random _rndWindFlowing;
         private Random _rndWindFlowChange;
+        private bool _randomFlow;
         #endregion
 
         #region Public Variables
         public Vector3 WindFlow { get; set; }
         #endregion
+
+        public Wind(bool randomFlow = false)
+        {
+            _randomFlow = randomFlow;
+        }
 
         #region Public methods
         public override void Initialize()
@@ -26,24 +32,18 @@ namespace Utopia.Worlds.Weather
             _rndWindFlowChange = new Random(_rndWindFlowing.Next());
 
             WindFlow = new Vector3(GetFlowRnd(), GetFlowRnd(), GetFlowRnd());
-            //WindFlow = new Vector3(0, 0, 0);
         }
 
         public override void Update(ref GameTime TimeSpend)
         {
+            if (!_randomFlow) return;
+
             if (_rndWindFlowing.Next(0, 10000) == 0)
             {
                 WindFlow = new Vector3(GetFlowRnd(), GetFlowRnd(), GetFlowRnd());
             }
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
-        {
-        }
-
-        public override void Dispose()
-        {
-        }
         #endregion
 
         #region Private Methods
