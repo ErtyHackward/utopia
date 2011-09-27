@@ -16,11 +16,12 @@ namespace Utopia.Net.Messages
         private uint _destinationEntityId;
         private Vector2I _destinationSlot;
         private int _itemsCount;
+        private uint _itemEntityId;
 
         /// <summary>
         /// Source object item taken from, use 0 if item was taken from world space
         /// </summary>
-        public uint SourceEntityId
+        public uint SourceContainerEntityId
         {
             get { return _sourceEntityId; }
             set { _sourceEntityId = value; }
@@ -29,7 +30,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Source conainer slot position
         /// </summary>
-        public Vector2I SourceSlot
+        public Vector2I SourceContainerSlot
         {
             get { return _sourceSlot; }
             set { _sourceSlot = value; }
@@ -38,7 +39,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Destination entity where item must be placed. Use 0 if you need to throw item to world space
         /// </summary>
-        public uint DestinationEntityId
+        public uint DestinationContainerEntityId
         {
             get { return _destinationEntityId; }
             set { _destinationEntityId = value; }
@@ -47,7 +48,7 @@ namespace Utopia.Net.Messages
         /// <summary>
         /// Destination container slot position
         /// </summary>
-        public Vector2I DestinationSlot
+        public Vector2I DestinationContainerSlot
         {
             get { return _destinationSlot; }
             set { _destinationSlot = value; }
@@ -60,6 +61,15 @@ namespace Utopia.Net.Messages
         {
             get { return _itemsCount; }
             set { _itemsCount = value; }
+        }
+
+        /// <summary>
+        /// EntityId that should be taken from the world or put to. Optional value for container to container operations
+        /// </summary>
+        public uint ItemEntityId
+        {
+            get { return _itemEntityId; }
+            set { _itemEntityId = value; }
         }
 
         /// <summary>
@@ -80,6 +90,7 @@ namespace Utopia.Net.Messages
             writer.Write(_sourceSlot);
             writer.Write(_destinationEntityId);
             writer.Write(_destinationSlot);
+            writer.Write(_itemEntityId);
             writer.Write(_itemsCount);
         }
 
@@ -91,6 +102,7 @@ namespace Utopia.Net.Messages
             msg._sourceSlot = reader.ReadVector2I();
             msg._destinationEntityId = reader.ReadUInt32();
             msg._destinationSlot = reader.ReadVector2I();
+            msg._itemEntityId = reader.ReadUInt32();
             msg._itemsCount = reader.ReadInt32();
 
             return msg;
