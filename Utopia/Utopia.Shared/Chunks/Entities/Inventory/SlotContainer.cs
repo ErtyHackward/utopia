@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using Utopia.Shared.Chunks.Entities.Interfaces;
@@ -113,6 +114,50 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         {
             if (position.X < 0 || position.Y < 0 || position.X >= _gridSize.X || position.Y >= _gridSize.Y)
                 throw new ArgumentException("Slot position is unacceptable for this container");
+        }
+
+        /// <summary>
+        /// Tries to put item into the inventory
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public bool PutItem(Item item)
+        {
+            // inventory is full?
+            if (item.MaxStackSize == 1 && _slotsCount == _gridSize.X * _gridSize.Y)
+                return false;
+
+            if (item.MaxStackSize > 1)
+            {
+                // need to find uncomplete stack if exists
+
+                var e = this.Any(s =>
+                               {
+                                   if (s.Item.EntityId == item.EntityId && s.ItemsCount + 1 <= item.MaxStackSize)
+                                   {
+                                       s.ItemsCount++;
+                                       return true;
+                                   }
+                                   return false;
+                               });
+
+                if (e) return true;
+
+            }
+
+            // take first free cell and put item
+            for (int x = 0; x < _gridSize.X; x++)
+            {
+                for (int y = 0; y < _gridSize.Y; y++)
+                {
+                    if (_items[x, y] == null)
+                    {
+                        _items[x, y] = new T { Item = item, GridPosition = new Vector2I(x, y), ItemsCount = 1 };
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
