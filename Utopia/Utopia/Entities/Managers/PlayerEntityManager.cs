@@ -345,10 +345,7 @@ namespace Utopia.Entities.Managers
             Vector3D newWorldPosition;
 
             _cubesHolder.GetNextSolidBlockToPlayer(ref VisualEntity.WorldBBox, ref GroundDirection, out groundCube);
-            if (groundCube.Cube.Id != CubeId.Error)
-            {
-                _groundBelowEntity = groundCube.Position.Y + 1;
-            }
+            _groundBelowEntity = groundCube.Position.Y + 1;
 
             _physicSimu.Simulate(ref TimeSpend, out newWorldPosition);
             _worldPosition.Value = newWorldPosition;
