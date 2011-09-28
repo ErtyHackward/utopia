@@ -78,6 +78,16 @@ namespace Utopia.Server.Managers
             GetArea(new Vector3D(e.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, e.ChunkPosition.Y * AbstractChunk.ChunkSize.Z)).OnBlocksChanged(e);
         }
 
+        public void InvokeStaticEntityAdded(EntityCollectionEventArgs e)
+        {
+            GetArea(e.Entity.Position).OnStaticEntityAdded(e);
+        }
+
+        public void InvokeStaticEntityRemoved(EntityCollectionEventArgs e)
+        {
+            GetArea(e.Entity.Position).OnStaticEntityRemoved(e);
+        }
+
         private MapArea GetArea(Vector3D position)
         {
             var pos = new Vector2I((int)Math.Floor((double)position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor((double)position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);

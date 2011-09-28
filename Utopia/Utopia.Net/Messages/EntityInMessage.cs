@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using S33M3Engines.Shared.Math;
 using Utopia.Net.Interfaces;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Interfaces;
@@ -13,7 +14,8 @@ namespace Utopia.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct EntityInMessage : IBinaryMessage
     {
-        private IDynamicEntity _entity;
+        private Entity _entity;
+        private uint _parentEntityId;
 
         /// <summary>
         /// Gets message id
@@ -23,18 +25,27 @@ namespace Utopia.Net.Messages
             get { return (byte)MessageTypes.EntityIn; }
         }
 
-        public IDynamicEntity Entity
+        public Entity Entity
         {
             get { return _entity; }
             set { _entity = value; }
+        }
+        
+        /// <summary>
+        /// Entity id that throws an item (optional, default 0)
+        /// </summary>
+        public uint ParentEntityId
+        {
+            get { return _parentEntityId; }
+            set { _parentEntityId = value; }
         }
 
         public static EntityInMessage Read(BinaryReader reader)
         {
             EntityInMessage msg;
-            
-            var entity = EntityFactory.Instance.CreateFromBytes(reader);
-            msg._entity = (IDynamicEntity)entity;
+
+            msg._parentEntityId = reader.ReadUInt32();
+            msg._entity = EntityFactory.Instance.CreateFromBytes(reader);;
 
             return msg;
         }
@@ -43,7 +54,7 @@ namespace Utopia.Net.Messages
         {
             if(msg.Entity == null)
                 throw new NullReferenceException("Entity object is null");
-
+            writer.Write(msg._parentEntityId);
             msg.Entity.Save(writer);
 
         }

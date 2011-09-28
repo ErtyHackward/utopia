@@ -73,7 +73,7 @@ namespace Utopia.Shared.Chunks
             _blockDataProvider.BlockBufferChanged += BlockBufferChanged;
             _blockDataProvider.BlockDataChanged += BlockDataChanged;
 
-            Entities = new EntityCollection();
+            Entities = new EntityCollection(this);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Utopia.Shared.Chunks
             var reader = new BinaryReader(ms);
             BlockData.SetBlockBytes(reader.ReadBytes(ChunkBlocksByteLength));
             Entities.Clear();
-            Entities.LoadEntities(EntityFactory.Instance, ms, ChunkBlocksByteLength, (int)(ms.Length - ChunkBlocksByteLength));
+            Entities.LoadEntities(ms, ChunkBlocksByteLength, (int)(ms.Length - ChunkBlocksByteLength));
             ms.Dispose();
         }
 

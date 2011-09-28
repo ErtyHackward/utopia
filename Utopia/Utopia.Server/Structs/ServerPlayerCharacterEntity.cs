@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Utopia.Net.Messages;
 using Utopia.Server.Events;
+using Utopia.Server.Managers;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Inventory;
@@ -40,16 +41,28 @@ namespace Utopia.Server.Structs
             area.BlocksChanged += AreaBlocksChanged;
             area.EntityModelChanged += AreaEntityModelChanged;
             area.EntityEquipment += AreaEntityEquipment;
+            area.StaticEntityAdded += AreaStaticEntityAdded;
+            area.StaticEntityRemoved += AreaStaticEntityRemoved;
 
             foreach (var serverEntity in area.Enumerate())
             {
                 if (serverEntity != this)
                 {
                     //Console.WriteLine("TO: {0}, entity {1} in", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.SendAsync(new EntityInMessage { Entity = serverEntity.DynamicEntity });
+                    Connection.SendAsync(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity });
                 }
             }
 
+        }
+
+        void AreaStaticEntityRemoved(object sender, EntityCollectionEventArgs e)
+        {
+            Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.EntityId, TakerEntityId = e.ParentEntityId });
+        }
+
+        void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
+        {
+            Connection.SendAsync(new EntityInMessage { Entity = e.Entity, ParentEntityId = e.ParentEntityId });
         }
 
         void AreaEntityEquipment(object sender, CharacterEquipmentEventArgs e)
@@ -89,7 +102,7 @@ namespace Utopia.Server.Structs
             if (e.Entity != DynamicEntity)
             {
                 //Console.WriteLine("TO: {0},  {1} entity in view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.SendAsync(new EntityInMessage { Entity = e.Entity.DynamicEntity });
+                Connection.SendAsync(new EntityInMessage { Entity = (Entity)e.Entity.DynamicEntity });
             }
         }
 
@@ -101,6 +114,8 @@ namespace Utopia.Server.Structs
             area.BlocksChanged -= AreaBlocksChanged;
             area.EntityModelChanged -= AreaEntityModelChanged;
             area.EntityEquipment -= AreaEntityEquipment;
+            area.StaticEntityAdded -= AreaStaticEntityAdded;
+            area.StaticEntityRemoved -= AreaStaticEntityRemoved;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -240,16 +255,57 @@ namespace Utopia.Server.Structs
                     if ( (chunk = _server.LandscapeManager.SurroundChunks(playerCharacter.Position).First(c => c.Entities.ContainsId(itemTransferMessage.ItemEntityId))) != null)
                     {
                         Entity entity;
-                        chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, out entity);
+                        chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, playerCharacter.EntityId, out entity);
                         if (entity != null)
                         {
                             if (playerCharacter.Inventory.PutItem((Item)entity))
-                                return;
+                                return; // ok
                         }
                     }
                 }
             }
-            
+
+            //throw item to world
+            if (itemTransferMessage.SourceContainerEntityId == playerCharacter.EntityId && itemTransferMessage.DestinationContainerEntityId == 0)
+            {
+                if (itemTransferMessage.ItemEntityId != 0)
+                {
+                    // check if entity have this item
+
+                    var chunk = _server.LandscapeManager.GetChunk(playerCharacter.Position);
+
+                    var containedSlot = new ContainedSlot{ ItemsCount = itemTransferMessage.ItemsCount, GridPosition = itemTransferMessage.SourceContainerSlot };
+                    
+                    var slot = playerCharacter.Inventory.TakeSlot(containedSlot);
+
+                    if (slot != null)
+                    {
+                        // check if we have correct entityId
+                        if (slot.Item.EntityId == itemTransferMessage.ItemEntityId)
+                        {
+                            // repeat for entities count
+                            for (int i = 0; i < itemTransferMessage.ItemsCount; i++)
+                            {
+                                // throw it
+                                chunk.Entities.Add(slot.Item, playerCharacter.EntityId);    
+                            }
+                            // ok
+                            return;
+                        }
+                        else
+                        {
+                            // return item to inventory
+                            playerCharacter.Inventory.PutItem(slot);
+                        }
+
+
+                    }
+
+
+
+                }
+            }
+
             // impossible to transfer
             Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Invalid transfer operation" });
         }
