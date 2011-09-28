@@ -238,11 +238,27 @@ namespace Utopia.Server
         void LandscapeManagerChunkUnloaded(object sender, LandscapeManagerChunkEventArgs e)
         {
             e.Chunk.BlocksChanged -= ChunkBlocksChanged;
+            e.Chunk.Entities.EntityAdded -= Entities_EntityAdded;
+            e.Chunk.Entities.EntityRemoved -= Entities_EntityRemoved;
         }
 
         void LandscapeManagerChunkLoaded(object sender, LandscapeManagerChunkEventArgs e)
         {
             e.Chunk.BlocksChanged += ChunkBlocksChanged;
+            e.Chunk.Entities.EntityAdded += Entities_EntityAdded;
+            e.Chunk.Entities.EntityRemoved += Entities_EntityRemoved;
+        }
+
+        void Entities_EntityRemoved(object sender, EntityCollectionEventArgs e)
+        {
+            var entityCollection = (EntityCollection)sender;
+            AreaManager.InvokeStaticEntityRemoved(e);
+        }
+
+        void Entities_EntityAdded(object sender, EntityCollectionEventArgs e)
+        {
+            var entityCollection = (EntityCollection)sender;
+            AreaManager.InvokeStaticEntityAdded(e);
         }
 
         void ChunkBlocksChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
@@ -601,7 +617,7 @@ namespace Utopia.Server
                 };
                 connection.SendAsync(gameInfo);
                 connection.SendAsync(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
-                connection.SendAsync(new EntityInMessage { Entity = playerEntity.DynamicEntity });
+                connection.SendAsync(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity });
 
                 ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", e.Message.Login), Operator = true });
                 connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });

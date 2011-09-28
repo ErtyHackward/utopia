@@ -83,6 +83,7 @@ namespace Utopia.Server.Managers
         /// Gets time of last executed save operation
         /// </summary>
         public double SaveTime { get; set; }
+
         /// <summary>
         /// Gets amount of chunks saved last time
         /// </summary>
@@ -100,7 +101,17 @@ namespace Utopia.Server.Managers
         /// <summary>
         /// Gets chunk. First it tries to get cached in memory value, then it checks the database, and then it generates the chunk
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="globalPosition">global position (entity or block)</param>
+        /// <returns></returns>
+        public ServerChunk GetChunk(Vector3D globalPosition)
+        {
+            return GetChunk(new Vector2I((int)Math.Floor(globalPosition.X / AbstractChunk.ChunkSize.X), (int)Math.Floor(globalPosition.Z / AbstractChunk.ChunkSize.Z)));
+        }
+
+        /// <summary>
+        /// Gets chunk. First it tries to get cached in memory value, then it checks the database, and then it generates the chunk
+        /// </summary>
+        /// <param name="position">chunk position</param>
         /// <returns></returns>
         public ServerChunk GetChunk(Vector2I position)
         {

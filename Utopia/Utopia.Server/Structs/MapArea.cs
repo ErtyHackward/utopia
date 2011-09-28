@@ -159,6 +159,27 @@ namespace Utopia.Server.Structs
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Occurs when some entity appears in one of area chunks
+        /// </summary>
+        public event EventHandler<EntityCollectionEventArgs> StaticEntityAdded;
+
+        public void OnStaticEntityAdded(EntityCollectionEventArgs e)
+        {
+            var handler = StaticEntityAdded;
+            if (handler != null) handler(this, e);
+        }
+        
+        /// <summary>
+        /// Occurs when some entity removed from one of area chunks
+        /// </summary>
+        public event EventHandler<EntityCollectionEventArgs> StaticEntityRemoved;
+
+        public void OnStaticEntityRemoved(EntityCollectionEventArgs e)
+        {
+            var handler = StaticEntityRemoved;
+            if (handler != null) handler(this, e);
+        }
 
         #endregion
 

@@ -248,6 +248,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
                 return null;
 
             currentItem.ItemsCount -= slot.ItemsCount;
+            slot.Item = currentItem.Item;
 
             if (currentItem.ItemsCount == 0)
             {
