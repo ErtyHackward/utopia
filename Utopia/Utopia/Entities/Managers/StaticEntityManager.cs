@@ -24,7 +24,7 @@ namespace Utopia.Entities.Managers
         #region Private variables
         private HLSLPointSprite3D _effectPointSprite;
         private D3DEngine _d3dEngine;
-        private VertexBuffer<VertexPositionColor> _vb;
+        private VertexBuffer<VertexPointSprite> _vb;
         private ShaderResourceView _srv;
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
@@ -49,7 +49,7 @@ namespace Utopia.Entities.Managers
 
         public override void LoadContent()
         {
-            _effectPointSprite = new HLSLPointSprite3D(_d3dEngine, @"D3D\Effects\Basics\PointSprite3D.hlsl", VertexPositionColor.VertexDeclaration);
+            _effectPointSprite = new HLSLPointSprite3D(_d3dEngine, @"D3D\Effects\Basics\PointSprite3D.hlsl", VertexPointSprite.VertexDeclaration);
             CreateBuffer();
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _srv);
             _effectPointSprite.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
@@ -64,8 +64,8 @@ namespace Utopia.Entities.Managers
 
         private void CreateBuffer()
         {
-            VertexPositionColor[] vertices = new VertexPositionColor[] { new VertexPositionColor(new Vector3(0, 100, 0), new Color(5,1,0,0)) };
-            _vb = new VertexBuffer<VertexPositionColor>(_d3dEngine, vertices.Length, VertexPositionColor.VertexDeclaration, PrimitiveTopology.PointList, "PointSprite3D");
+            VertexPointSprite[] vertices = new VertexPointSprite[] { new VertexPointSprite((byte)5, new ByteVector4(5, 0, 0, 0)) };
+            _vb = new VertexBuffer<VertexPointSprite>(_d3dEngine, vertices.Length, VertexPointSprite.VertexDeclaration, PrimitiveTopology.PointList, "PointSprite3D");
             _vb.SetData(vertices);
         }
         #endregion
@@ -89,7 +89,7 @@ namespace Utopia.Entities.Managers
             _effectPointSprite.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _effectPointSprite.CBPerFrame.IsDirty = true;
 
-            Matrix test = Matrix.Identity;
+            Matrix test = Matrix.Translation(0,100,0);
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref test, ref test);
 
             _effectPointSprite.CBPerDraw.Values.World = Matrix.Transpose(test);
