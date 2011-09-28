@@ -37,7 +37,6 @@ namespace Utopia.Shared.Chunks.Entities
             Size = new SharpDX.Vector3(0.5f, 1.9f, 0.5f); //Default player size
             
             //Default Player Voxel Body
-            
             Model.Blocks = new byte[1, 1, 1];
             Model.Blocks[0, 0, 0] = CubeId.PlayerHead;
         }
