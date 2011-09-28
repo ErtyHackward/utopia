@@ -10,12 +10,13 @@ cbuffer PerDraw
 cbuffer PerFrame
 {
 	matrix ViewProjection;
+    float WindPower;
 };
 
 //--------------------------------------------------------------------------------------
 // Texture Samplers
 //--------------------------------------------------------------------------------------
-Texture2D DiffuseTexture;
+Texture2DArray DiffuseTexture;
 SamplerState SamplerDiffuse;
 
 //--------------------------------------------------------------------------------------
@@ -40,11 +41,11 @@ struct PSInput {
 
 
 // offsets for the 4 vertices
-static const float2 p[4] = {
-							{-0.5, 0.0f},
-							{-0.5, 1.0f},
-							{0.5, 0.0f},
-							{0.5, 1.0f}
+static const float3 p[4] = {
+							{-0.5, 0.0f, 0.0f},
+							{-0.5, 1.0f, 1.0f},
+							{0.5, 0.0f, 0.0f},
+							{0.5, 1.0f, 1.0f}
 						};
 
 static const float texcoordU[4] = { 0.0f, 0.0f, 1.0f, 1.0f};
@@ -73,10 +74,10 @@ void GS(point GSInput Input[1]: POSITION0, inout TriangleStream<PSInput> TriStre
 							 texcoordV[i],
 							 PointSpritePosition.w);
 
+		Output.Position.x = PointSpritePosition.x + (p[i].x * Input[0].Info.x) + (p[i].z * WindPower); //Add Offset to build the Quad X dim
+		Output.Position.y = PointSpritePosition.y + (p[i].y * Input[0].Info.x) ; //Add Offset to build the Quad Y dim
+		Output.Position.z = PointSpritePosition.z + (p[i].z * WindPower);
 		Output.Position.w = 1.0f;
-		Output.Position.z = PointSpritePosition.z;
-		Output.Position.x = PointSpritePosition.x + (p[i].x * Input[0].Info.x); //Add Offset to build the Quad X dim
-		Output.Position.y = PointSpritePosition.y + (p[i].y * Input[0].Info.x); //Add Offset to build the Quad Y dim
 
 		//Transform into Projection space
 		//Add Rotation matrix computation if needed here !
@@ -96,6 +97,9 @@ float4 PS(PSInput IN) : SV_Target
 {	
 	//Texture Sampling
 	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW);
+	
+	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
+
 	return color;	
 }
 

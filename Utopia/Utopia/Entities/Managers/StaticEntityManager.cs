@@ -16,6 +16,7 @@ using SharpDX.Direct3D11;
 using S33M3Engines.StatesManager;
 using S33M3Engines.Cameras;
 using S33M3Engines.WorldFocus;
+using System.Diagnostics;
 
 namespace Utopia.Entities.Managers
 {
@@ -51,8 +52,8 @@ namespace Utopia.Entities.Managers
         {
             _effectPointSprite = new HLSLPointSprite3D(_d3dEngine, @"D3D\Effects\Basics\PointSprite3D.hlsl", VertexPointSprite.VertexDeclaration);
             CreateBuffer();
-            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _srv);
-            _effectPointSprite.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
+            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, @"Textures/Sprites/", @"sp*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _srv);
+            _effectPointSprite.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
             _effectPointSprite.DiffuseTexture.Value = _srv;
         }
 
@@ -64,16 +65,38 @@ namespace Utopia.Entities.Managers
 
         private void CreateBuffer()
         {
-            VertexPointSprite[] vertices = new VertexPointSprite[] { new VertexPointSprite((byte)5, new ByteVector4(5, 0, 0, 0)) };
+            VertexPointSprite[] vertices = new VertexPointSprite[] { new VertexPointSprite((byte)0, new ByteVector4(1, 0, 0, 0)) };
             _vb = new VertexBuffer<VertexPointSprite>(_d3dEngine, vertices.Length, VertexPointSprite.VertexDeclaration, PrimitiveTopology.PointList, "PointSprite3D");
             _vb.SetData(vertices);
         }
         #endregion
 
         #region Public Methods
+        private float _windpower;
+        private long previousTime, currentTime, previousTimeTex, currentTimeTex;
+        private long timeAccumulator, timeAccumulatorTex;
+        private long FloodingSpeedTex = (long)(Stopwatch.Frequency / 30);
+        public float TextureAnimationOffset = 0;
+        float offsetValue = -0.02f;
         public override void Update(ref GameTime timeSpent)
         {
+            //Start Tempo
+            currentTimeTex = Stopwatch.GetTimestamp();
+            timeAccumulatorTex += currentTimeTex - previousTimeTex;
+            previousTimeTex = currentTimeTex;
 
+            if (timeAccumulatorTex < FloodingSpeedTex) return;
+            timeAccumulatorTex = 0;
+
+            TextureAnimationOffset += offsetValue;
+            if (TextureAnimationOffset > 0.3)
+            {
+                offsetValue *= -1;
+            }
+            if (TextureAnimationOffset < -0.3)
+            {
+                offsetValue *= -1;
+            }
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
@@ -82,11 +105,12 @@ namespace Utopia.Entities.Managers
 
         public override void Draw(int Index)
         {
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             _effectPointSprite.Begin();
 
             _effectPointSprite.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+            _effectPointSprite.CBPerFrame.Values.WindPower = TextureAnimationOffset;
             _effectPointSprite.CBPerFrame.IsDirty = true;
 
             Matrix test = Matrix.Translation(0,100,0);
