@@ -46,6 +46,7 @@ namespace Utopia.Entities.Voxel
 
         /// <summary>
         /// creates a VisualEntity ready to render with filled vertice List and vertexBuffer
+        /// TODO refactor the way overlay array is allocated, too much copy paste
         /// </summary>
         /// <param name="voxelMeshFactory">voxelMeshFactory responsible to create mesh</param>
         /// <param name="wrapped">wrapped VoxelEntity from server</param>

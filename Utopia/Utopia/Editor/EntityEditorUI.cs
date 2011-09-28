@@ -55,7 +55,9 @@ namespace Utopia.Editor
                                              new SpawnPlain(_editorComponent),
                                              new SpawnBorder(_editorComponent),
                                              new SpawnCenter(_editorComponent),
-                                             new SpawnAxis(_editorComponent)
+                                             new SpawnAxis(_editorComponent),
+                                             new EditorEditSelected(_editorComponent),
+                                             new EditorEditSelf(_editorComponent)
                                          };
 
             int buttonsNbr = tools.Count;
@@ -92,14 +94,14 @@ namespace Utopia.Editor
             List<EditorTool> tools = new List<EditorTool>
                                          {
                                              new EditorSymetry(_editorComponent),
-                                             new EditorAdd(_editorComponent),
-                                             new EditorRemove(_editorComponent),
-                                             new EditorSelect(_editorComponent),
-                                             editorCopy,
-                                             new EditorPaste(_editorComponent, editorCopy),
+                                             //new EditorAdd(_editorComponent), TODO finish edit tools
+                                             //new EditorRemove(_editorComponent),
+                                             //new EditorSelect(_editorComponent),
+                                             //editorCopy,
+                                             //new EditorPaste(_editorComponent, editorCopy),
                                              new EditorLoad(_editorComponent),
                                              new EditorSave(_editorComponent),
-                                             new EditorEditSelected(_editorComponent)
+                                          
                                          };
             int buttonsNbr = tools.Count;
 
@@ -208,4 +210,6 @@ namespace Utopia.Editor
             return palette;
         }
     }
+
+    
 }
