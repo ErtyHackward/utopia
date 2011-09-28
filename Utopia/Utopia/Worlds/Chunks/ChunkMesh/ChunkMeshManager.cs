@@ -132,7 +132,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         currentCube = _cubesHolder.Cubes[cubeIndex];
 
                         // ? Am I an Air Cube ? ==> Default Value, not needed to render !
-                        if (currentCube.Id == CubeId.Air || currentCube.Id == CubeId.Error) continue;
+                        if (currentCube.Id == CubeId.Air) continue;
 
                         //The Cube profile contain the value that are fixed for a block type.
                         cubeProfile = VisualCubeProfile.CubesProfile[currentCube.Id];

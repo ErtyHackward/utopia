@@ -150,8 +150,6 @@ namespace Utopia.Entities.Managers
                             Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.Rotation) * impulsePower
                         }
                         );
-
-
                     }
                     else
                     {
