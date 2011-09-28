@@ -400,7 +400,7 @@ namespace Utopia.Shared.Chunks
                 return CubeProfile.CubesProfile[cube.Id].IsPickable;
             }
 
-            cube = new TerraCube(CubeId.Error);
+            cube = new TerraCube();
             return false;
         }
 
@@ -414,7 +414,7 @@ namespace Utopia.Shared.Chunks
                 return CubeProfile.CubesProfile[cube.Id].IsPickable;
             }
 
-            cube = new TerraCube(CubeId.Error);
+            cube = new TerraCube();
             return false;
         }
 
@@ -444,7 +444,7 @@ namespace Utopia.Shared.Chunks
                 return CubeProfile.CubesProfile[cube.Id].IsPickable;
             }
 
-            cube = new TerraCube(CubeId.Error);
+            cube = new TerraCube();
             return false;
         }
 
