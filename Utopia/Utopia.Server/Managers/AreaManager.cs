@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using SharpDX;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
@@ -74,7 +75,7 @@ namespace Utopia.Server.Managers
         /// <param name="e"></param>
         public void InvokeBlocksChanged(BlocksChangedEventArgs e)
         {
-            GetArea(new Vector3D(e.ChunkPosition.X, 0, e.ChunkPosition.Y)).OnBlocksChanged(e);
+            GetArea(new Vector3D(e.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, e.ChunkPosition.Y * AbstractChunk.ChunkSize.Z)).OnBlocksChanged(e);
         }
 
         private MapArea GetArea(Vector3D position)
