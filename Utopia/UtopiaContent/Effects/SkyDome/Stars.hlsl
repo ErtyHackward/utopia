@@ -4,7 +4,6 @@
 
 cbuffer PerDraw
 {
-	matrix World;
 	matrix ViewProjection;
 	float Visibility;
 };
@@ -21,14 +20,14 @@ static const float2 p[4] = {
 //Vertex shader Input
 struct VSInput {
 	float3 Position				: POSITION;
-	float4 Info					: COLOR; // r = Stars size
+	float4 Info					: COLOR; // x = size
 };
 
 //--------------------------------------------------------------------------------------
 //Geometry shader Input
 struct GSInput {
 	float3 Position				: POSITION;
-	float4 Info					: COLOR; // r = Stars size
+	float4 Info					: COLOR; // x = size
 };
 
 //Pixel shader Input

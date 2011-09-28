@@ -16,6 +16,10 @@
         /// <summary>
         /// Static things (Example: chairs, chests, tables, beds, doors)
         /// </summary>
-        Static
+        Static,
+        /// <summary>
+        /// Dynamic Entity (Player, mobs, ...) Everything that is living and can move in world
+        /// </summary>
+        Dynamic
     }
 }

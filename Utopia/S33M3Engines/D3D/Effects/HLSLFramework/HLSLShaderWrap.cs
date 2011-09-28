@@ -115,57 +115,79 @@ namespace S33M3Engines.D3D.Effects
         // load and compile the vertex shader
         private void LoadVertexShader()
         {
-            if (_shaderEntryPoint.VertexShader_EntryPoint != null)
+            try
             {
-                using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
+                if (_shaderEntryPoint.VertexShader_EntryPoint != null)
                 {
-                    //Get the VS Input signature from the Vertex Shader
-                    _signature = ShaderSignature.GetInputSignature(bytecode);
-                    //Create the inputLayout from the signature (Must Match the Vertex Format used with this effect !!!)
-                    _inputLayout = new InputLayout(_d3dEngine.Device, _signature, _vertexDeclaration.Elements);
-
-                    _vs = new VertexShader(_d3dEngine.Device, bytecode);
-                    D3D.Tools.Resource.SetName(_vs, "vs " + _fileName);
-                    using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
+                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
                     {
-                        ShaderReflection(Shaders.VS, ShaderIDs.VS, shaderMetaData);
+                        //Get the VS Input signature from the Vertex Shader
+                        _signature = ShaderSignature.GetInputSignature(bytecode);
+                        //Create the inputLayout from the signature (Must Match the Vertex Format used with this effect !!!)
+                        _inputLayout = new InputLayout(_d3dEngine.Device, _signature, _vertexDeclaration.Elements);
+
+                        _vs = new VertexShader(_d3dEngine.Device, bytecode);
+                        D3D.Tools.Resource.SetName(_vs, "vs " + _fileName);
+                        using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
+                        {
+                            ShaderReflection(Shaders.VS, ShaderIDs.VS, shaderMetaData);
+                        }
                     }
                 }
+            }
+            catch (Exception)
+            {
+                throw new Exception(CompilationErrors);
             }
         }
 
         // load and compile the geometry shader
         private void LoadGeometryShader()
         {
-            if (_shaderEntryPoint.GeometryShader_EntryPoint != null)
+            try
             {
-                using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
-                {
-                    _gs = new GeometryShader(_d3dEngine.Device, bytecode);
-                    D3D.Tools.Resource.SetName(_gs, "gs " + _fileName);
-                    using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
-                    {
-                        ShaderReflection(Shaders.GS, ShaderIDs.GS, shaderMetaData);
-                    }
 
+                if (_shaderEntryPoint.GeometryShader_EntryPoint != null)
+                {
+                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
+                    {
+                        _gs = new GeometryShader(_d3dEngine.Device, bytecode);
+                        D3D.Tools.Resource.SetName(_gs, "gs " + _fileName);
+                        using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
+                        {
+                            ShaderReflection(Shaders.GS, ShaderIDs.GS, shaderMetaData);
+                        }
+
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                throw new Exception(CompilationErrors);
             }
         }
 
         // load and compile the pixel shader
         private void LoadPixelShader()
         {
-            if (_shaderEntryPoint.PixelShader_EntryPoint != null)
+            try
             {
-                using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
+                if (_shaderEntryPoint.PixelShader_EntryPoint != null)
                 {
-                    _ps = new PixelShader(_d3dEngine.Device, bytecode);
-                    D3D.Tools.Resource.SetName(_ps, "ps " + _fileName);
-                    using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
+                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
                     {
-                        ShaderReflection(Shaders.PS, ShaderIDs.PS, shaderMetaData);
+                        _ps = new PixelShader(_d3dEngine.Device, bytecode);
+                        D3D.Tools.Resource.SetName(_ps, "ps " + _fileName);
+                        using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
+                        {
+                            ShaderReflection(Shaders.PS, ShaderIDs.PS, shaderMetaData);
+                        }
                     }
                 }
+            }
+            catch (Exception)
+            {
+                throw new Exception(CompilationErrors);
             }
         }
         #endregion

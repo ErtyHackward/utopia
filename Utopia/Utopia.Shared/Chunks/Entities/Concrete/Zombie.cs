@@ -13,5 +13,11 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
         {
             get { return "Zombie "+ CharacterName; }
         }
+
+        public Zombie()
+        {
+            Type = EntityType.Dynamic;
+        }
+
     }
 }

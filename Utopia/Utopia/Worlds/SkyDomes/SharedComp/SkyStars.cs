@@ -68,7 +68,6 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled);
 
             _effectStars.Begin();
-            _effectStars.CBPerDraw.Values.World = Matrix.Transpose(_world);
             _effectStars.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
 
             //Compute Vibility !

@@ -8,7 +8,7 @@ using Utopia.Entities.Voxel;
 
 namespace Utopia.Entities.Managers.Interfaces
 {
-    public interface IDynamicEntityManager : IGameComponent
+    public interface IDynamicEntityManager : IDrawableComponent
     {
         void AddEntity(IDynamicEntity entity);
         void RemoveEntity(IDynamicEntity entity);

@@ -97,6 +97,7 @@
     <Compile Include="D3D\Effects\Basics\HLSLSprites.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLVertexPositionColor.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLVertexPositionTexture.cs" />
+    <Compile Include="D3D\Effects\Basics\HLSLPointSprite3D.cs" />
     <Compile Include="D3D\Effects\HLSLFramework\CBuffer.cs" />
     <Compile Include="D3D\Effects\HLSLFramework\Constant.cs" />
     <Compile Include="D3D\Effects\HLSLFramework\HLSLShaderWrap.cs" />
@@ -173,7 +174,13 @@
     <Compile Include="WorldFocus\WorldFocusManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="D3D\Effects\Basics\Billboard.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="D3D\Effects\Basics\Sprites.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="D3D\Effects\Basics\PointSprite3D.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="D3D\Effects\Basics\VertexPositionColor.hlsl">

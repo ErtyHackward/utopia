@@ -76,6 +76,7 @@ namespace Utopia
         private ActionsManager _actions;
         private D3DEngine _engine;
         private IDynamicEntityManager _dynamicEntityManager;
+        private IStaticEntityManager _staticEntityManager;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private IPickingRenderer _pickingRenderer;
         //Debug tools
@@ -229,7 +230,8 @@ namespace Utopia
 
             _dynamicEntityManager = IoCContainer.Get<IDynamicEntityManager>();
             GameComponents.Add(_dynamicEntityManager);
-
+            _staticEntityManager = IoCContainer.Get<IStaticEntityManager>();
+            GameComponents.Add(_staticEntityManager);
 
             _actions = IoCContainer.Get<ActionsManager>();
 
