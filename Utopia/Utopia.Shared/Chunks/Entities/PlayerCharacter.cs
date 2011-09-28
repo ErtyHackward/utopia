@@ -39,6 +39,8 @@ namespace Utopia.Shared.Chunks.Entities
             //Default Player Voxel Body
             Model.Blocks = new byte[1, 1, 1];
             Model.Blocks[0, 0, 0] = CubeId.PlayerHead;
+
+            Type = EntityType.Dynamic;
         }
 
         #region Public Methods

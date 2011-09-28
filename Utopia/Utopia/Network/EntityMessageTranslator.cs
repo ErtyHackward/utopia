@@ -103,16 +103,27 @@ namespace Utopia.Network
 
         void ConnectionMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
         {
+            
             // do we need to check if that entity was dynamic or static?
             _dynamicEntityManager.RemoveEntityById(e.Message.EntityId);
         }
 
         void ConnectionMessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
         {
-            var dynamicEntity = e.Message.Entity as IDynamicEntity;
-            // adding only if entity is dynamic
-            if(dynamicEntity != null)
-                _dynamicEntityManager.AddEntity((IDynamicEntity)e.Message.Entity);
+            switch (e.Message.Entity.Type)
+            {
+                case Utopia.Shared.Chunks.Entities.EntityType.Gear:
+                    break;
+                case Utopia.Shared.Chunks.Entities.EntityType.Block:
+                    break;
+                case Utopia.Shared.Chunks.Entities.EntityType.Static:
+                    break;
+                case Utopia.Shared.Chunks.Entities.EntityType.Dynamic:
+                        _dynamicEntityManager.AddEntity((IDynamicEntity)e.Message.Entity);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void PlayerEntityUse(object sender, EntityUseEventArgs e)

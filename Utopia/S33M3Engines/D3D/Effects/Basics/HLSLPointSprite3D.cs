@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.Struct.Vertex.Helper;
 using System.Runtime.InteropServices;
 using SharpDX;
-using S33M3Engines.D3D.Effects;
-using S33M3Engines.D3D;
-using S33M3Engines;
+using S33M3Engines.Struct.Vertex.Helper;
 
-namespace UtopiaContent.Effects.Skydome
+namespace S33M3Engines.D3D.Effects.Basics
 {
-
-    public class HLSLStars : HLSLShaderWrap
+    public class HLSLPointSprite3D : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
         // follow the packing rules from here:
@@ -24,21 +20,29 @@ namespace UtopiaContent.Effects.Skydome
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 80)]
+        [StructLayout(LayoutKind.Explicit, Size = 64)]
         public struct CBPerDraw_Struct
         {
             [FieldOffset(0)]
-            public Matrix ViewProjection;
-            [FieldOffset(64)]
-            public float Visibility;
+            public Matrix World;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
+
+        [StructLayout(LayoutKind.Explicit, Size = 64)]
+        public struct CBPerFrame_Struct
+        {
+            [FieldOffset(0)]
+            public Matrix ViewProjection;
+        }
+        public CBuffer<CBPerFrame_Struct> CBPerFrame;
         #endregion
 
         #region Resources
+        public ShaderResource DiffuseTexture;
         #endregion
 
         #region Sampler
+        public ShaderSampler SamplerDiffuse;
         #endregion
 
         #region Define Shaders EntryPoints Names
@@ -51,16 +55,22 @@ namespace UtopiaContent.Effects.Skydome
         };
         #endregion
 
-        public HLSLStars(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+        public HLSLPointSprite3D(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
             : base(d3dEngine, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = new CBuffer<CBPerDraw_Struct>(_d3dEngine, "PerDraw");
             CBuffers.Add(CBPerDraw);
+            CBPerFrame = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrame");
+            CBuffers.Add(CBPerFrame);
 
             //Create the resource interfaces ==================================================
+            DiffuseTexture = new ShaderResource(_d3dEngine, "DiffuseTexture");
+            ShaderResources.Add(DiffuseTexture);
 
             //Create the Sampler interface ==================================================
+            SamplerDiffuse = new ShaderSampler(_d3dEngine, "SamplerDiffuse");
+            ShaderSamplers.Add(SamplerDiffuse);
 
             //Load the shaders
             base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);
