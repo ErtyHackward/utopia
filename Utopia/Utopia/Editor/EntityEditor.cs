@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Nuclex.UserInterface.Controls;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
@@ -142,7 +143,12 @@ namespace Utopia.Editor
             if (_player.EntityState.PickedEntityId == 0)
             {
                 //picked a terrain block
-                Vector3I pos = _player.EntityState.PickedBlockPosition;
+             
+                EditableVoxelEntity spawn = new EditableVoxelEntity();
+                spawn.Model.Blocks = new byte[16, 16, 16]; //TODO 8 8 8 for terrain edited entity
+                
+                SpawnEntity(spawn);
+                
             } else
             {
                 //picked an entity
@@ -155,10 +161,31 @@ namespace Utopia.Editor
                 int z = voxel.Model.Blocks.GetLength(2);
                 byte[, ,] overlays = new byte[x, y, z];
                 _editedEntity = new VisualEntity(_voxelMeshFactory, voxel, overlays, IsColor);
-
+                
                 //after editing whether restore 'voxel' in _entityManager or dispose it at beginning and have server notify it changed 
             }
         }
+
+        public void EditYourself()
+        {
+            uint id = _player.EntityId;
+            VoxelEntity voxel = _player;
+            int x = voxel.Model.Blocks.GetLength(0);
+            int y = voxel.Model.Blocks.GetLength(1);
+            int z = voxel.Model.Blocks.GetLength(2);
+            byte[, ,] overlays = new byte[x, y, z];
+
+            //actually copies yourself and show the copy at newcubeplace, could really edit yourself and pass in 3rd person view 
+            _editedEntity = new VisualEntity(_voxelMeshFactory, voxel, overlays, IsColor);            
+            Vector3I pos = _player.EntityState.NewBlockPosition;
+            if (pos.IsZero())
+            {
+                Console.WriteLine(@"need a newcubeplace to edit yourself");
+            }
+            _editedEntity.Position = new Vector3D(pos.X, pos.Y, pos.Z);
+        }
+
+
         public override void LoadContent()
         {
             String[] dirs = new[] {@"Textures/Terran/", @"Textures/Editor/"};
@@ -362,11 +389,16 @@ namespace Utopia.Editor
             using ( BinaryWriter writer = new BinaryWriter(File.Open(path,FileMode.CreateNew)))
             {
                 _editedEntity.VoxelEntity.Model.Save(writer);    
-            }
-            
-            //TODO commit entity to server = _editedEntity.Commit();
+            }            
         }
 
+        /// <summary>
+        /// Commit modified entity to server 
+        /// </summary>
+        public void CommitEntity()
+        {
+            _editedEntity.Commit();
+        }
 
         private Vector3D _castedFrom, _castedTo;
        
@@ -505,6 +537,7 @@ namespace Utopia.Editor
             Selected.Clear();
         }
 
-       
+
+     
     }
 }

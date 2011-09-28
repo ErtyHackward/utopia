@@ -160,4 +160,14 @@ namespace Utopia.Editor
             Editor.EditSelectedEntity();
         }
     }
+
+    internal class EditorEditSelf : EditorTool
+    {
+        public EditorEditSelf(EntityEditor editor) : base(editor) { Name = "EditSelf"; }
+       
+        public override void Use()
+        {
+            Editor.EditYourself();
+        }
+    }
 }
