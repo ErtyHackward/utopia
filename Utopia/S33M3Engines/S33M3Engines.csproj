@@ -151,6 +151,7 @@
     <Compile Include="Struct\Vertex\VertexCubeFaceLQ.cs" />
     <Compile Include="Struct\Vertex\VertexCubeLiquid.cs" />
     <Compile Include="Struct\Vertex\VertexCubeSolid.cs" />
+    <Compile Include="Struct\Vertex\VertexPointSprite.cs" />
     <Compile Include="Struct\Vertex\VertexPosition.cs" />
     <Compile Include="Struct\Vertex\VertexPositionColor.cs" />
     <Compile Include="Struct\Vertex\VertexPositionColorTexture.cs" />
