@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory
 {
-    public class SpriteItem
+    public class SpriteItem : SpriteEntity, IItem, IDisposable
     {
     }
 }
