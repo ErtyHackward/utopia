@@ -251,9 +251,11 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             SaveItem(Arms, writer);
             SaveItem(Legs, writer);
             SaveItem(Feet, writer);
+
             SaveItem(LeftRing, writer);
             SaveItem(RightRing, writer);
             SaveItem(NeckLace, writer);
+
             SaveItem(LeftTool, writer);
             SaveItem(RightTool, writer);
         }
