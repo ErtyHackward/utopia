@@ -117,6 +117,16 @@ namespace Utopia.Settings
         /// use picked entity
         /// </summary>
         public KeyWithModifier Use;
+
+        /// <summary>
+        /// Throw equipped tool(s)
+        /// </summary>
+        public KeyWithModifier Throw;
+        
+        /// <summary>
+        /// Open/close inventory
+        /// </summary>
+        public KeyWithModifier Inventory;
     }
 
     /// <summary>
@@ -189,6 +199,8 @@ namespace Utopia.Settings
                         FreezeTime = new KeyWithModifier { MainKey = Keys.F10, Modifier = Keys.None, Info = "Stop World Clock" },
                         Chat = new KeyWithModifier { MainKey = Keys.Enter, Modifier = Keys.None, Info = "Open/Close the chat" },
                         Use = new KeyWithModifier { MainKey = Keys.E, Modifier = Keys.None, Info = "Use" },
+                        Throw = new KeyWithModifier { MainKey = Keys.Back, Modifier = Keys.None, Info = "Throw" },
+                        Inventory = new KeyWithModifier { MainKey = Keys.I, Modifier = Keys.None, Info = "Inventory" },
                     },
                     ServersList = new ServersList()
                 };

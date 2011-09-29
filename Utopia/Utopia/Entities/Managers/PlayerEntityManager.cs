@@ -1,35 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Ninject;
+using S33M3Engines;
+using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
 using S33M3Engines.D3D.DebugTools;
-using Utopia.Shared.Chunks.Entities.Interfaces;
-using Utopia.Shared.Chunks.Entities;
-using S33M3Engines;
-using S33M3Engines.WorldFocus;
-using S33M3Engines.Cameras;
-using Utopia.Action;
-using Utopia.InputManager;
-using Utopia.Shared.Chunks;
-using Utopia.Entities.Voxel;
-using Utopia.Shared.Structs;
-using SharpDX;
-using Utopia.Shared.Structs.Landscape;
-using Utopia.Shared.Cubes;
 using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.Struct;
-using S33M3Physics.Verlet;
+using S33M3Engines.WorldFocus;
 using S33M3Physics;
-using UtopiaContent.Effects.Terran;
-using S33M3Engines.Buffers;
-using S33M3Engines.Struct.Vertex;
-using Utopia.Shared.Chunks.Entities.Concrete;
-using S33M3Engines.StatesManager;
-using Utopia.Entities.Renderer;
-using Ninject;
+using S33M3Physics.Verlet;
+using SharpDX;
+using Utopia.Action;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Entities.Renderer;
+using Utopia.Entities.Voxel;
+using Utopia.InputManager;
+using Utopia.Shared.Chunks;
+using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Cubes;
+using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Entities.Managers
 {
@@ -195,6 +186,25 @@ namespace Utopia.Entities.Managers
                         Player.RightToolUse();
                     }
                 }
+            }
+
+            if (_actions.isTriggered(Actions.EntityUse))
+            {
+                //TODO implement use 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
+                //like opening a chest or a door  
+            }
+
+
+            if (_actions.isTriggered(Actions.EntityThrow))
+            {
+                //TODO unequip left item and throw it on the ground, (version 0 = place it at newCubeplace, animation later)
+                // or throw left + right
+                // or left first then right if nothing in left hand­­
+            }
+
+            if (_actions.isTriggered(Actions.OpenInventory))
+            {
+                //TODO open/close inventory
             }
 
         }
