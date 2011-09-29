@@ -534,6 +534,13 @@ namespace Utopia
                 TriggerType = KeyboardTriggerMode.KeyDownUp,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Throw
             });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction
+            {
+                Action = Actions.OpenInventory,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Inventory
+            });
         }
 
         public override void LoadContent()

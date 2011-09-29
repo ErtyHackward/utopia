@@ -16,8 +16,8 @@ namespace Utopia.GUI.D3D.Inventory
 
         public InventoryWindow(SpriteTexture back, PlayerCharacter player)
         {
-            InitializeComponent(back);
             _player = player;
+            InitializeComponent(back);            
         }
 
         private void InitializeComponent(SpriteTexture back)
@@ -68,28 +68,32 @@ namespace Utopia.GUI.D3D.Inventory
         {
             SlotContainer<ContainedSlot> slots = _player.Inventory;
 
+            DraggableItemControl[,] uiGrid = new DraggableItemControl[slots.GridSize.X, slots.GridSize.Y];
+
+            for (int x = 0; x < slots.GridSize.X; x++)
+            {
+                for (int y = 0; y < slots.GridSize.Y; y++)
+                {
+                    var control = new InventoryCell();
+                    control.Bounds = new UniRectangle(xstart + x * Item.IconSize, y * Item.IconSize, Item.IconSize,
+                                                      Item.IconSize);
+                    control.Name = x + "," + y;
+                    Children.Add(control);
+
+                    var drag = new DraggableItemControl();
+                    drag.Bounds = DraggableItemControl.referenceBounds;
+                    drag.Name = "drag " + x + "," + y;
+
+                    control.Children.Add(drag);
+                    uiGrid[x, y] = drag;
+                }
+            }
+
             foreach (var containedSlot in slots)
             {
                 int x = containedSlot.GridPosition.X;
                 int y = containedSlot.GridPosition.Y;
-                
-                var control = new InventoryCell();
-                control.Bounds = new UniRectangle(xstart + x*Item.IconSize, y*Item.IconSize, Item.IconSize,
-                                                      Item.IconSize);
-                control.Name = x + "," + y;
-                Children.Add(control);
-                  
-                control.Item = containedSlot.Item;
-                var drag = new DraggableItemControl();
-                drag.Bounds = DraggableItemControl.referenceBounds;
-                drag.Name = "drag " + x + "," + y;
-
-                //if (cell < items.Count()) drag.Item = items[cell];
-
-                control.Children.Add(drag);
-
-                
-                }
+                uiGrid[x, y].Item = containedSlot.Item;
             }
         }
     }
