@@ -17,12 +17,6 @@ namespace Utopia.Shared.Chunks.Entities
         public SpriteFormat Format;
 
         /// <summary>
-        /// In case an entity support "growing"
-        /// This variable could be use to change the texture use to display the sprite
-        /// </summary>
-        public byte EvolutionPhase;
-
-        /// <summary>
         /// The Sprite scale
         /// </summary>
         public Vector3 Scale;
@@ -42,7 +36,6 @@ namespace Utopia.Shared.Chunks.Entities
             // first we need to load base information
             base.Load(reader);
             Format = (SpriteFormat)reader.ReadByte();
-            EvolutionPhase = reader.ReadByte();
             Scale = new Vector3();
             Scale.X = reader.ReadSingle();
             Scale.Y = reader.ReadSingle();
@@ -55,7 +48,6 @@ namespace Utopia.Shared.Chunks.Entities
             // first we need to save base information
             base.Save(writer);
             writer.Write((byte)Format);
-            writer.Write(EvolutionPhase);
             writer.Write(Scale.X);
             writer.Write(Scale.Y);
             writer.Write(Scale.Z);
