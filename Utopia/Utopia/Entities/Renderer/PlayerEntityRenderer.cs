@@ -78,7 +78,6 @@ namespace Utopia.Entities.Renderer
             _entityEffect.CBPerFrame.IsDirty = true;
 
             Matrix world = _worldFocusManager.CenterOnFocus(ref VisualEntity.VisualEntity.World);
-            world *= Matrix.Translation(5, 0, 0);
 
             _entityEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
             _entityEffect.CBPerDraw.IsDirty = true;

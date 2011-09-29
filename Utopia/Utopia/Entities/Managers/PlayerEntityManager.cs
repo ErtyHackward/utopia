@@ -721,7 +721,7 @@ namespace Utopia.Entities.Managers
             Vector3 entityCenteredPosition = _worldPosition.ValueInterp.AsVector3();
             //entityCenteredPosition.X -= Player.Size.X / 2;
             //entityCenteredPosition.Z -= Player.Size.Z / 2;
-            VisualEntity.World = Matrix.Scaling(Player.Size) * Matrix.RotationQuaternion(_lookAtDirection.ValueInterp) * Matrix.Translation(entityCenteredPosition);
+            VisualEntity.World = Matrix.RotationQuaternion(_lookAtDirection.ValueInterp) * Matrix.Translation(entityCenteredPosition);
             //VisualEntity.World = Matrix.Scaling(Player.Size) * Matrix.Translation(entityCenteredPosition);
             //===================================================================================================================================
         }
