@@ -13,6 +13,7 @@ namespace Utopia.GUI.D3D.Inventory
     public class InventoryWindow : ContainerControl
     {
         private readonly PlayerCharacter _player;
+        private DraggableItemControl[,] _uiGrid;
 
         public InventoryWindow(SpriteTexture back, PlayerCharacter player)
         {
@@ -68,7 +69,7 @@ namespace Utopia.GUI.D3D.Inventory
         {
             SlotContainer<ContainedSlot> slots = _player.Inventory;
 
-            DraggableItemControl[,] uiGrid = new DraggableItemControl[slots.GridSize.X, slots.GridSize.Y];
+             _uiGrid = new DraggableItemControl[slots.GridSize.X, slots.GridSize.Y];
 
             for (int x = 0; x < slots.GridSize.X; x++)
             {
@@ -85,16 +86,22 @@ namespace Utopia.GUI.D3D.Inventory
                     drag.Name = "drag " + x + "," + y;
 
                     control.Children.Add(drag);
-                    uiGrid[x, y] = drag;
+                    _uiGrid[x, y] = drag;
                 }
             }
+        }
+
+        public void Refresh()
+        {
+            SlotContainer<ContainedSlot> slots = _player.Inventory;
 
             foreach (var containedSlot in slots)
             {
                 int x = containedSlot.GridPosition.X;
                 int y = containedSlot.GridPosition.Y;
-                uiGrid[x, y].Item = containedSlot.Item;
+                _uiGrid[x, y].Item = containedSlot.Item;
             }
         }
+
     }
 }

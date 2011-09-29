@@ -4,7 +4,7 @@ using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
-    //a shvovel is blockRemover restricted to grass & dirt
+    //a shovel is blockRemover restricted to grass & dirt
     public class Shovel : BlockRemover
     {
         public Shovel()
@@ -23,6 +23,14 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
         public override int MaxStackSize
         {
             get { return 1; }
+        }
+
+        public override string DisplayName
+        {
+            get
+            {
+                return "Shovel";
+            }
         }
     }
 }
