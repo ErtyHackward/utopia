@@ -82,6 +82,7 @@
     <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\Entities\CharacterEntity.cs" />
+    <Compile Include="Chunks\Entities\Concrete\Collectible\Grass.cs" />
     <Compile Include="Chunks\Entities\Concrete\EditableVoxelEntity.cs" />
     <Compile Include="Chunks\Entities\Concrete\Zombie.cs" />
     <Compile Include="Chunks\Entities\EntityCollectionEventArgs.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Chunks\Entities\Events\VoxelModelEventArgs.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IDynamicEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IEntity.cs" />
+    <Compile Include="Chunks\Entities\Interfaces\IGrowEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\ISlotContainer.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IToolImpact.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IToolLogic.cs" />
