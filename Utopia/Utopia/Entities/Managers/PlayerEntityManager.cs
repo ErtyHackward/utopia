@@ -1,11 +1,13 @@
 ﻿using System;
 using Ninject;
+using Nuclex.UserInterface;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
 using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
+using S33M3Engines.Shared.Sprites;
 using S33M3Engines.Struct;
 using S33M3Engines.WorldFocus;
 using S33M3Physics;
@@ -15,6 +17,7 @@ using Utopia.Action;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer;
 using Utopia.Entities.Voxel;
+using Utopia.GUI.D3D.Inventory;
 using Utopia.InputManager;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
@@ -66,6 +69,7 @@ namespace Utopia.Entities.Managers
         private Vector3D _entityXAxis, _entityYAxis, _entityZAxis;
         private IPickingRenderer _pickingRenderer;
         private IEntityPickingManager _entityPickingManager;
+        private readonly Screen _screen;
 
         //Drawing component
         private IEntitiesRenderer _playerRenderer;
@@ -76,6 +80,10 @@ namespace Utopia.Entities.Managers
         /// The Player
         /// </summary>
         public readonly PlayerCharacter Player;
+
+        private InventoryWindow _inventoryUI;
+        private SpriteTexture _backgroundTex;
+
         /// <summary>
         /// The Player Voxel body
         /// </summary>
@@ -116,7 +124,9 @@ namespace Utopia.Entities.Managers
                                    PlayerCharacter player,
                                    [Named("PlayerEntityRenderer")] IEntitiesRenderer playerRenderer,
                                    IPickingRenderer pickingRenderer,
-                                   IEntityPickingManager entityPickingManager)
+                                   IEntityPickingManager entityPickingManager,
+                                   Screen screen
+            )
         {
             _d3DEngine = engine;
             _cameraManager = cameraManager;
@@ -127,7 +137,7 @@ namespace Utopia.Entities.Managers
             _playerRenderer = playerRenderer;
             _pickingRenderer = pickingRenderer;
             _entityPickingManager = entityPickingManager;
-
+            _screen = screen;
 
 
             entityPickingManager.Player = this;
@@ -142,6 +152,7 @@ namespace Utopia.Entities.Managers
         {
             this.VisualEntity.Dispose();
             // _playerRenderer.Dispose(); ==> REgistered with Ninject
+            _backgroundTex.Dispose();
         }
 
         #region Private Methods
@@ -197,14 +208,20 @@ namespace Utopia.Entities.Managers
 
             if (_actions.isTriggered(Actions.EntityThrow))
             {
-                //TODO unequip left item and throw it on the ground, (version 0 = place it at newCubeplace, animation later)
-                // or throw left + right
-                // or left first then right if nothing in left hand­­
+                //TODO unequip left item and throw it on the ground, (version 0 = place it at newCubeplace, animation later)                
+                // and next, throw the right tool if left tool is already thrown
             }
 
             if (_actions.isTriggered(Actions.OpenInventory))
             {
-                //TODO open/close inventory
+                 if (_screen.Desktop.Children.Contains(_inventoryUI))
+                 {
+                     _screen.Desktop.Children.Remove(_inventoryUI);
+                 }
+                else
+                 {
+                     _screen.Desktop.Children.Add(_inventoryUI);
+                 }
             }
 
         }
@@ -675,6 +692,8 @@ namespace Utopia.Entities.Managers
         /// </summary>
         public override void LoadContent()
         {
+             _backgroundTex = new SpriteTexture(_d3DEngine.Device, @"Textures\charactersheet.png", new Vector2(0, 0));
+             _inventoryUI = new InventoryWindow(_backgroundTex, Player);
         }
 
         public override void Update(ref GameTime timeSpent)
@@ -689,7 +708,7 @@ namespace Utopia.Entities.Managers
 
             //Refresh the player Bounding box
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
-
+            
             _playerRenderer.Update(ref timeSpent);
         }
 

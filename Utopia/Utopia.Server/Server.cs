@@ -514,7 +514,9 @@ namespace Utopia.Server
             dEntity.CharacterName = clientConnection.Login;
             dEntity.Equipment.LeftTool = (Tool)EntityFactory.Instance.CreateEntity(EntityClassId.Annihilator);
             dEntity.Equipment.RightTool = (Tool)EntityFactory.Instance.CreateEntity(EntityClassId.DirtAdder);
-            
+
+            Item item = new Shovel();            
+            dEntity.Inventory.PutItem(item);
             var serverChar = new ServerPlayerCharacterEntity(clientConnection, dEntity, this);
             return serverChar;
         }
