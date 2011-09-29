@@ -31,7 +31,9 @@ namespace Utopia.Action
         Block_SelectPrevious,
         World_FreezeTime,
         DebugUI_Insert,
-        Toggle_Chat,
-        EntityUse
+        Toggle_Chat,//XXX this syntax is not standard, its' camelCase with an underscore, resharper doesn't even support it !
+        EntityUse,
+        EntityThrow,
+        OpenInventory
     }
 }

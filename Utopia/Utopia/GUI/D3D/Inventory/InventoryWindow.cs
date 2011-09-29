@@ -1,115 +1,94 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
-
-using Nuclex.UserInterface;
-using SharpDX.Direct3D11;
-using Utopia.Shared.Chunks.Entities.Inventory;
 using S33M3Engines.Shared.Sprites;
-
+using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Inventory;
 
 namespace Utopia.GUI.D3D.Inventory
 {
     /// <summary> InventoryWindow </summary>
     public class InventoryWindow : ContainerControl
     {
+        private readonly PlayerCharacter _player;
 
-       private ButtonControl _okButton;
-        //private Utopia.Shared.Chunks.Entities.Inventory.PlayerInventory _inventory;
-
-        public InventoryWindow(/*PlayerInventory inventory,*/ SpriteTexture back)
+        public InventoryWindow(SpriteTexture back, PlayerCharacter player)
         {
-            //_inventory = inventory;
             InitializeComponent(back);
-        }
-
-        /// <summary>Called when the user clicks on the okay button</summary>
-        /// <param name="sender">Button the user has clicked on</param>
-        /// <param name="arguments">Not used</param>
-        private void okClicked(object sender, EventArgs arguments)
-        {
-            this.RemoveFromParent();
+            _player = player;
         }
 
         private void InitializeComponent(SpriteTexture back)
         {
-           
-            this._okButton = new Nuclex.UserInterface.Controls.Desktop.ButtonControl();
+            var okButton = new ButtonControl();
 
-            this._okButton.Bounds = new UniRectangle(
+            okButton.Bounds = new UniRectangle(
                 new UniScalar(1.0f, -180.0f), new UniScalar(1.0f, -40.0f), 80, 24
-            );
-            this._okButton.Text = "Ok";
-            //this.okButton.ShortcutButton = Buttons.A;
-            this._okButton.Pressed += new EventHandler(okClicked);
+                );
+            okButton.Text = "Ok";
 
-            this.Bounds = new UniRectangle(80.0f, 10.0f, 512.0f, 384.0f);
+            okButton.Pressed += delegate { RemoveFromParent(); };
+
+            Bounds = new UniRectangle(80.0f, 10.0f, 512.0f, 384.0f);
             //this.Title = "Inventory";
-            Children.Add(this._okButton);
+            Children.Add(okButton);
 
-            buildCharacterSheet(back);
-            buildGrid(back.Width + 5);
-
+            BuildCharacterSheet(back);
+            BuildGrid(back.Width + 5);
         }
 
-        private void buildCharacterSheet(SpriteTexture back)
+        private void BuildCharacterSheet(SpriteTexture back)
         {
-            ContainerControl characterSheet = new ContainerControl();
+            var characterSheet = new ContainerControl();
             characterSheet.background = back;
             characterSheet.Bounds = new UniRectangle(0, 0, back.Width, back.Height);
             Children.Add(characterSheet);
-
-            buildBodyslot(characterSheet, EquipmentSlotType.Head, 74, 2);
-            buildBodyslot(characterSheet, EquipmentSlotType.Neck, 82, 46, 16);
-            buildBodyslot(characterSheet, EquipmentSlotType.Torso, 74, 71);
-            buildBodyslot(characterSheet, EquipmentSlotType.RightHand, 145, 64);
-            buildBodyslot(characterSheet, EquipmentSlotType.LeftHand, 2, 64);
-            buildBodyslot(characterSheet, EquipmentSlotType.Legs, 110, 136);
-            buildBodyslot(characterSheet, EquipmentSlotType.Feet, 48, 178);
-            buildBodyslot(characterSheet, EquipmentSlotType.LeftRing, 5, 101, 16);
-
+            //XXX externalize charactersheet slot positions. clientsettings.xml or somewhere else
+            BuildBodyslot(characterSheet, EquipmentSlotType.Head, 74, 2);
+            BuildBodyslot(characterSheet, EquipmentSlotType.Neck, 82, 46, 16);
+            BuildBodyslot(characterSheet, EquipmentSlotType.Torso, 74, 71);
+            BuildBodyslot(characterSheet, EquipmentSlotType.RightHand, 145, 64);
+            BuildBodyslot(characterSheet, EquipmentSlotType.LeftHand, 2, 64);
+            BuildBodyslot(characterSheet, EquipmentSlotType.Legs, 110, 136);
+            BuildBodyslot(characterSheet, EquipmentSlotType.Feet, 48, 178);
+            BuildBodyslot(characterSheet, EquipmentSlotType.LeftRing, 5, 101, 16);
         }
 
-        private void buildBodyslot(Control parent, EquipmentSlotType inventorySlot, int x, int y, int size = 32)
+        private void BuildBodyslot(Control parent, EquipmentSlotType inventorySlot, int x, int y, int size = 32)
         {
-            InventoryCell bodyCell = new InventoryCell(inventorySlot);
+            var bodyCell = new InventoryCell(inventorySlot);
             bodyCell.Bounds = new UniRectangle(x, y, size, size);
             bodyCell.IsLink = true;
             parent.Children.Add(bodyCell);
         }
 
-        public void buildGrid(int xstart)
+        public void BuildGrid(int xstart)
         {
+            SlotContainer<ContainedSlot> slots = _player.Inventory;
 
-            //List<ContainedSlot> items = _inventory.Bag.Items;
-
-            int gridSize = 5; // grid is gridSize*gridSize
-
-            int cell = 0;
-
-            for (int x = 0; x < gridSize; x++)
+            foreach (var containedSlot in slots)
             {
-                for (int y = 0; y < gridSize; y++)
-                {
-                    InventoryCell control = new InventoryCell();
-                    control.Bounds = new UniRectangle(xstart + x * Item.IconSize, y * Item.IconSize, Item.IconSize, Item.IconSize);
-                    control.Name = x + "," + y;
-                    Children.Add(control);
+                int x = containedSlot.GridPosition.X;
+                int y = containedSlot.GridPosition.Y;
+                
+                var control = new InventoryCell();
+                control.Bounds = new UniRectangle(xstart + x*Item.IconSize, y*Item.IconSize, Item.IconSize,
+                                                      Item.IconSize);
+                control.Name = x + "," + y;
+                Children.Add(control);
+                  
+                control.Item = containedSlot.Item;
+                var drag = new DraggableItemControl();
+                drag.Bounds = DraggableItemControl.referenceBounds;
+                drag.Name = "drag " + x + "," + y;
 
-                    //control.Item = items[cell];
-                    DraggableItemControl drag = new DraggableItemControl();
-                    drag.Bounds = DraggableItemControl.referenceBounds;
-                    drag.Name = "drag " + x + "," + y;
+                //if (cell < items.Count()) drag.Item = items[cell];
 
-                    //if (cell < items.Count()) drag.Item = items[cell];
+                control.Children.Add(drag);
 
-                    control.Children.Add(drag);
-
-                    cell++;
+                
                 }
             }
         }
