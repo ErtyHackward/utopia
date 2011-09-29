@@ -11,9 +11,9 @@ namespace Utopia.GUI.D3D.Inventory
     {
         bool MouseHovering { get; set; }
         bool IsLink { get; set; }
-        Item Item { get; set; }
+        IItem Item { get; set; }
 
         EquipmentSlotType InventorySlot { get; set; }
-        void Link(Item item);
+        void Link(IItem item);
     }
 }

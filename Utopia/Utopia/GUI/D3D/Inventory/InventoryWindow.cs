@@ -76,8 +76,7 @@ namespace Utopia.GUI.D3D.Inventory
                 for (int y = 0; y < slots.GridSize.Y; y++)
                 {
                     var control = new InventoryCell();
-                    control.Bounds = new UniRectangle(xstart + x * Item.IconSize, y * Item.IconSize, Item.IconSize,
-                                                      Item.IconSize);
+                    control.Bounds = new UniRectangle(xstart + x * 64, y * 64, 64, 64);
                     control.Name = x + "," + y;
                     Children.Add(control);
 

@@ -30,6 +30,9 @@
         NonPlayerCharacter = 3001,
         Zombie = 3002,
 
+        //Static Sprite
+        Grass = 4000,
+
         //Special case
         EditableEntity = 10001
     }

@@ -31,9 +31,9 @@ namespace Utopia.GUI.D3D.Inventory
         }
 
         public bool IsLink { get; set; }
-        public Item Item { get; set; }
+        public IItem Item { get; set; }
 
-        public void Link(Item itemToLink)
+        public void Link(IItem itemToLink)
         {
             Item = itemToLink;
         }

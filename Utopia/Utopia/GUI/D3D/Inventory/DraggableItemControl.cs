@@ -15,10 +15,10 @@ namespace Utopia.GUI.D3D.Inventory
 {
     public class DraggableItemControl : Control
     {
-        public static UniRectangle referenceBounds = new UniRectangle(0, 0, Item.IconSize, Item.IconSize);
+        public static UniRectangle referenceBounds = new UniRectangle(0, 0, 64, 64);
        public bool beingDragged;
 
-        public Item Item { get; set; }
+       public IItem Item { get; set; }
 
         /// <summary>X coordinate at which the control was picked up</summary>
         protected float pickupX;

@@ -16,7 +16,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// <summary>
         /// Gets or sets entity
         /// </summary>
-        public Item Item { get; set; }
+        public IItem Item { get; set; }
 
         /// <summary>
         /// Indicates if slot is empty
@@ -39,7 +39,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
             if (!IsEmpty)
             {
-                Item = (Item) EntityFactory.Instance.CreateFromBytes(reader);
+                Item = (IItem)EntityFactory.Instance.CreateFromBytes(reader);
             }
         }
 
