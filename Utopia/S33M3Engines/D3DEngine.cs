@@ -22,7 +22,6 @@ namespace S33M3Engines
     {
         #region Static Variables
         public static IntPtr WindowHandle;
-        public static bool FIXED_TIMESTEP_ENABLED = true;
         public static bool FULLDEBUGMODE = false;
         #endregion
 

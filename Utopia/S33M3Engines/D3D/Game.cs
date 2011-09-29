@@ -53,16 +53,6 @@ namespace S33M3Engines.D3D
             set { _vSync = value == true ? 1 : 0; }
         }
 
-        public bool FixedTimeSteps
-        {
-            get { return S33M3Engines.D3DEngine.FIXED_TIMESTEP_ENABLED; }
-            set
-            {
-                ResetGamePendingUpdate(value);
-                S33M3Engines.D3DEngine.FIXED_TIMESTEP_ENABLED = value;
-            }
-        }
-
         public GameExitReasonMessage GameExitReason;
         #endregion
 
@@ -104,6 +94,7 @@ namespace S33M3Engines.D3D
 
         #region Public Methods
 
+        double test;
         //Init + Start the pump !
         public void Run()
         {
@@ -113,37 +104,24 @@ namespace S33M3Engines.D3D
             //Call components Load Content
             LoadContent();
 
-            ResetGamePendingUpdate(FixedTimeSteps);
-
             //The Pump !
             RenderLoop.Run(_d3dEngine.GameWindow, () =>
             {
                 if (_isFormClosed) return;
 
-                if (FixedTimeSteps)
+                _updateWithoutrenderingCount = 0;
+                while (Stopwatch.GetTimestamp() > _next_game_update && _updateWithoutrenderingCount < _maxRenderFrameSkip && _isFormClosed == false)
                 {
-                    _updateWithoutrenderingCount = 0;
-                    while (Stopwatch.GetTimestamp() > _next_game_update &&
-                            _updateWithoutrenderingCount < _maxRenderFrameSkip &&
-                            _isFormClosed == false)
-                    {
-                        _gameTime.Update(FixedTimeSteps);
-                        Update(ref _gameTime);
-
-                        _next_game_update += GameUpdateDelta;
-                        _updateWithoutrenderingCount++;
-                    }
-
-                    _interpolation_hd = (double) (Stopwatch.GetTimestamp() + GameUpdateDelta - _next_game_update) / GameUpdateDelta;
-                    _interpolation_ld = (float)_interpolation_hd;
-                    Interpolation(ref _interpolation_hd, ref _interpolation_ld);
-                    //Call before each Draw !
-                }
-                else
-                {
-                    _gameTime.Update(FixedTimeSteps);
+                    _gameTime.Update();
                     Update(ref _gameTime);
+
+                    _next_game_update += GameUpdateDelta;
+                    _updateWithoutrenderingCount++;
                 }
+
+                _interpolation_hd = (double) (Stopwatch.GetTimestamp() + GameUpdateDelta - _next_game_update) / GameUpdateDelta;
+                _interpolation_ld = (float)_interpolation_hd;
+                Interpolation(ref _interpolation_hd, ref _interpolation_ld);
 
                 Draw();
             });
@@ -151,14 +129,6 @@ namespace S33M3Engines.D3D
             _d3dEngine.UnlockedMouse = false;
 
             UnloadContent();
-            //Dispose();
-        }
-
-        public void ResetGamePendingUpdate(bool fixedTimeSteps)
-        {
-            _gameTime.Update(fixedTimeSteps);
-            _gameTime.Update(fixedTimeSteps);
-            _next_game_update = Stopwatch.GetTimestamp();
         }
 
         //Close Window to stop the Window Pump !

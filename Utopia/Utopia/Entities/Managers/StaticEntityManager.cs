@@ -47,7 +47,6 @@ namespace Utopia.Entities.Managers
 
         public override void Initialize()
         {
-            offset = 0.03f;
             TextureAnimationOffset.Value = 0.00f;
             TextureAnimationOffset.ValuePrev = 0.00f;
         }
@@ -77,21 +76,10 @@ namespace Utopia.Entities.Managers
 
         #region Public Methods
         private float _windpower;
-        private long previousTime, currentTime, previousTimeTex, currentTimeTex;
-        private long timeAccumulator, timeAccumulatorTex;
-        private long FloodingSpeedTex = (long)(Stopwatch.Frequency / 30);
-        float offset = 0.03f;
+        float offset = 0.01f;
         FTSValue<float> TextureAnimationOffset = new FTSValue<float>();
         public override void Update(ref GameTime timeSpent)
         {
-            //Start Tempo
-            currentTimeTex = Stopwatch.GetTimestamp();
-            timeAccumulatorTex += currentTimeTex - previousTimeTex;
-            previousTimeTex = currentTimeTex;
-
-            if (timeAccumulatorTex < FloodingSpeedTex) return;
-            timeAccumulatorTex = 0;
-
             TextureAnimationOffset.BackUpValue();
 
             TextureAnimationOffset.Value += offset;
@@ -103,13 +91,11 @@ namespace Utopia.Entities.Managers
             {
                 offset *= -1;
             }
-        }
 
+        }
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-            //if (interpolationLd < 0 || interpolationLd > 1) Console.WriteLine("ERROR");
             TextureAnimationOffset.ValueInterp = MathHelper.Lerp(TextureAnimationOffset.ValuePrev, TextureAnimationOffset.Value, interpolationLd);
-            //Console.WriteLine(TextureAnimationOffset.Value + " " + TextureAnimationOffset.ValuePrev + " = " + TextureAnimationOffset.ValueInterp + "(" + interpolationLd + ")");
         }
 
         public override void Draw(int Index)

@@ -116,7 +116,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             Vector2 m_camera_pos = new Vector2((float)_camManager.ActiveCamera.WorldPosition.X, (float)_camManager.ActiveCamera.WorldPosition.Z); //Position de la caméra en X et Z, sans la composante Y
 
-            Vector2 CloudsMapOffset = _cloud_MapOffset.ActualValue - m_camera_pos;                      //Speed * Time = Distance
+            Vector2 CloudsMapOffset = _cloud_MapOffset.ValueInterp - m_camera_pos;                      //Speed * Time = Distance
             Vector2 CloudsMapOffsetWithCamera = -(CloudsMapOffset - m_camera_pos); //Je retire la position de ma caméra, pour compenser le mouvement de la caméra
             Location2<int> center_of_drawing_in_noise_i = new Location2<int>((int)(CloudsMapOffsetWithCamera.X / _cloud_size), (int)(CloudsMapOffsetWithCamera.Y / _cloud_size));
             Vector2 world_center_of_drawing_in_noise_f = new Vector2(center_of_drawing_in_noise_i.X * _cloud_size, center_of_drawing_in_noise_i.Z * _cloud_size) + CloudsMapOffset;

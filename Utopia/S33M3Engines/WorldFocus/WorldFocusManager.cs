@@ -37,9 +37,9 @@ namespace S33M3Engines.WorldFocus
         /// <param name="WorldFocusedMatrix"></param>
         public void CenterTranslationMatrixOnFocus(ref Matrix WorldTranslationMatrix, ref Matrix WorldFocusedMatrix)
         {
-                WorldFocusedMatrix.M41 = WorldTranslationMatrix.M41 - (float)_worldFocus.FocusPoint.ActualValue.X;
-                WorldFocusedMatrix.M42 = WorldTranslationMatrix.M42 - (float)_worldFocus.FocusPoint.ActualValue.Y;
-                WorldFocusedMatrix.M43 = WorldTranslationMatrix.M43 - (float)_worldFocus.FocusPoint.ActualValue.Z;
+            WorldFocusedMatrix.M41 = WorldTranslationMatrix.M41 - (float)_worldFocus.FocusPoint.ValueInterp.X;
+            WorldFocusedMatrix.M42 = WorldTranslationMatrix.M42 - (float)_worldFocus.FocusPoint.ValueInterp.Y;
+            WorldFocusedMatrix.M43 = WorldTranslationMatrix.M43 - (float)_worldFocus.FocusPoint.ValueInterp.Z;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace S33M3Engines.WorldFocus
         /// <param name="WorldFocusedMatrix"></param>
         public Matrix CenterOnFocus(ref Matrix WorldMatrix)
         {
-            return WorldMatrix * _worldFocus.FocusPointMatrix.ActualValue;
+            return WorldMatrix * _worldFocus.FocusPointMatrix.ValueInterp;
         }
         #endregion
 

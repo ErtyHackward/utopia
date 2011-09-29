@@ -129,13 +129,13 @@ namespace S33M3Engines.Cameras
 
         public Vector3D WorldPosition
         {
-            get { return _worldPosition.ActualValue; }
+            get { return _worldPosition.ValueInterp; }
             set { _worldPosition.Value = value; }
         }
 
         public Quaternion Orientation
         {
-            get { return _cameraOrientation.ActualValue; }
+            get { return _cameraOrientation.ValueInterp; }
             set { _cameraOrientation.Value = value; }
         }
 
