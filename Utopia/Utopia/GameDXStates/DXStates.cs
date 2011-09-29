@@ -60,6 +60,7 @@ namespace Utopia.GameDXStates
             public static int Enabled;
             public static int Disabled;
             public static int Sprite;
+            public static int AlphaToCoverage;
         }
 
         private static void CreateBlendStatesCollection()
@@ -115,6 +116,23 @@ namespace Utopia.GameDXStates
                 BlendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
             }
             Blenders.Sprite = StatesRepository.AddBlendStates(BlendDescr);
+
+            //Blender.AlphaToCoverage
+            BlendDescr = new BlendStateDescription();
+            BlendDescr.IndependentBlendEnable = false;
+            BlendDescr.AlphaToCoverageEnable = true;
+            for (int i = 0; i < 8; i++)
+            {
+                BlendDescr.RenderTarget[i].IsBlendEnabled = false;
+                BlendDescr.RenderTarget[i].SourceBlend = BlendOption.SourceAlpha;
+                BlendDescr.RenderTarget[i].DestinationBlend = BlendOption.InverseSourceAlpha;
+                BlendDescr.RenderTarget[i].BlendOperation = BlendOperation.Add;
+                BlendDescr.RenderTarget[i].SourceAlphaBlend = BlendOption.One;
+                BlendDescr.RenderTarget[i].DestinationAlphaBlend = BlendOption.One;
+                BlendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
+                BlendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
+            }
+            Blenders.AlphaToCoverage = StatesRepository.AddBlendStates(BlendDescr);
         }
 
         public static class DepthStencils

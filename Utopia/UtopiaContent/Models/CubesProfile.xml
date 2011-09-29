@@ -308,10 +308,10 @@
     <Id>17</Id>
     <Tex_Top>12</Tex_Top>
     <Tex_Bottom>12</Tex_Bottom>
-    <Tex_Front>12</Tex_Front>
-    <Tex_Back>12</Tex_Back>
-    <Tex_Left>12</Tex_Left>
-    <Tex_Right>12</Tex_Right>
+    <Tex_Front>11</Tex_Front>
+    <Tex_Back>11</Tex_Back>
+    <Tex_Left>11</Tex_Left>
+    <Tex_Right>11</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>

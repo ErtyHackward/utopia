@@ -28,11 +28,13 @@ namespace S33M3Engines.D3D.Effects.Basics
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
 
-        [StructLayout(LayoutKind.Explicit, Size = 64)]
+        [StructLayout(LayoutKind.Explicit, Size = 80)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
             public Matrix ViewProjection;
+            [FieldOffset(64)]
+            public float WindPower;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
         #endregion
