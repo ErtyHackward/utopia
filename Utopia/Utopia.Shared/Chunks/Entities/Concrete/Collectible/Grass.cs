@@ -22,20 +22,20 @@ namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
         }
 
         #region Public methods
-        // we need to override save and load!
-        public override void Load(BinaryReader reader)
-        {
-            // first we need to load base information
-            base.Load(reader);
-            GrowPhase = reader.ReadByte();
-        }
+        //// we need to override save and load!
+        //public override void Load(BinaryReader reader)
+        //{
+        //    // first we need to load base information
+        //    base.Load(reader);
+        //    GrowPhase = reader.ReadByte();
+        //}
 
-        public override void Save(BinaryWriter writer)
-        {
-            // first we need to save base information
-            base.Save(writer);
-            writer.Write(GrowPhase);
-        }
+        //public override void Save(BinaryWriter writer)
+        //{
+        //    // first we need to save base information
+        //    base.Save(writer);
+        //    writer.Write(GrowPhase);
+        //}
         #endregion
 
         #region Private methods

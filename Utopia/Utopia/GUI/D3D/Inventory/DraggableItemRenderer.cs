@@ -37,7 +37,7 @@ namespace Utopia.GUI.D3D.Inventory
             if (control.Item != null)
             {
                 graphics.DrawString("button.normal",controlBounds,control.Item.DisplayName);
-                graphics.DrawCustomTexture(control.Item.Icon, controlBounds);
+                //graphics.DrawCustomTexture(control.Item.Icon, controlBounds);
             }
         }
 
