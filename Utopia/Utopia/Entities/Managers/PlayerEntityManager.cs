@@ -81,7 +81,7 @@ namespace Utopia.Entities.Managers
         /// </summary>
         public readonly PlayerCharacter Player;
 
-        private InventoryWindow _inventoryUI;
+        private InventoryWindow _inventoryUi;
         private SpriteTexture _backgroundTex;
 
         /// <summary>
@@ -214,13 +214,14 @@ namespace Utopia.Entities.Managers
 
             if (_actions.isTriggered(Actions.OpenInventory))
             {
-                 if (_screen.Desktop.Children.Contains(_inventoryUI))
+                 if (_screen.Desktop.Children.Contains(_inventoryUi))
                  {
-                     _screen.Desktop.Children.Remove(_inventoryUI);
+                     _screen.Desktop.Children.Remove(_inventoryUi);
                  }
                 else
                  {
-                     _screen.Desktop.Children.Add(_inventoryUI);
+                     _inventoryUi.Refresh();
+                     _screen.Desktop.Children.Add(_inventoryUi);
                  }
             }
 
@@ -693,7 +694,7 @@ namespace Utopia.Entities.Managers
         public override void LoadContent()
         {
              _backgroundTex = new SpriteTexture(_d3DEngine.Device, @"Textures\charactersheet.png", new Vector2(0, 0));
-             _inventoryUI = new InventoryWindow(_backgroundTex, Player);
+             _inventoryUi = new InventoryWindow(_backgroundTex, Player);
         }
 
         public override void Update(ref GameTime timeSpent)
