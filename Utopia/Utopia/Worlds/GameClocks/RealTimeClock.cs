@@ -39,7 +39,7 @@ namespace Utopia.Worlds.GameClocks
         {
             _clockTime.Value = (float)(DateTime.Now.Hour * 60 + DateTime.Now.Minute) * (float)(Math.PI) / 12.0f / 60.0f;
 
-            _visualClockTime.Time = _clockTime.ActualValue;
+            _visualClockTime.Time = _clockTime.ValueInterp;
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)

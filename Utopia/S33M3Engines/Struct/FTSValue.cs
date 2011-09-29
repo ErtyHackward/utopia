@@ -11,21 +11,6 @@ namespace S33M3Engines.Struct
         public T ValuePrev;
         public T ValueInterp;
 
-        public T ActualValue
-        {
-            get
-            {
-                if (D3DEngine.FIXED_TIMESTEP_ENABLED)
-                {
-                    return ValueInterp;
-                }
-                else
-                {
-                    return Value;
-                }
-            }
-        }
-
         public void BackUpValue()
         {
             ValuePrev = Value;

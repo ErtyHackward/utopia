@@ -77,7 +77,7 @@ namespace Utopia.Worlds.GameClocks
                 _clockTime.Value = _clockTime.Value + (2 * (float)Math.PI);
             }
 
-            _visualClockTime.Time = _clockTime.ActualValue;
+            _visualClockTime.Time = _clockTime.Value;
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)

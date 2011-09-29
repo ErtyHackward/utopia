@@ -51,14 +51,6 @@ namespace Utopia.GUI.D3D.DebugUI
         {
             float y = 40f;
 
-            OptionControl fixedTimeStep = new OptionControl();
-            fixedTimeStep.Bounds = new UniRectangle(360f, y, 40.0f, 16.0f);
-            fixedTimeStep.Text = "FixeTimeStep Mode";
-            fixedTimeStep.Changed += (sender, e) => _game.FixedTimeSteps = !_game.FixedTimeSteps;
-            fixedTimeStep.Selected = _game.FixedTimeSteps;
-            Children.Add(fixedTimeStep);
-            y = y + Step;
-
             OptionControl vSync = new OptionControl();
             vSync.Bounds = new UniRectangle(360f, y, 40.0f, 16.0f);
             vSync.Text = "VSync Mode";

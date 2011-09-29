@@ -709,16 +709,12 @@ namespace Utopia.Entities.Managers
 
             //Refresh the player Bounding box
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
-            
-            _playerRenderer.Update(ref timeSpent);
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
             Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
-
-            _playerRenderer.Interpolation(ref interpolationHd, ref interpolationLd);
 
             //TODO To remove when Voxel Entity merge will done with Entity
             //Update the position and World Matrix of the Voxel body of the Entity.

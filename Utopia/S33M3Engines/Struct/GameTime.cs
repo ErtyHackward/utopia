@@ -15,18 +15,9 @@ namespace S33M3Engines.D3D
         static long _frequency;
         long count = 0;
 
-        public void Update(bool isFixedTimeStep)
+        public void Update()
         {
-            if (!isFixedTimeStep)
-            {
-                long last = count;
-                count = Stopwatch.GetTimestamp();
-                ElapsedGameTimeInS_HD = (double)(count - last) / _frequency;
-            }
-            else
-            {
-                ElapsedGameTimeInS_HD = (1.0 / _frequency) * Game.GameUpdateDelta;
-            }
+            ElapsedGameTimeInS_HD = (1.0 / _frequency) * Game.GameUpdateDelta; //Fixe amount of time elapsed !
             ElapsedGameTimeInS_LD = (float)ElapsedGameTimeInS_HD;
         }
 

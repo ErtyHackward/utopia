@@ -24,7 +24,7 @@ namespace Utopia.Worlds.SkyDomes
         #endregion
 
         #region Public Variables
-        public Vector3 LightDirection { get { return _lightDirection.ActualValue; } }
+        public Vector3 LightDirection { get { return _lightDirection.ValueInterp; } }
         public Vector3 SunColor { get { return _sunColor; } }
         #endregion
 
