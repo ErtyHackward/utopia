@@ -153,6 +153,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
                     if (_items[x, y] == null)
                     {
                         _items[x, y] = new T { Item = item, GridPosition = new Vector2I(x, y), ItemsCount = 1 };
+                        _slotsCount++;
                         return true;
                     }
                 }
