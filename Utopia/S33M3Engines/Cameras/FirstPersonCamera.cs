@@ -45,7 +45,7 @@ namespace S33M3Engines.Cameras
 
             if (CameraPlugin != null)
             {
-                //Get the Camera Position and Lookat Rotation from the attached Entity to the camera !
+                //Get the Camera Position and Rotation from the attached Entity to the camera !
                 _worldPosition.Value = CameraPlugin.CameraWorldPosition;
                 _cameraOrientation.Value = CameraPlugin.CameraOrientation;
 

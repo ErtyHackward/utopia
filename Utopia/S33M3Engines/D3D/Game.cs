@@ -104,6 +104,8 @@ namespace S33M3Engines.D3D
             //Call components Load Content
             LoadContent();
 
+            _next_game_update = Stopwatch.GetTimestamp();
+
             //The Pump !
             RenderLoop.Run(_d3dEngine.GameWindow, () =>
             {
@@ -112,7 +114,6 @@ namespace S33M3Engines.D3D
                 _updateWithoutrenderingCount = 0;
                 while (Stopwatch.GetTimestamp() > _next_game_update && _updateWithoutrenderingCount < _maxRenderFrameSkip && _isFormClosed == false)
                 {
-                    _gameTime.Update();
                     Update(ref _gameTime);
 
                     _next_game_update += GameUpdateDelta;
