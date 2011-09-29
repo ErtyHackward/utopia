@@ -201,7 +201,7 @@ namespace Utopia.Server.Structs
                     // take item from inventory
                     playerCharacter.Inventory.TakeItem(itemSlot);
 
-                    var oldItem = playerCharacter.Equipment.WearItem((Item)equipmentItem.Entity, equipmentItem.Slot);
+                    var oldItem = playerCharacter.Equipment.WearItem((VoxelItem)equipmentItem.Entity, equipmentItem.Slot);
 
                     if (oldItem != null)
                     {
@@ -258,7 +258,7 @@ namespace Utopia.Server.Structs
                         chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, playerCharacter.EntityId, out entity);
                         if (entity != null)
                         {
-                            if (playerCharacter.Inventory.PutItem((Item)entity))
+                            if (playerCharacter.Inventory.PutItem((IItem)entity))
                                 return; // ok
                         }
                     }
@@ -287,7 +287,7 @@ namespace Utopia.Server.Structs
                             for (int i = 0; i < itemTransferMessage.ItemsCount; i++)
                             {
                                 // throw it
-                                chunk.Entities.Add(slot.Item, playerCharacter.EntityId);    
+                                chunk.Entities.Add((Entity)slot.Item, playerCharacter.EntityId);    
                             }
                             // ok
                             return;

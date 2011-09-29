@@ -34,9 +34,9 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         private Armor _arms;
         private Armor _legs;
         private Armor _feet;
-        private Item _leftRing;
-        private Item _rightRing;
-        private Item _neckLace;
+        private VoxelItem _leftRing;
+        private VoxelItem _rightRing;
+        private VoxelItem _neckLace;
         private Tool _leftTool;
         private Tool _rightTool;
 
@@ -51,9 +51,9 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// <param name="item"></param>
         /// <param name="slot"></param>
         /// <returns>Item was weared off</returns>
-        public Item WearItem(Item item, EquipmentSlotType slot)
+        public IItem WearItem(VoxelItem item, EquipmentSlotType slot)
         {
-            Item previous = null;
+            VoxelItem previous = null;
             switch (slot)
             {
                 case EquipmentSlotType.Head:
@@ -154,8 +154,8 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
                 OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.Feet});
             }
         }
-        
-        public Item LeftRing
+
+        public VoxelItem LeftRing
         {
             get { return _leftRing; }
             set
@@ -164,8 +164,8 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
                 OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.LeftRing});
             }
         }
-        
-        public Item RightRing
+
+        public VoxelItem RightRing
         {
             get { return _rightRing; }
             set
@@ -174,8 +174,8 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
                 OnItemEquipped(new CharacterEquipmentEventArgs {Item = value, Slot = EquipmentSlotType.RightRing});
             }
         }
-        
-        public Item NeckLace
+
+        public VoxelItem NeckLace
         {
             get { return _neckLace; }
             set
@@ -270,9 +270,9 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             Legs = LoadItem<Armor>(reader);
             Feet = LoadItem<Armor>(reader);
 
-            LeftRing = LoadItem<Item>(reader);
-            RightRing = LoadItem<Item>(reader);
-            NeckLace = LoadItem<Item>(reader);
+            LeftRing = LoadItem<VoxelItem>(reader);
+            RightRing = LoadItem<VoxelItem>(reader);
+            NeckLace = LoadItem<VoxelItem>(reader);
 
             LeftTool = LoadItem<Tool>(reader);
             RightTool = LoadItem<Tool>(reader);
@@ -282,7 +282,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     public class CharacterEquipmentEventArgs : EventArgs
     {
         public IDynamicEntity Entity { get; set; }
-        public Item Item { get; set; }
+        public VoxelItem Item { get; set; }
         public EquipmentSlotType Slot { get; set; }
     }
 }

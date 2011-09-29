@@ -12,8 +12,8 @@ namespace Utopia.GUI.D3D.Inventory
     public class ButtonItemControl : ButtonControl, IDropTarget
     {
 
-        public Item Item { get; set; }
-        public Item RightItem { get; set; }
+        public IItem Item { get; set; }
+        public IItem RightItem { get; set; }
 
 
         public bool IsLink { get; set; }
@@ -22,7 +22,7 @@ namespace Utopia.GUI.D3D.Inventory
 
         public bool Highlight { get; set; } // to render as the hasfocus without really giving focus
 
-        public ButtonItemControl(Item item)
+        public ButtonItemControl(IItem item)
             : base()
         {
             Item = item;
@@ -38,7 +38,7 @@ namespace Utopia.GUI.D3D.Inventory
 
         }
 
-        public void Link(Item itemToLink)
+        public void Link(IItem itemToLink)
         {
             //a way to remove an assigned tool and avoid double tool exploit
             if (itemToLink == this.Item)

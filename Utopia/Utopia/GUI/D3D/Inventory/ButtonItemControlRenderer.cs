@@ -93,7 +93,7 @@ namespace Utopia.GUI.D3D.Inventory
             }
         }
 
-        private void drawIcon(Item item, IFlatGuiGraphics graphics, RectangleF controlBounds)
+        private void drawIcon(IItem item, IFlatGuiGraphics graphics, RectangleF controlBounds)
         {
             if (item.IconSourceRectangle.HasValue)
             {

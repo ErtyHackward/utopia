@@ -121,7 +121,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public bool PutItem(Item item)
+        public bool PutItem(IItem item)
         {
             // inventory is full?
             if (item.MaxStackSize == 1 && _slotsCount == _gridSize.X * _gridSize.Y)

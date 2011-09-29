@@ -100,7 +100,9 @@
     <Compile Include="Chunks\Entities\Interfaces\IToolLogic.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IUsableEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IVoxelEntity.cs" />
+    <Compile Include="Chunks\Entities\Inventory\IItem.cs" />
     <Compile Include="Chunks\Entities\Inventory\Slot.cs" />
+    <Compile Include="Chunks\Entities\Inventory\SpriteItem.cs" />
     <Compile Include="Chunks\Entities\Inventory\ToolbarSlot.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityEffect.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityState.cs" />
@@ -120,7 +122,7 @@
     <Compile Include="Chunks\Entities\Inventory\CharacterEquipment.cs" />
     <Compile Include="Chunks\Entities\Inventory\ContainedSlot.cs" />
     <Compile Include="Chunks\Entities\Inventory\EquipmentSlotType.cs" />
-    <Compile Include="Chunks\Entities\Inventory\Item.cs" />
+    <Compile Include="Chunks\Entities\Inventory\VoxelItem.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tool.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Wally.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\BlockRemover.cs" />
@@ -131,6 +133,8 @@
     <Compile Include="Chunks\Entities\Inventory\Tools\ToolImpact.cs" />
     <Compile Include="Chunks\Entities\Inventory\Weapon.cs" />
     <Compile Include="Chunks\Entities\DynamicEntity.cs" />
+    <Compile Include="Chunks\Entities\SpriteEntity.cs" />
+    <Compile Include="Chunks\Entities\SpriteFormat.cs" />
     <Compile Include="Chunks\Entities\VoxelEntity.cs" />
     <Compile Include="Chunks\Entities\VoxelModel.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
