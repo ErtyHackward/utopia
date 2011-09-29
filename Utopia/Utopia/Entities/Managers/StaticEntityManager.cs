@@ -17,6 +17,8 @@ using S33M3Engines.StatesManager;
 using S33M3Engines.Cameras;
 using S33M3Engines.WorldFocus;
 using System.Diagnostics;
+using S33M3Engines.Struct;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities.Managers
 {
@@ -45,7 +47,9 @@ namespace Utopia.Entities.Managers
 
         public override void Initialize()
         {
-
+            offset = 0.03f;
+            TextureAnimationOffset.Value = 0.00f;
+            TextureAnimationOffset.ValuePrev = 0.00f;
         }
 
         public override void LoadContent()
@@ -76,8 +80,8 @@ namespace Utopia.Entities.Managers
         private long previousTime, currentTime, previousTimeTex, currentTimeTex;
         private long timeAccumulator, timeAccumulatorTex;
         private long FloodingSpeedTex = (long)(Stopwatch.Frequency / 30);
-        public float TextureAnimationOffset = 0;
-        float offsetValue = -0.02f;
+        float offset = 0.03f;
+        FTSValue<float> TextureAnimationOffset = new FTSValue<float>();
         public override void Update(ref GameTime timeSpent)
         {
             //Start Tempo
@@ -88,19 +92,24 @@ namespace Utopia.Entities.Managers
             if (timeAccumulatorTex < FloodingSpeedTex) return;
             timeAccumulatorTex = 0;
 
-            TextureAnimationOffset += offsetValue;
-            if (TextureAnimationOffset > 0.3)
+            TextureAnimationOffset.BackUpValue();
+
+            TextureAnimationOffset.Value += offset;
+            if (TextureAnimationOffset.Value > 0.3)
             {
-                offsetValue *= -1;
+                offset *= -1;
             }
-            if (TextureAnimationOffset < -0.3)
+            if (TextureAnimationOffset.Value < -0.3)
             {
-                offsetValue *= -1;
+                offset *= -1;
             }
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
+            //if (interpolationLd < 0 || interpolationLd > 1) Console.WriteLine("ERROR");
+            TextureAnimationOffset.ValueInterp = MathHelper.Lerp(TextureAnimationOffset.ValuePrev, TextureAnimationOffset.Value, interpolationLd);
+            //Console.WriteLine(TextureAnimationOffset.Value + " " + TextureAnimationOffset.ValuePrev + " = " + TextureAnimationOffset.ValueInterp + "(" + interpolationLd + ")");
         }
 
         public override void Draw(int Index)
@@ -110,7 +119,7 @@ namespace Utopia.Entities.Managers
             _effectPointSprite.Begin();
 
             _effectPointSprite.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-            _effectPointSprite.CBPerFrame.Values.WindPower = TextureAnimationOffset;
+            _effectPointSprite.CBPerFrame.Values.WindPower = TextureAnimationOffset.ValueInterp;
             _effectPointSprite.CBPerFrame.IsDirty = true;
 
             Matrix test = Matrix.Translation(0,100,0);
