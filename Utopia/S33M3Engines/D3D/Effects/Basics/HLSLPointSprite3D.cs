@@ -20,20 +20,14 @@ namespace S33M3Engines.D3D.Effects.Basics
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 64)]
-        public struct CBPerDraw_Struct
-        {
-            [FieldOffset(0)]
-            public Matrix World;
-        }
-        public CBuffer<CBPerDraw_Struct> CBPerDraw;
-
-        [StructLayout(LayoutKind.Explicit, Size = 80)]
+        [StructLayout(LayoutKind.Explicit, Size = 144)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
-            public Matrix ViewProjection;
+            public Matrix WorldFocus;
             [FieldOffset(64)]
+            public Matrix ViewProjection;
+            [FieldOffset(128)]
             public float WindPower;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
@@ -61,8 +55,6 @@ namespace S33M3Engines.D3D.Effects.Basics
             : base(d3dEngine, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDraw_Struct>(_d3dEngine, "PerDraw");
-            CBuffers.Add(CBPerDraw);
             CBPerFrame = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrame");
             CBuffers.Add(CBPerFrame);
 

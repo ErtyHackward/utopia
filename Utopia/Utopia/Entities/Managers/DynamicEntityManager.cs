@@ -9,6 +9,7 @@ using Utopia.Entities.Renderer;
 using Ninject;
 using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Entities.Renderer.Interfaces;
 
 namespace Utopia.Entities.Managers
 {

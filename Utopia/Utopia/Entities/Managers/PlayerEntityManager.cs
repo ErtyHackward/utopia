@@ -24,6 +24,7 @@ using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
+using Utopia.Entities.Renderer.Interfaces;
 
 namespace Utopia.Entities.Managers
 {

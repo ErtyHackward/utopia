@@ -43,6 +43,7 @@ using Utopia.GUI;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
 using S33M3Engines.Timers;
+using Utopia.Entities.Renderer.Interfaces;
 
 namespace Utopia
 {
@@ -57,7 +58,7 @@ namespace Utopia
             iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");
-            iocContainer.Bind<IEntitiesRenderer>().To<DefaultEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");
+            iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");
             
             iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
@@ -72,7 +73,8 @@ namespace Utopia
             iocContainer.Bind<IStaticEntityManager>().To<StaticEntityManager>().InSingletonScope();
             iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InSingletonScope();
 
-            iocContainer.Bind<IPickingRenderer>().To<DefaultPickingRenderer>().InSingletonScope();
+            iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InSingletonScope();
+            iocContainer.Bind<IStaticSpriteEntityRenderer>().To<StaticSpriteEntityRenderer>().InSingletonScope();
 
             iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope();
