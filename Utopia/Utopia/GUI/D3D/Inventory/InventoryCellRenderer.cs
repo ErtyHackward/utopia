@@ -42,9 +42,9 @@ namespace Utopia.GUI.D3D.Inventory
                 }
             
 
-            if (control.Item != null)
+            if (control.Slot != null)
             {
-                graphics.DrawCustomTexture(control.Item.Icon, controlBounds);
+                graphics.DrawCustomTexture(control.Slot.Item.Icon, controlBounds);
             }
 
         }

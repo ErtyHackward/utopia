@@ -31,11 +31,11 @@ namespace Utopia.GUI.D3D.Inventory
         }
 
         public bool IsLink { get; set; }
-        public IItem Item { get; set; }
+        public Slot Slot { get; set; }
 
         public void Link(IItem itemToLink)
         {
-            Item = itemToLink;
+            Slot.Item = itemToLink;
         }
 
         #endregion

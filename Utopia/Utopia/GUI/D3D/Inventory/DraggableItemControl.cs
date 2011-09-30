@@ -18,7 +18,7 @@ namespace Utopia.GUI.D3D.Inventory
         public static UniRectangle referenceBounds = new UniRectangle(0, 0, 64, 64);
        public bool beingDragged;
 
-       public IItem Item { get; set; }
+       public Slot Slot { get; set; }
 
         /// <summary>X coordinate at which the control was picked up</summary>
         protected float pickupX;
@@ -52,7 +52,7 @@ namespace Utopia.GUI.D3D.Inventory
                 if (dropTarget.IsLink)
                 {
                     //copy item reference and restore the dragged item to its original position
-                    dropTarget.Link(Item);
+                    dropTarget.Link(Slot.Item);
                     this.Bounds = pickupBounds;
                 }
                 else
@@ -105,15 +105,11 @@ namespace Utopia.GUI.D3D.Inventory
                    // && control.GetAbsoluteBounds().Contains(x, y)//avoid bugs with multiple selected cells
                     )
                 {
-                    if (this.Item!=null && this.Item.AllowedSlots.HasFlag(((IDropTarget)control).InventorySlot))
+                    if (this.Slot!=null) 
                     {
                         return (IDropTarget)control;
                     }
-                    else
-                    {
-                        Debug.WriteLine("{0} not allowed, only {1}", ((IDropTarget)control).InventorySlot, this.Item.AllowedSlots);
-                    }
-
+                  
                 }
                 else
                 {
@@ -155,7 +151,7 @@ namespace Utopia.GUI.D3D.Inventory
         protected override void OnMousePressed(MouseButtons button)
         {
 
-            if (Item == null) return;//dont drag empty cells
+            if (Slot == null) return;//dont drag empty cells
 
             if (button == MouseButtons.Left)
             {
