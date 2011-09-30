@@ -19,7 +19,6 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// This is name can vary for concrete class instance (Example: Simon's steel shovel)
         /// </summary>
         public string UniqueName { get; set; }
-
         public EquipmentSlotType AllowedSlots { get; set;}
 
         /// <summary>
@@ -41,7 +40,6 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         {
             // first we need to load base information
             base.Load(reader);
-
             UniqueName = reader.ReadString();
         }
 
@@ -49,7 +47,6 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         {
             // first we need to save base information
             base.Save(writer);
-
             writer.Write(UniqueName);
         }
 

@@ -4,6 +4,8 @@ using Utopia.Shared.Structs;
 using S33M3Engines.Shared.Math.Noises;
 using System;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Chunks.Entities.Concrete.Collectible;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.World.Processors
 {
@@ -83,14 +85,14 @@ namespace Utopia.Shared.World.Processors
 
                 chunkWorldRange = new Range<int>() { Min = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z), Max = new Vector3I((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
 
-                TerraForming(chunk.BlockData.GetBlocksBytes(), ref chunkWorldRange);
+                TerraForming(chunk, ref chunkWorldRange);
 
                 //chunk.BlockData.SetBlockBytes(chunkBytes);
                 _chunksDone++;
             });
         }
 
-        private void TerraForming(byte[] Cubes, ref Range<int> workingRange)
+        private void TerraForming(GeneratedChunk chunk, ref Range<int> workingRange)
         {
             byte cubeId;
             int index;
@@ -99,6 +101,9 @@ namespace Utopia.Shared.World.Processors
             int inWaterMaxLevel = 0;
             NoiseResult sandResult, gravelResult;
             int localX, localY, localZ;
+
+            byte[] Cubes = chunk.BlockData.GetBlocksBytes();
+
             //Parcourir le _landscape pour changer les textures de surfaces
             for (int X = workingRange.Min.X; X < workingRange.Max.X; X++) //X
             {
@@ -159,6 +164,11 @@ namespace Utopia.Shared.World.Processors
                                 if (surfaceMudLayer == 0 && sandPlaced == false)
                                 {
                                     Cubes[index] = CubeId.Grass;
+                                    //Place Grass sprite on the Cube
+                                    if (sandResult.Value > 0.5)
+                                    {
+                                        chunk.Entities.Add(new Grass() { GrowPhase = 4, Position = new Vector3D(X, Y, Z) });
+                                    }
                                 }
                                 else
                                 {
