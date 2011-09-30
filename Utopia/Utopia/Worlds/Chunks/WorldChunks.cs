@@ -21,6 +21,7 @@ using Utopia.Worlds.Storage;
 using Utopia.Worlds.SkyDomes;
 using S33M3Engines.Maths;
 using System.Linq;
+using Utopia.Entities.Managers.Interfaces;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -99,7 +100,8 @@ namespace Utopia.Worlds.Chunks
                            IChunkStorageManager chunkstorage,
                            Server server,
                            PlayerEntityManager player,
-                           ISkyDome skydome)
+                           ISkyDome skydome,
+                           IEntityPickingManager pickingManager)
         {
             _server = server;
             _chunkstorage = chunkstorage;
@@ -119,6 +121,7 @@ namespace Utopia.Worlds.Chunks
 
             //Self injecting inside components
             _chunkWrapper.WorldChunks = this;
+            pickingManager.WorldChunks = this;
 
             //Subscribe to chunk modifications
             _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
