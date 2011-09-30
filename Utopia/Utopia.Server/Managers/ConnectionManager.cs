@@ -18,10 +18,11 @@ namespace Utopia.Server.Managers
         /// </summary>
         public event EventHandler<ConnectionEventArgs> ConnectionAdded;
 
-        protected void OnConnectionAdded(ConnectionEventArgs ea)
+        protected void OnConnectionAdded(ConnectionEventArgs e)
         {
-            if (ConnectionAdded != null)
-                ConnectionAdded(this, ea);
+            e.Connection.MessagePing += ConnectionMessagePing;
+            var handler = ConnectionAdded;
+            if (handler != null) handler(this, e);
         }
 
         /// <summary>
@@ -29,11 +30,13 @@ namespace Utopia.Server.Managers
         /// </summary>
         public event EventHandler<ConnectionEventArgs> ConnectionRemoved;
 
-        protected void OnConnectionRemoved(ConnectionEventArgs ea)
+        protected void OnConnectionRemoved(ConnectionEventArgs e)
         {
-            if (ConnectionRemoved != null)
-                ConnectionRemoved(this, ea);
+            e.Connection.MessagePing -= ConnectionMessagePing;
+            var handler = ConnectionRemoved;
+            if (handler != null) handler(this, e);
         }
+
 
         /// <summary>
         /// Gets total connections count
@@ -49,6 +52,18 @@ namespace Utopia.Server.Managers
         public ConnectionManager()
         {
             _connections = new Dictionary<string, ClientConnection>();
+        }
+
+        void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<Net.Messages.PingMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+            // we need respond as fast as possible
+            if (e.Message.Request)
+            {
+                var msg = e.Message;
+                msg.Request = false;
+                connection.SendAsync(msg);
+            }
         }
 
         /// <summary>

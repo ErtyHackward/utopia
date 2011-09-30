@@ -65,7 +65,7 @@ namespace Utopia.Server.Managers
 
                         _server.Clock.SetCurrentTimeOfDay(time);
                         _server.ConnectionManager.Broadcast(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
-                        _server.BroadCastChatMessage("Time updated by "+ connection.Login );
+                        _server.ChatManager.Broadcast("Time updated by "+ connection.Login );
                     }
                     catch (OverflowException)
                     {
@@ -75,6 +75,7 @@ namespace Utopia.Server.Managers
                 }
 
                 OnPlayerCommand(new PlayerCommandEventArgs { Connection = connection, Command = msg.Remove(0, 1) });
+                return true;
             }
             return false;
         }

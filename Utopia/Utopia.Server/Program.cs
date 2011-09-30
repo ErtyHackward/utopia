@@ -2,7 +2,6 @@
 using System.IO;
 using System.Reflection;
 using Ninject;
-using Ninject.Parameters;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Shared.Config;

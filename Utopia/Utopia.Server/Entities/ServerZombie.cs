@@ -70,7 +70,7 @@ namespace Utopia.Server.Entities
             {
                 _path = path;
 #if DEBUG
-                _server.BroadCastChatMessage(string.Format("Path found at {0} ms {1} iterations", _path.PathFindTime, _path.IterationsPerformed));
+                _server.ChatManager.Broadcast(string.Format("Path found at {0} ms {1} iterations", _path.PathFindTime, _path.IterationsPerformed));
 #endif
 
                 State = ZombieState.FollowPath;
@@ -87,7 +87,7 @@ namespace Utopia.Server.Entities
             }
             else
             {
-                _server.BroadCastChatMessage("there is no path there...");
+                _server.ChatManager.Broadcast("there is no path there...");
             }
         }
 

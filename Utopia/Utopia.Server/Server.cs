@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Utopia.Net.Connections;
 using Utopia.Net.Messages;
@@ -24,8 +23,6 @@ namespace Utopia.Server
         /// Modify this constant to actual value
         /// </summary>
         public const int ServerProtocolVersion = 1;
-        
-        private readonly Dictionary<uint, uint> _lockedEntities = new Dictionary<uint, uint>();
         
         #region Properties
         /// <summary>
@@ -93,6 +90,16 @@ namespace Utopia.Server
         /// </summary>
         public GameplayProvider Gameplay { get; private set; }
 
+        /// <summary>
+        /// Gets chat manager
+        /// </summary>
+        public ChatManager ChatManager { get; private set; }
+
+        /// <summary>
+        /// Gets entity manager
+        /// </summary>
+        public EntityManager EntityManager { get; private set; }
+
         #endregion
 
         /// <summary>
@@ -137,6 +144,10 @@ namespace Utopia.Server
 
             CommandsManager = new CommandsManager(this);
 
+            ChatManager = new ChatManager(this);
+
+            EntityManager = new EntityManager(this);
+
             // use DI
             Gameplay = new GameplayProvider(this);
 
@@ -146,28 +157,13 @@ namespace Utopia.Server
         {
             // note: do not forget to remove events!
             e.Connection.MessageLogin += ConnectionMessageLogin;
-            e.Connection.MessagePosition += ConnectionMessagePosition;
-            e.Connection.MessageDirection += ConnectionMessageDirection;
-            e.Connection.MessageChat += ConnectionMessageChat;
-            e.Connection.MessagePing += ConnectionMessagePing;
-            e.Connection.MessageEntityUse += ConnectionMessageEntityUse;
-            e.Connection.MessageItemTransfer += ConnectionMessageItemTransfer;
-            e.Connection.MessageEntityEquipment += ConnectionMessageEntityEquipment;
-            e.Connection.MessageEntityLock += ConnectionMessageEntityLock;
         }
 
         private void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
         {
             // stop listening
             e.Connection.MessageLogin -= ConnectionMessageLogin;
-            e.Connection.MessagePosition -= ConnectionMessagePosition;
-            e.Connection.MessageDirection -= ConnectionMessageDirection;
-            e.Connection.MessageChat -= ConnectionMessageChat;
-            e.Connection.MessagePing -= ConnectionMessagePing;
-            e.Connection.MessageEntityUse -= ConnectionMessageEntityUse;
-            e.Connection.MessageItemTransfer -= ConnectionMessageItemTransfer;
-            e.Connection.MessageEntityEquipment -= ConnectionMessageEntityEquipment;
-            e.Connection.MessageEntityLock -= ConnectionMessageEntityLock;
+            
 
             Console.WriteLine("{0} disconnected", e.Connection.RemoteAddress);
             
@@ -175,13 +171,6 @@ namespace Utopia.Server
             {
                 // saving the entity
                 EntityStorage.SaveEntity(e.Connection.ServerEntity.DynamicEntity);
-
-                // unlocking entities that was locked
-                if (e.Connection.ServerEntity.LockedEntity != 0)
-                {
-                    lock (_lockedEntities)
-                        _lockedEntities.Remove(e.Connection.ServerEntity.LockedEntity);
-                }
 
                 // tell everybody that this player is gone
                 AreaManager.RemoveEntity(e.Connection.ServerEntity);
@@ -191,110 +180,6 @@ namespace Utopia.Server
                 e.Connection.ServerEntity.CurrentArea = null;
             }
 
-        }
-        
-        private void ConnectionMessageEntityLock(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
-        {
-            var connection = (ClientConnection)sender;
-            lock (_lockedEntities)
-            {
-                if (e.Message.Lock)
-                {
-                    if (_lockedEntities.ContainsKey(e.Message.EntityId))
-                    {
-                        connection.SendAsync(new EntityLockResultMessage { EntityId = e.Message.EntityId, LockResult = LockResult.FailAlreadyLocked });
-                        return;
-                    }
-                    _lockedEntities.Add(e.Message.EntityId, connection.ServerEntity.DynamicEntity.EntityId);
-                    connection.ServerEntity.LockedEntity = e.Message.EntityId;
-                    connection.SendAsync(new EntityLockResultMessage { EntityId = e.Message.EntityId, LockResult = LockResult.SuccessLocked });
-                }
-                else
-                {
-                    uint lockOwner;
-                    if (_lockedEntities.TryGetValue(e.Message.EntityId, out lockOwner))
-                    {
-                        if (lockOwner == connection.ServerEntity.DynamicEntity.EntityId)
-                        {
-                            _lockedEntities.Remove(e.Message.EntityId);
-                            connection.ServerEntity.LockedEntity = 0;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void ConnectionMessageEntityEquipment(object sender, ProtocolMessageEventArgs<EntityEquipmentMessage> e)
-        {
-            var connection = (ClientConnection)sender;
-            connection.ServerEntity.Equip(e.Message);
-        }
-
-        private void ConnectionMessageItemTransfer(object sender, ProtocolMessageEventArgs<ItemTransferMessage> e)
-        {
-            var connection = (ClientConnection)sender;
-            connection.ServerEntity.ItemTransfer(e.Message);
-        }
-
-        private void ConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
-        {
-            var connection = (ClientConnection)sender;
-            if (e.Message.Login == connection.Login)
-            {
-                var msg = e.Message.Message;
-
-                if (string.IsNullOrWhiteSpace(msg))
-                    return;
-
-                if (CommandsManager.TryExecute(connection, msg))
-                    return;
-
-                ConnectionManager.Broadcast(e.Message);
-            }
-        }
-
-        public void BroadCastChatMessage(string message)
-        {
-            ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message= message });
-        }
-        
-        private void ConnectionMessageEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
-        {
-            // incoming use message by the player
-            // handling entity using (tool or just use)
-            
-            var connection = (ClientConnection)sender;
-            connection.ServerEntity.Use(e.Message);
-        }
-
-        private void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
-        {
-            var connection = (ClientConnection)sender;
-            // we need respond as fast as possible
-            if (e.Message.Request)
-            {
-                var msg = e.Message;
-                msg.Request = false;
-                connection.SendAsync(msg);
-            }
-        }
-
-        private void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
-        {
-            var connection = sender as ClientConnection;
-            if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.EntityId)
-            {
-                connection.ServerEntity.DynamicEntity.Rotation = e.Message.Direction;
-            }
-        }
-
-        private void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
-        {
-            var connection = sender as ClientConnection;
-            if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.EntityId)
-            {
-                connection.ServerEntity.DynamicEntity.Position = e.Message.Position;
-            }
         }
 
         private ServerPlayerCharacterEntity GetNewPlayerEntity(ClientConnection clientConnection, uint entityId)
@@ -306,7 +191,7 @@ namespace Utopia.Server
                 );
         }
 
-        void ConnectionMessageLogin(object sender, ProtocolMessageEventArgs<LoginMessage> e)
+        private void ConnectionMessageLogin(object sender, ProtocolMessageEventArgs<LoginMessage> e)
         {
             var connection = (ClientConnection)sender;
             
@@ -347,8 +232,7 @@ namespace Utopia.Server
                     oldConnection.SendAsync(new ErrorMessage { ErrorCode = ErrorCodes.AnotherInstanceLogged, Message = "Another instance of you was connected. You will be disconnected." });
                     oldConnection.Disconnect();
                 }
-
-
+                
                 connection.Authorized = true;
                 connection.UserId = loginData.UserId;
                 connection.Login = e.Message.Login;
@@ -359,8 +243,6 @@ namespace Utopia.Server
                 if (loginData.State == null)
                 {
                     // create new message
-
-
                     playerEntity = GetNewPlayerEntity(connection,  EntityFactory.Instance.GetUniqueEntityId());
 
                     var state = new UserState { EntityId = playerEntity.DynamicEntity.EntityId };
