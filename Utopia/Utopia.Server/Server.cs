@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using S33M3Engines.Shared.Math;
 using Utopia.Net.Connections;
 using Utopia.Net.Messages;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Server.Structs;
-using Utopia.Server.Tools;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Inventory;
-using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using Utopia.Shared.Config;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
@@ -120,24 +115,23 @@ namespace Utopia.Server
 
             Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
 
-            LandscapeManager = new LandscapeManager(chunksStorage, worldGenerator, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval);
+            ConnectionManager = new ConnectionManager();
+            ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
+            ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
+
+            // connections
+            Listener = new TcpConnectionListener(SettingsManager.Settings.ServerPort);
+            Listener.IncomingConnection += ListenerIncomingConnection;
+
+            Scheduler = new ScheduleManager(Clock);
+
+            LandscapeManager = new LandscapeManager(this, chunksStorage, worldGenerator, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval);
 
             AreaManager = new AreaManager(this);
             
             EntityFactory.Instance.SetLastId(EntityStorage.GetMaximumId());
             
-
-            // connections
-            Listener = new TcpConnectionListener(SettingsManager.Settings.ServerPort);
-            Listener.IncomingConnection += ListenerIncomingConnection;
-            
-            ConnectionManager = new ConnectionManager();
-            ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
-            ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
-
             Services = new ServiceManager(this);
-            
-            Scheduler = new ScheduleManager(Clock);
             
             PerformanceManager = new PerformanceManager(AreaManager);
 
@@ -152,7 +146,6 @@ namespace Utopia.Server
         {
             // note: do not forget to remove events!
             e.Connection.MessageLogin += ConnectionMessageLogin;
-            e.Connection.MessageGetChunks += ConnectionMessageGetChunks;
             e.Connection.MessagePosition += ConnectionMessagePosition;
             e.Connection.MessageDirection += ConnectionMessageDirection;
             e.Connection.MessageChat += ConnectionMessageChat;
@@ -167,7 +160,6 @@ namespace Utopia.Server
         {
             // stop listening
             e.Connection.MessageLogin -= ConnectionMessageLogin;
-            e.Connection.MessageGetChunks -= ConnectionMessageGetChunks;
             e.Connection.MessagePosition -= ConnectionMessagePosition;
             e.Connection.MessageDirection -= ConnectionMessageDirection;
             e.Connection.MessageChat -= ConnectionMessageChat;
@@ -253,7 +245,10 @@ namespace Utopia.Server
 
                 if (string.IsNullOrWhiteSpace(msg))
                     return;
-                
+
+                if (CommandsManager.TryExecute(connection, msg))
+                    return;
+
                 ConnectionManager.Broadcast(e.Message);
             }
         }
@@ -299,68 +294,6 @@ namespace Utopia.Server
             if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.EntityId)
             {
                 connection.ServerEntity.DynamicEntity.Position = e.Message.Position;
-            }
-        }
-
-        private void ConnectionMessageGetChunks(object sender, ProtocolMessageEventArgs<GetChunksMessage> e)
-        {
-            var connection = (ClientConnection)sender;
-
-            Console.WriteLine("GetChunks!" + e.Message.Range.Position+ " " + e.Message.Range.Size );
-
-            try
-            {
-                var range = e.Message.Range;
-
-                // list to get indicies
-                var positionsList = e.Message.Positions == null ? null : new List<Vector2I>(e.Message.Positions);
-
-                range.Foreach( pos => {
-
-                    var chunk = LandscapeManager.GetChunk(pos);
-                    
-                    if (e.Message.Flag == GetChunksMessageFlag.AlwaysSendChunkData)
-                    {
-                        goto sendAllData;
-                    }
-                    
-                    // do we have hashes from client?
-                    if (e.Message.HashesCount > 0 && positionsList != null)
-                    {
-                        //Has the position from the Range has been forwarded inside the location/hash arrays ??
-                        int hashIndex = positionsList.IndexOf(pos);
-
-                        if (hashIndex != -1) 
-                        {
-                            if (e.Message.Md5Hashes[hashIndex] == chunk.GetMd5Hash())
-                            {
-                                connection.SendAsync(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkMd5Equal, ChunkHash = chunk.GetMd5Hash() });
-                                return;
-                            }
-                        }
-                    }
-                    
-                    if (chunk.PureGenerated)
-                    {
-                        connection.SendAsync(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkCanBeGenerated, ChunkHash = chunk.GetMd5Hash() });
-                        return;
-                    }
-
-                    sendAllData:
-                    // send data anyway
-                    connection.SendAsync(new ChunkDataMessage
-                    {
-                        Position = pos,
-                        ChunkHash = chunk.GetMd5Hash(),
-                        Flag = ChunkDataMessageFlag.ChunkWasModified,
-                        Data = chunk.Compress()
-                    });
-
-                });
-            }
-            catch (IOException)
-            {
-                // client was disconnected
             }
         }
 
