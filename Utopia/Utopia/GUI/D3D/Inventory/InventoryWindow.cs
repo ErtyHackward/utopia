@@ -14,6 +14,7 @@ namespace Utopia.GUI.D3D.Inventory
     {
         private readonly PlayerCharacter _player;
         private DraggableItemControl[,] _uiGrid;
+        private const int CellSize = 64;
 
         public InventoryWindow(SpriteTexture back, PlayerCharacter player)
         {
@@ -23,6 +24,15 @@ namespace Utopia.GUI.D3D.Inventory
 
         private void InitializeComponent(SpriteTexture back)
         {
+           
+
+            SlotContainer<ContainedSlot> slots = _player.Inventory;
+            int w = back.Width + slots.GridSize.X*CellSize;
+            int h = (slots.GridSize.Y+1) * CellSize ;
+
+            Bounds = new UniRectangle(80.0f, 10.0f, w, h);
+            //this.Title = "Inventory";
+            
             var okButton = new ButtonControl();
 
             okButton.Bounds = new UniRectangle(
@@ -31,9 +41,7 @@ namespace Utopia.GUI.D3D.Inventory
             okButton.Text = "Ok";
 
             okButton.Pressed += delegate { RemoveFromParent(); };
-
-            Bounds = new UniRectangle(80.0f, 10.0f, 512.0f, 384.0f);
-            //this.Title = "Inventory";
+            
             Children.Add(okButton);
 
             BuildCharacterSheet(back);
@@ -50,8 +58,8 @@ namespace Utopia.GUI.D3D.Inventory
             BuildBodyslot(characterSheet, EquipmentSlotType.Head, 74, 2);
             BuildBodyslot(characterSheet, EquipmentSlotType.Neck, 82, 46, 16);
             BuildBodyslot(characterSheet, EquipmentSlotType.Torso, 74, 71);
-            BuildBodyslot(characterSheet, EquipmentSlotType.RightHand, 145, 64);
-            BuildBodyslot(characterSheet, EquipmentSlotType.LeftHand, 2, 64);
+            BuildBodyslot(characterSheet, EquipmentSlotType.RightHand, 145, CellSize);
+            BuildBodyslot(characterSheet, EquipmentSlotType.LeftHand, 2, CellSize);
             BuildBodyslot(characterSheet, EquipmentSlotType.Legs, 110, 136);
             BuildBodyslot(characterSheet, EquipmentSlotType.Feet, 48, 178);
             BuildBodyslot(characterSheet, EquipmentSlotType.LeftRing, 5, 101, 16);
@@ -60,6 +68,7 @@ namespace Utopia.GUI.D3D.Inventory
         private void BuildBodyslot(Control parent, EquipmentSlotType inventorySlot, int x, int y, int size = 32)
         {
             var bodyCell = new InventoryCell(inventorySlot);
+            bodyCell.Name = inventorySlot.ToString();
             bodyCell.Bounds = new UniRectangle(x, y, size, size);
             bodyCell.IsLink = true;
             parent.Children.Add(bodyCell);
@@ -76,14 +85,14 @@ namespace Utopia.GUI.D3D.Inventory
                 for (int y = 0; y < slots.GridSize.Y; y++)
                 {
                     var control = new InventoryCell();
-                    control.Bounds = new UniRectangle(xstart + x * 64, y * 64, 64, 64);
+                    control.Bounds = new UniRectangle(xstart + x * CellSize, y * CellSize, CellSize, CellSize);
                     control.Name = x + "," + y;
                     Children.Add(control);
 
                     var drag = new DraggableItemControl();
                     drag.Bounds = DraggableItemControl.referenceBounds;
                     drag.Name = "drag " + x + "," + y;
-
+                    
                     control.Children.Add(drag);
                     _uiGrid[x, y] = drag;
                 }
@@ -94,11 +103,20 @@ namespace Utopia.GUI.D3D.Inventory
         {
             SlotContainer<ContainedSlot> slots = _player.Inventory;
 
+            for (int x = 0; x < slots.GridSize.X; x++)
+            {
+                for (int y = 0; y < slots.GridSize.Y; y++)
+                {
+                    _uiGrid[x, y].Slot = null; //ensure there is no desynchro between ui state and server state
+                }
+            }
+
+            //thins enum only has the non null items and grid positions
             foreach (var containedSlot in slots)
             {
                 int x = containedSlot.GridPosition.X;
                 int y = containedSlot.GridPosition.Y;
-                _uiGrid[x, y].Item = containedSlot.Item;
+                _uiGrid[x, y].Slot = containedSlot;
             }
         }
 

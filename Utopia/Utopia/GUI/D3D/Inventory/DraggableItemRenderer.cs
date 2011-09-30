@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using Nuclex.UserInterface.Visuals.Flat;
 using Nuclex.UserInterface;
+using Utopia.Shared.Chunks.Entities.Inventory;
 
 namespace Utopia.GUI.D3D.Inventory
 {
@@ -34,9 +35,16 @@ namespace Utopia.GUI.D3D.Inventory
 
            // graphics.DrawElement("button.normal", controlBounds);
 
-            if (control.Item != null)
+            if (control.Slot != null )
             {
-                graphics.DrawString("button.normal",controlBounds,control.Item.DisplayName);
+                String s = ((ContainedSlot) control.Slot).GridPosition.ToString();
+
+                if (control.Slot.Item != null)
+                {
+                    s += control.Slot.Item.DisplayName;
+                }
+                
+                graphics.DrawString("button.normal",controlBounds,s);
                 //graphics.DrawCustomTexture(control.Item.Icon, controlBounds);
             }
         }

@@ -67,22 +67,22 @@ namespace Utopia.GUI.D3D.Inventory
             // Draw the button's frame
             graphics.DrawElement(states[stateIndex], controlBounds);
 
-            if (control.Item != null && control.Item.Icon != null)
+            if (control.Slot != null && control.Slot.Item.Icon != null)
             {
-                if (control.RightItem != null && control.RightItem.Icon != null)
+                if (control.RightSlot.Item != null && control.RightSlot.Item.Icon != null)
                 {
                     float w = controlBounds.Width/2;
                     float h = controlBounds.Height/2;
 
                     RectangleF leftBounds = new RectangleF(controlBounds.Left,controlBounds.Top,w,h);
-                    drawIcon(control.Item, graphics, leftBounds);
+                    drawIcon(control.Slot.Item, graphics, leftBounds);
                    
                     RectangleF rBounds = new RectangleF(controlBounds.Left + w,controlBounds.Top+h,w,h);
-                    drawIcon(control.RightItem, graphics, rBounds);
+                    drawIcon(control.RightSlot.Item, graphics, rBounds);
                 }
                 else
                 {
-                    drawIcon(control.Item, graphics, controlBounds);
+                    drawIcon(control.RightSlot.Item, graphics, controlBounds);
                 }
             }
 
