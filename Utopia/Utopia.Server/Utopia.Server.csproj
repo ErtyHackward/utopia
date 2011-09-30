@@ -69,10 +69,12 @@
     <Compile Include="Managers\CommandsManager.cs" />
     <Compile Include="Managers\ConnectionManager.cs" />
     <Compile Include="Managers\AreaManager.cs" />
+    <Compile Include="Managers\EntityManager.cs" />
     <Compile Include="Managers\GameplayProvider.cs" />
     <Compile Include="Managers\IEntityStorage.cs" />
     <Compile Include="Managers\LandscapeCursor.cs" />
     <Compile Include="Managers\LandscapeManager.cs" />
+    <Compile Include="Managers\ChatManager.cs" />
     <Compile Include="Managers\PerformanceManager.cs" />
     <Compile Include="Managers\ScheduleCallType.cs" />
     <Compile Include="Managers\ScheduleManager.cs" />

@@ -84,7 +84,7 @@ namespace Utopia.Server.Services
             if (cmd == "addzombie")
             {
                 var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
-                _server.BroadCastChatMessage(string.Format("Zombie {0} added {1}", z.DynamicEntity.DisplayName,
+                _server.ChatManager.Broadcast(string.Format("Zombie {0} added {1}", z.DynamicEntity.DisplayName,
                                                       _aliveZombies.Count));
             }
 
@@ -96,7 +96,7 @@ namespace Utopia.Server.Services
                 }
                 _aliveZombies.Clear();
 
-                _server.BroadCastChatMessage("All zombies removed");
+                _server.ChatManager.Broadcast("All zombies removed");
             }
 
             if (cmd.StartsWith("addzombies"))
@@ -110,7 +110,7 @@ namespace Utopia.Server.Services
                     var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
                     z.Seed = r.Next(0, 100000);
                 }
-                _server.BroadCastChatMessage(string.Format("{0} zombies added ({1} total)", count, _aliveZombies.Count));
+                _server.ChatManager.Broadcast(string.Format("{0} zombies added ({1} total)", count, _aliveZombies.Count));
             }
 
             if (cmd == "comehere")
@@ -126,7 +126,7 @@ namespace Utopia.Server.Services
                 }
                 else
                 {
-                    _server.BroadCastChatMessage(string.Format("Error: you need to stay on solid block to use this command"));
+                    _server.ChatManager.Broadcast(string.Format("Error: you need to stay on solid block to use this command"));
                 }
             }
 
