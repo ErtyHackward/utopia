@@ -14,10 +14,11 @@ using S33M3Engines.WorldFocus;
 using S33M3Engines.Cameras;
 using S33M3Engines.StatesManager;
 using Utopia.Entities.Voxel;
+using Utopia.Entities.Renderer.Interfaces;
 
 namespace Utopia.Entities.Renderer
 {
-    public class DefaultPickingRenderer : DrawableGameComponent, IPickingRenderer
+    public class PickingRenderer : DrawableGameComponent, IPickingRenderer
     {
         #region Private Variable
         private Vector3I _pickedUpCube;
@@ -37,7 +38,7 @@ namespace Utopia.Entities.Renderer
         #region Public Variable
         #endregion
 
-        public DefaultPickingRenderer(D3DEngine engine,
+        public PickingRenderer(D3DEngine engine,
                                       WorldFocusManager focusManager,
                                       IDynamicEntity player,
                                       CameraManager camManager)
@@ -107,7 +108,6 @@ namespace Utopia.Entities.Renderer
             RefreshpickedBoundingBox(false);
         }
         #endregion
-
 
     }
 }

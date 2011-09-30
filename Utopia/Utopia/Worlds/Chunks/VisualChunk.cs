@@ -16,6 +16,7 @@ using SharpDX.Direct3D11;
 using UtopiaContent.ModelComp;
 using S33M3Engines.WorldFocus;
 using Utopia.Shared.World;
+using Utopia.Entities;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -66,6 +67,8 @@ namespace Utopia.Worlds.Chunks
 
         public Location2<int> LightPropagateBorderOffset;
 
+        public List<VisualSpriteEntity> VisualSpriteEntities;
+
         public int StorageRequestTicket { get; set; }
 
         public Range<int> CubeRange
@@ -95,6 +98,7 @@ namespace Utopia.Worlds.Chunks
 #endif
             _d3dEngine = d3dEngine;
             _visualWorldParameters = visualWorldParameter;
+            VisualSpriteEntities = new List<VisualSpriteEntity>();
             CubeRange = cubeRange;
             State = ChunkState.Empty;
             Ready2Draw = false;
@@ -261,6 +265,8 @@ namespace Utopia.Worlds.Chunks
             ChunkPositionBlockUnit = new Vector2I() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
             ChunkPosition = new Vector2I() { X = _cubeRange.Min.X / AbstractChunk.ChunkSize.X, Y = _cubeRange.Min.Z / AbstractChunk.ChunkSize.Z };
             RefreshWorldMatrix();
+
+            VisualSpriteEntities.Clear();
         }
 
         #endregion

@@ -15,6 +15,8 @@ namespace Utopia.Shared.Chunks.Entities
 
         #region Events
 
+        public List<Entity> Data { get { return _entities; } }
+
         /// <summary>
         /// Occurs when new static entity was added
         /// </summary>

@@ -7,7 +7,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Entities.Voxel;
 
-namespace Utopia.Entities.Renderer
+namespace Utopia.Entities.Renderer.Interfaces
 {
     public interface IPickingRenderer : IDrawableComponent
     {

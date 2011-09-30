@@ -14,6 +14,8 @@ using Utopia.Worlds.Storage;
 using Utopia.Worlds.Storage.Structs;
 using Utopia.Net.Connections;
 using S33M3Engines.Timers;
+using Utopia.Entities;
+using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
@@ -229,7 +231,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             {
                 _createLandScapeDelegate.Invoke(chunk);
             }
-
             chunk.RefreshBorderChunk();
         }
 
@@ -240,7 +241,11 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
             
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
-            visualChunk.Entities = generatedChunk.Entities;
+
+            for (int entityID = 0; entityID < generatedChunk.Entities.Data.Count; entityID++)
+            {
+                visualChunk.VisualSpriteEntities.Add(new VisualSpriteEntity((SpriteEntity)generatedChunk.Entities.Data[entityID]));
+            }
 
             generatedChunk.Entities = null;
 

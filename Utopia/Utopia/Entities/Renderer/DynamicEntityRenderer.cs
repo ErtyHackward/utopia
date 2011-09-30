@@ -16,10 +16,11 @@ using SharpDX.Direct3D11;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
+using Utopia.Entities.Renderer.Interfaces;
 
 namespace Utopia.Entities.Renderer
 {
-    public class DefaultEntityRenderer : IEntitiesRenderer
+    public class DynamicEntityRenderer : IEntitiesRenderer
     {
         #region Private variables
         private HLSLTerran _entityEffect;
@@ -37,7 +38,7 @@ namespace Utopia.Entities.Renderer
         public IVisualEntityContainer VisualEntity { get; set; }
         #endregion
 
-        public DefaultEntityRenderer(D3DEngine d3DEngine,
+        public DynamicEntityRenderer(D3DEngine d3DEngine,
                                     CameraManager camManager,
                                     WorldFocusManager worldFocusManager,
                                     ISkyDome skydome,
