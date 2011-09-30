@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Chunks.Entities;
 using S33M3Engines.D3D;
+using S33M3Engines.Struct.Vertex;
 
 namespace Utopia.Entities.Renderer.Interfaces
 {
     public interface IStaticSpriteEntityRenderer : IDrawable
     {
-        VisualSpriteEntity[] SpriteEntities { get; set; }
-        int SpriteEntitiesNbr { get; set; }
+        void AddPointSpriteVertex(ref VertexPointSprite spriteVertex);
     }
 }

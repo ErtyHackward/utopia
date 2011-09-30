@@ -19,27 +19,28 @@ using S33M3Engines.Struct.Vertex;
 using S33M3Engines.Buffers;
 using SharpDX;
 using SharpDX.Direct3D;
+using S33M3Engines.Maths;
+using UtopiaContent.Effects.Entities;
 
 namespace Utopia.Entities.Renderer
 {
     public class StaticSpriteEntityRenderer : IStaticSpriteEntityRenderer
     {
         #region Private variables
-        private HLSLPointSprite3D _effectPointSprite;
+        private HLSLStaticEntitySprite _effectPointSprite;
         private D3DEngine _d3dEngine;
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
         private ShaderResourceView _spriteTexture_View;
         private ISkyDome _skydome;
         private VisualWorldParameters _visualWorldParameters;
-        private VisualEntity _entityToRender;
         private VertexBuffer<VertexPointSprite> _vb;
-        private List<VertexPointSprite> _vertices;
+        private VertexPointSprite[] _vertices; //Default to support a maximum of 50.000 elements !
+        private int _verticeArrayMaxSize = 50000;
+        private int _verticeCount;
         #endregion
 
         #region Public variables/properties
-        public VisualSpriteEntity[] SpriteEntities { get; set; }
-        public int SpriteEntitiesNbr { get; set; }
         #endregion
 
         public StaticSpriteEntityRenderer(D3DEngine d3dEngine,
@@ -59,13 +60,13 @@ namespace Utopia.Entities.Renderer
         #region Private Methods
         private void Initialize()
         {
-            _effectPointSprite = new HLSLPointSprite3D(_d3dEngine, @"D3D\Effects\Basics\PointSprite3D.hlsl", VertexPointSprite.VertexDeclaration);
+            _effectPointSprite = new HLSLStaticEntitySprite(_d3dEngine, @"Effects\Entities\StaticEntitySprite.hlsl", VertexPointSprite.VertexDeclaration);
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, @"Textures/Sprites/", @"sp*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
             _effectPointSprite.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
             _effectPointSprite.DiffuseTexture.Value = _spriteTexture_View;
-            _vertices = new List<VertexPointSprite>();
+            _vertices = new VertexPointSprite[_verticeArrayMaxSize];
+            _verticeCount = -1;
         }
-
 
         #endregion
 
@@ -78,12 +79,11 @@ namespace Utopia.Entities.Renderer
 
             _effectPointSprite.Begin();
 
-            Matrix test = Matrix.Identity;
-            test = _worldFocusManager.CenterOnFocus(ref test);
-
-            _effectPointSprite.CBPerFrame.Values.WorldFocus = Matrix.Transpose(test);
+            _effectPointSprite.CBPerFrame.Values.WorldFocus = Matrix.Transpose(_worldFocusManager.CenterOnFocus(ref MMatrix.Identity));
             _effectPointSprite.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _effectPointSprite.CBPerFrame.Values.WindPower = 1; //TextureAnimationOffset.ValueInterp;
+            _effectPointSprite.CBPerFrame.Values.SunColor = _skydome.SunColor;
+            _effectPointSprite.CBPerFrame.Values.fogdist = ((_visualWorldParameters.WorldVisibleSize.X) / 2) - 48; ;
             _effectPointSprite.CBPerFrame.IsDirty = true;
 
             _effectPointSprite.Apply();
@@ -92,25 +92,29 @@ namespace Utopia.Entities.Renderer
             _d3dEngine.Context.Draw(_vb.VertexCount, 0);
         }
 
+        public void AddPointSpriteVertex(ref VertexPointSprite spriteVertex)
+        {
+            _verticeCount++;
+            if (_verticeCount >= _verticeArrayMaxSize) return;
+            _vertices[_verticeCount] = spriteVertex;
+        }
+
         public void Update(ref GameTime timeSpent)
         {
-            _vertices.Clear();
-            for (int i = 0; i < SpriteEntitiesNbr; i++)
-            {
-                _vertices.Add(SpriteEntities[i].Vertex);
-            }
-
             //Udpate the Dynamic Vertex Buffer
-            if (_vertices.Count == 0) return;
+            if (_verticeCount == -1) return;
             if (_vb == null)
             {
-                _vb = new VertexBuffer<VertexPointSprite>(_d3dEngine, _vertices.Count, VertexPointSprite.VertexDeclaration, PrimitiveTopology.PointList, "StaticSprite", ResourceUsage.Dynamic, 10);
-                _vb.SetData(_vertices.ToArray());
+                _vb = new VertexBuffer<VertexPointSprite>(_d3dEngine, _verticeCount, VertexPointSprite.VertexDeclaration, PrimitiveTopology.PointList, "StaticSprite", ResourceUsage.Dynamic, 5);
+                _vb.SetData(_vertices);
             }
             else
             {
-                _vb.SetData(_vertices.ToArray());
+                _vb.SetData(_vertices);
             }
+
+            _verticeCount = 0;
+
         }
 
         public void Interpolation(ref double interpolationHd, ref float interpolationLd)
@@ -120,6 +124,7 @@ namespace Utopia.Entities.Renderer
 
         public void Dispose()
         {
+            _vertices = null;
             _spriteTexture_View.Dispose();
             _effectPointSprite.Dispose();
         }

@@ -49,7 +49,6 @@ namespace Utopia.Entities.Managers
             _worldFocusManager = worldFocusManager;
             _spriteRenderer = spriteRenderer;
             _spriteEntitiesToRender = new VisualSpriteEntity[_spriteMaxSize];
-            _spriteRenderer.SpriteEntities = _spriteEntitiesToRender;
             _worldChunks = worldChunks;
         }
 
@@ -73,7 +72,7 @@ namespace Utopia.Entities.Managers
             _spriteEntitiesToRenderNbr = 0;
 
             VisualChunk chunk;
-            //Check inside the visible chunks (Not visible culled) the statics entities that needs to be rendered
+            //Check inside the visible chunks (Not frustum culled) the statics entities that needs to be rendered
             for (int i = 0; i < _worldChunks.Chunks.Length; i++)
             {
                 chunk = _worldChunks.SortedChunks[i]; 
@@ -81,17 +80,10 @@ namespace Utopia.Entities.Managers
                 {
                     for (int j = 0; j < chunk.VisualSpriteEntities.Count; j++)
                     {
-                        _spriteEntitiesToRender[_spriteEntitiesToRenderNbr] = chunk.VisualSpriteEntities[j];
-                        _spriteEntitiesToRenderNbr++;
-                        if (_spriteEntitiesToRenderNbr >= _spriteMaxSize)
-                        {
-                            _spriteEntitiesToRenderNbr--;
-                            break;
-                        }
+                        _spriteRenderer.AddPointSpriteVertex(ref chunk.VisualSpriteEntities[j].Vertex);
                     }
                 }
             }
-            _spriteRenderer.SpriteEntitiesNbr = _spriteEntitiesToRenderNbr;
             _spriteRenderer.Update(ref timeSpent);
         }
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)

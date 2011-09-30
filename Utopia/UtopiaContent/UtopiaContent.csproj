@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Effects\Entities\HLSLStaticEntitySprite.cs" />
     <Compile Include="Effects\SkyDome\HLSLPlanetSkyDome.cs" />
     <Compile Include="Effects\SkyDome\HLSLStars.cs" />
     <Compile Include="Effects\Terran\HLSLLiquid.cs" />
@@ -99,6 +100,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Effects\Entities\StaticEntitySprite.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Effects\Entities\DynamicEntity.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
