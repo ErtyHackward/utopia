@@ -240,6 +240,9 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
             
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
+            visualChunk.Entities = generatedChunk.Entities;
+
+            generatedChunk.Entities = null;
 
             visualChunk.State = ChunkState.LandscapeCreated;
             visualChunk.ThreadStatus = ThreadStatus.Idle;

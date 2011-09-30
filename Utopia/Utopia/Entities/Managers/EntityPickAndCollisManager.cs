@@ -83,7 +83,6 @@ namespace Utopia.Entities.Managers
                 {
                     foreach (var entity in chunk.Entities.EnumerateFast())
                     {
-                        Console.WriteLine(entity.DisplayName);
                     }
                 }
             }
