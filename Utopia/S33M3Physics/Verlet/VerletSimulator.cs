@@ -72,9 +72,9 @@ namespace S33M3Physics.Verlet
         {
             if (_isRunning)
             {
-                AccumulateForce(ref dt);
-                Verlet(ref dt, out newPosition);
-                SatisfyConstraints(ref newPosition, ref _prevPosition);
+                AccumulateForce(ref dt);                                //Add the force currently applied
+                Verlet(ref dt, out newPosition);                        //Compute the next location based taken into account the accumulated force, the time , ...
+                SatisfyConstraints(ref newPosition, ref _prevPosition); //Validate the new location based in constraint (Collision, ...)
             }
             else
             {
@@ -112,15 +112,15 @@ namespace S33M3Physics.Verlet
             _curPosition = newPosition;
         }
 
-        private void SatisfyConstraints(ref Vector3D newPosition, ref Vector3D previousPosition)
+        private void SatisfyConstraints(ref Vector3D futurePosition, ref Vector3D OriginalPosition)
         {
             foreach (CheckConstraintFct fct in ConstraintFct.GetInvocationList())
             {
                 //This fct will be able to modify the newPosition if needed to satisfy its own constraint !
-                fct(ref newPosition, ref previousPosition);
+                fct(ref futurePosition, ref OriginalPosition);
             }
 
-            _curPosition = newPosition;
+            _curPosition = futurePosition;
            
         }
     }
