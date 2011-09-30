@@ -136,8 +136,8 @@ namespace Utopia.Entities.Voxel
         /// <param name="boundingBox"></param>
         public void RefreshWorldBoundingBox(ref Vector3D worldPosition)
         {
-            WorldBBox = new BoundingBox(LocalBBox.Minimum + worldPosition.AsVector3(),
-                                          LocalBBox.Maximum + worldPosition.AsVector3());
+            WorldBBox.Minimum = LocalBBox.Minimum + worldPosition.AsVector3();
+            WorldBBox.Maximum = LocalBBox.Maximum + worldPosition.AsVector3();
         }
 
         /// <summary>
