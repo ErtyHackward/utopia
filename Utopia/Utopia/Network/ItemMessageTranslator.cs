@@ -8,7 +8,7 @@ using Utopia.Shared.Chunks.Entities.Inventory;
 namespace Utopia.Network
 {
     /// <summary>
-    /// Performs items and containers events communication with the server
+    /// Performs items and containers events communication with the server. (Inventory exchange, containers locking)
     /// </summary>
     public class ItemMessageTranslator : IDisposable
     {
@@ -43,7 +43,7 @@ namespace Utopia.Network
 
 
         /// <summary>
-        /// Creates new
+        /// Creates new instance of ItemMessageTranslator.
         /// </summary>
         /// <param name="server"></param>
         /// <param name="playerEntity"></param>

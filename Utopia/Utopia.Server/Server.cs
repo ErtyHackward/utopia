@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using S33M3Engines.Shared.Math;
 using Utopia.Net.Connections;
 using Utopia.Net.Messages;
-using Utopia.Server.Events;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Server.Structs;
 using Utopia.Server.Tools;
-using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
@@ -36,25 +30,9 @@ namespace Utopia.Server
         /// </summary>
         public const int ServerProtocolVersion = 1;
         
-        // ReSharper disable NotAccessedField.Local
-        private Timer _cleanUpTimer;
-        private Timer _saveTimer;
-        private Timer _entityUpdateTimer;
-
-        private readonly Queue<double> _updateCyclesPerfomance = new Queue<double>();
-        private readonly Stopwatch _updateStopwatch = new Stopwatch();
-
-        // ReSharper restore NotAccessedField.Local        
-        private readonly object _areaManagerSyncRoot = new object();
-        private readonly DateTime _dateStart;
-
-        private readonly PerformanceCounter _cpuCounter;
-        private readonly PerformanceCounter _ramCounter;
-
-
-        //todo: remove to other class
-        private CubeToolLogic _logic;
-
+        private readonly Dictionary<uint, uint> _lockedEntities = new Dictionary<uint, uint>();
+        
+        #region Properties
         /// <summary>
         /// Gets connection listener. Allows to accept client connections
         /// </summary>
@@ -105,21 +83,23 @@ namespace Utopia.Server
         /// </summary>
         public Clock Clock { get; private set; }
 
-        #region Events
+        /// <summary>
+        /// Gets perfomance manager
+        /// </summary>
+        public PerformanceManager PerformanceManager { get; private set; }
 
         /// <summary>
-        /// Occurs when users sends a command
+        /// Gets command processor
         /// </summary>
-        public event EventHandler<PlayerCommandEventArgs> PlayerCommand;
+        public CommandsManager CommandsManager { get; private set; }
 
-        private void OnPlayerCommand(PlayerCommandEventArgs e)
-        {
-            var handler = PlayerCommand;
-            if (handler != null) handler(this, e);
-        }
+        /// <summary>
+        /// Gets current gameplay provider
+        /// </summary>
+        public GameplayProvider Gameplay { get; private set; }
 
         #endregion
-        
+
         /// <summary>
         /// Create new instance of the Server class
         /// </summary>
@@ -136,10 +116,16 @@ namespace Utopia.Server
             UsersStorage = usersStorage;
             EntityStorage = entityStorage;
 
-            AreaManager = new AreaManager();
+            var settings = SettingsManager.Settings;
+
+            Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
+
+            LandscapeManager = new LandscapeManager(chunksStorage, worldGenerator, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval);
+
+            AreaManager = new AreaManager(this);
             
             EntityFactory.Instance.SetLastId(EntityStorage.GetMaximumId());
-            EntityFactory.Instance.EntityCreated += InstanceEntityCreated;
+            
 
             // connections
             Listener = new TcpConnectionListener(SettingsManager.Settings.ServerPort);
@@ -150,130 +136,16 @@ namespace Utopia.Server
             ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
 
             Services = new ServiceManager(this);
-
-            LandscapeManager = new LandscapeManager(chunksStorage, worldGenerator);
-            LandscapeManager.ChunkLoaded += LandscapeManagerChunkLoaded;
-            LandscapeManager.ChunkUnloaded += LandscapeManagerChunkUnloaded;
             
-            Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
-
             Scheduler = new ScheduleManager(Clock);
-
-            //todo: remove to other class
-            _logic = new CubeToolLogic(LandscapeManager);
-
-            _dateStart = DateTime.Now;
-
-            _cpuCounter = new PerformanceCounter {CategoryName = "Processor", CounterName = "% Processor Time", InstanceName = "_Total"};
-            _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
             
-            // async server events (saving modified chunks, unloading unused chunks)
-            _cleanUpTimer = new Timer(CleanUp, null, SettingsManager.Settings.CleanUpInterval, SettingsManager.Settings.CleanUpInterval);
-            _saveTimer = new Timer(SaveChunks, null, SettingsManager.Settings.SaveInterval, SettingsManager.Settings.SaveInterval);
-            _entityUpdateTimer = new Timer(UpdateDynamic, null, 0, 100);
-        }
+            PerformanceManager = new PerformanceManager(AreaManager);
 
-        private void InstanceEntityCreated(object sender, EntityFactoryEventArgs e)
-        {
-            // set tool logic
-            if (e.Entity is Annihilator || e.Entity is DirtAdder)
-            {
-                (e.Entity as Tool).ToolLogic = _logic;
-            }
-        }
+            CommandsManager = new CommandsManager(this);
 
-        private DateTime _lastUpdate = DateTime.MinValue;
+            // use DI
+            Gameplay = new GameplayProvider(this);
 
-        // update dynamic entities
-        private void UpdateDynamic(object o)
-        {
-            if (Monitor.TryEnter(_areaManagerSyncRoot))
-            {
-                try
-                {
-                    var state = new DynamicUpdateState
-                                    {
-                                        ElapsedTime = _lastUpdate == DateTime.MinValue ? TimeSpan.Zero : Clock.Now - _lastUpdate,
-                                        CurrentTime = Clock.Now
-                                    };
-
-                    _lastUpdate = Clock.Now;
-
-                    _updateStopwatch.Restart();
-                    AreaManager.Update(state);
-                    _updateStopwatch.Stop();
-
-                    _updateCyclesPerfomance.Enqueue(_updateStopwatch.ElapsedTicks / ((double)Stopwatch.Frequency / 1000));
-                    if (_updateCyclesPerfomance.Count > 10)
-                        _updateCyclesPerfomance.Dequeue();
-                }
-                finally
-                {
-                    Monitor.Exit(_areaManagerSyncRoot);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Warning! Server is overloaded. Try to decrease dynamic entities count");
-            }
-        }
-
-        // another thread
-        private void CleanUp(object o)
-        {
-            LandscapeManager.CleanUp(SettingsManager.Settings.ChunkLiveTimeMinutes);
-        }
-
-        // this functions executes in other thread
-        private void SaveChunks(object obj)
-        {
-            LandscapeManager.SaveChunks();
-            if (LandscapeManager.ChunksSaved > 0)
-            {
-                Console.WriteLine("Chunks saved: {1} Took: {0} ms", LandscapeManager.SaveTime,
-                                  LandscapeManager.ChunksSaved);
-            }
-        }
-
-        void LandscapeManagerChunkUnloaded(object sender, LandscapeManagerChunkEventArgs e)
-        {
-            e.Chunk.BlocksChanged -= ChunkBlocksChanged;
-            e.Chunk.Entities.EntityAdded -= Entities_EntityAdded;
-            e.Chunk.Entities.EntityRemoved -= Entities_EntityRemoved;
-        }
-
-        void LandscapeManagerChunkLoaded(object sender, LandscapeManagerChunkEventArgs e)
-        {
-            e.Chunk.BlocksChanged += ChunkBlocksChanged;
-            e.Chunk.Entities.EntityAdded += Entities_EntityAdded;
-            e.Chunk.Entities.EntityRemoved += Entities_EntityRemoved;
-        }
-
-        void Entities_EntityRemoved(object sender, EntityCollectionEventArgs e)
-        {
-            var entityCollection = (EntityCollection)sender;
-            AreaManager.InvokeStaticEntityRemoved(e);
-        }
-
-        void Entities_EntityAdded(object sender, EntityCollectionEventArgs e)
-        {
-            var entityCollection = (EntityCollection)sender;
-            AreaManager.InvokeStaticEntityAdded(e);
-        }
-
-        void ChunkBlocksChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
-        {
-            var chunk = (ServerChunk)sender;
-
-            chunk.LastAccess = DateTime.Now;
-
-            var globalPos = new Vector3I[e.Locations.Length];
-
-            e.Locations.CopyTo(globalPos, 0);
-            BlockHelper.ConvertToGlobal(chunk.Position, globalPos);
-
-            // tell entities about blocks change
-            AreaManager.InvokeBlocksChanged(new BlocksChangedEventArgs { ChunkPosition = chunk.Position, BlockValues = e.Bytes, Locations = e.Locations, GlobalLocations = globalPos });
         }
 
         private void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
@@ -285,9 +157,10 @@ namespace Utopia.Server
             e.Connection.MessageDirection += ConnectionMessageDirection;
             e.Connection.MessageChat += ConnectionMessageChat;
             e.Connection.MessagePing += ConnectionMessagePing;
-            e.Connection.MessageEntityUse += Connection_MessageEntityUse;
-            e.Connection.MessageItemTransfer += Connection_MessageItemTransfer;
-            e.Connection.MessageEntityEquipment += Connection_MessageEntityEquipment;
+            e.Connection.MessageEntityUse += ConnectionMessageEntityUse;
+            e.Connection.MessageItemTransfer += ConnectionMessageItemTransfer;
+            e.Connection.MessageEntityEquipment += ConnectionMessageEntityEquipment;
+            e.Connection.MessageEntityLock += ConnectionMessageEntityLock;
         }
 
         private void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
@@ -299,9 +172,10 @@ namespace Utopia.Server
             e.Connection.MessageDirection -= ConnectionMessageDirection;
             e.Connection.MessageChat -= ConnectionMessageChat;
             e.Connection.MessagePing -= ConnectionMessagePing;
-            e.Connection.MessageEntityUse -= Connection_MessageEntityUse;
-            e.Connection.MessageItemTransfer -= Connection_MessageItemTransfer;
-            e.Connection.MessageEntityEquipment -= Connection_MessageEntityEquipment;
+            e.Connection.MessageEntityUse -= ConnectionMessageEntityUse;
+            e.Connection.MessageItemTransfer -= ConnectionMessageItemTransfer;
+            e.Connection.MessageEntityEquipment -= ConnectionMessageEntityEquipment;
+            e.Connection.MessageEntityLock -= ConnectionMessageEntityLock;
 
             Console.WriteLine("{0} disconnected", e.Connection.RemoteAddress);
             
@@ -309,6 +183,13 @@ namespace Utopia.Server
             {
                 // saving the entity
                 EntityStorage.SaveEntity(e.Connection.ServerEntity.DynamicEntity);
+
+                // unlocking entities that was locked
+                if (e.Connection.ServerEntity.LockedEntity != 0)
+                {
+                    lock (_lockedEntities)
+                        _lockedEntities.Remove(e.Connection.ServerEntity.LockedEntity);
+                }
 
                 // tell everybody that this player is gone
                 AreaManager.RemoveEntity(e.Connection.ServerEntity);
@@ -319,20 +200,51 @@ namespace Utopia.Server
             }
 
         }
+        
+        private void ConnectionMessageEntityLock(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+            lock (_lockedEntities)
+            {
+                if (e.Message.Lock)
+                {
+                    if (_lockedEntities.ContainsKey(e.Message.EntityId))
+                    {
+                        connection.SendAsync(new EntityLockResultMessage { EntityId = e.Message.EntityId, LockResult = LockResult.FailAlreadyLocked });
+                        return;
+                    }
+                    _lockedEntities.Add(e.Message.EntityId, connection.ServerEntity.DynamicEntity.EntityId);
+                    connection.ServerEntity.LockedEntity = e.Message.EntityId;
+                    connection.SendAsync(new EntityLockResultMessage { EntityId = e.Message.EntityId, LockResult = LockResult.SuccessLocked });
+                }
+                else
+                {
+                    uint lockOwner;
+                    if (_lockedEntities.TryGetValue(e.Message.EntityId, out lockOwner))
+                    {
+                        if (lockOwner == connection.ServerEntity.DynamicEntity.EntityId)
+                        {
+                            _lockedEntities.Remove(e.Message.EntityId);
+                            connection.ServerEntity.LockedEntity = 0;
+                        }
+                    }
+                }
+            }
+        }
 
-        void Connection_MessageEntityEquipment(object sender, ProtocolMessageEventArgs<EntityEquipmentMessage> e)
+        private void ConnectionMessageEntityEquipment(object sender, ProtocolMessageEventArgs<EntityEquipmentMessage> e)
         {
             var connection = (ClientConnection)sender;
             connection.ServerEntity.Equip(e.Message);
         }
 
-        void Connection_MessageItemTransfer(object sender, ProtocolMessageEventArgs<ItemTransferMessage> e)
+        private void ConnectionMessageItemTransfer(object sender, ProtocolMessageEventArgs<ItemTransferMessage> e)
         {
             var connection = (ClientConnection)sender;
             connection.ServerEntity.ItemTransfer(e.Message);
         }
 
-        void ConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
+        private void ConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
         {
             var connection = (ClientConnection)sender;
             if (e.Message.Login == connection.Login)
@@ -341,61 +253,7 @@ namespace Utopia.Server
 
                 if (string.IsNullOrWhiteSpace(msg))
                     return;
-
-                if (msg[0] == '/')
-                {
-                    if (msg == "/status")
-                    {
-                        var sb = new StringBuilder();
-
-                        sb.AppendFormat("Server is up for {0}\n",(DateTime.Now - _dateStart).ToString(@"dd\.hh\:mm\:ss"));
-                        sb.AppendFormat("Chunks in memory: {0}\n",LandscapeManager.ChunksInMemory);
-                        sb.AppendFormat("Entities count: {0}\n", AreaManager.EntitiesCount);
-                        sb.AppendFormat("Perfomance: CPU usage {1}%, Free RAM {2}Mb, DynamicUpdate {0} msec", Math.Round(_updateCyclesPerfomance.Average(), 2), _cpuCounter.NextValue(), _ramCounter.NextValue());
-
-                        connection.SendAsync(new ChatMessage { Login = "server", Message = sb.ToString() });
-                        return;
-                    }
-
-                    if (msg == "/save")
-                    {
-                        SaveChunks(null);
-                        //connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Saved {1} chunks. Time: {0} ms", LandscapeManager.SaveTime, LandscapeManager.ChunksSaved) });
-                    }
-
-                    if (msg.StartsWith("/services"))
-                    {
-                        BroadCastChatMessage("Currenty active services: " + string.Join(", ", (from s in Services select s.ServiceName)));
-                        return;
-                    }
-
-                    if (msg == "/uperf")
-                    {
-                        BroadCastChatMessage(string.Format("Average cycle perfomance: {0} msec", Math.Round(_updateCyclesPerfomance.Average(), 2)));
-                        return;
-                    }
-
-                    if (msg.StartsWith("/settime") && msg.Length > 9)
-                    {
-                        try
-                        {
-                            var time = TimeSpan.Parse(msg.Remove(0, 9));
-
-                            Clock.SetCurrentTimeOfDay(time);
-                            ConnectionManager.Broadcast(new DateTimeMessage { DateTime = Clock.Now, TimeFactor = Clock.TimeFactor });
-                            BroadCastChatMessage("Time updated");
-                        }
-                        catch (OverflowException)
-                        {
-                            connection.SendAsync(new ChatMessage { Login = "server", Message = "wrong time value, try 9:00 or 21:00" });
-                        }
-                        return;
-                    }
-
-                    OnPlayerCommand(new PlayerCommandEventArgs { Connection = connection, Command = msg.Remove(0, 1) });
-                    return;
-                }
-
+                
                 ConnectionManager.Broadcast(e.Message);
             }
         }
@@ -405,7 +263,7 @@ namespace Utopia.Server
             ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message= message });
         }
         
-        private void Connection_MessageEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
+        private void ConnectionMessageEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
         {
             // incoming use message by the player
             // handling entity using (tool or just use)
@@ -414,7 +272,7 @@ namespace Utopia.Server
             connection.ServerEntity.Use(e.Message);
         }
 
-        void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
+        private void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
         {
             var connection = (ClientConnection)sender;
             // we need respond as fast as possible
@@ -426,7 +284,7 @@ namespace Utopia.Server
             }
         }
 
-        void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
+        private void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
         {
             var connection = sender as ClientConnection;
             if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.EntityId)
@@ -435,7 +293,7 @@ namespace Utopia.Server
             }
         }
 
-        void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
+        private void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
         {
             var connection = sender as ClientConnection;
             if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.EntityId)
@@ -443,8 +301,8 @@ namespace Utopia.Server
                 connection.ServerEntity.DynamicEntity.Position = e.Message.Position;
             }
         }
-        
-        void ConnectionMessageGetChunks(object sender, ProtocolMessageEventArgs<GetChunksMessage> e)
+
+        private void ConnectionMessageGetChunks(object sender, ProtocolMessageEventArgs<GetChunksMessage> e)
         {
             var connection = (ClientConnection)sender;
 
@@ -508,18 +366,11 @@ namespace Utopia.Server
 
         private ServerPlayerCharacterEntity GetNewPlayerEntity(ClientConnection clientConnection, uint entityId)
         {
-            var dEntity = new PlayerCharacter();
-            dEntity.EntityId = entityId;
-            dEntity.Position = new Vector3D(10, 128, 10);
-            dEntity.CharacterName = clientConnection.Login;
-            dEntity.Equipment.LeftTool = (Tool)EntityFactory.Instance.CreateEntity(EntityClassId.Annihilator);
-            dEntity.Equipment.RightTool = (Tool)EntityFactory.Instance.CreateEntity(EntityClassId.DirtAdder);
-
-            IItem item = (IItem)EntityFactory.Instance.CreateEntity((EntityClassId.Shovel));            
-            dEntity.Inventory.PutItem(item);
-
-            var serverChar = new ServerPlayerCharacterEntity(clientConnection, dEntity, this);
-            return serverChar;
+            return new ServerPlayerCharacterEntity(
+                clientConnection, 
+                Gameplay.CreateNewPlayerCharacter(clientConnection.Login, entityId), 
+                this
+                );
         }
 
         void ConnectionMessageLogin(object sender, ProtocolMessageEventArgs<LoginMessage> e)

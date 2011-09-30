@@ -2,13 +2,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SharpDX;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
+using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Structs;
 using System.Threading;
 using S33M3Engines.Shared.Math;
@@ -18,11 +17,16 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Manages the dynamic entites
     /// </summary>
-    public class AreaManager
+    public class AreaManager : IDisposable
     {
+        private readonly Server _server;
         private readonly ConcurrentDictionary<Vector2I, MapArea> _areas = new ConcurrentDictionary<Vector2I, MapArea>();
         private readonly HashSet<ServerDynamicEntity> _dynamicEntities = new HashSet<ServerDynamicEntity>();
+        private readonly object _areaManagerSyncRoot = new object();
+        private readonly Timer _entityUpdateTimer;
+        private DateTime _lastUpdate = DateTime.MinValue;
 
+        #region Properties
 #if DEBUG
         public volatile int entityAreaChangesCount;
 
@@ -35,6 +39,15 @@ namespace Utopia.Server.Managers
             return _dynamicEntities;
         }
 #endif
+        /// <summary>
+        /// Gets total count of entities
+        /// </summary>
+        public int EntitiesCount
+        {
+            get { return _dynamicEntities.Count; }
+        }
+        #endregion
+
         #region Events
 
         /// <summary>
@@ -59,38 +72,111 @@ namespace Utopia.Server.Managers
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler BeforeUpdate;
+
+        private void OnBeforeUpdate()
+        {
+            var handler = BeforeUpdate;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        public event EventHandler AfterUpdate;
+
+        private void OnAfterUpdate()
+        {
+            var handler = AfterUpdate;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         #endregion
-
-        /// <summary>
-        /// Gets total count of entities
-        /// </summary>
-        public int EntitiesCount
+        
+        public AreaManager(Server server)
         {
-            get { return _dynamicEntities.Count; }
+            _server = server;
+            _server.LandscapeManager.ChunkLoaded += LandscapeManagerChunkLoaded;
+            _server.LandscapeManager.ChunkUnloaded += LandscapeManagerChunkUnloaded;
+            _entityUpdateTimer = new Timer(UpdateDynamic, null, 0, 100);
         }
 
-        /// <summary>
-        /// Tells entities about blocks change event
-        /// </summary>
-        /// <param name="e"></param>
-        public void InvokeBlocksChanged(BlocksChangedEventArgs e)
+        void LandscapeManagerChunkLoaded(object sender, LandscapeManagerChunkEventArgs e)
         {
-            GetArea(new Vector3D(e.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, e.ChunkPosition.Y * AbstractChunk.ChunkSize.Z)).OnBlocksChanged(e);
+            e.Chunk.BlocksChanged += ChunkBlocksChanged;
+            e.Chunk.Entities.EntityAdded += EntitiesEntityAdded;
+            e.Chunk.Entities.EntityRemoved += EntitiesEntityRemoved;
         }
 
-        public void InvokeStaticEntityAdded(EntityCollectionEventArgs e)
+        void LandscapeManagerChunkUnloaded(object sender, LandscapeManagerChunkEventArgs e)
         {
-            GetArea(e.Entity.Position).OnStaticEntityAdded(e);
+            e.Chunk.BlocksChanged -= ChunkBlocksChanged;
+            e.Chunk.Entities.EntityAdded -= EntitiesEntityAdded;
+            e.Chunk.Entities.EntityRemoved -= EntitiesEntityRemoved;
         }
 
-        public void InvokeStaticEntityRemoved(EntityCollectionEventArgs e)
+        void EntitiesEntityRemoved(object sender, EntityCollectionEventArgs e)
         {
             GetArea(e.Entity.Position).OnStaticEntityRemoved(e);
         }
 
+        void EntitiesEntityAdded(object sender, EntityCollectionEventArgs e)
+        {
+            GetArea(e.Entity.Position).OnStaticEntityAdded(e);
+        }
+
+        void ChunkBlocksChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
+        {
+            var chunk = (ServerChunk)sender;
+
+            chunk.LastAccess = DateTime.Now;
+
+            var globalPos = new Vector3I[e.Locations.Length];
+
+            e.Locations.CopyTo(globalPos, 0);
+            BlockHelper.ConvertToGlobal(chunk.Position, globalPos);
+
+            // tell entities about blocks change
+            var eargs = new BlocksChangedEventArgs 
+            { 
+                ChunkPosition = chunk.Position, 
+                BlockValues = e.Bytes, 
+                Locations = e.Locations, 
+                GlobalLocations = globalPos 
+            };
+
+            GetArea(new Vector3D(eargs.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, eargs.ChunkPosition.Y * AbstractChunk.ChunkSize.Z)).OnBlocksChanged(eargs);
+        }
+
+        // update dynamic entities
+        private void UpdateDynamic(object o)
+        {
+            if (Monitor.TryEnter(_areaManagerSyncRoot))
+            {
+                try
+                {
+                    var state = new DynamicUpdateState
+                    {
+                        ElapsedTime = _lastUpdate == DateTime.MinValue ? TimeSpan.Zero : _server.Clock.Now - _lastUpdate,
+                        CurrentTime = _server.Clock.Now
+                    };
+
+                    _lastUpdate = _server.Clock.Now;
+
+                    Update(state);
+
+                }
+                finally
+                {
+                    Monitor.Exit(_areaManagerSyncRoot);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Warning! Server is overloaded. Try to decrease dynamic entities count");
+            }
+        }
+
         private MapArea GetArea(Vector3D position)
         {
-            var pos = new Vector2I((int)Math.Floor((double)position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor((double)position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);
+            var pos = new Vector2I((int)Math.Floor(position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor(position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);
 
             MapArea area;            
             if (_areas.ContainsKey(pos))
@@ -229,12 +315,15 @@ namespace Utopia.Server.Managers
 
         public void Update(DynamicUpdateState gameTime)
         {
+            OnBeforeUpdate();
+
             //foreach (var mapArea in _areas)
             //{
             //    UpdateArea(mapArea.Value, gameTime);
             //}
 
             Parallel.ForEach(_areas, a => UpdateArea(a.Value, gameTime));
+            OnAfterUpdate();
         }
 
         private void UpdateArea(MapArea area, DynamicUpdateState gameTime)
@@ -243,6 +332,13 @@ namespace Utopia.Server.Managers
             {
                 entity.Update(gameTime);    
             }
+        }
+
+        public void Dispose()
+        {
+            _server.LandscapeManager.ChunkLoaded -= LandscapeManagerChunkLoaded;
+            _server.LandscapeManager.ChunkUnloaded -= LandscapeManagerChunkUnloaded;
+            _entityUpdateTimer.Dispose();
         }
     }
 }

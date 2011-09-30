@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 using S33M3Engines.Shared.Math;
 using Utopia.Server.AStar;
+using Utopia.Server.Events;
 using Utopia.Server.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
@@ -18,12 +20,18 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class LandscapeManager : IDisposable
     {
+        public int ChunkLiveTimeMinutes { get; set; }
+        public int CleanUpInterval { get; set; }
+        public int SaveInterval { get; set; }
         private readonly IChunksStorage _chunksStorage;
         private readonly WorldGenerator _generator;
         private readonly HashSet<ServerChunk> _chunksToSave = new HashSet<ServerChunk>();
         private readonly Queue<AStar<AStarNode3D>> _pathPool = new Queue<AStar<AStarNode3D>>();
         private readonly Stopwatch _saveStopwatch = new Stopwatch();
-        
+
+        private readonly Timer _cleanUpTimer;
+        private readonly Timer _saveTimer;
+
         private delegate Path3D CalculatePathDelegate(Vector3I start, Vector3I goal);
         public delegate void PathCalculatedDeleagte(Path3D path);
 
@@ -89,13 +97,37 @@ namespace Utopia.Server.Managers
         /// </summary>
         public int ChunksSaved { get; set; }
 
-        public LandscapeManager(IChunksStorage chunksStorage, WorldGenerator generator)
+        public LandscapeManager(IChunksStorage chunksStorage, WorldGenerator generator, int chunkLiveTimeMinutes, int cleanUpInterval, int saveInterval)
         {
+            ChunkLiveTimeMinutes = chunkLiveTimeMinutes;
+            CleanUpInterval = cleanUpInterval;
+            SaveInterval = saveInterval;
+
             if (chunksStorage == null) throw new ArgumentNullException("chunksStorage");
             if (generator == null) throw new ArgumentNullException("generator");
 
             _chunksStorage = chunksStorage;
             _generator = generator;
+
+            _cleanUpTimer = new Timer(CleanUp, null, CleanUpInterval, CleanUpInterval);
+            _saveTimer = new Timer(SaveChunks, null, SaveInterval, SaveInterval);
+        }
+
+        // this functions executes in other thread
+        private void CleanUp(object o)
+        {
+            CleanUp(ChunkLiveTimeMinutes);
+        }
+
+        // this functions executes in other thread
+        private void SaveChunks(object obj)
+        {
+            SaveChunks();
+            if (ChunksSaved > 0)
+            {
+                Console.WriteLine("Chunks saved: {1} Took: {0} ms", SaveTime,
+                                  ChunksSaved);
+            }
         }
 
         /// <summary>
@@ -328,6 +360,9 @@ namespace Utopia.Server.Managers
             {
                 _chunks.Clear();
             }
+
+            _cleanUpTimer.Dispose();
+            _saveTimer.Dispose();
         }
 
         public IEnumerable<ServerChunk> SurroundChunks(Vector3D vector3D, float radius = 10)

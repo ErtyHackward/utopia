@@ -62,7 +62,7 @@ namespace Utopia.Server.Services
         {
             _server = server;
 
-            _server.PlayerCommand += ServerPlayerCommand;
+            _server.CommandsManager.PlayerCommand += ServerPlayerCommand;
             var r = new Random();
             for (int i = 0; i < 1; i++)
             {
@@ -74,7 +74,7 @@ namespace Utopia.Server.Services
 
         public override void Dispose()
         {
-            _server.PlayerCommand -= ServerPlayerCommand;
+            _server.CommandsManager.PlayerCommand -= ServerPlayerCommand;
         }
 
         void ServerPlayerCommand(object sender, PlayerCommandEventArgs e)

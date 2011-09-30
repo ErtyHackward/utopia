@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Utopia.Net.Messages;
 using Utopia.Server.Events;
-using Utopia.Server.Managers;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Inventory;

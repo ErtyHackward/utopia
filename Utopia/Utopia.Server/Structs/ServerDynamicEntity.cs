@@ -22,6 +22,14 @@ namespace Utopia.Server.Structs
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Gets or sets currently locked entity by the player
+        /// </summary>
+        public uint LockedEntity { get; set; }
+
+        /// <summary>
+        /// Gets wrapped entity
+        /// </summary>
         public IDynamicEntity DynamicEntity { get; private set; }
 
         /// <summary>
