@@ -10,6 +10,8 @@ using Amib.Threading;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Settings;
+using Utopia.Entities;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
@@ -43,6 +45,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         {
             get { return _lightPropagateSteps; }
         }
+
+        public IWorldChunks WorldChunk { get; set; }
+
         #endregion
 
         public LightingManager(SingleArrayChunkContainer cubesHolder, VisualWorldParameters visualWorldParameters)
@@ -177,6 +182,8 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
             PropagateLightSources(ref cubeRangeWithOffset, borderAsLightSource);
 
+            PropagateLightInsideStaticEntities(chunk);
+
             chunk.State = ChunkState.LandscapeLightsPropagated;
             chunk.ThreadStatus = ThreadStatus.Idle;
 
@@ -215,6 +222,17 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         }
                     }
                 }
+            }
+        }
+
+        private void PropagateLightInsideStaticEntities(VisualChunk chunk)
+        {
+            S33M3Engines.Struct.Vertex.VertexPointSprite vertexEntity;
+            for (int i = 0; i < chunk.VisualSpriteEntities.Count; i++)
+            {
+                vertexEntity = chunk.VisualSpriteEntities[i].Vertex;
+                //Find the Cube below entity, and assign its color to the entity
+                chunk.VisualSpriteEntities[i].Vertex.Color = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(vertexEntity.Position.X), MathHelper.Fastfloor(vertexEntity.Position.Y), MathHelper.Fastfloor(vertexEntity.Position.Z))].EmissiveColor;
             }
         }
 
