@@ -56,6 +56,7 @@ using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Renderer;
 using Utopia.Entities.Managers.Interfaces;
 using S33M3Engines.Timers;
+using Utopia.Entities.Renderer.Interfaces;
 
 namespace Utopia
 {

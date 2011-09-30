@@ -2,13 +2,9 @@
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
 
-cbuffer PerDraw
-{
-	matrix World;
-};
-
 cbuffer PerFrame
 {
+	matrix WorldFocus;
 	matrix ViewProjection;
     float WindPower;
 };
@@ -22,14 +18,14 @@ SamplerState SamplerDiffuse;
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 struct VSInput {
-	uint4 Position				: POSITION; //w = Array texture index
+	float3 Position				: POSITION; //w = Array texture index
 	uint4 Info					: INFO;     //Billboard size
 };
 
 //--------------------------------------------------------------------------------------
 //Geometry shader Input
 struct GSInput {
-	uint4 Position				: POSITION;
+	float3 Position				: POSITION;
 	uint4 Info					: INFO;
 };
 
@@ -64,7 +60,7 @@ void GS(point GSInput Input[1]: POSITION0, inout TriangleStream<PSInput> TriStre
 {
 	PSInput Output;
 
-	float4 PointSpritePosition = Input[0].Position;
+	float4 PointSpritePosition = float4(Input[0].Position, 1);
 	
 	// *****************************************************
 	// generate the 4 vertices to make two triangles
@@ -72,18 +68,25 @@ void GS(point GSInput Input[1]: POSITION0, inout TriangleStream<PSInput> TriStre
 	{
 		Output.UVW = float3( texcoordU[i], 
 							 texcoordV[i],
-							 PointSpritePosition.w);
+							 Input[0].Info.x);
 
-		Output.Position.x = PointSpritePosition.x + (p[i].x * Input[0].Info.x) + (p[i].z * WindPower); //Add Offset to build the Quad X dim
-		Output.Position.y = PointSpritePosition.y + (p[i].y * Input[0].Info.x) ; //Add Offset to build the Quad Y dim
+		Output.Position.x = PointSpritePosition.x + (p[i].x * Input[0].Info.y) + (p[i].z * WindPower); //Add Offset to build the Quad X dim
+		Output.Position.y = PointSpritePosition.y + (p[i].y * Input[0].Info.y) ; //Add Offset to build the Quad Y dim
 		Output.Position.z = PointSpritePosition.z + (p[i].z * WindPower);
 		Output.Position.w = 1.0f;
 
 		//Transform into Projection space
 		//Add Rotation matrix computation if needed here !
 
+		matrix world;
+		world[0] = float4(1,0,0,0); 
+		world[1] = float4(0,1,0,0); 
+		world[2] = float4(0,0,1,0);
+		world[3] = float4(0,0,0,0);
+		world = mul(world, WorldFocus);
+
 		//Transform point in screen space
-		Output.Position = mul(mul(Output.Position, World), ViewProjection);
+		Output.Position = mul(mul(Output.Position, WorldFocus), ViewProjection);
 		TriStream.Append( Output );
 	}
 

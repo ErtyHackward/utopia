@@ -29,6 +29,7 @@ using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 using UtopiaContent.Effects.Terran;
 using Screen = Nuclex.UserInterface.Screen;
+using Utopia.Entities.Renderer.Interfaces;
 
 namespace Utopia.Editor
 {

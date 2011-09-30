@@ -83,6 +83,7 @@ namespace Utopia.Entities.Managers
                 {
                     foreach (var entity in chunk.Entities.EnumerateFast())
                     {
+                        //Add Static entities HERE for Picking and collision test !
                     }
                 }
             }

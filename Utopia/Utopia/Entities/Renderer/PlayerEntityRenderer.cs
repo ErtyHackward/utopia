@@ -17,6 +17,7 @@ using S33M3Engines.Textures;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
+using Utopia.Entities.Renderer.Interfaces;
 
 namespace Utopia.Entities.Renderer
 {
