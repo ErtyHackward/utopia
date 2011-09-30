@@ -9,6 +9,7 @@ namespace Utopia.Entities.Renderer.Interfaces
 {
     public interface IStaticSpriteEntityRenderer : IDrawable
     {
-        List<VisualSpriteEntity> SpriteEntities { get; set; }
+        VisualSpriteEntity[] SpriteEntities { get; set; }
+        int SpriteEntitiesNbr { get; set; }
     }
 }

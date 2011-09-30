@@ -24,7 +24,7 @@ namespace Utopia.Entities.Renderer
 {
     public class StaticSpriteEntityRenderer : IStaticSpriteEntityRenderer
     {
-         #region Private variables
+        #region Private variables
         private HLSLPointSprite3D _effectPointSprite;
         private D3DEngine _d3dEngine;
         private CameraManager _camManager;
@@ -38,7 +38,8 @@ namespace Utopia.Entities.Renderer
         #endregion
 
         #region Public variables/properties
-        public List<VisualSpriteEntity> SpriteEntities { get; set; }
+        public VisualSpriteEntity[] SpriteEntities { get; set; }
+        public int SpriteEntitiesNbr { get; set; }
         #endregion
 
         public StaticSpriteEntityRenderer(D3DEngine d3dEngine,
@@ -94,7 +95,7 @@ namespace Utopia.Entities.Renderer
         public void Update(ref GameTime timeSpent)
         {
             _vertices.Clear();
-            for (int i = 0; i < SpriteEntities.Count; i++)
+            for (int i = 0; i < SpriteEntitiesNbr; i++)
             {
                 _vertices.Add(SpriteEntities[i].Vertex);
             }

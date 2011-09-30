@@ -39,9 +39,9 @@ struct PSInput {
 // offsets for the 4 vertices
 static const float3 p[4] = {
 							{-0.5, 0.0f, 0.0f},
-							{-0.5, 1.0f, 1.0f},
+							{-0.5, 1.0f, 0.0f},
 							{0.5, 0.0f, 0.0f},
-							{0.5, 1.0f, 1.0f}
+							{0.5, 1.0f, 0.0f}
 						};
 
 static const float texcoordU[4] = { 0.0f, 0.0f, 1.0f, 1.0f};
@@ -70,20 +70,13 @@ void GS(point GSInput Input[1]: POSITION0, inout TriangleStream<PSInput> TriStre
 							 texcoordV[i],
 							 Input[0].Info.x);
 
-		Output.Position.x = PointSpritePosition.x + (p[i].x * Input[0].Info.y) + (p[i].z * WindPower); //Add Offset to build the Quad X dim
+		Output.Position.x = PointSpritePosition.x + (p[i].x * Input[0].Info.y) ;// + (p[i].z * 1); //Add Offset to build the Quad X dim
 		Output.Position.y = PointSpritePosition.y + (p[i].y * Input[0].Info.y) ; //Add Offset to build the Quad Y dim
-		Output.Position.z = PointSpritePosition.z + (p[i].z * WindPower);
+		Output.Position.z = PointSpritePosition.z + (p[i].z * 1);
 		Output.Position.w = 1.0f;
 
 		//Transform into Projection space
 		//Add Rotation matrix computation if needed here !
-
-		matrix world;
-		world[0] = float4(1,0,0,0); 
-		world[1] = float4(0,1,0,0); 
-		world[2] = float4(0,0,1,0);
-		world[3] = float4(0,0,0,0);
-		world = mul(world, WorldFocus);
 
 		//Transform point in screen space
 		Output.Position = mul(mul(Output.Position, WorldFocus), ViewProjection);
