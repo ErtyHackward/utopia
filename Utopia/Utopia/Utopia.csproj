@@ -218,6 +218,7 @@
     <Compile Include="GUI\NuclexUIPort\Visuals\IGuiVisualizer.cs" />
     <Compile Include="InputManager\InputsManager.cs" />
     <Compile Include="Network\EntityMessageTranslator.cs" />
+    <Compile Include="Network\ItemMessageTranslator.cs" />
     <Compile Include="Resources\SuaveSkinResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
