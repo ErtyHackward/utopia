@@ -41,7 +41,7 @@ namespace Utopia.Server.Tools
                         return impact;
                     }
                 }
-                impact.Message = "Can not erase an empty block";
+                impact.Message = "Pick a cube to use this tool";
                 return impact;
             }
 
@@ -57,7 +57,29 @@ namespace Utopia.Server.Tools
                         return impact;
                     }
                 }
-                impact.Message = "Can not set to non-empty block";
+                impact.Message = "Pick a cube to use this tool";
+                return impact;
+            }
+
+            if (callerTool is Shovel)
+            {
+                if (entity.EntityState.IsPickingActive)
+                {
+                    var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
+
+                    var blockValue = cursor.Read();
+                    if (blockValue == CubeId.Dirt || blockValue == CubeId.Grass)
+                    {
+                        cursor.Write(0);
+                        impact.Success = true;
+                        return impact;
+                    }
+
+                    impact.Message = "Shovel can only dig dirt and grass";
+                    return impact;
+                    
+                }
+                impact.Message = "Pick a cube to use this tool";
                 return impact;
             }
 

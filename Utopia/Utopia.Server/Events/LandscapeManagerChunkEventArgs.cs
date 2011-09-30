@@ -1,7 +1,7 @@
 using System;
 using Utopia.Server.Structs;
 
-namespace Utopia.Server.Managers
+namespace Utopia.Server.Events
 {
     public class LandscapeManagerChunkEventArgs : EventArgs
     {

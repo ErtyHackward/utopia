@@ -120,7 +120,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// Tries to put item into the inventory
         /// </summary>
         /// <param name="item"></param>
-        /// <returns></returns>
+        /// <returns>True if item put into the inventory otherwise false</returns>
         public bool PutItem(IItem item)
         {
             // inventory is full?
@@ -154,6 +154,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
                     {
                         _items[x, y] = new T { Item = item, GridPosition = new Vector2I(x, y), ItemsCount = 1 };
                         _slotsCount++;
+                        OnItemPut(new EntityContainerEventArgs<T> { Slot = _items[x, y] });
                         return true;
                     }
                 }
