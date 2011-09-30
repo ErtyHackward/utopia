@@ -12,6 +12,7 @@ using Utopia.Shared.Chunks;
 using Utopia.Network;
 using Utopia.Net.Messages;
 using Utopia.Action;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Entities.Managers
 {
@@ -29,6 +30,7 @@ namespace Utopia.Entities.Managers
         private int _entityDistance = AbstractChunk.ChunkSize.X * 2;
         private Server _server;
         private ActionsManager _action;
+        private IWorldChunks _worldChunks;
         #endregion
 
         #region public variables
@@ -36,6 +38,12 @@ namespace Utopia.Entities.Managers
         {
             get { return _player; }
             set { _player = value; }
+        }
+
+        public IWorldChunks WorldChunks
+        {
+            get { return _worldChunks; }
+            set { _worldChunks = value; }
         }
         #endregion
 
@@ -57,12 +65,30 @@ namespace Utopia.Entities.Managers
         }
 
         #region private methods
+        //Started everyseconds
         private void _timer_OnTimerRaised()
         {
-            CollectSurrendingPlayerEntities();
+            CollectSurrendingDynamicPlayerEntities(); //They have their own collection
+            CollectSurrendingStaticPlayerEntities(); //They are stored inside chunks !
         }
 
-        private void CollectSurrendingPlayerEntities()
+        private void CollectSurrendingStaticPlayerEntities()
+        {
+            VisualChunk chunk;
+            //Check inside the visible chunks (Not visible culled) the statics entities
+            for (int i = 0; i < _worldChunks.Chunks.Length; i++)
+            {
+                chunk = _worldChunks.Chunks[i];
+                if (chunk.isFrustumCulled == false)
+                {
+                    foreach (var entity in chunk.Entities.EnumerateFast())
+                    {
+                    }
+                }
+            }
+        }
+
+        private void CollectSurrendingDynamicPlayerEntities()
         {
             //Clear the list
             _entitiesNearPlayer.Clear();
