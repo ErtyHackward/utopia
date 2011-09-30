@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using S33M3Engines.Shared.Math;
+using Utopia.Net.Connections;
+using Utopia.Net.Messages;
 using Utopia.Server.AStar;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
@@ -20,9 +23,7 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class LandscapeManager : IDisposable
     {
-        public int ChunkLiveTimeMinutes { get; set; }
-        public int CleanUpInterval { get; set; }
-        public int SaveInterval { get; set; }
+        private readonly Server _server;
         private readonly IChunksStorage _chunksStorage;
         private readonly WorldGenerator _generator;
         private readonly HashSet<ServerChunk> _chunksToSave = new HashSet<ServerChunk>();
@@ -77,6 +78,12 @@ namespace Utopia.Server.Managers
 
         #endregion
 
+        public int ChunkLiveTimeMinutes { get; set; }
+
+        public int CleanUpInterval { get; set; }
+
+        public int SaveInterval { get; set; }
+
         public WorldGenerator WorldGenerator
         {
             get { return _generator; }
@@ -97,7 +104,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         public int ChunksSaved { get; set; }
 
-        public LandscapeManager(IChunksStorage chunksStorage, WorldGenerator generator, int chunkLiveTimeMinutes, int cleanUpInterval, int saveInterval)
+        public LandscapeManager(Server server, IChunksStorage chunksStorage, WorldGenerator generator, int chunkLiveTimeMinutes, int cleanUpInterval, int saveInterval)
         {
             ChunkLiveTimeMinutes = chunkLiveTimeMinutes;
             CleanUpInterval = cleanUpInterval;
@@ -106,12 +113,90 @@ namespace Utopia.Server.Managers
             if (chunksStorage == null) throw new ArgumentNullException("chunksStorage");
             if (generator == null) throw new ArgumentNullException("generator");
 
+            _server = server;
             _chunksStorage = chunksStorage;
             _generator = generator;
+
+            _server.ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
+            _server.ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
 
             _cleanUpTimer = new Timer(CleanUp, null, CleanUpInterval, CleanUpInterval);
             _saveTimer = new Timer(SaveChunks, null, SaveInterval, SaveInterval);
         }
+
+        void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
+        {
+            e.Connection.MessageGetChunks += ConnectionMessageGetChunks;
+        }
+
+        void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
+        {
+            e.Connection.MessageGetChunks -= ConnectionMessageGetChunks;
+        }
+        
+        private void ConnectionMessageGetChunks(object sender, ProtocolMessageEventArgs<GetChunksMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+
+            Console.WriteLine("GetChunks!" + e.Message.Range.Position + " " + e.Message.Range.Size);
+
+            try
+            {
+                var range = e.Message.Range;
+
+                // list to get indicies
+                var positionsList = e.Message.Positions == null ? null : new List<Vector2I>(e.Message.Positions);
+
+                range.Foreach(pos =>
+                {
+
+                    var chunk = _server.LandscapeManager.GetChunk(pos);
+
+                    if (e.Message.Flag == GetChunksMessageFlag.AlwaysSendChunkData)
+                    {
+                        goto sendAllData;
+                    }
+
+                    // do we have hashes from client?
+                    if (e.Message.HashesCount > 0 && positionsList != null)
+                    {
+                        //Has the position from the Range has been forwarded inside the location/hash arrays ??
+                        int hashIndex = positionsList.IndexOf(pos);
+
+                        if (hashIndex != -1)
+                        {
+                            if (e.Message.Md5Hashes[hashIndex] == chunk.GetMd5Hash())
+                            {
+                                connection.SendAsync(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkMd5Equal, ChunkHash = chunk.GetMd5Hash() });
+                                return;
+                            }
+                        }
+                    }
+
+                    if (chunk.PureGenerated)
+                    {
+                        connection.SendAsync(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkCanBeGenerated, ChunkHash = chunk.GetMd5Hash() });
+                        return;
+                    }
+
+                sendAllData:
+                    // send data anyway
+                    connection.SendAsync(new ChunkDataMessage
+                    {
+                        Position = pos,
+                        ChunkHash = chunk.GetMd5Hash(),
+                        Flag = ChunkDataMessageFlag.ChunkWasModified,
+                        Data = chunk.Compress()
+                    });
+
+                });
+            }
+            catch (IOException)
+            {
+                // client was disconnected
+            }
+        }
+
 
         // this functions executes in other thread
         private void CleanUp(object o)
@@ -322,7 +407,7 @@ namespace Utopia.Server.Managers
             var startNode = new AStarNode3D(GetCursor(start), null, goalNode, 1);
 
 #if DEBUG
-            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var sw = Stopwatch.StartNew();
 #endif
             calculator.FindPath(startNode);
 #if DEBUG
