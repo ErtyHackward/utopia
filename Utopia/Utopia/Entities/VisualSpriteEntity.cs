@@ -27,7 +27,7 @@ namespace Utopia.Entities
         #region Private methods
         private void CreateVertices()
         {
-            Vertex = new VertexPointSprite(SpriteEntity.Position.AsVector3(), new ByteVector4(4, 1, 0, 0));
+            Vertex = new VertexPointSprite(SpriteEntity.Position.AsVector3(), new ByteColor() ,new ByteVector4(4, 1, 0, 0));
         }
         #endregion
 

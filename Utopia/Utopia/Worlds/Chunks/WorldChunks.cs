@@ -122,6 +122,7 @@ namespace Utopia.Worlds.Chunks
             //Self injecting inside components
             _chunkWrapper.WorldChunks = this;
             pickingManager.WorldChunks = this;
+            lightingManager.WorldChunk = this;
 
             //Subscribe to chunk modifications
             _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);

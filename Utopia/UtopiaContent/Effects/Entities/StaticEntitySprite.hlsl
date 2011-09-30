@@ -20,15 +20,17 @@ SamplerState SamplerDiffuse;
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 struct VSInput {
-	uint4 Info					: INFO;     //Billboard size
-	float3 Position				: POSITION; //w = Array texture index
+	float3 Position				: POSITION;
+	float4 Col				    : COLOR;
+	uint4 Info					: INFO;  // x = Texture Array, Y = scaling size
 };
 
 //--------------------------------------------------------------------------------------
 //Geometry shader Input
 struct GSInput {
-	uint4 Info					: INFO;
 	float3 Position				: POSITION;
+	float4 Col				    : COLOR;
+	uint4 Info					: INFO;
 };
 
 //Pixel shader Input
@@ -89,7 +91,7 @@ void GS(point GSInput Input[1]: POSITION0, inout TriangleStream<PSInput> TriStre
 		Output.fogPower = clamp(((length(Output.Position.xyz) - fogdist) / foglength), 0, 1);
 		//Transform point in screen space
 		Output.Position = mul(mul(Output.Position, WorldFocus), ViewProjection);
-		Output.EmissiveLight = saturate(SunColor); //I should multiple the sun color by the qt of light received by the entity (depend on the block where its located) TODO
+		Output.EmissiveLight = saturate(Input[0].Col.rgb +  SunColor * Input[0].Col.a);
 		TriStream.Append( Output );
 	}
 
@@ -106,8 +108,8 @@ float4 PS(PSInput IN) : SV_Target
 	
 	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
 
-	float4 Finalfogcolor = {SunColor / 1.5, color.a};
-	color = lerp(color, Finalfogcolor, IN.fogPower);
+	//float4 Finalfogcolor = {SunColor / 1.5, color.a};
+	//color = lerp(color, Finalfogcolor, IN.fogPower);
 
 	return color;	
 }
