@@ -40,7 +40,6 @@ namespace Utopia.Worlds.Chunks
 #if DEBUG
             if (_gameStates.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 #endif
-            _chunkDrawByFrame = 0;
 
             _terraEffect.Begin();
             _terraEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
@@ -53,6 +52,8 @@ namespace Utopia.Worlds.Chunks
 
             if (Index == SOLID_DRAW)
             {
+                _chunkDrawByFrame = 0;
+
                 DrawSolidFaces();
 #if DEBUG
                 DrawDebug();
