@@ -116,9 +116,9 @@
     <Compile Include="Entities\Renderer\DynamicEntityRenderer.cs" />
     <Compile Include="Entities\Managers\DynamicEntityManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IDynamicEntityManager.cs" />
-    <Compile Include="Entities\Renderer\Interfaces\IEntitiesRenderer.cs" />
-    <Compile Include="Entities\Renderer\Interfaces\IPickingRenderer.cs" />
-    <Compile Include="Entities\Renderer\Interfaces\IStaticSpriteEntityRenderer.cs" />
+    <Compile Include="Entities\Managers\Interfaces\Interfaces\IEntitiesRenderer.cs" />
+    <Compile Include="Entities\Managers\Interfaces\Interfaces\IPickingRenderer.cs" />
+    <Compile Include="Entities\Managers\Interfaces\Interfaces\IStaticSpriteEntityRenderer.cs" />
     <Compile Include="Entities\Renderer\PickingRenderer.cs" />
     <Compile Include="Entities\Renderer\PlayerEntityRenderer.cs" />
     <Compile Include="Entities\Renderer\StaticSpriteEntityRenderer.cs" />
