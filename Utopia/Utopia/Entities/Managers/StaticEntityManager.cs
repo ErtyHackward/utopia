@@ -70,20 +70,24 @@ namespace Utopia.Entities.Managers
         #region Public Methods
         public override void Update(ref GameTime timeSpent)
         {
-            _spriteEntitiesToRenderNbr = -1;
+            _spriteEntitiesToRenderNbr = 0;
 
             VisualChunk chunk;
             //Check inside the visible chunks (Not visible culled) the statics entities that needs to be rendered
             for (int i = 0; i < _worldChunks.Chunks.Length; i++)
             {
-                chunk = _worldChunks.Chunks[i];
+                chunk = _worldChunks.SortedChunks[i]; 
                 if (chunk.isFrustumCulled == false && chunk.State == ChunkState.DisplayInSyncWithMeshes)
                 {
                     for (int j = 0; j < chunk.VisualSpriteEntities.Count; j++)
                     {
-                        _spriteEntitiesToRenderNbr++;
                         _spriteEntitiesToRender[_spriteEntitiesToRenderNbr] = chunk.VisualSpriteEntities[j];
-                        if (_spriteEntitiesToRenderNbr >= _spriteMaxSize) break;
+                        _spriteEntitiesToRenderNbr++;
+                        if (_spriteEntitiesToRenderNbr >= _spriteMaxSize)
+                        {
+                            _spriteEntitiesToRenderNbr--;
+                            break;
+                        }
                     }
                 }
             }
@@ -102,3 +106,4 @@ namespace Utopia.Entities.Managers
         #endregion
     }
 }
+
