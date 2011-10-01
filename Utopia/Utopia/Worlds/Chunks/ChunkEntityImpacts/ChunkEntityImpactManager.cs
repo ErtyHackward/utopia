@@ -110,7 +110,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             cubeRange.Max.X++;
             cubeRange.Max.Z++;
 
-            _lightManager.PropagateLightSources(ref cubeRange, true);
+            _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
             VisualCubeProfile profile = VisualCubeProfile.CubesProfile[replacementCubeId];
 
