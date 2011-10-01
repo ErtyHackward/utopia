@@ -50,20 +50,23 @@ namespace Utopia.GUI.D3D.Inventory
             {
                 if (dropTarget is ToolbarButtonControl)
                 {
-                    InventoryCell source = Parent as InventoryCell;                    
+                    ContainedSlot sourceSlot = this.Slot;                    
                     //copy item reference and restore the dragged item to its original position
-                    ((ToolbarButtonControl) dropTarget).Link(source.Slot);
+                    ((ToolbarButtonControl) dropTarget).Link(sourceSlot);
                     Bounds = pickupBounds;
                 }
                 else if (dropTarget is InventoryCell)
                 {
                     
-                    InventoryCell source = Parent as InventoryCell;
-                    InventoryCell destination = dropTarget as InventoryCell;
+                    InventoryCell cell = dropTarget as InventoryCell;
+                    
+                    //seems a bit strange but the system is coherent : slot information is defined in the draggableItemControl not in the inventoryCell
+                    //inventoryCell only serves as a UI droptarget
+                    DraggableItemControl destination = cell.Children.First() as DraggableItemControl;
 
                     _inventory.DropOn(this.Slot,destination.Slot);
 
-                    /*old client side implem
+                    /*old client side implemenation without the slots : 
                     //swap childs
                     Control dest = ((Control)dropTarget).Children.First();
 
