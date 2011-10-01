@@ -57,20 +57,25 @@ namespace S33M3Engines.Buffers
 
         public void SetData(dataType[] data, bool MapUpdate = false)
         {
-            _indicesCount = data.Length;
+            SetData(data, 0, data.Length, MapUpdate);
+        }
+
+        public void SetData(dataType[] data, int offset, int indiceCount, bool MapUpdate = false)
+        {
+            _indicesCount = indiceCount;
 
             //Autoresize ??
-            if (_indexBuffer == null || (data.Length > _bufferCount))
+            if (_indexBuffer == null || (_indicesCount > _bufferCount))
             {
                 //Compute IB new size
-                _bufferCount = data.Length + (data.Length * _autoResizePerc / 100);
+                _bufferCount = _indicesCount + (_indicesCount * _autoResizePerc / 100);
 
                 if (_indexBuffer != null) { _indexBuffer.Dispose(); }
                 if (_indices != null) { _indices.Dispose(); }
 
                 //Create new DataStream
                 _indices = new DataStream(_bufferCount * _indexStride, false, true);
-                _indices.WriteRange(data);
+                _indices.WriteRange(data, offset, indiceCount);
                 _indices.Position = 0; //Set the pointer to the beggining of the datastream
 
                 //Create the new Databox
@@ -88,14 +93,14 @@ namespace S33M3Engines.Buffers
                 {
                     DataBox databox = _d3dEngine.Context.MapSubresource(_indexBuffer, 0, _indicesCount * _indexStride, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None);
                     databox.Data.Position = 0;
-                    databox.Data.WriteRange(data);
+                    databox.Data.WriteRange(data, offset, indiceCount);
                     databox.Data.Position = 0;
                     _d3dEngine.Context.UnmapSubresource(_indexBuffer, 0);
                 }
                 else
                 {
                     _databox.Data.Position = 0;
-                    _databox.Data.WriteRange(data);
+                    _databox.Data.WriteRange(data, offset, indiceCount);
                     _databox.Data.Position = 0;
                     _d3dEngine.Context.UpdateSubresource(_databox, _indexBuffer, 0);
                 }

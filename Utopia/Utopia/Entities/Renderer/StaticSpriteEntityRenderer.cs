@@ -106,11 +106,11 @@ namespace Utopia.Entities.Renderer
             if (_vb == null)
             {
                 _vb = new VertexBuffer<VertexPointSprite>(_d3dEngine, _verticeCount, VertexPointSprite.VertexDeclaration, PrimitiveTopology.PointList, "StaticSprite", ResourceUsage.Dynamic, 5);
-                _vb.SetData(_vertices);
+                _vb.SetData(_vertices, 0, _verticeCount);
             }
             else
             {
-                _vb.SetData(_vertices);
+                _vb.SetData(_vertices, 0, _verticeCount);
             }
 
             _verticeCount = 0;
