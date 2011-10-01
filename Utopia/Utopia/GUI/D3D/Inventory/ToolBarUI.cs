@@ -8,6 +8,7 @@ using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using S33M3Engines.D3D;
+using Utopia.Shared.Structs;
 
 
 namespace Utopia.GUI.D3D.Inventory
@@ -19,7 +20,7 @@ namespace Utopia.GUI.D3D.Inventory
         //private ButtonItemControl leftButton;
         //private ButtonItemControl rightButton;
 
-        private readonly List<ButtonItemControl> _buttons;
+        private readonly List<ToolbarButtonControl> _buttons;
 
         //private PlayerInventory _inventory;
 
@@ -50,15 +51,14 @@ namespace Utopia.GUI.D3D.Inventory
             //);
             //this.Children.Add(rightButton);
             int nbrButton = 15;
-            _buttons = new List<ButtonItemControl>(nbrButton);
+            _buttons = new List<ToolbarButtonControl>(nbrButton);
 
             float fromX = ((Bounds.Right.Offset - Bounds.Left.Offset) - (ButtonSize * nbrButton)) / 2;
 
             for (int x = 0; x < nbrButton; x++)
             {
-                ButtonItemControl btn = new ButtonItemControl(null);
+                ToolbarButtonControl btn = new ToolbarButtonControl(new ToolbarSlot(){GridPosition = new Vector2I(x,0)});
                 btn.Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize);
-                btn.IsLink = true;
                 _buttons.Add(btn);
                 btn.Pressed += delegate(object sender, EventArgs e)
                                    {

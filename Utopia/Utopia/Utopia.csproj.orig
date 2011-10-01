@@ -39,6 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -48,6 +49,16 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ninject">
@@ -87,10 +98,42 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\EntityRenderer.cs" />
-    <Compile Include="GameStates\GameStatesManager.cs" />
+    <Compile Include="Action\ActionsManager.cs" />
+    <Compile Include="Action\KeyboardTriggerMode.cs" />
+    <Compile Include="Action\Actions.cs" />
+    <Compile Include="Action\KeyboardTriggeredAction.cs" />
+    <Compile Include="Action\MouseButton.cs" />
+    <Compile Include="Action\MouseTriggeredAction.cs" />
+    <Compile Include="Action\MouseTriggerMode.cs" />
+    <Compile Include="DebugComponent.cs" />
+    <Compile Include="Editor\EditorTool.cs" />
+    <Compile Include="Editor\EntityEditor.cs" />
+    <Compile Include="Editor\EntityEditorUI.cs" />
+    <Compile Include="Editor\Spawn.cs" />
+    <Compile Include="Entities\Managers\EntityPickAndCollisManager.cs" />
+    <Compile Include="Entities\Managers\Interfaces\IEntityPickingManager.cs" />
+    <Compile Include="Entities\Managers\Interfaces\IStaticEntityManager.cs" />
+    <Compile Include="Entities\Renderer\DynamicEntityRenderer.cs" />
+    <Compile Include="Entities\Managers\DynamicEntityManager.cs" />
+    <Compile Include="Entities\Managers\Interfaces\IDynamicEntityManager.cs" />
+    <Compile Include="Entities\Renderer\Interfaces\IEntitiesRenderer.cs" />
+    <Compile Include="Entities\Renderer\Interfaces\IPickingRenderer.cs" />
+    <Compile Include="Entities\Renderer\Interfaces\IStaticSpriteEntityRenderer.cs" />
+    <Compile Include="Entities\Renderer\PickingRenderer.cs" />
+    <Compile Include="Entities\Renderer\PlayerEntityRenderer.cs" />
+    <Compile Include="Entities\Renderer\StaticSpriteEntityRenderer.cs" />
+    <Compile Include="Entities\VisualDynamicEntity.cs" />
+    <Compile Include="Entities\Managers\PlayerEntityManager.cs" />
+    <Compile Include="Entities\Managers\StaticEntityManager.cs" />
+    <Compile Include="Entities\VisualSpriteEntity.cs" />
+    <Compile Include="Entities\Voxel\ColorLookup.cs" />
+    <Compile Include="Entities\Voxel\IVisualEntityContainer.cs" />
+    <Compile Include="Entities\Voxel\VisualEntity.cs" />
+    <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
+    <Compile Include="GUI\ChatComponent.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
-    <Compile Include="GUI\D3D\Inventory\ButtonItemControl.cs" />
+    <Compile Include="GUI\D3D\Hud.cs" />
+    <Compile Include="GUI\D3D\Inventory\ToolbarButtonControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControlRenderer.cs" />
     <Compile Include="GUI\D3D\Inventory\ContainerControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ContainerRenderer.cs" />
@@ -101,7 +144,7 @@
     <Compile Include="GUI\D3D\Inventory\InventoryCellRenderer.cs" />
     <Compile Include="GUI\D3D\Inventory\InventoryWindow.cs" />
     <Compile Include="GUI\D3D\Inventory\ToolBarUI.cs" />
-    <Compile Include="GUI\D3D\NuclexGUI.cs">
+    <Compile Include="GUI\D3D\GuiManager.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUI\Forms\CustControls\Config.cs">
@@ -109,6 +152,12 @@
     </Compile>
     <Compile Include="GUI\Forms\CustControls\Config.Designer.cs">
       <DependentUpon>Config.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Forms\CustControls\ErrorMessage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\CustControls\ErrorMessage.Designer.cs">
+      <DependentUpon>ErrorMessage.cs</DependentUpon>
     </Compile>
     <Compile Include="GUI\NuclexUIPort\Controls\Arcade\CommandControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Arcade\PanelControl.cs" />
@@ -127,6 +176,7 @@
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IThumbLocator.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ListControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\OptionControl.cs" />
+    <Compile Include="Editor\PaletteButtonControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\SliderControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\VerticalSliderControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\WindowControl.cs" />
@@ -159,8 +209,6 @@
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatProgressControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatVerticalSliderControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatWindowControlRenderer.cs" />
-    <Compile Include="GUI\XnaAdapters\IGraphicsDeviceService.cs" />
-    <Compile Include="GUI\XnaAdapters\ContentManager.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.Drawing.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.SkinParsing.cs" />
@@ -169,22 +217,17 @@
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\IFlatControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\IFlatGuiGraphics.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\OpeningLocator.cs" />
-    <Compile Include="GUI\XnaAdapters\GraphicsDevice.cs" />
-    <Compile Include="GUI\XnaAdapters\ServiceProvider.cs" />
-    <Compile Include="GUI\XnaAdapters\SpriteBatch.cs" />
+    <Compile Include="Editor\PaletteButtonControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\IGuiVisualizer.cs" />
-    <Compile Include="GUI\XnaAdapters\SpriteSortMode.cs" />
+    <Compile Include="InputManager\InputsManager.cs" />
+    <Compile Include="Network\EntityMessageTranslator.cs" />
+    <Compile Include="Network\ItemMessageTranslator.cs" />
     <Compile Include="Resources\SuaveSkinResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SuaveSkinResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings\ClientSettings.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\IEntity.cs" />
-    <Compile Include="Entities\Living\ILivingEntity.cs" />
-    <Compile Include="Entities\Living\LivingEntity.cs" />
-    <Compile Include="Entities\Admin\Wisp.cs" />
     <Compile Include="GameDXStates\DXStates.cs" />
     <Compile Include="GUI\Forms\CustControls\MultiPlayer.cs">
       <SubType>UserControl</SubType>
@@ -205,21 +248,25 @@
       <DependentUpon>WelcomeScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="Network\Server.cs" />
-    <Compile Include="Entities\EntityImpact.cs" />
-    <Compile Include="GUI\D3D\Inventory\Inventory.cs" />
     <Compile Include="UtopiaClient.cs" />
     <Compile Include="UtopiaRender.cs" />
-    <Compile Include="Entities\Living\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UtopiaRender.debug.cs" />
     <Compile Include="UtopiaRender.Bind.cs" />
+    <Compile Include="Worlds\Chunks\ChunkEntityImpacts\ChunkEntityImpactManager.cs" />
+    <Compile Include="Worlds\Chunks\ChunkEntityImpacts\IChunkEntityImpactManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkLandscape\ILandscapeManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkLandscape\LandscapeManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkLighting\ILightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkLighting\LightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
+    <Compile Include="Worlds\SkyDomes\SharedComp\Clouds3D.cs" />
+    <Compile Include="SQLite\SQLiteManager.cs" />
+    <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
+    <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
+    <Compile Include="Worlds\Storage\IChunkStorageManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\IChunksWrapper.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\WorldChunksWrapper.cs" />
     <Compile Include="Worlds\Chunks\Enums\CubesFaces.cs" />
@@ -245,6 +292,7 @@
     <Compile Include="Worlds\SkyDomes\SkyDome.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\SkyStars.cs" />
+    <Compile Include="Worlds\Storage\Structs\CubeRequest.cs" />
     <Compile Include="Worlds\Weathers\IWeather.cs" />
     <Compile Include="Worlds\Weathers\SharedComp\IWind.cs" />
     <Compile Include="Worlds\Weathers\Weather.cs" />
@@ -253,6 +301,9 @@
     <Compile Include="Worlds\WorldRenderer.cs" />
     <EmbeddedResource Include="GUI\Forms\CustControls\Config.resx">
       <DependentUpon>Config.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Forms\CustControls\ErrorMessage.resx">
+      <DependentUpon>ErrorMessage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\Forms\CustControls\MultiPlayer.resx">
       <DependentUpon>MultiPlayer.cs</DependentUpon>
@@ -359,11 +410,14 @@
       <UserProperties BuildVersion_UseGlobalSettings="True" />
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile;ResolveKeySource" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
+    <!-- Delete the file because I can't figure out how to force the SGen task. -->
+    <Delete Files="$(TargetDir)$(TargetName).XmlSerializers.dll" ContinueOnError="true" />
+    <SGen BuildAssemblyName="$(TargetFileName)" BuildAssemblyPath="$(OutputPath)" References="@(ReferencePath)" ShouldGenerateSerializer="true" UseProxyTypes="false" KeyContainer="$(KeyContainerName)" KeyFile="$(KeyOriginatorFile)" DelaySign="$(DelaySign)" ToolPath="$(SGenToolPath)" Platform="MSIL">
+      <Output TaskParameter="SerializationAssembly" ItemName="SerializationAssembly" />
+    </SGen>
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <PropertyGroup>
+    <PostBuildEvent>"$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\sgen" /a:Utopia.exe /t:Utopia.Settings.ClientConfig /force /compiler:/platform:x86</PostBuildEvent>
+  </PropertyGroup>
 </Project>

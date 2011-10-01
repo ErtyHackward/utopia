@@ -1,22 +1,16 @@
-﻿using Nuclex.UserInterface.Controls;
+﻿using System;
+using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Input;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
 using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Structs;
 
 namespace Utopia.GUI.D3D.Inventory
 {
     public class InventoryCell : Control, IDropTarget
     {
-        public InventoryCell(EquipmentSlotType slot = EquipmentSlotType.Bags)
-        {
-            InventorySlot = slot;
-        }
-
-        #region IDropTarget Members
-
-        public EquipmentSlotType InventorySlot { get; set; }
-
+      
         public bool MouseHovering
         {
             get
@@ -29,16 +23,6 @@ namespace Utopia.GUI.D3D.Inventory
 
             set { }
         }
-
-        public bool IsLink { get; set; }
-        public Slot Slot { get; set; }
-
-        public void Link(IItem itemToLink)
-        {
-            Slot.Item = itemToLink;
-        }
-
-        #endregion
 
         protected override void OnMouseReleased(MouseButtons button)
         {

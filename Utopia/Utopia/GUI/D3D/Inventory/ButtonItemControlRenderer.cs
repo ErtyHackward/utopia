@@ -30,7 +30,7 @@ namespace Utopia.GUI.D3D.Inventory
 
     /// <summary>Renders button controls in a traditional flat style</summary>
     public class ButtonItemControlRenderer :
-    IFlatControlRenderer<ButtonItemControl>
+    IFlatControlRenderer<ToolbarButtonControl>
     {
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Utopia.GUI.D3D.Inventory
         ///   Graphics interface that will be used to draw the control
         /// </param>
         public void Render(
-          ButtonItemControl control, IFlatGuiGraphics graphics
+          ToolbarButtonControl control, IFlatGuiGraphics graphics
         )
         {
             RectangleF controlBounds = control.GetAbsoluteBounds();
@@ -67,22 +67,22 @@ namespace Utopia.GUI.D3D.Inventory
             // Draw the button's frame
             graphics.DrawElement(states[stateIndex], controlBounds);
 
-            if (control.Slot != null && control.Slot.Item.Icon != null)
+            if (control.LeftItem != null && control.LeftItem.Icon != null)
             {
-                if (control.RightSlot.Item != null && control.RightSlot.Item.Icon != null)
+                if (control.RightItem != null && control.RightItem.Icon != null)
                 {
                     float w = controlBounds.Width/2;
                     float h = controlBounds.Height/2;
 
                     RectangleF leftBounds = new RectangleF(controlBounds.Left,controlBounds.Top,w,h);
-                    drawIcon(control.Slot.Item, graphics, leftBounds);
+                    drawIcon(control.LeftItem, graphics, leftBounds);
                    
                     RectangleF rBounds = new RectangleF(controlBounds.Left + w,controlBounds.Top+h,w,h);
-                    drawIcon(control.RightSlot.Item, graphics, rBounds);
+                    drawIcon(control.RightItem, graphics, rBounds);
                 }
                 else
                 {
-                    drawIcon(control.RightSlot.Item, graphics, controlBounds);
+                    drawIcon(control.RightItem, graphics, controlBounds);
                 }
             }
 
