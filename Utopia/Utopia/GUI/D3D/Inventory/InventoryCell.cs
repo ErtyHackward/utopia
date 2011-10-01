@@ -11,14 +11,6 @@ namespace Utopia.GUI.D3D.Inventory
     public class InventoryCell : Control, IDropTarget
     {
       
-        public InventoryCell(int x, int y)
-        {
-            Slot = new ContainedSlot();
-            Slot.GridPosition = new Vector2I(x,y);
-            
-        }
-
-
         public bool MouseHovering
         {
             get
@@ -30,14 +22,6 @@ namespace Utopia.GUI.D3D.Inventory
             }
 
             set { }
-        }
-
-        public bool IsLink { get; set; }
-        public ContainedSlot Slot { get; set; }
-
-        public void Link(IItem itemToLink)
-        {
-            Slot.Item = itemToLink;
         }
 
         protected override void OnMouseReleased(MouseButtons button)
