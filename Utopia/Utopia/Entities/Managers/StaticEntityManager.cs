@@ -32,9 +32,9 @@ namespace Utopia.Entities.Managers
         private WorldFocusManager _worldFocusManager;
         private IStaticSpriteEntityRenderer _spriteRenderer;
         private VisualSpriteEntity[] _spriteEntitiesToRender;
-        private int _spriteEntitiesToRenderNbr;
         private IWorldChunks _worldChunks;
-        private readonly int _spriteMaxSize = 50000;
+        private readonly int _spriteMaxSize = 20000;
+        private PlayerEntityManager _player;
         #endregion
 
         #region Public variables/properties
@@ -43,13 +43,17 @@ namespace Utopia.Entities.Managers
         public StaticEntityManager(D3DEngine d3dEngine,
                                    WorldFocusManager worldFocusManager,
                                    IStaticSpriteEntityRenderer spriteRenderer,
-                                   IWorldChunks worldChunks)
+                                   IWorldChunks worldChunks,
+                                   PlayerEntityManager player)
         {
             _d3dEngine = d3dEngine;
             _worldFocusManager = worldFocusManager;
             _spriteRenderer = spriteRenderer;
             _spriteEntitiesToRender = new VisualSpriteEntity[_spriteMaxSize];
             _worldChunks = worldChunks;
+            _player = player;
+
+            this.UpdateOrder = 11;
         }
 
         public override void Initialize()
@@ -69,13 +73,19 @@ namespace Utopia.Entities.Managers
         #region Public Methods
         public override void Update(ref GameTime timeSpent)
         {
-            _spriteEntitiesToRenderNbr = 0;
-
             VisualChunk chunk;
+            double minDistanceChunkModified = double.MaxValue;
+            double currentChunkModifiedDistance;
+            _spriteRenderer.BeginSpriteCollectionRefresh();
             //Check inside the visible chunks (Not frustum culled) the statics entities that needs to be rendered
             for (int i = 0; i < _worldChunks.Chunks.Length; i++)
             {
-                chunk = _worldChunks.SortedChunks[i]; 
+                chunk = _worldChunks.SortedChunks[i];
+                if (chunk.State != ChunkState.DisplayInSyncWithMeshes)
+                {
+                    currentChunkModifiedDistance = Vector3D.Distance(_player.VisualEntity.Position, new Vector3D(chunk.ChunkPositionBlockUnit.X, _player.VisualEntity.Position.Y, chunk.ChunkPositionBlockUnit.Y));
+                    if (currentChunkModifiedDistance < minDistanceChunkModified) minDistanceChunkModified = currentChunkModifiedDistance;
+                }
                 if (chunk.isFrustumCulled == false && chunk.State == ChunkState.DisplayInSyncWithMeshes)
                 {
                     for (int j = 0; j < chunk.VisualSpriteEntities.Count; j++)
@@ -84,7 +94,9 @@ namespace Utopia.Entities.Managers
                     }
                 }
             }
-            _spriteRenderer.Update(ref timeSpent);
+
+            if (minDistanceChunkModified >= 48)
+                _spriteRenderer.Update(ref timeSpent);
         }
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
