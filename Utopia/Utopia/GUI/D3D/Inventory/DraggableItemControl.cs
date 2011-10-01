@@ -15,10 +15,11 @@ namespace Utopia.GUI.D3D.Inventory
 {
     public class DraggableItemControl : Control
     {
+        private readonly SlotContainer<ContainedSlot> _inventory;
         public static UniRectangle referenceBounds = new UniRectangle(0, 0, 64, 64);
        public bool beingDragged;
 
-       public Slot Slot { get; set; }
+       public ContainedSlot Slot { get; set; }
 
         /// <summary>X coordinate at which the control was picked up</summary>
         protected float pickupX;
@@ -27,13 +28,11 @@ namespace Utopia.GUI.D3D.Inventory
 
         protected UniRectangle pickupBounds;
 
-        public DraggableItemControl()
+        public DraggableItemControl( SlotContainer<ContainedSlot> inventory)
             : base()
         {
-            
+            _inventory = inventory;
         }
-
-
 
         protected override void OnMouseReleased(MouseButtons button)
         {
@@ -49,14 +48,25 @@ namespace Utopia.GUI.D3D.Inventory
             }
             else if (dropTarget != null)
             {
-                if (dropTarget.IsLink)
+                if (dropTarget is ToolbarButtonControl)
                 {
+                    ContainedSlot sourceSlot = this.Slot;                    
                     //copy item reference and restore the dragged item to its original position
-                    dropTarget.Link(Slot.Item);
-                    this.Bounds = pickupBounds;
+                    ((ToolbarButtonControl) dropTarget).Link(sourceSlot);
+                    Bounds = pickupBounds;
                 }
-                else
+                else if (dropTarget is InventoryCell)
                 {
+                    
+                    InventoryCell cell = dropTarget as InventoryCell;
+                    
+                    //seems a bit strange but the system is coherent : slot information is defined in the draggableItemControl not in the inventoryCell
+                    //inventoryCell only serves as a UI droptarget
+                    DraggableItemControl destination = cell.Children.First() as DraggableItemControl;
+
+                    _inventory.DropOn(this.Slot,destination.Slot);
+
+                    /*old client side implemenation without the slots : 
                     //swap childs
                     Control dest = ((Control)dropTarget).Children.First();
 
@@ -68,10 +78,10 @@ namespace Utopia.GUI.D3D.Inventory
                     thisParent.Children.Add(dest);
                     ((Control)dropTarget).Children.Add(this);
 
-
+                    
                     dest.Bounds = referenceBounds;
                     this.Bounds = referenceBounds;
-
+                    */
                 }
             }
             else

@@ -37,11 +37,11 @@ namespace Utopia.GUI.D3D.Inventory
 
             if (control.Slot != null )
             {
-                String s = ((ContainedSlot) control.Slot).GridPosition.ToString();
+                String s = control.Slot.GridPosition.X + "," + control.Slot.GridPosition.Y;
 
                 if (control.Slot.Item != null)
                 {
-                    s += control.Slot.Item.DisplayName;
+                    s += ":" + control.Slot.Item.DisplayName;
                 }
                 
                 graphics.DrawString("button.normal",controlBounds,s);

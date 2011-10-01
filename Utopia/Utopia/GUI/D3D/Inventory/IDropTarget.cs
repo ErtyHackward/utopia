@@ -9,11 +9,6 @@ namespace Utopia.GUI.D3D.Inventory
 {
     public interface IDropTarget
     {
-        bool MouseHovering { get; set; }
-        bool IsLink { get; set; }
-        Slot Slot { get; set; }
-
-        EquipmentSlotType InventorySlot { get; set; }
-        void Link(IItem item);
+        bool MouseHovering { get; set; }      
     }
 }

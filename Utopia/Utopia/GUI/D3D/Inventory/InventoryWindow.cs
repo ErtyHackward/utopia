@@ -6,6 +6,7 @@ using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.Shared.Sprites;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Structs;
 
 namespace Utopia.GUI.D3D.Inventory
 {
@@ -55,24 +56,28 @@ namespace Utopia.GUI.D3D.Inventory
             characterSheet.Bounds = new UniRectangle(0, 0, back.Width, back.Height);
             Children.Add(characterSheet);
             //XXX externalize charactersheet slot positions. clientsettings.xml or somewhere else
-            BuildBodyslot(characterSheet, EquipmentSlotType.Head, 74, 2);
+
+            // TODO charactersheet has to be redone, CharacterEquipment is not ContainedSlot based but uses specialized methods like SetHeadGear
+ 
+           /* BuildBodyslot(characterSheet, EquipmentSlotType.Head, 74, 2);
             BuildBodyslot(characterSheet, EquipmentSlotType.Neck, 82, 46, 16);
             BuildBodyslot(characterSheet, EquipmentSlotType.Torso, 74, 71);
             BuildBodyslot(characterSheet, EquipmentSlotType.RightHand, 145, CellSize);
             BuildBodyslot(characterSheet, EquipmentSlotType.LeftHand, 2, CellSize);
             BuildBodyslot(characterSheet, EquipmentSlotType.Legs, 110, 136);
             BuildBodyslot(characterSheet, EquipmentSlotType.Feet, 48, 178);
-            BuildBodyslot(characterSheet, EquipmentSlotType.LeftRing, 5, 101, 16);
+            BuildBodyslot(characterSheet, EquipmentSlotType.LeftRing, 5, 101, 16);*/
         }
 
-        private void BuildBodyslot(Control parent, EquipmentSlotType inventorySlot, int x, int y, int size = 32)
+       /* private void BuildBodyslot(Control parent, EquipmentSlotType inventorySlot, int x, int y, int size = 32)
         {
+            _player.Equipment.Torso
             var bodyCell = new InventoryCell(inventorySlot);
             bodyCell.Name = inventorySlot.ToString();
             bodyCell.Bounds = new UniRectangle(x, y, size, size);
             bodyCell.IsLink = true;
             parent.Children.Add(bodyCell);
-        }
+        }*/
 
         public void BuildGrid(int xstart)
         {
@@ -89,7 +94,7 @@ namespace Utopia.GUI.D3D.Inventory
                     control.Name = x + "," + y;
                     Children.Add(control);
 
-                    var drag = new DraggableItemControl();
+                    var drag = new DraggableItemControl(_player.Inventory);
                     drag.Bounds = DraggableItemControl.referenceBounds;
                     drag.Name = "drag " + x + "," + y;
                     
@@ -107,7 +112,12 @@ namespace Utopia.GUI.D3D.Inventory
             {
                 for (int y = 0; y < slots.GridSize.Y; y++)
                 {
-                    _uiGrid[x, y].Slot = null; //ensure there is no desynchro between ui state and server state
+                    if (_uiGrid[x, y].Slot == null) _uiGrid[x, y].Slot = new ContainedSlot();
+                    //ensure there is no desynchro between ui state and server state
+                    _uiGrid[x, y].Slot.Item = null;
+                    _uiGrid[x, y].Slot.ItemsCount = 0;
+                    _uiGrid[x, y].Slot.GridPosition = new Vector2I(x,y);
+                   
                 }
             }
 
