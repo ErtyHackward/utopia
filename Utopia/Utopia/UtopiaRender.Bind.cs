@@ -63,6 +63,7 @@ namespace Utopia
             iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
+            iocContainer.Bind<ItemMessageTranslator>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<VisualDynamicEntity>().ToSelf().InSingletonScope();
 

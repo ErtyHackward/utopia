@@ -55,24 +55,28 @@ namespace Utopia.GUI.D3D.Inventory
             characterSheet.Bounds = new UniRectangle(0, 0, back.Width, back.Height);
             Children.Add(characterSheet);
             //XXX externalize charactersheet slot positions. clientsettings.xml or somewhere else
-            BuildBodyslot(characterSheet, EquipmentSlotType.Head, 74, 2);
+
+            // TODO charactersheet has to be redone, CharacterEquipment is not ContainedSlot based but uses specialized methods like SetHeadGear
+ 
+           /* BuildBodyslot(characterSheet, EquipmentSlotType.Head, 74, 2);
             BuildBodyslot(characterSheet, EquipmentSlotType.Neck, 82, 46, 16);
             BuildBodyslot(characterSheet, EquipmentSlotType.Torso, 74, 71);
             BuildBodyslot(characterSheet, EquipmentSlotType.RightHand, 145, CellSize);
             BuildBodyslot(characterSheet, EquipmentSlotType.LeftHand, 2, CellSize);
             BuildBodyslot(characterSheet, EquipmentSlotType.Legs, 110, 136);
             BuildBodyslot(characterSheet, EquipmentSlotType.Feet, 48, 178);
-            BuildBodyslot(characterSheet, EquipmentSlotType.LeftRing, 5, 101, 16);
+            BuildBodyslot(characterSheet, EquipmentSlotType.LeftRing, 5, 101, 16);*/
         }
 
-        private void BuildBodyslot(Control parent, EquipmentSlotType inventorySlot, int x, int y, int size = 32)
+       /* private void BuildBodyslot(Control parent, EquipmentSlotType inventorySlot, int x, int y, int size = 32)
         {
+            _player.Equipment.Torso
             var bodyCell = new InventoryCell(inventorySlot);
             bodyCell.Name = inventorySlot.ToString();
             bodyCell.Bounds = new UniRectangle(x, y, size, size);
             bodyCell.IsLink = true;
             parent.Children.Add(bodyCell);
-        }
+        }*/
 
         public void BuildGrid(int xstart)
         {
@@ -84,12 +88,12 @@ namespace Utopia.GUI.D3D.Inventory
             {
                 for (int y = 0; y < slots.GridSize.Y; y++)
                 {
-                    var control = new InventoryCell();
+                    var control = new InventoryCell(x,y);
                     control.Bounds = new UniRectangle(xstart + x * CellSize, y * CellSize, CellSize, CellSize);
                     control.Name = x + "," + y;
                     Children.Add(control);
 
-                    var drag = new DraggableItemControl();
+                    var drag = new DraggableItemControl(_player.Inventory);
                     drag.Bounds = DraggableItemControl.referenceBounds;
                     drag.Name = "drag " + x + "," + y;
                     
