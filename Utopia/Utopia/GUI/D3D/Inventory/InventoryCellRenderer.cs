@@ -41,11 +41,11 @@ namespace Utopia.GUI.D3D.Inventory
                     graphics.DrawElement("button.normal", controlBounds);
                 }
             
-
+            /*
             if (control.Slot != null)
             {
                 graphics.DrawCustomTexture(control.Slot.Item.Icon, controlBounds);
-            }
+            }*/
 
         }
 

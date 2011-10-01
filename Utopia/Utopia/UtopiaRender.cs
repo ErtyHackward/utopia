@@ -73,6 +73,7 @@ namespace Utopia
         private IChunkStorageManager _chunkStorageManager;
         private ActionsManager _actionManager;
         private EntityMessageTranslator _entityMessageTranslator;
+        private ItemMessageTranslator _itemMessageTranslator;
         private Server _server;
         private ActionsManager _actions;
         private D3DEngine _engine;
@@ -273,7 +274,7 @@ namespace Utopia
 
             //Create the EntityMessageTRanslator
             _entityMessageTranslator = IoCContainer.Get<EntityMessageTranslator>();
-
+            _itemMessageTranslator = IoCContainer.Get<ItemMessageTranslator>();
             GameComponents.Add(_server);
 
             GameComponents.Add(IoCContainer.Get<DebugComponent>());

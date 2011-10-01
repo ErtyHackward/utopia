@@ -133,7 +133,7 @@
     <Compile Include="GUI\ChatComponent.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
     <Compile Include="GUI\D3D\Hud.cs" />
-    <Compile Include="GUI\D3D\Inventory\ButtonItemControl.cs" />
+    <Compile Include="GUI\D3D\Inventory\ToolbarButtonControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControlRenderer.cs" />
     <Compile Include="GUI\D3D\Inventory\ContainerControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ContainerRenderer.cs" />
