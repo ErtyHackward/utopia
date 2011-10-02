@@ -33,6 +33,9 @@ namespace Utopia.Server.Managers
 
             var item = (IItem)EntityFactory.Instance.CreateEntity((EntityClassId.Shovel));
             dEntity.Inventory.PutItem(item);
+            var item2 = (IItem)EntityFactory.Instance.CreateEntity((EntityClassId.PickAxe));
+            dEntity.Inventory.PutItem(item2);
+
             return dEntity;
         }
 
