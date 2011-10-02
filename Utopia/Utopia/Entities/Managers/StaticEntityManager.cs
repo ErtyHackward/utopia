@@ -33,7 +33,6 @@ namespace Utopia.Entities.Managers
         private IStaticSpriteEntityRenderer _spriteRenderer;
         private VisualSpriteEntity[] _spriteEntitiesToRender;
         private IWorldChunks _worldChunks;
-        private readonly int _spriteMaxSize = 20000;
         private PlayerEntityManager _player;
         #endregion
 
@@ -49,7 +48,6 @@ namespace Utopia.Entities.Managers
             _d3dEngine = d3dEngine;
             _worldFocusManager = worldFocusManager;
             _spriteRenderer = spriteRenderer;
-            _spriteEntitiesToRender = new VisualSpriteEntity[_spriteMaxSize];
             _worldChunks = worldChunks;
             _player = player;
 

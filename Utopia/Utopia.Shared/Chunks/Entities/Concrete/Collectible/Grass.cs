@@ -24,11 +24,13 @@ namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
         {
             get { return "Grass"; }
         }
+
         #endregion
         public Grass()
         {
             GrowPhase = 4;
             Type = EntityType.Static;
+            UniqueName = DisplayName;
         }
 
         #region Public methods

@@ -202,7 +202,7 @@ namespace Utopia.Worlds.Storage
             _landscapeInsertCmd.Parameters[2].Value = data.ChunkZ;
             if (data.Md5Hash != null) _landscapeInsertCmd.Parameters[3].Value = data.Md5Hash.Bytes;
             else _landscapeInsertCmd.Parameters[3].Value = null;
-            _landscapeInsertCmd.Parameters[4].Value = data.CubeData;
+            _landscapeInsertCmd.Parameters[4].Value = data.CubeData; //Chunk + Entities Data under compressed form stored
 
             _landscapeInsertCmd.ExecuteNonQuery();
 

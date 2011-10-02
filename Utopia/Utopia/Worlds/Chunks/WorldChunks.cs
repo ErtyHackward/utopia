@@ -304,7 +304,9 @@ namespace Utopia.Worlds.Chunks
 
                     //Create the new VisualChunk
                     chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder);
-                    if (_server.Connected) chunk.IsServerRequested = true;
+                    chunk.IsServerRequested = true;
+                    //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
+                    chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);
 
                     //Store this chunk inside the arrays.
                     Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
