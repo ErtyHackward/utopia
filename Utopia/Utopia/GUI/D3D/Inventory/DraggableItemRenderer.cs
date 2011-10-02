@@ -35,14 +35,10 @@ namespace Utopia.GUI.D3D.Inventory
 
            // graphics.DrawElement("button.normal", controlBounds);
 
-            if (control.Slot != null )
+            if (control.Item != null )
             {
-                String s = control.Slot.GridPosition.X + "," + control.Slot.GridPosition.Y;
-
-                if (control.Slot.Item != null)
-                {
-                    s += ":" + control.Slot.Item.DisplayName;
-                }
+                String s = control.Item.DisplayName;
+                
                 
                 graphics.DrawString("button.normal",controlBounds,s);
                 //graphics.DrawCustomTexture(control.Item.Icon, controlBounds);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
@@ -14,7 +15,7 @@ namespace Utopia.GUI.D3D.Inventory
     public class InventoryWindow : ContainerControl
     {
         private readonly PlayerCharacter _player;
-        private DraggableItemControl[,] _uiGrid;
+        private InventoryCell[,] _uiGrid;
         private const int CellSize = 64;
 
         public InventoryWindow(SpriteTexture back, PlayerCharacter player)
@@ -83,7 +84,7 @@ namespace Utopia.GUI.D3D.Inventory
         {
             SlotContainer<ContainedSlot> slots = _player.Inventory;
 
-             _uiGrid = new DraggableItemControl[slots.GridSize.X, slots.GridSize.Y];
+            _uiGrid = new InventoryCell[slots.GridSize.X, slots.GridSize.Y];
 
             for (int x = 0; x < slots.GridSize.X; x++)
             {
@@ -99,7 +100,7 @@ namespace Utopia.GUI.D3D.Inventory
                     drag.Name = "drag " + x + "," + y;
                     
                     control.Children.Add(drag);
-                    _uiGrid[x, y] = drag;
+                    _uiGrid[x, y] = control;
                 }
             }
         }
@@ -117,7 +118,8 @@ namespace Utopia.GUI.D3D.Inventory
                     _uiGrid[x, y].Slot.Item = null;
                     _uiGrid[x, y].Slot.ItemsCount = 0;
                     _uiGrid[x, y].Slot.GridPosition = new Vector2I(x,y);
-                   
+                    DraggableItemControl drag = (DraggableItemControl) _uiGrid[x, y].Children.First();
+                    drag.Item = null;
                 }
             }
 
@@ -127,6 +129,8 @@ namespace Utopia.GUI.D3D.Inventory
                 int x = containedSlot.GridPosition.X;
                 int y = containedSlot.GridPosition.Y;
                 _uiGrid[x, y].Slot = containedSlot;
+                DraggableItemControl drag = (DraggableItemControl)_uiGrid[x, y].Children.First();
+                drag.Item = containedSlot.Item;
             }
         }
 
