@@ -19,7 +19,7 @@ namespace Utopia.GUI.D3D.Inventory
         public static UniRectangle referenceBounds = new UniRectangle(0, 0, 64, 64);
        public bool beingDragged;
 
-       public ContainedSlot Slot { get; set; }
+       public IItem Item { get; set; }
 
         /// <summary>X coordinate at which the control was picked up</summary>
         protected float pickupX;
@@ -40,6 +40,8 @@ namespace Utopia.GUI.D3D.Inventory
 
             IDropTarget dropTarget = findDropTarget(this.Screen.Desktop);
 
+            ContainedSlot sourceSlot = ((InventoryCell)this.Parent).Slot;
+
             if (dropTarget == this.Parent)
             {
                 Debug.WriteLine("droptarget = parent");
@@ -50,21 +52,17 @@ namespace Utopia.GUI.D3D.Inventory
             {
                 if (dropTarget is ToolbarButtonControl)
                 {
-                    ContainedSlot sourceSlot = this.Slot;                    
+                                        
                     //copy item reference and restore the dragged item to its original position
                     ((ToolbarButtonControl) dropTarget).Link(sourceSlot);
                     Bounds = pickupBounds;
                 }
                 else if (dropTarget is InventoryCell)
                 {
-                    
-                    InventoryCell cell = dropTarget as InventoryCell;
-                    
-                    //seems a bit strange but the system is coherent : slot information is defined in the draggableItemControl not in the inventoryCell
-                    //inventoryCell only serves as a UI droptarget
-                    DraggableItemControl destination = cell.Children.First() as DraggableItemControl;
 
-                    _inventory.DropOn(this.Slot,destination.Slot);
+                    InventoryCell destination = dropTarget as InventoryCell;
+
+                    _inventory.DropOn(sourceSlot,destination.Slot);
 
                     /*old client side implemenation without the slots : 
                     //swap childs
@@ -114,12 +112,8 @@ namespace Utopia.GUI.D3D.Inventory
                 if (control != this && control is IDropTarget && ((IDropTarget)control).MouseHovering
                    // && control.GetAbsoluteBounds().Contains(x, y)//avoid bugs with multiple selected cells
                     )
-                {
-                    if (this.Slot!=null) 
-                    {
-                        return (IDropTarget)control;
-                    }
-                  
+                {   
+                    return (IDropTarget)control;
                 }
                 else
                 {
@@ -161,7 +155,7 @@ namespace Utopia.GUI.D3D.Inventory
         protected override void OnMousePressed(MouseButtons button)
         {
 
-            if (Slot == null) return;//dont drag empty cells
+            if (Item == null) return;//dont drag empty cells
 
             if (button == MouseButtons.Left)
             {

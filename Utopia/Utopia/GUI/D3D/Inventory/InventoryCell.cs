@@ -11,6 +11,8 @@ namespace Utopia.GUI.D3D.Inventory
     public class InventoryCell : Control, IDropTarget
     {
       
+        public ContainedSlot Slot;
+
         public bool MouseHovering
         {
             get

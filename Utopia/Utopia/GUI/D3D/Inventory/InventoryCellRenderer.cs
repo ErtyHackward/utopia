@@ -40,7 +40,9 @@ namespace Utopia.GUI.D3D.Inventory
                 {
                     graphics.DrawElement("button.normal", controlBounds);
                 }
-            
+
+                String s = control.Slot.GridPosition.X + "," + control.Slot.GridPosition.Y;
+                graphics.DrawString("button.normal",controlBounds,s);
             /*
             if (control.Slot != null)
             {
