@@ -25,7 +25,7 @@ namespace Utopia.Server.Structs
         /// <summary>
         /// Gets or sets currently locked entity by the player
         /// </summary>
-        public uint LockedEntity { get; set; }
+        public Entity LockedEntity { get; set; }
 
         /// <summary>
         /// Gets wrapped entity

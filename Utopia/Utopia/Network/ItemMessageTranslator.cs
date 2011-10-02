@@ -56,12 +56,41 @@ namespace Utopia.Network
             
             _playerEntity.Inventory.ItemPut += InventoryItemPut;
             _playerEntity.Inventory.ItemTaken += InventoryItemTaken;
+            _playerEntity.Inventory.ItemExchanged += InventoryItemExchanged;
 
             _connection = server.ServerConnection;
 
             _connection.MessageEntityLockResult += ConnectionMessageEntityLockResult;
             
 
+        }
+
+        void InventoryItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
+        {
+            if (!_pendingOperation)
+                throw new InvalidOperationException("Unable to exchange item without taking it first");
+
+            var destId = sender == _playerEntity.Inventory ? _playerEntity.EntityId : _lockedEntity.EntityId;
+            var srcId = _sourceContainer == _playerEntity.Inventory ? _playerEntity.EntityId : (_lockedEntity == null ? 0 : _lockedEntity.EntityId);
+
+            var msg = new ItemTransferMessage
+            {
+                SourceContainerSlot = _tempSlot.GridPosition,
+                SourceContainerEntityId = srcId,
+                ItemsCount = e.Slot.ItemsCount,
+                DestinationContainerSlot = e.Slot.GridPosition,
+                DestinationContainerEntityId = destId,
+                IsSwitch = true
+            };
+
+            if (srcId == 0)
+                msg.ItemEntityId = _tempSlot.Item.EntityId;
+
+            _connection.SendAsync(msg);
+
+            _tempSlot.Item = e.Exchanged.Item;
+            _tempSlot.ItemsCount = e.Exchanged.ItemsCount;
+            _pendingOperation = true;
         }
 
         void ConnectionMessageEntityLockResult(object sender, ProtocolMessageEventArgs<EntityLockResultMessage> e)
@@ -206,6 +235,7 @@ namespace Utopia.Network
             }
             _playerEntity.Inventory.ItemPut -= InventoryItemPut;
             _playerEntity.Inventory.ItemTaken -= InventoryItemTaken;
+            _playerEntity.Inventory.ItemExchanged -= InventoryItemExchanged;
             _connection.MessageEntityLockResult -= ConnectionMessageEntityLockResult;
         }
     }

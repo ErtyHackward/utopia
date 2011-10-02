@@ -246,5 +246,19 @@ namespace Utopia.Shared.Chunks.Entities
                 return _entities.Find(e => e.EntityId == p) != null;
             }
         }
+
+        /// <summary>
+        /// Detects if spicified entity in this collection
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public bool ContainsId(uint p, out Entity entity)
+        {
+            lock (_syncRoot)
+            {
+                return (entity = _entities.Find(e => e.EntityId == p)) != null;
+            }
+        }
     }
 }

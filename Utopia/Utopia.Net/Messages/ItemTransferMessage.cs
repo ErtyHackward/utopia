@@ -17,6 +17,7 @@ namespace Utopia.Net.Messages
         private Vector2I _destinationSlot;
         private int _itemsCount;
         private uint _itemEntityId;
+        private bool _isSwitch;
 
         /// <summary>
         /// Source object item taken from, use 0 if item was taken from world space
@@ -73,12 +74,23 @@ namespace Utopia.Net.Messages
         }
 
         /// <summary>
+        /// Indicates if operation is the switch operation
+        /// </summary>
+        public bool IsSwitch
+        {
+            get { return _isSwitch; }
+            set { _isSwitch = value; }
+        }
+
+        /// <summary>
         /// Gets a message identification number
         /// </summary>
         public byte MessageId
         {
             get { return (byte)MessageTypes.ItemTransfer; }
         }
+
+
 
         /// <summary>
         /// Writes all necessary instance members
@@ -92,6 +104,7 @@ namespace Utopia.Net.Messages
             writer.Write(_destinationSlot);
             writer.Write(_itemEntityId);
             writer.Write(_itemsCount);
+            writer.Write(_isSwitch);
         }
 
         public static ItemTransferMessage Read(BinaryReader reader)
@@ -104,6 +117,7 @@ namespace Utopia.Net.Messages
             msg._destinationSlot = reader.ReadVector2I();
             msg._itemEntityId = reader.ReadUInt32();
             msg._itemsCount = reader.ReadInt32();
+            msg._isSwitch = reader.ReadBoolean();
 
             return msg;
         }

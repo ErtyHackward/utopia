@@ -165,10 +165,10 @@ namespace Utopia.Shared.World.Processors
                                 {
                                     Cubes[index] = CubeId.Grass;
                                     //Place Grass sprite on the Cube
-                                    if (sandResult.Value > 0.5)
-                                    {
-                                        chunk.Entities.Add(new Grass() { GrowPhase = 4, Position = new Vector3D(X + 0.5, Y + 1, Z + 0.5) });
-                                    }
+                                    //if (sandResult.Value > 0.5)
+                                    //{
+                                    //    chunk.Entities.Add(new Grass() { GrowPhase = 4, Position = new Vector3D(X + 0.5, Y + 1, Z + 0.5) });
+                                    //}
                                 }
                                 else
                                 {

@@ -20,6 +20,11 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         event EventHandler<EntityContainerEventArgs<T>> ItemPut;
 
         /// <summary>
+        /// Occurs when one item being replaced by other
+        /// </summary>
+        event EventHandler<EntityContainerEventArgs<T>> ItemExchanged;
+
+        /// <summary>
         /// Gets maximum container capacity
         /// </summary>
         int Capacity { get; }
@@ -28,7 +33,7 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// Gets container grid size
         /// </summary>
         Vector2I GridSize { get; }
-        
+
         /// <summary>
         /// Tries to put item into slot specified
         /// </summary>
@@ -50,10 +55,33 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// <returns></returns>
         T TakeSlot(T slot);
 
+        /// <summary>
+        /// Returns slot without taking it from the container
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        T PeekSlot(Vector2I pos);
+
+        /// <summary>
+        /// Puts the item to already occupied slot (Items should have different type)
+        /// </summary>
+        /// <param name="slotPut"></param>
+        /// <param name="slotTaken"></param>
+        /// <returns></returns>
+        bool PutItemExchange(T slotPut, out T slotTaken);
+
     }
 
     public class EntityContainerEventArgs<T> : EventArgs
     {
+        /// <summary>
+        /// Gets item that was taken or put
+        /// </summary>
         public T Slot { get; set; }
+
+        /// <summary>
+        /// Gets item that was taken by exchange operation
+        /// </summary>
+        public T Exchanged { get; set; }
     }
 }

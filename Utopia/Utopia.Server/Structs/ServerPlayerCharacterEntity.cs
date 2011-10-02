@@ -221,10 +221,26 @@ namespace Utopia.Server.Structs
         {
             var playerCharacter = (PlayerCharacter)DynamicEntity;
 
+            if (itemTransferMessage.IsSwitch)
+            {
+                //this.LockedEntity
+
+
+
+
+                return;
+            }
+
+
             // internal inventory transfer?
             if (playerCharacter.EntityId == itemTransferMessage.SourceContainerEntityId && itemTransferMessage.SourceContainerEntityId == itemTransferMessage.DestinationContainerEntityId)
             {
-                var slot = new ContainedSlot { GridPosition = itemTransferMessage.SourceContainerSlot, ItemsCount = itemTransferMessage.ItemsCount };
+
+                var slot = new ContainedSlot
+                               {
+                                   GridPosition = itemTransferMessage.SourceContainerSlot,
+                                   ItemsCount = itemTransferMessage.ItemsCount
+                               };
                 // check if we allow transfer
                 slot = playerCharacter.Inventory.TakeSlot(slot);
 
@@ -243,8 +259,9 @@ namespace Utopia.Server.Structs
                         playerCharacter.Inventory.PutItem(slot);
                     }
                 }
+
             }
-            
+
             // take from world?
             if (itemTransferMessage.SourceContainerEntityId == 0 && itemTransferMessage.DestinationContainerEntityId == playerCharacter.EntityId)
             {
