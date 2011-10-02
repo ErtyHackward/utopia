@@ -62,7 +62,14 @@ namespace Utopia.GUI.D3D.Inventory
 
                     InventoryCell destination = dropTarget as InventoryCell;
 
-                    _inventory.DropOn(sourceSlot,destination.Slot);
+                    _inventory.DropOn(ref sourceSlot,destination.Slot);
+
+                    //restore the draggablecontrols
+                    this.Bounds = referenceBounds;
+                    this.Item = sourceSlot.Item;
+
+                    DraggableItemControl dragDest = (DraggableItemControl) destination.Children.First();
+                    dragDest.Item = destination.Slot.Item;
 
                     /*old client side implemenation without the slots : 
                     //swap childs

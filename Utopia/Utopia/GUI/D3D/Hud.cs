@@ -6,6 +6,7 @@ using SharpDX;
 using Nuclex.UserInterface;
 using Utopia.GUI.D3D.Inventory;
 using SharpDX.Direct3D11;
+using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia.GUI.D3D
 {
@@ -24,13 +25,16 @@ namespace Utopia.GUI.D3D
 
 
         /// <summary>
-        /// _toolbarUI is part of the hud 
+        /// _toolbarUI is a fixed part of the hud
         /// </summary>
         ToolBarUi _toolbarUi;
 
-        public Hud(Screen screen, D3DEngine d3DEngine)
+        private readonly PlayerCharacter _player;
+
+        public Hud(Screen screen, D3DEngine d3DEngine, PlayerCharacter player)
         {
             _screen = screen;
+            _player = player;
             _d3DEngine = d3DEngine;
             DrawOrders.UpdateIndex(0, 9000);
             _d3DEngine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
@@ -46,7 +50,7 @@ namespace Utopia.GUI.D3D
             _font = new SpriteFont();
             _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
 
-            _toolbarUi = new ToolBarUi(new UniRectangle(0.0f, _d3DEngine.ViewPort.Height - 46, _d3DEngine.ViewPort.Width, 80.0f));
+            _toolbarUi = new ToolBarUi(new UniRectangle(0.0f, _d3DEngine.ViewPort.Height - 46, _d3DEngine.ViewPort.Width, 80.0f),_player);
             _screen.Desktop.Children.Add(_toolbarUi);
             //the guimanager will draw the GUI screen, not the Hud !
         }
