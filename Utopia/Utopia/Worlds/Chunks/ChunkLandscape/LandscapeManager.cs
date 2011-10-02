@@ -110,7 +110,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                 //Have we receive the Server data
                 if (_receivedServerChunks.TryGetValue(chunk.ChunkID, out message))
                 {
-                    chunk.IsServerRequested = false;
+
                     switch (message.Flag)
                     {
                         //In this case the message contains the data from the landscape !
@@ -119,8 +119,10 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
                             chunk.RefreshBorderChunk();
                             chunk.State = ChunkState.LandscapeCreated;
-                            chunk.CompressedBytes = message.Data;
+                            //chunk.CompressedBytes = message.Data;
                             chunk.ThreadStatus = ThreadStatus.Idle;
+
+                            CreateVisualEntities(chunk, chunk);
 
                             //Save the modified chunk landscape data locally only if the local one is different from the server one
                             Md5Hash hash;
@@ -133,13 +135,13 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             if (SaveChunk)
                             {
                                 _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage()
-                                {
-                                    ChunkId = chunk.ChunkID,
-                                    ChunkX = chunk.ChunkPosition.X,
-                                    ChunkZ = chunk.ChunkPosition.Y,
-                                    Md5Hash = message.ChunkHash,
-                                    CubeData = message.Data
-                                }
+                                                                            {
+                                                                                ChunkId = chunk.ChunkID,
+                                                                                ChunkX = chunk.ChunkPosition.X,
+                                                                                ChunkZ = chunk.ChunkPosition.Y,
+                                                                                Md5Hash = message.ChunkHash,
+                                                                                CubeData = message.Data
+                                                                            }
                                                                      );
                             }
 
@@ -148,6 +150,11 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
                                 chunk.StorageRequestTicket = 0;
                             }
+
+
+                            chunk.IsServerRequested = false;
+
+
                             break;
                         case ChunkDataMessageFlag.ChunkCanBeGenerated:
                             CreateLandscapeFromGenerator(chunk, Async);
@@ -157,6 +164,10 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
                                 chunk.StorageRequestTicket = 0;
                             }
+
+
+                            chunk.IsServerRequested = false;
+
 
                             break;
                         case ChunkDataMessageFlag.ChunkMd5Equal:
@@ -171,11 +182,16 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 chunk.State = ChunkState.LandscapeCreated;
                                 chunk.ThreadStatus = ThreadStatus.Idle;
 
+                                CreateVisualEntities(chunk, chunk);
+
                                 if (chunk.StorageRequestTicket != 0)
                                 {
                                     _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
                                     chunk.StorageRequestTicket = 0;
                                 }
+
+                                chunk.IsServerRequested = false;
+
                             }
                             break;
                         default:
@@ -201,6 +217,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                         Range = new Range2(chunk.ChunkPosition, Vector2I.One),
                         Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
                     });
+
+                    chunk.ThreadStatus = ThreadStatus.Locked;
                 }
                 else
                 {
@@ -211,8 +229,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                         Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
                     });
                 }
-
-
             }
         }
 
@@ -241,18 +257,21 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
             
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
-
-            for (int entityID = 0; entityID < generatedChunk.Entities.Data.Count; entityID++)
-            {
-                visualChunk.VisualSpriteEntities.Add(new VisualSpriteEntity((SpriteEntity)generatedChunk.Entities.Data[entityID]));
-            }
-
-            generatedChunk.Entities = null;
+            visualChunk.Entities = generatedChunk.Entities;
+            CreateVisualEntities(generatedChunk, visualChunk);
 
             visualChunk.State = ChunkState.LandscapeCreated;
             visualChunk.ThreadStatus = ThreadStatus.Idle;
 
             return null;
+        }
+
+        private void CreateVisualEntities(AbstractChunk source, VisualChunk target)
+        {
+            for (int entityID = 0; entityID < source.Entities.Data.Count; entityID++)
+            {
+                target.VisualSpriteEntities.Add(new VisualSpriteEntity((SpriteEntity)source.Entities.Data[entityID]));
+            }
         }
 
         #endregion

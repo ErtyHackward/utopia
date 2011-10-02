@@ -89,7 +89,7 @@ namespace Utopia.Entities.Renderer
             _effectPointSprite.Apply();
 
             _vb.SetToDevice(0);
-            _d3dEngine.Context.Draw(_vb.VertexCount, 0);
+            _d3dEngine.Context.Draw(_verticeCount, 0);
         }
 
         public void BeginSpriteCollectionRefresh()
@@ -99,8 +99,8 @@ namespace Utopia.Entities.Renderer
 
         public void AddPointSpriteVertex(ref VertexPointSprite spriteVertex)
         {
+            if (_verticeCount >= _verticeArrayMaxSize-1) return;
             _verticeCount++;
-            if (_verticeCount >= _verticeArrayMaxSize) return;
             _vertices[_verticeCount] = spriteVertex;
         }
 
