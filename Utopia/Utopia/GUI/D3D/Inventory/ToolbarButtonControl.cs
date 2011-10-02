@@ -14,7 +14,7 @@ namespace Utopia.GUI.D3D.Inventory
     public class ToolbarButtonControl : ButtonControl, IDropTarget
     {
 
-        public readonly ToolbarSlot ToolbarSlot;       
+        public ToolbarSlot ToolbarSlot;       
 
         public bool Highlight { get; set; }
 
@@ -33,9 +33,10 @@ namespace Utopia.GUI.D3D.Inventory
         public ToolbarButtonControl(ToolbarSlot slot)
             : base()
         {
-            ToolbarSlot = slot;
-            //Text = item.name;            
+            ToolbarSlot = slot;    
         }
+
+     
 
         protected override void OnMouseEntered()
         {
@@ -61,6 +62,7 @@ namespace Utopia.GUI.D3D.Inventory
             {
                 if (ToolbarSlot.Left == null)
                 {
+                    Text = pos.ToString();
                     ToolbarSlot.Left = pos;
                 }
                 else
