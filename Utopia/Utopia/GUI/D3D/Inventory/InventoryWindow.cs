@@ -113,11 +113,12 @@ namespace Utopia.GUI.D3D.Inventory
             {
                 for (int y = 0; y < slots.GridSize.Y; y++)
                 {
-                    if (_uiGrid[x, y].Slot == null) _uiGrid[x, y].Slot = new ContainedSlot();
-                    //ensure there is no desynchro between ui state and server state
-                    _uiGrid[x, y].Slot.Item = null;
-                    _uiGrid[x, y].Slot.ItemsCount = 0;
-                    _uiGrid[x, y].Slot.GridPosition = new Vector2I(x,y);
+                    if (_uiGrid[x, y].Slot == null)
+                    {
+                        _uiGrid[x, y].Slot = new ContainedSlot();
+                        _uiGrid[x, y].Slot.GridPosition = new Vector2I(x, y);
+                    }
+                    
                     DraggableItemControl drag = (DraggableItemControl) _uiGrid[x, y].Children.First();
                     drag.Item = null;
                 }
