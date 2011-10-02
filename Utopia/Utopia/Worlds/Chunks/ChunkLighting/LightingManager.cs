@@ -192,7 +192,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
 
         //Can only be done if surrounding chunks have their landscape initialized !
-        public void PropagateLightSources(ref Range<int> cubeRange, bool borderAsLightSource = false)
+        public void PropagateLightSources(ref Range<int> cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false)
         {
             VisualCubeProfile cubeprofile;
             bool borderchunk = false;
@@ -223,8 +223,25 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     }
                 }
             }
+            if (withRangeEntityPropagation) PropagateLightInsideStaticEntities(ref cubeRange);
+
         }
 
+        //Propagate the light inside the chunk entities
+        private void PropagateLightInsideStaticEntities(ref Range<int> cubeRange)
+        {
+            VisualChunk chunk;
+            //Find all chunk from the Cube range !
+            for (int i = 0; i < WorldChunk.Chunks.Length; i++)
+            {
+                chunk = WorldChunk.Chunks[i];
+                if ((chunk.CubeRange.Max.X < cubeRange.Min.X) || (chunk.CubeRange.Min.X > cubeRange.Max.X))continue;
+                if ((chunk.CubeRange.Max.Y < cubeRange.Min.Y) || (chunk.CubeRange.Min.Y > cubeRange.Max.Y))continue;
+                PropagateLightInsideStaticEntities(chunk);
+            }
+        }
+
+        //Propagate the light inside the chunk entities
         private void PropagateLightInsideStaticEntities(VisualChunk chunk)
         {
             S33M3Engines.Struct.Vertex.VertexPointSprite vertexEntity;

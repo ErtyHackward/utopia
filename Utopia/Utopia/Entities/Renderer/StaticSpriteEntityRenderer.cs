@@ -92,6 +92,11 @@ namespace Utopia.Entities.Renderer
             _d3dEngine.Context.Draw(_vb.VertexCount, 0);
         }
 
+        public void BeginSpriteCollectionRefresh()
+        {
+            _verticeCount = 0;
+        }
+
         public void AddPointSpriteVertex(ref VertexPointSprite spriteVertex)
         {
             _verticeCount++;
@@ -102,7 +107,7 @@ namespace Utopia.Entities.Renderer
         public void Update(ref GameTime timeSpent)
         {
             //Udpate the Dynamic Vertex Buffer
-            if (_verticeCount == -1) return;
+            if (_verticeCount == 0) return;
             if (_vb == null)
             {
                 _vb = new VertexBuffer<VertexPointSprite>(_d3dEngine, _verticeCount, VertexPointSprite.VertexDeclaration, PrimitiveTopology.PointList, "StaticSprite", ResourceUsage.Dynamic, 5);
@@ -112,9 +117,6 @@ namespace Utopia.Entities.Renderer
             {
                 _vb.SetData(_vertices, 0, _verticeCount);
             }
-
-            _verticeCount = 0;
-
         }
 
         public void Interpolation(ref double interpolationHd, ref float interpolationLd)
