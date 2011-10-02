@@ -22,7 +22,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// </summary>
         public event EventHandler<EntityContainerEventArgs<T>> ItemTaken;
 
-        public void OnItemTaken(EntityContainerEventArgs<T> e)
+        protected void OnItemTaken(EntityContainerEventArgs<T> e)
         {
             var handler = ItemTaken;
             if (handler != null) handler(this, e);
@@ -33,9 +33,17 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// </summary>
         public event EventHandler<EntityContainerEventArgs<T>> ItemPut;
 
-        public void OnItemPut(EntityContainerEventArgs<T> e)
+        protected void OnItemPut(EntityContainerEventArgs<T> e)
         {
             var handler = ItemPut;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<EntityContainerEventArgs<T>> ItemExchanged;
+
+        protected void OnItemExchanged(EntityContainerEventArgs<T> e)
+        {
+            EventHandler<EntityContainerEventArgs<T>> handler = ItemExchanged;
             if (handler != null) handler(this, e);
         }
 
@@ -264,6 +272,44 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             OnItemTaken(new EntityContainerEventArgs<T> { Slot = slot });
 
             return slot;
+        }
+
+        /// <summary>
+        /// Returns slot without taking it from the container
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        public T PeekSlot(Vector2I pos)
+        {
+            ValidatePosition(pos);
+            return _items[pos.X, pos.Y];
+        }
+
+        /// <summary>
+        /// Puts the item to already occupied slot (Items should have different type)
+        /// </summary>
+        /// <param name="slotPut"></param>
+        /// <param name="slotTaken"></param>
+        /// <returns></returns>
+        public bool PutItemExchange(T slotPut, out T slotTaken)
+        {
+            slotTaken = null;
+
+            if (slotPut == null || slotPut.Item == null)
+                return false;
+
+            ValidatePosition(slotPut.GridPosition);
+            
+            var currentItem = _items[slotPut.GridPosition.X, slotPut.GridPosition.Y];
+
+            if (currentItem == null || currentItem.Item.GetType() == slotPut.Item.GetType())
+                return false;
+
+            slotTaken = currentItem;
+
+            _items[slotPut.GridPosition.X, slotPut.GridPosition.Y] = slotPut;
+            OnItemExchanged(new EntityContainerEventArgs<T> { Slot = slotPut, Exchanged = slotTaken });
+            return true;
         }
 
         /// <summary>

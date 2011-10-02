@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Utopia.Net.Connections;
 using Utopia.Net.Messages;
+using Utopia.Server.Structs;
+using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia.Server.Managers
 {
@@ -31,10 +31,11 @@ namespace Utopia.Server.Managers
             if (e.Connection.Authorized)
             {
                 // unlocking entities that was locked
-                if (e.Connection.ServerEntity.LockedEntity != 0)
+                if (e.Connection.ServerEntity.LockedEntity != null)
                 {
                     lock (_lockedEntities)
-                        _lockedEntities.Remove(e.Connection.ServerEntity.LockedEntity);
+                        _lockedEntities.Remove(e.Connection.ServerEntity.LockedEntity.EntityId);
+                    e.Connection.ServerEntity.LockedEntity = null;
                 }
             }
         }
@@ -100,8 +101,17 @@ namespace Utopia.Server.Managers
                         connection.SendAsync(new EntityLockResultMessage { EntityId = e.Message.EntityId, LockResult = LockResult.FailAlreadyLocked });
                         return;
                     }
+
+                    Entity entity = null;
+                    if (!_server.LandscapeManager.SurroundChunks(connection.ServerEntity.DynamicEntity.Position).Any(chunk => chunk.Entities.ContainsId(e.Message.EntityId, out entity)))
+                    {
+                        ServerDynamicEntity dynEntity;
+                        if (_server.AreaManager.TryFind(e.Message.EntityId, out dynEntity))
+                            entity = (Entity)dynEntity.DynamicEntity;
+                    }
+
                     _lockedEntities.Add(e.Message.EntityId, connection.ServerEntity.DynamicEntity.EntityId);
-                    connection.ServerEntity.LockedEntity = e.Message.EntityId;
+                    connection.ServerEntity.LockedEntity = entity;
                     connection.SendAsync(new EntityLockResultMessage { EntityId = e.Message.EntityId, LockResult = LockResult.SuccessLocked });
                 }
                 else
@@ -112,7 +122,7 @@ namespace Utopia.Server.Managers
                         if (lockOwner == connection.ServerEntity.DynamicEntity.EntityId)
                         {
                             _lockedEntities.Remove(e.Message.EntityId);
-                            connection.ServerEntity.LockedEntity = 0;
+                            connection.ServerEntity.LockedEntity = null;
                         }
                     }
                 }

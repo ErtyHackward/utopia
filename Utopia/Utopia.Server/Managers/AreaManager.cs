@@ -21,7 +21,7 @@ namespace Utopia.Server.Managers
     {
         private readonly Server _server;
         private readonly ConcurrentDictionary<Vector2I, MapArea> _areas = new ConcurrentDictionary<Vector2I, MapArea>();
-        private readonly HashSet<ServerDynamicEntity> _dynamicEntities = new HashSet<ServerDynamicEntity>();
+        private readonly Dictionary<uint, ServerDynamicEntity> _dynamicEntities = new  Dictionary<uint, ServerDynamicEntity>();
         private readonly object _areaManagerSyncRoot = new object();
         private readonly Timer _entityUpdateTimer;
         private DateTime _lastUpdate = DateTime.MinValue;
@@ -36,7 +36,7 @@ namespace Utopia.Server.Managers
         /// <returns></returns>
         public IEnumerable<ServerDynamicEntity> EnumerateEntities()
         {
-            return _dynamicEntities;
+            return _dynamicEntities.Values;
         }
 #endif
         /// <summary>
@@ -255,10 +255,10 @@ namespace Utopia.Server.Managers
         {
             lock (_dynamicEntities)
             {
-                if (_dynamicEntities.Contains(entity))
+                if (_dynamicEntities.ContainsKey(entity.DynamicEntity.EntityId))
                     throw new InvalidOperationException("Such entity is already in manager");
 
-                _dynamicEntities.Add(entity);
+                _dynamicEntities.Add(entity.DynamicEntity.EntityId, entity);
             }
 
             MapArea entityArea = null;
@@ -289,7 +289,7 @@ namespace Utopia.Server.Managers
             bool removed;
             lock (_dynamicEntities)
             {
-                removed = _dynamicEntities.Remove(entity);
+                removed = _dynamicEntities.Remove(entity.DynamicEntity.EntityId);
             }
 
             if (!removed) return;
@@ -339,6 +339,11 @@ namespace Utopia.Server.Managers
             _server.LandscapeManager.ChunkLoaded -= LandscapeManagerChunkLoaded;
             _server.LandscapeManager.ChunkUnloaded -= LandscapeManagerChunkUnloaded;
             _entityUpdateTimer.Dispose();
+        }
+
+        public bool TryFind(uint entityId, out ServerDynamicEntity entity)
+        {
+            return _dynamicEntities.TryGetValue(entityId, out entity);
         }
     }
 }

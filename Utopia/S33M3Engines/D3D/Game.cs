@@ -79,7 +79,7 @@ namespace S33M3Engines.D3D
         private readonly GameComponentCollection _gameComponents;
         private Color4 _backBufferColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
         private GameTime _gameTime = new GameTime();
-        private int _vSync = 1;
+        private int _vSync = 0;
         #endregion
 
         public Game()
