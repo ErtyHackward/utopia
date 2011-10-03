@@ -67,6 +67,7 @@ namespace Utopia.Worlds.Chunks
         private PlayerEntityManager _playerManager;
         private IChunkStorageManager _chunkstorage;
         private ISkyDome _skydome;
+        private IStaticEntityManager _staticEntityManager;
         #endregion
 
         #region Public Property/Variables
@@ -101,7 +102,8 @@ namespace Utopia.Worlds.Chunks
                            Server server,
                            PlayerEntityManager player,
                            ISkyDome skydome,
-                           IEntityPickingManager pickingManager)
+                           IEntityPickingManager pickingManager,
+                           IStaticEntityManager staticEntityManager)
         {
             _server = server;
             _chunkstorage = chunkstorage;
@@ -118,11 +120,13 @@ namespace Utopia.Worlds.Chunks
             _lightingManager = lightingManager;
             _playerManager = player;
             _skydome = skydome;
+            _staticEntityManager = staticEntityManager;
 
-            //Self injecting inside components
+            //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;
             pickingManager.WorldChunks = this;
             lightingManager.WorldChunk = this;
+            staticEntityManager.WorldChunks = this;
 
             //Subscribe to chunk modifications
             _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);

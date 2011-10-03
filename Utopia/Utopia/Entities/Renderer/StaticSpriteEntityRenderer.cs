@@ -27,17 +27,17 @@ namespace Utopia.Entities.Renderer
     public class StaticSpriteEntityRenderer : IStaticSpriteEntityRenderer
     {
         #region Private variables
-        private HLSLStaticEntitySprite _effectPointSprite;
+        private HLSLStaticEntitySpriteInstanced _entitySpriteInstanced;
         private D3DEngine _d3dEngine;
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
         private ShaderResourceView _spriteTexture_View;
         private ISkyDome _skydome;
         private VisualWorldParameters _visualWorldParameters;
-        private VertexBuffer<VertexPointSprite> _vb;
-        private VertexPointSprite[] _vertices; //Default to support a maximum of 50.000 elements !
-        private int _verticeArrayMaxSize = 50000;
-        private int _verticeCount;
+        private List<VertexPositionColorTextureInstanced> _vertices; //Default to support a maximum of 50.000 elements !
+
+        private InstancedVertexBuffer<VertexPositionTexture, VertexPositionColorTextureInstanced> _staticSpriteBuffer;
+        private IndexBuffer<short> _staticSpriteIndices;
         #endregion
 
         #region Public variables/properties
@@ -60,12 +60,35 @@ namespace Utopia.Entities.Renderer
         #region Private Methods
         private void Initialize()
         {
-            _effectPointSprite = new HLSLStaticEntitySprite(_d3dEngine, @"Effects\Entities\StaticEntitySprite.hlsl", VertexPointSprite.VertexDeclaration);
+            _entitySpriteInstanced = new HLSLStaticEntitySpriteInstanced(_d3dEngine, @"Effects/Entities/StaticEntitySpriteInstanced.hlsl", VertexPositionColorTextureInstanced.VertexDeclaration);
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, @"Textures/Sprites/", @"sp*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
-            _effectPointSprite.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
-            _effectPointSprite.DiffuseTexture.Value = _spriteTexture_View;
-            _vertices = new VertexPointSprite[_verticeArrayMaxSize];
-            _verticeCount = -1;
+            _entitySpriteInstanced.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
+            _entitySpriteInstanced.DiffuseTexture.Value = _spriteTexture_View;
+
+            _vertices = new List<VertexPositionColorTextureInstanced>(20000);
+            CreateStaticSpriteBuffer();
+        }
+
+        private void CreateStaticSpriteBuffer()
+        {
+            //Create the base mesh that will be instanced.
+            //Create the vertex buffer
+            VertexPositionTexture[] vertices = { 
+                                          //First Quad
+                                          new VertexPositionTexture(new Vector3(-0.5f, 0.0f, 0.0f), new Vector2(0.0f, 1.0f)),
+                                          new VertexPositionTexture(new Vector3(-0.5f, 1.0f, 0.0f), new Vector2(0.0f, 0.0f)),
+                                          new VertexPositionTexture(new Vector3(0.5f, 0.0f, 0.0f), new Vector2(1.0f, 1.0f)),
+                                          new VertexPositionTexture(new Vector3(0.5f, 1.0f, 0.0f), new Vector2(1.0f, 0.0f)),
+                                          //Add more quad here
+                                      };
+            //Create a new InstancendeVertexBuffer
+            _staticSpriteBuffer = new InstancedVertexBuffer<VertexPositionTexture, VertexPositionColorTextureInstanced>(_d3dEngine, VertexPositionColorTextureInstanced.VertexDeclaration, PrimitiveTopology.TriangleList);
+            _staticSpriteBuffer.SetFixedData(vertices);
+
+            short[] indices = { 0, 1, 2, 3, 0, 2 };
+            _staticSpriteIndices = new IndexBuffer<short>(_d3dEngine, indices.Length, SharpDX.DXGI.Format.R16_UInt, "StaticEntityManagerInd");
+            _staticSpriteIndices.SetData(indices);
+             
         }
 
         #endregion
@@ -73,62 +96,60 @@ namespace Utopia.Entities.Renderer
         #region Public Methods
         public void Draw(int Index)
         {
-            if (_vb == null || _vb.VertexCount == 0) return;
+            if (_vertices.Count == 0) return;
 
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
-            _effectPointSprite.Begin();
+            _entitySpriteInstanced.Begin();
 
-            _effectPointSprite.CBPerFrame.Values.WorldFocus = Matrix.Transpose(_worldFocusManager.CenterOnFocus(ref MMatrix.Identity));
-            _effectPointSprite.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-            _effectPointSprite.CBPerFrame.Values.WindPower = 1; //TextureAnimationOffset.ValueInterp;
-            _effectPointSprite.CBPerFrame.Values.SunColor = _skydome.SunColor;
-            _effectPointSprite.CBPerFrame.Values.fogdist = ((_visualWorldParameters.WorldVisibleSize.X) / 2) - 48; ;
-            _effectPointSprite.CBPerFrame.IsDirty = true;
+            _entitySpriteInstanced.CBPerFrame.Values.WorldFocus = Matrix.Transpose(_worldFocusManager.CenterOnFocus(ref MMatrix.Identity));
+            _entitySpriteInstanced.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+            _entitySpriteInstanced.CBPerFrame.Values.WindPower = 1; //TextureAnimationOffset.ValueInterp;
+            _entitySpriteInstanced.CBPerFrame.Values.SunColor = _skydome.SunColor;
+            _entitySpriteInstanced.CBPerFrame.Values.fogdist = ((_visualWorldParameters.WorldVisibleSize.X) / 2) - 48; ;
+            _entitySpriteInstanced.CBPerFrame.IsDirty = true;
 
-            _effectPointSprite.Apply();
+            _entitySpriteInstanced.Apply();
 
-            _vb.SetToDevice(0);
-            _d3dEngine.Context.Draw(_verticeCount, 0);
+            _staticSpriteIndices.SetToDevice(0);
+            _staticSpriteBuffer.SetToDevice(0);
+            _d3dEngine.Context.DrawIndexedInstanced(_staticSpriteIndices.IndicesCount, _vertices.Count, 0, 0, 0);
         }
 
         public void BeginSpriteCollectionRefresh()
         {
-            _verticeCount = 0;
+            _vertices.Clear();
         }
 
-        public void AddPointSpriteVertex(ref VertexPointSprite spriteVertex)
+        public void AddPointSpriteVertex(VisualSpriteEntity spriteVertex)
         {
-            if (_verticeCount >= _verticeArrayMaxSize-1) return;
-            _verticeCount++;
-            _vertices[_verticeCount] = spriteVertex;
+            _vertices.Add(spriteVertex.Vertex);
+        }
+
+        public void EndSpriteCollectionRefresh()
+        {
+            //Udpate the Dynamic instanced Vertex Buffer
+            if (_vertices.Count == 0) return;
+            _staticSpriteBuffer.SetInstancedData(_vertices.ToArray());
         }
 
         public void Update(ref GameTime timeSpent)
         {
-            //Udpate the Dynamic Vertex Buffer
-            if (_verticeCount == 0) return;
-            if (_vb == null)
-            {
-                _vb = new VertexBuffer<VertexPointSprite>(_d3dEngine, _verticeCount, VertexPointSprite.VertexDeclaration, PrimitiveTopology.PointList, "StaticSprite", ResourceUsage.Dynamic, 5);
-                _vb.SetData(_vertices, 0, _verticeCount);
-            }
-            else
-            {
-                _vb.SetData(_vertices, 0, _verticeCount);
-            }
         }
 
         public void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-
         }
 
         public void Dispose()
         {
             _vertices = null;
             _spriteTexture_View.Dispose();
-            _effectPointSprite.Dispose();
+            _entitySpriteInstanced.Dispose();
+
+            _staticSpriteBuffer.Dispose();
+            _staticSpriteIndices.Dispose();
+            _entitySpriteInstanced.Dispose();
         }
         #endregion
     }

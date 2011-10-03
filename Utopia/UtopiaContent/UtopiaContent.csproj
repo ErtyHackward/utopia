@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Effects\Entities\HLSLStaticEntitySprite.cs" />
+    <Compile Include="Effects\Entities\HLSLStaticEntitySpriteInstanced.cs" />
     <Compile Include="Effects\SkyDome\HLSLPlanetSkyDome.cs" />
     <Compile Include="Effects\SkyDome\HLSLStars.cs" />
     <Compile Include="Effects\Terran\HLSLLiquid.cs" />
@@ -104,6 +105,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Effects\Entities\DynamicEntity.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Effects\Entities\StaticEntitySpriteInstanced.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Effects\SkyDome\PlanetSkyDome.hlsl">

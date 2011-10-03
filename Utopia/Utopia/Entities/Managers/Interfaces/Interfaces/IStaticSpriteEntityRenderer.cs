@@ -10,7 +10,8 @@ namespace Utopia.Entities.Renderer.Interfaces
 {
     public interface IStaticSpriteEntityRenderer : IDrawable
     {
-        void AddPointSpriteVertex(ref VertexPointSprite spriteVertex);
+        void AddPointSpriteVertex(VisualSpriteEntity spriteVertex);
         void BeginSpriteCollectionRefresh();
+        void EndSpriteCollectionRefresh();
     }
 }

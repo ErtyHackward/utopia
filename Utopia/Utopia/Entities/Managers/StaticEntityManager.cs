@@ -31,24 +31,23 @@ namespace Utopia.Entities.Managers
         private D3DEngine _d3dEngine;
         private WorldFocusManager _worldFocusManager;
         private IStaticSpriteEntityRenderer _spriteRenderer;
-        private VisualSpriteEntity[] _spriteEntitiesToRender;
-        private IWorldChunks _worldChunks;
+        //private VisualSpriteEntity[] _spriteEntitiesToRender;
         private PlayerEntityManager _player;
         #endregion
 
         #region Public variables/properties
+        public bool StaticSpriteListDirty { get; set; }
+        public IWorldChunks WorldChunks { get; set; }
         #endregion
 
         public StaticEntityManager(D3DEngine d3dEngine,
                                    WorldFocusManager worldFocusManager,
                                    IStaticSpriteEntityRenderer spriteRenderer,
-                                   IWorldChunks worldChunks,
                                    PlayerEntityManager player)
         {
             _d3dEngine = d3dEngine;
             _worldFocusManager = worldFocusManager;
             _spriteRenderer = spriteRenderer;
-            _worldChunks = worldChunks;
             _player = player;
 
             this.UpdateOrder = 11;
@@ -60,10 +59,12 @@ namespace Utopia.Entities.Managers
 
         public override void LoadContent()
         {
+            StaticSpriteListDirty = false;
         }
 
         public override void Dispose()
         {
+
         }
         #region Private Methods
         #endregion
@@ -72,30 +73,53 @@ namespace Utopia.Entities.Managers
         public override void Update(ref GameTime timeSpent)
         {
             VisualChunk chunk;
-            double minDistanceChunkModified = double.MaxValue;
-            double currentChunkModifiedDistance;
-            _spriteRenderer.BeginSpriteCollectionRefresh();
-            //Check inside the visible chunks (Not frustum culled) the statics entities that needs to be rendered
-            for (int i = 0; i < _worldChunks.Chunks.Length; i++)
+            if (StaticSpriteListDirty)
             {
-                chunk = _worldChunks.SortedChunks[i];
-                if (chunk.State != ChunkState.DisplayInSyncWithMeshes)
+                _spriteRenderer.BeginSpriteCollectionRefresh();
+                for (int i = 0; i < WorldChunks.Chunks.Length; i++)
                 {
-                    currentChunkModifiedDistance = Vector3D.Distance(_player.VisualEntity.Position, new Vector3D(chunk.ChunkPositionBlockUnit.X, _player.VisualEntity.Position.Y, chunk.ChunkPositionBlockUnit.Y));
-                    if (currentChunkModifiedDistance < minDistanceChunkModified) minDistanceChunkModified = currentChunkModifiedDistance;
-                }
-                if (chunk.isFrustumCulled == false && chunk.State == ChunkState.DisplayInSyncWithMeshes)
-                {
-                    for (int j = 0; j < chunk.VisualSpriteEntities.Count; j++)
+                    chunk = WorldChunks.SortedChunks[i];
+                    if (chunk.State == ChunkState.DisplayInSyncWithMeshes)
                     {
-                        _spriteRenderer.AddPointSpriteVertex(ref chunk.VisualSpriteEntities[j].Vertex);
+                        for (int j = 0; j < chunk.VisualSpriteEntities.Count; j++)
+                        {
+                            _spriteRenderer.AddPointSpriteVertex(chunk.VisualSpriteEntities[j]);
+                        }
                     }
                 }
+
+                _spriteRenderer.EndSpriteCollectionRefresh();
+                StaticSpriteListDirty = false;
             }
 
-            if (minDistanceChunkModified >= 48)
-                _spriteRenderer.Update(ref timeSpent);
+            //VisualChunk chunk;
+            //double minDistanceChunkModified = double.MaxValue;
+            //double currentChunkModifiedDistance;
+            //_spriteRenderer.BeginSpriteCollectionRefresh();
+            ////Check inside the visible chunks (Not frustum culled) the statics entities that needs to be rendered
+            //for (int i = 0; i < _worldChunks.Chunks.Length; i++)
+            //{
+            //    chunk = _worldChunks.SortedChunks[i];
+            //    if (chunk.State != ChunkState.DisplayInSyncWithMeshes)
+            //    {
+            //        currentChunkModifiedDistance = Vector3D.Distance(_player.VisualEntity.Position, new Vector3D(chunk.ChunkPositionBlockUnit.X, _player.VisualEntity.Position.Y, chunk.ChunkPositionBlockUnit.Y));
+            //        if (currentChunkModifiedDistance < minDistanceChunkModified) minDistanceChunkModified = currentChunkModifiedDistance;
+            //    }
+            //    if (chunk.isFrustumCulled == false && chunk.State == ChunkState.DisplayInSyncWithMeshes)
+            //    {
+            //        for (int j = 0; j < chunk.VisualSpriteEntities.Count; j++)
+            //        {
+            //            _spriteRenderer.AddPointSpriteVertex(ref chunk.VisualSpriteEntities[j].Vertex);
+            //        }
+            //    }
+            //}
+
+            //if (minDistanceChunkModified >= 48)
+            //    _spriteRenderer.Update(ref timeSpent);
         }
+
+
+
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
         }

@@ -164,7 +164,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 chunk.StorageRequestTicket = 0;
                             }
 
-
                             chunk.IsServerRequested = false;
 
 
