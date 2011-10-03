@@ -80,7 +80,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private void ServerConnection_MessageChunkData(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
         {
             //Bufferize the Data here
-            //Console.WriteLine("== New Chunk data receive : " + e.Message.Position.ToString());
             if(_receivedServerChunks.ContainsKey(e.Message.Position.GetID())) _receivedServerChunks.Remove(e.Message.Position.GetID());
             _receivedServerChunks.Add(e.Message.Position.GetID(), e.Message);
         }
@@ -171,7 +170,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
                             break;
                         case ChunkDataMessageFlag.ChunkMd5Equal:
-                            //Do we still have to wait for the chunk from the storage ??
+                            //Do we still have to wait for the chunk from the local storage ??
                             ChunkDataStorage data = _chunkStorageManager.Data[chunk.StorageRequestTicket];
                             if (data != null)
                             {
@@ -217,8 +216,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                         Range = new Range2(chunk.ChunkPosition, Vector2I.One),
                         Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
                     });
-
-                    chunk.ThreadStatus = ThreadStatus.Locked;
                 }
                 else
                 {
