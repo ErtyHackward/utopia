@@ -14,7 +14,7 @@ namespace Utopia.Shared.Chunks.Entities
         #endregion
 
         #region Public variables/properties
-        public SlotContainer<ToolbarSlot> Toolbar { get; set; }
+        public SlotContainer<ToolbarSlot> Toolbar { get; private set; }
         
         public override EntityClassId ClassId
         {

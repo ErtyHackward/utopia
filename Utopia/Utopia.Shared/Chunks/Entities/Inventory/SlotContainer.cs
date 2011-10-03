@@ -39,11 +39,14 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Occurs when item was put to non-empty slot
+        /// </summary>
         public event EventHandler<EntityContainerEventArgs<T>> ItemExchanged;
 
         protected void OnItemExchanged(EntityContainerEventArgs<T> e)
         {
-            EventHandler<EntityContainerEventArgs<T>> handler = ItemExchanged;
+            var handler = ItemExchanged;
             if (handler != null) handler(this, e);
         }
 
@@ -100,7 +103,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
         public void Load(BinaryReader reader)
         {
-            // read contained entites count
+            // read contained slots count
             _slotsCount = reader.ReadInt32();
 
             // read container grid size
@@ -141,7 +144,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
                 var e = this.Any(s =>
                                {
-                                   if (s.Item.EntityId == item.EntityId && s.ItemsCount + 1 <= item.MaxStackSize)
+                                   if (s.Item.GetType() == item.GetType() && s.ItemsCount + 1 <= item.MaxStackSize)
                                    {
                                        s.ItemsCount++;
                                        return true;

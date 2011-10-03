@@ -50,26 +50,26 @@ namespace Utopia.GUI.D3D.Inventory
         {
             Vector2I pos = slotToLink.GridPosition;
 
-            if (ToolbarSlot.Left==pos)
-            {
-                //a way to remove an assigned tool and avoid double tool exploit
-                ToolbarSlot.Left = null;
-            } else if (ToolbarSlot.Right==pos)
-            {
-                ToolbarSlot.Right = null;
-            } 
-            else
-            {
-                if (ToolbarSlot.Left == null)
-                {
-                    Text = pos.ToString();
-                    ToolbarSlot.Left = pos;
-                }
-                else
-                {
-                    ToolbarSlot.Right = pos;
-                }
-            }
+            //if (ToolbarSlot.Left==pos)
+            //{
+            //    //a way to remove an assigned tool and avoid double tool exploit
+            //    ToolbarSlot.Left = null;
+            //} else if (ToolbarSlot.Right==pos)
+            //{
+            //    ToolbarSlot.Right = null;
+            //} 
+            //else
+            //{
+            //    if (ToolbarSlot.Left == null)
+            //    {
+            //        Text = pos.ToString();
+            //        ToolbarSlot.Left = pos;
+            //    }
+            //    else
+            //    {
+            //        ToolbarSlot.Right = pos;
+            //    }
+            //}
         }
     }
 }
