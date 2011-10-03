@@ -155,6 +155,7 @@
     <Compile Include="Struct\Vertex\VertexPosition.cs" />
     <Compile Include="Struct\Vertex\VertexPositionColor.cs" />
     <Compile Include="Struct\Vertex\VertexPositionColorTexture.cs" />
+    <Compile Include="Struct\Vertex\VertexPositionColorTextureInstanced.cs" />
     <Compile Include="Struct\Vertex\VertexPositionNormalTexture.cs" />
     <Compile Include="Struct\Vertex\VertexPositionTexture.cs" />
     <Compile Include="Struct\Vertex\VertexSprite.cs" />
