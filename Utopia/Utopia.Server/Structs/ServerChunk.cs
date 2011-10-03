@@ -52,8 +52,8 @@ namespace Utopia.Server.Structs
         public ServerChunk(GeneratedChunk chunk)
             : base(chunk.BlockData)
         {
+            Entities = chunk.Entities;
             PureGenerated = true;
-            InstantCompress = true;
         }
 
         /// <summary>

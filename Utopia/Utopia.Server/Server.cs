@@ -106,10 +106,10 @@ namespace Utopia.Server
         /// Create new instance of the Server class
         /// </summary>
         public Server(
-            XmlSettingsManager<ServerSettings> settingsManager, 
-            WorldGenerator worldGenerator, 
-            IUsersStorage usersStorage, 
-            IChunksStorage chunksStorage, 
+            XmlSettingsManager<ServerSettings> settingsManager,
+            WorldGenerator worldGenerator,
+            IUsersStorage usersStorage,
+            IChunksStorage chunksStorage,
             IEntityStorage entityStorage
             )
         {

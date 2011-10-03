@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Utopia.Shared.Chunks.Entities.Concrete;
+using Utopia.Shared.Chunks.Entities.Concrete.Collectible;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
@@ -77,6 +78,7 @@ namespace Utopia.Shared.Chunks.Entities
                 case EntityClassId.Zombie: entity = new Zombie(); break;
                 case EntityClassId.Annihilator: entity = new Annihilator(); break;
                 case EntityClassId.DirtAdder: entity = new DirtAdder(); break;
+                case EntityClassId.Grass: entity = new Grass(); break;
                 default:
                     throw new ArgumentOutOfRangeException("classId");
             }
