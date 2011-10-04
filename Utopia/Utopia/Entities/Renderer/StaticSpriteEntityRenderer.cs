@@ -145,7 +145,6 @@ namespace Utopia.Entities.Renderer
         {
             _vertices = null;
             _spriteTexture_View.Dispose();
-            _entitySpriteInstanced.Dispose();
 
             _staticSpriteBuffer.Dispose();
             _staticSpriteIndices.Dispose();

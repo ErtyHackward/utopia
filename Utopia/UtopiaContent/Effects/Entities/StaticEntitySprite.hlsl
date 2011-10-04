@@ -9,6 +9,7 @@ cbuffer PerFrame
 	float3 SunColor;			  // Diffuse lighting color
 	float fogdist;
     float3 WindPower;
+	float keyFrameAnimation;
 };
 
 //--------------------------------------------------------------------------------------
@@ -64,8 +65,8 @@ PSInput VS (VSInput input)
 	{
 	      //worldPosition.x += WindPower.x;
 		  //worldPosition.z += WindPower.z;
-		  float sine = sin(input.Position.z / 20) * 1.5; // * Time variable to make it move !
-		  worldPosition.xyz += sine * WindPower;
+		  float sine = sin(input.Position.z / 5) * 1.5; // * Time variable to make it move !
+		  worldPosition.xyz += sine * WindPower * keyFrameAnimation;
 	}
 
 	output.Position = mul(worldPosition, ViewProjection);
