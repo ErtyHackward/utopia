@@ -25,6 +25,9 @@ namespace Utopia.Shared.World
         /// </summary>
         public WorldGenerationStagesManager Stages { get; private set; }
 
+
+        public LandscapeManager<GeneratedChunk> LandscapeManager { get; private set; }
+
         /// <summary>
         /// Initializes instance of world generator
         /// </summary>
@@ -63,37 +66,6 @@ namespace Utopia.Shared.World
             return del.BeginInvoke(range, callback, state);
         }
 
-        /// <summary>
-        /// Performs generation of specified range of chunks
-        /// </summary>
-        /// <param name="range">Range of chunks to generate</param>
-        /// <param name="dataArray">Array to write data to</param>
-        /// <param name="arrayOffset">dataArray shift</param>
-        /// <param name="entities">Generated entities collection</param>
-        public void Generate(Range2 range, byte[] dataArray, int arrayOffset, out EntityCollection[] entities)
-        {
-            var chunks = Generate(range);
-
-            entities = new EntityCollection[range.Count];
-
-            int chunkIndex = 0;
-
-            for (int x = 0; x < range.Size.X; x++)
-            {
-                for (int z = 0; z < range.Size.Y; z++)
-                {
-                    var chunk = chunks[x, z];
-                    var chunkData = chunk.BlockData.GetBlocksBytes();
-                    var chunkEntities = chunk.Entities;
-
-                    Array.Copy(chunkData, 0, dataArray, arrayOffset + chunkIndex * AbstractChunk.ChunkBlocksByteLength, AbstractChunk.ChunkBlocksByteLength);
-                    entities[chunkIndex] = chunkEntities;
-
-                    chunkIndex++;
-                }
-            }
-        }
-
         private GeneratedChunk[,] Generate(Range2 range)
         {
             if (Stages.Count == 0)
@@ -118,13 +90,13 @@ namespace Utopia.Shared.World
         }
 
         /// <summary>
-        /// Gets a generated chunk. (Generates it if needed)
+        /// Gets a generated chunk. Generates 9 chunks (target + 8 surrounding). Consider using GenerateAsync method
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
         public GeneratedChunk GetChunk(Vector2I position)
         {
-            var chunks = Generate(new Range2 { Position = position, Size = Vector2I.One });
+            var chunks = Generate(new Range2 { Position = position, Size = new Vector2I(1,1) });
 
             return chunks[0, 0];
         }

@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using S33M3Engines.Threading;
 using System.Threading.Tasks;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.Chunks;
 using Amib.Threading;
 using Utopia.Network;
-using Utopia.Net.Messages;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Storage.Structs;
-using Utopia.Net.Connections;
 using S33M3Engines.Timers;
 using Utopia.Entities;
 using Utopia.Shared.Chunks.Entities;
@@ -77,7 +77,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         }
 
         //New chunk Received !
-        private void ServerConnection_MessageChunkData(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
+        private void ServerConnection_MessageChunkData(object sender, ProtocolMessageEventArgs<ChunkDataMessage> e)
         {
             //Bufferize the Data here
             if(_receivedServerChunks.ContainsKey(e.Message.Position.GetID())) _receivedServerChunks.Remove(e.Message.Position.GetID());

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Utopia.Net.Messages;
 using Utopia.Server.Events;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Structs
 {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Utopia.Server.Managers;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Server.AStar

@@ -1,5 +1,4 @@
 using System;
-using Utopia.Net.Connections;
 
 namespace Utopia.Server
 {

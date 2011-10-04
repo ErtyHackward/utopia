@@ -3,8 +3,9 @@ using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.D3D;
 using Utopia.Action;
-using Utopia.Net.Messages;
 using Utopia.Network;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 using Utopia.Shared.World.PlanGenerator;
 
 namespace Utopia.GUI.D3D.Map
@@ -39,7 +40,7 @@ namespace Utopia.GUI.D3D.Map
             _planGenerator = new WorldPlan();
         }
 
-        void ServerConnectionMessageGameInformation(object sender, Net.Connections.ProtocolMessageEventArgs<GameInformationMessage> e)
+        void ServerConnectionMessageGameInformation(object sender, ProtocolMessageEventArgs<GameInformationMessage> e)
         {
             _planGenerator.Parameters = e.Message.PlanGenerationParameters;
 

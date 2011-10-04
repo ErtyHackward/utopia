@@ -72,8 +72,7 @@
     <Compile Include="Managers\EntityManager.cs" />
     <Compile Include="Managers\GameplayProvider.cs" />
     <Compile Include="Managers\IEntityStorage.cs" />
-    <Compile Include="Managers\LandscapeCursor.cs" />
-    <Compile Include="Managers\LandscapeManager.cs" />
+    <Compile Include="Managers\ServerLandscapeManager.cs" />
     <Compile Include="Managers\ChatManager.cs" />
     <Compile Include="Managers\PerformanceManager.cs" />
     <Compile Include="Managers\ScheduleCallType.cs" />
@@ -104,10 +103,6 @@
     <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
       <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
       <Name>S33M3Engines.Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utopia.Net\Utopia.Net.csproj">
-      <Project>{5AF1BAD4-43AC-4069-B338-CF19F7B987C2}</Project>
-      <Name>Utopia.Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>

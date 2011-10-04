@@ -1,6 +1,6 @@
 using System;
-using Utopia.Net.Messages;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Events
 {

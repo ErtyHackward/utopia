@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks
@@ -8,7 +9,7 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Represents a base chunk class
     /// </summary>
-    public abstract class AbstractChunk
+    public abstract class AbstractChunk : IAbstractChunk
     {
         #region Static
         /// <summary>

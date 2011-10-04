@@ -10,8 +10,9 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Action;
 using Utopia.InputManager;
-using Utopia.Net.Messages;
 using Utopia.Network;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using System.Diagnostics;
 
@@ -99,7 +100,7 @@ namespace Utopia.GUI
             base.Dispose();
         }
 
-        void ServerConnection_MessageChat(object sender, Net.Connections.ProtocolMessageEventArgs<ChatMessage> e)
+        void ServerConnection_MessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
         {
             //Cut the received message by line feed
             foreach (var msgText in e.Message.Message.Split('\n'))

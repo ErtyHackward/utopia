@@ -13,6 +13,7 @@ using Utopia.Editor;
 using Utopia.GUI;
 using Utopia.GUI.D3D;
 using Utopia.GUI.D3D.Map;
+using Utopia.Shared.Net.Connections;
 using UtopiaContent.ModelComp;
 using SharpDX;
 using S33M3Engines.Struct;
@@ -52,7 +53,6 @@ using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities;
-using Utopia.Net.Connections;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Renderer;
 using Utopia.Entities.Managers.Interfaces;
@@ -325,7 +325,7 @@ namespace Utopia
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void ServerConnection_ConnectionStatusChanged(object sender, Net.Connections.ConnectionStatusEventArgs e)
+        void ServerConnection_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
         {
             if (e.Status == ConnectionStatus.Disconnected && e.Exception != null)
             {
