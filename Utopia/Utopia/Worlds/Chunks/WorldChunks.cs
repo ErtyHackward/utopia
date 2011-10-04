@@ -22,6 +22,7 @@ using Utopia.Worlds.SkyDomes;
 using S33M3Engines.Maths;
 using System.Linq;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Worlds.Weather;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -69,6 +70,7 @@ namespace Utopia.Worlds.Chunks
         private IChunkStorageManager _chunkstorage;
         private ISkyDome _skydome;
         private IStaticEntityManager _staticEntityManager;
+        private IWeather _weather;
         #endregion
 
         #region Public Property/Variables
@@ -104,7 +106,8 @@ namespace Utopia.Worlds.Chunks
                            PlayerEntityManager player,
                            ISkyDome skydome,
                            IEntityPickingManager pickingManager,
-                           IStaticEntityManager staticEntityManager)
+                           IStaticEntityManager staticEntityManager,
+                           IWeather weather)
         {
             _server = server;
             _chunkstorage = chunkstorage;
@@ -122,6 +125,7 @@ namespace Utopia.Worlds.Chunks
             _playerManager = player;
             _skydome = skydome;
             _staticEntityManager = staticEntityManager;
+            _weather = weather;
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;

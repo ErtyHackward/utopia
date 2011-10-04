@@ -18,6 +18,7 @@ namespace Utopia.Worlds.Weather
 
         #region Public Variables
         public Vector3 WindFlow { get; set; }
+        public Vector3 FlatWindFlow { get; set; }
         #endregion
 
         public Wind(bool randomFlow = false)
@@ -32,6 +33,7 @@ namespace Utopia.Worlds.Weather
             _rndWindFlowChange = new Random(_rndWindFlowing.Next());
 
             WindFlow = new Vector3(GetFlowRnd(), GetFlowRnd(), GetFlowRnd());
+            FlatWindFlow = new Vector3(WindFlow.X, 0, WindFlow.Z);
         }
 
         public override void Update(ref GameTime TimeSpend)
@@ -41,6 +43,7 @@ namespace Utopia.Worlds.Weather
             if (_rndWindFlowing.Next(0, 10000) == 0)
             {
                 WindFlow = new Vector3(GetFlowRnd(), GetFlowRnd(), GetFlowRnd());
+                FlatWindFlow = new Vector3(WindFlow.X, 0, WindFlow.Z);
             }
         }
 

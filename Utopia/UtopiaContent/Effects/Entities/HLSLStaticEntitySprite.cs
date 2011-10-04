@@ -30,11 +30,11 @@ namespace UtopiaContent.Effects.Entities
             [FieldOffset(64)]
             public Matrix ViewProjection;
             [FieldOffset(128)]
-            public float WindPower;
-            [FieldOffset(132)]
             public Vector3 SunColor;			  // Diffuse lighting color
-            [FieldOffset(144)]
+            [FieldOffset(140)]
             public float fogdist;
+            [FieldOffset(144)]
+            public Vector3 WindPower;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
         #endregion
