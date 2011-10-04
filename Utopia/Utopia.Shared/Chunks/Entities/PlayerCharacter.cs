@@ -84,6 +84,17 @@ namespace Utopia.Shared.Chunks.Entities
             base.Save(writer);
             Toolbar.Save(writer);
         }
+
+        public IItem lookupItem(uint itemId)
+        {
+            foreach (IItem item in Inventory)
+            {
+                if (item.EntityId==itemId) return item;
+            }
+
+
+        }
+
         #endregion
     }
 }
