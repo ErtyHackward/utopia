@@ -19,8 +19,6 @@ namespace Utopia.Worlds.Chunks
         #region Private variables
         private bool processInsync;
         private int _chunkCreationTrigger;
-        private FTSValue<float> _keyFrameAnimation;
-        private float _animationStep = 0.02f;
         #endregion
 
         #region Public variables/properties
@@ -29,8 +27,6 @@ namespace Utopia.Worlds.Chunks
         #region public methods
         public override void Update(ref GameTime TimeSpend)
         {
-            _keyFrameAnimation.BackUpValue();
-            UpdateKeyAnimation();
             if (_camManager.ActiveCamera.WorldPosition.Y < 400)
             {
                 ChunkUpdateManager();
@@ -41,7 +37,6 @@ namespace Utopia.Worlds.Chunks
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
-            _keyFrameAnimation.ValueInterp = MathHelper.Lerp(_keyFrameAnimation.ValuePrev, _keyFrameAnimation.Value, interpolationLd);
         }
 
         #endregion
@@ -51,9 +46,6 @@ namespace Utopia.Worlds.Chunks
         private void IntilializeUpdateble()
         {
             _chunkCreationTrigger = (VisualWorldParameters.WorldVisibleSize.X / 2) - (1 * AbstractChunk.ChunkSize.X);
-            _keyFrameAnimation = new FTSValue<float>();
-            _keyFrameAnimation.Value = 0;
-            _keyFrameAnimation.ValuePrev = 0;
         }
 
         private void ChunkUpdateManager()
@@ -63,21 +55,6 @@ namespace Utopia.Worlds.Chunks
             ProcessChunks_LandscapeLightsSourceCreated();
             ProcessChunks_LandscapeLightsPropagated();
             ProcessChunks_MeshesChanged();
-        }
-
-        private void UpdateKeyAnimation()
-        {
-            _keyFrameAnimation.Value += _animationStep;
-            if (_keyFrameAnimation.Value > 1)
-            {
-                _animationStep *= -1;
-                _keyFrameAnimation.Value += _animationStep * 2;
-            }
-            if (_keyFrameAnimation.Value < 0)
-            {
-                _animationStep *= -1;
-                _keyFrameAnimation.Value += _animationStep * 2;
-            }
         }
 
         private void ProcessChunks_Empty()

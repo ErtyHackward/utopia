@@ -10,6 +10,7 @@ namespace Utopia.Worlds.Weathers.SharedComp
     public interface IWind : IGameComponent,IUpdateableComponent
     {
         Vector3 WindFlow { get; set; }
-        Vector3 FlatWindFlow { get; set; }
+        Vector3 FlatWindFlowNormalizedWithNoise { get; set; }
+        double KeyFrameAnimation { get; }
     }
 }

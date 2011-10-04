@@ -66,6 +66,11 @@ namespace S33M3Engines.Shared.Math
             return (MinValue + ((MaxValue - MinValue) * amount));
         }
 
+        public static double Lerp(double MinValue, double MaxValue, double amount)
+        {
+            return (MinValue + ((MaxValue - MinValue) * amount));
+        }
+
         public static float FullLerp(float MinTargetValue, float MaxTargetValue, double MinAmount, double MaxAmount, double amount, bool withClamp = false)
         {
             float result = MinTargetValue + (float)((MaxTargetValue - MinTargetValue) / (MaxAmount - MinAmount) * (amount - MinAmount));

@@ -6,10 +6,9 @@ cbuffer PerFrame
 {
 	matrix WorldFocus;
 	matrix ViewProjection;
+    float WindPower;
 	float3 SunColor;			  // Diffuse lighting color
 	float fogdist;
-    float3 WindPower;
-	float keyFrameAnimation;
 };
 
 //--------------------------------------------------------------------------------------
@@ -22,8 +21,16 @@ SamplerState SamplerDiffuse;
 //Vertex shader Input
 struct VSInput {
 	float3 Position				: POSITION;
-	float4 Color				: COLOR;
-	float3 Textcoord     		: TEXCOORD;
+	float4 Col				    : COLOR;
+	uint4 Info					: INFO;  // x = Texture Array, Y = scaling size
+};
+
+//--------------------------------------------------------------------------------------
+//Geometry shader Input
+struct GSInput {
+	float3 Position				: POSITION;
+	float4 Col				    : COLOR;
+	uint4 Info					: INFO;
 };
 
 //Pixel shader Input
@@ -34,7 +41,6 @@ struct PSInput {
 	float3 EmissiveLight		: Light0;
 };
 
-//--------------------------------------------------------------------------------------
 
 static const float foglength = 45;
 static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
@@ -54,28 +60,42 @@ static const float texcoordV[4] = { 1.0f, 0.0f, 1.0f, 0.0f};
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-PSInput VS (VSInput input)
+GSInput VS (VSInput input)
 {
-	PSInput output;
+	return input;
+}
 
-	float4 worldPosition = {input.Position.xyz, 1.0f};
-	worldPosition = mul(worldPosition, WorldFocus);
+[maxvertexcount(4)]
+void GS(point GSInput Input[1]: POSITION0, inout TriangleStream<PSInput> TriStream )
+{
+	PSInput Output;
 
-	if (input.Textcoord.y <= 0.1)
+	float4 PointSpritePosition = float4(Input[0].Position, 1);
+	
+	// *****************************************************
+	// generate the 4 vertices to make two triangles
+	for( uint i = 0 ; i < 4 ; i++ )
 	{
-	      //worldPosition.x += WindPower.x;
-		  //worldPosition.z += WindPower.z;
-		  float sine = sin(keyFrameAnimation); // * Time variable to make it move !
-		  worldPosition.xyz += sine * WindPower;
+		Output.UVW = float3( texcoordU[i], 
+							 texcoordV[i],
+							 Input[0].Info.x);
+
+		Output.Position.x = PointSpritePosition.x + (p[i].x * Input[0].Info.y) ;// + (p[i].z * 1); //Add Offset to build the Quad X dim
+		Output.Position.y = PointSpritePosition.y + (p[i].y * Input[0].Info.y) ; //Add Offset to build the Quad Y dim
+		Output.Position.z = PointSpritePosition.z + (p[i].z * 1);
+		Output.Position.w = 1.0f;
+
+		//Transform into Projection space
+		//Add Rotation matrix computation if needed here !
+
+		Output.fogPower = clamp(((length(Output.Position.xyz) - fogdist) / foglength), 0, 1);
+		//Transform point in screen space
+		Output.Position = mul(mul(Output.Position, WorldFocus), ViewProjection);
+		Output.EmissiveLight = saturate(Input[0].Col.rgb +  SunColor * Input[0].Col.a);
+		TriStream.Append( Output );
 	}
 
-	output.Position = mul(worldPosition, ViewProjection);
-	output.UVW = input.Textcoord;
-
-	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
-	output.EmissiveLight = saturate(input.Color.rgb +  SunColor * input.Color.a);
-
-	return output;
+	TriStream.RestartStrip();
 }
 
 //--------------------------------------------------------------------------------------
@@ -88,8 +108,8 @@ float4 PS(PSInput IN) : SV_Target
 	
 	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
 
-	float4 Finalfogcolor = {SunColor / 1.5, color.a};
-	color = lerp(color, Finalfogcolor, IN.fogPower);
+	//float4 Finalfogcolor = {SunColor / 1.5, color.a};
+	//color = lerp(color, Finalfogcolor, IN.fogPower);
 
 	return color;	
 }
