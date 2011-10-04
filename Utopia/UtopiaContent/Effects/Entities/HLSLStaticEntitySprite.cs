@@ -35,6 +35,8 @@ namespace UtopiaContent.Effects.Entities
             public float fogdist;
             [FieldOffset(144)]
             public Vector3 WindPower;
+            [FieldOffset(156)]
+            public float KeyFrameAnimation;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
         #endregion
