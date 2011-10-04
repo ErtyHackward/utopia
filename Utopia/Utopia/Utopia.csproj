@@ -147,6 +147,9 @@
     <Compile Include="GUI\D3D\GuiManager.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUI\D3D\Map\MapComponent.cs" />
+    <Compile Include="GUI\D3D\Map\MapControl.cs" />
+    <Compile Include="GUI\D3D\Map\MapRenderer.cs" />
     <Compile Include="GUI\Forms\CustControls\Config.cs">
       <SubType>UserControl</SubType>
     </Compile>

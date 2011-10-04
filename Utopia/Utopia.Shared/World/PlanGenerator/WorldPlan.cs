@@ -158,7 +158,7 @@ namespace Utopia.Shared.World.PlanGenerator
 
             for (int i = 0; i < Parameters.PolygonsCount; i++)
             {
-                datapoints.Add(new Vector(r.Next(0, Parameters.MapSize.Width), r.Next(0, Parameters.MapSize.Height)));
+                datapoints.Add(new Vector(r.Next(0, Parameters.MapSize.X), r.Next(0, Parameters.MapSize.Y)));
             }
 
             var graph = Fortune.ComputeVoronoiGraph(datapoints);
@@ -192,7 +192,7 @@ namespace Utopia.Shared.World.PlanGenerator
 
             if(Parameters.CenterElevation)
             {
-                var poly = GetAtPoint(new Point(Parameters.MapSize.Width / 2, Parameters.MapSize.Height / 2));
+                var poly = GetAtPoint(new Point(Parameters.MapSize.X / 2, Parameters.MapSize.Y / 2));
                 poly.Elevation = 200;
                 StartPropagation(poly, 15);
                 ElevateCorners();
@@ -203,7 +203,7 @@ namespace Utopia.Shared.World.PlanGenerator
                 //r = new Random((int)voronoiSeedNumeric.Value);
                 var borderElevation = 80;
                 var step = 20;
-                for (int x = 0; x < Parameters.MapSize.Width; x+=5)
+                for (int x = 0; x < Parameters.MapSize.X; x+=5)
                 {
                     var poly = GetAtPoint(new Point(x, 0));
 
@@ -211,13 +211,13 @@ namespace Utopia.Shared.World.PlanGenerator
                     StartPropagation(poly, step);
 
 
-                    poly = GetAtPoint(new Point(x, Parameters.MapSize.Height));
+                    poly = GetAtPoint(new Point(x, Parameters.MapSize.Y));
                     poly.Elevation = borderElevation;// r.Next(0, 100);
                     StartPropagation(poly, step);
 
                 }
 
-                for (int y = 0; y < Parameters.MapSize.Height; y+=5)
+                for (int y = 0; y < Parameters.MapSize.X; y+=5)
                 {
                     var poly = GetAtPoint(new Point(0, y));
 
@@ -225,7 +225,7 @@ namespace Utopia.Shared.World.PlanGenerator
                     StartPropagation(poly, step);
 
 
-                    poly = GetAtPoint(new Point(Parameters.MapSize.Width, y));
+                    poly = GetAtPoint(new Point(Parameters.MapSize.Y, y));
 
                     poly.Elevation = borderElevation;// r.Next(0, 100);
                     StartPropagation(poly, step);
@@ -374,9 +374,9 @@ namespace Utopia.Shared.World.PlanGenerator
             // detect ocean
             {
                 SetOcean(GetAtPoint(new Point(0, 0)));
-                SetOcean(GetAtPoint(new Point(Parameters.MapSize.Width, 0)));
-                SetOcean(GetAtPoint(new Point(0, Parameters.MapSize.Height)));
-                SetOcean(GetAtPoint(new Point(Parameters.MapSize.Width, Parameters.MapSize.Height)));
+                SetOcean(GetAtPoint(new Point(Parameters.MapSize.X, 0)));
+                SetOcean(GetAtPoint(new Point(0, Parameters.MapSize.Y)));
+                SetOcean(GetAtPoint(new Point(Parameters.MapSize.X, Parameters.MapSize.Y)));
             }
 
             // set biomes
@@ -395,8 +395,8 @@ namespace Utopia.Shared.World.PlanGenerator
             {
                 foreach (var edge in polygon.Edges)
                 {
-                    Polygon poly = null;
-                    Polygon poly2 = null;
+                    Polygon poly;
+                    Polygon poly2;
                     if (((poly = edge.Polygons.Find(p => p.Elevation > 127)) != null) && ((poly2 = edge.Polygons.Find((p => p.Elevation <= 127))) != null))
                     {
                         poly.Coast = true;
@@ -701,7 +701,7 @@ namespace Utopia.Shared.World.PlanGenerator
 
         public Image Render()
         {
-            Bitmap bmp = new Bitmap(Parameters.MapSize.Width, Parameters.MapSize.Height);
+            Bitmap bmp = new Bitmap(Parameters.MapSize.X, Parameters.MapSize.Y);
             
             Random r = new Random(1);
 
@@ -732,7 +732,7 @@ namespace Utopia.Shared.World.PlanGenerator
             using (var g = Graphics.FromImage(bmp))
             {
                 if (RenderMapTemplate != null)
-                    g.DrawImage(RenderMapTemplate, new Rectangle(0, 0, Parameters.MapSize.Width, Parameters.MapSize.Height));
+                    g.DrawImage(RenderMapTemplate, new Rectangle(0, 0, Parameters.MapSize.X, Parameters.MapSize.Y));
 
                 Brush polyBrush = new SolidBrush(Color.FromArgb(219, 164, 74));
                 if (RenderContinentTemplate != null)
@@ -757,7 +757,7 @@ namespace Utopia.Shared.World.PlanGenerator
                     //}
                     //else
                     {
-                        Color col = GetPolygonColor(polygon);
+                        //Color col = GetPolygonColor(polygon);
 
                         try
                         {

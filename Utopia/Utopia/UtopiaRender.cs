@@ -12,6 +12,7 @@ using S33M3Engines.Cameras;
 using Utopia.Editor;
 using Utopia.GUI;
 using Utopia.GUI.D3D;
+using Utopia.GUI.D3D.Map;
 using UtopiaContent.ModelComp;
 using SharpDX;
 using S33M3Engines.Struct;
@@ -269,6 +270,9 @@ namespace Utopia
 
             // chat
             GameComponents.Add(IoCContainer.Get<ChatComponent>());
+
+            // map
+            GameComponents.Add(IoCContainer.Get<MapComponent>());
 
             GameConsole.Initialize(_d3dEngine);
 
@@ -542,6 +546,13 @@ namespace Utopia
                 Action = Actions.OpenInventory,
                 TriggerType = KeyboardTriggerMode.KeyDownUp,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Inventory
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction
+            {
+                Action = Actions.OpenMap,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Map
             });
         }
 

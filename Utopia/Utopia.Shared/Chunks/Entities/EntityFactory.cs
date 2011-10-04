@@ -79,6 +79,7 @@ namespace Utopia.Shared.Chunks.Entities
                 case EntityClassId.Annihilator: entity = new Annihilator(); break;
                 case EntityClassId.DirtAdder: entity = new DirtAdder(); break;
                 case EntityClassId.Grass: entity = new Grass(); break;
+                case EntityClassId.Tree: entity = new Tree(); break;
                 default:
                     throw new ArgumentOutOfRangeException("classId");
             }

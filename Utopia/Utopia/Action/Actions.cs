@@ -34,6 +34,7 @@ namespace Utopia.Action
         Toggle_Chat,//XXX this syntax is not standard, its' camelCase with an underscore, resharper doesn't even support it !
         EntityUse,
         EntityThrow,
-        OpenInventory
+        OpenInventory,
+        OpenMap
     }
 }
