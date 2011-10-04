@@ -18,7 +18,9 @@ License along with this library
 */
 #endregion
 
-using System; using SharpDX;
+using System;
+using S33M3Engines.Struct.Vertex;
+using SharpDX;
 using System.Collections.Generic;
 
 namespace Nuclex.UserInterface.Controls.Desktop {
@@ -38,6 +40,6 @@ namespace Nuclex.UserInterface.Controls.Desktop {
 
     /// <summary>Text that will be shown on the button</summary>
     public string Text;
-
+     
   }
 } // namespace Nuclex.UserInterface.Controls.Desktop

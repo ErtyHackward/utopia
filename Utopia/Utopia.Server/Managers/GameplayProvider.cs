@@ -4,6 +4,7 @@ using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Server.Managers
 {
@@ -29,8 +30,12 @@ namespace Utopia.Server.Managers
             dEntity.Position = new Vector3D(10, 128, 10);
             dEntity.CharacterName = name;
             dEntity.Equipment.LeftTool = (Tool)EntityFactory.Instance.CreateEntity(EntityClassId.Annihilator);
-            dEntity.Equipment.RightTool = (Tool)EntityFactory.Instance.CreateEntity(EntityClassId.DirtAdder);
 
+            BlockAdder adder = (BlockAdder) EntityFactory.Instance.CreateEntity(EntityClassId.BlockAdder);
+            adder.CubeId = CubeId.LightBlue;//looting a terraincube will create a new blockadder instance or add to the stack
+
+            dEntity.Equipment.RightTool = adder;
+                
             var item = (IItem)EntityFactory.Instance.CreateEntity((EntityClassId.Shovel));
             dEntity.Inventory.PutItem(item);
             var item2 = (IItem)EntityFactory.Instance.CreateEntity((EntityClassId.PickAxe));
@@ -42,7 +47,7 @@ namespace Utopia.Server.Managers
         private void InstanceEntityCreated(object sender, EntityFactoryEventArgs e)
         {
             // set tool logic
-            if (e.Entity is Annihilator || e.Entity is DirtAdder || e.Entity is Shovel)
+            if (e.Entity is Annihilator || e.Entity is BlockAdder || e.Entity is Shovel)
             {
                 (e.Entity as Tool).ToolLogic = _logic;
             }

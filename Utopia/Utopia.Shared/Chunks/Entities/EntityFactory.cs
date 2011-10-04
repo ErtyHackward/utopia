@@ -77,7 +77,7 @@ namespace Utopia.Shared.Chunks.Entities
                 case EntityClassId.PlayerCharacter: entity = new PlayerCharacter(); break;
                 case EntityClassId.Zombie: entity = new Zombie(); break;
                 case EntityClassId.Annihilator: entity = new Annihilator(); break;
-                case EntityClassId.DirtAdder: entity = new DirtAdder(); break;
+                case EntityClassId.BlockAdder: entity = new BlockAdder(); break;
                 case EntityClassId.Grass: entity = new Grass(); break;
                 default:
                     throw new ArgumentOutOfRangeException("classId");
