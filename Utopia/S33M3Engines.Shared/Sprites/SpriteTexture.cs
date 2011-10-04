@@ -5,6 +5,8 @@ using S33M3Engines.Shared.Delegates;
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.Direct3D;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 #endregion
 
@@ -83,8 +85,50 @@ namespace S33M3Engines.Shared.Sprites
             _textureDispose = false;
             Texture = textureShader;
             Width = width;
-            Height = height
-                ;
+            Height = height;
+            ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
+        }
+
+        public SpriteTexture(Device device, Bitmap image, Vector2 screenPosition)
+        {
+            _textureDispose = true;
+
+            Width = image.Width;
+            Height = image.Height;
+
+            // Lock the bitmap for direct memory access
+            BitmapData bmData = image.LockBits(new System.Drawing.Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            // Create a D3D texture, initalized with the bitmap data  
+            Texture2DDescription texDesc = new Texture2DDescription();
+            texDesc.Width = Width;
+            texDesc.Height = Height;
+            texDesc.MipLevels = 1;
+            texDesc.ArraySize = 1;
+            texDesc.Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm;
+            texDesc.SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0);
+            texDesc.Usage = ResourceUsage.Immutable;
+            texDesc.BindFlags = BindFlags.ShaderResource;
+            texDesc.CpuAccessFlags = CpuAccessFlags.None;
+            texDesc.OptionFlags = ResourceOptionFlags.None;
+
+            DataRectangle data = new DataRectangle(Width * 4, new DataStream(bmData.Scan0, 4 * Width * Height, true, false));
+
+            Texture2D texture2d = new Texture2D(device, texDesc, data);
+
+            image.UnlockBits(bmData);
+
+            ShaderResourceViewDescription srDesc = new ShaderResourceViewDescription();
+            srDesc.Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm;
+            //srDesc.Dimension = ShaderResourceViewDimension.Texture2D;
+            //srDesc.Texture2D = new ShaderResourceViewDescription.Texture2DResource() { MipLevels = 1, MostDetailedMip = 0 };
+            srDesc.Dimension = ShaderResourceViewDimension.Texture2DArray;
+            srDesc.Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource() { MostDetailedMip = 0, MipLevels = 1, FirstArraySlice = 0, ArraySize = 1 };
+
+            Texture = new ShaderResourceView(device, texture2d, srDesc);
+
+            texture2d.Dispose();
+
             ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
         }
 
