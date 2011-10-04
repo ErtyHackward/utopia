@@ -127,6 +127,11 @@ namespace Utopia.Settings
         /// Open/close inventory
         /// </summary>
         public KeyWithModifier Inventory;
+
+        /// <summary>
+        /// Open/close the map
+        /// </summary>
+        public KeyWithModifier Map;
     }
 
     /// <summary>
@@ -188,7 +193,7 @@ namespace Utopia.Settings
                             StrafeRight = Keys.D,
                             Jump = Keys.Space,
                             Run = Keys.LShiftKey,
-                            Mode = Keys.M
+                            Mode = Keys.F
                         },
                         Console = Keys.Oemtilde,
                         VSync = new KeyWithModifier { MainKey = Keys.F8, Modifier = Keys.RControlKey, Info = "Enable/Disable VSync" },
@@ -201,6 +206,7 @@ namespace Utopia.Settings
                         Use = new KeyWithModifier { MainKey = Keys.E, Modifier = Keys.None, Info = "Use" },
                         Throw = new KeyWithModifier { MainKey = Keys.Back, Modifier = Keys.None, Info = "Throw" },
                         Inventory = new KeyWithModifier { MainKey = Keys.I, Modifier = Keys.None, Info = "Inventory" },
+                        Map = new KeyWithModifier { MainKey = Keys.M, Modifier = Keys.None, Info = "Open/close the map" }
                     },
                     ServersList = new ServersList()
                 };

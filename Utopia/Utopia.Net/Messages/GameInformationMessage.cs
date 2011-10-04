@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using Utopia.Net.Interfaces;
 using Utopia.Shared.Structs;
+using Utopia.Shared.World.PlanGenerator;
 
 namespace Utopia.Net.Messages
 {
@@ -22,6 +23,7 @@ namespace Utopia.Net.Messages
 
         private int _worldSeed;
         private int _waterLevel;
+        private GenerationParameters _planGenerationParameters;
 
         /// <summary>
         /// Gets message id
@@ -60,6 +62,15 @@ namespace Utopia.Net.Messages
             get { return _waterLevel; }
             set { _waterLevel = value; }
         }
+        
+        /// <summary>
+        /// Contains plan generation details
+        /// </summary>
+        public GenerationParameters PlanGenerationParameters
+        {
+            get { return _planGenerationParameters; }
+            set { _planGenerationParameters = value; }
+        }
 
         public static GameInformationMessage Read(BinaryReader reader)
         {
@@ -70,7 +81,11 @@ namespace Utopia.Net.Messages
             gi._chunkSize = reader.ReadVector3I();
             gi._worldSeed = reader.ReadInt32();
             gi._waterLevel = reader.ReadInt32();
+            var plan = new GenerationParameters();
+            plan.Load(reader);
+            gi._planGenerationParameters = plan;
             
+
             return gi;
         }
 
@@ -80,6 +95,7 @@ namespace Utopia.Net.Messages
             writer.Write(info._chunkSize);
             writer.Write(info._worldSeed);
             writer.Write(info._waterLevel);
+            info._planGenerationParameters.Save(writer);
         }
         
         public void Write(BinaryWriter writer)
