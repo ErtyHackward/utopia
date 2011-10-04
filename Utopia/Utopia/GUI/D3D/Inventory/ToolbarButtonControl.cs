@@ -6,6 +6,7 @@ using Nuclex.UserInterface.Controls.Desktop;
 
 using System.Diagnostics;
 using SharpDX;
+using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 
@@ -13,6 +14,7 @@ namespace Utopia.GUI.D3D.Inventory
 {
     public class ToolbarButtonControl : ButtonControl, IDropTarget
     {
+        private readonly PlayerCharacter _player;
 
         public ToolbarSlot ToolbarSlot;       
 
@@ -20,19 +22,20 @@ namespace Utopia.GUI.D3D.Inventory
 
         public IItem LeftItem
         {
-            get { return ToolbarSlot.Item; }
+            get { return _player.LookupItem(ToolbarSlot.Left); }
         }
 
         public IItem RightItem
         {
-            get { return ToolbarSlot.Item; }//TODO right item in toolbarSlot
+            get { return _player.LookupItem(ToolbarSlot.Right); }
         }
 
 // to render as the hasfocus without really giving focus
 
-        public ToolbarButtonControl(ToolbarSlot slot)
+        public ToolbarButtonControl(PlayerCharacter player,ToolbarSlot slot)
             : base()
         {
+            _player = player;
             ToolbarSlot = slot;    
         }
 
@@ -71,8 +74,10 @@ namespace Utopia.GUI.D3D.Inventory
                     ToolbarSlot.Right = itemId;
                 }
             }
-       
-             Text = LeftItem + "|" + RightItem; 
+
+            Text = LeftItem == null ? "" : LeftItem.DisplayName;//TODO remove all text based early tests
+            Text += Text != "" ? "|":"";
+            Text += RightItem == null ? "": RightItem.DisplayName; 
         }
     }
 }
