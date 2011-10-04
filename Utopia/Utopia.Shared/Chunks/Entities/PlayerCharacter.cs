@@ -85,15 +85,30 @@ namespace Utopia.Shared.Chunks.Entities
             Toolbar.Save(writer);
         }
 
-        public IItem lookupItem(uint itemId)
+        public IItem LookupItem(uint itemId)
         {
-            foreach (IItem item in Inventory)
+            if (itemId==0) return null;
+            foreach (ContainedSlot slot in Inventory)
             {
-                if (item.EntityId==itemId) return item;
+                if (slot.Item.EntityId == itemId) return slot.Item;
             }
 
+            IItem[] equipment = new IItem[]
+                                    {
+                                        Equipment.HeadGear, Equipment.LeftRing, Equipment.RightRing,
+                                        Equipment.LeftTool, Equipment.RightTool, Equipment.Legs, Equipment.NeckLace,
+                                        Equipment.Torso, Equipment.Feet
+                                    };
 
+            foreach (var item in equipment)
+            {
+                if (item!=null && item.EntityId == itemId) return item;
+            }
+            
+            return null;
         }
+
+       
 
         #endregion
     }

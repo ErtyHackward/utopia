@@ -16,6 +16,7 @@ namespace Utopia.GUI.D3D.Inventory
 {
     public class ToolBarUi : ContainerControl
     {
+        private readonly PlayerCharacter _player;
         const int ButtonSize = 46;
 
         private ButtonControl leftButton;//TODO iconButton
@@ -28,6 +29,7 @@ namespace Utopia.GUI.D3D.Inventory
 
         public ToolBarUi(UniRectangle Bounds, PlayerCharacter player)
         {
+            _player = player;
             _toolbar = player.Toolbar;
             _equipment = player.Equipment;
             
@@ -71,7 +73,7 @@ namespace Utopia.GUI.D3D.Inventory
             for (int x = 0; x < nbrButton; x++)
             {
                 
-                ToolbarButtonControl btn = new ToolbarButtonControl(new ToolbarSlot(){GridPosition = new Vector2I(x,0)});
+                ToolbarButtonControl btn = new ToolbarButtonControl(_player,new ToolbarSlot(){GridPosition = new Vector2I(x,0)});
                 btn.Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize);
                 _buttons.Add(btn);
                 btn.Pressed += delegate {
