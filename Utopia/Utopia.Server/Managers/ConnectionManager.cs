@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Utopia.Net.Connections;
-using Utopia.Net.Interfaces;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Interfaces;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Managers
 {
@@ -54,7 +55,7 @@ namespace Utopia.Server.Managers
             _connections = new Dictionary<string, ClientConnection>();
         }
 
-        void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<Net.Messages.PingMessage> e)
+        void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
         {
             var connection = (ClientConnection)sender;
             // we need respond as fast as possible

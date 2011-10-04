@@ -61,7 +61,7 @@ namespace Utopia.Server.Entities
 
         public void Goto(Vector3I location)
         {
-            _server.LandscapeManager.CalculatePathAsync(LandscapeManager.EntityToBlockPosition(this.DynamicEntity.Position), location, PathCalculated);
+            _server.LandscapeManager.CalculatePathAsync(ServerLandscapeManager.EntityToBlockPosition(this.DynamicEntity.Position), location, PathCalculated);
         }
 
         private void PathCalculated(Path3D path)

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using Utopia.Net.Connections;
-using Utopia.Net.Messages;
 using Utopia.Shared.Chunks.Entities.Events;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Network
 {

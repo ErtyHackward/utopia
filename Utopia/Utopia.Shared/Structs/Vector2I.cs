@@ -188,6 +188,16 @@ namespace Utopia.Shared.Structs
 
         #endregion
 
+        public static Vector2I operator -(Vector2I one, Vector2I two)
+        {
+            Vector2I vec;
+
+            vec.X = one.X - two.X;
+            vec.Y = one.Y - two.Y;
+
+            return vec;
+        }
+
         /// <summary>
         /// Gets IntVector2 with values x = 1, y = 1
         /// </summary>
