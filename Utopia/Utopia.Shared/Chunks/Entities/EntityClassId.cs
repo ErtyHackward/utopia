@@ -14,7 +14,7 @@
         Axe = 5,
         Survey = 6,
         Annihilator = 7,
-        DirtAdder = 8,
+        BlockAdder = 8,
 
         // static
         Chest = 1000,

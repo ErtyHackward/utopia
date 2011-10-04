@@ -1,21 +1,30 @@
 ﻿
-#region Using Statements
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-
-using System.Diagnostics;
-using Utopia.Shared.Structs;
-using Utopia.Shared.Structs.Landscape;
-
-#endregion
-
 namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
 {
-    public abstract class BlockAdder : Tool
+    public class BlockAdder : Tool
     {
+        public byte CubeId;
 
+        public override int MaxStackSize
+        {
+            get { return 999; }
+        }
+
+        public override EntityClassId ClassId
+        {
+            get { return EntityClassId.BlockAdder; }
+        }
+
+        public override void Load(System.IO.BinaryReader reader)
+        {
+            base.Load(reader);
+            CubeId = reader.ReadByte();
+        }
+
+        public override void Save(System.IO.BinaryWriter writer)
+        {
+            base.Save(writer);
+            writer.Write(CubeId);
+        }
     }
 }

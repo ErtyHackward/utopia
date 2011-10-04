@@ -45,14 +45,14 @@ namespace Utopia.Server.Tools
                 return impact;
             }
 
-            if (callerTool is DirtAdder)
+            if (callerTool is BlockAdder)
             {
                 if (entity.EntityState.IsPickingActive)
                 {
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
                     if (cursor.Read() == 0)
                     {
-                        cursor.Write(CubeId.Dirt);
+                        cursor.Write(((BlockAdder)callerTool).CubeId);
                         impact.Success = true;
                         return impact;
                     }

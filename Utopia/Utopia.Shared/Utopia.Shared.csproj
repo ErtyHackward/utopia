@@ -108,7 +108,7 @@
     <Compile Include="Chunks\Entities\Inventory\ToolbarSlot.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityEffect.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityState.cs" />
-    <Compile Include="Chunks\Entities\Inventory\Tools\DirtAdder.cs" />
+    <Compile Include="Chunks\Entities\Inventory\Tools\BlockAdder.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Hand.cs" />
     <Compile Include="Chunks\Entities\PlayerCharacter.cs" />
     <Compile Include="Chunks\Entities\SpecialCharacterEntity.cs" />
@@ -126,9 +126,7 @@
     <Compile Include="Chunks\Entities\Inventory\EquipmentSlotType.cs" />
     <Compile Include="Chunks\Entities\Inventory\VoxelItem.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tool.cs" />
-    <Compile Include="Chunks\Entities\Inventory\Tools\Wally.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\BlockRemover.cs" />
-    <Compile Include="Chunks\Entities\Inventory\Tools\BlockAdder.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Shovel.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Pickaxe.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\Survey.cs" />
