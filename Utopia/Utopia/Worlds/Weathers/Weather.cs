@@ -15,11 +15,11 @@ namespace Utopia.Worlds.Weather
     {
         #region Private variable
         private Server _server;
+        private IClock _clock;
         #endregion
 
         #region Public properties/variable
         public IWind Wind { get; set; }
-        public IClock _clock { get; set; }
         #endregion
 
         public Weather(IClock clock, Server server)

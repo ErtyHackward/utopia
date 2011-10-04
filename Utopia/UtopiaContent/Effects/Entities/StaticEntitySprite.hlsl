@@ -6,9 +6,9 @@ cbuffer PerFrame
 {
 	matrix WorldFocus;
 	matrix ViewProjection;
-    float WindPower;
 	float3 SunColor;			  // Diffuse lighting color
 	float fogdist;
+    float3 WindPower;
 };
 
 //--------------------------------------------------------------------------------------
@@ -59,6 +59,14 @@ PSInput VS (VSInput input)
 
 	float4 worldPosition = {input.Position.xyz, 1.0f};
 	worldPosition = mul(worldPosition, WorldFocus);
+
+	if (input.Textcoord.y <= 0.1)
+	{
+	      //worldPosition.x += WindPower.x;
+		  //worldPosition.z += WindPower.z;
+		  float sine = sin(input.Position.z / 20) * 1.5; // * Time variable to make it move !
+		  worldPosition.xyz += sine * WindPower;
+	}
 
 	output.Position = mul(worldPosition, ViewProjection);
 	output.UVW = input.Textcoord;
