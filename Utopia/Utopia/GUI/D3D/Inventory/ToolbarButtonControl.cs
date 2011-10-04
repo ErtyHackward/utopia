@@ -48,28 +48,31 @@ namespace Utopia.GUI.D3D.Inventory
 
         public void Link(ContainedSlot slotToLink)
         {
-            Vector2I pos = slotToLink.GridPosition;
+            uint itemId = slotToLink.Item.EntityId;
 
-            //if (ToolbarSlot.Left==pos)
-            //{
-            //    //a way to remove an assigned tool and avoid double tool exploit
-            //    ToolbarSlot.Left = null;
-            //} else if (ToolbarSlot.Right==pos)
-            //{
-            //    ToolbarSlot.Right = null;
-            //} 
-            //else
-            //{
-            //    if (ToolbarSlot.Left == null)
-            //    {
-            //        Text = pos.ToString();
-            //        ToolbarSlot.Left = pos;
-            //    }
-            //    else
-            //    {
-            //        ToolbarSlot.Right = pos;
-            //    }
-            //}
+            if (ToolbarSlot.Left == itemId)
+            {
+                //a way to remove an assigned tool and avoid double tool exploit
+                ToolbarSlot.Left = 0;
+            }
+            else if (ToolbarSlot.Right == itemId)
+            {
+                ToolbarSlot.Right = 0;
+            } 
+            else
+            {
+                if (ToolbarSlot.Left == 0)
+                {
+                    Text = itemId.ToString();
+                    ToolbarSlot.Left = itemId;
+                }
+                else
+                {
+                    ToolbarSlot.Right = itemId;
+                }
+            }
+       
+             Text = LeftItem + "|" + RightItem; 
         }
     }
 }
