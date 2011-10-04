@@ -10,7 +10,7 @@ using S33M3Engines;
 
 namespace UtopiaContent.Effects.Entities
 {
-    public class HLSLStaticEntitySprite : HLSLShaderWrap
+    public class HLSLStaticEntitySpriteGeoShader : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
         // follow the packing rules from here:
@@ -52,11 +52,12 @@ namespace UtopiaContent.Effects.Entities
         EntryPoints _shadersEntryPoint = new EntryPoints()
         {
             VertexShader_EntryPoint = "VS",
+            GeometryShader_EntryPoint = "GS",
             PixelShader_EntryPoint = "PS"
         };
         #endregion
 
-        public HLSLStaticEntitySprite(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+        public HLSLStaticEntitySpriteGeoShader(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
             : base(d3dEngine, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================

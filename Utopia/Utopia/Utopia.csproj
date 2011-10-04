@@ -110,6 +110,7 @@
     <Compile Include="Editor\EntityEditor.cs" />
     <Compile Include="Editor\EntityEditorUI.cs" />
     <Compile Include="Editor\Spawn.cs" />
+    <Compile Include="Entities\Interfaces\IVisualEntity.cs" />
     <Compile Include="Entities\Managers\EntityPickAndCollisManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IEntityPickingManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IStaticEntityManager.cs" />

@@ -17,6 +17,7 @@ using UtopiaContent.ModelComp;
 using S33M3Engines.WorldFocus;
 using Utopia.Shared.World;
 using Utopia.Entities;
+using Utopia.Entities.Interfaces;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -32,6 +33,7 @@ namespace Utopia.Worlds.Chunks
 
         private object Lock_DrawChunksSolidFaces = new object();       //Multithread Locker
         private object Lock_DrawChunksSeeThrough1Faces = new object(); //Multithread Locker
+        private object Lock_Draw = new object(); //Multithread Locker
         #endregion
 
         #region Public properties/Variable
@@ -43,11 +45,17 @@ namespace Utopia.Worlds.Chunks
         public List<VertexCubeLiquid> LiquidCubeVertices;    // Collection use to collect the vertices at the liquid cube creation time
         public List<ushort> LiquidCubeIndices;               // Collection use to collect the indices at the liquid cube creation time
 
+        public List<VertexPositionColorTexture> StaticSpritesVertices;
+        public List<ushort> StaticSpritesIndices;
+
         //Graphical chunk components Exposed VB and IB ==> Called a lot, so direct acces without property bounding
         public VertexBuffer<VertexCubeSolid> SolidCubeVB;   //Solid cube vertex Buffer
         public IndexBuffer<ushort> SolidCubeIB;             //Solid cube index buffer
         public VertexBuffer<VertexCubeLiquid> LiquidCubeVB; //Liquid cube vertex Buffer
         public IndexBuffer<ushort> LiquidCubeIB;            //Liquid cube index Buffer
+
+        public VertexBuffer<VertexPositionColorTexture> StaticSpritesVB;
+        public IndexBuffer<ushort> StaticSpritesIB;
 
         public Vector2I ChunkPositionBlockUnit { get; private set; } // Gets or sets current chunk position in Block Unit
         public Vector2I ChunkPosition { get; private set; } // Gets or sets current chunk position in Chunk Unit
@@ -67,7 +75,7 @@ namespace Utopia.Worlds.Chunks
 
         public Location2<int> LightPropagateBorderOffset;
 
-        public List<VisualSpriteEntity> VisualSpriteEntities;
+        public List<IVisualEntity> VisualSpriteEntities;
 
         public int StorageRequestTicket { get; set; }
 
@@ -98,12 +106,11 @@ namespace Utopia.Worlds.Chunks
 #endif
             _d3dEngine = d3dEngine;
             _visualWorldParameters = visualWorldParameter;
-            VisualSpriteEntities = new List<VisualSpriteEntity>();
+            VisualSpriteEntities = new List<IVisualEntity>();
             CubeRange = cubeRange;
             State = ChunkState.Empty;
             Ready2Draw = false;
             LightPropagateBorderOffset = new Location2<int>(0, 0);
-
         }
 
         #region Public methods
@@ -123,12 +130,16 @@ namespace Utopia.Worlds.Chunks
             SolidCubeIndices = new List<ushort>();
             LiquidCubeVertices = new List<VertexCubeLiquid>();
             LiquidCubeIndices = new List<ushort>();
+
+            StaticSpritesIndices = new List<ushort>();
+            StaticSpritesVertices = new List<VertexPositionColorTexture>();
         }
 
         public void SendCubeMeshesToBuffers()
         {
-            SendSolidCubeMeshToGraphicCard();
-            SendLiquidCubeMeshToGraphicCard();
+            SendSolidCubeMeshToGraphicCard();       //Solid Cubes
+            SendLiquidCubeMeshToGraphicCard();      //See Through Cubes
+            SendStaticEntitiesToGraphicalCard();    //Static Entities Sprite + Voxel
             State = ChunkState.DisplayInSyncWithMeshes;
             Ready2Draw = true;
         }
@@ -195,6 +206,34 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
+        private void SendStaticEntitiesToGraphicalCard()
+        {
+            lock (Lock_Draw)
+            {
+                if (StaticSpritesVertices.Count == 0)
+                {
+                    if (StaticSpritesVB != null) StaticSpritesVB.Dispose();
+                    StaticSpritesVB = null;
+                    return;
+                }
+
+                if (StaticSpritesVB == null)
+                {
+                    StaticSpritesVB = new VertexBuffer<VertexPositionColorTexture>(_d3dEngine, StaticSpritesVertices.Count, VertexPositionColorTexture.VertexDeclaration, PrimitiveTopology.TriangleList, "StaticEntityVB", ResourceUsage.Default, 5);
+                }
+                StaticSpritesVB.SetData(StaticSpritesVertices.ToArray());
+                StaticSpritesVertices.Clear();
+
+                if (StaticSpritesIB == null)
+                {
+                    StaticSpritesIB = new IndexBuffer<ushort>(_d3dEngine, StaticSpritesIndices.Count, SharpDX.DXGI.Format.R16_UInt, "StaticEntityIB");
+                }
+                StaticSpritesIB.SetData(StaticSpritesIndices.ToArray());
+                StaticSpritesIndices.Clear();
+            }
+        }
+
+
         //Ask the Graphical card to Draw the solid faces
         public void DrawSolidFaces()
         {
@@ -219,6 +258,20 @@ namespace Utopia.Worlds.Chunks
                     LiquidCubeVB.SetToDevice(0);
                     LiquidCubeIB.SetToDevice(0);
                     _d3dEngine.Context.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
+                }
+            }
+        }
+
+        //Ask the Graphical card to Draw the solid faces
+        public void DrawStaticEntities()
+        {
+            lock (Lock_Draw)
+            {
+                if (StaticSpritesVB != null)
+                {
+                    StaticSpritesVB.SetToDevice(0);
+                    StaticSpritesIB.SetToDevice(0);
+                    _d3dEngine.Context.DrawIndexed(StaticSpritesIB.IndicesCount, 0, 0);
                 }
             }
         }

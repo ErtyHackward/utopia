@@ -51,6 +51,7 @@ namespace Utopia.Worlds.Chunks
     {
         private const int SOLID_DRAW = 0;
         private const int TRANSPARENT_DRAW = 1;
+        private const int ENTITIES_DRAW = 2;
 
         #region Private variables
         private D3DEngine _d3dEngine;
@@ -132,6 +133,7 @@ namespace Utopia.Worlds.Chunks
             _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
 
             DrawOrders.UpdateIndex(SOLID_DRAW, 10); //not needed but its for the sample (This index is already created by default)
+            DrawOrders.AddIndex(ENTITIES_DRAW, 20); //not needed but its for the sample (This index is already created by default)
             DrawOrders.AddIndex(TRANSPARENT_DRAW, 1050); //not needed but its for the sample (This index is already created by default)
         }
 

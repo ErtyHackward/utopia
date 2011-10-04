@@ -72,50 +72,25 @@ namespace Utopia.Entities.Managers
         #region Public Methods
         public override void Update(ref GameTime timeSpent)
         {
-            VisualChunk chunk;
-            if (StaticSpriteListDirty)
-            {
-                _spriteRenderer.BeginSpriteCollectionRefresh();
-                for (int i = 0; i < WorldChunks.Chunks.Length; i++)
-                {
-                    chunk = WorldChunks.SortedChunks[i];
-                    if (chunk.State == ChunkState.DisplayInSyncWithMeshes)
-                    {
-                        for (int j = 0; j < chunk.VisualSpriteEntities.Count; j++)
-                        {
-                            _spriteRenderer.AddPointSpriteVertex(chunk.VisualSpriteEntities[j]);
-                        }
-                    }
-                }
-
-                _spriteRenderer.EndSpriteCollectionRefresh();
-                StaticSpriteListDirty = false;
-            }
-
             //VisualChunk chunk;
-            //double minDistanceChunkModified = double.MaxValue;
-            //double currentChunkModifiedDistance;
-            //_spriteRenderer.BeginSpriteCollectionRefresh();
-            ////Check inside the visible chunks (Not frustum culled) the statics entities that needs to be rendered
-            //for (int i = 0; i < _worldChunks.Chunks.Length; i++)
+            //if (StaticSpriteListDirty)
             //{
-            //    chunk = _worldChunks.SortedChunks[i];
-            //    if (chunk.State != ChunkState.DisplayInSyncWithMeshes)
+            //    _spriteRenderer.BeginSpriteCollectionRefresh();
+            //    for (int i = 0; i < WorldChunks.Chunks.Length; i++)
             //    {
-            //        currentChunkModifiedDistance = Vector3D.Distance(_player.VisualEntity.Position, new Vector3D(chunk.ChunkPositionBlockUnit.X, _player.VisualEntity.Position.Y, chunk.ChunkPositionBlockUnit.Y));
-            //        if (currentChunkModifiedDistance < minDistanceChunkModified) minDistanceChunkModified = currentChunkModifiedDistance;
-            //    }
-            //    if (chunk.isFrustumCulled == false && chunk.State == ChunkState.DisplayInSyncWithMeshes)
-            //    {
-            //        for (int j = 0; j < chunk.VisualSpriteEntities.Count; j++)
+            //        chunk = WorldChunks.SortedChunks[i];
+            //        if (chunk.State == ChunkState.DisplayInSyncWithMeshes)
             //        {
-            //            _spriteRenderer.AddPointSpriteVertex(ref chunk.VisualSpriteEntities[j].Vertex);
+            //            for (int j = 0; j < chunk.VisualSpriteEntities.Count; j++)
+            //            {
+            //                _spriteRenderer.AddPointSpriteVertex(chunk.VisualSpriteEntities[j]);
+            //            }
             //        }
             //    }
-            //}
 
-            //if (minDistanceChunkModified >= 48)
-            //    _spriteRenderer.Update(ref timeSpent);
+            //    _spriteRenderer.EndSpriteCollectionRefresh();
+            //    StaticSpriteListDirty = false;
+            //}
         }
 
 
@@ -126,7 +101,7 @@ namespace Utopia.Entities.Managers
 
         public override void Draw(int Index)
         {
-            _spriteRenderer.Draw(Index);
+            //_spriteRenderer.Draw(Index);
         }
 
         #endregion
