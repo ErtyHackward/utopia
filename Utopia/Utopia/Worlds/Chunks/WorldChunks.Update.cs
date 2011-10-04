@@ -149,14 +149,10 @@ namespace Utopia.Worlds.Chunks
 
                 if (chunk.State == ChunkState.MeshesChanged)
                 {
-                    //Console.WriteLine(chunk.UserChangeOrder);
-
                     chunk.UserChangeOrder = 0;
                     chunk.ThreadPriority = WorkItemPriority.Normal;
                     //Si exécuté dans un thread => Doit fonctionner avec des device context deffered, avec un system de replay (Pas encore testé !!)
                     chunk.SendCubeMeshesToBuffers();
-
-                    _staticEntityManager.StaticSpriteListDirty = true;
                 }
             }
         }

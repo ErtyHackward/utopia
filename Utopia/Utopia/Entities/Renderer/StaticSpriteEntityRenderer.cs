@@ -123,7 +123,7 @@ namespace Utopia.Entities.Renderer
 
         public void AddPointSpriteVertex(VisualSpriteEntity spriteVertex)
         {
-            _vertices.Add(spriteVertex.Vertex);
+            //_vertices.Add(spriteVertex.Vertex);
         }
 
         public void EndSpriteCollectionRefresh()

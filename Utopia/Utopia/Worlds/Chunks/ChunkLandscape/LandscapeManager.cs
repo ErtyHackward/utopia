@@ -166,7 +166,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
                             chunk.IsServerRequested = false;
 
-
                             break;
                         case ChunkDataMessageFlag.ChunkMd5Equal:
                             //Do we still have to wait for the chunk from the local storage ??
@@ -254,6 +253,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
             visualChunk.Entities = generatedChunk.Entities;
+
             CreateVisualEntities(generatedChunk, visualChunk);
 
             visualChunk.State = ChunkState.LandscapeCreated;
@@ -264,12 +264,17 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         private void CreateVisualEntities(AbstractChunk source, VisualChunk target)
         {
+            //Create the Sprite Entities
+            SpriteEntity spriteEntity;
             for (int entityID = 0; entityID < source.Entities.Data.Count; entityID++)
             {
-                target.VisualSpriteEntities.Add(new VisualSpriteEntity((SpriteEntity)source.Entities.Data[entityID]));
+                spriteEntity = source.Entities.Data[entityID] as SpriteEntity;
+                if (spriteEntity != null)
+                {
+                    target.VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
+                }
             }
         }
-
         #endregion
     }
 }

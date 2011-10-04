@@ -17,11 +17,11 @@ namespace S33M3Engines.Struct.Vertex
     public struct VertexPositionColorTexture : IVertexType
     {
         public Vector3 Position;
-        public Color Color;
-        public Vector2 TextureCoordinate;
+        public ByteColor Color;
+        public Vector3 TextureCoordinate;
 
         public static readonly VertexDeclaration VertexDeclaration;
-        public VertexPositionColorTexture(Vector3 position, Color color, Vector2 textureCoordinate)
+        public VertexPositionColorTexture(Vector3 position, ByteColor color, Vector3 textureCoordinate)
         {
             this.Position = position;
             this.Color = color;
@@ -45,35 +45,13 @@ namespace S33M3Engines.Struct.Vertex
             return string.Format(CultureInfo.CurrentCulture, "{{Position:{0} Color:{1} TextureCoordinate:{2}}}", new object[] { this.Position, this.Color, this.TextureCoordinate });
         }
 
-        public static bool operator ==(VertexPositionColorTexture left, VertexPositionColorTexture right)
-        {
-            return (((left.Position == right.Position) && (left.Color == right.Color)) && (left.TextureCoordinate == right.TextureCoordinate));
-        }
-
-        public static bool operator !=(VertexPositionColorTexture left, VertexPositionColorTexture right)
-        {
-            return !(left == right);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            if (obj.GetType() != base.GetType())
-            {
-                return false;
-            }
-            return (this == ((VertexPositionColorTexture)obj));
-        }
 
         static VertexPositionColorTexture()
         {
             InputElement[] elements = new InputElement[] { 
                                                             new InputElement("POSITION", 0, Format.R32G32B32_Float,0 , 0), 
                                                             new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, 12, 0),
-                                                            new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
+                                                            new InputElement("TEXCOORD", 0, Format.R32G32B32_Float, 16, 0)
                                                             };
 
             VertexDeclaration = new VertexDeclaration(elements);

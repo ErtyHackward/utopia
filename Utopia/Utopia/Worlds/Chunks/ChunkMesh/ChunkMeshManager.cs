@@ -8,6 +8,11 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks.Enums;
 using Utopia.Worlds.Cubes;
+using Utopia.Entities;
+using System.Collections.Generic;
+using S33M3Engines.Struct.Vertex;
+using Utopia.Shared.Chunks.Entities;
+using SharpDX;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -75,6 +80,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             GenerateCubesFace(CubeFace.Top, chunk);
             GenerateCubesFace(CubeFace.Left, chunk);
             GenerateCubesFace(CubeFace.Right, chunk);
+            GenerateStaticEntitiesMesh(chunk);
         }
 
         private void GenerateCubesFace(CubeFace cubeFace, VisualChunk chunk)
@@ -208,6 +214,48 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                 }
             }
 
+        }
+
+        private void GenerateStaticEntitiesMesh(VisualChunk chunk)
+        {
+            chunk.StaticSpritesVertices.Clear();
+            chunk.StaticSpritesIndices.Clear();
+            //Loop trhough all Visual Entity and create meshes from them.
+            foreach (VisualSpriteEntity SpriteEntities in chunk.VisualSpriteEntities)
+            {
+                GenerateEntitySprite(chunk.StaticSpritesVertices, chunk.StaticSpritesIndices, SpriteEntities.SpriteEntity.Format, SpriteEntities);
+            }
+        }
+
+        private void GenerateEntitySprite(List<VertexPositionColorTexture> vertices, List<ushort> indices, SpriteFormat spriteFormat, VisualSpriteEntity sprite)
+        {
+            Vector3 spriteLocation = sprite.SpriteEntity.Position.AsVector3();
+            int baseIndex = vertices.Count;
+
+            switch (spriteFormat)
+            {
+                case SpriteFormat.Single:
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - 0.5f, spriteLocation.Y + 0.0f, spriteLocation.Z + 0.0f), sprite.color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - 0.5f, spriteLocation.Y + 1.0f, spriteLocation.Z + 0.0f), sprite.color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + 0.5f, spriteLocation.Y + 0.0f, spriteLocation.Z + 0.0f), sprite.color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + 0.5f, spriteLocation.Y + 1.0f, spriteLocation.Z + 0.0f), sprite.color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+
+                    indices.Add((ushort)(baseIndex + 0));
+                    indices.Add((ushort)(baseIndex + 1));
+                    indices.Add((ushort)(baseIndex + 2));
+                    indices.Add((ushort)(baseIndex + 3));
+                    indices.Add((ushort)(baseIndex + 0));
+                    indices.Add((ushort)(baseIndex + 2));
+                    break;
+                case SpriteFormat.Double:
+                    break;
+                case SpriteFormat.Cross:
+                    break;
+                case SpriteFormat.Quad:
+                    break;
+                default:
+                    break;
+            }
         }
 
         #endregion

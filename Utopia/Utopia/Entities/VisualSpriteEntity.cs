@@ -6,17 +6,19 @@ using Utopia.Shared.Chunks.Entities;
 using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs;
 using SharpDX;
+using Utopia.Entities.Interfaces;
 
 namespace Utopia.Entities
 {
-    public class VisualSpriteEntity
+    public class VisualSpriteEntity : IVisualEntity
     {
         #region Private Variables
         #endregion
 
         #region Public Variables
-        public SpriteEntity SpriteEntity;
-        public VertexPositionColorTextureInstanced Vertex;
+        public SpriteEntity SpriteEntity { get; set; }
+        public ByteColor color { get; set; }
+        public int spriteTextureId;
         #endregion
 
         public VisualSpriteEntity(SpriteEntity spriteEntity)
@@ -28,26 +30,19 @@ namespace Utopia.Entities
         #region Private methods
         private void CreateVertices()
         {
-            //Matrix world = Matrix.Scaling(SpriteEntity.Scale) * Matrix.Translation(SpriteEntity.Position.AsVector3());
-            Matrix world = Matrix.Transpose(Matrix.Translation(SpriteEntity.Position.AsVector3()));
-            ByteColor color = new ByteColor();
-            uint textureArrayId;
             //Get Texture Array from Sprite Type
             switch (SpriteEntity.ClassId)
             {
                 case EntityClassId.Grass:
-                    textureArrayId = 4;     //5 level of evolution forsee by sprite formula should be (StaticSpriteTextureID * 5) + Evolution.
+                    spriteTextureId = 4;     //5 level of evolution forsee by sprite formula should be (StaticSpriteTextureID * 5) + Evolution.
                     break;
                 default:
                     throw new Exception("Static Sprite ID not supported");
             }
-
-            Vertex = new VertexPositionColorTextureInstanced(ref world, ref color, textureArrayId);
         }
         #endregion
 
         #region Public methods
         #endregion
-
     }
 }
