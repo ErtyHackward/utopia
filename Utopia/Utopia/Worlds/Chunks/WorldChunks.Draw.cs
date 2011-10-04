@@ -175,8 +175,8 @@ namespace Utopia.Worlds.Chunks
 
                         _staticSpriteEffect.CBPerFrame.Values.WorldFocus = Matrix.Transpose(_worldFocusManager.CenterOnFocus(ref MMatrix.Identity));
                         _staticSpriteEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-                        _staticSpriteEffect.CBPerFrame.Values.WindPower = _weather.Wind.FlatWindFlow;
-                        _staticSpriteEffect.CBPerFrame.Values.KeyFrameAnimation = _keyFrameAnimation.ValueInterp;
+                        _staticSpriteEffect.CBPerFrame.Values.WindPower = _weather.Wind.FlatWindFlowNormalizedWithNoise;
+                        _staticSpriteEffect.CBPerFrame.Values.KeyFrameAnimation = (float)_weather.Wind.KeyFrameAnimation;
                         _staticSpriteEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
                         _staticSpriteEffect.CBPerFrame.Values.fogdist = ((VisualWorldParameters.WorldVisibleSize.X) / 2) - 48; ;
                         _staticSpriteEffect.CBPerFrame.IsDirty = true;

@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Delegates\D3DEngineDelegates.cs" />
+    <Compile Include="Math\FastRandom.cs" />
     <Compile Include="Math\Vector3D.cs" />
     <Compile Include="Math\MathHelper.cs" />
     <Compile Include="Math\Noises\NoiseMath.cs" />
