@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Utopia.Server.Entities
 {
-    public enum ZombieState
+    public enum TestNpcState
     {
         Staying,
         FollowPath,

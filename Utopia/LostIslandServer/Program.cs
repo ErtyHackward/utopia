@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
 using Ninject;
+using Utopia.Server;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Shared.Config;
@@ -11,17 +13,22 @@ using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.WorldConfigs;
 
-namespace Utopia.Server
+namespace LostIslandServer
 {
     class Program
     {
+        public static Server Server
+        {
+            get { return _server; }
+        }
+
         private static Server _server;
         private static IKernel _iocContainer;
 
         static void IocBind(WorldParameters param)
         {
 
-            var settingsManager = new XmlSettingsManager<ServerSettings>("utopiaServer.config", SettingsStorage.ApplicationData );
+            var settingsManager = new XmlSettingsManager<ServerSettings>("utopiaServer.config", SettingsStorage.ApplicationData);
             settingsManager.Load();
 
             if (string.IsNullOrEmpty(settingsManager.Settings.DatabasePath))
@@ -38,17 +45,15 @@ namespace Utopia.Server
 
             //_iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope().Named("ErtyHackwardWorld");
             //_iocContainer.Bind<IWorldProcessor>().To<ErtyHackwardPlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
-
-
-
             
             _iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
             _iocContainer.Bind<IUsersStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
             _iocContainer.Bind<IChunksStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
             _iocContainer.Bind<IEntityStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
-            
+
         }
 
+        [STAThread]
         static void Main(string[] args)
         {
             _iocContainer = new StandardKernel(new NinjectSettings());
@@ -59,36 +64,21 @@ namespace Utopia.Server
 
             Console.WriteLine("Welcome to Utopia game server v{1} Protocol: v{0}", Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
 
-            _server = new Server( 
-                _iocContainer.Get<XmlSettingsManager<ServerSettings>>(),  
+            _server = new Server(
+                _iocContainer.Get<XmlSettingsManager<ServerSettings>>(),
                 _iocContainer.Get<WorldGenerator>(),
                 _iocContainer.Get<IUsersStorage>(),
                 _iocContainer.Get<IChunksStorage>(),
                 _iocContainer.Get<IEntityStorage>()
                 );
 
-            _server.Services.Add(new ZombieService());
+            _server.Services.Add(new TestNpcService());
 
-            _server.Listen();
-            
-            while (true)
-            {
-                var command = Console.ReadLine().ToLower();
+            _server.ConnectionManager.Listen();
 
-                switch (command)
-                {
-                    case "exit":
-                        _server.Dispose();
-                        return;
-                    case "status":
-                        Console.WriteLine("Currently {0} entities", _server.AreaManager.EntitiesCount);
-                        break;
-                    case "test":
-
-                        _server.ConnectionManager.Foreach(c => Console.WriteLine(c._delayedMessages.Count));
-                        break;
-                }
-            }
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new frmMain());
         }
     }
 }

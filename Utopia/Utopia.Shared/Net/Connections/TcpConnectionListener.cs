@@ -22,6 +22,11 @@ namespace Utopia.Shared.Net.Connections
                 IncomingConnection(this, e);
         }
 
+        /// <summary>
+        /// Local port to open to listen incoming connections
+        /// </summary>
+        public int Port { get; set; }
+
         private TcpConnectionListener()
         {
             startTransfer = OnStartConnection;
@@ -41,6 +46,7 @@ namespace Utopia.Shared.Net.Connections
                                         ProtocolType.Tcp);
             _ep = new IPEndPoint(IPAddress.Any, port);
             _listenSocket.Bind(_ep);
+            Port = port;
         }
 
         public void Start()
@@ -107,6 +113,8 @@ namespace Utopia.Shared.Net.Connections
         }
 
         #endregion
+
+        
     }
 
     public class IncomingConnectionEventArgs : BaseEventArgs

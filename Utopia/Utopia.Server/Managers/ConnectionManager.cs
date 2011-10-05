@@ -30,7 +30,7 @@ namespace Utopia.Server.Managers
         /// Occurs when connection is removed from connection manager
         /// </summary>
         public event EventHandler<ConnectionEventArgs> ConnectionRemoved;
-
+        
         protected void OnConnectionRemoved(ConnectionEventArgs e)
         {
             e.Connection.MessagePing -= ConnectionMessagePing;
@@ -38,6 +38,10 @@ namespace Utopia.Server.Managers
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Gets connection listener. Allows to accept client connections
+        /// </summary>
+        public TcpConnectionListener Listener { get; private set; }
 
         /// <summary>
         /// Gets total connections count
@@ -53,6 +57,32 @@ namespace Utopia.Server.Managers
         public ConnectionManager()
         {
             _connections = new Dictionary<string, ClientConnection>();
+        }
+
+        public ConnectionManager(int portToListen) : this()
+        {
+            Listener = new TcpConnectionListener(portToListen);
+            Listener.IncomingConnection += ListenerIncomingConnection;
+        }
+
+        public void Listen()
+        {
+            Listener.Start();
+            Console.WriteLine("Listening at {0} port", Listener.Port);
+        }
+
+        void ListenerIncomingConnection(object sender, IncomingConnectionEventArgs e)
+        {
+            var conn = new ClientConnection(e.Socket);
+
+            Console.WriteLine("{0} connected", e.Socket.RemoteEndPoint);
+
+            e.Handled = Add(conn);
+
+            conn.Listen();
+
+            if (!e.Handled)
+                conn.BeginDispose();
         }
 
         void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
@@ -167,6 +197,7 @@ namespace Utopia.Server.Managers
         {
             lock (_syncRoot)
             {
+                Listener.Dispose();
                 foreach (var connection in _connections.Values)
                 {
                     connection.BeginDispose();

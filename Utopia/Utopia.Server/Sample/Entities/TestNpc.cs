@@ -12,9 +12,9 @@ using Utopia.Shared.Structs;
 namespace Utopia.Server.Entities
 {
     /// <summary>
-    /// Experimental server mob
+    /// Sample server mob
     /// </summary>
-    public class ServerZombie : ServerDynamicEntity
+    public class TestNpc : ServerDynamicEntity
     {
         public static Vector3D CubeCenter = new Vector3D(0.5d, 0.0d, 0.5d);
         public static Vector3D Near = new Vector3D(0.02d);
@@ -34,7 +34,7 @@ namespace Utopia.Server.Entities
         private int _targetPathNodeIndex = -1;
         Vector3D _pathTargetPoint;
 
-        public ZombieState State { get; set; }
+        public TestNpcState State { get; set; }
 
         public Vector3D MoveVector
         {
@@ -53,7 +53,7 @@ namespace Utopia.Server.Entities
             }
         }
         
-        public ServerZombie(Server server, Zombie z) : base(z)
+        public TestNpc(Server server, Zombie z) : base(z)
         {
             _server = server;
             Seed = 0;
@@ -73,7 +73,7 @@ namespace Utopia.Server.Entities
                 _server.ChatManager.Broadcast(string.Format("Path found at {0} ms {1} iterations", _path.PathFindTime, _path.IterationsPerformed));
 #endif
 
-                State = ZombieState.FollowPath;
+                State = TestNpcState.FollowPath;
                 _targetPathNodeIndex = 0;
                 _pathTargetPoint = new Vector3D(_path.Points[1].X, _path.Points[1].Y, _path.Points[1].Z) + CubeCenter;
                 _moveDirection = _pathTargetPoint - DynamicEntity.Position;
@@ -100,9 +100,7 @@ namespace Utopia.Server.Entities
         {
             _mapAreas.Remove(area);
         }
-
         
-
         /// <summary>
         /// Perform AI operations...
         /// </summary>
@@ -118,7 +116,7 @@ namespace Utopia.Server.Entities
 
             #region Falling
             var current = _server.LandscapeManager.GetCursor(DynamicEntity.Position);
-            if (State == ZombieState.Staying && !current.IsSolidDown())
+            if (State == TestNpcState.Staying && !current.IsSolidDown())
             {
                 var pos = DynamicEntity.Position;
                 pos.Y = Math.Round(DynamicEntity.Position.Y);
@@ -127,13 +125,13 @@ namespace Utopia.Server.Entities
             }
             #endregion
 
-            if (State == ZombieState.FollowPath)
+            if (State == TestNpcState.FollowPath)
             {
                 if ((DynamicEntity.Position - _pathTargetPoint).LengthSquared() < 0.2d)
                 {
                     if (++_targetPathNodeIndex == _path.Points.Count)
                     {
-                        State = ZombieState.Staying;
+                        State = TestNpcState.Staying;
                         return;
                     }
                     else

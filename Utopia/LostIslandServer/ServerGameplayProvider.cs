@@ -1,4 +1,5 @@
 ﻿using S33M3Engines.Shared.Math;
+using Utopia.Server;
 using Utopia.Server.Tools;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Events;
@@ -6,17 +7,17 @@ using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using Utopia.Shared.Cubes;
 
-namespace Utopia.Server.Managers
+namespace LostIslandServer
 {
     /// <summary>
     /// Provides all gameplay functionality
     /// </summary>
-    public class GameplayProvider
+    public class ServerGameplayProvider
     {
         private readonly Server _server;
         private readonly CubeToolLogic _logic;
 
-        public GameplayProvider(Server server)
+        public ServerGameplayProvider(Server server)
         {
             _server = server;
             EntityFactory.Instance.EntityCreated += InstanceEntityCreated;

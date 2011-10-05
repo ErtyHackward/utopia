@@ -24,6 +24,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Utopia.vsmdi = Utopia.vsmdi
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIslandClient", "LostIsland\LostIslandClient.csproj", "{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gameplay", "Gameplay", "{16F39C83-EC82-4286-BAA2-EE91D5CC461B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIslandServer", "LostIslandServer\LostIslandServer.csproj", "{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Utopia.vsmdi
@@ -121,9 +127,33 @@ Global
 		{7716805C-620D-457D-8A53-2026CF69E765}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7716805C-620D-457D-8A53-2026CF69E765}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7716805C-620D-457D-8A53-2026CF69E765}.Release|x86.ActiveCfg = Release|Any CPU
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}.Debug|x86.ActiveCfg = Debug|x86
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}.Debug|x86.Build.0 = Debug|x86
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}.Release|Any CPU.ActiveCfg = Release|x86
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}.Release|Mixed Platforms.Build.0 = Release|x86
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}.Release|x86.ActiveCfg = Release|x86
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}.Release|x86.Build.0 = Release|x86
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}.Debug|x86.ActiveCfg = Debug|x86
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}.Debug|x86.Build.0 = Debug|x86
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}.Release|Any CPU.ActiveCfg = Release|x86
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}.Release|Mixed Platforms.Build.0 = Release|x86
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}.Release|x86.ActiveCfg = Release|x86
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C} = {16F39C83-EC82-4286-BAA2-EE91D5CC461B}
+		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41} = {16F39C83-EC82-4286-BAA2-EE91D5CC461B}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
