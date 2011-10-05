@@ -24,6 +24,7 @@ namespace LostIslandServer
 
         private static Server _server;
         private static IKernel _iocContainer;
+        private static ServerGameplayProvider _gameplay;
 
         static void IocBind(WorldParameters param)
         {
@@ -64,6 +65,8 @@ namespace LostIslandServer
 
             Console.WriteLine("Welcome to Utopia game server v{1} Protocol: v{0}", Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
 
+            
+
             _server = new Server(
                 _iocContainer.Get<XmlSettingsManager<ServerSettings>>(),
                 _iocContainer.Get<WorldGenerator>(),
@@ -72,13 +75,22 @@ namespace LostIslandServer
                 _iocContainer.Get<IEntityStorage>()
                 );
 
+            _gameplay = new ServerGameplayProvider(_server);
+
             _server.Services.Add(new TestNpcService());
 
             _server.ConnectionManager.Listen();
 
+            _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmMain());
+        }
+
+        static void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
+        {
+            e.PlayerEntity = _gameplay.CreateNewPlayerCharacter(e.Connection.Login, e.EntityId);
         }
     }
 }
