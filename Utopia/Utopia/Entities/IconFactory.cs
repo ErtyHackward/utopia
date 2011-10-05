@@ -20,7 +20,7 @@ namespace Utopia.Entities
             _d3DEngine = d3DEngine;
         }
 
-        public const int IconSize = 48;
+        public const int IconSize = 32; //not important, you can scale texture in the ui
 
         public override void Dispose()
         {
