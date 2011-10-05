@@ -99,7 +99,11 @@ namespace Utopia.GUI.D3D.Inventory
         {
             SpriteTexture tex = iconFactory.Lookup(item);
             if (tex!=null)
-                graphics.DrawCustomTexture(tex, controlBounds,tex.Index);  //TODO texIndex param vs tex.Index is messy      
+            {
+                const int innerBorder = 2;
+                RectangleF texBounds = new RectangleF(controlBounds.X + innerBorder, controlBounds.Y + innerBorder, controlBounds.Width - innerBorder * 2, controlBounds.Height - innerBorder*2);
+                graphics.DrawCustomTexture(tex, texBounds, tex.Index);  //TODO texIndex param vs tex.Index is messy      
+            }
         }
 
         /// <summary>Names of the states the button control can be in</summary>

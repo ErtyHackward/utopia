@@ -42,7 +42,8 @@ namespace Utopia.GUI.D3D.Inventory
                 SpriteTexture tex = control.IconFactory.Lookup(control.Item);
                 if (tex != null)
                 {
-                    graphics.DrawCustomTexture(tex, controlBounds, tex.Index);
+                    RectangleF texBounds = new RectangleF(controlBounds.X + 2, controlBounds.Y + 2, controlBounds.Width - 4, controlBounds.Height - 4);
+                    graphics.DrawCustomTexture(tex, texBounds, tex.Index);
                 }
                 else
                 {
