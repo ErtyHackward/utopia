@@ -84,6 +84,7 @@ namespace Utopia.Entities.Managers
 
         private InventoryWindow _inventoryUi;
         private SpriteTexture _backgroundTex;
+        private readonly IconFactory _iconFactory;
 
         /// <summary>
         /// The Player Voxel body
@@ -126,10 +127,11 @@ namespace Utopia.Entities.Managers
                                    [Named("PlayerEntityRenderer")] IEntitiesRenderer playerRenderer,
                                    IPickingRenderer pickingRenderer,
                                    IEntityPickingManager entityPickingManager,
-                                   Screen screen
-            )
+                                   Screen screen, 
+                                   IconFactory iconFactory)
         {
             _d3DEngine = engine;
+            _iconFactory = iconFactory;
             _cameraManager = cameraManager;
             _worldFocusManager = worldFocusManager;
             _actions = actions;
@@ -691,7 +693,7 @@ namespace Utopia.Entities.Managers
         public override void LoadContent()
         {
              _backgroundTex = new SpriteTexture(_d3DEngine.Device, @"Textures\charactersheet.png", new Vector2(0, 0));
-             _inventoryUi = new InventoryWindow(_backgroundTex, Player);
+             _inventoryUi = new InventoryWindow(_backgroundTex, Player,_iconFactory);
         }
 
         public override void Update(ref GameTime timeSpent)

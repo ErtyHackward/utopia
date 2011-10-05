@@ -5,6 +5,7 @@ using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.Shared.Sprites;
+using Utopia.Entities;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
@@ -16,11 +17,13 @@ namespace Utopia.GUI.D3D.Inventory
     {
         private readonly PlayerCharacter _player;
         private InventoryCell[,] _uiGrid;
+        private IconFactory _iconFactory;
         private const int CellSize = 64;
 
-        public InventoryWindow(SpriteTexture back, PlayerCharacter player)
+        public InventoryWindow(SpriteTexture back, PlayerCharacter player, IconFactory iconFactory)
         {
             _player = player;
+            _iconFactory = iconFactory;
             InitializeComponent(back);            
         }
 
@@ -95,8 +98,8 @@ namespace Utopia.GUI.D3D.Inventory
                     control.Name = x + "," + y;
                     Children.Add(control);
 
-                    var drag = new DraggableItemControl(_player.Inventory);
-                    drag.Bounds = DraggableItemControl.referenceBounds;
+                    var drag = new DraggableItemControl(_iconFactory,_player.Inventory);
+                    drag.Bounds = DraggableItemControl.ReferenceBounds;
                     drag.Name = "drag " + x + "," + y;
                     
                     control.Children.Add(drag);
