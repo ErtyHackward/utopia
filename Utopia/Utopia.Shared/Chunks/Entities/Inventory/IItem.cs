@@ -6,9 +6,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 {
     public interface IItem : IEntity
     {
-        EquipmentSlotType AllowedSlots { get; set; }
-        SpriteTexture Icon { get; set; }
-        Rectangle? IconSourceRectangle { get; set; }
+        EquipmentSlotType AllowedSlots { get; set; }   
         int MaxStackSize { get; }
         string UniqueName { get; set; }
     }

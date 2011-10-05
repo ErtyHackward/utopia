@@ -9,11 +9,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     /// Represents any lootable voxelEntity, tool, weapon, armor, collectible. This entity can be put into the inventory
     /// </summary>
     public abstract class VoxelItem : VoxelEntity, IItem, IDisposable
-    {
-        //FIXME icon stuff should probably not be here , rendering the voxel model as a 2d icon would be better,
-        // but for now I need to port the XNA UI code
-        public SpriteTexture Icon { get; set; }
-        public Rectangle? IconSourceRectangle { get; set; }
+    {   
 
         /// <summary>
         /// This is name can vary for concrete class instance (Example: Simon's steel shovel)
@@ -51,8 +47,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         }
 
         public void Dispose()
-        {
-            if (Icon != null) Icon.Dispose();
+        {           
         }
     }
 }
