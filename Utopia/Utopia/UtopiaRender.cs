@@ -215,6 +215,7 @@ namespace Utopia
                                                                           new ConstructorArgument("UserName", _server.ServerConnection.Login));
 
             GameComponents.Add(IoCContainer.Get<InputsManager>());
+            GameComponents.Add(IoCContainer.Get<IconFactory>());
 
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
             //camera.CameraPlugin = _player;

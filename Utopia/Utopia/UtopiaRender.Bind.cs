@@ -51,6 +51,9 @@ namespace Utopia
     {
         private void ContainersBindings(IKernel iocContainer, WorldParameters worldParam)
         {
+
+            iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();
+
             iocContainer.Bind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
             iocContainer.Bind<IDynamicEntity>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope().Named("Player"); //Register the current Player.
             iocContainer.Bind<PlayerCharacter>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope(); //Register the current Player.
