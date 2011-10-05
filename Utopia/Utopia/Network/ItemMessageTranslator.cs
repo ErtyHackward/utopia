@@ -1,9 +1,9 @@
 ﻿using System;
-using Utopia.Net.Connections;
-using Utopia.Net.Messages;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Network
 {

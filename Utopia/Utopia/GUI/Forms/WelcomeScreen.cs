@@ -11,6 +11,9 @@ using Utopia.Network;
 using System.Threading;
 using Utopia.Settings;
 using S33M3Engines.D3D;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
+using ErrorMessage = Utopia.GUI.Forms.CustControls.ErrorMessage;
 
 namespace Utopia.GUI.Forms
 {
@@ -198,7 +201,7 @@ namespace Utopia.GUI.Forms
             _server.ServerConnection.MessageDateTime -= ServerConnection_MessageDateTime;
         }
 
-        void ServerConnection_MessageEntityIn(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.EntityInMessage> e)
+        void ServerConnection_MessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
         {
             _server.Player = (Utopia.Shared.Chunks.Entities.PlayerCharacter)e.Message.Entity;
             UnregisterEvents();
@@ -206,18 +209,18 @@ namespace Utopia.GUI.Forms
              HideWindows();
         }
 
-        void ServerConnection_MessageDateTime(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.DateTimeMessage> e)
+        void ServerConnection_MessageDateTime(object sender, ProtocolMessageEventArgs<DateTimeMessage> e)
         {
             _server.WorldDateTime = e.Message.DateTime;
             _server.TimeFactor = e.Message.TimeFactor; 
         }
 
-        void ServerConnection_MessagePing(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.PingMessage> e)
+        void ServerConnection_MessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
         {
             Console.WriteLine("Ping Time : " + (double)(System.Diagnostics.Stopwatch.GetTimestamp() - e.Message.Token) / System.Diagnostics.Stopwatch.Frequency + " sec.");
         }
 
-        void ServerConnection_MessageGameInformation(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.GameInformationMessage> e)
+        void ServerConnection_MessageGameInformation(object sender, ProtocolMessageEventArgs<GameInformationMessage> e)
         {
             AddTextToListBox("Game Information received - starting game ... ");
             _server.MaxServerViewRange = e.Message.MaxViewRange;
@@ -226,7 +229,7 @@ namespace Utopia.GUI.Forms
             _server.WorldSeed = e.Message.WorldSeed;
         }
 
-        void ServerConnection_ConnectionStatusChanged(object sender, Net.Connections.ConnectionStatusEventArgs e)
+        void ServerConnection_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
         {
             string ErrorString = "";
             if (e.Exception != null)
@@ -239,14 +242,14 @@ namespace Utopia.GUI.Forms
         }
 
         //Handle server Error Message
-        void ServerConnection_MessageError(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.ErrorMessage> e)
+        void ServerConnection_MessageError(object sender, ProtocolMessageEventArgs<Shared.Net.Messages.ErrorMessage> e)
         {
             AddTextToListBox(e.Message.Message);
             NetworkConnectBtState(true);
             _serverTime.Dispose();
         }
 
-        void ServerConnection_MessageLoginResult(object sender, Net.Connections.ProtocolMessageEventArgs<Net.Messages.LoginResultMessage> e)
+        void ServerConnection_MessageLoginResult(object sender, ProtocolMessageEventArgs<LoginResultMessage> e)
         {
             AddTextToListBox("Login result : " + e.Message.Logged.ToString());
             //_serverTime = new System.Threading.Timer(_timerDelegate, null, 100, 100 );

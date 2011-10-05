@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Utopia.Net.Connections;
-using Utopia.Net.Messages;
 using Utopia.Server.Structs;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Managers
 {

@@ -12,6 +12,8 @@ using S33M3Engines.Cameras;
 using Utopia.Editor;
 using Utopia.GUI;
 using Utopia.GUI.D3D;
+using Utopia.GUI.D3D.Map;
+using Utopia.Shared.Net.Connections;
 using UtopiaContent.ModelComp;
 using SharpDX;
 using S33M3Engines.Struct;
@@ -51,7 +53,6 @@ using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks.Entities;
-using Utopia.Net.Connections;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Renderer;
 using Utopia.Entities.Managers.Interfaces;
@@ -271,6 +272,9 @@ namespace Utopia
             // chat
             GameComponents.Add(IoCContainer.Get<ChatComponent>());
 
+            // map
+            GameComponents.Add(IoCContainer.Get<MapComponent>());
+
             GameConsole.Initialize(_d3dEngine);
 
             //Create the EntityMessageTRanslator
@@ -322,7 +326,7 @@ namespace Utopia
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void ServerConnection_ConnectionStatusChanged(object sender, Net.Connections.ConnectionStatusEventArgs e)
+        void ServerConnection_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
         {
             if (e.Status == ConnectionStatus.Disconnected && e.Exception != null)
             {
@@ -543,6 +547,13 @@ namespace Utopia
                 Action = Actions.OpenInventory,
                 TriggerType = KeyboardTriggerMode.KeyDownUp,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Inventory
+            });
+
+            _actionManager.AddActions(new KeyboardTriggeredAction
+            {
+                Action = Actions.OpenMap,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Map
             });
         }
 

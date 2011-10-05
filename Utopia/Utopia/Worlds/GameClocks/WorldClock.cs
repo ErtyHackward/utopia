@@ -8,9 +8,9 @@ using S33M3Engines;
 using S33M3Engines.InputHandler;
 using Utopia.Action;
 using Utopia.Network;
-using Utopia.Net.Connections;
-using Utopia.Net.Messages;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Worlds.GameClocks
 {

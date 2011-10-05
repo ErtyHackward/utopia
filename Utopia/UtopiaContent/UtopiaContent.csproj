@@ -289,6 +289,9 @@
     <Content Include="Textures\Terran\ct22.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Textures\Terran\ct23.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Textures\Weather\clouds.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -12,9 +12,9 @@ namespace Utopia.Server.Tools
     /// </summary>
     public class CubeToolLogic : IToolLogic
     {
-        public LandscapeManager LandscapeManager { get; private set; }
+        public ServerLandscapeManager LandscapeManager { get; private set; }
 
-        public CubeToolLogic(LandscapeManager manager)
+        public CubeToolLogic(ServerLandscapeManager manager)
         {
             if (manager == null) throw new ArgumentNullException("manager");
             LandscapeManager = manager;

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using Utopia.Net.Connections;
-using Utopia.Net.Messages;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Server.Structs;
@@ -9,6 +7,8 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Config;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 
@@ -63,7 +63,7 @@ namespace Utopia.Server
         /// <summary>
         /// Gets landscape manager
         /// </summary>
-        public LandscapeManager LandscapeManager { get; private set; }
+        public ServerLandscapeManager LandscapeManager { get; private set; }
 
         /// <summary>
         /// Gets schedule manager for dalayed and periodic operations.
@@ -132,7 +132,7 @@ namespace Utopia.Server
 
             Scheduler = new ScheduleManager(Clock);
 
-            LandscapeManager = new LandscapeManager(this, chunksStorage, worldGenerator, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval);
+            LandscapeManager = new ServerLandscapeManager(this, chunksStorage, worldGenerator, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval);
 
             AreaManager = new AreaManager(this);
             
