@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using S33M3Engines.Shared.Math;
-using SharpDX;
 using Utopia.Server.Entities;
 using Utopia.Server.Events;
-using Utopia.Server.Managers;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.ClassExt;
 
 namespace Utopia.Server.Services
 {
-    public class ZombieService : Service
+    /// <summary>
+    /// Provides sample service to performs test
+    /// </summary>
+    public class TestNpcService : Service
     {
         private Server _server;
         private string[] _names = new[] { "Bob", "Ivan", "Steve", "Sayid", "Chuck", "Matvey", "Mattias", "George", "Master Yoda", "Homer" };
 
-        private List<ServerZombie> _aliveZombies = new List<ServerZombie>();
+        private List<TestNpc> _aliveNpc = new List<TestNpc>();
 
         public override string ServiceName
         {
-            get { return "Zombie"; }
+            get { return "Test NPC Service"; }
         }
 
         /// <summary>
@@ -31,17 +30,17 @@ namespace Utopia.Server.Services
         /// <param name="name"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public ServerZombie CreateZombie(string name, Vector3D position)
+        public TestNpc CreateZombie(string name, Vector3D position)
         {
             var z = new Zombie { CharacterName = name, EntityId = EntityFactory.Instance.GetUniqueEntityId() };
 
-            var zombie = new ServerZombie(_server, z);
+            var zombie = new TestNpc(_server, z);
             
             zombie.DynamicEntity.Position = position;
             zombie.DynamicEntity.Size = new SharpDX.Vector3(1f, 1f, 1f);
 
             zombie.DynamicEntity.Model.Blocks = new byte[1, 1, 1];// { { { (byte)15 } } },
-            zombie.DynamicEntity.Model.Blocks[0, 0, 0] = (byte)27;
+            zombie.DynamicEntity.Model.Blocks[0, 0, 0] = 27;
             //zombie.Blocks[1, 0, 0] = (byte)0;
             //zombie.Blocks[0, 0, 1] = (byte)15;
             //zombie.Blocks[1, 0, 1] = (byte)0;
@@ -53,7 +52,7 @@ namespace Utopia.Server.Services
             //zombie.Blocks[1, 2, 0] = (byte)15;
             //zombie.Blocks[0, 2, 1] = (byte)14;
             //zombie.Blocks[1, 2, 1] = (byte)15;
-            _aliveZombies.Add(zombie);
+            _aliveNpc.Add(zombie);
             _server.AreaManager.AddEntity(zombie);
             return zombie;
         }
@@ -81,25 +80,25 @@ namespace Utopia.Server.Services
         {
             var cmd = e.Command.ToLower();
             var r = new Random(DateTime.Now.Millisecond);
-            if (cmd == "addzombie")
+            if (cmd == "addtestnpc")
             {
                 var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
-                _server.ChatManager.Broadcast(string.Format("Zombie {0} added {1}", z.DynamicEntity.DisplayName,
-                                                      _aliveZombies.Count));
+                _server.ChatManager.Broadcast(string.Format("Test NPC {0} added {1}", z.DynamicEntity.DisplayName,
+                                                      _aliveNpc.Count));
             }
 
-            if (cmd == "removezombies")
+            if (cmd == "removetestnpc")
             {
-                for (int i = _aliveZombies.Count - 1; i >= 0; i--)
+                for (int i = _aliveNpc.Count - 1; i >= 0; i--)
                 {
-                    _server.AreaManager.RemoveEntity(_aliveZombies[i]);
+                    _server.AreaManager.RemoveEntity(_aliveNpc[i]);
                 }
-                _aliveZombies.Clear();
+                _aliveNpc.Clear();
 
-                _server.ChatManager.Broadcast("All zombies removed");
+                _server.ChatManager.Broadcast("All test npc removed");
             }
 
-            if (cmd.StartsWith("addzombies"))
+            if (cmd.StartsWith("addtestnpc"))
             {
                 var splt = cmd.Split(' ');
                 int count = 0;
@@ -110,7 +109,7 @@ namespace Utopia.Server.Services
                     var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
                     z.Seed = r.Next(0, 100000);
                 }
-                _server.ChatManager.Broadcast(string.Format("{0} zombies added ({1} total)", count, _aliveZombies.Count));
+                _server.ChatManager.Broadcast(string.Format("{0} test NPC added ({1} total)", count, _aliveNpc.Count));
             }
 
             if (cmd == "comehere")
@@ -119,7 +118,7 @@ namespace Utopia.Server.Services
                 
                 if (!blockPos.IsSolid() && blockPos.IsSolidDown())
                 {
-                    foreach (var serverZombie in _aliveZombies)
+                    foreach (var serverZombie in _aliveNpc)
                     {
                         serverZombie.Goto(blockPos.GlobalPosition);
                     }

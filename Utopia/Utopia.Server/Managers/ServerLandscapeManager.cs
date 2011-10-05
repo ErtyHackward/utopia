@@ -157,8 +157,6 @@ namespace Utopia.Server.Managers
                         goto sendAllData;
                     }
 
-                    goto sendAllData;
-
                     // do we have hashes from client?
                     if (e.Message.HashesCount > 0 && positionsList != null)
                     {

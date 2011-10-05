@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using PathFinder.AStar;
 
 namespace Utopia.Server.AStar {
     /// <summary>

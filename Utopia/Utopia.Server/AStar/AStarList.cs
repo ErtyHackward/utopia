@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Server.AStar;
+﻿using System.Collections.Generic;
 
-namespace PathFinder.AStar
+namespace Utopia.Server.AStar
 {
     public class AStarList<T>
     {
-        private List<T> _list = new List<T>();
+        private readonly List<T> _list = new List<T>();
 
         public IComparer<T> Comparer { get; set; }
 
@@ -35,33 +31,6 @@ namespace PathFinder.AStar
             {
                 _list.Insert(index, item);
             }
-        }
-
-        public bool Contains(T item, Predicate<T> sure)
-        {
-            foreach (var i in _list)
-            {
-                if (sure(i)) return true;
-            }
-            return false;
-            //var index = _list.BinarySearch(item, Comparer);
-
-            //if (index >= 0)
-            //{
-            //    while (true)
-            //    {
-            //        index++;
-            //        if (index == _list.Count) return false;
-            //        if (Comparer.Compare(_list[index], item) == 0)
-            //        {
-            //            if (sure(_list[index]))
-            //                return true;
-            //        }
-            //        else return false;
-            //    }
-            //}
-            return false;
-
         }
 
         public T Pop()
