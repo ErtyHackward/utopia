@@ -22,6 +22,8 @@ using System;
 using System.Collections.Generic;
 using Nuclex.UserInterface.Visuals.Flat;
 using Nuclex.UserInterface;
+using S33M3Engines.Shared.Sprites;
+using Utopia.Entities;
 using Utopia.Shared.Chunks.Entities.Inventory;
 
 
@@ -67,22 +69,22 @@ namespace Utopia.GUI.D3D.Inventory
             // Draw the button's frame
             graphics.DrawElement(states[stateIndex], controlBounds);
 
-            if (control.LeftItem != null && control.LeftItem.Icon != null)
+            if (control.LeftItem != null )
             {
-                if (control.RightItem != null && control.RightItem.Icon != null)
+                if (control.RightItem != null )
                 {
                     float w = controlBounds.Width/2;
                     float h = controlBounds.Height/2;
 
                     RectangleF leftBounds = new RectangleF(controlBounds.Left,controlBounds.Top,w,h);
-                    drawIcon(control.LeftItem, graphics, leftBounds);
+                    drawIcon(control.IconFactory, control.LeftItem, graphics, leftBounds);
                    
                     RectangleF rBounds = new RectangleF(controlBounds.Left + w,controlBounds.Top+h,w,h);
-                    drawIcon(control.RightItem, graphics, rBounds);
+                    drawIcon(control.IconFactory, control.RightItem, graphics, rBounds);
                 }
                 else
                 {
-                    drawIcon(control.RightItem, graphics, controlBounds);
+                    drawIcon(control.IconFactory, control.LeftItem, graphics, controlBounds);
                 }
             }
 
@@ -93,17 +95,11 @@ namespace Utopia.GUI.D3D.Inventory
             }
         }
 
-        private void drawIcon(IItem item, IFlatGuiGraphics graphics, RectangleF controlBounds)
+        private void drawIcon(IconFactory iconFactory, IItem item, IFlatGuiGraphics graphics, RectangleF controlBounds)
         {
-            if (item.IconSourceRectangle.HasValue)
-            {
-                graphics.DrawCustomTexture(item.Icon, item.IconSourceRectangle.Value, controlBounds);
-            }
-            else
-            {
-                graphics.DrawCustomTexture(item.Icon, controlBounds);
-            }
-
+            SpriteTexture tex = iconFactory.Lookup(item);
+            if (tex!=null)
+                graphics.DrawCustomTexture(tex, controlBounds,tex.Index);  //TODO texIndex param vs tex.Index is messy      
         }
 
         /// <summary>Names of the states the button control can be in</summary>

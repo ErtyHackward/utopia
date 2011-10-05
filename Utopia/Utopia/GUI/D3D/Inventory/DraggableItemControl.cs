@@ -1,98 +1,76 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using Nuclex.UserInterface.Controls.Desktop;
-
 using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
-using System.Diagnostics;
 using Nuclex.UserInterface.Input;
+using Utopia.Entities;
 using Utopia.Shared.Chunks.Entities.Inventory;
-using S33M3Engines.InputHandler;
 
 namespace Utopia.GUI.D3D.Inventory
 {
     public class DraggableItemControl : Control
     {
+        public static UniRectangle ReferenceBounds = new UniRectangle(0, 0, 64, 64);
         private readonly SlotContainer<ContainedSlot> _inventory;
-        public static UniRectangle referenceBounds = new UniRectangle(0, 0, 64, 64);
-       public bool beingDragged;
-
-       public IItem Item { get; set; }
+        public bool BeingDragged;
+        protected UniRectangle PickupBounds;
 
         /// <summary>X coordinate at which the control was picked up</summary>
-        protected float pickupX;
+        protected float PickupX;
+
         /// <summary>Y coordinate at which the control was picked up</summary>
-        protected float pickupY;
+        protected float PickupY;
 
-        protected UniRectangle pickupBounds;
-
-        public DraggableItemControl( SlotContainer<ContainedSlot> inventory)
-            : base()
+        public DraggableItemControl(IconFactory iconFactory, SlotContainer<ContainedSlot> inventory)
         {
+            IconFactory = iconFactory;
             _inventory = inventory;
         }
 
+        public IconFactory IconFactory { get; private set; }
+        public IItem Item { get; set; }
+
         protected override void OnMouseReleased(MouseButtons button)
         {
-            beingDragged = false;
+            BeingDragged = false;
 
-            IDropTarget dropTarget = findDropTarget(this.Screen.Desktop);
+            IDropTarget dropTarget = findDropTarget(Screen.Desktop);
 
-            ContainedSlot sourceSlot = ((InventoryCell)this.Parent).Slot;
+            ContainedSlot sourceSlot = ((InventoryCell) Parent).Slot;
 
-            if (dropTarget == this.Parent)
+            if (dropTarget == Parent)
             {
                 Debug.WriteLine("droptarget = parent");
-                this.Bounds = referenceBounds;
+                Bounds = ReferenceBounds;
                 return;
             }
             else if (dropTarget != null)
             {
                 if (dropTarget is ToolbarButtonControl)
                 {
-                                        
                     //copy item reference and restore the dragged item to its original position
                     ((ToolbarButtonControl) dropTarget).Link(sourceSlot);
-                    Bounds = pickupBounds;
+                    Bounds = PickupBounds;
                 }
                 else if (dropTarget is InventoryCell)
                 {
+                    var destination = dropTarget as InventoryCell;
 
-                    InventoryCell destination = dropTarget as InventoryCell;
-
-                    _inventory.DropOn(ref sourceSlot,destination.Slot);
+                    _inventory.DropOn(ref sourceSlot, destination.Slot);
 
                     //restore the draggablecontrols
-                    this.Bounds = referenceBounds;
-                    this.Item = sourceSlot.Item;
+                    Bounds = ReferenceBounds;
+                    Item = sourceSlot.Item;
 
-                    DraggableItemControl dragDest = (DraggableItemControl) destination.Children.First();
+                    var dragDest = (DraggableItemControl) destination.Children.First();
                     dragDest.Item = destination.Slot.Item;
-
-                    /*old client side implemenation without the slots : 
-                    //swap childs
-                    Control dest = ((Control)dropTarget).Children.First();
-
-                    Control thisParent = this.Parent;
-
-                    this.RemoveFromParent();
-                    dest.RemoveFromParent();
-
-                    thisParent.Children.Add(dest);
-                    ((Control)dropTarget).Children.Add(this);
-
-                    
-                    dest.Bounds = referenceBounds;
-                    this.Bounds = referenceBounds;
-                    */
                 }
             }
             else
             {
                 //restore inital position
-                this.Bounds = pickupBounds;
+                Bounds = PickupBounds;
             }
         }
 
@@ -105,22 +83,22 @@ namespace Utopia.GUI.D3D.Inventory
                 Console.WriteLine();
             }
 
-            if (this.MouseOverControl is IDropTarget)
+            if (MouseOverControl is IDropTarget)
             {
                 Debug.WriteLine("mouse over ctrl");
-                return (IDropTarget)MouseOverControl;
+                return (IDropTarget) MouseOverControl;
             }
 
             foreach (Control control in parent.Children)
             {
                 //int x = Mouse.GetState().X;
-               // int y = Mouse.GetState().Y;
+                // int y = Mouse.GetState().Y;
 
-                if (control != this && control is IDropTarget && ((IDropTarget)control).MouseHovering
-                   // && control.GetAbsoluteBounds().Contains(x, y)//avoid bugs with multiple selected cells
+                if (control != this && control is IDropTarget && ((IDropTarget) control).MouseHovering
+                    // && control.GetAbsoluteBounds().Contains(x, y)//avoid bugs with multiple selected cells
                     )
-                {   
-                    return (IDropTarget)control;
+                {
+                    return (IDropTarget) control;
                 }
                 else
                 {
@@ -133,26 +111,24 @@ namespace Utopia.GUI.D3D.Inventory
         }
 
 
-
         protected override void OnMouseMoved(float x, float y)
         {
-            if (this.beingDragged)
+            if (BeingDragged)
             {
-                this.BringToFront();
+                BringToFront();
                 // Adjust the control's position within the container
-                this.Bounds.Location.X.Offset += x - this.pickupX;
-                this.Bounds.Location.Y.Offset += y - this.pickupY;
+                Bounds.Location.X.Offset += x - PickupX;
+                Bounds.Location.Y.Offset += y - PickupY;
                 //this.Bounds.Size.X = 32;
                 // this.Bounds.Size.Y = 32;
             }
             else
             {
-
                 // Remember the current mouse position so we know where the user picked
                 // up the control when a drag operation begins
-                this.pickupX = x;
-                this.pickupY = y;
-                pickupBounds = this.Bounds;
+                PickupX = x;
+                PickupY = y;
+                PickupBounds = Bounds;
             }
             base.OnMouseMoved(x, y);
         }
@@ -161,24 +137,21 @@ namespace Utopia.GUI.D3D.Inventory
         /// <param name="button">Index of the button that has been pressed</param>
         protected override void OnMousePressed(MouseButtons button)
         {
-
-            if (Item == null) return;//dont drag empty cells
+            if (Item == null) return; //dont drag empty cells
 
             if (button == MouseButtons.Left)
             {
-                this.beingDragged = true;
-                ((IDropTarget)this.Parent).MouseHovering = false;
+                BeingDragged = true;
+                ((IDropTarget) Parent).MouseHovering = false;
             }
         }
 
         protected override void OnMouseEntered()
         {
-
         }
 
         protected override void OnMouseLeft()
         {
-
         }
     }
 }

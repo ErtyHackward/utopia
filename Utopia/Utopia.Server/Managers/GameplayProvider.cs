@@ -41,6 +41,10 @@ namespace Utopia.Server.Managers
             var item2 = (IItem)EntityFactory.Instance.CreateEntity((EntityClassId.PickAxe));
             dEntity.Inventory.PutItem(item2);
 
+            var item3 = (BlockAdder)EntityFactory.Instance.CreateEntity((EntityClassId.BlockAdder));
+            item3.CubeId = CubeId.LightViolet;
+            dEntity.Inventory.PutItem(item3);
+            
             return dEntity;
         }
 

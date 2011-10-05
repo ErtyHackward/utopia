@@ -6,6 +6,8 @@ using Nuclex.UserInterface.Controls.Desktop;
 
 using System.Diagnostics;
 using SharpDX;
+using SharpDX.Direct3D11;
+using Utopia.Entities;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
@@ -15,10 +17,13 @@ namespace Utopia.GUI.D3D.Inventory
     public class ToolbarButtonControl : ButtonControl, IDropTarget
     {
         private readonly PlayerCharacter _player;
+        public readonly IconFactory IconFactory;
 
         public ToolbarSlot ToolbarSlot;       
 
         public bool Highlight { get; set; }
+
+        private ShaderResourceView _cubesTexture;
 
         public IItem LeftItem
         {
@@ -32,10 +37,11 @@ namespace Utopia.GUI.D3D.Inventory
 
 // to render as the hasfocus without really giving focus
 
-        public ToolbarButtonControl(PlayerCharacter player,ToolbarSlot slot)
+        public ToolbarButtonControl(PlayerCharacter player,IconFactory iconFactory, ToolbarSlot slot)
             : base()
         {
             _player = player;
+            IconFactory = iconFactory;
             ToolbarSlot = slot;    
         }
 

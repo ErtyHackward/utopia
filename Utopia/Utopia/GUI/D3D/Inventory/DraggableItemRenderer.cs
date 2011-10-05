@@ -1,4 +1,5 @@
 ﻿#region CPL License
+
 /*
 Nuclex Framework
 Copyright (C) 2002-2010 Nuclex Development Labs
@@ -16,35 +17,40 @@ IBM Common Public License for more details.
 You should have received a copy of the IBM Common Public
 License along with this library
 */
+
 #endregion
 
 using System;
 using System.Collections.Generic;
 using Nuclex.UserInterface.Visuals.Flat;
 using Nuclex.UserInterface;
+using S33M3Engines.Shared.Sprites;
 using Utopia.Shared.Chunks.Entities.Inventory;
 
 namespace Utopia.GUI.D3D.Inventory
 {
-
     public class DraggableItemRenderer : IFlatControlRenderer<DraggableItemControl>
     {
         public void Render(DraggableItemControl control, IFlatGuiGraphics graphics)
         {
             RectangleF controlBounds = control.GetAbsoluteBounds();
 
-           // graphics.DrawElement("button.normal", controlBounds);
+            // graphics.DrawElement("button.normal", controlBounds);
 
-            if (control.Item != null )
+            if (control.Item != null)
             {
-                String s = control.Item.DisplayName;
-                
-                
-                graphics.DrawString("button.normal",controlBounds,s);
-                //graphics.DrawCustomTexture(control.Item.Icon, controlBounds);
+                SpriteTexture tex = control.IconFactory.Lookup(control.Item);
+                if (tex != null)
+                {
+                    graphics.DrawCustomTexture(tex, controlBounds, tex.Index);
+                }
+                else
+                {
+                    String s = control.Item.DisplayName;
+
+                    graphics.DrawString("button.normal", controlBounds, s);
+                }
             }
         }
-
     }
-
 }

@@ -14,8 +14,8 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
         #region Public variables
         public EquipmentSlotType AllowedSlots { get; set; }
-        public SpriteTexture Icon { get; set; }
-        public Rectangle? IconSourceRectangle  { get; set; }
+        //public SpriteTexture Icon { get; set; }
+        //public Rectangle? IconSourceRectangle  { get; set; }
         public int MaxStackSize { get; private set; }
         public string UniqueName { get; set; }
         #endregion

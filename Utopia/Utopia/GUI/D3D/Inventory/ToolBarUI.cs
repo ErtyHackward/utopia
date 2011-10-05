@@ -6,6 +6,7 @@ using Nuclex.UserInterface.Controls.Desktop;
 using Nuclex.UserInterface;
 
 using Nuclex.UserInterface.Controls;
+using Utopia.Entities;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using S33M3Engines.D3D;
@@ -27,7 +28,7 @@ namespace Utopia.GUI.D3D.Inventory
         private SlotContainer<ToolbarSlot> _toolbar;
         private CharacterEquipment _equipment;
 
-        public ToolBarUi(UniRectangle Bounds, PlayerCharacter player)
+        public ToolBarUi(UniRectangle Bounds, PlayerCharacter player, IconFactory iconFactory)
         {
             _player = player;
             _toolbar = player.Toolbar;
@@ -73,7 +74,7 @@ namespace Utopia.GUI.D3D.Inventory
             for (int x = 0; x < nbrButton; x++)
             {
                 
-                ToolbarButtonControl btn = new ToolbarButtonControl(_player,new ToolbarSlot(){GridPosition = new Vector2I(x,0)});
+                ToolbarButtonControl btn = new ToolbarButtonControl(_player,iconFactory,new ToolbarSlot(){GridPosition = new Vector2I(x,0)});
                 btn.Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize);
                 _buttons.Add(btn);
                 btn.Pressed += delegate {
