@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Net.Messages;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Managers
 {
@@ -32,7 +33,7 @@ namespace Utopia.Server.Managers
             e.Connection.MessageChat -= ConnectionMessageChat;
         }
 
-        private void ConnectionMessageChat(object sender, Net.Connections.ProtocolMessageEventArgs<ChatMessage> e)
+        private void ConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
         {
             var connection = (ClientConnection)sender;
             if (e.Message.Login == connection.Login)

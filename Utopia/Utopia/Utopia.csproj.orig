@@ -116,9 +116,9 @@
     <Compile Include="Entities\Renderer\DynamicEntityRenderer.cs" />
     <Compile Include="Entities\Managers\DynamicEntityManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IDynamicEntityManager.cs" />
-    <Compile Include="Entities\Renderer\Interfaces\IEntitiesRenderer.cs" />
-    <Compile Include="Entities\Renderer\Interfaces\IPickingRenderer.cs" />
-    <Compile Include="Entities\Renderer\Interfaces\IStaticSpriteEntityRenderer.cs" />
+    <Compile Include="Entities\Managers\Interfaces\Interfaces\IEntitiesRenderer.cs" />
+    <Compile Include="Entities\Managers\Interfaces\Interfaces\IPickingRenderer.cs" />
+    <Compile Include="Entities\Managers\Interfaces\Interfaces\IStaticSpriteEntityRenderer.cs" />
     <Compile Include="Entities\Renderer\PickingRenderer.cs" />
     <Compile Include="Entities\Renderer\PlayerEntityRenderer.cs" />
     <Compile Include="Entities\Renderer\StaticSpriteEntityRenderer.cs" />
@@ -147,6 +147,9 @@
     <Compile Include="GUI\D3D\GuiManager.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUI\D3D\Map\MapComponent.cs" />
+    <Compile Include="GUI\D3D\Map\MapControl.cs" />
+    <Compile Include="GUI\D3D\Map\MapRenderer.cs" />
     <Compile Include="GUI\Forms\CustControls\Config.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -350,10 +353,6 @@
     <ProjectReference Include="..\S33M3Physics\S33M3Physics.csproj">
       <Project>{A5C84956-C735-457B-9BF5-C5359F427418}</Project>
       <Name>S33M3Physics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utopia.Net\Utopia.Net.csproj">
-      <Project>{5AF1BAD4-43AC-4069-B338-CF19F7B987C2}</Project>
-      <Name>Utopia.Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>

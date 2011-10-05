@@ -5,10 +5,10 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Utopia.Net.Connections;
-using Utopia.Net.Interfaces;
-using Utopia.Net.Messages;
 using Utopia.Server.Structs;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Interfaces;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server
 {

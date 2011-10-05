@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines.D3D;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Weathers.SharedComp;
 using Utopia.Worlds.GameClocks;
 using Utopia.Network;
-using Utopia.Net.Messages;
-using Utopia.Net.Connections;
 
 namespace Utopia.Worlds.Weather
 {

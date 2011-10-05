@@ -21,6 +21,7 @@
         Chair = 1001,
         Door = 1002,
         Bed = 1003,
+        Tree = 1004,
 
         // blocks
         ThinGlass = 2001,
@@ -34,6 +35,7 @@
         Grass = 4000,
 
         //Special case
-        EditableEntity = 10001
+        EditableEntity = 10001,
+        
     }
 }

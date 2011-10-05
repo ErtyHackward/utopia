@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines.D3D.DebugTools;
-using Utopia.Net.Connections;
 using Utopia.Shared;
 using Utopia.Shared.ClassExt;
 using S33M3Engines.D3D;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
-using Utopia.Net.Messages;
 using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia.Network
@@ -86,7 +86,7 @@ namespace Utopia.Network
             Console.WriteLine("hours");
         }
 
-        void _server_MessageLoginResult(object sender, ProtocolMessageEventArgs<Net.Messages.LoginResultMessage> e)
+        void _server_MessageLoginResult(object sender, ProtocolMessageEventArgs<LoginResultMessage> e)
         {
             //if (e.Message.Logged)
             //{
@@ -94,52 +94,52 @@ namespace Utopia.Network
             //}
         }
 
-        void _server_MessagePosition(object sender, ProtocolMessageEventArgs<Net.Messages.EntityPositionMessage> e)
+        void _server_MessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
         {
             //throw new NotImplementedException();
         }
 
-        void _server_MessagePlayerOut(object sender, ProtocolMessageEventArgs<Net.Messages.EntityOutMessage> e)
+        void _server_MessagePlayerOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
         {
             //throw new NotImplementedException();
         }
 
-        void _server_MessagePlayerIn(object sender, ProtocolMessageEventArgs<Net.Messages.EntityInMessage> e)
+        void _server_MessagePlayerIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
         {
             //Console.WriteLine("_server_MessagePlayerIn : " + e.Message.Entity.DisplayName);
         }
 
-        void _server_MessageGameInformation(object sender, ProtocolMessageEventArgs<Net.Messages.GameInformationMessage> e)
+        void _server_MessageGameInformation(object sender, ProtocolMessageEventArgs<GameInformationMessage> e)
         {
             //Console.WriteLine("_server_MessageGameInformation : " + e.Message.ChunkSize.ToString());
         }
 
-        void _server_MessageError(object sender, ProtocolMessageEventArgs<Net.Messages.ErrorMessage> e)
+        void _server_MessageError(object sender, ProtocolMessageEventArgs<ErrorMessage> e)
         {
             Console.WriteLine("_server_MessageGameInformation : " + e.Message.Message.ToString());
         }
 
-        void _server_MessageDirection(object sender, ProtocolMessageEventArgs<Net.Messages.EntityDirectionMessage> e)
+        void _server_MessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
         {
             //Console.WriteLine("_server_MessageGameInformation : " + e.Message.Message.ToString());
         }
 
-        void _server_MessageDateTime(object sender, ProtocolMessageEventArgs<Net.Messages.DateTimeMessage> e)
+        void _server_MessageDateTime(object sender, ProtocolMessageEventArgs<DateTimeMessage> e)
         {
             //throw new NotImplementedException();
         }
 
-        void _server_MessageChunkData(object sender, ProtocolMessageEventArgs<Net.Messages.ChunkDataMessage> e)
+        void _server_MessageChunkData(object sender, ProtocolMessageEventArgs<ChunkDataMessage> e)
         {
             //Console.WriteLine("_server_MessageChunkData : " + e.Message.Position.ToString() + " " + e.Message.Data.Length + " bytes");
         }
 
-        void _server_MessageChat(object sender, ProtocolMessageEventArgs<Net.Messages.ChatMessage> e)
+        void _server_MessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
         {
             //throw new NotImplementedException();
         }
 
-        void _server_MessageBlockChange(object sender, ProtocolMessageEventArgs<Net.Messages.BlocksChangedMessage> e)
+        void _server_MessageBlockChange(object sender, ProtocolMessageEventArgs<BlocksChangedMessage> e)
         {
             //Console.WriteLine("_server_MessageBlockChange : ");
         }

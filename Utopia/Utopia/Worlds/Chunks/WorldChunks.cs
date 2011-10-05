@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Utopia.Shared.Net.Messages;
 using Utopia.Shared.World;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
@@ -16,7 +17,6 @@ using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Network;
 using Utopia.Entities.Managers;
-using Utopia.Net.Messages;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.SkyDomes;
 using S33M3Engines.Maths;
@@ -348,7 +348,7 @@ namespace Utopia.Worlds.Chunks
                 Md5Hashes = chunkHash.ToArray(),
                 Positions = chunkPosition.ToArray(),
                 HashesCount = chunkHash.Count,
-                Flag = Net.Messages.GetChunksMessageFlag.DontSendChunkDataIfNotModified
+                Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
             }
             );
 

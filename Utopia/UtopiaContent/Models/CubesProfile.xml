@@ -492,4 +492,21 @@
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
   </Cube>
+  <Cube>
+   <Name>Leaves</Name>
+    <Id>28</Id>
+    <Tex_Top>23</Tex_Top>
+    <Tex_Bottom>23</Tex_Bottom>
+    <Tex_Front>23</Tex_Front>
+    <Tex_Back>23</Tex_Back>
+    <Tex_Left>23</Tex_Left>
+    <Tex_Right>23</Tex_Right>
+    <IsBlockingLight>true</IsBlockingLight>
+    <IsPickable>true</IsPickable>
+    <IsSolidToEntity>true</IsSolidToEntity>
+    <IsBlockingWater>true</IsBlockingWater>
+    <IsFlooding>false</IsFlooding>
+    <IsFloodPropagation>false</IsFloodPropagation>
+    <CubeFamilly>Solid</CubeFamilly>
+  </Cube>
 </Config>

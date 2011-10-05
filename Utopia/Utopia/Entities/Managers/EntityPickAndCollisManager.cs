@@ -10,8 +10,8 @@ using S33M3Engines.Maths;
 using S33M3Engines.Timers;
 using Utopia.Shared.Chunks;
 using Utopia.Network;
-using Utopia.Net.Messages;
 using Utopia.Action;
+using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
 
 namespace Utopia.Entities.Managers

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using Utopia.Net.Messages;
 using Utopia.Server.Events;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Managers
 {
