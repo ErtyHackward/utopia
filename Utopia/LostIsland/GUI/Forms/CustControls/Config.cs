@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using Utopia.Settings;
 using System.Reflection;
 using Utopia.Shared.Config;
-
-namespace Utopia.GUI.Forms.CustControls
+          
+namespace LostIslandClient.GUI.Forms.CustControls
 {
     public partial class Config : UserControl
     {

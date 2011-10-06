@@ -7,18 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Utopia.GUI.Forms.CustControls
+namespace LostIslandClient.GUI.Forms.CustControls
 {
-    public partial class ErrorMessage : UserControl
+    public partial class SinglePlayer : UserControl
     {
-        public ErrorMessage()
+        public SinglePlayer()
         {
             InitializeComponent();
-        }
-
-        private void btOk_Click(object sender, EventArgs e)
-        {
-            this.Hide();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Utopia.GUI.Forms.CustControls
+﻿namespace LostIslandClient.GUI.Forms.CustControls
 {
     partial class Config
     {

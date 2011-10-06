@@ -1,4 +1,4 @@
-﻿namespace Utopia.GUI.Forms
+﻿namespace LostIsland.GUI.Forms
 {
     partial class WelcomeScreen
     {
@@ -41,11 +41,11 @@
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Script MT Bold", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(12, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(212, 77);
+            this.label1.Size = new System.Drawing.Size(197, 77);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Utopia";
+            this.label1.Text = "xXxX";
             // 
             // btSinglePlayer
             // 
@@ -93,7 +93,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::Utopia.Properties.Resources.WelcomeScreen;
+            this.BackgroundImage = global::LostIsland.Properties.Resources.WelcomeScreen;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(794, 447);
             this.Controls.Add(this.ChildContainer);

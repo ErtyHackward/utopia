@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.GUI.Forms;
-using System.Windows.Forms;
-using Utopia.Shared.Config;
-using Utopia.Settings;
 using Utopia.Network;
 using Ninject;
 using S33M3Engines.D3D;
+using System.Windows.Forms;
+using Utopia.Settings;
+using Utopia.Shared.Config;
+using Utopia;
+using LostIsland.GUI.Forms;
 
-namespace Utopia
+namespace LostIsland
 {
-    public class UtopiaClient : IDisposable
+    public partial class Client : IDisposable
     {
         #region Private variables
         private static WelcomeScreen _welcomeForm;
@@ -24,7 +25,7 @@ namespace Utopia
         #region Public Properties/Variables
         #endregion
 
-        public UtopiaClient()
+        public Client()
         {
             //_iocContainer =  new StandardKernel(new NinjectSettings { UseReflectionBasedInjection = true }); ==> More debug infor with this if binding problems, but slower !
             _exitRease = new GameExitReasonMessage() { GameExitReason = ExitReason.UserRequest };
@@ -119,6 +120,8 @@ namespace Utopia
         private void StartDirectXWindow()
         {
             UtopiaRender main = new UtopiaRender(_iocContainer);
+            Binding(_iocContainer, main);
+
             main.Run();
             //Get windows Exit reason
             _exitRease = main.GameExitReason;
@@ -132,17 +135,6 @@ namespace Utopia
             GC.WaitForPendingFinalizers();
 
         }
-
-        //private void AnalyseExitReason(GameExitReasonMessage exitReason)
-        //{
-        //    if (exitReason.GameExitReason == ExitReason.Error)
-        //    {
-        //        ShowMessage messageDisplayer = new ShowMessage();
-        //        messageDisplayer.Message.Text = exitReason.MainMessage;
-        //        messageDisplayer.MessageDetail.Text = exitReason.DetailedMessage;
-        //        messageDisplayer.ShowDialog();
-        //    }
-        //}
         #endregion
 
         #region CleanUp
@@ -152,16 +144,5 @@ namespace Utopia
         }
         #endregion
     }
-
-    //Sample calling a WPF form from within a class library, in case we use WPF as interface instead of WinForm.
-    //thread = new Thread(() =>
-    //    {
-    //        bw = new BusyWindow();
-    //        bw.Show();
-    //        bw.Closed += (s, e) => bw.Dispatcher.InvokeShutdown(); 
-    //        Dispatcher.Run();
-    //    });
-    //    thread.SetApartmentState(ApartmentState.STA);
-    //    //thread.IsBackground = true;
-    //    thread.Start();
+    
 }

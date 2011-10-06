@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DB3E251E-EF28-44D5-9F9A-DB07624CD753}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Utopia</RootNamespace>
     <AssemblyName>Utopia</AssemblyName>
@@ -59,6 +59,9 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ninject">
@@ -152,18 +155,6 @@
     <Compile Include="GUI\D3D\Map\MapComponent.cs" />
     <Compile Include="GUI\D3D\Map\MapControl.cs" />
     <Compile Include="GUI\D3D\Map\MapRenderer.cs" />
-    <Compile Include="GUI\Forms\CustControls\Config.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="GUI\Forms\CustControls\Config.Designer.cs">
-      <DependentUpon>Config.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUI\Forms\CustControls\ErrorMessage.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="GUI\Forms\CustControls\ErrorMessage.Designer.cs">
-      <DependentUpon>ErrorMessage.cs</DependentUpon>
-    </Compile>
     <Compile Include="GUI\NuclexUIPort\Controls\Arcade\CommandControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Arcade\PanelControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Control.cs" />
@@ -234,31 +225,9 @@
     </Compile>
     <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="GameDXStates\DXStates.cs" />
-    <Compile Include="GUI\Forms\CustControls\MultiPlayer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="GUI\Forms\CustControls\MultiPlayer.Designer.cs">
-      <DependentUpon>MultiPlayer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUI\Forms\CustControls\SinglePlayer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="GUI\Forms\CustControls\SinglePlayer.Designer.cs">
-      <DependentUpon>SinglePlayer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUI\Forms\WelcomeScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\Forms\WelcomeScreen.Designer.cs">
-      <DependentUpon>WelcomeScreen.cs</DependentUpon>
-    </Compile>
     <Compile Include="Network\Server.cs" />
-    <Compile Include="UtopiaClient.cs" />
     <Compile Include="UtopiaRender.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UtopiaRender.debug.cs" />
-    <Compile Include="UtopiaRender.Bind.cs" />
     <Compile Include="Worlds\Chunks\ChunkEntityImpacts\ChunkEntityImpactManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkEntityImpacts\IChunkEntityImpactManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkLandscape\ILandscapeManager.cs" />
@@ -304,21 +273,6 @@
     <Compile Include="Worlds\Weathers\SharedComp\Wind.cs" />
     <Compile Include="Worlds\World.cs" />
     <Compile Include="Worlds\WorldRenderer.cs" />
-    <EmbeddedResource Include="GUI\Forms\CustControls\Config.resx">
-      <DependentUpon>Config.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\Forms\CustControls\ErrorMessage.resx">
-      <DependentUpon>ErrorMessage.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\Forms\CustControls\MultiPlayer.resx">
-      <DependentUpon>MultiPlayer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\Forms\CustControls\SinglePlayer.resx">
-      <DependentUpon>SinglePlayer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\Forms\WelcomeScreen.resx">
-      <DependentUpon>WelcomeScreen.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -419,6 +373,6 @@
     </SGen>
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>"$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\sgen" /a:Utopia.exe /t:Utopia.Settings.ClientConfig /force /compiler:/platform:x86</PostBuildEvent>
+    <PostBuildEvent>"$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\sgen" /a:Utopia.dll /t:Utopia.Settings.ClientConfig /force /compiler:/platform:x86</PostBuildEvent>
   </PropertyGroup>
 </Project>

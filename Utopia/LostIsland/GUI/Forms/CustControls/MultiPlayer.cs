@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using Utopia.Network;
 
-namespace Utopia.GUI.Forms.CustControls
+namespace LostIslandClient.GUI.Forms.CustControls
 {
     public partial class MultiPlayer : UserControl
     {
