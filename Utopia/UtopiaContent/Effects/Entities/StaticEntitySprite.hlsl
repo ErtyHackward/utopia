@@ -61,13 +61,11 @@ PSInput VS (VSInput input)
 	float4 worldPosition = {input.Position.xyz, 1.0f};
 	worldPosition = mul(worldPosition, WorldFocus);
 
-	if (input.Textcoord.y <= 0.1)
-	{
-	      //worldPosition.x += WindPower.x;
-		  //worldPosition.z += WindPower.z;
-		  float sine = sin(keyFrameAnimation); // * Time variable to make it move !
-		  worldPosition.xyz += sine * WindPower;
-	}
+	//if (input.Textcoord.y <= 0.1)
+	//{
+	//	  float sine = sin(keyFrameAnimation); // * Time variable to make it move !
+	//	  worldPosition.xyz += sine * WindPower;
+	//}
 
 	output.Position = mul(worldPosition, ViewProjection);
 	output.UVW = input.Textcoord;

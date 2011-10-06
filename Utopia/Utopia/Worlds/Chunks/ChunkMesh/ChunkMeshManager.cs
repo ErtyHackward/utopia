@@ -232,24 +232,55 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             Vector3 spriteLocation = sprite.SpriteEntity.Position.AsVector3();
             int baseIndex = vertices.Count;
 
+           Vector3 normalSize = new Vector3(0.8f, 0.8f, 0.8f);
+           Vector3 normalHalfSize = new Vector3(normalSize.X / 2, normalSize.Y / 2, normalSize.Z / 2);
+           normalSize.X *= sprite.SpriteEntity.Scale.X;
+           normalSize.Y *= sprite.SpriteEntity.Scale.Y;
+           normalSize.Z *= sprite.SpriteEntity.Scale.Z;
+
             switch (spriteFormat)
             {
                 case SpriteFormat.Single:
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - 0.5f, spriteLocation.Y + 0.0f, spriteLocation.Z + 0.0f), sprite.color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - 0.5f, spriteLocation.Y + 1.0f, spriteLocation.Z + 0.0f), sprite.color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + 0.5f, spriteLocation.Y + 0.0f, spriteLocation.Z + 0.0f), sprite.color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + 0.5f, spriteLocation.Y + 1.0f, spriteLocation.Z + 0.0f), sprite.color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z), sprite.color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z), sprite.color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z), sprite.color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z), sprite.color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));
                     indices.Add((ushort)(baseIndex + 2));
                     indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 2));
+                    indices.Add((ushort)(baseIndex + 1));
                     break;
                 case SpriteFormat.Double:
                     break;
                 case SpriteFormat.Cross:
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z), sprite.color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z + normalHalfSize.Z), sprite.color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z), sprite.color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z - normalHalfSize.Z), sprite.color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    
+                    indices.Add((ushort)(baseIndex + 0));
+                    indices.Add((ushort)(baseIndex + 1));
+                    indices.Add((ushort)(baseIndex + 2));
+                    indices.Add((ushort)(baseIndex + 3));
+                    indices.Add((ushort)(baseIndex + 2));
+                    indices.Add((ushort)(baseIndex + 1));
+
+                    baseIndex += 4;
+
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z), sprite.color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z + normalHalfSize.Z), sprite.color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z), sprite.color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z - normalHalfSize.Z), sprite.color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+
+                    indices.Add((ushort)(baseIndex + 0));
+                    indices.Add((ushort)(baseIndex + 1));
+                    indices.Add((ushort)(baseIndex + 2));
+                    indices.Add((ushort)(baseIndex + 3));
+                    indices.Add((ushort)(baseIndex + 2));
+                    indices.Add((ushort)(baseIndex + 1));
                     break;
                 case SpriteFormat.Quad:
                     break;
