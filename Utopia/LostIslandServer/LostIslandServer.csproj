@@ -94,6 +94,10 @@
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UtopiaContent\UtopiaContent.csproj">
+      <Project>{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}</Project>
+      <Name>UtopiaContent</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
