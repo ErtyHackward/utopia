@@ -19,13 +19,19 @@ namespace Utopia.Worlds
         public ISkyDome WorldSkyDome { get; set; }
         public IWeather WorldWeather { get; set; }
 
-        public World(IWorldChunks worldChunks, IClock worldClock, ISkyDome worldSkyDome, IWeather worldWeather, SingleArrayChunkContainer singleArrayChunkContainer)
+        public World(UtopiaRender mainRenderer, IWorldChunks worldChunks, IClock worldClock, ISkyDome worldSkyDome, IWeather worldWeather, SingleArrayChunkContainer singleArrayChunkContainer)
         {
             this.SingleArrayChunkContainer = singleArrayChunkContainer;
             this.WorldChunks = worldChunks;
             this.WorldClock = worldClock;
             this.WorldSkyDome = worldSkyDome;
             this.WorldWeather = worldWeather;
+
+            //Register the component for rendering/Updating
+            mainRenderer.GameComponents.Add(WorldClock);
+            mainRenderer.GameComponents.Add(WorldWeather);
+            mainRenderer.GameComponents.Add(WorldSkyDome);
+            mainRenderer.GameComponents.Add(WorldChunks);
         }
     }
 }
