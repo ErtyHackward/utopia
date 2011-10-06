@@ -67,7 +67,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             CheckServerReceivedData(chunk, Async);
         }
 
-
         #endregion
 
         #region Private methods

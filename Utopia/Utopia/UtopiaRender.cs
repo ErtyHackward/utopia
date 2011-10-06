@@ -63,7 +63,6 @@ namespace Utopia
 {
     public partial class UtopiaRender : Game
     {
-        private WorldRenderer _worldRenderer;
         private IWorld _currentWorld;
         private IClock _worldClock;
         private ISkyDome _skyDome;
@@ -113,6 +112,8 @@ namespace Utopia
             VSync = true;                                              // Vsync ON (default)
 
             CubeProfile.InitCubeProfiles();                 // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
+            //Bind System objects
+            SystemBinding(iocContainer);
         }
 
         public override void Initialize()
@@ -236,11 +237,6 @@ namespace Utopia
 
             //Create the World Components wrapper -----------------------
             _currentWorld = IoCContainer.Get<IWorld>();
-
-            //Send the world to render
-            _worldRenderer = IoCContainer.Get<WorldRenderer>();
-            _worldRenderer.UpdateOrder = 11;
-            GameComponents.Add(_worldRenderer);             //Bind worldRendered to main loop.
 
             //GUI components
             _fps = new FPS();
