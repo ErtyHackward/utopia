@@ -83,9 +83,11 @@ namespace LostIslandServer
 
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMain());
+            while (Console.ReadLine() != "exit")
+            {
+
+            }
+
         }
 
         static void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
