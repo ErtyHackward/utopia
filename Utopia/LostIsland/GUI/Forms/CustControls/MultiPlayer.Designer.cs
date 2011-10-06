@@ -1,4 +1,5 @@
-﻿namespace Utopia.GUI.Forms.CustControls
+﻿
+namespace LostIslandClient.GUI.Forms.CustControls
 {
     partial class MultiPlayer
     {
@@ -41,7 +42,7 @@
             this.lstServerCom = new System.Windows.Forms.ListBox();
             this.label7 = new System.Windows.Forms.Label();
             this.chkRegistering = new System.Windows.Forms.CheckBox();
-            this.srvList = new Utopia.GUI.Forms.CustControls.RefreshingListBox();
+            this.srvList = new LostIslandClient.GUI.Forms.CustControls.RefreshingListBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btSave = new System.Windows.Forms.Button();
             this.txtServerName = new System.Windows.Forms.TextBox();

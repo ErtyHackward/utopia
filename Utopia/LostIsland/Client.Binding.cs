@@ -45,13 +45,29 @@ using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
 using S33M3Engines.Timers;
 using Utopia.Entities.Renderer.Interfaces;
+using Utopia;
+using Utopia.Shared.Structs;
 
-namespace Utopia
+namespace LostIsland
 {
-    public partial class UtopiaRender
+    public partial class Client
     {
-        private void ContainersBindings(IKernel iocContainer, WorldParameters worldParam)
+        public void Binding(IKernel iocContainer, UtopiaRender gameRenderer)
         {
+            int Seed = 12695360;
+            int SeaLevel = AbstractChunk.ChunkSize.Y / 2;
+
+            //Variables initialisation ==================================================================
+            WorldParameters worldParam = new WorldParameters()
+            {
+                IsInfinite = true,
+                Seed = Seed,
+                SeaLevel = SeaLevel,
+                WorldChunkSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
+                                                ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
+            };
+            //===========================================================================================
+
 
             iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();
 
@@ -63,7 +79,7 @@ namespace Utopia
 
             iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");
             iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");
-            
+
             iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
@@ -73,7 +89,7 @@ namespace Utopia
 
             iocContainer.Bind<InputsManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();
-            
+
             iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();
             iocContainer.Bind<IStaticEntityManager>().To<StaticEntityManager>().InSingletonScope();
             iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InSingletonScope();
@@ -91,6 +107,7 @@ namespace Utopia
             iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();
 
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
+
             if (ClientSettings.Current.Settings.GraphicalParameters.CloudsQuality <= 0)
             {
                 iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");
@@ -111,7 +128,6 @@ namespace Utopia
             iocContainer.Bind<IWorldProcessor>().To<FlatWorldProcessor>().Named("FlatWorldProcessor");
             iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
             iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
-            
 
             iocContainer.Bind<ILightingManager>().To<LightingManager>().InSingletonScope();
 
@@ -132,7 +148,7 @@ namespace Utopia
             //Nuclex Screen (UI desktop) is a first class injectable now. any component who wants to draw something only needs the screen instance
             iocContainer.Bind<Screen>().ToSelf().InSingletonScope();
 
-            iocContainer.Bind<UtopiaRender>().ToConstant(this); 
+            iocContainer.Bind<UtopiaRender>().ToConstant(gameRenderer);
             //this is required for any component depending on game (having game in constructor params) 
             // or else the component gets a new game instance
             // normally/currently, only DebugComponent uses this for accedding to game.exit , _game.VSynSc  etc...
@@ -140,14 +156,9 @@ namespace Utopia
 
             iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();
             iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
-
             iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
-
             iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope();
-            
-
             iocContainer.Bind<ActionsManager>().ToSelf().InSingletonScope();
-
         }
     }
 }

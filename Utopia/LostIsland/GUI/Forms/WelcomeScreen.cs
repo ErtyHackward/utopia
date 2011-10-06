@@ -6,21 +6,20 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Utopia.GUI.Forms.CustControls;
+using LostIslandClient.GUI.Forms.CustControls;
 using Utopia.Network;
 using System.Threading;
 using Utopia.Settings;
 using S33M3Engines.D3D;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
-using ErrorMessage = Utopia.GUI.Forms.CustControls.ErrorMessage;
+using ErrorMessage = LostIslandClient.GUI.Forms.CustControls.ErrorMessage;
 
-namespace Utopia.GUI.Forms
+namespace LostIsland.GUI.Forms
 {
     public partial class WelcomeScreen : Form, IDisposable
     {
-        internal FormData Data;
-
+        public FormData Data;
         private delegate void SetBoolCallback(bool text);
         private delegate void SetTextCallback(string text);
         private delegate void DefaultCallback();
@@ -242,7 +241,7 @@ namespace Utopia.GUI.Forms
         }
 
         //Handle server Error Message
-        void ServerConnection_MessageError(object sender, ProtocolMessageEventArgs<Shared.Net.Messages.ErrorMessage> e)
+        void ServerConnection_MessageError(object sender, ProtocolMessageEventArgs<Utopia.Shared.Net.Messages.ErrorMessage> e)
         {
             AddTextToListBox(e.Message.Message);
             NetworkConnectBtState(true);

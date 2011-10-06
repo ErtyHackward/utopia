@@ -127,15 +127,11 @@ namespace Utopia
             GameConsole.Write("DX11 main engine started and initialized with feature level : " + _d3dEngine.Device.FeatureLevel);
 #endif
             base.Initialize();
-
         }
 
         //Default Utopia Init method.
         private void Init(IKernel IoCContainer)
         {
-            int Seed = 12695360;
-            int SeaLevel = AbstractChunk.ChunkSize.Y / 2;
-
             //=======================================================================================
             //New Class structure Acces =============================================================
             //=======================================================================================
@@ -156,24 +152,6 @@ namespace Utopia
             {
                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize = _server.MaxServerViewRange;
             }
-
-            Seed = _server.WorldSeed;
-            SeaLevel = _server.SeaLevel;
-
-            //Variables initialisation ==================================================================
-            Utopia.Shared.World.WorldParameters worldParam = new Shared.World.WorldParameters()
-            {
-                IsInfinite = true,
-                Seed = Seed,
-                SeaLevel = SeaLevel,
-                WorldChunkSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,
-                                                ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
-            };
-            Location2<int> worldStartUp = new Location2<int>(0 * AbstractChunk.ChunkSize.X, 0 * AbstractChunk.ChunkSize.Z);
-            //===========================================================================================
-
-            //Creating the IoC Bindings
-            ContainersBindings(IoCContainer, worldParam);
 
             //Init Block Profiles
             VisualCubeProfile.InitCubeProfiles(IoCContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"),
@@ -249,9 +227,8 @@ namespace Utopia
             //-- Chunks -- Get chunks manager.
 
             //Get Processor Config by giving world specification
-            _chunks = IoCContainer.Get<IWorldChunks>(new ConstructorArgument("worldStartUpPosition", worldStartUp));
+            _chunks = IoCContainer.Get<IWorldChunks>();
 
-            //Attach a "Flat world generator"
             _chunks.LandscapeManager.WorldGenerator = new WorldGenerator(IoCContainer.Get<WorldParameters>(), IoCContainer.Get<IWorldProcessorConfig>("s33m3World"));
 
             //Get the chunkEntityImpact
@@ -290,7 +267,6 @@ namespace Utopia
 
             //this one is disabled by default, can be enabled with F12 UI 
             GameComponents.Add(IoCContainer.Get<EntityEditor>());
-
 
             _debugInfo = new DebugInfo(_d3dEngine);
             _debugInfo.Activated = true;
