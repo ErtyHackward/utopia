@@ -17,10 +17,10 @@ namespace Utopia.Shared.Structs.Landscape
         public static CubeProfile[] CubesProfile;
 
         //Create the various Cubes
-        public static void InitCubeProfiles()
+        public static void InitCubeProfiles(string cubeProfilePath)
         {
             DataSet CubeProfileDS = new DataSet();
-            CubeProfileDS.ReadXml(@"Models\CubesProfile.xml", XmlReadMode.Auto);
+            CubeProfileDS.ReadXml(cubeProfilePath, XmlReadMode.Auto);
 
             DataTable dt = CubeProfileDS.Tables["Cube"];
             CubesProfile = new CubeProfile[dt.Rows.Count];

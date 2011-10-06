@@ -18,10 +18,10 @@ namespace Utopia.Worlds.Cubes
         public static VisualCubeProfile[] CubesProfile;
 
         //Create the various Cubes
-        public static void InitCubeProfiles(ICubeMeshFactory solidCubeMeshFactory, ICubeMeshFactory liquidCubeMeshFactory)
+        public static void InitCubeProfiles(ICubeMeshFactory solidCubeMeshFactory, ICubeMeshFactory liquidCubeMeshFactory, string FilePath)
         {
             DataSet CubeProfileDS = new DataSet();
-            CubeProfileDS.ReadXml(@"Models\CubesProfile.xml", XmlReadMode.Auto);
+            CubeProfileDS.ReadXml(FilePath, XmlReadMode.Auto);
 
             DataTable dt = CubeProfileDS.Tables["Cube"];
             CubesProfile = new VisualCubeProfile[dt.Rows.Count];
