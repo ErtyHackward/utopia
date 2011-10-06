@@ -23,6 +23,10 @@ using Utopia.Worlds.Chunks.ChunkMesh;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using Utopia.Entities.Managers.Interfaces;
+using Utopia.Entities.Managers;
+using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia
 {
@@ -60,7 +64,13 @@ namespace Utopia
             //=============================================================
 
             //Entities ====================================================
-            iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope();
+            iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
+            iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InSingletonScope();   //Entites picking and collision handling vs player
+            iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();         //Dynamic Entity manager
+            iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();                             //The player manager
+            //Register the Player Against IDynamicEntity and PlayerCharacter
+            iocContainer.Bind<PlayerCharacter>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope(); //Register the current Player.
+            iocContainer.Bind<IDynamicEntity>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope().Named("Player"); //Register the current Player.
             //=============================================================
 
             //World Object Container ======================================

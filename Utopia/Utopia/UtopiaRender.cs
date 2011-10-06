@@ -111,7 +111,6 @@ namespace Utopia
             S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
             VSync = true;                                              // Vsync ON (default)
 
-            CubeProfile.InitCubeProfiles();                 // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
             //Bind System objects
             SystemBinding(iocContainer);
         }
@@ -133,30 +132,20 @@ namespace Utopia
         //Default Utopia Init method.
         private void Init(IKernel IoCContainer)
         {
-            //=======================================================================================
-            //New Class structure Acces =============================================================
-            //=======================================================================================
-            //Create the world components ===========================================================
-
-            //If Server mode set the chunk Side
             _server = IoCContainer.Get<Server>();
-
             _server.ServerConnection.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
 
             if (AbstractChunk.ChunkSize != _server.ChunkSize)
             {
                 throw new Exception("Client chunkSize is different from server !");
             }
-
             //Change Visible WorldSize if client parameter > Server !
             if (ClientSettings.Current.Settings.GraphicalParameters.WorldSize > _server.MaxServerViewRange)
             {
                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize = _server.MaxServerViewRange;
             }
 
-            //Init Block Profiles
-            VisualCubeProfile.InitCubeProfiles(IoCContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"),
-                                               IoCContainer.Get<ICubeMeshFactory>("LiquidCubeMeshFactory"));
+
 
             //-- Get the Main D3dEngine --
             _d3dEngine = IoCContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(W, H)),
@@ -213,8 +202,6 @@ namespace Utopia
 
             _dynamicEntityManager = IoCContainer.Get<IDynamicEntityManager>();
             GameComponents.Add(_dynamicEntityManager);
-            _staticEntityManager = IoCContainer.Get<IStaticEntityManager>();
-            GameComponents.Add(_staticEntityManager);
 
             _actions = IoCContainer.Get<ActionsManager>();
 
