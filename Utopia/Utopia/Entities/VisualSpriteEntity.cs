@@ -7,6 +7,7 @@ using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs;
 using SharpDX;
 using Utopia.Entities.Interfaces;
+using Utopia.Shared.Chunks.Entities.Concrete.Collectible;
 
 namespace Utopia.Entities
 {
@@ -34,7 +35,8 @@ namespace Utopia.Entities
             switch (SpriteEntity.ClassId)
             {
                 case EntityClassId.Grass:
-                    spriteTextureId = 4;     //5 level of evolution forsee by sprite formula should be (StaticSpriteTextureID * 5) + Evolution.
+                    Grass grassEntity = (Grass)SpriteEntity;
+                    spriteTextureId = (0 * 5) + grassEntity.GrowPhase ;     //5 level of evolution forsee by sprite formula should be (StaticSpriteTextureID * 5) + Evolution.
                     break;
                 default:
                     throw new Exception("Static Sprite ID not supported");

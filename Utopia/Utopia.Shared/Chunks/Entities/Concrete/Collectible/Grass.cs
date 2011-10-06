@@ -5,6 +5,7 @@ using System.Text;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using System.IO;
+using SharpDX;
 
 namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
 {
@@ -28,9 +29,10 @@ namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
         #endregion
         public Grass()
         {
-            GrowPhase = 4;
+            GrowPhase = 0;
             Type = EntityType.Static;
             UniqueName = DisplayName;
+            Scale = new Vector3(1, 1, 1);
         }
 
         #region Public methods
