@@ -58,7 +58,7 @@ namespace LostIsland.Client
             iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
             //Chunk Landscape Creation Processors picking ====
-            iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope().Named("s33m3World");
+            iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope();
             iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
             iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
 

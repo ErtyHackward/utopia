@@ -28,7 +28,7 @@ namespace S33M3Engines.Cameras
         protected FTSValue<Quaternion> _cameraOrientation = new FTSValue<Quaternion>();
         #endregion
 
-        #region Private Variable    
+        #region Private Variable
 
         protected Viewport? _viewport;
         protected Vector3 _lookAt;

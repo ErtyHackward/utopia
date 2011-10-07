@@ -27,6 +27,7 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Managers;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.World;
 
 namespace Utopia
 {
@@ -52,7 +53,7 @@ namespace Utopia
             iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();        //Gui base class
 
             iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();  //Voxel Factory
-            iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();       //Icon Factory
+            //iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();       //Icon Factory
 
             //Landscape Creation/Acces/Management ====================================
             iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();         //The client  "Big" Array
@@ -61,6 +62,7 @@ namespace Utopia
             iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InSingletonScope();   //Chunk Mesh + Entities creation
             iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();             //Chunk Management (Update/Draw)
             iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
+            iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
             //=============================================================
 
             //Entities ====================================================
@@ -71,6 +73,7 @@ namespace Utopia
             //Register the Player Against IDynamicEntity and PlayerCharacter
             iocContainer.Bind<PlayerCharacter>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope(); //Register the current Player.
             iocContainer.Bind<IDynamicEntity>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope().Named("Player"); //Register the current Player.
+            
             //=============================================================
 
             //World Object Container ======================================

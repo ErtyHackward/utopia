@@ -122,7 +122,6 @@ namespace Utopia
 
             //DebugInit(_iocContainer); //To use for testing Debug initializer
             Init(_iocContainer);
-
 #if DEBUG
             GameConsole.Write("DX11 main engine started and initialized with feature level : " + _d3dEngine.Device.FeatureLevel);
 #endif
@@ -146,7 +145,6 @@ namespace Utopia
             }
 
 
-
             //-- Get the Main D3dEngine --
             _d3dEngine = IoCContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(W, H)),
                                                      new ConstructorArgument("windowCaption", "Utopia"),
@@ -164,6 +162,8 @@ namespace Utopia
 
             //-- Get Camera --
             ICamera camera = IoCContainer.Get<ICamera>(); // Create a firstPersonCamera viewer
+            camera.CameraPlugin = IoCContainer.Get<PlayerEntityManager>();
+            GameComponents.Add(IoCContainer.Get<PlayerEntityManager>());
 
             //-- Get World focus --
             _worldFocusManager = IoCContainer.Get<WorldFocusManager>();
@@ -188,20 +188,10 @@ namespace Utopia
 
             //Attached the Player to the camera =+> The player will be used as Camera Holder !
             //camera.CameraPlugin = _player;
-            _camManager.UpdateOrder = 1;
             GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
 
-            _pickingRenderer = IoCContainer.Get<IPickingRenderer>();
-            GameComponents.Add(_pickingRenderer);
-
-            //Create the Player manager
-            PlayerEntityManager Player = IoCContainer.Get<PlayerEntityManager>(new ConstructorArgument("visualEntity", new VisualEntity(IoCContainer.Get<VoxelMeshFactory>(), IoCContainer.Get<PlayerCharacter>())));
-            Player.UpdateOrder = 0;
-            camera.CameraPlugin = Player;
-            GameComponents.Add(Player);
-
-            _dynamicEntityManager = IoCContainer.Get<IDynamicEntityManager>();
-            GameComponents.Add(_dynamicEntityManager);
+            GameComponents.Add(IoCContainer.Get<IPickingRenderer>());
+            GameComponents.Add(IoCContainer.Get<IDynamicEntityManager>());
 
             _actions = IoCContainer.Get<ActionsManager>();
 
@@ -216,8 +206,6 @@ namespace Utopia
 
             //Get Processor Config by giving world specification
             _chunks = IoCContainer.Get<IWorldChunks>();
-
-            _chunks.LandscapeManager.WorldGenerator = new WorldGenerator(IoCContainer.Get<WorldParameters>(), IoCContainer.Get<IWorldProcessorConfig>("s33m3World"));
 
             //Get the chunkEntityImpact
             _chunkEntityImpactManager = IoCContainer.Get<IChunkEntityImpactManager>();
@@ -234,8 +222,6 @@ namespace Utopia
 
             // map
             GameComponents.Add(IoCContainer.Get<MapComponent>());
-
-            GameConsole.Initialize(_d3dEngine);
 
             //Create the EntityMessageTRanslator
             _entityMessageTranslator = IoCContainer.Get<EntityMessageTranslator>();
@@ -264,6 +250,7 @@ namespace Utopia
             
             // TODO (Simon)  debug vs release is currently a mess : no debug text in debug mode, no UI in debug mode, is debug mode of any use fir us ?
             #region Debug Components
+            GameConsole.Initialize(_d3dEngine);
 #if DEBUG
             DebugEffect.Init(_d3dEngine);             // Default Effect used by debug componant (will be shared)
 #endif

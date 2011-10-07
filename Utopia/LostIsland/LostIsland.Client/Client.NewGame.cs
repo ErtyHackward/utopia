@@ -10,6 +10,7 @@ using Utopia.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Worlds.Cubes;
 using Utopia.Shared.Structs.Landscape;
+using S33M3Engines.D3D;
 
 namespace LostIsland.Client
 {
@@ -27,22 +28,22 @@ namespace LostIsland.Client
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
             //===========================================================================================
-
-            this.Binding(iocContainer, worldParam); // Bind various Components against concrete class.
-
+            //Doing components bindings
+            UtopiaRender utopiaRenderer = new UtopiaRender(iocContainer); // Need to create it there, the "system" component will be binded at creation time.
+            this.Binding(iocContainer, worldParam);                       // Bind various Components against concrete class.
             //=======================================================================================================================
             //Create the various Concrete classe Binded, forwarding appropriate value. ==============================================
             //=======================================================================================================================
-
             //Init Block Profiles
             VisualCubeProfile.InitCubeProfiles(iocContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"),     //The default binded Solid Cube Mesh Factory
                                                iocContainer.Get<ICubeMeshFactory>("LiquidCubeMeshFactory"),    //The default binded Water Cube Mesh Factory
                                                @"Config\CubesProfile.xml");                                    //The path to the Cubes Profiles descriptions
             CubeProfile.InitCubeProfiles(@"Config\CubesProfile.xml");                                          // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
-    
 
 
-            return new UtopiaRender(iocContainer);
+
+
+            return utopiaRenderer;
         }
     }
 }

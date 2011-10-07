@@ -16,6 +16,7 @@ using Utopia.Worlds.Storage.Structs;
 using S33M3Engines.Timers;
 using Utopia.Entities;
 using Utopia.Shared.Chunks.Entities;
+using Ninject;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
@@ -32,6 +33,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         #endregion
 
         #region Public variables/properties
+        [Inject] // ==> This property will be automatically SET by NInject with binded WorldGenerator singleton !
         public WorldGenerator WorldGenerator
         {
             get { return _worldGenerator; }

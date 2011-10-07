@@ -122,7 +122,7 @@ namespace Utopia.Entities.Managers
                                    ActionsManager actions,
                                    InputsManager inputsManager,
                                    SingleArrayChunkContainer cubesHolder,
-                                   VisualEntity visualEntity,
+                                   VoxelMeshFactory voxelMeshFactory,
                                    PlayerCharacter player,
                                    [Named("PlayerEntityRenderer")] IEntitiesRenderer playerRenderer,
                                    IPickingRenderer pickingRenderer,
@@ -142,19 +142,19 @@ namespace Utopia.Entities.Managers
             _entityPickingManager = entityPickingManager;
             _screen = screen;
 
-
             entityPickingManager.Player = this;
             this.Player = player;
-            this.VisualEntity = visualEntity;
+            this.VisualEntity = new Voxel.VisualEntity(voxelMeshFactory, player);
 
             //Give the Renderer acces to the Voxel buffers, ...
             _playerRenderer.VisualEntity = this;
+
+            UpdateOrder = 0;
         }
 
         public override void Dispose()
         {
             this.VisualEntity.Dispose();
-            // _playerRenderer.Dispose(); ==> REgistered with Ninject
             _backgroundTex.Dispose();
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace S33M3Engines.D3D
 {
@@ -27,6 +28,13 @@ namespace S33M3Engines.D3D
         public event EventHandler<GameComponentCollectionEventArgs> ComponentAdded;
         public event EventHandler<GameComponentCollectionEventArgs> ComponentRemoved;
 
+        public void AddRange(IEnumerable<IGameComponent> gameComponents)
+        {
+            foreach (var gameComponent in gameComponents)
+            {
+                this.Add(gameComponent);
+            }
+        }
 
         protected override void ClearItems()
         {
