@@ -28,6 +28,7 @@ using Utopia.Entities.Managers;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.World;
+using S33M3Engines.D3D.DebugTools;
 
 namespace Utopia
 {
@@ -53,7 +54,7 @@ namespace Utopia
             iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();        //Gui base class
 
             iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();  //Voxel Factory
-            //iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();       //Icon Factory
+            iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();       //Icon Factory
 
             //Landscape Creation/Acces/Management ====================================
             iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();         //The client  "Big" Array
@@ -86,6 +87,7 @@ namespace Utopia
 
             //Debug displayer component ===================================
             iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope();
+            iocContainer.Bind<FPS>().ToSelf().InSingletonScope();
             //=============================================================
 
             //Network Related =============================================

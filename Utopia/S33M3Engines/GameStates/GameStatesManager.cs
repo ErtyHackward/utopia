@@ -9,5 +9,11 @@ namespace S33M3Engines.GameStates
     {
         public int DebugDisplay { get; set; }
         public bool DebugActif { get; set; }
+
+        public GameStatesManager()
+        {
+            DebugActif = false;
+            DebugDisplay = 0;
+        }
     }
 }

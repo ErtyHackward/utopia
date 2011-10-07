@@ -104,7 +104,6 @@
     <Compile Include="D3D\Effects\HLSLFramework\ShaderResource.cs" />
     <Compile Include="D3D\Effects\HLSLFramework\ShaderSampler.cs" />
     <Compile Include="D3DEngine.cs" />
-    <Compile Include="D3D\DebugTools\GameConsole.cs" />
     <Compile Include="D3D\DebugTools\DebugInfo.cs" />
     <Compile Include="D3D\DebugTools\FPS.cs" />
     <Compile Include="D3D\Game.cs" />

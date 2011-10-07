@@ -76,26 +76,19 @@ namespace S33M3Engines.D3D.DebugTools
         public override void Draw(int Index)
         {
             //Afficher la console, ou bien les infos !
-            if (GameConsole.Show)
+            if (Activated)
             {
-                GameConsole.Draw();
-            }
-            else
-            {
-                if (Activated)
-                {
-                    //_sprite.Begin(SpriteFlags.SaveState); //==> Problèmes avec PIX ! ==> Veuillez a tjs mettre mes states avec chaque draw !
-                    //for (int CompIndex = 0; CompIndex < _args.Length; CompIndex++)
-                    //{
-                    //    string.Concat(_infos[CompIndex] + "\n");
+                //_sprite.Begin(SpriteFlags.SaveState); //==> Problèmes avec PIX ! ==> Veuillez a tjs mettre mes states avec chaque draw !
+                //for (int CompIndex = 0; CompIndex < _args.Length; CompIndex++)
+                //{
+                //    string.Concat(_infos[CompIndex] + "\n");
 
-                    //    _font.Draw(_sprite, _infos[CompIndex], new System.Drawing.Rectangle(0, _fontHeight * CompIndex, Game.GameWindow.ClientSize.Width, _fontHeight * CompIndex), FontDrawFlags.NoClip, _fontColor);
-                    //}
+                //    _font.Draw(_sprite, _infos[CompIndex], new System.Drawing.Rectangle(0, _fontHeight * CompIndex, Game.GameWindow.ClientSize.Width, _fontHeight * CompIndex), FontDrawFlags.NoClip, _fontColor);
+                //}
 
-                    _spriteRender.Begin(SpriteRenderer.FilterMode.Point);
-                    _spriteRender.RenderText(_font, string.Concat(_infos), _textPosition, _fontColor);
-                    _spriteRender.End();
-                }
+                _spriteRender.Begin(SpriteRenderer.FilterMode.Point);
+                _spriteRender.RenderText(_font, string.Concat(_infos), _textPosition, _fontColor);
+                _spriteRender.End();
             }
         }
 
