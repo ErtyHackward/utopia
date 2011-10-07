@@ -17,4 +17,5 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
             get { return 1; }
         }
     }
+
 }

@@ -144,7 +144,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
                 var e = this.Any(s =>
                                {
-                                   if (s.Item.GetType() == item.GetType() && s.ItemsCount + 1 <= item.MaxStackSize)
+                                   if (s.Item.StackType == item.StackType && s.ItemsCount + 1 <= item.MaxStackSize)
                                    {
                                        s.ItemsCount++;
                                        return true;
@@ -189,7 +189,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             if (currentItem != null)
             {
                 // check if slot is busy by other entity (different entities are unstackable)
-                if (currentItem.Item.GetType() != slot.Item.GetType())
+                if (currentItem.Item.StackType != slot.Item.StackType)
                     return false;
 
                 // check for stack limit
@@ -224,7 +224,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             if (currentItem == null) return false;
 
             // unable to take items of other types
-            if (currentItem.Item.GetType() != slot.Item.GetType())
+            if (currentItem.Item.StackType != slot.Item.StackType)
                 return false;
 
             // unable to take more items than container have
@@ -305,7 +305,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
             
             var currentItem = _items[slotPut.GridPosition.X, slotPut.GridPosition.Y];
 
-            if (currentItem == null || currentItem.Item.GetType() == slotPut.Item.GetType())
+            if (currentItem == null || currentItem.Item.StackType == slotPut.Item.StackType)
                 return false;
 
             slotTaken = currentItem;
