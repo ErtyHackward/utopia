@@ -15,6 +15,7 @@ namespace Utopia.Shared.Net.Messages
         private uint _toolId;
         private uint _entityId;
         private bool _isBlockPicked;
+        private int _token;
 
         /// <summary>
         /// Identification number of entity that performs use operation (player or NPC)
@@ -61,6 +62,15 @@ namespace Utopia.Shared.Net.Messages
             get { return _isBlockPicked; }
             set { _isBlockPicked = value; }
         }
+        
+        /// <summary>
+        /// Identification token of the use operation
+        /// </summary>
+        public int Token
+        {
+            get { return _token; }
+            set { _token = value; }
+        }
 
         /// <summary>
         /// Gets message id (cast to MessageTypes enumeration)
@@ -80,6 +90,7 @@ namespace Utopia.Shared.Net.Messages
             msg._pickedEntityId = reader.ReadUInt32();
             msg._toolId = reader.ReadUInt32();
             msg._isBlockPicked = reader.ReadBoolean();
+            msg._token = reader.ReadInt32();
 
             return msg;
         }
@@ -96,6 +107,7 @@ namespace Utopia.Shared.Net.Messages
             writer.Write(_pickedEntityId);
             writer.Write(_toolId);
             writer.Write(_isBlockPicked);
+            writer.Write(_token);
         }
     }
 }

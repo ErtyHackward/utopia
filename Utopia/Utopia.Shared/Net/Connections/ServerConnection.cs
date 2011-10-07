@@ -44,7 +44,7 @@ namespace Utopia.Shared.Net.Connections
         public string Login { get; set; }
 
         /// <summary>
-        /// Gets or sets current connection md5 hash
+        /// Gets or sets current connection user password md5 hash
         /// </summary>
         public string Password { get; set; }
 
@@ -59,8 +59,7 @@ namespace Utopia.Shared.Net.Connections
         public int UserId { get; set; }
 
         #region Events
-
-
+        
         /// <summary>
         /// Occurs when Login data is received
         /// </summary>
@@ -280,6 +279,17 @@ namespace Utopia.Shared.Net.Connections
         {
             if (MessageEntityLockResult != null)
                 MessageEntityLockResult(this, new ProtocolMessageEventArgs<EntityLockResultMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when UseFeedbackMessage is received (another thread)
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<UseFeedbackMessage>> MessageUseFeedback;
+
+        protected void OnMessageUseFeedback(UseFeedbackMessage ea)
+        {
+            if (MessageUseFeedback != null)
+                MessageUseFeedback(this, new ProtocolMessageEventArgs<UseFeedbackMessage> { Message = ea });
         }
 
         #endregion
@@ -509,6 +519,9 @@ namespace Utopia.Shared.Net.Connections
                     break;
                 case MessageTypes.EntityLockResult:
                     OnMessageEntityLockResult((EntityLockResultMessage)msg);
+                    break;
+                case MessageTypes.UseFeedback:
+                    OnMessageUseFeedback((UseFeedbackMessage)msg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("msg", "Invalid message received from server");
