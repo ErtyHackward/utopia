@@ -16,7 +16,6 @@ namespace LostIsland.Client
         {
             foreach (string arg in args)
             {
-                if (arg == "WithDebug") S33M3Engines.D3D.DebugTools.GameConsole.Actif = true;
             }
 
             using (GameClient main = new GameClient())

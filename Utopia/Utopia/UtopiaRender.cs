@@ -63,46 +63,11 @@ namespace Utopia
 {
     public partial class UtopiaRender : Game
     {
-        private IWorld _currentWorld;
-        private IClock _worldClock;
-        private ISkyDome _skyDome;
-        private IWorldChunks _chunks;
-        private IWeather _weather;
-        private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
-        private IChunkStorageManager _chunkStorageManager;
         private ActionsManager _actionManager;
-        private EntityMessageTranslator _entityMessageTranslator;
-        private ItemMessageTranslator _itemMessageTranslator;
         private Server _server;
-        private ActionsManager _actions;
         private D3DEngine _engine;
-        private IDynamicEntityManager _dynamicEntityManager;
-        private IStaticEntityManager _staticEntityManager;
-        private IChunkEntityImpactManager _chunkEntityImpactManager;
-        private IPickingRenderer _pickingRenderer;
-        //Debug tools
-        private FPS _fps; //FPS computing object
-
-        //Game components
-        //private Entities.Living.ILivingEntity _player;
-       
-        private GameStatesManager _gameStateManagers;
-
-        //Debug Tool
-        private DebugInfo _debugInfo;
-
         private IKernel _iocContainer;
-
-        private TimerManager _timerManager;
-
-#if STEALTH
-        const int W = 48;
-        const int H = 32;
-#else
-        const int W = 1024;
-        const int H = 600;
-#endif
 
         public UtopiaRender(IKernel iocContainer)
         {
@@ -113,23 +78,21 @@ namespace Utopia
 
             //Bind System objects
             SystemBinding(iocContainer);
+
+            //Initialize the Thread Pool manager
+            S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
         }
 
         public override void Initialize()
         {
-            //Initialize the Thread Pool manager
-            S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
-
-            //DebugInit(_iocContainer); //To use for testing Debug initializer
-            Init(_iocContainer);
-#if DEBUG
-            GameConsole.Write("DX11 main engine started and initialized with feature level : " + _d3dEngine.Device.FeatureLevel);
-#endif
             base.Initialize();
         }
 
         //Default Utopia Init method.
-        private void Init(IKernel IoCContainer)
+        public void Init(IKernel IoCContainer, 
+                         string WindowsCaption, 
+                         Size startupWindowsSize,
+                         bool resetClientCache)
         {
             _server = IoCContainer.Get<Server>();
             _server.ServerConnection.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
@@ -144,113 +107,44 @@ namespace Utopia
                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize = _server.MaxServerViewRange;
             }
 
-
             //-- Get the Main D3dEngine --
-            _d3dEngine = IoCContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(W, H)),
-                                                     new ConstructorArgument("windowCaption", "Utopia"),
+            _d3dEngine = IoCContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", startupWindowsSize),
+                                                     new ConstructorArgument("windowCaption", WindowsCaption),
                                                      new ConstructorArgument("MaxNbrThreads", WorkQueue.ThreadPool.Concurrency));
-
             _d3dEngine.Initialize(); //Init the 3d Engine
             _d3dEngine.GameWindow.Closed += GameWindow_Closed;
             _d3dEngine.HideMouseCursor();   //Hide the mouse by default !
-
-            _actionManager = IoCContainer.Get<ActionsManager>();
             DXStates.CreateStates(_d3dEngine);  //Create all States that could by used by the game.
 
-            _timerManager = IoCContainer.Get<TimerManager>();
-            GameComponents.Add(_timerManager);
-
             //-- Get Camera --
-            ICamera camera = IoCContainer.Get<ICamera>(); // Create a firstPersonCamera viewer
+            ICamera camera = IoCContainer.Get<ICamera>();
             camera.CameraPlugin = IoCContainer.Get<PlayerEntityManager>();
-            GameComponents.Add(IoCContainer.Get<PlayerEntityManager>());
 
             //-- Get World focus --
             _worldFocusManager = IoCContainer.Get<WorldFocusManager>();
             _worldFocusManager.WorldFocus = (IWorldFocus)camera; // Use the camera as a the world focus
 
-            //-- Get StateManager --
-            _gameStateManagers = IoCContainer.Get<GameStatesManager>();
-            _gameStateManagers.DebugActif = false;
-            _gameStateManagers.DebugDisplay = 0;
+            //Create the EntityMessageTranslator to active them. (Will subscribe to server events, ...)
+            IoCContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", resetClientCache), new ConstructorArgument("UserName", _server.ServerConnection.Login));
+            IoCContainer.Get<EntityMessageTranslator>();
+            IoCContainer.Get<ItemMessageTranslator>();
+            IoCContainer.Get<IChunkEntityImpactManager>();
+            IoCContainer.Get<GameStatesManager>();
 
-            //-- Get Camera manager --
-            _camManager = IoCContainer.Get<CameraManager>();
-
+            _actionManager = IoCContainer.Get<ActionsManager>();
             _engine = IoCContainer.Get<D3DEngine>();
-          
-            //Storage Manager
-            _chunkStorageManager = IoCContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false),
-                                                                          new ConstructorArgument("UserName", _server.ServerConnection.Login));
 
+            GameComponents.Add(_server);
             GameComponents.Add(IoCContainer.Get<InputsManager>());
             GameComponents.Add(IoCContainer.Get<IconFactory>());
-
-            //Attached the Player to the camera =+> The player will be used as Camera Holder !
-            //camera.CameraPlugin = _player;
-            GameComponents.Add(_camManager); //The camera is using the _player to get it's world positions and parameters, so the _player updates must be done BEFORE the camera !
-
-            GameComponents.Add(IoCContainer.Get<IPickingRenderer>());
+            GameComponents.Add(IoCContainer.Get<TimerManager>());
+            GameComponents.Add(IoCContainer.Get<PlayerEntityManager>());
             GameComponents.Add(IoCContainer.Get<IDynamicEntityManager>());
-
-            _actions = IoCContainer.Get<ActionsManager>();
-
-            //-- Clock --
-            _worldClock = IoCContainer.Get<IClock>();
-            //-- Weather --
-            _weather = IoCContainer.Get<IWeather>();
-
-            //-- SkyDome --
-            _skyDome = IoCContainer.Get<ISkyDome>();
-            //-- Chunks -- Get chunks manager.
-
-            //Get Processor Config by giving world specification
-            _chunks = IoCContainer.Get<IWorldChunks>();
-
-            //Get the chunkEntityImpact
-            _chunkEntityImpactManager = IoCContainer.Get<IChunkEntityImpactManager>();
-
-            //Create the World Components wrapper -----------------------
-            _currentWorld = IoCContainer.Get<IWorld>();
-
-            //GUI components
-            _fps = new FPS();
-            GameComponents.Add(_fps);
-
-            // chat
-            GameComponents.Add(IoCContainer.Get<ChatComponent>());
-
-            // map
-            GameComponents.Add(IoCContainer.Get<MapComponent>());
-
-            //Create the EntityMessageTRanslator
-            _entityMessageTranslator = IoCContainer.Get<EntityMessageTranslator>();
-            _itemMessageTranslator = IoCContainer.Get<ItemMessageTranslator>();
-            GameComponents.Add(_server);
-
-            GameComponents.Add(IoCContainer.Get<DebugComponent>());
-
+            GameComponents.Add(IoCContainer.Get<CameraManager>());
             GameComponents.Add(IoCContainer.Get<Hud>());
-
             GameComponents.Add(IoCContainer.Get<GuiManager>());
 
-            //this one is disabled by default, can be enabled with F12 UI 
-            GameComponents.Add(IoCContainer.Get<EntityEditor>());
-
-            _debugInfo = new DebugInfo(_d3dEngine);
-            _debugInfo.Activated = true;
-            _debugInfo.SetComponants(_fps, IoCContainer.Get<IClock>(), IoCContainer.Get<IWorldChunks>(), IoCContainer.Get<PlayerEntityManager>(), _server);
-            GameComponents.Add(_debugInfo);
-
-            //Bind Actions to inputs events
-            BindActions();
-
-            // TODO (Simon) wire all binded components in one shot with ninject : GameComponents.AddRange(IoCContainer.GetAll<IGameComponent>());
-            // BUT we cant handle the add order ourselves: an updateOrder int + sorted components collection like in XNA would be good
-            
-            // TODO (Simon)  debug vs release is currently a mess : no debug text in debug mode, no UI in debug mode, is debug mode of any use fir us ?
             #region Debug Components
-            GameConsole.Initialize(_d3dEngine);
 #if DEBUG
             DebugEffect.Init(_d3dEngine);             // Default Effect used by debug componant (will be shared)
 #endif
@@ -286,222 +180,7 @@ namespace Utopia
             }
         }
 
-        private void BindActions()
-        {
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Move_Forward,
-                TriggerType = KeyboardTriggerMode.KeyDown,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Forward
-            });
-
-            _actionManager.AddActions(new MouseTriggeredAction()
-            {
-                Action = Actions.Move_Forward,
-                TriggerType = MouseTriggerMode.ButtonDown,
-                Binding = MouseButton.LeftAndRightButton
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Move_Backward,
-                TriggerType = KeyboardTriggerMode.KeyDown,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Backward
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Move_StrafeLeft,
-                TriggerType = KeyboardTriggerMode.KeyDown,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeLeft
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Move_StrafeRight,
-                TriggerType = KeyboardTriggerMode.KeyDown,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeRight
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Move_Down,
-                TriggerType = KeyboardTriggerMode.KeyDown,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Down
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Move_Up,
-                TriggerType = KeyboardTriggerMode.KeyDown,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Up
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Move_Jump,
-                TriggerType = KeyboardTriggerMode.KeyDown,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Jump
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Move_Mode,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Mode
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Move_Run,
-                TriggerType = KeyboardTriggerMode.KeyDown,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Run
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Engine_FullScreen,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.FullScreen
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Engine_LockMouseCursor,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.LockMouseCursor
-            });
-
-            _actionManager.AddActions(new MouseTriggeredAction()
-            {
-                Action = Actions.Use_Left,
-                TriggerType = MouseTriggerMode.ButtonUpDown,
-                Binding = MouseButton.LeftButton
-            });
-
-            _actionManager.AddActions(new MouseTriggeredAction()
-            {
-                Action = Actions.Use_Right,
-                TriggerType = MouseTriggerMode.ButtonUpDown,
-                Binding = MouseButton.RightButton
-            });
-
-            _actionManager.AddActions(new MouseTriggeredAction()
-            {
-                Action = Actions.Use_LeftWhileCursorLocked,
-                TriggerType = MouseTriggerMode.ButtonUpDown,
-                Binding = MouseButton.LeftButton,
-                WithCursorLocked = true
-            });
-
-            _actionManager.AddActions(new MouseTriggeredAction()
-            {
-                Action = Actions.Use_RightWhileCursorLocked,
-                TriggerType = MouseTriggerMode.ButtonUpDown,
-                Binding = MouseButton.RightButton,
-                WithCursorLocked = true
-            });
-
-            _actionManager.AddActions(new MouseTriggeredAction()
-            {
-                Action = Actions.Use_LeftWhileCursorNotLocked,
-                TriggerType = MouseTriggerMode.ButtonUpDown,
-                Binding = MouseButton.LeftButton,
-                WithCursorLocked = false
-            });
-
-            _actionManager.AddActions(new MouseTriggeredAction()
-            {
-                Action = Actions.Use_RightWhileCursorNotLocked,
-                TriggerType = MouseTriggerMode.ButtonUpDown,
-                Binding = MouseButton.RightButton,
-                WithCursorLocked = false
-            });
-
-            _actionManager.AddActions(new MouseTriggeredAction()
-            {
-                Action = Actions.Block_SelectNext,
-                TriggerType = MouseTriggerMode.ScrollWheelForward,
-                Binding = MouseButton.ScrollWheel
-            });
-
-            _actionManager.AddActions(new MouseTriggeredAction()
-            {
-                Action = Actions.Block_SelectPrevious,
-                TriggerType = MouseTriggerMode.ScrollWheelBackWard,
-                Binding = MouseButton.ScrollWheel
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.World_FreezeTime,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.FreezeTime
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Engine_VSync,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.VSync
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Engine_ShowDebugUI,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = new KeyWithModifier() { MainKey = Keys.F12 }
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.Engine_Exit,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = new KeyWithModifier() { MainKey = Keys.Escape }
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction()
-            {
-                Action = Actions.DebugUI_Insert,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = new KeyWithModifier() { MainKey = Keys.Insert }
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction
-            {
-                Action = Actions.Toggle_Chat,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Chat
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction
-            {
-                Action = Actions.EntityUse,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Use
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction
-            {
-                Action = Actions.EntityThrow,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Throw
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction
-            {
-                Action = Actions.OpenInventory,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Inventory
-            });
-
-            _actionManager.AddActions(new KeyboardTriggeredAction
-            {
-                Action = Actions.OpenMap,
-                TriggerType = KeyboardTriggerMode.KeyDownUp,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Map
-            });
-        }
+        
 
         public override void LoadContent()
         {
@@ -542,7 +221,7 @@ namespace Utopia
         private void InputHandling()
         {
             //Exit application
-            if (_actions.isTriggered(Actions.Engine_Exit))
+            if (_actionManager.isTriggered(Actions.Engine_Exit))
             {
                 GameExitReasonMessage msg = new GameExitReasonMessage()
                 {
@@ -552,8 +231,8 @@ namespace Utopia
             
                 Exit(msg);
             }
-            if (_actions.isTriggered(Actions.Engine_LockMouseCursor)) _engine.UnlockedMouse = !_engine.UnlockedMouse;
-            if (_actions.isTriggered(Actions.Engine_FullScreen)) _engine.isFullScreen = !_engine.isFullScreen;
+            if (_actionManager.isTriggered(Actions.Engine_LockMouseCursor)) _engine.UnlockedMouse = !_engine.UnlockedMouse;
+            if (_actionManager.isTriggered(Actions.Engine_FullScreen)) _engine.isFullScreen = !_engine.isFullScreen;
         }
 
         public override void Dispose()
@@ -565,7 +244,6 @@ namespace Utopia
 
             _server.ServerConnection.ConnectionStatusChanged -= ServerConnection_ConnectionStatusChanged;
             VisualCubeProfile.CleanUp();
-            GameConsole.CleanUp();
             base.Dispose();
         }
     }
