@@ -58,12 +58,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Effects\Entities\HLSLStaticEntitySprite.cs" />
-    <Compile Include="Effects\SkyDome\HLSLPlanetSkyDome.cs" />
-    <Compile Include="Effects\SkyDome\HLSLStars.cs" />
-    <Compile Include="Effects\Terran\HLSLLiquid.cs" />
-    <Compile Include="Effects\Terran\HLSLTerran.cs" />
-    <Compile Include="Effects\Weather\HLSLClouds2D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

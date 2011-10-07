@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UtopiaContent.Effects.Terran;
 using S33M3Engines;
 using S33M3Engines.WorldFocus;
 using S33M3Engines.Cameras;
@@ -17,8 +16,9 @@ using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
 using Utopia.Entities.Renderer.Interfaces;
+using Utopia.Entities.Renderer;
 
-namespace Utopia.Entities.Renderer
+namespace ListIsland.Client.Entities.Renderer
 {
     public class DynamicEntityRenderer : IEntitiesRenderer
     {
@@ -49,10 +49,11 @@ namespace Utopia.Entities.Renderer
             _skydome = skydome;
             _visualWorldParameters = visualWorldParameters;
             _worldFocusManager = worldFocusManager;
+            Initialize();   
         }
 
         #region Private Methods
-        public void Initialize()
+        private void Initialize()
         {
             _entityEffect = new HLSLTerran(_d3DEngine, @"Effects/Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration);
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);

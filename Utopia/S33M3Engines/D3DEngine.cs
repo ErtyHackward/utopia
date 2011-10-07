@@ -96,7 +96,7 @@ namespace S33M3Engines
         #endregion
 
         //Constructor
-        public D3DEngine(System.Drawing.Size startingSize, string windowCaption, int MaxNbrThreads)
+        public D3DEngine(System.Drawing.Size startingSize, string windowCaption)
         {
             //Create the MainRendering Form
             _renderForm = new RenderForm()
@@ -110,6 +110,8 @@ namespace S33M3Engines
 
             //Link the mouse to the windows handle
             S33M3Engines.InputHandler.Mouse.SetMouseMessageHooker(D3DEngine.WindowHandle);
+
+            Initialize();
         }
 
         //Remove default F10 (Open menu) Form key push !

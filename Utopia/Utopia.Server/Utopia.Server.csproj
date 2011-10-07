@@ -107,9 +107,9 @@
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UtopiaContent\UtopiaContent.csproj">
+    <ProjectReference Include="..\Utopia.Resources\Utopia.Resources.csproj">
       <Project>{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}</Project>
-      <Name>UtopiaContent</Name>
+      <Name>Utopia.Resource</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

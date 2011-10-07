@@ -1,5 +1,4 @@
 ﻿using System;
-using Ninject;
 using Nuclex.UserInterface;
 using S33M3Engines;
 using S33M3Engines.Cameras;
@@ -25,6 +24,7 @@ using Utopia.Shared.Cubes;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
+using Ninject;
 
 namespace Utopia.Entities.Managers
 {
@@ -114,7 +114,6 @@ namespace Utopia.Entities.Managers
             }
         }
         #endregion
-
 
         public PlayerEntityManager(D3DEngine engine,
                                    CameraManager cameraManager,
@@ -685,6 +684,8 @@ namespace Utopia.Entities.Managers
 
             //Set Move direction = to LookAtDirection
             _moveDirection.Value = _lookAtDirection.Value;
+
+            _playerRenderer.Initialize();
         }
 
         /// <summary>

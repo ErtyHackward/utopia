@@ -47,12 +47,10 @@ namespace Utopia.Entities.Renderer
             _d3DEngine = d3DEngine;
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
-
-            Initialize();   
         }
 
         #region Private Methods
-        private void Initialize()
+        public void Initialize()
         {
             _entityEffect = new HLSLTerran(_d3DEngine, @"Effects/Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration);
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
