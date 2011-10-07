@@ -41,8 +41,12 @@ namespace Utopia.GUI.D3D.Inventory
                     graphics.DrawElement("button.normal", controlBounds);
                 }
 
-                String s = control.Slot.GridPosition.X + "," + control.Slot.GridPosition.Y;
-                graphics.DrawString("button.normal",controlBounds,s);
+                //String s = control.Slot.GridPosition.X + "," + control.Slot.GridPosition.Y;
+                String s = control.Slot.ItemsCount.ToString();
+                float h = controlBounds.Height/4;
+                float w = controlBounds.Width/4;
+                RectangleF textBound = new RectangleF(controlBounds.X+w*3,controlBounds.Y+h*3-2,w,h);
+                graphics.DrawString("button.normal", textBound, s);
             /*
             if (control.Slot != null)
             {
