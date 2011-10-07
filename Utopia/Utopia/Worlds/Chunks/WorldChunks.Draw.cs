@@ -227,7 +227,6 @@ namespace Utopia.Worlds.Chunks
             _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine, @"Effects/Entities/StaticEntitySprite.hlsl", VertexPositionColorTexture.VertexDeclaration);
             _staticSpriteEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
             _staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
-
         }
 
         private void DisposeDrawComponents()

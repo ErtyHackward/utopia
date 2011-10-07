@@ -190,7 +190,7 @@ namespace Utopia.Worlds.Cubes
                     break;
                 case CubeFace.Top:
 
-                    //Get the 9 Facing cubes to the face
+                   //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Y, SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.Y, ind, false);
 
                     ByteColor Bottom_Cube = (ind[SingleArrayChunkContainer.BaseIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.BaseIndex]].EmissiveColor : new ByteColor();

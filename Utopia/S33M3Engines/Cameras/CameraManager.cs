@@ -27,6 +27,7 @@ namespace S33M3Engines.Cameras
         public CameraManager(ICamera camera)
         {
             ActiveCamera = camera;
+            UpdateOrder = 1;
         }
 
         #region Public methods

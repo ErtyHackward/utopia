@@ -21,11 +21,6 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         #region Private variable
         private SingleArrayChunkContainer _cubesHolder;
 
-        private delegate object CreateLightSourcesDelegate(object Params);
-        private CreateLightSourcesDelegate _createLightSourcesDelegate;
-
-        private delegate object PropagateLightSourcesDelegate(object Params);
-        private PropagateLightSourcesDelegate _propagateLightSourcesDelegate;
         private VisualWorldParameters _visualWorldParameters;
 
         private byte _lightPropagateSteps;
@@ -67,14 +62,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             //1) Request Server the chunk
             //2) If chunk is a "pure" chunk on the server, then generate it localy.
             //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
-            if (Async)
-            {
-                WorkQueue.DoWorkInThread(new WorkItemCallback(CreateLightSources_threaded), chunk, chunk as IThreadStatus, chunk.ThreadPriority);
-            }
-            else
-            {
-                _createLightSourcesDelegate.Invoke(chunk);
-            }
+             WorkQueue.DoWorkInThread(new WorkItemCallback(CreateLightSources_threaded), chunk, chunk as IThreadStatus, chunk.ThreadPriority);
         }
 
         //Create the LightSources for a specific range
@@ -83,25 +71,12 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             //1) Request Server the chunk
             //2) If chunk is a "pure" chunk on the server, then generate it localy.
             //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
-            if (Async)
-            {
-                WorkQueue.DoWorkInThread(new WorkItemCallback(PropagatesLightSources_threaded), chunk, chunk as IThreadStatus, chunk.ThreadPriority);
-            }
-            else
-            {
-                _propagateLightSourcesDelegate.Invoke(chunk);
-            }
+            WorkQueue.DoWorkInThread(new WorkItemCallback(PropagatesLightSources_threaded), chunk, chunk as IThreadStatus, chunk.ThreadPriority);
         }
 
         #endregion
 
         #region Private methods
-        private void Intialize()
-        {
-            _createLightSourcesDelegate = new CreateLightSourcesDelegate(CreateLightSources_threaded);
-            _createLightSourcesDelegate = new CreateLightSourcesDelegate(PropagatesLightSources_threaded);
-        }
-
         //Create the landscape for the chunk
         private object CreateLightSources_threaded(object Params)
         {
@@ -225,7 +200,6 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 }
             }
             if (withRangeEntityPropagation) PropagateLightInsideStaticEntities(ref cubeRange);
-
         }
 
         //Propagate the light inside the chunk entities
