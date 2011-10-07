@@ -18,6 +18,12 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         //public Rectangle? IconSourceRectangle  { get; set; }
         public int MaxStackSize { get; private set; }
         public string UniqueName { get; set; }
+
+        public virtual string StackType
+        {
+            get { return this.GetType().Name; }
+        }
+
         #endregion
 
         #region Public Methods

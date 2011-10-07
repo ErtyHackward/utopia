@@ -1,5 +1,6 @@
 ﻿using System;
 using Utopia.Server.Managers;
+using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
@@ -31,13 +32,24 @@ namespace Utopia.Server.Tools
             var impact = new ToolImpact { Success = false };
             if (callerTool is Annihilator)
             {
-                if(entity.EntityState.IsPickingActive)
+                if (entity.EntityState.IsPickingActive)
                 {
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
-                    if (cursor.Read() != 0)
+                    byte cube = cursor.Read();
+                    if (cube != 0)
                     {
                         cursor.Write(0);
                         impact.Success = true;
+
+                        CharacterEntity character = entity as CharacterEntity;
+                        if (character != null)
+                        {
+                            BlockAdder adder = (BlockAdder)EntityFactory.Instance.CreateEntity(EntityClassId.BlockAdder);
+                            adder.CubeId = cube;
+
+                            character.Inventory.PutItem(adder);
+                        }
+
                         return impact;
                     }
                 }

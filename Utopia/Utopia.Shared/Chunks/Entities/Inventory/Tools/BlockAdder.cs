@@ -15,6 +15,14 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
             get { return EntityClassId.BlockAdder; }
         }
 
+        public override string StackType
+        {
+            get
+            {
+                return base.StackType + CubeId; //effectively this.getType().Name + cubeid , so blockadder1 blockadder2 etc ...
+            }
+        }
+
         public override void Load(System.IO.BinaryReader reader)
         {
             base.Load(reader);

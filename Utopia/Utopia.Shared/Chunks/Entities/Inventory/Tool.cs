@@ -35,8 +35,9 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
         protected Tool()
         {
-            UniqueName = this.GetType().Name;
+            UniqueName = GetType().Name;
         }
+
 
         // we need to override save and load!
         public override void Load(System.IO.BinaryReader reader)

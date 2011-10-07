@@ -9,5 +9,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         EquipmentSlotType AllowedSlots { get; set; }   
         int MaxStackSize { get; }
         string UniqueName { get; set; }
+        string StackType { get;  }
+        
     }
 }
