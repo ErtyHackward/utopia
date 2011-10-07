@@ -51,6 +51,7 @@ namespace Utopia.Shared.Net.Messages
                 case MessageTypes.EntityImpulse:    return EntityImpulseMessage.Read(reader);
                 case MessageTypes.EntityLock:       return EntityLockMessage.Read(reader);
                 case MessageTypes.EntityLockResult: return EntityLockResultMessage.Read(reader);
+                case MessageTypes.UseFeedback:      return UseFeedbackMessage.Read(reader);
                 default:
                     throw new ArgumentException("Invalid message id received");
             }

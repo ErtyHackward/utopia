@@ -179,7 +179,10 @@ namespace Utopia.Server.Structs
 
             if (tool != null)
             {
-                tool.Use();
+                var toolImpact = tool.Use();
+
+                // returning tool feedback
+                Connection.SendAsync(new UseFeedbackMessage { Token = entityUseMessage.Token, EntityImpactBytes = toolImpact.ToArray() });
             }
             else
             {

@@ -188,6 +188,7 @@
     <Compile Include="Net\Messages\MessageTypes.cs" />
     <Compile Include="Net\Messages\NetworkMessageFactory.cs" />
     <Compile Include="Net\Messages\PingMessage.cs" />
+    <Compile Include="Net\Messages\UseFeedbackMessage.cs" />
     <Compile Include="Net\Messages\WeatherMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Roleplay\CharacterExperience.cs" />

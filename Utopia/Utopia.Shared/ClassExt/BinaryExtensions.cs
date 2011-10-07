@@ -1,5 +1,7 @@
 ﻿using S33M3Engines.Shared.Math;
 using SharpDX;
+using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
 namespace System.IO
@@ -105,6 +107,16 @@ namespace System.IO
         {
             writer.Write(range.Position);
             writer.Write(range.Size);
+        }
+
+        public static byte[] ToArray(this IBinaryStorable item)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var writer = new BinaryWriter(ms);
+                item.Save(writer);
+                return ms.ToArray();
+            }
         }
     }
 }
