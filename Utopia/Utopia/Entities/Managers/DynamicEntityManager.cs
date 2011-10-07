@@ -58,6 +58,7 @@ namespace Utopia.Entities.Managers
         #region Public Methods
         public override void Initialize()
         {
+            _dynamicEntityRenderer.Initialize();
         }
 
         public override void LoadContent()

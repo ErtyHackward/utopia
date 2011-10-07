@@ -12,9 +12,7 @@ using Utopia.Worlds.Cubes;
 using Utopia.Shared.Structs.Landscape;
 using S33M3Engines.D3D;
 using Utopia.Action;
-using System.Windows.Forms;
 using Utopia.Shared.Config;
-using System.Drawing;
 using S33M3Engines.D3D.DebugTools;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Chunks;
@@ -25,6 +23,31 @@ using Utopia.Entities.Renderer.Interfaces;
 using Utopia.GUI;
 using Utopia.GUI.D3D.Map;
 using Utopia.Editor;
+using S33M3Engines.WorldFocus;
+using S33M3Engines.GameStates;
+using S33M3Engines.Cameras;
+using S33M3Engines.Timers;
+using Utopia.InputManager;
+using Utopia.GUI.D3D;
+using Utopia.Entities;
+using Utopia.Worlds.Weather;
+using Utopia.Worlds.SkyDomes;
+using Utopia.Worlds.Storage;
+using Utopia.Shared.Chunks;
+using Utopia.Worlds.Chunks.ChunkLandscape;
+using Utopia.Worlds.Chunks.ChunkLighting;
+using Utopia.Worlds.Chunks.ChunkMesh;
+using Utopia.Worlds.Chunks.ChunkWrapper;
+using Utopia.Shared.Interfaces;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using Utopia.Entities.Managers.Interfaces;
+using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Entities.Voxel;
+using Ninject.Parameters;
+using Nuclex.UserInterface;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace LostIsland.Client
 {
@@ -43,8 +66,8 @@ namespace LostIsland.Client
             };
             //===========================================================================================
             //Doing components bindings
-            UtopiaRender utopiaRenderer = new UtopiaRender(iocContainer); // Need to create it there, the "system" component will be binded at creation time.
-            Binding(iocContainer, worldParam);                       // Bind various Components against concrete class.
+            UtopiaRender utopiaRenderer; // Need to create it there, the "system" component will be binded at creation time.
+            Binding(iocContainer, worldParam);            // Bind various Components against concrete class.
 
             //=======================================================================================================================
             //Create the various Concrete classe Binded, forwarding appropriate value. ==============================================
@@ -55,24 +78,59 @@ namespace LostIsland.Client
                                                @"Config\CubesProfile.xml");                                    //The path to the Cubes Profiles descriptions
             CubeProfile.InitCubeProfiles(@"Config\CubesProfile.xml");                                          // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
 
-            //Initialize the System components
-            utopiaRenderer.Init(iocContainer, 
-                                "Lost Island client",
-                                new Size(1024,600),
-                                false);                                                           
+            utopiaRenderer = new UtopiaRender(
+                        iocContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(1024, 600)),
+                                                    new ConstructorArgument("windowCaption", "LostIsland Client")),
+                        iocContainer.Get<Server>(),
+                        iocContainer.Get<WorldFocusManager>(),
+                        iocContainer.Get<WorldParameters>(),
+                        iocContainer.Get<VisualWorldParameters>(),
+                        iocContainer.Get<GameStatesManager>(),
+                        iocContainer.Get<ICamera>(),
+                        iocContainer.Get<CameraManager>(),
+                        iocContainer.Get<TimerManager>(),
+                        iocContainer.Get<EntityMessageTranslator>(),
+                        iocContainer.Get<ItemMessageTranslator>(),
+                        iocContainer.Get<InputsManager>(),
+                        iocContainer.Get<ActionsManager>(),
+                        iocContainer.Get<GuiManager>(),
+                        iocContainer.Get<Nuclex.UserInterface.Screen>(),
+                        iocContainer.Get<IconFactory>(),
+                        iocContainer.Get<FPS>(),
+                        iocContainer.Get<IClock>(),
+                        iocContainer.Get<ChatComponent>(),
+                        iocContainer.Get<MapComponent>(),
+                        iocContainer.Get<Hud>(),
+                        iocContainer.Get<EntityEditor>(),
+                        iocContainer.Get<IDrawableComponent>("Stars"),
+                        iocContainer.Get<ISkyDome>(),
+                        iocContainer.Get<IWeather>(),
+                        iocContainer.Get<IDrawableComponent>("Clouds"),
+                        iocContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false),
+                                                               new ConstructorArgument("UserName", _server.ServerConnection.Login)),
+                        iocContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"),
+                        iocContainer.Get<ICubeMeshFactory>("LiquidCubeMeshFactory"),
+                        iocContainer.Get<SingleArrayChunkContainer>(),
+                        iocContainer.Get<ILandscapeManager>(),
+                        iocContainer.Get<ILightingManager>(),
+                        iocContainer.Get<IChunkMeshManager>(),
+                        iocContainer.Get<IWorldChunks>(),
+                        iocContainer.Get<IChunksWrapper>(),
+                        iocContainer.Get<WorldGenerator>(),
+                        iocContainer.Get<IWorldProcessorConfig>(),
+                        iocContainer.Get<IPickingRenderer>(),
+                        iocContainer.Get<IChunkEntityImpactManager>(),
+                        iocContainer.Get<IEntityPickingManager>(),
+                        iocContainer.Get<IDynamicEntityManager>(),
+                        iocContainer.Get<PlayerEntityManager>(),
+                        iocContainer.Get<PlayerCharacter>(),
+                        iocContainer.Get<IEntitiesRenderer>("PlayerEntityRenderer"),
+                        iocContainer.Get<IEntitiesRenderer>("DefaultEntityRenderer"),
+                        iocContainer.Get<VoxelMeshFactory>()
+                );
 
 
-            BindActions(iocContainer.Get<ActionsManager>());                                                   //Bind the various actions
-
-            //Initialize custom components
-            utopiaRenderer.GameComponents.Add(iocContainer.Get<IPickingRenderer>());
-            utopiaRenderer.GameComponents.Add(iocContainer.Get<ChatComponent>());
-            utopiaRenderer.GameComponents.Add(iocContainer.Get<MapComponent>());
-            utopiaRenderer.GameComponents.Add(iocContainer.Get<DebugComponent>());
-            utopiaRenderer.GameComponents.Add(iocContainer.Get<FPS>());
-            utopiaRenderer.GameComponents.Add(iocContainer.Get<EntityEditor>());
-
-            iocContainer.Get<IWorld>(); // Create a world object
+            BindActions(iocContainer.Get<ActionsManager>());    //Bind the various actions
 
             //Create a debug displayer component =====
             DebugInfo debugInfo = new DebugInfo(iocContainer.Get<D3DEngine>());

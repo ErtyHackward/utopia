@@ -2,25 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UtopiaContent.Effects.Terran;
-using S33M3Engines;
-using S33M3Engines.WorldFocus;
-using S33M3Engines.Cameras;
 using Utopia.Entities.Voxel;
-using S33M3Engines.Struct.Vertex;
+using S33M3Engines.D3D;
+using S33M3Engines;
+using S33M3Engines.Cameras;
+using S33M3Engines.WorldFocus;
 using S33M3Engines.StatesManager;
 using SharpDX;
-using S33M3Engines.D3D;
-using S33M3Engines.Textures;
+using S33M3Engines.Buffers;
+using S33M3Engines.Struct.Vertex;
 using SharpDX.Direct3D11;
+using S33M3Engines.Textures;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
 using Utopia.Entities.Renderer.Interfaces;
+using Utopia.Entities.Renderer;
+using LostIsland.Resources.Effects.Terran;
 
-namespace Utopia.Entities.Renderer
+namespace ListIsland.Client.Entities.Renderer
 {
-    public class DynamicEntityRenderer : IEntitiesRenderer
+    public class PlayerEntityRenderer : IEntitiesRenderer
     {
         #region Private variables
         private HLSLTerran _entityEffect;
@@ -30,7 +32,6 @@ namespace Utopia.Entities.Renderer
         private ShaderResourceView _cubeTexture_View;
         private ISkyDome _skydome;
         private VisualWorldParameters _visualWorldParameters;
-        private VisualEntity _entityToRender;
         #endregion
 
         #region Public variables/properties
@@ -38,7 +39,7 @@ namespace Utopia.Entities.Renderer
         public IVisualEntityContainer VisualEntity { get; set; }
         #endregion
 
-        public DynamicEntityRenderer(D3DEngine d3DEngine,
+        public PlayerEntityRenderer(D3DEngine d3DEngine,
                                     CameraManager camManager,
                                     WorldFocusManager worldFocusManager,
                                     ISkyDome skydome,
@@ -46,13 +47,13 @@ namespace Utopia.Entities.Renderer
         {
             _d3DEngine = d3DEngine;
             _camManager = camManager;
-            _skydome = skydome;
-            _visualWorldParameters = visualWorldParameters;
             _worldFocusManager = worldFocusManager;
+
+            Initialize();   
         }
 
         #region Private Methods
-        public void Initialize()
+        private void Initialize()
         {
             _entityEffect = new HLSLTerran(_d3DEngine, @"Effects/Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration);
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
@@ -65,6 +66,9 @@ namespace Utopia.Entities.Renderer
         #region Public Methods
         public void Draw(int Index)
         {
+            //If camera is first person Don't draw the body.
+            if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson) return;
+
             //Applying Correct Render States
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
@@ -75,26 +79,14 @@ namespace Utopia.Entities.Renderer
             _entityEffect.CBPerFrame.Values.fogdist = ((_visualWorldParameters.WorldVisibleSize.X) / 2) - 48;
             _entityEffect.CBPerFrame.IsDirty = true;
 
-            for (int i = 0; i < VisualEntities.Count; i++)
-            {
-                _entityToRender = VisualEntities[i].VisualEntity;
+            Matrix world = _worldFocusManager.CenterOnFocus(ref VisualEntity.VisualEntity.World);
 
-                //Draw only the entities that are in Client view range
-                if (_entityToRender.Position.X > _visualWorldParameters.WorldRange.Min.X &&
-                   _entityToRender.Position.X <= _visualWorldParameters.WorldRange.Max.X &&
-                   _entityToRender.Position.Z > _visualWorldParameters.WorldRange.Min.Z &&
-                   _entityToRender.Position.Z <= _visualWorldParameters.WorldRange.Max.Z)
-                {
-                    Matrix world = _worldFocusManager.CenterOnFocus(ref _entityToRender.World);
+            _entityEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
+            _entityEffect.CBPerDraw.IsDirty = true;
+            _entityEffect.Apply();
 
-                    _entityEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
-                    _entityEffect.CBPerDraw.IsDirty = true;
-                    _entityEffect.Apply();
-
-                    _entityToRender.VertexBuffer.SetToDevice(0);
-                    _d3DEngine.Context.Draw(VisualEntities[i].VisualEntity.VertexBuffer.VertexCount, 0);
-                }
-            }
+            VisualEntity.VisualEntity.VertexBuffer.SetToDevice(0);
+            _d3DEngine.Context.Draw(VisualEntity.VisualEntity.VertexBuffer.VertexCount, 0);
         }
 
         public void Update(ref GameTime timeSpent)
@@ -107,9 +99,10 @@ namespace Utopia.Entities.Renderer
 
         public void Dispose()
         {
-            _entityEffect.Dispose();
             _cubeTexture_View.Dispose();
+            _entityEffect.Dispose();
         }
         #endregion
+
     }
 }

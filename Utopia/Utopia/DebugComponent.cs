@@ -20,21 +20,18 @@ namespace Utopia
         private readonly ActionsManager _actions;
         private readonly D3DEngine _d3DEngine;
         private readonly UtopiaRender _game;
-        private readonly GameStatesManager _gameStateManagers;
-        private readonly DebugInfo _debugInfo;
         private readonly Screen _screen;
+        private readonly GameStatesManager _gameStateManagers;
 
         private DebugUi _debugUi;
 
-        public DebugComponent(DebugInfo debugInfo, GameStatesManager gameStateManagers, UtopiaRender game, D3DEngine d3DEngine, ActionsManager actions, Screen screen)
+        public DebugComponent(UtopiaRender game, D3DEngine d3DEngine, Screen screen, GameStatesManager gameStateManagers, ActionsManager actions)
         {
-
-            _debugInfo = debugInfo;
-            _actions = actions;
             _d3DEngine = d3DEngine;
             _game = game;
-            _gameStateManagers = gameStateManagers;
             _screen = screen;
+            _gameStateManagers = gameStateManagers;
+            _actions = actions;
          }
 
 
@@ -84,8 +81,6 @@ namespace Utopia
             //    _gameStateManagers.DebugDisplay--;
             //    if (_gameStateManagers.DebugDisplay < 0) _gameStateManagers.DebugDisplay = 0;
             //}
-
-
 
             if (_actions.isTriggered(Actions.Engine_VSync))
             {

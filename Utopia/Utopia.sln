@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utopia", "Utopia\Utopia.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S33M3Engines", "S33M3Engines\S33M3Engines.csproj", "{E1E5C757-C550-4E62-8BE3-2E9553F023F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtopiaContent", "UtopiaContent\UtopiaContent.csproj", "{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utopia.Resources", "Utopia.Resources\Utopia.Resources.csproj", "{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S33M3Physics", "S33M3Physics\S33M3Physics.csproj", "{A5C84956-C735-457B-9BF5-C5359F427418}"
 EndProject
