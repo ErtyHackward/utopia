@@ -92,6 +92,10 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Informs about lock operation result
         /// </summary>
-        EntityLockResult = 22 
+        EntityLockResult = 22,
+        /// <summary>
+        /// Informs about tool use success
+        /// </summary>
+        UseFeedback = 23
     }
 }
