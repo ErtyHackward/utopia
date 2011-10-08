@@ -9,7 +9,7 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
         /// <summary>
         /// Gets entity class id
         /// </summary>
-        EntityClassId ClassId { get; }
+        ushort ClassId { get; }
 
         /// <summary>
         /// Entity size

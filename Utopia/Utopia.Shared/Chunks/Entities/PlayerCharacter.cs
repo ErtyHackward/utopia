@@ -19,7 +19,7 @@ namespace Utopia.Shared.Chunks.Entities
         
         public SlotContainer<ToolbarSlot> Toolbar { get; private set; }
         
-        public override EntityClassId ClassId
+        public override ushort ClassId
         {
             get { return EntityClassId.PlayerCharacter; }
         }

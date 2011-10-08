@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
@@ -15,7 +16,7 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Class responsible to manage the acces to the circular array containing the Cubes
     /// </summary>
-    public class SingleArrayChunkContainer: IDisposable
+    public class SingleArrayChunkContainer: ILandscapeManager2D,  IDisposable
     {
         public struct SurroundingIndex
         {
@@ -595,6 +596,21 @@ namespace Utopia.Shared.Chunks
             Cubes[index] = cube;
 
             if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Vector3I { X = X, Y = Y, Z = Z } }, Bytes = new[] { cube.Id } });
+        }
+        
+        public IChunkLayout2D GetChunk(Vector2I position)
+        {
+            throw new NotSupportedException();
+        }
+
+        public ILandscapeCursor GetCursor(Vector3I blockPosition)
+        {
+            return new SingleArrayLandscapeCursor(this, blockPosition);
+        }
+
+        public ILandscapeCursor GetCursor(Vector3D entityPosition)
+        {
+            return GetCursor(new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
         }
     }
 }

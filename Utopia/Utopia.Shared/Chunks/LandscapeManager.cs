@@ -40,12 +40,12 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="blockPosition">global block position</param>
         /// <returns></returns>
-        public LandscapeCursor GetCursor(Vector3I blockPosition)
+        public ILandscapeCursor GetCursor(Vector3I blockPosition)
         {
             return new LandscapeCursor(this, blockPosition);
         }
 
-        public LandscapeCursor GetCursor(Vector3D entityPosition)
+        public ILandscapeCursor GetCursor(Vector3D entityPosition)
         {
             return GetCursor(new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
         }

@@ -16,7 +16,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
 
         #region Public properties/variables
         public byte GrowPhase { get; set; }
-        public override EntityClassId ClassId
+        public override ushort ClassId
         {
             get { return EntityClassId.Grass; }
         }

@@ -100,7 +100,6 @@
     <Compile Include="Chunks\Entities\Interfaces\IGrowEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\ISlotContainer.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IToolImpact.cs" />
-    <Compile Include="Chunks\Entities\Interfaces\IToolLogic.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IUsableEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IVoxelEntity.cs" />
     <Compile Include="Chunks\Entities\Inventory\IItem.cs" />
@@ -109,8 +108,6 @@
     <Compile Include="Chunks\Entities\Inventory\ToolbarSlot.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityEffect.cs" />
     <Compile Include="Chunks\Entities\DynamicEntityState.cs" />
-    <Compile Include="Chunks\Entities\Inventory\Tools\BlockAdder.cs" />
-    <Compile Include="Chunks\Entities\Inventory\Tools\Hand.cs" />
     <Compile Include="Chunks\Entities\PlayerCharacter.cs" />
     <Compile Include="Chunks\Entities\SpecialCharacterEntity.cs" />
     <Compile Include="Chunks\Entities\Concrete\ContainerEntity.cs" />
@@ -128,9 +125,6 @@
     <Compile Include="Chunks\Entities\Inventory\VoxelItem.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tool.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\BlockRemover.cs" />
-    <Compile Include="Chunks\Entities\Inventory\Tools\Shovel.cs" />
-    <Compile Include="Chunks\Entities\Inventory\Tools\Pickaxe.cs" />
-    <Compile Include="Chunks\Entities\Inventory\Tools\Survey.cs" />
     <Compile Include="Chunks\Entities\Inventory\Tools\ToolImpact.cs" />
     <Compile Include="Chunks\Entities\Inventory\Weapon.cs" />
     <Compile Include="Chunks\Entities\DynamicEntity.cs" />
@@ -141,6 +135,7 @@
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
+    <Compile Include="Chunks\SingleArrayLandscapeCursor.cs" />
     <Compile Include="Gameplay\ServerGameplayProvider.cs" />
     <Compile Include="Interfaces\IAbstractChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
@@ -154,6 +149,7 @@
     <Compile Include="Interfaces\IBinaryStorable.cs" />
     <Compile Include="Interfaces\IChunkLayout2D.cs" />
     <Compile Include="Interfaces\IChunksStorage.cs" />
+    <Compile Include="Interfaces\ILandscapeCursor.cs" />
     <Compile Include="Interfaces\ILandscapeManager2D.cs" />
     <Compile Include="Interfaces\ISingleArrayDataProviderUser.cs" />
     <Compile Include="Interfaces\IUsersStorage.cs" />

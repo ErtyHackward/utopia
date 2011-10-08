@@ -311,7 +311,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Utopia.Resources\Utopia.Resources.csproj">
       <Project>{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}</Project>
-      <Name>Utopia.Resource</Name>
+      <Name>Utopia.Resources</Name>
     </ProjectReference>
     <ProjectReference Include="..\S33M3Engines\S33M3Engines.csproj">
       <Project>{E1E5C757-C550-4E62-8BE3-2E9553F023F7}</Project>

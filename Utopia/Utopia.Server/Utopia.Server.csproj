@@ -109,7 +109,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Utopia.Resources\Utopia.Resources.csproj">
       <Project>{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}</Project>
-      <Name>Utopia.Resource</Name>
+      <Name>Utopia.Resources</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

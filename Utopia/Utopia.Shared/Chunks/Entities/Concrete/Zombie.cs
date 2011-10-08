@@ -4,7 +4,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
 {
     public class Zombie : CharacterEntity
     {
-        public override EntityClassId ClassId
+        public override ushort ClassId
         {
             get { return EntityClassId.Zombie; }
         }

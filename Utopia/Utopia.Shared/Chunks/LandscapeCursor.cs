@@ -8,7 +8,7 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Provides ability to travel the cubes without need to know about chunks
     /// </summary>
-    public class LandscapeCursor
+    public class LandscapeCursor : ILandscapeCursor
     {
         private readonly ILandscapeManager2D _manager;
         private Vector3I _internalPosition;
@@ -72,7 +72,7 @@ namespace Utopia.Shared.Chunks
         /// Creates a copy of current cursor
         /// </summary>
         /// <returns></returns>
-        public LandscapeCursor Clone()
+        public ILandscapeCursor Clone()
         {
             var cursor = new LandscapeCursor(_manager)
                              {
@@ -171,12 +171,12 @@ namespace Utopia.Shared.Chunks
             return _currentChunk.BlockData[peekPosition];
         }
 
-        public LandscapeCursor MoveDown()
+        public ILandscapeCursor MoveDown()
         {
             return Move(new Vector3I(0, -1, 0));
         }
 
-        public LandscapeCursor MoveUp()
+        public ILandscapeCursor MoveUp()
         {
             return Move(new Vector3I(0, 1, 0));
         }
@@ -186,7 +186,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="moveVector"></param>
         /// <returns></returns>
-        public LandscapeCursor Move(Vector3I moveVector)
+        public ILandscapeCursor Move(Vector3I moveVector)
         {
             _internalPosition.X += moveVector.X;
             _internalPosition.Y += moveVector.Y;

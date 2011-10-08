@@ -39,14 +39,15 @@ namespace Utopia.Entities
         {
             //TODO pooling in  a dictionary<entityId,Texture>, but don't forget to unpool entities that become unused !
 
-            if (item is BlockAdder)
-            {
-                BlockAdder blockAdder = item as BlockAdder;
-                SpriteTexture texture = new SpriteTexture(IconSize, IconSize, CubesTexture, Vector2.Zero);
-                texture.Index = blockAdder.CubeId;
-                return texture;
-            }
-            else if (item is SpriteItem)
+            //if (item is CubeResource)
+            //{
+            //    CubeResource blockAdder = item as CubeResource;
+            //    SpriteTexture texture = new SpriteTexture(IconSize, IconSize, CubesTexture, Vector2.Zero);
+            //    texture.Index = blockAdder.CubeId;
+            //    return texture;
+            //}
+            //else 
+                if (item is SpriteItem)
             {
                 //TODO spriteItem icon (shouldnt be difficult ;)
             }
