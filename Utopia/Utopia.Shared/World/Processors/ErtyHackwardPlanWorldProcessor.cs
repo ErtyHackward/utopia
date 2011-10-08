@@ -50,16 +50,17 @@ namespace Utopia.Shared.World.Processors
                 RelaxCount = 3
             });
 
-            Scale = 2;
+            Scale = 1;
 
             WorldPlan.Generate();
         }
 
         public void Generate(Range2 generationRange, GeneratedChunk[,] chunks)
         {
-            var r = new Random(_worldParameters.Seed);
+            
             generationRange.Foreach(pos =>
                                         {
+                                            var r = new Random(_worldParameters.Seed + pos.GetHashCode());
                                             var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
                                             
                                             for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
@@ -99,14 +100,14 @@ namespace Utopia.Shared.World.Processors
                                                                 if (topGroundBlock == CubeId.Grass)
                                                                 {
 
-                                                                    if (r.Next(0, 180) == 1)
+                                                                    if (r.NextDouble() < 0.01d)
                                                                     {
-                                                                        //AddTree(chunk, globalPos + new Vector3I(0, 1, 0));
+                                                                        AddTree(chunk, new Vector3I(x, y+ 1, z));
                                                                     }
                                                                     else
                                                                         chunk.Entities.Add(new Grass
                                                                                                {
-                                                                                                   GrowPhase = 4,
+                                                                                                   GrowPhase = 1,
                                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5)
                                                                                                });
                                                                 }
@@ -123,11 +124,41 @@ namespace Utopia.Shared.World.Processors
                                         });
         }
 
-        private void AddTree(GeneratedChunk chunk, Vector3D vector3d)
+        private void AddTree(GeneratedChunk chunk, Vector3I vector3i)
         {
             var tree = new Tree();
-            tree.Position = vector3d;
+            tree.Position = new Vector3D(vector3i.X, vector3i.Y, vector3i.Z);
             chunk.Entities.Add(tree);
+
+            for (int i = 0; i < 7; i++)
+            {
+                TryAddBlock(chunk, vector3i, CubeId.Trunk);
+                vector3i.Y++;
+            }
+
+            var radius = 2;
+            for (int y = 0; y < 4; y++)
+            {
+                if (y == 0 || y == 3) radius = 1; else radius = 2;
+                for (int x = -radius; x <= radius; x++)
+                {
+                    for (int z = -radius; z <= radius; z++)
+                    {
+                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), CubeId.Leaves);
+                    }
+                }
+
+                vector3i.Y--;
+            }
+
+        }
+
+        private void TryAddBlock(GeneratedChunk chunk, Vector3I pos, byte value)
+        {
+            if (pos.X >= 0 && pos.X < AbstractChunk.ChunkSize.X && pos.Y >= 0 && pos.Y < AbstractChunk.ChunkSize.Y && pos.Z >= 0 && pos.Z < AbstractChunk.ChunkSize.Z)
+            {
+                chunk.BlockData[pos] = value;
+            }
         }
 
         private struct PointData
@@ -162,7 +193,7 @@ namespace Utopia.Shared.World.Processors
 
             var distSumm = distances.Sum();
 
-            data.Elevation = (int)poly.Corners.Select((c, i) => (distances[i] * c.Elevation / 2) / distSumm).Sum();
+            data.Elevation = (int)Math.Round(poly.Corners.Select((c, i) => (distances[i] * c.Elevation / 2) / distSumm).Sum());
 
             return data;
         }
