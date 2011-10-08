@@ -265,7 +265,7 @@ namespace Utopia
             GameComponents.Add(_pickingRenderer);
             GameComponents.Add(_chatComponent);
             GameComponents.Add(_mapComponent);
-            GameComponents.Add(new DebugComponent(this, _d3dEngine, _screen, _gameStatesManager, _actionsManager));
+            GameComponents.Add(new DebugComponent(this, _d3dEngine, _screen, _gameStatesManager, _actionsManager,_playerEntityManager));
             GameComponents.Add(_fps);
             GameComponents.Add(_entityEditor);
             GameComponents.Add(_skydome);

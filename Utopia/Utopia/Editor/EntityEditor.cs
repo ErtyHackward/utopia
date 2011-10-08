@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Nuclex.UserInterface.Controls;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
@@ -16,20 +15,20 @@ using S33M3Engines.WorldFocus;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Action;
-using Utopia.Entities;
+using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
-using Utopia.Entities.Renderer;
+using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.InputManager;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Chunks.Entities.Concrete;
-using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Landscape;
+using Utopia.Worlds.Cubes;
 using UtopiaContent.Effects.Terran;
 using Screen = Nuclex.UserInterface.Screen;
-using Utopia.Entities.Renderer.Interfaces;
 
 namespace Utopia.Editor
 {
@@ -42,6 +41,7 @@ namespace Utopia.Editor
         private readonly InputsManager _inputManager;
         private readonly IPickingRenderer _pickingRenderer;
         private readonly IDynamicEntityManager _entityManager;
+        private readonly PlayerEntityManager _playerMgr;
         private HLSLTerran _itemEffect;
         private readonly CameraManager _camManager;
         private readonly WorldFocusManager _worldFocusManager;
@@ -68,7 +68,10 @@ namespace Utopia.Editor
 
         public List<Vector3I> Selected = new List<Vector3I>();
 
-        public byte SelectedIndex { get; set; }
+        /// <summary>
+        /// this byte represents a cubeid or color depending on IsColor mode
+        /// </summary>
+        public byte SelectedCubeId { get; set; }
         public bool IsTexture { get; set; }
 
         public bool IsColor
@@ -94,7 +97,7 @@ namespace Utopia.Editor
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
                             ActionsManager actions, Hud hudComponent, PlayerCharacter player,
-                            InputsManager inputsManager,IPickingRenderer pickingRenderer,IDynamicEntityManager entityManager)
+                            InputsManager inputsManager,IPickingRenderer pickingRenderer,IDynamicEntityManager entityManager,PlayerEntityManager playerMgr)
         {
             LeftTool = new EditorRemove(this);
             RightTool = new EditorAdd(this);
@@ -109,6 +112,7 @@ namespace Utopia.Editor
             _inputManager = inputsManager;
             _pickingRenderer = pickingRenderer;
             _entityManager = entityManager;
+            _playerMgr = playerMgr;
 
             // inactive by default, use F12 UI to enable :)
             _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
@@ -144,7 +148,8 @@ namespace Utopia.Editor
             if (_player.EntityState.PickedEntityId == 0)
             {
                 //picked a terrain block
-             
+                IsTexture = true;
+                SelectedCubeId = VisualCubeProfile.CubesProfile[_playerMgr.PickedCube.Cube.Id].Tex_Front;
                 EditableVoxelEntity spawn = new EditableVoxelEntity();
                 spawn.Model.Blocks = new byte[16, 16, 16]; //TODO 8 8 8 for terrain edited entity
                 
@@ -282,6 +287,9 @@ namespace Utopia.Editor
 
             if (Enabled)
             {
+                _playerMgr.HasMouseFocus = false;
+                _playerMgr.MousepickDisabled = true;
+                _playerMgr.Player.MoveSpeed = 0.25f;
                 _hudComponent.Enabled = false;
               
                 _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
@@ -296,6 +304,9 @@ namespace Utopia.Editor
             }
             else
             {
+                _playerMgr.HasMouseFocus = true;
+                _playerMgr.MousepickDisabled = false;
+                _playerMgr.Player.MoveSpeed = PlayerCharacter.DefaultMoveSpeed;
                 _player.Equipment.LeftTool = _leftToolbeforeEnteringEditor;
                 if (_ui != null)
                 {

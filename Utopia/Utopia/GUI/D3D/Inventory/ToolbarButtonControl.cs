@@ -23,8 +23,6 @@ namespace Utopia.GUI.D3D.Inventory
 
         public bool Highlight { get; set; }
 
-        private ShaderResourceView _cubesTexture;
-
         public IItem LeftItem
         {
             get { return _player.LookupItem(ToolbarSlot.Left); }

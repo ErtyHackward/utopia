@@ -14,6 +14,9 @@ namespace Utopia.Shared.Chunks.Entities
         #endregion
 
         #region Public variables/properties
+
+        public static float DefaultMoveSpeed = 5f;
+        
         public SlotContainer<ToolbarSlot> Toolbar { get; private set; }
         
         public override EntityClassId ClassId
@@ -32,7 +35,7 @@ namespace Utopia.Shared.Chunks.Entities
             //Define the default PlayerCharacter ToolBar
             Toolbar = new SlotContainer<ToolbarSlot>(new Vector2I(10, 1));
 
-            MoveSpeed = 5f;               //Default player MoveSpeed
+            MoveSpeed = DefaultMoveSpeed;               //Default player MoveSpeed
             RotationSpeed = 10f;          //Default Player Rotation Speed
             Size = new SharpDX.Vector3(0.5f, 1.9f, 0.5f); //Default player size
             

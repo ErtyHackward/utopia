@@ -154,7 +154,7 @@ namespace Utopia.Editor
                     int associatedindex = index; //for access inside closure 
                     btn.Pressed += (sender, e) =>
                                        {
-                                           _editorComponent.SelectedIndex = (byte) associatedindex;
+                                           _editorComponent.SelectedCubeId = (byte)associatedindex;
                                            _editorComponent.IsColor = true;
                                        };
 
@@ -199,7 +199,7 @@ namespace Utopia.Editor
                     int associatedindex = profile.Id; //new variable for access inside btn.pressed closure 
                     btn.Pressed += (sender, e) =>
                                        {
-                                           _editorComponent.SelectedIndex = (byte) associatedindex;
+                                           _editorComponent.SelectedCubeId = (byte) associatedindex;
                                            _editorComponent.IsTexture = true;
                                        };
                     palette.Children.Add(btn);
