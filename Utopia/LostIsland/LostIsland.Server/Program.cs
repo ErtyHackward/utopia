@@ -59,7 +59,7 @@ namespace LostIslandServer
         {
             _iocContainer = new StandardKernel(new NinjectSettings());
 
-            CubeProfile.InitCubeProfiles(@"Models\CubesProfile.xml");
+            CubeProfile.InitCubeProfiles(@"Config\CubesProfile.xml");
 
             IocBind(new WorldParameters());
 
