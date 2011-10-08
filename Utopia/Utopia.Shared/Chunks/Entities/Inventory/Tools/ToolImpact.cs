@@ -23,6 +23,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory.Tools
         public void Save(BinaryWriter writer)
         {
             writer.Write(Success);
+            if (Message == null) Message = string.Empty;
             writer.Write(Message);
         }
 
