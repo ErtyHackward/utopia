@@ -75,7 +75,7 @@ namespace Utopia.Editor
 
         protected override void FillFunction(int x, int y, int z)
         {
-            Entity.Model.Blocks[x, y, z] = Editor.SelectedIndex;
+            Entity.Model.Blocks[x, y, z] = Editor.SelectedCubeId;
         }
     }
 
@@ -98,7 +98,7 @@ namespace Utopia.Editor
             if (z == Zmax) n++;
             if (n > 1)
             {
-                Entity.Model.Blocks[x, y, z] = Editor.SelectedIndex;
+                Entity.Model.Blocks[x, y, z] = Editor.SelectedCubeId;
             }
             else
                 Entity.Model.Blocks[x, y, z] = 0;
@@ -124,7 +124,7 @@ namespace Utopia.Editor
                 {
                     for (int z = zc-1; z < zc+1; z++)
                     {
-                        Entity.Model.Blocks[x, y, z] = Editor.SelectedIndex;
+                        Entity.Model.Blocks[x, y, z] = Editor.SelectedCubeId;
                     }
                 }
             }
@@ -159,7 +159,7 @@ namespace Utopia.Editor
                 
             if (n>1)
             {
-                Entity.Model.Blocks[x, y, z] = Editor.SelectedIndex;                
+                Entity.Model.Blocks[x, y, z] = Editor.SelectedCubeId;                
             }
             else
                 Entity.Model.Blocks[x, y, z] = 0;

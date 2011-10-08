@@ -40,7 +40,8 @@ namespace Utopia.Entities.Managers
         private SingleArrayChunkContainer _cubesHolder;
 
         //Block Picking variables
-        private TerraCubeWithPosition _pickedCube;
+        public TerraCubeWithPosition PickedCube;
+        public TerraCubeWithPosition NewCube;
 
         //Head UnderWater test
         private int _headCubeIndex;
@@ -113,6 +114,8 @@ namespace Utopia.Entities.Managers
                 }
             }
         }
+
+        public bool HasMouseFocus { get; set; }
         #endregion
 
         public PlayerEntityManager(D3DEngine engine,
@@ -148,6 +151,8 @@ namespace Utopia.Entities.Managers
             //Give the Renderer acces to the Voxel buffers, ...
             _playerRenderer.VisualEntity = this;
 
+            HasMouseFocus = Enabled;
+
             UpdateOrder = 0;
         }
 
@@ -165,6 +170,7 @@ namespace Utopia.Entities.Managers
         /// </summary>
         private void inputHandler()
         {
+           
 
             if (_actions.isTriggered(Actions.Move_Mode))
             {
@@ -177,6 +183,8 @@ namespace Utopia.Entities.Managers
                     DisplacementMode = EntityDisplacementModes.Flying;
                 }
             }
+            
+            if (!HasMouseFocus) return; //the editor(s) can acquire the mouseFocus
 
             if (_actions.isTriggered(Actions.Use_Left))
             {
@@ -235,7 +243,7 @@ namespace Utopia.Entities.Managers
         {
             bool newpicking;
 
-            if (!_d3DEngine.UnlockedMouse)
+            if (MousepickDisabled || !_d3DEngine.UnlockedMouse)
             {
                 Vector3D pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
                 newpicking = RefreshPicking(ref pickingPointInLine, ref _lookAt, 1);
@@ -262,6 +270,8 @@ namespace Utopia.Entities.Managers
             }
         }
 
+        public bool MousepickDisabled { get; set; }
+
         //Will return true if a new Item has been picked up !
         private bool RefreshPicking(ref Vector3D pickingWorldPosition, ref Vector3D pickingLookAt, int rounding)
         {
@@ -274,28 +284,31 @@ namespace Utopia.Entities.Managers
                 pickingWorldPosition += pickingLookAt * 0.02;
 
                 //Check if a block is picked up !
-                if (_cubesHolder.isPickable(ref pickingWorldPosition, out _pickedCube))
+                if (_cubesHolder.isPickable(ref pickingWorldPosition, out PickedCube))
                 {
-                    Player._entityState.PickedBlockPosition = _pickedCube.Position;
-
+                    Player._entityState.PickedBlockPosition = PickedCube.Position;
+                    
+                    bool newPlacechanged = false;
+                    
                     //Find the Potential new block place, by roling back !
                     while (ptNbr > 0)
                     {
                         pickingWorldPosition -= pickingLookAt * 0.02;
-
-                        if (_cubesHolder.isPickable(ref pickingWorldPosition, out _pickedCube) == false)
+                        
+                        if (_cubesHolder.isPickable(ref pickingWorldPosition, out NewCube) == false)
                         {
-                            Player._entityState.NewBlockPosition = _pickedCube.Position;
+                            Player._entityState.NewBlockPosition = NewCube.Position;
+                            newPlacechanged = true;
                             break;
                         }
                         ptNbr--;
                     }
 
-                    if (_pickedCube.Position == Player._entityState.PickedBlockPosition)
+                    if (PickedCube.Position == Player._entityState.PickedBlockPosition)
                     {
                         Player._entityState.PickedEntityId = 0;
                         Player._entityState.IsPickingActive = true;
-                        return false;
+                        if (! newPlacechanged) return false;
                     }
 
                     Player._entityState.PickedEntityId = 0;
@@ -713,6 +726,7 @@ namespace Utopia.Entities.Managers
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
         {
+            //TODO FIXME NAsty bug here, not a number float arithmetic exception sometimes - surely a server side fix to do !
             Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 

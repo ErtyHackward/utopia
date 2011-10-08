@@ -8,6 +8,7 @@ using S33M3Engines.D3D;
 using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.GameStates;
 using S33M3Engines.InputHandler;
+using Utopia.Entities.Managers;
 using Utopia.Settings;
 using Screen = Nuclex.UserInterface.Screen;
 using Utopia.GUI.D3D.DebugUI;
@@ -18,6 +19,7 @@ namespace Utopia
     public class DebugComponent : GameComponent
     {
         private readonly ActionsManager _actions;
+        private readonly PlayerEntityManager _playerMgr;
         private readonly D3DEngine _d3DEngine;
         private readonly UtopiaRender _game;
         private readonly Screen _screen;
@@ -25,14 +27,15 @@ namespace Utopia
 
         private DebugUi _debugUi;
 
-        public DebugComponent(UtopiaRender game, D3DEngine d3DEngine, Screen screen, GameStatesManager gameStateManagers, ActionsManager actions)
+        public DebugComponent(UtopiaRender game, D3DEngine d3DEngine, Screen screen, GameStatesManager gameStateManagers, ActionsManager actions, PlayerEntityManager playerMgr )
         {
             _d3DEngine = d3DEngine;
             _game = game;
             _screen = screen;
             _gameStateManagers = gameStateManagers;
             _actions = actions;
-         }
+            _playerMgr = playerMgr;
+        }
 
 
         public override void Update(ref GameTime timeSpent)
@@ -102,12 +105,15 @@ namespace Utopia
                 if (_screen.Desktop.Children.Contains(_debugUi))
                 {
                     _screen.Desktop.Children.Remove(_debugUi);
+                    _playerMgr.HasMouseFocus = true;
                 }
                 else {
+
                     //each time i press the key, I want a fresh dynamically built UI, in synch with components, and I dont care for garbage in debug components !
                     _debugUi = new DebugUi(_game, _game.GameComponents, _d3DEngine, _gameStateManagers);
                     //made this without ninject to keep it explicit, but debugui could be injected into debugcomponent !
                     _screen.Desktop.Children.Add(_debugUi);
+                    _playerMgr.HasMouseFocus = false;
                 }
             }
 

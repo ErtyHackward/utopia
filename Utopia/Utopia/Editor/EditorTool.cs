@@ -32,7 +32,7 @@ namespace Utopia.Editor
 
         public override void Use()
         {
-            Editor.UpdateNewPlace(Editor.SelectedIndex);           
+            Editor.UpdateNewPlace(Editor.SelectedCubeId);           
         }
     }
     
