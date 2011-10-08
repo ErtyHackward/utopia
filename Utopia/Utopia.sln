@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIsland.Server", "LostIs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIsland.Resources", "LostIsland\LostIsland.Resources\LostIsland.Resources.csproj", "{E27CDE0E-E112-4BC7-A59B-977654547D5D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIsland.Shared", "LostIsland.Shared\LostIsland.Shared.csproj", "{F1802365-2422-40CA-9962-21BD6B93B6D3}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Utopia.vsmdi
@@ -159,6 +161,16 @@ Global
 		{E27CDE0E-E112-4BC7-A59B-977654547D5D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{E27CDE0E-E112-4BC7-A59B-977654547D5D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E27CDE0E-E112-4BC7-A59B-977654547D5D}.Release|x86.ActiveCfg = Release|Any CPU
+		{F1802365-2422-40CA-9962-21BD6B93B6D3}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{F1802365-2422-40CA-9962-21BD6B93B6D3}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{F1802365-2422-40CA-9962-21BD6B93B6D3}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{F1802365-2422-40CA-9962-21BD6B93B6D3}.Debug|x86.ActiveCfg = Debug|x86
+		{F1802365-2422-40CA-9962-21BD6B93B6D3}.Debug|x86.Build.0 = Debug|x86
+		{F1802365-2422-40CA-9962-21BD6B93B6D3}.Release|Any CPU.ActiveCfg = Release|x86
+		{F1802365-2422-40CA-9962-21BD6B93B6D3}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{F1802365-2422-40CA-9962-21BD6B93B6D3}.Release|Mixed Platforms.Build.0 = Release|x86
+		{F1802365-2422-40CA-9962-21BD6B93B6D3}.Release|x86.ActiveCfg = Release|x86
+		{F1802365-2422-40CA-9962-21BD6B93B6D3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -167,6 +179,7 @@ Global
 		{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C} = {16F39C83-EC82-4286-BAA2-EE91D5CC461B}
 		{B0BB4433-F9CF-423F-9C58-8FABD8A82B41} = {16F39C83-EC82-4286-BAA2-EE91D5CC461B}
 		{E27CDE0E-E112-4BC7-A59B-977654547D5D} = {16F39C83-EC82-4286-BAA2-EE91D5CC461B}
+		{F1802365-2422-40CA-9962-21BD6B93B6D3} = {16F39C83-EC82-4286-BAA2-EE91D5CC461B}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

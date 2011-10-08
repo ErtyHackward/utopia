@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LostIsland.Shared;
 using Utopia.Shared.World;
 using Utopia;
 using Ninject;
@@ -78,6 +79,8 @@ namespace LostIsland.Client
                                                @"Config\CubesProfile.xml");                                    //The path to the Cubes Profiles descriptions
             CubeProfile.InitCubeProfiles(@"Config\CubesProfile.xml");                                          // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
 
+            
+
             utopiaRenderer = new UtopiaRender(
                         iocContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(1024, 600)),
                                                     new ConstructorArgument("windowCaption", "LostIsland Client")),
@@ -128,8 +131,7 @@ namespace LostIsland.Client
                         iocContainer.Get<IEntitiesRenderer>("DefaultEntityRenderer"),
                         iocContainer.Get<VoxelMeshFactory>()
                 );
-
-
+            
             BindActions(iocContainer.Get<ActionsManager>());    //Bind the various actions
 
             //Create a debug displayer component =====

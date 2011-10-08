@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using LostIsland.Shared;
 using Utopia;
+using Utopia.Shared.Chunks;
+using Utopia.Shared.Chunks.Entities;
 
 namespace LostIsland.Client
 {
@@ -17,7 +20,7 @@ namespace LostIsland.Client
             foreach (string arg in args)
             {
             }
-
+            
             using (GameClient main = new GameClient())
             {
                 main.Run();

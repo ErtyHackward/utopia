@@ -74,7 +74,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerGameplayProvider.cs" />
-    <Compile Include="Tools\CubeToolLogic.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -97,6 +96,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\LostIsland.Shared\LostIsland.Shared.csproj">
+      <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
+      <Name>LostIsland.Shared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
       <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
       <Name>S33M3Engines.Shared</Name>
@@ -111,7 +114,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Utopia.Resources\Utopia.Resources.csproj">
       <Project>{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}</Project>
-      <Name>Utopia.Resource</Name>
+      <Name>Utopia.Resources</Name>
     </ProjectReference>
     <ProjectReference Include="..\LostIsland.Resources\LostIsland.Resources.csproj">
       <Project>{E27CDE0E-E112-4BC7-A59B-977654547D5D}</Project>

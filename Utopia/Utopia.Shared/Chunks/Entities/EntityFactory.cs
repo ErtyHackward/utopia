@@ -3,7 +3,6 @@ using System.IO;
 using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Chunks.Entities.Concrete.Collectible;
 using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -57,31 +56,44 @@ namespace Utopia.Shared.Chunks.Entities
             if (handler != null) handler(this, e);
         }
 
+        protected virtual Entity CreateCustomEntity(ushort classId)
+        {
+            return null;
+        }
+
         /// <summary>
         /// Returns new entity object by its classId. New entity will have unique ID
         /// </summary>
         /// <param name="classId">Entity class identificator</param>
         /// <returns></returns>
-        public Entity CreateEntity(EntityClassId classId)
+        public Entity CreateEntity(ushort classId)
         {
             // todo: implement this method correctly, create appropriate class here
 
-            Entity entity;
+            var entity = CreateCustomEntity(classId);
 
-            switch (classId)
+            if (entity == null)
             {
-                case EntityClassId.None: entity = new NoEntity(); break;
-                case EntityClassId.PickAxe: entity = new Pickaxe(); break;
-                case EntityClassId.Shovel: entity = new Shovel(); break;
-                case EntityClassId.Survey: entity = new Survey(); break;
-                case EntityClassId.PlayerCharacter: entity = new PlayerCharacter(); break;
-                case EntityClassId.Zombie: entity = new Zombie(); break;
-                case EntityClassId.Annihilator: entity = new Annihilator(); break;
-                case EntityClassId.BlockAdder: entity = new BlockAdder(); break;
-                case EntityClassId.Grass: entity = new Grass(); break;
-                case EntityClassId.Tree: entity = new Tree(); break;
-                default:
-                    throw new ArgumentOutOfRangeException("classId");
+                switch (classId)
+                {
+                    case EntityClassId.None:
+                        entity = new NoEntity();
+                        break;
+                    case EntityClassId.PlayerCharacter:
+                        entity = new PlayerCharacter();
+                        break;
+                    case EntityClassId.Zombie:
+                        entity = new Zombie();
+                        break;
+                    case EntityClassId.Grass:
+                        entity = new Grass();
+                        break;
+                    case EntityClassId.Tree:
+                        entity = new Tree();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("classId");
+                }
             }
 
             entity.EntityId = GetUniqueEntityId();
@@ -103,7 +115,7 @@ namespace Utopia.Shared.Chunks.Entities
 
             reader.BaseStream.Seek(-2, SeekOrigin.Current);
 
-            var entity = CreateEntity((EntityClassId)classId);
+            var entity = CreateEntity(classId);
 
             entity.Load(reader);
 

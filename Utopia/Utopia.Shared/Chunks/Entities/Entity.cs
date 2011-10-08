@@ -14,7 +14,7 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Gets entity class id
         /// </summary>
-        public abstract EntityClassId ClassId { get; }
+        public abstract ushort ClassId { get; }
 
         /// <summary>
         /// Gets current entity type

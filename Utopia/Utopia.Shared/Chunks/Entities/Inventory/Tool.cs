@@ -8,24 +8,22 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     public abstract class Tool : VoxelItem
     {
         /// <summary>
-        /// Tries to use the tool. The tool should decide is it possible to use and return toolImpact.
-        /// </summary>
-        /// <returns></returns>
-        public IToolImpact Use()
-        {
-            return ToolLogic.Use(this);
-        }
-
-        /// <summary>
         /// Gets or sets tool wear
         /// </summary>
         public byte Durability { get; set; }
 
         /// <summary>
-        /// Gets or sets tool business logic object (separate for client and server)
-        /// This object is not stored with tool instance
+        /// Performs tool business logic
         /// </summary>
-        public IToolLogic ToolLogic { get; set; }
+        /// <param name="runOnServer">Indicates if tool is run on the server</param>
+        /// <returns></returns>
+        public abstract IToolImpact Use(bool runOnServer = false);
+
+        /// <summary>
+        /// Performs actions to rollback preliminary made actions on the client side
+        /// </summary>
+        /// <param name="impact"></param>
+        public abstract void Rollback(IToolImpact impact);
 
         /// <summary>
         /// The tool owner, impossible to use the tool without owner

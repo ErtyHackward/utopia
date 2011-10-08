@@ -3,39 +3,31 @@
     /// <summary>
     /// Enumerates all available entities IDs (just for easy use in code). Please add new IDs to the bottom of the enum
     /// </summary>
-    public enum EntityClassId : ushort
+    public class EntityClassId
     {
         // items
-        None = 0,
-        Sword = 1,
-        PickAxe = 2,
-        Shovel = 3,
-        Hoe = 4,
-        Axe = 5,
-        Survey = 6,
-        Annihilator = 7,
-        BlockAdder = 8,
+        public const ushort None = 0;
 
         // static
-        Chest = 1000,
-        Chair = 1001,
-        Door = 1002,
-        Bed = 1003,
-        Tree = 1004,
+        public const ushort Chest = 1000;
+        public const ushort Chair = 1001;
+        public const ushort Door = 1002;
+        public const ushort Bed = 1003;
+        public const ushort Tree = 1004;
 
         // blocks
-        ThinGlass = 2001,
+        public const ushort ThinGlass = 2001;
 
         //alive
-        PlayerCharacter = 3000,
-        NonPlayerCharacter = 3001,
-        Zombie = 3002,
+        public const ushort PlayerCharacter = 3000;
+        public const ushort NonPlayerCharacter = 3001;
+        public const ushort Zombie = 3002;
 
         //Static Sprite
-        Grass = 4000,
+        public const ushort Grass = 4000;
 
         //Special case
-        EditableEntity = 10001,
+        public const ushort EditableEntity = 10001;
         
     }
 }

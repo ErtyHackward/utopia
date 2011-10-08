@@ -10,7 +10,7 @@
             get { return "Empty"; }
         }
 
-        public override EntityClassId ClassId
+        public override ushort ClassId
         {
             get
             {

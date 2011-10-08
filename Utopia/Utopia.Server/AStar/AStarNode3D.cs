@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Server.AStar
@@ -9,9 +10,9 @@ namespace Utopia.Server.AStar
     /// </summary>
     public class AStarNode3D : AStarNode<AStarNode3D>
     {
-        public readonly LandscapeCursor Cursor;
+        public readonly ILandscapeCursor Cursor;
 
-        public AStarNode3D(LandscapeCursor cursor, AStarNode3D aParent, AStarNode3D aGoalNode, double aCost) : 
+        public AStarNode3D(ILandscapeCursor cursor, AStarNode3D aParent, AStarNode3D aGoalNode, double aCost) : 
             base(aParent, aGoalNode, aCost)
         {
             Cursor = cursor;
@@ -73,7 +74,7 @@ namespace Utopia.Server.AStar
             }
         }
 
-        private void CreateNode(List<AStarNode3D> aSuccessors, LandscapeCursor cursor, double relativeCost)
+        private void CreateNode(List<AStarNode3D> aSuccessors, ILandscapeCursor cursor, double relativeCost)
         {
             var node = new AStarNode3D(cursor, this, GoalNode, Cost + relativeCost);
             aSuccessors.Add(node);

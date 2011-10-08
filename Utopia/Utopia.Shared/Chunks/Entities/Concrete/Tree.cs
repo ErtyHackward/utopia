@@ -8,7 +8,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete
 {
     public class Tree : Entity
     {
-        public override EntityClassId ClassId
+        public override ushort ClassId
         {
             get { return EntityClassId.Tree; }
         }
