@@ -96,6 +96,10 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Informs about tool use success
         /// </summary>
-        UseFeedback = 23
+        UseFeedback = 23,
+        /// <summary>
+        /// Client Initialized
+        /// </summary>
+        ClientInitialized = 24
     }
 }

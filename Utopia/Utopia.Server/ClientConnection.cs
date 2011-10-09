@@ -76,6 +76,17 @@ namespace Utopia.Server
         }
 
         /// <summary>
+        /// Occurs when a Clientinitiazlied message is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<ClientInitializedMessage>> MessageClientInitialized;
+
+        protected void OnClientInitialized(ClientInitializedMessage ea)
+        {
+            if (MessageClientInitialized != null)
+                MessageClientInitialized(this, new ProtocolMessageEventArgs<ClientInitializedMessage> { Message = ea });
+        }
+
+        /// <summary>
         /// Occurs when a ChatMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<ChatMessage>> MessageChat;
