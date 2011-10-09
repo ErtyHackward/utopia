@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using S33M3Engines.Shared.Math;
@@ -71,6 +72,9 @@ namespace Utopia.Shared.World.Processors
 
                                                     var topGroundBlock = CubeId.Grass;
                                                     var undegroundBlock = CubeId.Dirt;
+
+                                                    if (pointData.IsRiver)
+                                                        topGroundBlock = CubeId.Water;
                                                     
                                                     if (pointData.Biome == BiomeType.SubtropicalDesert || pointData.Biome == BiomeType.TemperateDesert)
                                                     {
@@ -93,7 +97,7 @@ namespace Utopia.Shared.World.Processors
 
                                                         if (y == pointData.Elevation)
                                                         {
-                                                            if (y > _worldParameters.SeaLevel)
+                                                            if (y >= _worldParameters.SeaLevel)
                                                             {
                                                                 chunk.BlockData[new Vector3I(x, y, z)] = topGroundBlock;
 
@@ -165,6 +169,7 @@ namespace Utopia.Shared.World.Processors
         {
             public int Elevation;
             public int Moisture;
+            public bool IsRiver;
             public BiomeType Biome;
         }
 
@@ -175,10 +180,33 @@ namespace Utopia.Shared.World.Processors
 
             mappoint.Offset(WorldPlan.Parameters.MapSize.X / 2, WorldPlan.Parameters.MapSize.Y / 2);
 
-            if (mappoint.X < 0 && mappoint.Y < 0 && mappoint.X > WorldPlan.Parameters.MapSize.X && mappoint.Y > WorldPlan.Parameters.MapSize.Y)
+            if (mappoint.X <= 0 && mappoint.Y <= 0 && mappoint.X > WorldPlan.Parameters.MapSize.X && mappoint.Y > WorldPlan.Parameters.MapSize.Y)
                 return data;
 
             var poly = WorldPlan.GetAtPoint(mappoint);
+
+            // river check
+
+            
+
+            foreach (var edge in poly.Edges)
+            {
+                
+                if (edge.WaterFlow > 0)
+                {
+                    var riverPath = new GraphicsPath();
+                    var pen = new Pen(Brushes.Black, edge.WaterFlow+1);
+                    riverPath.AddLine(edge.Start, edge.End);
+                    if (riverPath.IsOutlineVisible(mappoint, pen))
+                    {
+                        data.IsRiver = true;
+                        break;
+                    }
+                }
+
+            }
+            
+            //graphicsPath.IsOutlineVisible(
 
             data.Biome = poly.Biome;
             data.Moisture = poly.Moisture;

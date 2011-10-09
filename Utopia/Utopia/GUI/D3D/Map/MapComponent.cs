@@ -2,6 +2,7 @@
 using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.D3D;
+using SharpDX.Direct3D11;
 using Utopia.Action;
 using Utopia.Network;
 using Utopia.Shared.Net.Connections;
@@ -15,15 +16,17 @@ namespace Utopia.GUI.D3D.Map
     /// </summary>
     public class MapComponent : GameComponent
     {
+        private readonly Device _device;
         private readonly ActionsManager _actionManager;
         private readonly Screen _screen;
         private readonly Server _server;
         private readonly WindowControl _mapWindow;
         private readonly WorldPlan _planGenerator;
-        private Image _mapImage;
+        private Bitmap _mapImage;
 
-        public MapComponent(ActionsManager actionManager, Screen screen, Server server)
+        public MapComponent(Device device, ActionsManager actionManager, Screen screen, Server server)
         {
+            _device = device;
             _actionManager = actionManager;
             _screen = screen;
             _server = server;
@@ -33,7 +36,8 @@ namespace Utopia.GUI.D3D.Map
             _mapWindow.Title = "World map";
             _mapWindow.Bounds = new UniRectangle(100, 100, 300, 200);
             
-            //_mapWindow.Children.Add(new MapControl(){ MapTexture = S33M3Engines.Shared.Sprites.SpriteTexture
+            
+            
 
             _server.ServerConnection.MessageGameInformation += ServerConnectionMessageGameInformation;
 
@@ -47,6 +51,7 @@ namespace Utopia.GUI.D3D.Map
             // TODO: need to make it async
             _planGenerator.Generate();
             _mapImage = _planGenerator.Render();
+            _mapWindow.Children.Add(new MapControl() { MapTexture = new S33M3Engines.Shared.Sprites.SpriteTexture(_device, _mapImage, new SharpDX.Vector2()),  Bounds = _mapWindow.Bounds});
         }
 
         public override void Update(ref GameTime timeSpent)

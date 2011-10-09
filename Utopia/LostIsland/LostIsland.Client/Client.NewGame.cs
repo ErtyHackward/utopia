@@ -102,7 +102,7 @@ namespace LostIsland.Client
                         iocContainer.Get<FPS>(),
                         iocContainer.Get<IClock>(),
                         iocContainer.Get<ChatComponent>(),
-                        iocContainer.Get<MapComponent>(),
+                        iocContainer.Get<MapComponent>(new ConstructorArgument("device", iocContainer.Get<D3DEngine>().Device)),
                         iocContainer.Get<Hud>(),
                         iocContainer.Get<EntityEditor>(),
                         iocContainer.Get<IDrawableComponent>("Stars"),

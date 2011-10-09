@@ -404,9 +404,7 @@ namespace Utopia.Shared.World.PlanGenerator
                         edge.Coast = true;
                     }
                 }
-
             }
-
         }
 
         private void SetOcean(Polygon polygon)
@@ -699,7 +697,7 @@ namespace Utopia.Shared.World.PlanGenerator
             return p;
         }
 
-        public Image Render()
+        public Bitmap Render()
         {
             Bitmap bmp = new Bitmap(Parameters.MapSize.X, Parameters.MapSize.Y);
             
