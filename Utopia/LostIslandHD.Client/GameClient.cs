@@ -76,8 +76,6 @@ namespace LostIslandHD.Client
             _iocContainer.Bind<Server>().ToSelf().InSingletonScope();
             _server = _iocContainer.Get<Server>();
 
-            EntityFactory.Instance = new LostIslandEntityFactory(null);
-
             _welcomeForm = new WelcomeScreen(_server, withFadeIn);
             _welcomeForm.Text = "Utopia Client Alpha " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             _welcomeForm.ExitReason = _exitRease;

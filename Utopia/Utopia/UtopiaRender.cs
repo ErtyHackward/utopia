@@ -211,6 +211,7 @@ namespace Utopia
             _defaultEntityRenderer = defaultEntityRenderer;
             _voxelMeshFactory = voxelMeshFactory;
 
+
             S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
             S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
             VSync = true;                                              // Vsync ON (default)
@@ -227,6 +228,9 @@ namespace Utopia
         //Default Utopia Init method.
         private void Init()
         {
+
+            _visualWorldParameters.Init(_playerCharacter);
+
             _server.ServerConnection.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
             
             if (AbstractChunk.ChunkSize != _server.ChunkSize)

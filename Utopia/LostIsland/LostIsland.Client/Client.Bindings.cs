@@ -1,141 +1,98 @@
-﻿using Utopia.Shared.World;
-using Utopia;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Ninject;
-using Utopia.Network;
-using Utopia.Settings;
-using Utopia.Shared.Structs;
-using Utopia.Worlds.Cubes;
-using Utopia.Shared.Structs.Landscape;
-using S33M3Engines.D3D;
-using Utopia.Action;
-using Utopia.Shared.Config;
-using S33M3Engines.D3D.DebugTools;
-using Utopia.Worlds.GameClocks;
-using Utopia.Worlds.Chunks;
-using Utopia.Entities.Managers;
-using S33M3Engines;
-using Utopia.Entities.Renderer.Interfaces;
-using Utopia.GUI;
-using Utopia.GUI.D3D.Map;
+using Nuclex.UserInterface;
 using Utopia.Editor;
+using Utopia.Entities.Voxel;
+using Utopia.GUI.D3D;
+using Utopia.GUI.D3D.Map;
+using Utopia.Worlds.GameClocks;
+using Utopia.Worlds.Weather;
 using S33M3Engines.WorldFocus;
 using S33M3Engines.GameStates;
+using S33M3Engines;
+using S33M3Engines.InputHandler;
 using S33M3Engines.Cameras;
-using S33M3Engines.Timers;
-using Utopia.InputManager;
-using Utopia.GUI.D3D;
-using Utopia.Entities;
-using Utopia.Worlds.Weather;
+using Utopia.Worlds.SkyDomes.SharedComp;
+using S33M3Engines.D3D;
 using Utopia.Worlds.SkyDomes;
-using Utopia.Worlds.Storage;
+using Utopia.Shared.World;
+using Utopia.Worlds.Chunks;
+using Utopia.Worlds;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Chunks.ChunkLandscape;
-using Utopia.Worlds.Chunks.ChunkLighting;
-using Utopia.Worlds.Chunks.ChunkMesh;
-using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.World.Processors;
+using Utopia.Worlds.Chunks.ChunkMesh;
+using Utopia.Worlds.Cubes;
+using Utopia.Worlds.Chunks.ChunkWrapper;
+using Utopia.Worlds.Chunks.ChunkLighting;
+using Utopia.Shared.World.WorldConfigs;
+using Utopia.Entities;
+using Utopia.Worlds.Storage;
+using Utopia.Action;
+using Utopia.Network;
+using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.InputManager;
+using Utopia.Entities.Managers;
+using Utopia.Entities.Renderer;
+using Utopia.Settings;
+using Utopia.GUI;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Entities.Voxel;
-using Ninject.Parameters;
+using S33M3Engines.Timers;
+using Utopia.Entities.Renderer.Interfaces;
+using Utopia;
+using Utopia.Shared.Structs;
+using S33M3Engines.D3D.DebugTools;
+using Utopia.Shared.Config;
 using System.Windows.Forms;
-using System.Drawing;
-using LostIsland.Shared;
 
-namespace LostIslandHD.Client
+namespace LostIsland.Client
 {
     public partial class GameClient
     {
-        public UtopiaRender CreateNewGameEngine(IKernel iocContainer)
+        private void Binding(IKernel iocContainer, WorldParameters worldParam)
         {
-            //Prapare the world parameter variable from server sources ==================================
-            WorldParameters worldParam = new WorldParameters()
-            {
-                IsInfinite = true,
-                Seed = iocContainer.Get<Server>().WorldSeed,
-                SeaLevel = iocContainer.Get<Server>().SeaLevel,
-                WorldChunkSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,   //Define the visible Client chunk size
-                                                ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
-            };
-            //===========================================================================================
-            //Doing components bindings
-            UtopiaRender utopiaRenderer; // Need to create it there, the "system" component will be binded at creation time.
-            Binding(iocContainer, worldParam);            // Bind various Components against concrete class.
+            iocContainer.Bind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
+            iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
-            //=======================================================================================================================
-            //Create the various Concrete classe Binded, forwarding appropriate value. ==============================================
-            //=======================================================================================================================
-            //Init Block Profiles
-            VisualCubeProfile.InitCubeProfiles(iocContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"),     //The default binded Solid Cube Mesh Factory
-                                               iocContainer.Get<ICubeMeshFactory>("LiquidCubeMeshFactory"),    //The default binded Water Cube Mesh Factory
-                                               @"Config\CubesProfile.xml");                                    //The path to the Cubes Profiles descriptions
-            CubeProfile.InitCubeProfiles(@"Config\CubesProfile.xml");                                          // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
+            //Chunk Landscape Creation Processors picking ====
+            iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope();
+            iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
+            iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
 
-            
+            //Various ====
+            iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InSingletonScope();         // Use to display the picking cursor on block
+            iocContainer.Bind<FPS>().ToSelf().InSingletonScope();
 
-            utopiaRenderer = new UtopiaRender(
-                        iocContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(1024, 600)),
-                                                    new ConstructorArgument("windowCaption", "LostIsland Client")),
-                        iocContainer.Get<Server>(),
-                        iocContainer.Get<WorldFocusManager>(),
-                        iocContainer.Get<WorldParameters>(),
-                        iocContainer.Get<VisualWorldParameters>(),
-                        iocContainer.Get<GameStatesManager>(),
-                        iocContainer.Get<ICamera>(),
-                        iocContainer.Get<CameraManager>(),
-                        iocContainer.Get<TimerManager>(),
-                        iocContainer.Get<EntityMessageTranslator>(),
-                        iocContainer.Get<ItemMessageTranslator>(),
-                        iocContainer.Get<InputsManager>(),
-                        iocContainer.Get<ActionsManager>(),
-                        iocContainer.Get<GuiManager>(),
-                        iocContainer.Get<Nuclex.UserInterface.Screen>(),
-                        iocContainer.Get<IconFactory>(),
-                        iocContainer.Get<FPS>(),
-                        iocContainer.Get<IClock>(),
-                        iocContainer.Get<ChatComponent>(),
-                        iocContainer.Get<MapComponent>(),
-                        iocContainer.Get<Hud>(),
-                        iocContainer.Get<EntityEditor>(),
-                        iocContainer.Get<IDrawableComponent>("Stars"),
-                        iocContainer.Get<ISkyDome>(),
-                        iocContainer.Get<IWeather>(),
-                        iocContainer.Get<IDrawableComponent>("Clouds"),
-                        iocContainer.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false),
-                                                               new ConstructorArgument("UserName", _server.ServerConnection.Login)),
-                        iocContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"),
-                        iocContainer.Get<ICubeMeshFactory>("LiquidCubeMeshFactory"),
-                        iocContainer.Get<SingleArrayChunkContainer>(),
-                        iocContainer.Get<ILandscapeManager>(),
-                        iocContainer.Get<ILightingManager>(),
-                        iocContainer.Get<IChunkMeshManager>(),
-                        iocContainer.Get<IWorldChunks>(),
-                        iocContainer.Get<IChunksWrapper>(),
-                        iocContainer.Get<WorldGenerator>(),
-                        iocContainer.Get<IWorldProcessorConfig>(),
-                        iocContainer.Get<IPickingRenderer>(),
-                        iocContainer.Get<IChunkEntityImpactManager>(),
-                        iocContainer.Get<IEntityPickingManager>(),
-                        iocContainer.Get<IDynamicEntityManager>(),
-                        iocContainer.Get<PlayerEntityManager>(),
-                        iocContainer.Get<PlayerCharacter>(),
-                        iocContainer.Get<IEntitiesRenderer>("PlayerEntityRenderer"),
-                        iocContainer.Get<IEntitiesRenderer>("DefaultEntityRenderer"),
-                        iocContainer.Get<VoxelMeshFactory>()
-                );
-            
-            BindActions(iocContainer.Get<ActionsManager>());    //Bind the various actions
+            //Entities ====
+            iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");    //Rendering Player
+            iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");  //Rendering Dynamic Entities
 
-            EntityFactory.Instance = new LostIslandEntityFactory(iocContainer.Get<SingleArrayChunkContainer>());
+            //Game Componenents =====
+            iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
+            iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
+            iocContainer.Bind<MapComponent>().ToSelf().InSingletonScope();
+            iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
+            iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
+            iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
+            iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
+            iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
+            if (ClientSettings.Current.Settings.GraphicalParameters.CloudsQuality <= 0) iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");
+            else iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds");
 
-            //Create a debug displayer component =====
-            DebugInfo debugInfo = new DebugInfo(iocContainer.Get<D3DEngine>());
-            debugInfo.Activated = true;
-            debugInfo.SetComponants(iocContainer.Get<FPS>(), iocContainer.Get<IClock>(), iocContainer.Get<IWorldChunks>(), iocContainer.Get<PlayerEntityManager>(), _server);
-            utopiaRenderer.GameComponents.Add(debugInfo);
+            //System Management ======
+            iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope().WithConstructorArgument("forceNew", false)
+                                                                                                        .WithConstructorArgument("UserName", _server.ServerConnection.Login);
 
-            return utopiaRenderer;
+            iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InSingletonScope().Named("SolidCubeMeshFactory");
+            iocContainer.Bind<ICubeMeshFactory>().To<LiquidCubeMashFactory>().InSingletonScope().Named("LiquidCubeMeshFactory");
+            iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope(); //Type of camera used
+
         }
 
         private void BindActions(ActionsManager actionManager)
