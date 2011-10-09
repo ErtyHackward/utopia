@@ -11,6 +11,7 @@ using LostIsland.Client.GUI.Forms;
 
 namespace LostIslandHD.Client
 {
+
     public partial class GameClient : IDisposable
     {
         #region Private variables
