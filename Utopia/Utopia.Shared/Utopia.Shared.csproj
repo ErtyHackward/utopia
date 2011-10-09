@@ -164,6 +164,7 @@
     <Compile Include="Net\Messages\BlocksChangedMessage.cs" />
     <Compile Include="Net\Messages\ChatMessage.cs" />
     <Compile Include="Net\Messages\ChunkDataMessage.cs" />
+    <Compile Include="Net\Messages\ClientInitializedMessage.cs" />
     <Compile Include="Net\Messages\DateTimeMessage.cs" />
     <Compile Include="Net\Messages\EntityDirectionMessage.cs" />
     <Compile Include="Net\Messages\EntityEquipmentMessage.cs" />

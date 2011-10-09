@@ -220,9 +220,7 @@ namespace Utopia
         {
             //Initialize the Thread Pool manager
             S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
-
             Init();
-
             base.Initialize();
         }
 
