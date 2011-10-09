@@ -38,7 +38,6 @@ namespace Utopia.Server.Managers
         {
             // note: do not forget to remove events!
             e.Connection.MessageLogin += ConnectionMessageLogin;
-            e.Connection.MessageClientInitialized += Connection_MessageClientInitialized; 
         }
 
         private void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
@@ -153,22 +152,22 @@ namespace Utopia.Server.Managers
                 connection.SendAsync(new LoginResultMessage { Logged = true });
                 Console.WriteLine("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.EntityId);
 
-                //var gameInfo = new GameInformationMessage
-                //{
-                //    ChunkSize = AbstractChunk.ChunkSize,
-                //    MaxViewRange = 32,
-                //    WorldSeed = _server.LandscapeManager.WorldGenerator.WorldParametes.Seed,
-                //    WaterLevel = _server.LandscapeManager.WorldGenerator.WorldParametes.SeaLevel
-                //};
-                //connection.SendAsync(gameInfo);
-                //connection.SendAsync(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
-                //connection.SendAsync(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity });
+                var gameInfo = new GameInformationMessage
+                {
+                    ChunkSize = AbstractChunk.ChunkSize,
+                    MaxViewRange = 32,
+                    WorldSeed = _server.LandscapeManager.WorldGenerator.WorldParametes.Seed,
+                    WaterLevel = _server.LandscapeManager.WorldGenerator.WorldParametes.SeaLevel
+                };
+                connection.SendAsync(gameInfo);
+                connection.SendAsync(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
+                connection.SendAsync(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity });
 
-                //_server.ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", e.Message.Login), Operator = true });
-                //connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });
+                _server.ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", e.Message.Login), Operator = true });
+                connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });
 
-                //// adding entity to world
-                //_server.AreaManager.AddEntity(playerEntity);
+                // adding entity to world
+                _server.AreaManager.AddEntity(playerEntity);
             }
             else
             {
@@ -204,15 +203,6 @@ namespace Utopia.Server.Managers
                 return;
             }
 
-            var gameInfo = new GameInformationMessage
-            {
-                ChunkSize = AbstractChunk.ChunkSize,
-                MaxViewRange = 32,
-                WorldSeed = _server.LandscapeManager.WorldGenerator.WorldParametes.Seed,
-                WaterLevel = _server.LandscapeManager.WorldGenerator.WorldParametes.SeaLevel
-            };
-            connection.SendAsync(gameInfo);
-            connection.SendAsync(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
             connection.SendAsync(new EntityInMessage { Entity = (Entity)connection.ServerEntity.DynamicEntity });
 
             _server.ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", connection.Login), Operator = true });

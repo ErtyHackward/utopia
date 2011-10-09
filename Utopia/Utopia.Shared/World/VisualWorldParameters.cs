@@ -12,6 +12,7 @@ namespace Utopia.Shared.World
 {
     public class VisualWorldParameters
     {
+        private bool _initialized;
         public int ChunkPOWsize;
         WorldParameters _worldParameters;
         public WorldParameters WorldParameters
@@ -27,15 +28,20 @@ namespace Utopia.Shared.World
         public int WorldVisibleSizeXYZ;
         public Vector2I WorldChunkStartUpPosition;
 
-        public VisualWorldParameters(WorldParameters worldParameters, PlayerCharacter player)
+        public VisualWorldParameters(WorldParameters worldParameters)
         {
             WorldParameters = worldParameters;
+            _initialized = false;
+        }
 
+        public void Init(PlayerCharacter player)
+        {
             //Find the chunk location
-            int X = (MathHelper.Fastfloor(player.Position.X / 16) * 16) - ((worldParameters.WorldChunkSize.X / 2) * 16);
-            int Z = (MathHelper.Fastfloor(player.Position.Z / 16) * 16) - ((worldParameters.WorldChunkSize.Y / 2) * 16);
+            int X = (MathHelper.Fastfloor(player.Position.X / 16) * 16) - ((WorldParameters.WorldChunkSize.X / 2) * 16);
+            int Z = (MathHelper.Fastfloor(player.Position.Z / 16) * 16) - ((WorldParameters.WorldChunkSize.Y / 2) * 16);
 
             WorldChunkStartUpPosition = new Vector2I(X, Z);
+            _initialized = true;
         }
 
         private void newWorldParameters()

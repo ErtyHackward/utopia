@@ -185,7 +185,7 @@ namespace LostIsland.Client.GUI.Forms
             _server.ServerConnection.MessageLoginResult += ServerConnection_MessageLoginResult;
             _server.ServerConnection.MessageGameInformation += ServerConnection_MessageGameInformation;
             _server.ServerConnection.MessagePing += ServerConnection_MessagePing;
-            _server.ServerConnection.MessageEntityIn += ServerConnection_MessageEntityIn;
+            //_server.ServerConnection.MessageEntityIn += ServerConnection_MessageEntityIn;
             _server.ServerConnection.MessageDateTime += ServerConnection_MessageDateTime;
         }
 
@@ -196,22 +196,23 @@ namespace LostIsland.Client.GUI.Forms
             _server.ServerConnection.MessageLoginResult -= ServerConnection_MessageLoginResult;
             _server.ServerConnection.MessageGameInformation -= ServerConnection_MessageGameInformation;
             _server.ServerConnection.MessagePing -= ServerConnection_MessagePing;
-            _server.ServerConnection.MessageEntityIn -= ServerConnection_MessageEntityIn;
+            //_server.ServerConnection.MessageEntityIn -= ServerConnection_MessageEntityIn;
             _server.ServerConnection.MessageDateTime -= ServerConnection_MessageDateTime;
         }
 
-        void ServerConnection_MessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
-        {
-            _server.Player = (Utopia.Shared.Chunks.Entities.PlayerCharacter)e.Message.Entity;
-            UnregisterEvents();
-            _serverTime.Dispose();
-             HideWindows();
-        }
+        //void ServerConnection_MessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
+        //{
+        //    _server.Player = (Utopia.Shared.Chunks.Entities.PlayerCharacter)e.Message.Entity;
+        //}
 
         void ServerConnection_MessageDateTime(object sender, ProtocolMessageEventArgs<DateTimeMessage> e)
         {
             _server.WorldDateTime = e.Message.DateTime;
-            _server.TimeFactor = e.Message.TimeFactor; 
+            _server.TimeFactor = e.Message.TimeFactor;
+
+            UnregisterEvents();
+            _serverTime.Dispose();
+            HideWindows();
         }
 
         void ServerConnection_MessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)

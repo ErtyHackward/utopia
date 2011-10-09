@@ -111,7 +111,7 @@ namespace LostIslandHD.Client
             iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope();
             iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
             iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
-            //=============================================================
+            //===========================================================================
 
             //Entities related stuff ====================================================
             iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InSingletonScope();         // Use to display the picking cursor on block
