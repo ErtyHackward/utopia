@@ -69,12 +69,14 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public byte PeekDown()
         {
-            return PeekValue(new Vector3I(0, -1, 0));
+            var peekIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, Shared.Chunks.SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1, false);
+            return _landscapeManager.CubesHolder.Cubes[peekIndex].Id;
         }
 
         public byte PeekUp()
         {
-            return PeekValue(new Vector3I(0, 1, 0));
+            var peekIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, Shared.Chunks.SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1, false);
+            return _landscapeManager.CubesHolder.Cubes[peekIndex].Id;
         }
 
         public byte PeekValue(Vector3I moveVector)
