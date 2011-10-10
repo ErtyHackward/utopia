@@ -112,7 +112,7 @@ namespace S33M3Engines.Shared.Sprites
             texDesc.CpuAccessFlags = CpuAccessFlags.None;
             texDesc.OptionFlags = ResourceOptionFlags.None;
 
-            DataRectangle data = new DataRectangle(Width * 4, new DataStream(bmData.Scan0, 4 * Width * Height, true, false));
+            DataRectangle data = new DataRectangle(new DataStream(bmData.Scan0, 4 * Width * Height, true, false).DataPointer, Width * 4);
 
             Texture2D texture2d = new Texture2D(device, texDesc, data);
 

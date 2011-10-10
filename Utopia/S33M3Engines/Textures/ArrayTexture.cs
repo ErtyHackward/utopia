@@ -92,25 +92,15 @@ namespace S33M3Engines.Textures
 
             Texture2D texArray = new Texture2D(device, texArrayDesc);
             DataBox box;
-            int mipHeight, lockedSize, RowPitch;
+            int mipHeight;
             //Foreach Texture
-            RowPitch = 0;
             for (int arraySlice = 0; arraySlice < srcTex.Length; arraySlice++)
             {
                 //Foreach mipmap level
                 for (int mipSlice = 0; mipSlice < Imagesdesc.MipLevels; mipSlice++)
                 {
                     mipHeight = ArrayTextureHelper.GetMipSize(mipSlice, srcTex[arraySlice].Description.Height);
-
-                    ////It's a HACK version 2 ==> VERY VERY BAD ! Slower, but more safe !
-                    box = device.ImmediateContext.MapSubresource(srcTex[arraySlice], mipSlice, 1, MapMode.Read, MapFlags.None);
-                    RowPitch = box.RowPitch;
-                    device.ImmediateContext.UnmapSubresource(srcTex[arraySlice], mipSlice);
-                    //// Very very BBAaAaAADdDdd ===========================================
-
-                    lockedSize = mipHeight * RowPitch;//RowPitch
-
-                    box = device.ImmediateContext.MapSubresource(srcTex[arraySlice], mipSlice, lockedSize, MapMode.Read, MapFlags.None);
+                    box = device.ImmediateContext.MapSubresource(srcTex[arraySlice], mipSlice, MapMode.Read, MapFlags.None);
 
 
                     box.Data.Position = 0;

@@ -89,7 +89,7 @@ namespace S33M3Engines.Buffers
                 _vertices.Position = 0; //Set the pointer to the beggining of the datastream
 
                 //Create the new Databox
-                _databox = new DataBox(_vertexDeclatation.VertexStride, _bufferCount * _vertexDeclatation.VertexStride, _vertices);
+                _databox = new DataBox(_vertices.DataPointer, _vertexDeclatation.VertexStride, _bufferCount * _vertexDeclatation.VertexStride);
 
                 //Create new Buffer
                 _description.SizeInBytes = _bufferCount * _vertexDeclatation.VertexStride;
@@ -102,7 +102,7 @@ namespace S33M3Engines.Buffers
             {
                 if (MapUpdate || _vertexBuffer.Description.Usage == ResourceUsage.Dynamic)
                 {
-                    DataBox databox = _d3dEngine.Context.MapSubresource(_vertexBuffer, 0, _vertexCount * _vertexDeclatation.VertexStride, MapMode.WriteDiscard, MapFlags.None);
+                    DataBox databox = _d3dEngine.Context.MapSubresource(_vertexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
                     databox.Data.Position = 0;
                     databox.Data.WriteRange(data, offset, _vertexCount);
                     databox.Data.Position = 0;
@@ -125,7 +125,7 @@ namespace S33M3Engines.Buffers
         {
             if (VertexBuffer.LastPrimitiveTopology != _primitiveTopology)
             {
-                _d3dEngine.Context.InputAssembler.SetPrimitiveTopology(_primitiveTopology);
+                _d3dEngine.Context.InputAssembler.PrimitiveTopology = _primitiveTopology;
                 VertexBuffer.LastPrimitiveTopology = _primitiveTopology;
             }
 

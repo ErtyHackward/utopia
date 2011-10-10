@@ -257,7 +257,7 @@ namespace S33M3Engines.D3D.Effects
             // Input Layout changed ?? ==> Need to send it to the InputAssembler
             if (HLSLShaderWrap.LastEffectSet != _inputLayout.GetHashCode())
             {
-                _d3dEngine.Context.InputAssembler.SetInputLayout(_inputLayout);
+                _d3dEngine.Context.InputAssembler.InputLayout = _inputLayout;
                 HLSLShaderWrap.LastEffectSet = _inputLayout.GetHashCode();
             }
 

@@ -432,7 +432,6 @@ namespace S33M3Engines
             _swapChain.Dispose();
             _staggingBackBufferTexture.Dispose();
             StaggingBackBuffer.Dispose();
-            Context.Dispose();
             Device.Dispose();
 
             S33M3Engines.InputHandler.Mouse.CleanUp();

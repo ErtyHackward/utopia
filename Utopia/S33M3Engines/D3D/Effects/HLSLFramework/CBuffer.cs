@@ -100,7 +100,7 @@ namespace S33M3Engines.D3D.Effects
                 _dataStream.Position = 0;
             }
 
-            DataBox dataBox = new DataBox(_size, _size, _dataStream);
+            DataBox dataBox = new DataBox(_dataStream.DataPointer,_size, _size);
             _engine.Context.UpdateSubresource(dataBox, _CBuffer, 0);
         }
 

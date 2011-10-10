@@ -70,7 +70,6 @@ namespace Utopia.Worlds.Chunks
         private PlayerEntityManager _playerManager;
         private IChunkStorageManager _chunkstorage;
         private ISkyDome _skydome;
-        private IStaticEntityManager _staticEntityManager;
         private IWeather _weather;
         private SharedFrameCB _sharedFrameCB;
         #endregion

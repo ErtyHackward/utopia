@@ -15,10 +15,6 @@ namespace Utopia.Entities
     public class VisualDynamicEntity : IVisualEntityContainer, IDisposable
     {
         #region Private variables
-        //Player Visual characteristics (Not insde the PlayerCharacter object)
-        private BoundingBox _playerBoundingBox;
-        private Vector3 _boundingMinPoint, _boundingMaxPoint;                         //Use to recompute the bounding box in world coordinate
-
         //Server interpolated variables
         private NetworkValue<Vector3D> _netLocation;
         private double _interpolationRate = 0.035;
