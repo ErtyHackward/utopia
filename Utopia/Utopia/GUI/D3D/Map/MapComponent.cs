@@ -8,6 +8,7 @@ using Utopia.Network;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.World.PlanGenerator;
+using S33M3Engines;
 
 namespace Utopia.GUI.D3D.Map
 {
@@ -16,7 +17,7 @@ namespace Utopia.GUI.D3D.Map
     /// </summary>
     public class MapComponent : GameComponent
     {
-        private readonly Device _device;
+        private readonly D3DEngine _engine;
         private readonly ActionsManager _actionManager;
         private readonly Screen _screen;
         private readonly Server _server;
@@ -24,9 +25,9 @@ namespace Utopia.GUI.D3D.Map
         private readonly WorldPlan _planGenerator;
         private Bitmap _mapImage;
 
-        public MapComponent(Device device, ActionsManager actionManager, Screen screen, Server server)
+        public MapComponent(D3DEngine engine, ActionsManager actionManager, Screen screen, Server server)
         {
-            _device = device;
+            _engine = engine;
             _actionManager = actionManager;
             _screen = screen;
             _server = server;
@@ -51,7 +52,7 @@ namespace Utopia.GUI.D3D.Map
             // TODO: need to make it async
             _planGenerator.Generate();
             _mapImage = _planGenerator.Render();
-            _mapWindow.Children.Add(new MapControl() { MapTexture = new S33M3Engines.Shared.Sprites.SpriteTexture(_device, _mapImage, new SharpDX.Vector2()),  Bounds = _mapWindow.Bounds});
+            _mapWindow.Children.Add(new MapControl() { MapTexture = new S33M3Engines.Shared.Sprites.SpriteTexture(_engine.Device, _mapImage, new SharpDX.Vector2()), Bounds = _mapWindow.Bounds });
         }
 
         public override void Update(ref GameTime timeSpent)

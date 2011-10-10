@@ -24,7 +24,7 @@ namespace Utopia.Worlds.Chunks
     /// <summary>
     /// Represents a chunk for 3d rendering
     /// </summary>
-    public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IThreadStatus, IDisposable
+    public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IThreadStatus, IChunkLayout2D, IDisposable
     {
         #region Private variables
         private VisualWorldParameters _visualWorldParameters;
@@ -86,6 +86,18 @@ namespace Utopia.Worlds.Chunks
             {
                 _cubeRange = value;
                 RangeChanged();
+            }
+        }
+
+        public Vector2I Position
+        {
+            get
+            {
+                return ChunkPosition;
+            }
+            set
+            {
+                throw new NotImplementedException();
             }
         }
 

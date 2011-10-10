@@ -45,7 +45,12 @@ namespace LostIslandHD.Client
 {
     public partial class GameClient
     {
-        public void Binding(IKernel iocContainer, WorldParameters worldParam)
+        public void EarlyBinding(IKernel iocContainer)
+        {
+            iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
+        }
+
+        public void LateBinding(IKernel iocContainer, WorldParameters worldParam)
         {
             //DirectX layer & Helper ===================================
             iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope();         //DirectX Engine
@@ -115,7 +120,6 @@ namespace LostIslandHD.Client
 
             //Entities related stuff ====================================================
             iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InSingletonScope();         // Use to display the picking cursor on block
-            iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
             iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InSingletonScope();   //Entites picking and collision handling vs player
             iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();         //Dynamic Entity manager
             iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();                             //The player manager

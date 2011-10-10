@@ -2,21 +2,22 @@
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
-namespace Utopia.Shared.Chunks
+namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
     public class SingleArrayLandscapeCursor : ILandscapeCursor
     {
-        private readonly SingleArrayChunkContainer _landscapeManger;
+        private readonly IChunkEntityImpactManager _landscapeManager;
         private Vector3I _globalPosition;
         private int _bigArrayIndex;
 
-        public SingleArrayLandscapeCursor(SingleArrayChunkContainer landscapeManger, Vector3I blockPosition)
+        public SingleArrayLandscapeCursor(IChunkEntityImpactManager landscapeManager, Vector3I blockPosition)
         {
-            if (landscapeManger == null) throw new ArgumentNullException("landscapeManger");
-            _landscapeManger = landscapeManger;
+            if (landscapeManager == null) throw new ArgumentNullException("landscapeManger");
+            _landscapeManager = landscapeManager;
             GlobalPosition = blockPosition;
-            if(!landscapeManger.IndexSafe(blockPosition.X, blockPosition.Y, blockPosition.Z, out _bigArrayIndex))
+            if (!landscapeManager.CubesHolder.IndexSafe(blockPosition.X, blockPosition.Y, blockPosition.Z, out _bigArrayIndex))
                 throw new IndexOutOfRangeException();
         }
 
@@ -28,17 +29,17 @@ namespace Utopia.Shared.Chunks
 
         public byte Read()
         {
-            return _landscapeManger.Cubes[_bigArrayIndex].Id;
+            return _landscapeManager.CubesHolder.Cubes[_bigArrayIndex].Id;
         }
 
         public void Write(byte value)
         {
-            _landscapeManger.Cubes[_bigArrayIndex].Id = value;
+            _landscapeManager.ReplaceBlock(_bigArrayIndex, ref _globalPosition, value);
         }
 
         public ILandscapeCursor Clone()
         {
-            return new SingleArrayLandscapeCursor(_landscapeManger, _globalPosition);
+            return new SingleArrayLandscapeCursor(_landscapeManager, _globalPosition);
         }
 
         public bool IsSolid()
@@ -78,23 +79,26 @@ namespace Utopia.Shared.Chunks
 
         public byte PeekValue(Vector3I moveVector)
         {
-            var peekIndex = _bigArrayIndex + _landscapeManger.MoveX * moveVector.X + _landscapeManger.MoveY * moveVector.Y + _landscapeManger.MoveZ * moveVector.Z;
-            return _landscapeManger.Cubes[peekIndex].Id;
+            Vector3I peekPosition = _globalPosition + moveVector;
+            var peekIndex = _landscapeManager.CubesHolder.Index(ref peekPosition);
+            return _landscapeManager.CubesHolder.Cubes[peekIndex].Id;
         }
 
         public ILandscapeCursor MoveDown()
         {
-            return Move(new Vector3I(0, -1, 0));
+            _bigArrayIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, Shared.Chunks.SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1, false);
+            return this;
         }
 
         public ILandscapeCursor MoveUp()
         {
-            return Move(new Vector3I(0, 1, 0));
+            _bigArrayIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, Shared.Chunks.SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1, false);
+            return this;
         }
 
         public ILandscapeCursor Move(Vector3I moveVector)
         {
-            _bigArrayIndex += _landscapeManger.MoveX * moveVector.X + _landscapeManger.MoveY * moveVector.Y + _landscapeManger.MoveZ * moveVector.Z;
+            _bigArrayIndex = _landscapeManager.CubesHolder.Index(ref moveVector);
             return this;
         }
     }

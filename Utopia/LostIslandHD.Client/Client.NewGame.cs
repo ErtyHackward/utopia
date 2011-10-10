@@ -60,7 +60,7 @@ namespace LostIslandHD.Client
             //===========================================================================================
             //Doing components bindings
             UtopiaRender utopiaRenderer; // Need to create it there, the "system" component will be binded at creation time.
-            Binding(iocContainer, worldParam);            // Bind various Components against concrete class.
+            LateBinding(iocContainer, worldParam);            // Bind various Components against concrete class.
 
             //=======================================================================================================================
             //Create the various Concrete classe Binded, forwarding appropriate value. ==============================================
