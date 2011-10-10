@@ -9,6 +9,8 @@ namespace Utopia.Settings
     public class ClientSettings
     {
         public static XmlSettingsManager<ClientConfig> Current;
+        public static string TexturePack = "Default";
+        public static string EffectPack = "Default";
     }
 
     /// <summary>
@@ -27,11 +29,22 @@ namespace Utopia.Settings
         public string IPAddress { get; set; }
         public string ServerName { get; set; }
         public string DefaultUser { get; set; }
+        public string TexturePack { get; set; }
+        public string EffectPack { get; set; }
 
         public override string ToString()
         {
             return ServerName + " [" + IPAddress + "]";
         }
+
+        public ServerSetting()
+        {
+            TexturePack = "Default";
+            EffectPack = "Default";
+        }
+
+        public string ID { get { return ServerName + IPAddress + DefaultUser; } }
+
     }
 
     /// <summary>

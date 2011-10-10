@@ -15,6 +15,7 @@ using S33M3Engines.Cameras;
 using S33M3Engines.StatesManager;
 using Utopia.Entities.Voxel;
 using Utopia.Entities.Renderer.Interfaces;
+using Utopia.Settings;
 
 namespace Utopia.Entities.Renderer
 {

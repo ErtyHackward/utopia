@@ -128,8 +128,6 @@ namespace LostIslandHD.Client
             _exitRease = game.GameExitReason;
             game.Dispose();
 
-            //AnalyseExitReason(exitRease);
-
             _iocContainer.Dispose();
 
             GC.Collect();

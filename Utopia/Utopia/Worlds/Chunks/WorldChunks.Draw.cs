@@ -13,6 +13,7 @@ using SharpDX;
 using Utopia.Shared.Chunks;
 using UtopiaContent.Effects.Entities;
 using S33M3Engines.Maths;
+using Utopia.Settings;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -213,18 +214,18 @@ namespace Utopia.Worlds.Chunks
 
         private void InitDrawComponents()
         {
-            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _terra_View);
+            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _terra_View);
 
-            _terraEffect = new HLSLTerran(_d3dEngine, @"Effects/Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
+            _terraEffect = new HLSLTerran(_d3dEngine, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
             _terraEffect.TerraTexture.Value = _terra_View;
             _terraEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
 
-            _liquidEffect = new HLSLLiquid(_d3dEngine, @"Effects/Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration);
+            _liquidEffect = new HLSLLiquid(_d3dEngine, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration);
             _liquidEffect.TerraTexture.Value = _terra_View;
             _liquidEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
 
-            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, @"Textures/Sprites/", @"sp*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
-            _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine, @"Effects/Entities/StaticEntitySprite.hlsl", VertexPositionColorTexture.VertexDeclaration);
+            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, ClientSettings.TexturePack + @"Sprites/", @"sp*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
+            _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexPositionColorTexture.VertexDeclaration);
             _staticSpriteEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
             _staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
         }

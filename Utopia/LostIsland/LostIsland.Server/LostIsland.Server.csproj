@@ -116,10 +116,6 @@
       <Project>{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}</Project>
       <Name>Utopia.Resources</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LostIsland.Resources\LostIsland.Resources.csproj">
-      <Project>{E27CDE0E-E112-4BC7-A59B-977654547D5D}</Project>
-      <Name>LostIsland.Resources</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

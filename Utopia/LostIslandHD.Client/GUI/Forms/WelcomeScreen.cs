@@ -83,6 +83,10 @@ namespace LostIsland.Client.GUI.Forms
                 _multiChild.txtServerName.Text = serverItem.ServerName;
                 _multiChild.txtUser.Text = serverItem.DefaultUser;
                 _multiChild.txtPassword.Text = "";
+                _multiChild.txtTexturePack.Text = serverItem.TexturePack;
+                _multiChild.txtEffectPack.Text = serverItem.EffectPack;
+                ClientSettings.TexturePack = @"TexturesPacks\" + serverItem.TexturePack + @"\";
+                ClientSettings.EffectPack = @"EffectsPacks\" + serverItem.EffectPack + @"\";
             }
         }
 
@@ -126,19 +130,19 @@ namespace LostIsland.Client.GUI.Forms
             if (server == null)
             {
                 //Is the server already existing (With same IP) ??
-                if (ClientSettings.Current.Settings.ServersList.Servers.Where(x => x.IPAddress == _multiChild.txtSrvAdress.Text).Count() > 0)
+                if (ClientSettings.Current.Settings.ServersList.Servers.Where(x => x.ID == _multiChild.txtServerName.Text + _multiChild.txtSrvAdress.Text + _multiChild.txtUser.Text).Count() > 0)
                 {
                     //Server already existing => Udpate it
-                    server = ClientSettings.Current.Settings.ServersList.Servers.Find(x => x.IPAddress == _multiChild.txtSrvAdress.Text);
-                    server.ServerName = _multiChild.txtServerName.Text;
-                    server.DefaultUser = _multiChild.txtUser.Text;
+                    server = ClientSettings.Current.Settings.ServersList.Servers.Find(x => x.ID == _multiChild.txtServerName.Text + _multiChild.txtSrvAdress.Text + _multiChild.txtUser.Text);
+                    server.TexturePack = _multiChild.txtTexturePack.Text;
+                    server.EffectPack = _multiChild.txtEffectPack.Text;
 
                     foreach (var serverInListBoxItem in _multiChild.srvList.Items)
                     {
-                        if (((ServerSetting)serverInListBoxItem).IPAddress == _multiChild.txtSrvAdress.Text)
+                        if (((ServerSetting)serverInListBoxItem).ID == _multiChild.txtServerName.Text + _multiChild.txtSrvAdress.Text + _multiChild.txtUser.Text)
                         {
-                            ((ServerSetting)serverInListBoxItem).ServerName = _multiChild.txtServerName.Text;
-                            ((ServerSetting)serverInListBoxItem).DefaultUser = _multiChild.txtUser.Text;
+                            ((ServerSetting)serverInListBoxItem).TexturePack = _multiChild.txtTexturePack.Text;
+                            ((ServerSetting)serverInListBoxItem).EffectPack = _multiChild.txtEffectPack.Text;
                             _multiChild.srvList.RefreshItems();
                         }
                     }
@@ -146,7 +150,7 @@ namespace LostIsland.Client.GUI.Forms
                     return;
                 }
 
-                server = new ServerSetting() { IPAddress = _multiChild.txtSrvAdress.Text, ServerName = _multiChild.txtServerName.Text, DefaultUser = _multiChild.txtUser.Text };
+                server = new ServerSetting() { IPAddress = _multiChild.txtSrvAdress.Text, ServerName = _multiChild.txtServerName.Text, DefaultUser = _multiChild.txtUser.Text, TexturePack = _multiChild.txtTexturePack.Text, EffectPack = _multiChild.txtEffectPack.Text };
                 ClientSettings.Current.Settings.ServersList.Servers.Add(server);
             }
 
@@ -165,7 +169,7 @@ namespace LostIsland.Client.GUI.Forms
                 if (_multiChild.srvList.Items.Count > 0) _multiChild.srvList.SelectedIndex = 0;
                 else _multiChild.srvList.SelectedIndex = -1;
 
-                ClientSettings.Current.Settings.ServersList.Servers.RemoveAll(x => x.ServerName == serverItem.ServerName && x.IPAddress == serverItem.IPAddress);
+                ClientSettings.Current.Settings.ServersList.Servers.RemoveAll(x => x.ServerName == serverItem.ServerName && x.IPAddress == serverItem.IPAddress && x.DefaultUser == serverItem.DefaultUser);
                 SaveConfigurationFile();
             }
             e.Handled = true;

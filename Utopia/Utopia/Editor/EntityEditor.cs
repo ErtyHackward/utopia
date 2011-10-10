@@ -29,6 +29,7 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Worlds.Cubes;
 using UtopiaContent.Effects.Terran;
 using Screen = Nuclex.UserInterface.Screen;
+using Utopia.Settings;
 
 namespace Utopia.Editor
 {
@@ -194,12 +195,12 @@ namespace Utopia.Editor
 
         public override void LoadContent()
         {
-            String[] dirs = new[] {@"Textures/Terran/", @"Textures/Editor/"};
+            String[] dirs = new[] { ClientSettings.TexturePack + @"Terran/", ClientSettings.TexturePack + @"Editor/" };
 
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, dirs, @"ct*.png", FilterFlags.Point,
                                                   "ArrayTexture_EntityEditor", out Texture);
 
-            _itemEffect = new HLSLTerran(_d3DEngine, @"Effects/Terran/TerranEditor.hlsl",
+            _itemEffect = new HLSLTerran(_d3DEngine, ClientSettings.EffectPack + @"Terran/TerranEditor.hlsl",
                                          VertexCubeSolid.VertexDeclaration);
 
             _itemEffect.TerraTexture.Value = Texture;
