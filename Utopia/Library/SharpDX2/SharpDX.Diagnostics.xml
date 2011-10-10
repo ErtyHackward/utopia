@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>SharpDX.Error</name>
+        <name>SharpDX.Diagnostics</name>
     </assembly>
     <members>
-        <member name="T:SharpDX.ErrorManager">
+        <member name="T:SharpDX.Diagnostics.ErrorManager">
             <summary>
             ErrorManager helper to get a description from a HRESULT/SharpDX.Result code.
             </summary>
         </member>
-        <member name="M:SharpDX.ErrorManager.#ctor">
+        <member name="M:SharpDX.Diagnostics.ErrorManager.#ctor">
             <summary>
             No instance
             </summary>
         </member>
-        <member name="M:SharpDX.ErrorManager.#cctor">
+        <member name="M:SharpDX.Diagnostics.ErrorManager.#cctor">
             <summary>
             Initialize Map
             </summary>
         </member>
-        <member name="M:SharpDX.ErrorManager.Add(System.UInt32,System.String,System.String)">
+        <member name="M:SharpDX.Diagnostics.ErrorManager.Add(System.UInt32,System.String,System.String)">
             <summary>
             Add a message description for a particular code.
             </summary>
@@ -27,14 +27,14 @@
             <param name="codeString">string representation of the code</param>
             <param name="description">description of the error</param>
         </member>
-        <member name="M:SharpDX.ErrorManager.GetErrorMessage(System.Int32)">
+        <member name="M:SharpDX.Diagnostics.ErrorManager.GetErrorMessage(System.Int32)">
             <summary>
             Returns an error description.
             </summary>
             <param name="code">An error code</param>
             <returns>a description</returns>
         </member>
-        <member name="T:SharpDX.ErrorManager.ErrorDescription">
+        <member name="T:SharpDX.Diagnostics.ErrorManager.ErrorDescription">
             <summary>
             Error description holder
             </summary>

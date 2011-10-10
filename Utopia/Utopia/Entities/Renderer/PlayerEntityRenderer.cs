@@ -31,8 +31,6 @@ namespace Utopia.Entities.Renderer
         private CameraManager _camManager;
         private WorldFocusManager _worldFocusManager;
         private ShaderResourceView _cubeTexture_View;
-        private ISkyDome _skydome;
-        private VisualWorldParameters _visualWorldParameters;
         public SharedFrameCB SharedFrameCB { get; set;} 
         #endregion
 

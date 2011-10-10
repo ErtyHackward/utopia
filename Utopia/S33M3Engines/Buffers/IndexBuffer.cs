@@ -79,7 +79,7 @@ namespace S33M3Engines.Buffers
                 _indices.Position = 0; //Set the pointer to the beggining of the datastream
 
                 //Create the new Databox
-                _databox = new DataBox(_indexStride, _bufferCount * _indexStride, _indices);
+                _databox = new DataBox(_indices.DataPointer,_indexStride, _bufferCount * _indexStride);
 
                 //Create new Buffer
                 _description.SizeInBytes = _bufferCount * _indexStride;
@@ -91,7 +91,7 @@ namespace S33M3Engines.Buffers
             {
                 if (MapUpdate || _indexBuffer.Description.Usage == ResourceUsage.Dynamic)
                 {
-                    DataBox databox = _d3dEngine.Context.MapSubresource(_indexBuffer, 0, _indicesCount * _indexStride, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None);
+                    DataBox databox = _d3dEngine.Context.MapSubresource(_indexBuffer, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None);
                     databox.Data.Position = 0;
                     databox.Data.WriteRange(data, offset, indiceCount);
                     databox.Data.Position = 0;

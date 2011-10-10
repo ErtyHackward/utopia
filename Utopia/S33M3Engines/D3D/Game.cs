@@ -94,7 +94,6 @@ namespace S33M3Engines.D3D
 
         #region Public Methods
 
-        double test;
         //Init + Start the pump !
         public void Run()
         {
