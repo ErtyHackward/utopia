@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LostIslandHD.Client</RootNamespace>
-    <AssemblyName>LostIslandHD.Client</AssemblyName>
+    <AssemblyName>LostIsland</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
