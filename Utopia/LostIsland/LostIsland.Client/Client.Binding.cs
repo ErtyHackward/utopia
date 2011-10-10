@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Ninject;
+﻿using Ninject;
 using Nuclex.UserInterface;
 using Utopia.Editor;
 using Utopia.Entities.Voxel;
@@ -13,14 +9,12 @@ using Utopia.Worlds.Weather;
 using S33M3Engines.WorldFocus;
 using S33M3Engines.GameStates;
 using S33M3Engines;
-using S33M3Engines.InputHandler;
 using S33M3Engines.Cameras;
 using Utopia.Worlds.SkyDomes.SharedComp;
 using S33M3Engines.D3D;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks;
-using Utopia.Worlds;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Chunks.ChunkLandscape;
 using Utopia.Shared.Interfaces;
@@ -45,15 +39,19 @@ using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
 using S33M3Engines.Timers;
 using Utopia.Entities.Renderer.Interfaces;
-using Utopia;
-using Utopia.Shared.Structs;
 using S33M3Engines.D3D.DebugTools;
+using Utopia.Effects.Shared;
 
-namespace LostIsland.Client
+namespace LostIslandHD.Client
 {
     public partial class GameClient
     {
-        public void Binding(IKernel iocContainer, WorldParameters worldParam)
+        public void EarlyBinding(IKernel iocContainer)
+        {
+            iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
+        }
+
+        public void LateBinding(IKernel iocContainer, WorldParameters worldParam)
         {
             //DirectX layer & Helper ===================================
             iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope();         //DirectX Engine
@@ -69,6 +67,7 @@ namespace LostIsland.Client
             iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope(); //Type of camera used
             iocContainer.Bind<CameraManager>().ToSelf().InSingletonScope();     //Camera manager
             iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();      //Ingame based Timer class
+            iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class
 
             //Network Related =============================================
             iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
@@ -116,14 +115,13 @@ namespace LostIsland.Client
             iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();             //Chunk Management (Update/Draw)
             iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
             iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
-            iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope();
-            iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
-            iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
+            iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope();
+            iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
+            //iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
             //=============================================================
 
             //Entities related stuff ====================================================
             iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InSingletonScope();         // Use to display the picking cursor on block
-            iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
             iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InSingletonScope();   //Entites picking and collision handling vs player
             iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();         //Dynamic Entity manager
             iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();                             //The player manager

@@ -59,11 +59,11 @@
     <Compile Include="Tools\Survey.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
+    <ProjectReference Include="..\..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
       <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
       <Name>S33M3Engines.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
+    <ProjectReference Include="..\..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>
     </ProjectReference>

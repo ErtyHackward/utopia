@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LostIsland.Shared;
-using Utopia.Shared.World;
+﻿using Utopia.Shared.World;
 using Utopia;
 using Ninject;
 using Utopia.Network;
@@ -19,7 +14,6 @@ using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Chunks;
 using Utopia.Entities.Managers;
 using S33M3Engines;
-using Utopia.Worlds;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.GUI;
 using Utopia.GUI.D3D.Map;
@@ -43,14 +37,13 @@ using Utopia.Shared.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Entities.Voxel;
 using Ninject.Parameters;
-using Nuclex.UserInterface;
 using System.Windows.Forms;
 using System.Drawing;
+using Utopia.Effects.Shared;
 
-namespace LostIsland.Client
+namespace LostIslandHD.Client
 {
     public partial class GameClient
     {
@@ -68,7 +61,7 @@ namespace LostIsland.Client
             //===========================================================================================
             //Doing components bindings
             UtopiaRender utopiaRenderer; // Need to create it there, the "system" component will be binded at creation time.
-            Binding(iocContainer, worldParam);            // Bind various Components against concrete class.
+            LateBinding(iocContainer, worldParam);            // Bind various Components against concrete class.
 
             //=======================================================================================================================
             //Create the various Concrete classe Binded, forwarding appropriate value. ==============================================
@@ -78,7 +71,6 @@ namespace LostIsland.Client
                                                iocContainer.Get<ICubeMeshFactory>("LiquidCubeMeshFactory"),    //The default binded Water Cube Mesh Factory
                                                @"Config\CubesProfile.xml");                                    //The path to the Cubes Profiles descriptions
             CubeProfile.InitCubeProfiles(@"Config\CubesProfile.xml");                                          // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
-
 
 
             utopiaRenderer = new UtopiaRender(new UtopiaRenderStates()
@@ -130,7 +122,8 @@ namespace LostIsland.Client
                 playerCharacter = iocContainer.Get<PlayerCharacter>(),
                 playerEntityRenderer = iocContainer.Get<IEntitiesRenderer>("PlayerEntityRenderer"),
                 defaultEntityRenderer = iocContainer.Get<IEntitiesRenderer>("DefaultEntityRenderer"),
-                voxelMeshFactory = iocContainer.Get<VoxelMeshFactory>()
+                voxelMeshFactory = iocContainer.Get<VoxelMeshFactory>(),
+                sharedFrameCB = iocContainer.Get <SharedFrameCB>()
             }
             );
             
