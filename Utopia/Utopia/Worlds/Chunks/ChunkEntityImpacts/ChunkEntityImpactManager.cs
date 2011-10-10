@@ -11,6 +11,8 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Worlds.Cubes;
+using Utopia.Shared.Interfaces;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -25,9 +27,24 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         #endregion
 
         #region Public variables/properties
+        public SingleArrayChunkContainer CubesHolder
+        {
+            get { return _cubesHolder; }
+            set { _cubesHolder = value; }
+        }
+
+        public IWorldChunks WorldChunks
+        {
+            get { return _worldChunks; }
+            set { _worldChunks = value; }
+        }
         #endregion
 
-        public ChunkEntityImpactManager(Server server,
+        public ChunkEntityImpactManager()
+        {
+        }
+
+        public void LateInitialization(Server server,
                                         SingleArrayChunkContainer cubesHolder,
                                         IWorldChunks worldChunks,
                                         IChunkStorageManager chunkStorageManager,
@@ -60,29 +77,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i]);
             }
-        }
-
-        public void ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId)
-        {
-            //Create the new cube
-            TerraCube newCube = new TerraCube(replacementCubeId);
-
-            //Check if the cube is not already the same ? ! ?
-            TerraCube existingCube = _cubesHolder.Cubes[_cubesHolder.Index(ref cubeCoordinates)];
-            if (existingCube.Id == replacementCubeId) return;
-
-            //Change the cube in the big array
-            _cubesHolder.SetCube(ref cubeCoordinates, ref newCube);
-
-            CheckImpact(ref cubeCoordinates, replacementCubeId);
-
-            //Save the modified Chunk in local buffer DB
-            //Is it Worth ????
-            VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
-            impactedChunk.CompressedDirty = true;
-            Md5Hash chunkHash;
-            byte[] chunkDataCompressed = impactedChunk.CompressAndComputeHash(out chunkHash);
-            _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
         }
 
         /// <summary>
@@ -199,6 +193,48 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         #endregion
 
         #region Public methods
+        public void ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId)
+        {
+            ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId);
+        }
+
+        public void ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId)
+        {
+            //Create the new cube
+            TerraCube newCube = new TerraCube(replacementCubeId);
+
+            //Check if the cube is not already the same ? ! ?
+            TerraCube existingCube = _cubesHolder.Cubes[cubeArrayIndex];
+            if (existingCube.Id == replacementCubeId) return;
+
+            //Change the cube in the big array
+            _cubesHolder.SetCube(cubeArrayIndex, ref cubeCoordinates, ref newCube);
+
+            CheckImpact(ref cubeCoordinates, replacementCubeId);
+
+            //Save the modified Chunk in local buffer DB
+            //Is it Worth ????
+            VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
+            impactedChunk.CompressedDirty = true;
+            Md5Hash chunkHash;
+            byte[] chunkDataCompressed = impactedChunk.CompressAndComputeHash(out chunkHash);
+            _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
+        }
+
+        public IChunkLayout2D GetChunk(Vector2I position)
+        {
+            return _worldChunks.GetChunk(position.X, position.Y);
+        }
+
+        public ILandscapeCursor GetCursor(Vector3I blockPosition)
+        {
+            return new SingleArrayLandscapeCursor(this, blockPosition);
+        }
+
+        public ILandscapeCursor GetCursor(Vector3D entityPosition)
+        {
+            return GetCursor(new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
+        }
         #endregion
     }
 }

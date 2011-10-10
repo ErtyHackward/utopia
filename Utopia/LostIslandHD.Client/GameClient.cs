@@ -8,6 +8,7 @@ using Utopia.Settings;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Config;
 using LostIsland.Client.GUI.Forms;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace LostIslandHD.Client
 {
@@ -77,7 +78,8 @@ namespace LostIslandHD.Client
             _iocContainer.Bind<Server>().ToSelf().InSingletonScope();
             _server = _iocContainer.Get<Server>();
 
-            EntityFactory.Instance = new LostIslandEntityFactory(null);
+            EarlyBinding(_iocContainer);
+            EntityFactory.Instance = new LostIslandEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());
 
             _welcomeForm = new WelcomeScreen(_server, withFadeIn);
             _welcomeForm.Text = "Utopia Client Alpha " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();

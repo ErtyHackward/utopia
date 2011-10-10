@@ -252,6 +252,13 @@ namespace Utopia
             //-- Get World focus --
             _worldFocusManager.WorldFocus = (IWorldFocus)_firstPersonCamera; // Use the camera as a the world focus
 
+            //Do the ChunkEntityImpactManager late initialization
+            _chunkEntityImpactManager.LateInitialization(_server,
+                                                         _singleArrayChunkContainer,
+                                                         _worldChunks,
+                                                         _chunkStorageManager,
+                                                         _lightingManager);
+
             //Add Components to the main game Loop !
             GameComponents.Add(_server);
             GameComponents.Add(_inputsManager);

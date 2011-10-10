@@ -135,7 +135,6 @@
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
-    <Compile Include="Chunks\SingleArrayLandscapeCursor.cs" />
     <Compile Include="Gameplay\ServerGameplayProvider.cs" />
     <Compile Include="Interfaces\IAbstractChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
