@@ -19,6 +19,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
     public class ChunkEntityImpactManager : IChunkEntityImpactManager
     {
         #region Private variables
+        private bool _initialized;
         private Server _server;
         private SingleArrayChunkContainer _cubesHolder;
         private IWorldChunks _worldChunks;
@@ -42,6 +43,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public ChunkEntityImpactManager()
         {
+            _initialized = false;
         }
 
         public void LateInitialization(Server server,
@@ -50,17 +52,22 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                                         IChunkStorageManager chunkStorageManager,
                                         ILightingManager lightManager)
         {
+
             _server = server;
             _lightManager = lightManager;
             _worldChunks = worldChunks;
             _chunkStorageManager = chunkStorageManager;
             _server.ServerConnection.MessageBlockChange += ServerConnection_MessageBlockChange;
             _cubesHolder = cubesHolder;
+            _initialized = true;
         }
 
         public void Dispose()
         {
-            _server.ServerConnection.MessageBlockChange -= ServerConnection_MessageBlockChange;
+            if (_initialized)
+            {
+                _server.ServerConnection.MessageBlockChange -= ServerConnection_MessageBlockChange;
+            }
         }
 
         #region Private methods
