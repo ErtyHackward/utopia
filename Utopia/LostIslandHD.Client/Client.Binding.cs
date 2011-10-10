@@ -40,6 +40,7 @@ using Utopia.Entities.Managers.Interfaces;
 using S33M3Engines.Timers;
 using Utopia.Entities.Renderer.Interfaces;
 using S33M3Engines.D3D.DebugTools;
+using Utopia.Effects.Shared;
 
 namespace LostIslandHD.Client
 {
@@ -66,6 +67,7 @@ namespace LostIslandHD.Client
             iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope(); //Type of camera used
             iocContainer.Bind<CameraManager>().ToSelf().InSingletonScope();     //Camera manager
             iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();      //Ingame based Timer class
+            iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class
 
             //Network Related =============================================
             iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();

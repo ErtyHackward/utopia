@@ -13,11 +13,11 @@ using S33M3Engines.Buffers;
 using S33M3Engines;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
-using UtopiaContent.ModelComp;
 using S33M3Engines.WorldFocus;
 using Utopia.Shared.World;
 using Utopia.Entities;
 using Utopia.Entities.Interfaces;
+using Utopia.Resources.ModelComp;
 
 namespace Utopia.Worlds.Chunks
 {

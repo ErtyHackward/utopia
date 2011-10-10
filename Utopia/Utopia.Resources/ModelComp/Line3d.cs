@@ -8,7 +8,7 @@ using S33M3Engines.Cameras;
 using S33M3Engines.Struct;
 using Utopia.Shared.Structs;
 
-namespace UtopiaContent.ModelComp
+namespace Utopia.Resources.ModelComp
 {
     public class Line3D : IDrawable
     {

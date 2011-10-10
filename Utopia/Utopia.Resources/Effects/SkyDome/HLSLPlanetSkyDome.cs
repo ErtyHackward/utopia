@@ -9,7 +9,7 @@ using S33M3Engines.D3D.Effects;
 using S33M3Engines.D3D;
 using S33M3Engines;
 
-namespace UtopiaContent.Effects.Skydome
+namespace Utopia.Resources.Effects.Skydome
 {
 
     public class HLSLPlanetSkyDome : HLSLShaderWrap

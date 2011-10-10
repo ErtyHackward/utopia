@@ -37,6 +37,7 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Managers;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Entities.Voxel;
+using Utopia.Effects.Shared;
 
 namespace Utopia
 {
@@ -88,5 +89,6 @@ namespace Utopia
         public IEntitiesRenderer playerEntityRenderer;
         public IEntitiesRenderer defaultEntityRenderer;
         public VoxelMeshFactory voxelMeshFactory;
+        public SharedFrameCB sharedFrameCB;
     }
 }

@@ -5,7 +5,6 @@ using System.Text;
 using S33M3Engines.D3D;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks.Entities.Interfaces;
-using UtopiaContent.ModelComp;
 using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines;
 using S33M3Engines.Struct.Vertex;
@@ -16,6 +15,7 @@ using S33M3Engines.StatesManager;
 using Utopia.Entities.Voxel;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Settings;
+using Utopia.Resources.ModelComp;
 
 namespace Utopia.Entities.Renderer
 {

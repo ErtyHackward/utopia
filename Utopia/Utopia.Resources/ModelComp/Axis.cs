@@ -16,7 +16,7 @@ using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.GameStates;
 
-namespace UtopiaContent.ModelComp
+namespace Utopia.Resources.ModelComp
 {
     /// <summary>
     /// This is a game component that implements IUpdateable.

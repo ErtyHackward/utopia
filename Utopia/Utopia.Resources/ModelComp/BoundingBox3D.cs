@@ -15,7 +15,7 @@ using Utopia.Shared.Structs;
 using S33M3Engines;
 using S33M3Engines.WorldFocus;
 
-namespace UtopiaContent.ModelComp
+namespace Utopia.Resources.ModelComp
 {
     public class BoundingBox3D : IDisposable
     {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines.D3D;
-using UtopiaContent.Effects.Skydome;
 using S33M3Engines.Buffers;
 using Utopia.Worlds.GameClocks;
 using S33M3Engines.Struct.Vertex;
@@ -15,6 +14,7 @@ using S33M3Engines.Shared.Math;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using Utopia.Settings;
+using Utopia.Resources.Effects.Skydome;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {

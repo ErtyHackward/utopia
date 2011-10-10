@@ -5,7 +5,7 @@ using System.Text;
 using S33M3Engines.Cameras;
 using SharpDX;
 
-namespace UtopiaContent.ModelComp
+namespace Utopia.Resources.ModelComp
 {
     public interface IDrawable
     {

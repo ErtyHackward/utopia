@@ -13,7 +13,6 @@ using Utopia.Worlds.Weather;
 using Utopia.Shared.Chunks;
 using Utopia.Settings;
 using SharpDX.Direct3D11;
-using UtopiaContent.Effects.Weather;
 using S33M3Engines.StatesManager;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.Buffers;

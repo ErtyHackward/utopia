@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines.D3D;
-using UtopiaContent.Effects.Terran;
 using S33M3Engines.Struct.Vertex;
 using SharpDX.Direct3D11;
 using S33M3Engines.Textures;
@@ -11,9 +10,10 @@ using S33M3Engines.StatesManager;
 using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Chunks;
-using UtopiaContent.Effects.Entities;
 using S33M3Engines.Maths;
 using Utopia.Settings;
+using Utopia.Resources.Effects.Terran;
+using Utopia.Resources.Effects.Entities;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -45,13 +45,7 @@ namespace Utopia.Worlds.Chunks
 #if DEBUG
             if (_gameStates.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 #endif
-
             _terraEffect.Begin();
-            _terraEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-            _terraEffect.CBPerFrame.Values.fogdist = ((VisualWorldParameters.WorldVisibleSize.X) / 2) - 48;
-            _terraEffect.CBPerFrame.IsDirty = true;
-            if (_playerManager.IsHeadInsideWater) _terraEffect.CBPerFrame.Values.SunColor = new Vector3(_skydome.SunColor.X / 3, _skydome.SunColor.Y / 3, _skydome.SunColor.Z);
-            else _terraEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
 
             switch (Index)
             {
@@ -102,9 +96,6 @@ namespace Utopia.Worlds.Chunks
 
                 if (chunk.Ready2Draw)
                 {
-                    //Only checking Frustum with the faceID = 0
-                    //chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
-
                     if (!chunk.isFrustumCulled)
                     {
                         _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
@@ -133,12 +124,6 @@ namespace Utopia.Worlds.Chunks
             VisualChunk chunk;
 
             _liquidEffect.Begin();
-            _liquidEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-            _liquidEffect.CBPerFrame.Values.fogdist = ((VisualWorldParameters.WorldVisibleSize.X) / 2) - 48;
-            if (_playerManager.IsHeadInsideWater) _liquidEffect.CBPerFrame.Values.SunColor = new Vector3(_skydome.SunColor.X / 3, _skydome.SunColor.Y / 3, _skydome.SunColor.Z);
-            else _liquidEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
-
-            _liquidEffect.CBPerFrame.IsDirty = true;
 
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
@@ -216,11 +201,11 @@ namespace Utopia.Worlds.Chunks
         {
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _terra_View);
 
-            _terraEffect = new HLSLTerran(_d3dEngine, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
+            _terraEffect = new HLSLTerran(_d3dEngine, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _terraEffect.TerraTexture.Value = _terra_View;
             _terraEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
 
-            _liquidEffect = new HLSLLiquid(_d3dEngine, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration);
+            _liquidEffect = new HLSLLiquid(_d3dEngine, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _liquidEffect.TerraTexture.Value = _terra_View;
             _liquidEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
 
