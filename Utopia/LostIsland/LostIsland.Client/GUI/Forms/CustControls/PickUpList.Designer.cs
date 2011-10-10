@@ -1,4 +1,4 @@
-﻿namespace LostIslandHD.Client.GUI.Forms.CustControls
+﻿namespace LostIsland.Client.GUI.Forms.CustControls
 {
     partial class PickUpList
     {

@@ -10,7 +10,7 @@ using Utopia.Shared.Config;
 using LostIsland.Client.GUI.Forms;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
-namespace LostIslandHD.Client
+namespace LostIsland.Client
 {
 
     public partial class GameClient : IDisposable
