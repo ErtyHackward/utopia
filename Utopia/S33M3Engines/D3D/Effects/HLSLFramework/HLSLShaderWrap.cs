@@ -299,7 +299,7 @@ namespace S33M3Engines.D3D.Effects
             if (_ps != null) _ps.Dispose();
             for (int i = 0; i < _cBuffers.Length; i++)
             {
-                _cBuffers[i].Dispose();
+                if(!_cBuffers[i].GlobalCB) _cBuffers[i].Dispose();
             }
             DisposeInputLayout();
 

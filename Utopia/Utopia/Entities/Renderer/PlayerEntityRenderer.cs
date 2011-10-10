@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Utopia.Entities.Voxel;
 using S33M3Engines.D3D;
-using UtopiaContent.Effects.Terran;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.WorldFocus;
@@ -19,6 +18,8 @@ using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Settings;
+using Utopia.Resources.Effects.Terran;
+using Utopia.Effects.Shared;
 
 namespace Utopia.Entities.Renderer
 {
@@ -32,6 +33,7 @@ namespace Utopia.Entities.Renderer
         private ShaderResourceView _cubeTexture_View;
         private ISkyDome _skydome;
         private VisualWorldParameters _visualWorldParameters;
+        public SharedFrameCB SharedFrameCB { get; set;} 
         #endregion
 
         #region Public variables/properties
@@ -53,7 +55,7 @@ namespace Utopia.Entities.Renderer
         #region Private Methods
         public void Initialize()
         {
-            _entityEffect = new HLSLTerran(_d3DEngine, ClientSettings.EffectPack + @"Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration);
+            _entityEffect = new HLSLTerran(_d3DEngine, ClientSettings.EffectPack + @"Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCB.CBPerFrame);
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
 
             _entityEffect.TerraTexture.Value = _cubeTexture_View;
@@ -72,10 +74,10 @@ namespace Utopia.Entities.Renderer
 
             _entityEffect.Begin();
 
-            _entityEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-            _entityEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
-            _entityEffect.CBPerFrame.Values.fogdist = ((_visualWorldParameters.WorldVisibleSize.X) / 2) - 48;
-            _entityEffect.CBPerFrame.IsDirty = true;
+            //_entityEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+            //_entityEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
+            //_entityEffect.CBPerFrame.Values.fogdist = ((_visualWorldParameters.WorldVisibleSize.X) / 2) - 48;
+            //_entityEffect.CBPerFrame.IsDirty = true;
 
             Matrix world = _worldFocusManager.CenterOnFocus(ref VisualEntity.VisualEntity.World);
 

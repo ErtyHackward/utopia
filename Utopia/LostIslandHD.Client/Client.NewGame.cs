@@ -41,6 +41,7 @@ using Utopia.Entities.Voxel;
 using Ninject.Parameters;
 using System.Windows.Forms;
 using System.Drawing;
+using Utopia.Effects.Shared;
 
 namespace LostIslandHD.Client
 {
@@ -121,7 +122,8 @@ namespace LostIslandHD.Client
                 playerCharacter = iocContainer.Get<PlayerCharacter>(),
                 playerEntityRenderer = iocContainer.Get<IEntitiesRenderer>("PlayerEntityRenderer"),
                 defaultEntityRenderer = iocContainer.Get<IEntitiesRenderer>("DefaultEntityRenderer"),
-                voxelMeshFactory = iocContainer.Get<VoxelMeshFactory>()
+                voxelMeshFactory = iocContainer.Get<VoxelMeshFactory>(),
+                sharedFrameCB = iocContainer.Get <SharedFrameCB>()
             }
             );
             

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using SharpDX;
 using S33M3Engines;
 
-namespace UtopiaContent.Effects.Entities
+namespace Utopia.Resources.Effects.Entities
 {
     public class HLSLStaticEntitySprite : HLSLShaderWrap
     {

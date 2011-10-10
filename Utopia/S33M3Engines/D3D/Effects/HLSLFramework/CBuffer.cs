@@ -17,6 +17,7 @@ namespace S33M3Engines.D3D.Effects
         int[] Slot { get; set; }
         void Set2Device(bool forced = false);
         void Update();
+        bool GlobalCB { get; set; }
     }
 
     public class CBuffer<T> : iCBuffer, IDisposable
@@ -57,6 +58,8 @@ namespace S33M3Engines.D3D.Effects
             get { return _slot; }
             set { _slot = value; }
         }
+
+        public bool GlobalCB { get; set; }
         #endregion
 
         public CBuffer(D3DEngine engine, string Name)
@@ -80,6 +83,8 @@ namespace S33M3Engines.D3D.Effects
             Tools.Resource.SetName(_CBuffer, "CBuffer : " + Name);
 
             _dataStream = new DataStream(_size, true, true);
+
+            GlobalCB = false;
         }
 
         public void Update()
@@ -101,9 +106,9 @@ namespace S33M3Engines.D3D.Effects
 
         public void Set2Device(bool forced = false)
         {
-            if (_isDirty || forced)
+            if (_isDirty || forced || GlobalCB)
             {
-                Update();
+                if (!GlobalCB) Update();
                 if ((_shadersImpacted & Shaders.VS) == Shaders.VS) _engine.Context.VertexShader.SetConstantBuffer(_slot[ShaderIDs.VS], _CBuffer);
                 if ((_shadersImpacted & Shaders.GS) == Shaders.GS) _engine.Context.GeometryShader.SetConstantBuffer(_slot[ShaderIDs.GS], _CBuffer);
                 if ((_shadersImpacted & Shaders.PS) == Shaders.PS) _engine.Context.PixelShader.SetConstantBuffer(_slot[ShaderIDs.PS], _CBuffer);

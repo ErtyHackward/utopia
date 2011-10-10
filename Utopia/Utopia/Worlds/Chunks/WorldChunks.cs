@@ -23,6 +23,7 @@ using S33M3Engines.Maths;
 using System.Linq;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Weather;
+using Utopia.Effects.Shared;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -71,6 +72,7 @@ namespace Utopia.Worlds.Chunks
         private ISkyDome _skydome;
         private IStaticEntityManager _staticEntityManager;
         private IWeather _weather;
+        private SharedFrameCB _sharedFrameCB;
         #endregion
 
         #region Public Property/Variables
@@ -106,7 +108,8 @@ namespace Utopia.Worlds.Chunks
                            PlayerEntityManager player,
                            ISkyDome skydome,
                            IEntityPickingManager pickingManager,
-                           IWeather weather)
+                           IWeather weather,
+                           SharedFrameCB sharedFrameCB)
         {
             _server = server;
             _chunkstorage = chunkstorage;
@@ -124,6 +127,7 @@ namespace Utopia.Worlds.Chunks
             _playerManager = player;
             _skydome = skydome;
             _weather = weather;
+            _sharedFrameCB = sharedFrameCB;
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;

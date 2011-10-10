@@ -13,7 +13,6 @@ using Utopia.GUI;
 using Utopia.GUI.D3D;
 using Utopia.GUI.D3D.Map;
 using Utopia.Shared.Net.Connections;
-using UtopiaContent.ModelComp;
 using SharpDX;
 using S33M3Engines.Struct;
 using S33M3Engines.Maths;
@@ -59,6 +58,7 @@ using Utopia.Worlds.Chunks.ChunkLandscape;
 using Utopia.Worlds.Chunks.ChunkMesh;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Nuclex.UserInterface;
+using Utopia.Effects.Shared;
 
 namespace Utopia
 {
@@ -115,10 +115,10 @@ namespace Utopia
 
             //Do the ChunkEntityImpactManager late initialization
             _renderStates.chunkEntityImpactManager.LateInitialization(_renderStates.server,
-                                                         _renderStates.singleArrayChunkContainer,
-                                                         _renderStates.worldChunks,
-                                                         _renderStates.chunkStorageManager,
-                                                         _renderStates.lightingManager);
+                                                                      _renderStates.singleArrayChunkContainer,
+                                                                      _renderStates.worldChunks,
+                                                                      _renderStates.chunkStorageManager,
+                                                                      _renderStates.lightingManager);
 
             //Add Components to the main game Loop !
             GameComponents.Add(_renderStates.server);
@@ -140,6 +140,7 @@ namespace Utopia
             GameComponents.Add(_renderStates.gameClock);
             GameComponents.Add(_renderStates.weather);
             GameComponents.Add(_renderStates.worldChunks);
+            GameComponents.Add(_renderStates.sharedFrameCB);
 
             #region Debug Components
 #if DEBUG

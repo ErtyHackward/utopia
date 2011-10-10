@@ -9,7 +9,7 @@ using S33M3Engines.D3D.Effects;
 using S33M3Engines.D3D;
 using S33M3Engines;
 
-namespace UtopiaContent.Effects.Weather
+namespace Utopia.Resources.Effects.Weather
 {
 
     public class HLSLClouds2D : HLSLShaderWrap

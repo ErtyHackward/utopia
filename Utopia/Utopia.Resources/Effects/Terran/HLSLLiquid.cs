@@ -9,7 +9,7 @@ using S33M3Engines.D3D.Effects;
 using S33M3Engines.D3D;
 using S33M3Engines;
 
-namespace UtopiaContent.Effects.Terran
+namespace Utopia.Resources.Effects.Terran
 {
 
     public class HLSLLiquid : HLSLShaderWrap
@@ -33,18 +33,6 @@ namespace UtopiaContent.Effects.Terran
             public float popUpYOffset;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
-
-        [StructLayout(LayoutKind.Explicit, Size = 80)]
-        public struct CBPerFrame_Struct
-        {
-            [FieldOffset(0)]
-            public Matrix ViewProjection;   //64 (4*4 float)
-            [FieldOffset(64)]
-            public Vector3 SunColor;        //12 (3 float)
-            [FieldOffset(76)]
-            public float fogdist;           //4 (float)
-        }
-        public CBuffer<CBPerFrame_Struct> CBPerFrame;
         #endregion
 
         #region Resources
@@ -64,15 +52,14 @@ namespace UtopiaContent.Effects.Terran
         };
         #endregion
 
-        public HLSLLiquid(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+        public HLSLLiquid(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
             : base(d3dEngine, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = new CBuffer<CBPerDraw_Struct>(_d3dEngine, "PerDraw");
             CBuffers.Add(CBPerDraw);
 
-            CBPerFrame = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrame");
-            CBuffers.Add(CBPerFrame);
+            if (CBPerFrame != null) CBuffers.Add(CBPerFrame);
 
             //Create the resource interfaces ==================================================
             TerraTexture = new ShaderResource(_d3dEngine, "TerraTexture");

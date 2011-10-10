@@ -7,7 +7,6 @@ using S33M3Engines.StatesManager;
 using S33M3Engines.Buffers;
 using SharpDX;
 using S33M3Engines.Struct.Vertex;
-using UtopiaContent.Effects.Weather;
 using SharpDX.Direct3D11;
 using Utopia.Settings;
 using S33M3Engines.Maths;
@@ -19,6 +18,7 @@ using S33M3Engines;
 using S33M3Engines.Cameras;
 using Utopia.Shared.Chunks;
 using S33M3Engines.Shared.Math;
+using Utopia.Resources.Effects.Weather;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {

@@ -27,9 +27,10 @@ using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Worlds.Cubes;
-using UtopiaContent.Effects.Terran;
 using Screen = Nuclex.UserInterface.Screen;
 using Utopia.Settings;
+using Utopia.Resources.Effects.Terran;
+using Utopia.Effects.Shared;
 
 namespace Utopia.Editor
 {
@@ -51,6 +52,7 @@ namespace Utopia.Editor
         private readonly ActionsManager _actions;
         private readonly Hud _hudComponent;
         private readonly PlayerCharacter _player;
+        private SharedFrameCB _sharedFrameCB;
 
 
         private const double Scale = 1f/16f;
@@ -98,7 +100,8 @@ namespace Utopia.Editor
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
                             ActionsManager actions, Hud hudComponent, PlayerCharacter player,
-                            InputsManager inputsManager,IPickingRenderer pickingRenderer,IDynamicEntityManager entityManager,PlayerEntityManager playerMgr)
+                            InputsManager inputsManager,IPickingRenderer pickingRenderer,IDynamicEntityManager entityManager,PlayerEntityManager playerMgr,
+                            SharedFrameCB sharedFrameCB)
         {
             LeftTool = new EditorRemove(this);
             RightTool = new EditorAdd(this);
@@ -114,6 +117,7 @@ namespace Utopia.Editor
             _pickingRenderer = pickingRenderer;
             _entityManager = entityManager;
             _playerMgr = playerMgr;
+            _sharedFrameCB = sharedFrameCB;
 
             // inactive by default, use F12 UI to enable :)
             _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
@@ -201,7 +205,7 @@ namespace Utopia.Editor
                                                   "ArrayTexture_EntityEditor", out Texture);
 
             _itemEffect = new HLSLTerran(_d3DEngine, ClientSettings.EffectPack + @"Terran/TerranEditor.hlsl",
-                                         VertexCubeSolid.VertexDeclaration);
+                                         VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
 
             _itemEffect.TerraTexture.Value = Texture;
 
@@ -343,12 +347,12 @@ namespace Utopia.Editor
 
             _itemEffect.Begin();
 
-            _itemEffect.CBPerFrame.Values.ViewProjection =
-                Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-            _itemEffect.CBPerFrame.Values.SunColor = Vector3.One;
-            _itemEffect.CBPerFrame.Values.fogdist = 100;
+            //_itemEffect.CBPerFrame.Values.ViewProjection =
+            //    Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+            //_itemEffect.CBPerFrame.Values.SunColor = Vector3.One;
+            //_itemEffect.CBPerFrame.Values.fogdist = 100;
 
-            _itemEffect.CBPerFrame.IsDirty = true;
+            //_itemEffect.CBPerFrame.IsDirty = true;
 
             Matrix world = Matrix.Scaling((float) Scale)*
                            Matrix.Translation(_editedEntity.Position.AsVector3());
