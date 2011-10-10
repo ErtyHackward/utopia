@@ -167,10 +167,6 @@
       <Project>{DB3E251E-EF28-44D5-9F9A-DB07624CD753}</Project>
       <Name>Utopia</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LostIsland.Resources\LostIsland.Resources.csproj">
-      <Project>{E27CDE0E-E112-4BC7-A59B-977654547D5D}</Project>
-      <Name>LostIsland.Resources</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\WelcomeScreen.png" />

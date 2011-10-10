@@ -7,6 +7,7 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Chunks.Entities.Inventory.Tools;
+using Utopia.Settings;
 
 namespace Utopia.Entities
 {
@@ -31,7 +32,7 @@ namespace Utopia.Entities
         {
             ShaderResourceView cubeTextureView;
             //TODO this code is at multiple places, could be only handled here, texturefactory instead of IconFactory ? 
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out cubeTextureView);
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out cubeTextureView);
             CubesTexture = cubeTextureView;
         }
 

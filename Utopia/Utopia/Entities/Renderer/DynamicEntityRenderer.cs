@@ -17,6 +17,7 @@ using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
 using Utopia.Entities.Renderer.Interfaces;
+using Utopia.Settings;
 
 namespace Utopia.Entities.Renderer
 {
@@ -54,8 +55,8 @@ namespace Utopia.Entities.Renderer
         #region Private Methods
         public void Initialize()
         {
-            _entityEffect = new HLSLTerran(_d3DEngine, @"Effects/Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration);
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, @"Textures/Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
+            _entityEffect = new HLSLTerran(_d3DEngine, ClientSettings.EffectPack + @"Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration);
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
 
             _entityEffect.TerraTexture.Value = _cubeTexture_View;
             _entityEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);

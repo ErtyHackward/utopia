@@ -25,6 +25,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
 using Ninject;
+using Utopia.Settings;
 
 namespace Utopia.Entities.Managers
 {
@@ -706,7 +707,7 @@ namespace Utopia.Entities.Managers
         /// </summary>
         public override void LoadContent()
         {
-             _backgroundTex = new SpriteTexture(_d3DEngine.Device, @"Textures\charactersheet.png", new Vector2(0, 0));
+             _backgroundTex = new SpriteTexture(_d3DEngine.Device, ClientSettings.TexturePack + @"charactersheet.png", new Vector2(0, 0));
              _inventoryUi = new InventoryWindow(_backgroundTex, Player,_iconFactory);
         }
 

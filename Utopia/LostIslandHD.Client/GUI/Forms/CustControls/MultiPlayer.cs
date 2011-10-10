@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Utopia.Network;
+using LostIslandHD.Client.GUI.Forms.CustControls;
+using System.IO;
 
 namespace LostIsland.Client.GUI.Forms.CustControls
 {
@@ -15,6 +17,30 @@ namespace LostIsland.Client.GUI.Forms.CustControls
         public MultiPlayer()
         {
             InitializeComponent();
+        }
+
+        private void pickTexturePack_Click(object sender, EventArgs e)
+        {
+            PickUpList popUp = new PickUpList();
+
+            var files = Directory.GetDirectories(@"TexturesPacks\");
+
+            popUp.SetItems(files);
+            popUp.ShowDialog(this);
+
+            txtTexturePack.Text = popUp.PickedPack != "" ? popUp.PickedPack : "Default";
+        }
+
+        private void PickEffectPack_Click(object sender, EventArgs e)
+        {
+            PickUpList popUp = new PickUpList();
+
+            var files = Directory.GetDirectories(@"EffectsPacks\");
+
+            popUp.SetItems(files);
+            popUp.ShowDialog(this);
+
+            txtEffectPack.Text = popUp.PickedPack != "" ? popUp.PickedPack : "Default";
         }
     }
 

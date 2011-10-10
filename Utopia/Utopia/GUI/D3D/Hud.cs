@@ -8,6 +8,7 @@ using Utopia.Entities;
 using Utopia.GUI.D3D.Inventory;
 using SharpDX.Direct3D11;
 using Utopia.Shared.Chunks.Entities;
+using Utopia.Settings;
 
 namespace Utopia.GUI.D3D
 {
@@ -45,7 +46,7 @@ namespace Utopia.GUI.D3D
 
         public override void LoadContent()
         {
-            _crosshair = new SpriteTexture(_d3DEngine.Device, @"Textures\Gui\Crosshair.png", ref _d3DEngine.ViewPort_Updated, _d3DEngine.ViewPort);
+            _crosshair = new SpriteTexture(_d3DEngine.Device, ClientSettings.TexturePack + @"Gui\Crosshair.png", ref _d3DEngine.ViewPort_Updated, _d3DEngine.ViewPort);
 
             _spriteRender = new SpriteRenderer();
             _spriteRender.Initialize(_d3DEngine);

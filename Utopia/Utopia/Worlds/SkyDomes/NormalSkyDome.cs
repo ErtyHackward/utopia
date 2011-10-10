@@ -22,6 +22,7 @@ using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.WorldFocus;
 using Ninject;
+using Utopia.Settings;
 
 namespace Utopia.Worlds.SkyDomes
 {
@@ -85,13 +86,13 @@ namespace Utopia.Worlds.SkyDomes
             BuffersToDevice(); //Create Buffers
 
             //Init effects
-            _skyDomeEffect = new HLSLPlanetSkyDome(_d3dEngine, @"Effects\SkyDome\PlanetSkyDome.hlsl", VertexPosition.VertexDeclaration);
+            _skyDomeEffect = new HLSLPlanetSkyDome(_d3dEngine, ClientSettings.EffectPack + @"SkyDome\PlanetSkyDome.hlsl", VertexPosition.VertexDeclaration);
             _posiTextureEffect = new HLSLVertexPositionTexture(_d3dEngine, @"D3D\Effects\Basics\VertexPositionTexture.hlsl", VertexPositionTexture.VertexDeclaration);
 
             //Init Textures
-            _skyTex_View = ShaderResourceView.FromFile(_d3dEngine.Device, @"Textures\SkyDome\skyText.png");
-            _moonTex_View = ShaderResourceView.FromFile(_d3dEngine.Device, @"Textures\SkyDome\moon.png");
-            _glowTex_View = ShaderResourceView.FromFile(_d3dEngine.Device, @"Textures\SkyDome\moonglow.png");
+            _skyTex_View = ShaderResourceView.FromFile(_d3dEngine.Device, ClientSettings.TexturePack + @"SkyDome\skyText.png");
+            _moonTex_View = ShaderResourceView.FromFile(_d3dEngine.Device, ClientSettings.TexturePack + @"SkyDome\moon.png");
+            _glowTex_View = ShaderResourceView.FromFile(_d3dEngine.Device, ClientSettings.TexturePack + @"SkyDome\moonglow.png");
 
             _skyDomeEffect.TerraTexture.Value = _skyTex_View;
             _skyDomeEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UWrapVClamp_MinMagMipLinear);

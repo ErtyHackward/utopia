@@ -63,7 +63,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         public override void Initialize()
         {
             _nbrLayer = 1;// 
-            _cloudMap = ShaderResourceView.FromFile(_d3dEngine.Device, @"Textures\Weather\clouds.png");
+            _cloudMap = ShaderResourceView.FromFile(_d3dEngine.Device, ClientSettings.TexturePack + @"Weather\clouds.png");
             Init2D();
         }
 
@@ -113,7 +113,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #region private methods
         private void Init2D()
         {
-            _cloudEffect2D = new HLSLClouds2D(_d3dEngine, @"Effects\Weather\Clouds2D.hlsl", VertexCubeCloud.VertexDeclaration);
+            _cloudEffect2D = new HLSLClouds2D(_d3dEngine, ClientSettings.EffectPack + @"Weather\Clouds2D.hlsl", VertexCubeCloud.VertexDeclaration);
 
             _cloudEffect2D.CloudTexture.Value = _cloudMap;
             _cloudEffect2D.cloudSampler.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
