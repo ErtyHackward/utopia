@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Utopia.Network;
-using LostIslandHD.Client.GUI.Forms.CustControls;
+using LostIsland.Client.GUI.Forms.CustControls;
 using System.IO;
 
 namespace LostIsland.Client.GUI.Forms.CustControls

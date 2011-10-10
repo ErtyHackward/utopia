@@ -43,7 +43,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using Utopia.Effects.Shared;
 
-namespace LostIslandHD.Client
+namespace LostIsland.Client
 {
     public partial class GameClient
     {

@@ -42,7 +42,7 @@ using Utopia.Entities.Renderer.Interfaces;
 using S33M3Engines.D3D.DebugTools;
 using Utopia.Effects.Shared;
 
-namespace LostIslandHD.Client
+namespace LostIsland.Client
 {
     public partial class GameClient
     {

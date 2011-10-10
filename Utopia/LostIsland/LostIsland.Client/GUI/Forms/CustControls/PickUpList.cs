@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace LostIslandHD.Client.GUI.Forms.CustControls
+namespace LostIsland.Client.GUI.Forms.CustControls
 {
     public partial class PickUpList : Form
     {
