@@ -1,22 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LostIsland.Shared;
 using Utopia.Network;
 using Ninject;
 using S33M3Engines.D3D;
 using System.Windows.Forms;
 using Utopia.Settings;
-using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Config;
-using Utopia;
 using LostIsland.Client.GUI.Forms;
-using Utopia.Shared.World;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
-namespace LostIsland.Client
+namespace LostIslandHD.Client
 {
+
     public partial class GameClient : IDisposable
     {
         #region Private variables
@@ -82,7 +78,8 @@ namespace LostIsland.Client
             _iocContainer.Bind<Server>().ToSelf().InSingletonScope();
             _server = _iocContainer.Get<Server>();
 
-            EntityFactory.Instance = new LostIslandEntityFactory(null);
+            EarlyBinding(_iocContainer);
+            EntityFactory.Instance = new LostIslandEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());
 
             _welcomeForm = new WelcomeScreen(_server, withFadeIn);
             _welcomeForm.Text = "Utopia Client Alpha " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -130,8 +127,6 @@ namespace LostIsland.Client
             //Get windows Exit reason
             _exitRease = game.GameExitReason;
             game.Dispose();
-
-            //AnalyseExitReason(exitRease);
 
             _iocContainer.Dispose();
 

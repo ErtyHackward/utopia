@@ -96,7 +96,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\LostIsland.Shared\LostIsland.Shared.csproj">
+    <ProjectReference Include="..\LostIsland.Shared\LostIsland.Shared.csproj">
       <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
       <Name>LostIsland.Shared</Name>
     </ProjectReference>

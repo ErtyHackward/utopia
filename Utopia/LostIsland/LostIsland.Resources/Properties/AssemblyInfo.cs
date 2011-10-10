@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LostIsland.Resources")]
+[assembly: AssemblyTitle("LostIslandHD.Resources")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("LostIsland.Resources")]
+[assembly: AssemblyProduct("LostIslandHD.Resources")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("589cbdbe-66e7-47b3-b886-eb6c160e3fcf")]
+[assembly: Guid("2eb4a108-373c-40ca-8b47-0c07d3d595a7")]
 
 // Version information for an assembly consists of the following four values:
 //

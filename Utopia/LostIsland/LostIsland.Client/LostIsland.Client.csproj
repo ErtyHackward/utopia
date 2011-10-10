@@ -5,30 +5,15 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{ED1AA543-032B-4B64-BEBE-1A0A7BDDB69C}</ProjectGuid>
+    <ProjectGuid>{B2B7381A-86E2-4897-B04D-14EF79BE34C3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LostIsland.Client</RootNamespace>
-    <AssemblyName>LostIsland</AssemblyName>
+    <RootNamespace>LostIslandHD.Client</RootNamespace>
+    <AssemblyName>LostIslandHD.Client</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -51,25 +36,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ninject">
-      <HintPath>..\..\Library\Ninject.dll</HintPath>
+      <HintPath>..\Library\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX">
-      <HintPath>..\..\Library\SharpDX\SharpDX.dll</HintPath>
+    <Reference Include="Nuclex.Support">
+      <HintPath>..\Library\Nuclex.Support.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Library\SharpDX2\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Diagnostics">
+      <HintPath>..\Library\SharpDX2\SharpDX.Diagnostics.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D11, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\SharpDX\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>..\Library\SharpDX2\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.DXGI, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\SharpDX\SharpDX.DXGI.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Error">
-      <HintPath>..\..\Library\SharpDX\SharpDX.Error.dll</HintPath>
+      <HintPath>..\Library\SharpDX2\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -101,6 +89,12 @@
     <Compile Include="GUI\Forms\CustControls\MultiPlayer.Designer.cs">
       <DependentUpon>MultiPlayer.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Forms\CustControls\PickUpList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\CustControls\PickUpList.Designer.cs">
+      <DependentUpon>PickUpList.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\Forms\CustControls\SinglePlayer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -124,6 +118,9 @@
     <EmbeddedResource Include="GUI\Forms\CustControls\MultiPlayer.resx">
       <DependentUpon>MultiPlayer.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Forms\CustControls\PickUpList.resx">
+      <DependentUpon>PickUpList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\Forms\CustControls\SinglePlayer.resx">
       <DependentUpon>SinglePlayer.cs</DependentUpon>
     </EmbeddedResource>
@@ -140,6 +137,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -151,9 +149,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\LostIsland.Shared\LostIsland.Shared.csproj">
+    <None Include="Resources\WelcomeScreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LostIsland.Shared\LostIsland.Shared.csproj">
       <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
       <Name>LostIsland.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LostIsland.Resources\LostIsland.Resources.csproj">
+      <Project>{C09A8BDD-5E9F-43D9-91C5-7C6F6362A0B7}</Project>
+      <Name>LostIsland.Resources</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\S33M3Engines\S33M3Engines.csproj">
       <Project>{E1E5C757-C550-4E62-8BE3-2E9553F023F7}</Project>
@@ -167,31 +172,6 @@
       <Project>{DB3E251E-EF28-44D5-9F9A-DB07624CD753}</Project>
       <Name>Utopia</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\WelcomeScreen.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

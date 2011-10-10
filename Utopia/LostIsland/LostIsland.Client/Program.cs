@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using LostIsland.Shared;
+using LostIslandHD.Client;
 using Utopia;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;

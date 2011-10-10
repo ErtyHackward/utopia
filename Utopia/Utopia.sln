@@ -28,11 +28,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gameplay", "Gameplay", "{16
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIsland.Server", "LostIsland\LostIsland.Server\LostIsland.Server.csproj", "{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIsland.Shared", "LostIsland.Shared\LostIsland.Shared.csproj", "{F1802365-2422-40CA-9962-21BD6B93B6D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIsland.Shared", "LostIsland\LostIsland.Shared\LostIsland.Shared.csproj", "{F1802365-2422-40CA-9962-21BD6B93B6D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIsland.Client", "LostIslandHD.Client\LostIsland.Client.csproj", "{B2B7381A-86E2-4897-B04D-14EF79BE34C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIsland.Client", "LostIsland\LostIsland.Client\LostIsland.Client.csproj", "{B2B7381A-86E2-4897-B04D-14EF79BE34C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIsland.Resources", "LostIslandHD.Resources\LostIsland.Resources.csproj", "{C09A8BDD-5E9F-43D9-91C5-7C6F6362A0B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostIsland.Resources", "LostIsland\LostIsland.Resources\LostIsland.Resources.csproj", "{C09A8BDD-5E9F-43D9-91C5-7C6F6362A0B7}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution

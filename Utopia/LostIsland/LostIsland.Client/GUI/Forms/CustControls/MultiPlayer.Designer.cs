@@ -42,11 +42,17 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             this.lstServerCom = new System.Windows.Forms.ListBox();
             this.label7 = new System.Windows.Forms.Label();
             this.chkRegistering = new System.Windows.Forms.CheckBox();
-            this.srvList = new LostIsland.Client.GUI.Forms.CustControls.RefreshingListBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btSave = new System.Windows.Forms.Button();
             this.txtServerName = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.txtTexturePack = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.txtEffectPack = new System.Windows.Forms.TextBox();
+            this.pickTexturePack = new System.Windows.Forms.Button();
+            this.PickEffectPack = new System.Windows.Forms.Button();
+            this.srvList = new LostIsland.Client.GUI.Forms.CustControls.RefreshingListBox();
             this.SuspendLayout();
             // 
             // label1
@@ -93,7 +99,7 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             // btConnect
             // 
             this.btConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btConnect.Location = new System.Drawing.Point(20, 238);
+            this.btConnect.Location = new System.Drawing.Point(20, 273);
             this.btConnect.Name = "btConnect";
             this.btConnect.Size = new System.Drawing.Size(99, 37);
             this.btConnect.TabIndex = 8;
@@ -104,7 +110,7 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             // 
             this.label5.AutoSize = true;
             this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Location = new System.Drawing.Point(12, 150);
+            this.label5.Location = new System.Drawing.Point(15, 196);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(64, 13);
             this.label5.TabIndex = 15;
@@ -112,7 +118,7 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             // 
             // txtUser
             // 
-            this.txtUser.Location = new System.Drawing.Point(100, 147);
+            this.txtUser.Location = new System.Drawing.Point(103, 193);
             this.txtUser.Name = "txtUser";
             this.txtUser.Size = new System.Drawing.Size(139, 20);
             this.txtUser.TabIndex = 14;
@@ -121,7 +127,7 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             // 
             this.label6.AutoSize = true;
             this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Location = new System.Drawing.Point(12, 175);
+            this.label6.Location = new System.Drawing.Point(15, 221);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(59, 13);
             this.label6.TabIndex = 17;
@@ -129,7 +135,7 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(100, 172);
+            this.txtPassword.Location = new System.Drawing.Point(103, 218);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(139, 20);
             this.txtPassword.TabIndex = 16;
@@ -140,7 +146,7 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.Maroon;
-            this.label2.Location = new System.Drawing.Point(12, 118);
+            this.label2.Location = new System.Drawing.Point(15, 164);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(125, 17);
             this.label2.TabIndex = 18;
@@ -150,16 +156,16 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             // 
             this.lstServerCom.FormattingEnabled = true;
             this.lstServerCom.HorizontalScrollbar = true;
-            this.lstServerCom.Location = new System.Drawing.Point(15, 307);
+            this.lstServerCom.Location = new System.Drawing.Point(15, 333);
             this.lstServerCom.Name = "lstServerCom";
-            this.lstServerCom.Size = new System.Drawing.Size(518, 95);
+            this.lstServerCom.Size = new System.Drawing.Size(518, 69);
             this.lstServerCom.TabIndex = 20;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Location = new System.Drawing.Point(15, 291);
+            this.label7.Location = new System.Drawing.Point(15, 317);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(119, 13);
             this.label7.TabIndex = 21;
@@ -168,20 +174,12 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             // chkRegistering
             // 
             this.chkRegistering.AutoSize = true;
-            this.chkRegistering.Location = new System.Drawing.Point(15, 202);
+            this.chkRegistering.Location = new System.Drawing.Point(18, 248);
             this.chkRegistering.Name = "chkRegistering";
             this.chkRegistering.Size = new System.Drawing.Size(102, 17);
             this.chkRegistering.TabIndex = 22;
             this.chkRegistering.Text = "With registration";
             this.chkRegistering.UseVisualStyleBackColor = true;
-            // 
-            // srvList
-            // 
-            this.srvList.FormattingEnabled = true;
-            this.srvList.Location = new System.Drawing.Point(284, 48);
-            this.srvList.Name = "srvList";
-            this.srvList.Size = new System.Drawing.Size(249, 225);
-            this.srvList.TabIndex = 23;
             // 
             // label8
             // 
@@ -198,7 +196,7 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             // btSave
             // 
             this.btSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btSave.Location = new System.Drawing.Point(140, 238);
+            this.btSave.Location = new System.Drawing.Point(140, 273);
             this.btSave.Name = "btSave";
             this.btSave.Size = new System.Drawing.Size(99, 37);
             this.btSave.TabIndex = 25;
@@ -217,16 +215,88 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             // 
             this.label9.AutoSize = true;
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Location = new System.Drawing.Point(17, 100);
+            this.label9.Location = new System.Drawing.Point(15, 100);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(75, 13);
             this.label9.TabIndex = 27;
             this.label9.Text = "Server Name :";
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.BackColor = System.Drawing.Color.Transparent;
+            this.label10.Location = new System.Drawing.Point(15, 123);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(77, 13);
+            this.label10.TabIndex = 29;
+            this.label10.Text = "Texture Pack :";
+            // 
+            // txtTexturePack
+            // 
+            this.txtTexturePack.Location = new System.Drawing.Point(100, 120);
+            this.txtTexturePack.Name = "txtTexturePack";
+            this.txtTexturePack.ReadOnly = true;
+            this.txtTexturePack.Size = new System.Drawing.Size(137, 20);
+            this.txtTexturePack.TabIndex = 28;
+            this.txtTexturePack.Text = "Default";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.BackColor = System.Drawing.Color.Transparent;
+            this.label11.Location = new System.Drawing.Point(15, 143);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(69, 13);
+            this.label11.TabIndex = 30;
+            this.label11.Text = "Effect Pack :";
+            // 
+            // txtEffectPack
+            // 
+            this.txtEffectPack.Location = new System.Drawing.Point(100, 143);
+            this.txtEffectPack.Name = "txtEffectPack";
+            this.txtEffectPack.ReadOnly = true;
+            this.txtEffectPack.Size = new System.Drawing.Size(137, 20);
+            this.txtEffectPack.TabIndex = 31;
+            this.txtEffectPack.Text = "Default";
+            // 
+            // pickTexturePack
+            // 
+            this.pickTexturePack.Location = new System.Drawing.Point(245, 117);
+            this.pickTexturePack.Name = "pickTexturePack";
+            this.pickTexturePack.Size = new System.Drawing.Size(34, 23);
+            this.pickTexturePack.TabIndex = 32;
+            this.pickTexturePack.Text = "...";
+            this.pickTexturePack.UseVisualStyleBackColor = true;
+            this.pickTexturePack.Click += new System.EventHandler(this.pickTexturePack_Click);
+            // 
+            // PickEffectPack
+            // 
+            this.PickEffectPack.Location = new System.Drawing.Point(245, 141);
+            this.PickEffectPack.Name = "PickEffectPack";
+            this.PickEffectPack.Size = new System.Drawing.Size(34, 23);
+            this.PickEffectPack.TabIndex = 33;
+            this.PickEffectPack.Text = "...";
+            this.PickEffectPack.UseVisualStyleBackColor = true;
+            this.PickEffectPack.Click += new System.EventHandler(this.PickEffectPack_Click);
+            // 
+            // srvList
+            // 
+            this.srvList.FormattingEnabled = true;
+            this.srvList.Location = new System.Drawing.Point(284, 48);
+            this.srvList.Name = "srvList";
+            this.srvList.Size = new System.Drawing.Size(249, 225);
+            this.srvList.TabIndex = 23;
+            // 
             // MultiPlayer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.PickEffectPack);
+            this.Controls.Add(this.pickTexturePack);
+            this.Controls.Add(this.txtEffectPack);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.txtTexturePack);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.txtServerName);
             this.Controls.Add(this.btSave);
@@ -272,5 +342,11 @@ namespace LostIsland.Client.GUI.Forms.CustControls
         internal System.Windows.Forms.TextBox txtServerName;
         private System.Windows.Forms.Label label9;
         internal RefreshingListBox srvList;
+        private System.Windows.Forms.Label label10;
+        internal System.Windows.Forms.TextBox txtTexturePack;
+        private System.Windows.Forms.Label label11;
+        internal System.Windows.Forms.TextBox txtEffectPack;
+        private System.Windows.Forms.Button pickTexturePack;
+        private System.Windows.Forms.Button PickEffectPack;
     }
 }
