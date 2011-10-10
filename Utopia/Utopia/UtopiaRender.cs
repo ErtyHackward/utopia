@@ -65,151 +65,12 @@ namespace Utopia
     public partial class UtopiaRender : Game
     {
         #region Private Variables
-        private D3DEngine _engine;
-        private Server _server;
-        private WorldFocusManager _worldFocusManager;
-        private WorldParameters _worldParameters;
-        private VisualWorldParameters _visualWorldParameters;
-        private GameStatesManager _gameStatesManager;
-        private ICamera _firstPersonCamera;
-        private CameraManager _cameraManager;
-        private TimerManager _timerManager;
-        private EntityMessageTranslator _entityMessageTranslator;
-        private ItemMessageTranslator _itemMessageTranslator;
-        private InputsManager _inputsManager;
-        private ActionsManager _actionsManager;
-        private GuiManager _guiManager;
-        private Screen _screen;
-        private IconFactory _iconFactory;
-        private DebugComponent _debugComponent;
-        private FPS _fps;
-        private IClock _gameClock;
-        private ChatComponent _chatComponent;
-        private MapComponent _mapComponent;
-        private Hud _hud;
-        private EntityEditor _entityEditor;
-        private IDrawableComponent _stars;
-        private ISkyDome _skydome;
-        private IWeather _weather;
-        private IDrawableComponent _clouds;
-        private IChunkStorageManager _chunkStorageManager;
-        private ICubeMeshFactory _solidCubeMeshFactory;
-        private ICubeMeshFactory _liquidCubeMeshFactory;
-        private SingleArrayChunkContainer _singleArrayChunkContainer;
-        private ILandscapeManager _landscapeManager;
-        private ILightingManager _lightingManager;
-        private IChunkMeshManager _chunkMeshManager;
-        private IWorldChunks _worldChunks;
-        private IChunksWrapper _chunksWrapper;
-        private WorldGenerator _worldGenerator;
-        private IWorldProcessorConfig _worldProcessorConfig;
-        private IPickingRenderer _pickingRenderer;
-        private IChunkEntityImpactManager _chunkEntityImpactManager;
-        private IEntityPickingManager _entityPickingManager;
-        private IDynamicEntityManager _dynamicEntityManager;
-        private PlayerEntityManager _playerEntityManager;
-        private PlayerCharacter _playerCharacter;
-        private IEntitiesRenderer _playerEntityRenderer;
-        private IEntitiesRenderer _defaultEntityRenderer;
-        private VoxelMeshFactory _voxelMeshFactory;
-
+        private UtopiaRenderStates _renderStates;
         #endregion
 
-        public UtopiaRender(
-                D3DEngine engine,
-                Server server,
-                WorldFocusManager worldFocusManager,
-                WorldParameters worldParameters,
-                VisualWorldParameters visualWorldParameters,
-                GameStatesManager gameStatesManager,
-                ICamera firstPersonCamera,
-                CameraManager cameraManager,
-                TimerManager timerManager,
-                EntityMessageTranslator entityMessageTranslator,
-                ItemMessageTranslator itemMessageTranslator,
-                InputsManager inputsManager,
-                ActionsManager actionsManager,
-                GuiManager guiManager,
-                Screen screen,
-                IconFactory iconFactory,
-                FPS fps,
-                IClock gameClock,
-                ChatComponent chatComponent,
-                MapComponent mapComponent,
-                Hud hud,
-                EntityEditor entityEditor,
-                IDrawableComponent stars,
-                ISkyDome skydome,
-                IWeather weather,
-                IDrawableComponent clouds,
-                IChunkStorageManager chunkStorageManager,
-                ICubeMeshFactory solidCubeMeshFactory,
-                ICubeMeshFactory liquidCubeMeshFactory,
-                SingleArrayChunkContainer singleArrayChunkContainer,
-                ILandscapeManager landscapeManager,
-                ILightingManager lightingManager,
-                IChunkMeshManager chunkMeshManager,
-                IWorldChunks worldChunks,
-                IChunksWrapper chunksWrapper,
-                WorldGenerator worldGenerator,
-                IWorldProcessorConfig worldProcessorConfig,
-                IPickingRenderer pickingRenderer,
-                IChunkEntityImpactManager chunkEntityImpactManager,
-                IEntityPickingManager entityPickingManager,
-                IDynamicEntityManager dynamicEntityManager,
-                PlayerEntityManager playerEntityManager,
-                PlayerCharacter playerCharacter,
-                IEntitiesRenderer playerEntityRenderer,
-                IEntitiesRenderer defaultEntityRenderer,
-                VoxelMeshFactory voxelMeshFactory
-            )
+        public UtopiaRender(UtopiaRenderStates renderStates)
         {
-            _engine = engine;
-            _server = server;
-            _worldFocusManager = worldFocusManager;
-            _worldParameters = worldParameters;
-            _visualWorldParameters = visualWorldParameters;
-            _gameStatesManager = gameStatesManager;
-            _firstPersonCamera = firstPersonCamera;
-            _cameraManager = cameraManager;
-            _timerManager = timerManager;
-            _entityMessageTranslator = entityMessageTranslator;
-            _itemMessageTranslator = itemMessageTranslator;
-            _inputsManager = inputsManager;
-            _actionsManager = actionsManager;
-            _guiManager = guiManager;
-            _screen = screen;
-            _iconFactory = iconFactory;
-            _fps = fps;
-            _gameClock = gameClock;
-            _chatComponent = chatComponent;
-            _mapComponent = mapComponent;
-            _hud = hud;
-            _entityEditor = entityEditor;
-            _stars = stars;
-            _skydome = skydome;
-            _weather = weather;
-            _clouds = clouds;
-            _chunkStorageManager = chunkStorageManager;
-            _solidCubeMeshFactory = solidCubeMeshFactory;
-            _liquidCubeMeshFactory = liquidCubeMeshFactory;
-            _singleArrayChunkContainer = singleArrayChunkContainer;
-            _landscapeManager = landscapeManager;
-            _lightingManager = lightingManager;
-            _chunkMeshManager = chunkMeshManager;
-            _worldChunks = worldChunks;
-            _chunksWrapper = chunksWrapper;
-            _worldGenerator = worldGenerator;
-            _worldProcessorConfig = worldProcessorConfig;
-            _pickingRenderer = pickingRenderer;
-            _chunkEntityImpactManager = chunkEntityImpactManager;
-            _entityPickingManager = entityPickingManager;
-            _dynamicEntityManager = dynamicEntityManager;
-            _playerEntityManager = playerEntityManager;
-            _playerCharacter = playerCharacter;
-            _playerEntityRenderer = playerEntityRenderer;
-            _defaultEntityRenderer = defaultEntityRenderer;
-            _voxelMeshFactory = voxelMeshFactory;
+            _renderStates = renderStates;
 
             S33M3Engines.Threading.WorkQueue.ThreadingActif = true;    // Activate the threading Mode (Default : true, false used mainly to debug purpose)
             S33M3Engines.D3DEngine.FULLDEBUGMODE = false;
@@ -229,56 +90,56 @@ namespace Utopia
         //Default Utopia Init method.
         private void Init()
         {
-            _server.ServerConnection.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
-            
-            if (AbstractChunk.ChunkSize != _server.ChunkSize)
+            _renderStates.server.ServerConnection.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
+
+            if (AbstractChunk.ChunkSize != _renderStates.server.ChunkSize)
             {
                 throw new Exception("Client chunkSize is different from server !");
             }
             //Change Visible WorldSize if client parameter > Server !
-            if (ClientSettings.Current.Settings.GraphicalParameters.WorldSize > _server.MaxServerViewRange)
+            if (ClientSettings.Current.Settings.GraphicalParameters.WorldSize > _renderStates.server.MaxServerViewRange)
             {
-                ClientSettings.Current.Settings.GraphicalParameters.WorldSize = _server.MaxServerViewRange;
+                ClientSettings.Current.Settings.GraphicalParameters.WorldSize = _renderStates.server.MaxServerViewRange;
             }
 
-            _d3dEngine = _engine;
+            _d3dEngine = _renderStates.engine;
             _d3dEngine.GameWindow.Closed += GameWindow_Closed;
             _d3dEngine.HideMouseCursor();   //Hide the mouse by default !
             DXStates.CreateStates(_d3dEngine);  //Create all States that could by used by the game.
 
             //-- Get Camera --
-            _firstPersonCamera.CameraPlugin = _playerEntityManager;
+            _renderStates.firstPersonCamera.CameraPlugin = _renderStates.playerEntityManager;
 
             //-- Get World focus --
-            _worldFocusManager.WorldFocus = (IWorldFocus)_firstPersonCamera; // Use the camera as a the world focus
+            _renderStates.worldFocusManager.WorldFocus = (IWorldFocus)_renderStates.firstPersonCamera; // Use the camera as a the world focus
 
             //Do the ChunkEntityImpactManager late initialization
-            _chunkEntityImpactManager.LateInitialization(_server,
-                                                         _singleArrayChunkContainer,
-                                                         _worldChunks,
-                                                         _chunkStorageManager,
-                                                         _lightingManager);
+            _renderStates.chunkEntityImpactManager.LateInitialization(_renderStates.server,
+                                                         _renderStates.singleArrayChunkContainer,
+                                                         _renderStates.worldChunks,
+                                                         _renderStates.chunkStorageManager,
+                                                         _renderStates.lightingManager);
 
             //Add Components to the main game Loop !
-            GameComponents.Add(_server);
-            GameComponents.Add(_inputsManager);
-            GameComponents.Add(_iconFactory);
-            GameComponents.Add(_timerManager);
-            GameComponents.Add(_playerEntityManager);
-            GameComponents.Add(_dynamicEntityManager);
-            GameComponents.Add(_cameraManager);
-            GameComponents.Add(_hud);
-            GameComponents.Add(_guiManager);
-            GameComponents.Add(_pickingRenderer);
-            GameComponents.Add(_chatComponent);
-            GameComponents.Add(_mapComponent);
-            GameComponents.Add(new DebugComponent(this, _d3dEngine, _screen, _gameStatesManager, _actionsManager,_playerEntityManager));
-            GameComponents.Add(_fps);
-            GameComponents.Add(_entityEditor);
-            GameComponents.Add(_skydome);
-            GameComponents.Add(_gameClock);
-            GameComponents.Add(_weather);
-            GameComponents.Add(_worldChunks);
+            GameComponents.Add(_renderStates.server);
+            GameComponents.Add(_renderStates.inputsManager);
+            GameComponents.Add(_renderStates.iconFactory);
+            GameComponents.Add(_renderStates.timerManager);
+            GameComponents.Add(_renderStates.playerEntityManager);
+            GameComponents.Add(_renderStates.dynamicEntityManager);
+            GameComponents.Add(_renderStates.cameraManager);
+            GameComponents.Add(_renderStates.hud);
+            GameComponents.Add(_renderStates.guiManager);
+            GameComponents.Add(_renderStates.pickingRenderer);
+            GameComponents.Add(_renderStates.chatComponent);
+            GameComponents.Add(_renderStates.mapComponent);
+            GameComponents.Add(new DebugComponent(this, _d3dEngine, _renderStates.screen, _renderStates.gameStatesManager, _renderStates.actionsManager, _renderStates.playerEntityManager));
+            GameComponents.Add(_renderStates.fps);
+            GameComponents.Add(_renderStates.entityEditor);
+            GameComponents.Add(_renderStates.skydome);
+            GameComponents.Add(_renderStates.gameClock);
+            GameComponents.Add(_renderStates.weather);
+            GameComponents.Add(_renderStates.worldChunks);
 
             #region Debug Components
 #if DEBUG
@@ -331,8 +192,8 @@ namespace Utopia
 
         public override void Update(ref GameTime TimeSpend)
         {
-            _actionsManager.FetchInputs();
-            _actionsManager.Update();
+            _renderStates.actionsManager.FetchInputs();
+            _renderStates.actionsManager.Update();
             base.Update(ref TimeSpend);
 
             //After all update are done, Check against "System" keys like Exit, ...
@@ -341,7 +202,7 @@ namespace Utopia
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
         {
-            _actionsManager.FetchInputs();
+            _renderStates.actionsManager.FetchInputs();
             base.Interpolation(ref interpolation_hd, ref interpolation_ld);
         }
 
@@ -357,7 +218,7 @@ namespace Utopia
         private void InputHandling()
         {
             //Exit application
-            if (_actionsManager.isTriggered(Actions.Engine_Exit))
+            if (_renderStates.actionsManager.isTriggered(Actions.Engine_Exit))
             {
                 GameExitReasonMessage msg = new GameExitReasonMessage()
                 {
@@ -367,8 +228,8 @@ namespace Utopia
             
                 Exit(msg);
             }
-            if (_actionsManager.isTriggered(Actions.Engine_LockMouseCursor)) _engine.UnlockedMouse = !_engine.UnlockedMouse;
-            if (_actionsManager.isTriggered(Actions.Engine_FullScreen)) _engine.isFullScreen = !_engine.isFullScreen;
+            if (_renderStates.actionsManager.isTriggered(Actions.Engine_LockMouseCursor)) _renderStates.engine.UnlockedMouse = !_renderStates.engine.UnlockedMouse;
+            if (_renderStates.actionsManager.isTriggered(Actions.Engine_FullScreen)) _renderStates.engine.isFullScreen = !_renderStates.engine.isFullScreen;
         }
 
         public override void Dispose()
@@ -378,7 +239,7 @@ namespace Utopia
 #endif
             _d3dEngine.GameWindow.Closed -= GameWindow_Closed; //Subscribe to Close event
 
-            _server.ServerConnection.ConnectionStatusChanged -= ServerConnection_ConnectionStatusChanged;
+            _renderStates.server.ServerConnection.ConnectionStatusChanged -= ServerConnection_ConnectionStatusChanged;
             VisualCubeProfile.CleanUp();
             base.Dispose();
         }

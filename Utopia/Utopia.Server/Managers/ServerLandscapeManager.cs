@@ -181,7 +181,7 @@ namespace Utopia.Server.Managers
                         return;
                     }
 
-                //sendAllData:
+                sendAllData:
                     // send data anyway
                     connection.SendAsync(new ChunkDataMessage
                     {
