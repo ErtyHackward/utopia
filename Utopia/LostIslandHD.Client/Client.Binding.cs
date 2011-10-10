@@ -113,9 +113,9 @@ namespace LostIslandHD.Client
             iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();             //Chunk Management (Update/Draw)
             iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
             iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
-            iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope();
-            iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
-            iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
+            iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope();
+            iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
+            //iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
             //=============================================================
 
             //Entities related stuff ====================================================
