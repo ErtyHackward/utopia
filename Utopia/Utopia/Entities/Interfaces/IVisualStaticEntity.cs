@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Structs;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities.Interfaces
 {
-    public interface IVisualEntity
+    public interface IVisualStaticEntity
     {
-        SpriteEntity SpriteEntity { get; set; }
+        Vector3D WorldPosition { get; }
         ByteColor color { get; set; }
     }
 }

@@ -75,7 +75,7 @@ namespace Utopia.Worlds.Chunks
 
         public Location2<int> LightPropagateBorderOffset;
 
-        public List<IVisualEntity> VisualSpriteEntities;
+        public List<IVisualStaticEntity> VisualSpriteEntities;
 
         public int StorageRequestTicket { get; set; }
 
@@ -118,7 +118,7 @@ namespace Utopia.Worlds.Chunks
 #endif
             _d3dEngine = d3dEngine;
             _visualWorldParameters = visualWorldParameter;
-            VisualSpriteEntities = new List<IVisualEntity>();
+            VisualSpriteEntities = new List<IVisualStaticEntity>();
             CubeRange = cubeRange;
             State = ChunkState.Empty;
             Ready2Draw = false;

@@ -49,7 +49,7 @@ namespace Utopia.Entities.Managers
         {
             VisualDynamicEntity vEntity;
 
-            vEntity = new VisualDynamicEntity(entity, new Voxel.VisualEntity(_voxelMeshFactory, entity));
+            vEntity = new VisualDynamicEntity(entity, new Voxel.VisualVoxelEntity(_voxelMeshFactory, entity));
 
             return vEntity;
         }
@@ -132,7 +132,7 @@ namespace Utopia.Entities.Managers
         
         #endregion
 
-        public IEnumerator<VisualEntity> EnumerateVisualEntities()
+        public IEnumerator<VisualVoxelEntity> EnumerateVisualEntities()
         {
             foreach (var visualEntityContainer in DynamicEntities)
             {

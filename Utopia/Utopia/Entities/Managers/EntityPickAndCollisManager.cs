@@ -69,7 +69,7 @@ namespace Utopia.Entities.Managers
         private void _timer_OnTimerRaised()
         {
             CollectSurrendingDynamicPlayerEntities(); //They have their own collection
-            CollectSurrendingStaticPlayerEntities(); //They are stored inside chunks !
+            CollectSurrendingStaticPlayerEntities();  //They are stored inside chunks !
         }
 
         private void CollectSurrendingStaticPlayerEntities()
@@ -81,8 +81,9 @@ namespace Utopia.Entities.Managers
                 chunk = _worldChunks.Chunks[i];
                 if (chunk.isFrustumCulled == false)
                 {
-                    foreach (var entity in chunk.Entities.EnumerateFast())
+                    foreach (var entity in chunk.VisualSpriteEntities)
                     {
+                        //_entitiesNearPlayer.Add(entity);
                         //Add Static entities HERE for Picking and collision test !
                     }
                 }

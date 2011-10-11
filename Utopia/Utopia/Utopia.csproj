@@ -118,7 +118,7 @@
     <Compile Include="Editor\Spawn.cs" />
     <Compile Include="Effects\SharedFrameCB.cs" />
     <Compile Include="Entities\IconFactory.cs" />
-    <Compile Include="Entities\Interfaces\IVisualEntity.cs" />
+    <Compile Include="Entities\Interfaces\IVisualStaticEntity.cs" />
     <Compile Include="Entities\Managers\EntityPickAndCollisManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IEntityPickingManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IStaticEntityManager.cs" />
@@ -132,10 +132,11 @@
     <Compile Include="Entities\Renderer\PlayerEntityRenderer.cs" />
     <Compile Include="Entities\VisualDynamicEntity.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.cs" />
-    <Compile Include="Entities\VisualSpriteEntity.cs" />
+    <Compile Include="Entities\Sprites\VisualSpriteEntity.cs" />
+    <Compile Include="Entities\VisualEntity.cs" />
     <Compile Include="Entities\Voxel\ColorLookup.cs" />
     <Compile Include="Entities\Voxel\IVisualEntityContainer.cs" />
-    <Compile Include="Entities\Voxel\VisualEntity.cs" />
+    <Compile Include="Entities\Voxel\VisualVoxelEntity.cs" />
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
     <Compile Include="GUI\ChatComponent.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />

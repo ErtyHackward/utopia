@@ -219,12 +219,12 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Propagate the light inside the chunk entities
         private void PropagateLightInsideStaticEntities(VisualChunk chunk)
         {
-            IVisualEntity vertexEntity;
+            IVisualStaticEntity vertexEntity;
             for (int i = 0; i < chunk.VisualSpriteEntities.Count; i++)
             {
                 vertexEntity = chunk.VisualSpriteEntities[i];
                 //Find the Cube below entity, and assign its color to the entity
-                chunk.VisualSpriteEntities[i].color = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(vertexEntity.SpriteEntity.Position.X), MathHelper.Fastfloor(vertexEntity.SpriteEntity.Position.Y), MathHelper.Fastfloor(vertexEntity.SpriteEntity.Position.Z))].EmissiveColor;
+                chunk.VisualSpriteEntities[i].color = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(vertexEntity.WorldPosition.X), MathHelper.Fastfloor(vertexEntity.WorldPosition.Y), MathHelper.Fastfloor(vertexEntity.WorldPosition.Z))].EmissiveColor;
             }
         }
 

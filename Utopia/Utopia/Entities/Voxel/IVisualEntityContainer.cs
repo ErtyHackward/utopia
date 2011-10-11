@@ -7,6 +7,6 @@ namespace Utopia.Entities.Voxel
 {
     public interface IVisualEntityContainer
     {
-         VisualEntity VisualEntity { get; set; }
+         VisualVoxelEntity VisualEntity { get; set; }
     }
 }

@@ -38,7 +38,7 @@ namespace Utopia.Editor
     {
         private readonly Screen _screen;
 
-        private VisualEntity _editedEntity;
+        private VisualVoxelEntity _editedEntity;
         private readonly D3DEngine _d3DEngine;
         private readonly InputsManager _inputManager;
         private readonly IPickingRenderer _pickingRenderer;
@@ -138,7 +138,7 @@ namespace Utopia.Editor
             {
                 //a terrain block
                 Vector3I pos = _player.EntityState.PickedBlockPosition;
-                _editedEntity = new VisualEntity(_voxelMeshFactory, entity, overlays, IsColor);
+                _editedEntity = new VisualVoxelEntity(_voxelMeshFactory, entity, overlays, IsColor);
                 _editedEntity.Position = new Vector3D(pos.X, pos.Y, pos.Z);
                 _pickingRenderer.Enabled = false;
                 _pickingRenderer.Visible = false;
@@ -171,7 +171,7 @@ namespace Utopia.Editor
                 int y = voxel.Model.Blocks.GetLength(1);
                 int z = voxel.Model.Blocks.GetLength(2);
                 byte[, ,] overlays = new byte[x, y, z];
-                _editedEntity = new VisualEntity(_voxelMeshFactory, voxel, overlays, IsColor);
+                _editedEntity = new VisualVoxelEntity(_voxelMeshFactory, voxel, overlays, IsColor);
                 
                 //after editing whether restore 'voxel' in _entityManager or dispose it at beginning and have server notify it changed 
             }
@@ -187,7 +187,7 @@ namespace Utopia.Editor
             byte[, ,] overlays = new byte[x, y, z];
 
             //actually copies yourself and show the copy at newcubeplace, could really edit yourself and pass in 3rd person view 
-            _editedEntity = new VisualEntity(_voxelMeshFactory, voxel, overlays, IsColor);            
+            _editedEntity = new VisualVoxelEntity(_voxelMeshFactory, voxel, overlays, IsColor);            
             Vector3I pos = _player.EntityState.NewBlockPosition;
             if (pos.IsZero())
             {

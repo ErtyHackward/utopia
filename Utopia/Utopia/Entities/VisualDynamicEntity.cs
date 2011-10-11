@@ -29,7 +29,7 @@ namespace Utopia.Entities
         /// <summary>
         /// The Player Voxel body
         /// </summary>
-        public VisualEntity VisualEntity { get; set; }
+        public VisualVoxelEntity VisualEntity { get; set; }
 
         public FTSValue<Vector3D> WorldPosition = new FTSValue<Vector3D>();         //World Position
         public FTSValue<Quaternion> LookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
@@ -37,7 +37,7 @@ namespace Utopia.Entities
 
         #endregion
 
-        public VisualDynamicEntity(IDynamicEntity dynamicEntity, VisualEntity visualEntity)
+        public VisualDynamicEntity(IDynamicEntity dynamicEntity, VisualVoxelEntity visualEntity)
         {
             this.DynamicEntity = dynamicEntity;
             this.VisualEntity = visualEntity;

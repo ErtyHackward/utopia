@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Chunks.Entities;
 using SharpDX;
+using Utopia.Entities.Sprites;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -232,7 +233,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             Vector3 spriteLocation = sprite.SpriteEntity.Position.AsVector3();
             int baseIndex = vertices.Count;
 
-           Vector3 normalSize = new Vector3(0.8f, 0.8f, 0.8f);
+           Vector3 normalSize = sprite.SpriteEntity.Size;
            Vector3 normalHalfSize = new Vector3(normalSize.X / 2, normalSize.Y / 2, normalSize.Z / 2);
            normalSize.X *= sprite.SpriteEntity.Scale.X;
            normalSize.Y *= sprite.SpriteEntity.Scale.Y;

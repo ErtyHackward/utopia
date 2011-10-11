@@ -91,7 +91,7 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// The Player Voxel body
         /// </summary>
-        public VisualEntity VisualEntity { get; set; }
+        public VisualVoxelEntity VisualEntity { get; set; }
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual Vector3D CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
@@ -147,7 +147,7 @@ namespace Utopia.Entities.Managers
 
             entityPickingManager.Player = this;
             this.Player = player;
-            this.VisualEntity = new Voxel.VisualEntity(voxelMeshFactory, player);
+            this.VisualEntity = new Voxel.VisualVoxelEntity(voxelMeshFactory, player);
 
             //Give the Renderer acces to the Voxel buffers, ...
             _playerRenderer.VisualEntity = this;
