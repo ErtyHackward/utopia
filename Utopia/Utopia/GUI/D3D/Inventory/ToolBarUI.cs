@@ -78,8 +78,9 @@ namespace Utopia.GUI.D3D.Inventory
                 btn.Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize);
                 _buttons.Add(btn);
                 btn.Pressed += delegate {
-                                       _equipment.LeftTool = btn.ToolbarSlot.Item as Tool;
-                                   };
+                    if (btn.LeftItem is Tool)
+                        _equipment.LeftTool = (Tool)btn.LeftItem;
+                };
 
                 this.Children.Add(btn);
             }
