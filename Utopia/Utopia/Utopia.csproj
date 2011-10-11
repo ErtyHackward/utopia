@@ -303,6 +303,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LostIsland\LostIsland.Shared\LostIsland.Shared.csproj">
+      <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
+      <Name>LostIsland.Shared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
       <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
       <Name>S33M3Engines.Shared</Name>

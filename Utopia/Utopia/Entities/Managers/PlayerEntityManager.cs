@@ -191,7 +191,8 @@ namespace Utopia.Entities.Managers
             {
                 if (Player.EntityState.IsPickingActive)
                 {
-                    Player.LeftToolUse();
+                    Player.LeftToolUse();//sends the client server event that does tool.use on server
+                    Player.Equipment.LeftTool.Use();//client invocation to keep the client inventory in synch
                 }
             }
 
@@ -205,7 +206,8 @@ namespace Utopia.Entities.Managers
 
                     if (!MBoundingBox.Intersects(ref VisualEntity.WorldBBox, ref playerPotentialNewBlock))
                     {
-                        Player.RightToolUse();
+                        Player.RightToolUse();//sends the client server event that does tool.use on server
+                        Player.Equipment.RightTool.Use();//client invocation to keep the client inventory in synch
                     }
                 }
             }
