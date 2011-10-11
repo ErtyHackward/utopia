@@ -46,7 +46,7 @@ namespace Utopia.Entities.Voxel
         /// <param name="overlays">array of texture id to overlay</param>
         /// <param name="isColorOnly">for an entity made of colored cubes not textures</param>
         public VisualVoxelEntity(VoxelMeshFactory voxelMeshFactory, IVoxelEntity wrapped,byte[, ,] overlays=null,bool isColorOnly=false)
-            :base(wrapped.Size)
+            : base(wrapped.Size, wrapped)
         {
             VoxelEntity = wrapped;
             _isColorOnly = isColorOnly;

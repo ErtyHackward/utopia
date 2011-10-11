@@ -260,12 +260,11 @@ namespace Utopia.Worlds.Chunks
             if (!ChunkNeed2BeSorted || _camManager.ActiveCamera == null) return;
             int index = 0;
 
-            foreach (var chunk in Chunks.OrderBy(x => MVector3.Distance(x.CubeRange.Min, _playerManager.CameraWorldPosition)))
+            foreach (var chunk in Chunks.OrderBy(x => MVector3.DistanceSquared(x.ChunkCenter, _playerManager.CameraWorldPosition)))
             {
                 SortedChunks[index] = chunk;
                 index++;
             }
-
             ChunkNeed2BeSorted = false;
         }
 

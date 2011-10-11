@@ -1,6 +1,7 @@
 using System.IO;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Structs;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -11,10 +12,12 @@ namespace Utopia.Shared.Net.Messages
     {
         private Vector3I _pickedBlockPosition;
         private Vector3I _newBlockPosition;
-        private uint _pickedEntityId;
+        private Vector3D _pickedEntityPosition;
+        private uint _pickedEntityID;
         private uint _toolId;
         private uint _entityId;
         private bool _isBlockPicked;
+        private bool _isEntityPicked;
         private int _token;
 
         /// <summary>
@@ -50,10 +53,19 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Picked entity id (optional)
         /// </summary>
+        public Vector3D PickedEntityPosition
+        {
+            get { return _pickedEntityPosition; }
+            set { _pickedEntityPosition = value; }
+        }
+
+        /// <summary>
+        /// Picked entity id (optional)
+        /// </summary>
         public uint PickedEntityId
         {
-            get { return _pickedEntityId; }
-            set { _pickedEntityId = value; }
+            get { return _pickedEntityID; }
+            set { _pickedEntityID = value; }
         }
 
         
@@ -87,9 +99,14 @@ namespace Utopia.Shared.Net.Messages
             msg._entityId = reader.ReadUInt32();
             msg._pickedBlockPosition = reader.ReadVector3I();
             msg._newBlockPosition = reader.ReadVector3I();
-            msg._pickedEntityId = reader.ReadUInt32();
+            msg._pickedEntityPosition = new Vector3D();
+            msg._pickedEntityPosition.X = reader.ReadDouble();
+            msg._pickedEntityPosition.Y = reader.ReadDouble();
+            msg._pickedEntityPosition.Z = reader.ReadDouble();
             msg._toolId = reader.ReadUInt32();
             msg._isBlockPicked = reader.ReadBoolean();
+            msg._isEntityPicked = reader.ReadBoolean();
+            msg._pickedEntityID = reader.ReadUInt32();
             msg._token = reader.ReadInt32();
 
             return msg;
@@ -104,9 +121,13 @@ namespace Utopia.Shared.Net.Messages
             writer.Write(_entityId);
             writer.Write(_pickedBlockPosition);
             writer.Write(_newBlockPosition);
-            writer.Write(_pickedEntityId);
+            writer.Write(_pickedEntityPosition.X);
+            writer.Write(_pickedEntityPosition.Y);
+            writer.Write(_pickedEntityPosition.Z);
             writer.Write(_toolId);
             writer.Write(_isBlockPicked);
+            writer.Write(_isEntityPicked);
+            writer.Write(_pickedEntityID);
             writer.Write(_token);
         }
     }

@@ -9,8 +9,8 @@ namespace Utopia.Settings
     public class ClientSettings
     {
         public static XmlSettingsManager<ClientConfig> Current;
-        public static string TexturePack = "Default";
-        public static string EffectPack = "Default";
+        public static string TexturePack = "TexturesPacks\\Default\\";
+        public static string EffectPack = "EffectsPacks\\Default\\";
     }
 
     /// <summary>

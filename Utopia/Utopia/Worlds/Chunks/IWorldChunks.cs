@@ -30,7 +30,7 @@ namespace Utopia.Worlds.Chunks
         /// <returns></returns>
         VisualChunk GetChunk(int X, int Z);
 
-                /// <summary>
+        /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate with out of array check
         /// </summary>
         /// <param name="X">Cube X coordinate in world coordinate</param>

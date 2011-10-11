@@ -134,7 +134,7 @@ namespace Utopia.Editor
             int z = entity.Model.Blocks.GetLength(2);
             byte[,,] overlays = new byte[x,y,z];
 
-            if (_player.EntityState.PickedEntityId==0)
+            if (_player.EntityState.IsEntityPicked == false)
             {
                 //a terrain block
                 Vector3I pos = _player.EntityState.PickedBlockPosition;

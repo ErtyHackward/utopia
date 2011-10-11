@@ -12,7 +12,6 @@ using Utopia.Shared.World;
 using Utopia.Settings;
 using Utopia.Entities;
 using S33M3Engines.Shared.Math;
-using Utopia.Entities.Interfaces;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
@@ -219,12 +218,12 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Propagate the light inside the chunk entities
         private void PropagateLightInsideStaticEntities(VisualChunk chunk)
         {
-            IVisualStaticEntity vertexEntity;
+            VisualEntity vertexEntity;
             for (int i = 0; i < chunk.VisualSpriteEntities.Count; i++)
             {
                 vertexEntity = chunk.VisualSpriteEntities[i];
                 //Find the Cube below entity, and assign its color to the entity
-                chunk.VisualSpriteEntities[i].color = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(vertexEntity.WorldPosition.X), MathHelper.Fastfloor(vertexEntity.WorldPosition.Y), MathHelper.Fastfloor(vertexEntity.WorldPosition.Z))].EmissiveColor;
+                chunk.VisualSpriteEntities[i].Color = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(vertexEntity.Entity.Position.X), MathHelper.Fastfloor(vertexEntity.Entity.Position.Y), MathHelper.Fastfloor(vertexEntity.Entity.Position.Z))].EmissiveColor;
             }
         }
 

@@ -6,32 +6,23 @@ using Utopia.Shared.Chunks.Entities;
 using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs;
 using SharpDX;
-using Utopia.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Concrete.Collectible;
 using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities.Sprites
 {
-    public class VisualSpriteEntity : VisualEntity, IVisualStaticEntity
+    public class VisualSpriteEntity : VisualEntity
     {
         #region Private Variables
         #endregion
 
         #region Public Variables
         public SpriteEntity SpriteEntity { get; set; }
-        public ByteColor color { get; set; }
         public int spriteTextureId;
-        public Vector3D WorldPosition
-        {
-            get
-            {
-                return SpriteEntity.Position;
-            }
-        }
         #endregion
 
         public VisualSpriteEntity(SpriteEntity spriteEntity)
-            : base(spriteEntity.Size)
+            : base(spriteEntity.Size, spriteEntity.Scale, spriteEntity)
         {
             this.SpriteEntity = spriteEntity;
             CreateVertices();

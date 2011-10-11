@@ -3,6 +3,7 @@ using SharpDX;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.Chunks.Entities.Events
 {
@@ -36,9 +37,15 @@ namespace Utopia.Shared.Chunks.Entities.Events
         /// <summary>
         /// Gets entity that currently picked by character
         /// </summary>
+        public Vector3D PickedEntityPosition { get; set; }
+
+        /// <summary>
+        /// Gets entity that currently picked by character
+        /// </summary>
         public uint PickedEntityId { get; set; }
 
         public bool IsBlockPicked { get; set; }
+        public bool IsEntityPicked { get; set; }
 
         /// <summary>
         /// Creates event args from entity state
@@ -52,8 +59,10 @@ namespace Utopia.Shared.Chunks.Entities.Events
 
             e.PickedBlockPosition = state.PickedBlockPosition;
             e.NewBlockPosition = state.NewBlockPosition;
+            e.PickedEntityPosition = state.PickedEntityPosition;
+            e.IsBlockPicked = state.IsPickingActive && (state.IsEntityPicked);
+            e.IsEntityPicked = state.IsPickingActive && (!state.IsEntityPicked);
             e.PickedEntityId = state.PickedEntityId;
-            e.IsBlockPicked = state.IsPickingActive && (state.PickedEntityId==0);
             return e;
         }
     }
