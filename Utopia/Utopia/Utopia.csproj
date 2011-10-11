@@ -118,7 +118,6 @@
     <Compile Include="Editor\Spawn.cs" />
     <Compile Include="Effects\SharedFrameCB.cs" />
     <Compile Include="Entities\IconFactory.cs" />
-    <Compile Include="Entities\Interfaces\IVisualStaticEntity.cs" />
     <Compile Include="Entities\Managers\EntityPickAndCollisManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IEntityPickingManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IStaticEntityManager.cs" />
@@ -333,7 +332,9 @@
     <EmbeddedResource Include="Resources\skin.xsd" />
     <None Include="Resources\WelcomeScreen.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Entities\Interfaces\" />
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>

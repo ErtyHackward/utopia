@@ -49,7 +49,7 @@ namespace Utopia.Entities.Managers
         private TerraCube _headCube;
 
         //Player Visual characteristics (Not insde the PlayerCharacter object)
-        private IVisualEntityContainer _pickedUpEntity;
+        private VisualEntity _pickedUpEntity;
         private Vector3D _pickedUpEntityPosition;
         
         private FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();         //World Position
@@ -262,7 +262,7 @@ namespace Utopia.Entities.Managers
             if(newpicking)
             {
                 //A new Block has been pickedup
-                if (Player._entityState.PickedEntityId == 0)
+                if (Player._entityState.IsEntityPicked == false)
                 {
                     _pickingRenderer.SetPickedBlock(ref Player._entityState.PickedBlockPosition);
                 }
@@ -278,8 +278,19 @@ namespace Utopia.Entities.Managers
         //Will return true if a new Item has been picked up !
         private bool RefreshPicking(ref Vector3D pickingWorldPosition, ref Vector3D pickingLookAt, int rounding)
         {
-
             Player._entityState.IsPickingActive = false;
+
+            //Check the Ray against all entity.
+            Ray pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt.AsVector3());
+            if (_entityPickingManager.CheckEntityPicking(ref pickingRay, out _pickedUpEntity))
+            {
+                _pickedUpEntityPosition = _pickedUpEntity.Entity.Position;
+                Player._entityState.PickedEntityPosition = _pickedUpEntity.Entity.Position;
+                Player._entityState.PickedEntityId = _pickedUpEntity.Entity.EntityId;
+                Player._entityState.IsEntityPicked = true;
+                Player._entityState.IsPickingActive = true;
+                return true;
+            }
 
             //Sample 500 points in the view direction vector
             for (int ptNbr = 0; ptNbr < 500; ptNbr++)
@@ -309,31 +320,15 @@ namespace Utopia.Entities.Managers
 
                     if (PickedCube.Position == Player._entityState.PickedBlockPosition)
                     {
-                        Player._entityState.PickedEntityId = 0;
+                        Player._entityState.IsEntityPicked = false;
                         Player._entityState.IsPickingActive = true;
                         if (! newPlacechanged) return false;
                     }
 
-                    Player._entityState.PickedEntityId = 0;
+                    Player._entityState.IsEntityPicked = false;
                     Player._entityState.IsPickingActive = true;
                     break;
                 }
-
-                //Check if an entity is picked up HERE !
-                if (_entityPickingManager.CheckEntityPicking(ref pickingWorldPosition, out _pickedUpEntity))
-                {
-                    //if (Player._entityState.PickedEntityId == _pickedUpEntity.VisualEntity.VoxelEntity.EntityId && _pickedUpEntityPosition == _pickedUpEntity.VisualEntity.Position)
-                    //{
-                    //    Player._entityState.IsPickingActive = true;
-                    //    return false;
-                    //}
-
-                    _pickedUpEntityPosition = _pickedUpEntity.VisualEntity.Position;
-                    Player._entityState.PickedEntityId = _pickedUpEntity.VisualEntity.VoxelEntity.EntityId;
-                    Player._entityState.IsPickingActive = true;
-                    break;
-                }
-
             }
 
             return Player._entityState.IsPickingActive; //Return true if a new block or Entity has been picked up !

@@ -66,11 +66,11 @@ namespace S33M3Engines.Maths
             return (float)Math.Sqrt((double)num4);
         }
 
-        public static float DistanceSquared(Vector3 value1, Vector3 value2)
+        public static double DistanceSquared(Vector3D value1, Vector3D value2)
         {
-            float num3 = value1.X - value2.X;
-            float num2 = value1.Y - value2.Y;
-            float num = value1.Z - value2.Z;
+            double num3 = value1.X - value2.X;
+            double num2 = value1.Y - value2.Y;
+            double num = value1.Z - value2.Z;
             return (((num3 * num3) + (num2 * num2)) + (num * num));
         }
 

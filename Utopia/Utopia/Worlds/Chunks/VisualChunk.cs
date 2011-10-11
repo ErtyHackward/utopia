@@ -16,8 +16,8 @@ using SharpDX.Direct3D11;
 using S33M3Engines.WorldFocus;
 using Utopia.Shared.World;
 using Utopia.Entities;
-using Utopia.Entities.Interfaces;
 using Utopia.Resources.ModelComp;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -57,6 +57,7 @@ namespace Utopia.Worlds.Chunks
         public VertexBuffer<VertexPositionColorTexture> StaticSpritesVB;
         public IndexBuffer<ushort> StaticSpritesIB;
 
+        public Vector3D ChunkCenter { get; set; } 
         public Vector2I ChunkPositionBlockUnit { get; private set; } // Gets or sets current chunk position in Block Unit
         public Vector2I ChunkPosition { get; private set; } // Gets or sets current chunk position in Chunk Unit
         public ChunkState State { get; set; }                 // Chunk State
@@ -75,7 +76,7 @@ namespace Utopia.Worlds.Chunks
 
         public Location2<int> LightPropagateBorderOffset;
 
-        public List<IVisualStaticEntity> VisualSpriteEntities;
+        public List<VisualEntity> VisualSpriteEntities;
 
         public int StorageRequestTicket { get; set; }
 
@@ -118,7 +119,7 @@ namespace Utopia.Worlds.Chunks
 #endif
             _d3dEngine = d3dEngine;
             _visualWorldParameters = visualWorldParameter;
-            VisualSpriteEntities = new List<IVisualStaticEntity>();
+            VisualSpriteEntities = new List<VisualEntity>();
             CubeRange = cubeRange;
             State = ChunkState.Empty;
             Ready2Draw = false;
@@ -330,6 +331,10 @@ namespace Utopia.Worlds.Chunks
             ChunkPositionBlockUnit = new Vector2I() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
             ChunkPosition = new Vector2I() { X = _cubeRange.Min.X / AbstractChunk.ChunkSize.X, Y = _cubeRange.Min.Z / AbstractChunk.ChunkSize.Z };
             RefreshWorldMatrix();
+
+            ChunkCenter = new Vector3D(_cubeRange.Min.X + (_cubeRange.Max.X - _cubeRange.Min.X) / 2.0,
+                                       _cubeRange.Min.Y + (_cubeRange.Max.Y - _cubeRange.Min.Y) / 2.0,
+                                       _cubeRange.Min.Z + (_cubeRange.Max.Z - _cubeRange.Min.Z) / 2.0);
 
             VisualSpriteEntities.Clear();
         }

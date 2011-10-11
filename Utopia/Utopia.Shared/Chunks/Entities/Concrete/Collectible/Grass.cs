@@ -12,10 +12,16 @@ namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
     public class Grass : SpriteItem, IGrowEntity
     {
         #region Private properties
+        private byte _growPhase;
         #endregion
 
         #region Public properties/variables
-        public byte GrowPhase { get; set; }
+        public byte GrowPhase
+        {
+            get { return _growPhase; }
+            set { _growPhase = value; GrawPhaseChanged(); }
+        }
+
         public override ushort ClassId
         {
             get { return EntityClassId.Grass; }
@@ -29,11 +35,10 @@ namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
         #endregion
         public Grass()
         {
-            GrowPhase = 0;
             Type = EntityType.Static;
             UniqueName = DisplayName;
             Scale = new Vector3(1, 1, 1);
-            Size = new Vector3(0.8f, 0.8f, 0.8f);
+            GrowPhase = 0; //Set Default Grow Phase
         }
 
         #region Public methods
@@ -54,6 +59,24 @@ namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
         #endregion
 
         #region Private methods
+        private void GrawPhaseChanged()
+        {
+            switch (GrowPhase)
+            {
+                case 0:
+                        Size = new Vector3(0.8f, 0.8f, 0.8f);
+                        Format = SpriteFormat.Quad;
+                        break;
+                case 4:
+                        Size = new Vector3(0.9f, 0.9f, 0.9f);
+                        Format = SpriteFormat.Triangle;
+                    break;
+                default:
+                        Size = new Vector3(0.6f, 0.6f, 0.6f);
+                        Format = SpriteFormat.Cross;
+                    break;
+            }
+        }
         #endregion
     }
 }

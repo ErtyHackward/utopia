@@ -23,7 +23,7 @@ namespace Utopia.Entities.Renderer
     {
         #region Private Variable
         private Vector3I _pickedUpCube;
-        private IVisualEntityContainer _pickedEntity;
+        private VisualEntity _pickedEntity;
 
         private BoundingBox _pickedCubeBox;
         private BoundingBox3D _pickedCube;
@@ -66,8 +66,8 @@ namespace Utopia.Entities.Renderer
             }
             else
             {
-                _pickedCubeBox = _pickedEntity.VisualEntity.WorldBBox;
-                _pickedCube.Update(ref _pickedCubeBox, _pickedEntity.VisualEntity.VoxelEntity.Size);
+                _pickedCubeBox = _pickedEntity.WorldBBox;
+                _pickedCube.Update(ref _pickedCubeBox, _pickedEntity.Entity.Size);
             }
 
         }
@@ -103,7 +103,7 @@ namespace Utopia.Entities.Renderer
             RefreshpickedBoundingBox(true);
         }
 
-        public void SetPickedEntity(IVisualEntityContainer pickedEntity)
+        public void SetPickedEntity(VisualEntity pickedEntity)
         {
             _pickedEntity = pickedEntity;
             RefreshpickedBoundingBox(false);

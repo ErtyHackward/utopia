@@ -69,7 +69,7 @@ namespace Utopia.Shared.Chunks.Entities
 
         public void EntityUse()
         {
-            if (EntityState.PickedEntityId != 0)
+            if (EntityState.IsEntityPicked)
             {
                 var args = EntityUseEventArgs.FromState(EntityState);
                 OnUse(args);

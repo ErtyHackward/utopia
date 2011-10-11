@@ -4,21 +4,35 @@ using System.Linq;
 using System.Text;
 using SharpDX;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Structs;
+using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Chunks.Entities.Interfaces;
 
 namespace Utopia.Entities
 {
     public abstract class VisualEntity
     {
+
         /// <summary>
         /// The BBox surrending the Entity, it will be used for collision detections mainly !
         /// </summary>
-        public BoundingBox WorldBBox;
-        public BoundingBox LocalBBox;
+        public BoundingBox WorldBBox = new BoundingBox();
+        public BoundingBox LocalBBox = new BoundingBox();
+        public ByteColor Color;
+        public IEntity Entity;
 
-        public VisualEntity(Vector3 entitySize)
+        public VisualEntity(Vector3 entitySize, IEntity entity)
+            :this(entitySize, Vector3.One, entity)
         {
-            WorldBBox = new BoundingBox();
-            LocalBBox = new BoundingBox();
+        }
+
+        public VisualEntity(Vector3 entitySize, Vector3 entityScale, IEntity entity)
+        {
+            entitySize.X *= entityScale.X;
+            entitySize.Y *= entityScale.Y;
+            entitySize.Z *= entityScale.Z;
+
+            Entity = entity;
 
             CreateLocalBoundingBox(entitySize);
         }

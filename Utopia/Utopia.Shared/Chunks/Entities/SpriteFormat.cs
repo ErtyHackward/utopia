@@ -8,7 +8,7 @@ namespace Utopia.Shared.Chunks.Entities
     public enum SpriteFormat : byte
     {
         Single,
-        Double,
+        Triangle,
         Cross,
         Quad
     }

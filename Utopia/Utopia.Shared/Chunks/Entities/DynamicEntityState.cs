@@ -1,5 +1,6 @@
 ﻿using SharpDX;
 using Utopia.Shared.Structs;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.Chunks.Entities
 {
@@ -26,7 +27,14 @@ namespace Utopia.Shared.Chunks.Entities
         /// <summary>
         /// Gets entity that currently picked by entity
         /// </summary>
+        public Vector3D PickedEntityPosition;
+
+        /// <summary>
+        /// Gets entity that currently picked by entity
+        /// </summary>
         public uint PickedEntityId;
+
+        public bool IsEntityPicked;
     }
 
 }

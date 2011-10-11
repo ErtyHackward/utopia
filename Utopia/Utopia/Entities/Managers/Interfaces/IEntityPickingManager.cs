@@ -13,7 +13,7 @@ namespace Utopia.Entities.Managers.Interfaces
     {
         PlayerEntityManager Player { get; set; }
         IWorldChunks WorldChunks { get; set; }
-        bool CheckEntityPicking(ref Vector3D pickingPoint, out IVisualEntityContainer pickedEntity);
+        bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity);
         void isCollidingWithEntity(ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
     }
 }

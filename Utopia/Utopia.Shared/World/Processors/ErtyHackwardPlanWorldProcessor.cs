@@ -61,7 +61,7 @@ namespace Utopia.Shared.World.Processors
             
             generationRange.Foreach(pos =>
                                         {
-                                            var r = new Random(_worldParameters.Seed + pos.GetHashCode());
+                                            var r = new FastRandom(_worldParameters.Seed + pos.GetHashCode());
                                             var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
                                             
                                             for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
@@ -104,16 +104,30 @@ namespace Utopia.Shared.World.Processors
                                                                 if (topGroundBlock == CubeId.Grass)
                                                                 {
 
-                                                                    if (r.NextDouble() < 0.01d)
+                                                                    if (r.NextDouble() < 0.005d)
                                                                     {
-                                                                        AddTree(chunk, new Vector3I(x, y+ 1, z));
+                                                                        AddTree(chunk, new Vector3I(x, y + 1, z));
                                                                     }
                                                                     else
-                                                                        chunk.Entities.Add(new Grass
-                                                                                               {
-                                                                                                   GrowPhase = 1,
-                                                                                                   Position = globalPos + new Vector3D(0.5, 1, 0.5)
-                                                                                               });
+                                                                        if (r.NextDouble() < 0.03)
+                                                                        {
+                                                                            if (r.NextDouble() < 0.9)
+                                                                            {
+                                                                                chunk.Entities.Add(new Grass
+                                                                                                       {
+                                                                                                           GrowPhase = (byte)r.Next(0, 4),
+                                                                                                           Position = globalPos + new Vector3D(0.5, 1, 0.5),
+                                                                                                       });
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                chunk.Entities.Add(new Grass
+                                                                                {
+                                                                                    GrowPhase = 4,
+                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5),
+                                                                                });
+                                                                            }
+                                                                        }
                                                                 }
 
                                                                 break;

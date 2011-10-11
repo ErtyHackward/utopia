@@ -41,7 +41,7 @@ namespace Utopia.Entities
         {
             this.DynamicEntity = dynamicEntity;
             this.VisualEntity = visualEntity;
-
+            
             Initialize();
         }
 
