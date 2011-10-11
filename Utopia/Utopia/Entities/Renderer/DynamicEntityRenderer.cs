@@ -32,7 +32,7 @@ namespace Utopia.Entities.Renderer
         private ShaderResourceView _cubeTexture_View;
         private ISkyDome _skydome;
         private VisualWorldParameters _visualWorldParameters;
-        private VisualEntity _entityToRender;
+        private VisualVoxelEntity _entityToRender;
         #endregion
 
         #region Public variables/properties

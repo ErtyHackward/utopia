@@ -33,6 +33,7 @@ namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
             Type = EntityType.Static;
             UniqueName = DisplayName;
             Scale = new Vector3(1, 1, 1);
+            Size = new Vector3(0.8f, 0.8f, 0.8f);
         }
 
         #region Public methods

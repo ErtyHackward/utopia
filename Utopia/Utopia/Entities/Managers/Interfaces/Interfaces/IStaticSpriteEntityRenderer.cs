@@ -5,6 +5,7 @@ using System.Text;
 using Utopia.Shared.Chunks.Entities;
 using S33M3Engines.D3D;
 using S33M3Engines.Struct.Vertex;
+using Utopia.Entities.Sprites;
 
 namespace Utopia.Entities.Renderer.Interfaces
 {

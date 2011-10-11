@@ -174,12 +174,13 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             // chkRegistering
             // 
             this.chkRegistering.AutoSize = true;
+            this.chkRegistering.BackColor = System.Drawing.Color.Transparent;
             this.chkRegistering.Location = new System.Drawing.Point(18, 248);
             this.chkRegistering.Name = "chkRegistering";
             this.chkRegistering.Size = new System.Drawing.Size(102, 17);
             this.chkRegistering.TabIndex = 22;
             this.chkRegistering.Text = "With registration";
-            this.chkRegistering.UseVisualStyleBackColor = true;
+            this.chkRegistering.UseVisualStyleBackColor = false;
             // 
             // label8
             // 

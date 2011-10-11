@@ -17,6 +17,7 @@ using S33M3Engines.Timers;
 using Utopia.Entities;
 using Utopia.Shared.Chunks.Entities;
 using Ninject;
+using Utopia.Entities.Sprites;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
