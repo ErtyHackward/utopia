@@ -17,7 +17,7 @@ namespace S33M3Physics.Verlet
 
         private Vector3D _forcesAccum;
 
-        private BoundingBox _boundingBox;
+        private BoundingBox _localBoundingBox;
         private bool _isRunning;
 
         public bool IsRunning
@@ -30,23 +30,22 @@ namespace S33M3Physics.Verlet
         bool _withCollisionBounsing = false;
         bool _onGround;
 
-
         private List<Impulse> _impulses = new List<Impulse>();
 
         public List<Impulse> Impulses { get { return _impulses; } }
-        public bool WithCollisionBounsing { get { return _withCollisionBounsing; } set { _withCollisionBounsing = value; } }
+        public bool WithCollisionBouncing { get { return _withCollisionBounsing; } set { _withCollisionBounsing = value; } }
         public bool SubjectToGravity { get { return _subjectToGravity; } set { _subjectToGravity = value; } }
         public bool OnGround { get { return _onGround; } set { _onGround = value; } }
 
         public Vector3D CurPosition { get { return _curPosition; } set { _curPosition = value; } }
         public Vector3D PrevPosition { get { return _prevPosition; } set { _prevPosition = value; } }
 
-        public delegate void CheckConstraintFct(ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
+        public delegate void CheckConstraintFct(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
         public CheckConstraintFct ConstraintFct;
 
-        public VerletSimulator(ref BoundingBox boundingBox)
+        public VerletSimulator(ref BoundingBox localBoundingBox)
         {
-            _boundingBox = boundingBox;
+            _localBoundingBox = localBoundingBox;
         }
 
         public void StartSimulation(ref Vector3D StartingPosition, ref Vector3D PreviousPosition)
@@ -117,11 +116,9 @@ namespace S33M3Physics.Verlet
             foreach (CheckConstraintFct fct in ConstraintFct.GetInvocationList())
             {
                 //This fct will be able to modify the newPosition if needed to satisfy its own constraint !
-                fct(ref futurePosition, ref OriginalPosition);
+                fct(this, ref _localBoundingBox, ref futurePosition, ref OriginalPosition);
             }
-
             _curPosition = futurePosition;
-           
         }
     }
 }

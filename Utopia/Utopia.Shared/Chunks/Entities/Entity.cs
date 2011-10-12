@@ -12,6 +12,16 @@ namespace Utopia.Shared.Chunks.Entities
     public abstract class Entity : IBinaryStorable, IEntity
     {
         /// <summary>
+        /// Pickable entity Property
+        /// </summary>
+        public virtual bool IsPickable { get { return true; } }
+
+        /// <summary>
+        /// Player Collision checked entity Property
+        /// </summary>
+        public virtual bool IsPlayerCollidable { get { return false; } }
+
+        /// <summary>
         /// Gets entity class id
         /// </summary>
         public abstract ushort ClassId { get; }

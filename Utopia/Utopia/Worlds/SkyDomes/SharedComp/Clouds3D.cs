@@ -45,8 +45,10 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         private IndexBuffer<ushort> _cloudIB;
         private VertexBuffer<VertexPositionColor> _cloudVB;
-        private List<ushort> _indices;
-        private List<VertexPositionColor> _vertices;
+        private ushort[] _indices;
+        private VertexPositionColor[] _vertices;
+        private int _nbrIndices, _nbrVertices;
+        private int _maxNbrIndices, _maxNbrVertices;
         private HLSLVertexPositionColor _effect;
         private FTSValue<Vector2> _cloud_MapOffset;
         private Color _topFace, _side1Face, _side2Face, _bottomFace;
@@ -83,8 +85,12 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _noise.SetParameters(0.075, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
             _effect = new HLSLVertexPositionColor(_d3dEngine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
 
-            _indices = new List<ushort>();
-            _vertices = new List<VertexPositionColor>();
+            _maxNbrIndices = 15000;
+            _maxNbrVertices = 10000;
+            _indices = new ushort[_maxNbrIndices];
+            _vertices = new VertexPositionColor[_maxNbrVertices];
+            _nbrIndices = 0;
+            _nbrVertices = 0;
 
             _topFace = new Color(_brightness * 240, _brightness * 240, _brightness * 255, 200);
             _side1Face = new Color(_brightness * 230, _brightness * 230, _brightness * 255, 200);
@@ -120,10 +126,9 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             Location2<int> center_of_drawing_in_noise_i = new Location2<int>((int)(CloudsMapOffsetWithCamera.X / _cloud_size), (int)(CloudsMapOffsetWithCamera.Y / _cloud_size));
             Vector2 world_center_of_drawing_in_noise_f = new Vector2(center_of_drawing_in_noise_i.X * _cloud_size, center_of_drawing_in_noise_i.Z * _cloud_size) + CloudsMapOffset;
 
-            int verticesCount = 0;
             int _cloudMapXIndex, _cloudMapZIndex;
-            _indices.Clear();
-            _vertices.Clear();
+            _nbrIndices = 0;
+            _nbrVertices = 0;
 
             _brightness = _worldclock.ClockTime.SmartTimeInterpolation(0.2f);
 
@@ -149,6 +154,15 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             {
                 for (int xi = -_cloudMap_size; xi < _cloudMap_size; xi++)
                 {
+                    if(_nbrIndices >= _maxNbrIndices)
+                    {
+                        //Resize Arrays to have them bigger
+                        _maxNbrIndices += 36 * 100; //Add the posibility to store 100 clouds
+                        _maxNbrVertices += 24 * 100; //Add the posibility to store 100 clouds
+                        Array.Resize<ushort>(ref _indices, _maxNbrIndices);
+                        Array.Resize<VertexPositionColor>(ref _vertices, _maxNbrVertices);
+                    }
+
                     Location2<int> p_in_noise_i = new Location2<int>(xi + center_of_drawing_in_noise_i.X, zi + center_of_drawing_in_noise_i.Z);
 
                     Vector2 p0 = new Vector2(xi, zi) * _cloud_size + world_center_of_drawing_in_noise_f;
@@ -213,27 +227,33 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                         for (int j = 0; j < 4; j++)
                         {
                             _faces[j].Position += pos;
-                            _vertices.Add(_faces[j]);
+                            _vertices[_nbrVertices] = _faces[j];
+                            _nbrVertices++;
                         }
 
-                        _indices.Add((ushort)(2 + verticesCount));
-                        _indices.Add((ushort)(1 + verticesCount));
-                        _indices.Add((ushort)(0 + verticesCount));
-                        _indices.Add((ushort)(0 + verticesCount));
-                        _indices.Add((ushort)(3 + verticesCount));
-                        _indices.Add((ushort)(2 + verticesCount));
-                        verticesCount += 4;
+                        _indices[_nbrIndices] = (ushort)(_nbrVertices - 2); //2 + verticesCount);
+                        _nbrIndices++;
+                        _indices[_nbrIndices] = (ushort)(_nbrVertices - 3); //1 + verticesCount);
+                        _nbrIndices++;
+                        _indices[_nbrIndices] = (ushort)(_nbrVertices - 4); //0 + verticesCount);
+                        _nbrIndices++;
+                        _indices[_nbrIndices] = (ushort)(_nbrVertices - 4); //0 + verticesCount);
+                        _nbrIndices++;
+                        _indices[_nbrIndices] = (ushort)(_nbrVertices - 1); //3 + verticesCount);
+                        _nbrIndices++;
+                        _indices[_nbrIndices] = (ushort)(_nbrVertices - 2); //2 + verticesCount);
+                        _nbrIndices++;
                     }
                 }
             }
 
-            if (_indices.Count == 0) return;
+            if (_nbrIndices == 0) return;
             //Create/Update the Buffer
-            if (_cloudIB == null) _cloudIB = new IndexBuffer<ushort>(_d3dEngine, _indices.Count, SharpDX.DXGI.Format.R16_UInt, "_cloudIB" ,10, ResourceUsage.Dynamic);
-            _cloudIB.SetData(_indices.ToArray(), true);
+            if (_cloudIB == null) _cloudIB = new IndexBuffer<ushort>(_d3dEngine, _nbrIndices, SharpDX.DXGI.Format.R16_UInt, "_cloudIB" ,10, ResourceUsage.Dynamic);
+            _cloudIB.SetData(_indices, 0, _nbrIndices, true);
 
-            if (_cloudVB == null) _cloudVB = new VertexBuffer<VertexPositionColor>(_d3dEngine, _vertices.Count, VertexPositionColor.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB", ResourceUsage.Dynamic, 10);
-            _cloudVB.SetData(_vertices.ToArray(), true);
+            if (_cloudVB == null) _cloudVB = new VertexBuffer<VertexPositionColor>(_d3dEngine, _nbrVertices, VertexPositionColor.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB", ResourceUsage.Dynamic, 10);
+            _cloudVB.SetData(_vertices, 0 , _nbrVertices, true);
 
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 

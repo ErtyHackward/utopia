@@ -25,5 +25,6 @@ namespace S33M3Engines.Maths
             }
             return ContainmentType.Disjoint;
         }
+
     }
 }

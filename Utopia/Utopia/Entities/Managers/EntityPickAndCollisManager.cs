@@ -13,6 +13,7 @@ using Utopia.Network;
 using Utopia.Action;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
+using S33M3Physics.Verlet;
 
 namespace Utopia.Entities.Managers
 {
@@ -128,14 +129,16 @@ namespace Utopia.Entities.Managers
             for (int i = 0; i < _entitiesNearPlayer.Count; i++)
             {
                 entity = _entitiesNearPlayer[i];
-
-                Collision.RayIntersectsBox(ref pickingRay, ref entity.WorldBBox, out currentDistance);
-                if (currentDistance > 0)
+                if (entity.Entity.IsPickable)
                 {
-                    if (currentDistance < pickedEntityDistance)
+                    Collision.RayIntersectsBox(ref pickingRay, ref entity.WorldBBox, out currentDistance);
+                    if (currentDistance > 0)
                     {
-                        pickedEntityDistance = currentDistance;
-                        pickedEntity = entity;
+                        if (currentDistance < pickedEntityDistance)
+                        {
+                            pickedEntityDistance = currentDistance;
+                            pickedEntity = entity;
+                        }
                     }
                 }
             }
@@ -143,55 +146,64 @@ namespace Utopia.Entities.Managers
             else return true;
         }
 
-        public void isCollidingWithEntity(ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             VisualEntity entityTesting;
+            BoundingBox _boundingBox2Evaluate;
             //If new Position "inside" entity, then go back to previous Position !
             for (int i = 0; i < _entitiesNearPlayer.Count; i++)
             {
                 entityTesting = _entitiesNearPlayer[i];
-                if (MCollision.BoxContainsPoint(ref entityTesting.WorldBBox, ref newPosition2Evaluate) == ContainmentType.Contains)
+                if (entityTesting.Entity.IsPlayerCollidable)
                 {
-                    //Player was moving ?
-                    if (newPosition2Evaluate != previousPosition)
+
+                    _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), localEntityBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
+                    if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
                     {
-                        Vector3D newPositionWithColliding = previousPosition;
-
-                        newPositionWithColliding.X = newPosition2Evaluate.X;
-                        if (MCollision.BoxContainsPoint(ref entityTesting.WorldBBox, ref newPositionWithColliding) == ContainmentType.Contains)
+                        //Player was moving ?
+                        if (newPosition2Evaluate != previousPosition)
                         {
-                            newPositionWithColliding.X = previousPosition.X;
-                        }
+                            Vector3D newPositionWithColliding = previousPosition;
 
-                        newPositionWithColliding.Y = newPosition2Evaluate.Y;
-                        if (MCollision.BoxContainsPoint(ref entityTesting.WorldBBox, ref newPositionWithColliding) == ContainmentType.Contains)
+                            newPositionWithColliding.X = newPosition2Evaluate.X;
+                            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+                            if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
+                            {
+                                newPositionWithColliding.X = previousPosition.X;
+                            }
+
+                            newPositionWithColliding.Y = newPosition2Evaluate.Y;
+                            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+                            if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
+                            {
+                                newPositionWithColliding.Y = previousPosition.Y;
+                            }
+
+                            newPositionWithColliding.Z = newPosition2Evaluate.Z;
+                            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+                            if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
+                            {
+                                newPositionWithColliding.Z = previousPosition.Z;
+                            }
+
+                            newPosition2Evaluate = newPositionWithColliding;
+
+                            //Send an impulse message to the Entity, following my "LookAtVector" !
+                            float impulsePower = 1;
+                            if (_action.isTriggered(Actions.Move_Run)) impulsePower = 2;
+
+                            _server.ServerConnection.SendAsync(new EntityImpulseMessage()
+                            {
+                                EntityId = entityTesting.Entity.EntityId,
+                                Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.Rotation) * impulsePower
+                            }
+                            );
+                        }
+                        else
                         {
-                            newPositionWithColliding.Y = previousPosition.Y;
+                            Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(entityTesting.Entity.Rotation);
+                            newPosition2Evaluate += lookAt * 0.1;
                         }
-
-                        newPositionWithColliding.Z = newPosition2Evaluate.Z;
-                        if (MCollision.BoxContainsPoint(ref entityTesting.WorldBBox, ref newPositionWithColliding) == ContainmentType.Contains)
-                        {
-                            newPositionWithColliding.Z = previousPosition.Z;
-                        }
-
-                        newPosition2Evaluate = newPositionWithColliding;
-
-                        //Send an impulse message to the Entity, following my "LookAtVector" !
-                        float impulsePower = 1;
-                        if(_action.isTriggered(Actions.Move_Run)) impulsePower = 2;
-
-                        _server.ServerConnection.SendAsync(new EntityImpulseMessage()
-                        {
-                            EntityId = entityTesting.Entity.EntityId,
-                            Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.Rotation) * impulsePower
-                        }
-                        );
-                    }
-                    else
-                    {
-                        Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(entityTesting.Entity.Rotation);
-                        newPosition2Evaluate += lookAt * 0.1;
                     }
                 }
             }

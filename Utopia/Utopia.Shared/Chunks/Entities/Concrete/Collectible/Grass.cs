@@ -16,6 +16,9 @@ namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
         #endregion
 
         #region Public properties/variables
+        public override bool IsPickable { get { return true; } }
+        public override bool IsPlayerCollidable { get { return true; } }
+
         public byte GrowPhase
         {
             get { return _growPhase; }
@@ -63,17 +66,9 @@ namespace Utopia.Shared.Chunks.Entities.Concrete.Collectible
         {
             switch (GrowPhase)
             {
-                case 0:
-                        Size = new Vector3(0.8f, 0.8f, 0.8f);
-                        Format = SpriteFormat.Quad;
-                        break;
-                case 4:
-                        Size = new Vector3(0.9f, 0.9f, 0.9f);
-                        Format = SpriteFormat.Triangle;
-                    break;
                 default:
-                        Size = new Vector3(0.6f, 0.6f, 0.6f);
-                        Format = SpriteFormat.Cross;
+                        Size = new Vector3(0.7f, 0.7f, 0.7f);
+                        Format = SpriteFormat.Triangle;
                     break;
             }
         }

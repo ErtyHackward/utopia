@@ -26,6 +26,7 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
 using Ninject;
 using Utopia.Settings;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Entities.Managers
 {
@@ -117,6 +118,14 @@ namespace Utopia.Entities.Managers
         }
 
         public bool HasMouseFocus { get; set; }
+
+        public float GroundBelowEntity
+        {
+            get { return _groundBelowEntity; }
+            set { _groundBelowEntity = value; }
+        }
+
+        public IWorldChunks WorldChunks { get; set; }
         #endregion
 
         public PlayerEntityManager(D3DEngine engine,
@@ -396,54 +405,6 @@ namespace Utopia.Entities.Managers
                 _physicSimu.OnGround = false;
             }
         }
-
-        /// <summary>
-        /// Validate player move against surrending landscape, if move not possible, it will be "rollbacked"
-        /// </summary>
-        /// <param name="newPosition2Evaluate"></param>
-        /// <param name="previousPosition"></param>
-        private void isCollidingWithTerrain(ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
-        {
-            BoundingBox _boundingBox2Evaluate;
-            Vector3D newPositionWithColliding = previousPosition;
-            //Create a Bounding box with my new suggested position, taking only the X that has been changed !
-            //X Testing
-            newPositionWithColliding.X = newPosition2Evaluate.X;
-
-            VisualEntity.ComputeWorldBoundingBox(ref newPositionWithColliding, out _boundingBox2Evaluate);
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate))
-                newPositionWithColliding.X = previousPosition.X;
-
-            //Y Testing
-            newPositionWithColliding.Y = newPosition2Evaluate.Y;
-
-            //My Position raise  ==> If I were on the ground, I'm no more
-            if (previousPosition.Y < newPositionWithColliding.Y && _physicSimu.OnGround) _physicSimu.OnGround = false;
-
-            VisualEntity.ComputeWorldBoundingBox(ref newPositionWithColliding, out _boundingBox2Evaluate);
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate))
-            {
-                //If Jummping
-                if (previousPosition.Y < newPositionWithColliding.Y)
-                {
-                    newPositionWithColliding.Y = previousPosition.Y;
-                }
-                else //Falling
-                {
-                    newPositionWithColliding.Y = _groundBelowEntity;
-                    previousPosition.Y = _groundBelowEntity; // ==> This way I stop the Y move !
-                    _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
-                }
-            }
-
-            //Z Testing
-            newPositionWithColliding.Z = newPosition2Evaluate.Z;
-            VisualEntity.ComputeWorldBoundingBox(ref newPositionWithColliding, out _boundingBox2Evaluate);
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate))
-                newPositionWithColliding.Z = previousPosition.Z;
-
-            newPosition2Evaluate = newPositionWithColliding;
-        }
         #endregion
 
         #region Entity Movement + rotation
@@ -678,8 +639,8 @@ namespace Utopia.Entities.Managers
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
 
             //Init Velret physic simulator
-            _physicSimu = new VerletSimulator(ref VisualEntity.WorldBBox) { WithCollisionBounsing = false };
-            _physicSimu.ConstraintFct += isCollidingWithTerrain;
+            _physicSimu = new VerletSimulator(ref VisualEntity.LocalBBox) { WithCollisionBouncing = false };
+            _physicSimu.ConstraintFct += WorldChunks.isCollidingWithTerrain;
             _physicSimu.ConstraintFct += _entityPickingManager.isCollidingWithEntity;
 
             //Set displacement mode
