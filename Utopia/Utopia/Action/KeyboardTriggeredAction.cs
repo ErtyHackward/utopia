@@ -6,10 +6,13 @@ using Utopia.Shared.Config;
 
 namespace Utopia.Action
 {
-    public struct KeyboardTriggeredAction
+    public class KeyboardTriggeredAction
     {
         public Actions Action;
         public KeyboardTriggerMode TriggerType;
         public KeyWithModifier Binding;
+        public bool WithTimeElapsed;
+        public float MaxTimeElapsedInS;
+        public float StartTimeElapsedInTick;
     }
 }

@@ -15,14 +15,24 @@ cbuffer PerFrame
 	float fogdist;
 };
 
+
 static const float foglength = 45;
 static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
 static float3 Nightfogcolor = {0, 0, 0 };
+
+//face Types
+//Back = 0,
+//Front = 1,
+//Bottom = 2,
+//Top = 3,
+//Left = 4,
+//Right = 5
 
 static const float texmul1[6] = { -1,  1, -1,  1,  0,  0};
 static const float texmul2[6] = {  0,  0,  0,  0, -1,  1};
 static const float texmul3[6] = { -1, -1,  0,  0, -1, -1};		
 static const float texmul4[6] = {  0,  0,  1,  1,  0,  0};
+static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
 
 //--------------------------------------------------------------------------------------
 // Texture Samplers
@@ -36,7 +46,7 @@ struct VS_IN
 {
 	uint4 Position		 : POSITION;
 	float4 Col			 : COLOR;
-	uint4 VertexInfo	 : INFO;
+	uint4 VertexInfo	 : INFO;   // x = chunk PopUp Value, y = facetype, z = AOPower factor 255 = Factor of 3
 };
 
 struct PS_IN
@@ -60,7 +70,7 @@ PS_IN VS(VS_IN input)
     PS_IN output;
 	
 	float4 newPosition = {input.Position.xyz, 1.0f};
-	newPosition.y += input.VertexInfo.x + popUpYOffset; //Offseting the Y
+	newPosition.y += (input.VertexInfo.x/255) + popUpYOffset; //Offseting the Y
 
     float4 worldPosition = mul(newPosition, World);
 	output.Position = mul(worldPosition, ViewProjection);
@@ -72,7 +82,9 @@ PS_IN VS(VS_IN input)
 						(input.Position.y * texmul3[facetype]) + (input.Position.z * texmul4[facetype]),
 						input.Position.w );
 
-	output.EmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
+	//VertexInfo.z/765 => Will transform the Z into a range from 0 to 3
+	output.EmissiveLight = input.VertexInfo.z/85 * saturate(input.Col.rgb +  SunColor * input.Col.a);
+	output.EmissiveLight *= faceshades[facetype];
 
 	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 

@@ -495,13 +495,14 @@ namespace Utopia.Entities.Managers
 
         private void WalkingFirstPerson(ref GameTime TimeSpend)
         {
+            float jumpPower;
             _physicSimu.Freeze(true, false, true);
 
             //Move 3 time slower if not touching ground
             if (!_physicSimu.OnGround) _moveDelta /= 2f;
 
-            if ((_physicSimu.OnGround || _physicSimu.PrevPosition==_physicSimu.CurPosition)  && _actions.isTriggered(Actions.Move_Jump))
-                _physicSimu.Impulses.Add(new Impulse(ref TimeSpend) { ForceApplied = new Vector3D(0, 300, 0) });
+            if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _actions.isTriggered(Actions.Move_Jump, out jumpPower))
+                _physicSimu.Impulses.Add(new Impulse(ref TimeSpend) { ForceApplied = new Vector3D(0, 300 + (200 * jumpPower), 0) });
 
             if (_actions.isTriggered(Actions.Move_Forward))
                 if (_actions.isTriggered(Actions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f; //Running makes the entity go twice faster
