@@ -154,14 +154,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             {
                 for (int xi = -_cloudMap_size; xi < _cloudMap_size; xi++)
                 {
-                    if(_nbrIndices >= _maxNbrIndices)
-                    {
-                        //Resize Arrays to have them bigger
-                        _maxNbrIndices += 36 * 100; //Add the posibility to store 100 clouds
-                        _maxNbrVertices += 24 * 100; //Add the posibility to store 100 clouds
-                        Array.Resize<ushort>(ref _indices, _maxNbrIndices);
-                        Array.Resize<VertexPositionColor>(ref _vertices, _maxNbrVertices);
-                    }
+
 
                     Location2<int> p_in_noise_i = new Location2<int>(xi + center_of_drawing_in_noise_i.X, zi + center_of_drawing_in_noise_i.Z);
 
@@ -219,6 +212,15 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                                 _faces[2].Position.X = -rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = -rz; _faces[2].Color = _bottomFace;
                                 _faces[3].Position.X = rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = -rz; _faces[3].Color = _bottomFace;
                                 break;
+                        }
+
+                        if (_nbrIndices >= _maxNbrIndices)
+                        {
+                            //Resize Arrays to have them bigger
+                            _maxNbrIndices += 36 * 100; //Add the posibility to store 100 clouds
+                            _maxNbrVertices += 24 * 100; //Add the posibility to store 100 clouds
+                            Array.Resize<ushort>(ref _indices, _maxNbrIndices);
+                            Array.Resize<VertexPositionColor>(ref _vertices, _maxNbrVertices);
                         }
 
                         //Translate the local coordinate into world coordinate
