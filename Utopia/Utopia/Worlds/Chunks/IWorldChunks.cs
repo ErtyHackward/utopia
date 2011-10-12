@@ -8,6 +8,9 @@ using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using Utopia.Worlds.Chunks.ChunkLandscape;
 using S33M3Engines.D3D.DebugTools;
+using S33M3Physics.Verlet;
+using SharpDX;
+using S33M3Engines.Shared.Math;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -65,5 +68,7 @@ namespace Utopia.Worlds.Chunks
         IEnumerable<VisualChunk> GetChunksWithFixedZ(int FixedZ, int WorldMinX);
 
         ILandscapeManager LandscapeManager { get; }
+
+        void isCollidingWithTerrain(VerletSimulator _physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
     }
 }

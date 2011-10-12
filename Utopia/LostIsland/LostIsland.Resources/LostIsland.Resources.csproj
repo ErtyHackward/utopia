@@ -245,33 +245,6 @@
     <None Include="EffectsPacks\Default\Weather\Clouds2D.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="EffectsPacks\HD\Entities\DynamicEntity.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="EffectsPacks\HD\Entities\StaticEntitySprite.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="EffectsPacks\HD\SkyDome\ComplexSkyDome.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="EffectsPacks\HD\SkyDome\PlanetSkyDome.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="EffectsPacks\HD\SkyDome\Stars.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="EffectsPacks\HD\Terran\Liquid.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="EffectsPacks\HD\Terran\Terran.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="EffectsPacks\HD\Terran\TerranEditor.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="EffectsPacks\HD\Weather\Clouds2D.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="TexturesPacks\HD\Terran\ct20.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

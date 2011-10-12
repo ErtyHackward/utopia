@@ -6,6 +6,17 @@ namespace Utopia.Shared.Chunks.Entities.Interfaces
 {
     public interface IEntity
     {
+
+        /// <summary>
+        /// Pickable entity Property
+        /// </summary>
+        bool IsPickable { get; }
+
+        /// <summary>
+        /// Player Collision checked entity Property
+        /// </summary>
+        bool IsPlayerCollidable { get; }
+
         /// <summary>
         /// Gets entity class id
         /// </summary>

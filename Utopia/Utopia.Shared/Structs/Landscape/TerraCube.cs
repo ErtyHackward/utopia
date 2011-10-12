@@ -36,29 +36,5 @@ namespace Utopia.Shared.Structs.Landscape
             EmissiveColor.B = 0;
             EmissiveColor.SunLight = 0;
         }
-
-        public byte[] RawSerialize()
-        {
-            int rawSize = Marshal.SizeOf(this);
-            IntPtr buffer = Marshal.AllocHGlobal(rawSize);
-            Marshal.StructureToPtr(this, buffer, false);
-            byte[] rawDatas = new byte[rawSize];
-            Marshal.Copy(buffer, rawDatas, 0, rawSize);
-            Marshal.FreeHGlobal(buffer);
-            return rawDatas;
-        }
-
-        public void RawDeserialize(byte[] rawData)
-        {
-            int position = 0;
-            Type type = typeof(TerraCube);
-            int rawsize = Marshal.SizeOf(type);
-            if (rawsize > rawData.Length) return;
-
-            IntPtr buffer = Marshal.AllocHGlobal(rawsize);
-            Marshal.Copy(rawData, position, buffer, rawsize);
-            this = (TerraCube)Marshal.PtrToStructure(buffer, type);
-            Marshal.FreeHGlobal(buffer);
-        }
     }
 }
