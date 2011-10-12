@@ -147,6 +147,8 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
                                    if (s.Item.StackType == item.StackType && s.ItemsCount + 1 <= item.MaxStackSize)
                                    {
                                        s.ItemsCount++;
+                                       var t = new T {GridPosition = s.GridPosition, ItemsCount = 1, Item = s.Item};
+                                       OnItemPut(new EntityContainerEventArgs<T> { Slot = t });
                                        return true;
                                    }
                                    return false;
