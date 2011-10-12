@@ -41,6 +41,7 @@ namespace Utopia.Network
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        public bool Enabled { get; set; }
 
         /// <summary>
         /// Creates new instance of ItemMessageTranslator.
@@ -61,8 +62,8 @@ namespace Utopia.Network
             _connection = server.ServerConnection;
 
             _connection.MessageEntityLockResult += ConnectionMessageEntityLockResult;
-            
 
+            Enabled = true;
         }
 
         void InventoryItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
@@ -110,6 +111,9 @@ namespace Utopia.Network
         // handling player inventory requests
         private void InventoryItemTaken(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
+            if (!Enabled)
+                return;
+
             // at this point we need to remember what was taken to create appropriate message
             if (_pendingOperation)
                 throw new InvalidOperationException("Unable to take another item, release first previous taken item");
@@ -121,6 +125,9 @@ namespace Utopia.Network
         // handling player inventory requests
         private void InventoryItemPut(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
+            if (!Enabled)
+                return;
+
             if (!_pendingOperation)
                 throw new InvalidOperationException("Unable to put item without taking it first");
 
