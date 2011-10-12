@@ -202,7 +202,7 @@ namespace Utopia.Entities.Managers
 
             if (_actions.isTriggered(Actions.Use_Left))
             {
-                if (Player.EntityState.IsPickingActive)
+                if (Player.EntityState.IsPickingActive && Player.Equipment.LeftTool!=null)
                 {
                     Player.LeftToolUse();//sends the client server event that does tool.use on server
                     _itemMessageTranslator.Enabled = false;
@@ -213,9 +213,9 @@ namespace Utopia.Entities.Managers
 
             if (_actions.isTriggered(Actions.Use_Right))
             {
-                //Avoid the player to add a block where he is located !
-                if (Player.EntityState.IsPickingActive)
+                 if (Player.EntityState.IsPickingActive && Player.Equipment.RightTool != null)
                 {
+                    //Avoid the player to add a block where he is located !            
                     BoundingBox playerPotentialNewBlock;
                     ComputeBlockBoundingBox(ref Player._entityState.NewBlockPosition, out playerPotentialNewBlock);
 

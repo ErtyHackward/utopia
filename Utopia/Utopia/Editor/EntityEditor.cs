@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using LostIsland.Shared.Tools;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
@@ -26,6 +27,7 @@ using Utopia.Shared.Chunks.Entities.Concrete;
 using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Worlds.Cubes;
 using Screen = Nuclex.UserInterface.Screen;
 using Utopia.Settings;
@@ -53,6 +55,7 @@ namespace Utopia.Editor
         private readonly Hud _hudComponent;
         private readonly PlayerCharacter _player;
         private SharedFrameCB _sharedFrameCB;
+        private readonly IChunkEntityImpactManager _chunkEntityImpactManager;
 
 
         private const double Scale = 1f/16f;
@@ -99,14 +102,15 @@ namespace Utopia.Editor
 
         public EntityEditor(Screen screen, D3DEngine d3DEngine, CameraManager camManager,
                             VoxelMeshFactory voxelMeshFactory, WorldFocusManager worldFocusManager,
-                            ActionsManager actions, Hud hudComponent, PlayerCharacter player,
+                            ActionsManager actions, Hud hudComponent, 
                             InputsManager inputsManager,IPickingRenderer pickingRenderer,IDynamicEntityManager entityManager,PlayerEntityManager playerMgr,
-                            SharedFrameCB sharedFrameCB)
+                            SharedFrameCB sharedFrameCB,IChunkEntityImpactManager chunkEntityImpactManager)
         {
             LeftTool = new EditorRemove(this);
             RightTool = new EditorAdd(this);
             _screen = screen;
-            _player = player;
+            _playerMgr = playerMgr;
+            _player = _playerMgr.Player;
             _actions = actions;
             _worldFocusManager = worldFocusManager;
             _voxelMeshFactory = voxelMeshFactory;
@@ -116,8 +120,9 @@ namespace Utopia.Editor
             _inputManager = inputsManager;
             _pickingRenderer = pickingRenderer;
             _entityManager = entityManager;
-            _playerMgr = playerMgr;
+         
             _sharedFrameCB = sharedFrameCB;
+            _chunkEntityImpactManager = chunkEntityImpactManager;
 
             // inactive by default, use F12 UI to enable :)
             _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
@@ -154,9 +159,23 @@ namespace Utopia.Editor
             {
                 //picked a terrain block
                 IsTexture = true;
-                SelectedCubeId = VisualCubeProfile.CubesProfile[_playerMgr.PickedCube.Cube.Id].Tex_Front;
+                SelectedCubeId = _playerMgr.PickedCube.Cube.Id;
                 EditableVoxelEntity spawn = new EditableVoxelEntity();
-                spawn.Model.Blocks = new byte[16, 16, 16]; //TODO 8 8 8 for terrain edited entity
+                spawn.Model.Blocks = new byte[16, 16, 16]; //TODO 8 8 8 for terrain edited entity, check no hardcoded 16
+
+                Vector3I tmp = _player.EntityState.PickedBlockPosition;
+                _chunkEntityImpactManager.ReplaceBlock(ref tmp,0);//TODO currently, removes edited block client side
+
+                for (int x = 0; x < spawn.Model.Blocks.GetLength(0); x++)
+                {
+                    for (int y = 0; y < spawn.Model.Blocks.GetLength(1); y++)
+                    {
+                        for (int z = 0; z < spawn.Model.Blocks.GetLength(2); z++)
+                        {
+                            spawn.Model.Blocks[x, y, z] = SelectedCubeId;
+                        }
+                    }
+                }
                 
                 SpawnEntity(spawn);
                 
