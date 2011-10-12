@@ -8,6 +8,7 @@ using S33M3Engines.InputHandler.KeyboardHelper;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines;
+using System.Diagnostics;
 
 namespace Utopia.Action
 {
@@ -18,6 +19,12 @@ namespace Utopia.Action
     /// </summary>
     public class ActionsManager : IDisposable
     {
+        public struct ActionData
+        {
+            public bool Triggered;
+            public float ElapsedTimeInS;
+        }
+
         #region Private variables
         private KeyboardState _curKeyboardState;
         private KeyboardState _prevKeyboardState;
@@ -29,12 +36,13 @@ namespace Utopia.Action
         private MouseTriggeredAction _mouseAction;
         private List<MouseTriggeredAction> _mouseActions;
         private D3DEngine _engine;
-        
+        private float _actionTimeElapsedInS;
+
         private bool _isAction1Exposed;
-        private bool[] _bufferedActions1;
-        private bool[] _bufferedActions2;
-        private bool[] _bufferedActionsInProgress;
-        private bool[] _actions;        
+        private ActionData[] _bufferedActions1;          // Is link to _bufferedActionsInProgress or _actions => They are swapped
+        private ActionData[] _bufferedActions2;          // Is link to _bufferedActionsInProgress or _actions => They are swapped
+        private ActionData[] _bufferedActionsInProgress; // BackGround buffer accumulator
+        private ActionData[] _actions;                   // Default Accesible buffer
         #endregion
 
         #region Public variables/properties
@@ -48,8 +56,8 @@ namespace Utopia.Action
             _keyboardActions = new List<KeyboardTriggeredAction>();
             _mouseActions = new List<MouseTriggeredAction>();
 
-            _bufferedActions1 = new bool[Enum.GetValues(typeof(Actions)).Length];
-            _bufferedActions2 = new bool[_bufferedActions1.Length];
+            _bufferedActions1 = new ActionData[Enum.GetValues(typeof(Actions)).Length];
+            _bufferedActions2 = new ActionData[_bufferedActions1.Length];
             _actions = _bufferedActions1;
             _bufferedActionsInProgress = _bufferedActions2;
             _isAction1Exposed = true;
@@ -123,7 +131,19 @@ namespace Utopia.Action
         /// <returns></returns>
         public bool isTriggered(Actions action)
         {
-            return _actions[(int)action];
+            return _actions[(int)action].Triggered;
+        }
+
+        /// <summary>
+        /// Is an action Triggered !
+        /// </summary>
+        /// <param name="action">The action to look at</param>
+        /// <returns></returns>
+        public bool isTriggered(Actions action, out float ActionTimeElapsedInS)
+        {
+            ActionData data = _actions[(int)action];
+            ActionTimeElapsedInS = data.ElapsedTimeInS;
+            return data.Triggered;
         }
 
         #endregion
@@ -131,7 +151,7 @@ namespace Utopia.Action
         #region Private methods
         private void ProcessInputs()
         {
-            if(KeyboardActionsProcessing && _engine.HasFocus) ProcessKeyboardStates();
+            if (KeyboardActionsProcessing && _engine.HasFocus) ProcessKeyboardStates();
             if (MouseActionsProcessing && _engine.HasFocus) ProcessMouseStates();
         }
 
@@ -155,48 +175,48 @@ namespace Utopia.Action
                 {
                     case MouseTriggerMode.ButtonDown:
                         switch (_mouseAction.Binding)
-	                    {
+                        {
                             case MouseButton.LeftButton:
-                                if (_curMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.MiddleButton:
-                                if (_curMouseState.MiddleButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.MiddleButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.RightButton:
-                                if (_curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.XButton1:
-                                if (_curMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.XButton2:
-                                if (_curMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.LeftAndRightButton:
-                                if (_curMouseState.LeftButton == ButtonState.Pressed && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.LeftButton == ButtonState.Pressed && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
-	                    }
+                        }
                         break;
                     case MouseTriggerMode.ButtonDownUp:
                         //Set the Action Flag if required
                         switch (_mouseAction.Binding)
                         {
                             case MouseButton.LeftButton:
-                                if (_curMouseState.LeftButton == ButtonState.Released && _prevMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.LeftButton == ButtonState.Released && _prevMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.MiddleButton:
-                                if (_curMouseState.MiddleButton == ButtonState.Released && _prevMouseState.MiddleButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.MiddleButton == ButtonState.Released && _prevMouseState.MiddleButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.RightButton:
-                                if (_curMouseState.RightButton == ButtonState.Released && _prevMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.RightButton == ButtonState.Released && _prevMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.XButton1:
-                                if (_curMouseState.XButton1 == ButtonState.Released && _prevMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.XButton1 == ButtonState.Released && _prevMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.XButton2:
-                                if (_curMouseState.XButton2 == ButtonState.Released && _prevMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.XButton2 == ButtonState.Released && _prevMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.LeftAndRightButton:
-                                if (_curMouseState.LeftButton == ButtonState.Released && _prevMouseState.LeftButton == ButtonState.Pressed && _curMouseState.RightButton == ButtonState.Released && _prevMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_curMouseState.LeftButton == ButtonState.Released && _prevMouseState.LeftButton == ButtonState.Pressed && _curMouseState.RightButton == ButtonState.Released && _prevMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                         }
                         break;
@@ -205,32 +225,32 @@ namespace Utopia.Action
                         switch (_mouseAction.Binding)
                         {
                             case MouseButton.LeftButton:
-                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.MiddleButton:
-                                if (_prevMouseState.MiddleButton == ButtonState.Released && _curMouseState.MiddleButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_prevMouseState.MiddleButton == ButtonState.Released && _curMouseState.MiddleButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.RightButton:
-                                if (_prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.XButton1:
-                                if (_prevMouseState.XButton1 == ButtonState.Released && _curMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_prevMouseState.XButton1 == ButtonState.Released && _curMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.XButton2:
-                                if (_prevMouseState.XButton2 == ButtonState.Released && _curMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_prevMouseState.XButton2 == ButtonState.Released && _curMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                             case MouseButton.LeftAndRightButton:
-                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed && _prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed && _prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                                 break;
                         }
                         break;
                     case MouseTriggerMode.ScrollWheelForward:
-                        if (_curMouseState.ScrollWheelTicks > _prevMouseState.ScrollWheelTicks) 
-                            _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                        if (_curMouseState.ScrollWheelTicks > _prevMouseState.ScrollWheelTicks)
+                            _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                         break;
                     case MouseTriggerMode.ScrollWheelBackWard:
-                        if (_curMouseState.ScrollWheelTicks < _prevMouseState.ScrollWheelTicks) 
-                            _bufferedActionsInProgress[(int)_mouseAction.Action] = true;
+                        if (_curMouseState.ScrollWheelTicks < _prevMouseState.ScrollWheelTicks)
+                            _bufferedActionsInProgress[(int)_mouseAction.Action].Triggered = true;
                         break;
                 }
             }
@@ -246,19 +266,32 @@ namespace Utopia.Action
             for (int i = 0; i < _keyboardActions.Count; i++)
             {
                 _keyboardAction = _keyboardActions[i];
-                switch ( _keyboardAction.TriggerType)
+                switch (_keyboardAction.TriggerType)
                 {
                     case KeyboardTriggerMode.KeyDown:
                         //Set the Action Flag if required
                         if (_curKeyboardState.IsKeyDown(_keyboardAction.Binding))
-                            _bufferedActionsInProgress[(int)_keyboardAction.Action] = true;
+                            _bufferedActionsInProgress[(int)_keyboardAction.Action].Triggered = true;
                         break;
                     case KeyboardTriggerMode.KeyDownUp:
-                        //Set the Action Flag if required
+                        //Set start Action Flag if required
+                        if (_keyboardAction.WithTimeElapsed &&
+                            _prevKeyboardState.IsKeyDown(_keyboardAction.Binding) &&
+                            _keyboardAction.StartTimeElapsedInTick == 0)
+                        {
+                            _keyboardAction.StartTimeElapsedInTick = Stopwatch.GetTimestamp();
+                        }
 
                         if (_prevKeyboardState.IsKeyDown(_keyboardAction.Binding) && _curKeyboardState.IsKeyUp(_keyboardAction.Binding))
                         {
-                            _bufferedActionsInProgress[(int)_keyboardAction.Action] = true;
+                            _bufferedActionsInProgress[(int)_keyboardAction.Action].Triggered = true;
+                            if (_keyboardAction.WithTimeElapsed)
+                            {
+                                _actionTimeElapsedInS = (float)(((Stopwatch.GetTimestamp() - _keyboardAction.StartTimeElapsedInTick) / (float)Stopwatch.Frequency));
+                                if (_actionTimeElapsedInS > _keyboardAction.MaxTimeElapsedInS) _actionTimeElapsedInS = _keyboardAction.MaxTimeElapsedInS;
+                                _bufferedActionsInProgress[(int)_keyboardAction.Action].ElapsedTimeInS = _actionTimeElapsedInS;
+                                _keyboardAction.StartTimeElapsedInTick = 0;
+                            }
                         }
                         break;
                     case KeyboardTriggerMode.KeyUpDown:
@@ -266,7 +299,7 @@ namespace Utopia.Action
 
                         if (_curKeyboardState.IsKeyDown(_keyboardAction.Binding) && _prevKeyboardState.IsKeyUp(_keyboardAction.Binding))
                         {
-                            _bufferedActionsInProgress[(int)_keyboardAction.Action] = true;
+                            _bufferedActionsInProgress[(int)_keyboardAction.Action].Triggered = true;
                         }
                         break;
                 }

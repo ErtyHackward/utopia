@@ -192,8 +192,10 @@ namespace LostIsland.Client
             actionManager.AddActions(new KeyboardTriggeredAction()
             {
                 Action = Actions.Move_Jump,
-                TriggerType = KeyboardTriggerMode.KeyDown,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Jump
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Jump,
+                WithTimeElapsed = true,
+                MaxTimeElapsedInS = 1
             });
 
             actionManager.AddActions(new KeyboardTriggeredAction()

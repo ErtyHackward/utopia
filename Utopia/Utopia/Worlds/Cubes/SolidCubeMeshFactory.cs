@@ -37,7 +37,7 @@ namespace Utopia.Worlds.Cubes
 
             int cubeFaceType = (int)cubeFace;
 
-            ByteVector4 vertexInfo = new ByteVector4((byte)0, (byte)cubeFace, (byte)0, (byte)0);
+            ByteVector4 vertexInfo = new ByteVector4((byte)0, (byte)cubeFace, (byte)85, (byte)0);
 
             long hashVertex;
             int generatedVertex = 0;
