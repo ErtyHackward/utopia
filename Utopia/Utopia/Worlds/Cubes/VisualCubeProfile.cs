@@ -50,6 +50,7 @@ namespace Utopia.Worlds.Cubes
                 profile.Textures[(int)CubeFace.Right] = profile.Tex_Right;
 
                 profile.IsBlockingLight = cubeProfil.ItemArray[dt.Columns["IsBlockingLight"].Ordinal].ToString() == "true";
+                profile.IsSeeThrough = cubeProfil.ItemArray[dt.Columns["IsSeeThrough"].Ordinal].ToString() == "true";
                 profile.IsPickable = cubeProfil.ItemArray[dt.Columns["IsPickable"].Ordinal].ToString() == "true";
                 profile.IsSolidToEntity = cubeProfil.ItemArray[dt.Columns["IsSolidToEntity"].Ordinal].ToString() == "true";
                 profile.IsBlockingWater = cubeProfil.ItemArray[dt.Columns["IsBlockingWater"].Ordinal].ToString() == "true";
@@ -92,9 +93,9 @@ namespace Utopia.Worlds.Cubes
         public static bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
         {
             //By default I don't need to trace the cubeFace of my cube if the face neightboor cube is blocking light ! (Not see-through)
-            if (VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsBlockingLight) return false;
+            if (VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsSeeThrough) return true;
             //Else draw the face
-            return true;
+            return false;
         }
 
         public static bool WaterFaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
@@ -129,6 +130,7 @@ namespace Utopia.Worlds.Cubes
         public byte Id; //Represent the ID of the cube and it's linked texture in the array
         public bool IsPickable;
         public bool IsBlockingLight;
+        public bool IsSeeThrough;
         public bool IsBlockingWater;
         public bool IsFloodPropagation;
         public bool IsSolidToEntity;
