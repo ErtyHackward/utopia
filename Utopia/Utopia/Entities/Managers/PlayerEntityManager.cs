@@ -18,6 +18,7 @@ using Utopia.Entities.Renderer;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D.Inventory;
 using Utopia.InputManager;
+using Utopia.Network;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Cubes;
@@ -88,6 +89,7 @@ namespace Utopia.Entities.Managers
         private InventoryWindow _inventoryUi;
         private SpriteTexture _backgroundTex;
         private readonly IconFactory _iconFactory;
+        private readonly ItemMessageTranslator _itemMessageTranslator;
 
         /// <summary>
         /// The Player Voxel body
@@ -140,10 +142,12 @@ namespace Utopia.Entities.Managers
                                    IPickingRenderer pickingRenderer,
                                    IEntityPickingManager entityPickingManager,
                                    Screen screen, 
-                                   IconFactory iconFactory)
+                                   IconFactory iconFactory,
+                                   ItemMessageTranslator itemMessageTranslator)
         {
             _d3DEngine = engine;
             _iconFactory = iconFactory;
+            _itemMessageTranslator = itemMessageTranslator;
             _cameraManager = cameraManager;
             _worldFocusManager = worldFocusManager;
             _actions = actions;
@@ -201,7 +205,9 @@ namespace Utopia.Entities.Managers
                 if (Player.EntityState.IsPickingActive)
                 {
                     Player.LeftToolUse();//sends the client server event that does tool.use on server
+                    _itemMessageTranslator.Enabled = false;
                     Player.Equipment.LeftTool.Use();//client invocation to keep the client inventory in synch
+                    _itemMessageTranslator.Enabled = true;
                 }
             }
 
@@ -216,7 +222,9 @@ namespace Utopia.Entities.Managers
                     if (!MBoundingBox.Intersects(ref VisualEntity.WorldBBox, ref playerPotentialNewBlock))
                     {
                         Player.RightToolUse();//sends the client server event that does tool.use on server
+                        _itemMessageTranslator.Enabled = false;
                         Player.Equipment.RightTool.Use();//client invocation to keep the client inventory in synch
+                        _itemMessageTranslator.Enabled = true;
                     }
                 }
             }
