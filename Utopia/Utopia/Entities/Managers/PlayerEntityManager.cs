@@ -500,6 +500,9 @@ namespace Utopia.Entities.Managers
             //Move 3 time slower if not touching ground
             if (!_physicSimu.OnGround) _moveDelta /= 2f;
 
+            if ((_physicSimu.OnGround || _physicSimu.PrevPosition==_physicSimu.CurPosition)  && _actions.isTriggered(Actions.Move_Jump))
+                _physicSimu.Impulses.Add(new Impulse(ref TimeSpend) { ForceApplied = new Vector3D(0, 300, 0) });
+
             if (_actions.isTriggered(Actions.Move_Forward))
                 if (_actions.isTriggered(Actions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f; //Running makes the entity go twice faster
                 else _physicSimu.PrevPosition += _entityZAxis * _moveDelta;
@@ -513,8 +516,6 @@ namespace Utopia.Entities.Managers
             if (_actions.isTriggered(Actions.Move_StrafeRight))
                 _physicSimu.PrevPosition -= _entityXAxis * _moveDelta;
 
-            if (_physicSimu.OnGround && _actions.isTriggered(Actions.Move_Jump))
-                _physicSimu.Impulses.Add(new Impulse(ref TimeSpend) { ForceApplied = new Vector3D(0, 300, 0) });
         }
         #endregion
 
