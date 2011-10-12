@@ -10,6 +10,7 @@
     <Tex_Left>255</Tex_Left>
     <Tex_Right>255</Tex_Right>
     <IsBlockingLight>false</IsBlockingLight>
+    <IsSeeThrough>true</IsSeeThrough>
     <IsPickable>false</IsPickable>
     <IsSolidToEntity>false</IsSolidToEntity>
     <IsBlockingWater>false</IsBlockingWater>
@@ -27,6 +28,7 @@
     <Tex_Left>1</Tex_Left>
     <Tex_Right>1</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -44,6 +46,7 @@
     <Tex_Left>2</Tex_Left>
     <Tex_Right>2</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -61,6 +64,7 @@
     <Tex_Left>3</Tex_Left>
     <Tex_Right>3</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -78,6 +82,7 @@
     <Tex_Left>4</Tex_Left>
     <Tex_Right>4</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -95,6 +100,7 @@
     <Tex_Left>5</Tex_Left>
     <Tex_Right>5</Tex_Right>
     <IsBlockingLight>false</IsBlockingLight>
+    <IsSeeThrough>true</IsSeeThrough>
     <IsPickable>false</IsPickable>
     <IsSolidToEntity>false</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -114,6 +120,7 @@
     <Tex_Left>1</Tex_Left>
     <Tex_Right>1</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
@@ -133,6 +140,7 @@
     <Tex_Left>1</Tex_Left>
     <Tex_Right>1</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
@@ -152,6 +160,7 @@
     <Tex_Left>1</Tex_Left>
     <Tex_Right>1</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
@@ -171,6 +180,7 @@
     <Tex_Left>1</Tex_Left>
     <Tex_Right>1</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
@@ -190,6 +200,7 @@
     <Tex_Left>1</Tex_Left>
     <Tex_Right>1</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
@@ -209,6 +220,7 @@
     <Tex_Left>1</Tex_Left>
     <Tex_Right>1</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
@@ -228,6 +240,7 @@
     <Tex_Left>6</Tex_Left>
     <Tex_Right>6</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -245,6 +258,7 @@
     <Tex_Left>7</Tex_Left>
     <Tex_Right>7</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -262,6 +276,7 @@
     <Tex_Left>8</Tex_Left>
     <Tex_Right>8</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -279,6 +294,7 @@
     <Tex_Left>9</Tex_Left>
     <Tex_Right>9</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -296,6 +312,7 @@
     <Tex_Left>10</Tex_Left>
     <Tex_Right>10</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -313,6 +330,7 @@
     <Tex_Left>11</Tex_Left>
     <Tex_Right>11</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -330,6 +348,7 @@
     <Tex_Left>13</Tex_Left>
     <Tex_Right>13</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -347,6 +366,7 @@
     <Tex_Left>14</Tex_Left>
     <Tex_Right>14</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -364,6 +384,7 @@
     <Tex_Left>15</Tex_Left>
     <Tex_Right>15</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -381,6 +402,7 @@
     <Tex_Left>16</Tex_Left>
     <Tex_Right>16</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -398,6 +420,7 @@
     <Tex_Left>17</Tex_Left>
     <Tex_Right>17</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -415,6 +438,7 @@
     <Tex_Left>18</Tex_Left>
     <Tex_Right>18</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -432,6 +456,7 @@
     <Tex_Left>19</Tex_Left>
     <Tex_Right>19</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -449,6 +474,7 @@
     <Tex_Left>20</Tex_Left>
     <Tex_Right>20</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -466,6 +492,7 @@
     <Tex_Left>21</Tex_Left>
     <Tex_Right>21</Tex_Right>
     <IsBlockingLight>false</IsBlockingLight>
+    <IsSeeThrough>true</IsSeeThrough>
     <IsPickable>false</IsPickable>
     <IsSolidToEntity>false</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -485,6 +512,7 @@
     <Tex_Left>20</Tex_Left>
     <Tex_Right>20</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
@@ -502,6 +530,25 @@
     <Tex_Left>23</Tex_Left>
     <Tex_Right>23</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>true</IsSeeThrough>
+    <IsPickable>true</IsPickable>
+    <IsSolidToEntity>true</IsSolidToEntity>
+    <IsBlockingWater>true</IsBlockingWater>
+    <IsFlooding>false</IsFlooding>
+    <IsFloodPropagation>false</IsFloodPropagation>
+    <CubeFamilly>Solid</CubeFamilly>
+  </Cube>
+  <Cube>
+    <Name>Glass</Name>
+    <Id>29</Id>
+    <Tex_Top>24</Tex_Top>
+    <Tex_Bottom>24</Tex_Bottom>
+    <Tex_Front>24</Tex_Front>
+    <Tex_Back>24</Tex_Back>
+    <Tex_Left>24</Tex_Left>
+    <Tex_Right>24</Tex_Right>
+    <IsBlockingLight>false</IsBlockingLight>
+    <IsSeeThrough>true</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>

@@ -30,7 +30,7 @@ namespace LostIsland.Server
             dEntity.Equipment.LeftTool = (Tool)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.Annihilator);
 
             var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
-            adder.CubeId = CubeId.LightBlue;//looting a terraincube will create a new blockadder instance or add to the stack
+            adder.CubeId = CubeId.Glass;//looting a terraincube will create a new blockadder instance or add to the stack
 
             dEntity.Equipment.RightTool = adder;
 

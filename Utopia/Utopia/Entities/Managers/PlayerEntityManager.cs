@@ -227,7 +227,6 @@ namespace Utopia.Entities.Managers
                 //like opening a chest or a door  
             }
 
-
             if (_actions.isTriggered(Actions.EntityThrow))
             {
                 //TODO unequip left item and throw it on the ground, (version 0 = place it at newCubeplace, animation later)                
