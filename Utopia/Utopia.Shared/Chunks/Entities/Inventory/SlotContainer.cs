@@ -186,6 +186,9 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         {
             ValidatePosition(slot.GridPosition);
 
+            if (slot.ItemsCount == 0)
+                throw new InvalidOperationException("No items to put");
+
             var currentItem = _items[slot.GridPosition.X, slot.GridPosition.Y];
             
             if (currentItem != null)

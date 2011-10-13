@@ -46,7 +46,7 @@ namespace LostIsland.Server
             //_iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
 
             _iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope().Named("ErtyHackwardWorld");
-            _iocContainer.Bind<IWorldProcessor>().To<ErtyHackwardPlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
+            _iocContainer.Bind<IWorldProcessor>().To<ErtyHackwardPlanWorldProcessor>().InSingletonScope().Named("ErtyHackwardPlanWorldProcessor");
             
             _iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
             _iocContainer.Bind<IUsersStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
@@ -74,6 +74,10 @@ namespace LostIsland.Server
                 _iocContainer.Get<IChunksStorage>(),
                 _iocContainer.Get<IEntityStorage>()
                 );
+
+            var processor = _iocContainer.Get<IWorldProcessor>() as ErtyHackwardPlanWorldProcessor;
+
+            _server.LoginManager.GenerationParameters = processor.WorldPlan.Parameters;
 
             EntityFactory.Instance = new LostIslandEntityFactory(_server.LandscapeManager);
 

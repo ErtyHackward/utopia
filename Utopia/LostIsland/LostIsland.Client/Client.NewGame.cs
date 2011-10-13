@@ -1,9 +1,11 @@
-﻿using Utopia.Shared.World;
+﻿using LostIslandHD.Client.Properties;
+using Utopia.Shared.World;
 using Utopia;
 using Ninject;
 using Utopia.Network;
 using Utopia.Settings;
 using Utopia.Shared.Structs;
+using Utopia.Shared.World.PlanGenerator;
 using Utopia.Worlds.Cubes;
 using Utopia.Shared.Structs.Landscape;
 using S33M3Engines.D3D;
@@ -72,6 +74,15 @@ namespace LostIsland.Client
                                                @"Config\CubesProfile.xml");                                    //The path to the Cubes Profiles descriptions
             CubeProfile.InitCubeProfiles(@"Config\CubesProfile.xml");                                          // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
 
+            var plan = new WorldPlan
+                           {
+                               RenderMapTemplate = Resources.mapbg,
+                               RenderContinentTemplate = Resources.brush,
+                               RenderWavePatterns = new[] {Resources.wavePattern, Resources.wavePattern1, Resources.wavePattern2},
+                               RenderForest = Resources.forest,
+                               RenderTropicalForest = Resources.tropicForest
+                           };
+
 
             utopiaRenderer = new UtopiaRender(new UtopiaRenderStates()
             {
@@ -95,7 +106,7 @@ namespace LostIsland.Client
                 fps = iocContainer.Get<FPS>(),
                 gameClock = iocContainer.Get<IClock>(),
                 chatComponent = iocContainer.Get<ChatComponent>(),
-                mapComponent = iocContainer.Get<MapComponent>(),
+                mapComponent = iocContainer.Get<MapComponent>(new ConstructorArgument("plan",plan)),
                 hud = iocContainer.Get<Hud>(),
                 entityEditor = iocContainer.Get<EntityEditor>(),
                 stars = iocContainer.Get<IDrawableComponent>("Stars"),

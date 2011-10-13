@@ -173,7 +173,7 @@ namespace Utopia.GUI
         public override void LoadContent()
         {
             _font = new SpriteFont();
-            _font.Initialize("Lucida Console", 13f, System.Drawing.FontStyle.Bold, true, _d3dEngine.Device);
+            _font.Initialize("Lucida Console", 13f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
             _spriteRender = new SpriteRenderer();
             _spriteRender.Initialize(_d3dEngine);
         }
@@ -186,8 +186,16 @@ namespace Utopia.GUI
 
         public override void Update(ref GameTime timeSpent)
         {
-            if (Stopwatch.GetTimestamp() > _lastUpdateTick + _hideChatInTick) _chatHiden = true;
-            else _chatHiden = false;
+            if (Stopwatch.GetTimestamp() > _lastUpdateTick + _hideChatInTick)
+            {
+                _chatHiden = true;
+                _fontColor.SunLight = 50;
+            }
+            else
+            {
+                _chatHiden = false;
+                _fontColor.SunLight = 200;
+            }
 
             if (_actionManager.isTriggered(Actions.Toggle_Chat))
             {
@@ -211,7 +219,7 @@ namespace Utopia.GUI
 
         public override void Draw(int Index)
         {
-            if (_chatHiden) return;
+            //if (_chatHiden) return;
 
             _spriteRender.Begin(SpriteRenderer.FilterMode.Point);
 
