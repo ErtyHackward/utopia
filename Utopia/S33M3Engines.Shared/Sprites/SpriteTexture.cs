@@ -93,8 +93,6 @@ namespace S33M3Engines.Shared.Sprites
         {
             _textureDispose = true;
 
-            image.Save("d:\\test.bmp");
-
             Width = image.Width;
             Height = image.Height;
 

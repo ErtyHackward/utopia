@@ -46,7 +46,6 @@ namespace Utopia.GUI.D3D.Map
                 MapTexture = new S33M3Engines.Shared.Sprites.SpriteTexture(_engine.Device, _mapImage, new SharpDX.Vector2(), SharpDX.DXGI.Format.B8G8R8A8_UNorm),
                 Bounds = innerBounds
             });
-
             //_mapImage.Save("map.png", ImageFormat.Png);
         }
 
