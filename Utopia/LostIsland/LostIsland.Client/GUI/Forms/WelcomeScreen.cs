@@ -226,10 +226,7 @@ namespace LostIsland.Client.GUI.Forms
         void ServerConnection_MessageGameInformation(object sender, ProtocolMessageEventArgs<GameInformationMessage> e)
         {
             AddTextToListBox("Game Information received - starting game ... ");
-            _server.MaxServerViewRange = e.Message.MaxViewRange;
-            _server.ChunkSize = e.Message.ChunkSize;
-            _server.SeaLevel = e.Message.WaterLevel;
-            _server.WorldSeed = e.Message.WorldSeed;
+            _server.GameInformations = e.Message;
         }
 
         void ServerConnection_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)

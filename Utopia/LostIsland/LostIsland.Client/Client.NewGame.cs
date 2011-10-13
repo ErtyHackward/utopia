@@ -53,8 +53,8 @@ namespace LostIsland.Client
             WorldParameters worldParam = new WorldParameters()
             {
                 IsInfinite = true,
-                Seed = iocContainer.Get<Server>().WorldSeed,
-                SeaLevel = iocContainer.Get<Server>().SeaLevel,
+                Seed = iocContainer.Get<Server>().GameInformations.WorldSeed,
+                SeaLevel = iocContainer.Get<Server>().GameInformations.WaterLevel,
                 WorldChunkSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,   //Define the visible Client chunk size
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };

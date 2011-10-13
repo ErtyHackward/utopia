@@ -80,7 +80,6 @@ namespace Utopia.GUI.D3D.Inventory
         {
             if (parent is ToolBarUi)
             {
-                Console.WriteLine();
             }
 
             if (MouseOverControl is IDropTarget)

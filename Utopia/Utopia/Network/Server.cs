@@ -25,15 +25,11 @@ namespace Utopia.Network
         public ServerConnection ServerConnection { get; set; }
 
         //Initilialization received Data, should be move inside a proper class/struct !
-        public int MaxServerViewRange { get; set; }
-        public int SeaLevel { get; set; }
-        public int WorldSeed { get; set; }
         public PlayerCharacter Player { get; set; }
         public DateTime WorldDateTime { get; set; }
         public double TimeFactor { get; set; }
+        public GameInformationMessage GameInformations { get; set; }
         //===============================================================================================
-
-        public Vector3I ChunkSize { get; set; }
         #endregion
 
         public Server()
