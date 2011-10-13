@@ -104,6 +104,16 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 Max = new Vector3I(cubeCoordinates.X + _lightManager.LightPropagateSteps, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, cubeCoordinates.Z + _lightManager.LightPropagateSteps)
             };
 
+            //Refresh the Visual Entity if needed !
+            VisualChunk neightboorChunk;
+            Console.WriteLine("Chunk Impact check for the cube : " + cubeCoordinates);
+            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
+            if (neightboorChunk.Entities.IsDirty)
+            {
+                Console.WriteLine("DEBUG : ");
+                neightboorChunk.RefreshVisualEntities();
+            }
+
             _lightManager.CreateLightSources(ref cubeRange);
 
             cubeRange.Min.X--;
@@ -116,8 +126,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             VisualCubeProfile profile = VisualCubeProfile.CubesProfile[replacementCubeId];
 
             //Find the chunks that have been impacted around the 8 surrending chunks
-            VisualChunk neightboorChunk;
-            neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
             neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
             neightboorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
             neightboorChunk.UserChangeOrder = !profile.IsBlockingLight ? 2 : 1;
@@ -217,6 +225,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //Change the cube in the big array
             _cubesHolder.SetCube(cubeArrayIndex, ref cubeCoordinates, ref newCube);
 
+            Console.WriteLine("Block change");
             CheckImpact(ref cubeCoordinates, replacementCubeId);
 
             //Save the modified Chunk in local buffer DB
@@ -230,7 +239,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public IChunkLayout2D GetChunk(Vector2I chunkPosition)
         {
-            return _worldChunks.GetChunkFromChunkCoord(chunkPosition.X, chunkPosition.Y);
+            return _worldChunks.GetChunk(chunkPosition.X, chunkPosition.Y);
         }
 
         public ILandscapeCursor GetCursor(Vector3I blockPosition)

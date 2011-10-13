@@ -277,6 +277,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     target.VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
                 }
             }
+
+            source.Entities.IsDirty = false;
         }
         #endregion
     }

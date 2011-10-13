@@ -118,7 +118,7 @@ namespace Utopia.Shared.World.Processors
                                                                                                        {
                                                                                                            GrowPhase = (byte)r.Next(0, 4),
                                                                                                            Position = globalPos + new Vector3D(0.5, 1, 0.5),
-                                                                                                           LinkedCube = new Vector3I(x, y, z)
+                                                                                                           LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
                                                                                                        });
                                                                             }
                                                                             else
@@ -127,7 +127,7 @@ namespace Utopia.Shared.World.Processors
                                                                                 {
                                                                                     GrowPhase = 4,
                                                                                     Position = globalPos + new Vector3D(0.5, 1, 0.5),
-                                                                                    LinkedCube = new Vector3I(x, y, z)
+                                                                                    LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
                                                                                 });
                                                                             }
                                                                         }
