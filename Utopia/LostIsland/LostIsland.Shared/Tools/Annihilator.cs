@@ -33,23 +33,30 @@ namespace LostIsland.Shared.Tools
 
             if (entity.EntityState.IsPickingActive)
             {
-                var cursor = _landscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
-                byte cube = cursor.Read();
-                if (cube != 0)
+                if (entity.EntityState.IsEntityPicked)
                 {
-                    cursor.Write(0);
-                    impact.Success = true;
 
-                    var character = entity as CharacterEntity;
-                    if (character != null)
+                }
+                else
+                {
+                    var cursor = _landscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
+                    byte cube = cursor.Read();
+                    if (cube != 0)
                     {
-                        var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
-                        adder.CubeId = cube;
+                        cursor.Write(0);
+                        impact.Success = true;
 
-                        character.Inventory.PutItem(adder);
+                        var character = entity as CharacterEntity;
+                        if (character != null)
+                        {
+                            var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
+                            adder.CubeId = cube;
+
+                            character.Inventory.PutItem(adder);
+                        }
+
+                        return impact;
                     }
-
-                    return impact;
                 }
             }
             impact.Message = "Pick a cube to use this tool";

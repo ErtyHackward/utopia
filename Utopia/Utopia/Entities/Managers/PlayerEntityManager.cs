@@ -128,6 +128,7 @@ namespace Utopia.Entities.Managers
         }
 
         public IWorldChunks WorldChunks { get; set; }
+        public bool MousepickDisabled { get; set; }
         #endregion
 
         public PlayerEntityManager(D3DEngine engine,
@@ -204,6 +205,8 @@ namespace Utopia.Entities.Managers
             {
                 if (Player.EntityState.IsPickingActive && Player.Equipment.LeftTool!=null)
                 {
+                    Console.WriteLine(Player.EntityState.IsPickingActive);
+
                     Player.LeftToolUse();//sends the client server event that does tool.use on server
                     _itemMessageTranslator.Enabled = false;
                     Player.Equipment.LeftTool.Use();//client invocation to keep the client inventory in synch
@@ -257,7 +260,7 @@ namespace Utopia.Entities.Managers
         }
         #endregion
 
-        #region Player Block Picking
+        #region Player Picking
         private void GetSelectedEntity()
         {
             bool newpicking;
@@ -289,7 +292,6 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public bool MousepickDisabled { get; set; }
 
         //Will return true if a new Item has been picked up !
         private bool RefreshPicking(ref Vector3D pickingWorldPosition, ref Vector3D pickingLookAt, int rounding)
@@ -334,15 +336,12 @@ namespace Utopia.Entities.Managers
                         ptNbr--;
                     }
 
-                    if (PickedCube.Position == Player._entityState.PickedBlockPosition)
-                    {
-                        Player._entityState.IsEntityPicked = false;
-                        Player._entityState.IsPickingActive = true;
-                        if (! newPlacechanged) return false;
-                    }
-
                     Player._entityState.IsEntityPicked = false;
                     Player._entityState.IsPickingActive = true;
+                    if (PickedCube.Position == Player._entityState.PickedBlockPosition)
+                    {
+                        if (! newPlacechanged) return false;
+                    }
                     break;
                 }
             }

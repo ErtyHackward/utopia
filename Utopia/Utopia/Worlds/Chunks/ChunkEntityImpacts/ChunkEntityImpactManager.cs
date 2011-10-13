@@ -78,6 +78,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <param name="e"></param>
         private void ServerConnection_MessageBlockChange(object sender, ProtocolMessageEventArgs<BlocksChangedMessage> e)
         {
+            Console.WriteLine("ServerConnection_MessageBlockChange");
             //For each block modified transform the data to get both CubeID and Cube World position, then call the ReplaceBlock that will analyse
             //whats the impact of the block replacement - Draw impact only - to know wish chunks must be refreshed.
             for (int i = 0; i < e.Message.BlockValues.Length; i++)
