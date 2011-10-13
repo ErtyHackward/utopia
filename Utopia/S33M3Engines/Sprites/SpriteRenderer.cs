@@ -216,7 +216,7 @@ namespace S33M3Engines.Sprites
                                         {
                                             Tranform = transform,
                                             SourceRect = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height),
-                                            Color = new Color4(color.ToVector4()),
+                                            Color = new ByteColor(color),
                                             TextureArrayIndex = textureArrayIndex
                                         };
 
@@ -297,10 +297,10 @@ namespace S33M3Engines.Sprites
         public void RenderText(SpriteFont spriteFont, string text, Vector2 pos, Color color)
         {
             Matrix transform = Matrix.Translation(pos.X, pos.Y, 0);
-            RenderText(spriteFont, text, transform, new Color4(color.ToVector4()));//TODO color vs color4
+            RenderText(spriteFont, text, transform, new ByteColor(color));//TODO color vs color4
         }
 
-        public void RenderText(SpriteFont font, string text, Matrix transform, Color4 color, float lineDefaultOffset = -1)
+        public void RenderText(SpriteFont font, string text, Matrix transform, ByteColor color, float lineDefaultOffset = -1)
         {
             flushAccumulatedSprite();
 

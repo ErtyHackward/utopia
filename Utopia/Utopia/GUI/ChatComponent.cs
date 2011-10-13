@@ -29,8 +29,8 @@ namespace Utopia.GUI
         private bool _chatHiden;
         private long _hideChatInTick;
         private long _lastUpdateTick;
-        private Color4 _fontColor = new Color4(Color.White.A, Color.White.R, Color.White.G, Color.White.B);
-        private readonly D3DEngine _d3dEngine;
+        private ByteColor _fontColor = new ByteColor(Color.White.R, Color.White.G, Color.White.B, 128);
+        private D3DEngine _d3dEngine;
         private readonly ActionsManager _actionManager;
         private readonly InputsManager _imanager;
         private readonly Server _server;
