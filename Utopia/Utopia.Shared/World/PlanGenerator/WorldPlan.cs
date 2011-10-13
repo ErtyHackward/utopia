@@ -699,7 +699,7 @@ namespace Utopia.Shared.World.PlanGenerator
 
         public Bitmap Render()
         {
-            Bitmap bmp = new Bitmap(Parameters.MapSize.X, Parameters.MapSize.Y);
+            Bitmap bmp = new Bitmap(Parameters.MapSize.X, Parameters.MapSize.Y,System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             
             Random r = new Random(1);
 
