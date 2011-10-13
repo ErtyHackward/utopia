@@ -55,6 +55,7 @@ namespace LostIsland.Client.GUI.Forms
             _multiChild.btSave.Click += new EventHandler(btSave_Click);
             _multiChild.srvList.KeyDown += new KeyEventHandler(srvList_KeyDown);
             _multiChild.srvList.SelectedIndexChanged += new EventHandler(srvList_SelectedIndexChanged);
+            AcceptButton = _multiChild.btConnect;
             InitServerList();
         }
 

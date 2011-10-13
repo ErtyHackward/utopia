@@ -6,6 +6,7 @@ using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
+using Utopia.Shared.World.PlanGenerator;
 
 namespace Utopia.Server.Managers
 {
@@ -26,6 +27,8 @@ namespace Utopia.Server.Managers
             var handler = PlayerEntityNeeded;
             if (handler != null) handler(this, e);
         }
+
+        public GenerationParameters GenerationParameters { get; set; }
 
         public LoginManager(Server server)
         {
@@ -156,7 +159,8 @@ namespace Utopia.Server.Managers
                     ChunkSize = AbstractChunk.ChunkSize,
                     MaxViewRange = 32,
                     WorldSeed = _server.LandscapeManager.WorldGenerator.WorldParametes.Seed,
-                    WaterLevel = _server.LandscapeManager.WorldGenerator.WorldParametes.SeaLevel
+                    WaterLevel = _server.LandscapeManager.WorldGenerator.WorldParametes.SeaLevel,
+                    PlanGenerationParameters = GenerationParameters
                 };
                 connection.SendAsync(gameInfo);
                 connection.SendAsync(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
