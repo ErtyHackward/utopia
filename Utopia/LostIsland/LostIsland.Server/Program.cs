@@ -55,7 +55,6 @@ namespace LostIsland.Server
 
         }
 
-        [STAThread]
         static void Main(string[] args)
         {
             _iocContainer = new StandardKernel(new NinjectSettings());

@@ -4,6 +4,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Structs;
+using System;
 
 namespace LostIsland.Shared.Tools
 {
@@ -63,29 +64,32 @@ namespace LostIsland.Shared.Tools
             byte cube = cursor.Read();
             if (cube != CubeId.Air) 
             {
-                //change the Block to AIR
-                cursor.Write(CubeId.Air);
-                impact.Success = true;
-
                 //Check static entity impact of the Block removal.
                 //Get the chunk
                 var chunk = _landscapeManager.GetChunk(new Vector2I(Parent.EntityState.PickedBlockPosition.X, Parent.EntityState.PickedBlockPosition.Z));
 
                 IBlockLinkedEntity entity;
+                Entity removedEntity;
                 for (int entityId = chunk.Entities.Data.Count-1; entityId >= 0; entityId--)
                 {
                     entity = chunk.Entities.Data[entityId] as IBlockLinkedEntity;
+
                     if (entity != null)
                     {
                         //If the linkedCube entity is removed, then remove the entity also.
                         if (entity.LinkedCube == Parent.EntityState.PickedBlockPosition)
                         {
-                            chunk.Entities.Data.RemoveAt(entityId);
+                            Console.WriteLine("Remove Entity from Collection");
+                            chunk.Entities.RemoveByArrayIndex(entityId, Parent.EntityId, out removedEntity);
                             // Add entity on ground or in Inventory
                             //TOTO Enity picking ??
                         }
                     }
                 }
+
+                //change the Block to AIR
+                cursor.Write(CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
+                impact.Success = true;
 
                 //If the Tool Owner is a player, then Add the resource removed into the inventory
                 var character = Parent as CharacterEntity;

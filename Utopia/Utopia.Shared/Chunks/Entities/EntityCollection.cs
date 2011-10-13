@@ -16,6 +16,7 @@ namespace Utopia.Shared.Chunks.Entities
         #region Events
 
         public List<Entity> Data { get { return _entities; } }
+        public bool IsDirty { get; set; }
 
         /// <summary>
         /// Occurs when new static entity was added
@@ -70,7 +71,7 @@ namespace Utopia.Shared.Chunks.Entities
         {
             lock (_syncRoot)
                 _entities.Add(entity);
-
+            IsDirty = true;
             OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentEntityId = parentId });
         }
 
@@ -87,6 +88,7 @@ namespace Utopia.Shared.Chunks.Entities
             {
                 try
                 {
+                    IsDirty = true;
                     _entities.Add(entity);
                 }
                 finally
@@ -109,6 +111,7 @@ namespace Utopia.Shared.Chunks.Entities
             lock (_syncRoot)
                 _entities.Remove(entity);
 
+            IsDirty = true;
             OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentEntityId = parentId });
         }
 
@@ -125,6 +128,7 @@ namespace Utopia.Shared.Chunks.Entities
             {
                 try
                 {
+                    IsDirty = true;
                     _entities.Remove(entity);
                 }
                 finally
@@ -150,6 +154,7 @@ namespace Utopia.Shared.Chunks.Entities
                 var index = _entities.FindIndex(e => e.EntityId == p);
                 if (index != -1)
                 {
+                    IsDirty = true;
                     entity = _entities[index];
                     _entities.RemoveAt(index);
                     OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentEntityId = parentEntityId });
@@ -157,6 +162,21 @@ namespace Utopia.Shared.Chunks.Entities
                 else entity = null;
             }
         }
+
+        /// <summary>
+        /// Remove by Index
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="parentEntityId"></param>
+        /// <param name="entity"></param>
+        public void RemoveByArrayIndex(int index, uint parentEntityId, out Entity entity)
+        {
+            IsDirty = true;
+            entity = _entities[index];
+            _entities.RemoveAt(index);
+            OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentEntityId = parentEntityId });
+        }
+
 
         /// <summary>
         /// Removes all entites from the collection

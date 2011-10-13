@@ -214,7 +214,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                     }
                 }
             }
-
         }
 
         private void GenerateStaticEntitiesMesh(VisualChunk chunk)

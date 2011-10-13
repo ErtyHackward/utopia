@@ -18,6 +18,8 @@ using Utopia.Shared.World;
 using Utopia.Entities;
 using Utopia.Resources.ModelComp;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Chunks.Entities;
+using Utopia.Entities.Sprites;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -287,6 +289,23 @@ namespace Utopia.Worlds.Chunks
                     _d3dEngine.Context.DrawIndexed(StaticSpritesIB.IndicesCount, 0, 0);
                 }
             }
+        }
+
+        public void RefreshVisualEntities()
+        {
+            //Create the Sprite Entities
+            SpriteEntity spriteEntity;
+            VisualSpriteEntities.Clear();
+            for (int entityID = 0; entityID < Entities.Data.Count; entityID++)
+            {
+                spriteEntity = Entities.Data[entityID] as SpriteEntity;
+                if (spriteEntity != null)
+                {
+                    VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
+                }
+            }
+
+            Entities.IsDirty = false;
         }
 
         #endregion
