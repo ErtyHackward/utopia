@@ -229,9 +229,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
         }
 
-        public IChunkLayout2D GetChunk(Vector2I position)
+        public IChunkLayout2D GetChunk(Vector2I chunkPosition)
         {
-            return _worldChunks.GetChunk(position.X, position.Y);
+            return _worldChunks.GetChunkFromChunkCoord(chunkPosition.X, chunkPosition.Y);
         }
 
         public ILandscapeCursor GetCursor(Vector3I blockPosition)

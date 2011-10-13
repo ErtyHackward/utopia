@@ -6,8 +6,11 @@ using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities.Interfaces
 {
-    public interface IUsableEntity
+    public interface IBlockLinkedEntity
     {
-        void Use();
+        /// <summary>
+        /// Gets or sets entity position
+        /// </summary>
+        Vector3I LinkedCube { get; set; }
     }
 }

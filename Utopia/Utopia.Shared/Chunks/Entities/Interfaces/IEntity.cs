@@ -1,6 +1,7 @@
 using System.IO;
 using SharpDX;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities.Interfaces
 {

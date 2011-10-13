@@ -97,6 +97,7 @@
     <Compile Include="Chunks\Entities\Events\EntityViewEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\EntityUseEventArgs.cs" />
     <Compile Include="Chunks\Entities\Events\VoxelModelEventArgs.cs" />
+    <Compile Include="Chunks\Entities\Interfaces\IBlockLinkedEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IDynamicEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IEntity.cs" />
     <Compile Include="Chunks\Entities\Interfaces\IGrowEntity.cs" />
