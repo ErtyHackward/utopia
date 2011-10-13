@@ -127,7 +127,8 @@ namespace Utopia.Server.Structs
             // update entity state
             var state = new DynamicEntityState
             {
-                IsPickingActive = entityUseMessage.IsBlockPicked,
+                IsPickingActive = entityUseMessage.IsBlockPicked || entityUseMessage.IsEntityPicked,
+                IsEntityPicked = entityUseMessage.IsEntityPicked,
                 NewBlockPosition = entityUseMessage.NewBlockPosition,
                 PickedBlockPosition = entityUseMessage.PickedBlockPosition,
                 PickedEntityId = entityUseMessage.PickedEntityId,

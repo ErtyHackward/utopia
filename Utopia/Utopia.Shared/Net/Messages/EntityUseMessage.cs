@@ -18,6 +18,7 @@ namespace Utopia.Shared.Net.Messages
         private uint _entityId;
         private bool _isBlockPicked;
         private bool _isEntityPicked;
+
         private int _token;
 
         /// <summary>
@@ -73,6 +74,12 @@ namespace Utopia.Shared.Net.Messages
         {
             get { return _isBlockPicked; }
             set { _isBlockPicked = value; }
+        }
+
+        public bool IsEntityPicked
+        {
+            get { return _isEntityPicked; }
+            set { _isEntityPicked = value; }
         }
         
         /// <summary>

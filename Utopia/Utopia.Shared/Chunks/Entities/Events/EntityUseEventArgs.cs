@@ -57,11 +57,12 @@ namespace Utopia.Shared.Chunks.Entities.Events
         {
             var e = new EntityUseEventArgs();
 
+            e.IsEntityPicked = state.IsEntityPicked;
             e.PickedBlockPosition = state.PickedBlockPosition;
             e.NewBlockPosition = state.NewBlockPosition;
             e.PickedEntityPosition = state.PickedEntityPosition;
-            e.IsBlockPicked = state.IsPickingActive && (state.IsEntityPicked);
-            e.IsEntityPicked = state.IsPickingActive && (!state.IsEntityPicked);
+            e.IsBlockPicked = state.IsPickingActive && (!state.IsEntityPicked);
+            e.IsEntityPicked = state.IsPickingActive && (state.IsEntityPicked);
             e.PickedEntityId = state.PickedEntityId;
             return e;
         }
