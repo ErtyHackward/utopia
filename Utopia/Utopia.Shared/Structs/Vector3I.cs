@@ -19,6 +19,13 @@ namespace Utopia.Shared.Structs
             Z = z;
         }
 
+        public Vector3I(double x, double y, double z)
+        {
+            X = (int)x;
+            Y = (int)y;
+            Z = (int)z;
+        }
+
         /// <summary>
         /// Returns length between vectors using sqrt
         /// </summary>
