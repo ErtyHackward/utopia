@@ -160,8 +160,11 @@ namespace Utopia.Entities.Managers
             _screen = screen;
 
             entityPickingManager.Player = this;
-            this.Player = player;
-            this.VisualEntity = new Voxel.VisualVoxelEntity(voxelMeshFactory, player);
+            Player = player;
+
+            VisualEntity = new VisualVoxelEntity(voxelMeshFactory, player);
+
+
 
             //Give the Renderer acces to the Voxel buffers, ...
             _playerRenderer.VisualEntity = this;

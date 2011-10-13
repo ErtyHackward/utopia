@@ -4,7 +4,6 @@ using System.Text;
 using System.Windows.Forms;
 using S33M3Engines;
 using S33M3Engines.D3D;
-using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.Sprites;
 using SharpDX;
 using SharpDX.Direct3D11;
@@ -31,11 +30,11 @@ namespace Utopia.GUI
         private long _hideChatInTick;
         private long _lastUpdateTick;
         private Color4 _fontColor = new Color4(Color.White.A, Color.White.R, Color.White.G, Color.White.B);
-        private D3DEngine _d3dEngine;
+        private readonly D3DEngine _d3dEngine;
         private readonly ActionsManager _actionManager;
         private readonly InputsManager _imanager;
         private readonly Server _server;
-        private Queue<string> _messages = new Queue<string>();
+        private readonly Queue<string> _messages = new Queue<string>();
         private bool _showCaret = false;
         private DateTime _caretSwitch;
         private float windowHeight;
@@ -77,7 +76,7 @@ namespace Utopia.GUI
             _imanager = imanager;
             _server = server;
 
-            _server.ServerConnection.MessageChat += ServerConnection_MessageChat;
+            _server.ServerConnection.MessageChat += ServerConnectionMessageChat;
 
             ChatLineLimit = 30;
             //For 5 seconds =
@@ -95,12 +94,12 @@ namespace Utopia.GUI
 
         public override void Dispose()
         {
-            _server.ServerConnection.MessageChat -= ServerConnection_MessageChat;
+            _server.ServerConnection.MessageChat -= ServerConnectionMessageChat;
             _d3dEngine.ViewPort_Updated -= LocateChat;
             base.Dispose();
         }
 
-        void ServerConnection_MessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
+        void ServerConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
         {
             //Cut the received message by line feed
             foreach (var msgText in e.Message.Message.Split('\n'))
@@ -174,7 +173,7 @@ namespace Utopia.GUI
         public override void LoadContent()
         {
             _font = new SpriteFont();
-            _font.Initialize("Lucida Console", 13f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
+            _font.Initialize("Lucida Console", 13f, System.Drawing.FontStyle.Bold, true, _d3dEngine.Device);
             _spriteRender = new SpriteRenderer();
             _spriteRender.Initialize(_d3dEngine);
         }
