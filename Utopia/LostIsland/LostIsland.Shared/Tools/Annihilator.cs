@@ -104,24 +104,24 @@ namespace LostIsland.Shared.Tools
         private IToolImpact EntityImpact()
         {
             var impact = new ToolImpact { Success = false };
-            var cursor = _landscapeManager.GetCursor(Parent.EntityState.PickedBlockPosition);
-            byte cube = cursor.Read();
-            if (cube != 0)
-            {
-                cursor.Write(0);
-                impact.Success = true;
+            //var cursor = _landscapeManager.GetCursor(Parent.EntityState.PickedBlockPosition);
+            //byte cube = cursor.Read();
+            //if (cube != 0)
+            //{
+            //    cursor.Write(0);
+            //    impact.Success = true;
 
-                var character = Parent as CharacterEntity;
-                if (character != null)
-                {
-                    var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
-                    adder.CubeId = cube;
+            //    var character = Parent as CharacterEntity;
+            //    if (character != null)
+            //    {
+            //        var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
+            //        adder.CubeId = cube;
 
-                    character.Inventory.PutItem(adder);
-                }
+            //        character.Inventory.PutItem(adder);
+            //    }
 
-                return impact;
-            }
+            //    return impact;
+            //}
             return impact;
         }
 
