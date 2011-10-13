@@ -170,6 +170,27 @@
       <Name>Utopia</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\brush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\forest.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mapbg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tropicForest.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wavePattern.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wavePattern1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wavePattern2.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
