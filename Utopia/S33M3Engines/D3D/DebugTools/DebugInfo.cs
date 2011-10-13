@@ -27,7 +27,7 @@ namespace S33M3Engines.D3D.DebugTools
         IDebugInfo[] _args;
         string[] _infos;
         public bool Activated = false;
-        private Color4 _fontColor = new Color4(Color.Yellow.A, Color.Yellow.R, Color.Yellow.G, Color.Yellow.B);
+        private ByteColor _fontColor = new ByteColor(Color.Yellow.R, Color.Yellow.G, Color.Yellow.B, 255);
         private D3DEngine _d3dEngine;
 
         public DebugInfo(D3DEngine d3dEngine)
