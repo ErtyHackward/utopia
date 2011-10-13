@@ -184,6 +184,29 @@ namespace Utopia.Worlds.Chunks
         }
 
         /// <summary>
+        /// Get a world's chunk from a Cube location in world coordinate
+        /// </summary>
+        /// <param name="X">Chunk X coordinate</param>
+        /// <param name="Z">Chunk Z coordinate</param>
+        /// <returns></returns>
+        public VisualChunk GetChunkFromChunkCoord(int X, int Z)
+        {
+            //From Chunk coordinate to World Coordinate
+            X *= AbstractChunk.ChunkSize.X;
+            Z *= AbstractChunk.ChunkSize.Z;
+
+            //From World Coord to Cube Array Coord
+            int arrayX = MathHelper.Mod(X, VisualWorldParameters.WorldVisibleSize.X);
+            int arrayZ = MathHelper.Mod(Z, VisualWorldParameters.WorldVisibleSize.Z);
+
+            //From Cube Array coord to Chunk Array coord
+            int chunkX = arrayX >> VisualWorldParameters.ChunkPOWsize;
+            int chunkZ = arrayZ >> VisualWorldParameters.ChunkPOWsize;
+
+            return Chunks[chunkX + chunkZ * VisualWorldParameters.WorldParameters.WorldChunkSize.X];
+        }
+
+        /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate with out of array check
         /// </summary>
         /// <param name="X">Cube X coordinate in world coordinate</param>

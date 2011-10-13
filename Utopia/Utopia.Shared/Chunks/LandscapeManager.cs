@@ -59,5 +59,6 @@ namespace Utopia.Shared.Chunks
         {
             return new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z));
         }
+
     }
 }

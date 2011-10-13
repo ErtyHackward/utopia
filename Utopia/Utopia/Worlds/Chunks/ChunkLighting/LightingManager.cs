@@ -222,7 +222,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             for (int i = 0; i < chunk.VisualSpriteEntities.Count; i++)
             {
                 vertexEntity = chunk.VisualSpriteEntities[i];
-                //Find the Cube below entity, and assign its color to the entity
+                //Find the Cube where the entity is placed, and assign its color to the entity
                 chunk.VisualSpriteEntities[i].Color = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(vertexEntity.Entity.Position.X), MathHelper.Fastfloor(vertexEntity.Entity.Position.Y), MathHelper.Fastfloor(vertexEntity.Entity.Position.Z))].EmissiveColor;
             }
         }
