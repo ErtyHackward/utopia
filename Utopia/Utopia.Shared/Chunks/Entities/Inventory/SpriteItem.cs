@@ -16,7 +16,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         public EquipmentSlotType AllowedSlots { get; set; }
         //public SpriteTexture Icon { get; set; }
         //public Rectangle? IconSourceRectangle  { get; set; }
-        public int MaxStackSize { get; private set; }
+        public int MaxStackSize { get; protected set; }
         public string UniqueName { get; set; }
 
         public virtual string StackType
