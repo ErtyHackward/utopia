@@ -116,5 +116,22 @@ namespace Utopia.Shared.World.PlanGenerator
                     throw new ArgumentOutOfRangeException("type");
             }
         }
+
+        public static bool IsForest(BiomeType type)
+        {
+            switch (type)
+            {
+
+                case BiomeType.Taiga:
+                case BiomeType.TemperateRainForest:
+                case BiomeType.TemperateDeciduousForest:
+                case BiomeType.TropicalRainForest:
+                case BiomeType.TropicalSeasonalForest:
+                    return true;
+                default:
+                    return false;
+            }
+
+        }
     }
 }

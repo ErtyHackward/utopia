@@ -81,6 +81,7 @@ namespace Utopia.Shared.World.Processors
                                                         topGroundBlock = CubeId.Sand;
                                                         undegroundBlock = CubeId.Sand;
                                                     }
+                                                    bool trees = Biome.IsForest(pointData.Biome);
 
                                                     for (int y = 0; y < AbstractChunk.ChunkSize.Y; y++)
                                                     {
@@ -104,7 +105,7 @@ namespace Utopia.Shared.World.Processors
                                                                 if (topGroundBlock == CubeId.Grass)
                                                                 {
 
-                                                                    if (r.NextDouble() < 0.005d)
+                                                                    if (trees && r.NextDouble() < 0.005d)
                                                                     {
                                                                         AddTree(chunk, new Vector3I(x, y + 1, z));
                                                                     }
@@ -209,7 +210,7 @@ namespace Utopia.Shared.World.Processors
                 if (edge.WaterFlow > 0)
                 {
                     var riverPath = new GraphicsPath();
-                    var pen = new Pen(Brushes.Black, edge.WaterFlow+1);
+                    var pen = new Pen(Brushes.Black, edge.WaterFlow);
                     riverPath.AddLine(edge.Start, edge.End);
                     if (riverPath.IsOutlineVisible(mappoint, pen))
                     {
