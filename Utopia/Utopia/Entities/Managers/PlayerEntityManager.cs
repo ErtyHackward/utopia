@@ -208,8 +208,6 @@ namespace Utopia.Entities.Managers
             {
                 if (Player.EntityState.IsPickingActive && Player.Equipment.LeftTool!=null)
                 {
-                    Console.WriteLine(Player.EntityState.IsPickingActive);
-
                     Player.LeftToolUse();//sends the client server event that does tool.use on server
                     _itemMessageTranslator.Enabled = false;
                     Player.Equipment.LeftTool.Use();//client invocation to keep the client inventory in synch

@@ -92,14 +92,14 @@ namespace Utopia
         {
             _renderStates.server.ServerConnection.ConnectionStatusChanged += ServerConnection_ConnectionStatusChanged;
 
-            if (AbstractChunk.ChunkSize != _renderStates.server.ChunkSize)
+            if (AbstractChunk.ChunkSize != _renderStates.server.GameInformations.ChunkSize)
             {
                 throw new Exception("Client chunkSize is different from server !");
             }
             //Change Visible WorldSize if client parameter > Server !
-            if (ClientSettings.Current.Settings.GraphicalParameters.WorldSize > _renderStates.server.MaxServerViewRange)
+            if (ClientSettings.Current.Settings.GraphicalParameters.WorldSize > _renderStates.server.GameInformations.MaxViewRange)
             {
-                ClientSettings.Current.Settings.GraphicalParameters.WorldSize = _renderStates.server.MaxServerViewRange;
+                ClientSettings.Current.Settings.GraphicalParameters.WorldSize = _renderStates.server.GameInformations.MaxViewRange;
             }
 
             _d3dEngine = _renderStates.engine;
