@@ -39,6 +39,7 @@ namespace Utopia.Shared.Cubes
         public const byte PlayerHead = 27;
         public const byte Leaves = 28;
         public const byte Glass = 29;
+        public const byte HalfWoodPlank = 30;
         public const byte Error = 255;
     }
 }

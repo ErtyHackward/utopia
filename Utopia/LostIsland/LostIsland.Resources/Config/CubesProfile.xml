@@ -556,4 +556,22 @@
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
   </Cube>
+  <Cube>
+    <Name>HalfWoodPlank</Name>
+    <Id>30</Id>
+    <Tex_Top>4</Tex_Top>
+    <Tex_Bottom>4</Tex_Bottom>
+    <Tex_Front>4</Tex_Front>
+    <Tex_Back>4</Tex_Back>
+    <Tex_Left>4</Tex_Left>
+    <Tex_Right>4</Tex_Right>
+    <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>true</IsSeeThrough>
+    <IsPickable>true</IsPickable>
+    <IsSolidToEntity>true</IsSolidToEntity>
+    <IsBlockingWater>true</IsBlockingWater>
+    <IsFlooding>false</IsFlooding>
+    <IsFloodPropagation>false</IsFloodPropagation>
+    <CubeFamilly>Solid</CubeFamilly>
+  </Cube>
 </Config>
