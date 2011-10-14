@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Utopia.Shared.Cubes
 {
@@ -41,5 +38,40 @@ namespace Utopia.Shared.Cubes
         public const byte Glass = 29;
         public const byte HalfWoodPlank = 30;
         public const byte Error = 255;
+
+        public static IEnumerable<byte> All()
+        {
+            yield return Air;
+            yield return Stone;
+            yield return Dirt;
+            yield return Grass;
+            yield return WoodPlank;
+            yield return Water;
+            yield return LightRed;
+            yield return LightGreen;
+            yield return LightBlue;
+            yield return LightYellow;
+            yield return LightViolet;
+            yield return LightWhite;
+            yield return Stone2;
+            yield return Stone3;
+            yield return Rock;
+            yield return Sand;
+            yield return Gravel;
+            yield return Trunk;
+            yield return Minerai1;
+            yield return Minerai2;
+            yield return Minerai3;
+            yield return Minerai4;
+            yield return Minerai5;
+            yield return Stone4;
+            yield return Minerai6;
+            yield return Brick;
+            yield return WaterSource;
+            yield return PlayerHead;
+            yield return Leaves;
+            yield return Glass;
+            yield return HalfWoodPlank;
+        }
     }
 }
