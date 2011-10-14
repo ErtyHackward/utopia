@@ -46,7 +46,7 @@ struct VS_IN
 {
 	uint4 Position		 : POSITION;
 	float4 Col			 : COLOR;
-	uint4 VertexInfo	 : INFO;   // x = chunk PopUp Value, y = facetype, z = AOPower factor 255 = Factor of 3
+	uint4 VertexInfo	 : INFO;   // (bool)x = is Upper vertex, y = facetype, z = AOPower factor 255 = Factor of 3, w = Offset
 };
 
 struct PS_IN
@@ -70,7 +70,9 @@ PS_IN VS(VS_IN input)
     PS_IN output;
 	
 	float4 newPosition = {input.Position.xyz, 1.0f};
-	newPosition.y += (input.VertexInfo.x/255) + popUpYOffset; //Offseting the Y
+	float YOffset = 0;
+	if(input.VertexInfo.x == 1) YOffset = (input.VertexInfo.w/255.0f);
+	newPosition.y -= YOffset;
 
     float4 worldPosition = mul(newPosition, World);
 	output.Position = mul(worldPosition, ViewProjection);
@@ -79,10 +81,10 @@ PS_IN VS(VS_IN input)
 	//Compute the texture mapping
 	output.UVW = float3(
 						(input.Position.x * texmul1[facetype]) + (input.Position.z * texmul2[facetype]), 
-						(input.Position.y * texmul3[facetype]) + (input.Position.z * texmul4[facetype]),
+						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
 						input.Position.w );
 
-	//VertexInfo.z/765 => Will transform the Z into a range from 0 to 3
+	//VertexInfo.z/85 => Will transform the Z into a range from 0 to 3
 	output.EmissiveLight = input.VertexInfo.z/85 * saturate(input.Col.rgb +  SunColor * input.Col.a);
 	output.EmissiveLight *= faceshades[facetype];
 
