@@ -131,8 +131,9 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// Tries to put item into the inventory
         /// </summary>
         /// <param name="item"></param>
+        /// <param name="count"></param>
         /// <returns>True if item put into the inventory otherwise false</returns>
-        public bool PutItem(IItem item)
+        public bool PutItem(IItem item, int count = 1)
         {
             // inventory is full?
             if (item.MaxStackSize == 1 && _slotsCount == _gridSize.X * _gridSize.Y)
@@ -144,10 +145,10 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
 
                 var e = this.Any(s =>
                                {
-                                   if (s.Item.StackType == item.StackType && s.ItemsCount + 1 <= item.MaxStackSize)
+                                   if (s.Item.StackType == item.StackType && s.ItemsCount + count <= item.MaxStackSize)
                                    {
                                        s.ItemsCount++;
-                                       var t = new T {GridPosition = s.GridPosition, ItemsCount = 1, Item = s.Item};
+                                       var t = new T { GridPosition = s.GridPosition, ItemsCount = count, Item = s.Item };
                                        OnItemPut(new EntityContainerEventArgs<T> { Slot = t });
                                        return true;
                                    }
@@ -165,7 +166,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
                 {
                     if (_items[x, y] == null)
                     {
-                        _items[x, y] = new T { Item = item, GridPosition = new Vector2I(x, y), ItemsCount = 1 };
+                        _items[x, y] = new T { Item = item, GridPosition = new Vector2I(x, y), ItemsCount = count };
                         _slotsCount++;
                         OnItemPut(new EntityContainerEventArgs<T> { Slot = _items[x, y] });
                         return true;
