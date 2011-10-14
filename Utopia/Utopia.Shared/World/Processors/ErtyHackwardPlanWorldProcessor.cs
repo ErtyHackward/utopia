@@ -224,27 +224,19 @@ namespace Utopia.Shared.World.Processors
 
             data.Biome = poly.Biome;
             data.Moisture = poly.Moisture;
-            //var cor = poly.Corners.Find(c => c.Point == mappoint);
-            //if (cor != null)
-            //{
-            //    data.Elevation = cor.Elevation / 2;
-            //    return data;
-            //}
+            var cor = poly.Corners.Find(c => c.Point == mappoint);
+            if (cor != null)
+            {
+                data.Elevation = cor.Elevation / 2;
+                return data;
+            }
 
             // collect all nontouching corners
 
-            var corners = new List<Corner>();
-
-            foreach (var neighboor in poly.Neighbors)
-            {
-                foreach (var corner in neighboor.Corners)
-                {
-
-                }
-            }
+            //var corners = (from neighboor in poly.Neighbors from corner in neighboor.Corners where !poly.Corners.Contains(corner) select corner).ToList();
 
 
-            var distances = poly.Corners.Select(corner => 1 / Vector2I.Distance(new Vector2I(corner.Point.X, corner.Point.Y), new Vector2I(mappoint.X, mappoint.Y))).ToList();
+            var distances = poly.Corners.Select(corner => 1 / Math.Pow(Vector2I.Distance(new Vector2I(corner.Point.X, corner.Point.Y), new Vector2I(mappoint.X, mappoint.Y)),2)).ToList();
 
             var distSumm = distances.Sum();
 
