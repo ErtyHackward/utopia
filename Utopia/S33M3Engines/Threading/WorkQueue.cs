@@ -36,6 +36,7 @@ namespace S33M3Engines.Threading
         public static void Initialize(int ThreadAllocatedModifier)
         {
             SetOptimumNbrThread(ThreadAllocatedModifier);
+            ThreadingActif = true;
         }
 
         public static void SetOptimumNbrThread(int ThreadAllocatedModifier)
