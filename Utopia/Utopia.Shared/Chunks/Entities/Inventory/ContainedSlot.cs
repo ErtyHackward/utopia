@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks.Entities.Inventory
@@ -8,6 +9,16 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
     /// </summary>
     public class ContainedSlot : Slot
     {
+        public ContainedSlot(Vector2I from, int i=0)
+        {
+            GridPosition = from;
+            ItemsCount = i;
+        }
+
+        public ContainedSlot()
+        {           
+        }
+
         /// <summary>
         /// Gets or sets slot position in container grid
         /// </summary>

@@ -66,20 +66,20 @@ namespace Utopia.Tests
 
             // creating new slot
             var slot = new ContainedSlot
-            { 
-                // desired position
-                GridPosition = new Vector2I(0,0),
-                ItemsCount = 1,
-                Item = new Shovel()
-            };
+                           {
+                               // desired position
+                               GridPosition = new Vector2I(0, 0),
+                               ItemsCount = 1,
+                               Item = new Shovel()
+                           };
 
             // unable to put another unstackable shovel to the same slot (occupied by the first Shovel)
-            Assert.IsFalse(inventory.PutItem(slot)); 
+            Assert.IsFalse(inventory.PutItem(slot));
 
             slot.GridPosition = new Vector2I(0, 1);
 
             // no problem to put item on another empty slot
-            Assert.IsTrue(inventory.PutItem(slot)); 
+            Assert.IsTrue(inventory.PutItem(slot));
 
             // check persistance
             Assert.AreEqual(2, inventory.Count());
@@ -96,11 +96,11 @@ namespace Utopia.Tests
 
             // add 900 gold coins
             inventory.PutItem(new ContainedSlot
-                {
-                    Item = new GoldCoin(),
-                    GridPosition = new Vector2I(1, 0),
-                    ItemsCount = 900
-                });
+                                  {
+                                      Item = new GoldCoin(),
+                                      GridPosition = new Vector2I(1, 0),
+                                      ItemsCount = 900
+                                  });
 
             // check it
             slotTaken = inventory.PeekSlot(new Vector2I(1, 0));
@@ -109,18 +109,18 @@ namespace Utopia.Tests
 
             // cannot take 500 shovels, we have only 1
             slotTaken = inventory.TakeSlot(new ContainedSlot
-                { 
-                    GridPosition = new Vector2I(0,0), 
-                    ItemsCount = 500 
-                }); 
+                                               {
+                                                   GridPosition = new Vector2I(0, 0),
+                                                   ItemsCount = 500
+                                               });
             Assert.AreEqual(null, slotTaken);
 
             // ok to take 500 gold coins (400 will left)
-            slotTaken = inventory.TakeSlot(new ContainedSlot 
-                { 
-                    GridPosition = new Vector2I(1, 0), 
-                    ItemsCount = 500 
-                });
+            slotTaken = inventory.TakeSlot(new ContainedSlot
+                                               {
+                                                   GridPosition = new Vector2I(1, 0),
+                                                   ItemsCount = 500
+                                               });
 
             Assert.AreEqual(500, slotTaken.ItemsCount);
             Assert.IsTrue(slotTaken.Item is GoldCoin);
@@ -129,7 +129,65 @@ namespace Utopia.Tests
             slotTaken = inventory.PeekSlot(new Vector2I(1, 0));
             Assert.AreEqual(400, slotTaken.ItemsCount);
             Assert.IsTrue(slotTaken.Item is GoldCoin);
+        }
 
+        [TestMethod]
+        public void ExchangeTest()
+        {
+            #region init
+
+            var inventory = new SlotContainer<ContainedSlot>(new Vector2I(5, 8));
+
+            inventory.PutItem(new Shovel()); // puts item on first available slot (0,0)
+
+            ContainedSlot slot = new ContainedSlot
+                                     {
+                                         // desired position
+                                         GridPosition = new Vector2I(1, 1),
+                                         ItemsCount = 2,
+                                         Item = new GoldCoin()
+                                     };
+
+            inventory.PutItem(slot);
+
+            #endregion
+
+            var from = new Vector2I(0, 0);                
+            var to = new Vector2I(1, 1);                
+            
+
+            //initial state
+            Assert.IsTrue(inventory.PeekSlot(from).Item is Shovel);
+            Assert.IsTrue(inventory.PeekSlot(to).Item is GoldCoin);
+            
+            ContainedSlot hand = inventory.TakeSlot(new ContainedSlot(from,1));
+            //got the shovel in my hand
+            Assert.IsNull(inventory.PeekSlot(new Vector2I(0, 0)));
+            
+            //move my hand to the destination position
+            hand.GridPosition = to;
+            
+            //put down the shovel on 1,1 and get the goldcoin
+            ContainedSlot result;
+            inventory.PutItemExchange(hand, out result);
+
+            Assert.IsTrue(result.Item is GoldCoin);
+            Assert.IsTrue(inventory.PeekSlot(new Vector2I(1, 1)).Item is Shovel);
+
+            hand = result; //now i have the goldCoin in my hand
+            
+            //move back my hand to the original position
+            hand.GridPosition = from;
+            //empty my hand, put the goldcoin
+            inventory.PutItem(hand);
+
+            //final state :yay I switched two items ! 
+            Assert.IsTrue(inventory.PeekSlot(from).Item is GoldCoin);
+            Assert.AreEqual(2,inventory.PeekSlot(from).ItemsCount);
+
+            Assert.IsTrue(inventory.PeekSlot(to).Item is Shovel);
+            
+            
         }
     }
 }
