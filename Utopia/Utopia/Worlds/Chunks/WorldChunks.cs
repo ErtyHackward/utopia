@@ -186,6 +186,17 @@ namespace Utopia.Worlds.Chunks
         /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate
         /// </summary>
+        /// <param name="X">Cube X coordinate in world coordinate</param>
+        /// <param name="Z">Cube Z coordinate in world coordinate</param>
+        /// <returns></returns>
+        public VisualChunk GetChunk(ref Vector3I cubePosition)
+        {
+            return GetChunk(cubePosition.X, cubePosition.Z);
+        }
+
+        /// <summary>
+        /// Get a world's chunk from a Cube location in world coordinate
+        /// </summary>
         /// <param name="X">Chunk X coordinate</param>
         /// <param name="Z">Chunk Z coordinate</param>
         /// <returns></returns>

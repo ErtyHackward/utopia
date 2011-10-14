@@ -16,6 +16,13 @@ namespace Utopia.Shared.Interfaces
         IChunkLayout2D GetChunk(Vector2I chunkPosition);
 
         /// <summary>
+        /// Gets the chunk at block position specified
+        /// </summary>
+        /// <param name="position">block position in World coordinate</param>
+        /// <returns></returns>
+        IChunkLayout2D GetChunk(Vector3I blockPosition);
+
+        /// <summary>
         /// Returns block cursor
         /// </summary>
         /// <param name="blockPosition"></param>
