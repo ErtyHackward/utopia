@@ -26,6 +26,8 @@ using Utopia.Worlds.Weather;
 using Utopia.Effects.Shared;
 using SharpDX;
 using S33M3Physics.Verlet;
+using Utopia.Shared.Structs.Landscape;
+using Utopia.Worlds.Cubes;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -317,6 +319,7 @@ namespace Utopia.Worlds.Chunks
         {
             BoundingBox _boundingBox2Evaluate;
             Vector3D newPositionWithColliding = previousPosition;
+            TerraCubeWithPosition _collidingCube;
 
             if (newPosition2Evaluate == previousPosition) return;
 
@@ -325,12 +328,26 @@ namespace Utopia.Worlds.Chunks
             newPositionWithColliding.X = newPosition2Evaluate.X;
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate))
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, out _collidingCube))
+            {
+                if((VisualCubeProfile.CubesProfile[_collidingCube.Cube.Id].YBlockOffset == 0         // Do a collision test IF not collided against Offseted block
+                   && !_playerManager.PlayerOnOffsettedBlock))                                       // And I'm not On a Offseted Block
                 newPositionWithColliding.X = previousPosition.X;
+            }
+
+            //Z Testing =========================================================
+            newPositionWithColliding.Z = newPosition2Evaluate.Z;
+            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, out _collidingCube))
+            {
+                if (VisualCubeProfile.CubesProfile[_collidingCube.Cube.Id].YBlockOffset == 0
+                    && !_playerManager.PlayerOnOffsettedBlock
+                )
+                newPositionWithColliding.Z = previousPosition.Z;
+            }
 
             //Y Testing ======================================================
             newPositionWithColliding.Y = newPosition2Evaluate.Y;
-
 
             //My Position raise  ==> If I were on the ground, I'm no more
             if (previousPosition.Y < newPositionWithColliding.Y && _physicSimu.OnGround) _physicSimu.OnGround = false;
@@ -347,16 +364,11 @@ namespace Utopia.Worlds.Chunks
                 else //Falling
                 {
                     newPositionWithColliding.Y = _playerManager.GroundBelowEntity;
-                    previousPosition.Y = _playerManager.GroundBelowEntity; // ==> This way I stop the Y move !
+                    // ==> This way I stop the Y move ! If not done, its like applying "quickly" a force to the UP ! <= While I jsut want to follow the Ground.
+                    previousPosition.Y = _playerManager.GroundBelowEntity;
                     _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
                 }
             }
-
-            //Z Testing =========================================================
-            newPositionWithColliding.Z = newPosition2Evaluate.Z;
-            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate))
-                newPositionWithColliding.Z = previousPosition.Z;
 
             newPosition2Evaluate = newPositionWithColliding;
         }

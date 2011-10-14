@@ -565,7 +565,7 @@
     <Tex_Back>4</Tex_Back>
     <Tex_Left>4</Tex_Left>
     <Tex_Right>4</Tex_Right>
-    <IsBlockingLight>true</IsBlockingLight>
+    <IsBlockingLight>false</IsBlockingLight>
     <IsSeeThrough>true</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
@@ -573,5 +573,6 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
+    <YBlockOffset>125</YBlockOffset>
   </Cube>
 </Config>

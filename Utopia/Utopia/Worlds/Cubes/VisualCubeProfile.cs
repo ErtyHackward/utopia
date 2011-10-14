@@ -57,6 +57,7 @@ namespace Utopia.Worlds.Cubes
                 profile.IsFlooding = cubeProfil.ItemArray[dt.Columns["IsFlooding"].Ordinal].ToString() == "true";
                 profile.IsFloodPropagation = cubeProfil.ItemArray[dt.Columns["IsFloodPropagation"].Ordinal].ToString() == "true";
                 profile.FloodingPropagationPower = cubeProfil.ItemArray[dt.Columns["FloodingPropagationPower"].Ordinal].ToString() != "" ? int.Parse(cubeProfil.ItemArray[dt.Columns["FloodingPropagationPower"].Ordinal].ToString()) : 0;
+                profile.YBlockOffset = cubeProfil.ItemArray[dt.Columns["YBlockOffset"].Ordinal].ToString() != "" ? byte.Parse(cubeProfil.ItemArray[dt.Columns["YBlockOffset"].Ordinal].ToString()) : (byte)0;
 
                 if (cubeProfil.ItemArray[dt.Columns["IsEmissiveColorLightSource"].Ordinal].ToString() == "true")
                 {
@@ -140,6 +141,7 @@ namespace Utopia.Worlds.Cubes
         public Color EmissiveColor;
         public enuCubeFamilly CubeFamilly;
         public enuLiquidType LiquidType;
+        public byte YBlockOffset;
         //Texture id foreach face
         public byte Tex_Front, Tex_Back, Tex_Left, Tex_Right, Tex_Top, Tex_Bottom;
         public byte[] Textures = new byte[6];
