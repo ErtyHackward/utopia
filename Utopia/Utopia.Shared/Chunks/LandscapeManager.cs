@@ -23,6 +23,17 @@ namespace Utopia.Shared.Chunks
                                       (int) Math.Floor(globalPosition.Z/AbstractChunk.ChunkSize.Z)));
         }
 
+
+        public T GetChunk(Vector3I blockPosition)
+        {
+            return
+                GetChunk(new Vector2I((int)Math.Floor((double)blockPosition.X / AbstractChunk.ChunkSize.X),
+                                      (int)Math.Floor((double)blockPosition.Z / AbstractChunk.ChunkSize.Z)));
+        }
+
+
+
+
         /// <summary>
         /// Gets the chunk at position specified
         /// </summary>
@@ -33,6 +44,11 @@ namespace Utopia.Shared.Chunks
         IChunkLayout2D ILandscapeManager2D.GetChunk(Vector2I position)
         {
             return GetChunk(position);
+        }
+
+        IChunkLayout2D ILandscapeManager2D.GetChunk(Vector3I blockPosition)
+        {
+            return GetChunk(blockPosition);
         }
 
         /// <summary>
@@ -59,6 +75,5 @@ namespace Utopia.Shared.Chunks
         {
             return new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z));
         }
-
     }
 }

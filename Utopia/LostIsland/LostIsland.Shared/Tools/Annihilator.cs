@@ -66,7 +66,7 @@ namespace LostIsland.Shared.Tools
             {
                 //Check static entity impact of the Block removal.
                 //Get the chunk
-                var chunk = _landscapeManager.GetChunk(new Vector2I(Parent.EntityState.PickedBlockPosition.X, Parent.EntityState.PickedBlockPosition.Z));
+                var chunk = _landscapeManager.GetChunk(Parent.EntityState.PickedBlockPosition);
 
                 IBlockLinkedEntity entity;
                 Entity removedEntity;

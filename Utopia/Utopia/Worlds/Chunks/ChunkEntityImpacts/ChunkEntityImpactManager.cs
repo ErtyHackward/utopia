@@ -240,7 +240,12 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public IChunkLayout2D GetChunk(Vector2I chunkPosition)
         {
-            return _worldChunks.GetChunk(chunkPosition.X, chunkPosition.Y);
+            return _worldChunks.GetChunk(chunkPosition.X * AbstractChunk.ChunkSize.X, chunkPosition.Y * AbstractChunk.ChunkSize.Z);
+        }
+
+        public IChunkLayout2D GetChunk(Vector3I chunkPosition)
+        {
+            return _worldChunks.GetChunk(ref chunkPosition);
         }
 
         public ILandscapeCursor GetCursor(Vector3I blockPosition)
