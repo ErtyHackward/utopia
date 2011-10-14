@@ -184,9 +184,9 @@ namespace Utopia.Shared.World.PlanGenerator
                     poly.Elevation = (int)col;
                 }
 
-                // elevate each corner
-                if (!Parameters.CenterElevation)
-                    ElevateCorners();
+                //// elevate each corner
+                //if (!Parameters.CenterElevation)
+                //    ElevateCorners();
 
             }
 
@@ -195,7 +195,7 @@ namespace Utopia.Shared.World.PlanGenerator
                 var poly = GetAtPoint(new Point(Parameters.MapSize.X / 2, Parameters.MapSize.Y / 2));
                 poly.Elevation = 200;
                 StartPropagation(poly, 15);
-                ElevateCorners();
+                
             }
 
             // making island
@@ -203,7 +203,7 @@ namespace Utopia.Shared.World.PlanGenerator
                 //r = new Random((int)voronoiSeedNumeric.Value);
                 var borderElevation = 80;
                 var step = 20;
-                for (int x = 0; x < Parameters.MapSize.X; x+=5)
+                for (int x = 0; x < Parameters.MapSize.X; x += 5)
                 {
                     var poly = GetAtPoint(new Point(x, 0));
 
@@ -217,7 +217,7 @@ namespace Utopia.Shared.World.PlanGenerator
 
                 }
 
-                for (int y = 0; y < Parameters.MapSize.X; y+=5)
+                for (int y = 0; y < Parameters.MapSize.Y; y += 5)
                 {
                     var poly = GetAtPoint(new Point(0, y));
 
@@ -225,13 +225,15 @@ namespace Utopia.Shared.World.PlanGenerator
                     StartPropagation(poly, step);
 
 
-                    poly = GetAtPoint(new Point(Parameters.MapSize.Y, y));
+                    poly = GetAtPoint(new Point(Parameters.MapSize.X, y));
 
                     poly.Elevation = borderElevation;// r.Next(0, 100);
                     StartPropagation(poly, step);
 
                 }
             }
+
+            ElevateCorners();
 
             #region Moisturizing
             {
@@ -759,8 +761,10 @@ namespace Utopia.Shared.World.PlanGenerator
 
                         try
                         {
-                            //if(!polygon.Ocean && MapTemplate != null)
+                            //if (!polygon.Ocean)
                             //    g.FillPolygon(new SolidBrush(col), polygon.points);
+                            //else
+                            //    g.FillPolygon(new SolidBrush(Color.SeaGreen), polygon.points);
 
                             //if (polygon.Coast)
                             //{
@@ -768,7 +772,8 @@ namespace Utopia.Shared.World.PlanGenerator
 
                             //    g.FillPolygon(polyBrush, polygon.points);
                             //}
-                            if(!polygon.Ocean && polygon.Elevation > 127)
+
+                            if (polygon.Elevation > 127) // if (!polygon.Ocean && polygon.Elevation > 127)
                                 g.FillPolygon(polyBrush, polygon.points);
 
                             if (RenderWavePatterns != null)

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using S33M3Engines.Shared.Math.Noises;
 using Utopia.MapGenerator.Properties;
+using Utopia.Shared.Structs;
 using Utopia.Shared.World.PlanGenerator;
 
 namespace Utopia.MapGenerator
@@ -32,7 +33,7 @@ namespace Utopia.MapGenerator
 
 
             _map = new WorldPlan(new GenerationParameters { 
-                MapSize = new Size((int)numericUpDown1.Value,(int)numericUpDown2.Value), 
+                MapSize = new Vector2I((int)numericUpDown1.Value,(int)numericUpDown2.Value), 
                 CenterElevation = centerElevationCheck.Checked,
                 ElevationSeed = (int)voronoiSeedNumeric.Value, 
                 GridSeed = (int)voronoiSeedNumeric.Value, 
