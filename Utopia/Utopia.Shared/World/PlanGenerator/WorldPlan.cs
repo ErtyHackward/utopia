@@ -773,33 +773,33 @@ namespace Utopia.Shared.World.PlanGenerator
                             //    g.FillPolygon(polyBrush, polygon.points);
                             //}
 
-                            if (polygon.Elevation > 127) // if (!polygon.Ocean && polygon.Elevation > 127)
-                                g.FillPolygon(polyBrush, polygon.points);
+                            //if (polygon.Elevation > 127) // if (!polygon.Ocean && polygon.Elevation > 127)
+                            //    g.FillPolygon(polyBrush, polygon.points);
 
-                            if (RenderWavePatterns != null)
-                            {
-                                if (polygon.Ocean && !polygon.Coast && !polygon.Neighbors.Exists(p => p.HasPattern) && r.NextDouble() > 0.5)
-                                {
-                                    polygon.HasPattern = true;
-                                    var center = polygon.Center;
-                                    center.Offset(-32, -16);
-                                    g.DrawImage(RenderWavePatterns[r.Next(0,RenderWavePatterns.Length)], new Rectangle(center, new Size(64, 32)));
-                                }
-                            }
+                            //if (RenderWavePatterns != null)
+                            //{
+                            //    if (polygon.Ocean && !polygon.Coast && !polygon.Neighbors.Exists(p => p.HasPattern) && r.NextDouble() > 0.5)
+                            //    {
+                            //        polygon.HasPattern = true;
+                            //        var center = polygon.Center;
+                            //        center.Offset(-32, -16);
+                            //        g.DrawImage(RenderWavePatterns[r.Next(0,RenderWavePatterns.Length)], new Rectangle(center, new Size(64, 32)));
+                            //    }
+                            //}
 
-                            if (RenderForest != null && !polygon.Coast && polygon.Biome == BiomeType.TemperateDeciduousForest || polygon.Biome == BiomeType.TemperateRainForest)
-                            {
-                                                                    var center = polygon.Center;
-                                    center.Offset(-16, -16);
-                                    g.DrawImage(RenderForest, new Rectangle(center, new Size(32, 32)));
-                            }
+                            //if (RenderForest != null && !polygon.Coast && polygon.Biome == BiomeType.TemperateDeciduousForest || polygon.Biome == BiomeType.TemperateRainForest)
+                            //{
+                            //                                        var center = polygon.Center;
+                            //        center.Offset(-16, -16);
+                            //        g.DrawImage(RenderForest, new Rectangle(center, new Size(32, 32)));
+                            //}
 
-                            if (RenderTropicalForest != null && !polygon.Coast && polygon.Biome == BiomeType.TropicalRainForest || polygon.Biome == BiomeType.TropicalRainForest)
-                            {
-                                var center = polygon.Center;
-                                center.Offset(-16, -16);
-                                g.DrawImage(RenderTropicalForest, new Rectangle(center, new Size(32, 32)));
-                            }
+                            //if (RenderTropicalForest != null && !polygon.Coast && polygon.Biome == BiomeType.TropicalRainForest || polygon.Biome == BiomeType.TropicalRainForest)
+                            //{
+                            //    var center = polygon.Center;
+                            //    center.Offset(-16, -16);
+                            //    g.DrawImage(RenderTropicalForest, new Rectangle(center, new Size(32, 32)));
+                            //}
 
                         }
                         catch (OverflowException)

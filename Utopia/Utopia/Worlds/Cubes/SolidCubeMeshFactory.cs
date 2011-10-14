@@ -41,7 +41,8 @@ namespace Utopia.Worlds.Cubes
             //y = Cube Face
             //z = OA Factor for light (0 to 85 * 3) (== 0 to 3)
             //w = Cube "Offset"
-            ByteVector4 vertexInfo = new ByteVector4((byte)0, (byte)cubeFace, (byte)85, (byte)cubeProfile.YBlockOffset);
+
+            ByteVector4 vertexInfo = new ByteVector4((byte)0, (byte)cubeFace, (byte)85, (byte)(cubeProfile.YBlockOffset * 255));
 
             long hashVertex;
             int generatedVertex = 0;
