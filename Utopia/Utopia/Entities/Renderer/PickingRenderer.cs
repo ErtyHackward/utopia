@@ -34,6 +34,8 @@ namespace Utopia.Entities.Renderer
         private WorldFocusManager _focusManager;
         private IDynamicEntity _player;
         private CameraManager _camManager;
+
+        private float _cubeYOffset;
         #endregion
 
         #region Public Variable
@@ -61,8 +63,11 @@ namespace Utopia.Entities.Renderer
         {
             if (fromCube)
             {
-                _pickedCubeBox = new BoundingBox(new Vector3(_pickedUpCube.X - 0.002f, _pickedUpCube.Y - 0.002f, _pickedUpCube.Z - 0.002f), new Vector3(_pickedUpCube.X + 1.002f, _pickedUpCube.Y + 1.002f, _pickedUpCube.Z + 1.002f));
-                _pickedCube.Update(ref _pickedCubeBox);
+                _pickedCubeBox = new BoundingBox(new Vector3(_pickedUpCube.X - 0.002f, _pickedUpCube.Y - 0.002f, _pickedUpCube.Z - 0.002f), new Vector3(_pickedUpCube.X + 1.002f, _pickedUpCube.Y + 1.002f - _cubeYOffset, _pickedUpCube.Z + 1.002f));
+                if (_cubeYOffset > 0)
+                    _pickedCube.Update(ref _pickedCubeBox, _cubeYOffset);
+                else
+                    _pickedCube.Update(ref _pickedCubeBox);
             }
             else
             {
@@ -77,7 +82,7 @@ namespace Utopia.Entities.Renderer
         public override void LoadContent()
         {
             _blockpickedUPEffect = new HLSLVertexPositionColor(_engine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
-            _pickedCube = new BoundingBox3D(_engine, _focusManager, new Vector3(1.004f, 1.004f, 1.004f), _blockpickedUPEffect, _cursorColor);
+            _pickedCube = new BoundingBox3D(_engine, _focusManager, new Vector3(1.002f, 1.002f, 1.002f), _blockpickedUPEffect, _cursorColor);
         }
 
         public override void UnloadContent()
@@ -97,9 +102,10 @@ namespace Utopia.Entities.Renderer
             }
         }
 
-        public void SetPickedBlock(ref Vector3I pickedUpCube)
+        public void SetPickedBlock(ref Vector3I pickedUpCube, float cubeYOffset)
         {
             _pickedUpCube = pickedUpCube;
+            _cubeYOffset = cubeYOffset;
             RefreshpickedBoundingBox(true);
         }
 

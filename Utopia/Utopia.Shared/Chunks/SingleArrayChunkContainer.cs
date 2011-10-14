@@ -494,9 +494,10 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
-        public bool IsSolidToPlayer(ref BoundingBox bb, out TerraCubeWithPosition collidingcube)
+        public bool IsSolidToPlayer(ref BoundingBox bb, bool withCubeOffSetAccount, out TerraCubeWithPosition collidingcube)
         {
             int index;
+            CubeProfile profile;
 
             //Get ground surface 4 blocks below the Bounding box
             int Xmin = MathHelper.Fastfloor(bb.Minimum.X);
@@ -514,11 +515,24 @@ namespace Utopia.Shared.Chunks
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
-                            if (CubeProfile.CubesProfile[Cubes[index].Id].IsSolidToEntity)
+                            profile = CubeProfile.CubesProfile[Cubes[index].Id];
+                            if (profile.IsSolidToEntity)
                             {
                                 collidingcube.Cube = Cubes[index];
                                 collidingcube.Position = new Vector3I(x, y, z);
-                                return true;
+
+                                //Block with Offset case
+                                if (withCubeOffSetAccount && profile.YBlockOffset > 0.0f)
+                                {
+                                    if (bb.Minimum.Y < y)
+                                    {
+                                        return true;
+                                    }
+                                }
+                                else
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }

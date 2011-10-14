@@ -286,7 +286,7 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (Player._entityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref Player._entityState.PickedBlockPosition);
+                    _pickingRenderer.SetPickedBlock(ref Player._entityState.PickedBlockPosition, VisualCubeProfile.CubesProfile[PickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {
@@ -407,7 +407,7 @@ namespace Utopia.Entities.Managers
             _cubesHolder.GetNextSolidBlockToPlayer(ref VisualEntity.WorldBBox, ref GroundDirection, out groundCube);
             //Half cube below me ??
             BlockOffset = VisualCubeProfile.CubesProfile[groundCube.Cube.Id].YBlockOffset;
-            _groundBelowEntity = groundCube.Position.Y + 1 - (BlockOffset / 255.0f);
+            _groundBelowEntity = groundCube.Position.Y + 1 - BlockOffset;
             PlayerOnOffsettedBlock = BlockOffset != 0;
 
             _physicSimu.Simulate(ref TimeSpend, out newWorldPosition);

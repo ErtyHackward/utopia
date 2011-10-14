@@ -79,6 +79,11 @@ namespace Utopia.Resources.ModelComp
             BB3dworld = Matrix.Translation(bb.Minimum);
         }
 
+        public void Update(ref BoundingBox bb, float YOffset)
+        {
+            BB3dworld = Matrix.Scaling(new Vector3(1, 1.0f - YOffset, 1)) * Matrix.Translation(bb.Minimum);
+        }
+
         public void Update(ref BoundingBox bb, Vector3 scalingSize)
         {
             BB3dworld = Matrix.Scaling(scalingSize) * Matrix.Translation(bb.Minimum);
