@@ -254,7 +254,7 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// Tries to get item from slot. Slot entity will be filled from slot position
         /// </summary>
         /// <param name="slot"></param>
-        /// <returns></returns>
+        /// <returns>slot parameter, same reference but changed !</returns>
         public T TakeSlot(T slot)
         {
             ValidatePosition(slot.GridPosition);
@@ -297,27 +297,27 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// <summary>
         /// Puts the item to already occupied slot (Items should have different type)
         /// </summary>
-        /// <param name="slotPut"></param>
-        /// <param name="slotTaken"></param>
+        /// <param name="slotToPut">to put : what's in your hand before exchanging </param>
+        /// <param name="slotTaken">result of the itemexchange = you get this in you hand</param>
         /// <returns></returns>
-        public bool PutItemExchange(T slotPut, out T slotTaken)
+        public bool PutItemExchange(T slotToPut, out T slotTaken)
         {
             slotTaken = null;
 
-            if (slotPut == null || slotPut.Item == null)
+            if (slotToPut == null || slotToPut.Item == null)
                 return false;
 
-            ValidatePosition(slotPut.GridPosition);
+            ValidatePosition(slotToPut.GridPosition);
             
-            var currentItem = _items[slotPut.GridPosition.X, slotPut.GridPosition.Y];
+            var currentItem = _items[slotToPut.GridPosition.X, slotToPut.GridPosition.Y];
 
-            if (currentItem == null || currentItem.Item.StackType == slotPut.Item.StackType)
+            if (currentItem == null || currentItem.Item.StackType == slotToPut.Item.StackType)
                 return false;
 
             slotTaken = currentItem;
 
-            _items[slotPut.GridPosition.X, slotPut.GridPosition.Y] = slotPut;
-            OnItemExchanged(new EntityContainerEventArgs<T> { Slot = slotPut, Exchanged = slotTaken });
+            _items[slotToPut.GridPosition.X, slotToPut.GridPosition.Y] = slotToPut;
+            OnItemExchanged(new EntityContainerEventArgs<T> { Slot = slotToPut, Exchanged = slotTaken });
             return true;
         }
 
@@ -388,54 +388,37 @@ namespace Utopia.Shared.Chunks.Entities.Inventory
         /// Drop 'from' on 'to' . Switches 'from' and 'to' when items are different, adds to the to stacks when items are stackable 
         /// //TODO check performance when moving stacks of items. maybe replace by a proper switch slots message
         /// </summary>
-        /// <param name="from">Source slot</param>
+        /// <param name="taken"></param>
         /// <param name="to">Destination slot</param>
-        public void DropOn(ref T from, T to)
+        public T DropOn(ref T taken, T to)
         {
-            IItem itemFrom = from.Item;
+            IItem itemFrom = taken.Item;
             IItem itemTo = to.Item;
-            
+
+            T hand;
+
             if (itemTo==null)
             {
-                to.Item = from.Item;
-                while (TakeItem(from)){
-                    PutItem(to);    //TODO handle case when stack is full 
-                }
-                from.Item = null;
+                to.Item = taken.Item; 
+                PutItem(to);   //not the same thing as putItem(itemfrom) , i want to put on this specific slot not in the next available one
+                //TODO handle case when stack is full                
+                //TODO move a full stack    
+                hand = null;
             }
-            else if (itemTo.MaxStackSize>1 && itemFrom.ClassId==itemTo.ClassId )
+            else if (itemTo.MaxStackSize > 1 && itemFrom.StackType == itemTo.StackType)
             {
-                //de-stack on from, stack on to 
-                TakeItem(from);
+                //de-stack on from, stack on to                 
                 PutItem(to);//TODO handle case when stack is full 
+                hand = null;
             } 
             else
             {
-                //switch grid positions
-                int amountInDest = 0;
-                
-                //empty the destination 
-                while (TakeItem(to))
-                {
-                    amountInDest++;
-                }
-                //at this point, to.Item is null 
-           
-                //fill the destination
-                while (TakeItem(from))
-                {
-                    to.Item = itemFrom;
-                    PutItem(to);
-                }
-                
-                //fill the source with old destination content
-                for (int i=0;i<amountInDest;i++)
-                {
-                    from.Item = itemTo;
-                    PutItem(from);
-                }
+                T slotPut = taken;
+                slotPut.GridPosition = to.GridPosition;              
+                PutItemExchange(slotPut, out hand);
             }
 
+            return hand;
         }
     }
 }
