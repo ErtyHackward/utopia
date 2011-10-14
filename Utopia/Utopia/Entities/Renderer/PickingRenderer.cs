@@ -66,7 +66,7 @@ namespace Utopia.Entities.Renderer
             }
             else
             {
-                _pickedCubeBox = _pickedEntity.WorldBBox;
+                _pickedCubeBox = new BoundingBox(new Vector3(_pickedEntity.WorldBBox.Minimum.X, _pickedEntity.WorldBBox.Minimum.Y + 0.002f, _pickedEntity.WorldBBox.Minimum.Z), _pickedEntity.WorldBBox.Maximum);
                 _pickedCube.Update(ref _pickedCubeBox, _pickedEntity.Entity.Size);
             }
 
