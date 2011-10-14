@@ -203,9 +203,6 @@ namespace Utopia.Shared.World.Processors
             var poly = WorldPlan.GetAtPoint(mappoint);
 
             // river check
-
-            
-
             foreach (var edge in poly.Edges)
             {
                 
@@ -227,12 +224,25 @@ namespace Utopia.Shared.World.Processors
 
             data.Biome = poly.Biome;
             data.Moisture = poly.Moisture;
-            var cor = poly.Corners.Find(c => c.Point == mappoint);
-            if (cor != null)
+            //var cor = poly.Corners.Find(c => c.Point == mappoint);
+            //if (cor != null)
+            //{
+            //    data.Elevation = cor.Elevation / 2;
+            //    return data;
+            //}
+
+            // collect all nontouching corners
+
+            var corners = new List<Corner>();
+
+            foreach (var neighboor in poly.Neighbors)
             {
-                data.Elevation = cor.Elevation / 2;
-                return data;
+                foreach (var corner in neighboor.Corners)
+                {
+
+                }
             }
+
 
             var distances = poly.Corners.Select(corner => 1 / Vector2I.Distance(new Vector2I(corner.Point.X, corner.Point.Y), new Vector2I(mappoint.X, mappoint.Y))).ToList();
 
