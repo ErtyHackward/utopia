@@ -42,7 +42,15 @@ namespace LostIsland.Server
             var item3 = (CubeResource)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.CubeResource));
             item3.CubeId = CubeId.WoodPlank;
             dEntity.Inventory.PutItem(item3);
-            
+
+            foreach (var cubeId in CubeId.All())
+            {
+                
+                item3 = (CubeResource)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.CubeResource));
+                item3.CubeId = cubeId;
+                dEntity.Inventory.PutItem(item3, 100);
+            }
+
             return dEntity;
         }
 
