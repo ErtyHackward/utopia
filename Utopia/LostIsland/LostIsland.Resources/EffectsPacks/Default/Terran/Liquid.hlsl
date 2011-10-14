@@ -46,8 +46,8 @@ struct VS_LIQUID_IN
 {
 	uint4 Position		 : POSITION;
 	float4 Col			 : COLOR;
-	uint4 VertexInfo1	 : INFO0; // x = FaceType, y = LiquidType, z = FlowDirection
-	float4 VertexInfo2	 : INFO1; // x = YOffset, 
+	uint4 VertexInfo1	 : INFO0; // x = FaceType, (bool)y = is Upper vertex
+	float4 VertexInfo2	 : INFO1; // x = Y Modified block Height modificator, 
 };
 
 struct PS_IN
@@ -71,7 +71,9 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
     PS_IN output;
 	
 	float4 newPosition = {input.Position.xyz, 1.0f};
-	newPosition.y += input.VertexInfo2.x + popUpYOffset; //Offseting the Y
+	float YOffset = 0;
+	if(input.VertexInfo1.y == 1) YOffset = input.VertexInfo2.x;
+	newPosition.y -= YOffset;
 
     float4 worldPosition = mul(newPosition, World);
 	output.Position = mul(worldPosition, ViewProjection);
@@ -80,7 +82,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	//Compute the texture mapping
 	output.UVW = float3(
 						(input.Position.x * texmul1[facetype]) + (input.Position.z * texmul2[facetype]), 
-						(input.Position.y * texmul3[facetype]) + (input.Position.z * texmul4[facetype]),
+						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
 						input.Position.w );
 
 	output.EmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
