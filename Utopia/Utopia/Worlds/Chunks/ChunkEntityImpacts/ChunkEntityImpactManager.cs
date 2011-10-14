@@ -110,7 +110,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
             if (neightboorChunk.Entities.IsDirty)
             {
-                Console.WriteLine("DEBUG : ");
+                Console.WriteLine("Refresh the Visual Entities collection from chunk : ");
                 neightboorChunk.RefreshVisualEntities();
             }
 
@@ -233,6 +233,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
             impactedChunk.CompressedDirty = true;
             Md5Hash chunkHash;
+            Console.WriteLine("DB Saved");
             byte[] chunkDataCompressed = impactedChunk.CompressAndComputeHash(out chunkHash);
             _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
         }
