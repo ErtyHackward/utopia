@@ -28,6 +28,7 @@ using Utopia.Entities.Renderer.Interfaces;
 using Ninject;
 using Utopia.Settings;
 using Utopia.Worlds.Chunks;
+using Utopia.Worlds.Cubes;
 
 namespace Utopia.Entities.Managers
 {
@@ -121,6 +122,7 @@ namespace Utopia.Entities.Managers
 
         public bool HasMouseFocus { get; set; }
 
+        public bool PlayerOnOffsettedBlock { get; set; }
         public float GroundBelowEntity
         {
             get { return _groundBelowEntity; }
@@ -400,9 +402,13 @@ namespace Utopia.Entities.Managers
             TerraCubeWithPosition groundCube;
             Vector3I GroundDirection = new Vector3I(0, -1, 0);
             Vector3D newWorldPosition;
+            float BlockOffset;
 
             _cubesHolder.GetNextSolidBlockToPlayer(ref VisualEntity.WorldBBox, ref GroundDirection, out groundCube);
-            _groundBelowEntity = groundCube.Position.Y + 1;
+            //Half cube below me ??
+            BlockOffset = VisualCubeProfile.CubesProfile[groundCube.Cube.Id].YBlockOffset;
+            _groundBelowEntity = groundCube.Position.Y + 1 - (BlockOffset / 255.0f);
+            PlayerOnOffsettedBlock = BlockOffset != 0;
 
             _physicSimu.Simulate(ref TimeSpend, out newWorldPosition);
             _worldPosition.Value = newWorldPosition;

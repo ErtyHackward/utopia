@@ -215,7 +215,7 @@
     <Compile Include="Structs\Range.cs" />
     <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
-    <Compile Include="Structs\TerraCubeWithPosition.cs" />
+    <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />
     <Compile Include="Structs\Vector3I.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
     <Compile Include="World\PlanGenerator\BiomeType.cs" />
