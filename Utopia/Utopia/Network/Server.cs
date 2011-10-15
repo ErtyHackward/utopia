@@ -6,11 +6,12 @@ using S33M3Engines.D3D.DebugTools;
 using Utopia.Shared;
 using Utopia.Shared.ClassExt;
 using S33M3Engines.D3D;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Chunks.Entities;
 
 namespace Utopia.Network
 {

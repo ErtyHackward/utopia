@@ -5,7 +5,8 @@ using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Input;
 using Utopia.Entities;
-using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.GUI.D3D.Inventory
 {

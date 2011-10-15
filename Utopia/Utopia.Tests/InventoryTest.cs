@@ -3,24 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Utopia.Shared.Chunks.Entities.Inventory;
-using Utopia.Shared.Chunks.Entities.Inventory.Tools;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Tests
 {
-    public class Shovel : BlockRemover
+    public class Shovel : VoxelItem
     {
-        public override Shared.Chunks.Entities.Interfaces.IToolImpact Use(bool runOnServer = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Rollback(Shared.Chunks.Entities.Interfaces.IToolImpact impact)
-        {
-            throw new NotImplementedException();
-        }
-
         public override int MaxStackSize
         {
             get { return 1; }

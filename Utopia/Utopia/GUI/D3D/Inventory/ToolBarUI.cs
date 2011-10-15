@@ -7,9 +7,11 @@ using Nuclex.UserInterface;
 
 using Nuclex.UserInterface.Controls;
 using Utopia.Entities;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Inventory;
 using S33M3Engines.D3D;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 
 
@@ -48,9 +50,9 @@ namespace Utopia.GUI.D3D.Inventory
             );
             leftButton.Pressed += delegate
                                       {
-                                          _equipment.LeftTool.Use();
+                                          _equipment.LeftTool.Tool.Use(player);
                                       };
-            leftButton.Text = _equipment.LeftTool.DisplayName;
+            leftButton.Text = _equipment.LeftTool.Item.DisplayName;
             this.Children.Add(leftButton);
 
 
@@ -59,10 +61,10 @@ namespace Utopia.GUI.D3D.Inventory
             rightButton.Bounds = new UniRectangle(
               ButtonSize, 0, ButtonSize, ButtonSize
             );
-            rightButton.Text = _equipment.RightTool.DisplayName;
+            rightButton.Text = _equipment.RightTool.Item.DisplayName;
             rightButton.Pressed += delegate
             {
-                _equipment.RightTool.Use();
+                _equipment.RightTool.Tool.Use(player);
             };
             this.Children.Add(rightButton);
             
@@ -78,8 +80,8 @@ namespace Utopia.GUI.D3D.Inventory
                 btn.Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize);
                 _buttons.Add(btn);
                 btn.Pressed += delegate {
-                    if (btn.LeftItem is Tool)
-                        _equipment.LeftTool = (Tool)btn.LeftItem;
+                    if (btn.LeftItem is ITool)
+                        _equipment.LeftTool.Item = (ITool)btn.LeftItem;
                 };
 
                 this.Children.Add(btn);

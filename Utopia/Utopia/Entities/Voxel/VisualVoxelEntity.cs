@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using S33M3Engines.Buffers;
 using S33M3Engines.Struct.Vertex;
 using SharpDX;
-using Utopia.Shared.Chunks.Entities.Concrete;
 using S33M3Engines.Shared.Math;
-using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Entities.Voxel

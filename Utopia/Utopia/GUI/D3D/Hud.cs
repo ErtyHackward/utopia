@@ -7,8 +7,9 @@ using Nuclex.UserInterface;
 using Utopia.Entities;
 using Utopia.GUI.D3D.Inventory;
 using SharpDX.Direct3D11;
-using Utopia.Shared.Chunks.Entities;
 using Utopia.Settings;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 
 namespace Utopia.GUI.D3D
 {

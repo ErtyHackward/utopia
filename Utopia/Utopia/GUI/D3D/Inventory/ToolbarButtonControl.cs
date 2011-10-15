@@ -8,8 +8,10 @@ using System.Diagnostics;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Entities;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 
 namespace Utopia.GUI.D3D.Inventory

@@ -2,9 +2,11 @@
 using System.IO;
 using System.Linq;
 using Utopia.Server.Events;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Structs
@@ -68,7 +70,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.SendAsync(new EntityEquipmentMessage { Items = new[] { new EquipmentItem(e.Slot, e.Item) } });
+                Connection.SendAsync(new EntityEquipmentMessage { Items = new[] { new EquipmentItem(e.Slot, e.EquippedItem.Item) } });
             }
         }
 
@@ -179,7 +181,7 @@ namespace Utopia.Server.Structs
 
             if (tool != null)
             {
-                var toolImpact = tool.Use();
+                var toolImpact = tool.Use(playerCharacter);
 
                 // returning tool feedback
                 Connection.SendAsync(new UseFeedbackMessage { Token = entityUseMessage.Token, EntityImpactBytes = toolImpact.ToArray() });

@@ -11,6 +11,8 @@ using Utopia.Network;
 using System.Threading;
 using Utopia.Settings;
 using S33M3Engines.D3D;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using ErrorMessage = LostIsland.Client.GUI.Forms.CustControls.ErrorMessage;
@@ -207,7 +209,7 @@ namespace LostIsland.Client.GUI.Forms
 
         void ServerConnection_MessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
         {
-            _server.Player = (Utopia.Shared.Chunks.Entities.PlayerCharacter)e.Message.Entity;
+            _server.Player = (PlayerCharacter)e.Message.Entity;
             UnregisterEvents();
             _serverTime.Dispose();
              HideWindows();

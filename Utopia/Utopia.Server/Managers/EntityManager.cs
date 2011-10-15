@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Utopia.Server.Structs;
-using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 

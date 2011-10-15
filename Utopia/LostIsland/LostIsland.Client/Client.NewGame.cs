@@ -1,4 +1,6 @@
 ﻿using LostIslandHD.Client.Properties;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.World;
 using Utopia;
 using Ninject;
@@ -38,7 +40,6 @@ using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Shared.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
-using Utopia.Shared.Chunks.Entities;
 using Utopia.Entities.Voxel;
 using Ninject.Parameters;
 using System.Windows.Forms;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
 using S33M3Engines.Threading;
@@ -18,7 +19,6 @@ using Utopia.Shared.World;
 using Utopia.Entities;
 using Utopia.Resources.ModelComp;
 using S33M3Engines.Shared.Math;
-using Utopia.Shared.Chunks.Entities;
 using Utopia.Entities.Sprites;
 
 namespace Utopia.Worlds.Chunks

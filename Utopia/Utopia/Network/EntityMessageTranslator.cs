@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 
@@ -110,13 +111,13 @@ namespace Utopia.Network
         {
             switch (e.Message.Entity.Type)
             {
-                case Utopia.Shared.Chunks.Entities.EntityType.Gear:
+                case EntityType.Gear:
                     break;
-                case Utopia.Shared.Chunks.Entities.EntityType.Block:
+                case EntityType.Block:
                     break;
-                case Utopia.Shared.Chunks.Entities.EntityType.Static:
+                case EntityType.Static:
                     break;
-                case Utopia.Shared.Chunks.Entities.EntityType.Dynamic:
+                case EntityType.Dynamic:
                         _dynamicEntityManager.AddEntity((IDynamicEntity)e.Message.Entity);
                     break;
                 default:
