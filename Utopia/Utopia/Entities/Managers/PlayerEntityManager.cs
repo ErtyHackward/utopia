@@ -20,8 +20,9 @@ using Utopia.GUI.D3D.Inventory;
 using Utopia.InputManager;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
@@ -212,7 +213,7 @@ namespace Utopia.Entities.Managers
                 {
                     Player.LeftToolUse();//sends the client server event that does tool.use on server
                     _itemMessageTranslator.Enabled = false;
-                    Player.Equipment.LeftTool.Use();//client invocation to keep the client inventory in synch
+                    Player.Equipment.LeftTool.Tool.Use(Player);//client invocation to keep the client inventory in synch
                     _itemMessageTranslator.Enabled = true;
                 }
             }
@@ -229,7 +230,7 @@ namespace Utopia.Entities.Managers
                     {
                         Player.RightToolUse();//sends the client server event that does tool.use on server
                         _itemMessageTranslator.Enabled = false;
-                        Player.Equipment.RightTool.Use();//client invocation to keep the client inventory in synch
+                        Player.Equipment.RightTool.Tool.Use(Player);//client invocation to keep the client inventory in synch
                         _itemMessageTranslator.Enabled = true;
                     }
                 }

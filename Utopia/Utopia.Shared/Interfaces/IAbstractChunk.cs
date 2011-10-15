@@ -1,5 +1,5 @@
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Shared.Interfaces
 {

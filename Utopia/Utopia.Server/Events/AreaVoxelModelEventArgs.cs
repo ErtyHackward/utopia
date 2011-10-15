@@ -1,5 +1,5 @@
 using System;
-using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Events

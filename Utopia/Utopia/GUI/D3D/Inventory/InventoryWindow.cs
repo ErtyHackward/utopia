@@ -6,8 +6,9 @@ using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.Shared.Sprites;
 using Utopia.Entities;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 
 namespace Utopia.GUI.D3D.Inventory

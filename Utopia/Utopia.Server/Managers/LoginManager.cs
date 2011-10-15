@@ -2,7 +2,8 @@
 using System.IO;
 using Utopia.Server.Structs;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;

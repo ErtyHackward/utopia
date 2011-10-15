@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines.D3D;
-using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.Entities.Renderer;
 using Ninject;
 using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Entities.Managers
 {

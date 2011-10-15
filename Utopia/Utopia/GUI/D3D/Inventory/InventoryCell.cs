@@ -3,7 +3,7 @@ using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Input;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
-using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 
 namespace Utopia.GUI.D3D.Inventory

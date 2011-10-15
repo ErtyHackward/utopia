@@ -1,8 +1,9 @@
 ﻿using System;
 using S33M3Engines.Shared.Math;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 

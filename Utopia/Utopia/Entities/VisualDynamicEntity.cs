@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines.D3D;
-using Utopia.Shared.Chunks.Entities.Concrete;
-using Utopia.Shared.Chunks.Entities.Interfaces;
 using SharpDX;
 using S33M3Engines.Struct;
 using S33M3Engines.Shared.Math;
 using Utopia.Entities.Voxel;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Entities
 {
@@ -73,7 +73,7 @@ namespace Utopia.Entities
             MoveDirection.Value = LookAtDirection.Value;
 
             //Change the default value when Player => The player message arrive much more faster !
-            if (DynamicEntity.ClassId == Shared.Chunks.Entities.EntityClassId.PlayerCharacter)
+            if (DynamicEntity.ClassId == EntityClassId.PlayerCharacter)
             {
                 _interpolationRate = 0.1;
                 _distanceLimit = 5;

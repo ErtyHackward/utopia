@@ -1,8 +1,9 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Interfaces;
 
 namespace Utopia.Shared.Net.Messages
@@ -65,10 +66,10 @@ namespace Utopia.Shared.Net.Messages
 
     public struct EquipmentItem
     {
-        private Entity _entity;
+        private IEntity _entity;
         private EquipmentSlotType _slot;
 
-        public EquipmentItem(EquipmentSlotType slot, Entity entity)
+        public EquipmentItem(EquipmentSlotType slot, IEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
             _slot = slot;
@@ -81,7 +82,7 @@ namespace Utopia.Shared.Net.Messages
             set { _slot = value; }
         }
         
-        public Entity Entity
+        public IEntity Entity
         {
             get { return _entity; }
             set { _entity = value; }

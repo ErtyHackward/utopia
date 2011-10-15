@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using S33M3Engines.Shared.Math;
 using SharpDX;
-using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.Chunks
@@ -435,7 +436,7 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
-        public bool isPickable(ref Vector3 position, Tool withTool, out TerraCube cube)
+        public bool isPickable(ref Vector3 position, ITool withTool, out TerraCube cube)
         {
             int cubeIndex;
 

@@ -1,4 +1,4 @@
-using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Server.Managers
 {

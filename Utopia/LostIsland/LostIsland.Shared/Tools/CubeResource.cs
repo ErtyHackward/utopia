@@ -1,17 +1,32 @@
-using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 
 namespace LostIsland.Shared.Tools
 {
-    public class CubeResource : Tool
+    public class CubeResource : Entity, ITool
     {
         private readonly ILandscapeManager2D _landscapeManager;
-        public byte CubeId;
+        
+        public byte CubeId { get; set; }
+    
+        public EquipmentSlotType AllowedSlots
+        {
+            get { return EquipmentSlotType.LeftHand | EquipmentSlotType.RightHand; }
+            set { throw new System.NotSupportedException(); }
+        }
 
-        public override int MaxStackSize
+        public int MaxStackSize
         {
             get { return 999; }
+        }
+
+        public string UniqueName
+        {
+            get { return DisplayName; }
+            set { throw new System.NotSupportedException(); }
         }
 
         public override ushort ClassId
@@ -19,17 +34,24 @@ namespace LostIsland.Shared.Tools
             get { return LostIslandEntityClassId.CubeResource; }
         }
 
-        public override string StackType
+        public DynamicEntity Parent { get; set; }
+        
+        public string StackType
         {
             get
             {
-                return base.StackType + CubeId; //effectively this.getType().Name + cubeid , so blockadder1 blockadder2 etc ...
+                return "CubeResource" + CubeId; //effectively this.getType().Name + cubeid , so blockadder1 blockadder2 etc ...
             }
         }
 
         public CubeResource(ILandscapeManager2D landscapeManager)
         {
             _landscapeManager = landscapeManager;
+        }
+
+        public override string DisplayName
+        {
+            get { return Utopia.Shared.Cubes.CubeId.GetCubeTypeName(CubeId); }
         }
 
         public override void Load(System.IO.BinaryReader reader)
@@ -44,9 +66,9 @@ namespace LostIsland.Shared.Tools
             writer.Write(CubeId);
         }
 
-        public override Utopia.Shared.Chunks.Entities.Interfaces.IToolImpact Use(bool runOnServer = false)
+        public IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
         {
-            var entity = Parent;
+            var entity = owner;
             var impact = new ToolImpact { Success = false };
 
 
@@ -64,9 +86,11 @@ namespace LostIsland.Shared.Tools
             return impact;
         }
 
-        public override void Rollback(Utopia.Shared.Chunks.Entities.Interfaces.IToolImpact impact)
+        public void Rollback(IToolImpact impact)
         {
             throw new System.NotImplementedException();
         }
+
+        
     }
 }
