@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using S33M3Engines.Threading;
 using System.Threading.Tasks;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
@@ -15,7 +16,6 @@ using Utopia.Worlds.Storage;
 using Utopia.Worlds.Storage.Structs;
 using S33M3Engines.Timers;
 using Utopia.Entities;
-using Utopia.Shared.Chunks.Entities;
 using Ninject;
 using Utopia.Entities.Sprites;
 

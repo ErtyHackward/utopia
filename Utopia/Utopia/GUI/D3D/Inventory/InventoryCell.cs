@@ -3,15 +3,42 @@ using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Input;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
-using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 
 namespace Utopia.GUI.D3D.Inventory
 {
+    /// <summary>
+    /// Represents inventory cell
+    /// </summary>
     public class InventoryCell : Control, IDropTarget
     {
-      
-        public ContainedSlot Slot;
+        private readonly SlotContainer<ContainedSlot> _container;
+
+        /// <summary>
+        /// Gets current cell grid position
+        /// </summary>
+        public Vector2I InventoryPosition { get; private set; }
+
+        /// <summary>
+        /// Gets or sets current slot
+        /// </summary>
+        public ContainedSlot Slot
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Creates new inventory cell and links it with some container
+        /// </summary>
+        /// <param name="container"></param>
+        /// <param name="position"></param>
+        public InventoryCell(SlotContainer<ContainedSlot> container, Vector2I position)
+        {
+            _container = container;
+            InventoryPosition = position;
+        }
 
         public bool MouseHovering
         {

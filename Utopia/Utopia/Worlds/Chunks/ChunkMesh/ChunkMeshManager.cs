@@ -3,6 +3,7 @@ using Amib.Threading;
 using S33M3Engines.Threading;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
@@ -11,7 +12,6 @@ using Utopia.Worlds.Cubes;
 using Utopia.Entities;
 using System.Collections.Generic;
 using S33M3Engines.Struct.Vertex;
-using Utopia.Shared.Chunks.Entities;
 using SharpDX;
 using Utopia.Entities.Sprites;
 

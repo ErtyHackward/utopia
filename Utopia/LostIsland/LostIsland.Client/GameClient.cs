@@ -5,9 +5,9 @@ using Ninject;
 using S33M3Engines.D3D;
 using System.Windows.Forms;
 using Utopia.Settings;
-using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Config;
 using LostIsland.Client.GUI.Forms;
+using Utopia.Shared.Entities;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace LostIsland.Client

@@ -1,8 +1,8 @@
 ﻿using System;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
-using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Config;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
 

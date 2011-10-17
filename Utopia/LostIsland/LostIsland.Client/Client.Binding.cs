@@ -4,6 +4,9 @@ using Utopia.Editor;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.GUI.D3D.Map;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
 using S33M3Engines.WorldFocus;
@@ -28,8 +31,6 @@ using Utopia.Entities;
 using Utopia.Worlds.Storage;
 using Utopia.Action;
 using Utopia.Network;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Interfaces;
 using Utopia.InputManager;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Renderer;
@@ -116,7 +117,7 @@ namespace LostIsland.Client
             iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
             iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
             iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope();
-            iocContainer.Bind<IWorldProcessor>().To<ErtyHackwardPlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
+            iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
             //iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
             //=============================================================
 

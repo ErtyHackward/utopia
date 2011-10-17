@@ -32,26 +32,28 @@ namespace Utopia.GUI.D3D.Inventory
         {
             RectangleF controlBounds = control.GetAbsoluteBounds();
 
-                if (control.MouseHovering)
-                {
-                    graphics.DrawElement("button.highlighted", controlBounds);
-                }
-                else
-                {
-                    graphics.DrawElement("button.normal", controlBounds);
-                }
-
-                //String s = control.Slot.GridPosition.X + "," + control.Slot.GridPosition.Y;
-                String s = control.Slot.ItemsCount.ToString();
-                float h = controlBounds.Height/4;
-                float w = controlBounds.Width/4;
-                RectangleF textBound = new RectangleF(controlBounds.X+w*3,controlBounds.Y+h*3-2,w,h);
-                graphics.DrawString("button.normal", textBound, s);
-            /*
-            if (control.Slot != null)
+            if (control.MouseHovering)
             {
-                graphics.DrawCustomTexture(control.Slot.Item.Icon, controlBounds);
-            }*/
+                graphics.DrawElement("button.highlighted", controlBounds);
+            }
+            else
+            {
+                graphics.DrawElement("button.normal", controlBounds);
+            }
+
+            var s = control.Slot.ItemsCount.ToString();
+            var textSize = graphics.MeasureString("button.normal", controlBounds, s);
+            
+            var h = textSize.Height;
+            var w = textSize.Width;
+
+            var textPosition = new RectangleF(controlBounds.X + controlBounds.Width - textSize.Width - 3,
+                                              controlBounds.Y + controlBounds.Height - textSize.Height - 3,
+                                              w,
+                                              h);
+
+            graphics.DrawString("button.normal", textPosition, s);
+
 
         }
 

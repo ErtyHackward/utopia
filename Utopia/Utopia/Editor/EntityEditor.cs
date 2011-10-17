@@ -22,9 +22,11 @@ using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.InputManager;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Concrete;
-using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
@@ -64,7 +66,7 @@ namespace Utopia.Editor
        
         public ShaderResourceView Texture; //it's a field for being able to dispose the resource
 
-        private Tool _leftToolbeforeEnteringEditor;
+        private ITool _leftToolbeforeEnteringEditor;
 
         public Vector3I? NewCubePlace;
         private Vector3I? _prevNewCubePlace;
@@ -125,7 +127,7 @@ namespace Utopia.Editor
             _chunkEntityImpactManager = chunkEntityImpactManager;
 
             // inactive by default, use F12 UI to enable :)
-            _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
+            _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool.Tool;
             Visible = false;
             Enabled = false;
 
@@ -316,8 +318,8 @@ namespace Utopia.Editor
                 _playerMgr.Player.MoveSpeed = 0.25f;
                 _hudComponent.Enabled = false;
               
-                _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
-                _player.Equipment.LeftTool = null;
+                _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool.Tool;
+                //_player.Equipment.LeftTool = null;
                 foreach (var control in _ui.Children)
                 {
                     if (!_screen.Desktop.Children.Contains(control))
@@ -331,7 +333,7 @@ namespace Utopia.Editor
                 _playerMgr.HasMouseFocus = true;
                 _playerMgr.MousepickDisabled = false;
                 _playerMgr.Player.MoveSpeed = PlayerCharacter.DefaultMoveSpeed;
-                _player.Equipment.LeftTool = _leftToolbeforeEnteringEditor;
+                //_player.Equipment.LeftTool = _leftToolbeforeEnteringEditor;
                 if (_ui != null)
                 {
                     foreach (var control in _ui.Children)

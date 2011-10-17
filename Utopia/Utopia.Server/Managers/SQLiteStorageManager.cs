@@ -2,8 +2,8 @@
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 

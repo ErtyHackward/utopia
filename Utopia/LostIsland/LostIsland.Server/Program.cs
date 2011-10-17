@@ -6,8 +6,8 @@ using Ninject;
 using Utopia.Server;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
-using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Config;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
@@ -46,7 +46,7 @@ namespace LostIsland.Server
             //_iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
 
             _iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope().Named("ErtyHackwardWorld");
-            _iocContainer.Bind<IWorldProcessor>().To<ErtyHackwardPlanWorldProcessor>().InSingletonScope().Named("ErtyHackwardPlanWorldProcessor");
+            _iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().InSingletonScope().Named("ErtyHackwardPlanWorldProcessor");
             
             _iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
             _iocContainer.Bind<IUsersStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
@@ -75,7 +75,7 @@ namespace LostIsland.Server
                 _iocContainer.Get<IEntityStorage>()
                 );
 
-            var processor = _iocContainer.Get<IWorldProcessor>() as ErtyHackwardPlanWorldProcessor;
+            var processor = _iocContainer.Get<IWorldProcessor>() as PlanWorldProcessor;
 
             _server.LoginManager.GenerationParameters = processor.WorldPlan.Parameters;
 

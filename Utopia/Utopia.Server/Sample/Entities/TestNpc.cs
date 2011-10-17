@@ -5,8 +5,8 @@ using SharpDX;
 using Utopia.Server.AStar;
 using Utopia.Server.Managers;
 using Utopia.Server.Structs;
-using Utopia.Shared.Chunks.Entities.Concrete;
-using Utopia.Shared.Chunks.Entities.Interfaces;
+using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Server.Entities

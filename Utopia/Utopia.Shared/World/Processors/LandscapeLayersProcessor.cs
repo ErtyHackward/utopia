@@ -1,10 +1,10 @@
 ﻿using Utopia.Shared.Chunks;
+using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Engines.Shared.Math.Noises;
 using System;
 using Utopia.Shared.Cubes;
-using Utopia.Shared.Chunks.Entities.Concrete.Collectible;
 using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.World.Processors
