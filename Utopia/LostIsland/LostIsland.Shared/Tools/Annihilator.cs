@@ -1,10 +1,4 @@
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Chunks.Entities.Interfaces;
-using Utopia.Shared.Cubes;
-using Utopia.Shared.Structs;
-using System;
 
 namespace LostIsland.Shared.Tools
 {
@@ -13,122 +7,21 @@ namespace LostIsland.Shared.Tools
     /// </summary>
     public class Annihilator : BlockRemover
     {
-        private readonly ILandscapeManager2D _landscapeManager;
-
         public override ushort ClassId
         {
             get { return LostIslandEntityClassId.Annihilator; }
         }
 
-        public override int MaxStackSize
+        public override string DisplayName
         {
-            get { return 1; }
+            get { return "Annihilator"; }
         }
 
-        public Annihilator(ILandscapeManager2D landscapeManager)
+        public Annihilator(ILandscapeManager2D landscapeManager) : base(landscapeManager)
         {
-            _landscapeManager = landscapeManager;
+            
         }
-
-        public override IToolImpact Use(bool runOnServer = false)
-        {
-            if (Parent.EntityState.IsPickingActive)
-            {
-                if (Parent.EntityState.IsEntityPicked)
-                {
-                    return EntityImpact();
-                }
-                else
-                {
-                    return BlockImpact();
-                }
-            }
-            else
-            {
-                var impact = new ToolImpact { Success = false };
-                impact.Message = "No target selected for use";
-                return impact;
-            }
-        }
-
-        public override void Rollback(Utopia.Shared.Chunks.Entities.Interfaces.IToolImpact impact)
-        {
-            throw new System.NotImplementedException();
-        }
-
-
-        private IToolImpact BlockImpact()
-        {
-            var impact = new ToolImpact { Success = false };
-            var cursor = _landscapeManager.GetCursor(Parent.EntityState.PickedBlockPosition);
-            byte cube = cursor.Read();
-            if (cube != CubeId.Air) 
-            {
-                //Check static entity impact of the Block removal.
-                //Get the chunk
-                var chunk = _landscapeManager.GetChunk(Parent.EntityState.PickedBlockPosition);
-
-                IBlockLinkedEntity entity;
-                Entity removedEntity;
-                for (int entityId = chunk.Entities.Data.Count-1; entityId >= 0; entityId--)
-                {
-                    entity = chunk.Entities.Data[entityId] as IBlockLinkedEntity;
-
-                    if (entity != null)
-                    {
-                        //If the linkedCube entity is removed, then remove the entity also.
-                        if (entity.LinkedCube == Parent.EntityState.PickedBlockPosition)
-                        {
-                            Console.WriteLine("Remove Entity from Collection");
-                            chunk.Entities.RemoveByArrayIndex(entityId, Parent.EntityId, out removedEntity);
-                            // Add entity on ground or in Inventory
-                            //TOTO Enity picking ??
-                        }
-                    }
-                }
-
-                //change the Block to AIR
-                cursor.Write(CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
-                impact.Success = true;
-
-                //If the Tool Owner is a player, then Add the resource removed into the inventory
-                var character = Parent as CharacterEntity;
-                if (character != null)
-                {
-                    var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
-                    adder.CubeId = cube;
-                    character.Inventory.PutItem(adder);
-                }
-                return impact;
-            }
-            impact.Message = "Cannot remove Air block !";
-            return impact;
-        }
-
-        private IToolImpact EntityImpact()
-        {
-            var impact = new ToolImpact { Success = false };
-            //var cursor = _landscapeManager.GetCursor(Parent.EntityState.PickedBlockPosition);
-            //byte cube = cursor.Read();
-            //if (cube != 0)
-            //{
-            //    cursor.Write(0);
-            //    impact.Success = true;
-
-            //    var character = Parent as CharacterEntity;
-            //    if (character != null)
-            //    {
-            //        var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
-            //        adder.CubeId = cube;
-
-            //        character.Inventory.PutItem(adder);
-            //    }
-
-            //    return impact;
-            //}
-            return impact;
-        }
-
+        
     }
 
 }

@@ -1,6 +1,6 @@
 ﻿using System;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Concrete;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Editor
 {

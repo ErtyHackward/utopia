@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using S33M3Engines.Shared.Math;
 using SharpDX;
-using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.Chunks
@@ -435,7 +436,7 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
-        public bool isPickable(ref Vector3 position, Tool withTool, out TerraCube cube)
+        public bool isPickable(ref Vector3 position, ITool withTool, out TerraCube cube)
         {
             int cubeIndex;
 
@@ -494,9 +495,10 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
-        public bool IsSolidToPlayer(ref BoundingBox bb, out TerraCubeWithPosition collidingcube)
+        public bool IsSolidToPlayer(ref BoundingBox bb, bool withCubeOffSetAccount, out TerraCubeWithPosition collidingcube)
         {
             int index;
+            CubeProfile profile;
 
             //Get ground surface 4 blocks below the Bounding box
             int Xmin = MathHelper.Fastfloor(bb.Minimum.X);
@@ -514,11 +516,24 @@ namespace Utopia.Shared.Chunks
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
-                            if (CubeProfile.CubesProfile[Cubes[index].Id].IsSolidToEntity)
+                            profile = CubeProfile.CubesProfile[Cubes[index].Id];
+                            if (profile.IsSolidToEntity)
                             {
                                 collidingcube.Cube = Cubes[index];
                                 collidingcube.Position = new Vector3I(x, y, z);
-                                return true;
+
+                                //Block with Offset case
+                                if (withCubeOffSetAccount && profile.YBlockOffset > 0.0f)
+                                {
+                                    if (bb.Minimum.Y < y)
+                                    {
+                                        return true;
+                                    }
+                                }
+                                else
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }

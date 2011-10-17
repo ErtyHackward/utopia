@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Shared.Chunks.Entities.Inventory;
 
 
 namespace Utopia.GUI.D3D.Inventory

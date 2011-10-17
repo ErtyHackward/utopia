@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
-using Utopia.Shared.Chunks.Entities;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 

@@ -26,6 +26,8 @@ using Utopia.Worlds.Weather;
 using Utopia.Effects.Shared;
 using SharpDX;
 using S33M3Physics.Verlet;
+using Utopia.Shared.Structs.Landscape;
+using Utopia.Worlds.Cubes;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -139,9 +141,9 @@ namespace Utopia.Worlds.Chunks
             //Subscribe to chunk modifications
             _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
 
-            DrawOrders.UpdateIndex(SOLID_DRAW, 10); //not needed but its for the sample (This index is already created by default)
-            DrawOrders.AddIndex(ENTITIES_DRAW, 20); //not needed but its for the sample (This index is already created by default)
-            DrawOrders.AddIndex(TRANSPARENT_DRAW, 1050); //not needed but its for the sample (This index is already created by default)
+            DrawOrders.UpdateIndex(SOLID_DRAW, 10);
+            DrawOrders.AddIndex(ENTITIES_DRAW, 20); 
+            DrawOrders.AddIndex(TRANSPARENT_DRAW, 1050); 
         }
 
         #region Public methods
@@ -317,6 +319,7 @@ namespace Utopia.Worlds.Chunks
         {
             BoundingBox _boundingBox2Evaluate;
             Vector3D newPositionWithColliding = previousPosition;
+            TerraCubeWithPosition _collidingCube;
 
             if (newPosition2Evaluate == previousPosition) return;
 
@@ -325,38 +328,68 @@ namespace Utopia.Worlds.Chunks
             newPositionWithColliding.X = newPosition2Evaluate.X;
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate))
-                newPositionWithColliding.X = previousPosition.X;
-
-            //Y Testing ======================================================
-            newPositionWithColliding.Y = newPosition2Evaluate.Y;
-
-
-            //My Position raise  ==> If I were on the ground, I'm no more
-            if (previousPosition.Y < newPositionWithColliding.Y && _physicSimu.OnGround) _physicSimu.OnGround = false;
-
-            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate))
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
-                //If Jummping
-                if (previousPosition.Y < newPositionWithColliding.Y)
+                if ((_playerManager.PlayerOnOffsettedBlock && _collidingCube.Position.Y == MathHelper.Fastfloor(newPosition2Evaluate.Y)))
                 {
-                    newPositionWithColliding.Y = previousPosition.Y;
+                    newPositionWithColliding.Y = newPosition2Evaluate.Y + 0.6;
+                    _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+                    if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
+                    {
+                        newPositionWithColliding.X = previousPosition.X;
+                    }
                 }
-                else //Falling
+                else
                 {
-                    newPositionWithColliding.Y = _playerManager.GroundBelowEntity;
-                    previousPosition.Y = _playerManager.GroundBelowEntity; // ==> This way I stop the Y move !
-                    _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
+                    newPositionWithColliding.X = previousPosition.X;
                 }
             }
 
             //Z Testing =========================================================
             newPositionWithColliding.Z = newPosition2Evaluate.Z;
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate))
-                newPositionWithColliding.Z = previousPosition.Z;
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
+            {
+                if ((_playerManager.PlayerOnOffsettedBlock && _collidingCube.Position.Y == MathHelper.Fastfloor(newPosition2Evaluate.Y)))
+                {
+                    newPositionWithColliding.Y = newPosition2Evaluate.Y + 0.6;
+                    _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+                    if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
+                    {
+                        newPositionWithColliding.Z = previousPosition.Z;
+                    }
+                }
+                else
+                {
+                    newPositionWithColliding.Z = previousPosition.Z;
+                }
+            }
+
+            //Y Testing ======================================================
+            newPositionWithColliding.Y = newPosition2Evaluate.Y;
+
+            //My Position raise  ==> If I were on the ground, I'm no more
+            if (previousPosition.Y < newPositionWithColliding.Y && _physicSimu.OnGround) _physicSimu.OnGround = false;
+
+            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, false, out _collidingCube))
+            {
+                //If Jummping
+                if (previousPosition.Y < newPositionWithColliding.Y)
+                {
+                    if(VisualCubeProfile.CubesProfile[_collidingCube.Cube.Id].YBlockOffset == 0)
+                    newPositionWithColliding.Y = previousPosition.Y;
+                }
+                else //Falling
+                {
+                    //The "ground level" will be the next ground below entity, if entity BB is inside a block, the ground level is the first above entity.
+                    newPositionWithColliding.Y = _playerManager.GroundBelowEntity;
+                    // ==> This way I stop the Y move ! If not done, its like applying "quickly" a force to the UP ! <= While I jsut want to follow the Ground.
+                    previousPosition.Y = _playerManager.GroundBelowEntity;
+                    _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
+                }
+            }
 
             newPosition2Evaluate = newPositionWithColliding;
         }

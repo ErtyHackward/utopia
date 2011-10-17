@@ -6,9 +6,9 @@ using S33M3Engines.Shared.Sprites;
 using S33M3Engines.Textures;
 using SharpDX;
 using SharpDX.Direct3D11;
-using Utopia.Shared.Chunks.Entities.Inventory;
-using Utopia.Shared.Chunks.Entities.Inventory.Tools;
 using Utopia.Settings;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Entities
 {

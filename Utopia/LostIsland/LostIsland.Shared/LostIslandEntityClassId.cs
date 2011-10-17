@@ -1,4 +1,4 @@
-﻿using Utopia.Shared.Chunks.Entities;
+﻿using Utopia.Shared.Entities;
 
 namespace LostIsland.Shared
 {
@@ -7,7 +7,5 @@ namespace LostIsland.Shared
         public const ushort CubeResource = 1;
         public const ushort Annihilator = 2;
         public const ushort Shovel = 3;
-        public const ushort Pickaxe = 4;
-        public const ushort Survey = 5;
     }
 }

@@ -24,7 +24,7 @@ using Nuclex.UserInterface.Visuals.Flat;
 using Nuclex.UserInterface;
 using S33M3Engines.Shared.Sprites;
 using Utopia.Entities;
-using Utopia.Shared.Chunks.Entities.Inventory;
+using Utopia.Shared.Entities.Interfaces;
 
 
 namespace Utopia.GUI.D3D.Inventory

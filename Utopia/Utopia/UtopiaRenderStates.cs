@@ -5,6 +5,8 @@ using System.Text;
 using S33M3Engines;
 using Utopia.Network;
 using S33M3Engines.WorldFocus;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.World;
 using S33M3Engines.GameStates;
 using S33M3Engines.Cameras;
@@ -35,7 +37,6 @@ using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Managers;
-using Utopia.Shared.Chunks.Entities;
 using Utopia.Entities.Voxel;
 using Utopia.Effects.Shared;
 

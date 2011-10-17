@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Shared.Chunks.Entities;
 using S33M3Engines.Struct.Vertex;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Structs;
 using SharpDX;
-using Utopia.Shared.Chunks.Entities.Concrete.Collectible;
 using S33M3Engines.Shared.Math;
 
 namespace Utopia.Entities.Sprites

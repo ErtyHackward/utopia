@@ -41,6 +41,7 @@ namespace Utopia.Shared.Structs.Landscape
                 profile.IsFlooding = cubeProfil.ItemArray[dt.Columns["IsFlooding"].Ordinal].ToString() == "true";
                 profile.IsFloodPropagation = cubeProfil.ItemArray[dt.Columns["IsFloodPropagation"].Ordinal].ToString() == "true";
                 profile.FloodingPropagationPower = cubeProfil.ItemArray[dt.Columns["FloodingPropagationPower"].Ordinal].ToString() != "" ? int.Parse(cubeProfil.ItemArray[dt.Columns["FloodingPropagationPower"].Ordinal].ToString()) : 0;
+                profile.YBlockOffset = cubeProfil.ItemArray[dt.Columns["YBlockOffset"].Ordinal].ToString() != "" ? byte.Parse(cubeProfil.ItemArray[dt.Columns["YBlockOffset"].Ordinal].ToString())/255.0f : 0.0f;
 
                 if (cubeProfil.ItemArray[dt.Columns["IsEmissiveColorLightSource"].Ordinal].ToString() == "true")
                 {
@@ -63,6 +64,7 @@ namespace Utopia.Shared.Structs.Landscape
         public bool IsEmissiveColorLightSource;
         public bool IsFlooding;
         public int FloodingPropagationPower;
+        public float YBlockOffset;
         public Color EmissiveColor;
     }
 }

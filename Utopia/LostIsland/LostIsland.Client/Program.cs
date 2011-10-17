@@ -6,7 +6,6 @@ using LostIsland.Shared;
 using LostIsland.Client;
 using Utopia;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Chunks.Entities;
 
 namespace LostIsland.Client
 {

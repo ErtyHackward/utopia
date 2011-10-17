@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using Nuclex.UserInterface.Visuals.Flat;
 using Nuclex.UserInterface;
 using S33M3Engines.Shared.Sprites;
-using Utopia.Shared.Chunks.Entities.Inventory;
 
 namespace Utopia.GUI.D3D.Inventory
 {
@@ -42,7 +41,7 @@ namespace Utopia.GUI.D3D.Inventory
                 SpriteTexture tex = control.IconFactory.Lookup(control.Item);
                 if (tex != null)
                 {
-                    const int innerBorder = 16;
+                    const int innerBorder = 3;
                     RectangleF texBounds = new RectangleF(controlBounds.X + innerBorder, controlBounds.Y + innerBorder, controlBounds.Width - innerBorder * 2, controlBounds.Height - innerBorder * 2);
                      graphics.DrawCustomTexture(tex, texBounds, tex.Index);
                 }

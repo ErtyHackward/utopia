@@ -20,14 +20,16 @@ using Utopia.GUI.D3D.Inventory;
 using Utopia.InputManager;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Chunks.Entities;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
 using Ninject;
 using Utopia.Settings;
 using Utopia.Worlds.Chunks;
+using Utopia.Worlds.Cubes;
 
 namespace Utopia.Entities.Managers
 {
@@ -121,6 +123,7 @@ namespace Utopia.Entities.Managers
 
         public bool HasMouseFocus { get; set; }
 
+        public bool PlayerOnOffsettedBlock { get; set; }
         public float GroundBelowEntity
         {
             get { return _groundBelowEntity; }
@@ -210,7 +213,7 @@ namespace Utopia.Entities.Managers
                 {
                     Player.LeftToolUse();//sends the client server event that does tool.use on server
                     _itemMessageTranslator.Enabled = false;
-                    Player.Equipment.LeftTool.Use();//client invocation to keep the client inventory in synch
+                    Player.Equipment.LeftTool.Tool.Use(Player);//client invocation to keep the client inventory in synch
                     _itemMessageTranslator.Enabled = true;
                 }
             }
@@ -227,7 +230,7 @@ namespace Utopia.Entities.Managers
                     {
                         Player.RightToolUse();//sends the client server event that does tool.use on server
                         _itemMessageTranslator.Enabled = false;
-                        Player.Equipment.RightTool.Use();//client invocation to keep the client inventory in synch
+                        Player.Equipment.RightTool.Tool.Use(Player);//client invocation to keep the client inventory in synch
                         _itemMessageTranslator.Enabled = true;
                     }
                 }
@@ -284,7 +287,7 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (Player._entityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref Player._entityState.PickedBlockPosition);
+                    _pickingRenderer.SetPickedBlock(ref Player._entityState.PickedBlockPosition, VisualCubeProfile.CubesProfile[PickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {
@@ -400,9 +403,13 @@ namespace Utopia.Entities.Managers
             TerraCubeWithPosition groundCube;
             Vector3I GroundDirection = new Vector3I(0, -1, 0);
             Vector3D newWorldPosition;
+            float BlockOffset;
 
             _cubesHolder.GetNextSolidBlockToPlayer(ref VisualEntity.WorldBBox, ref GroundDirection, out groundCube);
-            _groundBelowEntity = groundCube.Position.Y + 1;
+            //Half cube below me ??
+            BlockOffset = VisualCubeProfile.CubesProfile[groundCube.Cube.Id].YBlockOffset;
+            _groundBelowEntity = groundCube.Position.Y + 1 - BlockOffset;
+            PlayerOnOffsettedBlock = BlockOffset != 0;
 
             _physicSimu.Simulate(ref TimeSpend, out newWorldPosition);
             _worldPosition.Value = newWorldPosition;
@@ -675,7 +682,7 @@ namespace Utopia.Entities.Managers
         public override void LoadContent()
         {
              _backgroundTex = new SpriteTexture(_d3DEngine.Device, ClientSettings.TexturePack + @"charactersheet.png", new Vector2(0, 0));
-             _inventoryUi = new InventoryWindow(_backgroundTex, Player,_iconFactory);
+             _inventoryUi = new InventoryWindow(_backgroundTex, Player.Inventory, _iconFactory);
         }
 
         public override void Update(ref GameTime timeSpent)

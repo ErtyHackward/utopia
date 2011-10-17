@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Nuclex.UserInterface.Controls;
+using Nuclex.UserInterface.Controls.Desktop;
 using SharpDX.Direct3D11;
 using S33M3Engines.Shared.Sprites;
 

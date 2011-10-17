@@ -3,10 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using SharpDX;
 using Utopia.Server.Events;
-using Utopia.Shared.Chunks.Entities;
-using Utopia.Shared.Chunks.Entities.Events;
-using Utopia.Shared.Chunks.Entities.Inventory;
 using Utopia.Shared.ClassExt;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Server.Structs

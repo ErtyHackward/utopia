@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Chunks.Entities.Interfaces;
 using S33M3Engines.Shared.Math;
-using Utopia.Shared.Chunks.Entities;
+
 namespace Utopia.Shared.World
 {
     public class VisualWorldParameters
