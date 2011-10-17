@@ -117,7 +117,7 @@ namespace LostIsland.Client
             iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
             iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
             iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope();
-            iocContainer.Bind<IWorldProcessor>().To<ErtyHackwardPlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
+            iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
             //iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
             //=============================================================
 

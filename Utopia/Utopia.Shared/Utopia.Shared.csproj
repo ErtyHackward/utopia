@@ -227,7 +227,7 @@
     <Compile Include="World\PlanGenerator\RiverBranch.cs" />
     <Compile Include="World\PlanGenerator\VectorExtensions.cs" />
     <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
-    <Compile Include="World\Processors\ErtyHackwardPlanWorldProcessor.cs" />
+    <Compile Include="World\Processors\PlanWorldProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
     <Compile Include="World\WorldConfigs\ErtyHackwardWorldConfig.cs" />
     <Compile Include="World\WorldConfigs\s33m3WorldConfig.cs" />
