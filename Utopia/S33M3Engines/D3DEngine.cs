@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
+using S33M3Engines.Windows;
 using SharpDX.Windows;
 using S33M3Engines.Struct;
 using System.Drawing;
@@ -406,6 +408,27 @@ namespace S33M3Engines
                 System.Windows.Forms.Cursor.Hide();
                 _mouseHideCount--;
             }
+        }
+
+        private IntPtr pointeurCurseur;
+
+        public Cursor CreateCursor(Bitmap bmp, int xHotSpot, int yHotSpot)
+        {
+            if (pointeurCurseur != IntPtr.Zero) UnsafeNativeMethods.DestroyIcon(pointeurCurseur);
+
+            IntPtr ptr = bmp.GetHicon();
+            IconInfo tmp = new IconInfo();
+            UnsafeNativeMethods.GetIconInfo(ptr, ref tmp);
+            tmp.xHotspot = xHotSpot;
+            tmp.yHotspot = yHotSpot;
+            tmp.fIcon = false;
+            pointeurCurseur = UnsafeNativeMethods.CreateIconIndirect(ref tmp);
+
+            if (tmp.hbmColor != IntPtr.Zero) UnsafeNativeMethods.DeleteObject(tmp.hbmColor);
+            if (tmp.hbmMask != IntPtr.Zero) UnsafeNativeMethods.DeleteObject(tmp.hbmMask);
+            if (ptr != IntPtr.Zero) UnsafeNativeMethods.DestroyIcon(ptr);
+
+            return new Cursor(pointeurCurseur);
         }
 
         #endregion

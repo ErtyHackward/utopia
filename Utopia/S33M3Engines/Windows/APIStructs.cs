@@ -28,4 +28,13 @@ namespace S33M3Engines.Windows
             return new POINT(p.X, p.Y);
         }
     }
+
+    public struct IconInfo
+    {
+        public bool fIcon;
+        public int xHotspot;
+        public int yHotspot;
+        public IntPtr hbmMask;
+        public IntPtr hbmColor;
+    }
 }
