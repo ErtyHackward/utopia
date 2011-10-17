@@ -682,7 +682,7 @@ namespace Utopia.Entities.Managers
         public override void LoadContent()
         {
              _backgroundTex = new SpriteTexture(_d3DEngine.Device, ClientSettings.TexturePack + @"charactersheet.png", new Vector2(0, 0));
-             _inventoryUi = new InventoryWindow(_backgroundTex, Player,_iconFactory);
+             _inventoryUi = new InventoryWindow(_backgroundTex, Player.Inventory, _iconFactory);
         }
 
         public override void Update(ref GameTime timeSpent)

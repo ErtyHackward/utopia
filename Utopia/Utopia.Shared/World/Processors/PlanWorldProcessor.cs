@@ -15,7 +15,7 @@ using Utopia.Shared.World.PlanGenerator;
 
 namespace Utopia.Shared.World.Processors
 {
-    public class ErtyHackwardPlanWorldProcessor : IWorldProcessor
+    public class PlanWorldProcessor : IWorldProcessor
     {
         private readonly WorldParameters _worldParameters;
 
@@ -38,7 +38,7 @@ namespace Utopia.Shared.World.Processors
 
         public double Scale { get; set; }
 
-        public ErtyHackwardPlanWorldProcessor(WorldParameters worldParameters)
+        public PlanWorldProcessor(WorldParameters worldParameters)
         {
             _worldParameters = worldParameters;
             WorldPlan = new WorldPlan(new GenerationParameters

@@ -12,7 +12,7 @@ namespace Utopia.GUI.D3D.Inventory
 {
     public class DraggableItemControl : Control
     {
-        public static UniRectangle ReferenceBounds = new UniRectangle(0, 0, 64, 64);
+        public static UniRectangle ReferenceBounds = new UniRectangle(0, 0, 38, 38);
         private readonly SlotContainer<ContainedSlot> _inventory;
         public bool BeingDragged;
         protected UniRectangle PickupBounds;
