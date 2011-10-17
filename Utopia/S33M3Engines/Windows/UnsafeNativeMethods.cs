@@ -28,19 +28,33 @@ namespace S33M3Engines.Windows
         [DllImport("User32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern unsafe bool GetKeyboardState(byte* lpKeyState);
+
+        #region cursor
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetCursorPos(POINT* lpPoint);
         [DllImport("user32.dll")]
         public static extern bool ScreenToClient(IntPtr hWnd, POINT* lpPoint);
-        [DllImport("user32.dll")]
-        public static extern short GetAsyncKeyState(System.Windows.Forms.Keys vKey);
-        [DllImport("user32.dll")]
+         [DllImport("user32.dll")]
         public static extern bool ClientToScreen(IntPtr hWnd, POINT* lpPoint);
         [DllImport("user32.dll")]
         public static extern bool SetCursorPos(int X, int Y);
         [DllImport("user32.dll")]
         public static extern int ShowCursor(bool bShow);
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetIconInfo(IntPtr hIcon, ref IconInfo pIconInfo);
+        [DllImport("user32.dll")]
+        public static extern IntPtr CreateIconIndirect(ref IconInfo icon);
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr handle);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern bool DestroyIcon(IntPtr handle);
+        #endregion 
+
+        [DllImport("user32.dll")]
+        public static extern short GetAsyncKeyState(System.Windows.Forms.Keys vKey);
+   
         [DllImport("user32.dll")]
         public static extern bool GetKeyboardLayoutName(StringBuilder pwszKLID);
         [DllImport("user32.dll")]
