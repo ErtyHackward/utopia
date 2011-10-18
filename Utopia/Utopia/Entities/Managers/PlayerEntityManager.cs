@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using Nuclex.UserInterface;
+using System.Windows.Forms;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
@@ -31,6 +31,7 @@ using Ninject;
 using Utopia.Settings;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Cubes;
+using Screen = Nuclex.UserInterface.Screen;
 
 namespace Utopia.Entities.Managers
 {
@@ -94,6 +95,7 @@ namespace Utopia.Entities.Managers
         private readonly IconFactory _iconFactory;
         private readonly ItemMessageTranslator _itemMessageTranslator;
 
+        private Cursor _prevMouseCursor;
         /// <summary>
         /// The Player Voxel body
         /// </summary>
@@ -254,17 +256,12 @@ namespace Utopia.Entities.Managers
                  if (_screen.Desktop.Children.Contains(_inventoryUi))
                  {
                      _screen.Desktop.Children.Remove(_inventoryUi);
+                     _d3DEngine.GameWindow.Cursor = _prevMouseCursor;
                  }
                 else
                  {
-                     Bitmap bitmap = new Bitmap(140, 25);
-                     Graphics g = Graphics.FromImage(bitmap);
-                     using (Font f = new Font(FontFamily.GenericSansSerif, 10))
-                         g.DrawString("{X}", f, Brushes.Green, 0, 0);
-                     _d3DEngine.GameWindow.Cursor = _d3DEngine.CreateCursor(bitmap, 3, 3);
-                     bitmap.Dispose();
-                     
-
+                     _prevMouseCursor = _d3DEngine.AssignMouseCursor("(-X-)");// tie fighter ascii art
+                   
                      _inventoryUi.Refresh();
                      _screen.Desktop.Children.Add(_inventoryUi);
                  }

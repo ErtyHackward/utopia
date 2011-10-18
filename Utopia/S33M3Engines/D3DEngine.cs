@@ -410,11 +410,32 @@ namespace S33M3Engines
             }
         }
 
-        private IntPtr pointeurCurseur;
+        private IntPtr _cursorPtr;
 
-        public Cursor CreateCursor(Bitmap bmp, int xHotSpot, int yHotSpot)
+        public Cursor AssignMouseCursor(String text, Brush color = null)
         {
-            if (pointeurCurseur != IntPtr.Zero) UnsafeNativeMethods.DestroyIcon(pointeurCurseur);
+            if (color == null) color = Brushes.Red;
+
+            Bitmap bitmap = new Bitmap(140, 25);
+            Graphics g = Graphics.FromImage(bitmap);
+            using (Font f = new Font(FontFamily.GenericSansSerif, 10))
+                g.DrawString(text, f, color, 0, 0);
+            Cursor old = GameWindow.Cursor;
+            GameWindow.Cursor = BuildMouseCursor(bitmap, 3, 3);
+            bitmap.Dispose();
+            return old;
+        }
+
+        public Cursor AssignMouseCursor(Bitmap bmp, int xHotSpot, int yHotSpot)
+        {
+            Cursor old = GameWindow.Cursor;
+            GameWindow.Cursor = BuildMouseCursor(bmp, xHotSpot, xHotSpot);
+            return old;
+        }
+
+        private Cursor BuildMouseCursor(Bitmap bmp, int xHotSpot, int yHotSpot)
+        {
+            if (_cursorPtr != IntPtr.Zero) UnsafeNativeMethods.DestroyIcon(_cursorPtr);
 
             IntPtr ptr = bmp.GetHicon();
             IconInfo tmp = new IconInfo();
@@ -422,13 +443,13 @@ namespace S33M3Engines
             tmp.xHotspot = xHotSpot;
             tmp.yHotspot = yHotSpot;
             tmp.fIcon = false;
-            pointeurCurseur = UnsafeNativeMethods.CreateIconIndirect(ref tmp);
+            _cursorPtr = UnsafeNativeMethods.CreateIconIndirect(ref tmp);
 
             if (tmp.hbmColor != IntPtr.Zero) UnsafeNativeMethods.DeleteObject(tmp.hbmColor);
             if (tmp.hbmMask != IntPtr.Zero) UnsafeNativeMethods.DeleteObject(tmp.hbmMask);
             if (ptr != IntPtr.Zero) UnsafeNativeMethods.DestroyIcon(ptr);
 
-            return new Cursor(pointeurCurseur);
+            return new Cursor(_cursorPtr);
         }
 
         #endregion
