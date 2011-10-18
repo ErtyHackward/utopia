@@ -262,7 +262,6 @@ namespace Utopia.Entities.Managers
                  {
                      _prevMouseCursor = _d3DEngine.AssignMouseCursor("(-X-)");// tie fighter ascii art
                    
-                     _inventoryUi.Refresh();
                      _screen.Desktop.Children.Add(_inventoryUi);
                  }
             }
@@ -688,7 +687,7 @@ namespace Utopia.Entities.Managers
         public override void LoadContent()
         {
              _backgroundTex = new SpriteTexture(_d3DEngine.Device, ClientSettings.TexturePack + @"charactersheet.png", new Vector2(0, 0));
-             _inventoryUi = new InventoryWindow(_backgroundTex, Player.Inventory, _iconFactory);
+             _inventoryUi = new PlayerInventory(_backgroundTex, Player.Inventory, _iconFactory, new Point(280, 120));
         }
 
         public override void Update(ref GameTime timeSpent)

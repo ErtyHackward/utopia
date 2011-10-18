@@ -3,6 +3,7 @@ using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Input;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
+using Utopia.Entities;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 
@@ -14,6 +15,7 @@ namespace Utopia.GUI.D3D.Inventory
     public class InventoryCell : Control, IDropTarget
     {
         private readonly SlotContainer<ContainedSlot> _container;
+        private readonly IconFactory _iconFactory;
 
         /// <summary>
         /// Gets current cell grid position
@@ -33,10 +35,12 @@ namespace Utopia.GUI.D3D.Inventory
         /// Creates new inventory cell and links it with some container
         /// </summary>
         /// <param name="container"></param>
+        /// <param name="iconFactory"></param>
         /// <param name="position"></param>
-        public InventoryCell(SlotContainer<ContainedSlot> container, Vector2I position)
+        public InventoryCell(SlotContainer<ContainedSlot> container, IconFactory iconFactory, Vector2I position)
         {
             _container = container;
+            _iconFactory = iconFactory;
             InventoryPosition = position;
         }
 
