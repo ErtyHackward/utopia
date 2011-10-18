@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Nuclex.UserInterface;
 using S33M3Engines;
 using S33M3Engines.Cameras;
@@ -256,6 +257,14 @@ namespace Utopia.Entities.Managers
                  }
                 else
                  {
+                     Bitmap bitmap = new Bitmap(140, 25);
+                     Graphics g = Graphics.FromImage(bitmap);
+                     using (Font f = new Font(FontFamily.GenericSansSerif, 10))
+                         g.DrawString("{X}", f, Brushes.Green, 0, 0);
+                     _d3DEngine.GameWindow.Cursor = _d3DEngine.CreateCursor(bitmap, 3, 3);
+                     bitmap.Dispose();
+                     
+
                      _inventoryUi.Refresh();
                      _screen.Desktop.Children.Add(_inventoryUi);
                  }

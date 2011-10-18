@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Utopia.Shared.Structs;
 
@@ -11,6 +12,12 @@ namespace Utopia.Shared.Entities.Inventory
         public ContainedSlot()
         {
             ItemsCount = 1;
+        }
+
+        public ContainedSlot(Vector2I from, int quantity)
+        {
+            GridPosition = from;
+            ItemsCount = quantity;
         }
 
         /// <summary>

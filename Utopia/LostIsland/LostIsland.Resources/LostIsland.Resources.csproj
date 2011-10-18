@@ -80,6 +80,9 @@
     <None Include="TexturesPacks\Default\Gui\Crosshair.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="TexturesPacks\Default\Gui\Pointer.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TexturesPacks\Default\pickaxe-icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
