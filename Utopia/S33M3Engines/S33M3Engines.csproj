@@ -166,6 +166,7 @@
     <Compile Include="Textures\ArrayTexture.cs" />
     <Compile Include="Textures\ArrayTextureHelper.cs" />
     <Compile Include="Textures\DrawableTex2D.cs" />
+    <Compile Include="Textures\RenderedTexture2D.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="Timers\TimerManager.cs" />
     <Compile Include="TypeExtension\Queue.cs" />
