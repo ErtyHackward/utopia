@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 using Nuclex.UserInterface;
 using S33M3Engines;
 using S33M3Engines.D3D;
 using S33M3Engines.InputHandler;
+using S33M3Engines.InputHandler.KeyboardHelper;
 using S33M3Engines.Shared.Sprites;
 using SharpDX;
 using Utopia.Action;
@@ -13,6 +15,7 @@ using Utopia.Network;
 using Utopia.Settings;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
+using Screen = Nuclex.UserInterface.Screen;
 
 namespace Utopia.GUI.D3D.Inventory
 {
@@ -58,12 +61,14 @@ namespace Utopia.GUI.D3D.Inventory
             _inventoryUi.SlotClicked += InventoryUiSlotClicked;
             _dragControl = new InventoryCell(null, _iconFactory, new Vector2I()) 
             { 
-                Bounds = new UniRectangle(0, 0, InventoryWindow.CellSize, InventoryWindow.CellSize) 
+                Bounds = new UniRectangle(0, 0, InventoryWindow.CellSize, InventoryWindow.CellSize),
+                IsClickTransparent = true
             };
         }
 
         void InventoryUiSlotClicked(object sender, InventoryWindowEventArgs e)
         {
+            var keyboard = Keyboard.GetState();
             if (_dragControl.Slot == null)
             {
                 // taking item
@@ -72,8 +77,19 @@ namespace Utopia.GUI.D3D.Inventory
 
                 if (slot != null)
                 {
-                    if (e.Container.TakeSlot(slot) == null)
+                    var itemsCount = slot.ItemsCount;
+
+                    if (e.MouseState.RightButton == S33M3Engines.InputHandler.MouseHelper.ButtonState.Pressed)
+                        itemsCount = 1;
+
+                    if (keyboard.IsKeyDown(Keys.ShiftKey) && itemsCount > 1)
+                        itemsCount = slot.ItemsCount / 2;
+
+                    if (!e.Container.TakeItem(slot.GridPosition, itemsCount))
                         throw new InvalidOperationException();
+
+                    slot.ItemsCount = itemsCount;
+
                     BeginDrag(slot, e.Offset);
                 }
             }
@@ -89,7 +105,7 @@ namespace Utopia.GUI.D3D.Inventory
                     // exchange
                     _dragControl.Slot.GridPosition = e.SlotPosition;
                     ContainedSlot slotTaken;
-                    if (!e.Container.PutItemExchange(_dragControl.Slot, out slotTaken))
+                    if (!e.Container.PutItemExchange(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount, out slotTaken))
                         throw new InvalidOperationException();
                     UpdateDrag(slotTaken);
                 }
@@ -97,9 +113,24 @@ namespace Utopia.GUI.D3D.Inventory
                 {
                     // just put, gonna be okay, da da doo-doo-mmm
                     _dragControl.Slot.GridPosition = e.SlotPosition;
-                    if (!e.Container.PutItem(_dragControl.Slot))
+
+                    var itemsCount = _dragControl.Slot.ItemsCount;
+
+                    if (e.MouseState.RightButton == S33M3Engines.InputHandler.MouseHelper.ButtonState.Pressed)
+                    {
+                        if (keyboard.IsKeyDown(Keys.ShiftKey) && itemsCount > 1)
+                            itemsCount = itemsCount / 2;
+                        else
+                            itemsCount = 1;
+                    }
+
+                    if (!e.Container.PutItem(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, itemsCount))
                         throw new InvalidOperationException();
-                    EndDrag();
+
+                    _dragControl.Slot.ItemsCount -= itemsCount;
+                    if (_dragControl.Slot.ItemsCount == 0)
+                        EndDrag();
+                    else _dragControl.BringToFront();
                 }
 
             }
@@ -108,7 +139,7 @@ namespace Utopia.GUI.D3D.Inventory
         private void BeginDrag(ContainedSlot slot, Point offset)
         {
             _dragControl.Slot = slot;
-            _dragOffset = offset;
+            _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);  // offset;
             _screen.Desktop.Children.Add(_dragControl);
             _dragControl.BringToFront();
         }

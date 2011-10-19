@@ -203,14 +203,14 @@ namespace Utopia.Server.Structs
                 if ((itemSlot = playerCharacter.Inventory.Find(equipmentItem.Entity)) != null)
                 {
                     // take item from inventory
-                    playerCharacter.Inventory.TakeItem(itemSlot);
+                    playerCharacter.Inventory.TakeItem(itemSlot.GridPosition, itemSlot.ItemsCount);
 
                     var oldItem = playerCharacter.Equipment.WearItem((VoxelItem)equipmentItem.Entity, equipmentItem.Slot);
 
                     if (oldItem != null)
                     {
                         itemSlot.Item = oldItem;
-                        playerCharacter.Inventory.PutItem(itemSlot);
+                        playerCharacter.Inventory.PutItem(itemSlot.Item, itemSlot.GridPosition, itemSlot.ItemsCount);
                     }
 
                 }
@@ -246,13 +246,13 @@ namespace Utopia.Server.Structs
                                    GridPosition = itemTransferMessage.SourceContainerSlot,
                                    ItemsCount = itemTransferMessage.ItemsCount
                                };
-                // check if we allow transfer
-                slot = playerCharacter.Inventory.TakeSlot(slot);
 
-                if (slot != null)
+                var itemType = playerCharacter.Inventory.PeekSlot(slot.GridPosition);
+
+                // check if we allow transfer
+                if (playerCharacter.Inventory.TakeItem(slot.GridPosition, slot.ItemsCount))
                 {
-                    slot.GridPosition = itemTransferMessage.DestinationContainerSlot;
-                    if (playerCharacter.Inventory.PutItem(slot))
+                    if (playerCharacter.Inventory.PutItem(itemType.Item, itemTransferMessage.DestinationContainerSlot, slot.ItemsCount ))
                     {
                         // ok
                         return;
@@ -261,7 +261,7 @@ namespace Utopia.Server.Structs
                     {
                         // return back
                         slot.GridPosition = itemTransferMessage.SourceContainerSlot;
-                        playerCharacter.Inventory.PutItem(slot);
+                        playerCharacter.Inventory.PutItem(itemType.Item, slot.GridPosition, slot.ItemsCount);
                     }
                 }
 
@@ -296,19 +296,19 @@ namespace Utopia.Server.Structs
                     var chunk = _server.LandscapeManager.GetChunk(playerCharacter.Position);
 
                     var containedSlot = new ContainedSlot{ ItemsCount = itemTransferMessage.ItemsCount, GridPosition = itemTransferMessage.SourceContainerSlot };
-                    
-                    var slot = playerCharacter.Inventory.TakeSlot(containedSlot);
 
-                    if (slot != null)
+                    var itemType = playerCharacter.Inventory.PeekSlot(containedSlot.GridPosition);
+
+                    if (playerCharacter.Inventory.TakeItem(containedSlot.GridPosition, containedSlot.ItemsCount))
                     {
                         // check if we have correct entityId
-                        if (slot.Item.EntityId == itemTransferMessage.ItemEntityId)
+                        if (itemType.Item.EntityId == itemTransferMessage.ItemEntityId)
                         {
                             // repeat for entities count
                             for (int i = 0; i < itemTransferMessage.ItemsCount; i++)
                             {
                                 // throw it
-                                chunk.Entities.Add((Entity)slot.Item, playerCharacter.EntityId);    
+                                chunk.Entities.Add((Entity)itemType.Item, playerCharacter.EntityId);    
                             }
                             // ok
                             return;
@@ -316,7 +316,7 @@ namespace Utopia.Server.Structs
                         else
                         {
                             // return item to inventory
-                            playerCharacter.Inventory.PutItem(slot);
+                            playerCharacter.Inventory.PutItem(itemType.Item, containedSlot.GridPosition, containedSlot.ItemsCount);
                         }
 
 
