@@ -30,7 +30,7 @@ namespace S33M3Engines
         #region Private variables
         int _mouseHideCount = 0;
         bool _isResizing = false;
-        bool _unlockedMouse = false;
+        bool _mouseCapture = true;
         RenderForm _renderForm;
         SwapChain _swapChain;
         RenderTargetView _renderTarget;
@@ -44,6 +44,14 @@ namespace S33M3Engines
         ShaderFlags _shaderFlags = ShaderFlags.OptimizationLevel3;
 #endif
         #endregion
+
+        public event EventHandler<D3DEngineMouseCaptureChangedEventArgs> MouseCaptureChanged;
+
+        private void OnMouseCaptureChanged(D3DEngineMouseCaptureChangedEventArgs e)
+        {
+            var handler = MouseCaptureChanged;
+            if (handler != null) handler(this, e);
+        }
 
         #region Public properties
         public Device Device;
@@ -78,20 +86,28 @@ namespace S33M3Engines
             }
         }
 
-        public bool UnlockedMouse
+        /// <summary>
+        /// Gets or sets whether the mouse is captured by the engine
+        /// </summary>
+        public bool MouseCapture
         {
-            get { return _unlockedMouse; }
+            get { return _mouseCapture; }
             set
             {
-                if (value)
+                if (value != _mouseCapture)
                 {
-                    ShowMouseCursor();
+                    if (_mouseCapture)
+                    {
+                        ShowMouseCursor();
+                    }
+                    else
+                    {
+                        HideMouseCursor();
+                    }
+                    _mouseCapture = value;
+
+                    OnMouseCaptureChanged(new D3DEngineMouseCaptureChangedEventArgs { MouseCaptured = _mouseCapture });
                 }
-                else
-                {
-                    HideMouseCursor();
-                }
-                _unlockedMouse = value;
             }
         }
 
@@ -213,7 +229,7 @@ namespace S33M3Engines
         void GameWindow_GotFocus(object sender, EventArgs e)
         {
             HasFocus = true;
-            if (!UnlockedMouse) HideMouseCursor();
+            if (MouseCapture) HideMouseCursor();
         }
 
         void GameWindow_LostFocus(object sender, EventArgs e)
@@ -484,5 +500,10 @@ namespace S33M3Engines
         }
 
         #endregion
+    }
+
+    public class D3DEngineMouseCaptureChangedEventArgs : EventArgs
+    {
+        public bool MouseCaptured { get; set; }
     }
 }

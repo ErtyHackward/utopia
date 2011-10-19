@@ -168,7 +168,7 @@ namespace Utopia.Action
 
                 if (_mouseAction.WithCursorLocked != null)
                 {
-                    if (_mouseAction.WithCursorLocked == _engine.UnlockedMouse) continue;
+                    if (_mouseAction.WithCursorLocked != _engine.MouseCapture) continue;
                 }
 
                 switch (_mouseAction.TriggerType)

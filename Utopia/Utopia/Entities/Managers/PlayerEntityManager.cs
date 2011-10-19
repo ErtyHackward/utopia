@@ -252,7 +252,7 @@ namespace Utopia.Entities.Managers
         {
             bool newpicking;
 
-            if (MousepickDisabled || !_d3DEngine.UnlockedMouse)
+            if (MousepickDisabled || _d3DEngine.MouseCapture)
             {
                 Vector3D pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
                 newpicking = RefreshPicking(ref pickingPointInLine, ref _lookAt, 1);
@@ -513,7 +513,7 @@ namespace Utopia.Entities.Managers
         #region Head + Body Rotation management
         private void EntityRotationsOnEvents(EntityDisplacementModes mode)
         {
-            if (_d3DEngine.UnlockedMouse == false)
+            if (_d3DEngine.MouseCapture)
             {
                 Rotate(_inputsManager.MouseMoveDelta.X, _inputsManager.MouseMoveDelta.Y, 0.0f, mode);
             }

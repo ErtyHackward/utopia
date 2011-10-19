@@ -172,14 +172,14 @@ namespace Utopia.GUI.D3D.Inventory
                     _screen.Desktop.Children.Remove(_inventoryUi);
                     _itemMessageTranslator.Enabled = false;
                     _playerManager.HandleToolsUse = true;
-                    _engine.UnlockedMouse = false;                    
+                    _engine.MouseCapture = true;                    
                 }
                 else
                 {
                     _screen.Desktop.Children.Add(_inventoryUi);
                     _itemMessageTranslator.Enabled = true;
                     _playerManager.HandleToolsUse = false;
-                    _engine.UnlockedMouse = true;
+                    _engine.MouseCapture = false;
                 }
             }
         }

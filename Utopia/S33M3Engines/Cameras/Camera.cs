@@ -200,7 +200,7 @@ namespace S33M3Engines.Cameras
             Matrix.OrthoRH(Viewport.Width, Viewport.Height, NearPlane, FarPlane, out _projection2D);
 
             //Set Mouse position
-            Mouse.SetPosition((int) Viewport.Width/2, (int) Viewport.Height/2);
+            //Mouse.SetPosition((int) Viewport.Width/2, (int) Viewport.Height/2);
         }
 
         private void newCameraPluginDriver()

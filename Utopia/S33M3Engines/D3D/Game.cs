@@ -126,7 +126,7 @@ namespace S33M3Engines.D3D
                 Draw();
             });
 
-            _d3dEngine.UnlockedMouse = false;
+            _d3dEngine.MouseCapture = true;
 
             UnloadContent();
         }
