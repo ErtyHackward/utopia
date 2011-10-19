@@ -280,18 +280,22 @@ namespace Utopia.Shared.Entities.Inventory
 
             OnItemTaken(new EntityContainerEventArgs<T> { Slot = slot });
 
-            return slot;
+            return (T)slot.Clone();
         }
 
         /// <summary>
         /// Returns slot without taking it from the container
         /// </summary>
         /// <param name="pos"></param>
-        /// <returns></returns>
+        /// <returns>slot object or null</returns>
         public T PeekSlot(Vector2I pos)
         {
             ValidatePosition(pos);
-            return _items[pos.X, pos.Y];
+
+            var slot = _items[pos.X, pos.Y];
+            if(slot != null)
+                return (T)slot.Clone();
+            return null;
         }
 
         /// <summary>
@@ -382,60 +386,6 @@ namespace Utopia.Shared.Entities.Inventory
                 }
             }
             return null;
-        }
-
-        /// <summary>
-        /// Drop 'from' on 'to' . Switches 'from' and 'to' when items are different, adds to the to stacks when items are stackable 
-        /// //TODO check performance when moving stacks of items. maybe replace by a proper switch slots message
-        /// </summary>
-        /// <param name="from">Source slot</param>
-        /// <param name="to">Destination slot</param>
-        public void DropOn(ref T from, T to)
-        {
-            IItem itemFrom = from.Item;
-            IItem itemTo = to.Item;
-            
-            if (itemTo==null)
-            {
-                to.Item = from.Item;
-                while (TakeItem(from)){
-                    PutItem(to);    //TODO handle case when stack is full 
-                }
-                from.Item = null;
-            }
-            else if (itemTo.MaxStackSize>1 && itemFrom.ClassId==itemTo.ClassId )
-            {
-                //de-stack on from, stack on to 
-                TakeItem(from);
-                PutItem(to);//TODO handle case when stack is full 
-            } 
-            else
-            {
-                //switch grid positions
-                int amountInDest = 0;
-                
-                //empty the destination 
-                while (TakeItem(to))
-                {
-                    amountInDest++;
-                }
-                //at this point, to.Item is null 
-           
-                //fill the destination
-                while (TakeItem(from))
-                {
-                    to.Item = itemFrom;
-                    PutItem(to);
-                }
-                
-                //fill the source with old destination content
-                for (int i=0;i<amountInDest;i++)
-                {
-                    from.Item = itemTo;
-                    PutItem(from);
-                }
-            }
-
         }
     }
 }

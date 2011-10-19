@@ -1,4 +1,5 @@
 ﻿using LostIslandHD.Client.Properties;
+using Utopia.GUI.D3D.Inventory;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.World;
@@ -106,6 +107,7 @@ namespace LostIsland.Client
                 iconFactory = iocContainer.Get<IconFactory>(),
                 fps = iocContainer.Get<FPS>(),
                 gameClock = iocContainer.Get<IClock>(),
+                inventoryComponent = iocContainer.Get<InventoryComponent>(),
                 chatComponent = iocContainer.Get<ChatComponent>(),
                 mapComponent = iocContainer.Get<MapComponent>(new ConstructorArgument("plan",plan)),
                 hud = iocContainer.Get<Hud>(),

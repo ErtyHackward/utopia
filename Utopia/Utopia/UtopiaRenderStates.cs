@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3Engines;
+using Utopia.GUI.D3D.Inventory;
 using Utopia.Network;
 using S33M3Engines.WorldFocus;
 using Utopia.Shared.Entities;
@@ -62,6 +63,7 @@ namespace Utopia
         public IconFactory iconFactory;
         public FPS fps;
         public IClock gameClock;
+        public InventoryComponent inventoryComponent;
         public ChatComponent chatComponent;
         public MapComponent mapComponent;
         public Hud hud;

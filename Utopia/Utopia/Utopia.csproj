@@ -140,14 +140,12 @@
     <Compile Include="GUI\ChatComponent.cs" />
     <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
     <Compile Include="GUI\D3D\Hud.cs" />
-    <Compile Include="GUI\D3D\Inventory\DragControl.cs" />
+    <Compile Include="GUI\D3D\Inventory\InventoryComponent.cs" />
     <Compile Include="GUI\D3D\Inventory\PlayerInventory.cs" />
     <Compile Include="GUI\D3D\Inventory\ToolbarButtonControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControlRenderer.cs" />
     <Compile Include="GUI\D3D\Inventory\ContainerControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ContainerRenderer.cs" />
-    <Compile Include="GUI\D3D\Inventory\DraggableItemControl.cs" />
-    <Compile Include="GUI\D3D\Inventory\DraggableItemRenderer.cs" />
     <Compile Include="GUI\D3D\Inventory\IDropTarget.cs" />
     <Compile Include="GUI\D3D\Inventory\InventoryCell.cs" />
     <Compile Include="GUI\D3D\Inventory\InventoryCellRenderer.cs" />

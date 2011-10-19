@@ -2,7 +2,6 @@
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Input;
 using S33M3Engines.InputHandler;
-using S33M3Engines.InputHandler.MouseHelper;
 using Utopia.Entities;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
@@ -10,12 +9,13 @@ using Utopia.Shared.Structs;
 namespace Utopia.GUI.D3D.Inventory
 {
     /// <summary>
-    /// Represents inventory cell
+    /// Represents inventory cell.
     /// </summary>
     public class InventoryCell : Control, IDropTarget
     {
         private readonly SlotContainer<ContainedSlot> _container;
         private readonly IconFactory _iconFactory;
+        private ContainedSlot _slot;
 
         /// <summary>
         /// Gets current cell grid position
@@ -23,12 +23,33 @@ namespace Utopia.GUI.D3D.Inventory
         public Vector2I InventoryPosition { get; private set; }
 
         /// <summary>
-        /// Gets or sets current slot
+        /// Gets current slot
         /// </summary>
         public ContainedSlot Slot
         {
-            get;
-            set;
+            get { return _slot ?? (_container != null ? _container.PeekSlot(InventoryPosition) : null); }
+            set { _slot = value; }
+        }
+
+        /// <summary>
+        /// Whether to draw the cell background
+        /// </summary>
+        public bool DrawCellBackground { get; set; }
+
+        /// <summary>
+        /// Gets icon factory used by cell to draw items icons
+        /// </summary>
+        public IconFactory IconFactory
+        {
+            get { return _iconFactory; }
+        }
+
+        public event EventHandler<MouseDownEventArgs> MouseDown;
+
+        private void OnMouseDown(MouseDownEventArgs e)
+        {
+            var handler = MouseDown;
+            if (handler != null) handler(this, e);
         }
 
         /// <summary>
@@ -42,46 +63,27 @@ namespace Utopia.GUI.D3D.Inventory
             _container = container;
             _iconFactory = iconFactory;
             InventoryPosition = position;
+            DrawCellBackground = true;
         }
 
         public bool MouseHovering
         {
             get
             {
-                MouseState ms = Mouse.GetState();
-                int x = ms.X;
-                int y = ms.Y;
-                return GetAbsoluteBounds().Contains(x, y);
+                var ms = Mouse.GetState();
+                return GetAbsoluteBounds().Contains(ms.X, ms.Y);
             }
-
-            set { }
-        }
-
-        protected override void OnMouseReleased(MouseButtons button)
-        {
-        }
-
-        protected override void OnMouseMoved(float x, float y)
-        {
+            set { throw new NotSupportedException(); }
         }
 
         protected override void OnMousePressed(MouseButtons button)
         {
-            if (button == MouseButtons.Left)
-            {
-                MouseHovering = false;
-            }
+            OnMouseDown(new MouseDownEventArgs { Buttons = button });
         }
+    }
 
-        protected override void OnMouseEntered()
-        {
-            // Debug.WriteLine("hovering over " + this.Name);
-            MouseHovering = true;
-        }
-
-        protected override void OnMouseLeft()
-        {
-            MouseHovering = false;
-        }
+    public class MouseDownEventArgs : EventArgs
+    {
+        public MouseButtons Buttons { get; set; }
     }
 }

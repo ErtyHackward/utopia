@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Items\GoldCoin.cs" />
     <Compile Include="LostIslandEntityClassId.cs" />
     <Compile Include="LostIslandEntityFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -12,6 +12,9 @@
   <xs:complexType name="fontType">
     <xs:attribute name="name" type="xs:string" use="required" />
     <xs:attribute name="contentPath" type="xs:string" use="required" />
+    <xs:attribute name="fontName" type="xs:string" use="required" />
+    <xs:attribute name="fontSize" type="xs:float" use="required" />
+    <xs:attribute name="fontStyle" type="xs:string" use="required" />
   </xs:complexType>
 
   <!-- Complex type for declaring a bitmap used in this skin -->

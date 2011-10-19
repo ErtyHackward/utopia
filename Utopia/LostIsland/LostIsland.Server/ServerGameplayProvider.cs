@@ -1,4 +1,6 @@
-﻿using LostIsland.Shared;
+﻿using System;
+using LostIsland.Shared;
+using LostIsland.Shared.Items;
 using LostIsland.Shared.Tools;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Cubes;
@@ -41,6 +43,8 @@ namespace LostIsland.Server
             item3.CubeId = CubeId.WoodPlank;
             dEntity.Inventory.PutItem(item3);
 
+            Random r = new Random();
+
             foreach (var cubeId in CubeId.All())
             {
                 
@@ -48,6 +52,8 @@ namespace LostIsland.Server
                 item3.CubeId = cubeId;
                 dEntity.Inventory.PutItem(item3, 100);
             }
+
+            dEntity.Inventory.PutItem(new GoldCoin(), 45821);
 
             return dEntity;
         }

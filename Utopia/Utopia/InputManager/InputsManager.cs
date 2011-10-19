@@ -141,7 +141,7 @@ namespace Utopia.InputManager
         #region Private Methods
         private void RegisterKeybardWinformEvents()
         {
-            _engine.GameWindow.KeyPress += new KeyPressEventHandler(GameWindow_KeyPress);
+            _engine.GameWindow.KeyPress += GameWindow_KeyPress;
         }
 
         private void UnRegisterKeybardWinformEvents()

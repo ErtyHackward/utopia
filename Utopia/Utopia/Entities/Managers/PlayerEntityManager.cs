@@ -78,7 +78,6 @@ namespace Utopia.Entities.Managers
         private Vector3D _entityXAxis, _entityYAxis, _entityZAxis;
         private IPickingRenderer _pickingRenderer;
         private IEntityPickingManager _entityPickingManager;
-        private readonly Screen _screen;
 
         //Drawing component
         private IEntitiesRenderer _playerRenderer;
@@ -90,12 +89,6 @@ namespace Utopia.Entities.Managers
         /// </summary>
         public readonly PlayerCharacter Player;
 
-        private InventoryWindow _inventoryUi;
-        private SpriteTexture _backgroundTex;
-        private readonly IconFactory _iconFactory;
-        private readonly ItemMessageTranslator _itemMessageTranslator;
-
-        private Cursor _prevMouseCursor;
         /// <summary>
         /// The Player Voxel body
         /// </summary>
@@ -135,6 +128,9 @@ namespace Utopia.Entities.Managers
 
         public IWorldChunks WorldChunks { get; set; }
         public bool MousepickDisabled { get; set; }
+
+        public bool HandleToolsUse { get; set; }
+
         #endregion
 
         public PlayerEntityManager(D3DEngine engine,
@@ -147,14 +143,9 @@ namespace Utopia.Entities.Managers
                                    PlayerCharacter player,
                                    [Named("PlayerEntityRenderer")] IEntitiesRenderer playerRenderer,
                                    IPickingRenderer pickingRenderer,
-                                   IEntityPickingManager entityPickingManager,
-                                   Screen screen, 
-                                   IconFactory iconFactory,
-                                   ItemMessageTranslator itemMessageTranslator)
+                                   IEntityPickingManager entityPickingManager)
         {
             _d3DEngine = engine;
-            _iconFactory = iconFactory;
-            _itemMessageTranslator = itemMessageTranslator;
             _cameraManager = cameraManager;
             _worldFocusManager = worldFocusManager;
             _actions = actions;
@@ -163,7 +154,6 @@ namespace Utopia.Entities.Managers
             _playerRenderer = playerRenderer;
             _pickingRenderer = pickingRenderer;
             _entityPickingManager = entityPickingManager;
-            _screen = screen;
 
             entityPickingManager.Player = this;
             Player = player;
@@ -176,14 +166,13 @@ namespace Utopia.Entities.Managers
             _playerRenderer.VisualEntity = this;
 
             HasMouseFocus = Enabled;
-
+            HandleToolsUse = true;
             UpdateOrder = 0;
         }
 
         public override void Dispose()
         {
             this.VisualEntity.Dispose();
-            _backgroundTex.Dispose();
         }
 
         #region Private Methods
@@ -210,18 +199,19 @@ namespace Utopia.Entities.Managers
             
             if (!HasMouseFocus) return; //the editor(s) can acquire the mouseFocus
 
-            if (_actions.isTriggered(Actions.Use_Left))
+            if (HandleToolsUse && _actions.isTriggered(Actions.Use_Left))
             {
                 if (Player.EntityState.IsPickingActive && Player.Equipment.LeftTool!=null)
                 {
-                    Player.LeftToolUse();//sends the client server event that does tool.use on server
-                    _itemMessageTranslator.Enabled = false;
-                    Player.Equipment.LeftTool.Tool.Use(Player);//client invocation to keep the client inventory in synch
-                    _itemMessageTranslator.Enabled = true;
+                    //sends the client server event that does tool.use on server
+                    Player.LeftToolUse();
+
+                    //client invocation to keep the client inventory in synch
+                    Player.Equipment.LeftTool.Tool.Use(Player);
                 }
             }
 
-            if (_actions.isTriggered(Actions.Use_Right))
+            if (HandleToolsUse && _actions.isTriggered(Actions.Use_Right))
             {
                  if (Player.EntityState.IsPickingActive && Player.Equipment.RightTool != null)
                 {
@@ -231,10 +221,11 @@ namespace Utopia.Entities.Managers
 
                     if (!MBoundingBox.Intersects(ref VisualEntity.WorldBBox, ref playerPotentialNewBlock))
                     {
-                        Player.RightToolUse();//sends the client server event that does tool.use on server
-                        _itemMessageTranslator.Enabled = false;
-                        Player.Equipment.RightTool.Tool.Use(Player);//client invocation to keep the client inventory in synch
-                        _itemMessageTranslator.Enabled = true;
+                        //sends the client server event that does tool.use on server
+                        Player.RightToolUse();
+
+                        //client invocation to keep the client inventory in synch
+                        Player.Equipment.RightTool.Tool.Use(Player);
                     }
                 }
             }
@@ -251,20 +242,7 @@ namespace Utopia.Entities.Managers
                 // and next, throw the right tool if left tool is already thrown
             }
 
-            if (_actions.isTriggered(Actions.OpenInventory))
-            {
-                 if (_screen.Desktop.Children.Contains(_inventoryUi))
-                 {
-                     _screen.Desktop.Children.Remove(_inventoryUi);
-                     _d3DEngine.GameWindow.Cursor = _prevMouseCursor;
-                 }
-                else
-                 {
-                     _prevMouseCursor = _d3DEngine.AssignMouseCursor("(-X-)");// tie fighter ascii art
-                   
-                     _screen.Desktop.Children.Add(_inventoryUi);
-                 }
-            }
+
 
         }
         #endregion
@@ -686,8 +664,7 @@ namespace Utopia.Entities.Managers
         /// </summary>
         public override void LoadContent()
         {
-             _backgroundTex = new SpriteTexture(_d3DEngine.Device, ClientSettings.TexturePack + @"charactersheet.png", new Vector2(0, 0));
-             _inventoryUi = new PlayerInventory(_backgroundTex, Player.Inventory, _iconFactory, new Point(280, 120));
+
         }
 
         public override void Update(ref GameTime timeSpent)
