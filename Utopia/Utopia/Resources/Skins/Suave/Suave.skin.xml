@@ -61,9 +61,10 @@ that uses the theme, please give due credit to the original artist!
   <!--
     Resources used to draw GUI elements using this skin
   -->
-  <resources>
-    <font name="title" contentPath="TitleFont" />
-    <font name="default" contentPath="DefaultFont" />
+  <resources> 
+    <font name="title" contentPath="TitleFont" fontName ="Segoe UI Mono" fontSize ="11.5" fontStyle="Regular" />
+    <font name="default" contentPath="DefaultFont" fontName ="Segoe UI Mono" fontSize ="11.5" fontStyle="Regular" />
+    <font name="itemsFont" contentPath="ItemsFont" fontName ="Small Fonts " fontSize ="11.0" fontStyle="Bold" />
     <bitmap name="controls" contentPath="SuaveSheet" />
   </resources>
 
@@ -494,7 +495,7 @@ that uses the theme, please give due credit to the original artist!
       <region source="controls" hplacement="left" vplacement="bottom" x="92" y="23" w="1" h="1" />
       <region source="controls" hplacement="stretch" vplacement="bottom" x="93" y="23" w="62" h="1" />
       <region source="controls" hplacement="right" vplacement="bottom" x="155" y="23" w="1" h="1" />
-      <text font="default" color="#3F3F3F" hplacement="left" vplacement="top" xoffset="4" yoffset="0" />
+        <text font="default" color="#3F3F3F" hplacement="left" vplacement="top" xoffset="4" yoffset="0" />
     </frame>
 
     <!--
@@ -510,6 +511,14 @@ that uses the theme, please give due credit to the original artist!
       <region source="controls" hplacement="left" vplacement="bottom" x="92" y="70" w="2" h="2" />
       <region source="controls" hplacement="stretch" vplacement="bottom" x="94" y="70" w="60" h="2" />
       <region source="controls" hplacement="right" vplacement="bottom" x="154" y="70" w="2" h="2" />
+    </frame>
+  
+    <frame name="slot.items">
+      <text font="itemsFont" color="#FFFFFF" hplacement="left" vplacement="top" xoffset="0" yoffset="0" />
+    </frame>
+
+    <frame name="slot.items.shadow">
+      <text font="itemsFont" color="#000000" hplacement="left" vplacement="top" xoffset="1" yoffset="1" />
     </frame>
 
   </frames>

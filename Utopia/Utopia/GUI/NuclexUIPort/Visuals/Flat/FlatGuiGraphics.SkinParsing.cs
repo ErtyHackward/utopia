@@ -20,7 +20,9 @@ License along with this library
 
 #if !USE_XMLDOCUMENT
 
-using System; using SharpDX;
+using System;
+using System.Drawing;
+using SharpDX;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -36,9 +38,9 @@ using System.Xml.Schema;
 using Nuclex.Support;
 using SharpDX.Direct3D11;
 using S33M3Engines.Sprites;
-using Utopia.Shared.Structs;
 using Utopia.GUI.D3D;
 using S33M3Engines.Shared.Sprites;
+using Color = Utopia.Shared.Structs.Color;
 
 namespace Nuclex.UserInterface.Visuals.Flat {
 
@@ -378,16 +380,22 @@ namespace Nuclex.UserInterface.Visuals.Flat {
       XElement resources = skinDocument.Element("skin").Element("resources");
 
       // Load all fonts used by the skin
-      foreach (XElement element in resources.Descendants("font")) {
-        string fontName = element.Attribute("name").Value;
-        string contentPath = element.Attribute("contentPath").Value;
+      foreach (XElement element in resources.Descendants("font"))
+      {
+          string fontName = element.Attribute("name").Value;
+          string contentPath = element.Attribute("contentPath").Value;
+          string realFontName = element.Attribute("fontName").Value;
+          string style = element.Attribute("fontStyle").Value;
+          float fontSize = float.Parse(element.Attribute("fontSize").Value, CultureInfo.InvariantCulture);
 
-        SpriteFont spriteFont = new SpriteFont();
-        spriteFont.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
-        this.fonts.Add(fontName, spriteFont);
+          var fontStyle = (FontStyle)Enum.Parse(typeof(FontStyle), style);
+          
+          var spriteFont = new SpriteFont();
+          spriteFont.Initialize(realFontName, fontSize, fontStyle, true, _d3dEngine.Device);
+          this.fonts.Add(fontName, spriteFont);
       }
 
-      // Load all bitmaps used by the skin
+        // Load all bitmaps used by the skin
       foreach (XElement element in resources.Descendants("bitmap")) {
         string bitmapName = element.Attribute("name").Value;
         string contentPath = element.Attribute("contentPath").Value;

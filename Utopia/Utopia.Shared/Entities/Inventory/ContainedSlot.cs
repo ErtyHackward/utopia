@@ -25,6 +25,18 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public Vector2I GridPosition { get; set; }
 
+        /// <summary>
+        /// Detects whether the slots can be stacked
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <returns></returns>
+        public bool CanStackWith(ContainedSlot slot)
+        {
+            if (slot != null && slot.Item != null && Item != null && slot.Item.StackType == Item.StackType && slot.ItemsCount + ItemsCount <= Item.MaxStackSize)
+                return true;
+            return false;
+        }
+
         public override void Load(BinaryReader reader)
         {
             base.Load(reader);
@@ -43,6 +55,17 @@ namespace Utopia.Shared.Entities.Inventory
             {
                 writer.Write(GridPosition);
             }
+        }
+
+        public override object Clone()
+        {
+            var slot = new ContainedSlot {
+                Item = Item, 
+                ItemsCount = ItemsCount, 
+                GridPosition = GridPosition
+            };
+            
+            return slot;
         }
     }
 }

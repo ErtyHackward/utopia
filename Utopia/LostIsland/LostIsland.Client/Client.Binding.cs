@@ -3,6 +3,7 @@ using Nuclex.UserInterface;
 using Utopia.Editor;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
+using Utopia.GUI.D3D.Inventory;
 using Utopia.GUI.D3D.Map;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
@@ -95,6 +96,7 @@ namespace LostIsland.Client
 
             //Game Componenents =========================================
             iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
+            iocContainer.Bind<InventoryComponent>().ToSelf().InSingletonScope();
             iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
             iocContainer.Bind<MapComponent>().ToSelf().InSingletonScope();
             iocContainer.Bind<Hud>().ToSelf().InSingletonScope();

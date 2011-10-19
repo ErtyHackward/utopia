@@ -18,45 +18,75 @@ License along with this library
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using Nuclex.UserInterface.Visuals.Flat;
 using Nuclex.UserInterface;
 
 namespace Utopia.GUI.D3D.Inventory
 {
-
     public class InventoryCellRenderer : IFlatControlRenderer<InventoryCell>
     {
         public void Render(InventoryCell control, IFlatGuiGraphics graphics)
         {
-            RectangleF controlBounds = control.GetAbsoluteBounds();
+            var controlBounds = control.GetAbsoluteBounds();
 
-            if (control.MouseHovering)
+            #region Backgroung
+            if (control.DrawCellBackground)
             {
-                graphics.DrawElement("button.highlighted", controlBounds);
+                if (control.MouseHovering)
+                {
+                    graphics.DrawElement("button.highlighted", controlBounds);
+                }
+                else
+                {
+                    graphics.DrawElement("button.normal", controlBounds);
+                }
             }
-            else
-            {
-                graphics.DrawElement("button.normal", controlBounds);
-            }
-
-            var s = control.Slot.ItemsCount.ToString();
-            var textSize = graphics.MeasureString("button.normal", controlBounds, s);
+            #endregion
             
-            var h = textSize.Height;
-            var w = textSize.Width;
+            #region Item icon
+            if (control.Slot != null && !control.Slot.IsEmpty)
+            {
+                var tex = control.IconFactory.Lookup(control.Slot.Item);
+                if (tex != null)
+                {
+                    const int innerBorder = 3;
+                    var texBounds = new RectangleF(
+                        controlBounds.X + innerBorder, 
+                        controlBounds.Y + innerBorder, 
+                        controlBounds.Width - innerBorder * 2, 
+                        controlBounds.Height - innerBorder * 2
+                        );
+                    graphics.DrawCustomTexture(tex, texBounds, tex.Index);
+                }
+                else
+                {
+                    var displayName = control.Slot.Item.DisplayName;
 
-            var textPosition = new RectangleF(controlBounds.X + controlBounds.Width - textSize.Width - 3,
-                                              controlBounds.Y + controlBounds.Height - textSize.Height - 3,
-                                              w,
-                                              h);
+                    graphics.DrawString("button.normal", controlBounds, displayName);
+                }
+            }
+            #endregion
 
-            graphics.DrawString("button.normal", textPosition, s);
+            #region Items count
 
+            if (control.Slot != null)
+            {
+                var itemsCount = control.Slot.ItemsCount.ToString();
+                var textSize = graphics.MeasureString("slot.items", controlBounds, itemsCount);
 
+                var h = textSize.Height;
+                var w = textSize.Width;
+
+                var textPosition = new RectangleF(controlBounds.X + controlBounds.Width - textSize.Width - 6,
+                                                  controlBounds.Y + controlBounds.Height - textSize.Height,
+                                                  w,
+                                                  h);
+                graphics.DrawString("slot.items.shadow", textPosition, itemsCount);
+                graphics.DrawString("slot.items", textPosition, itemsCount);
+            }
+
+            #endregion
+            
         }
-
     }
-
 }

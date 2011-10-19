@@ -1,4 +1,5 @@
-﻿using LostIsland.Shared.Tools;
+﻿using LostIsland.Shared.Items;
+using LostIsland.Shared.Tools;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 
@@ -20,6 +21,7 @@ namespace LostIsland.Shared
                 case LostIslandEntityClassId.Annihilator: return new Annihilator(_landscapeManager);
                 case LostIslandEntityClassId.CubeResource: return new CubeResource(_landscapeManager);
                 case LostIslandEntityClassId.Shovel: return new Shovel(_landscapeManager);
+                case LostIslandEntityClassId.GoldCoin: return new GoldCoin();
             }
 
             return null;
