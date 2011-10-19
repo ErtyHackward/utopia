@@ -176,7 +176,7 @@ namespace Utopia
             
                 Exit(msg);
             }
-            if (_renderStates.actionsManager.isTriggered(Actions.Engine_LockMouseCursor)) _renderStates.engine.UnlockedMouse = !_renderStates.engine.UnlockedMouse;
+            if (_renderStates.actionsManager.isTriggered(Actions.Engine_LockMouseCursor)) _renderStates.engine.MouseCapture = !_renderStates.engine.MouseCapture;
             if (_renderStates.actionsManager.isTriggered(Actions.Engine_FullScreen)) _renderStates.engine.isFullScreen = !_renderStates.engine.isFullScreen;
         }
 

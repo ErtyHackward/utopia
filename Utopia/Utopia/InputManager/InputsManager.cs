@@ -30,6 +30,7 @@ namespace Utopia.InputManager
         private Vector2I _centerViewPort;
 
         private bool _keyBoardListening;
+        private Vector2I _cursorPosition;
         #endregion
 
         #region Public variables/Properties
@@ -58,10 +59,30 @@ namespace Utopia.InputManager
             //Should have the smallest UpdateOrder possible.
             this.UpdateOrder = 0;
 
+            _engine.MouseCaptureChanged += _engine_MouseCaptureChanged;
+
             _keyBoardListening = false;
 
             //Subscibe the viewPort update
             engine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
+        }
+
+        void _engine_MouseCaptureChanged(object sender, D3DEngineMouseCaptureChangedEventArgs e)
+        {
+            var mouseState = Mouse.GetState();
+            if (e.MouseCaptured)
+            {
+                // save mouse position
+                _cursorPosition = new Vector2I(mouseState.X, mouseState.Y);
+                Mouse.SetPosition(_centerViewPort.X, _centerViewPort.Y);
+                MouseMoveDelta.X = 0;
+                MouseMoveDelta.Y = 0;
+            }
+            else
+            {
+                // restore
+                Mouse.SetPosition(_cursorPosition.X, _cursorPosition.Y);
+            }
         }
 
         public override void Dispose()
@@ -157,7 +178,7 @@ namespace Utopia.InputManager
         private void ProcessMouseStates()
         {
             //If the mouse is hiden, then start tracking mouse mouvement, and recenter the mouse to the center of the screen at each update !
-            if (!_engine.UnlockedMouse && _engine.HasFocus)
+            if (_engine.MouseCapture && _engine.HasFocus)
             {
                 //Set the mouse to the Center Screen
                 Mouse.SetPosition(_centerViewPort.X, _centerViewPort.Y);
@@ -173,7 +194,8 @@ namespace Utopia.InputManager
 
         private void ComputeCenterViewport(Viewport viewport)
         {
-            _centerViewPort = new Location2<int>((int)viewport.Width / 2, (int)viewport.Height / 2);
+            _centerViewPort = new Vector2I((int)viewport.Width / 2, (int)viewport.Height / 2);
+            if (_cursorPosition.IsZero()) _cursorPosition = _centerViewPort;
         }
         #endregion
     }
