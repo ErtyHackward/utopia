@@ -92,7 +92,9 @@ namespace Nuclex.UserInterface.Controls {
       get { return this.affectsOrdering; }
     }
 
-    /// <summary>Parent control this control is contained in</summary>
+      public bool IsClickTransparent { get; set; }
+
+      /// <summary>Parent control this control is contained in</summary>
     /// <remarks>
     ///   Can be null, but this is only the case for free-floating controls that have
     ///   not been added into a Gui. The only control that really keeps this field

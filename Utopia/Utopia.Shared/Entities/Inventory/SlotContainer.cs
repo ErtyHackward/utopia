@@ -147,7 +147,7 @@ namespace Utopia.Shared.Entities.Inventory
                                {
                                    if (s.Item.StackType == item.StackType && s.ItemsCount + count <= item.MaxStackSize)
                                    {
-                                       s.ItemsCount++;
+                                       s.ItemsCount += count;
                                        var t = new T { GridPosition = s.GridPosition, ItemsCount = count, Item = s.Item };
                                        OnItemPut(new EntityContainerEventArgs<T> { Slot = t });
                                        return true;
@@ -167,7 +167,7 @@ namespace Utopia.Shared.Entities.Inventory
                     if (_items[x, y] == null)
                     {
                         _items[x, y] = new T { Item = item, GridPosition = new Vector2I(x, y), ItemsCount = count };
-                        _slotsCount++;
+                        _slotsCount += count;
                         OnItemPut(new EntityContainerEventArgs<T> { Slot = _items[x, y] });
                         return true;
                     }
@@ -181,106 +181,72 @@ namespace Utopia.Shared.Entities.Inventory
         /// if slot has already an item, add to the stack
         /// if slot is empty, initialize it with slot.item
         /// </summary>
-        /// <param name="slot"></param>
+        /// <param name="item"></param>
+        /// <param name="position"></param>
+        /// <param name="itemsCount"></param>
         /// <returns>True if succeed otherwise false</returns>
-        public bool PutItem(T slot)
+        public bool PutItem(IItem item, Vector2I position, int itemsCount = 1)
         {
-            ValidatePosition(slot.GridPosition);
+            ValidatePosition(position);
 
-            if (slot.ItemsCount == 0)
+            if (itemsCount == 0)
                 throw new InvalidOperationException("No items to put");
 
-            var currentItem = _items[slot.GridPosition.X, slot.GridPosition.Y];
+            var currentItem = _items[position.X, position.Y];
             
             if (currentItem != null)
             {
                 // check if slot is busy by other entity (different entities are unstackable)
-                if (currentItem.Item.StackType != slot.Item.StackType)
+                if (currentItem.Item.StackType != item.StackType)
                     return false;
 
                 // check for stack limit
-                if (currentItem.ItemsCount + slot.ItemsCount > slot.Item.MaxStackSize)
+                if (currentItem.ItemsCount + itemsCount > item.MaxStackSize)
                     return false;
 
-                currentItem.ItemsCount += slot.ItemsCount;
+                currentItem.ItemsCount += itemsCount;
             }
             else
             {
                 // adding new slot
-                _items[slot.GridPosition.X, slot.GridPosition.Y] = slot;
+                _items[position.X, position.Y] = new T { Item = item, GridPosition = position, ItemsCount = itemsCount };
                 _slotsCount++;
             }
 
-            OnItemPut(new EntityContainerEventArgs<T> { Slot = slot });
+            OnItemPut(new EntityContainerEventArgs<T> { Slot = new T{ Item = item, GridPosition = position, ItemsCount = itemsCount } });
             return true;
         }
 
         /// <summary>
         /// Tries to get item from slot. Checks the Entity type 
         /// </summary>
-        /// <param name="slot"></param>
+        /// <param name="position"></param>
+        /// <param name="itemsCount"></param>
         /// <returns>True if succeed otherwise false</returns>
-        public bool TakeItem(T slot)
+        public bool TakeItem(Vector2I position, int itemsCount = 1)
         {
-            ValidatePosition(slot.GridPosition);
+            ValidatePosition(position);
 
-            var currentItem = _items[slot.GridPosition.X, slot.GridPosition.Y];
+            var currentItem = _items[position.X, position.Y];
 
             // unable to take items from empty slot
             if (currentItem == null) return false;
 
-            // unable to take items of other types
-            if (currentItem.Item.StackType != slot.Item.StackType)
-                return false;
-
             // unable to take more items than container have
-            if (currentItem.ItemsCount < slot.ItemsCount)
+            if (currentItem.ItemsCount < itemsCount)
                 return false;
 
-            currentItem.ItemsCount -= slot.ItemsCount;
+            currentItem.ItemsCount -= itemsCount;
 
             if (currentItem.ItemsCount == 0)
             {
                 // no more items in slot
-                _items[slot.GridPosition.X, slot.GridPosition.Y] = null;
+                _items[position.X, position.Y] = null;
                 _slotsCount--;
             }
 
-            OnItemTaken(new EntityContainerEventArgs<T> { Slot = slot });
+            OnItemTaken(new EntityContainerEventArgs<T> { Slot = new T { GridPosition = position, ItemsCount = itemsCount, Item = currentItem.Item } });
             return true;
-        }
-
-        /// <summary>
-        /// Tries to get item from slot. Slot entity will be filled from slot position
-        /// </summary>
-        /// <param name="slot"></param>
-        /// <returns></returns>
-        public T TakeSlot(T slot)
-        {
-            ValidatePosition(slot.GridPosition);
-
-            var currentItem = _items[slot.GridPosition.X, slot.GridPosition.Y];
-
-            // unable to take items from empty slot
-            if (currentItem == null) return null;
-
-            // unable to take more items than container have
-            if (currentItem.ItemsCount < slot.ItemsCount)
-                return null;
-
-            currentItem.ItemsCount -= slot.ItemsCount;
-            slot.Item = currentItem.Item;
-
-            if (currentItem.ItemsCount == 0)
-            {
-                // no more items in slot
-                _items[slot.GridPosition.X, slot.GridPosition.Y] = null;
-                _slotsCount--;
-            }
-
-            OnItemTaken(new EntityContainerEventArgs<T> { Slot = slot });
-
-            return (T)slot.Clone();
         }
 
         /// <summary>
@@ -301,27 +267,31 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Puts the item to already occupied slot (Items should have different type)
         /// </summary>
-        /// <param name="slotPut"></param>
+        /// <param name="itemsCount"></param>
         /// <param name="slotTaken"></param>
+        /// <param name="item"></param>
+        /// <param name="position"></param>
         /// <returns></returns>
-        public bool PutItemExchange(T slotPut, out T slotTaken)
+        public bool PutItemExchange(IItem item, Vector2I position, int itemsCount, out T slotTaken)
         {
             slotTaken = null;
 
-            if (slotPut == null || slotPut.Item == null)
+            if (item == null)
                 return false;
 
-            ValidatePosition(slotPut.GridPosition);
-            
-            var currentItem = _items[slotPut.GridPosition.X, slotPut.GridPosition.Y];
+            ValidatePosition(position);
 
-            if (currentItem == null || currentItem.Item.StackType == slotPut.Item.StackType)
+            var currentItem = _items[position.X, position.Y];
+
+            if (currentItem == null || currentItem.Item.StackType == item.StackType)
                 return false;
 
-            slotTaken = currentItem;
+            slotTaken = (T)currentItem.Clone();
 
-            _items[slotPut.GridPosition.X, slotPut.GridPosition.Y] = slotPut;
-            OnItemExchanged(new EntityContainerEventArgs<T> { Slot = slotPut, Exchanged = slotTaken });
+            var put = new T { Item = item, GridPosition = position, ItemsCount = itemsCount };
+
+            _items[position.X, position.Y] = put;
+            OnItemExchanged(new EntityContainerEventArgs<T> { Slot = put, Exchanged = slotTaken });
             return true;
         }
 

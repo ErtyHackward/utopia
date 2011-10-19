@@ -289,6 +289,9 @@ namespace Nuclex.UserInterface.Controls {
       // Check whether the mouse is hovering over one of our children and if so,
       // pass on the mouse movement notification to the child.
       for(int index = 0; index < this.children.Count; ++index) {
+
+          if (children[index].IsClickTransparent)
+              continue;
         RectangleF childBounds = this.children[index].Bounds.ToOffset(size.X, size.Y);
 
         // Is the mouse over this child?

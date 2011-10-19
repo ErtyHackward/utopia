@@ -82,6 +82,11 @@ namespace Utopia.GUI.D3D
             if (_prevMouseState.LeftButton == ButtonState.Pressed && mouseState.LeftButton == ButtonState.Released)
                 _screen.InjectMouseRelease(MouseButtons.Left);
 
+            if (_prevMouseState.RightButton == ButtonState.Released && mouseState.RightButton == ButtonState.Pressed)
+                _screen.InjectMousePress(MouseButtons.Right);
+
+            if (_prevMouseState.RightButton == ButtonState.Pressed && mouseState.RightButton == ButtonState.Released)
+                _screen.InjectMouseRelease(MouseButtons.Right);
 
             _screen.InjectMouseMove(mouseState.X, mouseState.Y);
 

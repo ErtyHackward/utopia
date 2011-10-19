@@ -35,25 +35,29 @@ namespace Utopia.Shared.Entities.Interfaces
         Vector2I GridSize { get; }
 
         /// <summary>
-        /// Tries to put item into slot specified
+        /// Tries to put items
         /// </summary>
-        /// <param name="slot"></param>
+        /// <param name="item"></param>
+        /// <param name="count"></param>
         /// <returns>True if succeed otherwise false</returns>
-        bool PutItem(T slot);
+        bool PutItem(IItem item, int count = 1);
+
+        /// <summary>
+        /// Tries to put items into slot specified
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="position"></param>
+        /// <param name="itemsCount"></param>
+        /// <returns></returns>
+        bool PutItem(IItem item, Vector2I position, int itemsCount = 1);
 
         /// <summary>
         /// Tries to get item from slot. Checks the Entity type 
         /// </summary>
-        /// <param name="slot"></param>
+        /// <param name="position"></param>
+        /// <param name="itemsCount"></param>
         /// <returns>True if succeed otherwise false</returns>
-        bool TakeItem(T slot);
-
-        /// <summary>
-        /// Tries to get item from slot. Slot entity will be filled from slot position
-        /// </summary>
-        /// <param name="slot"></param>
-        /// <returns></returns>
-        T TakeSlot(T slot);
+        bool TakeItem(Vector2I position, int itemsCount = 1);
 
         /// <summary>
         /// Returns slot without taking it from the container
@@ -65,10 +69,12 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// Puts the item to already occupied slot (Items should have different type)
         /// </summary>
-        /// <param name="slotPut"></param>
+        /// <param name="itemsCount"></param>
         /// <param name="slotTaken"></param>
+        /// <param name="item"></param>
+        /// <param name="position"></param>
         /// <returns></returns>
-        bool PutItemExchange(T slotPut, out T slotTaken);
+        bool PutItemExchange(IItem item, Vector2I position, int itemsCount, out T slotTaken);
 
     }
 
