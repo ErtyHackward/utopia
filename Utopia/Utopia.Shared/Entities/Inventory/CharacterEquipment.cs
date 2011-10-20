@@ -107,6 +107,11 @@ namespace Utopia.Shared.Entities.Inventory
             return previous != null ? previous.Item : null;
         }
 
+        public ContainedSlot UnWearItem(EquipmentSlotType sourceSlotType)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Determines if item can be put to equipment slot
         /// </summary>
