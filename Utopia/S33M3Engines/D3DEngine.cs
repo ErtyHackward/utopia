@@ -182,7 +182,12 @@ namespace S33M3Engines
             _renderForm.TopMost = false;
         }
 
-        public void ResetRenderTargetsAndViewPort()
+        public void ResetDefaultRenderTargets()
+        {
+            Context.OutputMerger.SetTargets(_depthStencil, _renderTarget);
+        }
+
+        public void ResetDefaultRenderTargetsAndViewPort()
         {
             Context.OutputMerger.SetTargets(_depthStencil, _renderTarget);
             Context.Rasterizer.SetViewports(_viewPort);
