@@ -100,6 +100,7 @@
     <Compile Include="D3D\Effects\Basics\DebugEffect.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLSprites.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLVertexPositionColor.cs" />
+    <Compile Include="D3D\Effects\Basics\HLSLVertexPositionNormalTexture.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLVertexPositionTexture.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLPointSprite3D.cs" />
     <Compile Include="D3D\Effects\HLSLFramework\CBuffer.cs" />
@@ -125,6 +126,10 @@
     <Compile Include="Maths\GMathHelper.cs" />
     <Compile Include="Maths\MCollision.cs" />
     <Compile Include="Maths\MQuaternion.cs" />
+    <Compile Include="Meshes\Factories\Helpers\StringScanner.cs" />
+    <Compile Include="Meshes\Factories\IMeshFactory.cs" />
+    <Compile Include="Meshes\Factories\MilkShape3DMeshFactory.cs" />
+    <Compile Include="Meshes\Mesh.cs" />
     <Compile Include="Sprites\SpriteFont.cs" />
     <Compile Include="Sprites\SpriteRenderer.cs" />
     <Compile Include="StatesManager\StatesRepository.cs" />
@@ -149,6 +154,7 @@
     <Compile Include="Struct\Vertex\Helper\Interfaces.cs" />
     <Compile Include="Struct\Vertex\Helper\Enums.cs" />
     <Compile Include="Struct\Vertex\Helper\VertexDeclaration.cs" />
+    <Compile Include="Struct\Vertex\VertexMesh.cs" />
     <Compile Include="Struct\Vertex\VertexCubeCloud.cs" />
     <Compile Include="Struct\Vertex\VertexCubeFaceHQ.cs" />
     <Compile Include="Struct\Vertex\VertexCubeFaceLQ.cs" />
@@ -193,6 +199,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="D3D\Effects\Basics\VertexPositionColorTexture.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="D3D\Effects\Basics\VertexPositionNormalTexture.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="D3D\Effects\Basics\VertexPositionTexture.hlsl">

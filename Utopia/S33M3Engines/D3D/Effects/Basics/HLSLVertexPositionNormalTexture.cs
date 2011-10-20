@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.Struct.Vertex.Helper;
 using System.Runtime.InteropServices;
 using SharpDX;
-using SharpDX.D3DCompiler;
-using SharpDX.Direct3D11;
-using Buffer = SharpDX.Direct3D11.Buffer;
+using S33M3Engines.Struct.Vertex.Helper;
 
 namespace S33M3Engines.D3D.Effects.Basics
 {
-    public class HLSLVertexPositionColorTexture : HLSLShaderWrap
+    public class HLSLVertexPositionNormalTexture : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
 
@@ -62,7 +59,7 @@ namespace S33M3Engines.D3D.Effects.Basics
         };
         #endregion
 
-        public HLSLVertexPositionColorTexture(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+        public HLSLVertexPositionNormalTexture(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
             : base(d3dEngine, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
@@ -79,7 +76,7 @@ namespace S33M3Engines.D3D.Effects.Basics
             //Create the Sampler interface ==================================================
             SamplerDiffuse = new ShaderSampler(_d3dEngine, "SamplerDiffuse");
             ShaderSamplers.Add(SamplerDiffuse);
-            
+
             //Load the shaders
             base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);
         }
