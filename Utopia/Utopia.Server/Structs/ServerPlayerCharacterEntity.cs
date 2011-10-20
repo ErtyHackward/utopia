@@ -222,6 +222,36 @@ namespace Utopia.Server.Structs
             }
         }
 
+        private ContainedSlot _itemTaken;
+
+        private bool TakeItem(ItemTransferMessage itemTransferMessage)
+        {
+            var playerCharacter = (PlayerCharacter)DynamicEntity;
+
+            // first find the container
+
+            if (playerCharacter.EntityId == itemTransferMessage.SourceContainerEntityId)
+            {
+                if (itemTransferMessage.SourceSlotType != EquipmentSlotType.None)
+                {
+                    // equipment take
+                    _itemTaken = playerCharacter.Equipment.UnWearItem(itemTransferMessage.SourceSlotType);
+                    if (_itemTaken != null)
+                        return true;
+                    return false;
+                }
+
+            }
+
+            return false;
+        }
+
+        private bool PutItem(ItemTransferMessage itemTransferMessage)
+        {
+
+            return false;
+        }
+
         public override void ItemTransfer(ItemTransferMessage itemTransferMessage)
         {
             var playerCharacter = (PlayerCharacter)DynamicEntity;
@@ -240,7 +270,7 @@ namespace Utopia.Server.Structs
             // internal inventory transfer?
             if (playerCharacter.EntityId == itemTransferMessage.SourceContainerEntityId && itemTransferMessage.SourceContainerEntityId == itemTransferMessage.DestinationContainerEntityId)
             {
-
+                
                 var slot = new ContainedSlot
                                {
                                    GridPosition = itemTransferMessage.SourceContainerSlot,
