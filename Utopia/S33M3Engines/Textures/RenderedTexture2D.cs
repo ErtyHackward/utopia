@@ -16,10 +16,8 @@ namespace S33M3Engines.Textures
     {
         #region Private variables
         private Texture2DDescription _textureDesc;
-        private Texture2D _renderTargetTexture;
         private RenderTargetView _renderTargetView;
         private DepthStencilView _depthStencilView;
-        private ShaderResourceView _shaderResourceView;
         private D3DEngine _d3dEngine;
         private Viewport _viewport;
 
@@ -30,6 +28,9 @@ namespace S33M3Engines.Textures
         #endregion
 
         #region Public variables
+        public Texture2D RenderTargetTexture;
+        public ShaderResourceView ShaderResourceView;
+
         public Color4 BackGroundColor
         {
             get { return _backGroundColor; }
@@ -53,10 +54,10 @@ namespace S33M3Engines.Textures
 
         public void Dispose()
         {
-            _shaderResourceView.Dispose();
-            _renderTargetView.Dispose();
-            _renderTargetTexture.Dispose();
-            _depthStencilView.Dispose();
+            if(ShaderResourceView != null) ShaderResourceView.Dispose();
+            if (_renderTargetView != null) _renderTargetView.Dispose();
+            if (RenderTargetTexture != null) RenderTargetTexture.Dispose();
+            if (_depthStencilView != null) _depthStencilView.Dispose();
         }
 
         #region Private methods
@@ -86,9 +87,7 @@ namespace S33M3Engines.Textures
                 SampleDescription = new SharpDX.DXGI.SampleDescription() { Count = 1, Quality = 0 }
             };
             // Create the render target texture.
-            _renderTargetTexture = new Texture2D(_d3dEngine.Device, _textureDesc);
-
-
+            RenderTargetTexture = new Texture2D(_d3dEngine.Device, _textureDesc);
 
             Texture2DDescription depthMapDesc = new Texture2DDescription()
             {
@@ -114,8 +113,6 @@ namespace S33M3Engines.Textures
             _depthStencilView = new DepthStencilView(_d3dEngine.Device, depthMap, depthStencilViewDesc);
             depthMap.Dispose();
 
-
-
             // Setup the description of the render target view.
             RenderTargetViewDescription renderTargetViewDesc = new RenderTargetViewDescription()
             {
@@ -124,7 +121,7 @@ namespace S33M3Engines.Textures
                 Texture2D = new RenderTargetViewDescription.Texture2DResource() { MipSlice = 0 }
             };
             // Create the render target view for using the Texture define.
-            _renderTargetView = new RenderTargetView(_d3dEngine.Device, _renderTargetTexture, renderTargetViewDesc);
+            _renderTargetView = new RenderTargetView(_d3dEngine.Device, RenderTargetTexture, renderTargetViewDesc);
 
             // Setup the description of the shader resource view.
             ShaderResourceViewDescription shaderResourceViewDesc = new ShaderResourceViewDescription()
@@ -133,7 +130,17 @@ namespace S33M3Engines.Textures
                 Dimension = SharpDX.Direct3D.ShaderResourceViewDimension.Texture2D,
                 Texture2D = new ShaderResourceViewDescription.Texture2DResource() { MipLevels = 1, MostDetailedMip = 0 }
             };
-            _shaderResourceView = new ShaderResourceView(_d3dEngine.Device, _renderTargetTexture, shaderResourceViewDesc);
+            ShaderResourceView = new ShaderResourceView(_d3dEngine.Device, RenderTargetTexture, shaderResourceViewDesc);
+        }
+
+        /// <summary>
+        /// If we won't use the Texture for rendering anymore, we can freeUp Resources
+        /// </summary>
+        private void ReleaseDrawingResources()
+        {
+            if (_renderTargetView != null) _renderTargetView.Dispose();
+            if (RenderTargetTexture != null) RenderTargetTexture.Dispose();
+            if (_depthStencilView != null) _depthStencilView.Dispose();
         }
         #endregion
 
@@ -151,17 +158,11 @@ namespace S33M3Engines.Textures
             _d3dEngine.Context.ClearDepthStencilView(_depthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
         }
 
-        public void End(bool generateMips = false)
+        public void End(bool releaseDrawingResources ,bool generateMips = false)
         {
-            if (generateMips) _d3dEngine.Context.GenerateMips(_shaderResourceView);
+            if (generateMips) _d3dEngine.Context.GenerateMips(ShaderResourceView);
+            if (releaseDrawingResources) ReleaseDrawingResources();
         }
-
-        //Get the texture
-        public ShaderResourceView GetShaderResourceView()
-        {
-            return _shaderResourceView;
-        }
-
         #endregion
     }
 }

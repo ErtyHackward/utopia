@@ -8,6 +8,7 @@ using S33M3Engines.WorldFocus;
 using Utopia.Worlds.Cubes;
 using Utopia.Shared.Chunks;
 using Utopia.Action;
+using S33M3Engines.D3D.Effects.Basics;
 
 namespace Utopia
 {
@@ -88,6 +89,9 @@ namespace Utopia
             GameComponents.Add(_renderStates.weather);
             GameComponents.Add(_renderStates.worldChunks);
             GameComponents.Add(_renderStates.sharedFrameCB);
+
+
+
 
             #region Debug Components
 #if DEBUG
