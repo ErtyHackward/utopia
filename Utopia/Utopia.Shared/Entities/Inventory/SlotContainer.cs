@@ -167,7 +167,7 @@ namespace Utopia.Shared.Entities.Inventory
                     if (_items[x, y] == null)
                     {
                         _items[x, y] = new T { Item = item, GridPosition = new Vector2I(x, y), ItemsCount = count };
-                        _slotsCount += count;
+                        _slotsCount ++;
                         OnItemPut(new EntityContainerEventArgs<T> { Slot = _items[x, y] });
                         return true;
                     }
