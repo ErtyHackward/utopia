@@ -69,9 +69,10 @@ namespace Utopia.GUI.D3D.Inventory
 
             #region Items count
 
-            if (control.Slot != null)
+            if (control.Slot != null && control.Slot.ItemsCount > 1)
             {
                 var itemsCount = control.Slot.ItemsCount.ToString();
+
                 var textSize = graphics.MeasureString("slot.items", controlBounds, itemsCount);
 
                 var h = textSize.Height;

@@ -16,6 +16,7 @@ namespace Utopia.GUI.D3D.Inventory
         private readonly SlotContainer<ContainedSlot> _container;
         private readonly IconFactory _iconFactory;
         private ContainedSlot _slot;
+        private Shared.Entities.Dynamic.PlayerCharacter _player;
 
         /// <summary>
         /// Gets current cell grid position
@@ -27,7 +28,15 @@ namespace Utopia.GUI.D3D.Inventory
         /// </summary>
         public ContainedSlot Slot
         {
-            get { return _slot ?? (_container != null ? _container.PeekSlot(InventoryPosition) : null); }
+            get
+            {
+                if (_slot != null) return _slot;
+                if(_container != null)
+                    return _container.PeekSlot(InventoryPosition);
+                if (_player != null)
+                    return _player.Equipment[SlotType];
+                return null;
+            }
             set { _slot = value; }
         }
 
@@ -43,14 +52,27 @@ namespace Utopia.GUI.D3D.Inventory
         {
             get { return _iconFactory; }
         }
+        
+        public bool MouseHovering
+        {
+            get
+            {
+                var ms = Mouse.GetState();
+                return GetAbsoluteBounds().Contains(ms.X, ms.Y);
+            }
+            set { throw new NotSupportedException(); }
+        }
+
+        public EquipmentSlotType SlotType { get; set; }
 
         public event EventHandler<MouseDownEventArgs> MouseDown;
-
+        
         private void OnMouseDown(MouseDownEventArgs e)
         {
             var handler = MouseDown;
             if (handler != null) handler(this, e);
         }
+
 
         /// <summary>
         /// Creates new inventory cell and links it with some container
@@ -66,14 +88,17 @@ namespace Utopia.GUI.D3D.Inventory
             DrawCellBackground = true;
         }
 
-        public bool MouseHovering
+        /// <summary>
+        /// Creates new cell and links it with player equipment slot
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="inventorySlot"></param>
+        /// <param name="iconFactory"></param>
+        public InventoryCell(Shared.Entities.Dynamic.PlayerCharacter player, EquipmentSlotType inventorySlot, IconFactory iconFactory)
         {
-            get
-            {
-                var ms = Mouse.GetState();
-                return GetAbsoluteBounds().Contains(ms.X, ms.Y);
-            }
-            set { throw new NotSupportedException(); }
+            _player = player;
+            SlotType = inventorySlot;
+            _iconFactory = iconFactory;
         }
 
         protected override void OnMousePressed(MouseButtons button)

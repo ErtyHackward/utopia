@@ -25,11 +25,11 @@ namespace Utopia.GUI.D3D.Inventory
         /// <summary>
         /// Occurs when some slot get clicked
         /// </summary>
-        public event EventHandler<InventoryWindowEventArgs> SlotClicked;
+        public event EventHandler<InventoryWindowEventArgs> InventorySlotClicked;
 
         protected void OnSlotClicked(InventoryWindowEventArgs e)
         {
-            var handler = SlotClicked;
+            var handler = InventorySlotClicked;
             if (handler != null) handler(this, e);
         }
 

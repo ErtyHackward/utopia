@@ -205,7 +205,7 @@ namespace Utopia.Server.Structs
                     // take item from inventory
                     playerCharacter.Inventory.TakeItem(itemSlot.GridPosition, itemSlot.ItemsCount);
 
-                    var oldItem = playerCharacter.Equipment.WearItem((VoxelItem)equipmentItem.Entity, equipmentItem.Slot);
+                    var oldItem = playerCharacter.Equipment.WearItem(new ContainedSlot { Item = (IItem)equipmentItem.Entity }, equipmentItem.Slot);
 
                     if (oldItem != null)
                     {

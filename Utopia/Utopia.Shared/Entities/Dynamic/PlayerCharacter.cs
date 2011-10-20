@@ -51,20 +51,20 @@ namespace Utopia.Shared.Entities.Dynamic
         #region Public Methods
         public void LeftToolUse()
         {
-            if (Equipment.LeftTool != null)
+            if (Equipment.LeftSlot != null)
             {
                 var args = EntityUseEventArgs.FromState(EntityState);
-                args.Tool = (ITool)Equipment.LeftTool.Item;
+                args.Tool = (ITool)Equipment.LeftSlot.Item;
                 OnUse(args);
             }
         }
 
         public void RightToolUse()
         {
-            if (Equipment.RightTool != null)
+            if (Equipment.RightSlot != null)
             {
                 var args = EntityUseEventArgs.FromState(EntityState);
-                args.Tool = (ITool)Equipment.RightTool.Item;
+                args.Tool = (ITool)Equipment.RightSlot.Item;
                 OnUse(args);
             }
         }
@@ -98,7 +98,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 if (slot.Item.EntityId == itemId) return slot.Item;
             }
 
-            return Equipment.AllItems().FirstOrDefault(item => item != null && item.EntityId == itemId);
+            return Equipment.AllItems().FirstOrDefault(item => item.Item != null && item.Item.EntityId == itemId).Item;
         }
 
        
