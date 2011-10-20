@@ -51,10 +51,10 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <returns>Tool instance or null</returns>
         public ITool FindToolById(uint toolId)
         {
-            if (Equipment.LeftTool != null && Equipment.LeftTool.Item.EntityId == toolId)
-                return (ITool)Equipment.LeftTool.Item;
-            if (Equipment.RightTool != null && Equipment.RightTool.Item.EntityId == toolId)
-                return (ITool)Equipment.RightTool.Item;
+            if (Equipment.LeftSlot != null && Equipment.LeftSlot.Item.EntityId == toolId)
+                return (ITool)Equipment.LeftSlot.Item;
+            if (Equipment.RightSlot != null && Equipment.RightSlot.Item.EntityId == toolId)
+                return (ITool)Equipment.RightSlot.Item;
             return null;
         }
 

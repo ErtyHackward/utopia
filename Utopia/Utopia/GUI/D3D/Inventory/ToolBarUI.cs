@@ -50,9 +50,9 @@ namespace Utopia.GUI.D3D.Inventory
             );
             leftButton.Pressed += delegate
                                       {
-                                          _equipment.LeftTool.Tool.Use(player);
+                                          _equipment.LeftSlot.Equipment.Use(player);
                                       };
-            leftButton.Text = _equipment.LeftTool.Item.DisplayName;
+            leftButton.Text = _equipment.LeftSlot.Item.DisplayName;
             this.Children.Add(leftButton);
 
 
@@ -61,10 +61,10 @@ namespace Utopia.GUI.D3D.Inventory
             rightButton.Bounds = new UniRectangle(
               ButtonSize, 0, ButtonSize, ButtonSize
             );
-            rightButton.Text = _equipment.RightTool.Item.DisplayName;
+            rightButton.Text = _equipment.RightSlot.Item.DisplayName;
             rightButton.Pressed += delegate
             {
-                _equipment.RightTool.Tool.Use(player);
+                _equipment.RightSlot.Equipment.Use(player);
             };
             this.Children.Add(rightButton);
             
@@ -81,7 +81,7 @@ namespace Utopia.GUI.D3D.Inventory
                 _buttons.Add(btn);
                 btn.Pressed += delegate {
                     if (btn.LeftItem is ITool)
-                        _equipment.LeftTool.Item = (ITool)btn.LeftItem;
+                        _equipment.LeftSlot.Item = (ITool)btn.LeftItem;
                 };
 
                 this.Children.Add(btn);

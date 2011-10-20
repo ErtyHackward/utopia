@@ -57,11 +57,12 @@ namespace Utopia.GUI.D3D.Inventory
         public override void LoadContent()
         {
             _backgroundTex = new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"charactersheet.png", new Vector2(0, 0));
-            _inventoryUi = new PlayerInventory(_backgroundTex, _playerManager.Player.Inventory, _iconFactory, new Point(280, 120));
-            _inventoryUi.SlotClicked += InventoryUiSlotClicked;
-            _dragControl = new InventoryCell(null, _iconFactory, new Vector2I()) 
-            { 
+            _inventoryUi = new PlayerInventory(_backgroundTex, _playerManager.Player, _iconFactory, new Point(280, 120));
+            _inventoryUi.InventorySlotClicked += InventoryUiSlotClicked;
+            _dragControl = new InventoryCell(null, _iconFactory, new Vector2I())
+            {
                 Bounds = new UniRectangle(0, 0, InventoryWindow.CellSize, InventoryWindow.CellSize),
+                DrawCellBackground = false,
                 IsClickTransparent = true
             };
         }
@@ -186,7 +187,7 @@ namespace Utopia.GUI.D3D.Inventory
 
         public override void Dispose()
         {
-            _inventoryUi.SlotClicked -= InventoryUiSlotClicked;
+            _inventoryUi.InventorySlotClicked -= InventoryUiSlotClicked;
             _backgroundTex.Dispose();
         }
     }
