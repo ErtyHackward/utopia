@@ -5,7 +5,6 @@ using Nuclex.UserInterface;
 using S33M3Engines;
 using S33M3Engines.D3D;
 using S33M3Engines.InputHandler;
-using S33M3Engines.InputHandler.KeyboardHelper;
 using S33M3Engines.Shared.Sprites;
 using SharpDX;
 using Utopia.Action;
@@ -91,7 +90,7 @@ namespace Utopia.GUI.D3D.Inventory
 
                     slot.ItemsCount = itemsCount;
 
-                    BeginDrag(slot, e.Offset);
+                    BeginDrag(slot);
                 }
             }
             else
@@ -137,10 +136,10 @@ namespace Utopia.GUI.D3D.Inventory
             }
         }
 
-        private void BeginDrag(ContainedSlot slot, Point offset)
+        private void BeginDrag(ContainedSlot slot)
         {
             _dragControl.Slot = slot;
-            _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);  // offset;
+            _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);
             _screen.Desktop.Children.Add(_dragControl);
             _dragControl.BringToFront();
         }
