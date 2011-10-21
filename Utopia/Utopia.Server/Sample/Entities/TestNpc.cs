@@ -79,10 +79,10 @@ namespace Utopia.Server.Entities
                 _moveDirection = _pathTargetPoint - DynamicEntity.Position;
                 _moveDirection.Normalize();
                 var q =
-                    Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(),
+                    Quaternion.RotationMatrix(Matrix.LookAtLH(DynamicEntity.Position.AsVector3(),
                                                               DynamicEntity.Position.AsVector3() +
                                                               _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
-                DynamicEntity.Rotation = Quaternion.Invert(q);
+                //DynamicEntity.Rotation = Quaternion.Invert(q);
                 //Transform the rotation from a world rotatino to a local rotation
             }
             else
@@ -140,8 +140,8 @@ namespace Utopia.Server.Entities
                         _pathTargetPoint = new Vector3D(vec3d.X, vec3d.Y, vec3d.Z) + CubeCenter;
                         _moveDirection = _pathTargetPoint-DynamicEntity.Position;
                         _moveDirection.Normalize();
-                        var q = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
-                        DynamicEntity.Rotation = Quaternion.Invert(q); //Transform the rotation from a world rotatino to a local rotation
+                        var q = Quaternion.RotationMatrix(Matrix.LookAtLH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
+                        //DynamicEntity.Rotation = Quaternion.Invert(q); //Transform the rotation from a world rotatino to a local rotation
                     }
                 }
                 

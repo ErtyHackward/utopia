@@ -29,11 +29,13 @@ namespace Utopia.Entities.Renderer
         private BoundingBox3D _pickedCube;
         private HLSLVertexPositionColor _blockpickedUPEffect;
 
-        private Color _cursorColor = Color.Red; //Color.FromNonPremultiplied(30,30,30, 255);
+        private Color _cursorColor = Color.FromNonPremultiplied(20,20,20, 255);
         private D3DEngine _engine;
         private WorldFocusManager _focusManager;
         private IDynamicEntity _player;
         private CameraManager _camManager;
+
+        private Vector3 _cubeScaling = new Vector3(1.005f, 1.005f, 1.005f);
 
         private float _cubeYOffset;
         #endregion
@@ -63,16 +65,11 @@ namespace Utopia.Entities.Renderer
         {
             if (fromCube)
             {
-                _pickedCubeBox = new BoundingBox(new Vector3(_pickedUpCube.X - 0.002f, _pickedUpCube.Y - 0.002f, _pickedUpCube.Z - 0.002f), new Vector3(_pickedUpCube.X + 1.002f, _pickedUpCube.Y + 1.002f - _cubeYOffset, _pickedUpCube.Z + 1.002f));
-                if (_cubeYOffset > 0)
-                    _pickedCube.Update(ref _pickedCubeBox, _cubeYOffset);
-                else
-                    _pickedCube.Update(ref _pickedCubeBox);
+                _pickedCube.Update(ref _pickedUpCube, _cubeScaling, _cubeYOffset);
             }
             else
             {
-                _pickedCubeBox = new BoundingBox(new Vector3(_pickedEntity.WorldBBox.Minimum.X, _pickedEntity.WorldBBox.Minimum.Y + 0.002f, _pickedEntity.WorldBBox.Minimum.Z), _pickedEntity.WorldBBox.Maximum);
-                _pickedCube.Update(ref _pickedCubeBox, _pickedEntity.Entity.Size);
+                _pickedCube.Update(ref _pickedUpCube, _pickedEntity.Entity.Size, 0);
             }
 
         }
@@ -82,7 +79,7 @@ namespace Utopia.Entities.Renderer
         public override void LoadContent()
         {
             _blockpickedUPEffect = new HLSLVertexPositionColor(_engine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
-            _pickedCube = new BoundingBox3D(_engine, _focusManager, new Vector3(1.002f, 1.002f, 1.002f), _blockpickedUPEffect, _cursorColor);
+            _pickedCube = new BoundingBox3D(_engine, _focusManager, new Vector3(1.000f, 1.000f, 1.000f), _blockpickedUPEffect, _cursorColor);
         }
 
         public override void UnloadContent()

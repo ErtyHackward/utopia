@@ -312,7 +312,7 @@ namespace Utopia.Worlds.SkyDomes
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
             //Set States.
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullFront, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             _skyDomeEffect.Begin();
             _skyDomeEffect.CBPerDraw.Values.ViewProj = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
@@ -347,8 +347,7 @@ namespace Utopia.Worlds.SkyDomes
                                 new Vector3(MoonScale,MoonScale,0),
                                 new Vector2(1,0))
                         };
-
-            _moonIb = new short[] { 0, 1, 2, 2, 3, 0 };
+            _moonIb = new short[] { 0, 2, 1, 2, 0, 3 };
         }
 
         private void DrawingMoon()
@@ -404,7 +403,6 @@ namespace Utopia.Worlds.SkyDomes
             _posiTextureEffect.Apply();
 
             _d3dEngine.Context.DrawIndexed(_moonIb.Length, 0, 0);
-
         }
 
         private void BuffersToDevice()

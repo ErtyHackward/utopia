@@ -37,56 +37,66 @@ namespace Utopia.Resources.ModelComp
             _d3dEngine = d3dEngine;
             _worldFocusManager = worldFocusManager;
             _wrappedEffect = effect;
-            CreateBBShape(ref BBDimension, ref color);
+            CreateBBShape(BBDimension / 2, ref color);
         }
 
-        private void CreateBBShape(ref Vector3 BBDimension, ref Color color)
+        private void CreateBBShape(Vector3 BBDimension, ref Color color)
         {
             VertexPositionColor[] ptList = new VertexPositionColor[24];
-            ptList[0] = new VertexPositionColor() { Position = new Vector3(0, 0, 0), Color = color };
-            ptList[1] = new VertexPositionColor() { Position = new Vector3(0, 0, BBDimension.Z), Color = color };
-            ptList[2] = new VertexPositionColor() { Position = new Vector3(0, 0, BBDimension.Z), Color = color };
-            ptList[3] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, 0, BBDimension.Z), Color = color };
-            ptList[4] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, 0, BBDimension.Z), Color = color };
-            ptList[5] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, 0, 0), Color = color };
-            ptList[6] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, 0, 0), Color = color };
-            ptList[7] = new VertexPositionColor() { Position = new Vector3(0, 0, 0), Color = color };
+            ptList[0] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
+            ptList[1] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
+            ptList[2] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
+            ptList[3] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
+            ptList[4] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
+            ptList[5] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
+            ptList[6] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
+            ptList[7] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
 
-            ptList[8] = new VertexPositionColor() { Position = new Vector3(0, BBDimension.Y, 0), Color = color };
-            ptList[9] = new VertexPositionColor() { Position = new Vector3(0, BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[10] = new VertexPositionColor() { Position = new Vector3(0, BBDimension.Y, BBDimension.Z), Color = color };
+            ptList[8] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
+            ptList[9] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
+            ptList[10] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
             ptList[11] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
             ptList[12] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[13] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, BBDimension.Y, 0), Color = color };
-            ptList[14] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, BBDimension.Y, 0), Color = color };
-            ptList[15] = new VertexPositionColor() { Position = new Vector3(0, BBDimension.Y, 0), Color = color };
+            ptList[13] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
+            ptList[14] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
+            ptList[15] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
 
-            ptList[16] = new VertexPositionColor() { Position = new Vector3(0, 0, 0), Color = color };
-            ptList[17] = new VertexPositionColor() { Position = new Vector3(0, BBDimension.Y, 0), Color = color };
-            ptList[18] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, 0, 0), Color = color };
-            ptList[19] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, BBDimension.Y, 0), Color = color };
-            ptList[20] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, 0, BBDimension.Z), Color = color };
+            ptList[16] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
+            ptList[17] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
+            ptList[18] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
+            ptList[19] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
+            ptList[20] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
             ptList[21] = new VertexPositionColor() { Position = new Vector3(BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[22] = new VertexPositionColor() { Position = new Vector3(0, 0, BBDimension.Z), Color = color };
-            ptList[23] = new VertexPositionColor() { Position = new Vector3(0, BBDimension.Y, BBDimension.Z), Color = color };
+            ptList[22] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
+            ptList[23] = new VertexPositionColor() { Position = new Vector3(-BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
 
             _vertexBuffer = new VertexBuffer<VertexPositionColor>(_d3dEngine, 24, VertexPositionColor.VertexDeclaration, PrimitiveTopology.LineList, "BoundingBox3D_vertexBuffer");
             _vertexBuffer.SetData(ptList);
         }
 
-        public void Update(ref BoundingBox bb)
+        public void Update(ref Vector3 position, Vector3 scalingSize, float YOffset = 0)
         {
-            BB3dworld = Matrix.Translation(bb.Minimum);
+            if (YOffset == 0)
+            {
+                BB3dworld = Matrix.Scaling(scalingSize) * Matrix.Translation(position);
+            }
+            else
+            {
+                BB3dworld = Matrix.Scaling(new Vector3(scalingSize.X, scalingSize.Y - YOffset, scalingSize.Z)) * Matrix.Translation(position);
+            }
         }
 
-        public void Update(ref BoundingBox bb, float YOffset)
+        public void Update(ref Vector3I position, Vector3 scalingSize, float YOffset = 0)
         {
-            BB3dworld = Matrix.Scaling(new Vector3(1, 1.0f - YOffset, 1)) * Matrix.Translation(bb.Minimum);
-        }
-
-        public void Update(ref BoundingBox bb, Vector3 scalingSize)
-        {
-            BB3dworld = Matrix.Scaling(scalingSize) * Matrix.Translation(bb.Minimum);
+            Vector3 translation = new Vector3(position.X + 0.5f, position.Y + ((1.0f - YOffset) / 2), position.Z + 0.5f);
+            if (YOffset == 0)
+            {
+                BB3dworld = Matrix.Scaling(scalingSize) * Matrix.Translation(translation);
+            }
+            else
+            {
+                BB3dworld = Matrix.Scaling(new Vector3(scalingSize.X, scalingSize.Y - YOffset, scalingSize.Z)) * Matrix.Translation(translation);
+            }
         }
 
         #region Private methods

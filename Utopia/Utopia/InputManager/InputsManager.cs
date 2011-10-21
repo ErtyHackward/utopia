@@ -182,8 +182,8 @@ namespace Utopia.InputManager
             {
                 //Set the mouse to the Center Screen
                 Mouse.SetPosition(_centerViewPort.X, _centerViewPort.Y);
-                MouseMoveDelta.X = _curMouseState.X - _centerViewPort.X;
-                MouseMoveDelta.Y = _curMouseState.Y - _centerViewPort.Y;
+                MouseMoveDelta.X = _centerViewPort.X - _curMouseState.X;
+                MouseMoveDelta.Y = _centerViewPort.Y - _curMouseState.Y;
             }
         }
 

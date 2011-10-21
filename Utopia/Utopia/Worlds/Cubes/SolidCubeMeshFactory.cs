@@ -121,11 +121,12 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
+
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
 
                     break;
                 case CubeFace.Back:
@@ -194,11 +195,12 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
+
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
 
                     break;
                 case CubeFace.Top:
@@ -267,11 +269,13 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
+
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
+
                     break;
 
                 case CubeFace.Bottom:
@@ -340,11 +344,13 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
+
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
+
                     break;
 
                 case CubeFace.Left:
@@ -413,11 +419,12 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
+
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
                     break;
                 case CubeFace.Right:
 
@@ -485,11 +492,13 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
+
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
-                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset2));
+                    chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
+
                     break;
             }
         }
