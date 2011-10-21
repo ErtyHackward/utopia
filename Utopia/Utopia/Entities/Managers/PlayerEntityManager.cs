@@ -201,19 +201,19 @@ namespace Utopia.Entities.Managers
 
             if (HandleToolsUse && _actions.isTriggered(Actions.Use_Left))
             {
-                if (Player.EntityState.IsPickingActive && Player.Equipment.LeftSlot!=null)
+                if (Player.EntityState.IsPickingActive && Player.Equipment.LeftTool!=null)
                 {
                     //sends the client server event that does tool.use on server
                     Player.LeftToolUse();
 
                     //client invocation to keep the client inventory in synch
-                    Player.Equipment.LeftSlot.Equipment.Use(Player);
+                    Player.Equipment.LeftTool.Use(Player);
                 }
             }
 
             if (HandleToolsUse && _actions.isTriggered(Actions.Use_Right))
             {
-                 if (Player.EntityState.IsPickingActive && Player.Equipment.RightSlot != null)
+                 if (Player.EntityState.IsPickingActive && Player.Equipment.RightTool != null)
                 {
                     //Avoid the player to add a block where he is located !            
                     BoundingBox playerPotentialNewBlock;
@@ -225,7 +225,7 @@ namespace Utopia.Entities.Managers
                         Player.RightToolUse();
 
                         //client invocation to keep the client inventory in synch
-                        Player.Equipment.RightSlot.Equipment.Use(Player);
+                        Player.Equipment.RightTool.Use(Player);
                     }
                 }
             }

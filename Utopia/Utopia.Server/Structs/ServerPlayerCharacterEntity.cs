@@ -194,32 +194,7 @@ namespace Utopia.Server.Structs
 
         public override void Equip(EntityEquipmentMessage entityEquipmentMessage)
         {
-            // first check has the entity this item it want to equip
-            var playerCharacter = (PlayerCharacter)DynamicEntity;
 
-            foreach (var equipmentItem in entityEquipmentMessage.Items)
-            {
-                ContainedSlot itemSlot;
-                if ((itemSlot = playerCharacter.Inventory.Find(equipmentItem.Entity)) != null)
-                {
-                    // take item from inventory
-                    playerCharacter.Inventory.TakeItem(itemSlot.GridPosition, itemSlot.ItemsCount);
-
-                    var oldItem = playerCharacter.Equipment.WearItem(new ContainedSlot { Item = (IItem)equipmentItem.Entity }, equipmentItem.Slot);
-
-                    if (oldItem != null)
-                    {
-                        itemSlot.Item = oldItem;
-                        playerCharacter.Inventory.PutItem(itemSlot.Item, itemSlot.GridPosition, itemSlot.ItemsCount);
-                    }
-
-                }
-                else
-                {
-                    // impossible to equip
-                    Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Unable to equip this item, it should be inside the inventory" });
-                }
-            }
         }
 
         private ContainedSlot _itemTaken;
@@ -232,14 +207,13 @@ namespace Utopia.Server.Structs
 
             if (playerCharacter.EntityId == itemTransferMessage.SourceContainerEntityId)
             {
-                if (itemTransferMessage.SourceSlotType != EquipmentSlotType.None)
-                {
+
                     // equipment take
-                    _itemTaken = playerCharacter.Equipment.UnWearItem(itemTransferMessage.SourceSlotType);
+                    //_itemTaken = playerCharacter.Equipment.UnWearItem(itemTransferMessage.SourceSlotType);
                     if (_itemTaken != null)
                         return true;
                     return false;
-                }
+                
 
             }
 
