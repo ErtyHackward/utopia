@@ -29,12 +29,13 @@ namespace LostIsland.Server
             dEntity.EntityId = entityId;
             dEntity.Position = new Vector3D(10, 128, 10);
             dEntity.CharacterName = name;
-            dEntity.Equipment.LeftSlot = new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.Annihilator) };
+            ContainedSlot outItem;
+            dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.Annihilator) }, out outItem);
 
             var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
             adder.CubeId = CubeId.HalfWoodPlank;//looting a terraincube will create a new blockadder instance or add to the stack
 
-            dEntity.Equipment.RightSlot = new EquipmentSlot<ITool> { Item = adder };
+            dEntity.Equipment.Equip(EquipmentSlotType.RightHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
             var item = (IItem)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.Shovel));
             dEntity.Inventory.PutItem(item);

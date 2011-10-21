@@ -1,6 +1,5 @@
 using System.IO;
 using System.Runtime.InteropServices;
-using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Structs;
 
@@ -20,8 +19,6 @@ namespace Utopia.Shared.Net.Messages
         private int _itemsCount;
         private uint _itemEntityId;
         private bool _isSwitch;
-        private EquipmentSlotType _sourceInventorySlot;
-        private EquipmentSlotType _destinationInventorySlot;
 
         /// <summary>
         /// Source object item taken from, use 0 if item was taken from world space
@@ -34,6 +31,8 @@ namespace Utopia.Shared.Net.Messages
 
         /// <summary>
         /// Source conainer slot position
+        /// x == -1 : equipment, y = equipmentSlot
+        /// x == -2 : toolbar, toolbarslot
         /// </summary>
         public Vector2I SourceContainerSlot
         {
@@ -52,6 +51,8 @@ namespace Utopia.Shared.Net.Messages
         
         /// <summary>
         /// Destination container slot position
+        /// x == -1 : equipment, y = equipmentSlot
+        /// x == -2 : toolbar, toolbarslot
         /// </summary>
         public Vector2I DestinationContainerSlot
         {
@@ -87,33 +88,13 @@ namespace Utopia.Shared.Net.Messages
         }
 
         /// <summary>
-        /// Indicate if item was taken from the equipment
-        /// </summary>
-        public EquipmentSlotType SourceSlotType
-        {
-            get { return _sourceInventorySlot; }
-            set { _sourceInventorySlot = value; }
-        }
-
-        /// <summary>
-        /// Indicate if item was put to the equipment
-        /// </summary>
-        public EquipmentSlotType DestinationSlotType
-        {
-            get { return _destinationInventorySlot; }
-            set { _destinationInventorySlot = value; }
-        }
-
-        /// <summary>
         /// Gets a message identification number
         /// </summary>
         public byte MessageId
         {
             get { return (byte)MessageTypes.ItemTransfer; }
         }
-
-
-
+        
         /// <summary>
         /// Writes all necessary instance members
         /// </summary>
@@ -127,9 +108,6 @@ namespace Utopia.Shared.Net.Messages
             writer.Write(_itemEntityId);
             writer.Write(_itemsCount);
             writer.Write(_isSwitch);
-            writer.Write((ushort)_sourceInventorySlot);
-            writer.Write((ushort)_destinationInventorySlot);
-
         }
 
         public static ItemTransferMessage Read(BinaryReader reader)
@@ -143,8 +121,6 @@ namespace Utopia.Shared.Net.Messages
             msg._itemEntityId = reader.ReadUInt32();
             msg._itemsCount = reader.ReadInt32();
             msg._isSwitch = reader.ReadBoolean();
-            msg._sourceInventorySlot = (EquipmentSlotType)reader.ReadUInt16();
-            msg._destinationInventorySlot = (EquipmentSlotType)reader.ReadUInt16();
 
             return msg;
         }

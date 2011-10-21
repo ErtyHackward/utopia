@@ -98,7 +98,7 @@ namespace Utopia.Server.Services
                 _server.ChatManager.Broadcast("All test npc removed");
             }
 
-            if (cmd.StartsWith("addtestnpc"))
+            if (cmd.StartsWith("addtestnpc "))
             {
                 var splt = cmd.Split(' ');
                 int count = 0;

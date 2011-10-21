@@ -11,7 +11,7 @@ namespace Utopia.Shared.Entities.Dynamic
         protected CharacterEntity()
         {
             Equipment = new CharacterEquipment(this);
-            Inventory = new SlotContainer<ContainedSlot>();
+            Inventory = new SlotContainer<ContainedSlot>(this);
         }
 
         /// <summary>
@@ -51,10 +51,10 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <returns>Tool instance or null</returns>
         public ITool FindToolById(uint toolId)
         {
-            if (Equipment.LeftSlot != null && Equipment.LeftSlot.Item.EntityId == toolId)
-                return (ITool)Equipment.LeftSlot.Item;
-            if (Equipment.RightSlot != null && Equipment.RightSlot.Item.EntityId == toolId)
-                return (ITool)Equipment.RightSlot.Item;
+            if (Equipment.LeftTool != null && Equipment.LeftTool.EntityId == toolId)
+                return Equipment.LeftTool;
+            if (Equipment.RightTool != null && Equipment.RightTool.EntityId == toolId)
+                return Equipment.RightTool;
             return null;
         }
 
