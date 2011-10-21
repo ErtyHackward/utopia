@@ -16,6 +16,11 @@ using S33M3Engines.Struct.Vertex;
 using S33M3Engines.D3D.Effects.Basics;
 using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
+using UtopiaContent.Effects.Entities;
+using Utopia.Shared.Cubes;
+using Utopia.Worlds.Cubes;
+using System.Collections.Generic;
+using S33M3Engines.StatesManager;
 
 namespace Utopia.Entities
 {
@@ -83,67 +88,103 @@ namespace Utopia.Entities
         {
             //Get the "Block" mesh that will be used to draw the various blocks.
             IMeshFactory meshfactory = new MilkShape3DMeshFactory();
-            Mesh mesh;
-            meshfactory.LoadMesh(@"\Meshes\Block.txt", out mesh, 0);
+            Mesh meshBluePrint;
+
+            int textureSize = 128;
+            
+            meshfactory.LoadMesh(@"\Meshes\block.txt", out meshBluePrint, 0);
             //Create Vertex/Index Buffer to store the loaded mesh.
             VertexBuffer<VertexMesh> vb = new VertexBuffer<VertexMesh>(_d3DEngine,
-                                                                       mesh.Vertices.Length,
+                                                                       meshBluePrint.Vertices.Length,
                                                                        VertexMesh.VertexDeclaration,
                                                                        SharpDX.Direct3D.PrimitiveTopology.TriangleList,
                                                                        "Block VB");
-            IndexBuffer<ushort> ib = new IndexBuffer<ushort>(_d3DEngine, mesh.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB");
+            IndexBuffer<ushort> ib = new IndexBuffer<ushort>(_d3DEngine, meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB");
 
             //Create the render texture
-            RenderedTexture2D texture = new RenderedTexture2D(_d3DEngine, IconSize, IconSize, SharpDX.DXGI.Format.R8G8B8A8_UNorm)
+            RenderedTexture2D texture = new RenderedTexture2D(_d3DEngine, textureSize, textureSize, SharpDX.DXGI.Format.R8G8B8A8_UNorm)
             {
                 BackGroundColor = new Color4(255, 0, 150, 150)
             };
 
             //Create the Shadder used to render on the texture.
-            HLSLVertexPositionNormalTexture shader = new HLSLVertexPositionNormalTexture(_d3DEngine,
-                                                                                         @"D3D/Effects/Basics/VertexPositionNormalTexture.hlsl",
-                                                                                         VertexMesh.VertexDeclaration);
-
-            //Init Textures
-            ShaderResourceView innerTexture = ShaderResourceView.FromFile(_d3DEngine.Device, ClientSettings.TexturePack + @"Terran/" + @"ct01.png");
-
-            //Stored the mesh data inside teh buffers
-            vb.SetData(mesh.Vertices);
-            ib.SetData(mesh.Indices);
+            HLSLIcons shader = new HLSLIcons(_d3DEngine,
+                                             ClientSettings.EffectPack + @"Entities/Icons.hlsl",
+                                             VertexMesh.VertexDeclaration);
 
             //Compute projection + View matrix
-            float aspectRatio = IconSize / IconSize;
+            float aspectRatio = textureSize / textureSize;
             Matrix projection;
-            Matrix.PerspectiveFovRH((float)Math.PI / 3, aspectRatio, 0.5f, 100f, out projection);
-            Matrix view = Matrix.LookAtRH(new Vector3(0, 0, -1.8f), Vector3.Zero, Vector3.UnitY);
+            Matrix.PerspectiveFovLH((float)Math.PI / 3, aspectRatio, 0.5f, 100f, out projection);
+            Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -3f), Vector3.Zero, Vector3.UnitY);
 
-            //Begin Drawing
-            texture.Begin();
+            Dictionary<int, int> MaterialChangeMapping = new Dictionary<int, int>();
+            MaterialChangeMapping.Add(0, 0); //Change the Back Texture Id
+            MaterialChangeMapping.Add(1, 0); //Change the Front Texture Id
+            MaterialChangeMapping.Add(2, 0); //Change the Bottom Texture Id
+            MaterialChangeMapping.Add(3, 0); //Change the Top Texture Id
+            MaterialChangeMapping.Add(4, 0); //Change the Left Texture Id
+            MaterialChangeMapping.Add(5, 0); //Change the Right Texture Id
 
-            shader.Begin();
+            //Create a texture for each cubes existing !
+            foreach (ushort cubeId in CubeId.All())
+            {
+                //Don't create "Air" cube
+                if (cubeId == 0) continue;
+                //Create the new Material MeshMapping
+                var profile = VisualCubeProfile.CubesProfile[cubeId];
+                
+                //Here the key parameter is the ID name given to the texture inside the file model.
+                //In our case the model loaded has these Materials/texture Ids :
+                // 0 = Back
+                // 1 = Front
+                // 2 = Bottom
+                // 3 = Top
+                // 4 = Left
+                // 5 = Right
+                //The value attached to it is simply the TextureID from the texture array to use.
+                MaterialChangeMapping[0] = profile.Tex_Back; //Change the Back Texture Id
+                MaterialChangeMapping[1] = profile.Tex_Front; //Change the Front Texture Id
+                MaterialChangeMapping[2] = profile.Tex_Bottom; //Change the Bottom Texture Id
+                MaterialChangeMapping[3] = profile.Tex_Top; //Change the Top Texture Id
+                MaterialChangeMapping[4] = profile.Tex_Left; //Change the Left Texture Id
+                MaterialChangeMapping[5] = profile.Tex_Right; //Change the Right Texture Id
 
-            shader.CBPerFrame.Values.Alpha = 1;
-            shader.CBPerFrame.Values.View = Matrix.Transpose(view);
-            shader.CBPerFrame.Values.Projection = Matrix.Transpose(projection);
-            shader.CBPerFrame.IsDirty = true;
+                Mesh mesh = meshBluePrint.Clone(MaterialChangeMapping);
+                //Stored the mesh data inside the buffers
+                vb.SetData(mesh.Vertices);
+                ib.SetData(mesh.Indices);
 
-            shader.CBPerDraw.Values.World = Matrix.Transpose( Matrix.RotationY(MathHelper.PiOver4) * Matrix.Translation(new Vector3(0, 0, 0)));
-            shader.CBPerDraw.IsDirty = true;
+                //Begin Drawing
+                texture.Begin();
 
-            shader.DiffuseTexture.Value = innerTexture;
+                StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
-            shader.Apply();
-            //Set the buffer to the device
-            vb.SetToDevice(0);
-            ib.SetToDevice(0);
+                shader.Begin();
 
-            //Draw things here.
-            _d3DEngine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
+                shader.CBPerFrame.Values.Alpha = 1;
+                shader.CBPerFrame.Values.View = Matrix.Transpose(view);
+                shader.CBPerFrame.Values.Projection = Matrix.Transpose(projection);
+                shader.CBPerFrame.IsDirty = true;
 
-            //End Drawing
-            texture.End(false);
+                shader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationY(MathHelper.PiOver4) * Matrix.Translation(new Vector3(0, 0, 0)));
+                shader.CBPerDraw.IsDirty = true;
 
-            //Texture2D.ToFile<Texture2D>(_d3DEngine.Context, texture.RenderTargetTexture, ImageFileFormat.Png, @"e:\test.png");
+                shader.DiffuseTexture.Value = CubesTexture;
+
+                shader.Apply();
+                //Set the buffer to the device
+                vb.SetToDevice(0);
+                ib.SetToDevice(0);
+
+                //Draw things here.
+                _d3DEngine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
+
+                //End Drawing
+                texture.End(false);
+
+                //Texture2D.ToFile<Texture2D>(_d3DEngine.Context, texture.RenderTargetTexture, ImageFileFormat.Png, @"E:\text\Block" + profile.Name + ".png");
+            }
 
             //Reset device Default render target
             _d3DEngine.ResetDefaultRenderTargetsAndViewPort();
@@ -152,7 +193,6 @@ namespace Utopia.Entities
             shader.Dispose();
             vb.Dispose();
             ib.Dispose();
-            innerTexture.Dispose();
         }
         #endregion
         
