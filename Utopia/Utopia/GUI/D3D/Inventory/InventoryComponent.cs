@@ -30,7 +30,7 @@ namespace Utopia.GUI.D3D.Inventory
         private readonly IconFactory _iconFactory;
         private readonly ItemMessageTranslator _itemMessageTranslator;
 
-        private InventoryWindow _inventoryUi;
+        private PlayerInventory _inventoryUi;
         private SpriteTexture _backgroundTex;
         private InventoryCell _dragControl;
         private Point _dragOffset;
@@ -58,6 +58,7 @@ namespace Utopia.GUI.D3D.Inventory
             _backgroundTex = new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"charactersheet.png", new Vector2(0, 0));
             _inventoryUi = new PlayerInventory(_backgroundTex, _playerManager.Player, _iconFactory, new Point(280, 120));
             _inventoryUi.InventorySlotClicked += InventoryUiSlotClicked;
+            _inventoryUi.EquipmentSlotClicked += InventoryUiSlotClicked;
             _dragControl = new InventoryCell(null, _iconFactory, new Vector2I())
             {
                 Bounds = new UniRectangle(0, 0, InventoryWindow.CellSize, InventoryWindow.CellSize),
@@ -65,6 +66,7 @@ namespace Utopia.GUI.D3D.Inventory
                 IsClickTransparent = true
             };
         }
+
 
         void InventoryUiSlotClicked(object sender, InventoryWindowEventArgs e)
         {

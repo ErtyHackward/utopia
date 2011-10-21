@@ -127,7 +127,7 @@ namespace Utopia.Editor
             _chunkEntityImpactManager = chunkEntityImpactManager;
 
             // inactive by default, use F12 UI to enable :)
-            _leftToolbeforeEnteringEditor = _player.Equipment.LeftSlot.Equipment;
+            _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
             Visible = false;
             Enabled = false;
 
@@ -318,7 +318,7 @@ namespace Utopia.Editor
                 _playerMgr.Player.MoveSpeed = 0.25f;
                 _hudComponent.Enabled = false;
 
-                _leftToolbeforeEnteringEditor = _player.Equipment.LeftSlot.Equipment;
+                _leftToolbeforeEnteringEditor = _player.Equipment.LeftTool;
                 //_player.Equipment.LeftTool = null;
                 foreach (var control in _ui.Children)
                 {

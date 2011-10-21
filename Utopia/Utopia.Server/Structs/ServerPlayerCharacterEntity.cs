@@ -8,6 +8,7 @@ using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Server.Structs
 {
@@ -194,32 +195,7 @@ namespace Utopia.Server.Structs
 
         public override void Equip(EntityEquipmentMessage entityEquipmentMessage)
         {
-            // first check has the entity this item it want to equip
-            var playerCharacter = (PlayerCharacter)DynamicEntity;
 
-            foreach (var equipmentItem in entityEquipmentMessage.Items)
-            {
-                ContainedSlot itemSlot;
-                if ((itemSlot = playerCharacter.Inventory.Find(equipmentItem.Entity)) != null)
-                {
-                    // take item from inventory
-                    playerCharacter.Inventory.TakeItem(itemSlot.GridPosition, itemSlot.ItemsCount);
-
-                    var oldItem = playerCharacter.Equipment.WearItem(new ContainedSlot { Item = (IItem)equipmentItem.Entity }, equipmentItem.Slot);
-
-                    if (oldItem != null)
-                    {
-                        itemSlot.Item = oldItem;
-                        playerCharacter.Inventory.PutItem(itemSlot.Item, itemSlot.GridPosition, itemSlot.ItemsCount);
-                    }
-
-                }
-                else
-                {
-                    // impossible to equip
-                    Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Unable to equip this item, it should be inside the inventory" });
-                }
-            }
         }
 
         private ContainedSlot _itemTaken;
@@ -228,95 +204,88 @@ namespace Utopia.Server.Structs
         {
             var playerCharacter = (PlayerCharacter)DynamicEntity;
 
-            // first find the container
-
-            if (playerCharacter.EntityId == itemTransferMessage.SourceContainerEntityId)
-            {
-                if (itemTransferMessage.SourceSlotType != EquipmentSlotType.None)
-                {
-                    // equipment take
-                    _itemTaken = playerCharacter.Equipment.UnWearItem(itemTransferMessage.SourceSlotType);
-                    if (_itemTaken != null)
-                        return true;
-                    return false;
-                }
-
-            }
-
-            return false;
-        }
-
-        private bool PutItem(ItemTransferMessage itemTransferMessage)
-        {
-
-            return false;
-        }
-
-        public override void ItemTransfer(ItemTransferMessage itemTransferMessage)
-        {
-            var playerCharacter = (PlayerCharacter)DynamicEntity;
-
-            if (itemTransferMessage.IsSwitch)
-            {
-                //this.LockedEntity
-
-
-
-
-                return;
-            }
-
-
-            // internal inventory transfer?
-            if (playerCharacter.EntityId == itemTransferMessage.SourceContainerEntityId && itemTransferMessage.SourceContainerEntityId == itemTransferMessage.DestinationContainerEntityId)
-            {
-                
-                var slot = new ContainedSlot
-                               {
-                                   GridPosition = itemTransferMessage.SourceContainerSlot,
-                                   ItemsCount = itemTransferMessage.ItemsCount
-                               };
-
-                var itemType = playerCharacter.Inventory.PeekSlot(slot.GridPosition);
-
-                // check if we allow transfer
-                if (playerCharacter.Inventory.TakeItem(slot.GridPosition, slot.ItemsCount))
-                {
-                    if (playerCharacter.Inventory.PutItem(itemType.Item, itemTransferMessage.DestinationContainerSlot, slot.ItemsCount ))
-                    {
-                        // ok
-                        return;
-                    }
-                    else
-                    {
-                        // return back
-                        slot.GridPosition = itemTransferMessage.SourceContainerSlot;
-                        playerCharacter.Inventory.PutItem(itemType.Item, slot.GridPosition, slot.ItemsCount);
-                    }
-                }
-
-            }
-
-            // take from world?
+            #region Take from world
             if (itemTransferMessage.SourceContainerEntityId == 0 && itemTransferMessage.DestinationContainerEntityId == playerCharacter.EntityId)
             {
                 if (itemTransferMessage.ItemEntityId != 0)
                 {
                     ServerChunk chunk;
-                    if ( (chunk = _server.LandscapeManager.SurroundChunks(playerCharacter.Position).First(c => c.Entities.ContainsId(itemTransferMessage.ItemEntityId))) != null)
+                    if ((chunk = _server.LandscapeManager.SurroundChunks(playerCharacter.Position).First(c => c.Entities.ContainsId(itemTransferMessage.ItemEntityId))) != null)
                     {
                         Entity entity;
                         chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, playerCharacter.EntityId, out entity);
-                        if (entity != null)
-                        {
-                            if (playerCharacter.Inventory.PutItem((IItem)entity))
-                                return; // ok
-                        }
+
+                        _itemTaken = new ContainedSlot { Item = (IItem)entity };
+                        return true;
                     }
                 }
             }
+            #endregion
+            
+            // detect the container
+            SlotContainer<ContainedSlot> container = null;
 
-            //throw item to world
+            var position = itemTransferMessage.SourceContainerSlot;
+
+            if (playerCharacter.EntityId == itemTransferMessage.SourceContainerEntityId)
+            {
+                if (itemTransferMessage.SourceContainerSlot.X == -1)
+                {
+                    container = playerCharacter.Equipment;
+                    position.X = 0;
+                }
+                else
+                    container = playerCharacter.Inventory;
+            }
+            
+            if (container == null)
+                return false;
+
+            _itemTaken = container.PeekSlot(position);
+
+            if (!container.TakeItem(position, itemTransferMessage.ItemsCount))
+            {
+                _itemTaken = null;
+                return false;
+            }
+
+            _itemTaken.ItemsCount = itemTransferMessage.ItemsCount;
+
+            return true;
+        }
+
+        private void RollbackItem(ItemTransferMessage itm)
+        {
+            if (_itemTaken != null)
+            {
+                var playerCharacter = (PlayerCharacter)DynamicEntity;
+                var position = itm.SourceContainerSlot;
+                SlotContainer<ContainedSlot> container = null;
+                if (playerCharacter.EntityId == itm.SourceContainerEntityId)
+                {
+                    if (itm.SourceContainerSlot.X == -1)
+                    {
+                        container = playerCharacter.Equipment;
+                        position.X = 0;
+                    }
+                    else
+                        container = playerCharacter.Inventory;
+                }
+
+                if (container != null)
+                    container.PutItem(_itemTaken.Item, position, _itemTaken.ItemsCount);
+                else
+                    throw new InvalidOperationException("Unable to rollback");
+
+                _itemTaken = null;
+            }
+        }
+
+        private bool PutItem(ItemTransferMessage itemTransferMessage)
+        {
+            var playerCharacter = (PlayerCharacter)DynamicEntity;
+
+            #region Throw to world
             if (itemTransferMessage.SourceContainerEntityId == playerCharacter.EntityId && itemTransferMessage.DestinationContainerEntityId == 0)
             {
                 if (itemTransferMessage.ItemEntityId != 0)
@@ -325,7 +294,7 @@ namespace Utopia.Server.Structs
 
                     var chunk = _server.LandscapeManager.GetChunk(playerCharacter.Position);
 
-                    var containedSlot = new ContainedSlot{ ItemsCount = itemTransferMessage.ItemsCount, GridPosition = itemTransferMessage.SourceContainerSlot };
+                    var containedSlot = new ContainedSlot { ItemsCount = itemTransferMessage.ItemsCount, GridPosition = itemTransferMessage.SourceContainerSlot };
 
                     var itemType = playerCharacter.Inventory.PeekSlot(containedSlot.GridPosition);
 
@@ -338,26 +307,137 @@ namespace Utopia.Server.Structs
                             for (int i = 0; i < itemTransferMessage.ItemsCount; i++)
                             {
                                 // throw it
-                                chunk.Entities.Add((Entity)itemType.Item, playerCharacter.EntityId);    
+                                chunk.Entities.Add((Entity)itemType.Item, playerCharacter.EntityId);
                             }
                             // ok
-                            return;
+                            return true;
                         }
                         else
                         {
                             // return item to inventory
                             playerCharacter.Inventory.PutItem(itemType.Item, containedSlot.GridPosition, containedSlot.ItemsCount);
                         }
-
-
                     }
+                }
 
+                return false;
+            }
+            #endregion
 
+            // detect the container
+            SlotContainer<ContainedSlot> container = null;
 
+            var position = itemTransferMessage.DestinationContainerSlot;
+
+            if (itemTransferMessage.DestinationContainerEntityId == playerCharacter.EntityId)
+            {
+                if (position.X == -1)
+                {
+                    container = playerCharacter.Equipment;
+                    position.X = 0;
+                }
+                else
+                {
+                    container = playerCharacter.Inventory;
                 }
             }
 
+            if (container == null)
+                return false;
+
+            return container.PutItem(_itemTaken.Item, position, _itemTaken.ItemsCount);
+        }
+
+        public SlotContainer<ContainedSlot> FindContainer(uint entityId, Vector2I position, out Vector2I newPosition)
+        {
+            var playerCharacter = (PlayerCharacter)DynamicEntity;
+
+            newPosition = position;
+
+            if (entityId == playerCharacter.EntityId)
+            {
+                if (position.X == -1)
+                {
+                    newPosition.X = 0;
+                    return playerCharacter.Equipment;
+                }
+                return playerCharacter.Inventory;
+            }
+            return null;
+        }
+
+
+        public override void ItemTransfer(ItemTransferMessage itm)
+        {
+            var playerCharacter = (PlayerCharacter)DynamicEntity;
+
+            #region Switch
+            if (itm.IsSwitch)
+            {
+                var srcPosition = itm.SourceContainerSlot;
+                var dstPosition = itm.DestinationContainerSlot;
+
+                var srcContainer = FindContainer(itm.SourceContainerEntityId, srcPosition, out srcPosition);
+                var dstContainer = FindContainer(itm.DestinationContainerEntityId, dstPosition, out dstPosition);
+
+                if (srcContainer == null || dstContainer == null)
+                {
+                    ItemError();
+                    return;
+                }
+
+                // switching is allowed only if we have both slots busy
+                var srcSlot = srcContainer.PeekSlot(srcPosition);
+                var dstSlot = dstContainer.PeekSlot(dstPosition);
+
+                if (srcSlot == null || dstSlot == null)
+                {
+                    ItemError();
+                    return;
+                }
+
+                if(!srcContainer.TakeItem(srcSlot.GridPosition, srcSlot.ItemsCount))
+                {
+                    ItemError();
+                    return;
+                }
+                if(!dstContainer.TakeItem(dstSlot.GridPosition, dstSlot.ItemsCount))
+                {
+                    ItemError();
+                    return;
+                }
+                if (!srcContainer.PutItem(dstSlot.Item, srcSlot.GridPosition, dstSlot.ItemsCount))
+                {
+                    ItemError();
+                    return;
+                }
+                if (!dstContainer.PutItem(srcSlot.Item, dstSlot.GridPosition, srcSlot.ItemsCount))
+                {
+                    ItemError();
+                    return;
+                }
+
+                // ok
+                return;
+            }
+            #endregion
+
+            if (TakeItem(itm))
+            {
+                if (PutItem(itm))
+                {
+                    // ok
+                    return;
+                }
+                RollbackItem(itm);
+            }
+
             // impossible to transfer
+            ItemError();
+        }
+
+        private void ItemError()
+        {
             Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Invalid transfer operation" });
         }
 

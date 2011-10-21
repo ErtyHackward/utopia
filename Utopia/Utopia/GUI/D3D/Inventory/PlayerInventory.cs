@@ -20,16 +20,16 @@ namespace Utopia.GUI.D3D.Inventory
         /// <summary>
         /// Occurs when euipment slot is clicked
         /// </summary>
-        public event EventHandler<PlayerEquipmentEventArgs> EquipmentSlotClicked;
+        public event EventHandler<InventoryWindowEventArgs> EquipmentSlotClicked;
 
-        private void OnEquipmentSlotClicked(PlayerEquipmentEventArgs e)
+        private void OnEquipmentSlotClicked(InventoryWindowEventArgs e)
         {
             var handler = EquipmentSlotClicked;
             if (handler != null) handler(this, e);
         }
 
         public PlayerInventory(SpriteTexture back, PlayerCharacter player, IconFactory iconFactory, Point windowStartPosition)
-            : base(player.Inventory, iconFactory, windowStartPosition)
+            : base(player.Inventory, iconFactory, windowStartPosition,new Point(4 + back.Width, 24))
         {
             _player = player;
             _iconFactory = iconFactory;
@@ -40,11 +40,11 @@ namespace Utopia.GUI.D3D.Inventory
         {
             var characterSheet = new ContainerControl();
             characterSheet.background = back;
-            characterSheet.Bounds = new UniRectangle(-back.Width, 0, back.Width, back.Height);
+            characterSheet.Bounds = new UniRectangle(4, 24, back.Width, back.Height);
             Children.Add(characterSheet);
 
-            BuildBodyslot(characterSheet, EquipmentSlotType.RightHand, 145, CellSize);
-            BuildBodyslot(characterSheet, EquipmentSlotType.LeftHand, 2, CellSize);
+            BuildBodyslot(characterSheet, EquipmentSlotType.RightHand, 146, 64);
+            BuildBodyslot(characterSheet, EquipmentSlotType.LeftHand, 2, 64);
 
             //XXX externalize charactersheet slot positions. clientsettings.xml or somewhere else
 
@@ -62,7 +62,7 @@ namespace Utopia.GUI.D3D.Inventory
 
          private void BuildBodyslot(Control parent, EquipmentSlotType inventorySlot, int x, int y, int size = 32)
          {
-             var bodyCell = new InventoryCell(_player, inventorySlot, _iconFactory);
+             var bodyCell = new InventoryCell(_player.Equipment, _iconFactory, new Shared.Structs.Vector2I(0,(int)inventorySlot) );
              bodyCell.Name = inventorySlot.ToString();
              bodyCell.Bounds = new UniRectangle(x, y, size, size);
              bodyCell.MouseDown += BodyCellMouseDown;
@@ -71,12 +71,8 @@ namespace Utopia.GUI.D3D.Inventory
 
          void BodyCellMouseDown(object sender, MouseDownEventArgs e)
          {
-             OnEquipmentSlotClicked(new PlayerEquipmentEventArgs { EquipmentCell = (InventoryCell)sender });
+             var cell = (InventoryCell)sender;
+             OnEquipmentSlotClicked(new InventoryWindowEventArgs { Container = _player.Equipment, SlotPosition = cell.InventoryPosition });
          }
-    }
-
-    public class PlayerEquipmentEventArgs : EventArgs
-    {
-        public InventoryCell EquipmentCell { get; set; }
     }
 }

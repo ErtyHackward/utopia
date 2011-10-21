@@ -1,32 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities.Inventory
 {
     /// <summary>
     /// Represents character equipment
     /// </summary>
-    public class CharacterEquipment : IBinaryStorable
+    public class CharacterEquipment : SlotContainer<ContainedSlot>
     {
-        private readonly DynamicEntity _parent;
-
-        private EquipmentSlot<IHeadArmor> _headGear;
-        private EquipmentSlot<ITorsoArmor> _torso;
-        private EquipmentSlot<IArmsArmor> _arms;
-        private EquipmentSlot<ILegsArmor> _legs;
-        private EquipmentSlot<IFeetArmor> _feet;
-        private EquipmentSlot<IRing> _leftRing;
-        private EquipmentSlot<IRing> _rightRing;
-        private EquipmentSlot<INecklace> _neckLace;
-        private EquipmentSlot<ITool> _leftTool;
-        private EquipmentSlot<ITool> _rightTool;
-
         /// <summary>
-        /// Occurs when the character wears something
+        /// Occurs when the character wears/unwears something
         /// </summary>
         public event EventHandler<CharacterEquipmentEventArgs> ItemEquipped;
 
@@ -36,106 +19,44 @@ namespace Utopia.Shared.Entities.Inventory
         /// <param name="e"></param>
         public void OnItemEquipped(CharacterEquipmentEventArgs e)
         {
-            e.Entity = _parent;
+            e.Entity = (IDynamicEntity)Parent;
             var handler = ItemEquipped;
             if (handler != null) handler(this, e);
         }
-        
-        public CharacterEquipment(DynamicEntity parent)
-        {
-            _parent = parent;
-        }
 
         /// <summary>
-        /// Wear some item
+        /// Creates new instance of character eqipment
         /// </summary>
-        /// <param name="newSlot"></param>
-        /// <param name="slot"></param>
-        /// <returns>Item was weared off</returns>
-        public IItem WearItem(ContainedSlot newSlot, EquipmentSlotType slot)
+        public CharacterEquipment(IDynamicEntity parent) : base(parent,new Structs.Vector2I(1, 10))
         {
-            ContainedSlot previous;
-            
-            switch (slot)
+            ItemPut += CharacterEquipmentItemPut;
+            ItemTaken += CharacterEquipmentItemTaken;
+            ItemExchanged += CharacterEquipmentItemExchanged;
+
+        }
+
+        void CharacterEquipmentItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
+        {
+            OnItemEquipped(new CharacterEquipmentEventArgs { EquippedItem = e.Slot, Slot = (EquipmentSlotType)e.Slot.GridPosition.Y, UnequippedItem = e.Exchanged });
+        }
+
+        void CharacterEquipmentItemTaken(object sender, EntityContainerEventArgs<ContainedSlot> e)
+        {
+            var actualItem = PeekSlot(e.Slot.GridPosition);
+
+            if (actualItem == null)
             {
-                case EquipmentSlotType.Head:
-                    previous = _headGear;
-                    _headGear = EquipmentSlot<IHeadArmor>.FromBase(newSlot);
-                    break;
-                case EquipmentSlotType.Torso:
-                    previous = _torso;
-                    _torso = EquipmentSlot<ITorsoArmor>.FromBase(newSlot);
-                    break;
-                case EquipmentSlotType.Legs:
-                    previous = _legs;
-                    _legs = EquipmentSlot<ILegsArmor>.FromBase(newSlot);
-                    break;
-                case EquipmentSlotType.Feet:
-                    previous = _feet;
-                    _feet = EquipmentSlot<IFeetArmor>.FromBase(newSlot);
-                    break;
-                case EquipmentSlotType.Arms:
-                    previous = _arms;
-                    _arms = EquipmentSlot<IArmsArmor>.FromBase(newSlot);
-                    break;
-                case EquipmentSlotType.LeftHand:
-                    previous = _leftTool;
-                    _leftTool = EquipmentSlot<ITool>.FromBase(newSlot);
-                    break;
-                case EquipmentSlotType.RightHand:
-                    previous = _rightTool;
-                    _rightTool = EquipmentSlot<ITool>.FromBase(newSlot);
-                    break;
-                case EquipmentSlotType.LeftRing:
-                    previous = _leftRing;
-                    _leftRing = EquipmentSlot<IRing>.FromBase(newSlot);
-                    break;
-                case EquipmentSlotType.RightRing:
-                    previous = _rightRing;
-                    _rightRing = EquipmentSlot<IRing>.FromBase(newSlot);
-                    break;
-                case EquipmentSlotType.Neck:
-                    previous = _neckLace;
-                    _neckLace = EquipmentSlot<INecklace>.FromBase(newSlot);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("slot");
+                OnItemEquipped(new CharacterEquipmentEventArgs { EquippedItem = null, Slot = (EquipmentSlotType)e.Slot.GridPosition.Y });
             }
-
-            OnItemEquipped(new CharacterEquipmentEventArgs { EquippedItem = newSlot, UnequippedItem = previous, Slot = slot });
-
-            return previous != null ? previous.Item : null;
         }
 
-        public ContainedSlot UnWearItem(EquipmentSlotType sourceSlotType)
+        void CharacterEquipmentItemPut(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
-            throw new NotImplementedException();
-        }
+            var actualItem = PeekSlot(e.Slot.GridPosition);
 
-        /// <summary>
-        /// Determines if item can be put to equipment slot
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="slot"></param>
-        /// <returns></returns>
-        public bool CanWear(ContainedSlot item, EquipmentSlotType slot)
-        {
-            if(item == null || item.Item == null) return false;
-            switch (slot)
+            if (actualItem.ItemsCount == e.Slot.ItemsCount)
             {
-                case EquipmentSlotType.None: return false;
-                case EquipmentSlotType.Head: return item.Item is IHeadArmor;
-                case EquipmentSlotType.Torso: return item.Item is ITorsoArmor;
-                case EquipmentSlotType.Legs: return item.Item is ILegsArmor;
-                case EquipmentSlotType.Feet: return item.Item is IFeetArmor;
-                case EquipmentSlotType.Arms: return item.Item is IArmsArmor;
-                case EquipmentSlotType.LeftHand: return item.Item is ITool;
-                case EquipmentSlotType.RightHand: return item.Item is ITool;
-                case EquipmentSlotType.LeftRing: return item.Item is IRing;
-                case EquipmentSlotType.RightRing: return item.Item is IRing;
-                case EquipmentSlotType.Neck: return item.Item is INecklace;
-                default:
-                    throw new ArgumentOutOfRangeException("slot");
+                OnItemEquipped(new CharacterEquipmentEventArgs { EquippedItem = actualItem, Slot = (EquipmentSlotType)e.Slot.GridPosition.Y });
             }
         }
 
@@ -144,154 +65,79 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="slotType"></param>
         /// <returns></returns>
-        public ContainedSlot this[EquipmentSlotType slotType]
+        public ContainedSlot this[EquipmentSlotType slotType] 
+        {
+            get { return PeekSlot( new Structs.Vector2I(0, (int)slotType)); }
+        }
+
+        public bool Equip(EquipmentSlotType slotType, ContainedSlot slot, out ContainedSlot itemTaken)
+        {
+            itemTaken = null;
+
+            var internalPosition = new Structs.Vector2I(0, (int)slotType);
+            var actualSlot = PeekSlot(internalPosition);
+
+            if (actualSlot == null || actualSlot.CanStackWith(slot))
+            {
+                return PutItem(slot.Item, internalPosition, slot.ItemsCount);
+            }
+
+            return PutItemExchange(slot.Item, internalPosition, slot.ItemsCount, out itemTaken);
+        }
+
+        public bool Unequip(EquipmentSlotType slotType, out ContainedSlot itemTaken)
+        {
+            itemTaken = null;
+
+            var internalPosition = new Structs.Vector2I(0, (int)slotType);
+            var actualSlot = PeekSlot(internalPosition);
+
+            if (actualSlot == null)
+                return false;
+
+            itemTaken = actualSlot;
+
+            return TakeItem(internalPosition, actualSlot.ItemsCount);
+        }
+
+        public ITool LeftTool
         {
             get {
-                switch (slotType)
-                {
-                    case EquipmentSlotType.None:
-                        throw new ArgumentOutOfRangeException("slotType");
-                    case EquipmentSlotType.Head:
-                        return _headGear;
-                    case EquipmentSlotType.Torso:
-                        return _torso;
-                    case EquipmentSlotType.Legs:
-                        return _legs;
-                    case EquipmentSlotType.Feet:
-                        return _feet;
-                    case EquipmentSlotType.Arms:
-                        return _arms;
-                    case EquipmentSlotType.LeftHand:
-                        return _leftTool;
-                    case EquipmentSlotType.RightHand:
-                        return _rightTool;
-                    case EquipmentSlotType.LeftRing:
-                        return _leftRing;
-                    case EquipmentSlotType.RightRing:
-                        return _rightRing;
-                    case EquipmentSlotType.Neck:
-                        return _neckLace;
-                    default:
-                        throw new ArgumentOutOfRangeException("slotType");
-                }
+                var leftTool = PeekSlot(new Structs.Vector2I(0, (int)EquipmentSlotType.LeftHand));
+                if (leftTool != null)
+                    return (ITool)leftTool.Item;
+                return null;
             }
         }
-        
-        public EquipmentSlot<ITool> LeftSlot
+
+        public ITool RightTool
         {
-            get { return _leftTool; }
-            set
+            get
             {
-                var previous = _leftTool;
-
-                _leftTool = value;
-
-                OnItemEquipped(new CharacterEquipmentEventArgs { EquippedItem = _leftTool, UnequippedItem = previous, Slot = EquipmentSlotType.LeftHand });
+                var tool = PeekSlot(new Structs.Vector2I(0, (int)EquipmentSlotType.RightHand));
+                if (tool != null)
+                    return (ITool)tool.Item;
+                return null;
             }
         }
 
-        public EquipmentSlot<ITool> RightSlot
+        protected override bool ValidateItem(IItem item, Structs.Vector2I position)
         {
-            get { return _rightTool; }
-            set
+            switch ((EquipmentSlotType)position.Y)
             {
-                var previous = _rightTool;
-
-                _rightTool = value;
-
-                OnItemEquipped(new CharacterEquipmentEventArgs { EquippedItem = _rightTool, UnequippedItem = previous, Slot = EquipmentSlotType.RightHand });
+                case EquipmentSlotType.LeftHand: return item is ITool;
+                case EquipmentSlotType.RightHand: return item is ITool;
+                case EquipmentSlotType.Head: return item is IHeadArmor;
+                case EquipmentSlotType.Torso: return item is ITorsoArmor;
+                case EquipmentSlotType.Legs: return item is ILegsArmor;
+                case EquipmentSlotType.Feet: return item is IFeetArmor;
+                case EquipmentSlotType.Arms: return item is IArmsArmor;
+                case EquipmentSlotType.LeftRing: return item is IRing;
+                case EquipmentSlotType.RightRing: return item is IRing;
+                case EquipmentSlotType.Neck: return item is INecklace;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-        }
-
-        private void SaveSlot(ContainedSlot slot, BinaryWriter writer)
-        {
-            if (slot != null)
-                slot.Save(writer);
-            else new ContainedSlot { ItemsCount = 0 }.Save(writer);
-        }
-
-        private T LoadSlot<T>(BinaryReader reader) where T : ContainedSlot, new()
-        {
-            var slot = new T();
-            slot.Load(reader);
-            return slot;
-        }
-
-        /// <summary>
-        /// Saves character equipment
-        /// </summary>
-        /// <param name="writer"></param>
-        public void Save(BinaryWriter writer)
-        {
-            SaveSlot(_headGear, writer);
-            SaveSlot(_torso, writer);
-            SaveSlot(_arms, writer);
-            SaveSlot(_legs, writer);
-            SaveSlot(_feet, writer);
-
-            SaveSlot(_leftRing, writer);
-            SaveSlot(_rightRing, writer);
-            SaveSlot(_neckLace, writer);
-
-            SaveSlot(_leftTool, writer);
-            SaveSlot(_rightTool, writer);
-        }
-
-        /// <summary>
-        /// Loads character equipment
-        /// </summary>
-        /// <param name="reader"></param>
-        public void Load(BinaryReader reader)
-        {
-            _headGear = LoadSlot<EquipmentSlot<IHeadArmor>>(reader);
-            _torso = LoadSlot<EquipmentSlot<ITorsoArmor>>(reader);
-            _arms = LoadSlot<EquipmentSlot<IArmsArmor>>(reader);
-            _legs = LoadSlot<EquipmentSlot<ILegsArmor>>(reader);
-            _feet = LoadSlot<EquipmentSlot<IFeetArmor>>(reader);
-
-            _leftRing = LoadSlot<EquipmentSlot<IRing>>(reader);
-            _rightRing = LoadSlot<EquipmentSlot<IRing>>(reader);
-            _neckLace = LoadSlot<EquipmentSlot<INecklace>>(reader);
-
-            LeftSlot = LoadSlot<EquipmentSlot<ITool>>(reader);
-            RightSlot = LoadSlot<EquipmentSlot<ITool>>(reader);
-        }
-
-        /// <summary>
-        /// Enumerates all non-null slots
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<ContainedSlot> AllItems()
-        {
-            if(_leftTool != null)
-                yield return _leftTool;
-
-            if(_rightTool != null)
-                yield return _rightTool;
-            
-            if(_headGear != null)
-                yield return _headGear;
-
-            if(_torso != null)
-                yield return _torso;
-
-            if(_arms != null)
-                yield return _arms;
-
-            if(_legs != null)
-                yield return _legs; 
-
-            if(_feet != null)
-                yield return _feet;
-
-            if(_leftRing != null)
-                yield return _leftRing;
-
-            if(_rightRing != null)
-                yield return _rightRing;
-
-            if(_neckLace != null)
-                yield return _neckLace;
         }
     }
 
