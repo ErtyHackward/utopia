@@ -22,7 +22,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public event EventHandler<EntityContainerEventArgs<T>> ItemTaken;
 
-        protected void OnItemTaken(EntityContainerEventArgs<T> e)
+        protected virtual void OnItemTaken(EntityContainerEventArgs<T> e)
         {
             var handler = ItemTaken;
             if (handler != null) handler(this, e);
@@ -33,7 +33,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public event EventHandler<EntityContainerEventArgs<T>> ItemPut;
 
-        protected void OnItemPut(EntityContainerEventArgs<T> e)
+        protected virtual void OnItemPut(EntityContainerEventArgs<T> e)
         {
             var handler = ItemPut;
             if (handler != null) handler(this, e);
@@ -44,7 +44,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public event EventHandler<EntityContainerEventArgs<T>> ItemExchanged;
 
-        protected void OnItemExchanged(EntityContainerEventArgs<T> e)
+        protected virtual void OnItemExchanged(EntityContainerEventArgs<T> e)
         {
             var handler = ItemExchanged;
             if (handler != null) handler(this, e);
@@ -128,6 +128,38 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
+        /// Allows to perform item type validation
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        protected virtual bool ValidateItem(IItem item, Vector2I position)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Determines if item can be put or exchanged to slot 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="position"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public bool CanPut(IItem item, Vector2I position, int count = 1)
+        {
+            ValidatePosition(position);
+
+            if (!ValidateItem(item, position))
+                return false;
+
+            var slot = _items[position.X, position.Y];
+
+            var newSlot = new T { Item = item, ItemsCount = count };
+            
+            return slot == null || slot.CanStackWith(newSlot);
+        }
+
+        /// <summary>
         /// Tries to put item into the inventory
         /// </summary>
         /// <param name="item"></param>
@@ -138,7 +170,7 @@ namespace Utopia.Shared.Entities.Inventory
             // inventory is full?
             if (item.MaxStackSize == 1 && _slotsCount == _gridSize.X * _gridSize.Y)
                 return false;
-
+            
             if (item.MaxStackSize > 1)
             {
                 // need to find uncomplete stack if exists
@@ -147,6 +179,9 @@ namespace Utopia.Shared.Entities.Inventory
                                {
                                    if (s.Item.StackType == item.StackType && s.ItemsCount + count <= item.MaxStackSize)
                                    {
+                                       if (!ValidateItem(item, s.GridPosition))
+                                           return false;
+
                                        s.ItemsCount += count;
                                        var t = new T { GridPosition = s.GridPosition, ItemsCount = count, Item = s.Item };
                                        OnItemPut(new EntityContainerEventArgs<T> { Slot = t });
@@ -166,7 +201,12 @@ namespace Utopia.Shared.Entities.Inventory
                 {
                     if (_items[x, y] == null)
                     {
-                        _items[x, y] = new T { Item = item, GridPosition = new Vector2I(x, y), ItemsCount = count };
+                        var pos = new Vector2I(x, y);
+
+                        if (!ValidateItem(item, pos))
+                            continue;
+
+                        _items[x, y] = new T { Item = item, GridPosition = pos, ItemsCount = count };
                         _slotsCount ++;
                         OnItemPut(new EntityContainerEventArgs<T> { Slot = _items[x, y] });
                         return true;
@@ -191,6 +231,9 @@ namespace Utopia.Shared.Entities.Inventory
 
             if (itemsCount == 0)
                 throw new InvalidOperationException("No items to put");
+
+            if (!ValidateItem(item, position))
+                return false;
 
             var currentItem = _items[position.X, position.Y];
             
@@ -218,7 +261,7 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
-        /// Tries to get item from slot. Checks the Entity type 
+        /// Tries to get item from slot.
         /// </summary>
         /// <param name="position"></param>
         /// <param name="itemsCount"></param>
@@ -278,8 +321,11 @@ namespace Utopia.Shared.Entities.Inventory
 
             if (item == null)
                 return false;
-
+            
             ValidatePosition(position);
+
+            if (!ValidateItem(item, position))
+                return false;
 
             var currentItem = _items[position.X, position.Y];
 
@@ -340,9 +386,9 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Performs search for entity and returns slot
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entityid"></param>
         /// <returns></returns>
-        public T Find(IEntity entity)
+        public T Find(uint entityid)
         {
             for (int x = 0; x < _gridSize.X; x++)
             {
@@ -350,7 +396,7 @@ namespace Utopia.Shared.Entities.Inventory
                 {
                     if (_items[x, y] != null)
                     {
-                        if (_items[x, y].Item.EntityId == entity.EntityId)
+                        if (_items[x, y].Item.EntityId == entityid)
                             return _items[x, y];
                     }
                 }
