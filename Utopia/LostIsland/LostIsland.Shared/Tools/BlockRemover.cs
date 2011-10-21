@@ -96,7 +96,6 @@ namespace LostIsland.Shared.Tools
                         //If the linkedCube entity is removed, then remove the entity also.
                         if (entity.LinkedCube == owner.EntityState.PickedBlockPosition)
                         {
-                            Console.WriteLine("Remove Entity from Collection");
                             chunk.Entities.RemoveByArrayIndex(entityId, owner.EntityId, out removedEntity);
                             // Add entity on ground or in Inventory
                             //TOTO Enity picking ??

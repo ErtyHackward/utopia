@@ -29,7 +29,7 @@ namespace Utopia.Entities.Renderer
         private BoundingBox3D _pickedCube;
         private HLSLVertexPositionColor _blockpickedUPEffect;
 
-        private Color _cursorColor = Color.FromNonPremultiplied(20,20,20, 255);
+        private Color _cursorColor = Color.Red;//Color.FromNonPremultiplied(20,20,20, 255);
         private D3DEngine _engine;
         private WorldFocusManager _focusManager;
         private IDynamicEntity _player;
@@ -65,11 +65,13 @@ namespace Utopia.Entities.Renderer
         {
             if (fromCube)
             {
-                _pickedCube.Update(ref _pickedUpCube, _cubeScaling, _cubeYOffset);
+                _pickedCube.Update(new Vector3(_pickedUpCube.X + 0.5f, _pickedUpCube.Y + ((1.0f - _cubeYOffset) / 2), _pickedUpCube.Z + 0.5f), _cubeScaling, _cubeYOffset);
             }
             else
             {
-                _pickedCube.Update(ref _pickedUpCube, _pickedEntity.Entity.Size, 0);
+                Vector3 EntityWorldPosition = _pickedEntity.Entity.Position.AsVector3();
+                EntityWorldPosition.Y += _pickedEntity.Entity.Size.Y / 2.0f;
+                _pickedCube.Update(EntityWorldPosition, _pickedEntity.Entity.Size);
             }
 
         }
