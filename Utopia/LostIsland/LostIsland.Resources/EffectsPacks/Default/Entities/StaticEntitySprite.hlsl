@@ -6,7 +6,7 @@ cbuffer PerFrame
 {
 	matrix WorldFocus;
 	matrix ViewProjection;
-	float3 SunColor;			  // Diffuse lighting color
+	float3 SunColor;			  // Ambiant lighting color
 	float fogdist;
     float3 WindPower;
 	float keyFrameAnimation;

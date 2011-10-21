@@ -14,7 +14,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
 
         #region Public properties/variables
         public override bool IsPickable { get { return true; } }
-        public override bool IsPlayerCollidable { get { return true; } }
+        public override bool IsPlayerCollidable { get { return false; } }
         public Vector3I LinkedCube { get; set; }
 
         public byte GrowPhase

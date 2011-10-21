@@ -22,11 +22,6 @@ namespace Utopia.Shared.Entities
         /// </summary>
         public bool IsAnimated;
 
-        /// <summary>
-        /// in case we want the sprite to move with the wind
-        /// </summary>
-        public bool IsColladable;
-
         public SpriteEntity()
         {
         }
@@ -42,7 +37,6 @@ namespace Utopia.Shared.Entities
             Scale.Y = reader.ReadSingle();
             Scale.Z = reader.ReadSingle();
             IsAnimated = reader.ReadBoolean();
-            IsColladable = reader.ReadBoolean();
         }
 
         public override void Save(System.IO.BinaryWriter writer)
@@ -54,7 +48,6 @@ namespace Utopia.Shared.Entities
             writer.Write(Scale.Y);
             writer.Write(Scale.Z);
             writer.Write(IsAnimated);
-            writer.Write(IsColladable);
         }
     }
 }

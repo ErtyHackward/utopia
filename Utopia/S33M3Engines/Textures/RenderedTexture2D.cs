@@ -5,6 +5,7 @@ using System.Text;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX;
+using S33M3Engines.Shared.Sprites;
 
 namespace S33M3Engines.Textures
 {
@@ -162,6 +163,20 @@ namespace S33M3Engines.Textures
         {
             if (generateMips) _d3dEngine.Context.GenerateMips(ShaderResourceView);
             if (releaseDrawingResources) ReleaseDrawingResources();
+        }
+
+        public SpriteTexture CloneToSpriteTexture()
+        {
+            Texture2D clonedTexture = new Texture2D(_d3dEngine.Device, _textureDesc);
+            _d3dEngine.Context.CopyResource(RenderTargetTexture, clonedTexture);
+            return new SpriteTexture(_d3dEngine.Device, clonedTexture, Vector2.Zero);
+        }
+
+        public Texture2D CloneTexture()
+        {
+            Texture2D clonedTexture = new Texture2D(_d3dEngine.Device, _textureDesc);
+            _d3dEngine.Context.CopyResource(RenderTargetTexture, clonedTexture);
+            return clonedTexture;
         }
         #endregion
     }
