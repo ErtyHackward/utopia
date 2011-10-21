@@ -57,7 +57,7 @@ namespace S33M3Engines.Sprites
                                                             AddressU = TextureAddressMode.Clamp,
                                                             AddressV = TextureAddressMode.Clamp,
                                                             AddressW = TextureAddressMode.Clamp,
-                                                            Filter = Filter.MinMagMipPoint,
+                                                            Filter = Filter.MinLinearMagMipPoint,
                                                             MaximumLod = float.MaxValue,
                                                             MinimumLod = 0
                                                         });

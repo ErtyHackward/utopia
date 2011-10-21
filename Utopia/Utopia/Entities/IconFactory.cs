@@ -28,7 +28,8 @@ namespace Utopia.Entities
     {
         #region private variables
         private readonly D3DEngine _d3DEngine;
-        public const int IconSize = 32; 
+        public const int IconSize = 32;
+        private Dictionary<int, SpriteTexture> _blockIconLookUp;
         #endregion
 
         #region public Variables/properties
@@ -38,6 +39,7 @@ namespace Utopia.Entities
         public IconFactory(D3DEngine d3DEngine)
         {
             _d3DEngine = d3DEngine;
+            _blockIconLookUp = new Dictionary<int, SpriteTexture>();
         }
 
         public override void LoadContent()
@@ -53,19 +55,25 @@ namespace Utopia.Entities
         public override void Dispose()
         {
             CubesTexture.Dispose();
-
+            foreach (var spriteTexture in _blockIconLookUp.Values) spriteTexture.Dispose();
         }
 
         #region Public methods
         public SpriteTexture Lookup(IItem item)
         {
+            SpriteTexture result;
             //TODO pooling in  a dictionary<entityId,Texture>, but don't forget to unpool entities that become unused !
             if (item is CubeResource)
             {
-                CubeResource blockAdder = item as CubeResource;
-                SpriteTexture texture = new SpriteTexture(IconSize, IconSize, CubesTexture, Vector2.Zero);
-                texture.Index = blockAdder.CubeId;
-                return texture;
+                //CubeResource blockAdder = item as CubeResource;
+                //SpriteTexture texture = new SpriteTexture(IconSize, IconSize, CubesTexture, Vector2.Zero);
+                //texture.Index = blockAdder.CubeId;
+                //return texture;
+                if (_blockIconLookUp.TryGetValue(((CubeResource)item).CubeId, out result))
+                {
+                    return result;
+                }
+                return null;
             }
             else if (item is SpriteItem)
             {
@@ -90,7 +98,7 @@ namespace Utopia.Entities
             IMeshFactory meshfactory = new MilkShape3DMeshFactory();
             Mesh meshBluePrint;
 
-            int textureSize = 128;
+            int textureSize = 64;
             
             meshfactory.LoadMesh(@"\Meshes\block.txt", out meshBluePrint, 0);
             //Create Vertex/Index Buffer to store the loaded mesh.
@@ -104,7 +112,7 @@ namespace Utopia.Entities
             //Create the render texture
             RenderedTexture2D texture = new RenderedTexture2D(_d3DEngine, textureSize, textureSize, SharpDX.DXGI.Format.R8G8B8A8_UNorm)
             {
-                BackGroundColor = new Color4(255, 0, 150, 150)
+                BackGroundColor = new Color4(0, 255, 255, 255)
             };
 
             //Create the Shadder used to render on the texture.
@@ -116,7 +124,7 @@ namespace Utopia.Entities
             float aspectRatio = textureSize / textureSize;
             Matrix projection;
             Matrix.PerspectiveFovLH((float)Math.PI / 3, aspectRatio, 0.5f, 100f, out projection);
-            Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -2f), Vector3.Zero, Vector3.UnitY);
+            Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -1.8f), Vector3.Zero, Vector3.UnitY);
 
             Dictionary<int, int> MaterialChangeMapping = new Dictionary<int, int>();
             MaterialChangeMapping.Add(0, 0); //Change the Back Texture Id
@@ -162,7 +170,7 @@ namespace Utopia.Entities
 
                 shader.Begin();
 
-                shader.CBPerFrame.Values.Alpha = 1;
+                shader.CBPerFrame.Values.DiffuseLightDirection = new Vector3(-0.8f, -0.9f, 1.5f) * -1;
                 shader.CBPerFrame.Values.View = Matrix.Transpose(view);
                 shader.CBPerFrame.Values.Projection = Matrix.Transpose(projection);
                 shader.CBPerFrame.IsDirty = true;
@@ -171,6 +179,7 @@ namespace Utopia.Entities
                 shader.CBPerDraw.IsDirty = true;
 
                 shader.DiffuseTexture.Value = CubesTexture;
+                shader.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);  
 
                 shader.Apply();
                 //Set the buffer to the device
@@ -182,13 +191,16 @@ namespace Utopia.Entities
 
                 //End Drawing
                 texture.End(false);
+
                 //Texture2D.ToFile<Texture2D>(_d3DEngine.Context, texture.RenderTargetTexture, ImageFileFormat.Png, @"E:\text\Block" + profile.Name + ".png");
+                _blockIconLookUp.Add(cubeId, texture.CloneToSpriteTexture());
             }
 
             //Reset device Default render target
             _d3DEngine.ResetDefaultRenderTargetsAndViewPort();
 
             //Dispose temp resource.
+            texture.Dispose();
             shader.Dispose();
             vb.Dispose();
             ib.Dispose();

@@ -39,7 +39,7 @@ namespace UtopiaContent.Effects.Entities
             [FieldOffset(64)]
             public Matrix Projection;
             [FieldOffset(128)]
-            public float Alpha;
+            public Vector3 DiffuseLightDirection;     //The alpha will be used to store the ambient intensity
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
         #endregion
