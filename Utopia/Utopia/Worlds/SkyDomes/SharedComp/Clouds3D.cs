@@ -235,15 +235,15 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
                         _indices[_nbrIndices] = (ushort)(_nbrVertices - 2); //2 + verticesCount);
                         _nbrIndices++;
+                        _indices[_nbrIndices] = (ushort)(_nbrVertices - 4); //0 + verticesCount);
+                        _nbrIndices++;
                         _indices[_nbrIndices] = (ushort)(_nbrVertices - 3); //1 + verticesCount);
                         _nbrIndices++;
                         _indices[_nbrIndices] = (ushort)(_nbrVertices - 4); //0 + verticesCount);
                         _nbrIndices++;
-                        _indices[_nbrIndices] = (ushort)(_nbrVertices - 4); //0 + verticesCount);
+                        _indices[_nbrIndices] = (ushort)(_nbrVertices - 2); //2 + verticesCount);
                         _nbrIndices++;
                         _indices[_nbrIndices] = (ushort)(_nbrVertices - 1); //3 + verticesCount);
-                        _nbrIndices++;
-                        _indices[_nbrIndices] = (ushort)(_nbrVertices - 2); //2 + verticesCount);
                         _nbrIndices++;
                     }
                 }

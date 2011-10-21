@@ -74,28 +74,15 @@ namespace Utopia.Resources.ModelComp
             _vertexBuffer.SetData(ptList);
         }
 
-        public void Update(ref Vector3 position, Vector3 scalingSize, float YOffset = 0)
+        public void Update(Vector3 centerPosition, Vector3 scalingSize, float YOffset = 0)
         {
             if (YOffset == 0)
             {
-                BB3dworld = Matrix.Scaling(scalingSize) * Matrix.Translation(position);
+                BB3dworld = Matrix.Scaling(scalingSize) * Matrix.Translation(centerPosition);
             }
             else
             {
-                BB3dworld = Matrix.Scaling(new Vector3(scalingSize.X, scalingSize.Y - YOffset, scalingSize.Z)) * Matrix.Translation(position);
-            }
-        }
-
-        public void Update(ref Vector3I position, Vector3 scalingSize, float YOffset = 0)
-        {
-            Vector3 translation = new Vector3(position.X + 0.5f, position.Y + ((1.0f - YOffset) / 2), position.Z + 0.5f);
-            if (YOffset == 0)
-            {
-                BB3dworld = Matrix.Scaling(scalingSize) * Matrix.Translation(translation);
-            }
-            else
-            {
-                BB3dworld = Matrix.Scaling(new Vector3(scalingSize.X, scalingSize.Y - YOffset, scalingSize.Z)) * Matrix.Translation(translation);
+                BB3dworld = Matrix.Scaling(new Vector3(scalingSize.X, scalingSize.Y - YOffset, scalingSize.Z)) * Matrix.Translation(centerPosition);
             }
         }
 
