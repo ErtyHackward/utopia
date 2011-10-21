@@ -88,19 +88,6 @@ namespace Utopia.GUI.D3D.Inventory
             DrawCellBackground = true;
         }
 
-        /// <summary>
-        /// Creates new cell and links it with player equipment slot
-        /// </summary>
-        /// <param name="player"></param>
-        /// <param name="inventorySlot"></param>
-        /// <param name="iconFactory"></param>
-        public InventoryCell(Shared.Entities.Dynamic.PlayerCharacter player, EquipmentSlotType inventorySlot, IconFactory iconFactory)
-        {
-            _player = player;
-            SlotType = inventorySlot;
-            _iconFactory = iconFactory;
-        }
-
         protected override void OnMousePressed(MouseButtons button)
         {
             OnMouseDown(new MouseDownEventArgs { Buttons = button });

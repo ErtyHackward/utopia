@@ -35,7 +35,7 @@ namespace Utopia.Shared.Entities.Dynamic
         public PlayerCharacter()
         {
             //Define the default PlayerCharacter ToolBar
-            Toolbar = new SlotContainer<ToolbarSlot>(new Vector2I(10, 1));
+            Toolbar = new SlotContainer<ToolbarSlot>(this, new Vector2I(10, 1));
 
             MoveSpeed = DefaultMoveSpeed;               //Default player MoveSpeed
             RotationSpeed = 10f;          //Default Player Rotation Speed

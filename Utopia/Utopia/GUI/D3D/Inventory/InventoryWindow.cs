@@ -19,7 +19,7 @@ namespace Utopia.GUI.D3D.Inventory
         private InventoryCell[,] _uiGrid;
         private readonly IconFactory _iconFactory;
         private readonly Point _windowStartPosition;
-        private readonly Point _gridOffset = new Point(4, 24);
+        protected readonly Point GridOffset;
         public const int CellSize = 38;
         
         /// <summary>
@@ -41,19 +41,26 @@ namespace Utopia.GUI.D3D.Inventory
             get { return _container; }
         }
 
-        public InventoryWindow(SlotContainer<ContainedSlot> container, IconFactory iconFactory, Point windowStartPosition)
+        protected InventoryWindow(SlotContainer<ContainedSlot> container, IconFactory iconFactory, Point windowStartPosition, Point gridOffset)
         {
+            GridOffset = gridOffset;
             _container = container;
             _iconFactory = iconFactory;
             _windowStartPosition = windowStartPosition;
             Title = "Inventory";
 
-            var width = _container.GridSize.X * CellSize + 8;      // 8 = 4+4 (each window side)
-            var height = _container.GridSize.Y * CellSize + 24 + 4; // 24 = window header, 4 - bottom side
+            var width = _container.GridSize.X * CellSize + GridOffset.X + 4;     
+            var height = _container.GridSize.Y * CellSize + GridOffset.Y + 22 + 4; // 22 = bottom line, 4 - bottom side
 
             Bounds = new UniRectangle(_windowStartPosition.X, _windowStartPosition.Y, width, height);
 
-            BuildGrid(_gridOffset);         
+            BuildGrid(GridOffset);  
+        }
+
+        public InventoryWindow(SlotContainer<ContainedSlot> container, IconFactory iconFactory, Point windowStartPosition)
+            :this(container, iconFactory, windowStartPosition,  new Point(4, 24))
+        {
+       
         }
         
         public void BuildGrid(Point offset)
@@ -89,8 +96,8 @@ namespace Utopia.GUI.D3D.Inventory
 
             // detect the slot was clicked
             var slotPosition = new Vector2I(
-                (state.X - (int)bounds.X - _gridOffset.X) / CellSize,
-                (state.Y - (int)bounds.Y - _gridOffset.Y) / CellSize
+                (state.X - (int)bounds.X - GridOffset.X) / CellSize,
+                (state.Y - (int)bounds.Y - GridOffset.Y) / CellSize
                 );
 
             if (slotPosition.X < 0 || slotPosition.X >= _container.GridSize.X || slotPosition.Y < 0 || slotPosition.Y >= _container.GridSize.Y)
@@ -101,8 +108,8 @@ namespace Utopia.GUI.D3D.Inventory
 
             // slot offset
             var offset = new Point(
-                (state.X - (int)bounds.X - _gridOffset.X) % CellSize,
-                (state.Y - (int)bounds.Y - _gridOffset.Y) % CellSize
+                (state.X - (int)bounds.X - GridOffset.X) % CellSize,
+                (state.Y - (int)bounds.Y - GridOffset.Y) % CellSize
                 );
 
             // tell everyone that user click some slot
