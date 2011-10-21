@@ -17,10 +17,10 @@ namespace S33M3Engines.Struct.Vertex
     {
         public Vector3 Position;
         public Vector3 Normal;
-        public Vector2 TextureCoordinate;
+        public Vector3 TextureCoordinate;
         public static readonly VertexDeclaration VertexDeclaration;
 
-        public VertexMesh(Vector3 position, Vector3 normal, Vector2 textureCoordinate)
+        public VertexMesh(Vector3 position, Vector3 normal, Vector3 textureCoordinate)
         {
             this.Position = position;
             this.Normal = normal;
@@ -70,9 +70,9 @@ namespace S33M3Engines.Struct.Vertex
         static VertexMesh()
         {
             InputElement[] elements = new InputElement[] { 
-                                                            new InputElement("POSITION", 0, Format.R32G32B32_Float,0 , 0), 
-                                                            new InputElement("NORMAL", 0, Format.R32G32B32_Float, 12, 0),
-                                                            new InputElement("TEXCOORD", 0, Format.R32G32_Float, 24, 0)
+                                                            new InputElement("POSITION", 0, Format.R32G32B32_Float,InputElement.AppendAligned , 0), 
+                                                            new InputElement("NORMAL", 0, Format.R32G32B32_Float, InputElement.AppendAligned, 0),
+                                                            new InputElement("TEXCOORD", 0, Format.R32G32B32_Float, InputElement.AppendAligned, 0),
                                                           };
 
             VertexDeclaration = new VertexDeclaration(elements);

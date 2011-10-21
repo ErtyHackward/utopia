@@ -16,7 +16,7 @@ cbuffer PerFrame
 //--------------------------------------------------------------------------------------
 // Texture Samplers
 //--------------------------------------------------------------------------------------
-Texture2D DiffuseTexture;
+Texture2DArray DiffuseTexture;
 SamplerState SamplerDiffuse;
 
 //--------------------------------------------------------------------------------------
@@ -25,14 +25,14 @@ struct VS_IN
 {
 	float3 Pos : POSITION;
 	float3 Norm : NORMAL;
-	float3 UV  : TEXCOORD;
+	float3 UVW  : TEXCOORD;
 };
 
 //Pixel shader Input
 struct PS_IN
 {
 	float4 Pos : SV_POSITION;
-	float2 UV  : TEXCOORD;
+	float3 UVW  : TEXCOORD;
 };
 
 //--------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ PS_IN VS( VS_IN input )
 	output.Pos = mul( output.Pos, World );
 	output.Pos = mul( output.Pos, View );
 	output.Pos = mul( output.Pos, Projection );
-	output.UV = input.UV;
+	output.UVW = input.UVW;
 	
 	return output;
 }
@@ -56,7 +56,7 @@ PS_IN VS( VS_IN input )
 //--------------------------------------------------------------------------------------
 float4 PS( PS_IN input ) : SV_Target
 {
-	float4 color = DiffuseTexture.Sample(SamplerDiffuse, input.UV);
+	float4 color = DiffuseTexture.Sample(SamplerDiffuse, input.UVW);
 	color.a *= Alpha;
 
 	return color;
