@@ -10,7 +10,10 @@ namespace LostIsland.Shared.Items
         public GoldCoin()
         {
             UniqueName = DisplayName;
+            MaxStackSize = 100000;
         }
+
+        
 
         public override ushort ClassId
         {
