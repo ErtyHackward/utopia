@@ -506,7 +506,6 @@ namespace Utopia.Entities.Managers
 
             if (_actions.isTriggered(Actions.Move_StrafeRight))
                 _physicSimu.PrevPosition -= _entityXAxis * _moveDelta;
-
         }
         #endregion
 
@@ -530,12 +529,12 @@ namespace Utopia.Entities.Managers
             switch (mode)
             {
                 case EntityDisplacementModes.Flying:
-                    RotateLookAt(-headingDegrees, -pitchDegrees);
-                    RotateMove(-headingDegrees);
+                    RotateLookAt(headingDegrees, pitchDegrees);
+                    RotateMove(headingDegrees);
                     break;
                 case EntityDisplacementModes.Walking:
-                    RotateLookAt(-headingDegrees, -pitchDegrees);
-                    RotateMove(-headingDegrees);
+                    RotateLookAt(headingDegrees, pitchDegrees);
+                    RotateMove(headingDegrees);
                     break;
                 default:
                     break;
@@ -561,11 +560,10 @@ namespace Utopia.Entities.Managers
         private void UpdateEntityData()
         {
             Matrix.RotationQuaternion(ref _moveDirection.Value, out _entityRotation);
-            Matrix.Transpose(ref _entityRotation, out _entityRotation);
 
             _entityXAxis = new Vector3D(_entityRotation.M11, _entityRotation.M21, _entityRotation.M31);
             _entityYAxis = new Vector3D(_entityRotation.M12, _entityRotation.M22, _entityRotation.M32);
-            _entityZAxis = new Vector3D(_entityRotation.M13, _entityRotation.M23, _entityRotation.M33);
+            _entityZAxis = new Vector3D(_entityRotation.M13, _entityRotation.M23, _entityRotation.M33) * -1;
         }
 
         private void RotateLookAt(double headingDegrees, double pitchDegrees)
@@ -592,14 +590,14 @@ namespace Utopia.Entities.Managers
             if (heading != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Up, (float)heading, out rotation);
-                _lookAtDirection.Value = _lookAtDirection.Value * rotation;
+                _lookAtDirection.Value = rotation * _lookAtDirection.Value;
             }
 
             // Rotate the camera about its local X axis.
             if (pitch != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Right, (float)pitch, out rotation);
-                _lookAtDirection.Value = rotation * _lookAtDirection.Value;
+                _lookAtDirection.Value = _lookAtDirection.Value * rotation;
             }
 
             _lookAtDirection.Value.Normalize();
@@ -609,13 +607,12 @@ namespace Utopia.Entities.Managers
         private void UpdateHeadData()
         {
             Matrix.RotationQuaternion(ref _lookAtDirection.Value, out _headRotation);
-            Matrix.Transpose(ref _headRotation, out _headRotation);
 
             _entityHeadXAxis = new Vector3D(_headRotation.M11, _headRotation.M21, _headRotation.M31);
             _entityHeadYAxis = new Vector3D(_headRotation.M12, _headRotation.M22, _headRotation.M32);
             _entityHeadZAxis = new Vector3D(_headRotation.M13, _headRotation.M23, _headRotation.M33);
 
-            _lookAt = new Vector3D(-_entityHeadZAxis.X, -_entityHeadZAxis.Y, -_entityHeadZAxis.Z);
+            _lookAt = new Vector3D(_entityHeadZAxis.X, _entityHeadZAxis.Y, _entityHeadZAxis.Z);
             _lookAt.Normalize();
         }
         #endregion

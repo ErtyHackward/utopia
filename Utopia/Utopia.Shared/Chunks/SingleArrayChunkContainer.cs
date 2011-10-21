@@ -525,9 +525,17 @@ namespace Utopia.Shared.Chunks
                                 //Block with Offset case
                                 if (withCubeOffSetAccount && profile.YBlockOffset > 0.0f)
                                 {
+                                    //If my "Feet" are below the height of the offseted cube, then colliding true
                                     if (bb.Minimum.Y < y)
                                     {
                                         return true;
+                                    }
+                                    else
+                                    {
+                                        //check the head when On a Offseted Block
+                                        IndexSafe(x, MathHelper.Fastfloor(bb.Maximum.Y + profile.YBlockOffset), z, out index);
+                                        profile = CubeProfile.CubesProfile[Cubes[index].Id];
+                                        if (profile.IsSolidToEntity) return true;
                                     }
                                 }
                                 else

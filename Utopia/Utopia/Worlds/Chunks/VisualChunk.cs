@@ -339,7 +339,7 @@ namespace Utopia.Worlds.Chunks
             ChunkWorldBoundingBox.Maximum = new Vector3(_cubeRange.Max.X, _cubeRange.Max.Y, _cubeRange.Max.Z);
 
 #if DEBUG
-            ChunkBoundingBoxDisplay.Update(ref ChunkWorldBoundingBox);
+            //ChunkBoundingBoxDisplay.Update(ref ChunkWorldBoundingBox);
 #endif
         }
 

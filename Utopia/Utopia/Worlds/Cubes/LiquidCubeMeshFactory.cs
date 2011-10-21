@@ -122,11 +122,12 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
+
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
 
                     break;
                 case CubeFace.Back:
@@ -194,11 +195,12 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
+
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
 
                     break;
                 case CubeFace.Top:
@@ -267,11 +269,12 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
+
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
                     break;
 
                 case CubeFace.Bottom:
@@ -340,11 +343,12 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
+
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
                     break;
 
                 case CubeFace.Left:
@@ -413,11 +417,12 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
+
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
                     break;
                 case CubeFace.Right:
 
@@ -485,11 +490,12 @@ namespace Utopia.Worlds.Cubes
 
                     //Create Vertices
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
+
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
-                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
+                    chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
                     break;
             }
         }

@@ -196,8 +196,8 @@ namespace S33M3Engines.Cameras
 
             float aspectRatio = Viewport.Width/Viewport.Height;
 
-            Matrix.PerspectiveFovRH((float) Math.PI/3, aspectRatio, NearPlane, FarPlane, out _projection3D);
-            Matrix.OrthoRH(Viewport.Width, Viewport.Height, NearPlane, FarPlane, out _projection2D);
+            Matrix.PerspectiveFovLH((float) Math.PI/3, aspectRatio, NearPlane, FarPlane, out _projection3D);
+            Matrix.OrthoLH(Viewport.Width, Viewport.Height, NearPlane, FarPlane, out _projection2D);
 
             //Set Mouse position
             //Mouse.SetPosition((int) Viewport.Width/2, (int) Viewport.Height/2);
