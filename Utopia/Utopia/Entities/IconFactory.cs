@@ -116,7 +116,7 @@ namespace Utopia.Entities
             float aspectRatio = textureSize / textureSize;
             Matrix projection;
             Matrix.PerspectiveFovLH((float)Math.PI / 3, aspectRatio, 0.5f, 100f, out projection);
-            Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -3f), Vector3.Zero, Vector3.UnitY);
+            Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -2f), Vector3.Zero, Vector3.UnitY);
 
             Dictionary<int, int> MaterialChangeMapping = new Dictionary<int, int>();
             MaterialChangeMapping.Add(0, 0); //Change the Back Texture Id
@@ -167,7 +167,7 @@ namespace Utopia.Entities
                 shader.CBPerFrame.Values.Projection = Matrix.Transpose(projection);
                 shader.CBPerFrame.IsDirty = true;
 
-                shader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationY(MathHelper.PiOver4) * Matrix.Translation(new Vector3(0, 0, 0)));
+                shader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationY(MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi/5));
                 shader.CBPerDraw.IsDirty = true;
 
                 shader.DiffuseTexture.Value = CubesTexture;
@@ -182,7 +182,6 @@ namespace Utopia.Entities
 
                 //End Drawing
                 texture.End(false);
-
                 //Texture2D.ToFile<Texture2D>(_d3DEngine.Context, texture.RenderTargetTexture, ImageFileFormat.Png, @"E:\text\Block" + profile.Name + ".png");
             }
 
