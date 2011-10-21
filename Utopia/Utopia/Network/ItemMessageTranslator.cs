@@ -8,20 +8,6 @@ using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Network
 {
-    /*
-     * Items and equip system:
-     * - Equipping the tool (no tool equipped)
-     * 1) TakeItem from the inventory
-     * 2) PutItem to equipment slot -> EntityEquipmentMessage
-     * 
-     * - Equipping the tool (changing)
-     * 1) Take item from the inventory
-     * 2) PutItem to equipment slot -> EntityEquipmentMessage
-     * 3) PutItem to inventory -> (if position in different) -> ItemTransferMessage
-     * 
-     */
-
-
     /// <summary>
     /// Performs items and containers events communication with the server. (Inventory exchange, containers locking)
     /// </summary>
@@ -74,7 +60,9 @@ namespace Utopia.Network
             _playerEntity.Inventory.ItemTaken += InventoryItemTaken;
             _playerEntity.Inventory.ItemExchanged += InventoryItemExchanged;
 
-            _playerEntity.Equipment.ItemEquipped += EquipmentItemEquipped;
+            _playerEntity.Equipment.ItemPut += InventoryItemPut;
+            _playerEntity.Equipment.ItemTaken += InventoryItemTaken;
+            _playerEntity.Equipment.ItemExchanged += InventoryItemExchanged;
 
             _connection = server.ServerConnection;
 
@@ -83,45 +71,30 @@ namespace Utopia.Network
             Enabled = true;
         }
 
-        void EquipmentItemEquipped(object sender, CharacterEquipmentEventArgs e)
-        {
-            if (!_pendingOperation)
-                throw new InvalidOperationException("Operation must be in pending state");
-
-            var msg = new EntityEquipmentMessage
-            {
-                Items = new[] { new EquipmentItem { Entity = e.EquippedItem.Item, Slot = e.Slot } }
-            };
-
-            _connection.SendAsync(msg);
-
-            if (e.UnequippedItem == null)
-            {
-                // operation is finished
-                _pendingOperation = false;
-                _sourceContainer = null;
-            }
-            else
-            {
-                // item
-
-            }
-        }
-
         void InventoryItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
             if (!_pendingOperation)
                 throw new InvalidOperationException("Unable to exchange item without taking it first");
 
-            var destId = sender == _playerEntity.Inventory ? _playerEntity.EntityId : _lockedEntity.EntityId;
-            var srcId = _sourceContainer == _playerEntity.Inventory ? _playerEntity.EntityId : (_lockedEntity == null ? 0 : _lockedEntity.EntityId);
+            var destContainer = (SlotContainer<ContainedSlot>)sender;
+            
+            var srcId = _sourceContainer.Parent.EntityId;
+            var destId = destContainer.Parent.EntityId;
+
+            var srcPosition = _tempSlot.GridPosition;
+            var destPosition = e.Slot.GridPosition;
+
+            if (_sourceContainer is CharacterEquipment)
+                srcPosition.X = -1;
+            if (destContainer is CharacterEquipment)
+                destPosition.X = -1;
 
             var msg = new ItemTransferMessage
             {
-                SourceContainerSlot = _tempSlot.GridPosition,
+                SourceContainerSlot = srcPosition,
                 SourceContainerEntityId = srcId,
                 ItemsCount = e.Slot.ItemsCount,
-                DestinationContainerSlot = e.Slot.GridPosition,
+                DestinationContainerSlot = destPosition,
                 DestinationContainerEntityId = destId,
                 IsSwitch = true
             };
@@ -159,6 +132,7 @@ namespace Utopia.Network
             // at this point we need to remember what was taken to create appropriate message
             if (_pendingOperation)
                 throw new InvalidOperationException("Unable to take another item, release first previous taken item");
+
             _tempSlot = e.Slot;
             _pendingOperation = true;
             _sourceContainer = (ISlotContainer<ContainedSlot>)sender;
@@ -181,15 +155,25 @@ namespace Utopia.Network
                 return;
             }
 
-            var destId = sender == _playerEntity.Inventory ? _playerEntity.EntityId : _lockedEntity.EntityId;
-            var srcId = _sourceContainer == _playerEntity.Inventory ? _playerEntity.EntityId : (_lockedEntity == null ? 0 : _lockedEntity.EntityId);
+            var destContainer = (SlotContainer<ContainedSlot>)sender;
+
+            var srcId = _sourceContainer.Parent.EntityId;
+            var destId = destContainer.Parent.EntityId;
+
+            var srcPosition = _tempSlot.GridPosition;
+            var destPosition = e.Slot.GridPosition;
+
+            if (_sourceContainer is CharacterEquipment)
+                srcPosition.X = -1;
+            if (destContainer is CharacterEquipment)
+                destPosition.X = -1;
 
             var msg = new ItemTransferMessage
             {
-                SourceContainerSlot = _tempSlot.GridPosition,
+                SourceContainerSlot = srcPosition,
                 SourceContainerEntityId = srcId,
                 ItemsCount = e.Slot.ItemsCount,
-                DestinationContainerSlot = e.Slot.GridPosition,
+                DestinationContainerSlot = destPosition,
                 DestinationContainerEntityId = destId
             };
 
@@ -217,10 +201,17 @@ namespace Utopia.Network
             if (!_pendingOperation)
                 throw new InvalidOperationException("Unable to put item without taking it first");
 
+            var srcPosition = _tempSlot.GridPosition;
+
+            if (_sourceContainer is CharacterEquipment)
+            {
+                srcPosition.X = -1;
+            }
+
             _connection.SendAsync(new ItemTransferMessage
             {
                 SourceContainerEntityId = _sourceContainer == _playerEntity.Inventory ? _playerEntity.EntityId : _lockedEntity.EntityId,
-                SourceContainerSlot= _tempSlot.GridPosition,
+                SourceContainerSlot = srcPosition,
                 ItemsCount = _tempSlot.ItemsCount,
                 ItemEntityId = _tempSlot.Item.EntityId,
                 DestinationContainerEntityId = 0,
@@ -286,7 +277,9 @@ namespace Utopia.Network
             _playerEntity.Inventory.ItemTaken -= InventoryItemTaken;
             _playerEntity.Inventory.ItemExchanged -= InventoryItemExchanged;
 
-            _playerEntity.Equipment.ItemEquipped -= EquipmentItemEquipped;
+            _playerEntity.Equipment.ItemPut -= InventoryItemPut;
+            _playerEntity.Equipment.ItemTaken -= InventoryItemTaken;
+            _playerEntity.Equipment.ItemExchanged -= InventoryItemExchanged;
 
             _connection.MessageEntityLockResult -= ConnectionMessageEntityLockResult;
 

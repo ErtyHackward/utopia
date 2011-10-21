@@ -11,7 +11,7 @@ namespace Utopia.Shared.Entities.Dynamic
         protected CharacterEntity()
         {
             Equipment = new CharacterEquipment(this);
-            Inventory = new SlotContainer<ContainedSlot>();
+            Inventory = new SlotContainer<ContainedSlot>(this);
         }
 
         /// <summary>

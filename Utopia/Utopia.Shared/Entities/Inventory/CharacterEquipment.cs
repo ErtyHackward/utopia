@@ -8,8 +8,6 @@ namespace Utopia.Shared.Entities.Inventory
     /// </summary>
     public class CharacterEquipment : SlotContainer<ContainedSlot>
     {
-        private readonly IDynamicEntity _parent;
-
         /// <summary>
         /// Occurs when the character wears/unwears something
         /// </summary>
@@ -21,7 +19,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <param name="e"></param>
         public void OnItemEquipped(CharacterEquipmentEventArgs e)
         {
-            e.Entity = _parent;
+            e.Entity = (IDynamicEntity)Parent;
             var handler = ItemEquipped;
             if (handler != null) handler(this, e);
         }
@@ -29,10 +27,8 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Creates new instance of character eqipment
         /// </summary>
-        public CharacterEquipment(IDynamicEntity parent) : base(new Structs.Vector2I(1, 10))
+        public CharacterEquipment(IDynamicEntity parent) : base(parent,new Structs.Vector2I(1, 10))
         {
-            _parent = parent;
-
             ItemPut += CharacterEquipmentItemPut;
             ItemTaken += CharacterEquipmentItemTaken;
             ItemExchanged += CharacterEquipmentItemExchanged;

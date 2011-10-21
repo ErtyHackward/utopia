@@ -13,9 +13,37 @@ namespace Utopia.Shared.Entities.Inventory
     /// </summary>
     public class SlotContainer<T> : ISlotContainer<T>, IBinaryStorable where T: ContainedSlot, new()
     {
+        private readonly IEntity _parentEntity;
         private T[,] _items;
         private Vector2I _gridSize;
         private int _slotsCount;
+
+        /// <summary>
+        /// Gets maximum container capacity
+        /// </summary>
+        public int Capacity { get; set; }
+
+        /// <summary>
+        /// Gets container grid size
+        /// </summary>
+        public Vector2I GridSize
+        {
+            get { return _gridSize; }
+            set
+            {
+                _gridSize = value;
+                //todo: copy of items to new container from old
+                _items = new T[_gridSize.X, _gridSize.Y];
+            }
+        }
+
+        /// <summary>
+        /// Gets parent entity
+        /// </summary>
+        public IEntity Parent
+        {
+            get { return _parentEntity; }
+        }
 
         /// <summary>
         /// Occurs when the item was taken from the container
@@ -53,37 +81,21 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Creates new instance of container with gridSize specified
         /// </summary>
+        /// <param name="parentEntity"></param>
         /// <param name="containerGridSize"></param>
-        public SlotContainer(Vector2I containerGridSize)
+        public SlotContainer(IEntity parentEntity , Vector2I containerGridSize)
         {
+            _parentEntity = parentEntity;
             GridSize = containerGridSize;
         }
 
         /// <summary>
         /// Creates new instance of container with GridSize of 8x5 items
         /// </summary>
-        public SlotContainer()
-            : this(new Vector2I(8, 5))
+        public SlotContainer(IEntity parentEntity)
+            : this(parentEntity, new Vector2I(8, 5))
         {
             
-        }
-
-        /// <summary>
-        /// Gets maximum container capacity
-        /// </summary>
-        public int Capacity { get; set; }
-        
-        /// <summary>
-        /// Gets container grid size
-        /// </summary>
-        public Vector2I GridSize
-        {
-            get { return _gridSize; }
-            set { 
-                _gridSize = value;
-                //todo: copy of items to new container from old
-                _items = new T[_gridSize.X, _gridSize.Y];
-            }
         }
         
         public void Save(BinaryWriter writer)

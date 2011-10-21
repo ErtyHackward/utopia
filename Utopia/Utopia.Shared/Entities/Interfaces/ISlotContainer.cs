@@ -35,6 +35,11 @@ namespace Utopia.Shared.Entities.Interfaces
         Vector2I GridSize { get; }
 
         /// <summary>
+        /// Gets parent entity
+        /// </summary>
+        IEntity Parent { get; }
+
+        /// <summary>
         /// Tries to put items
         /// </summary>
         /// <param name="item"></param>
