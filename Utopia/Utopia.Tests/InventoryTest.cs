@@ -20,16 +20,26 @@ namespace Utopia.Tests
         {
             get { throw new NotImplementedException(); }
         }
+
+        public override string Description
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 
     public class GoldCoin : SpriteItem
     {
-        public GoldCoin()
+        public override int MaxStackSize
         {
-            MaxStackSize = 1000;
+            get { return 1000; }
         }
 
         public override ushort ClassId
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override string Description
         {
             get { throw new NotImplementedException(); }
         }

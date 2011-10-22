@@ -10,10 +10,17 @@ namespace LostIsland.Shared.Items
         public GoldCoin()
         {
             UniqueName = DisplayName;
-            MaxStackSize = 100000;
         }
 
-        
+        public override int MaxStackSize
+        {
+            get { return 100000; }
+        }
+
+        public override string Description
+        {
+            get { return "A coin made of gold. Very valuable thing."; }
+        }
 
         public override ushort ClassId
         {

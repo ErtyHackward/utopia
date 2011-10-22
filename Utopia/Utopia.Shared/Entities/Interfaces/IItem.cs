@@ -8,6 +8,10 @@ namespace Utopia.Shared.Entities.Interfaces
         int MaxStackSize { get; }
         string UniqueName { get; set; }
         string StackType { get; }
-        
+
+        /// <summary>
+        /// Gets item description
+        /// </summary>
+        string Description { get; }
     }
 }

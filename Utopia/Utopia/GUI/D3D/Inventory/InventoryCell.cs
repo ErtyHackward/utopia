@@ -73,6 +73,22 @@ namespace Utopia.GUI.D3D.Inventory
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler MouseEnter;
+
+        private void OnMouseEnter(EventArgs e)
+        {
+            var handler = MouseEnter;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler MouseLeave;
+
+        private void OnMouseLeave(EventArgs e)
+        {
+            var handler = MouseLeave;
+            if (handler != null) handler(this, e);
+        }
+
 
         /// <summary>
         /// Creates new inventory cell and links it with some container
@@ -86,6 +102,16 @@ namespace Utopia.GUI.D3D.Inventory
             _iconFactory = iconFactory;
             InventoryPosition = position;
             DrawCellBackground = true;
+        }
+
+        protected override void OnMouseEntered()
+        {
+            OnMouseEnter(EventArgs.Empty);
+        }
+
+        protected override void OnMouseLeft()
+        {
+            OnMouseLeave(EventArgs.Empty);
         }
 
         protected override void OnMousePressed(MouseButtons button)

@@ -43,7 +43,7 @@ namespace LostIsland.Shared.Tools
                 return "CubeResource" + CubeId; //effectively this.getType().Name + cubeid , so blockadder1 blockadder2 etc ...
             }
         }
-
+        
         public CubeResource(ILandscapeManager2D landscapeManager)
         {
             _landscapeManager = landscapeManager;
@@ -52,6 +52,11 @@ namespace LostIsland.Shared.Tools
         public override string DisplayName
         {
             get { return Utopia.Shared.Cubes.CubeId.GetCubeTypeName(CubeId); }
+        }
+
+        public string Description
+        {
+            get { return Utopia.Shared.Cubes.CubeId.GetCubeDescription(CubeId); }
         }
 
         public override void Load(System.IO.BinaryReader reader)

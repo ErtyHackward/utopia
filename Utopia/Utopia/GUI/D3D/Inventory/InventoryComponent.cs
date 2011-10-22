@@ -34,6 +34,7 @@ namespace Utopia.GUI.D3D.Inventory
         private SpriteTexture _backgroundTex;
         private InventoryCell _dragControl;
         private Point _dragOffset;
+        private ItemInfoWindow _infoWindow;
 
         public InventoryComponent(
             D3DEngine engine, 
@@ -56,15 +57,34 @@ namespace Utopia.GUI.D3D.Inventory
         public override void LoadContent()
         {
             _backgroundTex = new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"charactersheet.png", new Vector2(0, 0));
-            _inventoryUi = new PlayerInventory(_backgroundTex, _playerManager.Player, _iconFactory, new Point(280, 120));
+
+            _infoWindow = new ItemInfoWindow(_iconFactory);
+
+            _inventoryUi = new PlayerInventory(_backgroundTex, _playerManager.Player, _iconFactory, new Point(180, 120));
             _inventoryUi.InventorySlotClicked += InventoryUiSlotClicked;
             _inventoryUi.EquipmentSlotClicked += InventoryUiSlotClicked;
+            _inventoryUi.CellMouseEnter += InventoryUiCellMouseEnter;
+            _inventoryUi.CellMouseLeave += InventoryUiCellMouseLeave;
+
             _dragControl = new InventoryCell(null, _iconFactory, new Vector2I())
             {
                 Bounds = new UniRectangle(0, 0, InventoryWindow.CellSize, InventoryWindow.CellSize),
                 DrawCellBackground = false,
                 IsClickTransparent = true
             };
+        }
+
+        void InventoryUiCellMouseLeave(object sender, InventoryWindowCellMouseEventArgs e)
+        {
+            _infoWindow.ActiveItem = null;
+        }
+
+        void InventoryUiCellMouseEnter(object sender, InventoryWindowCellMouseEventArgs e)
+        {
+            if (e.Cell.Slot == null)
+                return;
+            
+            _infoWindow.ActiveItem = e.Cell.Slot.Item;
         }
 
 
@@ -171,6 +191,7 @@ namespace Utopia.GUI.D3D.Inventory
             {
                 if (_screen.Desktop.Children.Contains(_inventoryUi))
                 {
+                    _screen.Desktop.Children.Remove(_infoWindow);
                     _screen.Desktop.Children.Remove(_inventoryUi);
                     _itemMessageTranslator.Enabled = false;
                     _playerManager.HandleToolsUse = true;
@@ -178,6 +199,7 @@ namespace Utopia.GUI.D3D.Inventory
                 }
                 else
                 {
+                    _screen.Desktop.Children.Add(_infoWindow);
                     _screen.Desktop.Children.Add(_inventoryUi);
                     _itemMessageTranslator.Enabled = true;
                     _playerManager.HandleToolsUse = false;

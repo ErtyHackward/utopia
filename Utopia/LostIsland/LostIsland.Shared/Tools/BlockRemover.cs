@@ -63,6 +63,11 @@ namespace LostIsland.Shared.Tools
             get { return 1; }
         }
 
+        public virtual string Description
+        {
+            get { return "Allows to remove blocks from the world"; }
+        }
+
         public string UniqueName
         {
             get { throw new NotImplementedException(); }

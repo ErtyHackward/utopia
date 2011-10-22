@@ -26,6 +26,9 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public abstract int MaxStackSize { get; }
 
+
+        public abstract string Description { get; }
+
         /// <summary>
         /// Gets a displayed entity name
         /// </summary>
