@@ -44,9 +44,12 @@ namespace Utopia.InputManager
             get { return _keyBoardListening; }
             set
             {
-                _keyBoardListening = value;
-                if (value) RegisterKeybardWinformEvents();
-                else UnRegisterKeybardWinformEvents();
+                if (value != _keyBoardListening)
+                {
+                    _keyBoardListening = value;
+                    if (value) RegisterKeybardWinformEvents();
+                    else UnRegisterKeybardWinformEvents();
+                }
             }
         }
         #endregion
