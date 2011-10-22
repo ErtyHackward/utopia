@@ -21,6 +21,14 @@ namespace LostIsland.Shared.Tools
             }
         }
 
+        public override string Description
+        {
+            get
+            {
+                return "Famous Simon's shovel. Can be transformed to jetpack.";
+            }
+        }
+
         public Shovel(ILandscapeManager2D landscapeManager) : base(landscapeManager)
         {
             RemoveableCubeIds.Add(CubeId.Dirt);

@@ -123,7 +123,7 @@ namespace Utopia.Entities
             //Compute projection + View matrix
             float aspectRatio = textureSize / textureSize;
             Matrix projection;
-            Matrix.PerspectiveFovLH((float)Math.PI / 3, aspectRatio, 0.5f, 100f, out projection);
+            Matrix.PerspectiveFovLH((float)Math.PI / 3.6f, aspectRatio, 0.5f, 100f, out projection);
             Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -1.8f), Vector3.Zero, Vector3.UnitY);
 
             Dictionary<int, int> MaterialChangeMapping = new Dictionary<int, int>();

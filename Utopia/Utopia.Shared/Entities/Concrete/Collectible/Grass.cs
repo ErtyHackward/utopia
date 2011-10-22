@@ -33,6 +33,19 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
             get { return "Grass"; }
         }
 
+        public override string Description
+        {
+            get { return "Juicy green grass. Collect, dry and smoke!"; }
+        }
+
+        public override int MaxStackSize
+        {
+            get
+            {
+                return 20;
+            }
+        }
+
         #endregion
         public Grass()
         {

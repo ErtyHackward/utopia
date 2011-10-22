@@ -33,6 +33,23 @@ namespace Utopia.GUI.D3D.Inventory
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler<InventoryWindowCellMouseEventArgs> CellMouseEnter;
+
+        protected void OnCellMouseEnter(InventoryWindowCellMouseEventArgs e)
+        {
+            var handler = CellMouseEnter;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<InventoryWindowCellMouseEventArgs> CellMouseLeave;
+
+        protected void OnCellMouseLeave(InventoryWindowCellMouseEventArgs e)
+        {
+            var handler = CellMouseLeave;
+            if (handler != null) handler(this, e);
+        }
+
+
         /// <summary>
         /// Gets container wrapped
         /// </summary>
@@ -80,12 +97,23 @@ namespace Utopia.GUI.D3D.Inventory
                                       };
 
                     control.MouseDown += ControlMouseDown;
-
+                    control.MouseEnter += ControlMouseEnter;
+                    control.MouseLeave += ControlMouseLeave;
                     Children.Add(control);
 
                     _uiGrid[x, y] = control;
                 }
             }
+        }
+
+        void ControlMouseLeave(object sender, EventArgs e)
+        {
+            OnCellMouseLeave(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
+        }
+
+        void ControlMouseEnter(object sender, EventArgs e)
+        {
+            OnCellMouseEnter(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
         }
 
         void ControlMouseDown(object sender, MouseDownEventArgs e)
@@ -115,6 +143,11 @@ namespace Utopia.GUI.D3D.Inventory
             // tell everyone that user click some slot
             OnSlotClicked(new InventoryWindowEventArgs { SlotPosition = slotPosition, MouseState = state, Container = _container, Offset = offset });
         }
+    }
+
+    public class InventoryWindowCellMouseEventArgs : EventArgs
+    {
+        public InventoryCell Cell { get; set; }
     }
 
     public class InventoryWindowEventArgs : EventArgs

@@ -88,6 +88,15 @@ namespace Utopia.Shared.Cubes
             }
         }
 
+        public static string GetCubeDescription(byte cubeId)
+        {
+            switch (cubeId)
+            {
+                default:
+                    return "Buiding material. Can be placed into the world";
+            }
+        }
+
         /// <summary>
         /// Enumerates all blocks except the Error block
         /// </summary>

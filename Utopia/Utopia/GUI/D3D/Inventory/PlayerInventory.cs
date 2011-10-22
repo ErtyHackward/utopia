@@ -66,7 +66,19 @@ namespace Utopia.GUI.D3D.Inventory
              bodyCell.Name = inventorySlot.ToString();
              bodyCell.Bounds = new UniRectangle(x, y, size, size);
              bodyCell.MouseDown += BodyCellMouseDown;
+             bodyCell.MouseEnter += BodyCellMouseEnter;
+             bodyCell.MouseLeave += BodyCellMouseLeave;
              parent.Children.Add(bodyCell);
+         }
+
+         void BodyCellMouseLeave(object sender, EventArgs e)
+         {
+             OnCellMouseLeave(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
+         }
+
+         void BodyCellMouseEnter(object sender, EventArgs e)
+         {
+             OnCellMouseEnter(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
          }
 
          void BodyCellMouseDown(object sender, MouseDownEventArgs e)
