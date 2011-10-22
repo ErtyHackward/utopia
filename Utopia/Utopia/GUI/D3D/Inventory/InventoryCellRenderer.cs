@@ -32,7 +32,7 @@ namespace Utopia.GUI.D3D.Inventory
             #region Backgroung
             if (control.DrawCellBackground)
             {
-                if (control.MouseHovering)
+                if (control.MouseHovering || control.IsCellSelected)
                 {
                     graphics.DrawElement("button.highlighted", controlBounds);
                 }

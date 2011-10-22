@@ -47,6 +47,8 @@ namespace Utopia.Shared.Entities.Events
         public bool IsBlockPicked { get; set; }
         public bool IsEntityPicked { get; set; }
 
+        public byte UseMode { get; set; }
+
         /// <summary>
         /// Creates event args from entity state
         /// </summary>

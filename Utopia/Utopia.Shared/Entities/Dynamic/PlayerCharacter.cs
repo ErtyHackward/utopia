@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Events;
@@ -19,7 +20,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
         public static float DefaultMoveSpeed = 5f;
         
-        public SlotContainer<ToolbarSlot> Toolbar { get; private set; }
+        public List<uint> Toolbar { get; private set; }
         
         public override ushort ClassId
         {
@@ -35,7 +36,11 @@ namespace Utopia.Shared.Entities.Dynamic
         public PlayerCharacter()
         {
             //Define the default PlayerCharacter ToolBar
-            Toolbar = new SlotContainer<ToolbarSlot>(this, new Vector2I(10, 1));
+            Toolbar = new List<uint>();
+            for (int i = 0; i < 10; i++)
+            {
+                Toolbar.Add(0);
+            }
 
             MoveSpeed = DefaultMoveSpeed;               //Default player MoveSpeed
             RotationSpeed = 10f;          //Default Player Rotation Speed
@@ -49,12 +54,13 @@ namespace Utopia.Shared.Entities.Dynamic
         }
 
         #region Public Methods
-        public void LeftToolUse()
+        public void LeftToolUse(byte useMode)
         {
             if (Equipment.LeftTool != null)
             {
                 var args = EntityUseEventArgs.FromState(EntityState);
                 args.Tool = Equipment.LeftTool;
+                args.UseMode = useMode;
                 OnUse(args);
             }
         }
@@ -81,13 +87,21 @@ namespace Utopia.Shared.Entities.Dynamic
         public override void Load(System.IO.BinaryReader reader)
         {
             base.Load(reader);
-            Toolbar.Load(reader);
+
+            Toolbar.Clear();
+            for (int i = 0; i < 10; i++)
+            {
+                Toolbar.Add(reader.ReadUInt32());
+            }
         }
 
         public override void Save(System.IO.BinaryWriter writer)
         {
             base.Save(writer);
-            Toolbar.Save(writer);
+            for (int i = 0; i < 10; i++)
+            {
+                writer.Write(Toolbar[i]);
+            }
         }
 
         public IItem LookupItem(uint itemId)

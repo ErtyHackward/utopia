@@ -143,7 +143,6 @@
     <Compile Include="GUI\D3D\Inventory\InventoryComponent.cs" />
     <Compile Include="GUI\D3D\Inventory\ItemInfoWindow.cs" />
     <Compile Include="GUI\D3D\Inventory\PlayerInventory.cs" />
-    <Compile Include="GUI\D3D\Inventory\ToolbarButtonControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ButtonItemControlRenderer.cs" />
     <Compile Include="GUI\D3D\Inventory\ContainerControl.cs" />
     <Compile Include="GUI\D3D\Inventory\ContainerRenderer.cs" />
