@@ -5,6 +5,7 @@ using S33M3Engines.Shared.Sprites;
 using S33M3Engines.Sprites;
 using SharpDX;
 using Nuclex.UserInterface;
+using Utopia.Action;
 using Utopia.Entities;
 using Utopia.GUI.D3D.Inventory;
 using SharpDX.Direct3D11;
@@ -27,7 +28,8 @@ namespace Utopia.GUI.D3D
         private SpriteFont _font;
         private readonly Screen _screen;
         private readonly D3DEngine _d3DEngine;
-        
+        private int _selectedSlot;
+
         /// <summary>
         /// _toolbarUI is a fixed part of the hud
         /// </summary>
@@ -36,6 +38,7 @@ namespace Utopia.GUI.D3D
         private readonly PlayerCharacter _player;
         private IconFactory iconFactory;
         private readonly InputsManager _inputManager;
+        private readonly ActionsManager _actions;
 
         public event EventHandler<SlotClickedEventArgs> SlotClicked;
 
@@ -45,9 +48,10 @@ namespace Utopia.GUI.D3D
             if (handler != null) handler(this, e);
         }
 
-        public Hud(Screen screen, D3DEngine d3DEngine, PlayerCharacter player, IconFactory iconFactory, InputManager.InputsManager inputManager)
+        public Hud(Screen screen, D3DEngine d3DEngine, PlayerCharacter player, IconFactory iconFactory, InputManager.InputsManager inputManager, ActionsManager actions)
         {
             _screen = screen;
+            _actions = actions;
             this.iconFactory = iconFactory;
             _inputManager = inputManager;
             _player = player;
@@ -80,6 +84,7 @@ namespace Utopia.GUI.D3D
         private void SelectSlot(int index)
         {
             // equip the slot
+            _selectedSlot = index;
             OnSlotClicked(new SlotClickedEventArgs { SlotIndex = index });
         }
 
@@ -122,9 +127,23 @@ namespace Utopia.GUI.D3D
             _d3DEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
         }
 
+        private int _lastSlot = 9;//TODO dynamic / configurable amount of toolbar slots
+                
         public override void Update(ref GameTime timeSpent)
         {
+           //TODO skip empty toolbar slots
             
+            if (_actions.isTriggered(Actions.ToolBar_SelectPrevious))
+            {
+                int slot = _selectedSlot == 0 ?  _lastSlot : _selectedSlot-1;
+                SelectSlot(slot);
+            }
+
+            else if (_actions.isTriggered(Actions.ToolBar_SelectNext))
+            {
+                int slot = _selectedSlot == _lastSlot ? 0 : _selectedSlot + 1;
+                SelectSlot(slot);
+            }
 
             _toolbarUi.Update(ref timeSpent);
         }
