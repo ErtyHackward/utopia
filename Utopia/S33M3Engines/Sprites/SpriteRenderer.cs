@@ -201,6 +201,47 @@ namespace S33M3Engines.Sprites
             _d3dEngine.Context.DrawIndexed(6, 0, 0);
         }
 
+        public void Render(SpriteTexture spriteTexture, 
+                           ref Matrix transform, 
+                           Color4 color,
+                           Vector2 viewportSize,
+                           RectangleF sourceRect = default(RectangleF), 
+                           bool sourceRectInTextCoord = true)
+        {
+            _vBuffer.SetToDevice(0); // Set the Vertex buffer
+
+            //Set Par Batch Constant
+            _effect.Begin();
+
+            _effect.CBPerDraw.Values.ViewportSize = viewportSize;
+            if (sourceRectInTextCoord) _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.Width, spriteTexture.Height);
+            else _effect.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
+
+            _effect.CBPerDraw.IsDirty = true;
+
+            // Set per-instance data
+            _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
+            _effect.CBPerInstance.Values.TextureArrayIndex = 0;
+            _effect.CBPerInstance.Values.Color = color;
+            if (sourceRect == default(RectangleF))
+            {
+                if (sourceRectInTextCoord) _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, spriteTexture.Width, spriteTexture.Height);
+                else _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, 1, 1);
+            }
+            else
+            {
+                _effect.CBPerInstance.Values.SourceRect = sourceRect;
+            }
+            _effect.CBPerInstance.IsDirty = true;
+
+            _effect.SpriteTexture.Value = spriteTexture.Texture;
+            _effect.SpriteTexture.IsDirty = true;
+
+            _effect.Apply(); //Set Shader to the device
+
+            _d3dEngine.Context.DrawIndexed(6, 0, 0);
+        }
+
 
         /// <summary>
         /// Will be used as an accumulator, will create a draw call at texture change

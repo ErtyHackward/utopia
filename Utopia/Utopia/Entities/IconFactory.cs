@@ -21,6 +21,8 @@ using Utopia.Shared.Cubes;
 using Utopia.Worlds.Cubes;
 using System.Collections.Generic;
 using S33M3Engines.StatesManager;
+using S33M3Engines.Sprites;
+using SharpDX.DXGI;
 
 namespace Utopia.Entities
 {
@@ -94,6 +96,8 @@ namespace Utopia.Entities
         #region Private methods
         private void Create3DBlockIcons()
         {
+            SpriteRenderer spriteRenderer = new SpriteRenderer();
+            spriteRenderer.Initialize(_d3DEngine);
             //Get the "Block" mesh that will be used to draw the various blocks.
             IMeshFactory meshfactory = new MilkShape3DMeshFactory();
             Mesh meshBluePrint;
@@ -115,6 +119,29 @@ namespace Utopia.Entities
                 BackGroundColor = new Color4(0, 255, 255, 255)
             };
 
+            Texture2DDescription SpriteTextureDesc = new Texture2DDescription()
+            {
+                Width = 1,
+                Height = 1,
+                MipLevels = 1,
+                ArraySize = 1,
+                Format = Format.R32G32B32A32_Float,
+                SampleDescription = new SampleDescription() { Count = 1 },
+                Usage = ResourceUsage.Dynamic,
+                BindFlags = BindFlags.ShaderResource,
+                CpuAccessFlags = CpuAccessFlags.Write
+            };
+            Texture2D SpriteTexture = new Texture2D(_d3DEngine.Device, SpriteTextureDesc);
+            DataBox data = _d3DEngine.Context.MapSubresource(SpriteTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None);
+            data.Data.Position = 0;
+            data.Data.Write<Vector4>(new Vector4(1.0f, 1.0f, 1.0f, 1.0f)); //Ecrire dans la texture
+            data.Data.Position = 0;
+            _d3DEngine.Context.UnmapSubresource(SpriteTexture, 0);
+
+            SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, SpriteTexture, new Vector2(0, 0));
+            spriteTexture.ScreenPosition = Matrix.Scaling(textureSize) * spriteTexture.ScreenPosition;
+            SpriteTexture.Dispose();
+
             //Create the Shadder used to render on the texture.
             HLSLIcons shader = new HLSLIcons(_d3DEngine,
                                              ClientSettings.EffectPack + @"Entities/Icons.hlsl",
@@ -124,7 +151,8 @@ namespace Utopia.Entities
             float aspectRatio = textureSize / textureSize;
             Matrix projection;
             Matrix.PerspectiveFovLH((float)Math.PI / 3.6f, aspectRatio, 0.5f, 100f, out projection);
-            Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -1.8f), Vector3.Zero, Vector3.UnitY);
+            Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -1.9f), Vector3.Zero, Vector3.UnitY);
+            Matrix WorldScale;
 
             Dictionary<int, int> MaterialChangeMapping = new Dictionary<int, int>();
             MaterialChangeMapping.Add(0, 0); //Change the Back Texture Id
@@ -175,7 +203,16 @@ namespace Utopia.Entities
                 shader.CBPerFrame.Values.Projection = Matrix.Transpose(projection);
                 shader.CBPerFrame.IsDirty = true;
 
-                shader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationY(MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi/5));
+                if (profile.YBlockOffset > 0)
+                {
+                    WorldScale = Matrix.Scaling(1, 1.0f - profile.YBlockOffset, 1);
+                }
+                else
+                {
+                    WorldScale = Matrix.Identity;
+                }
+
+                shader.CBPerDraw.Values.World = Matrix.Transpose(WorldScale * Matrix.RotationY(MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5));
                 shader.CBPerDraw.IsDirty = true;
 
                 shader.DiffuseTexture.Value = CubesTexture;
@@ -188,6 +225,16 @@ namespace Utopia.Entities
 
                 //Draw things here.
                 _d3DEngine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
+
+                //Draw a sprite for lighting block
+                if (profile.IsEmissiveColorLightSource)
+                {
+                    spriteRenderer.Begin(SpriteRenderer.FilterMode.Point);
+
+                    spriteRenderer.Render(spriteTexture, ref spriteTexture.ScreenPosition, new Color4(0.5f, profile.EmissiveColor.R /255, profile.EmissiveColor.G/255, profile.EmissiveColor.B/255), new Vector2(textureSize,textureSize));
+
+                    spriteRenderer.End();
+                }
 
                 //End Drawing
                 texture.End(false);
@@ -204,6 +251,7 @@ namespace Utopia.Entities
             shader.Dispose();
             vb.Dispose();
             ib.Dispose();
+            spriteRenderer.Dispose();
         }
         #endregion
         
