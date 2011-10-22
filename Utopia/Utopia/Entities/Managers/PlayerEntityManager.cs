@@ -179,7 +179,7 @@ namespace Utopia.Entities.Managers
 
         #region Player InputHandling
         /// <summary>
-        /// Handle Player input handling - Movement and rotation input are not handled here
+        /// Handle Player Actions - Movement and rotation input are not handled here
         /// </summary>
         private void inputHandler()
         {
@@ -241,9 +241,7 @@ namespace Utopia.Entities.Managers
                 //TODO unequip left item and throw it on the ground, (version 0 = place it at newCubeplace, animation later)                
                 // and next, throw the right tool if left tool is already thrown
             }
-
-
-
+            
         }
         #endregion
 

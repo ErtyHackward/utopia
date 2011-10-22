@@ -288,14 +288,14 @@ namespace LostIsland.Client
 
             actionManager.AddActions(new MouseTriggeredAction()
             {
-                Action = Actions.Block_SelectNext,
+                Action = Actions.ToolBar_SelectNext,
                 TriggerType = MouseTriggerMode.ScrollWheelForward,
                 Binding = MouseButton.ScrollWheel
             });
 
             actionManager.AddActions(new MouseTriggeredAction()
             {
-                Action = Actions.Block_SelectPrevious,
+                Action = Actions.ToolBar_SelectPrevious,
                 TriggerType = MouseTriggerMode.ScrollWheelBackWard,
                 Binding = MouseButton.ScrollWheel
             });
