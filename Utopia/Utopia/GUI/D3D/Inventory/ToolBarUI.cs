@@ -50,7 +50,7 @@ namespace Utopia.GUI.D3D.Inventory
                                   
                               };
                 btn.MouseDown += BtnMouseDown;
-
+                
                 if (_player.Toolbar[x] != 0)
                     btn.Slot = new ContainedSlot { Item = _player.FindToolById(_player.Toolbar[x]) };
 
