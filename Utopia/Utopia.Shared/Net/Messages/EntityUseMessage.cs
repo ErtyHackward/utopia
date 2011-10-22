@@ -13,11 +13,12 @@ namespace Utopia.Shared.Net.Messages
         private Vector3I _pickedBlockPosition;
         private Vector3I _newBlockPosition;
         private Vector3D _pickedEntityPosition;
-        private uint _pickedEntityID;
+        private uint _pickedEntityId;
         private uint _toolId;
         private uint _entityId;
         private bool _isBlockPicked;
         private bool _isEntityPicked;
+        private byte _useMode;
 
         private int _token;
 
@@ -65,8 +66,8 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         public uint PickedEntityId
         {
-            get { return _pickedEntityID; }
-            set { _pickedEntityID = value; }
+            get { return _pickedEntityId; }
+            set { _pickedEntityId = value; }
         }
 
         
@@ -92,6 +93,15 @@ namespace Utopia.Shared.Net.Messages
         }
 
         /// <summary>
+        /// Indicates use mode (simple case - left ot right mouse buttons)
+        /// </summary>
+        public byte UseMode
+        {
+            get { return _useMode; }
+            set { _useMode = value; }
+        }
+
+        /// <summary>
         /// Gets message id (cast to MessageTypes enumeration)
         /// </summary>
         public byte MessageId
@@ -113,8 +123,9 @@ namespace Utopia.Shared.Net.Messages
             msg._toolId = reader.ReadUInt32();
             msg._isBlockPicked = reader.ReadBoolean();
             msg._isEntityPicked = reader.ReadBoolean();
-            msg._pickedEntityID = reader.ReadUInt32();
+            msg._pickedEntityId = reader.ReadUInt32();
             msg._token = reader.ReadInt32();
+            msg._useMode = reader.ReadByte();
 
             return msg;
         }
@@ -134,8 +145,9 @@ namespace Utopia.Shared.Net.Messages
             writer.Write(_toolId);
             writer.Write(_isBlockPicked);
             writer.Write(_isEntityPicked);
-            writer.Write(_pickedEntityID);
+            writer.Write(_pickedEntityId);
             writer.Write(_token);
+            writer.Write(_useMode);
         }
     }
 }

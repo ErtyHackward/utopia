@@ -210,5 +210,10 @@ namespace Utopia.Shared.Structs
         {
             return X == 0 && Y == 0;
         }
+
+        public static Vector2I Zero
+        {
+            get { return new Vector2I(); }
+        }
     }
 }

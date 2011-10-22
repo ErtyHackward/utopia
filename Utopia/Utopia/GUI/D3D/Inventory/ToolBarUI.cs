@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Nuclex.UserInterface.Controls.Desktop;
 using Nuclex.UserInterface;
-
-using Nuclex.UserInterface.Controls;
 using Utopia.Entities;
 using S33M3Engines.D3D;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
-using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 
@@ -22,77 +15,61 @@ namespace Utopia.GUI.D3D.Inventory
         private readonly PlayerCharacter _player;
         const int ButtonSize = 46;
 
-        private ButtonControl leftButton;//TODO iconButton
-        private ButtonControl rightButton;
+        private readonly List<InventoryCell> _buttons;
 
-        private readonly List<ToolbarButtonControl> _buttons;
+        /// <summary>
+        /// Occurs when some slot get clicked
+        /// </summary>
+        public event EventHandler<InventoryWindowCellMouseEventArgs> SlotClicked;
 
-        private SlotContainer<ToolbarSlot> _toolbar;
-        private CharacterEquipment _equipment;
+        protected void OnSlotClicked(InventoryWindowCellMouseEventArgs e)
+        {
+            var handler = SlotClicked;
+            if (handler != null) handler(this, e);
+        }
 
-        public ToolBarUi(UniRectangle Bounds, PlayerCharacter player, IconFactory iconFactory)
+        public ToolBarUi(UniRectangle bounds, PlayerCharacter player, IconFactory iconFactory)
         {
             _player = player;
-            _toolbar = player.Toolbar;
-            _equipment = player.Equipment;
+ 
+            Bounds = bounds;
+            Name = "Toolbar";
+
             
-            //FIXME uniscalar relative positions doe not work, surely due to rectangle ordering  
-            //this.Bounds = new UniRectangle(0.0f, new UniScalar(.5f, 0f), new UniScalar(1, 0), 80.0f);
-            //TODO (simon) ToolBarUi remove all magic hardcoded numbers
-            //this.Bounds = new UniRectangle(0.0f, 600-46, 1024, 80.0f);
-            this.Bounds = Bounds;
-            this.Name = "Toolbar";
+            int nbrButton = 10;
+            _buttons = new List<InventoryCell>(nbrButton);
 
-            leftButton = new ButtonControl();
-            leftButton.Name = "LeftTool";
-            leftButton.Bounds = new UniRectangle(
-               0, 0, ButtonSize, ButtonSize
-            );
-            leftButton.Pressed += delegate
-                                      {
-                                          _equipment.LeftTool.Use(player);
-                                      };
-            leftButton.Text = _equipment.LeftTool.DisplayName;
-            this.Children.Add(leftButton);
-
-
-            rightButton = new ButtonControl();
-            rightButton.Name = "RightTool";
-            rightButton.Bounds = new UniRectangle(
-              ButtonSize, 0, ButtonSize, ButtonSize
-            );
-            rightButton.Text = _equipment.RightTool.DisplayName;
-            rightButton.Pressed += delegate
-            {
-                _equipment.RightTool.Use(player);
-            };
-            this.Children.Add(rightButton);
-            
-            int nbrButton = 12;
-            _buttons = new List<ToolbarButtonControl>(nbrButton);
-
-            float fromX = ((Bounds.Right.Offset - Bounds.Left.Offset) - (ButtonSize * (nbrButton-3))) / 2;
+            float fromX = ((bounds.Right.Offset - bounds.Left.Offset) - (ButtonSize * (nbrButton-3))) / 2;
 
             for (int x = 0; x < nbrButton; x++)
             {
-                
-                ToolbarButtonControl btn = new ToolbarButtonControl(_player,iconFactory,new ToolbarSlot(){GridPosition = new Vector2I(x,0)});
-                btn.Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize);
+
+                var btn = new InventoryCell(null, iconFactory, new Vector2I(0, x))
+                              {
+                                  Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize)
+                                  
+                              };
+                btn.MouseDown += BtnMouseDown;
+
+                if (_player.Toolbar[x] != 0)
+                    btn.Slot = new ContainedSlot { Item = _player.FindToolById(_player.Toolbar[x]) };
+
                 _buttons.Add(btn);
-                btn.Pressed += delegate {
-                    //if (btn.LeftItem is ITool)
-                    //    _equipment.LeftTool = (ITool)btn.LeftItem;
-                };
 
-                this.Children.Add(btn);
+                Children.Add(btn);
             }
 
-            foreach (ToolbarSlot slot in _toolbar)
-            {
-                int y = slot.GridPosition.Y;
-                _buttons[y].ToolbarSlot = slot;
-            }
 
+        }
+
+        void BtnMouseDown(object sender, MouseDownEventArgs e)
+        {
+            OnSlotClicked(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
+        }
+
+        public void SetSlot(int i, ContainedSlot slot)
+        {
+            _buttons[i].Slot = slot;
         }
 
         public void Resized()
@@ -106,52 +83,21 @@ namespace Utopia.GUI.D3D.Inventory
             }
         }
 
-        //TODO (Simon) review ToolBarUI update, envent based may be better
         public void Update(ref GameTime gameTime)
         {
-            //for (int i = 0; i < _inventory.Toolbar.Count; i++)
-            //{
-            //    buttons[i].Item = _inventory.Toolbar[i];
+            if (_player.Equipment.LeftTool == null)
+                return;
 
-            //    if (_inventory.Toolbar[i] !=null)
-            //    {
-            //        buttons[i].Text = _inventory.Toolbar[i].UniqueName;
-            //    }
-               
-
-            //    if (buttons[i].Item == _inventory.LeftTool)
-            //    {
-            //        buttons[i].Highlight = true;
-            //    }
-            //    else
-            //    {
-            //        buttons[i].Highlight = false;
-            //    }
-            //}
-
-            //if (_inventory.LeftTool != null)
-            //{
-            //    leftButton.Item = _inventory.LeftTool;
-            //    if (leftButton.Item.Icon == null)
-            //        leftButton.Text = _inventory.LeftTool.UniqueName;
-            //    else
-            //        leftButton.Text = null;
-            //}
-
-            //if (_inventory.RightTool != null)
-            //{
-            //    rightButton.Item = _inventory.RightTool;
-
-            //    if (rightButton.Item.Icon == null)
-            //        rightButton.Text = _inventory.RightTool.UniqueName;
-            //    else
-            //        rightButton.Text = null;
-            //}
+            for (int i = 0; i < _buttons.Count; i++)
+            {
+                if (_player.Toolbar[i] != 0)
+                {
+                    _buttons[i].IsCellSelected = _player.Equipment.LeftTool.EntityId == _player.Toolbar[i];
+                }
+                else
+                    _buttons[i].IsCellSelected = false;
+            }
         }
 
-        protected override void OnMouseEntered()
-        {
-            base.OnMouseEntered();
-        }
     }
 }

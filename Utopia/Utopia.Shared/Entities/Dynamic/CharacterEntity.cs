@@ -55,7 +55,10 @@ namespace Utopia.Shared.Entities.Dynamic
                 return Equipment.LeftTool;
             if (Equipment.RightTool != null && Equipment.RightTool.EntityId == toolId)
                 return Equipment.RightTool;
-            return null;
+
+            var slot = Inventory.Find(toolId);
+
+            return slot != null ? (ITool)slot.Item : null;
         }
 
         public override void Load(System.IO.BinaryReader reader)

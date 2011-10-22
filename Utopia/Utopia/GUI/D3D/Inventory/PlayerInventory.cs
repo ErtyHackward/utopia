@@ -43,7 +43,7 @@ namespace Utopia.GUI.D3D.Inventory
             characterSheet.Bounds = new UniRectangle(4, 24, back.Width, back.Height);
             Children.Add(characterSheet);
 
-            BuildBodyslot(characterSheet, EquipmentSlotType.RightHand, 146, 64);
+            //BuildBodyslot(characterSheet, EquipmentSlotType.RightHand, 146, 64);
             BuildBodyslot(characterSheet, EquipmentSlotType.LeftHand, 2, 64);
 
             //XXX externalize charactersheet slot positions. clientsettings.xml or somewhere else

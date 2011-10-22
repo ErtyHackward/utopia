@@ -71,7 +71,7 @@ namespace LostIsland.Shared.Tools
             writer.Write(CubeId);
         }
 
-        public IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        public IToolImpact Use(IDynamicEntity owner, byte useMode, bool runOnServer = false)
         {
             var entity = owner;
             var impact = new ToolImpact { Success = false };
@@ -79,12 +79,48 @@ namespace LostIsland.Shared.Tools
 
             if (entity.EntityState.IsPickingActive)
             {
-                var cursor = _landscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
-                if (cursor.Read() == 0)
+                if (useMode == 0)
                 {
-                    cursor.Write(CubeId);
-                    impact.Success = true;
-                    return impact;
+                    var cursor = _landscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
+                    var cube = cursor.Read();
+                    if (cube != Utopia.Shared.Cubes.CubeId.Air)
+                    {
+                        var chunk = _landscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
+
+                        IBlockLinkedEntity bentity;
+                        Entity removedEntity;
+                        for (int entityId = chunk.Entities.Data.Count - 1; entityId >= 0; entityId--)
+                        {
+                            bentity = chunk.Entities.Data[entityId] as IBlockLinkedEntity;
+
+                            if (bentity != null)
+                            {
+                                //If the linkedCube entity is removed, then remove the entity also.
+                                if (bentity.LinkedCube == owner.EntityState.PickedBlockPosition)
+                                {
+                                    chunk.Entities.RemoveByArrayIndex(entityId, owner.EntityId, out removedEntity);
+                                    // Add entity on ground or in Inventory
+                                    //TOTO Enity picking ??
+                                }
+                            }
+                        }
+
+                        //change the Block to AIR
+                        cursor.Write(Utopia.Shared.Cubes.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
+                        impact.Success = true;
+                        return impact;
+                    }
+                }
+                else
+                {
+
+                    var cursor = _landscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
+                    if (cursor.Read() == Utopia.Shared.Cubes.CubeId.Air)
+                    {
+                        cursor.Write(CubeId);
+                        impact.Success = true;
+                        return impact;
+                    }
                 }
             }
             impact.Message = "Pick a cube to use this tool";

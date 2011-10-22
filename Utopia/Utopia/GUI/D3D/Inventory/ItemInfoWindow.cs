@@ -15,6 +15,7 @@ namespace Utopia.GUI.D3D.Inventory
         private readonly LabelControl _descriptionLabel;
 
         private IItem _activeItem;
+
         public IItem ActiveItem
         {
             get { return _activeItem; }
@@ -55,7 +56,7 @@ namespace Utopia.GUI.D3D.Inventory
 
             _descriptionLabel = new LabelControl
                                     {
-                                        Bounds = new UniRectangle(10, 80, 20, 100)
+                                        Bounds = new UniRectangle(10, 80, 180, 100)
                                     };
 
             Children.Add(_descriptionLabel);

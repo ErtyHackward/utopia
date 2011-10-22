@@ -73,6 +73,9 @@ namespace Utopia.Network
 
         void InventoryItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
+            if (!Enabled)
+                return;
+
             if (!_pendingOperation)
                 throw new InvalidOperationException("Unable to exchange item without taking it first");
 
@@ -136,6 +139,11 @@ namespace Utopia.Network
             _tempSlot = e.Slot;
             _pendingOperation = true;
             _sourceContainer = (ISlotContainer<ContainedSlot>)sender;
+        }
+
+        public void SetToolBar(int slot, uint entityId)
+        {
+            _connection.SendAsync(new ItemTransferMessage { SourceContainerSlot = new Shared.Structs.Vector2I(-2, slot),  ItemEntityId = entityId });
         }
 
         // handling player inventory requests

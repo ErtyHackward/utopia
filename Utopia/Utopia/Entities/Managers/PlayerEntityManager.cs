@@ -204,16 +204,16 @@ namespace Utopia.Entities.Managers
                 if (Player.EntityState.IsPickingActive && Player.Equipment.LeftTool!=null)
                 {
                     //sends the client server event that does tool.use on server
-                    Player.LeftToolUse();
+                    Player.LeftToolUse(0);
 
                     //client invocation to keep the client inventory in synch
-                    Player.Equipment.LeftTool.Use(Player);
+                    Player.Equipment.LeftTool.Use(Player, 0);
                 }
             }
 
             if (HandleToolsUse && _actions.isTriggered(Actions.Use_Right))
             {
-                 if (Player.EntityState.IsPickingActive && Player.Equipment.RightTool != null)
+                if (Player.EntityState.IsPickingActive && Player.Equipment.LeftTool != null)
                 {
                     //Avoid the player to add a block where he is located !            
                     BoundingBox playerPotentialNewBlock;
@@ -222,10 +222,10 @@ namespace Utopia.Entities.Managers
                     if (!MBoundingBox.Intersects(ref VisualEntity.WorldBBox, ref playerPotentialNewBlock))
                     {
                         //sends the client server event that does tool.use on server
-                        Player.RightToolUse();
+                        Player.LeftToolUse(1);
 
                         //client invocation to keep the client inventory in synch
-                        Player.Equipment.RightTool.Use(Player);
+                        Player.Equipment.LeftTool.Use(Player, 1);
                     }
                 }
             }

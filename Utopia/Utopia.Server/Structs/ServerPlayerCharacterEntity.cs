@@ -129,7 +129,7 @@ namespace Utopia.Server.Structs
             }
         }
 
-        public override void Update(Shared.Structs.DynamicUpdateState gameTime)
+        public override void Update(DynamicUpdateState gameTime)
         {
             // no need to update something on real player
         }
@@ -182,7 +182,7 @@ namespace Utopia.Server.Structs
 
             if (tool != null)
             {
-                var toolImpact = tool.Use(playerCharacter);
+                var toolImpact = tool.Use(playerCharacter, entityUseMessage.UseMode, true);
 
                 // returning tool feedback
                 Connection.SendAsync(new UseFeedbackMessage { Token = entityUseMessage.Token, EntityImpactBytes = toolImpact.ToArray() });
@@ -369,8 +369,6 @@ namespace Utopia.Server.Structs
 
         public override void ItemTransfer(ItemTransferMessage itm)
         {
-            var playerCharacter = (PlayerCharacter)DynamicEntity;
-
             #region Switch
             if (itm.IsSwitch)
             {
@@ -421,6 +419,16 @@ namespace Utopia.Server.Structs
                 return;
             }
             #endregion
+
+            if (itm.SourceContainerSlot.X == -2)
+            {
+                // set toolbar slot
+                var playerCharacter = (PlayerCharacter)DynamicEntity;
+
+                playerCharacter.Toolbar[itm.SourceContainerSlot.Y] = itm.ItemEntityId;
+                return;
+            }
+
 
             if (TakeItem(itm))
             {

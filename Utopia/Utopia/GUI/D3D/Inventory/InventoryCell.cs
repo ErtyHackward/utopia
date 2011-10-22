@@ -46,6 +46,11 @@ namespace Utopia.GUI.D3D.Inventory
         public bool DrawCellBackground { get; set; }
 
         /// <summary>
+        /// Whether the cell is drawn selected
+        /// </summary>
+        public bool IsCellSelected { get; set; }
+
+        /// <summary>
         /// Gets icon factory used by cell to draw items icons
         /// </summary>
         public IconFactory IconFactory
