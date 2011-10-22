@@ -48,7 +48,9 @@ namespace LostIsland.Server
 
             foreach (var cubeId in CubeId.All())
             {
-                
+                if (cubeId == CubeId.Air)
+                    continue;
+
                 item3 = (CubeResource)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.CubeResource));
                 item3.CubeId = cubeId;
                 dEntity.Inventory.PutItem(item3, 100);
