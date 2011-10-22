@@ -27,8 +27,8 @@ namespace Utopia.Action
         Use_Right,
         Use_RightWhileCursorLocked,
         Use_RightWhileCursorNotLocked,
-        Block_SelectNext,
-        Block_SelectPrevious,
+        ToolBar_SelectNext,
+        ToolBar_SelectPrevious,
         World_FreezeTime,
         DebugUI_Insert,
         Toggle_Chat,//XXX this syntax is not standard, its' camelCase with an underscore, resharper doesn't even support it !
