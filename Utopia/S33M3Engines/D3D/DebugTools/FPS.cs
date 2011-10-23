@@ -45,7 +45,7 @@ namespace S33M3Engines.D3D.DebugTools
         {
         }
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             DateTime currentRealTime = DateTime.Now;
             TimeSpan elapsedRealTime = currentRealTime - _prevRealTimeFPS;

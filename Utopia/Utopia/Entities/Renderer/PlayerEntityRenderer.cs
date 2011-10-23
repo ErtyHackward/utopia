@@ -62,7 +62,7 @@ namespace Utopia.Entities.Renderer
         #endregion
 
         #region Public Methods
-        public void Draw(int Index)
+        public void Draw(int index)
         {
             //If camera is first person Don't draw the body.
             if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson) return;

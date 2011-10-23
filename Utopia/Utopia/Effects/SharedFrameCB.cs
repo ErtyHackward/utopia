@@ -62,7 +62,7 @@ namespace Utopia.Effects.Shared
             CBPerFrame.GlobalCB = true;
         }
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D_focused);
             if (_playerManager.IsHeadInsideWater) CBPerFrame.Values.SunColor = new Vector3(_skydome.SunColor.X / 3, _skydome.SunColor.Y / 3, _skydome.SunColor.Z);

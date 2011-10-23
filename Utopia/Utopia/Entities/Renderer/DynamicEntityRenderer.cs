@@ -66,7 +66,7 @@ namespace Utopia.Entities.Renderer
         #endregion
 
         #region Public Methods
-        public void Draw(int Index)
+        public void Draw(int index)
         {
             //Applying Correct Render States
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);

@@ -54,7 +54,7 @@ namespace S33M3Engines.D3D
 
         #region Public Events
 
-        public virtual void Draw(int Index)
+        public virtual void Draw(int index)
         {
         }
 

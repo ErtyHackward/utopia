@@ -83,7 +83,7 @@ namespace Utopia.Resources.ModelComp
             base.Update(ref TimeSpend);
         }
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             if (_gameStates.DebugDisplay == 1)
             {
