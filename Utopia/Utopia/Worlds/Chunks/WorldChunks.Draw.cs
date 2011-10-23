@@ -38,7 +38,7 @@ namespace Utopia.Worlds.Chunks
 
         #region Public methods
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             
 
@@ -47,7 +47,7 @@ namespace Utopia.Worlds.Chunks
 #endif
             _terraEffect.Begin();
 
-            switch (Index)
+            switch (index)
             {
                 case SOLID_DRAW:
                     _chunkDrawByFrame = 0;

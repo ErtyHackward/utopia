@@ -66,7 +66,7 @@ namespace Utopia.GUI.D3D
         }
 
         //Draw at 2d level ! (Last draw called)
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             _guiVisualizer.Draw(_screen);
         }

@@ -90,7 +90,7 @@ namespace Utopia.Entities.Renderer
             if (_pickedCube != null) _pickedCube.Dispose();
         }
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             //Applying Correct Render States
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);

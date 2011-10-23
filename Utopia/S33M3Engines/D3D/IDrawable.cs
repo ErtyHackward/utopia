@@ -7,6 +7,6 @@ namespace S33M3Engines.D3D
 {
     public interface IDrawable : IUpdatable
     {
-        void Draw(int Index);
+        void Draw(int index);
     }
 }

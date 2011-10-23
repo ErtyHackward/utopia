@@ -81,10 +81,10 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             //Only Draw the Entities that are in View Client scope !
-            _dynamicEntityRenderer.Draw(Index);
+            _dynamicEntityRenderer.Draw(index);
         }
 
         public void AddEntity(IDynamicEntity entity)

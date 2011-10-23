@@ -73,7 +73,7 @@ namespace S33M3Engines.D3D.DebugTools
         }
 
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             //Afficher la console, ou bien les infos !
             if (Activated)

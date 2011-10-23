@@ -11,7 +11,6 @@ using Utopia.GUI.D3D.Inventory;
 using SharpDX.Direct3D11;
 using Utopia.InputManager;
 using Utopia.Settings;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 
 namespace Utopia.GUI.D3D
@@ -20,7 +19,6 @@ namespace Utopia.GUI.D3D
     /// <summary>
     /// Heads up display = crosshair + toolbar(s) / icons + life + mana + ... 
     /// </summary>
-      
     public class Hud : DrawableGameComponent
     {
         private SpriteRenderer _spriteRender;
@@ -36,7 +34,7 @@ namespace Utopia.GUI.D3D
         private ToolBarUi _toolbarUi;
 
         private readonly PlayerCharacter _player;
-        private IconFactory iconFactory;
+        private readonly IconFactory _iconFactory;
         private readonly InputsManager _inputManager;
         private readonly ActionsManager _actions;
 
@@ -48,20 +46,20 @@ namespace Utopia.GUI.D3D
             if (handler != null) handler(this, e);
         }
 
-        public Hud(Screen screen, D3DEngine d3DEngine, PlayerCharacter player, IconFactory iconFactory, InputManager.InputsManager inputManager, ActionsManager actions)
+        public Hud(Screen screen, D3DEngine d3DEngine, PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager, ActionsManager actions)
         {
             _screen = screen;
             _actions = actions;
-            this.iconFactory = iconFactory;
+            _iconFactory = iconFactory;
             _inputManager = inputManager;
             _player = player;
             _d3DEngine = d3DEngine;
             DrawOrders.UpdateIndex(0, 9000);
-            _d3DEngine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
-            ToolbarUi = new ToolBarUi(new UniRectangle(0.0f, _d3DEngine.ViewPort.Height - 46, _d3DEngine.ViewPort.Width, 80.0f), _player, iconFactory);
+            _d3DEngine.ViewPort_Updated += D3DEngineViewPortUpdated;
+            ToolbarUi = new ToolBarUi(new UniRectangle(0.0f, _d3DEngine.ViewPort.Height - 46, _d3DEngine.ViewPort.Width, 80.0f), _player, _iconFactory);
 
             _inputManager.KeyBoardListening = true;
-            _inputManager.OnKeyPressed += new InputsManager.KeyPress(_inputManager_OnKeyPressed);
+            _inputManager.OnKeyPressed += _inputManager_OnKeyPressed;
         }
 
         void _inputManager_OnKeyPressed(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -113,7 +111,7 @@ namespace Utopia.GUI.D3D
         }
 
         //Refresh Sprite Centering when the viewPort size change !
-        private void D3dEngine_ViewPort_Updated(Viewport viewport)
+        private void D3DEngineViewPortUpdated(Viewport viewport)
         {
             ToolbarUi.Bounds = new UniRectangle(0.0f, viewport.Height - 46, viewport.Width, 80.0f);
             ToolbarUi.Resized();
@@ -124,24 +122,24 @@ namespace Utopia.GUI.D3D
             _spriteRender.Dispose();
             _crosshair.Dispose();
             _font.Dispose();
-            _d3DEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
+            _d3DEngine.ViewPort_Updated -= D3DEngineViewPortUpdated;
         }
 
         private int _lastSlot = 9;//TODO dynamic / configurable amount of toolbar slots
                 
         public override void Update(ref GameTime timeSpent)
         {
-           //TODO skip empty toolbar slots
+            //TODO skip empty toolbar slots
             
             if (_actions.isTriggered(Actions.ToolBar_SelectPrevious))
             {
-                int slot = _selectedSlot == 0 ?  _lastSlot : _selectedSlot-1;
+                var slot = _selectedSlot == 0 ?  _lastSlot : _selectedSlot-1;
                 SelectSlot(slot);
             }
 
             else if (_actions.isTriggered(Actions.ToolBar_SelectNext))
             {
-                int slot = _selectedSlot == _lastSlot ? 0 : _selectedSlot + 1;
+                var slot = _selectedSlot == _lastSlot ? 0 : _selectedSlot + 1;
                 SelectSlot(slot);
             }
 
@@ -153,7 +151,7 @@ namespace Utopia.GUI.D3D
         }
 
         //Draw at 2d level ! (Last draw called)
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             _spriteRender.Begin(SpriteRenderer.FilterMode.Linear);
             _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
@@ -161,7 +159,7 @@ namespace Utopia.GUI.D3D
 
         }
 
-        protected override void OnEnabledChanged(object sender, System.EventArgs args)
+        protected override void OnEnabledChanged(object sender, EventArgs args)
         {
             base.OnEnabledChanged(sender, args);
             if (Enabled)

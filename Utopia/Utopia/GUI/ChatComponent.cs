@@ -39,6 +39,7 @@ namespace Utopia.GUI
         private DateTime _caretSwitch;
         private float windowHeight;
 
+
         public int ChatLineLimit { get; set; }
 
         private bool _activated;
@@ -52,13 +53,10 @@ namespace Utopia.GUI
                 if (value)
                 {
                     _actionManager.KeyboardActionsProcessing = false;
-                    _imanager.KeyBoardListening = true;
                 }
                 else
                 {
                     _actionManager.KeyboardActionsProcessing = true;
-                    _imanager.KeyBoardListening = false;
-
                 }
             }
         }
@@ -130,7 +128,6 @@ namespace Utopia.GUI
                 if (e.KeyChar == (char)Keys.Enter)
                 {
                     _actionManager.KeyboardActionsProcessing = true;
-                    _imanager.KeyBoardListening = false;
                     if (!string.IsNullOrWhiteSpace(Input))
                     {
                         var msg = new ChatMessage { Login = _server.Player.DisplayName, Message = Input };
@@ -217,7 +214,7 @@ namespace Utopia.GUI
 
         }
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             //if (_chatHiden) return;
 

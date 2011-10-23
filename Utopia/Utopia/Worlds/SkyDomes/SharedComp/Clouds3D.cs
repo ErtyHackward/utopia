@@ -116,7 +116,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             Vector2.Lerp(ref _cloud_MapOffset.ValuePrev, ref _cloud_MapOffset.Value, interpolation_ld, out _cloud_MapOffset.ValueInterp);
         }
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
 
             Vector2 m_camera_pos = new Vector2((float)_camManager.ActiveCamera.WorldPosition.X, (float)_camManager.ActiveCamera.WorldPosition.Z); //Position de la caméra en X et Z, sans la composante Y

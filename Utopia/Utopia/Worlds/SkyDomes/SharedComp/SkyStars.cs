@@ -64,7 +64,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
         }
 
-        public override void Draw(int Index)
+        public override void Draw(int index)
         {
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled);
 
