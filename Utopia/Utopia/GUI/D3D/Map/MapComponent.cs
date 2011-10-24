@@ -59,8 +59,8 @@ namespace Utopia.GUI.D3D.Map
             _mapControl = new MapControl
                               {
                                   MarkerPosition = new Point(),
-                                  PlayerMarker = new S33M3Engines.Shared.Sprites.SpriteTexture(_engine.Device, playerMarker, new SharpDX.Vector2(), SharpDX.DXGI.Format.R8G8B8A8_UNorm),
-                                  MapTexture = new S33M3Engines.Shared.Sprites.SpriteTexture(_engine.Device, _mapImage, new SharpDX.Vector2(), SharpDX.DXGI.Format.R8G8B8A8_UNorm),
+                                  PlayerMarker = new S33M3Engines.Shared.Sprites.SpriteTexture(_engine.Device, playerMarker, new SharpDX.Vector2(), _engine.B8G8R8A8_UNormSupport),
+                                  MapTexture = new S33M3Engines.Shared.Sprites.SpriteTexture(_engine.Device, _mapImage, new SharpDX.Vector2(), _engine.B8G8R8A8_UNormSupport),
                                   Bounds = innerBounds
                               };
 
