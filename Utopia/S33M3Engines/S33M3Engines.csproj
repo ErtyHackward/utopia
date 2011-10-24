@@ -154,6 +154,7 @@
     <Compile Include="Struct\Vertex\Helper\Interfaces.cs" />
     <Compile Include="Struct\Vertex\Helper\Enums.cs" />
     <Compile Include="Struct\Vertex\Helper\VertexDeclaration.cs" />
+    <Compile Include="Struct\Vertex\VertexSprite3D.cs" />
     <Compile Include="Struct\Vertex\VertexMesh.cs" />
     <Compile Include="Struct\Vertex\VertexCubeCloud.cs" />
     <Compile Include="Struct\Vertex\VertexCubeFaceHQ.cs" />

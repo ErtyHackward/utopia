@@ -19,6 +19,11 @@ namespace S33M3Engines.Cameras
         /// Must point to the real Orientation, not the interpolated one !
         /// </summary>
         Quaternion CameraOrientation { get; }
+
+        /// <summary>
+        /// Must point to the real Orientation, not the interpolated one !
+        /// </summary>
+        Quaternion CameraYAxisOrientation { get; }
     }
 
 }

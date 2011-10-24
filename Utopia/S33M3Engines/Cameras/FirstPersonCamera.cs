@@ -42,12 +42,14 @@ namespace S33M3Engines.Cameras
             //Memorise the last timedepend variables
             _worldPosition.BackUpValue();
             _cameraOrientation.BackUpValue();
+            _cameraYAxisOrientation.BackUpValue();
 
             if (CameraPlugin != null)
             {
                 //Get the Camera Position and Rotation from the attached Entity to the camera !
                 _worldPosition.Value = CameraPlugin.CameraWorldPosition;
                 _cameraOrientation.Value = CameraPlugin.CameraOrientation;
+                _cameraYAxisOrientation.Value = CameraPlugin.CameraYAxisOrientation;
 
                 //Set the new Computed focus point
                 base.FocusPoint.Value = _worldPosition.Value; // == Position of my camera !
@@ -83,7 +85,8 @@ namespace S33M3Engines.Cameras
             base.FocusPointMatrix.ValueInterp = Matrix.Translation(-1 * _worldPosition.ValueInterp.AsVector3());
 
             Quaternion.Slerp(ref _cameraOrientation.ValuePrev, ref _cameraOrientation.Value, (float)interpolation_ld, out _cameraOrientation.ValueInterp);
-
+            Quaternion.Slerp(ref _cameraYAxisOrientation.ValuePrev, ref _cameraYAxisOrientation.Value, (float)interpolation_ld, out _cameraYAxisOrientation.ValueInterp);
+            
             //Recompute the interpolated View Matrix
             Matrix MTranslation = Matrix.Translation(-(_worldPosition.ValueInterp - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3());
             Matrix MRotation = Matrix.RotationQuaternion(_cameraOrientation.ValueInterp);

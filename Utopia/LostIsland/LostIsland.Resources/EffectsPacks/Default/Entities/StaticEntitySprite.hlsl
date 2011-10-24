@@ -2,14 +2,19 @@
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
 
-cbuffer PerFrame
+cbuffer PerFrameLocal
 {
 	matrix WorldFocus;
-	matrix ViewProjection;
-	float3 SunColor;			  // Ambiant lighting color
-	float fogdist;
+	matrix View;
     float3 WindPower;
 	float keyFrameAnimation;
+};
+
+cbuffer PerFrame
+{
+	matrix ViewProjection;
+	float3 SunColor;			  // Diffuse lighting color
+	float fogdist;
 };
 
 //--------------------------------------------------------------------------------------
@@ -21,7 +26,7 @@ SamplerState SamplerDiffuse;
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 struct VSInput {
-	float3 Position				: POSITION;
+	float4 Position				: POSITION;
 	float4 Color				: COLOR;
 	float3 Textcoord     		: TEXCOORD;
 };
@@ -37,19 +42,15 @@ struct PSInput {
 //--------------------------------------------------------------------------------------
 
 static const float foglength = 45;
-static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
-static float3 Nightfogcolor = {0, 0, 0 };
 
-// offsets for the 4 vertices
-static const float3 p[4] = {
-							{-0.5, 0.0f, 0.0f},
-							{-0.5, 1.0f, 0.0f},
-							{0.5, 0.0f, 0.0f},
-							{0.5, 1.0f, 0.0f}
-						};
-
-static const float texcoordU[4] = { 0.0f, 0.0f, 1.0f, 1.0f};
-static const float texcoordV[4] = { 1.0f, 0.0f, 1.0f, 0.0f};	
+//Billboard corners, 0 being no billboards
+static const float3 billboardCorners[5] = {
+											{0, 0.0f, 0.0f},
+											{-0.5, 0.5f, 0.0f},
+											{0.5, 0.5f, 0.0f},
+											{0.5, -0.5f, 0.0f},
+											{-0.5, -0.5f, 0.0f}
+									};
 
 //--------------------------------------------------------------------------------------
 // Vertex Shader
@@ -59,13 +60,28 @@ PSInput VS (VSInput input)
 	PSInput output;
 
 	float4 worldPosition = {input.Position.xyz, 1.0f};
-	worldPosition = mul(worldPosition, WorldFocus);
+	
+	//Rotating the Position if Billboard
+	float3 billboardVertexPosition = billboardCorners[input.Position.w];
 
-	//if (input.Textcoord.y <= 0.1)
+	//Rotating it
+	billboardVertexPosition = float4(mul(billboardVertexPosition, (float3x3)View),0); //Rotate the billboard
+
+	//Translating/scaling it back to world position
+	worldPosition.x = billboardVertexPosition.x + (input.Position.x - billboardCorners[input.Position.w].x);
+	worldPosition.y = billboardVertexPosition.y + (input.Position.y - billboardCorners[input.Position.w].y);
+	worldPosition.z = billboardVertexPosition.z + (input.Position.z - billboardCorners[input.Position.w].z);
+
+
+
+
+	//Billboard rotation ?
+	//if(input.Position.w == 1)
 	//{
-	//	  float sine = sin(keyFrameAnimation); // * Time variable to make it move !
-	//	  worldPosition.xyz += sine * WindPower;
+	//	worldPosition = float4(mul(worldPosition, (float3x3)View),0); //Rotate the vertex
 	//}
+
+	worldPosition = mul(worldPosition, WorldFocus); //Translate to vertex to the correct location
 
 	output.Position = mul(worldPosition, ViewProjection);
 	output.UVW = input.Textcoord;

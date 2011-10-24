@@ -149,6 +149,25 @@ namespace Utopia.Worlds.Chunks
             VisualChunk chunk;
             Matrix worldFocus = Matrix.Identity;
 
+            _staticSpriteEffect.Begin();
+            _staticSpriteEffect.CBPerFrameLocal.Values.WorldFocus = Matrix.Transpose(_worldFocusManager.CenterOnFocus(ref MMatrix.Identity));
+
+            	// Calculate the rotation that needs to be applied to the billboard model to face the current camera position using the arc tangent function.
+//    angle = atan2(modelPosition.x - cameraPosition.x, modelPosition.z - cameraPosition.z) * (180.0 / D3DX_PI);
+
+//    // Convert rotation into radians.
+//    rotation = (float)angle * 0.0174532925f;
+//Use the rotation to first rotate the world matrix accordingly, and then translate to the position of the billboard in the world.
+
+//    // Setup the rotation the billboard at the origin using the world matrix.
+//    D3DXMatrixRotationY(&worldMatrix, rotation);
+
+            _staticSpriteEffect.CBPerFrameLocal.Values.View = Matrix.RotationQuaternion(_camManager.ActiveCamera.YAxisOrientation);
+            _staticSpriteEffect.CBPerFrameLocal.Values.WindPower = _weather.Wind.FlatWindFlowNormalizedWithNoise;
+            _staticSpriteEffect.CBPerFrameLocal.Values.KeyFrameAnimation = (float)_weather.Wind.KeyFrameAnimation;
+            _staticSpriteEffect.CBPerFrameLocal.IsDirty = true;
+            _staticSpriteEffect.Apply();
+
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
@@ -157,18 +176,6 @@ namespace Utopia.Worlds.Chunks
                 {
                     if (!chunk.isFrustumCulled)
                     {
-                         _staticSpriteEffect.Begin();
-
-                        _staticSpriteEffect.CBPerFrame.Values.WorldFocus = Matrix.Transpose(_worldFocusManager.CenterOnFocus(ref MMatrix.Identity));
-                        _staticSpriteEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-                        _staticSpriteEffect.CBPerFrame.Values.WindPower = _weather.Wind.FlatWindFlowNormalizedWithNoise;
-                        _staticSpriteEffect.CBPerFrame.Values.KeyFrameAnimation = (float)_weather.Wind.KeyFrameAnimation;
-                        _staticSpriteEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
-                        _staticSpriteEffect.CBPerFrame.Values.fogdist = ((VisualWorldParameters.WorldVisibleSize.X) / 2) - 48; ;
-                        _staticSpriteEffect.CBPerFrame.IsDirty = true;
-
-                        _staticSpriteEffect.Apply();
-
                         chunk.DrawStaticEntities();
                     }
                 }
@@ -210,7 +217,7 @@ namespace Utopia.Worlds.Chunks
             _liquidEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
 
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, ClientSettings.TexturePack + @"Sprites/", @"sp*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
-            _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexPositionColorTexture.VertexDeclaration);
+            _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _staticSpriteEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
             _staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
         }

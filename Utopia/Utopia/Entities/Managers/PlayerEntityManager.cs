@@ -60,6 +60,7 @@ namespace Utopia.Entities.Managers
         
         private FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();         //World Position
         private FTSValue<Quaternion> _lookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
+        private FTSValue<Quaternion> _cameraYAxisOrientation = new FTSValue<Quaternion>();   //LookAtYAxis angle
         private FTSValue<Quaternion> _moveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
         private Vector3D _lookAt;
         private Vector3 _entityEyeOffset;                                     //Offset of the camera Placement inside the entity, from entity center point.
@@ -97,6 +98,7 @@ namespace Utopia.Entities.Managers
         //Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual Vector3D CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
         public virtual Quaternion CameraOrientation { get { return _lookAtDirection.Value; } }
+        public virtual Quaternion CameraYAxisOrientation { get { return _cameraYAxisOrientation.Value; } }
 
         public bool IsHeadInsideWater { get; set; }
 
@@ -589,6 +591,7 @@ namespace Utopia.Entities.Managers
             {
                 Quaternion.RotationAxis(ref MVector3.Up, (float)heading, out rotation);
                 _lookAtDirection.Value = rotation * _lookAtDirection.Value;
+                _cameraYAxisOrientation.Value = rotation * _cameraYAxisOrientation.Value;
             }
 
             // Rotate the camera about its local X axis.
@@ -645,8 +648,11 @@ namespace Utopia.Entities.Managers
             _lookAtDirection.Value = Player.Rotation;
 
             double playerSavedYaw = MQuaternion.getYaw(ref _lookAtDirection.Value);
-            Quaternion.RotationAxis(ref MVector3.Up, (float)playerSavedYaw, out _lookAtDirection.Value);
+            Quaternion.RotationAxis(ref MVector3.Up, (float)playerSavedYaw, out _lookAtDirection.Value);            
             _lookAtDirection.ValuePrev = _lookAtDirection.Value;
+
+            _cameraYAxisOrientation.Value = _lookAtDirection.Value;
+            _cameraYAxisOrientation.ValuePrev = _lookAtDirection.Value;
 
             //Set Move direction = to LookAtDirection
             _moveDirection.Value = _lookAtDirection.Value;

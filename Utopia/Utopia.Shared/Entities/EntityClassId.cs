@@ -25,6 +25,10 @@ namespace Utopia.Shared.Entities
 
         //Static Sprite
         public const ushort Grass = 4000;
+        public const ushort Flower1 = 4001;
+        public const ushort Flower2 = 4002;
+        public const ushort Mushroom1 = 4003;
+        public const ushort Mushroom2 = 4004;
 
         //Special case
         public const ushort EditableEntity = 10001;

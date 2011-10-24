@@ -26,6 +26,7 @@ namespace S33M3Engines.Cameras
         #region Private TimeDepending Variable ===> Will be LERPED, SLERPED or recomputed
         protected FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();
         protected FTSValue<Quaternion> _cameraOrientation = new FTSValue<Quaternion>();
+        protected FTSValue<Quaternion> _cameraYAxisOrientation = new FTSValue<Quaternion>();
         #endregion
 
         #region Private Variable
@@ -130,13 +131,16 @@ namespace S33M3Engines.Cameras
         public Vector3D WorldPosition
         {
             get { return _worldPosition.ValueInterp; }
-            set { _worldPosition.Value = value; }
         }
 
         public Quaternion Orientation
         {
             get { return _cameraOrientation.ValueInterp; }
-            set { _cameraOrientation.Value = value; }
+        }
+
+        public Quaternion YAxisOrientation
+        {
+            get { return _cameraYAxisOrientation.ValueInterp; }
         }
 
         public ICameraPlugin CameraPlugin
