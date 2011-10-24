@@ -235,9 +235,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
            Vector3 normalSize = sprite.SpriteEntity.Size;
            Vector3 normalHalfSize = new Vector3(normalSize.X / 2, normalSize.Y / 2, normalSize.Z / 2);
            Vector3 normalQuartSize = new Vector3(normalSize.X / 4, normalSize.Y / 4, normalSize.Z / 4);
-           normalSize.X *= sprite.SpriteEntity.Scale.X;
-           normalSize.Y *= sprite.SpriteEntity.Scale.Y;
-           normalSize.Z *= sprite.SpriteEntity.Scale.Z;
 
             switch (spriteFormat)
             {
@@ -255,10 +252,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                     indices.Add((ushort)(baseIndex + 1));
                     break;
                 case SpriteFormat.Billboard:
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z, 4), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z, 1), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z, 3), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z, 2), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 4), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), normalSize));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 1), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), normalSize));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 3), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), normalSize));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 2), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), normalSize));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));

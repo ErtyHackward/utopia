@@ -51,7 +51,6 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;
-            Scale = new Vector3(1, 1, 1);
             GrowPhase = 0; //Set Default Grow Phase
         }
 

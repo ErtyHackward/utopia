@@ -29,6 +29,7 @@ struct VSInput {
 	float4 Position				: POSITION;
 	float4 Color				: COLOR;
 	float3 Textcoord     		: TEXCOORD;
+	float3 MetaData     		: METADATA;
 };
 
 //Pixel shader Input
@@ -45,11 +46,11 @@ static const float foglength = 45;
 
 //Billboard corners, 0 being no billboards
 static const float3 billboardCorners[5] = {
-											{0, 0.0f, 0.0f},
-											{-0.5, 0.5f, 0.0f},
-											{0.5, 0.5f, 0.0f},
-											{0.5, -0.5f, 0.0f},
-											{-0.5, -0.5f, 0.0f}
+											{0.0f, 0.0f, 0.0f},
+											{-0.5, 1.0f, 0.0f},
+											{0.5, 1.0f, 0.0f},
+											{0.5, 0.0f, 0.0f},
+											{-0.5, 0.0f, 0.0f}
 									};
 
 //--------------------------------------------------------------------------------------
@@ -59,30 +60,18 @@ PSInput VS (VSInput input)
 {
 	PSInput output;
 
-	float4 worldPosition = {input.Position.xyz, 1.0f};
-	
-	//Rotating the Position if Billboard
+	//Get the billboard template corner
 	float3 billboardVertexPosition = billboardCorners[input.Position.w];
+	//Multiply the template by the Billboard size (Scale)
+	billboardVertexPosition *= input.MetaData;
 
 	//Rotating it
-	billboardVertexPosition = float4(mul(billboardVertexPosition, (float3x3)View),0); //Rotate the billboard
+	billboardVertexPosition = float4(mul(billboardVertexPosition, (float3x3)View),0); //Rotate the billboard following Ca
 
-	//Translating/scaling it back to world position
-	worldPosition.x = billboardVertexPosition.x + (input.Position.x - billboardCorners[input.Position.w].x);
-	worldPosition.y = billboardVertexPosition.y + (input.Position.y - billboardCorners[input.Position.w].y);
-	worldPosition.z = billboardVertexPosition.z + (input.Position.z - billboardCorners[input.Position.w].z);
-
-
-
-
-	//Billboard rotation ?
-	//if(input.Position.w == 1)
-	//{
-	//	worldPosition = float4(mul(worldPosition, (float3x3)View),0); //Rotate the vertex
-	//}
+	//Translating
+	float4 worldPosition = {billboardVertexPosition.xyz + input.Position.xyz, 1.0f};
 
 	worldPosition = mul(worldPosition, WorldFocus); //Translate to vertex to the correct location
-
 	output.Position = mul(worldPosition, ViewProjection);
 	output.UVW = input.Textcoord;
 

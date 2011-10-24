@@ -13,11 +13,6 @@ namespace Utopia.Shared.Entities
         public SpriteFormat Format;
 
         /// <summary>
-        /// The Sprite scale
-        /// </summary>
-        public Vector3 Scale;
-
-        /// <summary>
         /// in case we want the sprite to move with the wind
         /// </summary>
         public bool IsAnimated;
@@ -32,10 +27,6 @@ namespace Utopia.Shared.Entities
             // first we need to load base information
             base.Load(reader);
             Format = (SpriteFormat)reader.ReadByte();
-            Scale = new Vector3();
-            Scale.X = reader.ReadSingle();
-            Scale.Y = reader.ReadSingle();
-            Scale.Z = reader.ReadSingle();
             IsAnimated = reader.ReadBoolean();
         }
 
@@ -44,9 +35,6 @@ namespace Utopia.Shared.Entities
             // first we need to save base information
             base.Save(writer);
             writer.Write((byte)Format);
-            writer.Write(Scale.X);
-            writer.Write(Scale.Y);
-            writer.Write(Scale.Z);
             writer.Write(IsAnimated);
         }
     }

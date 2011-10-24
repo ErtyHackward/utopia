@@ -22,7 +22,7 @@ namespace Utopia.Entities.Sprites
         #endregion
 
         public VisualSpriteEntity(SpriteEntity spriteEntity)
-            : base(spriteEntity.Size, spriteEntity.Scale, spriteEntity)
+            : base(spriteEntity.Size, spriteEntity)
         {
             this.SpriteEntity = spriteEntity;
             Initialize();

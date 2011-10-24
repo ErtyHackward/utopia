@@ -21,16 +21,7 @@ namespace Utopia.Entities
         public IEntity Entity;
 
         public VisualEntity(Vector3 entitySize, IEntity entity)
-            :this(entitySize, Vector3.One, entity)
         {
-        }
-
-        public VisualEntity(Vector3 entitySize, Vector3 entityScale, IEntity entity)
-        {
-            entitySize.X *= entityScale.X;
-            entitySize.Y *= entityScale.Y;
-            entitySize.Z *= entityScale.Z;
-
             Entity = entity;
 
             CreateLocalBoundingBox(entitySize);
