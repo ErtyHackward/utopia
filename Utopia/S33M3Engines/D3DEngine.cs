@@ -66,6 +66,8 @@ namespace S33M3Engines
         public DepthStencilView DepthStencilTarget { get { return _depthStencil; } }
         public ShaderResourceView StaggingBackBuffer;
 
+        public bool B8G8R8A8_UNormSupport { get; set; }
+
         public DeviceContext Context;
 
         public bool HasFocus;
@@ -146,15 +148,11 @@ namespace S33M3Engines
         {
             _dx11factory = new Factory();
 
-            //foreach (var mode in dx10factory.GetAdapter(0).GetOutput(0).GetDisplayModeList(Format.B8G8R8A8_UNorm, DisplayModeEnumerationFlags.Interlaced))
-            //{
-            //    if (mode.Width == dx10factory.GetAdapter(0).GetOutput(0).Description.DesktopBounds.Width && 
-            //        mode.Height == dx10factory.GetAdapter(0).GetOutput(0).Description.DesktopBounds.Height)
-            //    {
-            //        refreshRate = mode.RefreshRate;
-            //        break;
-            //    }
-            //}
+            B8G8R8A8_UNormSupport = false;
+            foreach (var mode in _dx11factory.GetAdapter(0).GetOutput(0).GetDisplayModeList(Format.B8G8R8A8_UNorm, DisplayModeEnumerationFlags.Interlaced))
+            {
+                B8G8R8A8_UNormSupport = true;
+            }
 
             CreateSwapChain();
             CreateRenderTarget();

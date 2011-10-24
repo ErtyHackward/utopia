@@ -132,6 +132,74 @@ namespace S33M3Engines.Shared.Sprites
             ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
         }
 
+        public unsafe SpriteTexture(Device device, Bitmap image, Vector2 screenPosition, bool B8G8R8A8_UNormSupport)
+        {
+            _textureDispose = true;
+
+            SharpDX.DXGI.Format bitmapFormat;
+            B8G8R8A8_UNormSupport = !B8G8R8A8_UNormSupport;
+            if (!B8G8R8A8_UNormSupport)
+            {
+                bitmapFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm;
+            }
+            else
+            {
+                bitmapFormat = SharpDX.DXGI.Format.B8G8R8A8_UNorm;
+            }
+
+            Width = image.Width;
+            Height = image.Height;
+
+            // Lock the bitmap for direct memory access
+            BitmapData bmData = image.LockBits(new System.Drawing.Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            //Swith the Red and Blue channel if needed !
+            if (!B8G8R8A8_UNormSupport)
+            {
+                uint* byteData = (uint*)bmData.Scan0;
+
+                // Switch bgra <-> rgba
+                for (int i = 0; i < image.Width * image.Height; i++)
+                {
+                    byteData[i] = (byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
+                }
+
+                byteData = null;
+            }
+
+            // Create a D3D texture, initalized with the bitmap data  
+            Texture2DDescription texDesc = new Texture2DDescription();
+            texDesc.Width = Width;
+            texDesc.Height = Height;
+            texDesc.MipLevels = 1;
+            texDesc.ArraySize = 1;
+            texDesc.Format = bitmapFormat;
+            texDesc.SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0);
+            texDesc.Usage = ResourceUsage.Immutable;
+            texDesc.BindFlags = BindFlags.ShaderResource;
+            texDesc.CpuAccessFlags = CpuAccessFlags.None;
+            texDesc.OptionFlags = ResourceOptionFlags.None;
+
+            DataRectangle data = new DataRectangle(new DataStream(bmData.Scan0, 4 * Width * Height, true, false).DataPointer, Width * 4);
+
+            Texture2D texture2d = new Texture2D(device, texDesc, data);
+            image.UnlockBits(bmData);
+
+            //Texture2D.ToFile<Texture2D>(device.ImmediateContext, texture2d, ImageFileFormat.Bmp, "d:\\test2.bmp");
+
+            ShaderResourceViewDescription srDesc = new ShaderResourceViewDescription();
+            srDesc.Format = bitmapFormat;
+            //srDesc.Dimension = ShaderResourceViewDimension.Texture2D;
+            //srDesc.Texture2D = new ShaderResourceViewDescription.Texture2DResource() { MipLevels = 1, MostDetailedMip = 0 };
+            srDesc.Dimension = ShaderResourceViewDimension.Texture2DArray;
+            srDesc.Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource() { MostDetailedMip = 0, MipLevels = 1, FirstArraySlice = 0, ArraySize = 1 };
+
+            Texture = new ShaderResourceView(device, texture2d, srDesc);
+            texture2d.Dispose();
+
+            ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
+        }
+
         private void CreateResource(Device device, Texture2D texture, Vector2 screenPosition)
         {
             ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
