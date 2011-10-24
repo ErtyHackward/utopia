@@ -44,9 +44,8 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;
-            Scale = new Vector3(1, 1, 1);
             Format = SpriteFormat.Billboard;
-            Size = new Vector3(0.7f, 0.7f, 0.7f);
+            Size = new Vector3(0.4f, 0.4f, 0.4f);
         }
 
         #region Public methods
