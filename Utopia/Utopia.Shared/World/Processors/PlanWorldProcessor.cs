@@ -112,20 +112,44 @@ namespace Utopia.Shared.World.Processors
                                                                     else
                                                                         if (r.NextDouble() < 0.03)
                                                                         {
-                                                                            if (r.NextDouble() < 0.9)
-                                                                            {
-                                                                                chunk.Entities.Add(new Grass
-                                                                                                       {
-                                                                                                           GrowPhase = (byte)r.Next(0, 4),
-                                                                                                           Position = globalPos + new Vector3D(0.5, 1, 0.5),
-                                                                                                           LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
-                                                                                                       });
-                                                                            }
-                                                                            else
+                                                                            double result = r.NextDouble();
+                                                                            if (result <= 0.4)
                                                                             {
                                                                                 chunk.Entities.Add(new Grass
                                                                                 {
-                                                                                    GrowPhase = 4,
+                                                                                    GrowPhase = (byte)r.Next(0, 5),
+                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5),
+                                                                                    LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
+                                                                                });
+                                                                            }
+                                                                            else if (result <= 0.6)
+                                                                            {
+                                                                                chunk.Entities.Add(new Flower1
+                                                                                {
+                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5),
+                                                                                    LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
+                                                                                });
+                                                                            }
+                                                                            else if (result <= 0.7)
+                                                                            {
+                                                                                chunk.Entities.Add(new Flower2
+                                                                                {
+                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5),
+                                                                                    LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
+                                                                                });
+                                                                            }
+                                                                            else if (result <= 0.9)
+                                                                            {
+                                                                                chunk.Entities.Add(new Mushr1
+                                                                                {
+                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5),
+                                                                                    LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
+                                                                                });
+                                                                            }
+                                                                            else if (result <= 1)
+                                                                            {
+                                                                                chunk.Entities.Add(new Mushr2
+                                                                                {
                                                                                     Position = globalPos + new Vector3D(0.5, 1, 0.5),
                                                                                     LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
                                                                                 });

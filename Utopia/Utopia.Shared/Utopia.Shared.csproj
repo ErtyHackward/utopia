@@ -86,7 +86,11 @@
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
+    <Compile Include="Entities\Concrete\Collectible\Flower1.cs" />
+    <Compile Include="Entities\Concrete\Collectible\Flower2.cs" />
     <Compile Include="Entities\Concrete\Collectible\Grass.cs" />
+    <Compile Include="Entities\Concrete\Collectible\Mushr1.cs" />
+    <Compile Include="Entities\Concrete\Collectible\Mushr2.cs" />
     <Compile Include="Entities\Concrete\EditableVoxelEntity.cs" />
     <Compile Include="Entities\Concrete\NoEntity.cs" />
     <Compile Include="Entities\Concrete\Tree.cs" />

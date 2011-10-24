@@ -25,20 +25,32 @@ namespace Utopia.Entities.Sprites
             : base(spriteEntity.Size, spriteEntity.Scale, spriteEntity)
         {
             this.SpriteEntity = spriteEntity;
-            CreateVertices();
+            Initialize();
 
             RefreshWorldBoundingBox(SpriteEntity.Position);
         }
 
         #region Private methods
-        private void CreateVertices()
+        private void Initialize()
         {
-            //Get Texture Array from Sprite Type
+            //Assign Texture Array from Sprite Type
             switch (SpriteEntity.ClassId)
             {
                 case EntityClassId.Grass:
                     Grass grassEntity = (Grass)SpriteEntity;
                     spriteTextureId = (0 * 5) + grassEntity.GrowPhase ;     //5 level of evolution forsee by sprite formula should be (StaticSpriteTextureID * 5) + Evolution.
+                    break;
+                case EntityClassId.Flower1:
+                    spriteTextureId = 7;
+                    break;
+                case EntityClassId.Flower2:
+                    spriteTextureId = 8;
+                    break;
+                case EntityClassId.Mushroom1:
+                    spriteTextureId = 5;
+                    break;
+                case EntityClassId.Mushroom2:
+                    spriteTextureId = 6;
                     break;
                 default:
                     throw new Exception("Static Sprite ID not supported");

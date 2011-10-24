@@ -227,7 +227,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             }
         }
 
-        private void GenerateEntitySprite(List<VertexPositionColorTexture> vertices, List<ushort> indices, SpriteFormat spriteFormat, VisualSpriteEntity sprite)
+        private void GenerateEntitySprite(List<VertexSprite3D> vertices, List<ushort> indices, SpriteFormat spriteFormat, VisualSpriteEntity sprite)
         {
             Vector3 spriteLocation = sprite.SpriteEntity.Position.AsVector3();
             int baseIndex = vertices.Count;
@@ -242,10 +242,23 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             switch (spriteFormat)
             {
                 case SpriteFormat.Single:
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+
+                    indices.Add((ushort)(baseIndex + 0));
+                    indices.Add((ushort)(baseIndex + 1));
+                    indices.Add((ushort)(baseIndex + 2));
+                    indices.Add((ushort)(baseIndex + 3));
+                    indices.Add((ushort)(baseIndex + 2));
+                    indices.Add((ushort)(baseIndex + 1));
+                    break;
+                case SpriteFormat.Billboard:
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z, 4), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z, 1), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z, 3), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z, 2), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));
@@ -255,10 +268,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                     indices.Add((ushort)(baseIndex + 1));
                     break;
                 case SpriteFormat.Cross:
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
                     
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));
@@ -269,10 +282,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                     baseIndex += 4;
 
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Z, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));
@@ -283,10 +296,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                     break;
                 case SpriteFormat.Triangle:
 
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));
@@ -297,10 +310,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                     baseIndex += 4;
 
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));
@@ -311,10 +324,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                     baseIndex += 4;
 
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));
@@ -326,10 +339,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                     break;
                 case SpriteFormat.Quad:
 
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalQuartSize.Z), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalQuartSize.Z), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalQuartSize.Z), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalQuartSize.Z), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));
@@ -340,10 +353,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                     baseIndex += 4;
 
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));
@@ -354,10 +367,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                     baseIndex += 4;
 
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));
@@ -368,10 +381,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                     baseIndex += 4;
 
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
-                    vertices.Add(new VertexPositionColorTexture(new Vector3(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId)));
+                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId)));
 
                     indices.Add((ushort)(baseIndex + 0));
                     indices.Add((ushort)(baseIndex + 1));

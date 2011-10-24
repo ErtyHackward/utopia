@@ -22,23 +22,19 @@ namespace Utopia.Resources.Effects.Entities
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 160)]
+        [StructLayout(LayoutKind.Explicit, Size = 144)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
             public Matrix WorldFocus;
             [FieldOffset(64)]
-            public Matrix ViewProjection;
+            public Matrix View;
             [FieldOffset(128)]
-            public Vector3 SunColor;			  // Diffuse lighting color
-            [FieldOffset(140)]
-            public float fogdist;
-            [FieldOffset(144)]
             public Vector3 WindPower;
-            [FieldOffset(156)]
+            [FieldOffset(140)]
             public float KeyFrameAnimation;
         }
-        public CBuffer<CBPerFrame_Struct> CBPerFrame;
+        public CBuffer<CBPerFrame_Struct> CBPerFrameLocal;
         #endregion
 
         #region Resources
@@ -58,12 +54,14 @@ namespace Utopia.Resources.Effects.Entities
         };
         #endregion
 
-        public HLSLStaticEntitySprite(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+        public HLSLStaticEntitySprite(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
             : base(d3dEngine, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerFrame = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrame");
-            CBuffers.Add(CBPerFrame);
+            CBPerFrameLocal = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrameLocal");
+            CBuffers.Add(CBPerFrameLocal);
+
+            if (CBPerFrame != null) CBuffers.Add(CBPerFrame);
 
             //Create the resource interfaces ==================================================
             DiffuseTexture = new ShaderResource(_d3dEngine, "DiffuseTexture");

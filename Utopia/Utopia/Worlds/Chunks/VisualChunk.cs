@@ -47,7 +47,7 @@ namespace Utopia.Worlds.Chunks
         public List<VertexCubeLiquid> LiquidCubeVertices;    // Collection use to collect the vertices at the liquid cube creation time
         public List<ushort> LiquidCubeIndices;               // Collection use to collect the indices at the liquid cube creation time
 
-        public List<VertexPositionColorTexture> StaticSpritesVertices;
+        public List<VertexSprite3D> StaticSpritesVertices;
         public List<ushort> StaticSpritesIndices;
 
         //Graphical chunk components Exposed VB and IB ==> Called a lot, so direct acces without property bounding
@@ -56,7 +56,7 @@ namespace Utopia.Worlds.Chunks
         public VertexBuffer<VertexCubeLiquid> LiquidCubeVB; //Liquid cube vertex Buffer
         public IndexBuffer<ushort> LiquidCubeIB;            //Liquid cube index Buffer
 
-        public VertexBuffer<VertexPositionColorTexture> StaticSpritesVB;
+        public VertexBuffer<VertexSprite3D> StaticSpritesVB;
         public IndexBuffer<ushort> StaticSpritesIB;
 
         public Vector3D ChunkCenter { get; set; } 
@@ -147,7 +147,7 @@ namespace Utopia.Worlds.Chunks
             LiquidCubeIndices = new List<ushort>();
 
             StaticSpritesIndices = new List<ushort>();
-            StaticSpritesVertices = new List<VertexPositionColorTexture>();
+            StaticSpritesVertices = new List<VertexSprite3D>();
         }
 
         public void SendCubeMeshesToBuffers()
@@ -234,7 +234,7 @@ namespace Utopia.Worlds.Chunks
 
                 if (StaticSpritesVB == null)
                 {
-                    StaticSpritesVB = new VertexBuffer<VertexPositionColorTexture>(_d3dEngine, StaticSpritesVertices.Count, VertexPositionColorTexture.VertexDeclaration, PrimitiveTopology.TriangleList, "StaticEntityVB", ResourceUsage.Default, 5);
+                    StaticSpritesVB = new VertexBuffer<VertexSprite3D>(_d3dEngine, StaticSpritesVertices.Count, VertexSprite3D.VertexDeclaration, PrimitiveTopology.TriangleList, "StaticEntityVB", ResourceUsage.Default, 5);
                 }
                 StaticSpritesVB.SetData(StaticSpritesVertices.ToArray());
                 StaticSpritesVertices.Clear();
