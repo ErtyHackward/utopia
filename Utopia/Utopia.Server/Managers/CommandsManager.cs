@@ -67,9 +67,11 @@ namespace Utopia.Server.Managers
                         _server.ConnectionManager.Broadcast(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
                         _server.ChatManager.Broadcast("Time updated by "+ connection.Login );
                     }
-                    catch (OverflowException)
+                    catch (Exception ex)
                     {
-                        connection.SendAsync(new ChatMessage { Login = "server", Message = "wrong time value, try 9:00 or 21:00" });
+                        if(ex is OverflowException || ex is FormatException)
+                            connection.SendAsync(new ChatMessage { Login = "server", Message = "wrong time value, try 9:00 or 21:00" });
+                        else throw;
                     }
                     return true;
                 }
