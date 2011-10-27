@@ -46,13 +46,28 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         {
             //No sense to define a full screen Scissor ...
             //_game.D3dEngine.ScissorRectangle = new System.Drawing.Rectangle(0, 0, (int)_game.ViewPort.Width, (int)_game.ViewPort.Height);
-
+            _delayedFontDraw.Clear();
             this.spriteRenderer.Begin();
         }
 
         /// <summary>Needs to be called when the GUI drawing process has ended</summary>
         public void EndDrawing()
         {
+            // draw all fonts
+
+            foreach (var fontDrawInfo in _delayedFontDraw)
+            {
+                Frame frame = lookupFrame(fontDrawInfo.FrameName);
+
+                // Draw the text in all anchor locations defined by the skin
+                for (int index = 0; index < frame.Texts.Length; ++index)
+                {
+                    this.spriteRenderer.RenderText(frame.Texts[index].Font, fontDrawInfo.Text, positionText(ref frame.Texts[index], fontDrawInfo.RectangleF, fontDrawInfo.Text), frame.Texts[index].Color);
+                }
+            }
+
+
+
             this.spriteRenderer.End();
         }
 
@@ -162,19 +177,29 @@ namespace Nuclex.UserInterface.Visuals.Flat {
 
         }
 
+        private struct FontDrawInfo
+        {
+            public string FrameName { get; set; }
+            public RectangleF RectangleF { get; set; }
+            public string Text { get; set; }
+        }
+
+        private List<FontDrawInfo> _delayedFontDraw = new List<FontDrawInfo>();
+
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
         public void DrawString(string frameName, RectangleF bounds, string text)
         {
-            Frame frame = lookupFrame(frameName);
+            _delayedFontDraw.Add(new FontDrawInfo { FrameName = frameName, RectangleF = bounds, Text = text });
+            //Frame frame = lookupFrame(frameName);
 
-            // Draw the text in all anchor locations defined by the skin
-            for (int index = 0; index < frame.Texts.Length; ++index)
-            {
-                this.spriteRenderer.RenderText(frame.Texts[index].Font, text, positionText(ref frame.Texts[index], bounds, text), frame.Texts[index].Color );
-            }
+            //// Draw the text in all anchor locations defined by the skin
+            //for (int index = 0; index < frame.Texts.Length; ++index)
+            //{
+            //    this.spriteRenderer.RenderText(frame.Texts[index].Font, text, positionText(ref frame.Texts[index], bounds, text), frame.Texts[index].Color);
+            //}
         }
 
         /// <summary>Draws a caret for text input at the specified index</summary>
