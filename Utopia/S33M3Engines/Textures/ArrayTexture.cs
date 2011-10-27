@@ -39,7 +39,71 @@ namespace S33M3Engines.Textures
          {
              CreateTexture2DFromFiles(device, new string[] {directory}, fileNames, miPfilterFlag, ResourceName, out textureArrayView);
          }
+         
+         public static void CreateTexture2D(Device device, Texture2D[] texturesCollection, FilterFlags MIPfilterFlag, string ResourceName, out ShaderResourceView TextureArrayView)
+         {
 
+             //Create TextureArray object
+             Texture2DDescription Imagesdesc = texturesCollection[0].Description;
+             Texture2DDescription texArrayDesc = new Texture2DDescription()
+             {
+                 Width = Imagesdesc.Width,
+                 Height = Imagesdesc.Height,
+                 MipLevels = Imagesdesc.MipLevels,
+                 ArraySize = texturesCollection.Length,
+                 Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                 SampleDescription = new SharpDX.DXGI.SampleDescription() { Count = 1, Quality = 0 },
+                 Usage = ResourceUsage.Default,
+                 BindFlags = BindFlags.ShaderResource,
+                 CpuAccessFlags = CpuAccessFlags.None,
+                 OptionFlags = ResourceOptionFlags.None
+             };
+
+             Texture2D texArray = new Texture2D(device, texArrayDesc);
+             DataBox box;
+             int mipHeight;
+             //Foreach Texture
+             //Foreach Texture
+             for (int arraySlice = 0; arraySlice < texturesCollection.Length; arraySlice++)
+             {
+                 //Foreach mipmap level
+                 for (int mipSlice = 0; mipSlice < Imagesdesc.MipLevels; mipSlice++)
+                 {
+                     mipHeight = ArrayTextureHelper.GetMipSize(mipSlice, texturesCollection[arraySlice].Description.Height);
+                     box = device.ImmediateContext.MapSubresource(texturesCollection[arraySlice], mipSlice, MapMode.Read, MapFlags.None);
+
+                     box.Data.Position = 0;
+                     device.ImmediateContext.UpdateSubresource(box,
+                                                          texArray,
+                                                          S33M3Engines.D3D.Tools.Resource.CalcSubresource(mipSlice, arraySlice, Imagesdesc.MipLevels)
+                                                          );
+                     device.ImmediateContext.UnmapSubresource(texturesCollection[arraySlice], mipSlice);
+
+                 }
+             }
+
+             //Create Resource view to texture array
+             ShaderResourceViewDescription viewDesc = new ShaderResourceViewDescription()
+             {
+                 Format = texArrayDesc.Format,
+                 Dimension = ShaderResourceViewDimension.Texture2DArray,
+                 Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource()
+                 {
+                     MostDetailedMip = 0,
+                     MipLevels = texArrayDesc.MipLevels,
+                     FirstArraySlice = 0,
+                     ArraySize = texturesCollection.Length
+                 }
+             };
+
+             TextureArrayView = new ShaderResourceView(device, texArray, viewDesc);
+
+             //Set resource Name, will only be done at debug time.
+             S33M3Engines.D3D.Tools.Resource.SetName(TextureArrayView, ResourceName);
+
+             //Disposing resources used to create the texture array
+             texArray.Dispose();
+         }
 
         /// <summary>
         /// Create A shaderViewresource on a TextureArray object created from image files
@@ -74,68 +138,10 @@ namespace S33M3Engines.Textures
 
             //2 Creation of the TextureArray resource
 
-            //Create TextureArray object
-            Texture2DDescription Imagesdesc = srcTex[0].Description;
-            Texture2DDescription texArrayDesc = new Texture2DDescription()
-            {
-                Width = Imagesdesc.Width,
-                Height = Imagesdesc.Height,
-                MipLevels = Imagesdesc.MipLevels,
-                ArraySize = srcTex.Length,
-                Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
-                SampleDescription = new SharpDX.DXGI.SampleDescription() { Count = 1, Quality = 0 },
-                Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.ShaderResource,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None
-            };
-
-            Texture2D texArray = new Texture2D(device, texArrayDesc);
-            DataBox box;
-            int mipHeight;
-            //Foreach Texture
-            for (int arraySlice = 0; arraySlice < srcTex.Length; arraySlice++)
-            {
-                //Foreach mipmap level
-                for (int mipSlice = 0; mipSlice < Imagesdesc.MipLevels; mipSlice++)
-                {
-                    mipHeight = ArrayTextureHelper.GetMipSize(mipSlice, srcTex[arraySlice].Description.Height);
-                    box = device.ImmediateContext.MapSubresource(srcTex[arraySlice], mipSlice, MapMode.Read, MapFlags.None);
-
-
-                    box.Data.Position = 0;
-                    device.ImmediateContext.UpdateSubresource(box,
-                                                         texArray,
-                                                         S33M3Engines.D3D.Tools.Resource.CalcSubresource(mipSlice, arraySlice, Imagesdesc.MipLevels)
-                                                         );
-                    device.ImmediateContext.UnmapSubresource(srcTex[arraySlice], mipSlice);
-
-                }
-            }
-
-            //Create Resource view to texture array
-            ShaderResourceViewDescription viewDesc = new ShaderResourceViewDescription()
-            {
-                Format = texArrayDesc.Format,
-                Dimension = ShaderResourceViewDimension.Texture2DArray,
-                Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource()
-                {
-                    MostDetailedMip = 0,
-                    MipLevels = texArrayDesc.MipLevels,
-                    FirstArraySlice = 0,
-                    ArraySize = srcTex.Length
-                }
-            };
-
-            TextureArrayView = new ShaderResourceView(device, texArray, viewDesc);
-
-            //Set resource Name, will only be done at debug time.
-            S33M3Engines.D3D.Tools.Resource.SetName(TextureArrayView, ResourceName);
+            CreateTexture2D(device, srcTex, MIPfilterFlag, ResourceName, out TextureArrayView);
 
             //Disposing resources used to create the texture array
-            texArray.Dispose();
             foreach (Texture2D tex in srcTex) tex.Dispose();
-
         }
 
     }
