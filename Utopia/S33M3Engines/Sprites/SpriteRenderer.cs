@@ -37,6 +37,8 @@ namespace S33M3Engines.Sprites
         private SpriteTexture _currentSpriteTexture;
         private VertexSpriteInstanced[] _spriteAccumulator = new VertexSpriteInstanced[MaxBatchSize];
 
+        private int _drawCalls = 0;
+
         public enum FilterMode
         {
             DontSet = 0,
@@ -137,6 +139,7 @@ namespace S33M3Engines.Sprites
 
         public void Begin(FilterMode filterMode = FilterMode.DontSet)
         {
+            _drawCalls = 0;
             _accumulatedSprites = 0;
             _currentSpriteTexture = null;
 
@@ -167,6 +170,7 @@ namespace S33M3Engines.Sprites
 
         public void Render(SpriteTexture spriteTexture, ref Matrix transform, Color4 color,  RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true)
         {
+            _drawCalls++;
             _vBuffer.SetToDevice(0); // Set the Vertex buffer
 
             //Set Par Batch Constant
@@ -208,6 +212,7 @@ namespace S33M3Engines.Sprites
                            RectangleF sourceRect = default(RectangleF), 
                            bool sourceRectInTextCoord = true)
         {
+            _drawCalls++;
             _vBuffer.SetToDevice(0); // Set the Vertex buffer
 
             //Set Par Batch Constant
@@ -298,6 +303,7 @@ namespace S33M3Engines.Sprites
         /// <param name="sourceRectInTextCoord"></param>
         public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, int numSprites, bool sourceRectInTextCoord = true)
         {
+            _drawCalls++;
             //Set Par Batch Constant
             _effectInstanced.Begin();
 
@@ -392,6 +398,7 @@ namespace S33M3Engines.Sprites
 
         public void End()
         {
+            System.Diagnostics.Debug.WriteLine("Sprite renderer: " + _drawCalls);
             flushAccumulatedSprite();
         }
 

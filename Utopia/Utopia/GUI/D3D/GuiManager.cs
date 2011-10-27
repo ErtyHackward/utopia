@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 using S33M3Engines.D3D;
 using S33M3Engines.InputHandler.KeyboardHelper;
@@ -68,7 +69,9 @@ namespace Utopia.GUI.D3D
         //Draw at 2d level ! (Last draw called)
         public override void Draw(int index)
         {
+            //Debug.WriteLine("Gui draw start");
             _guiVisualizer.Draw(_screen);
+            //Debug.WriteLine("Gui draw end");
         }
 
 
