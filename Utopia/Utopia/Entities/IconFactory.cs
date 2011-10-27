@@ -32,10 +32,15 @@ namespace Utopia.Entities
         private readonly D3DEngine _d3DEngine;
         public const int IconSize = 32;
         private Dictionary<int, SpriteTexture> _blockIconLookUp;
+        private ShaderResourceView _iconsTexture;
         #endregion
 
         #region public Variables/properties
         public ShaderResourceView CubesTexture { get; private set; }
+        public ShaderResourceView IconsTexture
+        {
+            get { return _iconsTexture; }
+        }
         #endregion
 
         public IconFactory(D3DEngine d3DEngine)
@@ -96,6 +101,8 @@ namespace Utopia.Entities
         #region Private methods
         private void Create3DBlockIcons()
         {
+            List<Texture2D> createdIconsTexture = new List<Texture2D>();
+
             SpriteRenderer spriteRenderer = new SpriteRenderer();
             spriteRenderer.Initialize(_d3DEngine);
             //Get the "Block" mesh that will be used to draw the various blocks.
@@ -240,8 +247,14 @@ namespace Utopia.Entities
                 texture.End(false);
 
                 //Texture2D.ToFile<Texture2D>(_d3DEngine.Context, texture.RenderTargetTexture, ImageFileFormat.Png, @"E:\text\Block" + profile.Name + ".png");
+
+                //Must be staging as these needs to have CPU read/write access (to create the Texture2d array from them)
+                createdIconsTexture.Add(texture.CloneTexture(ResourceUsage.Staging));
                 _blockIconLookUp.Add(cubeId, texture.CloneToSpriteTexture());
             }
+
+            //Create the Icon texture Array
+            ArrayTexture.CreateTexture2D(_d3DEngine.Device, createdIconsTexture.ToArray(), FilterFlags.Linear, "Icon's ArrayTexture", out _iconsTexture);
 
             //Reset device Default render target
             _d3DEngine.ResetDefaultRenderTargetsAndViewPort();

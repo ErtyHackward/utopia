@@ -72,7 +72,6 @@ namespace S33M3Engines.Textures
             _viewport.MinDepth = 0.0f;
             _viewport.MaxDepth = 1.0f;
 
-
             // Setup the render target texture description.
             _textureDesc = new Texture2DDescription()
             {
@@ -87,6 +86,7 @@ namespace S33M3Engines.Textures
                 OptionFlags = ResourceOptionFlags.None,
                 SampleDescription = new SharpDX.DXGI.SampleDescription() { Count = 1, Quality = 0 }
             };
+
             // Create the render target texture.
             RenderTargetTexture = new Texture2D(_d3dEngine.Device, _textureDesc);
 
@@ -172,9 +172,34 @@ namespace S33M3Engines.Textures
             return new SpriteTexture(_d3dEngine.Device, clonedTexture, Vector2.Zero);
         }
 
-        public Texture2D CloneTexture()
+        public Texture2D CloneTexture(ResourceUsage defaultResourceUsage)
         {
-            Texture2D clonedTexture = new Texture2D(_d3dEngine.Device, _textureDesc);
+            // Setup the render target texture description.
+            Texture2DDescription clonetextureDesc = new Texture2DDescription()
+            {
+                Width = _textureWidth,
+                Height = _textureHeight,
+                MipLevels = 1,
+                ArraySize = 1,
+                Format = _textureFormat,
+                Usage = defaultResourceUsage,
+                OptionFlags = ResourceOptionFlags.None,
+                SampleDescription = new SharpDX.DXGI.SampleDescription() { Count = 1, Quality = 0 }
+            };
+
+            if (defaultResourceUsage == ResourceUsage.Staging)
+            {
+                clonetextureDesc.BindFlags = BindFlags.None;
+                clonetextureDesc.CpuAccessFlags = CpuAccessFlags.Read | CpuAccessFlags.Write;
+            }
+            else
+            {
+                clonetextureDesc.BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource;
+                clonetextureDesc.CpuAccessFlags = CpuAccessFlags.None;
+            }
+
+            Texture2D clonedTexture = new Texture2D(_d3dEngine.Device, clonetextureDesc);
+
             _d3dEngine.Context.CopyResource(RenderTargetTexture, clonedTexture);
             return clonedTexture;
         }

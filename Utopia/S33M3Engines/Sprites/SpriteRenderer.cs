@@ -398,7 +398,7 @@ namespace S33M3Engines.Sprites
 
         public void End()
         {
-            System.Diagnostics.Debug.WriteLine("Sprite renderer: " + _drawCalls);
+            //System.Diagnostics.Debug.WriteLine("Sprite renderer: " + _drawCalls);
             flushAccumulatedSprite();
         }
 
