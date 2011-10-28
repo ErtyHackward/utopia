@@ -48,6 +48,8 @@ namespace S33M3Engines.D3D.Effects.Basics
             public RectangleF SourceRect;
             [FieldOffset(96)]
             public uint TextureArrayIndex;
+            [FieldOffset(100)]
+            public float Depth;
         }
 
         public CBuffer<CBPerInstance_Struct> CBPerInstance;

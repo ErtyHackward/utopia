@@ -13,6 +13,7 @@ cbuffer PerInstance
     float4 Color;
     float4 SourceRect;
 	uint TexIndex;
+	float Depth;
 };
 
 //======================================================================================
@@ -38,6 +39,7 @@ struct VSInputInstanced
     float4 Color : COLOR;
     float4 SourceRect : SOURCERECT;
 	uint TexIndex : TEXINDEX;
+	float Depth : DEPTH;
 };
 
 //Pixel Shader input
@@ -56,10 +58,11 @@ VSOutput SpriteVSCommon(float2 position,
                         float4x4 transform, 
                         float4 color, 
                         float4 sourceRect,
-						uint texIndex)
+						uint texIndex,
+						float depth)
 {
     // Scale the quad so that it's texture-sized    
-    float4 positionSS = float4(position * sourceRect.zw, 0.0f, 1.0f);
+    float4 positionSS = float4(position * sourceRect.zw, depth, 1.0f);
     
     // Apply transforms in screen space
     positionSS = mul(positionSS, transform);
@@ -93,7 +96,7 @@ VSOutput SpriteVSCommon(float2 position,
 //======================================================================================
 VSOutput SpriteVS(in VSInput input)
 {
-    return SpriteVSCommon(input.Position, input.TexCoord, Transform, Color, SourceRect, TexIndex);
+    return SpriteVSCommon(input.Position, input.TexCoord, Transform, Color, SourceRect, TexIndex, Depth);
 }
 
 //======================================================================================
@@ -102,7 +105,7 @@ VSOutput SpriteVS(in VSInput input)
 VSOutput SpriteInstancedVS(in VSInputInstanced input)
 {
     return SpriteVSCommon(input.Position, input.TexCoord, 
-                            transpose(input.Transform), input.Color, input.SourceRect,input.TexIndex); 
+                            transpose(input.Transform), input.Color, input.SourceRect,input.TexIndex,input.Depth); 
 }
 
 //======================================================================================
