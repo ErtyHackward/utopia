@@ -35,7 +35,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         {
             //No sense to define a full screen Scissor ...
             //_game.D3dEngine.ScissorRectangle = new System.Drawing.Rectangle(0, 0, (int)_game.ViewPort.Width, (int)_game.ViewPort.Height);
-            spriteRenderer.Begin();
+            spriteRenderer.Begin(true);
         }
 
         /// <summary>Needs to be called when the GUI drawing process has ended</summary>

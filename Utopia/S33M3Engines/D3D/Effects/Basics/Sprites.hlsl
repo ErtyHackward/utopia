@@ -62,15 +62,18 @@ VSOutput SpriteVSCommon(float2 position,
 						float depth)
 {
     // Scale the quad so that it's texture-sized    
-    float4 positionSS = float4(position * sourceRect.zw, depth, 1.0f);
+    float4 positionSS = float4(position * sourceRect.zw, 0.0f, 1.0f);
     
     // Apply transforms in screen space
-    positionSS = mul(positionSS, transform);
+    positionSS = mul(positionSS, transform); // == Simple translation
+
+	positionSS.z = depth;
+	positionSS.w = 1;
 
     // Scale by the viewport size, flip Y, then rescale to device coordinates
     float4 positionDS = positionSS;
     positionDS.xy /= ViewportSize;
-    positionDS = positionDS * 2 - 1;
+    positionDS.xy = positionDS.xy * 2 - 1;
     positionDS.y *= -1;
 
     // Figure out the texture coordinates

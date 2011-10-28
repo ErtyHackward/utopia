@@ -23,7 +23,7 @@ namespace S33M3Engines.Sprites
         private SamplerState _spriteSampler;
         private D3DEngine _d3DEngine;
 
-        private int _rasterStateId, _blendStateId, _depthStateId;
+        private int _rasterStateId, _blendStateId, _depthStateWithDepthId, _depthStateWithoutDepthId;
 
         private IndexBuffer<short> _iBuffer;
         private VertexBuffer<VertexSprite> _vBuffer;
@@ -130,10 +130,20 @@ namespace S33M3Engines.Sprites
             }
             _blendStateId = StatesRepository.AddBlendStates(blendDescr);
 
-            _depthStateId = StatesRepository.AddDepthStencilStates(new DepthStencilStateDescription
+            _depthStateWithDepthId = StatesRepository.AddDepthStencilStates(new DepthStencilStateDescription
+            {
+                IsDepthEnabled = true,
+                DepthComparison = Comparison.Less,
+                DepthWriteMask = DepthWriteMask.All,
+                IsStencilEnabled = false,
+                BackFace = new DepthStencilOperationDescription { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep },
+                FrontFace = new DepthStencilOperationDescription { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep }
+            });
+
+            _depthStateWithoutDepthId = StatesRepository.AddDepthStencilStates(new DepthStencilStateDescription
             {
                 IsDepthEnabled = false,
-                DepthComparison = Comparison.LessEqual,
+                DepthComparison = Comparison.Less,
                 DepthWriteMask = DepthWriteMask.All,
                 IsStencilEnabled = false,
                 BackFace = new DepthStencilOperationDescription { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep },
@@ -146,7 +156,7 @@ namespace S33M3Engines.Sprites
         /// Begins sprites collecting, call End() to perform actual drawing
         /// </summary>
         /// <param name="filterMode"></param>
-        public void Begin(FilterMode filterMode = FilterMode.DontSet)
+        public void Begin(bool withDepth, FilterMode filterMode = FilterMode.DontSet)
         {
             //Send index buffer to Device
             _iBuffer.SetToDevice(0);
@@ -156,7 +166,10 @@ namespace S33M3Engines.Sprites
             _currentDepth = 1;
 
             // Set the states
-            StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _depthStateId);
+            if(withDepth)
+                StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _depthStateWithDepthId);
+            else
+                StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _depthStateWithoutDepthId);
 
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
         }

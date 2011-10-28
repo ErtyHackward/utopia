@@ -90,9 +90,6 @@ namespace Utopia
             GameComponents.Add(_renderStates.worldChunks);
             GameComponents.Add(_renderStates.sharedFrameCB);
 
-
-
-
             #region Debug Components
 #if DEBUG
             DebugEffect.Init(_d3dEngine);             // Default Effect used by debug componant (will be shared)
