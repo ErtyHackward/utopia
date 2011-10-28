@@ -30,6 +30,14 @@ namespace Utopia.Shared.Structs
             this.SunLight = c.A;
         }
 
+        public ByteColor(SharpDX.Color4 color)
+        {
+            R = (byte)(color.Red * 255);
+            G = (byte)(color.Green * 255);
+            B = (byte)(color.Blue * 255);
+            SunLight = (byte)(color.Alpha * 255);
+        }
+
         public static ByteColor operator +(ByteColor a, ByteColor b)
         {
             ByteColor result;

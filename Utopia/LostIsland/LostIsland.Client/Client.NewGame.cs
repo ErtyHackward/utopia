@@ -146,7 +146,14 @@ namespace LostIsland.Client
             //Create a debug displayer component =====
             DebugInfo debugInfo = new DebugInfo(iocContainer.Get<D3DEngine>());
             debugInfo.Activated = true;
-            debugInfo.SetComponants(iocContainer.Get<FPS>(), iocContainer.Get<IClock>(), iocContainer.Get<IWorldChunks>(), iocContainer.Get<PlayerEntityManager>(), _server);
+            debugInfo.SetComponants(
+                iocContainer.Get<FPS>(), 
+                iocContainer.Get<IClock>(), 
+                iocContainer.Get<IWorldChunks>(), 
+                iocContainer.Get<PlayerEntityManager>(), 
+                _server,
+                iocContainer.Get<GuiManager>()
+                );
             utopiaRenderer.GameComponents.Add(debugInfo);
 
             return utopiaRenderer;

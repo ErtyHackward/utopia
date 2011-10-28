@@ -234,7 +234,7 @@ namespace Utopia.GUI
 
             _textPosition = Matrix.Translation(5, windowHeight - (100 + _messages.Count * _font.CharHeight), 0);
 
-            _spriteRender.RenderText(_font, builder.ToString(), _textPosition, _fontColor);
+            _spriteRender.DrawText(_font, builder.ToString(), _textPosition, _fontColor);
             _spriteRender.End();
         }
     }

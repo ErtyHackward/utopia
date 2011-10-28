@@ -87,7 +87,7 @@ namespace S33M3Engines.D3D.DebugTools
                 //}
 
                 _spriteRender.Begin(SpriteRenderer.FilterMode.Point);
-                _spriteRender.RenderText(_font, string.Concat(_infos), _textPosition, _fontColor);
+                _spriteRender.DrawText(_font, string.Concat(_infos), _textPosition, _fontColor);
                 _spriteRender.End();
             }
         }

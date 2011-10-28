@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SharpDX;
 using SharpDX.Direct3D11;
 using S33M3Engines.D3D.Effects.Basics;
-using S33M3Engines.D3D;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.Buffers;
 using S33M3Engines.StatesManager;
@@ -16,14 +13,15 @@ using Utopia.Shared.Structs;
 
 namespace S33M3Engines.Sprites
 {
+    /// <summary>
+    /// Provides delayed optimized drawing of the set of sprites.
+    /// </summary>
     public class SpriteRenderer : IDisposable
     {
-        public static int MaxBatchSize = 1000;
-
         private HLSLSprites _effect;
         private HLSLSprites _effectInstanced;
         private SamplerState _spriteSampler;
-        private D3DEngine _d3dEngine;
+        private D3DEngine _d3DEngine;
 
         private int _rasterStateId, _blendStateId, _depthStateId;
 
@@ -31,14 +29,11 @@ namespace S33M3Engines.Sprites
         private VertexBuffer<VertexSprite> _vBuffer;
         private InstancedVertexBuffer<VertexSprite, VertexSpriteInstanced> _vBufferInstanced;
 
-        private VertexSpriteInstanced[] _textDrawData = new VertexSpriteInstanced[MaxBatchSize];
-
-        private int _accumulatedSprites;
-        private SpriteTexture _currentSpriteTexture;
-        private VertexSpriteInstanced[] _spriteAccumulator = new VertexSpriteInstanced[MaxBatchSize];
-
-        private int _drawCalls = 0;
-
+        /// <summary>
+        /// Provides grouping of draw calls
+        /// </summary>
+        private readonly SpriteBuffer _spriteBuffer = new SpriteBuffer();
+        
         public enum FilterMode
         {
             DontSet = 0,
@@ -46,15 +41,25 @@ namespace S33M3Engines.Sprites
             Point = 2
         };
 
-        public void Initialize(D3DEngine d3dEngine)
+        public int DrawCalls
         {
-            _d3dEngine = d3dEngine;
-            _effect = new HLSLSprites(_d3dEngine, @"D3D\Effects\Basics\Sprites.hlsl", VertexSprite.VertexDeclaration);
-            _effectInstanced = new HLSLSprites(_d3dEngine, @"D3D\Effects\Basics\Sprites.hlsl", VertexSpriteInstanced.VertexDeclaration, new D3D.Effects.EntryPoints() { VertexShader_EntryPoint = "SpriteInstancedVS", PixelShader_EntryPoint = "SpritePS" });
+            get { return _spriteBuffer.DrawCalls; }
+        }
+
+        public int DrawItems
+        {
+            get { return _spriteBuffer.TotalItems; }
+        }
+
+        public void Initialize(D3DEngine d3DEngine)
+        {
+            _d3DEngine = d3DEngine;
+            _effect = new HLSLSprites(_d3DEngine, @"D3D\Effects\Basics\Sprites.hlsl", VertexSprite.VertexDeclaration);
+            _effectInstanced = new HLSLSprites(_d3DEngine, @"D3D\Effects\Basics\Sprites.hlsl", VertexSpriteInstanced.VertexDeclaration, new D3D.Effects.EntryPoints { VertexShader_EntryPoint = "SpriteInstancedVS", PixelShader_EntryPoint = "SpritePS" });
 
 
-            _spriteSampler = new SamplerState(_d3dEngine.Device,
-                                                        new SamplerStateDescription()
+            _spriteSampler = new SamplerState(_d3DEngine.Device,
+                                                        new SamplerStateDescription
                                                         {
                                                             AddressU = TextureAddressMode.Clamp,
                                                             AddressV = TextureAddressMode.Clamp,
@@ -72,13 +77,13 @@ namespace S33M3Engines.Sprites
                                           new VertexSprite(new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f)),
                                           new VertexSprite(new Vector2(1.0f, 0.0f), new Vector2(1.0f, 0.0f)),
                                           new VertexSprite(new Vector2(1.0f, 1.0f), new Vector2(1.0f, 1.0f)),
-                                          new VertexSprite(new Vector2(0.0f, 1.0f), new Vector2(0.0f, 1.0f)),
+                                          new VertexSprite(new Vector2(0.0f, 1.0f), new Vector2(0.0f, 1.0f))
                                       };
 
-            _vBuffer = new VertexBuffer<VertexSprite>(_d3dEngine, vertices.Length, VertexSprite.VertexDeclaration, PrimitiveTopology.TriangleList, "SpriteRenderer_vBuffer", ResourceUsage.Immutable);
+            _vBuffer = new VertexBuffer<VertexSprite>(_d3DEngine, vertices.Length, VertexSprite.VertexDeclaration, PrimitiveTopology.TriangleList, "SpriteRenderer_vBuffer", ResourceUsage.Immutable);
             _vBuffer.SetData(vertices);
 
-            _vBufferInstanced = new InstancedVertexBuffer<VertexSprite, VertexSpriteInstanced>(_d3dEngine, VertexSpriteInstanced.VertexDeclaration, PrimitiveTopology.TriangleList);
+            _vBufferInstanced = new InstancedVertexBuffer<VertexSprite, VertexSpriteInstanced>(_d3DEngine, VertexSpriteInstanced.VertexDeclaration, PrimitiveTopology.TriangleList);
             _vBufferInstanced.SetFixedData(vertices);
 
             // Create the instance data buffer
@@ -86,7 +91,7 @@ namespace S33M3Engines.Sprites
 
             // Create the index buffer
             short[] indices = { 0, 1, 2, 3, 0, 2 };
-            _iBuffer = new IndexBuffer<short>(_d3dEngine, indices.Length, SharpDX.DXGI.Format.R16_UInt, "SpriteRenderer_iBuffer");
+            _iBuffer = new IndexBuffer<short>(_d3DEngine, indices.Length, SharpDX.DXGI.Format.R16_UInt, "SpriteRenderer_iBuffer");
             _iBuffer.SetData(indices);
 
             // Create our constant buffers
@@ -95,7 +100,7 @@ namespace S33M3Engines.Sprites
             //Create the states
             //Rasters.Default
 
-            _rasterStateId = StatesRepository.AddRasterStates(new RasterizerStateDescription()
+            _rasterStateId = StatesRepository.AddRasterStates(new RasterizerStateDescription
             {
                 IsAntialiasedLineEnabled = false,
                 CullMode = CullMode.None,
@@ -109,42 +114,42 @@ namespace S33M3Engines.Sprites
                 SlopeScaledDepthBias = 0,
             });
 
-            BlendStateDescription BlendDescr = new BlendStateDescription();
-            BlendDescr.IndependentBlendEnable = false;
-            BlendDescr.AlphaToCoverageEnable = false;
-            for (int i = 0; i < 8; i++)
+            var blendDescr = new BlendStateDescription { IndependentBlendEnable = false, AlphaToCoverageEnable = false };
+            for (var i = 0; i < 8; i++)
             {
-                BlendDescr.RenderTarget[i].IsBlendEnabled = true;
-                BlendDescr.RenderTarget[i].BlendOperation = BlendOperation.Add;
-                BlendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
-                BlendDescr.RenderTarget[i].DestinationBlend = BlendOption.InverseSourceAlpha;
-                BlendDescr.RenderTarget[i].DestinationAlphaBlend = BlendOption.One;
-                BlendDescr.RenderTarget[i].SourceBlend = BlendOption.One;
-                BlendDescr.RenderTarget[i].SourceAlphaBlend = BlendOption.One;
-                BlendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
+                blendDescr.RenderTarget[i].IsBlendEnabled = true;
+                blendDescr.RenderTarget[i].BlendOperation = BlendOperation.Add;
+                blendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
+                blendDescr.RenderTarget[i].DestinationBlend = BlendOption.InverseSourceAlpha;
+                blendDescr.RenderTarget[i].DestinationAlphaBlend = BlendOption.One;
+                blendDescr.RenderTarget[i].SourceBlend = BlendOption.One;
+                blendDescr.RenderTarget[i].SourceAlphaBlend = BlendOption.One;
+                blendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
             }
-            _blendStateId = StatesRepository.AddBlendStates(BlendDescr);
+            _blendStateId = StatesRepository.AddBlendStates(blendDescr);
 
-            _depthStateId = StatesRepository.AddDepthStencilStates(new DepthStencilStateDescription()
+            _depthStateId = StatesRepository.AddDepthStencilStates(new DepthStencilStateDescription
             {
                 IsDepthEnabled = false,
                 DepthComparison = Comparison.Less,
                 DepthWriteMask = DepthWriteMask.All,
                 IsStencilEnabled = false,
-                BackFace = new DepthStencilOperationDescription() { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep },
-                FrontFace = new DepthStencilOperationDescription() { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep }
+                BackFace = new DepthStencilOperationDescription { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep },
+                FrontFace = new DepthStencilOperationDescription { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep }
             });
 
         }
 
+        /// <summary>
+        /// Begins sprites collecting, call End() to perform actual drawing
+        /// </summary>
+        /// <param name="filterMode"></param>
         public void Begin(FilterMode filterMode = FilterMode.DontSet)
         {
-            _drawCalls = 0;
-            _accumulatedSprites = 0;
-            _currentSpriteTexture = null;
-
             //Send index buffer to Device
             _iBuffer.SetToDevice(0);
+
+            _spriteBuffer.Clear();
 
             // Set the states
             StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _depthStateId);
@@ -152,146 +157,77 @@ namespace S33M3Engines.Sprites
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
         }
 
-        public void Render(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color)
+        /// <summary>
+        /// Flush all sprites to the graphic device
+        /// </summary>
+        public void End()
         {
-            Matrix transform = Matrix.Scaling((float)destRect.Width / srcRect.Width, (float)destRect.Height / srcRect.Height, 0) *
-                               Matrix.Translation(destRect.Left, destRect.Top, 0);
-
-            System.Drawing.RectangleF src = new System.Drawing.RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height);
-
-            Render(spriteTexture, ref transform, new Color4(color.ToVector4()), src);
-        }
-
-        public void Render(SpriteTexture spriteTexture, Rectangle destRect, Color color)
-        {
-            Matrix transform = Matrix.Translation(destRect.Left, destRect.Top, 0);
-            Render(spriteTexture, ref transform, new Color4(color.ToVector4()));
-        }
-
-        public void Render(SpriteTexture spriteTexture, ref Matrix transform, Color4 color,  RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true)
-        {
-            _drawCalls++;
-            _vBuffer.SetToDevice(0); // Set the Vertex buffer
-
-            //Set Par Batch Constant
-            _effect.Begin();
-
-            _effect.CBPerDraw.Values.ViewportSize = new Vector2(_d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height);
-            if (sourceRectInTextCoord) _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.Width, spriteTexture.Height);
-            else _effect.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
-            
-            _effect.CBPerDraw.IsDirty = true;
-            
-            // Set per-instance data
-            _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
-            _effect.CBPerInstance.Values.TextureArrayIndex = 0;
-            _effect.CBPerInstance.Values.Color = color;
-            if (sourceRect == default(RectangleF))
+            foreach (var drawInfo in _spriteBuffer)
             {
-                if (sourceRectInTextCoord) _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, spriteTexture.Width, spriteTexture.Height);
-                else _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, 1, 1);
+                if (drawInfo.IsGroup)
+                {
+                    RenderBatch(drawInfo.SpriteTexture, drawInfo.Group);
+                }
+                else Render(drawInfo.SpriteTexture, drawInfo.Transform, drawInfo.Color4, drawInfo.SourceRect);
             }
-            else
-            {
-                _effect.CBPerInstance.Values.SourceRect = sourceRect;
-            }
-            _effect.CBPerInstance.IsDirty = true;
 
-            _effect.SpriteTexture.Value = spriteTexture.Texture;
-            _effect.SpriteTexture.IsDirty = true;
-
-            _effect.Apply(); //Set Shader to the device
-
-            _d3dEngine.Context.DrawIndexed(6, 0, 0);
+            System.Diagnostics.Debug.WriteLine(string.Format("Sprite renderer: {0}/{1}", _spriteBuffer.DrawCalls, _spriteBuffer.TotalItems));
         }
-
-        public void Render(SpriteTexture spriteTexture, 
-                           ref Matrix transform, 
-                           Color4 color,
-                           Vector2 viewportSize,
-                           RectangleF sourceRect = default(RectangleF), 
-                           bool sourceRectInTextCoord = true)
-        {
-            _drawCalls++;
-            _vBuffer.SetToDevice(0); // Set the Vertex buffer
-
-            //Set Par Batch Constant
-            _effect.Begin();
-
-            _effect.CBPerDraw.Values.ViewportSize = viewportSize;
-            if (sourceRectInTextCoord) _effect.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.Width, spriteTexture.Height);
-            else _effect.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
-
-            _effect.CBPerDraw.IsDirty = true;
-
-            // Set per-instance data
-            _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
-            _effect.CBPerInstance.Values.TextureArrayIndex = 0;
-            _effect.CBPerInstance.Values.Color = color;
-            if (sourceRect == default(RectangleF))
-            {
-                if (sourceRectInTextCoord) _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, spriteTexture.Width, spriteTexture.Height);
-                else _effect.CBPerInstance.Values.SourceRect = new RectangleF(0, 0, 1, 1);
-            }
-            else
-            {
-                _effect.CBPerInstance.Values.SourceRect = sourceRect;
-            }
-            _effect.CBPerInstance.IsDirty = true;
-
-            _effect.SpriteTexture.Value = spriteTexture.Texture;
-            _effect.SpriteTexture.IsDirty = true;
-
-            _effect.Apply(); //Set Shader to the device
-
-            _d3dEngine.Context.DrawIndexed(6, 0, 0);
-        }
-
 
         /// <summary>
-        /// Will be used as an accumulator, will create a draw call at texture change
+        /// Draws single texture
         /// </summary>
         /// <param name="spriteTexture"></param>
-        /// <param name="numSprites"></param>
+        /// <param name="destRect"></param>
+        /// <param name="color"></param>
+        public void Draw(SpriteTexture spriteTexture, Rectangle destRect, Color color)
+        {
+            var transform = Matrix.Translation(destRect.Left, destRect.Top, 0);
+            Draw(spriteTexture, ref transform, new Color4(color.ToVector4()));
+        }
+
+        /// <summary>
+        /// Draws single texture
+        /// </summary>
+        /// <param name="spriteTexture"></param>
+        /// <param name="destRect"></param>
+        /// <param name="srcRect"></param>
+        /// <param name="color"></param>
         /// <param name="sourceRectInTextCoord"></param>
-        public void RenderBatch(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color, bool sourceRectInTextCoord = true, int textureArrayIndex=0)
+        /// <param name="textureArrayIndex"></param>
+        public void Draw(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color, bool sourceRectInTextCoord = true, int textureArrayIndex = 0)
         {
-            Matrix transform = Matrix.Scaling((float)destRect.Width / srcRect.Width, (float)destRect.Height / srcRect.Height, 0) *
-                               Matrix.Translation(destRect.Left, destRect.Top, 0);
-            VertexSpriteInstanced newSpriteInstace = new VertexSpriteInstanced()
-                                        {
-                                            Tranform = transform,
-                                            SourceRect = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height),
-                                            Color = new ByteColor(color),
-                                            TextureArrayIndex = textureArrayIndex
-                                        };
+            var transform = Matrix.Scaling((float)destRect.Width / srcRect.Width, (float)destRect.Height / srcRect.Height, 0) *
+                   Matrix.Translation(destRect.Left, destRect.Top, 0);
 
-            //Texture change ==> Flush the accomulator by creation a batched draw call
-            if(_currentSpriteTexture != null && spriteTexture.GetHashCode() != _currentSpriteTexture.GetHashCode())
-            {
-                flushAccumulatedSprite();
-            }
+            var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height);
 
-            _currentSpriteTexture = spriteTexture;
-            _spriteAccumulator[_accumulatedSprites] = newSpriteInstace;
-            _accumulatedSprites++;
-
+            Draw(spriteTexture, ref transform, new Color4(color.ToVector4()), src, sourceRectInTextCoord, textureArrayIndex);
+        }
+        
+        /// <summary>
+        /// Draws single texture
+        /// </summary>
+        /// <param name="spriteTexture"></param>
+        /// <param name="transform"></param>
+        /// <param name="color"></param>
+        /// <param name="sourceRect"></param>
+        /// <param name="sourceRectInTextCoord"></param>
+        /// <param name="textureArrayIndex"></param>
+        public void Draw(SpriteTexture spriteTexture, ref Matrix transform, Color4 color,  RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true, int textureArrayIndex = 0)
+        {
+            _spriteBuffer.Add(spriteTexture, ref transform, color, sourceRect, sourceRectInTextCoord, textureArrayIndex);
         }
 
-        private void flushAccumulatedSprite()
+        /// <summary>
+        /// Draws sprite batch
+        /// </summary>
+        /// <param name="spriteTexture"></param>
+        /// <param name="drawData"></param>
+        /// <param name="sourceRectInTextCoord"></param>
+        public void Draw(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, bool sourceRectInTextCoord = true)
         {
-            if (_accumulatedSprites > 0)
-            {
-                RenderBatch(_currentSpriteTexture, _spriteAccumulator, _accumulatedSprites);
-            }
-            _accumulatedSprites = 0;
-        }
-
-
-
-        public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, bool sourceRectInTextCoord = true)
-        {
-            RenderBatch(spriteTexture, drawData, drawData.Length, sourceRectInTextCoord);
+            Draw(spriteTexture, drawData, drawData.Length, sourceRectInTextCoord);
         }
 
         /// <summary>
@@ -301,63 +237,83 @@ namespace S33M3Engines.Sprites
         /// <param name="drawData"></param>
         /// <param name="numSprites"></param>
         /// <param name="sourceRectInTextCoord"></param>
-        public void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, int numSprites, bool sourceRectInTextCoord = true)
+        public void Draw(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, int numSprites, bool sourceRectInTextCoord = true)
         {
-            _drawCalls++;
-            //Set Par Batch Constant
-            _effectInstanced.Begin();
-
-            _effectInstanced.CBPerDraw.Values.ViewportSize = new Vector2(_d3dEngine.ViewPort.Width, _d3dEngine.ViewPort.Height);
-            if(sourceRectInTextCoord)_effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(spriteTexture.Width, spriteTexture.Height);
-            else _effectInstanced.CBPerDraw.Values.TextureSize = new Vector2(1, 1);
-            _effectInstanced.CBPerDraw.IsDirty = true;
-            _effectInstanced.SpriteTexture.Value = spriteTexture.Texture;
-            _effectInstanced.SpriteTexture.IsDirty = true;
-            _effectInstanced.Apply();
-
-            //// Make sure the draw rects are all valid
-            //for (int i = drawOffset; i < drawData.Length - drawOffset; ++i)
-            //{
-            //    Vector4 drawRect = drawData[i].SourceRect;
-            //    if (drawRect.X < 0 || drawRect.X >= spriteTexture.Width ||
-            //        drawRect.Y >= 0 && drawRect.Y < spriteTexture.Height ||
-            //        drawRect.Z > 0 && drawRect.X + drawRect.Z <= spriteTexture.Width ||
-            //        drawRect.W > 0 && drawRect.Y + drawRect.W <= spriteTexture.Height)
-            //    {
-            //        Console.WriteLine("ERREUR Rectangle source en dehors texture !!!!");
-            //    }
-            //}
-
-            int numSpritesToDraw = Math.Min(numSprites, MaxBatchSize);
-
-            // Copy the Data inside the vertex buffer
-            _vBufferInstanced.SetInstancedData(drawData);
-            _vBufferInstanced.SetToDevice(0);
-
-            _d3dEngine.Context.DrawIndexedInstanced(6, numSpritesToDraw, 0, 0, 0);
-            // If there's any left to be rendered, do it recursively
-            if (numSprites > numSpritesToDraw)
-                RenderBatch(spriteTexture, drawData, numSprites - numSpritesToDraw);
-
+            _spriteBuffer.Add(spriteTexture, drawData);
         }
 
-        public void RenderText(SpriteFont spriteFont, string text, Vector2 pos, Color color)
+        //public void Render(SpriteTexture spriteTexture, 
+        //                   ref Matrix transform, 
+        //                   Color4 color,
+        //                   Vector2 viewportSize,
+        //                   RectangleF sourceRect = default(RectangleF), 
+        //                   bool sourceRectInTextCoord = true)
+        //{
+        //    _vBuffer.SetToDevice(0); // Set the Vertex buffer
+
+        //    //Set Par Batch Constant
+        //    _effect.Begin();
+
+        //    _effect.CBPerDraw.Values.ViewportSize = viewportSize;
+        //    _effect.CBPerDraw.Values.TextureSize = sourceRectInTextCoord ? new Vector2(spriteTexture.Width, spriteTexture.Height) : new Vector2(1, 1);
+
+        //    _effect.CBPerDraw.IsDirty = true;
+
+        //    // Set per-instance data
+        //    _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
+        //    _effect.CBPerInstance.Values.TextureArrayIndex = 0;
+        //    _effect.CBPerInstance.Values.Color = color;
+        //    if (sourceRect == default(RectangleF))
+        //    {
+        //        _effect.CBPerInstance.Values.SourceRect = sourceRectInTextCoord ? new RectangleF(0, 0, spriteTexture.Width, spriteTexture.Height) : new RectangleF(0, 0, 1, 1);
+        //    }
+        //    else
+        //    {
+        //        _effect.CBPerInstance.Values.SourceRect = sourceRect;
+        //    }
+        //    _effect.CBPerInstance.IsDirty = true;
+
+        //    _effect.SpriteTexture.Value = spriteTexture.Texture;
+        //    _effect.SpriteTexture.IsDirty = true;
+
+        //    _effect.Apply(); //Set Shader to the device
+
+        //    _d3DEngine.Context.DrawIndexed(6, 0, 0);
+        //}
+
+        /// <summary>
+        /// Draw some text
+        /// </summary>
+        /// <param name="spriteFont"></param>
+        /// <param name="text"></param>
+        /// <param name="pos"></param>
+        /// <param name="color"></param>
+        public void DrawText(SpriteFont spriteFont, string text, Vector2 pos, Color color)
         {
-            Matrix transform = Matrix.Translation(pos.X, pos.Y, 0);
-            RenderText(spriteFont, text, transform, new ByteColor(color));//TODO color vs color4
+            var transform = Matrix.Translation(pos.X, pos.Y, 0);
+
+            //TODO color vs color4
+            DrawText(spriteFont, text, transform, new ByteColor(color));
         }
 
-        public void RenderText(SpriteFont font, string text, Matrix transform, ByteColor color, float lineDefaultOffset = -1)
+        /// <summary>
+        /// Draws some text
+        /// </summary>
+        /// <param name="font"></param>
+        /// <param name="text"></param>
+        /// <param name="transform"></param>
+        /// <param name="color"></param>
+        /// <param name="lineDefaultOffset"></param>
+        public void DrawText(SpriteFont font, string text, Matrix transform, ByteColor color, float lineDefaultOffset = -1)
         {
-            flushAccumulatedSprite();
+            var length = text.Length;
+            var textTransform = Matrix.Identity;
 
-            int length = text.Length;
-            Matrix textTransform = Matrix.Identity;
-
-            int numCharsToDraw = Math.Min(length, MaxBatchSize);
-            int currentDraw = 0;
+            var numCharsToDraw = length;
 
             if(lineDefaultOffset == -1) lineDefaultOffset = transform.M41;
+
+            var list = new List<VertexSpriteInstanced>();
 
             for (int i = 0; i < numCharsToDraw; ++i)
             {
@@ -375,32 +331,93 @@ namespace S33M3Engines.Sprites
                 else
                 {
                     //New character
-                    S33M3Engines.Sprites.SpriteFont.CharDesc desc = font.CharDescriptors[character];
+                    var desc = font.CharDescriptors[character];
 
-                    _textDrawData[currentDraw].Tranform = textTransform * transform;
-                    _textDrawData[currentDraw].Color = color;
-                    _textDrawData[currentDraw].SourceRect.X = desc.X;
-                    _textDrawData[currentDraw].SourceRect.Y = desc.Y;
-                    _textDrawData[currentDraw].SourceRect.Width = desc.Width;
-                    _textDrawData[currentDraw].SourceRect.Height = desc.Height;
-                    currentDraw++;
+                    list.Add(new VertexSpriteInstanced
+                        {
+                            Tranform = textTransform * transform,
+                            SourceRect = desc,
+                            Color = color
+                        });
 
                     textTransform.M41 += desc.Width + 1;
                 }
             }
 
             // Submit a batch
-            RenderBatch(font.SpriteTexture, _textDrawData, currentDraw);
+            Draw(font.SpriteTexture, list.ToArray());
 
             if (length > numCharsToDraw)
-                RenderText(font, text.Substring(numCharsToDraw - 1), textTransform * transform, color, lineDefaultOffset);
+                DrawText(font, text.Substring(numCharsToDraw - 1), textTransform * transform, color, lineDefaultOffset);
         }
 
-        public void End()
+        /// <summary>
+        /// Performs single texture rendering
+        /// </summary>
+        /// <param name="spriteTexture"></param>
+        /// <param name="transform"></param>
+        /// <param name="color"></param>
+        /// <param name="sourceRect"></param>
+        /// <param name="sourceRectInTextCoord"></param>
+        private void Render(SpriteTexture spriteTexture, Matrix transform, Color4 color, RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true)
         {
-            //System.Diagnostics.Debug.WriteLine("Sprite renderer: " + _drawCalls);
-            flushAccumulatedSprite();
+            _vBuffer.SetToDevice(0); // Set the Vertex buffer
+
+            //Set Par Batch Constant
+            _effect.Begin();
+
+            _effect.CBPerDraw.Values.ViewportSize = new Vector2(_d3DEngine.ViewPort.Width, _d3DEngine.ViewPort.Height);
+            _effect.CBPerDraw.Values.TextureSize = sourceRectInTextCoord ? new Vector2(spriteTexture.Width, spriteTexture.Height) : new Vector2(1, 1);
+
+            _effect.CBPerDraw.IsDirty = true;
+
+            // Set per-instance data
+            _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
+            _effect.CBPerInstance.Values.TextureArrayIndex = 0;
+            _effect.CBPerInstance.Values.Color = color;
+            if (sourceRect == default(RectangleF))
+            {
+                _effect.CBPerInstance.Values.SourceRect = sourceRectInTextCoord ? new RectangleF(0, 0, spriteTexture.Width, spriteTexture.Height) : new RectangleF(0, 0, 1, 1);
+            }
+            else
+            {
+                _effect.CBPerInstance.Values.SourceRect = sourceRect;
+            }
+            _effect.CBPerInstance.IsDirty = true;
+
+            _effect.SpriteTexture.Value = spriteTexture.Texture;
+            _effect.SpriteTexture.IsDirty = true;
+
+            _effect.Apply(); //Set Shader to the device
+
+            _d3DEngine.Context.DrawIndexed(6, 0, 0);
         }
+
+        /// <summary>
+        /// Performs batch rendering
+        /// </summary>
+        /// <param name="spriteTexture"></param>
+        /// <param name="drawData"></param>
+        /// <param name="sourceRectInTextCoord"></param>
+        private void RenderBatch(SpriteTexture spriteTexture, VertexSpriteInstanced[] drawData, bool sourceRectInTextCoord = true)
+        {
+            //Set Par Batch Constant
+            _effectInstanced.Begin();
+
+            _effectInstanced.CBPerDraw.Values.ViewportSize = new Vector2(_d3DEngine.ViewPort.Width, _d3DEngine.ViewPort.Height);
+            _effectInstanced.CBPerDraw.Values.TextureSize = sourceRectInTextCoord ? new Vector2(spriteTexture.Width, spriteTexture.Height) : new Vector2(1, 1);
+            _effectInstanced.CBPerDraw.IsDirty = true;
+            _effectInstanced.SpriteTexture.Value = spriteTexture.Texture;
+            _effectInstanced.SpriteTexture.IsDirty = true;
+            _effectInstanced.Apply();
+
+            // Copy the Data inside the vertex buffer
+            _vBufferInstanced.SetInstancedData(drawData);
+            _vBufferInstanced.SetToDevice(0);
+
+            _d3DEngine.Context.DrawIndexedInstanced(6, drawData.Length, 0, 0, 0);
+        }
+
 
         public void Dispose()
         {

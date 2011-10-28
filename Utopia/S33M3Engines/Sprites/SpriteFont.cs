@@ -11,6 +11,7 @@ using Rectangle = System.Drawing.Rectangle;
 using System.Drawing;
 using SharpDX.Direct3D;
 using S33M3Engines.Shared.Sprites;
+using RectangleF = System.Drawing.RectangleF;
 
 namespace S33M3Engines.Sprites
 {
@@ -21,19 +22,9 @@ namespace S33M3Engines.Sprites
         static int NumChars = EndChar - StartChar;
         static int TexWidth = 1024;
 
-        #region Internal Types
-        public struct CharDesc
-        {
-            public float X;
-            public float Y;
-            public float Width;
-            public float Height;
-        };
-        #endregion
-
         #region Public Variables
         public SpriteTexture SpriteTexture;
-        public CharDesc[] CharDescriptors = new CharDesc[255];
+        public RectangleF[] CharDescriptors = new RectangleF[255];
         //public CharDesc& GetCharDescriptor(WCHAR character) const;
         public float Size { get { return _size; } }
         public int TextureWidth { get { return TexWidth; } }
@@ -251,7 +242,7 @@ namespace S33M3Engines.Sprites
                 }
                 else
                 {
-                    CharDesc desc = CharDescriptors[character];
+                    var desc = CharDescriptors[character];
                     textWidth += desc.Width;
                 }
             }

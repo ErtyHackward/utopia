@@ -238,7 +238,7 @@ namespace Utopia.Entities
                 {
                     spriteRenderer.Begin(SpriteRenderer.FilterMode.Point);
 
-                    spriteRenderer.Render(spriteTexture, ref spriteTexture.ScreenPosition, new Color4(0.5f, profile.EmissiveColor.R /255, profile.EmissiveColor.G/255, profile.EmissiveColor.B/255), new Vector2(textureSize,textureSize));
+                    spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, new Color4(0.5f, profile.EmissiveColor.R /255, profile.EmissiveColor.G/255, profile.EmissiveColor.B/255), new RectangleF(0,0,textureSize,textureSize));
 
                     spriteRenderer.End();
                 }
