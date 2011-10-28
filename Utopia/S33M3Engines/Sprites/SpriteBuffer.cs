@@ -16,7 +16,6 @@ namespace S33M3Engines.Sprites
     {
         private readonly Dictionary<int, DrawInfo> _drawBuffer = new Dictionary<int, DrawInfo>();
 
-        private int _currentDepth;
         private int _drawItemsCount;
 
         /// <summary>
@@ -38,7 +37,6 @@ namespace S33M3Engines.Sprites
         public void Clear()
         {
             _drawBuffer.Clear();
-            _currentDepth = 0;
             _drawItemsCount = 0;
         }
 
@@ -69,7 +67,7 @@ namespace S33M3Engines.Sprites
             _drawItemsCount++;
         }
 
-        public void Add(SpriteTexture spriteTexture, ref Matrix transform, Color4 color, RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true, int textureArrayIndex = 0)
+        public void Add(SpriteTexture spriteTexture, ref Matrix transform, Color4 color, RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true, int textureArrayIndex = 0, float depth = 0)
         {
             DrawInfo info;
             var key = spriteTexture.GetHashCode();
@@ -84,9 +82,10 @@ namespace S33M3Engines.Sprites
                     oldArray[oldArray.Length-1] = new VertexSpriteInstanced
                                                       {
                                                           Tranform = transform,
-                                                          SourceRect = sourceRectInTextCoord ? new RectangleF(sourceRect.Left, sourceRect.Top, sourceRect.Width, sourceRect.Height) : new RectangleF(0, 0, 1, 1),
+                                                          SourceRect = sourceRectInTextCoord ? sourceRect : new RectangleF(0, 0, 1, 1),
                                                           Color = new ByteColor(color),
-                                                          TextureArrayIndex = textureArrayIndex
+                                                          TextureArrayIndex = textureArrayIndex,
+                                                          Depth = depth
                                                       };
                     info.Group = oldArray;
                 }
@@ -100,7 +99,8 @@ namespace S33M3Engines.Sprites
                                        Tranform = info.Transform,
                                        SourceRect = info.SourceRect,
                                        Color = new ByteColor(info.Color4),
-                                       TextureArrayIndex = info.TextureArrayIndex
+                                       TextureArrayIndex = info.TextureArrayIndex,
+                                       Depth = info.Depth
                                    };
 
                     array[1] = new VertexSpriteInstanced
@@ -108,7 +108,8 @@ namespace S33M3Engines.Sprites
                                        Tranform = transform,
                                        SourceRect = sourceRectInTextCoord ? sourceRect : new RectangleF(0, 0, 1, 1),
                                        Color = new ByteColor(color),
-                                       TextureArrayIndex = textureArrayIndex
+                                       TextureArrayIndex = textureArrayIndex,
+                                       Depth = depth
                                    };
                     info.Group = array;
                 }
@@ -122,7 +123,7 @@ namespace S33M3Engines.Sprites
                                              Transform = transform,
                                              Color4 = color,
                                              SourceRect = sourceRectInTextCoord ? sourceRect : new RectangleF(0, 0, 1, 1),
-                                             Depth = _currentDepth++,
+                                             Depth = depth,
                                              TextureArrayIndex = textureArrayIndex
                                          });
             }

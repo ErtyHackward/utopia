@@ -29,6 +29,8 @@ namespace S33M3Engines.Sprites
         private VertexBuffer<VertexSprite> _vBuffer;
         private InstancedVertexBuffer<VertexSprite, VertexSpriteInstanced> _vBufferInstanced;
 
+        private float _currentDepth;
+
         /// <summary>
         /// Provides grouping of draw calls
         /// </summary>
@@ -105,7 +107,7 @@ namespace S33M3Engines.Sprites
                 IsAntialiasedLineEnabled = false,
                 CullMode = CullMode.None,
                 DepthBias = 0,
-                DepthBiasClamp = 1.0f,
+                DepthBiasClamp = 1f,
                 IsDepthClipEnabled = false,
                 FillMode = FillMode.Solid,
                 IsFrontCounterClockwise = false,
@@ -131,7 +133,7 @@ namespace S33M3Engines.Sprites
             _depthStateId = StatesRepository.AddDepthStencilStates(new DepthStencilStateDescription
             {
                 IsDepthEnabled = false,
-                DepthComparison = Comparison.Less,
+                DepthComparison = Comparison.LessEqual,
                 DepthWriteMask = DepthWriteMask.All,
                 IsStencilEnabled = false,
                 BackFace = new DepthStencilOperationDescription { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep },
@@ -151,6 +153,8 @@ namespace S33M3Engines.Sprites
 
             _spriteBuffer.Clear();
 
+            _currentDepth = 1;
+
             // Set the states
             StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _depthStateId);
 
@@ -168,7 +172,7 @@ namespace S33M3Engines.Sprites
                 {
                     RenderBatch(drawInfo.SpriteTexture, drawInfo.Group);
                 }
-                else Render(drawInfo.SpriteTexture, drawInfo.Transform, drawInfo.Color4, drawInfo.SourceRect);
+                else Render(drawInfo.SpriteTexture, drawInfo.Transform, drawInfo.Color4, drawInfo.SourceRect, true, drawInfo.Depth);
             }
 
             System.Diagnostics.Debug.WriteLine(string.Format("Sprite renderer: {0}/{1}", _spriteBuffer.DrawCalls, _spriteBuffer.TotalItems));
@@ -216,7 +220,8 @@ namespace S33M3Engines.Sprites
         /// <param name="textureArrayIndex"></param>
         public void Draw(SpriteTexture spriteTexture, ref Matrix transform, Color4 color,  RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true, int textureArrayIndex = 0)
         {
-            _spriteBuffer.Add(spriteTexture, ref transform, color, sourceRect, sourceRectInTextCoord, textureArrayIndex);
+            _currentDepth -= 0.001f;
+            _spriteBuffer.Add(spriteTexture, ref transform, color, sourceRect, sourceRectInTextCoord, textureArrayIndex, _currentDepth);
         }
 
         /// <summary>
@@ -315,6 +320,8 @@ namespace S33M3Engines.Sprites
 
             var list = new List<VertexSpriteInstanced>();
 
+            _currentDepth -= 0.001f;
+
             for (int i = 0; i < numCharsToDraw; ++i)
             {
                 char character = text[i];
@@ -337,12 +344,15 @@ namespace S33M3Engines.Sprites
                         {
                             Tranform = textTransform * transform,
                             SourceRect = desc,
-                            Color = color
+                            Color = color,
+                            Depth = _currentDepth
                         });
 
                     textTransform.M41 += desc.Width + 1;
                 }
             }
+
+            
 
             // Submit a batch
             Draw(font.SpriteTexture, list.ToArray());
@@ -359,7 +369,7 @@ namespace S33M3Engines.Sprites
         /// <param name="color"></param>
         /// <param name="sourceRect"></param>
         /// <param name="sourceRectInTextCoord"></param>
-        private void Render(SpriteTexture spriteTexture, Matrix transform, Color4 color, RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true)
+        private void Render(SpriteTexture spriteTexture, Matrix transform, Color4 color, RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true, float depth = 0)
         {
             _vBuffer.SetToDevice(0); // Set the Vertex buffer
 
@@ -375,6 +385,7 @@ namespace S33M3Engines.Sprites
             _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
             _effect.CBPerInstance.Values.TextureArrayIndex = 0;
             _effect.CBPerInstance.Values.Color = color;
+            _effect.CBPerInstance.Values.Depth = depth;
             if (sourceRect == default(RectangleF))
             {
                 _effect.CBPerInstance.Values.SourceRect = sourceRectInTextCoord ? new RectangleF(0, 0, spriteTexture.Width, spriteTexture.Height) : new RectangleF(0, 0, 1, 1);

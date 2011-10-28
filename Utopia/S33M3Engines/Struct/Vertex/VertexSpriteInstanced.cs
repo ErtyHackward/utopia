@@ -21,6 +21,7 @@ namespace S33M3Engines.Struct.Vertex
         public ByteColor Color;
         public RectangleF SourceRect;
         public int TextureArrayIndex;
+        public float Depth;
         public static readonly VertexDeclaration VertexDeclaration;
 
         public VertexSpriteInstanced(Matrix tranform, ByteColor color, RectangleF sourceRect)
@@ -29,6 +30,7 @@ namespace S33M3Engines.Struct.Vertex
             this.Color = color;
             this.SourceRect = sourceRect;
             TextureArrayIndex = 0;
+            Depth = 0;
         }
 
         public VertexSpriteInstanced(Matrix tranform, ByteColor color)
@@ -37,6 +39,7 @@ namespace S33M3Engines.Struct.Vertex
             this.Color = color;
             this.SourceRect = default(RectangleF);
             TextureArrayIndex = 0;
+            Depth = 0;
         }
 
         public VertexSpriteInstanced(Matrix tranform, ByteColor color, int textureArrayIndex)
@@ -45,6 +48,7 @@ namespace S33M3Engines.Struct.Vertex
             this.Color = color;
             this.SourceRect = default(RectangleF);
             TextureArrayIndex = textureArrayIndex;
+            Depth = 0;
         }
 
 
@@ -72,7 +76,8 @@ namespace S33M3Engines.Struct.Vertex
                                                             new InputElement("TRANSFORM", 3, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1),
                                                             new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1),
                                                             new InputElement("SOURCERECT", 0, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1),
-                                                            new InputElement("TEXINDEX", 0, Format.R32_UInt, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1)
+                                                            new InputElement("TEXINDEX", 0, Format.R32_UInt, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1),
+                                                            new InputElement("DEPTH", 0, Format.R32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1)
                                                                                                             
             };
 
