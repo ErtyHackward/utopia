@@ -18,57 +18,35 @@ License along with this library
 */
 #endregion
 
-using System; using SharpDX;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Xml;
-using System.Xml.Schema;
-
-using Texture2D = SharpDX.Direct3D11.Texture2D;
+using SharpDX;
 using Rectangle = System.Drawing.Rectangle;
-using Nuclex.Support;
-
 using Utopia.Shared.Structs;
-using S33M3Engines.Sprites;
 using S33M3Engines.Shared.Sprites;
-using SharpDX.Direct3D11;
-
 
 
 namespace Nuclex.UserInterface.Visuals.Flat {
 
     partial class FlatGuiGraphics
     {
+
+
         /// <summary>Needs to be called before the GUI drawing process begins</summary>
         public void BeginDrawing()
         {
             //No sense to define a full screen Scissor ...
             //_game.D3dEngine.ScissorRectangle = new System.Drawing.Rectangle(0, 0, (int)_game.ViewPort.Width, (int)_game.ViewPort.Height);
-            _delayedFontDraw.Clear();
-            this.spriteRenderer.Begin();
+            spriteRenderer.Begin();
         }
 
         /// <summary>Needs to be called when the GUI drawing process has ended</summary>
         public void EndDrawing()
         {
-            // draw all fonts
+            // flushing all pending draw calls to the device
+            spriteRenderer.End();
 
-            foreach (var fontDrawInfo in _delayedFontDraw)
-            {
-                Frame frame = lookupFrame(fontDrawInfo.FrameName);
-
-                // Draw the text in all anchor locations defined by the skin
-                for (int index = 0; index < frame.Texts.Length; ++index)
-                {
-                    this.spriteRenderer.RenderText(frame.Texts[index].Font, fontDrawInfo.Text, positionText(ref frame.Texts[index], fontDrawInfo.RectangleF, fontDrawInfo.Text), frame.Texts[index].Color);
-                }
-            }
-
-
-
-            this.spriteRenderer.End();
+            // update stati
+            DrawCalls = spriteRenderer.DrawCalls;
+            DrawItems = spriteRenderer.DrawItems;
         }
 
         ///// <summary>Sets the clipping region for any future drawing commands</summary>
@@ -144,7 +122,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
                 Rectangle destinationRegion = calculateDestinationRectangle(ref bounds, ref frame.Regions[index].DestinationRegion);
 
                 //this.spriteRenderer.Render(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion, Color.White);
-                this.spriteRenderer.RenderBatch(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion,color);
+                spriteRenderer.Draw(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion,color);
             }
         }
 
@@ -157,34 +135,25 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         public void DrawCustomTexture(SpriteTexture customTex, RectangleF bounds,int textureArrayIndex=0)
         {
 
-            UniRectangle offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
-            Rectangle destinationRegion = calculateDestinationRectangle(
+            var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
+            var destinationRegion = calculateDestinationRectangle(
               ref bounds, ref offset
             );
 
-            this.spriteRenderer.RenderBatch(customTex, destinationRegion, new SharpDX.Rectangle(0, 0, customTex.Width, customTex.Height), Color.White,true ,textureArrayIndex);
+            spriteRenderer.Draw(customTex, destinationRegion, new SharpDX.Rectangle(0, 0, customTex.Width, customTex.Height), Color.White,true ,textureArrayIndex);
         }
 
         public void DrawCustomTexture(SpriteTexture customTex, Rectangle textureSourceRect, RectangleF bounds)
         {
 
-            UniRectangle offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
-            System.Drawing.Rectangle destinationRegion = calculateDestinationRectangle(
+            var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
+            var destinationRegion = calculateDestinationRectangle(
               ref bounds, ref offset
             );
 
-            this.spriteRenderer.RenderBatch(customTex, destinationRegion, textureSourceRect, Color.White);
+            spriteRenderer.Draw(customTex, destinationRegion, textureSourceRect, Color.White);
 
         }
-
-        private struct FontDrawInfo
-        {
-            public string FrameName { get; set; }
-            public RectangleF RectangleF { get; set; }
-            public string Text { get; set; }
-        }
-
-        private List<FontDrawInfo> _delayedFontDraw = new List<FontDrawInfo>();
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
@@ -192,14 +161,16 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         /// <param name="text">Text that will be drawn</param>
         public void DrawString(string frameName, RectangleF bounds, string text)
         {
-            _delayedFontDraw.Add(new FontDrawInfo { FrameName = frameName, RectangleF = bounds, Text = text });
-            //Frame frame = lookupFrame(frameName);
+            if (string.IsNullOrWhiteSpace(text))
+                return;
 
-            //// Draw the text in all anchor locations defined by the skin
-            //for (int index = 0; index < frame.Texts.Length; ++index)
-            //{
-            //    this.spriteRenderer.RenderText(frame.Texts[index].Font, text, positionText(ref frame.Texts[index], bounds, text), frame.Texts[index].Color);
-            //}
+            var frame = lookupFrame(frameName);
+
+            // Draw the text in all anchor locations defined by the skin
+            for (var index = 0; index < frame.Texts.Length; ++index)
+            {
+                spriteRenderer.DrawText(frame.Texts[index].Font, text, positionText(ref frame.Texts[index], bounds, text), frame.Texts[index].Color);
+            }
         }
 
         /// <summary>Draws a caret for text input at the specified index</summary>
@@ -211,21 +182,20 @@ namespace Nuclex.UserInterface.Visuals.Flat {
           string frameName, RectangleF bounds, string text, int caretIndex
         )
         {
-            Frame frame = lookupFrame(frameName);
+            var frame = lookupFrame(frameName);
 
-            this.stringBuilder.Remove(0, this.stringBuilder.Length);
-            this.stringBuilder.Append(text, 0, caretIndex);
+            stringBuilder.Remove(0, stringBuilder.Length);
+            stringBuilder.Append(text, 0, caretIndex);
 
-            Vector2 caretPosition = Vector2.Zero, textPosition;
             for (int index = 0; index < frame.Texts.Length; ++index)
             {
-                textPosition = positionText(ref frame.Texts[index], bounds, text);
+                var textPosition = positionText(ref frame.Texts[index], bounds, text);
 
-                caretPosition = frame.Texts[index].Font.MeasureString(this.stringBuilder);
+                var caretPosition = frame.Texts[index].Font.MeasureString(stringBuilder);
                 caretPosition.X -= CaretWidth;
                 caretPosition.Y = 0.0f;
 
-                this.spriteRenderer.RenderText(frame.Texts[index].Font,"|", textPosition + caretPosition, frame.Texts[index].Color);
+                spriteRenderer.DrawText(frame.Texts[index].Font,"|", textPosition + caretPosition, frame.Texts[index].Color);
             }
         }
 
@@ -238,17 +208,9 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         /// </returns>
         public RectangleF MeasureString(string frameName, RectangleF bounds, string text)
         {
-            Frame frame = lookupFrame(frameName);
+            var frame = lookupFrame(frameName);
 
-            Vector2 size = Vector2.Zero;
-            if (frame.Texts.Length > 0)
-            {
-                size = frame.Texts[0].Font.MeasureString(text);
-            }
-            else
-            {
-                size = Vector2.Zero;
-            }
+            var size = frame.Texts.Length > 0 ? frame.Texts[0].Font.MeasureString(text) : Vector2.Zero;
 
             return new RectangleF(0.0f, 0.0f, size.X, size.Y);
         }
@@ -265,7 +227,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
           string frameName, RectangleF bounds, string text, Vector2 position
         )
         {
-            Frame frame = lookupFrame(frameName);
+            var frame = lookupFrame(frameName);
 
             // exTODO: Find the closest gap across multiple text anchors
             //   Frames can repeat their text in several places. Though this is probably
@@ -275,12 +237,12 @@ namespace Nuclex.UserInterface.Visuals.Flat {
 
             for (int index = 0; index < frame.Texts.Length; ++index)
             {
-                Vector2 textPosition = positionText(ref frame.Texts[index], bounds, text);
+                var textPosition = positionText(ref frame.Texts[index], bounds, text);
                 position.X -= textPosition.X;
                 position.Y -= textPosition.Y;
 
-                float openingX = position.X;
-                int openingIndex = this.openingLocator.FindClosestOpening(
+                //float openingX = position.X;
+                var openingIndex = openingLocator.FindClosestOpening(
                   frame.Texts[index].Font, text, position.X + CaretWidth
                 );
 

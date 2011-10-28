@@ -130,6 +130,8 @@
     <Compile Include="Meshes\Factories\IMeshFactory.cs" />
     <Compile Include="Meshes\Factories\MilkShape3DMeshFactory.cs" />
     <Compile Include="Meshes\Mesh.cs" />
+    <Compile Include="Sprites\DrawInfo.cs" />
+    <Compile Include="Sprites\SpriteBuffer.cs" />
     <Compile Include="Sprites\SpriteFont.cs" />
     <Compile Include="Sprites\SpriteRenderer.cs" />
     <Compile Include="StatesManager\StatesRepository.cs" />

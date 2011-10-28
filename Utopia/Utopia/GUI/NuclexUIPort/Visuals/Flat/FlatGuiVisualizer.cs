@@ -473,7 +473,12 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     /// <summary>Used to draw the individual building elements of the GUI</summary>
     private FlatGuiGraphics flatGuiGraphics;
 
-    /// <summary>Helps draw the GUI controls in the hierarchically correct order</summary>
+      public FlatGuiGraphics Graphics
+      {
+          get { return flatGuiGraphics; }
+      }
+
+      /// <summary>Helps draw the GUI controls in the hierarchically correct order</summary>
     /// <remarks>
     ///   This is a field and not a local variable because the stack allocates
     ///   heap memory and we don't want that to happen in a frame-by-frame basis on

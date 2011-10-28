@@ -278,7 +278,15 @@ namespace S33M3Engines
                 }
                 else
                 {
-                    Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.Debug, SwapDesc, out Device, out _swapChain);
+                    try
+                    {
+                        Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.Debug, SwapDesc, out Device,
+                                                   out _swapChain);
+                    }
+                    catch (SharpDXException ex)
+                    {
+                        Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.None, SwapDesc, out Device, out _swapChain);
+                    }
                 }
 
                 //Create the threaded contexts

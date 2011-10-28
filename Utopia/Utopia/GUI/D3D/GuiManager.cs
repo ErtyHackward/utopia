@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using S33M3Engines.D3D;
+using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.InputHandler.KeyboardHelper;
 using S33M3Engines.Sprites;
 using SharpDX;
@@ -23,7 +24,7 @@ namespace Utopia.GUI.D3D
     /// No one should reference this class apart from the game initialization (ninject bind and get)
     ///
     /// </summary>
-    public class GuiManager : DrawableGameComponent
+    public class GuiManager : DrawableGameComponent, IDebugInfo
     {
         /// <summary>Draws the GUI</summary>
         private Nuclex.UserInterface.Visuals.IGuiVisualizer _guiVisualizer;
@@ -34,6 +35,8 @@ namespace Utopia.GUI.D3D
         private readonly D3DEngine _d3DEngine;
         private MouseState _prevMouseState;
         private KeyboardState _prevKeybState;
+
+        private string _debugString;
 
         public GuiManager(Screen screen, D3DEngine d3DEngine)
         {
@@ -71,6 +74,13 @@ namespace Utopia.GUI.D3D
         {
             //Debug.WriteLine("Gui draw start");
             _guiVisualizer.Draw(_screen);
+
+            var v = (Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer)_guiVisualizer;
+
+
+            _debugString = string.Format("Gui Draw calls: {0} Items: {1}", v.Graphics.DrawCalls, v.Graphics.DrawItems);
+            //v.Draw
+
             //Debug.WriteLine("Gui draw end");
         }
 
@@ -114,6 +124,11 @@ namespace Utopia.GUI.D3D
             }
 
             _prevKeybState = Keyboard.GetState();
+        }
+
+        public string GetInfo()
+        {
+            return _debugString;
         }
     }
 }

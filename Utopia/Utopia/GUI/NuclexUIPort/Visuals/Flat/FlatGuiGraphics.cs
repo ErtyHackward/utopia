@@ -346,8 +346,15 @@ namespace Nuclex.UserInterface.Visuals.Flat {
     private Dictionary<string, SpriteTexture> bitmaps;
     /// <summary>Types of frames the painter can draw</summary>
     private Dictionary<string, Frame> frames;
-    /// <summary>Rasterizer state used for drawing the GUI</summary>
-    //private RasterizerState rasterizerState;
+
+      ///// <summary>Rasterizer state used for drawing the GUI</summary>
+      //private RasterizerState rasterizerState;
+      
+      public int DrawCalls { get; private set; }
+
+      public int DrawItems { get; private set; }
+
+
   }
 
 } // namespace Nuclex.UserInterface.Visuals.Flat

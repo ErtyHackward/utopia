@@ -154,7 +154,7 @@ namespace Utopia.GUI.D3D
         public override void Draw(int index)
         {
             _spriteRender.Begin(SpriteRenderer.FilterMode.Linear);
-            _spriteRender.Render(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
+            _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
             _spriteRender.End();
 
         }
