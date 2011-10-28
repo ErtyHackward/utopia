@@ -15,6 +15,7 @@ using S33M3Engines;
 using ButtonState = S33M3Engines.InputHandler.MouseHelper.ButtonState;
 using MouseButtons = Nuclex.UserInterface.Input.MouseButtons;
 using Screen = Nuclex.UserInterface.Screen;
+using SharpDX.Direct3D11;
 
 namespace Utopia.GUI.D3D
 {
@@ -72,6 +73,8 @@ namespace Utopia.GUI.D3D
         //Draw at 2d level ! (Last draw called)
         public override void Draw(int index)
         {
+            //Clear the Depth Buffer Befor render the GUI !! => This draw must be DONE AFTER ALL other "3D" Draw.
+            _d3DEngine.Context.ClearDepthStencilView(_d3DEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
             //Debug.WriteLine("Gui draw start");
             _guiVisualizer.Draw(_screen);
 

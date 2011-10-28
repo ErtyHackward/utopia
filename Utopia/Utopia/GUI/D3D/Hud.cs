@@ -153,7 +153,7 @@ namespace Utopia.GUI.D3D
         //Draw at 2d level ! (Last draw called)
         public override void Draw(int index)
         {
-            _spriteRender.Begin(SpriteRenderer.FilterMode.Linear);
+            _spriteRender.Begin(true, SpriteRenderer.FilterMode.Linear);
             _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
             _spriteRender.End();
 

@@ -236,10 +236,8 @@ namespace Utopia.Entities
                 //Draw a sprite for lighting block
                 if (profile.IsEmissiveColorLightSource)
                 {
-                    spriteRenderer.Begin(SpriteRenderer.FilterMode.Point);
-
+                    spriteRenderer.Begin(false, SpriteRenderer.FilterMode.Point);
                     spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, new Color4(0.5f, profile.EmissiveColor.R /255, profile.EmissiveColor.G/255, profile.EmissiveColor.B/255), new RectangleF(0,0,textureSize,textureSize));
-
                     spriteRenderer.End();
                 }
 

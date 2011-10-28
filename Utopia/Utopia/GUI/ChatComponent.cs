@@ -218,7 +218,7 @@ namespace Utopia.GUI
         {
             //if (_chatHiden) return;
 
-            _spriteRender.Begin(SpriteRenderer.FilterMode.Point);
+            _spriteRender.Begin(false, SpriteRenderer.FilterMode.Point);
 
             var builder = new StringBuilder();
 
