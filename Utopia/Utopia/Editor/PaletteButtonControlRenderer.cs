@@ -31,7 +31,7 @@ namespace Utopia.Editor
         innerBounds.Inflate(-1f, -1f);
 
         if (control.Texture != null)
-            graphics.DrawCustomTexture(control.Texture, innerBounds, control.Texture.Index);
+            graphics.DrawCustomTexture(control.Texture, innerBounds);
 
         // If there's text assigned to the button, draw it into the button
       if(!string.IsNullOrEmpty(control.Text)) {

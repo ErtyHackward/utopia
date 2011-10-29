@@ -13,8 +13,6 @@ using S33M3Engines.Meshes.Factories;
 using S33M3Engines.Meshes;
 using S33M3Engines.Buffers;
 using S33M3Engines.Struct.Vertex;
-using S33M3Engines.D3D.Effects.Basics;
-using S33M3Engines.Maths;
 using S33M3Engines.Shared.Math;
 using UtopiaContent.Effects.Entities;
 using Utopia.Shared.Cubes;
@@ -26,27 +24,26 @@ using SharpDX.DXGI;
 
 namespace Utopia.Entities
 {
+    /// <summary>
+    /// Provides cached access to items icons
+    /// </summary>
     public class IconFactory : GameComponent
     {
         #region private variables
         private readonly D3DEngine _d3DEngine;
-        public const int IconSize = 32;
-        private Dictionary<int, SpriteTexture> _blockIconLookUp;
-        private ShaderResourceView _iconsTexture;
+        public const int IconSize = 64;
+        private ShaderResourceView _iconsTextureArray;
+
+        private SpriteTexture _cubesTextureArray;
         #endregion
 
         #region public Variables/properties
         public ShaderResourceView CubesTexture { get; private set; }
-        public ShaderResourceView IconsTexture
-        {
-            get { return _iconsTexture; }
-        }
         #endregion
 
         public IconFactory(D3DEngine d3DEngine)
         {
             _d3DEngine = d3DEngine;
-            _blockIconLookUp = new Dictionary<int, SpriteTexture>();
         }
 
         public override void LoadContent()
@@ -62,29 +59,28 @@ namespace Utopia.Entities
         public override void Dispose()
         {
             CubesTexture.Dispose();
-            foreach (var spriteTexture in _blockIconLookUp.Values) spriteTexture.Dispose();
+            _iconsTextureArray.Dispose();
+            _cubesTextureArray.Dispose();
         }
 
         #region Public methods
-        public SpriteTexture Lookup(IItem item)
+        public void Lookup(IItem item, out SpriteTexture texture, out int textureArrayIndex)
         {
-            SpriteTexture result;
-            //TODO pooling in  a dictionary<entityId,Texture>, but don't forget to unpool entities that become unused !
+            texture = null;
+            textureArrayIndex = 0;
+
             if (item is CubeResource)
             {
-                //CubeResource blockAdder = item as CubeResource;
-                //SpriteTexture texture = new SpriteTexture(IconSize, IconSize, CubesTexture, Vector2.Zero);
-                //texture.Index = blockAdder.CubeId;
-                //return texture;
-                if (_blockIconLookUp.TryGetValue(((CubeResource)item).CubeId, out result))
-                {
-                    return result;
-                }
-                return null;
+                var cubeId = ((CubeResource)item).CubeId;
+                texture = _cubesTextureArray;
+                textureArrayIndex = cubeId - 1;
+                return;
             }
             else if (item is SpriteItem)
             {
+                var spriteItem = (SpriteItem)item;
                 //TODO spriteItem icon (shouldnt be difficult ;)
+                //texture = spriteItem.
             }
             else if (item is VoxelItem)
             {
@@ -94,7 +90,7 @@ namespace Utopia.Entities
                 // option 1 : draw voxelModel in a render target texture (reuse/pool while unchanged)
                 // option 2 :  cpu projection of voxels into a dynamic Texture (making a for loop on blocks, creating a sort of heigtmap in a bitmap)
             }
-            return null;
+            return;
         }
         #endregion
 
@@ -109,7 +105,7 @@ namespace Utopia.Entities
             IMeshFactory meshfactory = new MilkShape3DMeshFactory();
             Mesh meshBluePrint;
 
-            int textureSize = 64;
+            int textureSize = IconSize;
             
             meshfactory.LoadMesh(@"\Meshes\block.txt", out meshBluePrint, 0);
             //Create Vertex/Index Buffer to store the loaded mesh.
@@ -170,7 +166,7 @@ namespace Utopia.Entities
             MaterialChangeMapping.Add(5, 0); //Change the Right Texture Id
 
             //Create a texture for each cubes existing !
-            foreach (ushort cubeId in CubeId.All())
+            foreach (byte cubeId in CubeId.All())
             {
                 //Don't create "Air" cube
                 if (cubeId == 0) continue;
@@ -248,11 +244,14 @@ namespace Utopia.Entities
 
                 //Must be staging as these needs to have CPU read/write access (to create the Texture2d array from them)
                 createdIconsTexture.Add(texture.CloneTexture(ResourceUsage.Staging));
-                _blockIconLookUp.Add(cubeId, texture.CloneToSpriteTexture());
             }
 
             //Create the Icon texture Array
-            ArrayTexture.CreateTexture2D(_d3DEngine.Device, createdIconsTexture.ToArray(), FilterFlags.Linear, "Icon's ArrayTexture", out _iconsTexture);
+            ArrayTexture.CreateTexture2D(_d3DEngine.Device, createdIconsTexture.ToArray(), FilterFlags.Linear, "Icon's ArrayTexture", out _iconsTextureArray);
+
+            // indexes into array corresponds textures with modifier +1 (Air)
+            _cubesTextureArray = new SpriteTexture(textureSize, textureSize, _iconsTextureArray, new Vector2());
+            
 
             //Reset device Default render target
             _d3DEngine.ResetDefaultRenderTargetsAndViewPort();

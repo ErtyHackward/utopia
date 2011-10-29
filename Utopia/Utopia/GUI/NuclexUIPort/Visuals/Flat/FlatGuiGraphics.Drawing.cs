@@ -132,7 +132,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
          }
 
         //the 2 DrawCustomTexture methods were added by Simon ! 
-        public void DrawCustomTexture(SpriteTexture customTex, RectangleF bounds,int textureArrayIndex=0)
+        public void DrawCustomTexture(SpriteTexture customTex, RectangleF bounds, int textureArrayIndex = 0)
         {
 
             var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
@@ -140,7 +140,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
               ref bounds, ref offset
             );
 
-            spriteRenderer.Draw(customTex, destinationRegion, new SharpDX.Rectangle(0, 0, customTex.Width, customTex.Height), Color.White,true ,textureArrayIndex);
+            spriteRenderer.Draw(customTex, destinationRegion, new SharpDX.Rectangle(0, 0, customTex.Width, customTex.Height), Color.White, true, textureArrayIndex);
         }
 
         public void DrawCustomTexture(SpriteTexture customTex, Rectangle textureSourceRect, RectangleF bounds)

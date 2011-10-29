@@ -20,6 +20,7 @@ License along with this library
 
 using Nuclex.UserInterface.Visuals.Flat;
 using Nuclex.UserInterface;
+using S33M3Engines.Shared.Sprites;
 
 namespace Utopia.GUI.D3D.Inventory
 {
@@ -46,7 +47,9 @@ namespace Utopia.GUI.D3D.Inventory
             #region Item icon
             if (control.Slot != null && !control.Slot.IsEmpty)
             {
-                var tex = control.IconFactory.Lookup(control.Slot.Item);
+                SpriteTexture tex;
+                int textureArrayIndex;
+                control.IconFactory.Lookup(control.Slot.Item, out tex, out textureArrayIndex);
                 if (tex != null)
                 {
                     const int innerBorder = 3;
@@ -56,7 +59,7 @@ namespace Utopia.GUI.D3D.Inventory
                         controlBounds.Width - innerBorder * 2, 
                         controlBounds.Height - innerBorder * 2
                         );
-                    graphics.DrawCustomTexture(tex, texBounds, tex.Index);
+                    graphics.DrawCustomTexture(tex, texBounds, textureArrayIndex);
                 }
                 else
                 {

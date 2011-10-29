@@ -108,7 +108,7 @@ namespace S33M3Engines.Sprites
                 CullMode = CullMode.None,
                 DepthBias = 0,
                 DepthBiasClamp = 1f,
-                IsDepthClipEnabled = false,
+                IsDepthClipEnabled = true,
                 FillMode = FillMode.Solid,
                 IsFrontCounterClockwise = false,
                 IsMultisampleEnabled = true,
@@ -188,7 +188,7 @@ namespace S33M3Engines.Sprites
                 else Render(drawInfo.SpriteTexture, drawInfo.Transform, drawInfo.Color4, drawInfo.SourceRect, true, drawInfo.Depth);
             }
 
-            System.Diagnostics.Debug.WriteLine(string.Format("Sprite renderer: {0}/{1}", _spriteBuffer.DrawCalls, _spriteBuffer.TotalItems));
+            //System.Diagnostics.Debug.WriteLine(string.Format("Sprite renderer: {0}/{1}", _spriteBuffer.DrawCalls, _spriteBuffer.TotalItems));
         }
 
         /// <summary>
@@ -212,12 +212,15 @@ namespace S33M3Engines.Sprites
         /// <param name="color"></param>
         /// <param name="sourceRectInTextCoord"></param>
         /// <param name="textureArrayIndex"></param>
-        public void Draw(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color, bool sourceRectInTextCoord = true, int textureArrayIndex = 0)
+        public void Draw(SpriteTexture spriteTexture, Rectangle destRect, Rectangle srcRect, Color color, bool sourceRectInTextCoord = true, int textureArrayIndex = -1)
         {
             var transform = Matrix.Scaling((float)destRect.Width / srcRect.Width, (float)destRect.Height / srcRect.Height, 0) *
                    Matrix.Translation(destRect.Left, destRect.Top, 0);
 
             var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height);
+
+            if (textureArrayIndex == -1)
+                textureArrayIndex = spriteTexture.Index;
 
             Draw(spriteTexture, ref transform, new Color4(color.ToVector4()), src, sourceRectInTextCoord, textureArrayIndex);
         }
@@ -231,8 +234,11 @@ namespace S33M3Engines.Sprites
         /// <param name="sourceRect"></param>
         /// <param name="sourceRectInTextCoord"></param>
         /// <param name="textureArrayIndex"></param>
-        public void Draw(SpriteTexture spriteTexture, ref Matrix transform, Color4 color,  RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true, int textureArrayIndex = 0)
+        public void Draw(SpriteTexture spriteTexture, ref Matrix transform, Color4 color,  RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true, int textureArrayIndex = -1)
         {
+            if (textureArrayIndex == -1)
+                textureArrayIndex = spriteTexture.Index;
+
             _currentDepth -= 0.001f;
             _spriteBuffer.Add(spriteTexture, ref transform, color, sourceRect, sourceRectInTextCoord, textureArrayIndex, _currentDepth);
         }
@@ -382,8 +388,11 @@ namespace S33M3Engines.Sprites
         /// <param name="color"></param>
         /// <param name="sourceRect"></param>
         /// <param name="sourceRectInTextCoord"></param>
-        private void Render(SpriteTexture spriteTexture, Matrix transform, Color4 color, RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true, float depth = 0)
+        private void Render(SpriteTexture spriteTexture, Matrix transform, Color4 color, RectangleF sourceRect = default(RectangleF), bool sourceRectInTextCoord = true, float depth = 0, int textureArrayIndex = -1)
         {
+            if (textureArrayIndex == -1)
+                textureArrayIndex = spriteTexture.Index;
+
             _vBuffer.SetToDevice(0); // Set the Vertex buffer
 
             //Set Par Batch Constant
@@ -396,7 +405,7 @@ namespace S33M3Engines.Sprites
 
             // Set per-instance data
             _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
-            _effect.CBPerInstance.Values.TextureArrayIndex = 0;
+            _effect.CBPerInstance.Values.TextureArrayIndex = (uint)textureArrayIndex;
             _effect.CBPerInstance.Values.Color = color;
             _effect.CBPerInstance.Values.Depth = depth;
             if (sourceRect == default(RectangleF))
