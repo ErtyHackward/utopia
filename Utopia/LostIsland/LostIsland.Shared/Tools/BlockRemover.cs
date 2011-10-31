@@ -58,6 +58,8 @@ namespace LostIsland.Shared.Tools
             }
         }
 
+        public uint StaticId { get; set; }
+
         public int MaxStackSize
         {
             get { return 1; }
@@ -90,24 +92,8 @@ namespace LostIsland.Shared.Tools
                 //Get the chunk
                 var chunk = _landscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
 
-                IBlockLinkedEntity entity;
-                Entity removedEntity;
-                for (int entityId = chunk.Entities.Data.Count - 1; entityId >= 0; entityId--)
-                {
-                    entity = chunk.Entities.Data[entityId] as IBlockLinkedEntity;
-
-                    if (entity != null)
-                    {
-                        //If the linkedCube entity is removed, then remove the entity also.
-                        if (entity.LinkedCube == owner.EntityState.PickedBlockPosition)
-                        {
-                            chunk.Entities.RemoveByArrayIndex(entityId, owner.EntityId, out removedEntity);
-                            // Add entity on ground or in Inventory
-                            //TOTO Enity picking ??
-                        }
-                    }
-                }
-
+                chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
+                
                 //change the Block to AIR
                 cursor.Write(CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
                 impact.Success = true;
@@ -149,6 +135,5 @@ namespace LostIsland.Shared.Tools
             //}
             return impact;
         }
-
     }
 }

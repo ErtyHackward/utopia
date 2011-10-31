@@ -107,9 +107,9 @@ namespace Utopia.Shared.Entities.Dynamic
         public IItem LookupItem(uint itemId)
         {
             if (itemId==0) return null;
-            foreach (ContainedSlot slot in Inventory)
+            foreach (var slot in Inventory)
             {
-                if (slot.Item.EntityId == itemId) return slot.Item;
+                if (slot.Item.StaticId == itemId) return slot.Item;
             }
 
             var equipmentSlot = Equipment.Find(itemId);

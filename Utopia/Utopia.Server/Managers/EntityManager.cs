@@ -2,6 +2,7 @@
 using System.Linq;
 using Utopia.Server.Structs;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 
@@ -34,7 +35,9 @@ namespace Utopia.Server.Managers
                 if (e.Connection.ServerEntity.LockedEntity != null)
                 {
                     lock (_lockedEntities)
+                    {
                         _lockedEntities.Remove(e.Connection.ServerEntity.LockedEntity.EntityId);
+                    }
                     e.Connection.ServerEntity.LockedEntity = null;
                 }
             }
@@ -74,7 +77,7 @@ namespace Utopia.Server.Managers
         private void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
         {
             var connection = sender as ClientConnection;
-            if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.EntityId)
+            if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.DynamicId)
             {
                 connection.ServerEntity.DynamicEntity.Rotation = e.Message.Direction;
             }
@@ -83,7 +86,7 @@ namespace Utopia.Server.Managers
         private void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
         {
             var connection = sender as ClientConnection;
-            if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.EntityId)
+            if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.DynamicId)
             {
                 connection.ServerEntity.DynamicEntity.Position = e.Message.Position;
             }
@@ -102,16 +105,21 @@ namespace Utopia.Server.Managers
                         return;
                     }
 
-                    Entity entity = null;
-                    if (!_server.LandscapeManager.SurroundChunks(connection.ServerEntity.DynamicEntity.Position).Any(chunk => chunk.Entities.ContainsId(e.Message.EntityId, out entity)))
+                    IEntity lockEntity = null;
+                    IStaticEntity lockStatic = null;
+                    if (!_server.LandscapeManager.SurroundChunks(connection.ServerEntity.DynamicEntity.Position).Any(chunk => chunk.Entities.ContainsId(e.Message.EntityId, out lockStatic)))
                     {
                         ServerDynamicEntity dynEntity;
                         if (_server.AreaManager.TryFind(e.Message.EntityId, out dynEntity))
-                            entity = (Entity)dynEntity.DynamicEntity;
+                            lockEntity = (Entity)dynEntity.DynamicEntity;
+                    }
+                    else
+                    {
+                        lockEntity = lockStatic;
                     }
 
-                    _lockedEntities.Add(e.Message.EntityId, connection.ServerEntity.DynamicEntity.EntityId);
-                    connection.ServerEntity.LockedEntity = entity;
+                    _lockedEntities.Add(e.Message.EntityId, connection.ServerEntity.DynamicEntity.DynamicId);
+                    connection.ServerEntity.LockedEntity = lockEntity;
                     connection.SendAsync(new EntityLockResultMessage { EntityId = e.Message.EntityId, LockResult = LockResult.SuccessLocked });
                 }
                 else
@@ -119,7 +127,7 @@ namespace Utopia.Server.Managers
                     uint lockOwner;
                     if (_lockedEntities.TryGetValue(e.Message.EntityId, out lockOwner))
                     {
-                        if (lockOwner == connection.ServerEntity.DynamicEntity.EntityId)
+                        if (lockOwner == connection.ServerEntity.DynamicEntity.DynamicId)
                         {
                             _lockedEntities.Remove(e.Message.EntityId);
                             connection.ServerEntity.LockedEntity = null;

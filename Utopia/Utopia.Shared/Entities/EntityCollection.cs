@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities
 {
@@ -12,14 +13,10 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public class EntityCollection
     {
-        private readonly List<Entity> _entities = new List<Entity>();
+        private readonly SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
         private readonly object _syncRoot = new object();
 
         #region Events
-
-        public List<Entity> Data { get { return _entities; } }
-        public bool IsDirty { get; set; }
-
         /// <summary>
         /// Occurs when new static entity was added
         /// </summary>
@@ -46,6 +43,8 @@ namespace Utopia.Shared.Entities
 
         #endregion
 
+        public bool IsDirty { get; set; }
+
         /// <summary>
         /// Gets entities count in collection
         /// </summary>
@@ -53,9 +52,9 @@ namespace Utopia.Shared.Entities
         {
             get { return _entities.Count; }
         }
-
+        
         /// <summary>
-        /// Gets parent chunk class
+        /// Gets parent chunk object
         /// </summary>
         public AbstractChunk Chunk { get; private set; }
 
@@ -65,38 +64,56 @@ namespace Utopia.Shared.Entities
         }
 
         /// <summary>
-        /// Adds entity to collection (with locking)
+        /// Returns free unique number for this collection
+        /// </summary>
+        /// <returns></returns>
+        public uint GetFreeId()
+        {
+            lock (_entities)
+            {
+                if(_entities.Count > 0)
+                    return _entities[_entities.Keys[_entities.Count - 1]].StaticId + 1;
+                return 1;
+            }
+        }
+        
+        /// <summary>
+        /// Adds entity to collection (with locking). Assing new unique id for the entity
         /// </summary>
         /// <param name="entity"></param>
-        /// <param name="parentId"></param>
-        public void Add(Entity entity, uint parentId = 0)
+        /// <param name="parentDynamicId"></param>
+        public void Add(IStaticEntity entity, uint parentDynamicId = 0)
         {
             lock (_syncRoot)
-                _entities.Add(entity);
+            {
+                entity.StaticId = GetFreeId();
+                _entities.Add(entity.StaticId, entity);
+            }
             IsDirty = true;
-            OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentEntityId = parentId });
+            OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicId });
         }
 
         /// <summary>
-        /// Tries to add entity into collection
+        /// Tries to add entity into collection. Assign new unique id for the entity
         /// </summary>
         /// <param name="entity">Entity object to add</param>
-        /// <param name="parentId"></param>
+        /// <param name="parentDynamicId"></param>
         /// <param name="timeout">Number of milliseconds to wait for lock</param>
         /// <returns>True if succeed otherwise False</returns>
-        public bool TryAdd(Entity entity, uint parentId = 0, int timeout = 0)
+        public bool TryAdd(IStaticEntity entity, uint parentDynamicId = 0, int timeout = 0)
         {
             if (Monitor.TryEnter(_syncRoot, timeout))
             {
                 try
                 {
                     IsDirty = true;
-                    _entities.Add(entity);
+                    entity.StaticId = GetFreeId();
+                    _entities.Add(entity.StaticId, entity);
                 }
                 finally
                 {
                     Monitor.Exit(_syncRoot);
-                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentEntityId = parentId });
+                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicId });
                 }
                 return true;
             }
@@ -108,13 +125,13 @@ namespace Utopia.Shared.Entities
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="parentId"></param>
-        public void Remove(Entity entity, uint parentId = 0)
+        public void Remove(IStaticEntity entity, uint parentId = 0)
         {
             lock (_syncRoot)
-                _entities.Remove(entity);
+                _entities.Remove(entity.StaticId);
 
             IsDirty = true;
-            OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentEntityId = parentId });
+            OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentId });
         }
 
         /// <summary>
@@ -124,19 +141,19 @@ namespace Utopia.Shared.Entities
         /// <param name="parentId"></param>
         /// <param name="timeout">Number of milliseconds to wait for lock</param>
         /// <returns>True if succeed otherwise False</returns>
-        public bool TryRemove(Entity entity, uint parentId, int timeout = 0)
+        public bool TryRemove(IStaticEntity entity, uint parentId, int timeout = 0)
         {
             if (Monitor.TryEnter(_syncRoot, timeout))
             {
                 try
                 {
                     IsDirty = true;
-                    _entities.Remove(entity);
+                    _entities.Remove(entity.StaticId);
                 }
                 finally
                 {
                     Monitor.Exit(_syncRoot);
-                    OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentEntityId = parentId });
+                    OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentId });
                 }
                 return true;
             }
@@ -146,39 +163,21 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Removes entity by ID
         /// </summary>
-        /// <param name="p"></param>
-        /// <param name="parentEntityId"></param>
+        /// <param name="staticEntityId"></param>
+        /// <param name="parentDynamicEntityId"></param>
         /// <param name="entity"></param>
-        public void RemoveById(uint p, uint parentEntityId, out Entity entity)
+        public void RemoveById(uint staticEntityId, uint parentDynamicEntityId, out IStaticEntity entity)
         {
             lock (_syncRoot)
             {
-                var index = _entities.FindIndex(e => e.EntityId == p);
-                if (index != -1)
+                if(_entities.TryGetValue(staticEntityId, out entity))
                 {
                     IsDirty = true;
-                    entity = _entities[index];
-                    _entities.RemoveAt(index);
-                    OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentEntityId = parentEntityId });
+                    _entities.Remove(staticEntityId);
+                    OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicEntityId });
                 }
-                else entity = null;
             }
         }
-
-        /// <summary>
-        /// Remove by Index
-        /// </summary>
-        /// <param name="p"></param>
-        /// <param name="parentEntityId"></param>
-        /// <param name="entity"></param>
-        public void RemoveByArrayIndex(int index, uint parentEntityId, out Entity entity)
-        {
-            IsDirty = true;
-            entity = _entities[index];
-            _entities.RemoveAt(index);
-            OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentEntityId = parentEntityId });
-        }
-
 
         /// <summary>
         /// Removes all entites from the collection
@@ -195,30 +194,43 @@ namespace Utopia.Shared.Entities
         /// Use this method to enumerate over the entites with exclusive lock. (Use it only for fast operations)
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Entity> EnumerateFast()
+        public IEnumerable<IStaticEntity> EnumerateFast()
         {
             lock (_syncRoot)
             {
                 foreach (var entity in _entities)
                 {
-                    yield return entity;
+                    yield return entity.Value;
                 }
             }
         }
 
         /// <summary>
-        /// Use this method to emumerate over the copy of the list of entities. (Use it for slow operations )
+        /// Use this method to iterate over entities of type specified
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public IEnumerable<Entity> EnumerateSlow()
+        public IEnumerable<T> Enumerate<T>()
         {
-            List<Entity> listCopy;
             lock (_syncRoot)
             {
-                listCopy = new List<Entity>(_entities);
+                foreach (var entity in _entities)
+                {
+                    if(entity.Value is T)
+                        yield return (T)entity.Value;
+                }
             }
+        }
 
-            return listCopy;
+        public void RemoveAll<T>(Predicate<T> condition)
+        {
+            //TODO: test for perfomance
+            for (int i = _entities.Count - 1; i >= 0; i--)
+            {
+                var value = _entities[_entities.Keys[i]]; // O(1)
+                if (value is T && condition((T)value))
+                    _entities.RemoveAt(i); // O(Count)
+            }
         }
 
         /// <summary>
@@ -235,7 +247,7 @@ namespace Utopia.Shared.Entities
 
                 while (ms.Position < offset + length)
                 {
-                    var entity = EntityFactory.Instance.CreateFromBytes(reader);
+                    var entity = (IStaticEntity)EntityFactory.Instance.CreateFromBytes(reader);
                     Add(entity);
                 }
             }
@@ -251,7 +263,7 @@ namespace Utopia.Shared.Entities
             {
                 foreach (var entity in _entities)
                 {
-                    entity.Save(writer);
+                    entity.Value.Save(writer);
                 }
             }
         }
@@ -259,13 +271,13 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Detects if spicified entity in this collection
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="staticEntityId"></param>
         /// <returns></returns>
-        public bool ContainsId(uint p)
+        public bool ContainsId(uint staticEntityId)
         {
             lock (_syncRoot)
             {
-                return _entities.Find(e => e.EntityId == p) != null;
+                return _entities.ContainsKey(staticEntityId);
             }
         }
 
@@ -275,11 +287,11 @@ namespace Utopia.Shared.Entities
         /// <param name="p"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public bool ContainsId(uint p, out Entity entity)
+        public bool ContainsId(uint p, out IStaticEntity entity)
         {
             lock (_syncRoot)
             {
-                return (entity = _entities.Find(e => e.EntityId == p)) != null;
+                return _entities.TryGetValue(p, out entity);
             }
         }
     }

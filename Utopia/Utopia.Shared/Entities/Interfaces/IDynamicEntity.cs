@@ -44,5 +44,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         DynamicEntityState EntityState { get; set; }
 
+        /// <summary>
+        /// Gets an unique entity identificator
+        /// </summary>
+        uint DynamicId { get; }
+
     }
 }

@@ -1,187 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Utopia.Shared.Chunks.Entities.VoxelModel" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="11.25" Y="1.5" Width="1.5" />
+  <Class Name="Utopia.Shared.Entities.Entity" Collapsed="true">
+    <Position X="11.5" Y="2.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAEgIAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\VoxelModel.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.CharacterEntity" Collapsed="true">
-    <Position X="7" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAiIAAAAAACAgAAAQAAAQAAAAAAAAAAAAAAgAAAAA=</HashCode>
-      <FileName>Chunks\Entities\CharacterEntity.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.DynamicEntity" Collapsed="true">
-    <Position X="7" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ACAAgIAAAACAAJAgAAAAAAAAEAAFAAAAAKAAAAAAQAA=</HashCode>
-      <FileName>Chunks\Entities\DynamicEntity.cs</FileName>
+      <HashCode>AAAAkIAgAAYAgIAggBAAAAAAAAAAAIAAAQAAAAAAAAA=</HashCode>
+      <FileName>Entities\Entity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.DynamicEntityEffect" Collapsed="true">
-    <Position X="9.5" Y="0.5" Width="1.5" />
+  <Class Name="Utopia.Shared.Entities.SpriteEntity" Collapsed="true">
+    <Position X="12.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\DynamicEntityEffect.cs</FileName>
+      <HashCode>AAAAgIAAAAAAAABAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\SpriteEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Entity" Collapsed="true">
-    <Position X="7" Y="0.5" Width="1.5" />
+  <Class Name="Utopia.Shared.Entities.VoxelEntity" Collapsed="true">
+    <Position X="10.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAkIAgAAIAgIAggAAAAAAAAAAAAIAAAQAAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\Entity.cs</FileName>
+      <HashCode>AAAAgIAAAAAAAQAAAgAAAQgAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Entities\VoxelEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.EntityCollection" Collapsed="true">
-    <Position X="11.25" Y="0.5" Width="1.5" />
+  <Class Name="Utopia.Shared.Entities.Dynamic.DynamicEntity" Collapsed="true">
+    <Position X="8.5" Y="6.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AoIAAAAAAAAJAAAAAABABASAAAAIAAAAAAAACABAAAA=</HashCode>
-      <FileName>Chunks\Entities\EntityCollection.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.EntityFactory" Collapsed="true">
-    <Position X="9.5" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>BAQEAAAAAAAAAAAEAAAAAAAAAAAQAQAAQAAAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\EntityFactory.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.PlayerCharacter" Collapsed="true">
-    <Position X="7" Y="7.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAEAAgAAAAAAAAAAAAAIACAAAAAAAAAEAAAAAAAAE=</HashCode>
-      <FileName>Chunks\Entities\PlayerCharacter.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.SpecialCharacterEntity" Collapsed="true">
-    <Position X="7" Y="6.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAgIAAQAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAQAA=</HashCode>
-      <FileName>Chunks\Entities\SpecialCharacterEntity.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.VoxelEntity" Collapsed="true">
-    <Position X="6" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAgIAAAAAAAQAAAgAAAQAAAAAAAAAAAAgAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\VoxelEntity.cs</FileName>
+      <HashCode>ACAAgJAAAACAAJAgAAAAAAAAEAAFAAAAAKAAAAAAQAA=</HashCode>
+      <FileName>Entities\Dynamic\DynamicEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Inventory.Weapon" Collapsed="true">
-    <Position X="3.75" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAACAAAAAAAAAAAAAAAABAAAEAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\Weapon.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Inventory.Armor" Collapsed="true">
-    <Position X="1.5" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\Armor.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Inventory.CharacterEquipment" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAJAkpAAQAAIiAUAEAAAAIAQBAAARAQEYAAAAAIESAA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\CharacterEquipment.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Inventory.CharacterEquipmentEventArgs" Collapsed="true">
-    <Position X="12.5" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAgA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\CharacterEquipment.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Inventory.ContainedSlot" Collapsed="true">
-    <Position X="0.5" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\ContainedSlot.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Inventory.Item" Collapsed="true">
-    <Position X="1.75" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAsYAAQCAAAAAAAAAAAQAAAAAAAAAAIAAAABEAAAA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\Item.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Inventory.Slot" Collapsed="true">
-    <Position X="0.5" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AABAgIAAAAAAAAgQAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\Slot.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Inventory.SlotContainer&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="12.25" Y="5.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ACAAiMAIAAAAAFAAAAAAAAAKABAAAAAAAAAABAIEEAA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\SlotContainer.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Inventory.Tool" Collapsed="true">
-    <Position X="3.75" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\Tool.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Utopia.Shared.Chunks.Entities.Inventory.ToolbarSlot" Collapsed="true">
-    <Position X="0.5" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAgIAAAAAAAAAAAAAAAAAAAAAAAAAACACAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\ToolbarSlot.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Struct Name="Utopia.Shared.Chunks.Entities.DynamicEntityState" Collapsed="true">
-    <Position X="9.5" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EAABAAAAAAAAAAQAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Chunks\Entities\DynamicEntityState.cs</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Enum Name="Utopia.Shared.Chunks.Entities.EntityClassId" Collapsed="true">
-    <Position X="9.5" Y="4" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EAQgCSAAEAAAQIQCAAAAAAAAAIAABAAAAACAAAFAAAA=</HashCode>
-      <FileName>Chunks\Entities\EntityClassId.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="Utopia.Shared.Chunks.Entities.EntityDisplacementModes" Collapsed="true">
-    <Position X="11.25" Y="4" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAgAAAA=</HashCode>
-      <FileName>Chunks\Entities\EntityDisplacementModes.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="Utopia.Shared.Chunks.Entities.EntityType" Collapsed="true">
-    <Position X="9.5" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAQA=</HashCode>
-      <FileName>Chunks\Entities\EntityType.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="Utopia.Shared.Chunks.Entities.Inventory.EquipmentSlotType" Collapsed="true">
-    <Position X="4" Y="5.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAMQEBEAAAAAAIAAAAAAAACAAAAAAAAAYAAAAAAEAAA=</HashCode>
-      <FileName>Chunks\Entities\Inventory\EquipmentSlotType.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

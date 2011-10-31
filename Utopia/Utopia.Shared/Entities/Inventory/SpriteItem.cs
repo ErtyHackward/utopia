@@ -14,6 +14,7 @@ namespace Utopia.Shared.Entities.Inventory
         public abstract int MaxStackSize { get; }
         public string UniqueName { get; set; }
         public abstract string Description { get; }
+        public uint StaticId { get; set; }
 
         public virtual string StackType
         {
@@ -43,5 +44,7 @@ namespace Utopia.Shared.Entities.Inventory
         #endregion
 
 
+
+        
     }
 }

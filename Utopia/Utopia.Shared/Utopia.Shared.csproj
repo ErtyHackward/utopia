@@ -108,6 +108,7 @@
     <Compile Include="Entities\EntityFactory.cs" />
     <Compile Include="Entities\EntityType.cs" />
     <Compile Include="Entities\Events\BlocksChangedEventArgs.cs" />
+    <Compile Include="Entities\Events\DynamicEntityCollectionEventArgs.cs" />
     <Compile Include="Entities\Events\DynamicEntityEventArgs.cs" />
     <Compile Include="Entities\Events\EntityCollectionEventArgs.cs" />
     <Compile Include="Entities\Events\EntityFactoryEventArgs.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Entities\Interfaces\INecklace.cs" />
     <Compile Include="Entities\Interfaces\IRing.cs" />
     <Compile Include="Entities\Interfaces\ISlotContainer.cs" />
+    <Compile Include="Entities\Interfaces\IStaticEntity.cs" />
     <Compile Include="Entities\Interfaces\ITool.cs" />
     <Compile Include="Entities\Interfaces\IToolImpact.cs" />
     <Compile Include="Entities\Interfaces\ITorsoArmor.cs" />

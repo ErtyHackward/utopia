@@ -114,6 +114,11 @@ namespace Utopia.Shared.Entities.Dynamic
             }
         }
 
+        /// <summary>
+        /// Gets or sets dynamic entity id
+        /// </summary>
+        public uint DynamicId { get; set; }
+
         #endregion
         
         public override void Load(System.IO.BinaryReader reader)

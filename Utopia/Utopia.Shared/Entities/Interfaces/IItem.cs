@@ -2,7 +2,7 @@ using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
-    public interface IItem : IEntity
+    public interface IItem : IStaticEntity
     {
         EquipmentSlotType AllowedSlots { get; set; }   
         int MaxStackSize { get; }
