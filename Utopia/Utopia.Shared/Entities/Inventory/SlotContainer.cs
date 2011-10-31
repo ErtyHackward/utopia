@@ -379,7 +379,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public bool Contains(IEntity entity)
+        public bool Contains(IStaticEntity entity)
         {
             for (int x = 0; x < _gridSize.X; x++)
             {
@@ -387,7 +387,7 @@ namespace Utopia.Shared.Entities.Inventory
                 {
                     if (_items[x, y] != null)
                     {
-                        if (_items[x, y].Item.EntityId == entity.EntityId)
+                        if (_items[x, y].Item.StaticId == entity.StaticId)
                             return true;
                     }
                 }
@@ -398,7 +398,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Performs search for entity and returns slot
         /// </summary>
-        /// <param name="entityid"></param>
+        /// <param name="entityid">static entity id</param>
         /// <returns></returns>
         public T Find(uint entityid)
         {
@@ -408,7 +408,7 @@ namespace Utopia.Shared.Entities.Inventory
                 {
                     if (_items[x, y] != null)
                     {
-                        if (_items[x, y].Item.EntityId == entityid)
+                        if (_items[x, y].Item.StaticId == entityid)
                             return _items[x, y];
                     }
                 }

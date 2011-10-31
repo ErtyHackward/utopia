@@ -59,12 +59,12 @@ namespace Utopia.Server.Structs
 
         void AreaStaticEntityRemoved(object sender, EntityCollectionEventArgs e)
         {
-            Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.EntityId, TakerEntityId = e.ParentEntityId });
+            Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.ParentDynamicEntityId });
         }
 
         void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
         {
-            Connection.SendAsync(new EntityInMessage { Entity = e.Entity, ParentEntityId = e.ParentEntityId });
+            Connection.SendAsync(new EntityInMessage { Entity = e.Entity, ParentEntityId = e.ParentDynamicEntityId });
         }
 
         void AreaEntityEquipment(object sender, CharacterEquipmentEventArgs e)
@@ -95,7 +95,7 @@ namespace Utopia.Server.Structs
             if (e.Entity != DynamicEntity)
             {
                 //Console.WriteLine("TO: {0},  {1} entity out of view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.DynamicEntity.EntityId });
+                Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.DynamicEntity.DynamicId });
             }
         }
 
@@ -124,7 +124,7 @@ namespace Utopia.Server.Structs
                 if (serverEntity != DynamicEntity)
                 {
                     //Console.WriteLine("TO: {0}, entity {1} out (remove)", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.SendAsync(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.EntityId });
+                    Connection.SendAsync(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.DynamicId });
                 }
             }
         }
@@ -139,12 +139,12 @@ namespace Utopia.Server.Structs
             if (e.Entity != DynamicEntity)
             {
                 Connection.SendAsync(new EntityUseMessage 
-                { 
-                    EntityId = e.Entity.EntityId, 
+                {
+                    EntityId = e.Entity.DynamicId, 
                     NewBlockPosition = e.NewBlockPosition, 
                     PickedBlockPosition = e.PickedBlockPosition,
                     PickedEntityPosition = e.PickedEntityPosition,
-                    ToolId = e.Tool.EntityId
+                    ToolId = e.Tool.StaticId
                 });
             }
         }
@@ -153,7 +153,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.SendAsync(new EntityPositionMessage { EntityId = e.Entity.EntityId, Position = e.Entity.Position });
+                Connection.SendAsync(new EntityPositionMessage { EntityId = e.Entity.DynamicId, Position = e.Entity.Position });
             }
         }
 
@@ -161,7 +161,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.SendAsync(new EntityDirectionMessage { EntityId = e.Entity.EntityId, Direction = e.Entity.Rotation });
+                Connection.SendAsync(new EntityDirectionMessage { EntityId = e.Entity.DynamicId, Direction = e.Entity.Rotation });
             }
         }
 
@@ -212,7 +212,7 @@ namespace Utopia.Server.Structs
                     ServerChunk chunk;
                     if ((chunk = _server.LandscapeManager.SurroundChunks(playerCharacter.Position).First(c => c.Entities.ContainsId(itemTransferMessage.ItemEntityId))) != null)
                     {
-                        Entity entity;
+                        IStaticEntity entity;
                         chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, playerCharacter.EntityId, out entity);
 
                         _itemTaken = new ContainedSlot { Item = (IItem)entity };
@@ -301,22 +301,21 @@ namespace Utopia.Server.Structs
                     if (playerCharacter.Inventory.TakeItem(containedSlot.GridPosition, containedSlot.ItemsCount))
                     {
                         // check if we have correct entityId
-                        if (itemType.Item.EntityId == itemTransferMessage.ItemEntityId)
+                        if (itemType.Item.StaticId == itemTransferMessage.ItemEntityId)
                         {
                             // repeat for entities count
                             for (int i = 0; i < itemTransferMessage.ItemsCount; i++)
                             {
                                 // throw it
-                                chunk.Entities.Add((Entity)itemType.Item, playerCharacter.EntityId);
+                                chunk.Entities.Add(itemType.Item, playerCharacter.EntityId);
                             }
                             // ok
                             return true;
                         }
-                        else
-                        {
-                            // return item to inventory
-                            playerCharacter.Inventory.PutItem(itemType.Item, containedSlot.GridPosition, containedSlot.ItemsCount);
-                        }
+
+                        // return item to inventory
+                        playerCharacter.Inventory.PutItem(itemType.Item, containedSlot.GridPosition, containedSlot.ItemsCount);
+                        
                     }
                 }
 

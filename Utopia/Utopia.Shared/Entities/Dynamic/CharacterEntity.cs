@@ -47,13 +47,13 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Returns tool that can be used
         /// </summary>
-        /// <param name="toolId"></param>
+        /// <param name="toolId">tool static id</param>
         /// <returns>Tool instance or null</returns>
         public ITool FindToolById(uint toolId)
         {
-            if (Equipment.LeftTool != null && Equipment.LeftTool.EntityId == toolId)
+            if (Equipment.LeftTool != null && Equipment.LeftTool.StaticId == toolId)
                 return Equipment.LeftTool;
-            if (Equipment.RightTool != null && Equipment.RightTool.EntityId == toolId)
+            if (Equipment.RightTool != null && Equipment.RightTool.StaticId == toolId)
                 return Equipment.RightTool;
 
             var slot = Inventory.Find(toolId);

@@ -1,6 +1,5 @@
 ﻿using System;
 using S33M3Engines.Shared.Math;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -26,7 +25,7 @@ namespace Utopia.Server.Structs
         /// <summary>
         /// Gets or sets currently locked entity by the player
         /// </summary>
-        public Entity LockedEntity { get; set; }
+        public IEntity LockedEntity { get; set; }
 
         /// <summary>
         /// Gets wrapped entity

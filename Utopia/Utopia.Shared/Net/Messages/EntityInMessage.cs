@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Interfaces;
 
 namespace Utopia.Shared.Net.Messages
@@ -12,7 +13,7 @@ namespace Utopia.Shared.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct EntityInMessage : IBinaryMessage
     {
-        private Entity _entity;
+        private IEntity _entity;
         private uint _parentEntityId;
 
         /// <summary>
@@ -23,7 +24,7 @@ namespace Utopia.Shared.Net.Messages
             get { return (byte)MessageTypes.EntityIn; }
         }
 
-        public Entity Entity
+        public IEntity Entity
         {
             get { return _entity; }
             set { _entity = value; }
@@ -43,7 +44,7 @@ namespace Utopia.Shared.Net.Messages
             EntityInMessage msg;
 
             msg._parentEntityId = reader.ReadUInt32();
-            msg._entity = EntityFactory.Instance.CreateFromBytes(reader);;
+            msg._entity = EntityFactory.Instance.CreateFromBytes(reader);
 
             return msg;
         }

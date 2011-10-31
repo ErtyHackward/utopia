@@ -4,6 +4,9 @@ using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
+    /// <summary>
+    /// Base interface for entities
+    /// </summary>
     public interface IEntity : IBinaryStorable
     {
 
@@ -41,10 +44,5 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets a displayed entity name
         /// </summary>
         string DisplayName { get; }
-
-        /// <summary>
-        /// Gets an unique entity identificator
-        /// </summary>
-        uint EntityId { get; }
     }
 }

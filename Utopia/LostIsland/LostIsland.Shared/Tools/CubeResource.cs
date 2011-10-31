@@ -86,24 +86,8 @@ namespace LostIsland.Shared.Tools
                     if (cube != Utopia.Shared.Cubes.CubeId.Air)
                     {
                         var chunk = _landscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
-
-                        IBlockLinkedEntity bentity;
-                        Entity removedEntity;
-                        for (int entityId = chunk.Entities.Data.Count - 1; entityId >= 0; entityId--)
-                        {
-                            bentity = chunk.Entities.Data[entityId] as IBlockLinkedEntity;
-
-                            if (bentity != null)
-                            {
-                                //If the linkedCube entity is removed, then remove the entity also.
-                                if (bentity.LinkedCube == owner.EntityState.PickedBlockPosition)
-                                {
-                                    chunk.Entities.RemoveByArrayIndex(entityId, owner.EntityId, out removedEntity);
-                                    // Add entity on ground or in Inventory
-                                    //TOTO Enity picking ??
-                                }
-                            }
-                        }
+                        
+                        chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
 
                         //change the Block to AIR
                         cursor.Write(Utopia.Shared.Cubes.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
@@ -132,6 +116,11 @@ namespace LostIsland.Shared.Tools
             throw new System.NotImplementedException();
         }
 
-        
+
+        public uint StaticId
+        {
+            get;
+            set;
+        }
     }
 }

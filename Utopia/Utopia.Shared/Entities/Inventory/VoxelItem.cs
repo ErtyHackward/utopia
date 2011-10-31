@@ -14,6 +14,8 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public virtual string UniqueName { get; set; }
 
+        public uint StaticId { get; set; }
+
         public virtual string StackType
         {
             get { return this.GetType().Name; }            
