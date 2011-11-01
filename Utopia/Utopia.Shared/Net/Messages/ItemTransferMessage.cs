@@ -12,9 +12,9 @@ namespace Utopia.Shared.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct ItemTransferMessage : IBinaryMessage
     {
-        private uint _sourceEntityId;
+        private EntityLink _sourceEntityId;
         private Vector2I _sourceSlot;
-        private uint _destinationEntityId;
+        private EntityLink _destinationEntityId;
         private Vector2I _destinationSlot;
         private int _itemsCount;
         private uint _itemEntityId;
@@ -23,7 +23,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Source object item taken from, use 0 if item was taken from world space
         /// </summary>
-        public uint SourceContainerEntityId
+        public EntityLink SourceContainerEntityLink
         {
             get { return _sourceEntityId; }
             set { _sourceEntityId = value; }
@@ -43,7 +43,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Destination entity where item must be placed. Use 0 if you need to throw item to world space
         /// </summary>
-        public uint DestinationContainerEntityId
+        public EntityLink DestinationContainerEntityLink
         {
             get { return _destinationEntityId; }
             set { _destinationEntityId = value; }
@@ -101,9 +101,9 @@ namespace Utopia.Shared.Net.Messages
         /// <param name="writer"></param>
         public void Write(BinaryWriter writer)
         {
-            writer.Write(_sourceEntityId);
+            _sourceEntityId.Save(writer);
             writer.Write(_sourceSlot);
-            writer.Write(_destinationEntityId);
+            _destinationEntityId.Save(writer);
             writer.Write(_destinationSlot);
             writer.Write(_itemEntityId);
             writer.Write(_itemsCount);
@@ -114,9 +114,9 @@ namespace Utopia.Shared.Net.Messages
         {
             ItemTransferMessage msg;
 
-            msg._sourceEntityId = reader.ReadUInt32();
+            msg._sourceEntityId = new EntityLink(reader);
             msg._sourceSlot = reader.ReadVector2I();
-            msg._destinationEntityId = reader.ReadUInt32();
+            msg._destinationEntityId = new EntityLink(reader);
             msg._destinationSlot = reader.ReadVector2I();
             msg._itemEntityId = reader.ReadUInt32();
             msg._itemsCount = reader.ReadInt32();

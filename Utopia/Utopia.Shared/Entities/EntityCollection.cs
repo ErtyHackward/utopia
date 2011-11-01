@@ -87,6 +87,7 @@ namespace Utopia.Shared.Entities
             lock (_syncRoot)
             {
                 entity.StaticId = GetFreeId();
+                entity.ParentChunk = Chunk;
                 _entities.Add(entity.StaticId, entity);
             }
             IsDirty = true;
@@ -108,6 +109,7 @@ namespace Utopia.Shared.Entities
                 {
                     IsDirty = true;
                     entity.StaticId = GetFreeId();
+                    entity.ParentChunk = Chunk;
                     _entities.Add(entity.StaticId, entity);
                 }
                 finally
@@ -127,11 +129,19 @@ namespace Utopia.Shared.Entities
         /// <param name="parentId"></param>
         public void Remove(IStaticEntity entity, uint parentId = 0)
         {
+            bool removed;
             lock (_syncRoot)
-                _entities.Remove(entity.StaticId);
-
-            IsDirty = true;
-            OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentId });
+                removed = _entities.Remove(entity.StaticId);
+            
+            if (removed)
+            {
+                IsDirty = true;
+                entity.ParentChunk = null;
+                OnEntityRemoved(new EntityCollectionEventArgs {
+                    Entity = entity, 
+                    ParentDynamicEntityId = parentId
+                });
+            }
         }
 
         /// <summary>
@@ -145,17 +155,25 @@ namespace Utopia.Shared.Entities
         {
             if (Monitor.TryEnter(_syncRoot, timeout))
             {
+                var removed = false;
                 try
                 {
                     IsDirty = true;
-                    _entities.Remove(entity.StaticId);
+                    removed = _entities.Remove(entity.StaticId);
                 }
                 finally
                 {
                     Monitor.Exit(_syncRoot);
-                    OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentId });
+                    if (removed)
+                    {
+                        entity.ParentChunk = null;
+                        OnEntityRemoved(new EntityCollectionEventArgs {
+                            Entity = entity, 
+                            ParentDynamicEntityId = parentId
+                        });
+                    }
                 }
-                return true;
+                return removed;
             }
             return false;
         }
@@ -174,7 +192,11 @@ namespace Utopia.Shared.Entities
                 {
                     IsDirty = true;
                     _entities.Remove(staticEntityId);
-                    OnEntityRemoved(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicEntityId });
+                    entity.ParentChunk = null;
+                    OnEntityRemoved(new EntityCollectionEventArgs { 
+                        Entity = entity, 
+                        ParentDynamicEntityId = parentDynamicEntityId 
+                    });
                 }
             }
         }
@@ -186,6 +208,11 @@ namespace Utopia.Shared.Entities
         {
             lock (_syncRoot)
             {
+                foreach (var staticEntity in _entities)
+                {
+                    staticEntity.Value.ParentChunk = null;
+                }
+
                 _entities.Clear();
             }
         }
@@ -222,14 +249,23 @@ namespace Utopia.Shared.Entities
             }
         }
 
+        //TODO: test for perfomance
         public void RemoveAll<T>(Predicate<T> condition)
         {
-            //TODO: test for perfomance
-            for (int i = _entities.Count - 1; i >= 0; i--)
+            lock (_syncRoot)
             {
-                var value = _entities[_entities.Keys[i]]; // O(1)
-                if (value is T && condition((T)value))
-                    _entities.RemoveAt(i); // O(Count)
+                for (int i = _entities.Count - 1; i >= 0; i--)
+                {
+                    var value = _entities[_entities.Keys[i]]; // O(1)
+                    if (value is T && condition((T) value))
+                    {
+                        value.ParentChunk = null;
+                        _entities.RemoveAt(i); // O(Count)
+                        OnEntityRemoved(new EntityCollectionEventArgs {
+                            Entity = value
+                        });
+                    }
+                }
             }
         }
 
@@ -284,14 +320,14 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Detects if spicified entity in this collection
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="staticEntityId"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public bool ContainsId(uint p, out IStaticEntity entity)
+        public bool ContainsId(uint staticEntityId, out IStaticEntity entity)
         {
             lock (_syncRoot)
             {
-                return _entities.TryGetValue(p, out entity);
+                return _entities.TryGetValue(staticEntityId, out entity);
             }
         }
     }
