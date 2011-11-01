@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using Utopia.Server.Structs;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Server.Managers
 {
     public class EntityManager
     {
         private readonly Server _server;
-        private readonly Dictionary<uint, uint> _lockedEntities = new Dictionary<uint, uint>();
+        private readonly Dictionary<uint, uint> _lockedDynamicEntities = new Dictionary<uint, uint>();
+        private readonly Dictionary<StaticId, uint> _lockedStaticEntities = new Dictionary<StaticId, uint>();
 
         public EntityManager(Server server)
         {
@@ -34,10 +34,25 @@ namespace Utopia.Server.Managers
                 // unlocking entities that was locked
                 if (e.Connection.ServerEntity.LockedEntity != null)
                 {
-                    lock (_lockedEntities)
+                    if (e.Connection.ServerEntity.LockedEntity is IStaticEntity)
                     {
-                        _lockedEntities.Remove(e.Connection.ServerEntity.LockedEntity.EntityId);
+                        var staticEntity = e.Connection.ServerEntity.LockedEntity as IStaticEntity;
+                        lock (_lockedStaticEntities)
+                        {
+                            var sid = new StaticId(e.Connection.ServerEntity.StaticEntityChunk, staticEntity.StaticId);
+                            _lockedStaticEntities.Remove(sid);
+                        }
                     }
+                    if (e.Connection.ServerEntity.LockedEntity is IDynamicEntity)
+                    {
+                        var dynamicEntity = e.Connection.ServerEntity.LockedEntity as IDynamicEntity;
+                        lock (_lockedDynamicEntities)
+                        {
+                            _lockedDynamicEntities.Remove(dynamicEntity.DynamicId);
+                        }
+                    }
+
+
                     e.Connection.ServerEntity.LockedEntity = null;
                 }
             }
@@ -94,47 +109,148 @@ namespace Utopia.Server.Managers
 
         private void ConnectionMessageEntityLock(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
         {
-            var connection = (ClientConnection)sender;
-            lock (_lockedEntities)
+            var connection = (ClientConnection) sender;
+            
+            if (e.Message.Lock)
             {
-                if (e.Message.Lock)
+                // locking
+
+                if (e.Message.IsStatic)
                 {
-                    if (_lockedEntities.ContainsKey(e.Message.EntityId))
+                    #region Lock static entity
+                    var chunk = _server.LandscapeManager.GetChunk(e.Message.ChunkPosition);
+                    IStaticEntity staticEntity;
+                    chunk.Entities.ContainsId(e.Message.EntityId, out staticEntity);
+
+                    if (staticEntity == null)
                     {
-                        connection.SendAsync(new EntityLockResultMessage { EntityId = e.Message.EntityId, LockResult = LockResult.FailAlreadyLocked });
+                        connection.SendAsync(new EntityLockResultMessage
+                        {
+                            IsStatic = true,
+                            ChunkPosition = e.Message.ChunkPosition,
+                            EntityId = e.Message.EntityId,
+                            LockResult = LockResult.NoSuchEntity
+                        });
                         return;
                     }
 
-                    IEntity lockEntity = null;
-                    IStaticEntity lockStatic = null;
-                    if (!_server.LandscapeManager.SurroundChunks(connection.ServerEntity.DynamicEntity.Position).Any(chunk => chunk.Entities.ContainsId(e.Message.EntityId, out lockStatic)))
-                    {
-                        ServerDynamicEntity dynEntity;
-                        if (_server.AreaManager.TryFind(e.Message.EntityId, out dynEntity))
-                            lockEntity = (Entity)dynEntity.DynamicEntity;
-                    }
-                    else
-                    {
-                        lockEntity = lockStatic;
-                    }
 
-                    _lockedEntities.Add(e.Message.EntityId, connection.ServerEntity.DynamicEntity.DynamicId);
-                    connection.ServerEntity.LockedEntity = lockEntity;
-                    connection.SendAsync(new EntityLockResultMessage { EntityId = e.Message.EntityId, LockResult = LockResult.SuccessLocked });
+                    var sid = new StaticId(chunk.Position, e.Message.EntityId);
+
+                    lock (_lockedStaticEntities)
+                    {
+                        if (_lockedStaticEntities.ContainsKey(sid))
+                        {
+                            connection.SendAsync(new EntityLockResultMessage
+                                                     {
+                                                         IsStatic = true,
+                                                         ChunkPosition = e.Message.ChunkPosition,
+                                                         EntityId = e.Message.EntityId,
+                                                         LockResult = LockResult.FailAlreadyLocked
+                                                     });
+                            return;
+                        }
+
+                        _lockedStaticEntities.Add(sid, connection.ServerEntity.DynamicEntity.DynamicId);
+
+                        connection.ServerEntity.StaticEntityChunk = e.Message.ChunkPosition;
+                        connection.ServerEntity.LockedEntity = staticEntity;
+                        connection.SendAsync(new EntityLockResultMessage
+                        {
+                            IsStatic = true,
+                            ChunkPosition = e.Message.ChunkPosition,
+                            EntityId = e.Message.EntityId,
+                            LockResult = LockResult.SuccessLocked
+                        });
+                        
+                    }
+                    #endregion
                 }
                 else
                 {
-                    uint lockOwner;
-                    if (_lockedEntities.TryGetValue(e.Message.EntityId, out lockOwner))
+                    #region Lock dynamic entity
+
+                    lock (_lockedDynamicEntities)
                     {
-                        if (lockOwner == connection.ServerEntity.DynamicEntity.DynamicId)
+                        if (_lockedDynamicEntities.ContainsKey(e.Message.EntityId))
                         {
-                            _lockedEntities.Remove(e.Message.EntityId);
-                            connection.ServerEntity.LockedEntity = null;
+                            connection.SendAsync(new EntityLockResultMessage
+                                                     {
+                                                         EntityId = e.Message.EntityId,
+                                                         LockResult = LockResult.FailAlreadyLocked
+                                                     });
+                            return;
+                        }
+
+                        var dynEntity = _server.AreaManager.Find(e.Message.EntityId);
+
+                        if (dynEntity != null)
+                        {
+                            _lockedDynamicEntities.Add(e.Message.EntityId,
+                                                       connection.ServerEntity.DynamicEntity.DynamicId);
+
+                            IEntity lockEntity = (Entity) dynEntity.DynamicEntity;
+
+                            connection.ServerEntity.LockedEntity = lockEntity;
+                            connection.SendAsync(new EntityLockResultMessage
+                                                     {
+                                                         EntityId = e.Message.EntityId,
+                                                         LockResult = LockResult.SuccessLocked
+                                                     });
+                        }
+                        else
+                        {
+                            connection.SendAsync(new EntityLockResultMessage
+                                                     {
+                                                         EntityId = e.Message.EntityId,
+                                                         LockResult = LockResult.NoSuchEntity
+                                                     });
+                        }
+
+                    }
+
+                    #endregion
+                }
+            }
+            else
+            {
+                // unlocking
+
+                if (e.Message.IsStatic)
+                {
+                    var chunk = _server.LandscapeManager.GetChunk(e.Message.ChunkPosition);
+                    IStaticEntity staticEntity;
+                    chunk.Entities.ContainsId(e.Message.EntityId, out staticEntity);
+                    
+                    if (staticEntity == null)
+                        return;
+
+                    var sid = new StaticId(chunk.Position, e.Message.EntityId);
+
+                    lock (_lockedStaticEntities)
+                    {
+                        _lockedStaticEntities.Remove(sid);
+                    }
+
+                    connection.ServerEntity.LockedEntity = null;
+                }
+                else
+                {
+                    lock (_lockedDynamicEntities)
+                    {
+                        uint lockOwner;
+                        if (_lockedDynamicEntities.TryGetValue(e.Message.EntityId, out lockOwner))
+                        {
+                            if (lockOwner == connection.ServerEntity.DynamicEntity.DynamicId)
+                            {
+                                _lockedDynamicEntities.Remove(e.Message.EntityId);
+                                connection.ServerEntity.LockedEntity = null;
+                            }
                         }
                     }
                 }
             }
+
         }
     }
 }

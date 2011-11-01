@@ -1,5 +1,6 @@
 using System.IO;
 using Utopia.Shared.Net.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -10,6 +11,8 @@ namespace Utopia.Shared.Net.Messages
     {
         private uint _entityId;
         private bool _lock;
+        private bool _isStatic;
+        private Vector2I _chunkPosition;
 
         /// <summary>
         /// Entity to be locked
@@ -20,6 +23,24 @@ namespace Utopia.Shared.Net.Messages
             set { _entityId = value; }
         }
         
+        /// <summary>
+        /// Static entity chunk position
+        /// </summary>
+        public Vector2I ChunkPosition
+        {
+            get { return _chunkPosition; }
+            set { _chunkPosition = value; }
+        }
+        
+        /// <summary>
+        /// Indicates if entity is static
+        /// </summary>
+        public bool IsStatic
+        {
+            get { return _isStatic; }
+            set { _isStatic = value; }
+        }
+
         /// <summary>
         /// True - request the lock, False - release the lock
         /// </summary>
@@ -43,6 +64,8 @@ namespace Utopia.Shared.Net.Messages
 
             msg._entityId = reader.ReadUInt32();
             msg._lock = reader.ReadBoolean();
+            msg._isStatic = reader.ReadBoolean();
+            msg._chunkPosition = reader.ReadVector2I();
 
             return msg;
         }
@@ -55,6 +78,8 @@ namespace Utopia.Shared.Net.Messages
         {
             writer.Write(_entityId);
             writer.Write(_lock);
+            writer.Write(_isStatic);
+            writer.Write(_chunkPosition);
         }
     }
 }

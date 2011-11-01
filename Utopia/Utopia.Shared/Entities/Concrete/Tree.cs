@@ -1,3 +1,4 @@
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete
@@ -15,6 +16,12 @@ namespace Utopia.Shared.Entities.Concrete
         }
 
         public uint StaticId
+        {
+            get;
+            set;
+        }
+
+        public AbstractChunk ParentChunk
         {
             get;
             set;

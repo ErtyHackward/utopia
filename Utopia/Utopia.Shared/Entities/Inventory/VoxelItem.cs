@@ -1,4 +1,5 @@
 using System;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Inventory
@@ -16,9 +17,11 @@ namespace Utopia.Shared.Entities.Inventory
 
         public uint StaticId { get; set; }
 
+        public AbstractChunk ParentChunk { get; set; }
+
         public virtual string StackType
         {
-            get { return this.GetType().Name; }            
+            get { return GetType().Name; }            
         }
 
         public EquipmentSlotType AllowedSlots { get; set;}

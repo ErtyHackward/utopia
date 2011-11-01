@@ -326,7 +326,7 @@ namespace Utopia.Server.Managers
             catch (Exception) { }
         }
 
-        public void SaveEntity(IEntity entity)
+        public void SaveDynamicEntity(IDynamicEntity entity)
         {
             byte[] bytes;
             using (var ms = new MemoryStream())
@@ -336,7 +336,7 @@ namespace Utopia.Server.Managers
                 bytes = ms.ToArray();
             }
 
-            SaveEntity(entity.EntityId, bytes);
+            SaveEntity(entity.DynamicId, bytes);
         }
 
         public void SaveEntity(uint entityId, byte[] bytes)

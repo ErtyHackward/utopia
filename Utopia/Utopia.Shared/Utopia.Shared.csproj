@@ -210,11 +210,13 @@
     <Compile Include="Structs\Color.cs" />
     <Compile Include="ClassExt\BinaryExtensions.cs" />
     <Compile Include="Structs\DynamicUpdateState.cs" />
+    <Compile Include="Structs\EntityLink.cs" />
     <Compile Include="Structs\Helpers\HalfUtils.cs" />
     <Compile Include="Structs\HalfVector2.cs" />
     <Compile Include="Structs\HalfVector4.cs" />
     <Compile Include="Structs\Helpers\PackUtils.cs" />
     <Compile Include="Structs\Line.cs" />
+    <Compile Include="Structs\StaticId.cs" />
     <Compile Include="Structs\Vector2I.cs" />
     <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />

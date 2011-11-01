@@ -42,9 +42,7 @@ namespace Utopia.Shared.Entities.Inventory
 
         #region Private methods
         #endregion
-
-
-
         
+        public Chunks.AbstractChunk ParentChunk { get; set; }
     }
 }

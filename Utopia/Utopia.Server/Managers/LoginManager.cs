@@ -55,7 +55,7 @@ namespace Utopia.Server.Managers
             if (e.Connection.Authorized)
             {
                 // saving the entity
-                _server.EntityStorage.SaveEntity(e.Connection.ServerEntity.DynamicEntity);
+                _server.EntityStorage.SaveDynamicEntity(e.Connection.ServerEntity.DynamicEntity);
 
                 // tell everybody that this player is gone
                 _server.AreaManager.RemoveEntity(e.Connection.ServerEntity);
@@ -122,7 +122,7 @@ namespace Utopia.Server.Managers
                     // create new message
                     playerEntity = GetNewPlayerEntity(connection, EntityFactory.Instance.GetUniqueEntityId());
 
-                    var state = new UserState { EntityId = playerEntity.DynamicEntity.EntityId };
+                    var state = new UserState { EntityId = playerEntity.DynamicEntity.DynamicId };
 
                     _server.UsersStorage.SetData(e.Message.Login, state.Save());
                 }
@@ -154,7 +154,7 @@ namespace Utopia.Server.Managers
                 connection.ServerEntity = playerEntity;
 
                 connection.SendAsync(new LoginResultMessage { Logged = true });
-                Console.WriteLine("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.EntityId);
+                Console.WriteLine("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.DynamicId);
                 var gameInfo = new GameInformationMessage
                 {
                     ChunkSize = AbstractChunk.ChunkSize,

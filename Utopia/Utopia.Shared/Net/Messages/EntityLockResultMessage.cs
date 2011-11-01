@@ -1,5 +1,6 @@
 using System.IO;
 using Utopia.Shared.Net.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -10,6 +11,26 @@ namespace Utopia.Shared.Net.Messages
     {
         private uint _entityId;
         private LockResult _lockResult;
+        private bool _isStatic;
+        private Vector2I _chunkPosition;
+
+        /// <summary>
+        /// Indicates if entity is static
+        /// </summary>
+        public bool IsStatic
+        {
+            get { return _isStatic; }
+            set { _isStatic = value; }
+        }
+        
+        /// <summary>
+        /// Gets or sets static entity chunk position
+        /// </summary>
+        public Vector2I ChunkPosition
+        {
+            get { return _chunkPosition; }
+            set { _chunkPosition = value; }
+        }
 
         /// <summary>
         /// Entity that was requested to be locked
@@ -43,6 +64,8 @@ namespace Utopia.Shared.Net.Messages
 
             msg._entityId = reader.ReadUInt32();
             msg._lockResult = (LockResult)reader.ReadByte();
+            msg._isStatic = reader.ReadBoolean();
+            msg._chunkPosition = reader.ReadVector2I();
 
             return msg;
         }
@@ -55,6 +78,8 @@ namespace Utopia.Shared.Net.Messages
         {
             writer.Write(_entityId);
             writer.Write((byte)_lockResult);
+            writer.Write(_isStatic);
+            writer.Write(_chunkPosition);
         }
     }
 
@@ -64,6 +89,7 @@ namespace Utopia.Shared.Net.Messages
     public enum LockResult : byte
     {
         SuccessLocked,
-        FailAlreadyLocked
+        FailAlreadyLocked,
+        NoSuchEntity
     }
 }

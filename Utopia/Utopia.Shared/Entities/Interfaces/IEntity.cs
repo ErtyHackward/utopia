@@ -1,6 +1,7 @@
 using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
@@ -9,7 +10,6 @@ namespace Utopia.Shared.Entities.Interfaces
     /// </summary>
     public interface IEntity : IBinaryStorable
     {
-
         /// <summary>
         /// Pickable entity Property
         /// </summary>

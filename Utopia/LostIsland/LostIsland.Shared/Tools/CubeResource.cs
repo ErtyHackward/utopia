@@ -1,3 +1,4 @@
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -35,6 +36,10 @@ namespace LostIsland.Shared.Tools
         }
 
         public DynamicEntity Parent { get; set; }
+
+        public uint StaticId { get; set; }
+
+        public AbstractChunk ParentChunk { get; set; }
         
         public string StackType
         {
@@ -117,10 +122,6 @@ namespace LostIsland.Shared.Tools
         }
 
 
-        public uint StaticId
-        {
-            get;
-            set;
-        }
+
     }
 }

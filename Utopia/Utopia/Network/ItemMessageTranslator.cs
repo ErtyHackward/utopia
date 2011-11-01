@@ -95,10 +95,10 @@ namespace Utopia.Network
             var msg = new ItemTransferMessage
             {
                 SourceContainerSlot = srcPosition,
-                SourceContainerEntityId = srcId,
+                SourceContainerEntityLink = srcId,
                 ItemsCount = e.Slot.ItemsCount,
                 DestinationContainerSlot = destPosition,
-                DestinationContainerEntityId = destId,
+                DestinationContainerEntityLink = destId,
                 IsSwitch = true
             };
 
@@ -179,10 +179,10 @@ namespace Utopia.Network
             var msg = new ItemTransferMessage
             {
                 SourceContainerSlot = srcPosition,
-                SourceContainerEntityId = srcId,
+                SourceContainerEntityLink = srcId,
                 ItemsCount = e.Slot.ItemsCount,
                 DestinationContainerSlot = destPosition,
-                DestinationContainerEntityId = destId
+                DestinationContainerEntityLink = destId
             };
 
             if (srcId == 0)
@@ -218,11 +218,11 @@ namespace Utopia.Network
 
             _connection.SendAsync(new ItemTransferMessage
             {
-                SourceContainerEntityId = _sourceContainer == _playerEntity.Inventory ? _playerEntity.EntityId : _lockedEntity.EntityId,
+                SourceContainerEntityLink = _sourceContainer == _playerEntity.Inventory ? _playerEntity.EntityId : _lockedEntity.EntityId,
                 SourceContainerSlot = srcPosition,
                 ItemsCount = _tempSlot.ItemsCount,
                 ItemEntityId = _tempSlot.Item.EntityId,
-                DestinationContainerEntityId = 0,
+                DestinationContainerEntityLink = 0,
             });
 
             _sourceContainer = null;

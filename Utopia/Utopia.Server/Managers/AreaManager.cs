@@ -6,7 +6,6 @@ using Utopia.Server.Events;
 using Utopia.Server.Structs;
 using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Structs;
 using System.Threading;
@@ -255,10 +254,10 @@ namespace Utopia.Server.Managers
         {
             lock (_dynamicEntities)
             {
-                if (_dynamicEntities.ContainsKey(entity.DynamicEntity.EntityId))
+                if (_dynamicEntities.ContainsKey(entity.DynamicEntity.DynamicId))
                     throw new InvalidOperationException("Such entity is already in manager");
 
-                _dynamicEntities.Add(entity.DynamicEntity.EntityId, entity);
+                _dynamicEntities.Add(entity.DynamicEntity.DynamicId, entity);
             }
 
             MapArea entityArea = null;
@@ -289,7 +288,7 @@ namespace Utopia.Server.Managers
             bool removed;
             lock (_dynamicEntities)
             {
-                removed = _dynamicEntities.Remove(entity.DynamicEntity.EntityId);
+                removed = _dynamicEntities.Remove(entity.DynamicEntity.DynamicId);
             }
 
             if (!removed) return;
@@ -302,7 +301,7 @@ namespace Utopia.Server.Managers
                     var area = GetArea(new Vector3D(entity.DynamicEntity.Position.X + x * MapArea.AreaSize.X, 0,
                                                    entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
                     if (x == 0 && z == 0)
-                        area.RemoveEntity((int)entity.DynamicEntity.EntityId);
+                        area.RemoveEntity((int)entity.DynamicEntity.DynamicId);
 
                     area.OnEntityOutOfViewRange(entity);
 
@@ -344,6 +343,18 @@ namespace Utopia.Server.Managers
         public bool TryFind(uint entityId, out ServerDynamicEntity entity)
         {
             return _dynamicEntities.TryGetValue(entityId, out entity);
+        }
+
+        /// <summary>
+        /// Search for dynamic entity and returns entity or null
+        /// </summary>
+        /// <param name="dynamicEntityId"></param>
+        /// <returns></returns>
+        public ServerDynamicEntity Find(uint dynamicEntityId)
+        {
+            ServerDynamicEntity result;
+            _dynamicEntities.TryGetValue(dynamicEntityId, out result);
+            return result;
         }
     }
 }
