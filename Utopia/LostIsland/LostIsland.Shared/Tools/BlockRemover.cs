@@ -22,7 +22,7 @@ namespace LostIsland.Shared.Tools
 
         public IToolImpact Use(IDynamicEntity owner, byte useMode, bool runOnServer = false)
         {
-            if (owner.EntityState.IsPickingActive)
+            if (owner.EntityState.IsBlockPicked)
             {
                 if (owner.EntityState.IsEntityPicked)
                 {
