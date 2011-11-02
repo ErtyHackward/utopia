@@ -185,8 +185,6 @@ namespace Utopia.Entities.Managers
         /// </summary>
         private void inputHandler()
         {
-           
-
             if (_actions.isTriggered(Actions.Move_Mode))
             {
                 if (_displacementMode == EntityDisplacementModes.Flying)
@@ -203,7 +201,7 @@ namespace Utopia.Entities.Managers
 
             if (HandleToolsUse && _actions.isTriggered(Actions.Use_Left))
             {
-                if (Player.EntityState.IsPickingActive && Player.Equipment.LeftTool!=null)
+                if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool!=null)
                 {
                     //sends the client server event that does tool.use on server
                     Player.LeftToolUse(0);
@@ -215,7 +213,7 @@ namespace Utopia.Entities.Managers
 
             if (HandleToolsUse && _actions.isTriggered(Actions.Use_Right))
             {
-                if (Player.EntityState.IsPickingActive && Player.Equipment.LeftTool != null)
+                if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool != null)
                 {
                     //Avoid the player to add a block where he is located !            
                     BoundingBox playerPotentialNewBlock;
@@ -283,7 +281,7 @@ namespace Utopia.Entities.Managers
         //Will return true if a new Item has been picked up !
         private bool RefreshPicking(ref Vector3D pickingWorldPosition, ref Vector3D pickingLookAt, int rounding)
         {
-            Player._entityState.IsPickingActive = false;
+            Player._entityState.IsBlockPicked = false;
 
             //Check the Ray against all entity.
             Ray pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt.AsVector3());
@@ -293,7 +291,7 @@ namespace Utopia.Entities.Managers
                 Player._entityState.PickedEntityPosition = _pickedUpEntity.Entity.Position;
                 Player._entityState.PickedEntityId = _pickedUpEntity.Entity.EntityId;
                 Player._entityState.IsEntityPicked = true;
-                Player._entityState.IsPickingActive = true;
+                Player._entityState.IsBlockPicked = false;
                 return true;
             }
 
@@ -324,7 +322,7 @@ namespace Utopia.Entities.Managers
                     }
 
                     Player._entityState.IsEntityPicked = false;
-                    Player._entityState.IsPickingActive = true;
+                    Player._entityState.IsBlockPicked = true;
                     if (PickedCube.Position == Player._entityState.PickedBlockPosition)
                     {
                         if (! newPlacechanged) return false;
@@ -333,7 +331,7 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            return Player._entityState.IsPickingActive; //Return true if a new block or Entity has been picked up !
+            return Player._entityState.IsBlockPicked; //Return true if a new block or Entity has been picked up !
         }
 
         private void ComputeBlockBoundingBox(ref Vector3I BlockPlace, out BoundingBox BlockBoundingBox)
@@ -711,8 +709,8 @@ namespace Utopia.Entities.Managers
                                                                                   Math.Round(Player.Position.X, 1),
                                                                                   Math.Round(Player.Position.Y, 1),
                                                                                   Math.Round(Player.Position.Z, 1),
-                                                                                  Player._entityState.IsPickingActive ? Player._entityState.PickedBlockPosition.ToString() : "None",
-                                                                                  Player._entityState.IsPickingActive ? Player._entityState.NewBlockPosition.ToString() : "None"
+                                                                                  Player._entityState.IsBlockPicked ? Player._entityState.PickedBlockPosition.ToString() : "None",
+                                                                                  Player._entityState.IsBlockPicked ? Player._entityState.NewBlockPosition.ToString() : "None"
                                                                                   );
         }
     }
