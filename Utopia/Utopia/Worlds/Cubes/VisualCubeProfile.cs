@@ -69,18 +69,6 @@ namespace Utopia.Worlds.Cubes
                 profile.CubeFamilly = (enuCubeFamilly)Enum.Parse(typeof(enuCubeFamilly), cubeProfil.ItemArray[dt.Columns["CubeFamilly"].Ordinal].ToString());
                 profile.LiquidType = cubeProfil.ItemArray[dt.Columns["LiquidType"].Ordinal].ToString() != "" ? (enuLiquidType)Enum.Parse(typeof(enuLiquidType), cubeProfil.ItemArray[dt.Columns["LiquidType"].Ordinal].ToString()) : enuLiquidType.None;
 
-                if (profile.CubeFamilly == enuCubeFamilly.Liquid)
-                {
-                    profile.CanGenerateCubeFace = VisualCubeProfile.WaterFaceGenerationCheck;
-                    profile.CreateLiquidCubeMesh = liquidCubeMeshFactory.GenCubeFace;
-                }
-
-                if (profile.CubeFamilly == enuCubeFamilly.Solid)
-                {
-                    profile.CanGenerateCubeFace = VisualCubeProfile.FaceGenerationCheck;
-                    profile.CreateSolidCubeMesh = solidCubeMeshFactory.GenCubeFace;
-                }
-
                 CubesProfile[Id] = profile;
             }
         }
@@ -89,43 +77,6 @@ namespace Utopia.Worlds.Cubes
         {
             CubesProfile = null;
         }
-
-        //Default Face Generation Checks !
-        public static bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
-        {
-            //By default I don't need to trace the cubeFace of my cube if the face neightboor cube is blocking light ! (Not see-through)
-            if (VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsSeeThrough) return true;
-            //Else draw the face
-            return false;
-        }
-
-        public static bool WaterFaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
-        {
-            if (cubeFace != CubeFace.Bottom && cubeFace != CubeFace.Top) //Never display a bottom Water face !
-            {
-                if ((!VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsBlockingLight && !VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsFlooding))
-                {
-                    return true;
-                }
-            }
-            if (cubeFace == CubeFace.Top)
-            {
-                if (cubePosiInWorld.Y == seaLevel || neightboorFaceCube.Id == CubeId.Air)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public delegate bool CanGenerateCubeFaceDelegate(ref TerraCube cube, ref Vector3I cubelocation, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel);
-        public CanGenerateCubeFaceDelegate CanGenerateCubeFace;
-
-        public delegate void GenerateSolidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk);
-        public GenerateSolidMesh CreateSolidCubeMesh;
-
-        public delegate void GenerateLiquidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk);
-        public GenerateLiquidMesh CreateLiquidCubeMesh;
 
         public string Name;
         public byte Id; //Represent the ID of the cube and it's linked texture in the array
