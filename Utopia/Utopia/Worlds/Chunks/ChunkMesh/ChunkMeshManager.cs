@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using Utopia.Entities.Sprites;
+using Ninject;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -24,15 +25,19 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         private delegate object CreateChunkMeshDelegate(object chunk);
         private readonly VisualWorldParameters _visualWorldParameters;
         private readonly SingleArrayChunkContainer _cubesHolder;
+        private ICubeMeshFactory _solidCubeMeshFactory;
+        private ICubeMeshFactory _liquidCubeMeshFactory;
         #endregion
 
         #region public variables/properties
         #endregion
 
-        public ChunkMeshManager(VisualWorldParameters visualWorldParameters, SingleArrayChunkContainer cubesHolder)
+        public ChunkMeshManager(VisualWorldParameters visualWorldParameters, SingleArrayChunkContainer cubesHolder, [Named("SolidCubeMeshFactory")] ICubeMeshFactory solidCubeMeshFactory, [Named("LiquidCubeMeshFactory")] ICubeMeshFactory liquidCubeMeshFactory)
         {
             _visualWorldParameters = visualWorldParameters;
             _cubesHolder = cubesHolder;
+            _solidCubeMeshFactory = solidCubeMeshFactory;
+            _liquidCubeMeshFactory = liquidCubeMeshFactory;
             Intialize();
         }
 
@@ -192,20 +197,18 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //if (i < 0) i += _cubesHolder.Cubes.Length;
                         neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
 
-                        //It is using a delegate in order to give the possibility for Plugging to replace the fonction call.
-                        //Be default the fonction called here is : TerraCube.FaceGenerationCheck or TerraCube.WaterFaceGenerationCheck
-                        if (!cubeProfile.CanGenerateCubeFace(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
-
                         switch (cubeProfile.CubeFamilly)
                         {
                             case enuCubeFamilly.Solid:
                                 //Other delegate.
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;
-                                cubeProfile.CreateSolidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk);
+                                if (!_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
+                                _solidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk);
                                 break;
                             case enuCubeFamilly.Liquid:
                                 //Default linked to : CubeMeshFactory.GenLiquidCubeFace;
-                                cubeProfile.CreateLiquidCubeMesh(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk);
+                                if (!_liquidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
+                                _liquidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk);
                                 break;
                             case enuCubeFamilly.Other:
                                 break;

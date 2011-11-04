@@ -10,6 +10,7 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Chunks;
 using SharpDX;
 using Utopia.Worlds.Liquid;
+using Utopia.Shared.Cubes;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -20,6 +21,26 @@ namespace Utopia.Worlds.Cubes
         public LiquidCubeMeshFactory(SingleArrayChunkContainer cubesHolder)
         {
             _cubesHolder = cubesHolder;
+        }
+
+         //Default Face Generation Checks !
+        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
+        {
+            if (cubeFace != CubeFace.Bottom && cubeFace != CubeFace.Top) //Never display a bottom Water face !
+            {
+                if ((!VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsBlockingLight && !VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsFlooding))
+                {
+                    return true;
+                }
+            }
+            if (cubeFace == CubeFace.Top)
+            {
+                if (cubePosiInWorld.Y == seaLevel || neightboorFaceCube.Id == CubeId.Air)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void GenCubeFace(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)

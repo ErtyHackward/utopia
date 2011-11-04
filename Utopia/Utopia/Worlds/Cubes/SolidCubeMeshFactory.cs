@@ -20,6 +20,15 @@ namespace Utopia.Worlds.Cubes
             _cubesHolder = cubesHolder;
         }
 
+        //Default Face Generation Checks !
+        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
+        {
+            //By default I don't need to trace the cubeFace of my cube if the face neightboor cube is blocking light ! (Not see-through)
+            if (VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsSeeThrough) return true;
+            //Else draw the face
+            return false;
+        }
+
         public void GenCubeFace(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)
         {
             int verticeCubeOffset = chunk.SolidCubeVertices.Count;

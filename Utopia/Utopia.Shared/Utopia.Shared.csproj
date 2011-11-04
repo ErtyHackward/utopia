@@ -202,6 +202,9 @@
     <Compile Include="Roleplay\CharacterPrimaryAttributes.cs" />
     <Compile Include="Roleplay\CharacterSecondaryAttributes.cs" />
     <Compile Include="Roleplay\CharacterSurvivalAttributes.cs" />
+    <Compile Include="Settings\CubeProfile.cs" />
+    <Compile Include="Settings\EntityProfile.cs" />
+    <Compile Include="Settings\GameSettings.cs" />
     <Compile Include="Structs\ByteColor.cs" />
     <Compile Include="Structs\ByteVector3.cs" />
     <Compile Include="Structs\ByteVector4.cs" />
