@@ -9,6 +9,8 @@ using Utopia.Worlds.Cubes;
 using Utopia.Shared.Chunks;
 using Utopia.Action;
 using S33M3Engines.D3D.Effects.Basics;
+using Utopia.Shared.Settings;
+using Utopia.Shared.Config;
 
 namespace Utopia
 {
@@ -22,6 +24,10 @@ namespace Utopia
         {
             _renderStates = renderStates;
             VSync = true;                                              // Vsync ON (default)
+
+            //TEST new config file loading
+            GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"CubesProfile.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"e:\" };
+            GameSystemSettings.Current.Load();
         }
 
         public override void Initialize()
