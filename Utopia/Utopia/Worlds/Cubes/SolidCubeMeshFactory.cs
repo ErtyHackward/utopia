@@ -8,6 +8,7 @@ using Utopia.Worlds.Chunks;
 using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Enums;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -21,7 +22,7 @@ namespace Utopia.Worlds.Cubes
         }
 
         //Default Face Generation Checks !
-        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
+        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
         {
             //By default I don't need to trace the cubeFace of my cube if the face neightboor cube is blocking light ! (Not see-through)
             if (VisualCubeProfile.CubesProfile[neightboorFaceCube.Id].IsSeeThrough) return true;
@@ -29,7 +30,7 @@ namespace Utopia.Worlds.Cubes
             return false;
         }
 
-        public void GenCubeFace(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)
+        public void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)
         {
             int verticeCubeOffset = chunk.SolidCubeVertices.Count;
             int indiceCubeOffset = chunk.SolidCubeIndices.Count;
@@ -64,7 +65,7 @@ namespace Utopia.Worlds.Cubes
 
             switch (cubeFace)
             {
-                case CubeFace.Front:
+                case CubeFaces.Front:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Z, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.Z, ind, false);
@@ -138,7 +139,7 @@ namespace Utopia.Worlds.Cubes
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset1));
 
                     break;
-                case CubeFace.Back:
+                case CubeFaces.Back:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Z, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.Z, ind, false);
@@ -212,7 +213,7 @@ namespace Utopia.Worlds.Cubes
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
 
                     break;
-                case CubeFace.Top:
+                case CubeFaces.Top:
 
                    //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Y, SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.Y, ind, false);
@@ -287,7 +288,7 @@ namespace Utopia.Worlds.Cubes
 
                     break;
 
-                case CubeFace.Bottom:
+                case CubeFaces.Bottom:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Y, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.Y, ind, false);
@@ -362,7 +363,7 @@ namespace Utopia.Worlds.Cubes
 
                     break;
 
-                case CubeFace.Left:
+                case CubeFaces.Left:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.X, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.X, ind, false);
@@ -435,7 +436,7 @@ namespace Utopia.Worlds.Cubes
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset0));
                     chunk.SolidCubeIndices.Add((ushort)(vertexOffset3));
                     break;
-                case CubeFace.Right:
+                case CubeFaces.Right:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.X, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.X, ind, false);
