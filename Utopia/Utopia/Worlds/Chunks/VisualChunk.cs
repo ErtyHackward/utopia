@@ -294,15 +294,11 @@ namespace Utopia.Worlds.Chunks
         public void RefreshVisualEntities()
         {
             //Create the Sprite Entities
-            SpriteEntity spriteEntity;
             VisualSpriteEntities.Clear();
-            for (int entityID = 0; entityID < Entities.Data.Count; entityID++)
+
+            foreach (var spriteEntity in Entities.Enumerate<SpriteEntity>())
             {
-                spriteEntity = Entities.Data[entityID] as SpriteEntity;
-                if (spriteEntity != null)
-                {
-                    VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
-                }
+                VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
             }
 
             Entities.IsDirty = false;

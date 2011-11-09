@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Utopia.Shared.Entities;
+﻿using System;
+using System.Collections.Generic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -11,7 +11,7 @@ namespace Utopia.Server.Managers
     {
         private readonly Server _server;
         private readonly Dictionary<uint, uint> _lockedDynamicEntities = new Dictionary<uint, uint>();
-        private readonly Dictionary<StaticId, uint> _lockedStaticEntities = new Dictionary<StaticId, uint>();
+        private readonly Dictionary<EntityLink, uint> _lockedStaticEntities = new Dictionary<EntityLink, uint>();
 
         public EntityManager(Server server)
         {
@@ -39,8 +39,7 @@ namespace Utopia.Server.Managers
                         var staticEntity = e.Connection.ServerEntity.LockedEntity as IStaticEntity;
                         lock (_lockedStaticEntities)
                         {
-                            var sid = new StaticId(e.Connection.ServerEntity.StaticEntityChunk, staticEntity.StaticId);
-                            _lockedStaticEntities.Remove(sid);
+                            _lockedStaticEntities.Remove(staticEntity.GetLink());
                         }
                     }
                     if (e.Connection.ServerEntity.LockedEntity is IDynamicEntity)
@@ -107,6 +106,28 @@ namespace Utopia.Server.Managers
             }
         }
 
+        public IStaticEntity ResolveStatic(EntityLink link)
+        {
+            if (link.IsDynamic)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var chunk = _server.LandscapeManager.GetChunk(link.ChunkPosition);
+
+            var collection = (IStaticContainer)chunk.Entities;
+            IStaticEntity sEntity = null;
+
+            for (int i = 0; i < link.Tail.Length; i++)
+            {
+                sEntity = collection.GetStaticEntity(link.Tail[i]);
+                if (sEntity is IStaticContainer)
+                    collection = sEntity as IStaticContainer;
+            }
+
+            return sEntity;
+        }
+
         private void ConnectionMessageEntityLock(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
         {
             var connection = (ClientConnection) sender;
@@ -115,51 +136,40 @@ namespace Utopia.Server.Managers
             {
                 // locking
 
-                if (e.Message.IsStatic)
+                if (!e.Message.EntityLink.IsDynamic)
                 {
                     #region Lock static entity
-                    var chunk = _server.LandscapeManager.GetChunk(e.Message.ChunkPosition);
-                    IStaticEntity staticEntity;
-                    chunk.Entities.ContainsId(e.Message.EntityId, out staticEntity);
+
+                    var staticEntity = ResolveStatic(e.Message.EntityLink);
 
                     if (staticEntity == null)
                     {
                         connection.SendAsync(new EntityLockResultMessage
                         {
-                            IsStatic = true,
-                            ChunkPosition = e.Message.ChunkPosition,
-                            EntityId = e.Message.EntityId,
+                            EntityLink = e.Message.EntityLink,
                             LockResult = LockResult.NoSuchEntity
                         });
                         return;
                     }
 
-
-                    var sid = new StaticId(chunk.Position, e.Message.EntityId);
-
                     lock (_lockedStaticEntities)
                     {
-                        if (_lockedStaticEntities.ContainsKey(sid))
+                        if (_lockedStaticEntities.ContainsKey(e.Message.EntityLink))
                         {
                             connection.SendAsync(new EntityLockResultMessage
                                                      {
-                                                         IsStatic = true,
-                                                         ChunkPosition = e.Message.ChunkPosition,
-                                                         EntityId = e.Message.EntityId,
+                                                         EntityLink = e.Message.EntityLink,
                                                          LockResult = LockResult.FailAlreadyLocked
                                                      });
                             return;
                         }
 
-                        _lockedStaticEntities.Add(sid, connection.ServerEntity.DynamicEntity.DynamicId);
+                        _lockedStaticEntities.Add(e.Message.EntityLink, connection.ServerEntity.DynamicEntity.DynamicId);
 
-                        connection.ServerEntity.StaticEntityChunk = e.Message.ChunkPosition;
                         connection.ServerEntity.LockedEntity = staticEntity;
                         connection.SendAsync(new EntityLockResultMessage
                         {
-                            IsStatic = true,
-                            ChunkPosition = e.Message.ChunkPosition,
-                            EntityId = e.Message.EntityId,
+                            EntityLink = e.Message.EntityLink,
                             LockResult = LockResult.SuccessLocked
                         });
                         
@@ -172,29 +182,29 @@ namespace Utopia.Server.Managers
 
                     lock (_lockedDynamicEntities)
                     {
-                        if (_lockedDynamicEntities.ContainsKey(e.Message.EntityId))
+                        if (_lockedDynamicEntities.ContainsKey(e.Message.EntityLink.DynamicEntityId))
                         {
                             connection.SendAsync(new EntityLockResultMessage
                                                      {
-                                                         EntityId = e.Message.EntityId,
+                                                         EntityLink = e.Message.EntityLink,
                                                          LockResult = LockResult.FailAlreadyLocked
                                                      });
                             return;
                         }
 
-                        var dynEntity = _server.AreaManager.Find(e.Message.EntityId);
+                        var dynEntity = _server.AreaManager.Find(e.Message.EntityLink.DynamicEntityId);
 
                         if (dynEntity != null)
                         {
-                            _lockedDynamicEntities.Add(e.Message.EntityId,
+                            _lockedDynamicEntities.Add(e.Message.EntityLink.DynamicEntityId,
                                                        connection.ServerEntity.DynamicEntity.DynamicId);
 
-                            IEntity lockEntity = (Entity) dynEntity.DynamicEntity;
+                            var lockEntity = (IEntity)dynEntity.DynamicEntity;
 
                             connection.ServerEntity.LockedEntity = lockEntity;
                             connection.SendAsync(new EntityLockResultMessage
                                                      {
-                                                         EntityId = e.Message.EntityId,
+                                                         EntityLink = e.Message.EntityLink,
                                                          LockResult = LockResult.SuccessLocked
                                                      });
                         }
@@ -202,7 +212,7 @@ namespace Utopia.Server.Managers
                         {
                             connection.SendAsync(new EntityLockResultMessage
                                                      {
-                                                         EntityId = e.Message.EntityId,
+                                                         EntityLink = e.Message.EntityLink,
                                                          LockResult = LockResult.NoSuchEntity
                                                      });
                         }
@@ -216,20 +226,23 @@ namespace Utopia.Server.Managers
             {
                 // unlocking
 
-                if (e.Message.IsStatic)
+                if (!e.Message.EntityLink.IsDynamic)
                 {
-                    var chunk = _server.LandscapeManager.GetChunk(e.Message.ChunkPosition);
-                    IStaticEntity staticEntity;
-                    chunk.Entities.ContainsId(e.Message.EntityId, out staticEntity);
+                    var staticEntity = ResolveStatic(e.Message.EntityLink);
                     
                     if (staticEntity == null)
                         return;
-
-                    var sid = new StaticId(chunk.Position, e.Message.EntityId);
-
+                    
                     lock (_lockedStaticEntities)
                     {
-                        _lockedStaticEntities.Remove(sid);
+                        uint lockOwner;
+                        if (_lockedStaticEntities.TryGetValue(e.Message.EntityLink, out lockOwner))
+                        {
+                            if (lockOwner == connection.ServerEntity.DynamicEntity.DynamicId)
+                            {
+                                _lockedStaticEntities.Remove(e.Message.EntityLink);
+                            }
+                        }
                     }
 
                     connection.ServerEntity.LockedEntity = null;
@@ -239,11 +252,11 @@ namespace Utopia.Server.Managers
                     lock (_lockedDynamicEntities)
                     {
                         uint lockOwner;
-                        if (_lockedDynamicEntities.TryGetValue(e.Message.EntityId, out lockOwner))
+                        if (_lockedDynamicEntities.TryGetValue(e.Message.EntityLink.DynamicEntityId, out lockOwner))
                         {
                             if (lockOwner == connection.ServerEntity.DynamicEntity.DynamicId)
                             {
-                                _lockedDynamicEntities.Remove(e.Message.EntityId);
+                                _lockedDynamicEntities.Remove(e.Message.EntityLink.DynamicEntityId);
                                 connection.ServerEntity.LockedEntity = null;
                             }
                         }

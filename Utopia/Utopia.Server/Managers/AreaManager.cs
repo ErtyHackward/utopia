@@ -252,6 +252,12 @@ namespace Utopia.Server.Managers
 
         public void AddEntity(ServerDynamicEntity entity)
         {
+            // maybe we need to generate new unique entity id
+            if (entity.DynamicEntity.DynamicId == 0)
+            {
+
+            }
+
             lock (_dynamicEntities)
             {
                 if (_dynamicEntities.ContainsKey(entity.DynamicEntity.DynamicId))

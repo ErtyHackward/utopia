@@ -1,11 +1,9 @@
-using SharpDX;
-
 namespace Utopia.Shared.Entities
 {
     /// <summary>
     /// Represente an entity that has a Sprite Body
     /// </summary>
-    public abstract class SpriteEntity: Entity
+    public abstract class SpriteEntity : StaticEntity
     {
         /// <summary>
         /// The sprite format, give the number of quad that will be draw, and how they intersect
@@ -16,10 +14,6 @@ namespace Utopia.Shared.Entities
         /// in case we want the sprite to move with the wind
         /// </summary>
         public bool IsAnimated;
-
-        public SpriteEntity()
-        {
-        }
 
         // we need to override save and load!
         public override void Load(System.IO.BinaryReader reader)

@@ -5,6 +5,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// </summary>
     public enum EquipmentSlotType : byte
     {
+        None = 255,
         LeftHand = 0,
         RightHand = 1,
         Head = 2,

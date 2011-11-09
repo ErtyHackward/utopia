@@ -11,7 +11,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// <summary>
     /// Represents a base container implementation (this is not an entity)
     /// </summary>
-    public class SlotContainer<T> : ISlotContainer<T>, IBinaryStorable where T: ContainedSlot, new()
+    public class SlotContainer<T> : ISlotContainer<T>, IBinaryStorable, IStaticContainer where T: ContainedSlot, new()
     {
         private readonly IEntity _parentEntity;
         private T[,] _items;
@@ -398,9 +398,9 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Performs search for entity and returns slot
         /// </summary>
-        /// <param name="entityid">static entity id</param>
+        /// <param name="staticEntityid">static entity id</param>
         /// <returns></returns>
-        public T Find(uint entityid)
+        public T Find(uint staticEntityid)
         {
             for (int x = 0; x < _gridSize.X; x++)
             {
@@ -408,11 +408,42 @@ namespace Utopia.Shared.Entities.Inventory
                 {
                     if (_items[x, y] != null)
                     {
-                        if (_items[x, y].Item.StaticId == entityid)
+                        if (_items[x, y].Item.StaticId == staticEntityid)
                             return _items[x, y];
                     }
                 }
             }
+            return null;
+        }
+
+        /// <summary>
+        /// This method is not supported. Use PutItem instead.
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Add(IStaticEntity entity)
+        {
+            throw new NotSupportedException("This method is not supported. Use PutItem instead.");
+        }
+
+        /// <summary>
+        /// This method is not supported. Use TakeItem instead.
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Remove(IStaticEntity entity)
+        {
+            throw new NotSupportedException("This method is not supported. Use TakeItem instead.");
+        }
+
+        /// <summary>
+        /// Gets entity by its static id
+        /// </summary>
+        /// <param name="staticId"></param>
+        /// <returns></returns>
+        public IStaticEntity GetStaticEntity(uint staticId)
+        {
+            var slot = Find(staticId);
+            if (slot != null)
+                return slot.Item;
             return null;
         }
     }

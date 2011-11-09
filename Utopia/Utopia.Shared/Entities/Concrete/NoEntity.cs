@@ -1,3 +1,5 @@
+using System;
+
 namespace Utopia.Shared.Entities.Concrete
 {
     /// <summary>
@@ -20,14 +22,14 @@ namespace Utopia.Shared.Entities.Concrete
 
         public static void SaveEmpty(System.IO.BinaryWriter writer)
         {
-            writer.Write((ushort)EntityClassId.None);
+            writer.Write(EntityClassId.None);
         }
 
         public override void Save(System.IO.BinaryWriter writer)
         {
             // only in this class we no need to call base members because none of any data should be saved
 
-            writer.Write((ushort)EntityClassId.None);
+            writer.Write(EntityClassId.None);
         }
 
         public override void Load(System.IO.BinaryReader reader)
@@ -36,6 +38,16 @@ namespace Utopia.Shared.Entities.Concrete
 
             // skip the null byte
             reader.ReadUInt16();
+        }
+
+        /// <summary>
+        /// throws NotSupportedException
+        /// </summary>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <returns></returns>
+        public override Structs.EntityLink GetLink()
+        {
+            throw new NotSupportedException();
         }
     }
 }

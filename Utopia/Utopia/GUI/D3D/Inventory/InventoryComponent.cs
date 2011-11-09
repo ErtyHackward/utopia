@@ -129,10 +129,10 @@ namespace Utopia.GUI.D3D.Inventory
                 return;
             if (_dragControl.Slot.Item is ITool)
             {
-                _playerManager.Player.Toolbar[e.Cell.InventoryPosition.Y] = _dragControl.Slot.Item.EntityId;
+                _playerManager.Player.Toolbar[e.Cell.InventoryPosition.Y] = _dragControl.Slot.Item.StaticId;
                 _toolBar.SetSlot(e.Cell.InventoryPosition.Y, new ContainedSlot { Item = _dragControl.Slot.Item, GridPosition = e.Cell.InventoryPosition });
 
-                _itemMessageTranslator.SetToolBar(e.Cell.InventoryPosition.Y, _dragControl.Slot.Item.EntityId);
+                _itemMessageTranslator.SetToolBar(e.Cell.InventoryPosition.Y, _dragControl.Slot.Item.StaticId);
 
                 _sourceContainer.PutItem(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount);
                 

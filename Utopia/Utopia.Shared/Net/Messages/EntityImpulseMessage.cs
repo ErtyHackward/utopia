@@ -15,7 +15,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Entity is affected by impulse
         /// </summary>
-        public uint EntityId
+        public uint DynamicEntityId
         {
             get { return _entityId; }
             set { _entityId = value; }

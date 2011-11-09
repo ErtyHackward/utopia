@@ -93,6 +93,7 @@
     <Compile Include="Structs\ServerPlayerCharacterEntity.cs" />
     <Compile Include="Structs\UserState.cs" />
     <Compile Include="Utils\BlockHelper.cs" />
+    <Compile Include="Utils\DynamicIdHelper.cs" />
     <Compile Include="Utils\IniSettings.cs" />
     <Compile Include="Managers\SQLiteStorageManager.cs" />
   </ItemGroup>

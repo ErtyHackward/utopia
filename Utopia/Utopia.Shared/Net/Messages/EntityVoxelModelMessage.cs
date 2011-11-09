@@ -1,6 +1,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Utopia.Shared.Net.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -10,16 +11,16 @@ namespace Utopia.Shared.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct EntityVoxelModelMessage: IBinaryMessage
     {
-        private uint _entityModel;
+        private EntityLink _entityLink;
         private byte[] _bytes;
 
         /// <summary>
-        /// Entity identification number
+        /// Link to the entity
         /// </summary>
-        public uint EntityModel
+        public EntityLink EntityLink
         {
-            get { return _entityModel; }
-            set { _entityModel = value; }
+            get { return _entityLink; }
+            set { _entityLink = value; }
         }
         
         /// <summary>
@@ -39,8 +40,8 @@ namespace Utopia.Shared.Net.Messages
         public static EntityVoxelModelMessage Read(BinaryReader reader)
         {
             EntityVoxelModelMessage msg;
-            
-            msg._entityModel = reader.ReadUInt32();
+
+            msg._entityLink = reader.ReadEntityLink();
             var bytesCount = reader.ReadInt32();
             msg._bytes = reader.ReadBytes(bytesCount);
 
@@ -54,7 +55,7 @@ namespace Utopia.Shared.Net.Messages
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(_entityModel);
+            writer.Write(_entityLink);
             writer.Write(_bytes.Length);
             writer.Write(_bytes);
         }

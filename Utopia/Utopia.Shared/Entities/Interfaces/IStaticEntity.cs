@@ -1,6 +1,4 @@
-﻿using Utopia.Shared.Chunks;
-
-namespace Utopia.Shared.Entities.Interfaces
+﻿namespace Utopia.Shared.Entities.Interfaces
 {
     /// <summary>
     /// Represents an entity that can be stored in chunk entiteis
@@ -8,13 +6,13 @@ namespace Utopia.Shared.Entities.Interfaces
     public interface IStaticEntity : IEntity
     {
         /// <summary>
-        /// Gets or sets static entity id
+        /// Gets or sets static entity id. This id is unique only in current container. Invalid without Container property set
         /// </summary>
         uint StaticId { get; set; }
 
         /// <summary>
-        /// Gets or sets current parent chunk
+        /// Gets or sets current parent container
         /// </summary>
-        AbstractChunk ParentChunk { get; set; }
+        IStaticContainer Container { get; set; }
     }
 }

@@ -1,8 +1,9 @@
+using Utopia.Shared.Entities.Inventory;
+
 namespace Utopia.Shared.Entities.Concrete
 {
-
     //dont implement this one on server for now its merely a placeholder for having soemthing not abstract
-    public class EditableVoxelEntity : VoxelEntity
+    public class EditableVoxelEntity : VoxelItem
     {
         public override ushort ClassId
         {
@@ -12,6 +13,16 @@ namespace Utopia.Shared.Entities.Concrete
         public override string DisplayName
         {
             get { return "Editable"; }
+        }
+
+        public override int MaxStackSize
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public override string Description
+        {
+            get { throw new System.NotImplementedException(); }
         }
     }
 }

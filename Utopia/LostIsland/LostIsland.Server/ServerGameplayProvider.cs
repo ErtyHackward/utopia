@@ -26,7 +26,7 @@ namespace LostIsland.Server
         public PlayerCharacter CreateNewPlayerCharacter(string name, uint entityId)
         {
             var dEntity = new PlayerCharacter();
-            dEntity.EntityId = entityId;
+            dEntity.DynamicId = entityId;
             dEntity.Position = new Vector3D(10, 128, 10);
             dEntity.CharacterName = name;
             ContainedSlot outItem;

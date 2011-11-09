@@ -13,7 +13,6 @@ namespace Utopia.Shared.Entities
     public class EntityFactory
     {
         private static EntityFactory _instance;
-        private readonly object _synObject = new object();
 
         /// <summary>
         /// Gets or sets instance of entity factory
@@ -22,28 +21,6 @@ namespace Utopia.Shared.Entities
         {
             get { return _instance ?? (_instance = new EntityFactory()); }
             set { _instance = value; }
-        }
-
-        private uint _lastId;
-
-        /// <summary>
-        /// Sets the maximum id value to generate unique EntityId values
-        /// </summary>
-        /// <param name="id"></param>
-        public void SetLastId(uint id)
-        {
-            lock (_synObject)
-            {
-                _lastId = id;
-            }
-        }
-
-        public uint GetUniqueEntityId()
-        {
-            lock (_synObject)
-            {
-                return ++_lastId;
-            }
         }
 
         /// <summary>
@@ -108,8 +85,6 @@ namespace Utopia.Shared.Entities
                         throw new ArgumentOutOfRangeException("classId");
                 }
             }
-
-            entity.EntityId = GetUniqueEntityId();
 
             // allow post produce prepare
             OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });

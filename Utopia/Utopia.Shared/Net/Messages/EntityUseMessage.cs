@@ -13,7 +13,7 @@ namespace Utopia.Shared.Net.Messages
         private Vector3I _pickedBlockPosition;
         private Vector3I _newBlockPosition;
         private Vector3D _pickedEntityPosition;
-        private uint _pickedEntityId;
+        private EntityLink _pickedEntityId;
         private uint _toolId;
         private uint _entityId;
         private bool _isBlockPicked;
@@ -25,7 +25,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Identification number of entity that performs use operation (player or NPC)
         /// </summary>
-        public uint EntityId
+        public uint DynamicEntityId
         {
             get { return _entityId; }
             set { _entityId = value; }
@@ -53,7 +53,7 @@ namespace Utopia.Shared.Net.Messages
         }
         
         /// <summary>
-        /// Picked entity id (optional)
+        /// Picked entity position (optional)
         /// </summary>
         public Vector3D PickedEntityPosition
         {
@@ -64,7 +64,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Picked entity id (optional)
         /// </summary>
-        public uint PickedEntityId
+        public EntityLink PickedEntityId
         {
             get { return _pickedEntityId; }
             set { _pickedEntityId = value; }
@@ -123,7 +123,7 @@ namespace Utopia.Shared.Net.Messages
             msg._toolId = reader.ReadUInt32();
             msg._isBlockPicked = reader.ReadBoolean();
             msg._isEntityPicked = reader.ReadBoolean();
-            msg._pickedEntityId = reader.ReadUInt32();
+            msg._pickedEntityId = reader.ReadEntityLink();
             msg._token = reader.ReadInt32();
             msg._useMode = reader.ReadByte();
 

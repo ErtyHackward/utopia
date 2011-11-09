@@ -134,7 +134,7 @@ namespace Utopia.Editor
             DrawOrders.UpdateIndex(0, 5000);
         }
 
-        public void SpawnEntity(VoxelEntity entity)
+        public void SpawnEntity(IVoxelEntity entity)
         {
             int x = entity.Model.Blocks.GetLength(0);
             int y = entity.Model.Blocks.GetLength(1);
@@ -157,7 +157,7 @@ namespace Utopia.Editor
 
         internal void EditSelectedEntity()
         {
-            if (_player.EntityState.PickedEntityId == 0)
+            if (_player.EntityState.PickedEntityLink.IsEmpty)
             {
                 //picked a terrain block
                 IsTexture = true;
@@ -184,9 +184,9 @@ namespace Utopia.Editor
             } else
             {
                 //picked an entity
-                uint id = _player.EntityState.PickedEntityId;
-                VoxelEntity voxel = (DynamicEntity)_entityManager.GetEntityById(id);
-                _entityManager.RemoveEntityById(id,false);
+                var link = _player.EntityState.PickedEntityLink;
+                IVoxelEntity voxel = _entityManager.GetEntityById(link.DynamicEntityId);
+                _entityManager.RemoveEntityById(link.DynamicEntityId, false);
                 //becomes managed by the editor, TODO : should notify server the entity is in a suspended mode !                
                 int x = voxel.Model.Blocks.GetLength(0);
                 int y = voxel.Model.Blocks.GetLength(1);
@@ -200,8 +200,8 @@ namespace Utopia.Editor
 
         public void EditYourself()
         {
-            uint id = _player.EntityId;
-            VoxelEntity voxel = _player;
+            var link = _player.GetLink();
+            IVoxelEntity voxel = _player;
             int x = voxel.Model.Blocks.GetLength(0);
             int y = voxel.Model.Blocks.GetLength(1);
             int z = voxel.Model.Blocks.GetLength(2);

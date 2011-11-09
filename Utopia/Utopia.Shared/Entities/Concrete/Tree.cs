@@ -1,9 +1,6 @@
-using Utopia.Shared.Chunks;
-using Utopia.Shared.Entities.Interfaces;
-
 namespace Utopia.Shared.Entities.Concrete
 {
-    public class Tree : Entity, IStaticEntity
+    public class Tree : MetaEntity
     {
         public override ushort ClassId
         {
@@ -13,18 +10,6 @@ namespace Utopia.Shared.Entities.Concrete
         public override string DisplayName
         {
             get { return "Tree"; }
-        }
-
-        public uint StaticId
-        {
-            get;
-            set;
-        }
-
-        public AbstractChunk ParentChunk
-        {
-            get;
-            set;
         }
     }
 }

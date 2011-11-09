@@ -44,5 +44,16 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets a displayed entity name
         /// </summary>
         string DisplayName { get; }
+
+        /// <summary>
+        /// Gets current entity type
+        /// </summary>
+        EntityType Type { get; }
+
+        /// <summary>
+        /// Returns link to the entity
+        /// </summary>
+        /// <returns></returns>
+        EntityLink GetLink();
     }
 }

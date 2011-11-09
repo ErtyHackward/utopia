@@ -7,7 +7,7 @@ using Utopia.Shared.Interfaces;
 
 namespace LostIsland.Shared.Tools
 {
-    public class CubeResource : Entity, ITool
+    public class CubeResource : StaticEntity, ITool
     {
         private readonly ILandscapeManager2D _landscapeManager;
         
@@ -36,8 +36,6 @@ namespace LostIsland.Shared.Tools
         }
 
         public DynamicEntity Parent { get; set; }
-
-        public uint StaticId { get; set; }
 
         public AbstractChunk ParentChunk { get; set; }
         

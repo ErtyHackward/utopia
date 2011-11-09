@@ -42,9 +42,10 @@ namespace Utopia.Shared.Entities.Events
         /// <summary>
         /// Gets entity that currently picked by character
         /// </summary>
-        public uint PickedEntityId { get; set; }
+        public EntityLink PickedEntityLink { get; set; }
 
         public bool IsBlockPicked { get; set; }
+
         public bool IsEntityPicked { get; set; }
 
         public byte UseMode { get; set; }
@@ -63,7 +64,7 @@ namespace Utopia.Shared.Entities.Events
                             PickedEntityPosition = state.PickedEntityPosition,
                             IsBlockPicked = state.IsPickingActive && (!state.IsEntityPicked),
                             IsEntityPicked = state.IsPickingActive && state.IsEntityPicked,
-                            PickedEntityId = state.PickedEntityId
+                            PickedEntityLink = state.PickedEntityLink
                         };
 
             return e;

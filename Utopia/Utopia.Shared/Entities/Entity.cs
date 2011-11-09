@@ -2,14 +2,14 @@ using System.IO;
 using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities
 {
     /// <summary>
     /// Represents a base entity 
     /// </summary>
-    public abstract class Entity : IBinaryStorable, IEntity
+    public abstract class Entity : IEntity
     {
         /// <summary>
         /// Pickable entity Property
@@ -30,11 +30,6 @@ namespace Utopia.Shared.Entities
         /// Gets current entity type
         /// </summary>
         public EntityType Type { get; protected set; }
-
-        /// <summary>
-        /// Unique entity identification number
-        /// </summary>
-        public uint EntityId { get; set; }
 
         /// <summary>
         /// Entity maximum size
@@ -66,7 +61,6 @@ namespace Utopia.Shared.Entities
             reader.ReadUInt16();
 
             Type = (EntityType)reader.ReadByte();
-            EntityId = reader.ReadUInt32();
 
             Vector3 entitySize;
             entitySize.X = reader.ReadSingle();
@@ -94,10 +88,9 @@ namespace Utopia.Shared.Entities
         /// <param name="writer"></param>
         public virtual void Save(BinaryWriter writer)
         {
-            writer.Write((ushort)ClassId);
+            writer.Write(ClassId);
 
             writer.Write((byte)Type);
-            writer.Write(EntityId);
 
             writer.Write(Size.X);
             writer.Write(Size.Y);
@@ -114,18 +107,6 @@ namespace Utopia.Shared.Entities
 
         }
 
-        public override int GetHashCode()
-        {
-            return (int)EntityId;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if(obj == null) return false;
-            if(obj.GetType() != GetType()) return false;
-
-            return (obj as Entity).EntityId == EntityId;
-        }
-
+        public abstract EntityLink GetLink();
     }
 }

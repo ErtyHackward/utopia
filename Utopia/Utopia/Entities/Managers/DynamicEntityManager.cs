@@ -89,21 +89,21 @@ namespace Utopia.Entities.Managers
 
         public void AddEntity(IDynamicEntity entity)
         {
-            if (!_dynamicEntitiesDico.ContainsKey(entity.EntityId))
+            if (!_dynamicEntitiesDico.ContainsKey(entity.DynamicId))
             {
                 VisualDynamicEntity newEntity = CreateVisualEntity(entity);
-                _dynamicEntitiesDico.Add(entity.EntityId, newEntity);
+                _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
                 DynamicEntities.Add(newEntity);
             }
         }
 
         public void RemoveEntity(IDynamicEntity entity)
         {
-            if (_dynamicEntitiesDico.ContainsKey(entity.EntityId))
+            if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId))
             {
-                VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entity.EntityId];
+                VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entity.DynamicId];
                 DynamicEntities.Remove(visualEntity);
-                _dynamicEntitiesDico.Remove(entity.EntityId);
+                _dynamicEntitiesDico.Remove(entity.DynamicId);
                 visualEntity.Dispose();
             }
         }
