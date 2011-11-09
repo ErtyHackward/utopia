@@ -152,7 +152,7 @@ namespace Utopia.Settings
     /// </summary>
     [XmlRoot("ClientConfig")]
     [Serializable]
-    public class ClientConfig
+    public class ClientConfig : IConfigClass
     {
         /// <summary>
         /// Game parameters config section
@@ -244,6 +244,10 @@ namespace Utopia.Settings
 
                 return config;
             }
+        }
+
+        public void Initialize()
+        {
         }
     }
 }

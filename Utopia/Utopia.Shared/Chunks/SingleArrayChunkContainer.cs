@@ -11,6 +11,7 @@ using Utopia.Shared.Structs;
 using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.Chunks
 {
@@ -399,7 +400,7 @@ namespace Utopia.Shared.Chunks
             {
                 cube = Cubes[cubeIndex];
                 // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == CubeId.Air) cube = new TerraCube(CubeId.Error);
-                return CubeProfile.CubesProfile[cube.Id].IsPickable;
+                return GameSystemSettings.Current.Settings.CubesProfile[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -413,7 +414,7 @@ namespace Utopia.Shared.Chunks
             if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-                return CubeProfile.CubesProfile[cube.Id].IsPickable;
+                return GameSystemSettings.Current.Settings.CubesProfile[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -429,7 +430,7 @@ namespace Utopia.Shared.Chunks
             if (Index(ref cubePosition, true, out cubeIndex))
             {
                 cubewithPosition = new TerraCubeWithPosition(cubePosition, Cubes[cubeIndex]);
-                return CubeProfile.CubesProfile[cubewithPosition.Cube.Id].IsPickable;
+                return GameSystemSettings.Current.Settings.CubesProfile[cubewithPosition.Cube.Id].IsPickable;
             }
 
             cubewithPosition = new TerraCubeWithPosition();
@@ -443,7 +444,7 @@ namespace Utopia.Shared.Chunks
             if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-                return CubeProfile.CubesProfile[cube.Id].IsPickable;
+                return GameSystemSettings.Current.Settings.CubesProfile[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -456,7 +457,7 @@ namespace Utopia.Shared.Chunks
             int cubeIndex;
             if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
             {
-                return CubeProfile.CubesProfile[Cubes[cubeIndex].Id].IsPickable;
+                return GameSystemSettings.Current.Settings.CubesProfile[Cubes[cubeIndex].Id].IsPickable;
             }
 
             return false;
@@ -483,7 +484,7 @@ namespace Utopia.Shared.Chunks
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
-                            if (CubeProfile.CubesProfile[Cubes[index].Id].IsSolidToEntity)
+                            if (GameSystemSettings.Current.Settings.CubesProfile[Cubes[index].Id].IsSolidToEntity)
                             {
                                 return true;
                             }
@@ -516,7 +517,7 @@ namespace Utopia.Shared.Chunks
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
-                            profile = CubeProfile.CubesProfile[Cubes[index].Id];
+                            profile = GameSystemSettings.Current.Settings.CubesProfile[Cubes[index].Id];
                             if (profile.IsSolidToEntity)
                             {
                                 collidingcube.Cube = Cubes[index];
@@ -534,7 +535,7 @@ namespace Utopia.Shared.Chunks
                                     {
                                         //check the head when On a Offseted Block
                                         IndexSafe(x, MathHelper.Fastfloor(bb.Maximum.Y + profile.YBlockOffset), z, out index);
-                                        profile = CubeProfile.CubesProfile[Cubes[index].Id];
+                                        profile = GameSystemSettings.Current.Settings.CubesProfile[Cubes[index].Id];
                                         if (profile.IsSolidToEntity) return true;
                                     }
                                 }
@@ -563,11 +564,11 @@ namespace Utopia.Shared.Chunks
 
             if (Y >= _visualWorldParam.WorldVisibleSize.Y) Y = _visualWorldParam.WorldVisibleSize.Y - 1;
 
-            while (!CubeProfile.CubesProfile[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
+            while (!GameSystemSettings.Current.Settings.CubesProfile[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
             {
                 if (IndexSafe(X, Y, Z, out index))
                 {
-                    if (CubeProfile.CubesProfile[Cubes[index].Id].IsSolidToEntity)
+                    if (GameSystemSettings.Current.Settings.CubesProfile[Cubes[index].Id].IsSolidToEntity)
                     {
                         cubeWithPosition.Cube = Cubes[index];
                         break;

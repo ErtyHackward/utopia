@@ -13,6 +13,7 @@ using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Worlds.Cubes;
 using Utopia.Shared.Interfaces;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -121,7 +122,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
             _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
-            VisualCubeProfile profile = VisualCubeProfile.CubesProfile[replacementCubeId];
+            CubeProfile profile = GameSystemSettings.Current.Settings.CubesProfile[replacementCubeId];
 
             //Find the chunks that have been impacted around the 8 surrending chunks
             neightboorChunk.State = ChunkState.LandscapeLightsPropagated;

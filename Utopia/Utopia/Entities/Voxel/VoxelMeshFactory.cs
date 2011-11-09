@@ -9,6 +9,7 @@ using Utopia.Shared.Structs;
 using Utopia.Worlds.Chunks.Enums;
 using Utopia.Worlds.Cubes;
 using Utopia.Shared.Enums;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Entities.Voxel
 {
@@ -91,7 +92,7 @@ namespace Utopia.Entities.Voxel
             }
             else
             {
-                VisualCubeProfile profile = VisualCubeProfile.CubesProfile[cubeid];
+                CubeProfile profile = GameSystemSettings.Current.Settings.CubesProfile[cubeid];
                 if (profile.IsEmissiveColorLightSource)
                     color = new ByteColor(profile.EmissiveColor); //Only when the cube is emitting light !
                 else

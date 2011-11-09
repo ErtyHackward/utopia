@@ -10,11 +10,11 @@ namespace Utopia.Shared.Structs.Landscape
     /// Class that will hold the collection of Cube profiles.
     /// A cube profile contains the informations for a cube type that cannot change.
     /// It needs to be initialized (InitCubeProfiles) !
-    /// Client is using a more complete profile collection (VisualCubeProfile) with graphical informations, like Texture mapping, but also delegates that can only be called from the Client side
+    /// Client is using a more complete profile collection (CubeProfile) with graphical informations, like Texture mapping, but also delegates that can only be called from the Client side
     /// </summary>
-    public class CubeProfile
+    public class CubeProfileOLD
     {
-        public static CubeProfile[] CubesProfile;
+        public static CubeProfileOLD[] CubesProfile;
 
         //Create the various Cubes
         public static void InitCubeProfiles(string cubeProfilePath)
@@ -23,15 +23,15 @@ namespace Utopia.Shared.Structs.Landscape
             CubeProfileDS.ReadXml(cubeProfilePath, XmlReadMode.Auto);
 
             DataTable dt = CubeProfileDS.Tables["Cube"];
-            CubesProfile = new CubeProfile[dt.Rows.Count];
+            CubesProfile = new CubeProfileOLD[dt.Rows.Count];
 
             ushort Id;
-            CubeProfile profile;
+            CubeProfileOLD profile;
             string[] emissiveColor;
             foreach (DataRow cubeProfil in dt.Rows)
             {
                 Id = ushort.Parse(cubeProfil.ItemArray[dt.Columns["Id"].Ordinal].ToString());
-                profile = new CubeProfile();
+                profile = new CubeProfileOLD();
                 profile.Id = Id;
                 profile.Name = cubeProfil.ItemArray[dt.Columns["Name"].Ordinal].ToString();
                 profile.IsBlockingLight = cubeProfil.ItemArray[dt.Columns["IsBlockingLight"].Ordinal].ToString() == "true";

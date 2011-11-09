@@ -3,6 +3,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -44,7 +45,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public bool IsSolid()
         {
-            return CubeProfile.CubesProfile[Read()].IsSolidToEntity;
+            return GameSystemSettings.Current.Settings.CubesProfile[Read()].IsSolidToEntity;
         }
 
         /// <summary>
@@ -54,17 +55,17 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <returns></returns>
         public bool IsSolid(Vector3I moveVector)
         {
-            return CubeProfile.CubesProfile[PeekValue(moveVector)].IsSolidToEntity;
+            return GameSystemSettings.Current.Settings.CubesProfile[PeekValue(moveVector)].IsSolidToEntity;
         }
 
         public bool IsSolidUp()
         {
-            return CubeProfile.CubesProfile[PeekUp()].IsSolidToEntity;
+            return GameSystemSettings.Current.Settings.CubesProfile[PeekUp()].IsSolidToEntity;
         }
 
         public bool IsSolidDown()
         {
-            return CubeProfile.CubesProfile[PeekDown()].IsSolidToEntity;
+            return GameSystemSettings.Current.Settings.CubesProfile[PeekDown()].IsSolidToEntity;
         }
 
         public byte PeekDown()

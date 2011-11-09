@@ -28,6 +28,7 @@ using SharpDX;
 using S33M3Physics.Verlet;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Worlds.Cubes;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -378,7 +379,7 @@ namespace Utopia.Worlds.Chunks
                 //If Jummping
                 if (previousPosition.Y < newPositionWithColliding.Y)
                 {
-                    if(VisualCubeProfile.CubesProfile[_collidingCube.Cube.Id].YBlockOffset == 0)
+                    if(GameSystemSettings.Current.Settings.CubesProfile[_collidingCube.Cube.Id].YBlockOffset == 0)
                     newPositionWithColliding.Y = previousPosition.Y;
                 }
                 else //Falling
