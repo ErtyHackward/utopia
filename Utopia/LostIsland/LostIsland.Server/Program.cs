@@ -13,6 +13,7 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.WorldConfigs;
+using Utopia.Shared.Settings;
 
 namespace LostIsland.Server
 {
@@ -59,9 +60,8 @@ namespace LostIsland.Server
         {
             _iocContainer = new StandardKernel(new NinjectSettings());
 
-            CubeProfile.InitCubeProfiles(@"Config\CubesProfile.xml");
-
-            
+            GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"Config\" };
+            GameSystemSettings.Current.Load();
 
             IocBind(new WorldParameters());
 

@@ -2,6 +2,7 @@ using System;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.Chunks
 {
@@ -90,7 +91,7 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public bool IsSolid()
         {
-            return CubeProfile.CubesProfile[Read()].IsSolidToEntity;
+            return GameSystemSettings.Current.Settings.CubesProfile[Read()].IsSolidToEntity;
         }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public bool IsSolid(Vector3I moveVector)
         {
-            return CubeProfile.CubesProfile[PeekValue(moveVector)].IsSolidToEntity;
+            return GameSystemSettings.Current.Settings.CubesProfile[PeekValue(moveVector)].IsSolidToEntity;
         }
 
         public bool IsSolidUp()

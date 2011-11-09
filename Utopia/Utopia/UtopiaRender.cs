@@ -9,6 +9,8 @@ using Utopia.Worlds.Cubes;
 using Utopia.Shared.Chunks;
 using Utopia.Action;
 using S33M3Engines.D3D.Effects.Basics;
+using Utopia.Shared.Settings;
+using Utopia.Shared.Config;
 
 namespace Utopia
 {
@@ -189,7 +191,7 @@ namespace Utopia
             _d3dEngine.GameWindow.Closed -= GameWindow_Closed; //Subscribe to Close event
 
             _renderStates.server.ServerConnection.ConnectionStatusChanged -= ServerConnection_ConnectionStatusChanged;
-            VisualCubeProfile.CleanUp();
+            GameSystemSettings.Current.Settings.CleanUp();
             base.Dispose();
         }
     }

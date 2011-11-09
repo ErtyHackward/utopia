@@ -5,7 +5,11 @@ using System.Text;
 
 namespace Utopia.Shared.Settings
 {
-    public struct EntityProfile
+    [Serializable]
+    public class EntityProfile
     {
+        public int ClassID;
+        public int SpriteID;
+        public int NbrGrowSprites;
     }
 }
