@@ -85,7 +85,7 @@ namespace Utopia.Server.Structs
                     e.Entity.Model.Save(writer);
                 }
 
-                Connection.SendAsync(new EntityVoxelModelMessage { EntityModel = e.Entity.EntityId, Bytes = ms.ToArray() });
+                Connection.SendAsync(new EntityVoxelModelMessage { EntityLink = e.Entity.GetLink(), Bytes = ms.ToArray() });
                 ms.Dispose();
             }
         }
@@ -140,7 +140,7 @@ namespace Utopia.Server.Structs
             {
                 Connection.SendAsync(new EntityUseMessage 
                 {
-                    EntityId = e.Entity.DynamicId, 
+                    DynamicEntityId = e.Entity.DynamicId, 
                     NewBlockPosition = e.NewBlockPosition, 
                     PickedBlockPosition = e.PickedBlockPosition,
                     PickedEntityPosition = e.PickedEntityPosition,
@@ -205,7 +205,7 @@ namespace Utopia.Server.Structs
             var playerCharacter = (PlayerCharacter)DynamicEntity;
 
             #region Take from world
-            if (itemTransferMessage.SourceContainerEntityLink == 0 && itemTransferMessage.DestinationContainerEntityLink == playerCharacter.EntityId)
+            if (itemTransferMessage.SourceContainerEntityLink.IsEmpty && itemTransferMessage.DestinationContainerEntityLink.IsPointsTo(playerCharacter))
             {
                 if (itemTransferMessage.ItemEntityId != 0)
                 {
@@ -213,7 +213,7 @@ namespace Utopia.Server.Structs
                     if ((chunk = _server.LandscapeManager.SurroundChunks(playerCharacter.Position).First(c => c.Entities.ContainsId(itemTransferMessage.ItemEntityId))) != null)
                     {
                         IStaticEntity entity;
-                        chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, playerCharacter.EntityId, out entity);
+                        chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, playerCharacter.DynamicId, out entity);
 
                         _itemTaken = new ContainedSlot { Item = (IItem)entity };
                         return true;
@@ -227,7 +227,7 @@ namespace Utopia.Server.Structs
 
             var position = itemTransferMessage.SourceContainerSlot;
 
-            if (playerCharacter.EntityId == itemTransferMessage.SourceContainerEntityLink)
+            if (itemTransferMessage.SourceContainerEntityLink.IsPointsTo(playerCharacter))
             {
                 if (itemTransferMessage.SourceContainerSlot.X == -1)
                 {
@@ -261,7 +261,7 @@ namespace Utopia.Server.Structs
                 var playerCharacter = (PlayerCharacter)DynamicEntity;
                 var position = itm.SourceContainerSlot;
                 SlotContainer<ContainedSlot> container = null;
-                if (playerCharacter.EntityId == itm.SourceContainerEntityLink)
+                if (itm.SourceContainerEntityLink.IsPointsTo(playerCharacter))
                 {
                     if (itm.SourceContainerSlot.X == -1)
                     {
@@ -286,7 +286,7 @@ namespace Utopia.Server.Structs
             var playerCharacter = (PlayerCharacter)DynamicEntity;
 
             #region Throw to world
-            if (itemTransferMessage.SourceContainerEntityLink == playerCharacter.EntityId && itemTransferMessage.DestinationContainerEntityLink == 0)
+            if (itemTransferMessage.SourceContainerEntityLink.IsPointsTo(playerCharacter) && itemTransferMessage.DestinationContainerEntityLink.IsEmpty)
             {
                 if (itemTransferMessage.ItemEntityId != 0)
                 {
@@ -307,7 +307,7 @@ namespace Utopia.Server.Structs
                             for (int i = 0; i < itemTransferMessage.ItemsCount; i++)
                             {
                                 // throw it
-                                chunk.Entities.Add(itemType.Item, playerCharacter.EntityId);
+                                chunk.Entities.Add(itemType.Item, playerCharacter.DynamicId);
                             }
                             // ok
                             return true;
@@ -328,7 +328,7 @@ namespace Utopia.Server.Structs
 
             var position = itemTransferMessage.DestinationContainerSlot;
 
-            if (itemTransferMessage.DestinationContainerEntityLink == playerCharacter.EntityId)
+            if (itemTransferMessage.DestinationContainerEntityLink.IsPointsTo(playerCharacter))
             {
                 if (position.X == -1)
                 {
@@ -347,13 +347,20 @@ namespace Utopia.Server.Structs
             return container.PutItem(_itemTaken.Item, position, _itemTaken.ItemsCount);
         }
 
-        public SlotContainer<ContainedSlot> FindContainer(uint entityId, Vector2I position, out Vector2I newPosition)
+        /// <summary>
+        /// Returns appropriate container from the player and provides correct position inside the container
+        /// </summary>
+        /// <param name="link"></param>
+        /// <param name="position"></param>
+        /// <param name="newPosition"></param>
+        /// <returns></returns>
+        public SlotContainer<ContainedSlot> FindContainer(EntityLink link, Vector2I position, out Vector2I newPosition)
         {
             var playerCharacter = (PlayerCharacter)DynamicEntity;
 
             newPosition = position;
 
-            if (entityId == playerCharacter.EntityId)
+            if (link.IsPointsTo(playerCharacter))
             {
                 if (position.X == -1)
                 {

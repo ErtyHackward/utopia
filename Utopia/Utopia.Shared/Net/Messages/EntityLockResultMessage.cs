@@ -9,36 +9,16 @@ namespace Utopia.Shared.Net.Messages
     /// </summary>
     public struct EntityLockResultMessage : IBinaryMessage
     {
-        private uint _entityId;
+        private EntityLink _entityLink;
         private LockResult _lockResult;
-        private bool _isStatic;
-        private Vector2I _chunkPosition;
-
-        /// <summary>
-        /// Indicates if entity is static
-        /// </summary>
-        public bool IsStatic
-        {
-            get { return _isStatic; }
-            set { _isStatic = value; }
-        }
-        
-        /// <summary>
-        /// Gets or sets static entity chunk position
-        /// </summary>
-        public Vector2I ChunkPosition
-        {
-            get { return _chunkPosition; }
-            set { _chunkPosition = value; }
-        }
 
         /// <summary>
         /// Entity that was requested to be locked
         /// </summary>
-        public uint EntityId
+        public EntityLink EntityLink
         {
-            get { return _entityId; }
-            set { _entityId = value; }
+            get { return _entityLink; }
+            set { _entityLink = value; }
         }
         
         /// <summary>
@@ -62,10 +42,8 @@ namespace Utopia.Shared.Net.Messages
         {
             EntityLockResultMessage msg;
 
-            msg._entityId = reader.ReadUInt32();
+            msg._entityLink = reader.ReadEntityLink();
             msg._lockResult = (LockResult)reader.ReadByte();
-            msg._isStatic = reader.ReadBoolean();
-            msg._chunkPosition = reader.ReadVector2I();
 
             return msg;
         }
@@ -76,10 +54,8 @@ namespace Utopia.Shared.Net.Messages
         /// <param name="writer"></param>
         public void Write(BinaryWriter writer)
         {
-            writer.Write(_entityId);
+            writer.Write(_entityLink);
             writer.Write((byte)_lockResult);
-            writer.Write(_isStatic);
-            writer.Write(_chunkPosition);
         }
     }
 

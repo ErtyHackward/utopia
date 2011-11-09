@@ -128,6 +128,7 @@
     <Compile Include="Entities\Interfaces\INecklace.cs" />
     <Compile Include="Entities\Interfaces\IRing.cs" />
     <Compile Include="Entities\Interfaces\ISlotContainer.cs" />
+    <Compile Include="Entities\Interfaces\IStaticContainer.cs" />
     <Compile Include="Entities\Interfaces\IStaticEntity.cs" />
     <Compile Include="Entities\Interfaces\ITool.cs" />
     <Compile Include="Entities\Interfaces\IToolImpact.cs" />
@@ -145,9 +146,10 @@
     <Compile Include="Entities\Inventory\ToolImpact.cs" />
     <Compile Include="Entities\Inventory\ToolSlot.cs" />
     <Compile Include="Entities\Inventory\VoxelItem.cs" />
+    <Compile Include="Entities\MetaEntity.cs" />
     <Compile Include="Entities\SpriteEntity.cs" />
     <Compile Include="Entities\SpriteFormat.cs" />
-    <Compile Include="Entities\VoxelEntity.cs" />
+    <Compile Include="Entities\StaticEntity.cs" />
     <Compile Include="Entities\VoxelModel.cs" />
     <Compile Include="Gameplay\ServerGameplayProvider.cs" />
     <Compile Include="Interfaces\IAbstractChunk.cs" />
@@ -216,7 +218,6 @@
     <Compile Include="Structs\HalfVector4.cs" />
     <Compile Include="Structs\Helpers\PackUtils.cs" />
     <Compile Include="Structs\Line.cs" />
-    <Compile Include="Structs\StaticId.cs" />
     <Compile Include="Structs\Vector2I.cs" />
     <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />

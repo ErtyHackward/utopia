@@ -9,7 +9,7 @@ using Utopia.Shared.Interfaces;
 
 namespace LostIsland.Shared.Tools
 {
-    public abstract class BlockRemover : Entity, ITool
+    public abstract class BlockRemover : VoxelItem, ITool
     {
         private readonly ILandscapeManager2D _landscapeManager;
 
@@ -46,37 +46,31 @@ namespace LostIsland.Shared.Tools
             throw new NotImplementedException();
         }
 
-        public Utopia.Shared.Entities.Inventory.EquipmentSlotType AllowedSlots
+        public EquipmentSlotType AllowedSlots
         {
             get
             {
                 return Utopia.Shared.Entities.Inventory.EquipmentSlotType.LeftHand | Utopia.Shared.Entities.Inventory.EquipmentSlotType.RightHand;
             }
-            set
-            {
-                throw new NotSupportedException();
-            }
         }
 
-        public uint StaticId { get; set; }
-
-        public int MaxStackSize
+        public override int MaxStackSize
         {
             get { return 1; }
         }
 
-        public virtual string Description
+        public override string Description
         {
             get { return "Allows to remove blocks from the world"; }
         }
 
-        public string UniqueName
+        public override string UniqueName
         {
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }
 
-        public string StackType
+        public override string StackType
         {
             get { return "BlockRemover"; }
         }

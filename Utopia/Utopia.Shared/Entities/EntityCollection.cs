@@ -11,7 +11,7 @@ namespace Utopia.Shared.Entities
     /// <summary>
     /// Represents a threadsafe collection of entities
     /// </summary>
-    public class EntityCollection
+    public class EntityCollection : IStaticContainer
     {
         private readonly SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
         private readonly object _syncRoot = new object();
@@ -87,7 +87,7 @@ namespace Utopia.Shared.Entities
             lock (_syncRoot)
             {
                 entity.StaticId = GetFreeId();
-                entity.ParentChunk = Chunk;
+                entity.Container = this;
                 _entities.Add(entity.StaticId, entity);
             }
             IsDirty = true;
@@ -109,7 +109,7 @@ namespace Utopia.Shared.Entities
                 {
                     IsDirty = true;
                     entity.StaticId = GetFreeId();
-                    entity.ParentChunk = Chunk;
+                    entity.Container = this;
                     _entities.Add(entity.StaticId, entity);
                 }
                 finally
@@ -136,7 +136,7 @@ namespace Utopia.Shared.Entities
             if (removed)
             {
                 IsDirty = true;
-                entity.ParentChunk = null;
+                entity.Container = this;
                 OnEntityRemoved(new EntityCollectionEventArgs {
                     Entity = entity, 
                     ParentDynamicEntityId = parentId
@@ -166,7 +166,7 @@ namespace Utopia.Shared.Entities
                     Monitor.Exit(_syncRoot);
                     if (removed)
                     {
-                        entity.ParentChunk = null;
+                        entity.Container = null;
                         OnEntityRemoved(new EntityCollectionEventArgs {
                             Entity = entity, 
                             ParentDynamicEntityId = parentId
@@ -192,7 +192,7 @@ namespace Utopia.Shared.Entities
                 {
                     IsDirty = true;
                     _entities.Remove(staticEntityId);
-                    entity.ParentChunk = null;
+                    entity.Container = null;
                     OnEntityRemoved(new EntityCollectionEventArgs { 
                         Entity = entity, 
                         ParentDynamicEntityId = parentDynamicEntityId 
@@ -210,7 +210,7 @@ namespace Utopia.Shared.Entities
             {
                 foreach (var staticEntity in _entities)
                 {
-                    staticEntity.Value.ParentChunk = null;
+                    staticEntity.Value.Container = null;
                 }
 
                 _entities.Clear();
@@ -259,7 +259,7 @@ namespace Utopia.Shared.Entities
                     var value = _entities[_entities.Keys[i]]; // O(1)
                     if (value is T && condition((T) value))
                     {
-                        value.ParentChunk = null;
+                        value.Container = null;
                         _entities.RemoveAt(i); // O(Count)
                         OnEntityRemoved(new EntityCollectionEventArgs {
                             Entity = value
@@ -329,6 +329,35 @@ namespace Utopia.Shared.Entities
             {
                 return _entities.TryGetValue(staticEntityId, out entity);
             }
+        }
+
+        /// <summary>
+        /// Adds new static entity to the container. Updates static entity id and Container properties
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Add(IStaticEntity entity)
+        {
+            Add(entity, 0);
+        }
+
+        /// <summary>
+        /// Removes static entity from the container
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Remove(IStaticEntity entity)
+        {
+            Remove(entity, 0);
+        }
+
+        /// <summary>
+        /// Gets entity by its id
+        /// </summary>
+        /// <param name="staticId"></param>
+        /// <returns></returns>
+        public IStaticEntity GetStaticEntity(uint staticId)
+        {
+            lock (_syncRoot)
+                return _entities[staticId];
         }
     }
 }

@@ -5,6 +5,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Network
 {
@@ -81,8 +82,8 @@ namespace Utopia.Network
 
             var destContainer = (SlotContainer<ContainedSlot>)sender;
             
-            var srcId = _sourceContainer.Parent.EntityId;
-            var destId = destContainer.Parent.EntityId;
+            var srcLink = _sourceContainer.Parent.GetLink();
+            var destLink = destContainer.Parent.GetLink();
 
             var srcPosition = _tempSlot.GridPosition;
             var destPosition = e.Slot.GridPosition;
@@ -95,15 +96,15 @@ namespace Utopia.Network
             var msg = new ItemTransferMessage
             {
                 SourceContainerSlot = srcPosition,
-                SourceContainerEntityLink = srcId,
+                SourceContainerEntityLink = srcLink,
                 ItemsCount = e.Slot.ItemsCount,
                 DestinationContainerSlot = destPosition,
-                DestinationContainerEntityLink = destId,
+                DestinationContainerEntityLink = destLink,
                 IsSwitch = true
             };
 
-            if (srcId == 0)
-                msg.ItemEntityId = _tempSlot.Item.EntityId;
+            if (srcLink.IsEmpty)
+                msg.ItemEntityId = _tempSlot.Item.StaticId;
 
             _connection.SendAsync(msg);
 
@@ -143,7 +144,7 @@ namespace Utopia.Network
 
         public void SetToolBar(int slot, uint entityId)
         {
-            _connection.SendAsync(new ItemTransferMessage { SourceContainerSlot = new Shared.Structs.Vector2I(-2, slot),  ItemEntityId = entityId });
+            _connection.SendAsync(new ItemTransferMessage { SourceContainerSlot = new Vector2I(-2, slot),  ItemEntityId = entityId });
         }
 
         // handling player inventory requests
@@ -165,8 +166,8 @@ namespace Utopia.Network
 
             var destContainer = (SlotContainer<ContainedSlot>)sender;
 
-            var srcId = _sourceContainer.Parent.EntityId;
-            var destId = destContainer.Parent.EntityId;
+            var srcLink = _sourceContainer.Parent.GetLink();
+            var destLink = destContainer.Parent.GetLink();
 
             var srcPosition = _tempSlot.GridPosition;
             var destPosition = e.Slot.GridPosition;
@@ -179,14 +180,14 @@ namespace Utopia.Network
             var msg = new ItemTransferMessage
             {
                 SourceContainerSlot = srcPosition,
-                SourceContainerEntityLink = srcId,
+                SourceContainerEntityLink = srcLink,
                 ItemsCount = e.Slot.ItemsCount,
                 DestinationContainerSlot = destPosition,
-                DestinationContainerEntityLink = destId
+                DestinationContainerEntityLink = destLink
             };
 
-            if (srcId == 0)
-                msg.ItemEntityId = _tempSlot.Item.EntityId;
+            if (srcLink.IsEmpty)
+                msg.ItemEntityId = _tempSlot.Item.StaticId;
 
             _connection.SendAsync(msg);
 
@@ -218,11 +219,11 @@ namespace Utopia.Network
 
             _connection.SendAsync(new ItemTransferMessage
             {
-                SourceContainerEntityLink = _sourceContainer == _playerEntity.Inventory ? _playerEntity.EntityId : _lockedEntity.EntityId,
+                SourceContainerEntityLink = _sourceContainer == _playerEntity.Inventory ? _playerEntity.GetLink() : _lockedEntity.GetLink(),
                 SourceContainerSlot = srcPosition,
                 ItemsCount = _tempSlot.ItemsCount,
-                ItemEntityId = _tempSlot.Item.EntityId,
-                DestinationContainerEntityLink = 0,
+                ItemEntityId = _tempSlot.Item.StaticId,
+                DestinationContainerEntityLink = EntityLink.Empty
             });
 
             _sourceContainer = null;
@@ -259,7 +260,7 @@ namespace Utopia.Network
             if (_lockedEntity != null)
                 throw new InvalidOperationException("Some entity was already locked or requested to be locked. Unable to lock more than one entities at once");
             _lockedEntity = entity;
-            _connection.SendAsync(new EntityLockMessage { EntityId = entity.EntityId, Lock = true });
+            _connection.SendAsync(new EntityLockMessage { EntityLink = entity.GetLink(), Lock = true });
         }
 
         /// <summary>
@@ -269,7 +270,7 @@ namespace Utopia.Network
         {
             if (_lockedEntity == null)
                 throw new InvalidOperationException("Unable to release the lock because no entity was locked");
-            _connection.SendAsync(new EntityLockMessage { EntityId = _lockedEntity.EntityId, Lock = false });
+            _connection.SendAsync(new EntityLockMessage { EntityLink = _lockedEntity.GetLink(), Lock = false });
         }
 
         /// <summary>

@@ -10,10 +10,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         event EventHandler<VoxelModelEventArgs> VoxelModelChanged;
 
-        VoxelModel Model
-        {
-            get;          
-        }
+        VoxelModel Model { get; }
 
         void CommitModel();
     }

@@ -268,16 +268,12 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private void CreateVisualEntities(AbstractChunk source, VisualChunk target)
         {
             //Create the Sprite Entities
-            SpriteEntity spriteEntity;
-            for (int entityID = 0; entityID < source.Entities.Data.Count; entityID++)
-            {
-                spriteEntity = source.Entities.Data[entityID] as SpriteEntity;
-                if (spriteEntity != null)
-                {
-                    target.VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
-                }
-            }
 
+            foreach (var spriteEntity in source.Entities.Enumerate<SpriteEntity>())
+            {
+                target.VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
+            }
+            
             source.Entities.IsDirty = false;
         }
         #endregion

@@ -291,7 +291,7 @@ namespace Utopia.Entities.Managers
             {
                 _pickedUpEntityPosition = _pickedUpEntity.Entity.Position;
                 Player._entityState.PickedEntityPosition = _pickedUpEntity.Entity.Position;
-                Player._entityState.PickedEntityId = _pickedUpEntity.Entity.EntityId;
+                Player._entityState.PickedEntityLink = _pickedUpEntity.Entity.GetLink();
                 Player._entityState.IsEntityPicked = true;
                 Player._entityState.IsPickingActive = true;
                 return true;

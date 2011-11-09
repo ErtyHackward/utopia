@@ -28,11 +28,6 @@ namespace Utopia.Server.Structs
         public IEntity LockedEntity { get; set; }
 
         /// <summary>
-        /// Gets or sets chunk position that contains the entity
-        /// </summary>
-        public Vector2I StaticEntityChunk { get; set; }
-
-        /// <summary>
         /// Gets wrapped entity
         /// </summary>
         public IDynamicEntity DynamicEntity { get; private set; }
@@ -136,7 +131,7 @@ namespace Utopia.Server.Structs
                 IsEntityPicked = entityUseMessage.IsEntityPicked,
                 NewBlockPosition = entityUseMessage.NewBlockPosition,
                 PickedBlockPosition = entityUseMessage.PickedBlockPosition,
-                PickedEntityId = entityUseMessage.PickedEntityId,
+                PickedEntityLink = entityUseMessage.PickedEntityId,
             };
             DynamicEntity.EntityState = state;
         }

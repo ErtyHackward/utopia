@@ -4,7 +4,7 @@ namespace Utopia.Shared.Entities.Interfaces
 {
     public interface IItem : IStaticEntity
     {
-        EquipmentSlotType AllowedSlots { get; set; }   
+        EquipmentSlotType AllowedSlots { get; }   
         int MaxStackSize { get; }
         string UniqueName { get; set; }
         string StackType { get; }

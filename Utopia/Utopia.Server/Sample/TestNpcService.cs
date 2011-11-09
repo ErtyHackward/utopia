@@ -32,7 +32,7 @@ namespace Utopia.Server.Services
         /// <returns></returns>
         public TestNpc CreateZombie(string name, Vector3D position)
         {
-            var z = new Zombie { CharacterName = name, EntityId = EntityFactory.Instance.GetUniqueEntityId() };
+            var z = new Zombie { CharacterName = name };
 
             var zombie = new TestNpc(_server, z);
             

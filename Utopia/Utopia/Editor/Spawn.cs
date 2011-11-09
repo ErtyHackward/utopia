@@ -1,12 +1,13 @@
 ﻿using System;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Editor
 {
     public class Spawn : EditorTool
     {
-        protected readonly VoxelEntity Entity;
+        protected readonly IVoxelEntity Entity;
         protected readonly int Xmax;
         protected readonly int Ymax;
         protected readonly int Zmax;
@@ -51,7 +52,7 @@ namespace Utopia.Editor
             Editor.SpawnEntity(Entity);
         }
 
-        private static void Fill(VoxelEntity entity, Action<int, int, int> fillFunction)
+        private static void Fill(IVoxelEntity entity, Action<int, int, int> fillFunction)
         {
             for (int x = 0; x < entity.Model.Blocks.GetLength(0); x++)
             {

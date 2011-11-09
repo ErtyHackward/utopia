@@ -120,8 +120,6 @@ namespace Utopia.Network
                 case EntityType.Dynamic:
                         _dynamicEntityManager.AddEntity((IDynamicEntity)e.Message.Entity);
                     break;
-                default:
-                    break;
             }
         }
 
@@ -130,12 +128,12 @@ namespace Utopia.Network
             _connection.SendAsync(new EntityUseMessage 
             { 
                 IsEntityPicked = e.IsEntityPicked,
-                IsBlockPicked =e.IsBlockPicked,
-                EntityId = _playerEntity.EntityId,
+                IsBlockPicked = e.IsBlockPicked,
+                DynamicEntityId = _playerEntity.DynamicId,
                 NewBlockPosition = e.NewBlockPosition, 
                 PickedBlockPosition = e.PickedBlockPosition, 
-                PickedEntityId = e.PickedEntityId, 
-                ToolId = e.Tool == null ? 0 : e.Tool.EntityId,
+                PickedEntityId = e.PickedEntityLink, 
+                ToolId = e.Tool == null ? 0 : e.Tool.StaticId,
                 UseMode = e.UseMode
             });
         }
@@ -145,7 +143,7 @@ namespace Utopia.Network
             _connection.SendAsync(new EntityDirectionMessage 
             { 
                 Direction = e.Entity.Rotation, 
-                EntityId = e.Entity.EntityId 
+                EntityId = e.Entity.DynamicId 
             });
         }
 
@@ -154,7 +152,7 @@ namespace Utopia.Network
             _connection.SendAsync(new EntityPositionMessage
             {
                 Position = e.Entity.Position,
-                EntityId = e.Entity.EntityId
+                EntityId = e.Entity.DynamicId
             });
         }
     }

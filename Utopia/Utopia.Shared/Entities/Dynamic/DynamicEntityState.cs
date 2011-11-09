@@ -31,7 +31,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets entity that currently picked by entity
         /// </summary>
-        public uint PickedEntityId;
+        public EntityLink PickedEntityLink;
 
         public bool IsEntityPicked;
     }

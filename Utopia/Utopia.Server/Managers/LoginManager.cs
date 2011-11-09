@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Utopia.Server.Structs;
+using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
@@ -120,7 +121,7 @@ namespace Utopia.Server.Managers
                 if (loginData.State == null)
                 {
                     // create new message
-                    playerEntity = GetNewPlayerEntity(connection, EntityFactory.Instance.GetUniqueEntityId());
+                    playerEntity = GetNewPlayerEntity(connection, DynamicIdHelper.GetNextUniqueId());
 
                     var state = new UserState { EntityId = playerEntity.DynamicEntity.DynamicId };
 

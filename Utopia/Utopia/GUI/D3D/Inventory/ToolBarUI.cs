@@ -92,7 +92,7 @@ namespace Utopia.GUI.D3D.Inventory
             {
                 if (_player.Toolbar[i] != 0)
                 {
-                    _buttons[i].IsCellSelected = _player.Equipment.LeftTool.EntityId == _player.Toolbar[i];
+                    _buttons[i].IsCellSelected = _player.Equipment.LeftTool.StaticId == _player.Toolbar[i];
                 }
                 else
                     _buttons[i].IsCellSelected = false;

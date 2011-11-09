@@ -11,6 +11,7 @@ using S33M3Engines.Timers;
 using Utopia.Shared.Chunks;
 using Utopia.Network;
 using Utopia.Action;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
 using S33M3Physics.Verlet;
@@ -192,9 +193,10 @@ namespace Utopia.Entities.Managers
                             float impulsePower = 1;
                             if (_action.isTriggered(Actions.Move_Run)) impulsePower = 2;
 
-                            _server.ServerConnection.SendAsync(new EntityImpulseMessage()
+                            _server.ServerConnection.SendAsync(new EntityImpulseMessage
                             {
-                                EntityId = entityTesting.Entity.EntityId,
+                                //TODO: Fabian, we can push only dynamic entities or static too ? (Vlad)
+                                DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
                                 Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.Rotation) * impulsePower
                             }
                             );

@@ -2,14 +2,17 @@ using System;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
     /// <summary>
-    /// Represents dynamic entity (players, robots, animals, NPC)
+    /// Represents dynamic voxel entity (players, robots, animals, NPC)
     /// </summary>
-    public abstract class DynamicEntity : VoxelEntity, IDynamicEntity
+    public abstract class DynamicEntity : Entity, IDynamicEntity
     {
+        private readonly VoxelModel _model;
+
         #region Events
 
         /// <summary>
@@ -45,11 +48,35 @@ namespace Utopia.Shared.Entities.Dynamic
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Occurs when entity voxel model was changed
+        /// </summary>
+        public event EventHandler<VoxelModelEventArgs> VoxelModelChanged;
+
+        protected void OnVoxelModelChanged(VoxelModelEventArgs e)
+        {
+            var handler = VoxelModelChanged;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
+        
+        /// <summary>
+        /// Gets voxel entity model
+        /// </summary>
+        public VoxelModel Model
+        {
+            get { return _model; }
+        }
+
+        public void CommitModel()
+        {
+            OnVoxelModelChanged(new VoxelModelEventArgs { Model = _model });
+        }
 
         protected DynamicEntity()
         {
-            
+            _model = new VoxelModel();   
         }
 
         #region Properties
@@ -79,7 +106,6 @@ namespace Utopia.Shared.Entities.Dynamic
         /// The displacement mode use by this entity (Walk, swim, fly, ...)
         /// </summary>
         public EntityDisplacementModes DisplacementMode { get; set; }
-
         
         public override Vector3D Position
         {
@@ -125,6 +151,8 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             base.Load(reader);
 
+            Model.Load(reader);
+
             DisplacementMode = (EntityDisplacementModes)reader.ReadByte();
             MoveSpeed = reader.ReadSingle();
             RotationSpeed = reader.ReadSingle();
@@ -134,9 +162,20 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             base.Save(writer);
 
+            Model.Save(writer);
+
             writer.Write((byte)DisplacementMode);
             writer.Write(MoveSpeed);
             writer.Write(RotationSpeed);
+        }
+
+        /// <summary>
+        /// Returns link to the entity
+        /// </summary>
+        /// <returns></returns>
+        public override EntityLink GetLink()
+        {
+            return new EntityLink(DynamicId);
         }
     }
 }

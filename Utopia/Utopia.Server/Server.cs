@@ -1,8 +1,8 @@
 ﻿using System;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
+using Utopia.Server.Utils;
 using Utopia.Shared.Config;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
 
@@ -118,8 +118,8 @@ namespace Utopia.Server
             LandscapeManager = new ServerLandscapeManager(this, chunksStorage, worldGenerator, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval);
 
             AreaManager = new AreaManager(this);
-            
-            EntityFactory.Instance.SetLastId(EntityStorage.GetMaximumId());
+
+            DynamicIdHelper.SetMaxExistsId(EntityStorage.GetMaximumId());
             
             Services = new ServiceManager(this);
             

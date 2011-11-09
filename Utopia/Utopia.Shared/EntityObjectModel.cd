@@ -9,35 +9,99 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.SpriteEntity" Collapsed="true">
-    <Position X="5" Y="2.5" Width="1.5" />
+    <Position X="7.25" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgIAAAAAAAABAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\SpriteEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Utopia.Shared.Entities.VoxelEntity" Collapsed="true">
-    <Position X="2.75" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAgIAAAAAAAQAAAgAAAQgAAAAAAAAAAAgAAAAAAAA=</HashCode>
-      <FileName>Entities\VoxelEntity.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="Utopia.Shared.Entities.Dynamic.DynamicEntity" Collapsed="true">
-    <Position X="1" Y="4.5" Width="1.5" />
-    <InheritanceLine Type="Utopia.Shared.Entities.VoxelEntity" ManuallyRouted="true">
-      <Path>
-        <Point X="3.5" Y="3.191" />
-        <Point X="3.5" Y="3.896" />
-        <Point X="1.75" Y="3.896" />
-        <Point X="1.75" Y="4.5" />
-      </Path>
-    </InheritanceLine>
+    <Position X="2.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ACAAgJAAAACAAJAgAAAAACAAEAAFAAAAAKAAAAAAQAA=</HashCode>
+      <HashCode>ACAAgJAAAACAAZAgAgAAASgAEAAFAAAAAKgAAAAAQAA=</HashCode>
       <FileName>Entities\Dynamic\DynamicEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Utopia.Shared.Entities.Concrete.NoEntity" Collapsed="true">
+    <Position X="1" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAkIAgEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Concrete\NoEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utopia.Shared.Entities.Concrete.Tree" Collapsed="true">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Concrete\Tree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utopia.Shared.Entities.StaticEntity" Collapsed="true">
+    <Position X="6.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\StaticEntity.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Utopia.Shared.Entities.Inventory.VoxelItem" Collapsed="true">
+    <Position X="5.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAsIAAQAAgAQAAAgAAAQgAAAAAAAAAIAgAAAQAAAA=</HashCode>
+      <FileName>Entities\Inventory\VoxelItem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Utopia.Shared.Entities.Dynamic.CharacterEntity" Collapsed="true">
+    <Position X="2.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAiIAAAAAACAgAAAQAAAQAAAAEAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Entities\Dynamic\CharacterEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utopia.Shared.Entities.Concrete.Zombie" Collapsed="true">
+    <Position X="1" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Concrete\Zombie.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utopia.Shared.Entities.Dynamic.SpecialCharacterEntity" Collapsed="true">
+    <Position X="3.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgIAAQAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Entities\Dynamic\SpecialCharacterEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utopia.Shared.Entities.Dynamic.PlayerCharacter" Collapsed="true">
+    <Position X="3.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAkIAgAAAAQAAAAAAAAIACAAAAAAAAAEAAAAgAAAE=</HashCode>
+      <FileName>Entities\Dynamic\PlayerCharacter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utopia.Shared.Entities.Inventory.Armor" Collapsed="true">
+    <Position X="5.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Inventory\Armor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utopia.Shared.Entities.Inventory.SpriteItem" Collapsed="true">
+    <Position X="7.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAoIAAQAAgAkAAAAAAAAAAAAAAAAAAIAAAAAQAAAA=</HashCode>
+      <FileName>Entities\Inventory\SpriteItem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Utopia.Shared.Entities.MetaEntity" Collapsed="true">
+    <Position X="9.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\MetaEntity.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

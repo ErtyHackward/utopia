@@ -117,5 +117,15 @@ namespace System.IO
                 return ms.ToArray();
             }
         }
+
+        public static void Write(this BinaryWriter writer, EntityLink link)
+        {
+            link.Save(writer);
+        }
+
+        public static EntityLink ReadEntityLink(this BinaryReader reader)
+        {
+            return new EntityLink(reader);
+        }
     }
 }
