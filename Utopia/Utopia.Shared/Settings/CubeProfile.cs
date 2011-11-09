@@ -4,35 +4,40 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Enums;
 
 namespace Utopia.Shared.Settings
 {
-    //public partial struct CubeProfile
-    //{
-    //    public delegate bool CanGenerateCubeFaceDelegate(ref TerraCube cube, ref Vector3I cubelocation, CubeFace cubeFace, ref TerraCube neightboorFaceCube, int seaLevel);
-    //    public CanGenerateCubeFaceDelegate CanGenerateCubeFace;
+    [Serializable]
+    public partial class CubeProfile
+    {
+        public string Name;
+        public byte Id;
+        public bool IsPickable;
+        public bool IsBlockingLight;
+        public bool IsSeeThrough;
+        public bool IsBlockingWater;
+        public bool IsFloodPropagation;
+        public bool IsSolidToEntity;
+        public bool IsEmissiveColorLightSource;
+        public bool IsFlooding;
+        public int FloodingPropagationPower;
+        public Color EmissiveColor;
+        public byte EmissiveColorA { get { return EmissiveColor.A; } set { EmissiveColor.A = value; } }
+        public byte EmissiveColorR { get { return EmissiveColor.R; } set { EmissiveColor.R = value; } }
+        public byte EmissiveColorG { get { return EmissiveColor.G; } set { EmissiveColor.G = value; } }
+        public byte EmissiveColorB { get { return EmissiveColor.B; } set { EmissiveColor.B = value; } }
+        public float YBlockOffset;
 
-    //    public delegate void GenerateSolidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, List<VertexCubeLiquid> vertices, Dictionary<long, int> verticesDico, List<ushort> indices);
-    //    public GenerateSolidMesh CreateSolidCubeMesh;
+        public enuCubeFamilly CubeFamilly { get; set; }
 
-    //    public delegate void GenerateLiquidMesh(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, List<VertexCubeLiquid> vertices, Dictionary<long, int> verticesDico, List<ushort> indices);
-    //    public GenerateLiquidMesh CreateLiquidCubeMesh;
-
-    //    public string Name;
-    //    public byte Id; //Represent the ID of the cube and it's linked texture in the array
-    //    public bool IsPickable;
-    //    public bool IsBlockingLight;
-    //    public bool IsSeeThrough;
-    //    public bool IsBlockingWater;
-    //    public bool IsFloodPropagation;
-    //    public bool IsSolidToEntity;
-    //    public bool IsEmissiveColorLightSource;
-    //    public bool IsFlooding;
-    //    public int FloodingPropagationPower;
-    //    public Color EmissiveColor;
-    //    public float YBlockOffset;
-    //    //Texture id foreach face
-    //    public byte Tex_Front, Tex_Back, Tex_Left, Tex_Right, Tex_Top, Tex_Bottom;
-    //    public byte[] Textures = new byte[6];
-    //}
+        //Texture id foreach face
+        public byte[] Textures = new byte[6];
+        public byte Tex_Front { get { return Textures[(int)CubeFaces.Front]; } set { Textures[(int)CubeFaces.Front] = value; } }
+        public byte Tex_Back { get { return Textures[(int)CubeFaces.Back]; } set { Textures[(int)CubeFaces.Back] = value; } }
+        public byte Tex_Left { get { return Textures[(int)CubeFaces.Left]; } set { Textures[(int)CubeFaces.Left] = value; } }
+        public byte Tex_Right { get { return Textures[(int)CubeFaces.Right]; } set { Textures[(int)CubeFaces.Right] = value; } }
+        public byte Tex_Top { get { return Textures[(int)CubeFaces.Top]; } set { Textures[(int)CubeFaces.Top] = value; } }
+        public byte Tex_Bottom { get { return Textures[(int)CubeFaces.Bottom]; } set { Textures[(int)CubeFaces.Bottom] = value; } }
+    }
 }

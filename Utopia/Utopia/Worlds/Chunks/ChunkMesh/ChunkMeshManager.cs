@@ -15,6 +15,8 @@ using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using Utopia.Entities.Sprites;
 using Ninject;
+using Utopia.Shared.Enums;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -80,19 +82,19 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             //Instanciate the various collection objects that wil be used during the cube mesh creations
             chunk.InitializeChunkBuffers();
 
-            GenerateCubesFace(CubeFace.Front, chunk);
-            GenerateCubesFace(CubeFace.Back, chunk);
-            GenerateCubesFace(CubeFace.Bottom, chunk);
-            GenerateCubesFace(CubeFace.Top, chunk);
-            GenerateCubesFace(CubeFace.Left, chunk);
-            GenerateCubesFace(CubeFace.Right, chunk);
+            GenerateCubesFace(CubeFaces.Front, chunk);
+            GenerateCubesFace(CubeFaces.Back, chunk);
+            GenerateCubesFace(CubeFaces.Bottom, chunk);
+            GenerateCubesFace(CubeFaces.Top, chunk);
+            GenerateCubesFace(CubeFaces.Left, chunk);
+            GenerateCubesFace(CubeFaces.Right, chunk);
             GenerateStaticEntitiesMesh(chunk);
         }
 
-        private void GenerateCubesFace(CubeFace cubeFace, VisualChunk chunk)
+        private void GenerateCubesFace(CubeFaces cubeFace, VisualChunk chunk)
         {
             TerraCube currentCube, neightborCube;
-            VisualCubeProfile cubeProfile;
+            CubeProfile cubeProfile;
 
             ByteVector4 cubePosiInChunk;
             Vector3I cubePosiInWorld;
@@ -147,7 +149,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         if (currentCube.Id == CubeId.Air) continue;
 
                         //The Cube profile contain the value that are fixed for a block type.
-                        cubeProfile = VisualCubeProfile.CubesProfile[currentCube.Id];
+                        cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[currentCube.Id];
 
                         cubePosiInWorld = new Vector3I(XWorld, YWorld, ZWorld);
                         cubePosiInChunk = new ByteVector4(x, y, z);
@@ -157,31 +159,31 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //BorderChunk value is true if the chunk is at the border of the visible world.
                         switch (cubeFace)
                         {
-                            case CubeFace.Back:
+                            case CubeFaces.Back:
                                 if (ZWorld - 1 < _visualWorldParameters.WorldRange.Min.Z) continue;
                                 //neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1);
                                 break;
-                            case CubeFace.Front:
+                            case CubeFaces.Front:
                                 if (ZWorld + 1 >= _visualWorldParameters.WorldRange.Max.Z) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1);
                                 break;
-                            case CubeFace.Bottom:
+                            case CubeFaces.Bottom:
                                 if (YWorld - 1 < 0) continue;
                                 neightborCubeIndex = cubeIndex - _cubesHolder.MoveY;
                                 
                                 break;
-                            case CubeFace.Top:
+                            case CubeFaces.Top:
                                 if (YWorld + 1 >= _visualWorldParameters.WorldRange.Max.Y) continue;
                                 neightborCubeIndex = cubeIndex + _cubesHolder.MoveY;
                                 
                                 break;
-                            case CubeFace.Left:
+                            case CubeFaces.Left:
                                 if (XWorld - 1 < _visualWorldParameters.WorldRange.Min.X) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1);
                                 
                                 break;
-                            case CubeFace.Right:
+                            case CubeFaces.Right:
                                 if (XWorld + 1 >= _visualWorldParameters.WorldRange.Max.X) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1);
                                 break;

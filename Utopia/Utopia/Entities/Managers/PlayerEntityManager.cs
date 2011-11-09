@@ -32,6 +32,7 @@ using Utopia.Settings;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Cubes;
 using Screen = Nuclex.UserInterface.Screen;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Entities.Managers
 {
@@ -268,7 +269,7 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (Player._entityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref Player._entityState.PickedBlockPosition, VisualCubeProfile.CubesProfile[PickedCube.Cube.Id].YBlockOffset);
+                    _pickingRenderer.SetPickedBlock(ref Player._entityState.PickedBlockPosition, GameSystemSettings.Current.Settings.CubesProfile[PickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {
@@ -388,7 +389,7 @@ namespace Utopia.Entities.Managers
 
             _cubesHolder.GetNextSolidBlockToPlayer(ref VisualEntity.WorldBBox, ref GroundDirection, out groundCube);
             //Half cube below me ??
-            BlockOffset = VisualCubeProfile.CubesProfile[groundCube.Cube.Id].YBlockOffset;
+            BlockOffset = GameSystemSettings.Current.Settings.CubesProfile[groundCube.Cube.Id].YBlockOffset;
             _groundBelowEntity = groundCube.Position.Y + 1 - BlockOffset;
             PlayerOnOffsettedBlock = BlockOffset != 0;
 

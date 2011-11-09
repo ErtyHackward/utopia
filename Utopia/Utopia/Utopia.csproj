@@ -247,8 +247,6 @@
     <Compile Include="Worlds\Storage\IChunkStorageManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\IChunksWrapper.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\WorldChunksWrapper.cs" />
-    <Compile Include="Worlds\Chunks\Enums\CubesFaces.cs" />
-    <Compile Include="Worlds\Chunks\Enums\enuCubeFamilly.cs" />
     <Compile Include="Worlds\Chunks\Enums\enuLiquidType.cs" />
     <Compile Include="Worlds\Chunks\VisualChunk.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.Draw.cs" />
@@ -256,7 +254,6 @@
     <Compile Include="Worlds\Cubes\LiquidCubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\SolidCubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\ICubeMeshFactory.cs" />
-    <Compile Include="Worlds\Cubes\VisualCubeProfile.cs" />
     <Compile Include="Worlds\GameClocks\Clock.cs" />
     <Compile Include="Worlds\GameClocks\IClock.cs" />
     <Compile Include="Worlds\GameClocks\RealTimeClock.cs" />

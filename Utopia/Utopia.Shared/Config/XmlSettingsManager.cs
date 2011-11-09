@@ -11,7 +11,7 @@ namespace Utopia.Shared.Config
     /// Allows to store user settings
     /// </summary>
     [DebuggerStepThrough]
-    public class XmlSettingsManager<T> where T : new()
+    public class XmlSettingsManager<T> where T : IConfigClass, new()
     {
         private readonly XmlSerializer _xmlSerializer;
 
@@ -114,6 +114,8 @@ namespace Utopia.Shared.Config
                 {
                     LoadDefault();
                 }
+
+                Settings.Initialize();
             }
             catch (Exception e)
             {

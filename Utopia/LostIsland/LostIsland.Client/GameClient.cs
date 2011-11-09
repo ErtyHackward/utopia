@@ -50,6 +50,7 @@ namespace LostIsland.Client
         {
             ClientSettings.Current = new XmlSettingsManager<ClientConfig>("UtopiaClient.config", SettingsStorage.ApplicationData);
             ClientSettings.Current.Load();
+
             //If file was not present create a new one with the Azerty Default mapping !
             if (ClientSettings.Current.Settings.KeyboardMapping == null)
             {
