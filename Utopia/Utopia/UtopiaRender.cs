@@ -24,10 +24,6 @@ namespace Utopia
         {
             _renderStates = renderStates;
             VSync = true;                                              // Vsync ON (default)
-
-            //TEST new config file loading
-            GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"CubesProfile.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"e:\" };
-            GameSystemSettings.Current.Load();
         }
 
         public override void Initialize()
@@ -195,7 +191,7 @@ namespace Utopia
             _d3dEngine.GameWindow.Closed -= GameWindow_Closed; //Subscribe to Close event
 
             _renderStates.server.ServerConnection.ConnectionStatusChanged -= ServerConnection_ConnectionStatusChanged;
-            VisualCubeProfile.CleanUp();
+            GameSystemSettings.Current.Settings.CleanUp();
             base.Dispose();
         }
     }

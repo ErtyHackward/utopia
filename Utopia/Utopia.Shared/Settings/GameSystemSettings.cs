@@ -16,7 +16,7 @@ namespace Utopia.Shared.Settings
     //Class that will old all settings attached to the game.
     [XmlRoot("GameSystemSettings")]
     [Serializable]
-    public class GameSystemSetting
+    public class GameSystemSetting : IConfigClass
     {
         #region Private variables
         #endregion
@@ -26,12 +26,13 @@ namespace Utopia.Shared.Settings
         /// Game parameters section
         /// </summary>
         [XmlElement("Cube")]
-        public List<CubeProfileNEW> Servers = new List<CubeProfileNEW>();
+        public CubeProfile[] CubesProfile;
+        [XmlElement("Entity")]
+        public EntityProfile[] EntityProfileLst;
 
-        /// <summary>
-        /// Dictionnary Profiles acces
-        /// </summary>
-        //public static Dictionary<int, EntityProfile> EntityProfiles = new Dictionary<int, EntityProfile>();
+        //Derived from EntityProfile
+        [XmlIgnore]
+        public Dictionary<int, EntityProfile> EntityProfile = new Dictionary<int,EntityProfile>();
         #endregion
 
         public GameSystemSetting()
@@ -39,12 +40,20 @@ namespace Utopia.Shared.Settings
         }
 
         #region Public methods
-        public void AddCubeProfiles(string XMLCubeFilePath)
+        public void CleanUp()
         {
+            CubesProfile = null;
+            EntityProfile.Clear();
+            EntityProfile = null;
+            EntityProfileLst = null;
         }
 
-        public void AddEntitiesProfiles(string XMLEntityFilePath)
+        public void Initialize()
         {
+            foreach (var data in EntityProfileLst)
+            {
+                EntityProfile.Add(data.ClassID, data);
+            }
         }
         #endregion
 

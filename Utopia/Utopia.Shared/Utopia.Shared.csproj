@@ -86,6 +86,7 @@
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
+    <Compile Include="Config\IConfigClass.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower1.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower2.cs" />
     <Compile Include="Entities\Concrete\Collectible\Grass.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="Entities\VoxelEntity.cs" />
     <Compile Include="Entities\VoxelModel.cs" />
     <Compile Include="Enums\CubeFaces.cs" />
+    <Compile Include="Enums\enuCubeFamilly.cs" />
     <Compile Include="Gameplay\ServerGameplayProvider.cs" />
     <Compile Include="Interfaces\IAbstractChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />

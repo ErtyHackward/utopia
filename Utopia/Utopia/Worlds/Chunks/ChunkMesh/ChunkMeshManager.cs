@@ -16,6 +16,7 @@ using SharpDX;
 using Utopia.Entities.Sprites;
 using Ninject;
 using Utopia.Shared.Enums;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -93,7 +94,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         private void GenerateCubesFace(CubeFaces cubeFace, VisualChunk chunk)
         {
             TerraCube currentCube, neightborCube;
-            VisualCubeProfile cubeProfile;
+            CubeProfile cubeProfile;
 
             ByteVector4 cubePosiInChunk;
             Vector3I cubePosiInWorld;
@@ -148,7 +149,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         if (currentCube.Id == CubeId.Air) continue;
 
                         //The Cube profile contain the value that are fixed for a block type.
-                        cubeProfile = VisualCubeProfile.CubesProfile[currentCube.Id];
+                        cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[currentCube.Id];
 
                         cubePosiInWorld = new Vector3I(XWorld, YWorld, ZWorld);
                         cubePosiInChunk = new ByteVector4(x, y, z);

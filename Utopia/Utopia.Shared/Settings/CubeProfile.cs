@@ -9,21 +9,28 @@ using Utopia.Shared.Enums;
 namespace Utopia.Shared.Settings
 {
     [Serializable]
-    public partial class CubeProfileNEW
+    public partial class CubeProfile
     {
-        public string Name { get; set; }
-        public byte Id { get; set; }
-        public bool IsPickable { get; set; }
-        public bool IsBlockingLight { get; set; }
-        public bool IsSeeThrough { get; set; }
-        public bool IsBlockingWater { get; set; }
-        public bool IsFloodPropagation { get; set; }
-        public bool IsSolidToEntity { get; set; }
-        public bool IsEmissiveColorLightSource { get; set; }
-        public bool IsFlooding { get; set; }
-        public int FloodingPropagationPower { get; set; }
-        public Color EmissiveColor { get; set; }
-        public float YBlockOffset { get; set; }
+        public string Name;
+        public byte Id;
+        public bool IsPickable;
+        public bool IsBlockingLight;
+        public bool IsSeeThrough;
+        public bool IsBlockingWater;
+        public bool IsFloodPropagation;
+        public bool IsSolidToEntity;
+        public bool IsEmissiveColorLightSource;
+        public bool IsFlooding;
+        public int FloodingPropagationPower;
+        public Color EmissiveColor;
+        public byte EmissiveColorA { get { return EmissiveColor.A; } set { EmissiveColor.A = value; } }
+        public byte EmissiveColorR { get { return EmissiveColor.R; } set { EmissiveColor.R = value; } }
+        public byte EmissiveColorG { get { return EmissiveColor.G; } set { EmissiveColor.G = value; } }
+        public byte EmissiveColorB { get { return EmissiveColor.B; } set { EmissiveColor.B = value; } }
+        public float YBlockOffset;
+
+        public enuCubeFamilly CubeFamilly { get; set; }
+
         //Texture id foreach face
         public byte[] Textures = new byte[6];
         public byte Tex_Front { get { return Textures[(int)CubeFaces.Front]; } set { Textures[(int)CubeFaces.Front] = value; } }

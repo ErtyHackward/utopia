@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using S33M3Engines.StatesManager;
 using S33M3Engines.Sprites;
 using SharpDX.DXGI;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Entities
 {
@@ -171,7 +172,7 @@ namespace Utopia.Entities
                 //Don't create "Air" cube
                 if (cubeId == 0) continue;
                 //Create the new Material MeshMapping
-                var profile = VisualCubeProfile.CubesProfile[cubeId];
+                var profile = GameSystemSettings.Current.Settings.CubesProfile[cubeId];
                 
                 //Here the key parameter is the ID name given to the texture inside the file model.
                 //In our case the model loaded has these Materials/texture Ids :

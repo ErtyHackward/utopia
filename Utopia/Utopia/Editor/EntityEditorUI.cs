@@ -11,6 +11,7 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
 using Utopia.Worlds.Cubes;
+using Utopia.Shared.Settings;
 
 #endregion
 
@@ -180,8 +181,8 @@ namespace Utopia.Editor
             WindowControl palette = new WindowControl();
             palette.Bounds = new UniRectangle(100, 0, (cols)*btnSize, (rows + 1)*btnSize);
 
-            List<VisualCubeProfile> filtered =
-                VisualCubeProfile.CubesProfile.ToList().FindAll(p => ! p.IsEmissiveColorLightSource);
+            List<CubeProfile> filtered =
+                GameSystemSettings.Current.Settings.CubesProfile.ToList().FindAll(p => ! p.IsEmissiveColorLightSource);
 
             int cubeProfileIndex = 1;
             for (int x = 0; x < cols; x++)
@@ -189,7 +190,7 @@ namespace Utopia.Editor
                 for (int y = 0; y < rows; y++)
                 {
                     if (cubeProfileIndex == filtered.Count) break;
-                    VisualCubeProfile profile = filtered[cubeProfileIndex];
+                    CubeProfile profile = filtered[cubeProfileIndex];
 
                     PaletteButtonControl btn = new PaletteButtonControl();
                     btn.Bounds = new UniRectangle(x0 + x*btnSize, y0 + y*btnSize, btnSize, btnSize);
