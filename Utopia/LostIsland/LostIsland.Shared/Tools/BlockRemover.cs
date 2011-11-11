@@ -64,12 +64,6 @@ namespace LostIsland.Shared.Tools
             get { return "Allows to remove blocks from the world"; }
         }
 
-        public override string UniqueName
-        {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
-        }
-
         public override string StackType
         {
             get { return "BlockRemover"; }

@@ -66,5 +66,19 @@ namespace Utopia.Shared.Entities
             // wrong root
             throw new InvalidOperationException("Unable to take link from that object");
         }
+
+        public override void Save(System.IO.BinaryWriter writer)
+        {
+            base.Save(writer);
+
+            writer.Write(StaticId);
+        }
+
+        public override void Load(System.IO.BinaryReader reader)
+        {
+            base.Load(reader);
+
+            StaticId = reader.ReadUInt32();
+        }
     }
 }

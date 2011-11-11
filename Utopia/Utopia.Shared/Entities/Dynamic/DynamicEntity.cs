@@ -12,6 +12,7 @@ namespace Utopia.Shared.Entities.Dynamic
     public abstract class DynamicEntity : Entity, IDynamicEntity
     {
         private readonly VoxelModel _model;
+        public DynamicEntityState _entityState;
 
         #region Events
 
@@ -61,14 +62,6 @@ namespace Utopia.Shared.Entities.Dynamic
 
         #endregion
         
-        /// <summary>
-        /// Gets voxel entity model
-        /// </summary>
-        public VoxelModel Model
-        {
-            get { return _model; }
-        }
-
         public void CommitModel()
         {
             OnVoxelModelChanged(new VoxelModelEventArgs { Model = _model });
@@ -81,7 +74,13 @@ namespace Utopia.Shared.Entities.Dynamic
 
         #region Properties
 
-        public DynamicEntityState _entityState;
+        /// <summary>
+        /// Gets voxel entity model
+        /// </summary>
+        public VoxelModel Model
+        {
+            get { return _model; }
+        }
 
         /// <summary>
         /// Gets or sets entity state (this field should be refreshed before using the tool)
@@ -153,6 +152,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
             Model.Load(reader);
 
+            DynamicId = reader.ReadUInt32();
             DisplacementMode = (EntityDisplacementModes)reader.ReadByte();
             MoveSpeed = reader.ReadSingle();
             RotationSpeed = reader.ReadSingle();
@@ -164,6 +164,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
             Model.Save(writer);
 
+            writer.Write(DynamicId);
             writer.Write((byte)DisplacementMode);
             writer.Write(MoveSpeed);
             writer.Write(RotationSpeed);

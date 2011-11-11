@@ -106,7 +106,7 @@ namespace Utopia.Server.Managers
                 var oldConnection = _server.ConnectionManager.Find(c => c.UserId == loginData.UserId);
                 if (oldConnection != null)
                 {
-                    oldConnection.SendAsync(new ErrorMessage { ErrorCode = ErrorCodes.AnotherInstanceLogged, Message = "Another instance of you was connected. You will be disconnected." });
+                    oldConnection.SendAsync(new ErrorMessage { ErrorCode = ErrorCodes.AnotherInstanceLogged, Message = "Another instance of you connected. You will be disconnected." });
                     oldConnection.Disconnect();
                 }
 
