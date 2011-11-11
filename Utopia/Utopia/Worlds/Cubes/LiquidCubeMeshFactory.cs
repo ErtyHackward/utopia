@@ -10,6 +10,9 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Chunks;
 using SharpDX;
 using Utopia.Worlds.Liquid;
+using Utopia.Shared.Cubes;
+using Utopia.Shared.Enums;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -22,13 +25,33 @@ namespace Utopia.Worlds.Cubes
             _cubesHolder = cubesHolder;
         }
 
-        public void GenCubeFace(ref TerraCube cube, CubeFace cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)
+         //Default Face Generation Checks !
+        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
+        {
+            if (cubeFace != CubeFaces.Bottom && cubeFace != CubeFaces.Top) //Never display a bottom Water face !
+            {
+                if ((!GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].IsBlockingLight && !GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].IsFlooding))
+                {
+                    return true;
+                }
+            }
+            if (cubeFace == CubeFaces.Top)
+            {
+                if (cubePosiInWorld.Y == seaLevel || neightboorFaceCube.Id == CubeId.Air)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref ByteVector4 cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)
         {
             int verticeCubeOffset = chunk.LiquidCubeVertices.Count;
             int indiceCubeOffset = chunk.LiquidCubeIndices.Count;
             ByteColor newColor = cube.EmissiveColor;
 
-            VisualCubeProfile cubeProfile = VisualCubeProfile.CubesProfile[cube.Id];
+            CubeProfile cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
             bool IsEmissiveColor = cubeProfile.IsEmissiveColorLightSource;
 
             //Les 4 vertex de ma face.... en fct de leur position dans le cube leur valeur en Z va changer ! (Face Top, Bottom, ...
@@ -56,7 +79,7 @@ namespace Utopia.Worlds.Cubes
 
             switch (cubeFace)
             {
-                case CubeFace.Front:
+                case CubeFaces.Front:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Z, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.Z, ind, true);
@@ -83,7 +106,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackTop_Cube, BackLeftTop_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -94,7 +117,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackRight_Cube, BackTop_Cube, BackRightTop_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -105,7 +128,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackBottom_Cube, BackLeftBottom_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -116,7 +139,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackRight_Cube, BackBottom_Cube, BackRightBottom_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Front, ref  newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref  newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -130,7 +153,7 @@ namespace Utopia.Worlds.Cubes
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset1));
 
                     break;
-                case CubeFace.Back:
+                case CubeFaces.Back:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Z, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.Z, ind, true);
@@ -156,7 +179,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontTop_Cube, FrontLeftTop_Cube, FrontLeft_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -167,7 +190,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontTop_Cube, FrontRight_Cube, FrontRightTop_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -178,7 +201,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontBottom_Cube, FrontLeft_Cube, FrontLeftBottom_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -189,7 +212,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontBottom_Cube, FrontRight_Cube, FrontRightBottom_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -203,7 +226,7 @@ namespace Utopia.Worlds.Cubes
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
 
                     break;
-                case CubeFace.Top:
+                case CubeFaces.Top:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Y, SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.Y, ind, true);
@@ -230,7 +253,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomLeft_Cube, BottomLeftTop_Cube, BottomTop_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -241,7 +264,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomRight_Cube, BottomBottom_Cube, BottomRightBottom_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -252,7 +275,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomBottom_Cube, BottomLeft_Cube, BottomLeftBottom_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -263,7 +286,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomTop_Cube, BottomRight_Cube, BottomRightTop_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -277,7 +300,7 @@ namespace Utopia.Worlds.Cubes
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
                     break;
 
-                case CubeFace.Bottom:
+                case CubeFaces.Bottom:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.Y, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.Y, ind, true);
@@ -304,7 +327,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopBottom_Cube, TopLeft_Cube, TopLeftBottom_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -315,7 +338,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopTop_Cube, TopLeft_Cube, TopLeftTop_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -326,7 +349,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopBottom_Cube, TopRight_Cube, TopRightBottom_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -337,7 +360,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopTop_Cube, TopRight_Cube, TopRightTop_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -351,7 +374,7 @@ namespace Utopia.Worlds.Cubes
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset2));
                     break;
 
-                case CubeFace.Left:
+                case CubeFaces.Left:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.X, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.X, ind, true);
@@ -378,7 +401,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightTop_Cube, RightRight_Cube, RightRightTop_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -389,7 +412,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightTop_Cube, RightLeft_Cube, RightLeftTop_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -400,7 +423,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightBottom_Cube, RightRight_Cube, RightRightBottom_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -411,7 +434,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightBottom_Cube, RightLeft_Cube, RightLeftBottom_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -424,7 +447,7 @@ namespace Utopia.Worlds.Cubes
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset0));
                     chunk.LiquidCubeIndices.Add((ushort)(vertexOffset3));
                     break;
-                case CubeFace.Right:
+                case CubeFaces.Right:
 
                     //Get the 9 Facing cubes to the face
                     _cubesHolder.SurroundingAxisIndex(_cubesHolder.FastIndex(baseIndex, cubePosiInWorld.X, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1), cubePosiInWorld.X, cubePosiInWorld.Y, cubePosiInWorld.Z, SingleArrayChunkContainer.Axis.X, ind, true);
@@ -451,7 +474,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftTop_Cube, LefttRight_Cube, LeftRightTop_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -462,7 +485,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftTop_Cube, LeftLeft_Cube, LeftLeftTop_Cube);
                         vertexInfo1.Y = 1;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -473,7 +496,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftBottom_Cube, LeftLeft_Cube, LeftLeftBottom_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, VisualCubeProfile.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 
@@ -484,7 +507,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftBottom_Cube, LefttRight_Cube, LeftRightBottom_Cube);
                         vertexInfo1.Y = 0;
-                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, VisualCubeProfile.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
+                        chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
                         generatedVertex++;
                     }
 

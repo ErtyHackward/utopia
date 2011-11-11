@@ -46,6 +46,7 @@ using Ninject.Parameters;
 using System.Windows.Forms;
 using System.Drawing;
 using Utopia.Effects.Shared;
+using Utopia.Shared.Settings;
 
 namespace LostIsland.Client
 {
@@ -71,10 +72,8 @@ namespace LostIsland.Client
             //Create the various Concrete classe Binded, forwarding appropriate value. ==============================================
             //=======================================================================================================================
             //Init Block Profiles
-            VisualCubeProfile.InitCubeProfiles(iocContainer.Get<ICubeMeshFactory>("SolidCubeMeshFactory"),     //The default binded Solid Cube Mesh Factory
-                                               iocContainer.Get<ICubeMeshFactory>("LiquidCubeMeshFactory"),    //The default binded Water Cube Mesh Factory
-                                               @"Config\CubesProfile.xml");                                    //The path to the Cubes Profiles descriptions
-            CubeProfile.InitCubeProfiles(@"Config\CubesProfile.xml");                                          // Init the cube profiles use by shared application (Similar than VisualCubeProfile, but without visual char.)
+            GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"Config\" };
+            GameSystemSettings.Current.Load();
 
             var plan = new WorldPlan
                            {

@@ -95,7 +95,7 @@ namespace Utopia.Entities.Renderer
             //Applying Correct Render States
             StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
-            if (_player.EntityState.IsPickingActive)
+            if (_player.EntityState.IsBlockPicked || _player.EntityState.IsEntityPicked)
             {
                 _pickedCube.Draw(_camManager.ActiveCamera);
             }

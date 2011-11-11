@@ -8,6 +8,8 @@ using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Structs;
 using SharpDX;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Settings;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Entities.Sprites
 {
@@ -33,29 +35,40 @@ namespace Utopia.Entities.Sprites
         #region Private methods
         private void Initialize()
         {
-            //Assign Texture Array from Sprite Type
-            switch (SpriteEntity.ClassId)
+            EntityProfile profile = GameSystemSettings.Current.Settings.EntityProfile[SpriteEntity.ClassId];
+
+            if (profile.NbrGrowSprites > 0)
             {
-                case EntityClassId.Grass:
-                    Grass grassEntity = (Grass)SpriteEntity;
-                    spriteTextureId = (0 * 5) + grassEntity.GrowPhase ;     //5 level of evolution forsee by sprite formula should be (StaticSpriteTextureID * 5) + Evolution.
-                    break;
-                case EntityClassId.Flower1:
-                    spriteTextureId = 7;
-                    break;
-                case EntityClassId.Flower2:
-                    spriteTextureId = 8;
-                    break;
-                case EntityClassId.Mushroom1:
-                    spriteTextureId = 5;
-                    break;
-                case EntityClassId.Mushroom2:
-                    spriteTextureId = 6;
-                    break;
-                default:
-                    throw new Exception("Static Sprite ID not supported");
+                IGrowEntity growableEntity = (IGrowEntity)SpriteEntity;
+                spriteTextureId = (profile.SpriteID * profile.NbrGrowSprites) + growableEntity.GrowPhase;
+            }
+            else
+            {
+                spriteTextureId = profile.SpriteID;
             }
         }
+        //    //Assign Texture Array from Sprite Type
+        //    switch (SpriteEntity.ClassId)
+        //    {
+        //        case EntityClassId.Grass:                    
+        //            IGrowEntity grassEntity = (IGrowEntity)SpriteEntity;
+        //            spriteTextureId = (0 * 5) + grassEntity.GrowPhase ;     //5 level of evolution forsee by sprite formula should be (StaticSpriteTextureID * 5) + Evolution.
+        //            break;
+        //        case EntityClassId.Flower1:
+        //            spriteTextureId = 7;
+        //            break;
+        //        case EntityClassId.Flower2:
+        //            spriteTextureId = 8;
+        //            break;
+        //        case EntityClassId.Mushroom1:
+        //            spriteTextureId = 5;
+        //            break;
+        //        case EntityClassId.Mushroom2:
+        //            spriteTextureId = 6;
+        //            break;
+        //        default:
+        //            throw new Exception("Static Sprite ID not supported");
+        //    }
         #endregion
 
         #region Public methods

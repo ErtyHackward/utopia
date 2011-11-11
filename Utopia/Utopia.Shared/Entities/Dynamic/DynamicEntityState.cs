@@ -16,7 +16,12 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Is the entity a block at range, ready to by "picked-up"
         /// </summary>
-        public bool IsPickingActive;
+        public bool IsBlockPicked;
+
+        /// <summary>
+        /// Is the entity ready to by "picked-up"
+        /// </summary>
+        public bool IsEntityPicked;
 
         /// <summary>
         /// Global position of new block to be inserted
@@ -32,8 +37,6 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Gets entity that currently picked by entity
         /// </summary>
         public EntityLink PickedEntityLink;
-
-        public bool IsEntityPicked;
     }
 
 }

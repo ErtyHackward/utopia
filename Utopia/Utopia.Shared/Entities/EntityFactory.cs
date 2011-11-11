@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using Utopia.Shared.Entities.Concrete;
-using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Entities.Concrete.Collectible;
 
 namespace Utopia.Shared.Entities
 {

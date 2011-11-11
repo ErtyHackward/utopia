@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Utopia.Shared.Config;
 
 namespace Utopia.Server
 {
@@ -7,7 +8,7 @@ namespace Utopia.Server
     /// Server specific settings
     /// </summary>
     [Serializable]
-    public class ServerSettings
+    public class ServerSettings : IConfigClass
     {
         /// <summary>
         /// Interval between cleanup operation executions. All chunks older than ChunkLiveTimeMinutes parameter will be unloaded
@@ -38,5 +39,9 @@ namespace Utopia.Server
         /// Database file location
         /// </summary>
         public string DatabasePath { get; set; }
+
+        public void Initialize()
+        {
+        }
     }
 }

@@ -79,8 +79,7 @@ namespace LostIsland.Shared.Tools
             var entity = owner;
             var impact = new ToolImpact { Success = false };
 
-
-            if (entity.EntityState.IsPickingActive)
+            if (entity.EntityState.IsBlockPicked)
             {
                 if (useMode == 0)
                 {

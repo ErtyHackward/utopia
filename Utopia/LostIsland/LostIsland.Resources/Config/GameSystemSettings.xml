@@ -1,5 +1,30 @@
-﻿<?xml version="1.0" standalone="yes"?>
-<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+﻿<GameSystemSettings>
+  <Entity>
+    <!-- Grass -->
+    <ClassID>4000</ClassID>
+    <SpriteID>0</SpriteID>
+    <NbrGrowSprites>5</NbrGrowSprites>
+  </Entity>
+  <Entity>
+    <!-- Flower1 -->
+    <ClassID>4001</ClassID>
+    <SpriteID>7</SpriteID>
+  </Entity>
+  <Entity>
+    <!-- Flower2 -->
+    <ClassID>4002</ClassID>
+    <SpriteID>8</SpriteID>
+  </Entity>
+  <Entity>
+    <!-- Mushroom1 -->
+    <ClassID>4003</ClassID>
+    <SpriteID>5</SpriteID>
+  </Entity>
+  <Entity>
+    <!-- Mushroom2 -->
+    <ClassID>4004</ClassID>
+    <SpriteID>6</SpriteID>
+  </Entity>
   <Cube>
     <Name>Air</Name>
     <Id>0</Id>
@@ -124,7 +149,10 @@
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
-    <EmissiveColor>255,0,0,255</EmissiveColor>
+    <EmissiveColorR>255</EmissiveColorR>
+    <EmissiveColorG>0</EmissiveColorG>
+    <EmissiveColorB>0</EmissiveColorB>
+    <EmissiveColorA>0</EmissiveColorA>
     <IsBlockingWater>true</IsBlockingWater>
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
@@ -144,7 +172,10 @@
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
-    <EmissiveColor>0,255,0,255</EmissiveColor>
+    <EmissiveColorR>0</EmissiveColorR>
+    <EmissiveColorG>255</EmissiveColorG>
+    <EmissiveColorB>0</EmissiveColorB>
+    <EmissiveColorA>255</EmissiveColorA>
     <IsBlockingWater>true</IsBlockingWater>
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
@@ -164,7 +195,10 @@
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
-    <EmissiveColor>0,0,255,255</EmissiveColor>
+    <EmissiveColorR>0</EmissiveColorR>
+    <EmissiveColorG>0</EmissiveColorG>
+    <EmissiveColorB>255</EmissiveColorB>
+    <EmissiveColorA>255</EmissiveColorA>
     <IsBlockingWater>true</IsBlockingWater>
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
@@ -184,7 +218,10 @@
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
-    <EmissiveColor>255,255,0,255</EmissiveColor>
+    <EmissiveColorR>255</EmissiveColorR>
+    <EmissiveColorG>255</EmissiveColorG>
+    <EmissiveColorB>0</EmissiveColorB>
+    <EmissiveColorA>255</EmissiveColorA>
     <IsBlockingWater>true</IsBlockingWater>
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
@@ -204,7 +241,10 @@
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
-    <EmissiveColor>255,0,255,255</EmissiveColor>
+    <EmissiveColorR>255</EmissiveColorR>
+    <EmissiveColorG>0</EmissiveColorG>
+    <EmissiveColorB>255</EmissiveColorB>
+    <EmissiveColorA>255</EmissiveColorA>
     <IsBlockingWater>true</IsBlockingWater>
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
@@ -224,7 +264,10 @@
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
-    <EmissiveColor>255,255,255,255</EmissiveColor>
+    <EmissiveColorR>255</EmissiveColorR>
+    <EmissiveColorG>255</EmissiveColorG>
+    <EmissiveColorB>255</EmissiveColorB>
+    <EmissiveColorA>255</EmissiveColorA>
     <IsBlockingWater>true</IsBlockingWater>
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
@@ -573,6 +616,6 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <YBlockOffset>125</YBlockOffset>
+    <YBlockOffset>0.5</YBlockOffset>
   </Cube>
-</Config>
+</GameSystemSettings>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Utopia.Worlds.Chunks.Enums
+namespace Utopia.Shared.Enums
 {
     public enum enuCubeFamilly
     {

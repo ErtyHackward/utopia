@@ -214,7 +214,7 @@ namespace Utopia.Server.Entities
             //var nextUp = cursor.PeekUp();
 
             //var current = _server.LandscapeManager.GetCursor(DynamicEntity.Position);
-            //if (!CubeProfile.CubesProfile[current.PeekDown()].IsSolidToEntity)
+            //if (!GameSystemSettings.Current.Settings.CubesProfile[current.PeekDown()].IsSolidToEntity)
             //{
             //    var pos = DynamicEntity.Position;
             //    pos.Y = Math.Round(DynamicEntity.Position.Y);
@@ -224,7 +224,7 @@ namespace Utopia.Server.Entities
 
 
             //// next down cube should be solid, and two upper cubes should be transparent
-            //if (!CubeProfile.CubesProfile[next].IsSolidToEntity && CubeProfile.CubesProfile[nextDown].IsSolidToEntity && !CubeProfile.CubesProfile[nextUp].IsSolidToEntity)
+            //if (!GameSystemSettings.Current.Settings.CubesProfile[next].IsSolidToEntity && GameSystemSettings.Current.Settings.CubesProfile[nextDown].IsSolidToEntity && !GameSystemSettings.Current.Settings.CubesProfile[nextUp].IsSolidToEntity)
             //{
             //    // move 
             //    DynamicEntity.Position = nextPosition;
