@@ -13,13 +13,14 @@ namespace LostIsland.Shared.Tools
             get { return LostIslandEntityClassId.Shovel; }
         }
 
-        public override string DisplayName
+        public override string UniqueName
         {
             get
             {
                 return "Shovel";
             }
         }
+
 
         public override string Description
         {
