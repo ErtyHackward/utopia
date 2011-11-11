@@ -12,6 +12,7 @@ using Utopia.Shared.World;
 using Utopia.Settings;
 using Utopia.Entities;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
@@ -96,7 +97,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             int index;
             bool blockLight = false;
             int maxSunLight;
-            VisualCubeProfile cubeprofile;
+            CubeProfile cubeprofile;
 
             for (int X = cubeRange.Min.X; X < cubeRange.Max.X; X++)
             {
@@ -110,7 +111,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         if (Y != cubeRange.Max.Y - 1) index -= _cubesHolder.MoveY;
 
                         //Create SunLight LightSources from AIR blocs
-                        cubeprofile = VisualCubeProfile.CubesProfile[_cubesHolder.Cubes[index].Id];
+                        cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id];
                         if ((!blockLight && cubeprofile.IsBlockingLight)) blockLight = true; //If my block is blocking light, stop sunlight propagation !
                         if (cubeprofile.IsFlooding)
                         {
@@ -125,9 +126,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
                         if (cubeprofile.IsEmissiveColorLightSource)
                         {
-                            _cubesHolder.Cubes[index].EmissiveColor.R = VisualCubeProfile.CubesProfile[_cubesHolder.Cubes[index].Id].EmissiveColor.R;
-                            _cubesHolder.Cubes[index].EmissiveColor.G = VisualCubeProfile.CubesProfile[_cubesHolder.Cubes[index].Id].EmissiveColor.G;
-                            _cubesHolder.Cubes[index].EmissiveColor.B = VisualCubeProfile.CubesProfile[_cubesHolder.Cubes[index].Id].EmissiveColor.B;
+                            _cubesHolder.Cubes[index].EmissiveColor.R = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id].EmissiveColor.R;
+                            _cubesHolder.Cubes[index].EmissiveColor.G = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id].EmissiveColor.G;
+                            _cubesHolder.Cubes[index].EmissiveColor.B = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id].EmissiveColor.B;
                         }
                         else
                         {
@@ -169,7 +170,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Can only be done if surrounding chunks have their landscape initialized !
         public void PropagateLightSources(ref Range<int> cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false)
         {
-            VisualCubeProfile cubeprofile;
+            CubeProfile cubeprofile;
             bool borderchunk = false;
             int index;
             //Foreach Blocks in the Range
@@ -185,7 +186,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
                         if (Y != cubeRange.Max.Y - 1) index -= _cubesHolder.MoveY;
 
-                        cubeprofile = VisualCubeProfile.CubesProfile[_cubesHolder.Cubes[index].Id];
+                        cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id];
                         if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) continue;
 
                         if (_cubesHolder.Cubes[index].EmissiveColor.SunLight == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.SunLight, LightComponent.SunLight, true, index);
@@ -229,7 +230,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
         private void PropagateLight(int X, int Y, int Z, int LightValue, LightComponent lightComp, bool isLightSource, int index)
         {
-            VisualCubeProfile cubeprofile;
+            CubeProfile cubeprofile;
             TerraCube cube;
 
             if (!isLightSource)
@@ -246,7 +247,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
                 //End propagation ?
                 cube = _cubesHolder.Cubes[index];
-                cubeprofile = VisualCubeProfile.CubesProfile[cube.Id];
+                cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
                 if (cubeprofile.IsBlockingLight) return;      // Do nothing if my block don't let the light pass !
                 switch (lightComp)
                 {

@@ -86,6 +86,7 @@
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
+    <Compile Include="Config\IConfigClass.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower1.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower2.cs" />
     <Compile Include="Entities\Concrete\Collectible\Grass.cs" />
@@ -151,6 +152,8 @@
     <Compile Include="Entities\SpriteFormat.cs" />
     <Compile Include="Entities\StaticEntity.cs" />
     <Compile Include="Entities\VoxelModel.cs" />
+    <Compile Include="Enums\CubeFaces.cs" />
+    <Compile Include="Enums\enuCubeFamilly.cs" />
     <Compile Include="Gameplay\ServerGameplayProvider.cs" />
     <Compile Include="Interfaces\IAbstractChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
@@ -206,6 +209,9 @@
     <Compile Include="Roleplay\CharacterPrimaryAttributes.cs" />
     <Compile Include="Roleplay\CharacterSecondaryAttributes.cs" />
     <Compile Include="Roleplay\CharacterSurvivalAttributes.cs" />
+    <Compile Include="Settings\CubeProfile.cs" />
+    <Compile Include="Settings\EntityProfile.cs" />
+    <Compile Include="Settings\GameSystemSettings.cs" />
     <Compile Include="Structs\ByteColor.cs" />
     <Compile Include="Structs\ByteVector3.cs" />
     <Compile Include="Structs\ByteVector4.cs" />
@@ -288,6 +294,10 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -62,8 +62,8 @@ namespace Utopia.Shared.Entities.Events
                             PickedBlockPosition = state.PickedBlockPosition,
                             NewBlockPosition = state.NewBlockPosition,
                             PickedEntityPosition = state.PickedEntityPosition,
-                            IsBlockPicked = state.IsPickingActive && (!state.IsEntityPicked),
-                            IsEntityPicked = state.IsPickingActive && state.IsEntityPicked,
+                            IsBlockPicked = state.IsBlockPicked,
+                            IsEntityPicked = state.IsEntityPicked,
                             PickedEntityLink = state.PickedEntityLink
                         };
 

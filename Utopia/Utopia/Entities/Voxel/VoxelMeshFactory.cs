@@ -8,6 +8,8 @@ using SharpDX.Direct3D11;
 using Utopia.Shared.Structs;
 using Utopia.Worlds.Chunks.Enums;
 using Utopia.Worlds.Cubes;
+using Utopia.Shared.Enums;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Entities.Voxel
 {
@@ -57,23 +59,23 @@ namespace Utopia.Entities.Voxel
             byte blockZIncreasing = z == blocks.GetLength(2) - 1 ? (byte) 0 : blocks[x, y, z + 1];
 
             if (blockXDecreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Left, blockType, overlay, colorMode); //X-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFaces.Left, blockType, overlay, colorMode); //X-
             if (blockXIncreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Right, blockType, overlay, colorMode); //X+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFaces.Right, blockType, overlay, colorMode); //X+
 
             if (blockYDecreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Bottom, blockType, overlay, colorMode); //Y-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFaces.Bottom, blockType, overlay, colorMode); //Y-
             if (blockYIncreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Top, blockType, overlay, colorMode); //Y+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFaces.Top, blockType, overlay, colorMode); //Y+
 
             if (blockZIncreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Back, blockType, overlay, colorMode); //Z+
+                BuildFaceVertices(ref vertice, x, y, z, CubeFaces.Back, blockType, overlay, colorMode); //Z+
             if (blockZDecreasing == 0)
-                BuildFaceVertices(ref vertice, x, y, z, CubeFace.Front, blockType, overlay, colorMode); //Z-
+                BuildFaceVertices(ref vertice, x, y, z, CubeFaces.Front, blockType, overlay, colorMode); //Z-
         }
 
         private static void BuildFaceVertices(ref List<VertexCubeSolid> vertice, int x, int y, int z,
-                                              CubeFace faceDir,
+                                              CubeFaces faceDir,
                                               byte blockType, byte overlay, bool colorMode)
         {
             ByteColor color;
@@ -90,7 +92,7 @@ namespace Utopia.Entities.Voxel
             }
             else
             {
-                VisualCubeProfile profile = VisualCubeProfile.CubesProfile[cubeid];
+                CubeProfile profile = GameSystemSettings.Current.Settings.CubesProfile[cubeid];
                 if (profile.IsEmissiveColorLightSource)
                     color = new ByteColor(profile.EmissiveColor); //Only when the cube is emitting light !
                 else
@@ -113,7 +115,7 @@ namespace Utopia.Entities.Voxel
 
             switch (faceDir)
             {
-                case CubeFace.Right: //X+
+                case CubeFaces.Right: //X+
                     {
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y + 1, z, face), textureArrayId,
                                                         ref color,
@@ -136,7 +138,7 @@ namespace Utopia.Entities.Voxel
                     }
                     break;
 
-                case CubeFace.Left: //X-
+                case CubeFaces.Left: //X-
                     {
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
@@ -154,7 +156,7 @@ namespace Utopia.Entities.Voxel
                     }
                     break;
 
-                case CubeFace.Top: //Y+
+                case CubeFaces.Top: //Y+
                     {
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
@@ -175,9 +177,9 @@ namespace Utopia.Entities.Voxel
                     }
                     break;
 
-                case CubeFace.Bottom: //Y-
+                case CubeFaces.Bottom: //Y-
                     {
-                        face = (int) CubeFace.Bottom;
+                        face = (int) CubeFaces.Bottom;
 
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x + 1, y, z + 1, face), textureArrayId,
                                                         ref color,
@@ -197,7 +199,7 @@ namespace Utopia.Entities.Voxel
                     }
                     break;
 
-                case CubeFace.Back: //Z+
+                case CubeFaces.Back: //Z+
                     {
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z + 1, face), textureArrayId,
                                                         ref color,
@@ -220,7 +222,7 @@ namespace Utopia.Entities.Voxel
                     }
                     break;
 
-                case CubeFace.Front: //Z-
+                case CubeFaces.Front: //Z-
                     {
                         vertice.Add(new VertexCubeSolid(new ByteVector4(x, y + 1, z, face), textureArrayId, ref color,
                                                         ref vertexInfo));
