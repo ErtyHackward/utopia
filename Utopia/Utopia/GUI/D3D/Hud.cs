@@ -54,7 +54,7 @@ namespace Utopia.GUI.D3D
             _inputManager = inputManager;
             _player = player;
             _d3DEngine = d3DEngine;
-            DrawOrders.UpdateIndex(0, 9000);
+            DrawOrders.UpdateIndex(0, 10000);
             _d3DEngine.ViewPort_Updated += D3DEngineViewPortUpdated;
             ToolbarUi = new ToolBarUi(new UniRectangle(0.0f, _d3DEngine.ViewPort.Height - 46, _d3DEngine.ViewPort.Width, 80.0f), _player, _iconFactory);
 
@@ -153,6 +153,9 @@ namespace Utopia.GUI.D3D
         //Draw at 2d level ! (Last draw called)
         public override void Draw(int index)
         {
+            //Clear the Depth Buffer Befor render the GUI !! => This draw must be DONE AFTER ALL other "3D" Draw.
+            _d3DEngine.Context.ClearDepthStencilView(_d3DEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
+
             _spriteRender.Begin(true, SpriteRenderer.FilterMode.Linear);
             _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
             _spriteRender.End();

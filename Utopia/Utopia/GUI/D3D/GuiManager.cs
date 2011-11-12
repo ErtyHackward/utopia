@@ -44,7 +44,7 @@ namespace Utopia.GUI.D3D
             _screen = screen;
             _d3DEngine = d3DEngine;
 
-            DrawOrders.UpdateIndex(0, 10000);
+            DrawOrders.UpdateIndex(0, 10001);
         }
 
         public override void Initialize()
@@ -73,8 +73,6 @@ namespace Utopia.GUI.D3D
         //Draw at 2d level ! (Last draw called)
         public override void Draw(int index)
         {
-            //Clear the Depth Buffer Befor render the GUI !! => This draw must be DONE AFTER ALL other "3D" Draw.
-            _d3DEngine.Context.ClearDepthStencilView(_d3DEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
             //Debug.WriteLine("Gui draw start");
             _guiVisualizer.Draw(_screen);
 
