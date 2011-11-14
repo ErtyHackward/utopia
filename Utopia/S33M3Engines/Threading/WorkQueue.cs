@@ -52,8 +52,8 @@ namespace S33M3Engines.Threading
             if (_totThread < 1) _totThread = 1;
 
             STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };
-            ThreadPool = new SmartThreadPool(_stpInfo);
-            
+            ThreadPool = new SmartThreadPool(1);
+
             ThreadPoolGrp = ThreadPool.CreateWorkItemsGroup(_totThread);
         }
 
@@ -65,6 +65,11 @@ namespace S33M3Engines.Threading
         public static void DoWorkInThread(WorkItemCallback work, object param, IThreadStatus ThreadedObject, bool executeInGroup = false)
         {
             DoWorkInThread(work, param, ThreadedObject, WorkItemPriority.Normal, executeInGroup);
+        }
+
+        public static void DoWorkSingleThreadedGroup(Amib.Threading.Action work)
+        {
+            ThreadPoolGrp.QueueWorkItem(work);
         }
 
         public static void DoWorkInThread(WorkItemCallback work, object param, IThreadStatus ThreadedObject, WorkItemPriority priority, bool executeInGroup = false, PostExecuteWorkItemCallback callBack = null)
@@ -82,6 +87,5 @@ namespace S33M3Engines.Threading
                 else ThreadPool.QueueWorkItem(work, param, callBack, priority);
             }
         }
-
     }
 }
