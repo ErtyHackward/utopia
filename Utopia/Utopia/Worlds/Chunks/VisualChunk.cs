@@ -20,6 +20,7 @@ using Utopia.Entities;
 using Utopia.Resources.ModelComp;
 using S33M3Engines.Shared.Math;
 using Utopia.Entities.Sprites;
+using Utopia.Entities.Managers.Interfaces;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -36,6 +37,8 @@ namespace Utopia.Worlds.Chunks
         private object Lock_DrawChunksSolidFaces = new object();       //Multithread Locker
         private object Lock_DrawChunksSeeThrough1Faces = new object(); //Multithread Locker
         private object Lock_Draw = new object(); //Multithread Locker
+
+        private IEntityPickingManager _entityPickingManager;
         #endregion
 
         #region Public properties/Variable
@@ -111,7 +114,13 @@ namespace Utopia.Worlds.Chunks
 
         #endregion
 
-        public VisualChunk(D3DEngine d3dEngine, WorldFocusManager worldFocusManager, VisualWorldParameters visualWorldParameter, ref Range<int> cubeRange, SingleArrayChunkContainer singleArrayContainer)
+        public VisualChunk(
+                            D3DEngine d3dEngine, 
+                            WorldFocusManager worldFocusManager, 
+                            VisualWorldParameters visualWorldParameter, 
+                            ref Range<int> cubeRange, 
+                            SingleArrayChunkContainer singleArrayContainer,
+                            IEntityPickingManager entityPickingManager)
             : base(new SingleArrayDataProvider(singleArrayContainer))
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
@@ -123,11 +132,11 @@ namespace Utopia.Worlds.Chunks
             _visualWorldParameters = visualWorldParameter;
             VisualSpriteEntities = new List<VisualEntity>();
             CubeRange = cubeRange;
+            _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
             Ready2Draw = false;
             LightPropagateBorderOffset = new Location2<int>(0, 0);
         }
-
         #region Public methods
         
 
@@ -136,6 +145,15 @@ namespace Utopia.Worlds.Chunks
             BorderChunk = isBorderChunk(ChunkPositionBlockUnit.X, ChunkPositionBlockUnit.Y);
         }
 
+        public void SetNewEntityCollection(EntityCollection newEntities)
+        {
+            if(base.Entities != null) base.Entities.CollectionDirty -= Entities_CollectionDirty;
+
+            base.Entities = newEntities;
+            base.Entities.Chunk = this;
+
+            base.Entities.CollectionDirty += Entities_CollectionDirty;
+        }
 
         //Graphical Part
         public void InitializeChunkBuffers()
@@ -304,6 +322,16 @@ namespace Utopia.Worlds.Chunks
             Entities.IsDirty = false;
         }
 
+        private void Entities_CollectionDirty(object sender, EventArgs e)
+        {
+            RefreshVisualEntities();
+            _entityPickingManager.isDirty = true; //Tell the Picking manager that it must force the picking entity list !
+            //Change chunk state in order to rebuild the Entity collections change
+            State = ChunkState.LandscapeCreated;
+            ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+            UserChangeOrder = 1;
+        }
+
         #endregion
 
         #region Privates Methods
@@ -377,6 +405,7 @@ namespace Utopia.Worlds.Chunks
             if (SolidCubeIB != null) SolidCubeIB.Dispose();
             if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
             if (LiquidCubeIB != null) LiquidCubeIB.Dispose();
+            base.Entities.CollectionDirty -= Entities_CollectionDirty;
 
         }
     }

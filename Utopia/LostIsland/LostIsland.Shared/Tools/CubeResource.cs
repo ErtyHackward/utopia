@@ -139,8 +139,9 @@ namespace LostIsland.Shared.Tools
 
             EntityLink entity = owner.EntityState.PickedEntityLink;
             Console.WriteLine(entity.Tail[0]);
-            var chunk = _landscapeManager.GetChunk(entity.ChunkPosition);
-
+            IChunkLayout2D chunk = _landscapeManager.GetChunk(entity.ChunkPosition);
+            IStaticEntity entityRemoved;
+            chunk.Entities.RemoveById(entity.Tail[0], entity.DynamicEntityId, out entityRemoved);
             //var cursor = _landscapeManager.GetCursor(Parent.EntityState.PickedBlockPosition);
             //byte cube = cursor.Read();
             //if (cube != 0)

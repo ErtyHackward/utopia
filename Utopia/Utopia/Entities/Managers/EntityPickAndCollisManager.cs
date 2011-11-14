@@ -47,6 +47,8 @@ namespace Utopia.Entities.Managers
             get { return _worldChunks; }
             set { _worldChunks = value; }
         }
+
+        public bool isDirty { get; set; }
         #endregion
 
         public EntityPickAndCollisManager(IDynamicEntityManager dynamicEntityManager, 
@@ -72,12 +74,12 @@ namespace Utopia.Entities.Managers
         {
             CollectSurrendingDynamicPlayerEntities(); //They have their own collection
             CollectSurrendingStaticEntities();  //They are stored inside chunks !
+            isDirty = false;
         }
 
         private void CollectSurrendingStaticEntities()
         {
             VisualChunk chunk;
-
             //Check inside the visible chunks (Not visible culled) the statics entities
             //Chunk are sorted around player, the 9 first are the chunk around the players.
             for (int i = 0; i < 9; i++)
@@ -123,6 +125,8 @@ namespace Utopia.Entities.Managers
         #region public methods
         public bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity)
         {
+            if (isDirty) _timer_OnTimerRaised();
+
             VisualEntity entity;
             float currentDistance;
             float pickedEntityDistance = float.MaxValue;
@@ -149,6 +153,8 @@ namespace Utopia.Entities.Managers
 
         public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
+            if (isDirty) _timer_OnTimerRaised();
+
             VisualEntity entityTesting;
             BoundingBox _boundingBox2Evaluate;
             //If new Position "inside" entity, then go back to previous Position !

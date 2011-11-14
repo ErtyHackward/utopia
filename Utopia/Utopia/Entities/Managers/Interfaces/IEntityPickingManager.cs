@@ -12,6 +12,7 @@ namespace Utopia.Entities.Managers.Interfaces
 {
     public interface IEntityPickingManager
     {
+        bool isDirty { get; set; }
         PlayerEntityManager Player { get; set; }
         IWorldChunks WorldChunks { get; set; }
         bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity);

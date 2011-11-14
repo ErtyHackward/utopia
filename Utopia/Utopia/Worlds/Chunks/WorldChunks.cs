@@ -77,6 +77,7 @@ namespace Utopia.Worlds.Chunks
         private ISkyDome _skydome;
         private IWeather _weather;
         private SharedFrameCB _sharedFrameCB;
+        private IEntityPickingManager _pickingManager;
         #endregion
 
         #region Public Property/Variables
@@ -132,6 +133,7 @@ namespace Utopia.Worlds.Chunks
             _skydome = skydome;
             _weather = weather;
             _sharedFrameCB = sharedFrameCB;
+            _pickingManager = pickingManager;
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;
@@ -437,7 +439,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Min.Z, VisualWorldParameters.WorldVisibleSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder);
+                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager);
                     chunk.IsServerRequested = true;
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);
