@@ -22,6 +22,11 @@ namespace Utopia.Shared.Entities
         /// </summary>
         public event EventHandler<EntityCollectionEventArgs> EntityAdded;
 
+        /// <summary>
+        /// Occurs when collection change
+        /// </summary>
+        public event EventHandler<EventArgs> CollectionDirty;
+
         private void OnEntityAdded(EntityCollectionEventArgs e)
         {
             e.Chunk = Chunk;
@@ -56,7 +61,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets parent chunk object
         /// </summary>
-        public AbstractChunk Chunk { get; private set; }
+        public AbstractChunk Chunk { get; set; }
 
         public EntityCollection(AbstractChunk chunk)
         {
@@ -111,6 +116,7 @@ namespace Utopia.Shared.Entities
                     entity.StaticId = GetFreeId();
                     entity.Container = this;
                     _entities.Add(entity.StaticId, entity);
+                    if (CollectionDirty != null) CollectionDirty(this, new EventArgs());
                 }
                 finally
                 {
@@ -141,6 +147,7 @@ namespace Utopia.Shared.Entities
                     Entity = entity, 
                     ParentDynamicEntityId = parentId
                 });
+                if (CollectionDirty != null) CollectionDirty(this, new EventArgs());
             }
         }
 
@@ -171,6 +178,7 @@ namespace Utopia.Shared.Entities
                             Entity = entity, 
                             ParentDynamicEntityId = parentId
                         });
+                        if (CollectionDirty != null) CollectionDirty(this, new EventArgs());
                     }
                 }
                 return removed;
@@ -192,11 +200,12 @@ namespace Utopia.Shared.Entities
                 {
                     IsDirty = true;
                     _entities.Remove(staticEntityId);
-                    entity.Container = null;
+                    entity.Container = null; //Remove from its container
                     OnEntityRemoved(new EntityCollectionEventArgs { 
                         Entity = entity, 
                         ParentDynamicEntityId = parentDynamicEntityId 
                     });
+                    if (CollectionDirty != null) CollectionDirty(this, new EventArgs());
                 }
             }
         }
@@ -267,6 +276,8 @@ namespace Utopia.Shared.Entities
                         });
                     }
                 }
+
+                if (CollectionDirty != null && IsDirty) CollectionDirty(this, new EventArgs());
             }
         }
 

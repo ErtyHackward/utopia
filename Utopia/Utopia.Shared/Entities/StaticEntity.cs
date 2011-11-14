@@ -20,7 +20,16 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets or sets current parent container
         /// </summary>
-        public IStaticContainer Container { get; set; }
+        private IStaticContainer _container;
+
+        public IStaticContainer Container
+        {
+            get { return _container; }
+            set 
+            {
+                _container = value; 
+            }
+        }
 
         /// <summary>
         /// Returns link to the entity
@@ -30,7 +39,6 @@ namespace Utopia.Shared.Entities
         {
             if(Container == null)
                 throw new InvalidOperationException("Unable to take link from the entity without parent container");
-            
             
             var entities = new List<uint>();
             var container = Container;

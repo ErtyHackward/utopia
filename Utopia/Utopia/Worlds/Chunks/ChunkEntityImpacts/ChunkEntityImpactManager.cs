@@ -108,10 +108,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //Refresh the Visual Entity if needed !
             VisualChunk neightboorChunk;
             neightboorChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
-            if (neightboorChunk.Entities.IsDirty)
-            {
-                neightboorChunk.RefreshVisualEntities();
-            }
+            //if (neightboorChunk.Entities.IsDirty)
+            //{
+            //    neightboorChunk.RefreshVisualEntities();
+            //}
 
             _lightManager.CreateLightSources(ref cubeRange);
 

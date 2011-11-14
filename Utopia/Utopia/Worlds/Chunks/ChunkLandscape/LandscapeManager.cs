@@ -255,8 +255,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
             
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
-            visualChunk.Entities = generatedChunk.Entities;
-
+            //visualChunk.Entities = generatedChunk.Entities;
+            
             CreateVisualEntities(generatedChunk, visualChunk);
 
             visualChunk.State = ChunkState.LandscapeCreated;
@@ -267,8 +267,9 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         private void CreateVisualEntities(AbstractChunk source, VisualChunk target)
         {
-            //Create the Sprite Entities
+            target.SetNewEntityCollection(source.Entities);
 
+            //Create the Sprite Entities
             foreach (var spriteEntity in source.Entities.Enumerate<SpriteEntity>())
             {
                 target.VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
