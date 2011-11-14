@@ -4,6 +4,8 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Structs;
+using System;
 
 namespace LostIsland.Shared.Tools
 {
@@ -76,6 +78,24 @@ namespace LostIsland.Shared.Tools
 
         public IToolImpact Use(IDynamicEntity owner, byte useMode, bool runOnServer = false)
         {
+            if (owner.EntityState.IsBlockPicked)
+            {
+                return BlockImpact(owner, useMode, runOnServer);
+            }else{
+                if (owner.EntityState.IsEntityPicked)
+                {
+                    return EntityImpact(owner, useMode, runOnServer);
+                }else
+                {
+                    var impact = new ToolImpact { Success = false };
+                    impact.Message = "No target selected for use";
+                    return impact;
+                }
+            }
+        }
+
+        public IToolImpact BlockImpact(IDynamicEntity owner, byte useMode, bool runOnServer = false)
+        {
             var entity = owner;
             var impact = new ToolImpact { Success = false };
 
@@ -110,6 +130,35 @@ namespace LostIsland.Shared.Tools
                 }
             }
             impact.Message = "Pick a cube to use this tool";
+            return impact;
+        }
+
+        private IToolImpact EntityImpact(IDynamicEntity owner, byte useMode, bool runOnServer = false)
+        {
+            var impact = new ToolImpact { Success = false };
+
+            EntityLink entity = owner.EntityState.PickedEntityLink;
+            Console.WriteLine(entity.Tail[0]);
+            var chunk = _landscapeManager.GetChunk(entity.ChunkPosition);
+
+            //var cursor = _landscapeManager.GetCursor(Parent.EntityState.PickedBlockPosition);
+            //byte cube = cursor.Read();
+            //if (cube != 0)
+            //{
+            //    cursor.Write(0);
+            //    impact.Success = true;
+
+            //    var character = Parent as CharacterEntity;
+            //    if (character != null)
+            //    {
+            //        var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
+            //        adder.CubeId = cube;
+
+            //        character.Inventory.PutItem(adder);
+            //    }
+
+            //    return impact;
+            //}
             return impact;
         }
 
