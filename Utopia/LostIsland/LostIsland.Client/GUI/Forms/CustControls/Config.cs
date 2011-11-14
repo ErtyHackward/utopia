@@ -25,6 +25,16 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             InitializeComponent();
         }
 
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                return cp;
+            }
+        }
+
         /// <summary>
         /// Create all the bindings lists from the Config data settings for datagrid binding
         /// </summary>
