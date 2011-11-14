@@ -56,6 +56,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private VertexPositionColor[] _faces;
 
         private int _cloudMapSize;
+        private int _cloudMapSizeSquare;
         private bool[] _cloudMap;
         #endregion
 
@@ -75,7 +76,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             //Create a virtual Cloud map of 1024 * 1024 size !
             _cloudMapSize = 1024;
-            _cloudMap = new bool[_cloudMapSize * _cloudMapSize];
+            _cloudMapSizeSquare = _cloudMapSize * _cloudMapSize;
+            _cloudMap = new bool[_cloudMapSizeSquare];
         }
 
         #region Public methods
@@ -154,8 +156,6 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             {
                 for (int xi = -_cloudMap_size; xi < _cloudMap_size; xi++)
                 {
-
-
                     Location2<int> p_in_noise_i = new Location2<int>(xi + center_of_drawing_in_noise_i.X, zi + center_of_drawing_in_noise_i.Z);
 
                     Vector2 p0 = new Vector2(xi, zi) * _cloud_size + world_center_of_drawing_in_noise_f;
@@ -172,41 +172,52 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                     float ry = _cloud_Height;
                     float rz = _cloud_size / 2;
 
+                    int neightBCloudIndex;
+
                     for (int i = 0; i < 6; i++)
                     {
                         switch (i)
                         {
-                            case 0:	// top
+                            case 0:	// top, always draw
                                 _faces[0].Position.X = -rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = -rz; _faces[0].Color = _topFace;
                                 _faces[1].Position.X = -rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = rz; _faces[1].Color = _topFace;
                                 _faces[2].Position.X = rx; _faces[2].Position.Y = ry; _faces[2].Position.Z = rz; _faces[2].Color = _topFace;
                                 _faces[3].Position.X = rx; _faces[3].Position.Y = ry; _faces[3].Position.Z = -rz; _faces[3].Color = _topFace;
                                 break;
                             case 1: // back
+                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Z - 1, _cloudMapSize)) * _cloudMapSize);
+                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
+
                                 _faces[0].Position.X = -rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = -rz; _faces[0].Color = _side1Face;
                                 _faces[1].Position.X = rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = -rz; _faces[1].Color = _side1Face;
                                 _faces[2].Position.X = rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = -rz; _faces[2].Color = _side1Face;
                                 _faces[3].Position.X = -rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = -rz; _faces[3].Color = _side1Face;
                                 break;
                             case 2: //right
+                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X + 1, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Z, _cloudMapSize)) * _cloudMapSize);
+                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
                                 _faces[0].Position.X = rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = -rz; _faces[0].Color = _side2Face;
                                 _faces[1].Position.X = rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = rz; _faces[1].Color = _side2Face;
                                 _faces[2].Position.X = rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = rz; _faces[2].Color = _side2Face;
                                 _faces[3].Position.X = rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = -rz; _faces[3].Color = _side2Face;
                                 break;
                             case 3: // front
+                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Z + 1, _cloudMapSize)) * _cloudMapSize);
+                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
                                 _faces[0].Position.X = rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = rz; _faces[0].Color = _side1Face;
                                 _faces[1].Position.X = -rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = rz; _faces[1].Color = _side1Face;
                                 _faces[2].Position.X = -rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = rz; _faces[2].Color = _side1Face;
                                 _faces[3].Position.X = rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = rz; _faces[3].Color = _side1Face;
                                 break;
                             case 4: // left
+                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X - 1, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Z, _cloudMapSize)) * _cloudMapSize);
+                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
                                 _faces[0].Position.X = -rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = rz; _faces[0].Color = _side2Face;
                                 _faces[1].Position.X = -rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = -rz; _faces[1].Color = _side2Face;
                                 _faces[2].Position.X = -rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = -rz; _faces[2].Color = _side2Face;
                                 _faces[3].Position.X = -rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = rz; _faces[3].Color = _side2Face;
                                 break;
-                            case 5: // bottom
+                            case 5: // bottom, always draw
                                 _faces[0].Position.X = rx; _faces[0].Position.Y = -ry; _faces[0].Position.Z = rz; _faces[0].Color = _bottomFace;
                                 _faces[1].Position.X = -rx; _faces[1].Position.Y = -ry; _faces[1].Position.Z = rz; _faces[1].Color = _bottomFace;
                                 _faces[2].Position.X = -rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = -rz; _faces[2].Color = _bottomFace;
@@ -257,7 +268,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             if (_cloudVB == null) _cloudVB = new VertexBuffer<VertexPositionColor>(_d3dEngine, _nbrVertices, VertexPositionColor.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB", ResourceUsage.Dynamic, 10);
             _cloudVB.SetData(_vertices, 0 , _nbrVertices, true);
 
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             _effect.Begin();
             _effect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View_focused);
@@ -311,3 +322,4 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #endregion
     }
 }
+
