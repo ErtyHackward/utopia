@@ -9,15 +9,23 @@ namespace S33M3Engines.D3D
     public abstract class GameComponent : IUpdateableComponent
     {
         #region Private variables
-
         private bool _enabled = true;
         private int _updateOrder = 10;
 
+        private string _initStep = "Ready";
+        private int _initVal = 100;
+        private bool _isInitialized = true;
         #endregion
 
         #region Public properties
 
         public event EventHandler<EventArgs> EnabledChanged;
+
+        public virtual string InitStep { get { return _initStep; } }
+
+        public virtual int InitVal { get { return _initVal; } }
+
+        public virtual bool IsInitialized { get { return _isInitialized; } }
 
         public bool Enabled
         {

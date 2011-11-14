@@ -8,6 +8,8 @@ using S33M3Engines.InputHandler;
 using SharpDX;
 using SharpDX.DXGI;
 using SharpDX.Windows;
+using S33M3Engines.Threading;
+using Amib.Threading;
 
 namespace S33M3Engines.D3D
 {
@@ -97,6 +99,13 @@ namespace S33M3Engines.D3D
         //Init + Start the pump !
         public void Run()
         {
+
+            ////Call the game Initialize !
+            //WorkQueue.DoWorkSingleThreadedGroup(new Amib.Threading.Action(Initialize));
+
+            ////Call components Load Content
+            //WorkQueue.DoWorkSingleThreadedGroup(new Amib.Threading.Action(LoadContent));
+
             //Call the game Initialize !
             Initialize();
 

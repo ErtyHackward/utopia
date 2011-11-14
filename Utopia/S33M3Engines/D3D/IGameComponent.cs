@@ -2,6 +2,10 @@
 {
     public interface IGameComponent
     {
+        string InitStep { get; }
+        int InitVal { get; }
+        bool IsInitialized { get; }
+
         void Initialize();
         void LoadContent();
         void UnloadContent();
