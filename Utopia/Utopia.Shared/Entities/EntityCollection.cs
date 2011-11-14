@@ -259,6 +259,7 @@ namespace Utopia.Shared.Entities
                     var value = _entities[_entities.Keys[i]]; // O(1)
                     if (value is T && condition((T) value))
                     {
+                        IsDirty = true;
                         value.Container = null;
                         _entities.RemoveAt(i); // O(Count)
                         OnEntityRemoved(new EntityCollectionEventArgs {
