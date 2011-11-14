@@ -12,6 +12,10 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             Equipment = new CharacterEquipment(this);
             Inventory = new SlotContainer<ContainedSlot>(this);
+
+            // we need to have single id scope with two of these containers
+            Equipment.JoinIdScope(Inventory);
+            Inventory.JoinIdScope(Equipment);
         }
 
         /// <summary>
