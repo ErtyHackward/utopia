@@ -181,16 +181,24 @@ namespace S33M3Engines.D3D
         {
             for (int i = 0; i < GameComponents.Count; i++)
             {
-                GameComponents[i].Initialize();
+                WorkQueue.DoWorkInThreadedGroup(new Amib.Threading.Action(GameComponents[i].Initialize));
+                //GameComponents[i].Initialize();
             }
+
+            //Wait for end of all jobs
+            WorkQueue.ThreadPoolGrp.WaitForIdle();
         }
 
         public virtual void LoadContent()
         {
             for (int i = 0; i < GameComponents.Count; i++)
             {
-                GameComponents[i].LoadContent();
+                WorkQueue.DoWorkInThreadedGroup(new Amib.Threading.Action(GameComponents[i].LoadContent));
+                //GameComponents[i].LoadContent();
             }
+
+            //Wait for end of all jobs
+            WorkQueue.ThreadPoolGrp.WaitForIdle();
         }
 
         public virtual void UnloadContent()

@@ -67,10 +67,10 @@ namespace S33M3Engines.Threading
             DoWorkInThread(work, param, ThreadedObject, WorkItemPriority.Normal, executeInGroup);
         }
 
-        //public static void DoWorkSingleThreadedGroup(Amib.Threading.Action work)
-        //{
-        //    ThreadPoolGrp.QueueWorkItem(work);
-        //}
+        public static void DoWorkInThreadedGroup(Amib.Threading.Action work)
+        {
+            ThreadPoolGrp.QueueWorkItem(work);
+        }
 
         public static void DoWorkInThread(WorkItemCallback work, object param, IThreadStatus ThreadedObject, WorkItemPriority priority, bool executeInGroup = false, PostExecuteWorkItemCallback callBack = null)
         {
