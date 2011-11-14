@@ -17,6 +17,8 @@ namespace Utopia.Shared.Entities.Inventory
         private T[,] _items;
         private Vector2I _gridSize;
         private int _slotsCount;
+        private uint _maxId;
+        private List<SlotContainer<T>> _joinedScope;
 
         /// <summary>
         /// Gets maximum container capacity
@@ -106,6 +108,9 @@ namespace Utopia.Shared.Entities.Inventory
             // writing grid size
             writer.Write(_gridSize);
 
+            // write max id
+            writer.Write(_maxId);
+
             // saving containing items
             foreach (var slot in this)
             {
@@ -120,6 +125,9 @@ namespace Utopia.Shared.Entities.Inventory
 
             // read container grid size
             _gridSize = reader.ReadVector2I();
+
+            // read max id
+            _maxId = reader.ReadUInt32();
 
             // load contained slots (slot is count and entity example)
             for (int i = 0; i < _slotsCount; i++)
@@ -148,6 +156,31 @@ namespace Utopia.Shared.Entities.Inventory
         protected virtual bool ValidateItem(IItem item, Vector2I position)
         {
             return true;
+        }
+
+        /// <summary>
+        /// Makes id valid for current container scope
+        /// </summary>
+        /// <param name="item"></param>
+        protected void ValidateId(IItem item)
+        {
+            if (item.StaticId == 0 || Find(item.StaticId) != null)
+                item.StaticId = GetFreeId();
+        }
+
+        /// <summary>
+        /// Joins two containers to have single id scope
+        /// </summary>
+        /// <param name="otherContainer"></param>
+        public void JoinIdScope(SlotContainer<T> otherContainer)
+        {
+            if (otherContainer == null) throw new ArgumentNullException("otherContainer");
+            if (otherContainer == this) throw new ArgumentException("Unable to join id scope with myself");
+
+            if (_joinedScope == null)
+                _joinedScope = new List<SlotContainer<T>>();
+
+            _joinedScope.Add(otherContainer);
         }
 
         /// <summary>
@@ -195,7 +228,13 @@ namespace Utopia.Shared.Entities.Inventory
                                            return false;
 
                                        s.ItemsCount += count;
-                                       var t = new T { GridPosition = s.GridPosition, ItemsCount = count, Item = s.Item };
+
+                                       var t = new T {
+                                           GridPosition = s.GridPosition,
+                                           ItemsCount = count,
+                                           Item = s.Item
+                                       };
+
                                        OnItemPut(new EntityContainerEventArgs<T> { Slot = t });
                                        return true;
                                    }
@@ -206,7 +245,7 @@ namespace Utopia.Shared.Entities.Inventory
 
             }
 
-            // take first free cell and put item
+            // take first free cell and put the item
             for (int x = 0; x < _gridSize.X; x++)
             {
                 for (int y = 0; y < _gridSize.Y; y++)
@@ -218,7 +257,10 @@ namespace Utopia.Shared.Entities.Inventory
                         if (!ValidateItem(item, pos))
                             continue;
 
-                        _items[x, y] = new T { Item = item, GridPosition = pos, ItemsCount = count };
+                        var addSlot = new T { Item = item, GridPosition = pos, ItemsCount = count };
+                        ValidateId(item);
+                        _items[x, y] = addSlot;
+                        
                         _slotsCount ++;
                         OnItemPut(new EntityContainerEventArgs<T> { Slot = _items[x, y] });
                         return true;
@@ -264,7 +306,9 @@ namespace Utopia.Shared.Entities.Inventory
             else
             {
                 // adding new slot
-                _items[position.X, position.Y] = new T { Item = item, GridPosition = position, ItemsCount = itemsCount };
+                var addSlot = new T { Item = item, GridPosition = position, ItemsCount = itemsCount };
+                ValidateId(item);
+                _items[position.X, position.Y] = addSlot;
                 _slotsCount++;
             }
 
@@ -298,6 +342,9 @@ namespace Utopia.Shared.Entities.Inventory
                 // no more items in slot
                 _items[position.X, position.Y] = null;
                 _slotsCount--;
+
+                if (_slotsCount == 0)
+                    _maxId = 0;
             }
 
             OnItemTaken(new EntityContainerEventArgs<T> { Slot = new T { GridPosition = position, ItemsCount = itemsCount, Item = currentItem.Item } });
@@ -346,7 +393,14 @@ namespace Utopia.Shared.Entities.Inventory
 
             slotTaken = (T)currentItem.Clone();
 
-            var put = new T { Item = item, GridPosition = position, ItemsCount = itemsCount };
+            var put = new T { 
+                Item = item, 
+                GridPosition = position, 
+                ItemsCount = itemsCount 
+            };
+
+            if (!IsIdFree(item.StaticId))
+                item.StaticId = GetFreeId();
 
             _items[position.X, position.Y] = put;
             OnItemExchanged(new EntityContainerEventArgs<T> { Slot = put, Exchanged = slotTaken });
@@ -396,7 +450,7 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
-        /// Performs search for entity and returns slot
+        /// Performs search for an entity and returns a slot
         /// </summary>
         /// <param name="staticEntityid">static entity id</param>
         /// <returns></returns>
@@ -445,6 +499,39 @@ namespace Utopia.Shared.Entities.Inventory
             if (slot != null)
                 return slot.Item;
             return null;
+        }
+
+
+        /// <summary>
+        /// Returns free unique number for this collection (and all joined collections)
+        /// </summary>
+        /// <returns></returns>
+        public uint GetFreeId()
+        {
+            if (_joinedScope != null)
+            {
+                var otherMax = _joinedScope.Max(c => c._maxId);
+
+                _maxId = Math.Max(_maxId, otherMax);
+            }
+
+            return ++_maxId;
+        }
+
+        private bool IsIdFree(uint staticId)
+        {
+            // id 0 is not allowed
+            if (staticId == 0) return false;
+
+            // check linked containers
+            if (_joinedScope != null)
+            {
+                if (_joinedScope.Exists(c => c.Find(staticId) != null))
+                    return false;
+            }
+
+            // check our container
+            return Find(staticId) == null;
         }
     }
 }
