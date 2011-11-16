@@ -170,6 +170,11 @@ namespace Utopia.Shared.Entities.Dynamic
             writer.Write(RotationSpeed);
         }
 
+        public override int GetHashCode()
+        {
+            return (int)DynamicId;
+        }
+
         /// <summary>
         /// Returns link to the entity
         /// </summary>
