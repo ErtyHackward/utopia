@@ -103,19 +103,37 @@ namespace LostIsland.Shared.Tools
             {
                 if (useMode == 0)
                 {
+                    var character = owner as CharacterEntity;
+
                     var cursor = _landscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
                     var cube = cursor.Read();
                     if (cube != Utopia.Shared.Cubes.CubeId.Air)
                     {
                         var chunk = _landscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
-                        
+
+                        if (character != null)
+                        {
+                            foreach (var cubeEntity in chunk.Entities.EnumerateFast())
+                            {
+                                IBlockLinkedEntity cubeBlockLinkedEntity = cubeEntity as IBlockLinkedEntity;
+                                if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
+                                {
+                                    var adder = (IItem)EntityFactory.Instance.CreateEntity(cubeEntity.ClassId);
+                                    if (cubeEntity is IGrowEntity)
+                                    {
+                                        ((IGrowEntity)adder).GrowPhase = ((IGrowEntity)cubeEntity).GrowPhase;
+                                    }
+                                    character.Inventory.PutItem(adder);
+                                }
+                            }
+                        }
+
                         chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
 
                         //change the Block to AIR
                         cursor.Write(Utopia.Shared.Cubes.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
                         impact.Success = true;
                         //If the Tool Owner is a player, then Add the resource removed into the inventory
-                        var character = owner as CharacterEntity;
                         if (character != null)
                         {
                             var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
@@ -155,6 +173,10 @@ namespace LostIsland.Shared.Tools
             if (character != null)
             {
                 var adder = (IItem)EntityFactory.Instance.CreateEntity(entityRemoved.ClassId);
+                if (entityRemoved is IGrowEntity)
+                {
+                    ((IGrowEntity)adder).GrowPhase = ((IGrowEntity)entityRemoved).GrowPhase;
+                }
                 character.Inventory.PutItem(adder);
             }
             return impact;
