@@ -114,6 +114,14 @@ namespace LostIsland.Shared.Tools
                         //change the Block to AIR
                         cursor.Write(Utopia.Shared.Cubes.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
                         impact.Success = true;
+                        //If the Tool Owner is a player, then Add the resource removed into the inventory
+                        var character = owner as CharacterEntity;
+                        if (character != null)
+                        {
+                            var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
+                            adder.CubeId = cube;
+                            character.Inventory.PutItem(adder);
+                        }
                         return impact;
                     }
                 }
@@ -142,24 +150,13 @@ namespace LostIsland.Shared.Tools
             IChunkLayout2D chunk = _landscapeManager.GetChunk(entity.ChunkPosition);
             IStaticEntity entityRemoved;
             chunk.Entities.RemoveById(entity.Tail[0], entity.DynamicEntityId, out entityRemoved);
-            //var cursor = _landscapeManager.GetCursor(Parent.EntityState.PickedBlockPosition);
-            //byte cube = cursor.Read();
-            //if (cube != 0)
-            //{
-            //    cursor.Write(0);
-            //    impact.Success = true;
-
-            //    var character = Parent as CharacterEntity;
-            //    if (character != null)
-            //    {
-            //        var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
-            //        adder.CubeId = cube;
-
-            //        character.Inventory.PutItem(adder);
-            //    }
-
-            //    return impact;
-            //}
+            
+            var character = owner as CharacterEntity;
+            if (character != null)
+            {
+                var adder = (IItem)EntityFactory.Instance.CreateEntity(entityRemoved.ClassId);
+                character.Inventory.PutItem(adder);
+            }
             return impact;
         }
 
