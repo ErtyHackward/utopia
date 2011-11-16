@@ -23,6 +23,11 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
             set { _growPhase = value; GrawPhaseChanged(); }
         }
 
+        public override string StackType
+        {
+            get { return this.GetType().Name + GrowPhase; }
+        }
+
         public override ushort ClassId
         {
             get { return EntityClassId.Grass; }
