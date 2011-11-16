@@ -6,6 +6,16 @@
     <NbrGrowSprites>5</NbrGrowSprites>
   </Entity>
   <Entity>
+    <!-- Mushroom1 -->
+    <ClassID>4003</ClassID>
+    <SpriteID>5</SpriteID>
+  </Entity>
+  <Entity>
+    <!-- Mushroom2 -->
+    <ClassID>4004</ClassID>
+    <SpriteID>6</SpriteID>
+  </Entity>
+  <Entity>
     <!-- Flower1 -->
     <ClassID>4001</ClassID>
     <SpriteID>7</SpriteID>
@@ -16,14 +26,9 @@
     <SpriteID>8</SpriteID>
   </Entity>
   <Entity>
-    <!-- Mushroom1 -->
-    <ClassID>4003</ClassID>
-    <SpriteID>5</SpriteID>
-  </Entity>
-  <Entity>
-    <!-- Mushroom2 -->
-    <ClassID>4004</ClassID>
-    <SpriteID>6</SpriteID>
+    <!-- GoldCoin1 -->
+    <ClassID>100</ClassID>
+    <SpriteID>9</SpriteID>
   </Entity>
   <Cube>
     <Name>Air</Name>

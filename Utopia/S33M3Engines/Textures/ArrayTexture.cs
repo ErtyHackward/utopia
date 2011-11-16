@@ -35,9 +35,30 @@ namespace S33M3Engines.Textures
             CreateTexture2DFromFiles(device, fileCollection.ToArray(), miPfilterFlag, ResourceName, out textureArrayView);
         }
 
+        public static void CreateTexture2DFromFiles(Device device, string[] directories, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out Texture2D[] textureArrayView, int MaxMipLevels = 0)
+        {
+            List<string> fileCollection = new List<string>();
+            foreach (var dir in directories)
+            {
+                DirectoryInfo dinfo = new DirectoryInfo(dir);
+
+                foreach (FileInfo fi in dinfo.GetFiles(fileNames).OrderBy(x => x.Name))
+                {
+                    fileCollection.Add(dir + fi.Name);
+                }
+
+            }
+            CreateTexture2DFromFiles(device, fileCollection.ToArray(), miPfilterFlag, ResourceName, out textureArrayView, MaxMipLevels);
+        }
+
          public static void CreateTexture2DFromFiles(Device device, string directory, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out ShaderResourceView textureArrayView)
          {
              CreateTexture2DFromFiles(device, new string[] {directory}, fileNames, miPfilterFlag, ResourceName, out textureArrayView);
+         }
+
+         public static void CreateTexture2DFromFiles(Device device, string directory, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out Texture2D[] textureArray, int MaxMipLevels = 0)
+         {
+             CreateTexture2DFromFiles(device, new string[] { directory }, fileNames, miPfilterFlag, ResourceName, out textureArray, MaxMipLevels);
          }
          
          public static void CreateTexture2D(Device device, Texture2D[] texturesCollection, FilterFlags MIPfilterFlag, string ResourceName, out ShaderResourceView TextureArrayView)
@@ -143,6 +164,40 @@ namespace S33M3Engines.Textures
             //Disposing resources used to create the texture array
             foreach (Texture2D tex in srcTex) tex.Dispose();
         }
+
+         /// <summary>
+         /// Create A shaderViewresource on a TextureArray object created from image files
+         /// </summary>
+         /// <param name="device">The graphic device</param>
+         /// <param name="FileNames">The files names that will be used to create the array, the array's index will be based on the order of the file inside this collection</param>
+         /// <param name="MIPfilterFlag">Filter used to create the mipmap lvl from the loaded images</param>
+         /// <param name="ArrayTextureView">The create textureArray view that can directly be used inside shaders</param>
+         public static void CreateTexture2DFromFiles(Device device, string[] FileNames, FilterFlags MIPfilterFlag, string ResourceName, out Texture2D[] TextureArray, int MaxMipLevels)
+         {
+             int inputImagesCount = FileNames.Length;
+
+             //1 First loading the textures from files
+             TextureArray = new Texture2D[inputImagesCount];
+
+             ImageLoadInformation ImageInfo = new ImageLoadInformation()
+             {
+                 FirstMipLevel = 0,
+                 MipLevels = MaxMipLevels,
+                 Usage = ResourceUsage.Staging,
+                 BindFlags = BindFlags.None,
+                 CpuAccessFlags = CpuAccessFlags.Write | CpuAccessFlags.Read,
+                 OptionFlags = ResourceOptionFlags.None,
+                 Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                 Filter = FilterFlags.None,
+                 MipFilter = MIPfilterFlag
+             };
+
+             for (int imgInd = 0; imgInd < inputImagesCount; imgInd++)
+             {
+                 TextureArray[imgInd] = Texture2D.FromFile<Texture2D>(device, FileNames[imgInd], ImageInfo);
+             }
+
+         }
 
     }
 }
