@@ -54,7 +54,7 @@ namespace S33M3Engines.Threading
             STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };
             ThreadPool = new SmartThreadPool(_stpInfo);
 
-            ThreadPoolGrp = ThreadPool.CreateWorkItemsGroup(_totThread);
+            ThreadPoolGrp = ThreadPool.CreateWorkItemsGroup(1);
         }
 
         public static void DoWorkInThread(WorkItemCallback work, IThreadStatus ThreadedObject, bool executeInGroup = false)
