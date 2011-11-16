@@ -63,7 +63,7 @@ namespace Utopia.GUI.D3D
 
         public override void Update(ref GameTime timeSpent)
         {
-            InjectInput();
+            
         }
 
         public override void Interpolation(ref double interpolatioHd, ref float interpolationHd)
@@ -73,6 +73,8 @@ namespace Utopia.GUI.D3D
         //Draw at 2d level ! (Last draw called)
         public override void Draw(int index)
         {
+            InjectInput();
+
             //Debug.WriteLine("Gui draw start");
             _guiVisualizer.Draw(_screen);
 
