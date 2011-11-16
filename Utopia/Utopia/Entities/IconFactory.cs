@@ -35,11 +35,13 @@ namespace Utopia.Entities
         public const int IconSize = 64;
         private ShaderResourceView _iconsTextureArray;
 
-        private SpriteTexture _cubesTextureArray;
+        private SpriteTexture _iconTextureArray;
+
+        private int _nbrCubeIcon;
+
         #endregion
 
         #region public Variables/properties
-        public ShaderResourceView CubesTexture { get; private set; }
         #endregion
 
         public IconFactory(D3DEngine d3DEngine)
@@ -49,19 +51,27 @@ namespace Utopia.Entities
 
         public override void LoadContent()
         {
+            List<Texture2D> icons;
             ShaderResourceView cubeTextureView;
-            //TODO this code is at multiple places, could be only handled here, texturefactory instead of IconFactory ? 
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out cubeTextureView);
-            CubesTexture = cubeTextureView;
+            icons = Create3DBlockIcons(cubeTextureView);
 
-            Create3DBlockIcons();
+            _nbrCubeIcon = icons.Count;
+
+            Texture2D[] spriteTextures;
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out spriteTextures, 1);
+
+            icons.AddRange(spriteTextures);
+            CreateTextureArray(icons);
+
+            cubeTextureView.Dispose();
+            foreach (Texture2D tex in spriteTextures) tex.Dispose();
         }
 
         public override void Dispose()
         {
-            CubesTexture.Dispose();
             _iconsTextureArray.Dispose();
-            _cubesTextureArray.Dispose();
+            _iconTextureArray.Dispose();
         }
 
         #region Public methods
@@ -72,23 +82,35 @@ namespace Utopia.Entities
 
             if (item is CubeResource)
             {
+                texture = _iconTextureArray;
                 var cubeId = ((CubeResource)item).CubeId;
-                texture = _cubesTextureArray;
                 textureArrayIndex = cubeId - 1;
                 return;
             }
             else if (item is SpriteItem)
             {
+                texture = _iconTextureArray;
                 var spriteItem = (SpriteItem)item;
-                //TODO spriteItem icon (shouldnt be difficult ;)
-                //texture = spriteItem.
+                var entityProfile = GameSystemSettings.Current.Settings.EntityProfile[item.ClassId];
+
+                textureArrayIndex = _nbrCubeIcon;
+
+                if (entityProfile.NbrGrowSprites > 0)
+                {
+                    textureArrayIndex += entityProfile.SpriteID + ((IGrowEntity)item).GrowPhase;
+                }
+                else
+                {
+                    textureArrayIndex += entityProfile.SpriteID;
+                }
+                return;
             }
             else if (item is VoxelItem)
             {
                 VoxelItem voxelItem = item as VoxelItem;
 
                 //2 options : 
-                // option 1 : draw voxelModel in a render target texture (reuse/pool while unchanged)
+                // option 1 :  draw voxelModel in a render target texture (reuse/pool while unchanged)
                 // option 2 :  cpu projection of voxels into a dynamic Texture (making a for loop on blocks, creating a sort of heigtmap in a bitmap)
             }
             return;
@@ -96,7 +118,17 @@ namespace Utopia.Entities
         #endregion
 
         #region Private methods
-        private void Create3DBlockIcons()
+
+        private void CreateTextureArray(List<Texture2D> textureArray)
+        {
+            //Create the Icon texture Array
+            ArrayTexture.CreateTexture2D(_d3DEngine.Device, textureArray.ToArray(), FilterFlags.Linear, "Icon's ArrayTexture", out _iconsTextureArray);
+
+            // indexes into array corresponds textures with modifier +1 (Air)
+            _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());
+        }
+
+        private List<Texture2D> Create3DBlockIcons(ShaderResourceView _cubesTexture)
         {
             List<Texture2D> createdIconsTexture = new List<Texture2D>();
 
@@ -219,7 +251,7 @@ namespace Utopia.Entities
                 shader.CBPerDraw.Values.World = Matrix.Transpose(WorldScale * Matrix.RotationY(MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5));
                 shader.CBPerDraw.IsDirty = true;
 
-                shader.DiffuseTexture.Value = CubesTexture;
+                shader.DiffuseTexture.Value = _cubesTexture;
                 shader.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);  
 
                 shader.Apply();
@@ -240,19 +272,12 @@ namespace Utopia.Entities
 
                 //End Drawing
                 texture.End(false);
-
+                
                 //Texture2D.ToFile<Texture2D>(_d3DEngine.Context, texture.RenderTargetTexture, ImageFileFormat.Png, @"E:\text\Block" + profile.Name + ".png");
 
                 //Must be staging as these needs to have CPU read/write access (to create the Texture2d array from them)
                 createdIconsTexture.Add(texture.CloneTexture(ResourceUsage.Staging));
             }
-
-            //Create the Icon texture Array
-            ArrayTexture.CreateTexture2D(_d3DEngine.Device, createdIconsTexture.ToArray(), FilterFlags.Linear, "Icon's ArrayTexture", out _iconsTextureArray);
-
-            // indexes into array corresponds textures with modifier +1 (Air)
-            _cubesTextureArray = new SpriteTexture(textureSize, textureSize, _iconsTextureArray, new Vector2());
-            
 
             //Reset device Default render target
             _d3DEngine.ResetDefaultRenderTargetsAndViewPort();
@@ -263,6 +288,13 @@ namespace Utopia.Entities
             vb.Dispose();
             ib.Dispose();
             spriteRenderer.Dispose();
+
+            return createdIconsTexture;            
+        }
+
+        private List<Texture2D> CreateSpritesIcons(ShaderResourceView spriteTextureView)
+        {
+            return new List<Texture2D>();
         }
         #endregion
         
