@@ -50,6 +50,8 @@ namespace Utopia.Shared.Entities
 
         public bool IsDirty { get; set; }
 
+        public SortedList<uint, IStaticEntity> Entities { get { return _entities; } } 
+
         /// <summary>
         /// Gets entities count in collection
         /// </summary>
@@ -61,11 +63,25 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets parent chunk object
         /// </summary>
-        public AbstractChunk Chunk { get; set; }
+        public AbstractChunk Chunk { get; private set; }
 
         public EntityCollection(AbstractChunk chunk)
         {
             Chunk = chunk;
+        }
+
+        /// <summary>
+        /// Must be used if we want to copy the entities from another collection to this one
+        /// </summary>
+        /// <param name="entityCollection">The new entities collection</param>
+        /// <param name="chunk">The chunk linked to the entity collection</param>
+        public void Import(EntityCollection entityCollection, AbstractChunk chunk)
+        {
+            this._entities.Clear();
+            foreach(var entity in entityCollection.EnumerateFast())
+            {
+                this._entities.Add(entity.StaticId, entity);
+            }
         }
 
         /// <summary>
