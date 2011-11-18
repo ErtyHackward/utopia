@@ -151,6 +151,9 @@ namespace Utopia.Worlds.Chunks
 
             base.Entities.Import(newEntities, this);
 
+            base.Entities = newEntities;
+            base.Entities.Chunk = this;
+
             base.Entities.CollectionDirty += Entities_CollectionDirty;
         }
 

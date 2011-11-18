@@ -82,6 +82,7 @@ namespace Utopia.Shared.Entities
             {
                 this._entities.Add(entity.StaticId, entity);
             }
+            this.Chunk = chunk;
         }
 
         /// <summary>
