@@ -149,8 +149,7 @@ namespace Utopia.Worlds.Chunks
         {
             if(base.Entities != null) base.Entities.CollectionDirty -= Entities_CollectionDirty;
 
-            base.Entities = newEntities;
-            base.Entities.Chunk = this;
+            base.Entities.Import(newEntities, this);
 
             base.Entities.CollectionDirty += Entities_CollectionDirty;
         }
