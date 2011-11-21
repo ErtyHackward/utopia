@@ -18,7 +18,7 @@ namespace LostIsland.Shared.Tools
         public EquipmentSlotType AllowedSlots
         {
             get { return EquipmentSlotType.LeftHand | EquipmentSlotType.RightHand; }
-            set { throw new System.NotSupportedException(); }
+            set { throw new NotSupportedException(); }
         }
 
         public int MaxStackSize
@@ -64,6 +64,14 @@ namespace LostIsland.Shared.Tools
             get { return Utopia.Shared.Cubes.CubeId.GetCubeDescription(CubeId); }
         }
 
+        public static event EventHandler<CubeChangedEventArgs> CubeChanged;
+
+        public static void OnCubeChanged(CubeChangedEventArgs e)
+        {
+            var handler = CubeChanged;
+            if (handler != null) handler(null, e);
+        }
+        
         public override void Load(System.IO.BinaryReader reader)
         {
             base.Load(reader);
@@ -75,7 +83,7 @@ namespace LostIsland.Shared.Tools
             base.Save(writer);
             writer.Write(CubeId);
         }
-
+        
         public IToolImpact Use(IDynamicEntity owner, byte useMode, bool runOnServer = false)
         {
             if (owner.EntityState.IsBlockPicked)
@@ -132,6 +140,8 @@ namespace LostIsland.Shared.Tools
 
                         //change the Block to AIR
                         cursor.Write(Utopia.Shared.Cubes.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
+                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = entity.EntityState.PickedBlockPosition, Value = Utopia.Shared.Cubes.CubeId.Air });
+                        
                         impact.Success = true;
                         //If the Tool Owner is a player, then Add the resource removed into the inventory
                         if (character != null)
@@ -150,6 +160,7 @@ namespace LostIsland.Shared.Tools
                     if (cursor.Read() == Utopia.Shared.Cubes.CubeId.Air)
                     {
                         cursor.Write(CubeId);
+                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = entity.EntityState.PickedBlockPosition, Value = CubeId });
                         impact.Success = true;
                         return impact;
                     }
@@ -188,5 +199,12 @@ namespace LostIsland.Shared.Tools
 
 
 
+    }
+
+    public class CubeChangedEventArgs : EventArgs
+    {
+        public Vector3I Position { get; set; }
+        public byte Value { get; set; }
+        public IDynamicEntity DynamicEntity { get; set; }
     }
 }

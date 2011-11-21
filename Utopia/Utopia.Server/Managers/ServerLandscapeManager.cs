@@ -73,7 +73,7 @@ namespace Utopia.Server.Managers
         {
             e.Chunk.BlocksChanged -= ChunkBlocksChanged;
 
-            EventHandler<LandscapeManagerChunkEventArgs> handler = ChunkUnloaded;
+            var handler = ChunkUnloaded;
             if (handler != null) handler(this, e);
         }
 

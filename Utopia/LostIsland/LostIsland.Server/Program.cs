@@ -88,6 +88,7 @@ namespace LostIsland.Server
             _gameplay = new ServerGameplayProvider(_server);
 
             _server.Services.Add(new TestNpcService());
+            _server.Services.Add(new BlueprintRecorderService());
 
             _server.ConnectionManager.Listen();
 

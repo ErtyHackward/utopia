@@ -247,7 +247,7 @@ namespace Utopia.Server.Managers
         /// <param name="passwordHash">user password</param>
         /// <param name="role">User role id</param>
         /// <returns>Returns true if register successfull otherwise false</returns>
-        public bool Register(string login, string passwordHash, int role)
+        public bool Register(string login, string passwordHash, UserRole role)
         {
             if (string.IsNullOrEmpty(login)) return false;
             if (string.IsNullOrEmpty(passwordHash)) return false;
@@ -255,7 +255,7 @@ namespace Utopia.Server.Managers
             if (IsRegistered(login))
                 return false;
 
-            return 1 == Execute(string.Format("INSERT INTO users (login, password, role) VALUES ('{0}', '{1}', {2})", Escape(login), Escape(passwordHash), role));
+            return 1 == Execute(string.Format("INSERT INTO users (login, password, role) VALUES ('{0}', '{1}', {2})", Escape(login), Escape(passwordHash), (int)role));
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace Utopia.Server.Managers
                 LoginData loginInfo;
 
                 loginInfo.UserId = reader.GetInt32(0);
-                loginInfo.Role = reader.GetInt32(1);
+                loginInfo.Role = (UserRole)reader.GetInt32(1);
                 loginInfo.Login = login;
                 loginInfo.State = reader.IsDBNull(2) ? null : (byte[])reader.GetValue(2);
                 

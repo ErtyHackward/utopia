@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using S33M3Engines.Shared.Math;
+using Utopia.Server.Commands;
 using Utopia.Server.Entities;
 using Utopia.Server.Events;
 using Utopia.Server.Services;
@@ -61,6 +62,10 @@ namespace Utopia.Server.Sample
         {
             _server = server;
 
+            _server.CommandsManager.RegisterCommand(new AddTestNpcCommand());
+            _server.CommandsManager.RegisterCommand(new RemoveTestNpcCommand());
+            _server.CommandsManager.RegisterCommand(new ComeHereCommand());
+
             _server.CommandsManager.PlayerCommand += ServerPlayerCommand;
             var r = new Random();
             for (int i = 0; i < 1; i++)
@@ -78,16 +83,31 @@ namespace Utopia.Server.Sample
 
         void ServerPlayerCommand(object sender, PlayerCommandEventArgs e)
         {
-            var cmd = e.Command.ToLower();
+            
             var r = new Random(DateTime.Now.Millisecond);
-            if (cmd == "addtestnpc")
+            if (e.Command is AddTestNpcCommand)
             {
-                var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
-                _server.ChatManager.Broadcast(string.Format("Test NPC {0} added {1}", z.DynamicEntity.DisplayName,
-                                                      _aliveNpc.Count));
+                if (e.HaveParameters)
+                {
+                    int count;
+                    int.TryParse(e.Params[0], out count);
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
+                        z.Seed = r.Next(0, 100000);
+                    }
+                    _server.ChatManager.Broadcast(string.Format("{0} test NPC added ({1} total)", count, _aliveNpc.Count));
+                }
+                else
+                {
+                    var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
+                    _server.ChatManager.Broadcast(string.Format("Test NPC {0} added {1}", z.DynamicEntity.DisplayName,
+                                                                _aliveNpc.Count));
+                }
             }
 
-            if (cmd == "removetestnpc")
+            if (e.Command is RemoveTestNpcCommand)
             {
                 for (int i = _aliveNpc.Count - 1; i >= 0; i--)
                 {
@@ -98,21 +118,7 @@ namespace Utopia.Server.Sample
                 _server.ChatManager.Broadcast("All test npc removed");
             }
 
-            if (cmd.StartsWith("addtestnpc "))
-            {
-                var splt = cmd.Split(' ');
-                int count = 0;
-                if (splt.Length == 2) int.TryParse(splt[1], out count);
-
-                for (int i = 0; i < count; i++)
-                {
-                    var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
-                    z.Seed = r.Next(0, 100000);
-                }
-                _server.ChatManager.Broadcast(string.Format("{0} test NPC added ({1} total)", count, _aliveNpc.Count));
-            }
-
-            if (cmd == "comehere")
+            if (e.Command is ComeHereCommand)
             {
                 var blockPos = _server.LandscapeManager.GetCursor(e.Connection.ServerEntity.DynamicEntity.Position);
                 
@@ -129,6 +135,45 @@ namespace Utopia.Server.Sample
                 }
             }
 
+        }
+    }
+
+    public class AddTestNpcCommand : AdministratorCommand
+    {
+        public override string Id
+        {
+            get { return "addtestnpc"; }
+        }
+
+        public override string Description
+        {
+            get { return "Adds new test NPC to current player position"; }
+        }
+    }
+
+    public class RemoveTestNpcCommand : AdministratorCommand
+    {
+        public override string Id
+        {
+            get { return "removetestnpc"; }
+        }
+
+        public override string Description
+        {
+            get { return "Removes all test NPC from the world"; }
+        }
+    }
+
+    public class ComeHereCommand : AdministratorCommand
+    {
+        public override string Id
+        {
+            get { return "comehere"; }
+        }
+
+        public override string Description
+        {
+            get { return "Tells every test npc to go to current player position"; }
         }
     }
 }

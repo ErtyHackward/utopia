@@ -14,7 +14,7 @@ namespace Utopia.Shared.Interfaces
         /// <param name="passwordHash">user password</param>
         /// <param name="role">User role id</param>
         /// <returns>Returns true if register successfull otherwise false</returns>
-        bool Register(string login, string passwordHash, int role);
+        bool Register(string login, string passwordHash, UserRole role);
 
         /// <summary>
         /// Checks whether the specified login registered
