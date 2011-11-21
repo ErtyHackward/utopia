@@ -9,6 +9,7 @@ using Utopia.Server.Structs;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Server
 {
@@ -256,7 +257,7 @@ namespace Utopia.Server
                     }
                     catch (IOException io)
                     {
-                        Console.WriteLine("Send fail... " + io.Message);
+                        TraceHelper.Write("Send fail... " + io.Message);
                         return;
                     }
                 }
@@ -316,7 +317,7 @@ namespace Utopia.Server
                 }
                 catch (IOException io)
                 {
-                    Console.WriteLine("Send fail... "+ io.Message);
+                    TraceHelper.Write("Send fail... " + io.Message);
                     return false;
                 }
             }

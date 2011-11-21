@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using S33M3Engines.Shared.Math;
 using Utopia.Server.Entities;
 using Utopia.Server.Events;
+using Utopia.Server.Services;
 using Utopia.Shared.ClassExt;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 
-namespace Utopia.Server.Services
+namespace Utopia.Server.Sample
 {
     /// <summary>
     /// Provides sample service to performs test
@@ -21,7 +21,7 @@ namespace Utopia.Server.Services
 
         public override string ServiceName
         {
-            get { return "Test NPC Service"; }
+            get { return "Test NPC"; }
         }
 
         /// <summary>

@@ -223,6 +223,7 @@
     <Compile Include="Structs\HalfVector2.cs" />
     <Compile Include="Structs\HalfVector4.cs" />
     <Compile Include="Structs\Helpers\PackUtils.cs" />
+    <Compile Include="Structs\Helpers\TraceHelper.cs" />
     <Compile Include="Structs\Line.cs" />
     <Compile Include="Structs\Vector2I.cs" />
     <Compile Include="Structs\Landscape\CubeProfile.cs" />

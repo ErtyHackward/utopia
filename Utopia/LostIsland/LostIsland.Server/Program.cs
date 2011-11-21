@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using LostIsland.Shared;
 using Ninject;
 using Utopia.Server;
 using Utopia.Server.Managers;
-using Utopia.Server.Services;
+using Utopia.Server.Sample;
 using Utopia.Shared.Config;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs.Landscape;
+using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.WorldConfigs;
@@ -58,6 +59,9 @@ namespace LostIsland.Server
 
         static void Main(string[] args)
         {
+            // redirect all trace into the console
+            Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
+
             _iocContainer = new StandardKernel(new NinjectSettings());
 
             GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"Config\" };
@@ -65,7 +69,7 @@ namespace LostIsland.Server
 
             IocBind(new WorldParameters());
 
-            Console.WriteLine("Welcome to Lost Island game server v{1} Protocol: v{0}", Utopia.Server.Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
+            TraceHelper.Write("Lost Island game server v{1} Protocol: v{0}", Utopia.Server.Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
 
             _server = new Utopia.Server.Server(
                 _iocContainer.Get<XmlSettingsManager<ServerSettings>>(),
@@ -88,6 +92,8 @@ namespace LostIsland.Server
             _server.ConnectionManager.Listen();
 
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
+
+            
 
             while (Console.ReadLine() != "exit")
             {

@@ -14,6 +14,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World;
 
 namespace Utopia.Server.Managers
@@ -138,7 +139,7 @@ namespace Utopia.Server.Managers
         {
             var connection = (ClientConnection)sender;
 
-            Console.WriteLine("GetChunks!" + e.Message.Range.Position + " " + e.Message.Range.Size);
+            //TraceHelper.Write("GetChunks!" + e.Message.Range.Position + " " + e.Message.Range.Size);
 
             try
             {
@@ -212,7 +213,7 @@ namespace Utopia.Server.Managers
             SaveChunks();
             if (ChunksSaved > 0)
             {
-                Console.WriteLine("Chunks saved: {1} Took: {0} ms", SaveTime,
+                TraceHelper.Write("Chunks saved: {1} Took: {0} ms", SaveTime,
                                   ChunksSaved);
             }
         }
