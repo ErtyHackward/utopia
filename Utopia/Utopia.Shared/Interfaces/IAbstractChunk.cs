@@ -13,6 +13,6 @@ namespace Utopia.Shared.Interfaces
         /// <summary>
         /// Gets entity collection of the chunk
         /// </summary>
-        EntityCollection Entities { get; set; }
+        EntityCollection Entities { get; }
     }
 }

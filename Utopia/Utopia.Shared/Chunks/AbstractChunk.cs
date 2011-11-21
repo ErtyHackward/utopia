@@ -64,7 +64,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Gets entity collection of the chunk
         /// </summary>
-        public EntityCollection Entities { get; set; }
+        public EntityCollection Entities { get; protected set; }
         
         #endregion
         

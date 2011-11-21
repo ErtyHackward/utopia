@@ -167,7 +167,7 @@ namespace LostIsland.Shared.Tools
             Console.WriteLine(entity.Tail[0]);
             IChunkLayout2D chunk = _landscapeManager.GetChunk(entity.ChunkPosition);
             IStaticEntity entityRemoved;
-            chunk.Entities.RemoveById(entity.Tail[0], entity.DynamicEntityId, out entityRemoved);
+            chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);
             
             var character = owner as CharacterEntity;
             if (character != null)
