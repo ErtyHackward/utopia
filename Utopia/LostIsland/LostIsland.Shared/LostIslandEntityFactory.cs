@@ -1,6 +1,7 @@
 ﻿using LostIsland.Shared.Items;
 using LostIsland.Shared.Tools;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Interfaces;
 
 namespace LostIsland.Shared

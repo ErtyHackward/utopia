@@ -15,6 +15,9 @@ namespace Utopia.Shared.Entities
         public const ushort Bed = 1003;
         public const ushort Tree = 1004;
 
+        // tools 
+        public const ushort CubeResource = 1500;
+
         // blocks
         public const ushort ThinGlass = 2001;
 

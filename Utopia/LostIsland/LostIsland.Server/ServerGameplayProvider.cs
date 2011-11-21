@@ -5,6 +5,7 @@ using LostIsland.Shared.Tools;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;

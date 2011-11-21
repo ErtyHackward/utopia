@@ -1,5 +1,4 @@
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -7,7 +6,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using System;
 
-namespace LostIsland.Shared.Tools
+namespace Utopia.Shared.Entities.Concrete
 {
     public class CubeResource : StaticEntity, ITool
     {
@@ -17,7 +16,7 @@ namespace LostIsland.Shared.Tools
     
         public EquipmentSlotType AllowedSlots
         {
-            get { return EquipmentSlotType.LeftHand | EquipmentSlotType.RightHand; }
+            get { return EquipmentSlotType.LeftHand; }
             set { throw new NotSupportedException(); }
         }
 
@@ -29,12 +28,12 @@ namespace LostIsland.Shared.Tools
         public string UniqueName
         {
             get { return DisplayName; }
-            set { throw new System.NotSupportedException(); }
+            set { throw new NotSupportedException(); }
         }
 
         public override ushort ClassId
         {
-            get { return LostIslandEntityClassId.CubeResource; }
+            get { return EntityClassId.CubeResource; }
         }
 
         public DynamicEntity Parent { get; set; }
@@ -56,12 +55,12 @@ namespace LostIsland.Shared.Tools
 
         public override string DisplayName
         {
-            get { return Utopia.Shared.Cubes.CubeId.GetCubeTypeName(CubeId); }
+            get { return Cubes.CubeId.GetCubeTypeName(CubeId); }
         }
 
         public string Description
         {
-            get { return Utopia.Shared.Cubes.CubeId.GetCubeDescription(CubeId); }
+            get { return Cubes.CubeId.GetCubeDescription(CubeId); }
         }
 
         public static event EventHandler<CubeChangedEventArgs> CubeChanged;
@@ -89,17 +88,16 @@ namespace LostIsland.Shared.Tools
             if (owner.EntityState.IsBlockPicked)
             {
                 return BlockImpact(owner, useMode, runOnServer);
-            }else{
-                if (owner.EntityState.IsEntityPicked)
-                {
-                    return EntityImpact(owner, useMode, runOnServer);
-                }else
-                {
-                    var impact = new ToolImpact { Success = false };
-                    impact.Message = "No target selected for use";
-                    return impact;
-                }
             }
+
+            if (owner.EntityState.IsEntityPicked)
+            {
+                return EntityImpact(owner, useMode, runOnServer);
+            }
+
+            var impact = new ToolImpact { Success = false };
+            impact.Message = "No target selected for use";
+            return impact;
         }
 
         public IToolImpact BlockImpact(IDynamicEntity owner, byte useMode, bool runOnServer = false)
@@ -115,7 +113,7 @@ namespace LostIsland.Shared.Tools
 
                     var cursor = _landscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
                     var cube = cursor.Read();
-                    if (cube != Utopia.Shared.Cubes.CubeId.Air)
+                    if (cube != Cubes.CubeId.Air)
                     {
                         var chunk = _landscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
 
@@ -139,14 +137,14 @@ namespace LostIsland.Shared.Tools
                         chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
 
                         //change the Block to AIR
-                        cursor.Write(Utopia.Shared.Cubes.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
-                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = entity.EntityState.PickedBlockPosition, Value = Utopia.Shared.Cubes.CubeId.Air });
+                        cursor.Write(Cubes.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
+                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = entity.EntityState.PickedBlockPosition, Value = Cubes.CubeId.Air });
                         
                         impact.Success = true;
                         //If the Tool Owner is a player, then Add the resource removed into the inventory
                         if (character != null)
                         {
-                            var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
+                            var adder = (CubeResource)EntityFactory.Instance.CreateEntity(EntityClassId.CubeResource);
                             adder.CubeId = cube;
                             character.Inventory.PutItem(adder);
                         }
@@ -157,7 +155,7 @@ namespace LostIsland.Shared.Tools
                 {
 
                     var cursor = _landscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
-                    if (cursor.Read() == Utopia.Shared.Cubes.CubeId.Air)
+                    if (cursor.Read() == Cubes.CubeId.Air)
                     {
                         cursor.Write(CubeId);
                         OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = entity.EntityState.PickedBlockPosition, Value = CubeId });
@@ -194,7 +192,7 @@ namespace LostIsland.Shared.Tools
 
         public void Rollback(IToolImpact impact)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
 
