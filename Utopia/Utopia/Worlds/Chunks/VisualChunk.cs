@@ -136,6 +136,7 @@ namespace Utopia.Worlds.Chunks
             State = ChunkState.Empty;
             Ready2Draw = false;
             LightPropagateBorderOffset = new Location2<int>(0, 0);
+            Entities.CollectionDirty += Entities_CollectionDirty;
         }
         #region Public methods
         
@@ -147,14 +148,10 @@ namespace Utopia.Worlds.Chunks
 
         public void SetNewEntityCollection(EntityCollection newEntities)
         {
-            if(base.Entities != null) base.Entities.CollectionDirty -= Entities_CollectionDirty;
+            if (newEntities == Entities)
+                throw new InvalidOperationException();
 
-            base.Entities.Import(newEntities, this);
-
-            base.Entities = newEntities;
-            base.Entities.Chunk = this;
-
-            base.Entities.CollectionDirty += Entities_CollectionDirty;
+            Entities.Import(newEntities);
         }
 
         //Graphical Part
@@ -407,7 +404,7 @@ namespace Utopia.Worlds.Chunks
             if (SolidCubeIB != null) SolidCubeIB.Dispose();
             if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
             if (LiquidCubeIB != null) LiquidCubeIB.Dispose();
-            base.Entities.CollectionDirty -= Entities_CollectionDirty;
+            Entities.CollectionDirty -= Entities_CollectionDirty;
 
         }
     }
