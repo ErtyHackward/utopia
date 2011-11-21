@@ -138,7 +138,7 @@ namespace Utopia.Shared.Entities.Concrete
 
                         //change the Block to AIR
                         cursor.Write(Cubes.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
-                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = entity.EntityState.PickedBlockPosition, Value = Cubes.CubeId.Air });
+                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = Cubes.CubeId.Air });
                         
                         impact.Success = true;
                         //If the Tool Owner is a player, then Add the resource removed into the inventory
@@ -158,7 +158,7 @@ namespace Utopia.Shared.Entities.Concrete
                     if (cursor.Read() == Cubes.CubeId.Air)
                     {
                         cursor.Write(CubeId);
-                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = entity.EntityState.PickedBlockPosition, Value = CubeId });
+                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = CubeId });
                         impact.Success = true;
                         return impact;
                     }

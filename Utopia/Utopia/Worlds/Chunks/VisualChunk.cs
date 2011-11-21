@@ -149,7 +149,11 @@ namespace Utopia.Worlds.Chunks
         public void SetNewEntityCollection(EntityCollection newEntities)
         {
             if (newEntities == Entities)
-                throw new InvalidOperationException();
+            {
+                // TODO: Fabian, why it happens? it should not be
+                //throw new InvalidOperationException();
+                return;
+            }
 
             Entities.Import(newEntities);
         }
