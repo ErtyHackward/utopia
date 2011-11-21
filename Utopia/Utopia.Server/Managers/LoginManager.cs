@@ -75,7 +75,7 @@ namespace Utopia.Server.Managers
             // check if user want to register and this login is busy
             if (e.Message.Register)
             {
-                if (!_server.UsersStorage.Register(e.Message.Login, e.Message.Password, 0))
+                if (!_server.UsersStorage.Register(e.Message.Login, e.Message.Password, UserRole.Administrator))
                 {
                     connection.SendAsync(new ErrorMessage
                     {
@@ -113,6 +113,7 @@ namespace Utopia.Server.Managers
 
                 connection.Authorized = true;
                 connection.UserId = loginData.UserId;
+                connection.UserRole = loginData.Role;
                 connection.Login = e.Message.Login;
 
                 ServerDynamicEntity playerEntity;

@@ -225,6 +225,7 @@
     <Compile Include="Structs\Helpers\PackUtils.cs" />
     <Compile Include="Structs\Helpers\TraceHelper.cs" />
     <Compile Include="Structs\Line.cs" />
+    <Compile Include="Structs\UserRole.cs" />
     <Compile Include="Structs\Vector2I.cs" />
     <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />

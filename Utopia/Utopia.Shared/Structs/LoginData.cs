@@ -16,7 +16,7 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// User role id
         /// </summary>
-        public int Role;        
+        public UserRole Role;        
         /// <summary>
         /// Binary-serialized user state
         /// </summary>

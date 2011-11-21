@@ -191,6 +191,16 @@ namespace Utopia.Shared.Structs
             return res;
         }
 
+        public static Vector3I operator -(Vector3I pos, Vector3I other)
+        {
+            Vector3I res;
+
+            res.X = pos.X - other.X;
+            res.Y = pos.Y - other.Y;
+            res.Z = pos.Z - other.Z;
+
+            return res;
+        }
 
         public static bool operator ==(Vector3I first, Vector3I second)
         {

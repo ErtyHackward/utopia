@@ -60,7 +60,11 @@
     <Compile Include="AStar\Path3D.cs" />
     <Compile Include="AStar\AStarList.cs" />
     <Compile Include="ClientConnection.cs" />
+    <Compile Include="Commands\AdministratorCommand.cs" />
+    <Compile Include="Commands\ServerCommands.cs" />
+    <Compile Include="Interfaces\IRoleRestrictedCommand.cs" />
     <Compile Include="Managers\LoginManager.cs" />
+    <Compile Include="Sample\BlueprintRecorderService.cs" />
     <Compile Include="Sample\Entities\TestNpc.cs" />
     <Compile Include="Sample\Entities\TestNpcState.cs" />
     <Compile Include="Events\AreaEntityEventArgs.cs" />
@@ -89,6 +93,7 @@
     <Compile Include="Sample\TestNpcService.cs" />
     <Compile Include="Structs\MapArea.cs" />
     <Compile Include="Structs\ServerChunk.cs" />
+    <Compile Include="Interfaces\IServerCommand.cs" />
     <Compile Include="Structs\ServerDynamicEntity.cs" />
     <Compile Include="Structs\ServerPlayerCharacterEntity.cs" />
     <Compile Include="Structs\UserState.cs" />
@@ -114,6 +119,7 @@
       <Name>Utopia.Resources</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

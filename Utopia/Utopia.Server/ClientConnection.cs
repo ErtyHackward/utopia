@@ -9,6 +9,7 @@ using Utopia.Server.Structs;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Server
@@ -59,7 +60,12 @@ namespace Utopia.Server
         /// Gets or sets player dynamic entity
         /// </summary>
         public ServerDynamicEntity ServerEntity { get; set; }
-        
+
+        public UserRole UserRole
+        {
+            get;
+            set;
+        }
 
         #endregion
 

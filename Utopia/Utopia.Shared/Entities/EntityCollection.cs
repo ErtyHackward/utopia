@@ -289,6 +289,18 @@ namespace Utopia.Shared.Entities
             }
         }
 
+        public void Foreach<T>(Action<T> action)
+        {
+            lock (_syncRoot)
+            {
+                foreach (var entity in _entities)
+                {
+                    if (entity.Value is T)
+                        action((T)entity.Value);
+                }
+            }
+        }
+
         //TODO: test for perfomance
         public void RemoveAll<T>(Predicate<T> condition)
         {
