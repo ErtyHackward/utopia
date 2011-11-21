@@ -8,6 +8,7 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World.PlanGenerator;
 
 namespace Utopia.Server.Managers
@@ -51,7 +52,7 @@ namespace Utopia.Server.Managers
             e.Connection.MessageLogin -= ConnectionMessageLogin;
 
 
-            Console.WriteLine("{0} disconnected", e.Connection.RemoteAddress);
+            TraceHelper.Write("{0} disconnected", e.Connection.RemoteAddress);
 
             if (e.Connection.Authorized)
             {
@@ -137,7 +138,7 @@ namespace Utopia.Server.Managers
 
                     if (bytes == null)
                     {
-                        Console.WriteLine("{0} entity was corrupted, creating new one...", e.Message.Login);
+                        TraceHelper.Write("{0} entity was corrupted, creating new one...", e.Message.Login);
                         playerEntity = GetNewPlayerEntity(connection, state.EntityId);
                     }
                     else
@@ -155,7 +156,7 @@ namespace Utopia.Server.Managers
                 connection.ServerEntity = playerEntity;
 
                 connection.SendAsync(new LoginResultMessage { Logged = true });
-                Console.WriteLine("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.DynamicId);
+                TraceHelper.Write("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.DynamicId);
                 var gameInfo = new GameInformationMessage
                 {
                     ChunkSize = AbstractChunk.ChunkSize,
@@ -182,7 +183,7 @@ namespace Utopia.Server.Managers
                     Message = "Wrong login/password combination"
                 };
 
-                Console.WriteLine("Incorrect login information {0} ({1})", e.Message.Login,
+                TraceHelper.Write("Incorrect login information {0} ({1})", e.Message.Login,
                                   connection.Id);
 
                 connection.SendAsync(error, new LoginResultMessage { Logged = false });

@@ -164,7 +164,6 @@ namespace LostIsland.Shared.Tools
             var impact = new ToolImpact { Success = false };
 
             EntityLink entity = owner.EntityState.PickedEntityLink;
-            Console.WriteLine(entity.Tail[0]);
             IChunkLayout2D chunk = _landscapeManager.GetChunk(entity.ChunkPosition);
             IStaticEntity entityRemoved;
             chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);

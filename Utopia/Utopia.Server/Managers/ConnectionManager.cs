@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Server.Managers
 {
@@ -68,14 +69,14 @@ namespace Utopia.Server.Managers
         public void Listen()
         {
             Listener.Start();
-            Console.WriteLine("Listening at {0} port", Listener.Port);
+            TraceHelper.Write("Listening at {0} port", Listener.Port);
         }
 
         void ListenerIncomingConnection(object sender, IncomingConnectionEventArgs e)
         {
             var conn = new ClientConnection(e.Socket);
 
-            Console.WriteLine("{0} connected", e.Socket.RemoteEndPoint);
+            TraceHelper.Write("{0} connected", e.Socket.RemoteEndPoint);
 
             e.Handled = Add(conn);
 

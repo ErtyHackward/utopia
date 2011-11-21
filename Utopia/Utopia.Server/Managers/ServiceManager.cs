@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Utopia.Server.Services;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Server.Managers
 {
@@ -20,6 +21,7 @@ namespace Utopia.Server.Managers
 
         public void Add(Service s)
         {
+            TraceHelper.Write("Activating {0} service...", s.ServiceName);
             _services.Add(s);
             s.Initialize(_parentServer);
         }

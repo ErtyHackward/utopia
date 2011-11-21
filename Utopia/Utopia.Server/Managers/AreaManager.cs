@@ -10,6 +10,7 @@ using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Structs;
 using System.Threading;
 using S33M3Engines.Shared.Math;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Server.Managers
 {
@@ -169,7 +170,7 @@ namespace Utopia.Server.Managers
             }
             else
             {
-                Console.WriteLine("Warning! Server is overloaded. Try to decrease dynamic entities count");
+                TraceHelper.Write("Warning! Server is overloaded. Try to decrease dynamic entities count");
             }
         }
 
