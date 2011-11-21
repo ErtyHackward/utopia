@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using Utopia.Server.Services;
 using Utopia.Server.Structs;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Server.Sample
 {
+    /// <summary>
+    /// Provides possibility to save landscape modifications to files
+    /// </summary>
     public class BlueprintRecorderService : Service
     {
         private Server _server;
 
-        private Dictionary<ClientConnection, Blueprint> _blueprints = new Dictionary<ClientConnection, Blueprint>();
+        private Dictionary<uint, Blueprint> _blueprints = new Dictionary<uint, Blueprint>();
 
         public override string ServiceName
         {
@@ -28,6 +32,16 @@ namespace Utopia.Server.Sample
             _server.CommandsManager.RegisterCommand(new BlueprintRecordCommand());
             _server.CommandsManager.RegisterCommand(new BlueprintStopCommand());
 
+            CubeResource.CubeChanged += CubeResourceCubeChanged;
+        }
+
+        void CubeResourceCubeChanged(object sender, CubeChangedEventArgs e)
+        {
+            Blueprint bp;
+            if (_blueprints.TryGetValue(e.DynamicEntity.DynamicId, out bp))
+            {
+                bp.Actions.Add(new BlueprintAction { Position = e.Position, CubeId = e.Value });
+            }
         }
 
         void CommandsManagerPlayerCommand(object sender, Events.PlayerCommandEventArgs e)
@@ -36,10 +50,10 @@ namespace Utopia.Server.Sample
             {
                 if (e.HaveParameters)
                 {
-                    if (_blueprints.ContainsKey(e.Connection))
-                        _blueprints.Remove(e.Connection);
-                    
-                    _blueprints.Add(e.Connection, new Blueprint { Name = e.Params[0] });
+                    if (_blueprints.ContainsKey(e.Connection.ServerEntity.DynamicEntity.DynamicId))
+                        _blueprints.Remove(e.Connection.ServerEntity.DynamicEntity.DynamicId);
+
+                    _blueprints.Add(e.Connection.ServerEntity.DynamicEntity.DynamicId, new Blueprint { Name = e.Params[0] });
                     _server.ChatManager.SendMessage(e.Connection, "Blueprint record started", "server");
                 }
                 else
@@ -51,10 +65,10 @@ namespace Utopia.Server.Sample
             if (e.Command is BlueprintStopCommand)
             {
                 Blueprint bp;
-                if (_blueprints.TryGetValue(e.Connection, out bp))
+                if (_blueprints.TryGetValue(e.Connection.ServerEntity.DynamicEntity.DynamicId, out bp))
                 {
                     bp.Save(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia\\Blueprints", bp.Name + ".bp"));
-                    _blueprints.Remove(e.Connection);
+                    _blueprints.Remove(e.Connection.ServerEntity.DynamicEntity.DynamicId);
                     _server.ChatManager.SendMessage(e.Connection, "Blueprint saved.", "server");
                 }
             }
@@ -63,6 +77,7 @@ namespace Utopia.Server.Sample
         public override void Dispose()
         {
             _server.CommandsManager.PlayerCommand -= CommandsManagerPlayerCommand;
+            CubeResource.CubeChanged -= CubeResourceCubeChanged;
         }
     }
 
@@ -89,6 +104,11 @@ namespace Utopia.Server.Sample
 
         public void Save(string fileName)
         {
+            if (fileName == null) throw new ArgumentNullException("fileName");
+
+            if (!Directory.Exists(Path.GetDirectoryName(fileName)))
+                Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+
             using (var sw = new BinaryWriter(File.Open(fileName, FileMode.Create)))
             {
                 Save(sw);

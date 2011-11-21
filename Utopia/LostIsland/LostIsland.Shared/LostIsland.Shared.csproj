@@ -55,7 +55,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\Annihilator.cs" />
     <Compile Include="Tools\BlockRemover.cs" />
-    <Compile Include="Tools\CubeResource.cs" />
     <Compile Include="Tools\Shovel.cs" />
   </ItemGroup>
   <ItemGroup>
