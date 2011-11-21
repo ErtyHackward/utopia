@@ -72,7 +72,7 @@ namespace Utopia.Server.Managers
                 if (!_commands.TryGetValue(cmd, out command))
                 {
                     connection.SendAsync(new ChatMessage { Login = "server", Message = "Sorry, no such command." });
-                    return false;
+                    return true;
                 }
 
                 // check access
@@ -81,7 +81,7 @@ namespace Utopia.Server.Managers
                     if (!(command as IRoleRestrictedCommand).HasAccess(connection.UserRole))
                     {
                         connection.SendAsync(new ChatMessage { Login = "server", Message = "Sorry, access denied." });
-                        return false;
+                        return true;
                     }
                 }
 

@@ -31,6 +31,7 @@ namespace Utopia.Server.Sample
 
             _server.CommandsManager.RegisterCommand(new BlueprintRecordCommand());
             _server.CommandsManager.RegisterCommand(new BlueprintStopCommand());
+            _server.CommandsManager.RegisterCommand(new BlueprintLoadCommand());
 
             CubeResource.CubeChanged += CubeResourceCubeChanged;
         }
@@ -72,6 +73,31 @@ namespace Utopia.Server.Sample
                     _server.ChatManager.SendMessage(e.Connection, "Blueprint saved.", "server");
                 }
             }
+
+            if (e.Command is BlueprintLoadCommand && e.HaveParameters)
+            {
+                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia\\Blueprints", e.Params[0] + ".bp");
+
+                if(!File.Exists(path))
+                {
+                    _server.ChatManager.SendMessage(e.Connection, "Error, no such blueprint to load", "server");
+                    return;
+                }
+
+                var bp = Blueprint.Load(path);
+
+                // recreate it from current position
+
+                var cursor = _server.LandscapeManager.GetCursor(e.Connection.ServerEntity.DynamicEntity.Position);
+                var basePosition = cursor.GlobalPosition;
+                foreach (var blueprintAction in bp.Actions)
+                {
+                    cursor.GlobalPosition = basePosition + blueprintAction.Position;
+                    cursor.Write(blueprintAction.CubeId);
+                }
+                _server.ChatManager.SendMessage(e.Connection, "Work complete!", "server");
+            }
+
         }
 
         public override void Dispose()
@@ -80,7 +106,7 @@ namespace Utopia.Server.Sample
             CubeResource.CubeChanged -= CubeResourceCubeChanged;
         }
     }
-
+    
     public class Blueprint : IBinaryStorable
     {
         public List<BlueprintAction> Actions { get; private set; }
@@ -187,6 +213,19 @@ namespace Utopia.Server.Sample
         public string Description
         {
             get { return "Stops recording of the blueprint and save all data to the hard disk"; }
+        }
+    }
+
+    public class BlueprintLoadCommand : IServerCommand
+    {
+        public string Id
+        {
+            get { return "bpload"; }
+        }
+
+        public string Description
+        {
+            get { return "Loads blueprint from file specified and builds starting from current player position. Example: bpload house1"; }
         }
     }
 }
