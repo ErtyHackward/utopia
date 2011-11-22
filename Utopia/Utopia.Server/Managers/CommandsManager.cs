@@ -97,7 +97,7 @@ namespace Utopia.Server.Managers
 
                         var commandsList = string.Join(", ", result);
 
-                        connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Available commands: {0}.\n Use help [command_name] to get additioanl information about command", commandsList) });
+                        connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Available commands: {0}.\nUse help [command_name] to get additioanl information about command", commandsList) });
                         
                         return true;
                     }
