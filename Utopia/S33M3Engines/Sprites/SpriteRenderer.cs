@@ -185,7 +185,7 @@ namespace S33M3Engines.Sprites
                 {
                     RenderBatch(drawInfo.SpriteTexture, drawInfo.Group);
                 }
-                else Render(drawInfo.SpriteTexture, drawInfo.Transform, drawInfo.Color4, drawInfo.SourceRect, true, drawInfo.Depth);
+                else Render(drawInfo.SpriteTexture, drawInfo.Transform, drawInfo.Color4, drawInfo.SourceRect, true, drawInfo.Depth, drawInfo.TextureArrayIndex);
             }
 
             //System.Diagnostics.Debug.WriteLine(string.Format("Sprite renderer: {0}/{1}", _spriteBuffer.DrawCalls, _spriteBuffer.TotalItems));
