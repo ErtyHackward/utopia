@@ -97,8 +97,6 @@ namespace LostIsland.Client
                 firstPersonCamera = iocContainer.Get<ICamera>(),
                 cameraManager = iocContainer.Get<CameraManager>(),
                 timerManager = iocContainer.Get<TimerManager>(),
-                entityMessageTranslator = iocContainer.Get<EntityMessageTranslator>(),
-                itemMessageTranslator = iocContainer.Get<ItemMessageTranslator>(),
                 inputsManager = iocContainer.Get<InputsManager>(),
                 actionsManager = iocContainer.Get<ActionsManager>(),
                 guiManager = iocContainer.Get<GuiManager>(),
@@ -136,7 +134,9 @@ namespace LostIsland.Client
                 playerEntityRenderer = iocContainer.Get<IEntitiesRenderer>("PlayerEntityRenderer"),
                 defaultEntityRenderer = iocContainer.Get<IEntitiesRenderer>("DefaultEntityRenderer"),
                 voxelMeshFactory = iocContainer.Get<VoxelMeshFactory>(),
-                sharedFrameCB = iocContainer.Get <SharedFrameCB>()
+                sharedFrameCB = iocContainer.Get <SharedFrameCB>(),
+                itemMessageTranslator = iocContainer.Get<ItemMessageTranslator>(),
+                entityMessageTranslator = iocContainer.Get<EntityMessageTranslator>()
             }
             );
             
