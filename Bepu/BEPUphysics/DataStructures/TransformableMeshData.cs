@@ -1,5 +1,6 @@
 ﻿using BEPUphysics.MathExtensions;
- 
+using Utopia.Shared.Structs;
+
 
 namespace BEPUphysics.DataStructures
 {
@@ -11,25 +12,53 @@ namespace BEPUphysics.DataStructures
         ///<summary>
         /// Constructs the mesh data.
         ///</summary>
+        ///<param name="globalMove"></param>
         ///<param name="vertices">Vertices to use in the mesh data.</param>
         ///<param name="indices">Indices to use in the mesh data.</param>
+        public TransformableMeshData(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices)
+        {
+            _globalMove = globalMove;
+            ByteVertices = vertices;
+            uIndices = indices;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vertices"></param>
+        /// <param name="indices"></param>
         public TransformableMeshData(Vector3[] vertices, int[] indices)
         {
-            Vertices = vertices;
-            Indices = indices;
+            this.vertices = vertices;
+            this.indices = indices;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vertices"></param>
+        /// <param name="indices"></param>
+        /// <param name="worldTransform"></param>
+        public TransformableMeshData(Vector3[] vertices, int[] indices, AffineTransform worldTransform)
+        {
+            this.worldTransform = worldTransform;
+            this.vertices = vertices;
+            this.indices = indices;
         }
 
         ///<summary>
         /// Constructs the mesh data.
         ///</summary>
+        ///<param name="globalMove"></param>
         ///<param name="vertices">Vertice sto use in the mesh data.</param>
         ///<param name="indices">Indices to use in the mesh data.</param>
         ///<param name="worldTransform">Transform to apply to vertices before returning their positions.</param>
-        public TransformableMeshData(Vector3[] vertices, int[] indices, AffineTransform worldTransform)
+        public TransformableMeshData(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices, AffineTransform worldTransform)
         {
+            _globalMove = globalMove;
             this.worldTransform = worldTransform;
-            Vertices = vertices;
-            Indices = indices;
+            ByteVertices = vertices;
+            uIndices = indices;
         }
 
 
@@ -59,9 +88,18 @@ namespace BEPUphysics.DataStructures
         ///<param name="v3">Third vertex of the triangle.</param>
         public override void GetTriangle(int triangleIndex, out Vector3 v1, out Vector3 v2, out Vector3 v3)
         {
-            AffineTransform.Transform(ref vertices[indices[triangleIndex]], ref worldTransform, out v1);
-            AffineTransform.Transform(ref vertices[indices[triangleIndex + 1]], ref worldTransform, out v2);
-            AffineTransform.Transform(ref vertices[indices[triangleIndex + 2]], ref worldTransform, out v3);
+
+            var bv1 = byteVertices[uindices[triangleIndex]];
+            var bv2 = byteVertices[uindices[triangleIndex + 1]];
+            var bv3 = byteVertices[uindices[triangleIndex + 2]];
+
+            var tv1 = new Vector3(_globalMove.X + bv1.X, _globalMove.Y + bv1.Y, _globalMove.Z + bv1.Z);
+            var tv2 = new Vector3(_globalMove.X + bv2.X, _globalMove.Y + bv2.Y, _globalMove.Z + bv2.Z);
+            var tv3 = new Vector3(_globalMove.X + bv3.X, _globalMove.Y + bv3.Y, _globalMove.Z + bv3.Z);
+
+            AffineTransform.Transform(ref tv1, ref worldTransform, out v1);
+            AffineTransform.Transform(ref tv2, ref worldTransform, out v2);
+            AffineTransform.Transform(ref tv3, ref worldTransform, out v3);
         }
 
         ///<summary>
@@ -71,7 +109,9 @@ namespace BEPUphysics.DataStructures
         ///<param name="vertex">Position of the vertex.</param>
         public override void GetVertexPosition(int i, out Vector3 vertex)
         {
-            AffineTransform.Transform(ref vertices[i], ref worldTransform, out vertex);
+            var bv = byteVertices[i];
+            var v = new Vector3(_globalMove.X + bv.X, _globalMove.Y + bv.Y, _globalMove.Z + bv.Z);
+            AffineTransform.Transform(ref v, ref worldTransform, out vertex);
         }
 
 

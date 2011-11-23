@@ -128,9 +128,9 @@ namespace BEPUphysics.CollisionTests.Manifolds
             localTriangleShape.collisionMargin = 0;
             indices = new TriangleIndices()
             {
-                A = data.indices[triangleIndex],
-                B = data.indices[triangleIndex + 1],
-                C = data.indices[triangleIndex + 2]
+                A = data.uindices[triangleIndex],
+                B = data.uindices[triangleIndex + 1],
+                C = data.uindices[triangleIndex + 2]
             };
             return true;
 

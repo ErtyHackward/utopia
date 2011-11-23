@@ -10,6 +10,7 @@ using BEPUphysics.CollisionShapes.ConvexShapes;
 using BEPUphysics.ResourceManagement;
 using BEPUphysics.CollisionTests.CollisionAlgorithms;
 using BEPUphysics.CollisionTests.CollisionAlgorithms.GJK;
+using Utopia.Shared.Structs;
 
 namespace BEPUphysics.Collidables
 {
@@ -56,11 +57,12 @@ namespace BEPUphysics.Collidables
         ///<summary>
         /// Constructs a new static mesh.
         ///</summary>
+        ///<param name="globalMove"></param>
         ///<param name="vertices">Vertex positions of the mesh.</param>
         ///<param name="indices">Index list of the mesh.</param>
-        public StaticMesh(Vector3[] vertices, int[] indices)
+        public StaticMesh(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices)
         {
-            base.Shape = new StaticMeshShape(vertices, indices);
+            base.Shape = new StaticMeshShape(globalMove, vertices, indices);
             collisionRules.group = CollisionRules.DefaultKinematicCollisionGroup;
             events = new ContactEventManager<StaticMesh>(this);
 
@@ -72,12 +74,13 @@ namespace BEPUphysics.Collidables
         ///<summary>
         /// Constructs a new static mesh.
         ///</summary>
+        ///<param name="globalMove"></param>
         ///<param name="vertices">Vertex positions of the mesh.</param>
         ///<param name="indices">Index list of the mesh.</param>
         /// <param name="worldTransform">Transform to use to create the mesh initially.</param>
-        public StaticMesh(Vector3[] vertices, int[] indices, AffineTransform worldTransform)
+        public StaticMesh(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices, AffineTransform worldTransform)
         {
-            base.Shape = new StaticMeshShape(vertices, indices, worldTransform);
+            base.Shape = new StaticMeshShape(globalMove, vertices, indices, worldTransform);
             collisionRules.group = CollisionRules.DefaultKinematicCollisionGroup;
             events = new ContactEventManager<StaticMesh>(this);
 

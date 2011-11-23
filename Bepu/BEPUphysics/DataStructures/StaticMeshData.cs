@@ -29,9 +29,9 @@ namespace BEPUphysics.DataStructures
         ///<param name="v3">Third vertex of the triangle.</param>
         public override void GetTriangle(int triangleIndex, out Vector3 v1, out Vector3 v2, out Vector3 v3)
         {
-            v1 = vertices[indices[triangleIndex]];
-            v2 = vertices[indices[triangleIndex + 1]];
-            v3 = vertices[indices[triangleIndex + 2]];
+            v1 = Vertices[indices[triangleIndex]];
+            v2 = Vertices[indices[triangleIndex + 1]];
+            v3 = Vertices[indices[triangleIndex + 2]];
         }
 
 
