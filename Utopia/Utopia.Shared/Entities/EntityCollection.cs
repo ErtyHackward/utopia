@@ -15,6 +15,7 @@ namespace Utopia.Shared.Entities
     {
         private readonly SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
         private readonly object _syncRoot = new object();
+        private bool _initialisation;
 
         #region Events
         /// <summary>
@@ -24,6 +25,7 @@ namespace Utopia.Shared.Entities
 
         protected void OnCollectionDirty()
         {
+            if (_initialisation) return;
             var handler = CollectionDirty;
             if (handler != null) handler(this, EventArgs.Empty);
         }
@@ -85,6 +87,7 @@ namespace Utopia.Shared.Entities
         {
             lock (_syncRoot)
             {
+                _initialisation = true;
                 _entities.Clear();
 
                 foreach (var entity in entityCollection.EnumerateFast())
@@ -92,6 +95,7 @@ namespace Utopia.Shared.Entities
                     entity.Container = this;
                     _entities.Add(entity.StaticId, entity);
                 }
+                _initialisation = false;
             }
         }
 
@@ -125,6 +129,15 @@ namespace Utopia.Shared.Entities
             IsDirty = true;
             OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicId });
             OnCollectionDirty();
+        }
+
+        /// <summary>
+        /// Adds new static entity to the container. Updates static entity id and Container properties
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Add(IStaticEntity entity)
+        {
+            Add(entity, 0);
         }
 
         /// <summary>
@@ -333,6 +346,7 @@ namespace Utopia.Shared.Entities
         /// <param name="length">bytes amount to process</param>
         public void LoadEntities(MemoryStream ms, int offset, int length)
         {
+            _initialisation = true;
             using (var reader = new BinaryReader(ms))
             {
                 ms.Position = offset;
@@ -343,6 +357,7 @@ namespace Utopia.Shared.Entities
                     Add(entity);
                 }
             }
+            _initialisation = false;
         }
 
         /// <summary>
@@ -385,15 +400,6 @@ namespace Utopia.Shared.Entities
             {
                 return _entities.TryGetValue(staticEntityId, out entity);
             }
-        }
-
-        /// <summary>
-        /// Adds new static entity to the container. Updates static entity id and Container properties
-        /// </summary>
-        /// <param name="entity"></param>
-        public void Add(IStaticEntity entity)
-        {
-            Add(entity, 0);
         }
 
         /// <summary>
