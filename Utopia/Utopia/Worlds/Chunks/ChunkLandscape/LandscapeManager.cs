@@ -117,6 +117,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     {
                         //In this case the message contains the data from the landscape !
                         case ChunkDataMessageFlag.ChunkWasModified:
+                            
                             chunk.Decompress(message.Data); //Set the data into the "Big Array"
                             _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
                             chunk.RefreshBorderChunk();
