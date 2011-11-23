@@ -57,7 +57,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>strongNameKey.snk</AssemblyOriginatorKeyFile>
@@ -100,7 +100,6 @@
     <Compile Include="Collidables\MobileCollidables\TriangleCollidable.cs" />
     <Compile Include="Collidables\StaticMesh.cs" />
     <Compile Include="Collidables\Terrain.cs" />
-    <Compile Include="Collidables\VoxelTerrain.cs" />
     <Compile Include="CollisionRuleManagement\CollisionGroup.cs" />
     <Compile Include="CollisionRuleManagement\CollisionGroupPair.cs" />
     <Compile Include="CollisionRuleManagement\CollisionRule.cs" />
@@ -126,7 +125,6 @@
     <Compile Include="CollisionShapes\ShapeDistributionInformation.cs" />
     <Compile Include="CollisionShapes\StaticMeshShape.cs" />
     <Compile Include="CollisionShapes\TerrainShape.cs" />
-    <Compile Include="CollisionShapes\VoxelTerrainShape.cs" />
     <Compile Include="CollisionTests\CollisionAlgorithms\BoxBoxCollider.cs" />
     <Compile Include="CollisionTests\CollisionAlgorithms\BoxSphereTester.cs" />
     <Compile Include="CollisionTests\CollisionAlgorithms\GeneralConvexPairTester.cs" />
@@ -450,6 +448,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Utopia\Utopia.Shared\Utopia.Shared.csproj">
+      <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
+      <Name>Utopia.Shared</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

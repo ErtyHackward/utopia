@@ -1,6 +1,7 @@
 ﻿using BEPUphysics.MathExtensions;
  
 using BEPUphysics.DataStructures;
+using Utopia.Shared.Structs;
 
 namespace BEPUphysics.CollisionShapes
 {
@@ -34,9 +35,9 @@ namespace BEPUphysics.CollisionShapes
         ///<param name="vertices">Vertices of the mesh.</param>
         ///<param name="indices">Indices of the mesh.</param>
         ///<param name="worldTransform">World transform to use in the local space data.</param>
-        public StaticMeshShape(Vector3[] vertices, int[] indices, AffineTransform worldTransform)
+        public StaticMeshShape(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices, AffineTransform worldTransform)
         {
-            triangleMeshData = new TransformableMeshData(vertices, indices, worldTransform);
+            triangleMeshData = new TransformableMeshData(globalMove, vertices, indices, worldTransform);
         }
 
 
@@ -46,9 +47,9 @@ namespace BEPUphysics.CollisionShapes
         ///</summary>
         ///<param name="vertices">Vertices of the mesh.</param>
         ///<param name="indices">Indices of the mesh.</param>
-        public StaticMeshShape(Vector3[] vertices, int[] indices)
+        public StaticMeshShape(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices)
         {
-            triangleMeshData = new TransformableMeshData(vertices, indices);
+            triangleMeshData = new TransformableMeshData(globalMove, vertices, indices);
         }
 
 
