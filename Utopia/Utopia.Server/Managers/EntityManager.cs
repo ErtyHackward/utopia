@@ -93,7 +93,7 @@ namespace Utopia.Server.Managers
             var connection = sender as ClientConnection;
             if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.DynamicId)
             {
-                connection.ServerEntity.DynamicEntity.Rotation = e.Message.Direction;
+                connection.ServerEntity.DynamicEntity.Rotation = e.Message.Rotation;
             }
         }
 
