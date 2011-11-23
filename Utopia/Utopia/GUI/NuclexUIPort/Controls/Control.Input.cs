@@ -171,6 +171,11 @@ namespace Nuclex.UserInterface.Controls {
       if(this.activatedControl == null) {
         this.activatedControl = this.mouseOverControl;
 
+
+        // Add the buttons to the list of mouse buttons being held down. This is used
+        // to track when we should clear the mouse-over control again.
+        this.heldMouseButtons |= button;
+
         // If we received an initial mouse press outside of our control area,
         // someone is feeding us notifications we shouldn't be receiving. The best
         // thing we can do is ignore this notification. This is a normal situation
@@ -186,9 +191,7 @@ namespace Nuclex.UserInterface.Controls {
         }
       }
 
-      // Add the buttons to the list of mouse buttons being held down. This is used
-      // to track when we should clear the mouse-over control again.
-      this.heldMouseButtons |= button;
+
 
       // If the mouse is over another control, pass on the mouse press.
       if(this.activatedControl != this) {
@@ -238,7 +241,7 @@ namespace Nuclex.UserInterface.Controls {
       this.heldMouseButtons &= ~button;
 
       // If the mouse was held over one of our childs, pass on the notification
-      if(this.activatedControl != this) {
+      if(activatedControl != null && this.activatedControl != this) {
         this.activatedControl.ProcessMouseRelease(button);
       } else {
         OnMouseReleased(button);
