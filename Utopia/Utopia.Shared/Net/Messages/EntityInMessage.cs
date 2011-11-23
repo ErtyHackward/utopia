@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -39,11 +40,23 @@ namespace Utopia.Shared.Net.Messages
             set { _parentEntityId = value; }
         }
 
+        private EntityLink _link;
+
+        /// <summary>
+        /// A link for an entity
+        /// </summary>
+        public EntityLink Link
+        {
+            get { return _link; }
+            set { _link = value; }
+        }
+
         public static EntityInMessage Read(BinaryReader reader)
         {
             EntityInMessage msg;
 
             msg._parentEntityId = reader.ReadUInt32();
+            msg._link = reader.ReadEntityLink();
             msg._entity = EntityFactory.Instance.CreateFromBytes(reader);
 
             return msg;
@@ -54,6 +67,7 @@ namespace Utopia.Shared.Net.Messages
             if(msg.Entity == null)
                 throw new NullReferenceException("Entity object is null");
             writer.Write(msg._parentEntityId);
+            writer.Write(msg._link);
             msg.Entity.Save(writer);
 
         }

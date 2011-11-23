@@ -51,7 +51,7 @@ namespace Utopia.Server.Structs
                 if (serverEntity != this)
                 {
                     //Console.WriteLine("TO: {0}, entity {1} in", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.SendAsync(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity });
+                    Connection.SendAsync(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity, Link = serverEntity.DynamicEntity.GetLink() });
                 }
             }
 
@@ -64,7 +64,7 @@ namespace Utopia.Server.Structs
 
         void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
         {
-            Connection.SendAsync(new EntityInMessage { Entity = e.Entity, ParentEntityId = e.ParentDynamicEntityId });
+            Connection.SendAsync(new EntityInMessage { Entity = e.Entity, ParentEntityId = e.ParentDynamicEntityId, Link = e.Entity.GetLink() });
         }
 
         void AreaEntityEquipment(object sender, CharacterEquipmentEventArgs e)
@@ -104,7 +104,7 @@ namespace Utopia.Server.Structs
             if (e.Entity != DynamicEntity)
             {
                 //Console.WriteLine("TO: {0},  {1} entity in view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.SendAsync(new EntityInMessage { Entity = (Entity)e.Entity.DynamicEntity });
+                Connection.SendAsync(new EntityInMessage { Entity = (Entity)e.Entity.DynamicEntity, Link = e.Entity.DynamicEntity.GetLink() });
             }
         }
 
