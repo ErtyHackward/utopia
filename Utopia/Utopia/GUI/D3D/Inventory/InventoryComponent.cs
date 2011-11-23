@@ -30,6 +30,7 @@ namespace Utopia.GUI.D3D.Inventory
         private readonly PlayerEntityManager _playerManager;
         private readonly IconFactory _iconFactory;
         private readonly ItemMessageTranslator _itemMessageTranslator;
+        private readonly Hud _hud;
         private readonly ToolBarUi _toolBar;
 
         private PlayerInventory _inventoryUi;
@@ -39,6 +40,11 @@ namespace Utopia.GUI.D3D.Inventory
         private ItemInfoWindow _infoWindow;
 
         private SlotContainer<ContainedSlot> _sourceContainer;
+
+        /// <summary>
+        /// Indicates if inventory is active now
+        /// </summary>
+        public bool IsActive { get; private set; }
 
         public InventoryComponent(
             D3DEngine engine, 
@@ -55,11 +61,23 @@ namespace Utopia.GUI.D3D.Inventory
             _playerManager = playerManager;
             _iconFactory = iconFactory;
             _itemMessageTranslator = itemMessageTranslator;
+            _hud = hud;
             _toolBar = hud.ToolbarUi;
 
-            hud.SlotClicked += HudSlotClicked;
+            _hud.SlotClicked += HudSlotClicked;
+            _screen.Desktop.Clicked += DesktopClicked;
 
             _itemMessageTranslator.Enabled = false;
+        }
+
+        void DesktopClicked(object sender, EventArgs e)
+        {
+            if (IsActive && _dragControl.Slot != null)
+            {
+                // drop item to the world
+                _itemMessageTranslator.DropToWorld();
+                EndDrag();
+            }
         }
 
         void HudSlotClicked(object sender, SlotClickedEventArgs e)
@@ -73,8 +91,8 @@ namespace Utopia.GUI.D3D.Inventory
                 {
                     var player = _playerManager.Player;
                     var entityId = player.Toolbar[e.SlotIndex];
+                    
                     // find the entity
-
                     var slot = player.Inventory.Find(entityId);
 
                     if (slot == null)
@@ -94,7 +112,6 @@ namespace Utopia.GUI.D3D.Inventory
                         }
                     }
                 }
-
             }
             finally
             {
@@ -165,8 +182,7 @@ namespace Utopia.GUI.D3D.Inventory
             {
                 // taking item
                 var slot = e.Container.PeekSlot(e.SlotPosition);
-
-
+                
                 if (slot != null)
                 {
                     var itemsCount = slot.ItemsCount;
@@ -267,7 +283,8 @@ namespace Utopia.GUI.D3D.Inventory
                     _screen.Desktop.Children.Remove(_inventoryUi);
                     _itemMessageTranslator.Enabled = false;
                     _playerManager.HandleToolsUse = true;
-                    _engine.MouseCapture = true;                    
+                    _engine.MouseCapture = true;
+                    IsActive = false;
                 }
                 else
                 {
@@ -276,13 +293,16 @@ namespace Utopia.GUI.D3D.Inventory
                     _itemMessageTranslator.Enabled = true;
                     _playerManager.HandleToolsUse = false;
                     _engine.MouseCapture = false;
+                    IsActive = true;
                 }
             }
         }
 
         public override void Dispose()
         {
+            _hud.SlotClicked -= HudSlotClicked;
             _inventoryUi.InventorySlotClicked -= InventoryUiSlotClicked;
+            _screen.Desktop.Clicked -= DesktopClicked;
             _backgroundTex.Dispose();
         }
     }

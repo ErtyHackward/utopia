@@ -88,14 +88,26 @@ namespace BEPUphysics.DataStructures
         ///<param name="v3">Third vertex of the triangle.</param>
         public override void GetTriangle(int triangleIndex, out Vector3 v1, out Vector3 v2, out Vector3 v3)
         {
+            Vector3 tv1;
+            Vector3 tv2;
+            Vector3 tv3;
 
-            var bv1 = byteVertices[uindices[triangleIndex]];
-            var bv2 = byteVertices[uindices[triangleIndex + 1]];
-            var bv3 = byteVertices[uindices[triangleIndex + 2]];
+            if (byteVertices != null)
+            {
+                var bv1 = byteVertices[uindices[triangleIndex]];
+                var bv2 = byteVertices[uindices[triangleIndex + 1]];
+                var bv3 = byteVertices[uindices[triangleIndex + 2]];
 
-            var tv1 = new Vector3(_globalMove.X + bv1.X, _globalMove.Y + bv1.Y, _globalMove.Z + bv1.Z);
-            var tv2 = new Vector3(_globalMove.X + bv2.X, _globalMove.Y + bv2.Y, _globalMove.Z + bv2.Z);
-            var tv3 = new Vector3(_globalMove.X + bv3.X, _globalMove.Y + bv3.Y, _globalMove.Z + bv3.Z);
+                tv1 = new Vector3(_globalMove.X + bv1.X, _globalMove.Y + bv1.Y, _globalMove.Z + bv1.Z);
+                tv2 = new Vector3(_globalMove.X + bv2.X, _globalMove.Y + bv2.Y, _globalMove.Z + bv2.Z);
+                tv3 = new Vector3(_globalMove.X + bv3.X, _globalMove.Y + bv3.Y, _globalMove.Z + bv3.Z);
+            }
+            else
+            {
+                tv1 = vertices[uindices[triangleIndex]];
+                tv2 = vertices[uindices[triangleIndex + 1]];
+                tv3 = vertices[uindices[triangleIndex + 2]];
+            }
 
             AffineTransform.Transform(ref tv1, ref worldTransform, out v1);
             AffineTransform.Transform(ref tv2, ref worldTransform, out v2);
@@ -109,8 +121,13 @@ namespace BEPUphysics.DataStructures
         ///<param name="vertex">Position of the vertex.</param>
         public override void GetVertexPosition(int i, out Vector3 vertex)
         {
-            var bv = byteVertices[i];
-            var v = new Vector3(_globalMove.X + bv.X, _globalMove.Y + bv.Y, _globalMove.Z + bv.Z);
+            Vector3 v;
+            if (byteVertices != null)
+            {
+                var bv = byteVertices[i];
+                v = new Vector3(_globalMove.X + bv.X, _globalMove.Y + bv.Y, _globalMove.Z + bv.Z);
+            }
+            else v = vertices[i];
             AffineTransform.Transform(ref v, ref worldTransform, out vertex);
         }
 

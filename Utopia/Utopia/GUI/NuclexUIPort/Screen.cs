@@ -45,10 +45,10 @@ namespace Nuclex.UserInterface {
   /// </remarks>
   public class Screen : IInputReceiver {
 
-    /// <summary>Triggered when the control in focus changes</summary>
-    public event EventHandler<ControlEventArgs> FocusChanged;
+      /// <summary>Triggered when the control in focus changes</summary>
+      public event EventHandler<ControlEventArgs> FocusChanged;
 
-    /// <summary>Initializes a new GUI</summary>
+      /// <summary>Initializes a new GUI</summary>
     public Screen() : this(0, 0) { }
 
     /// <summary>Initializes a new GUI</summary>
