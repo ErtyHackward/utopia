@@ -227,14 +227,14 @@ namespace Nuclex.UserInterface.Controls {
         return;
       }
 
-      // If we receive a release, we must have a control on which the mouse
-      // was pressed (possibly even ourselves)
-      Debug.Assert(
-        this.activatedControl != null,
-        "ProcessMouseRelease() had no control the mouse was pressed on",
-        "ProcessMouseRelease() was called on a control instance, but the control " +
-        "did not register a prior mouse press over itself or any of its child controls"
-      );
+      //// If we receive a release, we must have a control on which the mouse
+      //// was pressed (possibly even ourselves)
+      //Debug.Assert(
+      //  this.activatedControl != null,
+      //  "ProcessMouseRelease() had no control the mouse was pressed on",
+      //  "ProcessMouseRelease() was called on a control instance, but the control " +
+      //  "did not register a prior mouse press over itself or any of its child controls"
+      //);
 
       // Remove the button from the list of mouse buttons being held down. This
       // allows us to see when we can clear the mouse-press control.
