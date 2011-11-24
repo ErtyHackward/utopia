@@ -111,6 +111,7 @@
     <Compile Include="Action\MouseButton.cs" />
     <Compile Include="Action\MouseTriggeredAction.cs" />
     <Compile Include="Action\MouseTriggerMode.cs" />
+    <Compile Include="BepuPhysicsComponent.cs" />
     <Compile Include="DebugComponent.cs" />
     <Compile Include="Editor\EditorTool.cs" />
     <Compile Include="Editor\EntityEditor.cs" />
@@ -300,6 +301,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Bepu\BEPUphysics\BEPUphysics.csproj">
+      <Project>{C0D52C9F-14B8-4008-8DDC-109C27561A5C}</Project>
+      <Name>BEPUphysics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LostIsland\LostIsland.Shared\LostIsland.Shared.csproj">
       <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
       <Name>LostIsland.Shared</Name>

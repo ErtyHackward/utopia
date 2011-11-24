@@ -25,6 +25,12 @@ namespace Utopia.Worlds.Chunks
 
         /// <summary> indicate wether the chunks needs to be sorted</summary>
         bool ChunkNeed2BeSorted { get; set; }
+
+        /// <summary>
+        /// Occurs when array of visual chunks get initialized
+        /// </summary>
+        event EventHandler ChunksArrayInitialized;
+
         /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate
         /// </summary>

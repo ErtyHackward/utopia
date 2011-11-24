@@ -1,6 +1,8 @@
 ﻿
 
+using System.Collections.Generic;
 using BEPUphysics.MathExtensions;
+using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs;
 
 namespace BEPUphysics.DataStructures
@@ -12,11 +14,11 @@ namespace BEPUphysics.DataStructures
     {
         internal Vector3 _globalMove;
 
-        internal ushort[] uindices;
+        internal List<ushort> uindices;
         ///<summary>
         /// Gets or sets the indices of the triangle mesh.
         ///</summary>
-        public ushort[] uIndices
+        public List<ushort> uIndices
         {
             get
             {
@@ -28,11 +30,11 @@ namespace BEPUphysics.DataStructures
             }
         }
 
-        internal ByteVector3[] byteVertices;
+        internal List<VertexCubeSolid> byteVertices;
         ///<summary>
         /// Gets or sets the vertices of the triangle mesh.
         ///</summary>
-        public ByteVector3[] ByteVertices
+        public List<VertexCubeSolid> ByteVertices
         {
             get
             {
@@ -51,11 +53,11 @@ namespace BEPUphysics.DataStructures
             set { vertices = value; }
         }
 
-        internal int[] indices;
+        internal int[] _indices;
         public int[] Indices
         {
-            get { return indices; }
-            set { indices = value; }
+            get { return _indices; }
+            set { _indices = value; }
         }
 
         /// <summary>

@@ -11,7 +11,8 @@
     <RootNamespace>BEPUphysics</RootNamespace>
     <AssemblyName>BEPUphysics</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -450,6 +451,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Utopia\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
+      <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
+      <Name>S33M3Engines.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utopia\S33M3Engines\S33M3Engines.csproj">
+      <Project>{E1E5C757-C550-4E62-8BE3-2E9553F023F7}</Project>
+      <Name>S33M3Engines</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Utopia\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>

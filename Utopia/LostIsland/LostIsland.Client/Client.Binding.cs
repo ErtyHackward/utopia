@@ -1,6 +1,7 @@
 ﻿using LostIslandHD.Client;
 using Ninject;
 using Nuclex.UserInterface;
+using Utopia;
 using Utopia.Editor;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
@@ -108,6 +109,7 @@ namespace LostIsland.Client
             iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
             if (ClientSettings.Current.Settings.GraphicalParameters.CloudsQuality <= 0) iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");
             else iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds");
+            iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
 
             //Landscape Creation/Acces/Management ====================================
             iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope();
