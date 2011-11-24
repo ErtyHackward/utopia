@@ -65,11 +65,12 @@ namespace Utopia.Shared.Net.Connections
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<LoginMessage>> MessageLogin;
 
-        protected void OnMessageLogin(LoginMessage ea)
+        public void OnMessageLogin(LoginMessage ea)
         {
-            if (MessageLogin != null)
-                MessageLogin(this, new ProtocolMessageEventArgs<LoginMessage> { Message = ea });
+            var handler = MessageLogin;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<LoginMessage> { Message = ea });
         }
+
 
         /// <summary>
         /// Occurs when chunk data is received
@@ -78,8 +79,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageChunkData(ChunkDataMessage ea)
         {
-            if (MessageChunkData != null)
-                MessageChunkData(this, new ProtocolMessageEventArgs<ChunkDataMessage> { Message = ea });
+            var handler = MessageChunkData;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<ChunkDataMessage> { Message = ea });
         }
 
         /// <summary>
@@ -89,8 +90,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageChat(ChatMessage ea)
         {
-            if (MessageChat != null)
-                MessageChat(this, new ProtocolMessageEventArgs<ChatMessage> { Message = ea });
+            var handler = MessageChat;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<ChatMessage> { Message = ea });
         }
 
         /// <summary>
@@ -100,8 +101,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageError(ErrorMessage ea)
         {
-            if (MessageError != null)
-                MessageError(this, new ProtocolMessageEventArgs<ErrorMessage> { Message = ea });
+            var handler = MessageError;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<ErrorMessage> { Message = ea });
         }
 
         /// <summary>
@@ -111,8 +112,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageBlockChange(BlocksChangedMessage ea)
         {
-            if (MessageBlockChange != null)
-                MessageBlockChange(this, new ProtocolMessageEventArgs<BlocksChangedMessage> { Message = ea });
+            var handler = MessageBlockChange;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<BlocksChangedMessage> { Message = ea });
         }
 
         /// <summary>
@@ -122,8 +123,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessagePosition(EntityPositionMessage ea)
         {
-            if (MessagePosition != null)
-                MessagePosition(this, new ProtocolMessageEventArgs<EntityPositionMessage> { Message = ea });
+            var handler = MessagePosition;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityPositionMessage> { Message = ea });
         }
 
         /// <summary>
@@ -133,8 +134,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageDirection(EntityDirectionMessage ea)
         {
-            if (MessageDirection != null)
-                MessageDirection(this, new ProtocolMessageEventArgs<EntityDirectionMessage> { Message = ea });
+            var handler = MessageDirection;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityDirectionMessage> { Message = ea });
         }
 
         /// <summary>
@@ -144,8 +145,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageGameInformation(GameInformationMessage ea)
         {
-            if (MessageGameInformation != null)
-                MessageGameInformation(this, new ProtocolMessageEventArgs<GameInformationMessage> { Message = ea });
+            var handler = MessageGameInformation;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<GameInformationMessage> { Message = ea });
         }
 
         /// <summary>
@@ -156,8 +157,8 @@ namespace Utopia.Shared.Net.Connections
         protected void OnMessageLoginResult(LoginResultMessage ea)
         {
             LoggedOn = ea.Logged;
-            if (MessageLoginResult != null)
-                MessageLoginResult(this, new ProtocolMessageEventArgs<LoginResultMessage> { Message = ea });
+            var handler = MessageLoginResult;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<LoginResultMessage> { Message = ea });
         }
 
         /// <summary>
@@ -167,8 +168,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageEntityIn(EntityInMessage ea)
         {
-            if (MessageEntityIn != null)
-                MessageEntityIn(this, new ProtocolMessageEventArgs<EntityInMessage> { Message = ea });
+            var handler = MessageEntityIn;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityInMessage> { Message = ea });
         }
 
         /// <summary>
@@ -178,8 +179,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageEntityOut(EntityOutMessage ea)
         {
-            if (MessageEntityOut != null)
-                MessageEntityOut(this, new ProtocolMessageEventArgs<EntityOutMessage> { Message = ea });
+            var handler = MessageEntityOut;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityOutMessage> { Message = ea });
         }
 
         /// <summary>
@@ -189,8 +190,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageDateTime(DateTimeMessage ea)
         {
-            if (MessageDateTime != null)
-                MessageDateTime(this, new ProtocolMessageEventArgs<DateTimeMessage> { Message = ea });
+            var handler = MessageDateTime;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<DateTimeMessage> { Message = ea });
         }
 
         /// <summary>
@@ -200,8 +201,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageEntityUse(EntityUseMessage ea)
         {
-            if (MessageEntityUse != null)
-                MessageEntityUse(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
+            var handler = MessageEntityUse;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
         }
 
         /// <summary>
@@ -211,8 +212,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessagePing(PingMessage ea)
         {
-            if (MessagePing != null)
-                MessagePing(this, new ProtocolMessageEventArgs<PingMessage> { Message = ea });
+            var handler = MessagePing;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<PingMessage> { Message = ea });
         }
 
         /// <summary>
@@ -222,8 +223,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageEntityVoxelModel(EntityVoxelModelMessage ea)
         {
-            if (MessageEntityVoxelModel != null)
-                MessageEntityVoxelModel(this, new ProtocolMessageEventArgs<EntityVoxelModelMessage> { Message = ea });
+            var handler = MessageEntityVoxelModel;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityVoxelModelMessage> { Message = ea });
         }
 
         /// <summary>
@@ -233,8 +234,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageEntityEquipment(EntityEquipmentMessage ea)
         {
-            if (MessageEntityEquipment != null)
-                MessageEntityEquipment(this, new ProtocolMessageEventArgs<EntityEquipmentMessage> { Message = ea });
+            var handler = MessageEntityEquipment;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityEquipmentMessage> { Message = ea });
         }
 
         /// <summary>
@@ -244,8 +245,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageItemTransfer(ItemTransferMessage ea)
         {
-            if (MessageItemTransfer != null)
-                MessageItemTransfer(this, new ProtocolMessageEventArgs<ItemTransferMessage> { Message = ea });
+            var handler = MessageItemTransfer;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<ItemTransferMessage> { Message = ea });
         }
 
         /// <summary>
@@ -255,8 +256,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageWeather(WeatherMessage ea)
         {
-            if (MessageWeather != null)
-                MessageWeather(this, new ProtocolMessageEventArgs<WeatherMessage> { Message = ea });
+            var handler = MessageWeather;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<WeatherMessage> { Message = ea });
         }
 
         /// <summary>
@@ -266,8 +267,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageEntityImpulse(EntityImpulseMessage ea)
         {
-            if (MessageEntityImpulse != null)
-                MessageEntityImpulse(this, new ProtocolMessageEventArgs<EntityImpulseMessage> { Message = ea });
+            var handler = MessageEntityImpulse;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityImpulseMessage> { Message = ea });
         }
 
         /// <summary>
@@ -277,8 +278,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageEntityLockResult(EntityLockResultMessage ea)
         {
-            if (MessageEntityLockResult != null)
-                MessageEntityLockResult(this, new ProtocolMessageEventArgs<EntityLockResultMessage> { Message = ea });
+            var handler = MessageEntityLockResult;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityLockResultMessage> { Message = ea });
         }
 
         /// <summary>
@@ -288,8 +289,8 @@ namespace Utopia.Shared.Net.Connections
 
         protected void OnMessageUseFeedback(UseFeedbackMessage ea)
         {
-            if (MessageUseFeedback != null)
-                MessageUseFeedback(this, new ProtocolMessageEventArgs<UseFeedbackMessage> { Message = ea });
+            var handler = MessageUseFeedback;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<UseFeedbackMessage> { Message = ea });
         }
 
         #endregion

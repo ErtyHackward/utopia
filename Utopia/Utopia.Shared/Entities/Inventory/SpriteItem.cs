@@ -22,6 +22,11 @@ namespace Utopia.Shared.Entities.Inventory
 
         #endregion
 
+        protected SpriteItem()
+        {
+            UniqueName = string.Empty;
+        }
+
         #region Public Methods
         // we need to override save and load!
         public override void Load(System.IO.BinaryReader reader)

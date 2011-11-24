@@ -114,6 +114,18 @@ namespace Utopia.Worlds.Chunks
 
         #endregion
 
+        /// <summary>
+        /// Occurs when chunk mesh updated
+        /// </summary>
+        public event EventHandler ChunkMeshUpdated;
+
+        internal void OnChunkMeshUpdated()
+        {
+            var handler = ChunkMeshUpdated;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+
         public VisualChunk(
                             D3DEngine d3dEngine, 
                             WorldFocusManager worldFocusManager, 

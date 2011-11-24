@@ -25,7 +25,7 @@ namespace Utopia.Server
         protected NetworkStream Stream;
         protected BinaryWriter Writer;
 
-        internal readonly ConcurrentQueue<IBinaryMessage> _delayedMessages = new ConcurrentQueue<IBinaryMessage>();
+        private readonly ConcurrentQueue<IBinaryMessage> _delayedMessages = new ConcurrentQueue<IBinaryMessage>();
 
         #endregion
 
@@ -76,12 +76,12 @@ namespace Utopia.Server
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<LoginMessage>> MessageLogin;
 
-        protected void OnMessageLogin(LoginMessage ea)
+        public void OnMessageLogin(LoginMessage ea)
         {
-            if (MessageLogin != null)
-                MessageLogin(this, new ProtocolMessageEventArgs<LoginMessage> { Message = ea });
+            var handler = MessageLogin;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<LoginMessage> { Message = ea });
         }
-
+        
         /// <summary>
         /// Occurs when a ChatMessage is received
         /// </summary>
@@ -89,8 +89,8 @@ namespace Utopia.Server
 
         protected void OnMessageChat(ChatMessage ea)
         {
-            if (MessageChat != null)
-                MessageChat(this, new ProtocolMessageEventArgs<ChatMessage> { Message = ea });
+            var handler = MessageChat;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<ChatMessage> { Message = ea });
         }
 
         /// <summary>
@@ -100,8 +100,8 @@ namespace Utopia.Server
 
         protected void OnMessageGetChunks(GetChunksMessage ea)
         {
-            if (MessageGetChunks != null)
-                MessageGetChunks(this, new ProtocolMessageEventArgs<GetChunksMessage> { Message = ea });
+            var handler = MessageGetChunks;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<GetChunksMessage> { Message = ea });
         }
 
         /// <summary>
@@ -111,8 +111,8 @@ namespace Utopia.Server
 
         protected void OnMessagePosition(EntityPositionMessage ea)
         {
-            if (MessagePosition != null)
-                MessagePosition(this, new ProtocolMessageEventArgs<EntityPositionMessage> { Message = ea });
+            var handler = MessagePosition;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityPositionMessage> { Message = ea });
         }
 
         /// <summary>
@@ -122,8 +122,8 @@ namespace Utopia.Server
 
         protected void OnMessageDirection(EntityDirectionMessage ea)
         {
-            if (MessageDirection != null)
-                MessageDirection(this, new ProtocolMessageEventArgs<EntityDirectionMessage> { Message = ea });
+            var handler = MessageDirection;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityDirectionMessage> { Message = ea });
         }
 
         /// <summary>
@@ -133,8 +133,8 @@ namespace Utopia.Server
 
         protected void OnMessageEntityUse(EntityUseMessage ea)
         {
-            if (MessageEntityUse != null)
-                MessageEntityUse(this, new ProtocolMessageEventArgs<EntityUseMessage> {Message = ea});
+            var handler = MessageEntityUse;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityUseMessage> { Message = ea });
         }
         
         /// <summary>
@@ -144,8 +144,8 @@ namespace Utopia.Server
 
         protected void OnMessagePing(PingMessage ea)
         {
-            if (MessagePing != null)
-                MessagePing(this, new ProtocolMessageEventArgs<PingMessage> { Message = ea });
+            var handler = MessagePing;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<PingMessage> { Message = ea });
         }
 
         /// <summary>
@@ -155,8 +155,8 @@ namespace Utopia.Server
 
         protected void OnMessageEntityVoxelModel(EntityVoxelModelMessage ea)
         {
-            if (MessageEntityVoxelModel != null)
-                MessageEntityVoxelModel(this, new ProtocolMessageEventArgs<EntityVoxelModelMessage> { Message = ea });
+            var handler = MessageEntityVoxelModel;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityVoxelModelMessage> { Message = ea });
         }
 
         /// <summary>
@@ -166,8 +166,8 @@ namespace Utopia.Server
 
         protected void OnMessageEntityEquipment(EntityEquipmentMessage ea)
         {
-            if (MessageEntityEquipment != null)
-                MessageEntityEquipment(this, new ProtocolMessageEventArgs<EntityEquipmentMessage> { Message = ea });
+            var handler = MessageEntityEquipment;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityEquipmentMessage> { Message = ea });
         }
 
         /// <summary>
@@ -177,8 +177,8 @@ namespace Utopia.Server
 
         protected void OnMessageItemTransfer(ItemTransferMessage ea)
         {
-            if (MessageItemTransfer != null)
-                MessageItemTransfer(this, new ProtocolMessageEventArgs<ItemTransferMessage> { Message = ea });
+            var handler = MessageItemTransfer;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<ItemTransferMessage> { Message = ea });
         }
 
         /// <summary>
@@ -188,8 +188,8 @@ namespace Utopia.Server
 
         protected void OnMessageEntityImpulse(EntityImpulseMessage ea)
         {
-            if (MessageEntityImpulse != null)
-                MessageEntityImpulse(this, new ProtocolMessageEventArgs<EntityImpulseMessage> { Message = ea });
+            var handler = MessageEntityImpulse;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityImpulseMessage> { Message = ea });
         }
 
         /// <summary>
@@ -199,8 +199,8 @@ namespace Utopia.Server
 
         protected void OnMessageEntityLock(EntityLockMessage ea)
         {
-            if (MessageEntityLock != null)
-                MessageEntityLock(this, new ProtocolMessageEventArgs<EntityLockMessage> { Message = ea });
+            var handler = MessageEntityLock;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityLockMessage> { Message = ea });
         }
 
         #endregion

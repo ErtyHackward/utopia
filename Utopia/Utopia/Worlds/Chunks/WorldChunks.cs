@@ -142,7 +142,7 @@ namespace Utopia.Worlds.Chunks
             _playerManager.WorldChunks = this;
 
             //Subscribe to chunk modifications
-            _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
+            _cubesHolder.BlockDataChanged += ChunkCubes_BlockDataChanged;
 
             DrawOrders.UpdateIndex(SOLID_DRAW, 10);
             DrawOrders.AddIndex(ENTITIES_DRAW, 20);
@@ -200,7 +200,7 @@ namespace Utopia.Worlds.Chunks
         }
 
         /// <summary>
-        /// Get a world's chunk from a Cube location in world coordinate
+        /// Get a world's chunk from a chunk location in world coordinate
         /// </summary>
         /// <param name="X">Chunk X coordinate</param>
         /// <param name="Z">Chunk Z coordinate</param>
@@ -211,15 +211,7 @@ namespace Utopia.Worlds.Chunks
             X *= AbstractChunk.ChunkSize.X;
             Z *= AbstractChunk.ChunkSize.Z;
 
-            //From World Coord to Cube Array Coord
-            int arrayX = MathHelper.Mod(X, VisualWorldParameters.WorldVisibleSize.X);
-            int arrayZ = MathHelper.Mod(Z, VisualWorldParameters.WorldVisibleSize.Z);
-
-            //From Cube Array coord to Chunk Array coord
-            int chunkX = arrayX >> VisualWorldParameters.ChunkPOWsize;
-            int chunkZ = arrayZ >> VisualWorldParameters.ChunkPOWsize;
-
-            return Chunks[chunkX + chunkZ * VisualWorldParameters.WorldParameters.WorldChunkSize.X];
+            return GetChunk(X, Z);
         }
 
         /// <summary>
@@ -249,13 +241,7 @@ namespace Utopia.Worlds.Chunks
                 return false;
             }
 
-            int arrayX = MathHelper.Mod(X, VisualWorldParameters.WorldVisibleSize.X);
-            int arrayZ = MathHelper.Mod(Z, VisualWorldParameters.WorldVisibleSize.Z);
-
-            int chunkX = arrayX >> VisualWorldParameters.ChunkPOWsize;
-            int chunkZ = arrayZ >> VisualWorldParameters.ChunkPOWsize;
-
-            chunk = Chunks[chunkX + chunkZ * VisualWorldParameters.WorldParameters.WorldChunkSize.X];
+            chunk = GetChunk(X, Z);
             return true;
         }
 

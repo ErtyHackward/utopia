@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using S33M3Engines.Threading;
-using System.Threading.Tasks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -15,7 +13,6 @@ using Utopia.Network;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Storage.Structs;
 using S33M3Engines.Timers;
-using Utopia.Entities;
 using Ninject;
 using Utopia.Entities.Sprites;
 
@@ -129,22 +126,22 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
                             //Save the modified chunk landscape data locally only if the local one is different from the server one
                             Md5Hash hash;
-                            bool SaveChunk = true;
+                            bool saveChunk = true;
                             if (_chunkStorageManager.ChunkHashes.TryGetValue(chunk.ChunkID, out hash))
                             {
-                                if (hash == message.ChunkHash) SaveChunk = false;
+                                if (hash == message.ChunkHash) saveChunk = false;
                             }
 
-                            if (SaveChunk)
+                            if (saveChunk)
                             {
-                                _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage()
-                                                                            {
-                                                                                ChunkId = chunk.ChunkID,
-                                                                                ChunkX = chunk.ChunkPosition.X,
-                                                                                ChunkZ = chunk.ChunkPosition.Y,
-                                                                                Md5Hash = message.ChunkHash,
-                                                                                CubeData = message.Data
-                                                                            }
+                                _chunkStorageManager.StoreData_async(new ChunkDataStorage
+                                                                         {
+                                                                             ChunkId = chunk.ChunkID,
+                                                                             ChunkX = chunk.ChunkPosition.X,
+                                                                             ChunkZ = chunk.ChunkPosition.Y,
+                                                                             Md5Hash = message.ChunkHash,
+                                                                             CubeData = message.Data
+                                                                         }
                                                                      );
                             }
 
