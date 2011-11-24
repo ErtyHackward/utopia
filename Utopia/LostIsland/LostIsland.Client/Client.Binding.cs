@@ -1,4 +1,5 @@
-﻿using Ninject;
+﻿using LostIslandHD.Client;
+using Ninject;
 using Nuclex.UserInterface;
 using Utopia.Editor;
 using Utopia.Entities.Voxel;
@@ -50,6 +51,7 @@ namespace LostIsland.Client
     {
         public void EarlyBinding(IKernel iocContainer)
         {
+            iocContainer.Bind<IGameStateToolManager>().To<GameStateToolManager>().InSingletonScope();  
             iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
         }
 

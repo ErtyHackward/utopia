@@ -123,6 +123,7 @@
     <Compile Include="Entities\Interfaces\IDynamicEntity.cs" />
     <Compile Include="Entities\Interfaces\IEntity.cs" />
     <Compile Include="Entities\Interfaces\IFeetArmor.cs" />
+    <Compile Include="Entities\Interfaces\IGameStateTool.cs" />
     <Compile Include="Entities\Interfaces\IGrowEntity.cs" />
     <Compile Include="Entities\Interfaces\IHeadArmor.cs" />
     <Compile Include="Entities\Interfaces\IItem.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="Interfaces\IBinaryStorable.cs" />
     <Compile Include="Interfaces\IChunkLayout2D.cs" />
     <Compile Include="Interfaces\IChunksStorage.cs" />
+    <Compile Include="Interfaces\IGameStateToolManager.cs" />
     <Compile Include="Interfaces\ILandscapeCursor.cs" />
     <Compile Include="Interfaces\ILandscapeManager2D.cs" />
     <Compile Include="Interfaces\ISingleArrayDataProviderUser.cs" />

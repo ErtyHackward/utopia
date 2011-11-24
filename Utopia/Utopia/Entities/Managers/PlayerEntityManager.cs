@@ -24,6 +24,8 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
@@ -80,6 +82,7 @@ namespace Utopia.Entities.Managers
         private Vector3D _entityXAxis, _entityYAxis, _entityZAxis;
         private IPickingRenderer _pickingRenderer;
         private IEntityPickingManager _entityPickingManager;
+        private readonly IGameStateToolManager _gameStateToolManager;
 
         //Drawing component
         private IEntitiesRenderer _playerRenderer;
@@ -146,7 +149,9 @@ namespace Utopia.Entities.Managers
                                    PlayerCharacter player,
                                    [Named("PlayerEntityRenderer")] IEntitiesRenderer playerRenderer,
                                    IPickingRenderer pickingRenderer,
-                                   IEntityPickingManager entityPickingManager)
+                                   IEntityPickingManager entityPickingManager,
+                                   IGameStateToolManager gameStateToolManager 
+            )
         {
             _d3DEngine = engine;
             _cameraManager = cameraManager;
@@ -157,6 +162,7 @@ namespace Utopia.Entities.Managers
             _playerRenderer = playerRenderer;
             _pickingRenderer = pickingRenderer;
             _entityPickingManager = entityPickingManager;
+            _gameStateToolManager = gameStateToolManager;
 
             entityPickingManager.Player = this;
             Player = player;
@@ -204,11 +210,18 @@ namespace Utopia.Entities.Managers
             {
                 if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool!=null)
                 {
+                    if  (Player.Equipment.LeftTool is IGameStateTool)
+                    {
+                        _gameStateToolManager.Use(Player.Equipment.LeftTool as IGameStateTool);
+                    }
+                    else
+                    {                     
                     //sends the client server event that does tool.use on server
                     Player.LeftToolUse(0);
 
                     //client invocation to keep the client inventory in synch
                     Player.Equipment.LeftTool.Use(Player, 0);
+                    }
                 }
             }
 
