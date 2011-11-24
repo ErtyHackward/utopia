@@ -68,6 +68,7 @@
     <Compile Include="Client.Binding.cs" />
     <Compile Include="Client.NewGame.cs" />
     <Compile Include="GameClient.cs" />
+    <Compile Include="GameStateToolManager.cs" />
     <Compile Include="GUI\Forms\CustControls\Config.cs">
       <SubType>UserControl</SubType>
     </Compile>

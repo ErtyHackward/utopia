@@ -59,6 +59,8 @@ namespace LostIsland.Server
 
             dEntity.Inventory.PutItem(new GoldCoin(), 45821);
 
+            //dEntity.Inventory.PutItem((Carver)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.Carver)));
+            
             return dEntity;
         }
 

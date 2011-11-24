@@ -23,6 +23,8 @@ namespace LostIsland.Shared
                 case LostIslandEntityClassId.CubeResource: return new CubeResource(_landscapeManager);
                 case LostIslandEntityClassId.Shovel: return new Shovel(_landscapeManager);
                 case LostIslandEntityClassId.GoldCoin: return new GoldCoin();
+                case LostIslandEntityClassId.Editor: return new Editor();
+                case LostIslandEntityClassId.Carver: return new Carver();
             }
 
             return null;

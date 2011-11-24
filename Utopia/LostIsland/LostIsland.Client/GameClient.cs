@@ -76,6 +76,10 @@ namespace LostIsland.Client
         private void ShowWelcomeScreen(bool withFadeIn)
         {
             _iocContainer = new StandardKernel();
+
+            //cheating  the injection system for special cases (gamestates, multi component activation / deactivation)
+            _iocContainer.Bind<IKernel>().ToConstant(_iocContainer).InSingletonScope();
+            
             _iocContainer.Bind<Server>().ToSelf().InSingletonScope();
             _server = _iocContainer.Get<Server>();
 
