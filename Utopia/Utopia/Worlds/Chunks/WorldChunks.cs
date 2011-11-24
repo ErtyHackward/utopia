@@ -145,8 +145,8 @@ namespace Utopia.Worlds.Chunks
             _cubesHolder.BlockDataChanged += new EventHandler<ChunkDataProviderDataChangedEventArgs>(ChunkCubes_BlockDataChanged);
 
             DrawOrders.UpdateIndex(SOLID_DRAW, 10);
-            DrawOrders.AddIndex(ENTITIES_DRAW, 20); 
-            DrawOrders.AddIndex(TRANSPARENT_DRAW, 1050); 
+            DrawOrders.AddIndex(ENTITIES_DRAW, 20);
+            DrawOrders.AddIndex(TRANSPARENT_DRAW, 1050);
         }
 
         #region Public methods
@@ -279,8 +279,8 @@ namespace Utopia.Worlds.Chunks
         /// <summary>
         /// Get the list of chunks for a specific Z world coordinate
         /// </summary>
-        /// <param name="FixedX">The Fixed "line" of chunk to retrieve</param>
-        /// <param name="WorldMinZ">Get All chunk From the WorldMinX value to MaxLineX-WorldMinX (Excluded)</param>
+        /// <param name="FixedZ">The Fixed "line" of chunk to retrieve</param>
+        /// <param name="WorldMinX">Get All chunk From the WorldMinX value to MaxLineX-WorldMinX (Excluded)</param>
         /// <returns></returns>
         public IEnumerable<VisualChunk> GetChunksWithFixedZ(int FixedZ, int WorldMinX)
         {
@@ -296,9 +296,6 @@ namespace Utopia.Worlds.Chunks
         /// <summary>
         /// indicate if the Chunk coordinate passed in is the border of the visible world
         /// </summary>
-        /// <param name="X"></param>
-        /// <param name="Z"></param>
-        /// <param name="worldRange"></param>
         /// <returns></returns>
         public bool isBorderChunk(Vector2I chunkPosition)
         {

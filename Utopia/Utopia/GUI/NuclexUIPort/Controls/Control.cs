@@ -51,6 +51,17 @@ namespace Nuclex.UserInterface.Controls {
   /// </remarks>
   public partial class Control {
 
+      /// <summary>
+      /// Occurs when the control get clicked
+      /// </summary>
+      public event EventHandler Clicked;
+
+      public void OnClicked()
+      {
+          var handler = Clicked;
+          if (handler != null) handler(this, EventArgs.Empty);
+      }
+
     /// <summary>Initializes a new control</summary>
     public Control() : this(false) { }
 
@@ -239,7 +250,7 @@ namespace Nuclex.UserInterface.Controls {
 
     /// <summary>Called when a mouse button has been released again</summary>
     /// <param name="button">Index of the button that has been released</param>
-    protected virtual void OnMouseReleased(Nuclex.UserInterface.Input.MouseButtons button) { }
+    protected virtual void OnMouseReleased(Nuclex.UserInterface.Input.MouseButtons button) { OnClicked(); }
 
     /// <summary>
     ///   Called when the mouse has left the control and is no longer hovering over it

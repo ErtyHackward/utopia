@@ -1,6 +1,8 @@
 ﻿
 
 using BEPUphysics.MathExtensions;
+using Utopia.Shared.Structs;
+
 namespace BEPUphysics.DataStructures
 {
     ///<summary>
@@ -8,36 +10,52 @@ namespace BEPUphysics.DataStructures
     ///</summary>
     public abstract class MeshBoundingBoxTreeData
     {
-        internal int[] indices;
+        internal Vector3 _globalMove;
+
+        internal ushort[] uindices;
         ///<summary>
         /// Gets or sets the indices of the triangle mesh.
         ///</summary>
-        public int[] Indices
+        public ushort[] uIndices
         {
             get
             {
-                return indices;
+                return uindices;
             }
             set
             {
-                indices = value;
+                uindices = value;
+            }
+        }
+
+        internal ByteVector3[] byteVertices;
+        ///<summary>
+        /// Gets or sets the vertices of the triangle mesh.
+        ///</summary>
+        public ByteVector3[] ByteVertices
+        {
+            get
+            {
+                return byteVertices;
+            }
+            set
+            {
+                byteVertices = value;
             }
         }
 
         internal Vector3[] vertices;
-        ///<summary>
-        /// Gets or sets the vertices of the triangle mesh.
-        ///</summary>
         public Vector3[] Vertices
         {
-            get
-            {
-                return vertices;
-            }
-            set
-            {
-                vertices = value;
-            }
+            get { return vertices; }
+            set { vertices = value; }
+        }
+
+        internal int[] indices;
+        public int[] Indices
+        {
+            get { return indices; }
+            set { indices = value; }
         }
 
         /// <summary>

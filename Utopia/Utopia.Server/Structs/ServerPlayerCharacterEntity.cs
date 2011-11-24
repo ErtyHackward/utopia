@@ -51,7 +51,7 @@ namespace Utopia.Server.Structs
                 if (serverEntity != this)
                 {
                     //Console.WriteLine("TO: {0}, entity {1} in", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.SendAsync(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity });
+                    Connection.SendAsync(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity, Link = serverEntity.DynamicEntity.GetLink() });
                 }
             }
 
@@ -64,7 +64,7 @@ namespace Utopia.Server.Structs
 
         void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
         {
-            Connection.SendAsync(new EntityInMessage { Entity = e.Entity, ParentEntityId = e.ParentDynamicEntityId });
+            Connection.SendAsync(new EntityInMessage { Entity = e.Entity, ParentEntityId = e.ParentDynamicEntityId, Link = e.Entity.GetLink() });
         }
 
         void AreaEntityEquipment(object sender, CharacterEquipmentEventArgs e)
@@ -104,7 +104,7 @@ namespace Utopia.Server.Structs
             if (e.Entity != DynamicEntity)
             {
                 //Console.WriteLine("TO: {0},  {1} entity in view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.SendAsync(new EntityInMessage { Entity = (Entity)e.Entity.DynamicEntity });
+                Connection.SendAsync(new EntityInMessage { Entity = (Entity)e.Entity.DynamicEntity, Link = e.Entity.DynamicEntity.GetLink() });
             }
         }
 
@@ -161,7 +161,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.SendAsync(new EntityDirectionMessage { EntityId = e.Entity.DynamicId, Direction = e.Entity.Rotation });
+                Connection.SendAsync(new EntityDirectionMessage { EntityId = e.Entity.DynamicId, Rotation = e.Entity.Rotation });
             }
         }
 
@@ -293,29 +293,22 @@ namespace Utopia.Server.Structs
                     // check if entity have this item
 
                     var chunk = _server.LandscapeManager.GetChunk(playerCharacter.Position);
-
-                    var containedSlot = new ContainedSlot { ItemsCount = itemTransferMessage.ItemsCount, GridPosition = itemTransferMessage.SourceContainerSlot };
-
-                    var itemType = playerCharacter.Inventory.PeekSlot(containedSlot.GridPosition);
-
-                    if (playerCharacter.Inventory.TakeItem(containedSlot.GridPosition, containedSlot.ItemsCount))
+                    
+                    // check if we have correct entityId
+                    if (_itemTaken.Item.StaticId == itemTransferMessage.ItemEntityId)
                     {
-                        // check if we have correct entityId
-                        if (itemType.Item.StaticId == itemTransferMessage.ItemEntityId)
+                        // repeat for entities count
+                        for (int i = 0; i < itemTransferMessage.ItemsCount; i++)
                         {
-                            // repeat for entities count
-                            for (int i = 0; i < itemTransferMessage.ItemsCount; i++)
-                            {
-                                // throw it
-                                chunk.Entities.Add(itemType.Item, playerCharacter.DynamicId);
-                            }
-                            // ok
-                            return true;
-                        }
+                            // put to current position
+                            _itemTaken.Item.Position = playerCharacter.Position;
 
-                        // return item to inventory
-                        playerCharacter.Inventory.PutItem(itemType.Item, containedSlot.GridPosition, containedSlot.ItemsCount);
-                        
+                            // throw it
+                            chunk.Entities.Add(_itemTaken.Item, playerCharacter.DynamicId);
+
+                        }
+                        // ok
+                        return true;
                     }
                 }
 
