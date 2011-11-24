@@ -93,6 +93,14 @@ namespace Utopia
             GameComponents.Add(_renderStates.sharedFrameCB);
             GameComponents.Add(_renderStates.bepuPhysicsComponent);
 
+            if (_renderStates.customComponents != null)
+            {
+                foreach (var customComponent in _renderStates.customComponents)
+                {
+                    GameComponents.Add(customComponent);
+                }
+            }
+
             #region Debug Components
 #if DEBUG
             DebugEffect.Init(_d3dEngine);             // Default Effect used by debug componant (will be shared)

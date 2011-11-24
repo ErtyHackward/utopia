@@ -1,4 +1,5 @@
-﻿using LostIslandHD.Client.Properties;
+﻿using LostIsland.Client.GUI;
+using LostIsland.Client.Properties;
 using Utopia.GUI.D3D.Inventory;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
@@ -85,7 +86,7 @@ namespace LostIsland.Client
                            };
 
 
-            utopiaRenderer = new UtopiaRender(new UtopiaRenderStates()
+            var states = new UtopiaRenderStates
             {
                 engine = iocContainer.Get<D3DEngine>(new ConstructorArgument("startingSize", new Size(1024, 600)),
                                                     new ConstructorArgument("windowCaption", "LostIsland Client")),
@@ -106,7 +107,7 @@ namespace LostIsland.Client
                 gameClock = iocContainer.Get<IClock>(),
                 inventoryComponent = iocContainer.Get<InventoryComponent>(),
                 chatComponent = iocContainer.Get<ChatComponent>(),
-                mapComponent = iocContainer.Get<MapComponent>(new ConstructorArgument("plan",plan)),
+                mapComponent = iocContainer.Get<MapComponent>(new ConstructorArgument("plan", plan)),
                 hud = iocContainer.Get<Hud>(),
                 entityEditor = iocContainer.Get<EntityEditor>(),
                 stars = iocContainer.Get<IDrawableComponent>("Stars"),
@@ -134,12 +135,18 @@ namespace LostIsland.Client
                 playerEntityRenderer = iocContainer.Get<IEntitiesRenderer>("PlayerEntityRenderer"),
                 defaultEntityRenderer = iocContainer.Get<IEntitiesRenderer>("DefaultEntityRenderer"),
                 voxelMeshFactory = iocContainer.Get<VoxelMeshFactory>(),
-                sharedFrameCB = iocContainer.Get <SharedFrameCB>(),
+                sharedFrameCB = iocContainer.Get<SharedFrameCB>(),
                 itemMessageTranslator = iocContainer.Get<ItemMessageTranslator>(),
                 entityMessageTranslator = iocContainer.Get<EntityMessageTranslator>(),
-                bepuPhysicsComponent = iocContainer.Get<BepuPhysicsComponent>()
-            }
-            );
+                bepuPhysicsComponent = iocContainer.Get<BepuPhysicsComponent>(),
+                customComponents = new [] { iocContainer.Get<LoadingComponent>() }
+            };
+
+            states.playerEntityManager.Enabled = false;
+            states.worldChunks.LoadComplete += worldChunks_LoadComplete;
+
+            utopiaRenderer = new UtopiaRender(states);
+            
             
             BindActions(iocContainer.Get<ActionsManager>());    //Bind the various actions
 
@@ -158,6 +165,17 @@ namespace LostIsland.Client
             utopiaRenderer.GameComponents.Add(debugInfo);
 
             return utopiaRenderer;
+        }
+
+        void worldChunks_LoadComplete(object sender, System.EventArgs e)
+        {
+            var manager = _iocContainer.Get<PlayerEntityManager>();
+            manager.Enabled = true;
+            var worldChunks = (WorldChunks)sender;
+            worldChunks.LoadComplete -= worldChunks_LoadComplete;
+            var loading = _iocContainer.Get<LoadingComponent>();
+            loading.Enabled = false;
+            loading.Visible = false;
         }
 
         private void BindActions(ActionsManager actionManager)

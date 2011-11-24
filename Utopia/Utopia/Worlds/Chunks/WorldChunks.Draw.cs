@@ -94,7 +94,7 @@ namespace Utopia.Worlds.Chunks
             {
                 chunk = SortedChunks[chunkIndice];
 
-                if (chunk.Ready2Draw)
+                if (chunk.IsReady2Draw)
                 {
                     if (!chunk.isFrustumCulled)
                     {
@@ -128,7 +128,7 @@ namespace Utopia.Worlds.Chunks
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
-                if (chunk.Ready2Draw && !chunk.isFrustumCulled) // !! Display all Changed one, even if the changed failed the Frustum culling test
+                if (chunk.IsReady2Draw && !chunk.isFrustumCulled) // !! Display all Changed one, even if the changed failed the Frustum culling test
                 {
                     //Only If I have something to draw !
                     if (chunk.LiquidCubeVB != null)
@@ -172,7 +172,7 @@ namespace Utopia.Worlds.Chunks
             {
                 chunk = SortedChunks[chunkIndice];
 
-                if (chunk.Ready2Draw)
+                if (chunk.IsReady2Draw)
                 {
                     if (!chunk.isFrustumCulled)
                     {
@@ -192,7 +192,7 @@ namespace Utopia.Worlds.Chunks
             {
                 chunk = SortedChunks[chunkIndice];
 
-                if (chunk.Ready2Draw)
+                if (chunk.IsReady2Draw)
                 {
                     if (!chunk.isFrustumCulled)
                     {

@@ -156,6 +156,7 @@ namespace Utopia.Worlds.Chunks
                 {
                     chunk.UserChangeOrder = 0;
                     chunk.ThreadPriority = WorkItemPriority.Normal;
+                    //TODO: english, please
                     //Si exécuté dans un thread => Doit fonctionner avec des device context deffered, avec un system de replay (Pas encore testé !!)
                     chunk.SendCubeMeshesToBuffers();
                 }

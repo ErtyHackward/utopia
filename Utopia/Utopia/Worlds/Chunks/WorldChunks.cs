@@ -19,15 +19,11 @@ using Utopia.Network;
 using Utopia.Entities.Managers;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.SkyDomes;
-using S33M3Engines.Maths;
-using System.Linq;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Weather;
 using Utopia.Effects.Shared;
 using SharpDX;
 using S33M3Physics.Verlet;
-using Utopia.Shared.Structs.Landscape;
-using Utopia.Worlds.Cubes;
 using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.Chunks
@@ -78,6 +74,8 @@ namespace Utopia.Worlds.Chunks
         private IWeather _weather;
         private SharedFrameCB _sharedFrameCB;
         private IEntityPickingManager _pickingManager;
+        private int _readyToDrawCount;
+        private readonly object _counterLock = new object();
         #endregion
 
         #region Public Property/Variables
@@ -105,6 +103,17 @@ namespace Utopia.Worlds.Chunks
         private void OnChunksArrayInitialized()
         {
             var handler = ChunksArrayInitialized;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Occurs when all chunks is loaded
+        /// </summary>
+        public event EventHandler LoadComplete;
+
+        private void OnLoadComplete()
+        {
+            var handler = LoadComplete;
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
@@ -173,9 +182,14 @@ namespace Utopia.Worlds.Chunks
 
         public override void Dispose()
         {
-            foreach (VisualChunk chunk in Chunks)
+            foreach (var chunk in Chunks)
             {
-                if (chunk != null) chunk.Dispose();
+                if (chunk != null)
+                {
+                    chunk.ReadyToDraw -= ChunkReadyToDraw;
+                    chunk.PreparingToDraw -= ChunkPreparingToDraw;
+                    chunk.Dispose();
+                }
             }
 
             DisposeDrawComponents();
@@ -439,6 +453,9 @@ namespace Utopia.Worlds.Chunks
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);
 
+                    chunk.ReadyToDraw += ChunkReadyToDraw;
+                    chunk.PreparingToDraw += ChunkPreparingToDraw;
+
                     //Store this chunk inside the arrays.
                     Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
                     SortedChunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
@@ -476,6 +493,25 @@ namespace Utopia.Worlds.Chunks
             ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
 
             OnChunksArrayInitialized();
+        }
+
+        void ChunkPreparingToDraw(object sender, EventArgs e)
+        {
+            lock (_counterLock)
+            {
+                _readyToDrawCount--;
+            }
+
+        }
+
+        void ChunkReadyToDraw(object sender, EventArgs e)
+        {
+            lock (_counterLock)
+            {
+                _readyToDrawCount++;
+                if (_readyToDrawCount == Chunks.Length)
+                    OnLoadComplete();
+            }
         }
 
         /// <summary>

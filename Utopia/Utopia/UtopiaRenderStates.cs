@@ -94,5 +94,6 @@ namespace Utopia
         public VoxelMeshFactory voxelMeshFactory;
         public SharedFrameCB sharedFrameCB;
         public BepuPhysicsComponent bepuPhysicsComponent;
+        public GameComponent[] customComponents;
     }
 }
