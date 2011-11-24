@@ -1,4 +1,6 @@
-﻿using BEPUphysics.MathExtensions;
+﻿using System.Collections.Generic;
+using BEPUphysics.MathExtensions;
+using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs;
 
 
@@ -15,7 +17,7 @@ namespace BEPUphysics.DataStructures
         ///<param name="globalMove"></param>
         ///<param name="vertices">Vertices to use in the mesh data.</param>
         ///<param name="indices">Indices to use in the mesh data.</param>
-        public TransformableMeshData(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices)
+        public TransformableMeshData(Vector3 globalMove, List<VertexCubeSolid> vertices, List<ushort> indices)
         {
             _globalMove = globalMove;
             ByteVertices = vertices;
@@ -30,7 +32,7 @@ namespace BEPUphysics.DataStructures
         public TransformableMeshData(Vector3[] vertices, int[] indices)
         {
             this.vertices = vertices;
-            this.indices = indices;
+            this._indices = indices;
         }
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace BEPUphysics.DataStructures
         {
             this.worldTransform = worldTransform;
             this.vertices = vertices;
-            this.indices = indices;
+            this._indices = indices;
         }
 
         ///<summary>
@@ -53,7 +55,7 @@ namespace BEPUphysics.DataStructures
         ///<param name="vertices">Vertice sto use in the mesh data.</param>
         ///<param name="indices">Indices to use in the mesh data.</param>
         ///<param name="worldTransform">Transform to apply to vertices before returning their positions.</param>
-        public TransformableMeshData(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices, AffineTransform worldTransform)
+        public TransformableMeshData(Vector3 globalMove, List<VertexCubeSolid> vertices, List<ushort> indices, AffineTransform worldTransform)
         {
             _globalMove = globalMove;
             this.worldTransform = worldTransform;
@@ -94,9 +96,9 @@ namespace BEPUphysics.DataStructures
 
             if (byteVertices != null)
             {
-                var bv1 = byteVertices[uindices[triangleIndex]];
-                var bv2 = byteVertices[uindices[triangleIndex + 1]];
-                var bv3 = byteVertices[uindices[triangleIndex + 2]];
+                var bv1 = byteVertices[uindices[triangleIndex]].Position;
+                var bv2 = byteVertices[uindices[triangleIndex + 1]].Position;
+                var bv3 = byteVertices[uindices[triangleIndex + 2]].Position;
 
                 tv1 = new Vector3(_globalMove.X + bv1.X, _globalMove.Y + bv1.Y, _globalMove.Z + bv1.Z);
                 tv2 = new Vector3(_globalMove.X + bv2.X, _globalMove.Y + bv2.Y, _globalMove.Z + bv2.Z);
@@ -104,9 +106,9 @@ namespace BEPUphysics.DataStructures
             }
             else
             {
-                tv1 = vertices[uindices[triangleIndex]];
-                tv2 = vertices[uindices[triangleIndex + 1]];
-                tv3 = vertices[uindices[triangleIndex + 2]];
+                tv1 = vertices[_indices[triangleIndex]];
+                tv2 = vertices[_indices[triangleIndex + 1]];
+                tv3 = vertices[_indices[triangleIndex + 2]];
             }
 
             AffineTransform.Transform(ref tv1, ref worldTransform, out v1);
@@ -124,7 +126,7 @@ namespace BEPUphysics.DataStructures
             Vector3 v;
             if (byteVertices != null)
             {
-                var bv = byteVertices[i];
+                var bv = byteVertices[i].Position;
                 v = new Vector3(_globalMove.X + bv.X, _globalMove.Y + bv.Y, _globalMove.Z + bv.Z);
             }
             else v = vertices[i];

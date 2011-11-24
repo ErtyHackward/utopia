@@ -319,7 +319,7 @@ namespace BEPUphysics.CollisionShapes
             //A vertex would work, but targeting the middle of a triangle avoids some edge cases.
             Ray ray = new Ray();
             Vector3 vA, vB, vC;
-            triangleMesh.Data.GetTriangle(((triangleMesh.Data.uindices.Length / 3) / 2) * 3, out vA, out vB, out vC);
+            triangleMesh.Data.GetTriangle(((triangleMesh.Data._indices.Length / 3) / 2) * 3, out vA, out vB, out vC);
             ray.Direction = (vA + vB + vC) / 3;
             ray.Direction.Normalize();
 
@@ -434,7 +434,7 @@ namespace BEPUphysics.CollisionShapes
                 //The following inertia tensor calculation assumes a closed mesh.
 
                 shapeInformation.Volume = 0;
-                for (int i = 0; i < data.uindices.Length; i += 3)
+                for (int i = 0; i < data._indices.Length; i += 3)
                 {
                     Vector3 v2, v3, v4;
                     data.GetTriangle(i, out v2, out v3, out v4);
@@ -463,7 +463,7 @@ namespace BEPUphysics.CollisionShapes
                 float a = 0, b = 0, c = 0, ao = 0, bo = 0, co = 0;
 
                 float totalWeight = 0;
-                for (int i = 0; i < data.uindices.Length; i += 3)
+                for (int i = 0; i < data._indices.Length; i += 3)
                 {
                     Vector3 v2, v3, v4;
                     data.GetTriangle(i, out v2, out v3, out v4);
@@ -504,7 +504,7 @@ namespace BEPUphysics.CollisionShapes
             {
                 shapeInformation.Center = new Vector3();
                 float totalWeight = 0;
-                for (int i = 0; i < data.uindices.Length; i += 3)
+                for (int i = 0; i < data._indices.Length; i += 3)
                 { //Configure the inertia tensor to be local.
                     Vector3 vA, vB, vC;
                     data.GetTriangle(i, out vA, out vB, out vC);
@@ -528,7 +528,7 @@ namespace BEPUphysics.CollisionShapes
                 data.worldTransform.Translation -= shapeInformation.Center;
 
                 shapeInformation.VolumeDistribution = new Matrix3X3();
-                for (int i = 0; i < data.uindices.Length; i += 3)
+                for (int i = 0; i < data._indices.Length; i += 3)
                 { //Configure the inertia tensor to be local.
                     Vector3 vA, vB, vC;
                     data.GetTriangle(i, out vA, out vB, out vC);

@@ -136,7 +136,8 @@ namespace LostIsland.Client
                 voxelMeshFactory = iocContainer.Get<VoxelMeshFactory>(),
                 sharedFrameCB = iocContainer.Get <SharedFrameCB>(),
                 itemMessageTranslator = iocContainer.Get<ItemMessageTranslator>(),
-                entityMessageTranslator = iocContainer.Get<EntityMessageTranslator>()
+                entityMessageTranslator = iocContainer.Get<EntityMessageTranslator>(),
+                bepuPhysicsComponent = iocContainer.Get<BepuPhysicsComponent>()
             }
             );
             
@@ -151,7 +152,8 @@ namespace LostIsland.Client
                 iocContainer.Get<IWorldChunks>(), 
                 iocContainer.Get<PlayerEntityManager>(), 
                 _server,
-                iocContainer.Get<GuiManager>()
+                iocContainer.Get<GuiManager>(),
+                iocContainer.Get<BepuPhysicsComponent>()
                 );
             utopiaRenderer.GameComponents.Add(debugInfo);
 

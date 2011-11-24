@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BEPUphysics.Collidables.Events;
 using BEPUphysics.CollisionShapes;
 using BEPUphysics.MathExtensions;
@@ -10,6 +11,7 @@ using BEPUphysics.CollisionShapes.ConvexShapes;
 using BEPUphysics.ResourceManagement;
 using BEPUphysics.CollisionTests.CollisionAlgorithms;
 using BEPUphysics.CollisionTests.CollisionAlgorithms.GJK;
+using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs;
 
 namespace BEPUphysics.Collidables
@@ -60,7 +62,7 @@ namespace BEPUphysics.Collidables
         ///<param name="globalMove"></param>
         ///<param name="vertices">Vertex positions of the mesh.</param>
         ///<param name="indices">Index list of the mesh.</param>
-        public StaticMesh(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices)
+        public StaticMesh(Vector3 globalMove, List<VertexCubeSolid> vertices, List<ushort> indices)
         {
             base.Shape = new StaticMeshShape(globalMove, vertices, indices);
             collisionRules.group = CollisionRules.DefaultKinematicCollisionGroup;
@@ -78,13 +80,45 @@ namespace BEPUphysics.Collidables
         ///<param name="vertices">Vertex positions of the mesh.</param>
         ///<param name="indices">Index list of the mesh.</param>
         /// <param name="worldTransform">Transform to use to create the mesh initially.</param>
-        public StaticMesh(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices, AffineTransform worldTransform)
+        public StaticMesh(Vector3 globalMove, List<VertexCubeSolid> vertices, List<ushort> indices, AffineTransform worldTransform)
         {
             base.Shape = new StaticMeshShape(globalMove, vertices, indices, worldTransform);
             collisionRules.group = CollisionRules.DefaultKinematicCollisionGroup;
             events = new ContactEventManager<StaticMesh>(this);
+            
+            material = new Material();
+            materialChangedDelegate = OnMaterialChanged;
+            material.MaterialChanged += materialChangedDelegate;
+        }
 
+        ///<summary>
+        /// Constructs a new static mesh.
+        ///</summary>
+        ///<param name="vertices">Vertex positions of the mesh.</param>
+        ///<param name="indices">Index list of the mesh.</param>
+        /// <param name="worldTransform">Transform to use to create the mesh initially.</param>
+        public StaticMesh(Vector3[] vertices, int[] indices, AffineTransform worldTransform)
+        {
+            base.Shape = new StaticMeshShape(vertices, indices, worldTransform);
+            collisionRules.group = CollisionRules.DefaultKinematicCollisionGroup;
+            events = new ContactEventManager<StaticMesh>(this);
 
+            material = new Material();
+            materialChangedDelegate = OnMaterialChanged;
+            material.MaterialChanged += materialChangedDelegate;
+        }
+
+        ///<summary>
+        /// Constructs a new static mesh.
+        ///</summary>
+        ///<param name="vertices">Vertex positions of the mesh.</param>
+        ///<param name="indices">Index list of the mesh.</param>
+        /// <param name="worldTransform">Transform to use to create the mesh initially.</param>
+        public StaticMesh(Vector3[] vertices, int[] indices)
+        {
+            base.Shape = new StaticMeshShape(vertices, indices);
+            collisionRules.group = CollisionRules.DefaultKinematicCollisionGroup;
+            events = new ContactEventManager<StaticMesh>(this);
 
             material = new Material();
             materialChangedDelegate = OnMaterialChanged;

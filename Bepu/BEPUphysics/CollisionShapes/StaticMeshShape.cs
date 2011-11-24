@@ -1,6 +1,8 @@
-﻿using BEPUphysics.MathExtensions;
+﻿using System.Collections.Generic;
+using BEPUphysics.MathExtensions;
  
 using BEPUphysics.DataStructures;
+using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs;
 
 namespace BEPUphysics.CollisionShapes
@@ -35,11 +37,21 @@ namespace BEPUphysics.CollisionShapes
         ///<param name="vertices">Vertices of the mesh.</param>
         ///<param name="indices">Indices of the mesh.</param>
         ///<param name="worldTransform">World transform to use in the local space data.</param>
-        public StaticMeshShape(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices, AffineTransform worldTransform)
+        public StaticMeshShape(Vector3 globalMove, List<VertexCubeSolid> vertices, List<ushort> indices, AffineTransform worldTransform)
         {
             triangleMeshData = new TransformableMeshData(globalMove, vertices, indices, worldTransform);
         }
 
+        ///<summary>
+        /// Constructs a new StaticMeshShape.
+        ///</summary>
+        ///<param name="vertices">Vertices of the mesh.</param>
+        ///<param name="indices">Indices of the mesh.</param>
+        ///<param name="worldTransform">World transform to use in the local space data.</param>
+        public StaticMeshShape(Vector3[] vertices, int[] indices, AffineTransform worldTransform)
+        {
+            triangleMeshData = new TransformableMeshData(vertices, indices, worldTransform);
+        }
 
 
         ///<summary>
@@ -47,11 +59,21 @@ namespace BEPUphysics.CollisionShapes
         ///</summary>
         ///<param name="vertices">Vertices of the mesh.</param>
         ///<param name="indices">Indices of the mesh.</param>
-        public StaticMeshShape(Vector3 globalMove, ByteVector3[] vertices, ushort[] indices)
+        public StaticMeshShape(Vector3 globalMove, List<VertexCubeSolid> vertices, List<ushort> indices)
         {
             triangleMeshData = new TransformableMeshData(globalMove, vertices, indices);
         }
 
+        ///<summary>
+        /// Constructs a new StaticMeshShape.
+        ///</summary>
+        ///<param name="vertices">Vertices of the mesh.</param>
+        ///<param name="indices">Indices of the mesh.</param>
+        ///<param name="worldTransform">World transform to use in the local space data.</param>
+        public StaticMeshShape(Vector3[] vertices, int[] indices)
+        {
+            triangleMeshData = new TransformableMeshData(vertices, indices);
+        }
 
     }
 }

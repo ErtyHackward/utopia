@@ -65,11 +65,25 @@ namespace BEPUphysics.DataStructures
         public void Reconstruct()
         {
             root = null;
-            for (int i = 0; i < data.uindices.Length; i += 3)
+
+            if (data.byteVertices != null)
             {
-                //Use a permuted version of the triangles instead of the actual triangle list.
-                //Permuting makes the input basically random, improving the quality of the tree.
-                Insert((int)(((1208299L * (i / 3)) % (data.uindices.Length / 3)) * 3));
+
+                for (int i = 0; i < data.uindices.Count; i += 3)
+                {
+                    //Use a permuted version of the triangles instead of the actual triangle list.
+                    //Permuting makes the input basically random, improving the quality of the tree.
+                    Insert((int)(((1208299L * (i / 3)) % (data.uindices.Count / 3)) * 3));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < data._indices.Length; i += 3)
+                {
+                    //Use a permuted version of the triangles instead of the actual triangle list.
+                    //Permuting makes the input basically random, improving the quality of the tree.
+                    Insert((int)(((1208299L * (i / 3)) % (data._indices.Length / 3)) * 3));
+                }
             }
         }
 

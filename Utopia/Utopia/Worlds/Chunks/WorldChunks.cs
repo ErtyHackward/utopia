@@ -97,6 +97,18 @@ namespace Utopia.Worlds.Chunks
 
         #endregion
 
+        /// <summary>
+        /// Occurs when array of visual chunks get initialized
+        /// </summary>
+        public event EventHandler ChunksArrayInitialized;
+
+        private void OnChunksArrayInitialized()
+        {
+            var handler = ChunksArrayInitialized;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+
         public WorldChunks(D3DEngine d3dEngine, 
                            CameraManager camManager,
                            VisualWorldParameters visualWorldParameters,
@@ -462,6 +474,8 @@ namespace Utopia.Worlds.Chunks
             );
 
             ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
+
+            OnChunksArrayInitialized();
         }
 
         /// <summary>

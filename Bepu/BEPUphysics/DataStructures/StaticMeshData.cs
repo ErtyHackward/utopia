@@ -29,9 +29,22 @@ namespace BEPUphysics.DataStructures
         ///<param name="v3">Third vertex of the triangle.</param>
         public override void GetTriangle(int triangleIndex, out Vector3 v1, out Vector3 v2, out Vector3 v3)
         {
-            v1 = Vertices[indices[triangleIndex]];
-            v2 = Vertices[indices[triangleIndex + 1]];
-            v3 = Vertices[indices[triangleIndex + 2]];
+            if (byteVertices != null)
+            {
+                var bv1 = byteVertices[uindices[triangleIndex]].Position;
+                var bv2 = byteVertices[uindices[triangleIndex + 1]].Position;
+                var bv3 = byteVertices[uindices[triangleIndex + 2]].Position;
+
+                v1 = new Vector3(_globalMove.X + bv1.X, _globalMove.Y + bv1.Y, _globalMove.Z + bv1.Z);
+                v2 = new Vector3(_globalMove.X + bv2.X, _globalMove.Y + bv2.Y, _globalMove.Z + bv2.Z);
+                v3 = new Vector3(_globalMove.X + bv3.X, _globalMove.Y + bv3.Y, _globalMove.Z + bv3.Z);
+            }
+            else
+            {
+                v1 = vertices[uindices[triangleIndex]];
+                v2 = vertices[uindices[triangleIndex + 1]];
+                v3 = vertices[uindices[triangleIndex + 2]];
+            }
         }
 
 
@@ -42,7 +55,12 @@ namespace BEPUphysics.DataStructures
         ///<param name="vertex">Position of the vertex.</param>
         public override void GetVertexPosition(int i, out Vector3 vertex)
         {
-            vertex = vertices[i];
+            if (byteVertices != null)
+            {
+                var bv1 = byteVertices[i].Position;
+                vertex = new Vector3(_globalMove.X + bv1.X, _globalMove.Y + bv1.Y, _globalMove.Z + bv1.Z);
+            }
+            else vertex = vertices[i];
         }
 
 
