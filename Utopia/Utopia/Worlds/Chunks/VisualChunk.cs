@@ -69,8 +69,28 @@ namespace Utopia.Worlds.Chunks
         public ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
         public WorkItemPriority ThreadPriority { get; set; }  // Thread Priority value
         public int UserChangeOrder { get; set; }              // Variable for sync drawing at rebuild time.
-        public bool BorderChunk { get; set; }                 // Set to true if the chunk is located at the border of the visible world !
-        public bool Ready2Draw { get; set; }                  // Whenever the chunk mesh are ready to be rendered to screen
+        public bool IsBorderChunk { get; set; }                 // Set to true if the chunk is located at the border of the visible world !
+        private bool _ready2Draw;
+        /// <summary>
+        /// Whenever the chunk mesh are ready to be rendered to screen
+        /// </summary>
+        public bool IsReady2Draw
+        {
+            get { return _ready2Draw; }
+            internal set 
+            {
+                if (_ready2Draw != value)
+                {
+                    _ready2Draw = value;
+                    if (_ready2Draw)
+                        OnReadyToDraw();
+                    else 
+                        OnPreparingToDraw();
+                }
+            }
+        }
+
+        
         public bool isFrustumCulled { get; set; }             // Chunk Frustum culled
         public Int64 ChunkID { get; set; }                    // Chunk ID
 
@@ -125,6 +145,28 @@ namespace Utopia.Worlds.Chunks
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Occurs when chunk is ready to draw ;)
+        /// </summary>
+        public event EventHandler ReadyToDraw;
+
+        private void OnReadyToDraw()
+        {
+            var handler = ReadyToDraw;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Occurs when chunk vertices need to be rebuilded
+        /// </summary>
+        public event EventHandler PreparingToDraw;
+
+        private void OnPreparingToDraw()
+        {
+            var handler = PreparingToDraw;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
 
         public VisualChunk(
                             D3DEngine d3dEngine, 
@@ -146,7 +188,7 @@ namespace Utopia.Worlds.Chunks
             CubeRange = cubeRange;
             _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
-            Ready2Draw = false;
+            IsReady2Draw = false;
             LightPropagateBorderOffset = new Location2<int>(0, 0);
             Entities.CollectionDirty += Entities_CollectionDirty;
         }
@@ -155,7 +197,7 @@ namespace Utopia.Worlds.Chunks
 
         public void RefreshBorderChunk()
         {
-            BorderChunk = isBorderChunk(ChunkPositionBlockUnit.X, ChunkPositionBlockUnit.Y);
+            IsBorderChunk = isBorderChunk(ChunkPositionBlockUnit.X, ChunkPositionBlockUnit.Y);
         }
 
         public void SetNewEntityCollection(EntityCollection newEntities)
@@ -189,7 +231,7 @@ namespace Utopia.Worlds.Chunks
             SendLiquidCubeMeshToGraphicCard();      //See Through Cubes
             SendStaticEntitiesToGraphicalCard();    //Static Entities Sprite + Voxel
             State = ChunkState.DisplayInSyncWithMeshes;
-            Ready2Draw = true;
+            IsReady2Draw = true;
         }
 
         //Solid Cube

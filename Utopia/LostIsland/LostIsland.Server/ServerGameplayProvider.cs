@@ -3,6 +3,7 @@ using LostIsland.Shared;
 using LostIsland.Shared.Items;
 using LostIsland.Shared.Tools;
 using S33M3Engines.Shared.Math;
+using SharpDX;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
@@ -28,12 +29,13 @@ namespace LostIsland.Server
         {
             var dEntity = new PlayerCharacter();
             dEntity.DynamicId = entityId;
-            dEntity.Position = new Vector3D(10, 128, 10);
+            dEntity.DisplacementMode = EntityDisplacementModes.Walking;
+            dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
             dEntity.CharacterName = name;
             ContainedSlot outItem;
             //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.Annihilator) }, out outItem);
 
-            var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
+            var adder = (CubeResource)EntityFactory.Instance.CreateEntity(EntityClassId.CubeResource);
             adder.CubeId = CubeId.HalfWoodPlank;//looting a terraincube will create a new blockadder instance or add to the stack
 
             dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
@@ -43,7 +45,7 @@ namespace LostIsland.Server
                 if (cubeId == CubeId.Air)
                     continue;
 
-                var item3 = (CubeResource)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.CubeResource));
+                var item3 = (CubeResource)EntityFactory.Instance.CreateEntity((EntityClassId.CubeResource));
                 item3.CubeId = cubeId;
                 dEntity.Inventory.PutItem(item3);
             }

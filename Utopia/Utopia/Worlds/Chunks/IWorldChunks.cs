@@ -32,6 +32,11 @@ namespace Utopia.Worlds.Chunks
         event EventHandler ChunksArrayInitialized;
 
         /// <summary>
+        /// Occurs when all chunks is loaded
+        /// </summary>
+        event EventHandler LoadComplete;
+
+        /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate
         /// </summary>
         /// <param name="X">Cube X coordinate in world coordinate</param>

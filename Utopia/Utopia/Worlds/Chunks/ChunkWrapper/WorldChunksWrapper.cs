@@ -104,7 +104,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
-                        chunk.Ready2Draw = false;
+                        chunk.IsReady2Draw = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Max.X;
                         ActualCubeRange = chunk.CubeRange;
@@ -130,7 +130,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
-                        chunk.Ready2Draw = false;
+                        chunk.IsReady2Draw = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Min.X;
                         ActualCubeRange = chunk.CubeRange;
@@ -156,7 +156,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
-                        chunk.Ready2Draw = false;
+                        chunk.IsReady2Draw = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Max.Z;
                         ActualCubeRange = chunk.CubeRange;
@@ -181,7 +181,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
-                        chunk.Ready2Draw = false;
+                        chunk.IsReady2Draw = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Min.Z;
                         ActualCubeRange = chunk.CubeRange;

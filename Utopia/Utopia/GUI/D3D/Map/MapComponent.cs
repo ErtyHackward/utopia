@@ -66,7 +66,7 @@ namespace Utopia.GUI.D3D.Map
 
             _mapWindow.Children.Add(_mapControl);
 
-            _mapImage.Save("map.png", ImageFormat.Png);
+            //_mapImage.Save("map.png", ImageFormat.Png);
         }
 
 

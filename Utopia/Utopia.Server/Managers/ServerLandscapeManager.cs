@@ -10,6 +10,7 @@ using Utopia.Server.AStar;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Cubes;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -441,6 +442,28 @@ namespace Utopia.Server.Managers
                     }
                 }
             }
+        }
+
+        public Vector3D GetHighestPoint(Vector3D vector2)
+        {
+            var chunk = GetChunk(vector2);
+
+            var cx = (int)vector2.X % AbstractChunk.ChunkSize.X;
+            var cz = (int)vector2.Z % AbstractChunk.ChunkSize.Z;
+
+            if (cx < 0) cx = AbstractChunk.ChunkSize.X - cx;
+            if (cz < 0) cz = AbstractChunk.ChunkSize.Z - cz;
+
+            int y;
+
+            for (y = 127; y >= 0; y--)
+            {
+                if(chunk.BlockData.GetBlock(new Vector3I(cx, y, cz)) != CubeId.Air)
+                    break;
+                
+            }
+
+            return new Vector3D(vector2.X, y + 1, vector2.Z); 
         }
     }
 }

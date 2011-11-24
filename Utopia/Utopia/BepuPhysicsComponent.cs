@@ -166,6 +166,7 @@ namespace Utopia
 
         public string GetInfo()
         {
+            if (_perfCounter.Count == 0) return "Loading";
             return string.Format("BepuPhysics avg time: {0} ms, {1} meshes", Math.Round(_perfCounter.Average(), 1), _meshes.Count);
         }
     } 
