@@ -68,6 +68,8 @@ namespace Utopia.GUI.D3D.Inventory
             _screen.Desktop.Clicked += DesktopClicked;
 
             _itemMessageTranslator.Enabled = false;
+
+            _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);
         }
 
         void DesktopClicked(object sender, EventArgs e)
@@ -134,7 +136,7 @@ namespace Utopia.GUI.D3D.Inventory
 
             _dragControl = new InventoryCell(null, _iconFactory, new Vector2I())
             {
-                Bounds = new UniRectangle(0, 0, InventoryWindow.CellSize, InventoryWindow.CellSize),
+                Bounds = new UniRectangle(-100, -100, InventoryWindow.CellSize, InventoryWindow.CellSize),
                 DrawCellBackground = false,
                 IsClickTransparent = true
             };
@@ -249,7 +251,6 @@ namespace Utopia.GUI.D3D.Inventory
         private void BeginDrag(ContainedSlot slot)
         {
             _dragControl.Slot = slot;
-            _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);
             _screen.Desktop.Children.Add(_dragControl);
             _dragControl.BringToFront();
         }
@@ -269,7 +270,7 @@ namespace Utopia.GUI.D3D.Inventory
         public override void Update(ref GameTime timeSpent)
         {
 
-            if (_dragControl.Slot != null)
+            //if (_dragControl.Slot != null)
             {
                 var mouseState = Mouse.GetState();
                 _dragControl.Bounds.Location = new UniVector(new UniScalar(mouseState.X - _dragOffset.X), new UniScalar(mouseState.Y - _dragOffset.Y));

@@ -38,26 +38,20 @@ namespace LostIsland.Server
 
             dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
-            var item = (IItem)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.Shovel));
-            dEntity.Inventory.PutItem(item);
-
-            var item3 = (CubeResource)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.CubeResource));
-            item3.CubeId = CubeId.WoodPlank;
-            dEntity.Inventory.PutItem(item3);
-
-            Random r = new Random();
-
             foreach (var cubeId in CubeId.All())
             {
                 if (cubeId == CubeId.Air)
                     continue;
 
-                item3 = (CubeResource)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.CubeResource));
+                var item3 = (CubeResource)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.CubeResource));
                 item3.CubeId = cubeId;
-                dEntity.Inventory.PutItem(item3, 100);
+                dEntity.Inventory.PutItem(item3);
             }
 
-            dEntity.Inventory.PutItem(new GoldCoin(), 45821);
+            //var item = (IItem)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.Shovel));
+            //dEntity.Inventory.PutItem(item);
+
+            //dEntity.Inventory.PutItem(new GoldCoin(), 45821);
 
             //dEntity.Inventory.PutItem((Carver)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.Carver)));
             
