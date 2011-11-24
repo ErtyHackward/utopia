@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Diagnostics;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Network
 {
     /// <summary>
-    /// Translates message from entity object model to the server and back
+    /// Translates messages from the entity object model to the server and back
     /// </summary>
     public class EntityMessageTranslator : IDisposable
     {
         private readonly ServerConnection _connection;
         private readonly IDynamicEntityManager _dynamicEntityManager;
+        private readonly IWorldChunks _chunkManager;
         private IDynamicEntity _playerEntity;
 
         /// <summary>
@@ -52,7 +55,8 @@ namespace Utopia.Network
         /// <param name="connection"></param>
         /// <param name="playerEntity"></param>
         /// <param name="dynamicEntityManager"></param>
-        public EntityMessageTranslator(Server connection, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager)
+        /// <param name="chunkManager"></param>
+        public EntityMessageTranslator(Server connection, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager, IWorldChunks chunkManager)
         {
             if (connection == null) throw new ArgumentNullException("connection");
             _connection = connection.ServerConnection;
@@ -65,6 +69,9 @@ namespace Utopia.Network
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             _dynamicEntityManager = dynamicEntityManager;
+
+            if (chunkManager == null) throw new ArgumentNullException("chunkManager");
+            _chunkManager = chunkManager;
 
             if (playerEntity == null) throw new ArgumentNullException("playerEntity");
             PlayerEntity = playerEntity;
@@ -82,7 +89,7 @@ namespace Utopia.Network
         {
             var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
             if (entity != null)
-                entity.Rotation = e.Message.Direction;
+                entity.Rotation = e.Message.Rotation;
             else
             {
                 Debug.WriteLine("Unable to update direction of an entity");
@@ -102,7 +109,6 @@ namespace Utopia.Network
 
         void ConnectionMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
         {
-            
             // do we need to check if that entity was dynamic or static?
             _dynamicEntityManager.RemoveEntityById(e.Message.EntityId);
         }
@@ -116,9 +122,12 @@ namespace Utopia.Network
                 case EntityType.Block:
                     break;
                 case EntityType.Static:
+                    var cpos = e.Message.Link.ChunkPosition;
+                    var chunk = _chunkManager.GetChunk(cpos.X * AbstractChunk.ChunkSize.X, cpos.Y * AbstractChunk.ChunkSize.Z);
+                    chunk.Entities.Add((IStaticEntity)e.Message.Entity, e.Message.ParentEntityId);
                     break;
                 case EntityType.Dynamic:
-                        _dynamicEntityManager.AddEntity((IDynamicEntity)e.Message.Entity);
+                    _dynamicEntityManager.AddEntity((IDynamicEntity) e.Message.Entity);
                     break;
             }
         }
@@ -142,7 +151,7 @@ namespace Utopia.Network
         {
             _connection.SendAsync(new EntityDirectionMessage 
             { 
-                Direction = e.Entity.Rotation, 
+                Rotation = e.Entity.Rotation, 
                 EntityId = e.Entity.DynamicId 
             });
         }

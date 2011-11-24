@@ -18,7 +18,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Actual direction quaternion of the entity
         /// </summary>
-        private Quaternion _direction;
+        private Quaternion _rotation;
 
         /// <summary>
         /// Gets message id
@@ -40,19 +40,18 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Gets or sets an actual direction quaternion of the entity
         /// </summary>
-        public Quaternion Direction
+        public Quaternion Rotation
         {
-            get { return _direction; }
-            set { _direction = value; }
+            get { return _rotation; }
+            set { _rotation = value; }
         }
 
         public static EntityDirectionMessage Read(BinaryReader reader)
         {
-            
             EntityDirectionMessage msg;
 
             msg._entityId = reader.ReadUInt32();
-            msg._direction = reader.ReadQuaternion();
+            msg._rotation = reader.ReadQuaternion();
 
             return msg;
         }
@@ -60,7 +59,7 @@ namespace Utopia.Shared.Net.Messages
         public static void Write(BinaryWriter writer, EntityDirectionMessage msg)
         {
             writer.Write(msg._entityId);
-            writer.Write(msg._direction);
+            writer.Write(msg._rotation);
         }
 
         public void Write(BinaryWriter writer)

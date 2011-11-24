@@ -53,7 +53,7 @@ namespace Utopia.Server.Structs
         public ServerChunk(GeneratedChunk chunk)
             : base(chunk.BlockData)
         {
-            Entities = chunk.Entities;
+            Entities.Import(chunk.Entities);
             PureGenerated = true;
         }
 
