@@ -25,7 +25,7 @@ namespace S33M3Engines.Textures
         private Format _textureFormat;
         private int _textureWidth;
         private int _textureHeight;
-        private Color4 _backGroundColor = new Color4(1, 0, 0, 0);
+        private Color4 _backGroundColor = new Color4(0, 0, 0, 1);
         #endregion
 
         #region Public variables

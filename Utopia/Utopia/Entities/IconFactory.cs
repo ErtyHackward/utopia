@@ -153,7 +153,7 @@ namespace Utopia.Entities
             //Create the render texture
             RenderedTexture2D texture = new RenderedTexture2D(_d3DEngine, textureSize, textureSize, SharpDX.DXGI.Format.R8G8B8A8_UNorm)
             {
-                BackGroundColor = new Color4(0, 255, 255, 255)
+                BackGroundColor = new Color4(255, 255, 255, 0)
             };
 
             Texture2DDescription SpriteTextureDesc = new Texture2DDescription()
@@ -169,12 +169,14 @@ namespace Utopia.Entities
                 CpuAccessFlags = CpuAccessFlags.Write
             };
             Texture2D SpriteTexture = new Texture2D(_d3DEngine.Device, SpriteTextureDesc);
+
             DataStream dataStream;
-            _d3DEngine.Context.MapSubresource(SpriteTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out dataStream);
+            DataBox data = _d3DEngine.Context.MapSubresource(SpriteTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out dataStream);
             dataStream.Position = 0;
             dataStream.Write<Vector4>(new Vector4(1.0f, 1.0f, 1.0f, 1.0f)); //Ecrire dans la texture
             dataStream.Position = 0;
             _d3DEngine.Context.UnmapSubresource(SpriteTexture, 0);
+            dataStream.Dispose();
 
             SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, SpriteTexture, new Vector2(0, 0));
             spriteTexture.ScreenPosition = Matrix.Scaling(textureSize) * spriteTexture.ScreenPosition;
@@ -268,7 +270,7 @@ namespace Utopia.Entities
                 if (profile.IsEmissiveColorLightSource)
                 {
                     spriteRenderer.Begin(false, SpriteRenderer.FilterMode.Point);
-                    spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, new Color4(0.5f, profile.EmissiveColor.R /255, profile.EmissiveColor.G/255, profile.EmissiveColor.B/255), new RectangleF(0,0,textureSize,textureSize));
+                    spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, new Color4(profile.EmissiveColor.R / 255, profile.EmissiveColor.G / 255, profile.EmissiveColor.B / 255, 0.5f), new RectangleF(0, 0, textureSize, textureSize));
                     spriteRenderer.End();
                 }
 

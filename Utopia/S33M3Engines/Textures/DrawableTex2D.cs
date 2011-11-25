@@ -23,7 +23,7 @@ namespace S33M3Engines.Textures
         private DepthStencilView _depthMapDSV;
         private ShaderResourceView _depthMapSRV;
         private Viewport _viewport;
-        private Color4 _whiteColor = new Color4(1, 0, 0, 0);
+        private Color4 _whiteColor = new Color4(0, 0, 0, 1);
         private Texture2DDescription _colorMaptexDesc;
         private Texture2DDescription _depthMapDesc;
         #endregion
