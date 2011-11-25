@@ -16,6 +16,9 @@ using Ninject;
 
 namespace Utopia.Effects.Shared
 {
+    /// <summary>
+    /// What is this?
+    /// </summary>
     public class SharedFrameCB: DrawableGameComponent
     {
         [StructLayout(LayoutKind.Explicit, Size = 80)]

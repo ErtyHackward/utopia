@@ -56,8 +56,8 @@ namespace LostIsland.Client
         public UtopiaRender CreateNewGameEngine(IKernel iocContainer)
         {
             //Prapare the world parameter variable from server sources ==================================
-            WorldParameters worldParam = new WorldParameters()
-            {
+            var worldParam = new WorldParameters
+                                             {
                 IsInfinite = true,
                 Seed = iocContainer.Get<Server>().GameInformations.WorldSeed,
                 SeaLevel = iocContainer.Get<Server>().GameInformations.WaterLevel,
@@ -137,9 +137,7 @@ namespace LostIsland.Client
                 voxelMeshFactory = iocContainer.Get<VoxelMeshFactory>(),
                 sharedFrameCB = iocContainer.Get<SharedFrameCB>(),
                 itemMessageTranslator = iocContainer.Get<ItemMessageTranslator>(),
-                entityMessageTranslator = iocContainer.Get<EntityMessageTranslator>(),
-                bepuPhysicsComponent = iocContainer.Get<BepuPhysicsComponent>(),
-                customComponents = new [] { iocContainer.Get<LoadingComponent>() }
+                entityMessageTranslator = iocContainer.Get<EntityMessageTranslator>()
             };
 
             states.playerEntityManager.Enabled = false;
@@ -147,6 +145,10 @@ namespace LostIsland.Client
 
             utopiaRenderer = new UtopiaRender(states);
             
+
+            //utopiaRenderer.GameComponents.Add(iocContainer.Get<BepuPhysicsComponent>());
+            utopiaRenderer.GameComponents.Add(iocContainer.Get<LoadingComponent>());
+
             
             BindActions(iocContainer.Get<ActionsManager>());    //Bind the various actions
 
@@ -159,8 +161,7 @@ namespace LostIsland.Client
                 iocContainer.Get<IWorldChunks>(), 
                 iocContainer.Get<PlayerEntityManager>(), 
                 _server,
-                iocContainer.Get<GuiManager>(),
-                iocContainer.Get<BepuPhysicsComponent>()
+                iocContainer.Get<GuiManager>()
                 );
             utopiaRenderer.GameComponents.Add(debugInfo);
 
