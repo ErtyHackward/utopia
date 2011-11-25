@@ -47,28 +47,7 @@ namespace Utopia.Entities.Sprites
                 spriteTextureId = profile.SpriteID;
             }
         }
-        //    //Assign Texture Array from Sprite Type
-        //    switch (SpriteEntity.ClassId)
-        //    {
-        //        case EntityClassId.Grass:                    
-        //            IGrowEntity grassEntity = (IGrowEntity)SpriteEntity;
-        //            spriteTextureId = (0 * 5) + grassEntity.GrowPhase ;     //5 level of evolution forsee by sprite formula should be (StaticSpriteTextureID * 5) + Evolution.
-        //            break;
-        //        case EntityClassId.Flower1:
-        //            spriteTextureId = 7;
-        //            break;
-        //        case EntityClassId.Flower2:
-        //            spriteTextureId = 8;
-        //            break;
-        //        case EntityClassId.Mushroom1:
-        //            spriteTextureId = 5;
-        //            break;
-        //        case EntityClassId.Mushroom2:
-        //            spriteTextureId = 6;
-        //            break;
-        //        default:
-        //            throw new Exception("Static Sprite ID not supported");
-        //    }
+
         #endregion
 
         #region Public methods

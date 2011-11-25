@@ -169,10 +169,11 @@ namespace Utopia.Entities
                 CpuAccessFlags = CpuAccessFlags.Write
             };
             Texture2D SpriteTexture = new Texture2D(_d3DEngine.Device, SpriteTextureDesc);
-            DataBox data = _d3DEngine.Context.MapSubresource(SpriteTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None);
-            data.Data.Position = 0;
-            data.Data.Write<Vector4>(new Vector4(1.0f, 1.0f, 1.0f, 1.0f)); //Ecrire dans la texture
-            data.Data.Position = 0;
+            DataStream dataStream;
+            _d3DEngine.Context.MapSubresource(SpriteTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out dataStream);
+            dataStream.Position = 0;
+            dataStream.Write<Vector4>(new Vector4(1.0f, 1.0f, 1.0f, 1.0f)); //Ecrire dans la texture
+            dataStream.Position = 0;
             _d3DEngine.Context.UnmapSubresource(SpriteTexture, 0);
 
             SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, SpriteTexture, new Vector2(0, 0));

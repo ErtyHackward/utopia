@@ -91,13 +91,14 @@ namespace S33M3Engines.Textures
                  for (int mipSlice = 0; mipSlice < Imagesdesc.MipLevels; mipSlice++)
                  {
                      mipHeight = ArrayTextureHelper.GetMipSize(mipSlice, texturesCollection[arraySlice].Description.Height);
-                     box = device.ImmediateContext.MapSubresource(texturesCollection[arraySlice], mipSlice, MapMode.Read, MapFlags.None);
+                     DataStream datastream;
+                     box = device.ImmediateContext.MapSubresource(texturesCollection[arraySlice], mipSlice, MapMode.Read, MapFlags.None, out datastream);
 
-                     box.Data.Position = 0;
                      device.ImmediateContext.UpdateSubresource(box,
                                                           texArray,
                                                           S33M3Engines.D3D.Tools.Resource.CalcSubresource(mipSlice, arraySlice, Imagesdesc.MipLevels)
                                                           );
+
                      device.ImmediateContext.UnmapSubresource(texturesCollection[arraySlice], mipSlice);
 
                  }

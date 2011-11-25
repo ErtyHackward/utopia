@@ -113,11 +113,13 @@ namespace S33M3Engines.Buffers
             else
             {
                 //Update the buffer
-                DataBox databox = _d3dEngine.Context.MapSubresource(_vertexBufferInstancedData, 0, MapMode.WriteDiscard, MapFlags.None);
-                databox.Data.Position = 0;
-                databox.Data.WriteRange(data);
-                databox.Data.Position = 0;
+                DataStream dataStream;
+                DataBox databox = _d3dEngine.Context.MapSubresource(_vertexBufferInstancedData, 0, MapMode.WriteDiscard, MapFlags.None, out dataStream);
+                dataStream.Position = 0;
+                dataStream.WriteRange(data);
+                dataStream.Position = 0;
                 _d3dEngine.Context.UnmapSubresource(_vertexBufferInstancedData, 0);
+                dataStream.Dispose();
             }
 
             _bindingInstanced = new VertexBufferBinding(_vertexBufferInstancedData, _vertexDeclatation.PerInstance_vertexStride, 0);
