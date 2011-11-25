@@ -79,9 +79,17 @@ namespace LostIsland.Server
                 _iocContainer.Get<IEntityStorage>()
                 );
 
-            var processor = _iocContainer.Get<IWorldProcessor>() as PlanWorldProcessor;
-
-            _server.LoginManager.GenerationParameters = processor.WorldPlan.Parameters;
+            try
+            {
+                if (_iocContainer.Get<IWorldProcessor>() is PlanWorldProcessor)
+                {
+                    var processor = _iocContainer.Get<IWorldProcessor>() as PlanWorldProcessor;
+                    _server.LoginManager.GenerationParameters = processor.WorldPlan.Parameters;
+                }
+            }
+            catch (Exception)
+            {
+            }
 
             EntityFactory.Instance = new LostIslandEntityFactory(_server.LandscapeManager);
 
