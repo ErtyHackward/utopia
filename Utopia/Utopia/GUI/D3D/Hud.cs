@@ -157,7 +157,7 @@ namespace Utopia.GUI.D3D
             _d3DEngine.Context.ClearDepthStencilView(_d3DEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
 
             _spriteRender.Begin(true, SpriteRenderer.FilterMode.Linear);
-            _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, new Color4(1, 0, 0, 1));
+            _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, new Color4(0, 0, 1, 1));
             _spriteRender.End();
 
         }

@@ -235,22 +235,22 @@ namespace S33M3Engines.Meshes.Factories
                         //Read ambient color
                         line = sr.ReadLine();
                         _strScan.Scan(line, "{0} {1} {2} {3}", MaterialsColorData_Holder);
-                        newMaterial.Ambiant = new Color4((float)MaterialsColorData_Holder[3], (float)MaterialsColorData_Holder[0], (float)MaterialsColorData_Holder[1], (float)MaterialsColorData_Holder[2]);
+                        newMaterial.Ambiant = new Color4((float)MaterialsColorData_Holder[0], (float)MaterialsColorData_Holder[1], (float)MaterialsColorData_Holder[2], (float)MaterialsColorData_Holder[3]);
 
                         //Read diffuse color
                         line = sr.ReadLine();
                         _strScan.Scan(line, "{0} {1} {2} {3}", MaterialsColorData_Holder);
-                        newMaterial.Diffuse = new Color4((float)MaterialsColorData_Holder[3], (float)MaterialsColorData_Holder[0], (float)MaterialsColorData_Holder[1], (float)MaterialsColorData_Holder[2]);
+                        newMaterial.Diffuse = new Color4( (float)MaterialsColorData_Holder[0], (float)MaterialsColorData_Holder[1], (float)MaterialsColorData_Holder[2], (float)MaterialsColorData_Holder[3]);
 
                         //Read specular color
                         line = sr.ReadLine();
                         _strScan.Scan(line, "{0} {1} {2} {3}", MaterialsColorData_Holder);
-                        newMaterial.Specular = new Color4((float)MaterialsColorData_Holder[3], (float)MaterialsColorData_Holder[0], (float)MaterialsColorData_Holder[1], (float)MaterialsColorData_Holder[2]);
+                        newMaterial.Specular = new Color4((float)MaterialsColorData_Holder[0], (float)MaterialsColorData_Holder[1], (float)MaterialsColorData_Holder[2], (float)MaterialsColorData_Holder[3]);
 
                         //Read specular color
                         line = sr.ReadLine();
                         _strScan.Scan(line, "{0} {1} {2} {3}", MaterialsColorData_Holder);
-                        newMaterial.Emissive = new Color4((float)MaterialsColorData_Holder[3], (float)MaterialsColorData_Holder[0], (float)MaterialsColorData_Holder[1], (float)MaterialsColorData_Holder[2]);
+                        newMaterial.Emissive = new Color4((float)MaterialsColorData_Holder[0], (float)MaterialsColorData_Holder[1], (float)MaterialsColorData_Holder[2], (float)MaterialsColorData_Holder[3]);
 
                         //Read Shininess coef (0 => 255 float)
                         line = sr.ReadLine();
