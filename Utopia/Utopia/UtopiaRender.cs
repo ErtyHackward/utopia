@@ -91,15 +91,6 @@ namespace Utopia
             GameComponents.Add(_renderStates.weather);
             GameComponents.Add(_renderStates.worldChunks);
             GameComponents.Add(_renderStates.sharedFrameCB);
-            GameComponents.Add(_renderStates.bepuPhysicsComponent);
-
-            if (_renderStates.customComponents != null)
-            {
-                foreach (var customComponent in _renderStates.customComponents)
-                {
-                    GameComponents.Add(customComponent);
-                }
-            }
 
             #region Debug Components
 #if DEBUG
