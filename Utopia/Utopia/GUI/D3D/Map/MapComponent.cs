@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
 using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.D3D;
@@ -45,6 +44,13 @@ namespace Utopia.GUI.D3D.Map
             _planGenerator.Parameters = _server.GameInformations.PlanGenerationParameters;
         }
 
+        public override void Initialize()
+        {            
+            // TODO: need to make it async
+            _planGenerator.Generate();
+            _mapImage = _planGenerator.Render();
+        }
+
         public override void LoadContent()
         {
             var playerMarker = new Bitmap(16, 16);
@@ -56,9 +62,6 @@ namespace Utopia.GUI.D3D.Map
             }
 
             var innerBounds = new UniRectangle(4, 24, _mapWindow.Bounds.Size.X - 4 - 3, _mapWindow.Bounds.Size.Y - 24 - 3);
-            // TODO: need to make it async
-            _planGenerator.Generate();
-            _mapImage = _planGenerator.Render();
             _mapControl = new MapControl
             {
                 MarkerPosition = new Point(),
