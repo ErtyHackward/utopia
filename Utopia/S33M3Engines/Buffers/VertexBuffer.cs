@@ -31,6 +31,7 @@ namespace S33M3Engines.Buffers
         DataStream _vertices;
         VertexDeclaration _vertexDeclatation;
         DataBox _databox;
+        DataStream _dataStream;
         BufferDescription _description;
         string _bufferName;
         int _vertexCount;
@@ -90,6 +91,8 @@ namespace S33M3Engines.Buffers
 
                 //Create the new Databox
                 _databox = new DataBox(_vertices.DataPointer, _vertexDeclatation.VertexStride, _bufferCount * _vertexDeclatation.VertexStride);
+                if(_dataStream != null) _dataStream.Dispose();
+                _dataStream = new DataStream(_databox.DataPointer, _bufferCount * _vertexDeclatation.VertexStride, false, true);
 
                 //Create new Buffer
                 _description.SizeInBytes = _bufferCount * _vertexDeclatation.VertexStride;
@@ -102,17 +105,19 @@ namespace S33M3Engines.Buffers
             {
                 if (MapUpdate || _vertexBuffer.Description.Usage == ResourceUsage.Dynamic)
                 {
-                    DataBox databox = _d3dEngine.Context.MapSubresource(_vertexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
-                    databox.Data.Position = 0;
-                    databox.Data.WriteRange(data, offset, _vertexCount);
-                    databox.Data.Position = 0;
+                    DataStream dataStream;
+                    DataBox databox = _d3dEngine.Context.MapSubresource(_vertexBuffer, 0, MapMode.WriteDiscard, MapFlags.None, out dataStream);
+                    dataStream.Position = 0;
+                    dataStream.WriteRange(data, offset, _vertexCount);
+                    dataStream.Position = 0;
                     _d3dEngine.Context.UnmapSubresource(_vertexBuffer, 0);
+                    dataStream.Dispose();
                 }
                 else
                 {
-                    _databox.Data.Position = 0;
-                    _databox.Data.WriteRange(data, offset, _vertexCount);
-                    _databox.Data.Position = 0;
+                    _dataStream.Position = 0;
+                    _dataStream.WriteRange(data, offset, _vertexCount);
+                    _dataStream.Position = 0;
                     _d3dEngine.Context.UpdateSubresource(_databox, _vertexBuffer, 0);
                 }
             }

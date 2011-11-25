@@ -161,11 +161,7 @@ namespace Utopia.Worlds.Chunks
                     chunk.SendCubeMeshesToBuffers();
                 }
             }
-
-
-
         }
-
 
         private int CheckUserModifiedChunks()
         {

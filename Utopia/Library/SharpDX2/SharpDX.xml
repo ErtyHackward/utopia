@@ -942,6 +942,532 @@
             </summary>
             <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         </member>
+        <member name="T:SharpDX.ComArray">
+            <summary>
+            A fast method to pass array of <see cref="T:SharpDX.ComObject"/> to SharpDX methods.
+            </summary>
+        </member>
+        <member name="M:SharpDX.ComArray.#ctor(SharpDX.ComObject[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.ComArray"/> class.
+            </summary>
+            <param name="array">The array.</param>
+        </member>
+        <member name="M:SharpDX.ComArray.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.ComArray"/> class.
+            </summary>
+            <param name="size">The size.</param>
+        </member>
+        <member name="M:SharpDX.ComArray.Get(System.Int32)">
+            <summary>
+            Gets an object at the specified index.
+            </summary>
+            <param name="index">The index.</param>
+            <returns>A <see cref="T:SharpDX.ComObject"/></returns>
+        </member>
+        <member name="M:SharpDX.ComArray.Set(System.Int32,SharpDX.ComObject)">
+            <summary>
+            Sets an object at the specified index.
+            </summary>
+            <param name="index">The index.</param>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:SharpDX.ComArray.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="P:SharpDX.ComArray.NativePointer">
+            <summary>
+            Gets the pointer to the native array associated to this instance.
+            </summary>
+        </member>
+        <member name="P:SharpDX.ComArray.Length">
+            <summary>
+            Gets the length.
+            </summary>
+        </member>
+        <member name="T:SharpDX.ComArray`1">
+            <summary>
+            A typed version of <see cref="T:SharpDX.ComArray"/>
+            </summary>
+            <typeparam name="T">Type of the <see cref="T:SharpDX.ComObject"/></typeparam>
+        </member>
+        <member name="M:SharpDX.ComArray`1.#ctor(`0[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.ComArray`1"/> class.
+            </summary>
+            <param name="array">The array.</param>
+        </member>
+        <member name="M:SharpDX.ComArray`1.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.ComArray`1"/> class.
+            </summary>
+            <param name="size">The size.</param>
+        </member>
+        <member name="P:SharpDX.ComArray`1.Item(System.Int32)">
+            <summary>
+            Gets or sets the <see cref="!:T"/> with the specified i.
+            </summary>
+        </member>
+        <member name="T:SharpDX.Direct3D.PixHelper">
+            <summary>
+            Helper class for PIX.
+            </summary>
+        </member>
+        <member name="M:SharpDX.Direct3D.PixHelper.BeginEvent(System.Drawing.Color,System.String)">
+            <summary>
+            Marks the beginning of a user-defined event. PIX can use this event to trigger an action.
+            </summary>
+            <param name="color">The Event color.</param>
+            <param name="name">The Event Name.</param>
+            <returns>The zero-based level of the hierarchy that this event is starting in. If an error occurs, the return value will be negative.</returns>
+            <unmanaged>D3DPERF_BeginEvent</unmanaged>
+        </member>
+        <member name="M:SharpDX.Direct3D.PixHelper.EndEvent">
+            <summary>
+            Mark the end of a user-defined event. PIX can use this event to trigger an action.
+            </summary>
+            <returns>The level of the hierarchy in which the event is ending. If an error occurs, this value is negative.</returns>
+            <unmanaged>D3DPERF_EndEvent</unmanaged>
+        </member>
+        <member name="M:SharpDX.Direct3D.PixHelper.SetMarker(System.Drawing.Color,System.String)">
+            <summary>
+            Mark an instantaneous event. PIX can use this event to trigger an action.
+            </summary>
+            <param name="color">The color.</param>
+            <param name="name">The name.</param>
+            <unmanaged>D3DPERF_SetMarker</unmanaged>
+        </member>
+        <member name="M:SharpDX.Direct3D.PixHelper.AllowProfiling(System.Boolean)">
+            <summary>
+            Set this to false to notify PIX that the target program does not give permission to be profiled.
+            </summary>
+            <param name="enableFlag">if set to <c>true</c> PIX profiling is authorized. Default to true.</param>
+            <unmanaged>D3DPERF_SetOptions</unmanaged>
+        </member>
+        <member name="P:SharpDX.Direct3D.PixHelper.IsCurrentlyProfiled">
+            <summary>
+            Gets a value indicating whether this instance is currently profiled by PIX.
+            </summary>
+            <value>
+            <c>true</c> if this instance is currently profiled; otherwise, <c>false</c>.
+            </value>
+            <unmanaged>D3DPERF_GetStatus</unmanaged>
+        </member>
+        <member name="T:SharpDX.IO.NativeFile">
+            <summary>
+            Windows File Helper.
+            </summary>
+        </member>
+        <member name="M:SharpDX.IO.NativeFile.Create(System.String,SharpDX.IO.NativeFileAccess,SharpDX.IO.NativeFileShare,System.IntPtr,SharpDX.IO.NativeFileMode,SharpDX.IO.NativeFileOptions,System.IntPtr)">
+            <summary>
+            Creates the file.
+            </summary>
+            <param name="fileName">Name of the file.</param>
+            <param name="desiredAccess">The desired access.</param>
+            <param name="shareMode">The share mode.</param>
+            <param name="securityAttributes">The security attributes.</param>
+            <param name="mode">The creation disposition.</param>
+            <param name="flagsAndOptions">The flags and attributes.</param>
+            <param name="templateFile">The template file.</param>
+            <returns>A handle to the created file. IntPtr.Zero if failed.</returns>
+            <unmanaged>CreateFile</unmanaged>
+        </member>
+        <member name="M:SharpDX.IO.NativeFile.ReadFile(System.IntPtr,System.IntPtr,System.Int32,System.Int32@,System.IntPtr)">
+            <summary>
+            Reads to a file.
+            </summary>
+            <param name="fileHandle">The file handle.</param>
+            <param name="buffer">The buffer.</param>
+            <param name="numberOfBytesToRead">The number of bytes to read.</param>
+            <param name="numberOfBytesRead">The number of bytes read.</param>
+            <param name="overlapped">The overlapped.</param>
+            <returns>A Result</returns>
+            <unmanaged>ReadFile</unmanaged>
+        </member>
+        <member name="M:SharpDX.IO.NativeFile.WriteFile(System.IntPtr,System.IntPtr,System.Int32,System.Int32@,System.IntPtr)">
+            <summary>
+            Writes to a file.
+            </summary>
+            <param name="fileHandle">The file handle.</param>
+            <param name="buffer">The buffer.</param>
+            <param name="numberOfBytesToRead">The number of bytes to read.</param>
+            <param name="numberOfBytesRead">The number of bytes read.</param>
+            <param name="overlapped">The overlapped.</param>
+            <returns>A Result</returns>
+            <unmanaged>WriteFile</unmanaged>
+        </member>
+        <member name="M:SharpDX.IO.NativeFile.SetFilePointerEx(System.IntPtr,System.Int64,System.Int64@,System.IO.SeekOrigin)">
+            <summary>
+            Sets the file pointer.
+            </summary>
+            <param name="handle">The handle.</param>
+            <param name="distanceToMove">The distance to move.</param>
+            <param name="distanceToMoveHigh">The distance to move high.</param>
+            <param name="seekOrigin">The seek origin.</param>
+            <returns></returns>
+            <unmanaged>SetFilePointerEx</unmanaged>
+        </member>
+        <member name="M:SharpDX.IO.NativeFile.SetEndOfFile(System.IntPtr)">
+            <summary>
+            Sets the end of file.
+            </summary>
+            <param name="handle">The handle.</param>
+            <returns></returns>
+            <unmanaged>SetEndOfFile</unmanaged>
+        </member>
+        <member name="M:SharpDX.IO.NativeFile.GetFileSizeEx(System.IntPtr,System.Int64@)">
+            <summary>
+            Gets the size of the file.
+            </summary>
+            <param name="handle">The handle.</param>
+            <param name="fileSize">Size of the file.</param>
+            <returns></returns>
+            <unmanaged>GetFileSizeEx</unmanaged>
+        </member>
+        <member name="T:SharpDX.IO.NativeFileStream">
+            <summary>
+            Windows File Helper.
+            </summary>
+        </member>
+        <member name="M:SharpDX.IO.NativeFileStream.#ctor(System.String,SharpDX.IO.NativeFileMode,SharpDX.IO.NativeFileAccess,SharpDX.IO.NativeFileShare)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.IO.NativeFileStream"/> class.
+            </summary>
+            <param name="fileName">Name of the file.</param>
+            <param name="fileMode">The file mode.</param>
+            <param name="access">The access mode.</param>
+            <param name="share">The share mode.</param>
+        </member>
+        <member name="M:SharpDX.IO.NativeFileStream.Flush">
+            <inheritdoc/>
+        </member>
+        <member name="M:SharpDX.IO.NativeFileStream.Seek(System.Int64,System.IO.SeekOrigin)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SharpDX.IO.NativeFileStream.SetLength(System.Int64)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SharpDX.IO.NativeFileStream.Read(System.Byte[],System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SharpDX.IO.NativeFileStream.Write(System.Byte[],System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="P:SharpDX.IO.NativeFileStream.CanRead">
+            <inheritdoc/>
+        </member>
+        <member name="P:SharpDX.IO.NativeFileStream.CanSeek">
+            <inheritdoc/>
+        </member>
+        <member name="P:SharpDX.IO.NativeFileStream.CanWrite">
+            <inheritdoc/>
+        </member>
+        <member name="P:SharpDX.IO.NativeFileStream.Length">
+            <inheritdoc/>
+        </member>
+        <member name="P:SharpDX.IO.NativeFileStream.Position">
+            <inheritdoc/>
+        </member>
+        <member name="T:SharpDX.IO.NativeFileAccess">
+            <summary>
+            Native File access flags.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileAccess.Read">
+            <summary>
+            Read access.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileAccess.Write">
+            <summary>
+            Write access.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileAccess.ReadWrite">
+            <summary>
+            Read/Write Access,
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileAccess.Execute">
+            <summary>
+            Execute access.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileAccess.All">
+            <summary>
+            All access
+            </summary>
+        </member>
+        <member name="T:SharpDX.IO.NativeFileOptions">
+            <summary>
+            Native file attributes.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.None">
+            <summary>
+            None attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Readonly">
+            <summary>
+            Read only attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Hidden">
+            <summary>
+            Hidden attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.System">
+            <summary>
+            System attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Directory">
+            <summary>
+            Directory attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Archive">
+            <summary>
+            Archive attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Device">
+            <summary>
+            Device attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Normal">
+            <summary>
+            Normal attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Temporary">
+            <summary>
+            Temporary attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.SparseFile">
+            <summary>
+            Sparse file attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.ReparsePoint">
+            <summary>
+            ReparsePoint attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Compressed">
+            <summary>
+            Compressed attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Offline">
+            <summary>
+            Offline attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.NotContentIndexed">
+            <summary>
+            Not content indexed attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Encrypted">
+            <summary>
+            Encrypted attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Write_Through">
+            <summary>
+            Write through attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.Overlapped">
+            <summary>
+            Overlapped attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.NoBuffering">
+            <summary>
+            No buffering attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.RandomAccess">
+            <summary>
+            Random access attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.SequentialScan">
+            <summary>
+            Sequential scan attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.DeleteOnClose">
+            <summary>
+            Delete on close attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.BackupSemantics">
+            <summary>
+            Backup semantics attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.PosixSemantics">
+            <summary>
+            Post semantics attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.OpenReparsePoint">
+            <summary>
+            Open reparse point attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.OpenNoRecall">
+            <summary>
+            Open no recall attribute.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileOptions.FirstPipeInstance">
+            <summary>
+            First pipe instance attribute.
+            </summary>
+        </member>
+        <member name="T:SharpDX.IO.NativeFileMode">
+            <summary>
+            Native file creation disposition.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileMode.CreateNew">
+            <summary>
+            Creates a new file. The function fails if a specified file exists.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileMode.Create">
+            <summary>
+            Creates a new file, always.
+            If a file exists, the function overwrites the file, clears the existing attributes, combines the specified file attributes,
+            and flags with FILE_ATTRIBUTE_ARCHIVE, but does not set the security descriptor that the SECURITY_ATTRIBUTES structure specifies.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileMode.Open">
+            <summary>
+            Opens a file. The function fails if the file does not exist.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileMode.OpenOrCreate">
+            <summary>
+            Opens a file, always.
+            If a file does not exist, the function creates a file as if dwCreationDisposition is CREATE_NEW.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileMode.Truncate">
+            <summary>
+            Opens a file and truncates it so that its size is 0 (zero) bytes. The function fails if the file does not exist.
+            The calling process must open the file with the GENERIC_WRITE access right.
+            </summary>
+        </member>
+        <member name="T:SharpDX.IO.NativeFileShare">
+            <summary>
+            Native file share.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileShare.None">
+            <summary>
+            None flag.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileShare.Read">
+            <summary>
+            Enables subsequent open operations on an object to request read access.
+            Otherwise, other processes cannot open the object if they request read access.
+            If this flag is not specified, but the object has been opened for read access, the function fails.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileShare.Write">
+            <summary>
+            Enables subsequent open operations on an object to request write access.
+            Otherwise, other processes cannot open the object if they request write access.
+            If this flag is not specified, but the object has been opened for write access, the function fails.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileShare.ReadWrite">
+            <summary>
+            Read and Write flags.
+            </summary>
+        </member>
+        <member name="F:SharpDX.IO.NativeFileShare.Delete">
+            <summary>
+            Enables subsequent open operations on an object to request delete access.
+            Otherwise, other processes cannot open the object if they request delete access.
+            If this flag is not specified, but the object has been opened for delete access, the function fails.
+            </summary>
+        </member>
+        <member name="T:SharpDX.Matrix3x2">
+            <summary>
+            Direct2D Matrix 3x2. Use <see cref="T:SharpDX.Matrix"/> and implicit cast to <see cref="T:SharpDX.Matrix3x2"/>.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Matrix3x2.M11">
+            <summary>
+            Element (1,1)
+            </summary>
+        </member>
+        <member name="F:SharpDX.Matrix3x2.M12">
+            <summary>
+            Element (1,2)
+            </summary>
+        </member>
+        <member name="F:SharpDX.Matrix3x2.M21">
+            <summary>
+            Element (2,1)
+            </summary>
+        </member>
+        <member name="F:SharpDX.Matrix3x2.M22">
+            <summary>
+            Element (2,2)
+            </summary>
+        </member>
+        <member name="F:SharpDX.Matrix3x2.M31">
+            <summary>
+            Element (3,1)
+            </summary>
+        </member>
+        <member name="F:SharpDX.Matrix3x2.M32">
+            <summary>
+            Element (3,2)
+            </summary>
+        </member>
+        <member name="M:SharpDX.Matrix3x2.op_Implicit(SharpDX.Matrix)~SharpDX.Matrix3x2">
+            <summary>
+            Performs an implicit conversion from <see cref="T:SharpDX.Matrix"/> to <see cref="T:SharpDX.Matrix3x2"/>.
+            </summary>
+            <param name="matrix">The matrix.</param>
+            <returns>The result of the conversion.</returns>
+        </member>
+        <member name="P:SharpDX.Matrix3x2.Identity">
+            <summary>
+            Gets the identity matrix.
+            </summary>
+            <value>The identity matrix.</value>
+        </member>
+        <member name="T:SharpDX.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:SharpDX.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:SharpDX.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
         <member name="T:SharpDX.Collision">
             <summary>
             Contains static methods to help in determining intersections, containment, etc.
@@ -1802,10 +2328,10 @@
             <summary>
             Initializes a new instance of the <see cref="T:SharpDX.Color4"/> struct.
             </summary>
-            <param name="alpha">The alpha component of the color.</param>
             <param name="red">The red component of the color.</param>
             <param name="green">The green component of the color.</param>
             <param name="blue">The blue component of the color.</param>
+            <param name="alpha">The alpha component of the color.</param>
         </member>
         <member name="M:SharpDX.Color4.#ctor(SharpDX.Vector4)">
             <summary>
@@ -1819,6 +2345,12 @@
             </summary>
             <param name="value">The red, green, and blue compoennts of the color.</param>
             <param name="alpha">The alpha component of the color.</param>
+        </member>
+        <member name="M:SharpDX.Color4.#ctor(System.UInt32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.Color4"/> struct.
+            </summary>
+            <param name="argb">A packed integer containing all four color components.</param>
         </member>
         <member name="M:SharpDX.Color4.#ctor(System.Int32)">
             <summary>
@@ -2526,15 +3058,6 @@
             <param name = "message">The message describing the exception.</param>
             <param name="args">formatting arguments</param>
         </member>
-        <member name="M:SharpDX.SharpDXException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.SharpDXException"/> class.
-            </summary>
-            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
-            <exception cref="T:System.ArgumentNullException">The <paramref name="info"/> parameter is null. </exception>
-            <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). </exception>
-        </member>
         <member name="M:SharpDX.SharpDXException.#ctor(System.String,System.Exception,System.Object[])">
             <summary>
               Initializes a new instance of the <see cref = "T:SharpDX.SharpDXException" /> class.
@@ -2542,13 +3065,6 @@
             <param name = "message">The message describing the exception.</param>
             <param name = "innerException">The exception that caused this exception.</param>
             <param name="args">formatting arguments</param>
-        </member>
-        <member name="M:SharpDX.SharpDXException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-              When overridden in a derived class, sets the <see cref = "T:System.Runtime.Serialization.SerializationInfo" /> with information about the exception.
-            </summary>
-            <param name = "info">The <see cref = "T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
-            <param name = "context">The <see cref = "T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination.</param>
         </member>
         <member name="P:SharpDX.SharpDXException.ResultCode">
             <summary>
@@ -2568,14 +3084,6 @@
             </summary>
             <param name="errorCode">The error code.</param>
             <param name="message">The message.</param>
-        </member>
-        <member name="M:SharpDX.CompilationException.Check(SharpDX.Result,System.String)">
-            <summary>
-            Checks the specified error code and error message.
-            </summary>
-            <param name="errorCode">The error code.</param>
-            <param name="errorMessage">The error message.</param>
-            <returns>A CompilationException or null otherwise</returns>
         </member>
         <member name="T:SharpDX.Component">
             <summary>
@@ -2609,7 +3117,7 @@
             <see cref="T:SharpDX.Component"/> is reclaimed by garbage collection.
             </summary>
         </member>
-        <member name="M:SharpDX.Component.System#IDisposable#Dispose">
+        <member name="M:SharpDX.Component.Dispose">
             <summary>
             Releases unmanaged and - optionally - managed resources
             </summary>
@@ -2754,14 +3262,6 @@
             Gets the number of bytes per slice (for a 3D texture, a slice is a 2D image)
             </summary>
         </member>
-        <member name="P:SharpDX.DataBox.Data">
-            <summary>
-            Gets a stream from the <see cref="F:SharpDX.DataBox.DataPointer"/>.
-            </summary>
-            <remarks>
-            This methods returns a convenient way to access data.
-            </remarks>
-        </member>
         <member name="T:SharpDX.DataRectangle">
             <summary>
             Provides access to data organized in 2D.
@@ -2797,7 +3297,7 @@
             </summary>
             <param name="buffer">The buffer.</param>
         </member>
-        <member name="M:SharpDX.DataStream.#ctor(System.Array,System.Boolean,System.Boolean)">
+        <member name="M:SharpDX.DataStream.Create``1(``0[],System.Boolean,System.Boolean)">
             <summary>
               Initializes a new instance of the <see cref="T:SharpDX.DataStream"/> class, using a managed buffer as a backing store.
             </summary>
@@ -3339,11 +3839,15 @@
             </remarks>
             <unmanaged>None</unmanaged>
         </member>
-        <member name="M:SharpDX.DataBuffer.#ctor(System.Array)">
+        <member name="M:SharpDX.DataBuffer.Create``1(``0[],System.Boolean,System.Boolean)">
             <summary>
-              Initializes a new instance of the <see cref="T:SharpDX.DataBuffer"/> class, using a managed buffer as a backing store.
+            Creates the specified user buffer.
             </summary>
-            <param name="userBuffer">A managed array to be used as a backing store.</param>
+            <typeparam name="T"></typeparam>
+            <param name="userBuffer">The user buffer.</param>
+            <param name="canRead">if set to <c>true</c> [can read].</param>
+            <param name="canWrite">if set to <c>true</c> [can write].</param>
+            <returns></returns>
         </member>
         <member name="M:SharpDX.DataBuffer.#ctor(System.Int32)">
             <summary>
@@ -4471,106 +4975,115 @@
         </member>
         <member name="T:SharpDX.Direct3D.DriverType">
             <summary>	
-            No documentation.	
+            Driver type options.	
             </summary>	
+            <remarks>	
+            The driver type is required when calling <see cref="!:SharpDX.Direct3D11.D3D11.CreateDevice"/> or <see cref="!:SharpDX.Direct3D11.D3D11.CreateDeviceAndSwapChain"/>.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_DRIVER_TYPE']/*"/>	
             <unmanaged>D3D_DRIVER_TYPE</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.DriverType.Unknown">
             <summary>	
-            No documentation.	
+            <para>The driver type is unknown.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_DRIVER_TYPE_UNKNOWN']/*"/>	
             <unmanaged>D3D_DRIVER_TYPE_UNKNOWN</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.DriverType.Hardware">
             <summary>	
-            No documentation.	
+            <para>A hardware driver, which implements Direct3D features in hardware. This is the primary driver that you should use in your Direct3D applications because it provides the best performance. A hardware driver uses hardware acceleration (on supported hardware) but can also use software for parts of the pipeline that are not supported in hardware. This driver type is often referred to as a hardware abstraction layer or HAL.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_DRIVER_TYPE_HARDWARE']/*"/>	
             <unmanaged>D3D_DRIVER_TYPE_HARDWARE</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.DriverType.Reference">
             <summary>	
-            No documentation.	
+            <para>A reference driver, which is a software implementation that supports every Direct3D feature. A reference driver is designed for accuracy rather than speed and as a result is slow but accurate. The rasterizer portion of the driver does make use of special CPU instructions whenever it can, but it is not intended for retail applications; use it only for feature testing, demonstration of functionality, debugging, or verifying bugs in other drivers. This driver is installed by the DirectX SDK. This driver may be referred to as a REF driver, a reference driver or a reference rasterizer.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_DRIVER_TYPE_REFERENCE']/*"/>	
             <unmanaged>D3D_DRIVER_TYPE_REFERENCE</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.DriverType.Null">
             <summary>	
-            No documentation.	
+            <para>A <c>null</c> driver, which is a reference driver without render capability. This driver is commonly used for debugging non-rendering API calls, it is not appropriate for retail applications. This driver is installed by the DirectX SDK.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_DRIVER_TYPE_NULL']/*"/>	
             <unmanaged>D3D_DRIVER_TYPE_NULL</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.DriverType.Software">
             <summary>	
-            No documentation.	
+            <para>A software driver, which is a driver implemented completely in software. The software implementation is not intended for a high-performance application due to its very slow performance.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_DRIVER_TYPE_SOFTWARE']/*"/>	
             <unmanaged>D3D_DRIVER_TYPE_SOFTWARE</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.DriverType.Warp">
             <summary>	
-            No documentation.	
+            <para>A WARP driver, which is a high-performance software rasterizer. The rasterizer supports feature levels 9_1 through level 10.1 with a high performance software implementation. For information about limitations creating a WARP device on certain feature levels, see Limitations Creating WARP and Reference Devices. For more information about using a WARP driver, see Windows Advanced Rasterization Platform (WARP) In-Depth Guide.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_DRIVER_TYPE_WARP']/*"/>	
             <unmanaged>D3D_DRIVER_TYPE_WARP</unmanaged>	
         </member>
         <member name="T:SharpDX.Direct3D.FeatureLevel">
             <summary>	
-            No documentation.	
+            Describes the set of features targeted by a Direct3D device.	
             </summary>	
+            <remarks>	
+            For an overview of  the capabilities of each feature level, see Overview For Each Feature Level.For information about limitations creating nonhardware-type devices on certain feature levels, see Limitations Creating WARP and Reference Devices.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_FEATURE_LEVEL']/*"/>	
             <unmanaged>D3D_FEATURE_LEVEL</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.FeatureLevel.Level_9_1">
             <summary>	
-            No documentation.	
+            <para>Targets features supported by feature level 9.1 including shader model 2.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_FEATURE_LEVEL_9_1']/*"/>	
             <unmanaged>D3D_FEATURE_LEVEL_9_1</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.FeatureLevel.Level_9_2">
             <summary>	
-            No documentation.	
+            <para>Targets features supported by feature level 9.2 including shader model 2.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_FEATURE_LEVEL_9_2']/*"/>	
             <unmanaged>D3D_FEATURE_LEVEL_9_2</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.FeatureLevel.Level_9_3">
             <summary>	
-            No documentation.	
+            <para>Targets features supported by feature level 9.3 including shader model 2.0b.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_FEATURE_LEVEL_9_3']/*"/>	
             <unmanaged>D3D_FEATURE_LEVEL_9_3</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.FeatureLevel.Level_10_0">
             <summary>	
-            No documentation.	
+            <para>Targets features supported by Direct3D 10.0 including shader model 4.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_FEATURE_LEVEL_10_0']/*"/>	
             <unmanaged>D3D_FEATURE_LEVEL_10_0</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.FeatureLevel.Level_10_1">
             <summary>	
-            No documentation.	
+            <para>Targets features supported by Direct3D 10.1 including shader model 4.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_FEATURE_LEVEL_10_1']/*"/>	
             <unmanaged>D3D_FEATURE_LEVEL_10_1</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.FeatureLevel.Level_11_0">
             <summary>	
-            No documentation.	
+            <para>Targets features supported by Direct3D 11.0 including shader model 5.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_FEATURE_LEVEL_11_0']/*"/>	
             <unmanaged>D3D_FEATURE_LEVEL_11_0</unmanaged>	
         </member>
         <member name="T:SharpDX.Direct3D.PrimitiveTopology">
             <summary>	
-            No documentation.	
+            Values that indicate how the pipeline interprets vertex data that is bound to the input-assembler stage. These primitive topology values determine how the vertex data is rendered on screen.	
             </summary>	
+            <remarks>	
+            Use the  <see cref="!:SharpDX.Direct3D11.InputAssemblerStage.SetPrimitiveTopology"/> method and a value from <see cref="T:SharpDX.Direct3D.PrimitiveTopology"/> to bind a primitive topology to the input-assembler stage. Use the  <see cref="!:SharpDX.Direct3D11.InputAssemblerStage.GetPrimitiveTopology"/> method to retrieve the primitive topology for the input-assembler stage.The following diagram shows the various primitive types for a geometry shader object.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_PRIMITIVE_TOPOLOGY']/*"/>	
             <unmanaged>D3D_PRIMITIVE_TOPOLOGY</unmanaged>	
         </member>
@@ -4870,91 +5383,94 @@
         </member>
         <member name="T:SharpDX.Direct3D.ShaderResourceViewDimension">
             <summary>	
-            No documentation.	
+            Values that identify the type of resource to be viewed as a shader resource.	
             </summary>	
+            <remarks>	
+            A <see cref="T:SharpDX.Direct3D.ShaderResourceViewDimension"/>-typed value is specified in the ViewDimension member of the <see cref="!:SharpDX.Direct3D11.ShaderResourceViewDescription"/> structure or the  Dimension member of the <see cref="!:SharpDX.D3DCompiler.InputBindingDescription"/> structure.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.Unknown">
             <summary>	
-            No documentation.	
+            <para>The type is unknown.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_UNKNOWN']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_UNKNOWN</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.Buffer">
             <summary>	
-            No documentation.	
+            <para>The resource is a buffer.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_BUFFER']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_BUFFER</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.Texture1D">
             <summary>	
-            No documentation.	
+            <para>The resource is a 1D texture.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_TEXTURE1D']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_TEXTURE1D</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.Texture1DArray">
             <summary>	
-            No documentation.	
+            <para>The resource is an array of 1D textures.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_TEXTURE1DARRAY']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_TEXTURE1DARRAY</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.Texture2D">
             <summary>	
-            No documentation.	
+            <para>The resource is a 2D texture.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_TEXTURE2D']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_TEXTURE2D</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.Texture2DArray">
             <summary>	
-            No documentation.	
+            <para>The resource is an array of 2D textures.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_TEXTURE2DARRAY']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_TEXTURE2DARRAY</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.Texture2DMultisampled">
             <summary>	
-            No documentation.	
+            <para>The resource is a multisampling 2D texture.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_TEXTURE2DMS']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_TEXTURE2DMS</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.Texture2DMultisampledArray">
             <summary>	
-            No documentation.	
+            <para>The resource is an array of multisampling 2D textures.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_TEXTURE2DMSARRAY']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_TEXTURE2DMSARRAY</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.Texture3D">
             <summary>	
-            No documentation.	
+            <para>The resource is a 3D texture.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_TEXTURE3D']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_TEXTURE3D</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.TextureCube">
             <summary>	
-            No documentation.	
+            <para>The resource is a cube texture.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_TEXTURECUBE']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_TEXTURECUBE</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.Texturecubearray">
             <summary>	
-            No documentation.	
+            <para>The resource is an array of cube textures.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_TEXTURECUBEARRAY']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_TEXTURECUBEARRAY</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderResourceViewDimension.ExtendedBuffer">
             <summary>	
-            No documentation.	
+            <para>The resource is an extended buffer.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SRV_DIMENSION_BUFFEREX']/*"/>	
             <unmanaged>D3D_SRV_DIMENSION_BUFFEREX</unmanaged>	
@@ -4980,19 +5496,22 @@
             DLLs loaders
             </summary>
         </member>
-        <member name="M:SharpDX.Direct3D.D3DCommon.CreateBlob(SharpDX.Size,SharpDX.Direct3D.Blob)">
+        <member name="M:SharpDX.Direct3D.D3DCommon.CreateBlob(SharpDX.PointerSize,SharpDX.Direct3D.Blob)">
             <summary>	
-            No documentation.	
+            Creates a buffer.	
             </summary>	
-            <param name="size">No documentation.</param>	
-            <param name="blobOut">No documentation.</param>	
-            <returns>No documentation.</returns>	
+            <param name="size"><para>Number of bytes in the blob.</para></param>	
+            <param name="blobOut"><para>The address of a reference to the ID3DBlob interface that is used to retrieve the buffer.</para></param>	
+            <returns>Returns one of the following Direct3D 10 Return Codes.</returns>	
+            <remarks>	
+            The latest D3dcompiler_nn.dll contains the <see cref="M:SharpDX.Direct3D.D3DCommon.CreateBlob(SharpDX.PointerSize,SharpDX.Direct3D.Blob)"/> compiler function. Therefore, you are no longer required to create and use an arbitrary length data buffer by using the  D3D10CreateBlob function that is contained in D3d10.dll.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DCreateBlob']/*"/>	
             <unmanaged>HRESULT D3DCreateBlob([In] SIZE_T Size,[Out, Fast] ID3D10Blob** ppBlob)</unmanaged>	
         </member>
         <member name="T:SharpDX.Direct3D.Blob">
             <summary>	
-            No documentation.	
+            This interface is used to return arbitrary length data.	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D10Blob']/*"/>	
             <unmanaged>ID3D10Blob</unmanaged>	
@@ -5005,23 +5524,23 @@
         </member>
         <member name="M:SharpDX.Direct3D.Blob.GetBufferPointer">
             <summary>	
-            No documentation.	
+            Get a reference to the data.	
             </summary>	
-            <returns>No documentation.</returns>	
+            <returns>Returns a reference.</returns>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D10Blob::GetBufferPointer']/*"/>	
             <unmanaged>void* ID3D10Blob::GetBufferPointer()</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct3D.Blob.GetBufferSize">
             <summary>	
-            No documentation.	
+            Get the size.	
             </summary>	
-            <returns>No documentation.</returns>	
+            <returns>The size of the data, in bytes.</returns>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D10Blob::GetBufferSize']/*"/>	
             <unmanaged>SIZE_T ID3D10Blob::GetBufferSize()</unmanaged>	
         </member>
         <member name="P:SharpDX.Direct3D.Blob.BufferPointer">
             <summary>	
-            No documentation.	
+            Get a reference to the data.	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D10Blob::GetBufferPointer']/*"/>	
             <unmanaged>GetBufferPointer</unmanaged>	
@@ -5029,7 +5548,7 @@
         </member>
         <member name="P:SharpDX.Direct3D.Blob.BufferSize">
             <summary>	
-            No documentation.	
+            Get the size.	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D10Blob::GetBufferSize']/*"/>	
             <unmanaged>GetBufferSize</unmanaged>	
@@ -5037,21 +5556,27 @@
         </member>
         <member name="T:SharpDX.Direct3D.ShaderMacro">
             <summary>	
-            No documentation.	
+            Defines a shader macro.	
             </summary>	
+            <remarks>	
+            You can use shader macros in your shaders. The <see cref="T:SharpDX.Direct3D.ShaderMacro"/> structure defines a single shader macro as shown in the following example:<code>	
+             <see cref="T:SharpDX.Direct3D.ShaderMacro"/> Shader_Macros[1] = { "zero", "0"  };	
+            	
+            </code>The following shader or effect creation functions take an array of shader macros as an input parameter:D3D10CompileShader   <see cref="!:SharpDX.Direct3D10.D3DX10.CreateEffectFromFile"/>   D3DX10PreprocessShaderFromFile   D3DX11CreateAsyncShaderPreprocessProcessor	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SHADER_MACRO']/*"/>	
             <unmanaged>D3D_SHADER_MACRO</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderMacro.Name">
             <summary>	
-            No documentation.	
+            <para>The macro name.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SHADER_MACRO::Name']/*"/>	
             <unmanaged>const char* Name</unmanaged>	
         </member>
         <member name="F:SharpDX.Direct3D.ShaderMacro.Definition">
             <summary>	
-            No documentation.	
+            <para>The macro definition.</para>	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SHADER_MACRO::Definition']/*"/>	
             <unmanaged>const char* Definition</unmanaged>	
@@ -7774,7 +8299,10 @@
         </member>
         <member name="T:SharpDX.Win32.LockType">
             <summary>	
-            No documentation.	
+            The 	
+            <see cref="T:SharpDX.Win32.LockType"/> enumeration values indicate the type of locking requested for the specified range of bytes. The values are used in the 	
+            ILockBytes::LockRegion and 	
+            <see cref="M:SharpDX.Win32.IStream.LockRegion(System.Int64,System.Int64,SharpDX.Win32.LockType)"/> methods.	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='LOCKTYPE']/*"/>	
             <unmanaged>LOCKTYPE</unmanaged>	
@@ -7802,7 +8330,12 @@
         </member>
         <member name="T:SharpDX.Win32.StorageStatisticsFlags">
             <summary>	
-            No documentation.	
+            The 	
+            <see cref="T:SharpDX.Win32.StorageStatisticsFlags"/> enumeration values indicate whether the method should try to return a name in the pwcsName member of the 	
+            <see cref="T:SharpDX.Win32.StorageStatistics"/> structure. The values are used in the 	
+            ILockBytes::Stat, 	
+            IStorage::Stat, and 	
+            <see cref="M:SharpDX.Win32.IStream.GetStatistics(SharpDX.Win32.StorageStatisticsFlags)"/> methods to save memory when the pwcsName member is not required.	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='STATFLAG']/*"/>	
             <unmanaged>STATFLAG</unmanaged>	
@@ -18495,21 +19028,32 @@
         </member>
         <member name="T:SharpDX.Win32.ComStream">
             <summary>	
-            No documentation.	
+            The 	
+            <see cref="T:SharpDX.Win32.IStream"/> interface lets you read and write data to stream objects. Stream objects contain the data in a structured storage object, where storages provide the structure. Simple data can be written directly to a stream but, most frequently, streams are elements nested within a storage object. They are similar to standard files.	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IStream']/*"/>	
             <unmanaged>IStream</unmanaged>	
         </member>
         <member name="T:SharpDX.Win32.ComStreamBase">
             <summary>	
-            No documentation.	
+            The 	
+            <see cref="T:SharpDX.Win32.IStreamBase"/> interface supports simplified sequential access to stream objects. The 	
+            <see cref="T:SharpDX.Win32.IStream"/> interface inherits its 	
+            Read and 	
+            Write methods from 	
+            <see cref="T:SharpDX.Win32.IStreamBase"/>.	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ISequentialStream']/*"/>	
             <unmanaged>ISequentialStream</unmanaged>	
         </member>
         <member name="T:SharpDX.Win32.IStreamBase">
             <summary>	
-            No documentation.	
+            The 	
+            <see cref="T:SharpDX.Win32.IStreamBase"/> interface supports simplified sequential access to stream objects. The 	
+            <see cref="T:SharpDX.Win32.IStream"/> interface inherits its 	
+            Read and 	
+            Write methods from 	
+            <see cref="T:SharpDX.Win32.IStreamBase"/>.	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ISequentialStream']/*"/>	
             <unmanaged>ISequentialStream</unmanaged>	
@@ -18538,27 +19082,35 @@
         </member>
         <member name="M:SharpDX.Win32.ComStreamBase.Read(System.IntPtr,System.Int32)">
             <summary>	
-            No documentation.	
+            The Read method reads a specified number of bytes from the stream object into memory, starting at the current seek reference.	
             </summary>	
-            <param name="vRef">No documentation.</param>	
-            <param name="cb">No documentation.</param>	
-            <returns>No documentation.</returns>	
+            <param name="vRef"><para>A reference to the buffer which the stream data is read into.</para></param>	
+            <param name="cb"><para>The number of bytes of data to read from the stream object.</para></param>	
+            <returns><para>A reference to a ULONG variable that receives the actual number of bytes read from the stream object. </para> <para>Note??The number of bytes read may be zero.</para></returns>	
+            <remarks>	
+            This method reads bytes from this stream object into memory. The stream object must be opened in STGM_READ mode. This method adjusts the seek reference by the actual number of bytes read.The number of bytes actually read is also returned in the pcbRead parameter.Notes to CallersThe actual number of bytes read can be less than the number of bytes requested if an error occurs or if the end of the stream is reached during the read operation.  The number of bytes returned should always  be compared to the number of bytes requested.  If the number of bytes returned is less than the number of bytes requested, it usually means the Read method attempted to read  past the end of the stream.The application should handle both a returned error  and <see cref="F:SharpDX.Result.Ok"/> return values on end-of-stream read operations.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ISequentialStream::Read']/*"/>	
             <unmanaged>HRESULT ISequentialStream::Read([Out, Buffer] void* pv,[In] unsigned int cb,[Out, Optional] unsigned int* pcbRead)</unmanaged>	
         </member>
         <member name="M:SharpDX.Win32.ComStreamBase.Write(System.IntPtr,System.Int32)">
             <summary>	
-            No documentation.	
+            The Write method writes a specified number of bytes into the stream object starting at the current seek reference.	
             </summary>	
-            <param name="vRef">No documentation.</param>	
-            <param name="cb">No documentation.</param>	
-            <returns>No documentation.</returns>	
+            <param name="vRef"><para>A reference to the buffer that contains the data that is to be written to the stream. A valid reference must be provided for this parameter even when cb is zero.</para></param>	
+            <param name="cb"><para>The number of bytes of data to attempt to write into the stream. This value can be zero.</para></param>	
+            <returns><para>A reference to a ULONG variable where this method writes the actual number of bytes written to the stream object. The caller can set this reference to <c>null</c>, in which case this method does not provide the actual number of bytes written.</para></returns>	
+            <remarks>	
+            ISequentialStream::Write writes the specified data to a stream object. The seek reference is adjusted for the number of bytes actually written. The number of bytes actually written is returned in the pcbWritten parameter. If the byte count is zero bytes, the write operation has no effect.If the seek reference is currently past the end of the stream and the byte count is nonzero, this method increases the size of the stream to the seek reference and writes the specified bytes starting at the seek reference. The fill bytes written to the stream are not initialized to any particular value. This is the same as the end-of-file behavior in the MS-DOS FAT file system.With a zero byte count and a seek reference past the end of the stream, this method does not create the fill bytes to increase the stream to the seek reference. In this case, you must call the 	
+            <see cref="M:SharpDX.Win32.IStream.SetSize(System.Int64)"/> method to increase the size of the stream and write the fill bytes.The pcbWritten parameter can have a value even if an error occurs.In the COM-provided implementation, stream objects are not sparse. Any fill bytes are eventually allocated on the disk and assigned to the stream.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ISequentialStream::Write']/*"/>	
             <unmanaged>HRESULT ISequentialStream::Write([In, Buffer] const void* pv,[In] unsigned int cb,[Out, Optional] unsigned int* pcbWritten)</unmanaged>	
         </member>
         <member name="T:SharpDX.Win32.IStream">
             <summary>	
-            No documentation.	
+            The 	
+            <see cref="T:SharpDX.Win32.IStream"/> interface lets you read and write data to stream objects. Stream objects contain the data in a structured storage object, where storages provide the structure. Simple data can be written directly to a stream but, most frequently, streams are elements nested within a storage object. They are similar to standard files.	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IStream']/*"/>	
             <unmanaged>IStream</unmanaged>	
@@ -18634,59 +19186,87 @@
         </member>
         <member name="M:SharpDX.Win32.ComStream.Seek(System.Int64,System.IO.SeekOrigin)">
             <summary>	
-            No documentation.	
+            The Seek method changes the seek reference to a new location.  The new location is relative to either the beginning of the stream, the end of the stream, or the current seek reference.	
             </summary>	
-            <param name="dlibMove">No documentation.</param>	
-            <param name="dwOrigin">No documentation.</param>	
-            <returns>No documentation.</returns>	
+            <param name="dlibMove"><para>The displacement to be added to the location indicated by the dwOrigin parameter. If dwOrigin is STREAM_SEEK_SET, this is interpreted as an unsigned value rather than a signed value.</para></param>	
+            <param name="dwOrigin"><para>The origin for the displacement specified in dlibMove. The origin can be the beginning of the file (STREAM_SEEK_SET), the current seek reference (STREAM_SEEK_CUR), or the end of the file (STREAM_SEEK_END). For more information about values, see the STREAM_SEEK enumeration.</para></param>	
+            <returns><para>A reference to the location where this method writes the value of the new seek reference from the beginning of the stream. </para> <para>You can set this reference to <c>null</c>. In this case, this method does not provide the new seek reference.</para></returns>	
+            <remarks>	
+            IStream::Seek changes the seek reference so that subsequent read and write operations can be performed at a different location in the stream object. It is an error to seek before the beginning of the stream. It is not, however, an error to seek past the end of the stream. Seeking past the end of the stream is useful for subsequent write operations, as the stream byte range will be extended to the new seek position immediately before the write is complete.You can also use this method to obtain the current value of the seek reference by calling this method with the dwOrigin parameter set to STREAM_SEEK_CUR and the dlibMove parameter set to 0 so that the seek reference is not changed. The current seek reference is returned in the plibNewPosition parameter.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IStream::Seek']/*"/>	
             <unmanaged>HRESULT IStream::Seek([In] LARGE_INTEGER dlibMove,[In] SHARPDX_SEEKORIGIN dwOrigin,[Out, Optional] ULARGE_INTEGER* plibNewPosition)</unmanaged>	
         </member>
         <member name="M:SharpDX.Win32.ComStream.SetSize(System.Int64)">
             <summary>	
-            No documentation.	
+            The SetSize method changes the size of the stream object.	
             </summary>	
-            <param name="libNewSize">No documentation.</param>	
-            <returns>No documentation.</returns>	
+            <param name="libNewSize"><para>Specifies the new size of the stream as a number of bytes.</para></param>	
+            <returns>This method can return one of the following values.<item><term><see cref="F:SharpDX.Result.Ok"/></term> <description> <para>The size of the stream object was successfully changed.</para> </description></item> <item><term>E_PENDING</term> <description> <para>Asynchronous Storage only: Part or all of the stream's data is currently unavailable. For more information see IFillLockBytes and Asynchronous Storage.</para> </description></item> <item><term>STG_E_MEDIUMFULL</term> <description> <para>The stream size is not changed because there is no space left on the storage device.</para> </description></item> <item><term>STG_E_INVALIDFUNCTION</term> <description> <para>The value of the libNewSize parameter is not valid. Since streams cannot be greater than 232 bytes in the COM-provided implementation, the high DWORD data type of libNewSize must be 0. If it is nonzero, this parameter is not valid.</para> </description></item> <item><term>STG_E_REVERTED</term> <description> <para>The object has been invalidated by a revert operation above it in the transaction tree.</para> </description></item></returns>	
+            <remarks>	
+            IStream::SetSize changes the size of the stream object. Call this method to preallocate space for the stream. If the libNewSize parameter is larger than the current stream size, the stream is extended to the indicated size by filling the intervening space with bytes of undefined value. This operation is similar to the 	
+            <see cref="M:SharpDX.Win32.IStreamBase.Write(System.IntPtr,System.Int32)"/> method if the seek reference is past the current end of stream.If the libNewSize parameter is smaller than the current stream, the stream is truncated to the indicated size.The seek reference is not affected by the change in stream size.Calling <see cref="M:SharpDX.Win32.IStream.SetSize(System.Int64)"/> can be an effective way to obtain a large chunk of contiguous space.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IStream::SetSize']/*"/>	
             <unmanaged>HRESULT IStream::SetSize([In] ULARGE_INTEGER libNewSize)</unmanaged>	
         </member>
         <member name="M:SharpDX.Win32.ComStream.CopyTo_(System.IntPtr,System.Int64,System.Int64@)">
             <summary>	
-            No documentation.	
+            The CopyTo method copies a specified number of bytes from the current seek reference in the stream to the current seek reference in another stream.	
             </summary>	
-            <param name="stmRef">No documentation.</param>	
-            <param name="cb">No documentation.</param>	
-            <param name="cbWrittenRef">No documentation.</param>	
-            <returns>No documentation.</returns>	
+            <param name="stmRef"><para>A reference to the destination stream. The stream pointed to by pstm can be a new stream or a clone of the source stream.</para></param>	
+            <param name="cb"><para>The number of bytes to copy from the source stream.</para></param>	
+            <param name="cbWrittenRef"><para>A reference to the location where this method writes the actual number of bytes written to the destination. You can set this reference to <c>null</c>. In this case, this method does not provide the actual number of bytes written.</para></param>	
+            <returns><para>A reference to the location where this method writes the actual number of bytes read from the source. You can set this reference to <c>null</c>. In this case, this method does not provide the actual number of bytes read.</para></returns>	
+            <remarks>	
+            The CopyTo method copies the specified bytes from one stream to another. It can also be used to copy a stream to itself. The seek reference in each stream instance is adjusted for the number of bytes read or written. This method is equivalent to reading cb bytes into memory using 	
+            <see cref="M:SharpDX.Win32.IStreamBase.Read(System.IntPtr,System.Int32)"/> and then immediately writing them to the destination stream using 	
+            <see cref="M:SharpDX.Win32.IStreamBase.Write(System.IntPtr,System.Int32)"/>, although <see cref="!:SharpDX.Win32.IStream.CopyTo_"/> will be more efficient.The destination stream can be a clone of the source stream created by calling the 	
+            <see cref="M:SharpDX.Win32.IStream.Clone"/> method.If <see cref="!:SharpDX.Win32.IStream.CopyTo_"/> returns an error, you cannot assume that the seek references are valid for either the source or destination. Additionally, the values of pcbRead and pcbWritten are not meaningful even though they are returned.If <see cref="!:SharpDX.Win32.IStream.CopyTo_"/> returns successfully, the actual number of bytes read and written are the same.To copy the remainder of the source from the current seek reference, specify the maximum large integer value for the cb parameter. If the seek reference is the beginning of the stream, this operation copies the entire stream.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IStream::CopyTo']/*"/>	
             <unmanaged>HRESULT IStream::CopyTo([In] IStream* pstm,[In] ULARGE_INTEGER cb,[Out, Optional] ULARGE_INTEGER* pcbRead,[Out, Optional] ULARGE_INTEGER* pcbWritten)</unmanaged>	
         </member>
         <member name="M:SharpDX.Win32.ComStream.Commit(SharpDX.Win32.CommitFlags)">
             <summary>	
-            No documentation.	
+            The Commit method ensures that any changes made to a stream object open in transacted mode are reflected in the parent storage. If the stream object is open in direct mode, <see cref="M:SharpDX.Win32.IStream.Commit(SharpDX.Win32.CommitFlags)"/> has no effect other than flushing all memory buffers to the next-level storage object. The COM compound file implementation of streams does not support opening streams in transacted mode.	
             </summary>	
-            <param name="grfCommitFlags">No documentation.</param>	
-            <returns>No documentation.</returns>	
+            <param name="grfCommitFlags"><para>Controls how the changes for the stream object are committed. See the <see cref="T:SharpDX.Win32.CommitFlags"/> enumeration for a definition of these values.</para></param>	
+            <returns>This method can return one of the following values.<item><term><see cref="F:SharpDX.Result.Ok"/></term> <description> <para>Changes to the stream object were successfully committed to the parent level.</para> </description></item> <item><term>E_PENDING</term> <description> <para>Asynchronous Storage only: Part or all of the stream's data is currently unavailable. For more information see IFillLockBytes and Asynchronous Storage.</para> </description></item> <item><term>STG_E_MEDIUMFULL</term> <description> <para>The commit operation failed due to lack of space on the storage device.</para> </description></item> <item><term>STG_E_REVERTED</term> <description> <para>The object has been invalidated by a revert operation above it in the transaction tree.</para> </description></item></returns>	
+            <remarks>	
+            The Commit method ensures that changes to a stream object opened in transacted mode are reflected in the parent storage. Changes that have been made to the stream since it was opened or last committed are reflected to the parent storage object. If the parent is opened in transacted mode, the parent may revert at a later time, rolling back the changes to this stream object. The compound file implementation does not support the opening of streams in transacted mode, so this method has very little effect other than to flush memory buffers. For more information, see 	
+            <see cref="T:SharpDX.Win32.IStream"/> - Compound File Implementation.If the stream is open in direct mode, this method ensures that any memory buffers have been flushed out to the underlying storage object. This is much like a flush in traditional file systems.The <see cref="M:SharpDX.Win32.IStream.Commit(SharpDX.Win32.CommitFlags)"/> method is useful on a direct mode stream when the implementation of the 	
+            <see cref="T:SharpDX.Win32.IStream"/> interface is a wrapper for underlying file system APIs. In this case, <see cref="M:SharpDX.Win32.IStream.Commit(SharpDX.Win32.CommitFlags)"/> would be connected to the file system's flush call.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IStream::Commit']/*"/>	
             <unmanaged>HRESULT IStream::Commit([In] STGC grfCommitFlags)</unmanaged>	
         </member>
         <member name="M:SharpDX.Win32.ComStream.Revert">
             <summary>	
-            No documentation.	
+            The Revert method discards all changes that have been made to a transacted stream since the last 	
+            <see cref="M:SharpDX.Win32.IStream.Commit(SharpDX.Win32.CommitFlags)"/> call. On streams open in direct mode and streams using the COM compound file implementation of <see cref="M:SharpDX.Win32.IStream.Revert"/>, this method has no effect.	
             </summary>	
-            <returns>No documentation.</returns>	
+            <returns>This method can return one of the following values.<item><term><see cref="F:SharpDX.Result.Ok"/></term> <description> <para>The stream was successfully reverted to its previous version.</para> </description></item> <item><term>E_PENDING</term> <description> <para>Asynchronous Storage only: Part or all of the stream's data is currently unavailable. For more information see IFillLockBytes and Asynchronous Storage.</para> </description></item></returns>	
+            <remarks>	
+            The Revert method discards changes made to a transacted stream since the last commit operation.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IStream::Revert']/*"/>	
             <unmanaged>HRESULT IStream::Revert()</unmanaged>	
         </member>
         <member name="M:SharpDX.Win32.ComStream.LockRegion(System.Int64,System.Int64,SharpDX.Win32.LockType)">
             <summary>	
-            No documentation.	
+            The LockRegion method restricts access to a specified range of bytes in the stream. Supporting this functionality is optional since some file systems do not provide it.	
             </summary>	
-            <param name="libOffset">No documentation.</param>	
-            <param name="cb">No documentation.</param>	
-            <param name="dwLockType">No documentation.</param>	
-            <returns>No documentation.</returns>	
+            <param name="libOffset"><para>Integer that specifies the byte offset for the beginning of the range.</para></param>	
+            <param name="cb"><para>Integer that specifies the length of the range, in bytes, to be restricted.</para></param>	
+            <param name="dwLockType"><para>Specifies the restrictions being requested on accessing the range.</para></param>	
+            <returns>This method can return one of the following values.<item><term><see cref="F:SharpDX.Result.Ok"/></term> <description> <para>The specified range of bytes was locked.</para> </description></item> <item><term>E_PENDING</term> <description> <para>Asynchronous Storage only: Part or all of the stream's data is currently unavailable. For more information, see IFillLockBytes and Asynchronous Storage.</para> </description></item> <item><term>STG_E_INVALIDFUNCTION</term> <description> <para>Locking is not supported at all or the specific type of lock requested is not supported.</para> </description></item> <item><term>STG_E_LOCKVIOLATION</term> <description> <para>Requested lock is supported, but cannot be granted because of an existing lock.</para> </description></item> <item><term>STG_E_REVERTED</term> <description> <para>The object has been invalidated by a revert operation above it in the transaction tree.</para> </description></item></returns>	
+            <remarks>	
+            The byte range of the stream can be extended.  Locking an extended range for the stream is useful as a method of communication between different instances of the stream without changing data that is actually part of the stream.Three types of locking can be supported: locking to exclude other writers, locking to exclude other readers or writers, and locking that allows only one requester to obtain a lock on the given range, which is usually an alias for one of the other two lock types. A given stream instance might support either of the first two types, or both. The lock type is specified by dwLockType, using a value from the 	
+            <see cref="T:SharpDX.Win32.LockType"/> enumeration.Any region locked with <see cref="M:SharpDX.Win32.IStream.LockRegion(System.Int64,System.Int64,SharpDX.Win32.LockType)"/> must later be explicitly unlocked by calling 	
+            <see cref="M:SharpDX.Win32.IStream.UnlockRegion(System.Int64,System.Int64,SharpDX.Win32.LockType)"/> with exactly the same values for the libOffset, cb, and dwLockType parameters. The region must be unlocked before the stream is released. Two adjacent regions cannot be locked separately and then unlocked with a single unlock call.Notes to CallersSince the type of locking supported is optional and can vary in different implementations of 	
+            <see cref="T:SharpDX.Win32.IStream"/>, you must provide code to deal with the STG_E_INVALIDFUNCTION error.The LockRegion method has no effect in the compound file implementation, because the implementation does not support range locking.Notes to ImplementersSupport for this method is optional for implementations of stream objects since it may not be supported by the underlying file system. The type of locking supported is also optional. The STG_E_INVALIDFUNCTION error is returned if the requested type of locking is not supported.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IStream::LockRegion']/*"/>	
             <unmanaged>HRESULT IStream::LockRegion([In] ULARGE_INTEGER libOffset,[In] ULARGE_INTEGER cb,[In] LOCKTYPE dwLockType)</unmanaged>	
         </member>
@@ -18703,18 +19283,29 @@
         </member>
         <member name="M:SharpDX.Win32.ComStream.GetStatistics(SharpDX.Win32.StorageStatisticsFlags)">
             <summary>	
-            No documentation.	
+            The Stat method retrieves the 	
+            <see cref="T:SharpDX.Win32.StorageStatistics"/> structure for this stream.	
             </summary>	
             <param name="grfStatFlag">No documentation.</param>	
             <returns>No documentation.</returns>	
+            <remarks>	
+            IStream::Stat retrieves a reference to the 	
+            <see cref="T:SharpDX.Win32.StorageStatistics"/> structure that contains information about this open stream. When this stream is within a structured storage and 	
+            IStorage::EnumElements is called, it creates an enumerator object with the 	
+            IEnumSTATSTG interface on it, which can be called to enumerate the storages and streams through the 	
+            <see cref="T:SharpDX.Win32.StorageStatistics"/> structures associated with each of them.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IStream::Stat']/*"/>	
             <unmanaged>HRESULT IStream::Stat([Out] STATSTG* pstatstg,[In] STATFLAG grfStatFlag)</unmanaged>	
         </member>
         <member name="M:SharpDX.Win32.ComStream.Clone">
             <summary>	
-            No documentation.	
+            The Clone method creates a new stream object with its own seek reference that references the same bytes as the original stream.	
             </summary>	
-            <returns>No documentation.</returns>	
+            <returns><para>When successful, reference to the location of an <see cref="T:SharpDX.Win32.IStream"/> reference to the new stream object. If an error occurs, this parameter is <c>null</c>.</para></returns>	
+            <remarks>	
+            The Clone method creates a new stream object for accessing the same bytes but using a separate seek reference. The new stream object sees the same data as the source-stream object. Changes written to one object are immediately visible in the other. Range locking is shared between the stream objects.The initial setting of the seek reference in the cloned stream instance is the same as the current setting of the seek reference in the original stream at the time of the clone operation.	
+            </remarks>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IStream::Clone']/*"/>	
             <unmanaged>HRESULT IStream::Clone([Out] IStream** ppstm)</unmanaged>	
         </member>
@@ -18736,7 +19327,12 @@
         </member>
         <member name="T:SharpDX.Win32.StorageStatistics">
             <summary>	
-            No documentation.	
+            The 	
+            <see cref="T:SharpDX.Win32.StorageStatistics"/> structure contains statistical data about an open storage, stream, or byte-array object. This structure is used in the 	
+            IEnumSTATSTG, 	
+            ILockBytes, 	
+            IStorage, and 	
+            <see cref="T:SharpDX.Win32.IStream"/> interfaces.	
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='STATSTG']/*"/>	
             <unmanaged>STATSTG</unmanaged>	
@@ -21209,12 +21805,6 @@
             Generic sound input stream supporting WAV (Pcm,Float), ADPCM, xWMA sound file formats.
             </summary>
         </member>
-        <member name="M:SharpDX.Multimedia.SoundStream.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.Multimedia.SoundStream"/> class.
-            </summary>
-            <param name="soundFile">The sound file.</param>
-        </member>
         <member name="M:SharpDX.Multimedia.SoundStream.#ctor(System.IO.Stream)">
             <summary>
             Initializes a new instance of the <see cref="T:SharpDX.Multimedia.SoundStream"/> class.
@@ -23406,6 +23996,11 @@
             Result code Ok
             </summary>
         </member>
+        <member name="F:SharpDX.Result.False">
+            <summary>
+            Result code False
+            </summary>
+        </member>
         <member name="F:SharpDX.Result.Abord">
             <summary>
             Result code Abord
@@ -23474,37 +24069,37 @@
             </summary>
             <value><c>true</c> if failure; otherwise, <c>false</c>.</value>
         </member>
-        <member name="T:SharpDX.Size">
+        <member name="T:SharpDX.PointerSize">
             <summary>
               The maximum number of bytes to which a pointer can point. Use for a count that must span the full range of a pointer.
               Equivalent to Windows type SIZE_T.
             </summary>
         </member>
-        <member name="M:SharpDX.Size.#ctor(System.IntPtr)">
+        <member name="M:SharpDX.PointerSize.#ctor(System.IntPtr)">
             <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.Size"/> struct.
+            Initializes a new instance of the <see cref="T:SharpDX.PointerSize"/> struct.
             </summary>
             <param name="size">The size.</param>
         </member>
-        <member name="M:SharpDX.Size.#ctor(System.Void*)">
+        <member name="M:SharpDX.PointerSize.#ctor(System.Void*)">
             <summary>
               Default constructor.
             </summary>
             <param name = "size">value to set</param>
         </member>
-        <member name="M:SharpDX.Size.#ctor(System.Int32)">
+        <member name="M:SharpDX.PointerSize.#ctor(System.Int32)">
             <summary>
               Default constructor.
             </summary>
             <param name = "size">value to set</param>
         </member>
-        <member name="M:SharpDX.Size.#ctor(System.Int64)">
+        <member name="M:SharpDX.PointerSize.#ctor(System.Int64)">
             <summary>
               Default constructor.
             </summary>
             <param name = "size">value to set</param>
         </member>
-        <member name="M:SharpDX.Size.ToString">
+        <member name="M:SharpDX.PointerSize.ToString">
             <summary>
               Returns a <see cref="T:System.String"/> that represents this instance.
             </summary>
@@ -23512,7 +24107,7 @@
               A <see cref="T:System.String"/> that represents this instance.
             </returns>
         </member>
-        <member name="M:SharpDX.Size.ToString(System.String)">
+        <member name="M:SharpDX.PointerSize.ToString(System.String)">
             <summary>
               Returns a <see cref="T:System.String"/> that represents this instance.
             </summary>
@@ -23521,7 +24116,7 @@
               A <see cref="T:System.String"/> that represents this instance.
             </returns>
         </member>
-        <member name="M:SharpDX.Size.GetHashCode">
+        <member name="M:SharpDX.PointerSize.GetHashCode">
             <summary>
               Returns a hash code for this instance.
             </summary>
@@ -23529,16 +24124,16 @@
               A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
             </returns>
         </member>
-        <member name="M:SharpDX.Size.Equals(SharpDX.Size)">
+        <member name="M:SharpDX.PointerSize.Equals(SharpDX.PointerSize)">
             <summary>
-              Determines whether the specified <see cref="T:SharpDX.Size"/> is equal to this instance.
+              Determines whether the specified <see cref="T:SharpDX.PointerSize"/> is equal to this instance.
             </summary>
-            <param name="other">The <see cref="T:SharpDX.Size"/> to compare with this instance.</param>
+            <param name="other">The <see cref="T:SharpDX.PointerSize"/> to compare with this instance.</param>
             <returns>
-              <c>true</c> if the specified <see cref="T:SharpDX.Size"/> is equal to this instance; otherwise, <c>false</c>.
+              <c>true</c> if the specified <see cref="T:SharpDX.PointerSize"/> is equal to this instance; otherwise, <c>false</c>.
             </returns>
         </member>
-        <member name="M:SharpDX.Size.Equals(System.Object)">
+        <member name="M:SharpDX.PointerSize.Equals(System.Object)">
             <summary>
               Determines whether the specified <see cref="T:System.Object"/> is equal to this instance.
             </summary>
@@ -23547,7 +24142,7 @@
               <c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.
             </returns>
         </member>
-        <member name="M:SharpDX.Size.op_Addition(SharpDX.Size,SharpDX.Size)">
+        <member name="M:SharpDX.PointerSize.op_Addition(SharpDX.PointerSize,SharpDX.PointerSize)">
             <summary>
               Adds two sizes.
             </summary>
@@ -23555,14 +24150,14 @@
             <param name = "right">The second size to add.</param>
             <returns>The sum of the two sizes.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_UnaryPlus(SharpDX.Size)">
+        <member name="M:SharpDX.PointerSize.op_UnaryPlus(SharpDX.PointerSize)">
             <summary>
               Assert a size (return it unchanged).
             </summary>
             <param name = "value">The size to assert (unchange).</param>
             <returns>The asserted (unchanged) size.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Subtraction(SharpDX.Size,SharpDX.Size)">
+        <member name="M:SharpDX.PointerSize.op_Subtraction(SharpDX.PointerSize,SharpDX.PointerSize)">
             <summary>
               Subtracts two sizes.
             </summary>
@@ -23570,14 +24165,14 @@
             <param name = "right">The second size to subtract.</param>
             <returns>The difference of the two sizes.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_UnaryNegation(SharpDX.Size)">
+        <member name="M:SharpDX.PointerSize.op_UnaryNegation(SharpDX.PointerSize)">
             <summary>
               Reverses the direction of a given size.
             </summary>
             <param name = "value">The size to negate.</param>
             <returns>A size facing in the opposite direction.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Multiply(System.Int32,SharpDX.Size)">
+        <member name="M:SharpDX.PointerSize.op_Multiply(System.Int32,SharpDX.PointerSize)">
             <summary>
               Scales a size by the given value.
             </summary>
@@ -23585,7 +24180,7 @@
             <param name = "scale">The amount by which to scale the size.</param>
             <returns>The scaled size.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Multiply(SharpDX.Size,System.Int32)">
+        <member name="M:SharpDX.PointerSize.op_Multiply(SharpDX.PointerSize,System.Int32)">
             <summary>
               Scales a size by the given value.
             </summary>
@@ -23593,7 +24188,7 @@
             <param name = "scale">The amount by which to scale the size.</param>
             <returns>The scaled size.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Division(SharpDX.Size,System.Int32)">
+        <member name="M:SharpDX.PointerSize.op_Division(SharpDX.PointerSize,System.Int32)">
             <summary>
               Scales a size by the given value.
             </summary>
@@ -23601,7 +24196,7 @@
             <param name = "scale">The amount by which to scale the size.</param>
             <returns>The scaled size.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Equality(SharpDX.Size,SharpDX.Size)">
+        <member name="M:SharpDX.PointerSize.op_Equality(SharpDX.PointerSize,SharpDX.PointerSize)">
             <summary>
               Tests for equality between two objects.
             </summary>
@@ -23609,7 +24204,7 @@
             <param name = "right">The second value to compare.</param>
             <returns><c>true</c> if <paramref name = "left" /> has the same value as <paramref name = "right" />; otherwise, <c>false</c>.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Inequality(SharpDX.Size,SharpDX.Size)">
+        <member name="M:SharpDX.PointerSize.op_Inequality(SharpDX.PointerSize,SharpDX.PointerSize)">
             <summary>
               Tests for inequality between two objects.
             </summary>
@@ -23617,58 +24212,58 @@
             <param name = "right">The second value to compare.</param>
             <returns><c>true</c> if <paramref name = "left" /> has a different value than <paramref name = "right" />; otherwise, <c>false</c>.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Implicit(SharpDX.Size)~System.Int32">
+        <member name="M:SharpDX.PointerSize.op_Implicit(SharpDX.PointerSize)~System.Int32">
             <summary>
-              Performs an implicit conversion from <see cref="T:SharpDX.Size"/> to <see cref="T:System.Int32"/>.
+              Performs an implicit conversion from <see cref="T:SharpDX.PointerSize"/> to <see cref="T:System.Int32"/>.
             </summary>
             <param name="value">The value.</param>
             <returns>The result of the conversion.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Implicit(SharpDX.Size)~System.Int64">
+        <member name="M:SharpDX.PointerSize.op_Implicit(SharpDX.PointerSize)~System.Int64">
             <summary>
-              Performs an implicit conversion from <see cref="T:SharpDX.Size"/> to <see cref="T:System.Int64"/>.
+              Performs an implicit conversion from <see cref="T:SharpDX.PointerSize"/> to <see cref="T:System.Int64"/>.
             </summary>
             <param name="value">The value.</param>
             <returns>The result of the conversion.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Implicit(System.Int32)~SharpDX.Size">
+        <member name="M:SharpDX.PointerSize.op_Implicit(System.Int32)~SharpDX.PointerSize">
             <summary>
-              Performs an implicit conversion from <see cref="T:SharpDX.Size"/> to <see cref="T:System.Int32"/>.
+              Performs an implicit conversion from <see cref="T:SharpDX.PointerSize"/> to <see cref="T:System.Int32"/>.
             </summary>
             <param name="value">The value.</param>
             <returns>The result of the conversion.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Implicit(System.Int64)~SharpDX.Size">
+        <member name="M:SharpDX.PointerSize.op_Implicit(System.Int64)~SharpDX.PointerSize">
             <summary>
-              Performs an implicit conversion from <see cref="T:SharpDX.Size"/> to <see cref="T:System.Int64"/>.
+              Performs an implicit conversion from <see cref="T:SharpDX.PointerSize"/> to <see cref="T:System.Int64"/>.
             </summary>
             <param name="value">The value.</param>
             <returns>The result of the conversion.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Implicit(System.IntPtr)~SharpDX.Size">
+        <member name="M:SharpDX.PointerSize.op_Implicit(System.IntPtr)~SharpDX.PointerSize">
             <summary>
-            Performs an implicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.Size"/>.
+            Performs an implicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.PointerSize"/>.
             </summary>
             <param name="value">The value.</param>
             <returns>The result of the conversion.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Implicit(SharpDX.Size)~System.IntPtr">
+        <member name="M:SharpDX.PointerSize.op_Implicit(SharpDX.PointerSize)~System.IntPtr">
             <summary>
-              Performs an implicit conversion from <see cref="T:SharpDX.Size"/> to <see cref="T:System.IntPtr"/>.
+              Performs an implicit conversion from <see cref="T:SharpDX.PointerSize"/> to <see cref="T:System.IntPtr"/>.
             </summary>
             <param name="value">The value.</param>
             <returns>The result of the conversion.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Implicit(System.Void*)~SharpDX.Size">
+        <member name="M:SharpDX.PointerSize.op_Implicit(System.Void*)~SharpDX.PointerSize">
             <summary>
-              Performs an implicit conversion from void* to <see cref="T:SharpDX.Size"/>.
+              Performs an implicit conversion from void* to <see cref="T:SharpDX.PointerSize"/>.
             </summary>
             <param name="value">The value.</param>
             <returns>The result of the conversion.</returns>
         </member>
-        <member name="M:SharpDX.Size.op_Implicit(SharpDX.Size)~System.Void*">
+        <member name="M:SharpDX.PointerSize.op_Implicit(SharpDX.PointerSize)~System.Void*">
             <summary>
-              Performs an implicit conversion from <see cref="T:SharpDX.Size"/> to void*.
+              Performs an implicit conversion from <see cref="T:SharpDX.PointerSize"/> to void*.
             </summary>
             <param name="value">The value.</param>
             <returns>The result of the conversion.</returns>
@@ -23677,15 +24272,6 @@
             <summary>
             Utility class.
             </summary>
-        </member>
-        <member name="M:SharpDX.Utilities.CopyMemory(System.IntPtr,System.IntPtr,System.UInt64)">
-            <summary>
-            Native memcpy.
-            </summary>
-            <param name="dest">The destination memory location</param>
-            <param name="src">The source memory location.</param>
-            <param name="sizeInBytesToCopy">The count.</param>
-            <returns></returns>
         </member>
         <member name="M:SharpDX.Utilities.CopyMemory(System.IntPtr,System.IntPtr,System.Int32)">
             <summary>
@@ -23702,6 +24288,30 @@
             </summary>
             <typeparam name="T">a struct to evaluate</typeparam>
             <returns>sizeof this struct</returns>
+        </member>
+        <member name="M:SharpDX.Utilities.Pin``1(``0@,System.Action{System.IntPtr})">
+            <summary>
+            Pins the specified source and call an action with the pinned pointer.
+            </summary>
+            <typeparam name="T">The type of the structure to pin</typeparam>
+            <param name="source">The source.</param>
+            <param name="pinAction">The pin action to perform on the pinned pointer.</param>
+        </member>
+        <member name="M:SharpDX.Utilities.Pin``1(``0[],System.Action{System.IntPtr})">
+            <summary>
+            Pins the specified source and call an action with the pinned pointer.
+            </summary>
+            <typeparam name="T">The type of the structure to pin</typeparam>
+            <param name="source">The source array.</param>
+            <param name="pinAction">The pin action to perform on the pinned pointer.</param>
+        </member>
+        <member name="M:SharpDX.Utilities.ToByteArray``1(``0[])">
+            <summary>
+            Covnerts a structured array to an equivalent byte array.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source">The source.</param>
+            <returns></returns>
         </member>
         <member name="M:SharpDX.Utilities.Read``1(System.IntPtr,``0@)">
             <summary>
@@ -23757,6 +24367,13 @@
             <param name="array">The array.</param>
             <returns></returns>
         </member>
+        <member name="M:SharpDX.Utilities.GetGuidFromType(System.Type)">
+            <summary>
+            Gets the <see cref="T:System.Guid"/> from a type.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>The guid associated with this type</returns>
+        </member>
         <member name="M:SharpDX.Utilities.PtrToStringAnsi(System.IntPtr,System.Int32)">
             <summary>
             Converts a pointer to a null-terminating string up to maxLength characters to a .Net string.
@@ -23805,12 +24422,6 @@
             <param name="elements">The enumerable.</param>
             <returns>a string with array elements serparated by the seperator</returns>
         </member>
-        <member name="M:SharpDX.Utilities.CoInitializeEx(System.IntPtr,SharpDX.Utilities.CoInit)">
-            <summary>Initializes the COM library for use by the calling thread, sets the thread's concurrency model, and creates a new apartment for the thread if one is required.</summary>
-            <param name="reserved">This parameter is reserved and must be NULL.</param>
-            <param name="coInit">The concurrency model and initialization options for the thread. Values for this parameter are taken from the CoInit enumeration. Any combination of values can be used, except that the ApartmentThreaded and MultiThreaded flags cannot both be set. The default is MultiThreaded.</param>
-            <returns>If function succeeds, it returns S_OK. Otherwise, it returns an error code.</returns>
-        </member>
         <member name="M:SharpDX.Utilities.BlobToString(SharpDX.Direct3D.Blob)">
             <summary>
             Converts a blob to a string.
@@ -23838,7 +24449,7 @@
             Loads a native library.
             </summary>
             <param name="dllName">Name of the DLL.</param>
-            <exception cref="T:System.DllNotFoundException">If dll was not found</exception>
+            <exception cref="T:SharpDX.SharpDXException">If dll was not found</exception>
             <returns></returns>
         </member>
         <member name="M:SharpDX.Utilities.GetProcAddress(System.IntPtr,System.String)">
@@ -23847,7 +24458,7 @@
             </summary>
             <param name="handle">The handle.</param>
             <param name="dllFunctionToImport">The DLL function to import.</param>
-            <exception cref="T:System.EntryPointNotFoundException">If the function was not found</exception>
+            <exception cref="T:SharpDX.SharpDXException">If the function was not found</exception>
             <returns></returns>
         </member>
         <member name="T:SharpDX.Utilities.CoInit">
@@ -26326,101 +26937,6 @@
         <member name="T:SharpDX.Win32.ComStreamShadow.ComStreamVtbl.CloneDelegate">
             <unmanaged>HRESULT IStream::Clone([Out] IStream** ppstm)</unmanaged>	
         </member>
-        <member name="F:SharpDX.Win32.NativeFileAccess.GenericRead">
-             <summary>
-            
-             </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileAccess.GenericWrite">
-             <summary>
-            
-             </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileAccess.GenericExecute">
-             <summary>
-            
-             </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileAccess.GenericAll">
-             <summary>
-            
-             </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileShare.Read">
-            <summary>
-            Enables subsequent open operations on an object to request read access.
-            Otherwise, other processes cannot open the object if they request read access.
-            If this flag is not specified, but the object has been opened for read access, the function fails.
-            </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileShare.Write">
-            <summary>
-            Enables subsequent open operations on an object to request write access.
-            Otherwise, other processes cannot open the object if they request write access.
-            If this flag is not specified, but the object has been opened for write access, the function fails.
-            </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileShare.Delete">
-            <summary>
-            Enables subsequent open operations on an object to request delete access.
-            Otherwise, other processes cannot open the object if they request delete access.
-            If this flag is not specified, but the object has been opened for delete access, the function fails.
-            </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileCreationDisposition.New">
-            <summary>
-            Creates a new file. The function fails if a specified file exists.
-            </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileCreationDisposition.CreateAlways">
-            <summary>
-            Creates a new file, always.
-            If a file exists, the function overwrites the file, clears the existing attributes, combines the specified file attributes,
-            and flags with FILE_ATTRIBUTE_ARCHIVE, but does not set the security descriptor that the SECURITY_ATTRIBUTES structure specifies.
-            </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileCreationDisposition.OpenExisting">
-            <summary>
-            Opens a file. The function fails if the file does not exist.
-            </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileCreationDisposition.OpenAlways">
-            <summary>
-            Opens a file, always.
-            If a file does not exist, the function creates a file as if dwCreationDisposition is CREATE_NEW.
-            </summary>
-        </member>
-        <member name="F:SharpDX.Win32.NativeFileCreationDisposition.TruncateExisting">
-            <summary>
-            Opens a file and truncates it so that its size is 0 (zero) bytes. The function fails if the file does not exist.
-            The calling process must open the file with the GENERIC_WRITE access right.
-            </summary>
-        </member>
-        <member name="T:SharpDX.Win32.FileHelper">
-            <summary>
-            Windows File Helper.
-            </summary>
-        </member>
-        <member name="M:SharpDX.Win32.FileHelper.CreateFile(System.String,SharpDX.Win32.NativeFileAccess,SharpDX.Win32.NativeFileShare,System.IntPtr,SharpDX.Win32.NativeFileCreationDisposition,SharpDX.Win32.NativeFileAttributes,System.IntPtr)">
-            <summary>
-            Creates the file.
-            </summary>
-            <param name="lpFileName">Name of the lp file.</param>
-            <param name="dwDesiredAccess">The dw desired access.</param>
-            <param name="dwShareMode">The dw share mode.</param>
-            <param name="lpSecurityAttributes">The lp security attributes.</param>
-            <param name="dwCreationDisposition">The dw creation disposition.</param>
-            <param name="dwFlagsAndAttributes">The dw flags and attributes.</param>
-            <param name="hTemplateFile">The h template file.</param>
-            <returns></returns>
-        </member>
-        <member name="M:SharpDX.Win32.FileHelper.Convert(System.IO.FileAccess)">
-            <summary>
-            Converts the specified file access to a native file access.
-            </summary>
-            <param name="fileAccess">The file access.</param>
-            <returns></returns>
-        </member>
         <member name="T:SharpDX.Win32.PropertyBag">
             <summary>
             Implementation of OLE IPropertyBag2.
@@ -26742,6 +27258,716 @@
         <member name="E:SharpDX.Windows.RenderForm.UserResized">
             <summary>
             Occurs when [user resized].
+            </summary>
+        </member>
+        <member name="T:SharpDX.Colors">
+            <summary>
+            List of predefined <see cref="T:SharpDX.Color4"/>.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Transparent">
+            <summary>
+            Transparent color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.AliceBlue">
+            <summary>
+            AliceBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.AntiqueWhite">
+            <summary>
+            AntiqueWhite color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Aqua">
+            <summary>
+            Aqua color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Aquamarine">
+            <summary>
+            Aquamarine color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Azure">
+            <summary>
+            Azure color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Beige">
+            <summary>
+            Beige color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Bisque">
+            <summary>
+            Bisque color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Black">
+            <summary>
+            Black color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.BlanchedAlmond">
+            <summary>
+            BlanchedAlmond color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Blue">
+            <summary>
+            Blue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.BlueViolet">
+            <summary>
+            BlueViolet color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Brown">
+            <summary>
+            Brown color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.BurlyWood">
+            <summary>
+            BurlyWood color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.CadetBlue">
+            <summary>
+            CadetBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Chartreuse">
+            <summary>
+            Chartreuse color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Chocolate">
+            <summary>
+            Chocolate color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Coral">
+            <summary>
+            Coral color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.CornflowerBlue">
+            <summary>
+            CornflowerBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Cornsilk">
+            <summary>
+            Cornsilk color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Crimson">
+            <summary>
+            Crimson color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Cyan">
+            <summary>
+            Cyan color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkBlue">
+            <summary>
+            DarkBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkCyan">
+            <summary>
+            DarkCyan color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkGoldenrod">
+            <summary>
+            DarkGoldenrod color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkGray">
+            <summary>
+            DarkGray color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkGreen">
+            <summary>
+            DarkGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkKhaki">
+            <summary>
+            DarkKhaki color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkMagenta">
+            <summary>
+            DarkMagenta color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkOliveGreen">
+            <summary>
+            DarkOliveGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkOrange">
+            <summary>
+            DarkOrange color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkOrchid">
+            <summary>
+            DarkOrchid color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkRed">
+            <summary>
+            DarkRed color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkSalmon">
+            <summary>
+            DarkSalmon color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkSeaGreen">
+            <summary>
+            DarkSeaGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkSlateBlue">
+            <summary>
+            DarkSlateBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkSlateGray">
+            <summary>
+            DarkSlateGray color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkTurquoise">
+            <summary>
+            DarkTurquoise color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DarkViolet">
+            <summary>
+            DarkViolet color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DeepPink">
+            <summary>
+            DeepPink color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DeepSkyBlue">
+            <summary>
+            DeepSkyBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DimGray">
+            <summary>
+            DimGray color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.DodgerBlue">
+            <summary>
+            DodgerBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Firebrick">
+            <summary>
+            Firebrick color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.FloralWhite">
+            <summary>
+            FloralWhite color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.ForestGreen">
+            <summary>
+            ForestGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Fuchsia">
+            <summary>
+            Fuchsia color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Gainsboro">
+            <summary>
+            Gainsboro color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.GhostWhite">
+            <summary>
+            GhostWhite color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Gold">
+            <summary>
+            Gold color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Goldenrod">
+            <summary>
+            Goldenrod color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Gray">
+            <summary>
+            Gray color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Green">
+            <summary>
+            Green color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.GreenYellow">
+            <summary>
+            GreenYellow color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Honeydew">
+            <summary>
+            Honeydew color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.HotPink">
+            <summary>
+            HotPink color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.IndianRed">
+            <summary>
+            IndianRed color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Indigo">
+            <summary>
+            Indigo color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Ivory">
+            <summary>
+            Ivory color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Khaki">
+            <summary>
+            Khaki color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Lavender">
+            <summary>
+            Lavender color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LavenderBlush">
+            <summary>
+            LavenderBlush color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LawnGreen">
+            <summary>
+            LawnGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LemonChiffon">
+            <summary>
+            LemonChiffon color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightBlue">
+            <summary>
+            LightBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightCoral">
+            <summary>
+            LightCoral color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightCyan">
+            <summary>
+            LightCyan color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightGoldenrodYellow">
+            <summary>
+            LightGoldenrodYellow color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightGray">
+            <summary>
+            LightGray color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightGreen">
+            <summary>
+            LightGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightPink">
+            <summary>
+            LightPink color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightSalmon">
+            <summary>
+            LightSalmon color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightSeaGreen">
+            <summary>
+            LightSeaGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightSkyBlue">
+            <summary>
+            LightSkyBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightSlateGray">
+            <summary>
+            LightSlateGray color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightSteelBlue">
+            <summary>
+            LightSteelBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LightYellow">
+            <summary>
+            LightYellow color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Lime">
+            <summary>
+            Lime color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.LimeGreen">
+            <summary>
+            LimeGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Linen">
+            <summary>
+            Linen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Magenta">
+            <summary>
+            Magenta color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Maroon">
+            <summary>
+            Maroon color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MediumAquamarine">
+            <summary>
+            MediumAquamarine color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MediumBlue">
+            <summary>
+            MediumBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MediumOrchid">
+            <summary>
+            MediumOrchid color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MediumPurple">
+            <summary>
+            MediumPurple color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MediumSeaGreen">
+            <summary>
+            MediumSeaGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MediumSlateBlue">
+            <summary>
+            MediumSlateBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MediumSpringGreen">
+            <summary>
+            MediumSpringGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MediumTurquoise">
+            <summary>
+            MediumTurquoise color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MediumVioletRed">
+            <summary>
+            MediumVioletRed color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MidnightBlue">
+            <summary>
+            MidnightBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MintCream">
+            <summary>
+            MintCream color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.MistyRose">
+            <summary>
+            MistyRose color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Moccasin">
+            <summary>
+            Moccasin color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.NavajoWhite">
+            <summary>
+            NavajoWhite color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Navy">
+            <summary>
+            Navy color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.OldLace">
+            <summary>
+            OldLace color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Olive">
+            <summary>
+            Olive color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.OliveDrab">
+            <summary>
+            OliveDrab color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Orange">
+            <summary>
+            Orange color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.OrangeRed">
+            <summary>
+            OrangeRed color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Orchid">
+            <summary>
+            Orchid color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.PaleGoldenrod">
+            <summary>
+            PaleGoldenrod color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.PaleGreen">
+            <summary>
+            PaleGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.PaleTurquoise">
+            <summary>
+            PaleTurquoise color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.PaleVioletRed">
+            <summary>
+            PaleVioletRed color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.PapayaWhip">
+            <summary>
+            PapayaWhip color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.PeachPuff">
+            <summary>
+            PeachPuff color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Peru">
+            <summary>
+            Peru color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Pink">
+            <summary>
+            Pink color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Plum">
+            <summary>
+            Plum color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.PowderBlue">
+            <summary>
+            PowderBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Purple">
+            <summary>
+            Purple color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Red">
+            <summary>
+            Red color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.RosyBrown">
+            <summary>
+            RosyBrown color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.RoyalBlue">
+            <summary>
+            RoyalBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.SaddleBrown">
+            <summary>
+            SaddleBrown color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Salmon">
+            <summary>
+            Salmon color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.SandyBrown">
+            <summary>
+            SandyBrown color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.SeaGreen">
+            <summary>
+            SeaGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.SeaShell">
+            <summary>
+            SeaShell color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Sienna">
+            <summary>
+            Sienna color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Silver">
+            <summary>
+            Silver color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.SkyBlue">
+            <summary>
+            SkyBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.SlateBlue">
+            <summary>
+            SlateBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.SlateGray">
+            <summary>
+            SlateGray color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Snow">
+            <summary>
+            Snow color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.SpringGreen">
+            <summary>
+            SpringGreen color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.SteelBlue">
+            <summary>
+            SteelBlue color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Tan">
+            <summary>
+            Tan color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Teal">
+            <summary>
+            Teal color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Thistle">
+            <summary>
+            Thistle color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Tomato">
+            <summary>
+            Tomato color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Turquoise">
+            <summary>
+            Turquoise color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Violet">
+            <summary>
+            Violet color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Wheat">
+            <summary>
+            Wheat color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.White">
+            <summary>
+            White color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.WhiteSmoke">
+            <summary>
+            WhiteSmoke color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.Yellow">
+            <summary>
+            Yellow color.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Colors.YellowGreen">
+            <summary>
+            YellowGreen color.
             </summary>
         </member>
     </members>

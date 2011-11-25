@@ -66,7 +66,6 @@ namespace S33M3Engines.D3D.Effects
         InputLayout _inputLayout;
 
         public D3DEngine _d3dEngine;
-        public string CompilationErrors;
         #endregion
 
         #region public properties
@@ -105,7 +104,7 @@ namespace S33M3Engines.D3D.Effects
             }
             catch (Exception)
             {
-                Console.WriteLine("Shader compilation error : " + CompilationErrors);
+                Console.WriteLine("Shader compilation errors");
                 throw;
             }
 
@@ -119,7 +118,7 @@ namespace S33M3Engines.D3D.Effects
             {
                 if (_shaderEntryPoint.VertexShader_EntryPoint != null)
                 {
-                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
+                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null))
                     {
                         //Get the VS Input signature from the Vertex Shader
                         _signature = ShaderSignature.GetInputSignature(bytecode);
@@ -135,9 +134,9 @@ namespace S33M3Engines.D3D.Effects
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new Exception(CompilationErrors);
+                throw new Exception("Error compiling shader " + e.Message);
             }
         }
 
@@ -149,7 +148,7 @@ namespace S33M3Engines.D3D.Effects
 
                 if (_shaderEntryPoint.GeometryShader_EntryPoint != null)
                 {
-                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
+                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null))
                     {
                         _gs = new GeometryShader(_d3dEngine.Device, bytecode);
                         D3D.Tools.Resource.SetName(_gs, "gs " + _fileName);
@@ -161,9 +160,9 @@ namespace S33M3Engines.D3D.Effects
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new Exception(CompilationErrors);
+                throw new Exception("Error compiling shader " + e.Message);
             }
         }
 
@@ -174,7 +173,7 @@ namespace S33M3Engines.D3D.Effects
             {
                 if (_shaderEntryPoint.PixelShader_EntryPoint != null)
                 {
-                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null, out CompilationErrors))
+                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, _d3dEngine.ShaderFlags, EffectFlags.None, null, null))
                     {
                         _ps = new PixelShader(_d3dEngine.Device, bytecode);
                         D3D.Tools.Resource.SetName(_ps, "ps " + _fileName);
@@ -185,9 +184,9 @@ namespace S33M3Engines.D3D.Effects
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new Exception(CompilationErrors);
+                throw new Exception("Error compiling shader " + e.Message);
             }
         }
         #endregion
