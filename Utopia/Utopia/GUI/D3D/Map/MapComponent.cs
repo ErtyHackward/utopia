@@ -53,6 +53,8 @@ namespace Utopia.GUI.D3D.Map
 
         public override void LoadContent()
         {
+            if (_mapImage == null) return;
+
             var playerMarker = new Bitmap(16, 16);
 
             using (var g = Graphics.FromImage(playerMarker))
@@ -76,6 +78,8 @@ namespace Utopia.GUI.D3D.Map
 
         public override void Update(ref GameTime timeSpent)
         {
+            if (_mapImage == null) return;
+
             _mapControl.MarkerPosition = new Point((int)_playerManager.Player.Position.X, (int)_playerManager.Player.Position.Z);
 
             if (_actionManager.isTriggered(Actions.OpenMap))

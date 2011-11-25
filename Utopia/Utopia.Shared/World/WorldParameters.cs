@@ -31,7 +31,7 @@ namespace Utopia.Shared.World
         {
             //Define default values
             SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2;
-            Seed = 12695360;
+            Seed = 12695362;
         }
     }
 }

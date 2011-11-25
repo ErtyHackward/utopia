@@ -6,6 +6,7 @@ using System;
 using Utopia.Shared.Cubes;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Entities.Concrete.Collectible;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Shared.World.Processors
 {
@@ -79,20 +80,21 @@ namespace Utopia.Shared.World.Processors
 
             generationRange.Foreach(pos =>
             {
+                var r = new FastRandom(_worldParameters.Seed + pos.GetHashCode());
                 var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
 
                 //var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
 
                 chunkWorldRange = new Range<int>() { Min = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z), Max = new Vector3I((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
 
-                TerraForming(chunk, ref chunkWorldRange);
+                TerraForming(chunk, ref chunkWorldRange, r);
 
                 //chunk.BlockData.SetBlockBytes(chunkBytes);
                 _chunksDone++;
             });
         }
 
-        private void TerraForming(GeneratedChunk chunk, ref Range<int> workingRange)
+        private void TerraForming(GeneratedChunk chunk, ref Range<int> workingRange, FastRandom randomizer)
         {
             byte cubeId;
             int index;
@@ -121,7 +123,7 @@ namespace Utopia.Shared.World.Processors
                     index = -1;
 
                     localZ = Z - workingRange.Min.Z;
-                    for (int Y = AbstractChunk.ChunkSize.Y - 1; Y >= 1; Y--) //X
+                    for (int Y = AbstractChunk.ChunkSize.Y - 1; Y >= 1; Y--) //Y
                     {
                         localY = Y - workingRange.Min.Y;
 
@@ -164,16 +166,61 @@ namespace Utopia.Shared.World.Processors
                                 if (surfaceMudLayer == 0 && sandPlaced == false)
                                 {
                                     Cubes[index] = CubeId.Grass;
-                                    //Place Grass sprite on the Cube
-                                    if (sandResult.Value > 0.5)
+
+                                    if (randomizer.NextDouble() < 0.005d)
                                     {
-                                        chunk.Entities.Add(new Grass()
-                                        {
-                                            GrowPhase = 0,
-                                            Position = new Vector3D(X + MathHelper.FullLerp(0.45f, 0.55f, 0, 1, _rnd.NextDouble()), Y + 1, Z + MathHelper.FullLerp(0.45f, 0.55f, 0, 1, _rnd.NextDouble())),
-                                            LinkedCube = new Vector3I(X, Y, Z)
-                                        });
+                                        //AddTree(chunk, new Vector3I(X, Y + 1, Z));
                                     }
+                                    else
+                                        if (randomizer.NextDouble() < 0.03)
+                                        {
+                                            double result = randomizer.NextDouble();
+                                            if (result <= 0.4)
+                                            {
+                                                chunk.Entities.Add(new Grass
+                                                {
+                                                    GrowPhase = (byte)randomizer.Next(0, 5),
+                                                    Position = new Vector3D(X + 0.5, Y + 1, Z + 0.5),
+                                                    LinkedCube = new Vector3I(X, Y, Z)
+                                                });
+                                            }
+                                            else if (result <= 0.6)
+                                            {
+                                                chunk.Entities.Add(new Flower1
+                                                {
+                                                    Position = new Vector3D(X + 0.5, Y + 1, Z + 0.5),
+                                                    LinkedCube = new Vector3I(X, Y, Z)
+                                                });
+                                            }
+                                            else if (result <= 0.7)
+                                            {
+                                                chunk.Entities.Add(new Flower2
+                                                {
+                                                    Position = new Vector3D(X + 0.5, Y + 1, Z + 0.5),
+                                                    LinkedCube = new Vector3I(X, Y, Z)
+                                                });
+                                            }
+                                            else if (result <= 0.9)
+                                            {
+                                                chunk.Entities.Add(new Mushr1
+                                                {
+                                                    Position = new Vector3D(X + 0.5, Y + 1, Z + 0.5),
+                                                    LinkedCube = new Vector3I(X, Y, Z)
+                                                });
+                                            }
+                                            else if (result <= 1)
+                                            {
+                                                chunk.Entities.Add(new Mushr2
+                                                {
+                                                    Position = new Vector3D(X + 0.5, Y + 1, Z + 0.5),
+                                                    LinkedCube = new Vector3I(X, Y, Z)
+                                                });
+                                            }
+                                        }
+
+
+
+
                                 }
                                 else
                                 {
@@ -207,6 +254,45 @@ namespace Utopia.Shared.World.Processors
 
                     }
                 }
+            }
+        }
+
+        private void AddTree(GeneratedChunk chunk, Vector3I vector3i)
+        {
+            // don't add tree at the edge of chunk
+            if (vector3i.X == 0 || vector3i.X == AbstractChunk.ChunkSize.X - 1 || vector3i.Z == 0 || vector3i.Z == AbstractChunk.ChunkSize.Z - 1)
+                return;
+
+            var tree = new Tree();
+            tree.Position = new Vector3D(vector3i.X, vector3i.Y, vector3i.Z);
+            chunk.Entities.Add(tree);
+
+            for (int i = 0; i < 7; i++)
+            {
+                TryAddBlock(chunk, vector3i, CubeId.Trunk);
+                vector3i.Y++;
+            }
+
+            var radius = 2;
+            for (int y = 0; y < 4; y++)
+            {
+                if (y == 0 || y == 3) radius = 1; else radius = 2;
+                for (int x = -radius; x <= radius; x++)
+                {
+                    for (int z = -radius; z <= radius; z++)
+                    {
+                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), CubeId.Leaves);
+                    }
+                }
+                vector3i.Y--;
+            }
+        }
+
+        private void TryAddBlock(GeneratedChunk chunk, Vector3I pos, byte value)
+        {
+            if (pos.X >= 0 && pos.X < AbstractChunk.ChunkSize.X && pos.Y >= 0 && pos.Y < AbstractChunk.ChunkSize.Y && pos.Z >= 0 && pos.Z < AbstractChunk.ChunkSize.Z)
+            {
+                chunk.BlockData[pos] = value;
             }
         }
 

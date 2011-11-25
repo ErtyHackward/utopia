@@ -701,6 +701,8 @@ namespace Utopia.Shared.World.PlanGenerator
 
         public Bitmap Render()
         {
+            if (Parameters.MapSize.X == 0 || Parameters.MapSize.Y == 0) return null;
+            
             Bitmap bmp = new Bitmap(Parameters.MapSize.X, Parameters.MapSize.Y,System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             
             Random r = new Random(1);
