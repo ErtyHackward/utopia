@@ -111,12 +111,13 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         public event EventHandler LoadComplete;
 
-        private void OnLoadComplete()
+        private void OnInitialLoadComplete()
         {
             var handler = LoadComplete;
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        public bool IsInitialLoadCompleted { get; set; }
 
         public WorldChunks(D3DEngine d3dEngine, 
                            CameraManager camManager,
@@ -164,6 +165,7 @@ namespace Utopia.Worlds.Chunks
 
             //Subscribe to chunk modifications
             _cubesHolder.BlockDataChanged += ChunkCubes_BlockDataChanged;
+            IsInitialLoadCompleted = false;
 
             DrawOrders.UpdateIndex(SOLID_DRAW, 10);
             DrawOrders.AddIndex(ENTITIES_DRAW, 20);
@@ -187,7 +189,6 @@ namespace Utopia.Worlds.Chunks
                 if (chunk != null)
                 {
                     chunk.ReadyToDraw -= ChunkReadyToDraw;
-                    chunk.PreparingToDraw -= ChunkPreparingToDraw;
                     chunk.Dispose();
                 }
             }
@@ -454,7 +455,6 @@ namespace Utopia.Worlds.Chunks
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);
 
                     chunk.ReadyToDraw += ChunkReadyToDraw;
-                    chunk.PreparingToDraw += ChunkPreparingToDraw;
 
                     //Store this chunk inside the arrays.
                     Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
@@ -495,22 +495,16 @@ namespace Utopia.Worlds.Chunks
             OnChunksArrayInitialized();
         }
 
-        void ChunkPreparingToDraw(object sender, EventArgs e)
-        {
-            lock (_counterLock)
-            {
-                _readyToDrawCount--;
-            }
-
-        }
-
         void ChunkReadyToDraw(object sender, EventArgs e)
         {
             lock (_counterLock)
             {
                 _readyToDrawCount++;
-                if (_readyToDrawCount == Chunks.Length)
-                    OnLoadComplete();
+                if (_readyToDrawCount > (Chunks.Length * 5 /100) && IsInitialLoadCompleted == false)
+                {
+                    IsInitialLoadCompleted = true;
+                    OnInitialLoadComplete();
+                }
             }
         }
 

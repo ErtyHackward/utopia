@@ -51,15 +51,12 @@ namespace LostIsland.Client.GUI
                 lastCheck = DateTime.Now;
             }
 
-            
-
             base.Update(ref timeSpent);
         }
 
         public override void Draw(int index)
         {
             _spriteRender.Begin(false);
-
             _engine.Context.ClearRenderTargetView(_engine.RenderTarget, new Color4(1,1,1,1));
             _spriteRender.Draw(_materia, new SharpDX.Rectangle(100, 100, 357, 324), Color.White);
             _spriteRender.DrawText(_font, _loadingText, new Vector2(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 100), Color.Black);
