@@ -45,7 +45,7 @@ namespace Utopia.GUI.D3D.Map
         }
 
         public override void Initialize()
-        {            
+        {
             // TODO: need to make it async
             _planGenerator.Generate();
             _mapImage = _planGenerator.Render();

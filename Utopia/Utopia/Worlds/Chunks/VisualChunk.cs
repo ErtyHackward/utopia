@@ -84,8 +84,6 @@ namespace Utopia.Worlds.Chunks
                     _ready2Draw = value;
                     if (_ready2Draw)
                         OnReadyToDraw();
-                    else 
-                        OnPreparingToDraw();
                 }
             }
         }
@@ -155,18 +153,6 @@ namespace Utopia.Worlds.Chunks
             var handler = ReadyToDraw;
             if (handler != null) handler(this, EventArgs.Empty);
         }
-
-        /// <summary>
-        /// Occurs when chunk vertices need to be rebuilded
-        /// </summary>
-        public event EventHandler PreparingToDraw;
-
-        private void OnPreparingToDraw()
-        {
-            var handler = PreparingToDraw;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
 
         public VisualChunk(
                             D3DEngine d3dEngine, 
