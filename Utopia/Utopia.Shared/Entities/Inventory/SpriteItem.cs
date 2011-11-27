@@ -8,7 +8,7 @@ namespace Utopia.Shared.Entities.Inventory
         #endregion
 
         #region Public variables
-        public EquipmentSlotType AllowedSlots { get; set; }
+        public virtual EquipmentSlotType AllowedSlots { get; set; }
         //public SpriteTexture Icon { get; set; }
         //public Rectangle? IconSourceRectangle  { get; set; }
         public abstract int MaxStackSize { get; }

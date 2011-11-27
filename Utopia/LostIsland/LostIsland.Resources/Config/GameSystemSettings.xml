@@ -30,6 +30,11 @@
     <ClassID>100</ClassID>
     <SpriteID>9</SpriteID>
   </Entity>
+  <Entity>
+    <!-- Carver tool -->
+    <ClassID>3</ClassID>
+    <SpriteID>10</SpriteID>
+  </Entity>
   <Cube>
     <Name>Air</Name>
     <Id>0</Id>

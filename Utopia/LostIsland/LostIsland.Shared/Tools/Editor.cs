@@ -32,5 +32,16 @@ namespace LostIsland.Shared.Tools
         {
             get { return "Editor tool edits any entity"; }
         }
+
+
+        public IToolImpact Use(IDynamicEntity owner, byte useMode, bool runOnServer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Rollback(IToolImpact impact)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

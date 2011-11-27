@@ -207,6 +207,9 @@
     <Content Include="TexturesPacks\Default\Sprites\0005_0_GoldCoin1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TexturesPacks\Default\Sprites\0006_0_Carver1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TexturesPacks\Default\Terran\ct21.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
