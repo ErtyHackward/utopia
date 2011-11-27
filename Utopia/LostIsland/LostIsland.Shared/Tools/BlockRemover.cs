@@ -47,7 +47,7 @@ namespace LostIsland.Shared.Tools
             throw new NotImplementedException();
         }
 
-        public EquipmentSlotType AllowedSlots
+        public override EquipmentSlotType AllowedSlots
         {
             get
             {

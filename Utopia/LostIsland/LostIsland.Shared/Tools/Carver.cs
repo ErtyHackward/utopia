@@ -12,7 +12,6 @@ namespace LostIsland.Shared.Tools
     /// and eventually to show the carving tool itself in world, it's surely too small to be a voxel item
     /// maybe it will become a voxel item some day in fact ;)
     /// </summary>
-    
     public class Carver : SpriteItem, IGameStateTool
     {
         public override ushort ClassId
@@ -33,6 +32,23 @@ namespace LostIsland.Shared.Tools
         public override string Description
         {
             get { return "Carve tool to make sculptures"; }
+        }
+
+
+        public override EquipmentSlotType AllowedSlots
+        {
+            get { return EquipmentSlotType.LeftHand; }
+            set { throw new NotSupportedException(); }
+        }
+
+        public IToolImpact Use(IDynamicEntity owner, byte useMode, bool runOnServer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Rollback(IToolImpact impact)
+        {
+            throw new NotImplementedException();
         }
     }
 }
