@@ -187,6 +187,8 @@ namespace S33M3Engines.D3D
 
             //Wait for end of all jobs
             WorkQueue.ThreadPoolGrp.WaitForIdle();
+
+            
         }
 
         public virtual void LoadContent()
