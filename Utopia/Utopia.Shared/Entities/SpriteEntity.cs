@@ -8,7 +8,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// The sprite format, give the number of quad that will be draw, and how they intersect
         /// </summary>
-        public SpriteFormat Format;
+        public SpriteFormat Format = SpriteFormat.Billboard;
 
         /// <summary>
         /// in case we want the sprite to move with the wind

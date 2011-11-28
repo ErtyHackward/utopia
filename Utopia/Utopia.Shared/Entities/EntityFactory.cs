@@ -4,6 +4,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Concrete.Collectible;
+using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities
 {
@@ -12,15 +13,12 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public class EntityFactory
     {
-        private static EntityFactory _instance;
+        public static EntityFactory Instance;
+        public readonly ILandscapeManager2D LandscapeManager;
 
-        /// <summary>
-        /// Gets or sets instance of entity factory
-        /// </summary>
-        public static EntityFactory Instance
+        public EntityFactory(ILandscapeManager2D landscapeManager)
         {
-            get { return _instance ?? (_instance = new EntityFactory()); }
-            set { _instance = value; }
+            this.LandscapeManager = landscapeManager;
         }
 
         /// <summary>
@@ -64,19 +62,19 @@ namespace Utopia.Shared.Entities
                         entity = new Zombie();
                         break;
                     case EntityClassId.Grass:
-                        entity = new Grass();
+                        entity = new Grass(LandscapeManager);
                         break;
                     case EntityClassId.Flower1:
-                        entity = new Flower1();
+                        entity = new Flower1(LandscapeManager);
                         break;
                     case EntityClassId.Flower2:
-                        entity = new Flower2();
+                        entity = new Flower2(LandscapeManager);
                         break;
                     case EntityClassId.Mushroom1:
-                        entity = new Mushr1();
+                        entity = new Mushr1(LandscapeManager);
                         break;
                     case EntityClassId.Mushroom2:
-                        entity = new Mushr2();
+                        entity = new Mushr2(LandscapeManager);
                         break;
                     case EntityClassId.Tree:
                         entity = new Tree();
