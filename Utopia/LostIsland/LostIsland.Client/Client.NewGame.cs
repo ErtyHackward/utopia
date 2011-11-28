@@ -149,7 +149,7 @@ namespace LostIsland.Client
 
             //utopiaRenderer.GameComponents.Add(iocContainer.Get<BepuPhysicsComponent>());
             utopiaRenderer.GameComponents.Add(iocContainer.Get<LoadingComponent>());
-
+            //utopiaRenderer.GameComponents.Add(iocContainer.Get<LoginComponent>());
             
             BindActions(iocContainer.Get<ActionsManager>());    //Bind the various actions
 

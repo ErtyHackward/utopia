@@ -113,6 +113,8 @@ namespace LostIsland.Client
             else iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds");
             iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
             iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
+            iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
+
 
             //Landscape Creation/Acces/Management ====================================
             iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope();

@@ -157,6 +157,7 @@
     <Compile Include="GUI\D3D\GuiManager.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUI\D3D\LoginComponent.cs" />
     <Compile Include="GUI\D3D\Map\MapComponent.cs" />
     <Compile Include="GUI\D3D\Map\MapControl.cs" />
     <Compile Include="GUI\D3D\Map\MapRenderer.cs" />
