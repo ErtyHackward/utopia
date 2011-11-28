@@ -7,6 +7,7 @@ using Utopia.Shared.Cubes;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Shared.World.Processors
 {
@@ -177,7 +178,7 @@ namespace Utopia.Shared.World.Processors
                                             double result = randomizer.NextDouble();
                                             if (result <= 0.4)
                                             {
-                                                chunk.Entities.Add(new Grass
+                                                chunk.Entities.Add(new Grass()
                                                 {
                                                     GrowPhase = (byte)randomizer.Next(0, 5),
                                                     Position = new Vector3D(X + 0.5, Y + 1, Z + 0.5),
