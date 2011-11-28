@@ -68,6 +68,7 @@ namespace Utopia
         public MapComponent mapComponent;
         public Hud hud;
         public EntityEditor entityEditor;
+        public CarvingEditor carvingEditor;
         public IDrawableComponent stars;
         public ISkyDome skydome;
         public IWeather weather;

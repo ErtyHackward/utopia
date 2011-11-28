@@ -36,7 +36,10 @@ namespace LostIslandHD.Client
             if (tool is Carver )
             {
                 //this can be slow if you abuse it, here its a user special mode activation so it's ok
-                _iocContainer.Get<EntityEditor>().Enabled = true;
+                CarvingEditor editor = _iocContainer.Get<CarvingEditor>();
+                editor.Enabled = true;
+                editor.StartCarving();
+
             }
             else if (tool is Editor)
             {

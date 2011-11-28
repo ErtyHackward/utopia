@@ -110,6 +110,7 @@ namespace LostIsland.Client
                 mapComponent = iocContainer.Get<MapComponent>(new ConstructorArgument("plan", plan)),
                 hud = iocContainer.Get<Hud>(),
                 entityEditor = iocContainer.Get<EntityEditor>(),
+                carvingEditor = iocContainer.Get<CarvingEditor>(),
                 stars = iocContainer.Get<IDrawableComponent>("Stars"),
                 skydome = iocContainer.Get<ISkyDome>(),
                 weather = iocContainer.Get<IWeather>(),

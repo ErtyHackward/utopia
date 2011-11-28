@@ -113,6 +113,7 @@
     <Compile Include="Action\MouseTriggerMode.cs" />
     <Compile Include="BepuPhysicsComponent.cs" />
     <Compile Include="DebugComponent.cs" />
+    <Compile Include="Editor\CarvingEditor.cs" />
     <Compile Include="Editor\EditorTool.cs" />
     <Compile Include="Editor\EntityEditor.cs" />
     <Compile Include="Editor\EntityEditorUI.cs" />

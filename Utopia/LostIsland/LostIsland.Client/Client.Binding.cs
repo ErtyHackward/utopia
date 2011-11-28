@@ -105,6 +105,7 @@ namespace LostIsland.Client
             iocContainer.Bind<MapComponent>().ToSelf().InSingletonScope();
             iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
             iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
+            iocContainer.Bind<CarvingEditor>().ToSelf().InSingletonScope();            
             iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
             iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
             iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();

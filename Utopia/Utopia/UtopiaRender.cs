@@ -86,6 +86,7 @@ namespace Utopia
             GameComponents.Add(new DebugComponent(this, _d3dEngine, _renderStates.screen, _renderStates.gameStatesManager, _renderStates.actionsManager, _renderStates.playerEntityManager));
             GameComponents.Add(_renderStates.fps);
             GameComponents.Add(_renderStates.entityEditor);
+            GameComponents.Add(_renderStates.carvingEditor);
             GameComponents.Add(_renderStates.skydome);
             GameComponents.Add(_renderStates.gameClock);
             GameComponents.Add(_renderStates.weather);
