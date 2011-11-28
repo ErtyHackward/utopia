@@ -12,6 +12,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.PlanGenerator;
 using Utopia.Shared.Entities.Concrete.Collectible;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Shared.World.Processors
 {
@@ -115,7 +116,7 @@ namespace Utopia.Shared.World.Processors
                                                                             double result = r.NextDouble();
                                                                             if (result <= 0.4)
                                                                             {
-                                                                                chunk.Entities.Add(new Grass
+                                                                                chunk.Entities.Add(new Grass()
                                                                                 {
                                                                                     GrowPhase = (byte)r.Next(0, 5),
                                                                                     Position = globalPos + new Vector3D(0.5, 1, 0.5),
