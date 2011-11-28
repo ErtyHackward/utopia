@@ -116,12 +116,19 @@ namespace Utopia.GUI.D3D
             {
                 if (_prevKeybState.IsKeyUp(key) )
                 {
-                    if (key >= Keys.D0 && key <= Keys.D9)
+                    var c = (char)key;
+                    if (Char.IsLetterOrDigit((char)key))
                     {
-                        char c = (char)key; //HACK passing keys to UI is a hack only badly working with number keys
-                        _screen.InjectCharacter((char)key);
+                        _screen.InjectCharacter(c);
                     }
-                    
+                    else
+                    {
+                        switch (key)
+                        {
+                            case Keys.Back: _screen.InjectKeyPress(Nuclex.UserInterface.Input.Command.
+                        }
+                    }
+
                 }
            
             }

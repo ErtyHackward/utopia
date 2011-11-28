@@ -81,7 +81,13 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
 
           // Draw the text into the input box
           controlBounds.X += left;
-          graphics.DrawString(Style, controlBounds, control.Text);
+
+          string textToDraw = control.Text;
+          if (control.IsPassword)
+              textToDraw = new string('*', textToDraw.Length);
+
+
+          graphics.DrawString(Style, controlBounds, textToDraw);
 
           // If the input box is in focus, also draw the caret so the user knows
           // where characters will be inserted into the text.

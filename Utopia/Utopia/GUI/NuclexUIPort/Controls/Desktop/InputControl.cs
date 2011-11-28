@@ -55,6 +55,7 @@ namespace Nuclex.UserInterface.Controls.Desktop {
       this.Enabled = true;
       this.GuideTitle = "Text Entry";
       this.GuideDescription = "Please enter the text for this input field";
+      IsPassword = false;
     }
 
     /// <summary>Text that is being displayed on the control</summary>
@@ -93,7 +94,12 @@ namespace Nuclex.UserInterface.Controls.Desktop {
       }
     }
 
-    /// <summary>Elapsed milliseconds since the user last moved the caret</summary>
+      /// <summary>
+      /// Indicates if this
+      /// </summary>
+      public bool IsPassword { get; set; }
+
+      /// <summary>Elapsed milliseconds since the user last moved the caret</summary>
     /// <remarks>
     ///   This is an unusual property for an input box to have. It is retrieved by
     ///   the renderer and could be used for several purposes, such as lighting up
