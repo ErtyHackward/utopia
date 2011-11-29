@@ -144,6 +144,7 @@
     <FloodingPropagationPower>7</FloodingPropagationPower>
     <CubeFamilly>Liquid</CubeFamilly>
     <LiquidType>FreshWater</LiquidType>
+    <YBlockOffset>0.7</YBlockOffset>
   </Cube>
   <Cube>
     <Name>LightRed</Name>
@@ -554,6 +555,7 @@
     <FloodingPropagationPower>7</FloodingPropagationPower>
     <CubeFamilly>Liquid</CubeFamilly>
     <LiquidType>Ocean</LiquidType>
+    <YBlockOffset>0.7</YBlockOffset>
   </Cube>
   <Cube>
     <Name>Player</Name>
