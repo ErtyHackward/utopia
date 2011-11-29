@@ -6,7 +6,7 @@ using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
 {
-    public class Grass : CubePlaceableSpriteItem, IBlockLinkedEntity
+    public class Grass : CubePlaceableSpriteItem, IBlockLinkedEntity, IGrowEntity
     {
         #region Private properties
         private byte _growPhase;
