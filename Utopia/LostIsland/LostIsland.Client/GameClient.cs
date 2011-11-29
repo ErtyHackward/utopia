@@ -3,6 +3,7 @@ using System.Drawing;
 using LostIsland.Shared;
 using S33M3Engines;
 using S33M3Engines.WorldFocus;
+using Utopia.GUI.D3D;
 using Utopia.Network;
 using Ninject;
 using S33M3Engines.D3D;
@@ -42,10 +43,16 @@ namespace LostIsland.Client
 
             _iocContainer = new StandardKernel();
 
+
+
             //DirectX layer & Helper ===================================
             _iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope().WithConstructorArgument("startingSize", new Size(1024, 600)).WithConstructorArgument("windowCaption", "LostIsland Client");         //DirectX Engine
             _iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope(); //Focus
             //==========================================================
+
+            _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();        //Gui base class
+            _iocContainer.Bind<Nuclex.UserInterface.Screen>().ToSelf().InSingletonScope();
+            
 
 #if STEALTH
             StartDirectXWindow();
