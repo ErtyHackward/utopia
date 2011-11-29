@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Utopia.Shared.Enums
 {
-    public enum CubeFaces
+    public enum CubeFaces : byte
     {
         Back = 0,
         Front = 1,

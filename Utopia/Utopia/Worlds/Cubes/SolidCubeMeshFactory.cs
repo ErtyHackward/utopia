@@ -39,7 +39,7 @@ namespace Utopia.Worlds.Cubes
 
             CubeProfile cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
             bool IsEmissiveColor = cubeProfile.IsEmissiveColorLightSource;
-
+            bool vertexInDico;
             //Les 4 vertex de ma face.... en fct de leur position dans le cube leur valeur en Z va changer ! (Face Top, Bottom, ...
             ByteVector4 topLeft;
             ByteVector4 topRight;
@@ -87,10 +87,11 @@ namespace Utopia.Worlds.Cubes
                     bottomRight = cubePosition + new ByteVector4(1, 0, 1, cubeFaceType);
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
+                        if(!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackTop_Cube, BackLeftTop_Cube);
                         vertexInfo.X = 1;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo));
@@ -98,10 +99,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackRight_Cube, BackTop_Cube, BackRightTop_Cube);
                         vertexInfo.X = 1;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo));
@@ -109,10 +111,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackBottom_Cube, BackLeftBottom_Cube);
                         vertexInfo.X = 0;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo));
@@ -120,10 +123,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackRight_Cube, BackBottom_Cube, BackRightBottom_Cube);
                         vertexInfo.X = 0;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref  newColor, ref vertexInfo));
@@ -161,10 +165,11 @@ namespace Utopia.Worlds.Cubes
                     bottomRight = cubePosition + new ByteVector4(0, 0, 0, cubeFaceType);
 
                     hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontTop_Cube, FrontLeftTop_Cube, FrontLeft_Cube);
                         vertexInfo.X = 1;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo));
@@ -172,10 +177,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontTop_Cube, FrontRight_Cube, FrontRightTop_Cube);
                         vertexInfo.X = 1;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo));
@@ -183,10 +189,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontBottom_Cube, FrontLeft_Cube, FrontLeftBottom_Cube);
                         vertexInfo.X = 0;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo));
@@ -194,10 +201,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontBottom_Cube, FrontRight_Cube, FrontRightBottom_Cube);
                         vertexInfo.X = 0;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo));
@@ -385,10 +393,11 @@ namespace Utopia.Worlds.Cubes
                     topRight = cubePosition + new ByteVector4(0, 1, 1, cubeFaceType);
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightTop_Cube, RightRight_Cube, RightRightTop_Cube);
                         vertexInfo.X = 1;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo));
@@ -396,10 +405,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightTop_Cube, RightLeft_Cube, RightLeftTop_Cube);
                         vertexInfo.X = 1;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo));
@@ -407,10 +417,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightBottom_Cube, RightRight_Cube, RightRightBottom_Cube);
                         vertexInfo.X = 0;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo));
@@ -418,10 +429,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightBottom_Cube, RightLeft_Cube, RightLeftBottom_Cube);
                         vertexInfo.X = 0;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo));
@@ -458,10 +470,11 @@ namespace Utopia.Worlds.Cubes
                     bottomRight = cubePosition + new ByteVector4(1, 0, 0, cubeFaceType);
 
                     hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftTop_Cube, LefttRight_Cube, LeftRightTop_Cube);
                         vertexInfo.X = 1;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo));
@@ -469,10 +482,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftTop_Cube, LeftLeft_Cube, LeftLeftTop_Cube);
                         vertexInfo.X = 1;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo));
@@ -480,10 +494,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftBottom_Cube, LeftLeft_Cube, LeftLeftBottom_Cube);
                         vertexInfo.X = 0;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo));
@@ -491,10 +506,11 @@ namespace Utopia.Worlds.Cubes
                     }
 
                     hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
-                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
+                    vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3);
+                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
+                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftBottom_Cube, LefttRight_Cube, LeftRightBottom_Cube);
                         vertexInfo.X = 0;
                         chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo));
