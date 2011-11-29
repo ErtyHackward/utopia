@@ -252,7 +252,28 @@ namespace S33M3Engines.D3D
 
         private void GameComponentAdded(object sender, GameComponentCollectionEventArgs e)
         {
-            var d = e.GameComponent as IDrawableComponent;
+            if (_gameStarted)
+            {
+                // we need to initialize it properly before add
+
+                var component = e.GameComponent;
+
+                // catch load complete events to continue the load
+                component.Initialized += GameComponentInitialized;
+                component.ContentLoaded += GameComponentContentLoaded;
+
+                WorkQueue.ThreadPool.QueueWorkItem(component.InternalInitialize);
+
+                return;
+            }
+
+            // we not yet started, so simple add it
+            AddGameComponentToProcessing(e.GameComponent);
+        }
+
+        private void AddGameComponentToProcessing(GameComponent gc)
+        {
+            var d = gc as IDrawableComponent;
             if (d != null)
             {
                 d.DrawOrderChanged += DrawableDrawOrderChanged;
@@ -262,7 +283,7 @@ namespace S33M3Engines.D3D
                     AddDrawable(d);
             }
 
-            var u = e.GameComponent as IUpdateableComponent;
+            var u = gc as IUpdateableComponent;
             if (u != null)
             {
                 u.UpdateOrderChanged += UpdatableUpdateOrderChanged;
@@ -273,6 +294,26 @@ namespace S33M3Engines.D3D
             }
         }
 
+        void GameComponentInitialized(object sender, EventArgs e)
+        {
+            // continue to initialize
+            var component = (GameComponent)sender;
+
+            component.Initialized -= GameComponentInitialized;
+
+            WorkQueue.ThreadPoolGrp.QueueWorkItem(component.InternalLoadContent);
+        }
+
+        void GameComponentContentLoaded(object sender, EventArgs e)
+        {
+            // initilization complete
+            var component = (GameComponent)sender;
+
+            component.ContentLoaded -= GameComponentContentLoaded;
+
+            AddGameComponentToProcessing(component);
+        }
+        
         private void GameComponentRemoved(object sender, GameComponentCollectionEventArgs e)
         {
             var d = e.GameComponent as IDrawableComponent;
