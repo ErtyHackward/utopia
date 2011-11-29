@@ -4,12 +4,10 @@ using System.Diagnostics;
 using System.Threading;
 using S33M3Engines.Buffers;
 using S33M3Engines.D3D.Effects;
-using S33M3Engines.InputHandler;
 using SharpDX;
 using SharpDX.DXGI;
 using SharpDX.Windows;
 using S33M3Engines.Threading;
-using Amib.Threading;
 
 namespace S33M3Engines.D3D
 {
@@ -36,6 +34,9 @@ namespace S33M3Engines.D3D
             set { _backBufferColor = value; }
         }
 
+        /// <summary>
+        /// Gets collection of game components
+        /// </summary>
         public GameComponentCollection GameComponents
         {
             get { return _gameComponents; }
@@ -82,6 +83,7 @@ namespace S33M3Engines.D3D
         private Color4 _backBufferColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
         private GameTime _gameTime = new GameTime();
         private int _vSync = 0;
+        private bool _gameStarted;
         #endregion
 
         public Game()
@@ -90,8 +92,8 @@ namespace S33M3Engines.D3D
             _enabledUpdateable = new List<IUpdateableComponent>();
 
             _gameComponents = new GameComponentCollection();
-            _gameComponents.ComponentAdded += new EventHandler<GameComponentCollectionEventArgs>(GameComponentAdded);
-            _gameComponents.ComponentRemoved += new EventHandler<GameComponentCollectionEventArgs>(GameComponentRemoved);
+            _gameComponents.ComponentAdded += GameComponentAdded;
+            _gameComponents.ComponentRemoved += GameComponentRemoved;
         }
 
         #region Public Methods
@@ -113,6 +115,7 @@ namespace S33M3Engines.D3D
             LoadContent();
 
             _next_game_update = Stopwatch.GetTimestamp();
+            _gameStarted = true;
 
             //The Pump !
             RenderLoop.Run(_d3dEngine.GameWindow, () =>
@@ -166,7 +169,7 @@ namespace S33M3Engines.D3D
         {
             if (_d3dEngine.GameWindow.InvokeRequired)
             {
-                WinformInvockCallBack d = new WinformInvockCallBack(CloseWinform);
+                var d = new WinformInvockCallBack(CloseWinform);
                 _d3dEngine.GameWindow.Invoke(d);
             }
             else
@@ -181,21 +184,19 @@ namespace S33M3Engines.D3D
         {
             for (int i = 0; i < GameComponents.Count; i++)
             {
-                WorkQueue.DoWorkInThreadedGroup(new Amib.Threading.Action(GameComponents[i].Initialize));
+                WorkQueue.DoWorkInThreadedGroup(GameComponents[i].Initialize);
                 //GameComponents[i].Initialize();
             }
 
             //Wait for end of all jobs
             WorkQueue.ThreadPoolGrp.WaitForIdle();
-
-            
         }
 
         public virtual void LoadContent()
         {
             for (int i = 0; i < GameComponents.Count; i++)
             {
-                WorkQueue.DoWorkInThreadedGroup(new Amib.Threading.Action(GameComponents[i].LoadContent));
+                WorkQueue.DoWorkInThreadedGroup(GameComponents[i].LoadContent);
                 //GameComponents[i].LoadContent();
             }
 
@@ -251,7 +252,7 @@ namespace S33M3Engines.D3D
 
         private void GameComponentAdded(object sender, GameComponentCollectionEventArgs e)
         {
-            IDrawableComponent d = e.GameComponent as IDrawableComponent;
+            var d = e.GameComponent as IDrawableComponent;
             if (d != null)
             {
                 d.DrawOrderChanged += DrawableDrawOrderChanged;
@@ -261,7 +262,7 @@ namespace S33M3Engines.D3D
                     AddDrawable(d);
             }
 
-            IUpdateableComponent u = e.GameComponent as IUpdateableComponent;
+            var u = e.GameComponent as IUpdateableComponent;
             if (u != null)
             {
                 u.UpdateOrderChanged += UpdatableUpdateOrderChanged;
@@ -274,7 +275,7 @@ namespace S33M3Engines.D3D
 
         private void GameComponentRemoved(object sender, GameComponentCollectionEventArgs e)
         {
-            IDrawableComponent d = e.GameComponent as IDrawableComponent;
+            var d = e.GameComponent as IDrawableComponent;
             if (d != null)
             {
                 d.DrawOrderChanged -= DrawableDrawOrderChanged;
@@ -286,7 +287,7 @@ namespace S33M3Engines.D3D
                 }
             }
 
-            IUpdateableComponent u = e.GameComponent as IUpdateableComponent;
+            var u = e.GameComponent as IUpdateableComponent;
             if (u != null)
             {
                 u.UpdateOrderChanged -= UpdatableUpdateOrderChanged;
@@ -303,7 +304,7 @@ namespace S33M3Engines.D3D
         //private readonly List<IUpdateableComponent> _enabledUpdateable;
             foreach (var component in _enabledUpdateable)
             {
-                IUpdateableComponent u = component as IUpdateableComponent;
+                var u = component as IUpdateableComponent;
                 if (u != null)
                 {
                     u.UpdateOrderChanged -= UpdatableUpdateOrderChanged;
@@ -313,7 +314,7 @@ namespace S33M3Engines.D3D
 
             foreach (var component in _visibleDrawable)
             {
-                IDrawableComponent d = component as IDrawableComponent;
+                var d = component as IDrawableComponent;
                 if (d != null)
                 {
                     d.DrawOrderChanged -= DrawableDrawOrderChanged;
@@ -366,7 +367,7 @@ namespace S33M3Engines.D3D
 
         private void DrawableVisibleChanged(object sender, EventArgs e)
         {
-            IDrawableComponent d = (IDrawableComponent) sender;
+            var d = (IDrawableComponent) sender;
             if (d.Visible)
             {
                 foreach (var drawOrder in d.DrawOrders.GetAllDrawOrder())

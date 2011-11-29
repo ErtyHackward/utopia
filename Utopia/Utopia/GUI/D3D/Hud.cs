@@ -162,9 +162,9 @@ namespace Utopia.GUI.D3D
 
         }
 
-        protected override void OnEnabledChanged(object sender, EventArgs args)
+        protected override void OnEnabledChanged()
         {
-            base.OnEnabledChanged(sender, args);
+            base.OnEnabledChanged();
             if (Enabled)
             {
                 if (!_screen.Desktop.Children.Contains(ToolbarUi))

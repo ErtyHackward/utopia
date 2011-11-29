@@ -1,8 +1,4 @@
-﻿#region
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace S33M3Engines.D3D
 {
@@ -18,9 +14,7 @@ namespace S33M3Engines.D3D
         #endregion
 
         #region Public properties
-
-        public event EventHandler<EventArgs> EnabledChanged;
-
+        
         public virtual string InitStep { get { return _initStep; } }
 
         public virtual int InitVal { get { return _initVal; } }
@@ -35,7 +29,7 @@ namespace S33M3Engines.D3D
                 if (_enabled != value)
                 {
                     _enabled = value;
-                    OnEnabledChanged(this, EventArgs.Empty);
+                    OnEnabledChanged();
                 }
             }
         }
@@ -48,55 +42,73 @@ namespace S33M3Engines.D3D
                 if (_updateOrder != value)
                 {
                     _updateOrder = value;
-                    OnUpdateOrderChanged(this, EventArgs.Empty);
+                    OnUpdateOrderChanged();
                 }
             }
         }
 
         #endregion
 
-        public virtual
-            void Initialize()
+        public event EventHandler<EventArgs> EnabledChanged;
+
+        protected virtual void OnEnabledChanged()
         {
+            var handler = EnabledChanged;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+        
+        public event EventHandler<EventArgs> UpdateOrderChanged;
+
+        protected virtual void OnUpdateOrderChanged()
+        {
+            var handler = UpdateOrderChanged;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
 
-        public virtual
-            void LoadContent()
+        /// <summary>
+        /// Occurs when component was initialized
+        /// </summary>
+        public event EventHandler Initialized;
+
+        protected void OnInitialized()
         {
+            var handler = Initialized;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
 
-        public virtual
-            void UnloadContent()
+        /// <summary>
+        /// Occurs when all required component content was loaded
+        /// </summary>
+        public event EventHandler ContentLoaded;
+
+        protected void OnContentLoaded()
         {
+            var handler = ContentLoaded;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+        
+        internal void InternalInitialize()
+        {
+            Initialize();
+            OnInitialized();
         }
 
-        public virtual
-            void Update(ref GameTime timeSpent)
+        internal void InternalLoadContent()
         {
+            LoadContent();
+            OnContentLoaded();
         }
+        
+        public virtual void Initialize() { }
 
-        public virtual
-            void Interpolation(ref double interpolationHd, ref float interpolationLd)
-        {
-        }
+        public virtual void LoadContent() { }
 
-        public
-            event EventHandler<EventArgs> UpdateOrderChanged;
+        public virtual void UnloadContent() { }
 
-        protected virtual void OnEnabledChanged(object sender, EventArgs args)
-        {
-            if (EnabledChanged != null)
-                EnabledChanged(this, args);
-        }
+        public virtual void Update(ref GameTime timeSpent) { }
 
-        protected virtual void OnUpdateOrderChanged(object sender, EventArgs args)
-        {
-            if (UpdateOrderChanged != null)
-                UpdateOrderChanged(this, args);
-        }
+        public virtual void Interpolation(ref double interpolationHd, ref float interpolationLd) { }
 
-        public virtual void Dispose()
-        {
-        }
+        public virtual void Dispose() { }
     }
 }

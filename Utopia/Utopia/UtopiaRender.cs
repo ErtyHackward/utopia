@@ -75,11 +75,11 @@ namespace Utopia
             GameComponents.Add(_renderStates.iconFactory);
             GameComponents.Add(_renderStates.timerManager);
             GameComponents.Add(_renderStates.playerEntityManager);
-            GameComponents.Add(_renderStates.dynamicEntityManager);
+            GameComponents.Add((GameComponent)_renderStates.dynamicEntityManager);
             GameComponents.Add(_renderStates.cameraManager);
             GameComponents.Add(_renderStates.hud);
             GameComponents.Add(_renderStates.guiManager);
-            GameComponents.Add(_renderStates.pickingRenderer);
+            GameComponents.Add((GameComponent)_renderStates.pickingRenderer);
             GameComponents.Add(_renderStates.inventoryComponent);
             GameComponents.Add(_renderStates.chatComponent);
             GameComponents.Add(_renderStates.mapComponent);
@@ -87,10 +87,10 @@ namespace Utopia
             GameComponents.Add(_renderStates.fps);
             GameComponents.Add(_renderStates.entityEditor);
             GameComponents.Add(_renderStates.carvingEditor);
-            GameComponents.Add(_renderStates.skydome);
-            GameComponents.Add(_renderStates.gameClock);
-            GameComponents.Add(_renderStates.weather);
-            GameComponents.Add(_renderStates.worldChunks);
+            GameComponents.Add((GameComponent)_renderStates.skydome);
+            GameComponents.Add((GameComponent)_renderStates.gameClock);
+            GameComponents.Add((GameComponent)_renderStates.weather);
+            GameComponents.Add((GameComponent)_renderStates.worldChunks);
             GameComponents.Add(_renderStates.sharedFrameCB);
 
             #region Debug Components

@@ -82,13 +82,6 @@ namespace Utopia.GUI.D3D
 
         }
 
-        protected override void OnEnabledChanged(object sender, EventArgs args)
-        {
-            
-            
-            base.OnEnabledChanged(sender, args);
-        }
-
         public override void Dispose()
         {
             _loginWindow = null;
