@@ -75,7 +75,11 @@ namespace Utopia.Shared.Chunks
             _blockDataProvider.BlockDataChanged += BlockDataChanged;
 
             Entities = new EntityCollection(this);
+            Entities.CollectionDirty += EntitiesCollectionDirty;
+
         }
+
+
 
         /// <summary>
         /// Loads chunk data from bytes array (blocks and entites)
@@ -168,6 +172,16 @@ namespace Utopia.Shared.Chunks
         /// <param name="sender"></param>
         /// <param name="e"></param>
         protected virtual void BlockBufferChanged(object sender, ChunkDataProviderBufferChangedEventArgs e)
+        {
+            Md5HashData = null;
+        }
+
+        /// <summary>
+        /// Handling of entities collection change
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void EntitiesCollectionDirty(object sender, System.EventArgs e)
         {
             Md5HashData = null;
         }

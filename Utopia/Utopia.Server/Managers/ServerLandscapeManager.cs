@@ -11,6 +11,7 @@ using Utopia.Server.Events;
 using Utopia.Server.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -50,22 +51,33 @@ namespace Utopia.Server.Managers
         protected void OnChunkLoaded(LandscapeManagerChunkEventArgs e)
         {
             e.Chunk.BlocksChanged += ChunkBlocksChanged;
+            e.Chunk.Entities.CollectionDirty += EntitiesCollectionDirty;
 
             var handler = ChunkLoaded;
             if (handler != null) handler(this, e);
+        }
+        
+        private void RequestSave(ServerChunk chunk)
+        {
+            chunk.NeedSave = true;
+            chunk.PureGenerated = false;
+
+            lock (_chunksToSave)
+            {
+                if (!_chunksToSave.Contains(chunk))
+                    _chunksToSave.Add(chunk);
+            }
         }
 
         void ChunkBlocksChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
         {
             var serverChunk = (ServerChunk)sender;
-            serverChunk.NeedSave = true;
+            RequestSave(serverChunk);
+        }
 
-            lock (_chunksToSave)
-            {
-                if(!_chunksToSave.Contains(serverChunk))
-                    _chunksToSave.Add(serverChunk);
-            }
-
+        void EntitiesCollectionDirty(object sender, EventArgs e)
+        {
+            RequestSave(((EntityCollection)sender).Chunk as ServerChunk);
         }
 
         public event EventHandler<LandscapeManagerChunkEventArgs> ChunkUnloaded;
@@ -73,6 +85,7 @@ namespace Utopia.Server.Managers
         protected void OnChunkUnloaded(LandscapeManagerChunkEventArgs e)
         {
             e.Chunk.BlocksChanged -= ChunkBlocksChanged;
+            e.Chunk.Entities.CollectionDirty -= EntitiesCollectionDirty;
 
             var handler = ChunkUnloaded;
             if (handler != null) handler(this, e);

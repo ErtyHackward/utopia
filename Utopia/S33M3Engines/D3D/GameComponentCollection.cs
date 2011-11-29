@@ -9,26 +9,26 @@ namespace S33M3Engines.D3D
     /// </summary>
     public class GameComponentCollectionEventArgs : EventArgs
     {
-        private readonly IGameComponent _gameComponent;
+        private readonly GameComponent _gameComponent;
 
-        public GameComponentCollectionEventArgs(IGameComponent gameComponent)
+        public GameComponentCollectionEventArgs(GameComponent gameComponent)
         {
             _gameComponent = gameComponent;
         }
 
-        public IGameComponent GameComponent
+        public GameComponent GameComponent
         {
             get { return _gameComponent; }
         }
 
     }
 
-    public class GameComponentCollection : Collection<IGameComponent>
+    public class GameComponentCollection : Collection<GameComponent>
     {
         public event EventHandler<GameComponentCollectionEventArgs> ComponentAdded;
         public event EventHandler<GameComponentCollectionEventArgs> ComponentRemoved;
 
-        public void AddRange(IEnumerable<IGameComponent> gameComponents)
+        public void AddRange(IEnumerable<GameComponent> gameComponents)
         {
             foreach (var gameComponent in gameComponents)
             {
@@ -38,7 +38,7 @@ namespace S33M3Engines.D3D
 
         protected override void ClearItems()
         {
-            foreach (IGameComponent component in this)
+            foreach (var component in this)
             {
                 OnComponentRemoved(new GameComponentCollectionEventArgs(component));
             }
@@ -46,7 +46,7 @@ namespace S33M3Engines.D3D
             base.ClearItems();
         }
 
-        protected override void InsertItem(int index, IGameComponent item)
+        protected override void InsertItem(int index, GameComponent item)
         {
             base.InsertItem(index, item);
             OnComponentAdded(new GameComponentCollectionEventArgs(item));
@@ -66,14 +66,14 @@ namespace S33M3Engines.D3D
 
         protected override void RemoveItem(int index)
         {
-            IGameComponent item = this[index];
+            GameComponent item = this[index];
             base.RemoveItem(index);
             OnComponentRemoved(new GameComponentCollectionEventArgs(item));
         }
 
-        protected override void SetItem(int index, IGameComponent item)
+        protected override void SetItem(int index, GameComponent item)
         {
-            IGameComponent oldItem = this[index];
+            GameComponent oldItem = this[index];
             if (!oldItem.Equals(item))
             {
                 OnComponentRemoved(new GameComponentCollectionEventArgs(oldItem));
