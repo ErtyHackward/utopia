@@ -13,12 +13,19 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public class EntityFactory
     {
+        /// <summary>
+        /// Singleton instance
+        /// </summary>
         public static EntityFactory Instance;
-        public readonly ILandscapeManager2D LandscapeManager;
+
+        /// <summary>
+        /// Gets landscape manager used to create new tools
+        /// </summary>
+        public ILandscapeManager2D LandscapeManager { get; private set; }
 
         public EntityFactory(ILandscapeManager2D landscapeManager)
         {
-            this.LandscapeManager = landscapeManager;
+            LandscapeManager = landscapeManager;
         }
 
         /// <summary>
@@ -91,7 +98,7 @@ namespace Utopia.Shared.Entities
         }
 
         /// <summary>
-        /// Creates and loads entity from binary reader
+        /// Creates and loads entity from binary form
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>

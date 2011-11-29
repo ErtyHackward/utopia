@@ -54,7 +54,7 @@ namespace Utopia.Shared.Entities.Dynamic
         }
 
         #region Public Methods
-        public void LeftToolUse(byte useMode)
+        public void LeftToolUse(ToolUseMode useMode)
         {
             if (Equipment.LeftTool != null)
             {
