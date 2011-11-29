@@ -90,6 +90,9 @@ namespace LostIsland.Client
             //               };
 
             Engine = iocContainer.Get<D3DEngine>();
+
+            Engine.ShowMouseCursor();
+
             //var states = new UtopiaRenderStates
             //{
             //    server = iocContainer.Get<Server>(),
