@@ -1,6 +1,8 @@
-﻿using LostIsland.Client.GUI;
+﻿using System.Drawing;
+using LostIsland.Client.GUI;
 using LostIslandHD.Client;
 using Ninject;
+using Ninject.Parameters;
 using Nuclex.UserInterface;
 using Utopia;
 using Utopia.Editor;
@@ -60,7 +62,7 @@ namespace LostIsland.Client
         public void LateBinding(IKernel iocContainer, WorldParameters worldParam)
         {
             //DirectX layer & Helper ===================================
-            iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope();         //DirectX Engine
+            iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope().WithConstructorArgument("startingSize", new Size(1024, 600)).WithConstructorArgument("windowCaption", "LostIsland Client");         //DirectX Engine
             iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope(); //Focus
             //==========================================================
 

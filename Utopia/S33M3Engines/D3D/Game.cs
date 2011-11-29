@@ -86,8 +86,9 @@ namespace S33M3Engines.D3D
         private bool _gameStarted;
         #endregion
 
-        public Game()
+        public Game(D3DEngine engine)
         {
+            _d3dEngine = engine;
             _visibleDrawable = new List<DrawableComponentHolder>();
             _enabledUpdateable = new List<IUpdateableComponent>();
 

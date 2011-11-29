@@ -114,7 +114,7 @@ namespace Utopia.Shared.Entities
         }
         
         /// <summary>
-        /// Adds entity to collection (with locking). Assing new unique id for the entity
+        /// Adds entity to collection (with locking). Assign new unique id for the entity
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="parentDynamicId"></param>
