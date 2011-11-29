@@ -21,7 +21,7 @@ namespace LostIsland.Shared.Tools
             _landscapeManager = landscapeManager2D;
         }
 
-        public IToolImpact Use(IDynamicEntity owner, byte useMode, bool runOnServer = false)
+        public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
         {
             if (owner.EntityState.IsBlockPicked)
             {

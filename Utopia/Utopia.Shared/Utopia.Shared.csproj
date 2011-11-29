@@ -97,6 +97,7 @@
     <Compile Include="Entities\Concrete\NoEntity.cs" />
     <Compile Include="Entities\Concrete\Tree.cs" />
     <Compile Include="Entities\Concrete\Zombie.cs" />
+    <Compile Include="Entities\CubePlaceableSpriteItem.cs" />
     <Compile Include="Entities\Dynamic\CharacterEntity.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntity.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntityEffect.cs" />
@@ -153,6 +154,7 @@
     <Compile Include="Entities\SpriteEntity.cs" />
     <Compile Include="Entities\SpriteFormat.cs" />
     <Compile Include="Entities\StaticEntity.cs" />
+    <Compile Include="Entities\ToolUseMode.cs" />
     <Compile Include="Entities\VoxelModel.cs" />
     <Compile Include="Enums\CubeFaces.cs" />
     <Compile Include="Enums\enuCubeFamilly.cs" />

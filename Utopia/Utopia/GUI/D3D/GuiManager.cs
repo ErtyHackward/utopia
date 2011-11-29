@@ -123,10 +123,10 @@ namespace Utopia.GUI.D3D
                     }
                     else
                     {
-                        switch (key)
-                        {
-                            case Keys.Back: _screen.InjectKeyPress(Nuclex.UserInterface.Input.Command.
-                        }
+                        //switch (key)
+                        //{
+                        //    case Keys.Back: _screen.InjectKeyPress(Nuclex.UserInterface.Input.Command.
+                        //}
                     }
 
                 }

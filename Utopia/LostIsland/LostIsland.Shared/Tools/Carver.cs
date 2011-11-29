@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 
@@ -41,7 +39,7 @@ namespace LostIsland.Shared.Tools
             set { throw new NotSupportedException(); }
         }
 
-        public IToolImpact Use(IDynamicEntity owner, byte useMode, bool runOnServer)
+        public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer)
         {
             throw new NotImplementedException();
         }

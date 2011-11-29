@@ -82,8 +82,8 @@ namespace Utopia.Shared.Entities.Concrete
             base.Save(writer);
             writer.Write(CubeId);
         }
-        
-        public IToolImpact Use(IDynamicEntity owner, byte useMode, bool runOnServer = false)
+
+        public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
         {
             if (owner.EntityState.IsBlockPicked)
             {
@@ -100,14 +100,14 @@ namespace Utopia.Shared.Entities.Concrete
             return impact;
         }
 
-        public IToolImpact BlockImpact(IDynamicEntity owner, byte useMode, bool runOnServer = false)
+        public IToolImpact BlockImpact(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
         {
             var entity = owner;
             var impact = new ToolImpact { Success = false };
 
             if (entity.EntityState.IsBlockPicked)
             {
-                if (useMode == 0)
+                if (useMode == ToolUseMode.LeftMouse)
                 {
                     var character = owner as CharacterEntity;
 
@@ -168,7 +168,7 @@ namespace Utopia.Shared.Entities.Concrete
             return impact;
         }
 
-        private IToolImpact EntityImpact(IDynamicEntity owner, byte useMode, bool runOnServer = false)
+        private IToolImpact EntityImpact(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
         {
             var impact = new ToolImpact { Success = false };
 

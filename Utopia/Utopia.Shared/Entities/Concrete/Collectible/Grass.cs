@@ -1,19 +1,14 @@
 using System.IO;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
-using System;
 using Utopia.Shared.Interfaces;
-using S33M3Engines.Shared.Math;
-using Utopia.Shared.Chunks;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
 {
-    public class Grass : SpriteItem, IGrowEntity, ITool, IBlockLinkedEntity
+    public class Grass : CubePlaceableSpriteItem, IBlockLinkedEntity
     {
         #region Private properties
-        private ILandscapeManager2D _landscapeManager;
         private byte _growPhase;
         #endregion
 
@@ -57,17 +52,12 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         }
 
         #endregion
-        public Grass()
+        public Grass(ILandscapeManager2D landscapeManager)
+            : base(landscapeManager)
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;
             GrowPhase = 0; //Set Default Grow Phase
-        }
-
-        public Grass(ILandscapeManager2D landscapeManager)
-            :this()
-        {
-            _landscapeManager = landscapeManager;
         }
 
         #region Public methods
@@ -92,35 +82,6 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
             writer.Write(LinkedCube.X);
             writer.Write(LinkedCube.Y);
             writer.Write(LinkedCube.Z);
-        }
-
-        public IToolImpact Use(IDynamicEntity owner, byte useMode, bool runOnServer)
-        {
-            var impact = new ToolImpact { Success = false };
-
-            if (useMode == 1)
-            {
-
-                if (owner.EntityState.IsBlockPicked == true)
-                {
-                    IChunkLayout2D chunk = _landscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
-
-                    //Create a new version of the Grass, and put it into the world
-                    var cubeEntity = (IItem)EntityFactory.Instance.CreateEntity(this.ClassId);
-                    cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f, owner.EntityState.PickedBlockPosition.Y + 1f, owner.EntityState.PickedBlockPosition.Z + 0.5f);
-                    ((IGrowEntity)cubeEntity).GrowPhase = ((IGrowEntity)this).GrowPhase;
-
-                    chunk.Entities.Add(cubeEntity);
-
-                    impact.Success = true;
-                }
-            }
-            return impact;
-        }
-
-        public void Rollback(IToolImpact impact)
-        {
-            throw new NotImplementedException();
         }
         #endregion
 

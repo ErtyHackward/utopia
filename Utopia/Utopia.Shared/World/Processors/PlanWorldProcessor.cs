@@ -116,44 +116,49 @@ namespace Utopia.Shared.World.Processors
                                                                             double result = r.NextDouble();
                                                                             if (result <= 0.4)
                                                                             {
-                                                                                chunk.Entities.Add(new Grass()
-                                                                                {
-                                                                                    GrowPhase = (byte)r.Next(0, 5),
-                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5),
-                                                                                    LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
-                                                                                });
+                                                                                var grass = (Grass)EntityFactory.Instance.CreateEntity(EntityClassId.Grass);
+
+                                                                                grass.GrowPhase = (byte)r.Next(0, 5);
+                                                                                grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                                                grass.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                                                chunk.Entities.Add(grass);
                                                                             }
                                                                             else if (result <= 0.6)
                                                                             {
-                                                                                chunk.Entities.Add(new Flower1
-                                                                                {
-                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5),
-                                                                                    LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
-                                                                                });
+                                                                                var entity = (Flower1)EntityFactory.Instance.CreateEntity(EntityClassId.Flower1);
+
+                                                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                                                chunk.Entities.Add(entity);
                                                                             }
                                                                             else if (result <= 0.7)
                                                                             {
-                                                                                chunk.Entities.Add(new Flower2
-                                                                                {
-                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5),
-                                                                                    LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
-                                                                                });
+                                                                                var entity = (Flower2)EntityFactory.Instance.CreateEntity(EntityClassId.Flower2);
+
+                                                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                                                chunk.Entities.Add(entity);
                                                                             }
                                                                             else if (result <= 0.9)
                                                                             {
-                                                                                chunk.Entities.Add(new Mushr1
-                                                                                {
-                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5),
-                                                                                    LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
-                                                                                });
+                                                                                var entity = (Mushr1)EntityFactory.Instance.CreateEntity(EntityClassId.Mushroom1);
+
+                                                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                                                chunk.Entities.Add(entity);
                                                                             }
                                                                             else if (result <= 1)
                                                                             {
-                                                                                chunk.Entities.Add(new Mushr2
-                                                                                {
-                                                                                    Position = globalPos + new Vector3D(0.5, 1, 0.5),
-                                                                                    LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z)
-                                                                                });
+                                                                                var entity = (Mushr2)EntityFactory.Instance.CreateEntity(EntityClassId.Mushroom2);
+
+                                                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                                                chunk.Entities.Add(entity);
                                                                             }
                                                                         }
                                                                 }

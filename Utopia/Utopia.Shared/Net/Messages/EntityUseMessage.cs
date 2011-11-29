@@ -1,4 +1,5 @@
 using System.IO;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Engines.Shared.Math;
@@ -18,7 +19,7 @@ namespace Utopia.Shared.Net.Messages
         private uint _entityId;
         private bool _isBlockPicked;
         private bool _isEntityPicked;
-        private byte _useMode;
+        private ToolUseMode _useMode;
 
         private int _token;
 
@@ -95,7 +96,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Indicates use mode (simple case - left ot right mouse buttons)
         /// </summary>
-        public byte UseMode
+        public ToolUseMode UseMode
         {
             get { return _useMode; }
             set { _useMode = value; }
@@ -125,7 +126,7 @@ namespace Utopia.Shared.Net.Messages
             msg._isEntityPicked = reader.ReadBoolean();
             msg._pickedEntityId = reader.ReadEntityLink();
             msg._token = reader.ReadInt32();
-            msg._useMode = reader.ReadByte();
+            msg._useMode = (ToolUseMode)reader.ReadByte();
 
             return msg;
         }
@@ -147,7 +148,7 @@ namespace Utopia.Shared.Net.Messages
             writer.Write(_isEntityPicked);
             writer.Write(_pickedEntityId);
             writer.Write(_token);
-            writer.Write(_useMode);
+            writer.Write((byte)_useMode);
         }
     }
 }

@@ -217,10 +217,10 @@ namespace Utopia.Entities.Managers
                     else
                     {                     
                     //sends the client server event that does tool.use on server
-                    Player.LeftToolUse(0);
+                    Player.LeftToolUse(ToolUseMode.LeftMouse);
 
                     //client invocation to keep the client inventory in synch
-                    Player.Equipment.LeftTool.Use(Player, 0);
+                    Player.Equipment.LeftTool.Use(Player, ToolUseMode.LeftMouse);
                     }
                 }
             }
@@ -236,10 +236,10 @@ namespace Utopia.Entities.Managers
                     if (!MBoundingBox.Intersects(ref VisualEntity.WorldBBox, ref playerPotentialNewBlock))
                     {
                         //sends the client server event that does tool.use on server
-                        Player.LeftToolUse(1);
+                        Player.LeftToolUse(ToolUseMode.RightMouse);
 
                         //client invocation to keep the client inventory in synch
-                        Player.Equipment.LeftTool.Use(Player, 1);
+                        Player.Equipment.LeftTool.Use(Player, ToolUseMode.RightMouse);
                     }
                 }
             }
