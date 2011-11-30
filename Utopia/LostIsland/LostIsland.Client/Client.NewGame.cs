@@ -91,7 +91,7 @@ namespace LostIsland.Client
 
             Engine = iocContainer.Get<D3DEngine>();
 
-            Engine.ShowMouseCursor();
+            Engine.MouseCapture = false;
 
             //var states = new UtopiaRenderStates
             //{
@@ -150,10 +150,10 @@ namespace LostIsland.Client
             //states.worldChunks.LoadComplete += worldChunks_LoadComplete;
             
             var utopiaRenderer = new UtopiaRender(Engine);
-            // needed to display an nuclex forms
-            utopiaRenderer.GameComponents.Add(iocContainer.Get<GuiManager>());
-            // handles login dialog
-            utopiaRenderer.GameComponents.Add(iocContainer.Get<LoginComponent>());
+            //// needed to display an nuclex forms
+            //utopiaRenderer.GameComponents.Add(iocContainer.Get<GuiManager>());
+            //// handles login dialog
+            //utopiaRenderer.GameComponents.Add(iocContainer.Get<LoginComponent>());
 
             //utopiaRenderer.GameComponents.Add(iocContainer.Get<BepuPhysicsComponent>());
             //utopiaRenderer.GameComponents.Add(iocContainer.Get<LoadingComponent>());

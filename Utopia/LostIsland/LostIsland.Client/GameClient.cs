@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Drawing;
+using LostIsland.Client.States;
 using LostIsland.Shared;
-using S33M3Engines;
-using S33M3Engines.WorldFocus;
-using Utopia.GUI.D3D;
+using Utopia;
 using Utopia.Network;
 using Ninject;
 using S33M3Engines.D3D;
@@ -16,19 +14,13 @@ using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace LostIsland.Client
 {
-
     public partial class GameClient : IDisposable
     {
-        #region Private variables
         private static WelcomeScreen _welcomeForm;
         private Server _server;
         private IKernel _iocContainer;
         private GameExitReasonMessage _exitRease;
-        #endregion
-
-        #region Public Properties/Variables
-        #endregion
-
+        
         public GameClient()
         {
             _exitRease = new GameExitReasonMessage() { GameExitReason = ExitReason.UserRequest };
@@ -39,112 +31,33 @@ namespace LostIsland.Client
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            
             LoadClientsSettings();
 
-            _iocContainer = new StandardKernel();
+            IocBinding();
 
-
-
-            //DirectX layer & Helper ===================================
-            _iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope().WithConstructorArgument("startingSize", new Size(1024, 600)).WithConstructorArgument("windowCaption", "LostIsland Client");         //DirectX Engine
-            _iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope(); //Focus
-            //==========================================================
-
-            _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();        //Gui base class
-            _iocContainer.Bind<Nuclex.UserInterface.Screen>().ToSelf().InSingletonScope();
-            
-
-#if STEALTH
-            StartDirectXWindow();
-#else 
-            StartDirectXWindow();
-            //ShowWelcomeScreen(true);
-#endif      
-        }
-        #endregion
-
-        #region Private methods
-        private void LoadClientsSettings()
-        {
-            ClientSettings.Current = new XmlSettingsManager<ClientConfig>("UtopiaClient.config", SettingsStorage.ApplicationData);
-            ClientSettings.Current.Load();
-
-            //If file was not present create a new one with the Azerty Default mapping !
-            if (ClientSettings.Current.Settings.KeyboardMapping == null)
-            {
-                ClientSettings.Current.Settings = ClientConfig.DefaultQwerty;
-                ClientSettings.Current.Save();
-            }
-
-            ValidateSettings();
-        }
-
-        /// <summary>
-        /// Do validation on the settings values
-        /// </summary>
-        private void ValidateSettings()
-        {
-            if (ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps == 0)
-            {
-                ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps = 8;
-                ClientSettings.Current.Save();
-            }
-        }
-
-        private void ShowWelcomeScreen(bool withFadeIn)
-        {
-            //cheating  the injection system for special cases (gamestates, multi component activation / deactivation)
-            _iocContainer.Bind<IKernel>().ToConstant(_iocContainer).InSingletonScope();
-            
-            _iocContainer.Bind<Server>().ToSelf().InSingletonScope();
-            _server = _iocContainer.Get<Server>();
-
-            EarlyBinding(_iocContainer);
             EntityFactory.Instance = new LostIslandEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());
-
-            _welcomeForm = new WelcomeScreen(_server, withFadeIn);
-            _welcomeForm.Text = "Utopia Client Alpha " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            _welcomeForm.ExitReason = _exitRease;
-            _welcomeForm.ShowDialog();
-            if (_welcomeForm.IsDisposed == false)
-            {
-                AnalyseData(_welcomeForm.Data);
-            }
-        }
-
-        //User request the Client to enter game
-        private void AnalyseData(FormData data)
-        {
-            if (data == null) return;
-            //Close and cleanUP welcome screen;
-            _welcomeForm.Close();
-            _welcomeForm.CleanUp();
-            _welcomeForm.Dispose();
-            _welcomeForm = null;
             
-            switch (data.RequestAction)
-            {
-                case FormRequestedAction.ExitGame:
-                    return;
-                case FormRequestedAction.StartSinglePlayer:
-                    _iocContainer.Get<Server>().Connected = false;
-                    StartDirectXWindow();
-                    break;
-                case FormRequestedAction.StartMultiPlayer:
-                    _iocContainer.Get<Server>().Connected = true;
-                    StartDirectXWindow();
-                    break;
-            }
-
-            Cursor.Show();
-            ShowWelcomeScreen(false);
-        }
-
-        private void StartDirectXWindow()
-        {
             var game = CreateNewGameEngine(_iocContainer); // Create the Rendering
 
+            _iocContainer.Bind<Game>().ToConstant(game);
+
+            //filling stages
+
+            var stateManager = _iocContainer.Get<StatesManager>();
+
+            stateManager.RegisterState(_iocContainer.Get<LoginState>());
+            stateManager.RegisterState(_iocContainer.Get<MainMenuState>());
+            stateManager.RegisterState(_iocContainer.Get<GamePlayState>());
+            stateManager.RegisterState(_iocContainer.Get<GameLoadingState>());
+            stateManager.RegisterState(_iocContainer.Get<GameInventoryState>());
+
+            stateManager.PrepareState("Login");
+            // first state will be the login
+            stateManager.SetGameState("Login");
+
             game.Run();
+
             //Get windows Exit reason
             _exitRease = game.GameExitReason;
             game.Dispose();
@@ -153,16 +66,49 @@ namespace LostIsland.Client
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
-
         }
         #endregion
 
-        #region CleanUp
+        #region Private methods
+        private void LoadClientsSettings()
+        {
+            ClientSettings.Current = new XmlSettingsManager<ClientConfig>("UtopiaClient.config", SettingsStorage.ApplicationData);
+            ClientSettings.Current.Load();
+            
+            if (ValidateSettings()) 
+                ClientSettings.Current.Save();
+        }
+
+        /// <summary>
+        /// Do validation on the settings values
+        /// </summary>
+        /// <returns></returns>
+        private bool ValidateSettings()
+        {
+            var needSave = false;
+
+            //If file was not present create a new one with the Qwerty Default mapping !
+            if (ClientSettings.Current.Settings.KeyboardMapping == null)
+            {
+                ClientSettings.Current.Settings = ClientConfig.DefaultQwerty;
+                needSave = true;
+            }
+
+            if (ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps == 0)
+            {
+                ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps = 8;
+                needSave = true;
+            }
+
+            return needSave;
+        }
+        #endregion
+
         public void Dispose()
         {
             if(_iocContainer != null && !_iocContainer.IsDisposed) _iocContainer.Dispose(); // Will also disposed all singleton objects that have been registered !
         }
-        #endregion
+
     }
     
 }
