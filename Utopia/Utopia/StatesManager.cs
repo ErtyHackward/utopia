@@ -1,5 +1,8 @@
 ﻿using System; 
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using S33M3Engines.D3D;
 
 namespace Utopia
 {
@@ -8,6 +11,7 @@ namespace Utopia
     /// </summary>
     public class StatesManager
     {
+        private readonly Game _game;
         private readonly List<GameState> _states = new List<GameState>();
 
         private GameState _currentState;
@@ -28,6 +32,9 @@ namespace Utopia
 
                     _currentState = value;
 
+                    if (_currentState != null && _game.IsStarted && !IsReady(_currentState))
+                        throw new InvalidOperationException("Stage is not ready to be activated");
+                    
                     InitComponents(prev, _currentState);
 
                     if (_currentState != null)
@@ -36,19 +43,20 @@ namespace Utopia
             }
         }
 
+        public StatesManager(Game game)
+        {
+            if (game == null) throw new ArgumentNullException("game");
+            _game = game;
+        }
+
         private void InitComponents(GameState previous, GameState current)
         {
-            if (previous == null)
-            {
-                // just enable and show all current components
-                current.EnabledComponents.ForEach(c => c.Enabled = true);
-                current.VisibleComponents.ForEach(c => c.Visible = true);
-                return;
-            }
-
             // enable current stuff
             current.EnabledComponents.ForEach(c => c.Enabled = true);
             current.VisibleComponents.ForEach(c => c.Visible = true);
+
+            if (previous == null)
+                return;
 
             // disable previous
             previous.EnabledComponents.ForEach(c => { if (!current.EnabledComponents.Contains(c)) c.Enabled = false; });
@@ -71,12 +79,67 @@ namespace Utopia
         /// <param name="name"></param>
         public void SetGameState(string name)
         {
-            if (name == null) throw new ArgumentNullException("name");
-            var state = _states.Find(gs => gs.Name == name);
+            CurrentState = GetByName(name);
+        }
+
+        /// <summary>
+        /// Prepares stage to be able to activate
+        /// </summary>
+        /// <param name="state"></param>
+        public void PrepareStateAsync(GameState state)
+        {
+            if (IsReady(state)) return;
+
+            state.EnabledComponents.ForEach(c =>
+            {
+                if (!_game.GameComponents.Contains(c))
+                {
+                    _game.GameComponents.Add(c);
+                }
+            });
+
+            state.VisibleComponents.ForEach(c =>
+            {
+                if (!_game.GameComponents.Contains(c))
+                {
+                    _game.GameComponents.Add(c);
+                }
+            });
+        }
+
+        public GameState GetByName(string stateName)
+        {
+            if (stateName == null) throw new ArgumentNullException("stateName");
+            var state = _states.Find(gs => gs.Name == stateName);
             if (state == null)
                 throw new InvalidOperationException("No such state");
 
-            CurrentState = state;
+            return state;
+        }
+
+        public void PrepareStateAsync(string stateName)
+        {
+            PrepareStateAsync(GetByName(stateName));
+        }
+
+        public void PrepareState(string stateName)
+        {
+            var state = GetByName(stateName);
+
+            PrepareStateAsync(state);
+
+            while (_game.IsStarted && !IsReady(state))
+                Thread.Sleep(0);
+        }
+        
+        /// <summary>
+        /// Check whether this stage can be activated
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        public bool IsReady(GameState state)
+        {
+            return state.EnabledComponents.All(c => c.IsInitialized) && state.VisibleComponents.All(c => c.IsInitialized);
         }
 
         /// <summary>
@@ -91,6 +154,7 @@ namespace Utopia
                 throw new InvalidOperationException("State with such name is already added");
 
             _states.Add(state);
+            state.StatesManager = this;
         }
     }
 }

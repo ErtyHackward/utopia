@@ -22,6 +22,11 @@ namespace Utopia
         /// </summary>
         public List<DrawableGameComponent> VisibleComponents { get; protected set; }
 
+        /// <summary>
+        /// Gets states manager
+        /// </summary>
+        public StatesManager StatesManager { get; internal set; }
+
         protected GameState()
         {
             EnabledComponents = new List<GameComponent>();

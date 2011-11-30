@@ -56,6 +56,14 @@ namespace S33M3Engines.D3D
             set { _vSync = value == true ? 1 : 0; }
         }
 
+        /// <summary>
+        /// Indicates if game was started
+        /// </summary>
+        public bool IsStarted
+        {
+            get { return _gameStarted; }
+        }
+
         public GameExitReasonMessage GameExitReason;
         #endregion
 

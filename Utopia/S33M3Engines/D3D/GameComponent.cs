@@ -10,7 +10,7 @@ namespace S33M3Engines.D3D
 
         private string _initStep = "Ready";
         private int _initVal = 100;
-        private bool _isInitialized = true;
+        private bool _isInitialized;
         #endregion
 
         #region Public properties
@@ -97,6 +97,7 @@ namespace S33M3Engines.D3D
         {
             LoadContent();
             OnContentLoaded();
+            _isInitialized = true;
         }
         
         public virtual void Initialize() { }
