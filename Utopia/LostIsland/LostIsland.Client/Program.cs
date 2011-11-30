@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using LostIsland.Shared;
 using LostIsland.Client;
@@ -23,6 +24,7 @@ namespace LostIsland.Client
             
             using (GameClient main = new GameClient())
             {
+                Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 main.Run();
             }
         }
