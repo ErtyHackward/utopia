@@ -247,6 +247,8 @@ namespace S33M3Engines.Sprites
                 }
             }
 
+            textWidth += length; // spacing between characters
+
             return new Vector2(textWidth, textHeight);
 
         }
