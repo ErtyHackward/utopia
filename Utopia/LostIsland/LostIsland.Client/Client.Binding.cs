@@ -132,6 +132,7 @@ namespace LostIsland.Client
             _iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<FadeComponent>().ToSelf().InSingletonScope();
 
 
             //Landscape Creation/Acces/Management ====================================

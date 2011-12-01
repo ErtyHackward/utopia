@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using S33M3Engines.D3D;
+using Utopia.Components;
 
 namespace Utopia
 {
@@ -15,6 +16,7 @@ namespace Utopia
         private readonly List<GameState> _states = new List<GameState>();
 
         private GameState _currentState;
+        private GameState _nextState;
 
         /// <summary>
         /// Gets or sets current game state
@@ -25,43 +27,110 @@ namespace Utopia
             set {
                 if (_currentState != value)
                 {
-                    if (_currentState != null)
-                        _currentState.OnDisabled(value);
-                    
-                    var prev = _currentState;
+                    if (SwitchComponent == null || !_game.IsStarted)
+                    {
+                        UpdateComponent(value);
+                    }
+                    else
+                    {
+                        _nextState = value;
+                        SwitchComponent.BeginSwitch();
+                        SwitchComponent.Enabled = true;
+                        SwitchComponent.Visible = true;
+                    }
 
-                    _currentState = value;
-
-                    if (_currentState != null && _game.IsStarted && !IsReady(_currentState))
-                        throw new InvalidOperationException("Stage is not ready to be activated");
-                    
-                    InitComponents(prev, _currentState);
-
-                    if (_currentState != null)
-                        _currentState.OnEnabled(prev);
                 }
             }
         }
 
+        private void UpdateComponent(GameState newState)
+        {
+            if (_currentState != null)
+                _currentState.OnDisabled(newState);
+
+            var prev = _currentState;
+
+            _currentState = newState;
+
+            if (_currentState != null && _game.IsStarted && !IsReady(_currentState))
+                throw new InvalidOperationException("Stage is not ready to be activated");
+
+
+            InitComponents(prev, _currentState);
+
+            if (_currentState != null)
+                _currentState.OnEnabled(prev);
+        }
+
+        private ISwitchComponent _switchComponent;
+
+        /// <summary>
+        /// Gets or sets a component used when current state changes, maybe null
+        /// </summary>
+        public ISwitchComponent SwitchComponent
+        {
+            get { return _switchComponent; }
+            set
+            {
+                if (_switchComponent != value)
+                {
+                    if (_switchComponent != null)
+                    {
+                        _switchComponent.SwitchMoment -= SwitchComponentSwitchMoment;
+                        _switchComponent.EffectComplete -= SwitchComponentEffectComplete;
+                        _game.GameComponents.Remove((GameComponent)_switchComponent);
+                    }
+
+                    _switchComponent = value;
+
+                    if (_switchComponent != null)
+                    {
+                        _switchComponent.SwitchMoment += SwitchComponentSwitchMoment;
+                        _switchComponent.EffectComplete += SwitchComponentEffectComplete;
+                        _game.GameComponents.Add((GameComponent)_switchComponent);
+                    }
+                }
+            }
+        }
+
+        void SwitchComponentEffectComplete(object sender, EventArgs e)
+        {
+            SwitchComponent.Enabled = false;
+            SwitchComponent.Visible = false;
+        }
+
+        void SwitchComponentSwitchMoment(object sender, EventArgs e)
+        {
+            UpdateComponent(_nextState);
+            _nextState = null;
+            SwitchComponent.FinishSwitch();
+        }
+
         public StatesManager(Game game)
+            : this(game, null)
+        {
+
+        }
+
+        public StatesManager(Game game, ISwitchComponent switchComponent)
         {
             if (game == null) throw new ArgumentNullException("game");
             _game = game;
+            SwitchComponent = switchComponent;
         }
 
         private void InitComponents(GameState previous, GameState current)
         {
             // enable current stuff
-            current.EnabledComponents.ForEach(c => c.Enabled = true);
-            current.VisibleComponents.ForEach(c => c.Visible = true);
+            current.EnabledComponents.ForEach(c => { if (c != SwitchComponent) c.Enabled = true; });
+            current.VisibleComponents.ForEach(c => { if (c != SwitchComponent) c.Visible = true; });
 
             if (previous == null)
                 return;
 
             // disable previous
-            previous.EnabledComponents.ForEach(c => { if (!current.EnabledComponents.Contains(c)) c.Enabled = false; });
-            previous.VisibleComponents.ForEach(c => { if (!current.VisibleComponents.Contains(c)) c.Visible = false; });
-
+            previous.EnabledComponents.ForEach(c => { if (!current.EnabledComponents.Contains(c) && c != SwitchComponent) c.Enabled = false; });
+            previous.VisibleComponents.ForEach(c => { if (!current.VisibleComponents.Contains(c) && c != SwitchComponent) c.Visible = false; });
         }
         
         /// <summary>
