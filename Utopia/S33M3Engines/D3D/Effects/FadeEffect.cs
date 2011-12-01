@@ -99,8 +99,7 @@ namespace S33M3Engines.D3D.Effects
 
         public CBuffer<CBFadePerDraw> CBPerDraw;
 
-        public HLSLFade(D3DEngine engine)
-            : base(engine, @"D3D\Effects\Basics\Fade.hlsl", VertexPosition.VertexDeclaration)
+        public HLSLFade(D3DEngine engine) : base(engine, @"D3D\Effects\Basics\Fade.hlsl", VertexPosition2.VertexDeclaration)
         {
             CBPerDraw = new CBuffer<CBFadePerDraw>(engine, "PerDraw");
             CBuffers.Add(CBPerDraw);
