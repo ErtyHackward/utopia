@@ -22,7 +22,13 @@ namespace Utopia.GUI.D3D
         /// Occurs when you press login button
         /// </summary>
         public event EventHandler Login;
-        
+
+        protected void OnLogin()
+        {
+            var handler = Login;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         public LoginComponent(D3DEngine engine, Screen screen)
         {
             _engine = engine;
@@ -93,17 +99,42 @@ namespace Utopia.GUI.D3D
                 Selected = true
             });
 
-            _loginWindow.Children.Add(new ButtonControl
+            var button = new ButtonControl
             {
                 Bounds = new UniRectangle(dx, dy + 90, 200, 20),
                 Text = "Login"
-            });
+            };
 
-            _screen.Desktop.Children.Add(_loginWindow);
+            button.Pressed += delegate { 
+                OnLogin(); 
+            };
 
-            _screen.FocusedControl = loginInput;
+            _loginWindow.Children.Add(button);
 
-            CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
+            if (Enabled)
+            {
+                _screen.Desktop.Children.Add(_loginWindow);
+                _screen.FocusedControl = loginInput;
+                CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
+            }
+            
+        }
+
+        protected override void OnEnabledChanged()
+        {
+            if (!IsInitialized) return;
+
+            if (Enabled)
+            {
+                _screen.Desktop.Children.Add(_loginWindow);
+                CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
+            }
+            else
+            {
+                _screen.Desktop.Children.Remove(_loginWindow);
+            }
+
+            base.OnEnabledChanged();
         }
 
         public override void Update(ref GameTime timeSpent)

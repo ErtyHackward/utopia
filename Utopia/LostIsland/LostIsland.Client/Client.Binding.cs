@@ -4,7 +4,6 @@ using LostIsland.Client.GUI;
 using LostIsland.Client.States;
 using LostIslandHD.Client;
 using Ninject;
-using Ninject.Parameters;
 using Nuclex.UserInterface;
 using Utopia;
 using Utopia.Editor;
@@ -12,7 +11,6 @@ using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.GUI.D3D.Inventory;
 using Utopia.GUI.D3D.Map;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Worlds.GameClocks;
@@ -42,7 +40,6 @@ using Utopia.Network;
 using Utopia.InputManager;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Renderer;
-using Utopia.Settings;
 using Utopia.GUI;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
@@ -88,6 +85,7 @@ namespace LostIsland.Client
 
             // Game states ================================================
             _iocContainer.Bind<LoginState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<CreditsState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<MainMenuState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<GamePlayState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<GameLoadingState>().ToSelf().InSingletonScope();

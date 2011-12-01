@@ -9,7 +9,7 @@ namespace S33M3Engines.D3D
     {
         #region Private Fields
         private DrawOrders _drawOrder;
-        private bool _visible = true;
+        private bool _visible;
 
         #endregion
 

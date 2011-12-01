@@ -79,6 +79,7 @@ namespace Utopia
         /// <param name="name"></param>
         public void SetGameState(string name)
         {
+            PrepareState(name);
             CurrentState = GetByName(name);
         }
 
