@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Client.Binding.cs" />
     <Compile Include="Client.NewGame.cs" />
+    <Compile Include="Components\CreditsComponent.cs" />
     <Compile Include="Components\MainMenuComponent.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="GameStateToolManager.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="GUI\LoadingComponent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="States\CreditsState.cs" />
     <Compile Include="States\GameInventoryState.cs" />
     <Compile Include="States\GameLoadingState.cs" />
     <Compile Include="States\GamePlayState.cs" />

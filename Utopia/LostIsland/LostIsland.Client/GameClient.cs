@@ -1,4 +1,5 @@
 ﻿using System;
+using LostIsland.Client.Components;
 using LostIsland.Client.States;
 using LostIsland.Shared;
 using Utopia;
@@ -47,12 +48,13 @@ namespace LostIsland.Client
             var stateManager = _iocContainer.Get<StatesManager>();
 
             stateManager.RegisterState(_iocContainer.Get<LoginState>());
+            stateManager.RegisterState(_iocContainer.Get<CreditsState>());
             stateManager.RegisterState(_iocContainer.Get<MainMenuState>());
             stateManager.RegisterState(_iocContainer.Get<GamePlayState>());
             stateManager.RegisterState(_iocContainer.Get<GameLoadingState>());
             stateManager.RegisterState(_iocContainer.Get<GameInventoryState>());
 
-            stateManager.PrepareState("Login");
+            //stateManager.PrepareState("Login");
             // first state will be the login
             stateManager.SetGameState("Login");
 

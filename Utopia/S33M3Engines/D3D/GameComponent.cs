@@ -5,7 +5,7 @@ namespace S33M3Engines.D3D
     public abstract class GameComponent : IUpdateableComponent
     {
         #region Private variables
-        private bool _enabled = true;
+        private bool _enabled;
         private int _updateOrder = 10;
 
         private string _initStep = "Ready";
