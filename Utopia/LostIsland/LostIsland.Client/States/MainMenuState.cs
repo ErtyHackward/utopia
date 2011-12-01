@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LostIsland.Client.Components;
 using Ninject;
 using Utopia;
@@ -9,6 +6,9 @@ using Utopia.GUI.D3D;
 
 namespace LostIsland.Client.States
 {
+    /// <summary>
+    /// Main menu state handling
+    /// </summary>
     public class MainMenuState : GameState
     {
         public override string Name
@@ -27,12 +27,19 @@ namespace LostIsland.Client.States
 
             VisibleComponents.Add(gui);
 
-            menu.CreditsPressed += menu_CreditsPressed;
+            menu.CreditsPressed += MenuCreditsPressed;
 
         }
 
-        void menu_CreditsPressed(object sender, EventArgs e)
+        public override void OnEnabled(GameState previousState)
         {
+            StatesManager.PrepareStateAsync("GameLoading");
+            base.OnEnabled(previousState);
+        }
+        
+        void MenuCreditsPressed(object sender, EventArgs e)
+        {
+            // showing the credits
             StatesManager.SetGameState("Credits");
         }
     }

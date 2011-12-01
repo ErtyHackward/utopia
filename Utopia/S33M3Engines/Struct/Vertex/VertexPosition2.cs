@@ -1,22 +1,22 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using S33M3Engines.Struct.Vertex.Helper;
-using SharpDX;
 using S33M3Engines.Windows;
-using SharpDX.Direct3D11;
+using SharpDX;
 using SharpDX.DXGI;
+using SharpDX.Direct3D11;
 
 namespace S33M3Engines.Struct.Vertex
 {
     [Serializable, StructLayout(LayoutKind.Sequential)]
-    public struct VertexPosition : IVertexType
+    public struct VertexPosition2 : IVertexType
     {
-        public Vector3 Position;
+        public Vector2 Position;
         public static readonly VertexDeclaration VertexDeclaration;
 
-        public VertexPosition(Vector3 position)
+        public VertexPosition2(Vector2 position)
         {
-            this.Position = position;
+            Position = position;
         }
 
         VertexDeclaration IVertexType.VertexDeclaration
@@ -32,11 +32,9 @@ namespace S33M3Engines.Struct.Vertex
             return Helpers.SmartGetHashCode(this);
         }
 
-        static VertexPosition()
+        static VertexPosition2()
         {
-            InputElement[] elements = new InputElement[] { 
-                                                            new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0), 
-                                                            };
+            var elements = new[] { new InputElement("POSITION", 0, Format.R32G32_Float, 0, 0) };
             VertexDeclaration = new VertexDeclaration(elements);
         }
     }

@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+using Nuclex.UserInterface;
 using S33M3Engines;
 using S33M3Engines.D3D;
-using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.GameStates;
-using S33M3Engines.InputHandler;
-using Utopia.Entities.Managers;
-using Utopia.Settings;
-using Screen = Nuclex.UserInterface.Screen;
-using Utopia.GUI.D3D.DebugUI;
 using Utopia.Action;
+using Utopia.Entities.Managers;
+using Utopia.GUI.D3D.DebugUI;
 
-namespace Utopia
+namespace Utopia.Components
 {
     public class DebugComponent : GameComponent
     {

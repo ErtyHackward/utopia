@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ninject;
 using Utopia;
 
 namespace LostIsland.Client.States
 {
+    /// <summary>
+    /// Main gameplay stuff. Displaying the chunks, an entities, handling an input
+    /// </summary>
     public class GamePlayState : GameState
     {
         public override string Name
@@ -13,7 +17,7 @@ namespace LostIsland.Client.States
             get { return "Gameplay"; }
         }
 
-        public GamePlayState()
+        public GamePlayState(IKernel iocContainer)
         {
             //EnabledComponents.Add(
 

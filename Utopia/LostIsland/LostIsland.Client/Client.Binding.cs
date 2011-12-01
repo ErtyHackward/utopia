@@ -6,6 +6,7 @@ using LostIslandHD.Client;
 using Ninject;
 using Nuclex.UserInterface;
 using Utopia;
+using Utopia.Components;
 using Utopia.Editor;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;

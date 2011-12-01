@@ -111,8 +111,10 @@
     <Compile Include="Action\MouseButton.cs" />
     <Compile Include="Action\MouseTriggeredAction.cs" />
     <Compile Include="Action\MouseTriggerMode.cs" />
-    <Compile Include="BepuPhysicsComponent.cs" />
-    <Compile Include="DebugComponent.cs" />
+    <Compile Include="Components\BepuPhysicsComponent.cs" />
+    <Compile Include="Components\DebugComponent.cs" />
+    <Compile Include="Components\FadeComponent.cs" />
+    <Compile Include="Components\ISwitchComponent.cs" />
     <Compile Include="Editor\CarvingEditor.cs" />
     <Compile Include="Editor\EditorTool.cs" />
     <Compile Include="Editor\EntityEditor.cs" />

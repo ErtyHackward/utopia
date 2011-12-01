@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using S33M3Engines;
 using S33M3Engines.D3D;
@@ -10,6 +9,9 @@ using Color = Utopia.Shared.Structs.Color;
 
 namespace LostIsland.Client.GUI
 {
+    /// <summary>
+    /// Component to show something while game loading
+    /// </summary>
     public class LoadingComponent : DrawableGameComponent
     {
         private readonly D3DEngine _engine;
@@ -17,8 +19,8 @@ namespace LostIsland.Client.GUI
         SpriteFont _font;
         SpriteTexture _materia;
         string _loadingText = "Loading...";
-        DateTime lastCheck;
-        int _points = 0;
+        DateTime _lastCheck;
+        int _points;
 
         public LoadingComponent(D3DEngine engine)
         {
@@ -33,13 +35,13 @@ namespace LostIsland.Client.GUI
             _spriteRender = new SpriteRenderer();
             _spriteRender.Initialize(_engine);
 
-            _materia = new SpriteTexture(_engine.Device, "Images\\materia.png", new SharpDX.Vector2());
-            lastCheck = DateTime.Now;
+            _materia = new SpriteTexture(_engine.Device, "Images\\materia.png", new Vector2());
+            _lastCheck = DateTime.Now;
         }
 
         public override void Update(ref GameTime timeSpent)
         {
-            if ((DateTime.Now - lastCheck).TotalSeconds > 0.5)
+            if ((DateTime.Now - _lastCheck).TotalSeconds > 0.5)
             {
                 if (_points++ > 3) _points = 0;
                 _loadingText = "Loading";
@@ -48,7 +50,7 @@ namespace LostIsland.Client.GUI
                 {
                     _loadingText += ".";
                 }
-                lastCheck = DateTime.Now;
+                _lastCheck = DateTime.Now;
             }
 
             base.Update(ref timeSpent);
