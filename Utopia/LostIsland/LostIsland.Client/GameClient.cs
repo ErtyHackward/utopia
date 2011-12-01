@@ -50,7 +50,7 @@ namespace LostIsland.Client
 
             var fade = _iocContainer.Get<FadeComponent>();
 
-            fade.Color = new SharpDX.Color4(1,1,1,1);
+            fade.Color = new SharpDX.Color4(0,0,0,1);
 
             stateManager.SwitchComponent = fade;
 
