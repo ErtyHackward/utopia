@@ -42,28 +42,20 @@ namespace S33M3Engines.D3D.Effects
 
             _rasterStateId = StatesRepository.AddRasterStates(new RasterizerStateDescription
             {
-                IsAntialiasedLineEnabled = false,
                 CullMode = CullMode.None,
-                DepthBias = 0,
-                DepthBiasClamp = 1f,
-                IsDepthClipEnabled = true,
-                FillMode = FillMode.Solid,
-                IsFrontCounterClockwise = false,
-                IsMultisampleEnabled = true,
-                IsScissorEnabled = false,
-                SlopeScaledDepthBias = 0,
+                FillMode = FillMode.Solid 
             });
 
-            var blendDescr = new BlendStateDescription { IndependentBlendEnable = true, AlphaToCoverageEnable = false };
+            var blendDescr = new BlendStateDescription { IndependentBlendEnable = false, AlphaToCoverageEnable = false };
             for (var i = 0; i < 8; i++)
             {
                 blendDescr.RenderTarget[i].IsBlendEnabled = true;
-                blendDescr.RenderTarget[i].BlendOperation = BlendOperation.Add;
-                blendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
+                blendDescr.RenderTarget[i].SourceBlend = BlendOption.SourceAlpha;
                 blendDescr.RenderTarget[i].DestinationBlend = BlendOption.InverseSourceAlpha;
-                blendDescr.RenderTarget[i].DestinationAlphaBlend = BlendOption.One;
-                blendDescr.RenderTarget[i].SourceBlend = BlendOption.One;
+                blendDescr.RenderTarget[i].BlendOperation = BlendOperation.Add;
                 blendDescr.RenderTarget[i].SourceAlphaBlend = BlendOption.One;
+                blendDescr.RenderTarget[i].DestinationAlphaBlend = BlendOption.One;
+                blendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
                 blendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
             }
             _blendStateId = StatesRepository.AddBlendStates(blendDescr);
@@ -72,7 +64,6 @@ namespace S33M3Engines.D3D.Effects
 
         public void Draw(Color4 color)
         {
-
             StatesRepository.ApplyStates(_rasterStateId, _blendStateId);
 
             _vBuffer.SetToDevice(0);
