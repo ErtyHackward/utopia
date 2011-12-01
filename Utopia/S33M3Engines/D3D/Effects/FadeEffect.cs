@@ -26,10 +26,10 @@ namespace S33M3Engines.D3D.Effects
             
             // Create the vertex buffer
             VertexPosition2[] vertices = { 
-                                          new VertexPosition2(new Vector2(-0.10f, -0.10f)),
-                                          new VertexPosition2(new Vector2(0.10f, -0.10f)),
-                                          new VertexPosition2(new Vector2(0.10f, 0.10f)),
-                                          new VertexPosition2(new Vector2(-0.10f, 0.10f))
+                                          new VertexPosition2(new Vector2(-1.00f, -1.00f)),
+                                          new VertexPosition2(new Vector2(1.00f, -1.00f)),
+                                          new VertexPosition2(new Vector2(1.00f, 1.00f)),
+                                          new VertexPosition2(new Vector2(-1.00f, 1.00f))
                                       };
 
             _vBuffer = new VertexBuffer<VertexPosition2>(_engine, vertices.Length, VertexPosition2.VertexDeclaration, PrimitiveTopology.TriangleList, "Fade_vBuffer", ResourceUsage.Immutable);

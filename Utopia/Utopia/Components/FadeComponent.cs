@@ -14,7 +14,7 @@ namespace Utopia.Components
         private readonly D3DEngine _engine;
         FadeEffect _effect;
         private Color4 _color;
-        private float _fadeTimeS = 0.5f;
+        private float _fadeTimeS = 0.2f;
         private float _targetAlpha;
         
         /// <summary>
@@ -60,6 +60,8 @@ namespace Utopia.Components
         public FadeComponent(D3DEngine engine)
         {
             _engine = engine;
+
+            DrawOrders.UpdateIndex(0, int.MaxValue);
         }
 
         public override void LoadContent()
