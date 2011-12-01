@@ -5,6 +5,9 @@ using Utopia.GUI.D3D;
 
 namespace LostIsland.Client.States
 {
+    /// <summary>
+    /// Controls display of the authors
+    /// </summary>
     public class CreditsState : GameState
     {
         public override string Name
@@ -27,6 +30,7 @@ namespace LostIsland.Client.States
 
         void CreditsBackPressed(object sender, System.EventArgs e)
         {
+            // when you press "back" we returning to the main menu
             StatesManager.SetGameState("MainMenu");
         }
     }

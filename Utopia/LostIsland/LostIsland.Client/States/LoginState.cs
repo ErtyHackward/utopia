@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Ninject;
 using Utopia;
 using Utopia.GUI.D3D;
 
 namespace LostIsland.Client.States
 {
+    /// <summary>
+    /// First state of the game, requests login and password
+    /// </summary>
     public class LoginState : GameState
     {
         public override string Name
@@ -20,7 +20,7 @@ namespace LostIsland.Client.States
             var gui = iocContainer.Get<GuiManager>();
             var login = iocContainer.Get<LoginComponent>();
 
-            login.Login += login_Login;
+            login.Login += LoginLogin;
             
             EnabledComponents.Add(gui);
             EnabledComponents.Add(login);
@@ -30,13 +30,13 @@ namespace LostIsland.Client.States
 
         public override void OnEnabled(GameState previousState)
         {
+            // start preparing of the main menu
             StatesManager.PrepareStateAsync("MainMenu");
-            
-            base.OnEnabled(previousState);
         }
 
-        void login_Login(object sender, EventArgs e)
+        void LoginLogin(object sender, EventArgs e)
         {
+            // for now, while we have not a web part just open the main menu
             StatesManager.SetGameState("MainMenu");
         }
     }
