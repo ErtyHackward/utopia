@@ -6,6 +6,7 @@ using Utopia.GameDXStates;
 using Utopia.Settings;
 using Utopia.Action;
 using Utopia.Shared.Settings;
+using S33M3Engines.D3D.Effects.Basics;
 
 namespace Utopia
 {
