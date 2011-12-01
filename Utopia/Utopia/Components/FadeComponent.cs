@@ -14,7 +14,7 @@ namespace Utopia.Components
         private readonly D3DEngine _engine;
         FadeEffect _effect;
         private Color4 _color;
-        private float _fadeTimeS = 500;
+        private float _fadeTimeS = 0.5f;
         private float _targetAlpha;
         
         /// <summary>

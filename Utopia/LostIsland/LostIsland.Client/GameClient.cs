@@ -3,6 +3,7 @@ using LostIsland.Client.Components;
 using LostIsland.Client.States;
 using LostIsland.Shared;
 using Utopia;
+using Utopia.Components;
 using Utopia.Network;
 using Ninject;
 using S33M3Engines.D3D;
@@ -46,6 +47,12 @@ namespace LostIsland.Client
             //filling stages
 
             var stateManager = _iocContainer.Get<StatesManager>();
+
+            var fade = _iocContainer.Get<FadeComponent>();
+
+            fade.Color = new SharpDX.Color4(1,1,1,1);
+
+            stateManager.SwitchComponent = fade;
 
             stateManager.RegisterState(_iocContainer.Get<LoginState>());
             stateManager.RegisterState(_iocContainer.Get<CreditsState>());

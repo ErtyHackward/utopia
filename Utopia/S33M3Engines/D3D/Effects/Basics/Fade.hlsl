@@ -3,7 +3,6 @@
 //--------------------------------------------------------------------------------------
 cbuffer PerDraw
 {
-    matrix Transform;
     float4 Color;
 };
 
@@ -35,7 +34,7 @@ VSOutput FadeVS(in VSInput input)
 	output.Position = position;
 	output.Color = Color;
 
-    return 
+    return output;
 }
 
 //======================================================================================

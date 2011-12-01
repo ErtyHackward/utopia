@@ -1,11 +1,12 @@
 using System;
+using S33M3Engines.D3D;
 
 namespace Utopia.Components
 {
     /// <summary>
     /// Describes a component used to switch between the states
     /// </summary>
-    public interface ISwitchComponent
+    public interface ISwitchComponent : IDrawableComponent
     {
         /// <summary>
         /// Occurs when screen is completely opaque. It is a time to change active components
