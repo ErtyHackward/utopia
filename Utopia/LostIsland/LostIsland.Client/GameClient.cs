@@ -12,6 +12,8 @@ using Utopia.Settings;
 using Utopia.Shared.Config;
 using LostIsland.Client.GUI.Forms;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace LostIsland.Client
@@ -23,7 +25,6 @@ namespace LostIsland.Client
         private IKernel _iocContainer;
         private GameExitReasonMessage _exitRease;
         private LostIslandEntityFactory _clientFactory;
-        private LostIslandEntityFactory _serverFactory;
         
         public GameClient()
         {
@@ -44,6 +45,7 @@ namespace LostIsland.Client
             //Initialize the Thread Pool manager
             S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
 
+            NetworkMessageFactory.Instance.EntityFactory = _clientFactory;
 
             var game = CreateNewGameEngine(_iocContainer); // Create the Rendering
 

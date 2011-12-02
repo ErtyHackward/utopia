@@ -70,6 +70,11 @@ namespace Utopia.Shared.Config
             return Path.Combine(folder, FileName);
         }
 
+        public XmlSettingsManager(string fileName) : this(fileName, SettingsStorage.ApplicationData, "")
+        {
+            
+        }
+
 
         /// <summary>
         /// Creates new instance of XmlSettings manager

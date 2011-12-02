@@ -1,5 +1,6 @@
 ﻿using System;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Ninject;

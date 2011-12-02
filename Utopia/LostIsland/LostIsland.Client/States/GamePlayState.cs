@@ -1,10 +1,13 @@
-﻿using LostIsland.Client.Components;
+﻿using System;
+using System.IO;
+using LostIsland.Client.Components;
 using LostIsland.Shared;
 using Ninject;
 using Ninject.Parameters;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
 using S33M3Engines.D3D.DebugTools;
+using S33M3Engines.Shared.Math;
 using S33M3Engines.Threading;
 using S33M3Engines.Timers;
 using S33M3Engines.WorldFocus;
@@ -27,10 +30,17 @@ using Utopia.Network;
 using Utopia.Server;
 using Utopia.Server.Managers;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.ClassExt;
 using Utopia.Shared.Config;
+using Utopia.Shared.Cubes;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
+using Utopia.Shared.World.Processors;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Worlds.Chunks.ChunkLandscape;
@@ -54,6 +64,7 @@ namespace LostIsland.Client.States
         private RuntimeVariables _vars;
         private Server _server;
         private LostIslandEntityFactory _serverFactory;
+        private ServerComponent _serverComponent;
 
         public override string Name
         {
@@ -77,7 +88,9 @@ namespace LostIsland.Client.States
             var loading = _ioc.Get<LoadingComponent>();
             _vars = _ioc.Get<RuntimeVariables>();
 
+
             AddComponent(loading);
+            AddComponent(_ioc.Get<ServerComponent>());
         }
 
         private void GameplayInitialize()
@@ -86,19 +99,87 @@ namespace LostIsland.Client.States
             {
                 if(_server == null)
                 {
-                    var sqliteStorage = _ioc.Get<SQLiteStorageManager>();
                     _serverFactory = new LostIslandEntityFactory(null);
-                    _server = new Server(_ioc.Get<XmlSettingsManager<ServerSettings>>(), _ioc.Get<WorldGenerator>(), sqliteStorage, sqliteStorage, sqliteStorage, _serverFactory);
+                    var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia\\local.db");
+                    var sqliteStorage = _ioc.Get<SQLiteStorageManager>(new[] { new ConstructorArgument("filePath", dbPath), new ConstructorArgument("factory", _serverFactory) });
+
+                    sqliteStorage.Register("local", "qwe123".GetMd5Hash(), Utopia.Shared.Structs.UserRole.Administrator);
+                    
+                    var settings = _ioc.Get<XmlSettingsManager<ServerSettings>>();
+                    var wp = _ioc.Get<WorldParameters>();
+                    var worldGenerator = new WorldGenerator(wp, new PlanWorldProcessor(wp, _serverFactory));
+
+                    _server = new Server(settings, worldGenerator, sqliteStorage, sqliteStorage, sqliteStorage, _serverFactory);
                     _serverFactory.LandscapeManager = _server.LandscapeManager;
+                    _server.ConnectionManager.LocalMode = true;
+                    _server.ConnectionManager.Listen();
+                    _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
+                }
+
+                if (_serverComponent == null)
+                {
+                    _serverComponent = _ioc.Get<ServerComponent>();
+                    _serverComponent.ConnectionInitialized += ServerComponentConnectionInitialized;
+                }
+                _serverComponent.BindingServer("127.0.0.1");
+                _serverComponent.ConnectToServer("local", "qwe123", false);
+                if (_serverComponent.ServerConnection != null)
+                {
+                    _serverComponent.ServerConnection.MessageEntityIn += ServerConnectionMessageEntityIn;
                 }
             }
+        }
+
+        void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
+        {
+            var dEntity = new PlayerCharacter();
+            dEntity.DynamicId = e.EntityId;
+            dEntity.DisplacementMode = EntityDisplacementModes.Walking;
+            dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
+            dEntity.CharacterName = "Local player";
+            ContainedSlot outItem;
+            //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.Annihilator) }, out outItem);
+
+            var adder = (CubeResource)_server.EntityFactory.CreateEntity(EntityClassId.CubeResource);
+            adder.CubeId = CubeId.HalfWoodPlank;//looting a terraincube will create a new blockadder instance or add to the stack
+
+            dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
+
+            foreach (var cubeId in CubeId.All())
+            {
+                if (cubeId == CubeId.Air)
+                    continue;
+
+                var item3 = (CubeResource)_server.EntityFactory.CreateEntity((EntityClassId.CubeResource));
+                item3.CubeId = cubeId;
+                dEntity.Inventory.PutItem(item3);
+            }
+            e.PlayerEntity = dEntity;
+        }
+
+        void ServerComponentConnectionInitialized(object sender, ServerComponentConnectionInitializeEventArgs e)
+        {
+            if (e.ServerConnection != null)
+            {
+                e.ServerConnection.MessageEntityIn += ServerConnectionMessageEntityIn;
+                
+            }
+        }
+
+        void ServerConnectionMessageEntityIn(object sender, Utopia.Shared.Net.Connections.ProtocolMessageEventArgs<Utopia.Shared.Net.Messages.EntityInMessage> e)
+        {
+            var player = (PlayerCharacter)e.Message.Entity;
+            _ioc.Rebind<PlayerCharacter>().ToConstant(player).InSingletonScope(); //Register the current Player.
+            _ioc.Rebind<IDynamicEntity>().ToConstant(player).InSingletonScope().Named("Player"); //Register the current Player.
+            _serverComponent.ServerConnection.MessageEntityIn -= ServerConnectionMessageEntityIn;
+            GameplayComponentsCreation();
         }
 
         private void GameplayComponentsCreation()
         {
             //GameComponents.Add(new DebugComponent(this, _d3dEngine, _renderStates.screen, _renderStates.gameStatesManager, _renderStates.actionsManager, _renderStates.playerEntityManager));
             
-            // be carefull with initilization order
+            // be careful with initilization order
             var serverComponent = _ioc.Get<ServerComponent>();
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
             var wordParameters = _ioc.Get<WorldParameters>();
@@ -152,7 +233,7 @@ namespace LostIsland.Client.States
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             AddComponent(cameraManager);
-            AddComponent(_ioc.Get<ServerComponent>());
+            //AddComponent(_ioc.Get<ServerComponent>());
             AddComponent(inputsManager);
             AddComponent(iconFactory);
             AddComponent(timerManager);

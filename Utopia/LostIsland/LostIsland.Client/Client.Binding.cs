@@ -59,7 +59,7 @@ namespace LostIsland.Client
     {
         public void EarlyBinding(IKernel iocContainer)
         {
-            iocContainer.Bind<IGameStateToolManager>().To<GameStateToolManager>().InSingletonScope();
+            
         }
 
         public void IocBinding()
@@ -120,6 +120,7 @@ namespace LostIsland.Client
             //=============================================================
 
             //Game Componenents =========================================
+            _iocContainer.Bind<ServerComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
             _iocContainer.Bind<InventoryComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
@@ -148,9 +149,13 @@ namespace LostIsland.Client
             _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InSingletonScope();   //Chunk Mesh + Entities creation
             _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();             //Chunk Management (Update/Draw)
             _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
+            
             _iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
             _iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope();
             _iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
+
+            _iocContainer.Bind<IGameStateToolManager>().To<GameStateToolManager>().InSingletonScope();
+
             //iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope().Named("s33m3World");
             //iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
             //iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");

@@ -115,7 +115,11 @@ namespace Utopia.Server
             EntityStorage = entityStorage;
             EntityFactory = entityFactory;
 
+            if (SettingsManager.Settings == null)
+                SettingsManager.Load();
+
             var settings = SettingsManager.Settings;
+
 
             Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
 
