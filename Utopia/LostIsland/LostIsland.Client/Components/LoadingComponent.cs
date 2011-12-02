@@ -7,7 +7,7 @@ using S33M3Engines.Sprites;
 using SharpDX;
 using Color = Utopia.Shared.Structs.Color;
 
-namespace LostIsland.Client.GUI
+namespace LostIsland.Client.Components
 {
     /// <summary>
     /// Component to show something while game loading
@@ -39,7 +39,7 @@ namespace LostIsland.Client.GUI
             _lastCheck = DateTime.Now;
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             if ((DateTime.Now - _lastCheck).TotalSeconds > 0.5)
             {
@@ -53,7 +53,7 @@ namespace LostIsland.Client.GUI
                 _lastCheck = DateTime.Now;
             }
 
-            base.Update(ref timeSpent);
+            base.Update(ref timeSpend);
         }
 
         public override void Draw(int index)

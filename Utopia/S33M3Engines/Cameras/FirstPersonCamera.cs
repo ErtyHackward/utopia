@@ -37,7 +37,7 @@ namespace S33M3Engines.Cameras
 
         #region Public Methods
         //Called at fixed interval of time
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpend)
         {
             //Memorise the last timedepend variables
             _worldPosition.BackUpValue();

@@ -67,7 +67,7 @@ namespace Utopia.Worlds.Chunks
         private ILightingManager _lightingManager;
         private ILandscapeManager _landscapeManager;
         private IChunkMeshManager _chunkMeshManager;
-        private Server _server;
+        private ServerComponent _server;
         private PlayerEntityManager _playerManager;
         private IChunkStorageManager _chunkstorage;
         private ISkyDome _skydome;
@@ -131,7 +131,7 @@ namespace Utopia.Worlds.Chunks
                            IChunksWrapper chunkWrapper,
                            ILightingManager lightingManager,
                            IChunkStorageManager chunkstorage,
-                           Server server,
+                           ServerComponent server,
                            PlayerEntityManager player,
                            ISkyDome skydome,
                            IEntityPickingManager pickingManager,

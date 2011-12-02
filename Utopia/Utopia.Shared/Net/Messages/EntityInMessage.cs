@@ -51,13 +51,13 @@ namespace Utopia.Shared.Net.Messages
             set { _link = value; }
         }
 
-        public static EntityInMessage Read(BinaryReader reader)
+        public static EntityInMessage Read(BinaryReader reader, EntityFactory factory)
         {
             EntityInMessage msg;
 
             msg._parentEntityId = reader.ReadUInt32();
             msg._link = reader.ReadEntityLink();
-            msg._entity = EntityFactory.Instance.CreateFromBytes(reader);
+            msg._entity = factory.CreateFromBytes(reader);
 
             return msg;
         }

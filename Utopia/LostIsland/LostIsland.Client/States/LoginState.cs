@@ -10,6 +10,8 @@ namespace LostIsland.Client.States
     /// </summary>
     public class LoginState : GameState
     {
+        private readonly IKernel _iocContainer;
+
         public override string Name
         {
             get { return "Login"; }
@@ -17,17 +19,20 @@ namespace LostIsland.Client.States
 
         public LoginState(IKernel iocContainer)
         {
-            var gui = iocContainer.Get<GuiManager>();
-            var login = iocContainer.Get<LoginComponent>();
-
-            login.Login += LoginLogin;
-            
-            EnabledComponents.Add(gui);
-            EnabledComponents.Add(login);
-
-            VisibleComponents.Add(gui);
+            _iocContainer = iocContainer;
         }
 
+        public override void Initialize()
+        {
+            var gui = _iocContainer.Get<GuiManager>();
+            var login = _iocContainer.Get<LoginComponent>();
+
+            login.Login += LoginLogin;
+
+            AddComponent(gui);
+            AddComponent(login);
+        }
+        
         public override void OnEnabled(GameState previousState)
         {
             // start preparing of the main menu

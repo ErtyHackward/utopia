@@ -52,8 +52,8 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         }
 
         #endregion
-        public Grass(ILandscapeManager2D landscapeManager)
-            : base(landscapeManager)
+        public Grass(ILandscapeManager2D landscapeManager, EntityFactory factory)
+            : base(landscapeManager, factory)
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;
@@ -62,16 +62,12 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
 
         #region Public methods
         // we need to override save and load!
-        public override void Load(BinaryReader reader)
+        public override void Load(BinaryReader reader, EntityFactory factory)
         {
             // first we need to load base information
-            base.Load(reader);
+            base.Load(reader, factory);
             GrowPhase = reader.ReadByte();
-            Vector3I linkedCube = new Vector3I();
-            linkedCube.X = reader.ReadInt32();
-            linkedCube.Y = reader.ReadInt32();
-            linkedCube.Z = reader.ReadInt32();
-            LinkedCube = linkedCube;
+            LinkedCube = reader.ReadVector3I();
         }
 
         public override void Save(BinaryWriter writer)
@@ -79,9 +75,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
             // first we need to save base information
             base.Save(writer);
             writer.Write(GrowPhase);
-            writer.Write(LinkedCube.X);
-            writer.Write(LinkedCube.Y);
-            writer.Write(LinkedCube.Z);
+            writer.Write(LinkedCube);
         }
         #endregion
 

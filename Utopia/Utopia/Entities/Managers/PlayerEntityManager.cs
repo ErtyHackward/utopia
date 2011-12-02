@@ -680,7 +680,7 @@ namespace Utopia.Entities.Managers
 
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             inputHandler();             //Input handling
 
@@ -688,7 +688,7 @@ namespace Utopia.Entities.Managers
 
             CheckHeadUnderWater();      //Under water head test
 
-            RefreshEntityMovementAndRotation(ref timeSpent);   //Refresh player Movement + rotation
+            RefreshEntityMovementAndRotation(ref timeSpend);   //Refresh player Movement + rotation
 
             //Refresh the player Bounding box
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);

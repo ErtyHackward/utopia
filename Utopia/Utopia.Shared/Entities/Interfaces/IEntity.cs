@@ -1,6 +1,6 @@
+using System.IO;
 using S33M3Engines.Shared.Math;
 using SharpDX;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Interfaces
@@ -8,7 +8,7 @@ namespace Utopia.Shared.Entities.Interfaces
     /// <summary>
     /// Base interface for entities
     /// </summary>
-    public interface IEntity : IBinaryStorable
+    public interface IEntity
     {
         /// <summary>
         /// Pickable entity Property
@@ -55,5 +55,17 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         /// <returns></returns>
         EntityLink GetLink();
+
+        /// <summary>
+        /// Saves current object state to binary form
+        /// </summary>
+        /// <param name="writer"></param>
+        void Save(BinaryWriter writer);
+
+        /// <summary>
+        /// Loads current object from binary form
+        /// </summary>
+        /// <param name="reader"></param>
+        void Load(BinaryReader reader, EntityFactory factory);
     }
 }

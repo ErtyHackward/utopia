@@ -46,9 +46,9 @@ namespace S33M3Engines.Cameras
             ActiveCamera.Dispose();
         }
 
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpend)
         {
-            ActiveCamera.Update(ref TimeSpend);
+            ActiveCamera.Update(ref timeSpend);
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)

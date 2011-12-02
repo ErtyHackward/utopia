@@ -20,7 +20,7 @@ namespace Utopia.Worlds.GameClocks
         private float _deltaTime;
         private bool _frozenTime;
         private ActionsManager _actions;
-        private Server _server;
+        private ServerComponent _server;
         #endregion
 
         #region Public variable/properties
@@ -33,12 +33,26 @@ namespace Utopia.Worlds.GameClocks
         /// <param name="game">Base tools class</param>
         /// <param name="clockSpeed">The Ingame time speed in "Nbr of second ingame for each realtime seconds"; ex : 1 = Real time, 60 = 60times faster than realtime</param>
         /// <param name="gameTimeStatus">The startup time</param>
-        public WorldClock(ActionsManager actions, Server server)
+        public WorldClock(ActionsManager actions, ServerComponent server)
         {
+            if (server == null) throw new ArgumentNullException("server");
             _server = server;
             _actions = actions;
             AssignTimeAndFactor(server.TimeFactor, server.WorldDateTime);
-            _server.ServerConnection.MessageDateTime += ServerConnection_MessageDateTime;
+
+            _server.ConnectionInitialized += _server_ConnectionInitialized;
+
+            if(_server.ServerConnection != null)
+                _server.ServerConnection.MessageDateTime += ServerConnection_MessageDateTime;
+        }
+
+        void _server_ConnectionInitialized(object sender, ServerComponentConnectionInitializeEventArgs e)
+        {
+            if (e.PrevoiusConnection != null)
+                e.PrevoiusConnection.MessageDateTime -= ServerConnection_MessageDateTime;
+
+            if(e.ServerConnection != null)
+                e.ServerConnection.MessageDateTime += ServerConnection_MessageDateTime;
         }
 
         #region Public methods
@@ -54,13 +68,13 @@ namespace Utopia.Worlds.GameClocks
             base.Dispose();
         }
 
-        public override void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
+        public override void Update(ref S33M3Engines.D3D.GameTime timeSpend)
         {
             InputHandler();
 
             if (_frozenTime) return;
 
-            _deltaTime = TimeFactor * TimeSpend.ElapsedGameTimeInS_LD * (float)Math.PI / 43200.0f;
+            _deltaTime = TimeFactor * timeSpend.ElapsedGameTimeInS_LD * (float)Math.PI / 43200.0f;
 
             //Back UP previous values
             _clockTime.BackUpValue();

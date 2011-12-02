@@ -102,7 +102,7 @@ namespace Utopia.GUI.D3D
             if (_guiVisualizer != null) _guiVisualizer.Dispose();
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             
         }

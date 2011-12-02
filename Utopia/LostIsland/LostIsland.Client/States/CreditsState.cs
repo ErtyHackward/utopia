@@ -10,6 +10,8 @@ namespace LostIsland.Client.States
     /// </summary>
     public class CreditsState : GameState
     {
+        private readonly IKernel _iocContainer;
+
         public override string Name
         {
             get { return "Credits"; }
@@ -17,9 +19,15 @@ namespace LostIsland.Client.States
 
         public CreditsState(IKernel iocContainer)
         {
-            var gui = iocContainer.Get<GuiManager>();
-            var credits = iocContainer.Get<CreditsComponent>();
-            
+            _iocContainer = iocContainer;
+
+        }
+
+        public override void Initialize()
+        {
+            var gui = _iocContainer.Get<GuiManager>();
+            var credits = _iocContainer.Get<CreditsComponent>();
+
             EnabledComponents.Add(gui);
             EnabledComponents.Add(credits);
 

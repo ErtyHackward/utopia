@@ -68,7 +68,7 @@ namespace Utopia.Worlds.Weather
             Vector3.Lerp(ref _flatWindFlowNormalizedWithNoise.ValuePrev, ref _flatWindFlowNormalizedWithNoise.Value, interpolationLd, out _flatWindFlowNormalizedWithNoise.ValueInterp);
         }
 
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpend)
         {
             _keyFrameAnimation.BackUpValue();
             _flatWindFlowNormalizedWithNoise.BackUpValue();

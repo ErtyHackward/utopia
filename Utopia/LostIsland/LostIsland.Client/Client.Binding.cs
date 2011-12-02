@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using LostIsland.Client.Components;
 using LostIsland.Client.GUI;
 using LostIsland.Client.States;
 using LostIslandHD.Client;
@@ -12,6 +13,9 @@ using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.GUI.D3D.Inventory;
 using Utopia.GUI.D3D.Map;
+using Utopia.Server;
+using Utopia.Server.Managers;
+using Utopia.Shared.Config;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Worlds.GameClocks;
@@ -85,12 +89,11 @@ namespace LostIsland.Client
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class
 
             // Game states ================================================
+            _iocContainer.Bind<RuntimeVariables>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<CreditsState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<MainMenuState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<GamePlayState>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<GameLoadingState>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<GameInventoryState>().ToSelf().InSingletonScope();
             
             //Network Related =============================================
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
@@ -159,13 +162,17 @@ namespace LostIsland.Client
             _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();         //Dynamic Entity manager
             _iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();                             //The player manager
             //Register the Player Against IDynamicEntity and PlayerCharacter
-            _iocContainer.Bind<PlayerCharacter>().ToConstant(_iocContainer.Get<Server>().Player).InSingletonScope(); //Register the current Player.
-            _iocContainer.Bind<IDynamicEntity>().ToConstant(_iocContainer.Get<Server>().Player).InSingletonScope().Named("Player"); //Register the current Player.
+            _iocContainer.Bind<PlayerCharacter>().ToConstant(null).InSingletonScope(); //Register the current Player.
+            _iocContainer.Bind<IDynamicEntity>().ToConstant(null).InSingletonScope().Named("Player"); //Register the current Player.
             _iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");    //Rendering Player
             _iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");  //Rendering Dynamic Entities
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();  //Voxel Factory
             //=============================================================
 
+            // Server components ==========================================
+            _iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToSelf().InSingletonScope().WithConstructorArgument("fileName", "localServer.config");
+            _iocContainer.Bind<SQLiteStorageManager>().ToSelf().InSingletonScope();
+            
         }
     }
 }

@@ -1,14 +1,13 @@
 using System;
 using System.IO;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities.Inventory
 {
     /// <summary>
     /// Each slot has an entity and number of entities count.
     /// </summary>
-    public class Slot : IBinaryStorable, ICloneable 
+    public class Slot : ICloneable 
     {
         /// <summary>
         /// Gets or sets items count
@@ -35,13 +34,13 @@ namespace Utopia.Shared.Entities.Inventory
             }
         }
 
-        public virtual void Load(BinaryReader reader)
+        public virtual void LoadSlot(BinaryReader reader, EntityFactory factory)
         {
             ItemsCount = reader.ReadInt32();
-            
+
             if (ItemsCount > 0)
             {
-                Item = (IItem)EntityFactory.Instance.CreateFromBytes(reader);
+                Item = (IItem)factory.CreateFromBytes(reader);
             }
             else Item = null;
         }
@@ -57,7 +56,7 @@ namespace Utopia.Shared.Entities.Inventory
 
         public virtual object Clone()
         {
-            var slot = new Slot {
+            var slot = new Slot() {
                 Item = Item, 
                 ItemsCount = ItemsCount
             };

@@ -11,6 +11,9 @@ namespace LostIsland.Client.States
     /// </summary>
     public class MainMenuState : GameState
     {
+        private readonly IKernel _iocContainer;
+        private RuntimeVariables _vars;
+
         public override string Name
         {
             get { return "MainMenu"; }
@@ -18,22 +21,31 @@ namespace LostIsland.Client.States
 
         public MainMenuState(IKernel iocContainer)
         {
-            var gui = iocContainer.Get<GuiManager>();
-            var menu = iocContainer.Get<MainMenuComponent>();
+            _iocContainer = iocContainer;
+        }
 
+        public override void Initialize()
+        {
+            var gui = _iocContainer.Get<GuiManager>();
+            var menu = _iocContainer.Get<MainMenuComponent>();
+            _vars = _iocContainer.Get<RuntimeVariables>();
 
-            EnabledComponents.Add(gui);
-            EnabledComponents.Add(menu);
-
-            VisibleComponents.Add(gui);
-
+            AddComponent(gui);
+            AddComponent(menu);
+            
             menu.CreditsPressed += MenuCreditsPressed;
+            menu.SinglePlayerPressed += MenuSinglePlayerPressed;
+        }
 
+        void MenuSinglePlayerPressed(object sender, EventArgs e)
+        {
+            _vars.SinglePlayer = true;
+            StatesManager.SetGameState("Gameplay");
         }
 
         public override void OnEnabled(GameState previousState)
         {
-            StatesManager.PrepareStateAsync("GameLoading");
+            StatesManager.PrepareStateAsync("Gameplay");
             base.OnEnabled(previousState);
         }
         

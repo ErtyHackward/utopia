@@ -80,13 +80,13 @@ namespace Utopia.Components
             base.Dispose();
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             if (_targetAlpha != _color.Alpha)
             {
                 if (_targetAlpha > _color.Alpha)
                 {
-                    _color.Alpha += timeSpent.ElapsedGameTimeInS_LD / FadeTimeS;
+                    _color.Alpha += timeSpend.ElapsedGameTimeInS_LD / FadeTimeS;
                     if (_targetAlpha <= _color.Alpha)
                     {
                         _color.Alpha = _targetAlpha;
@@ -95,7 +95,7 @@ namespace Utopia.Components
                 }
                 else
                 {
-                    _color.Alpha -= timeSpent.ElapsedGameTimeInS_LD / FadeTimeS;
+                    _color.Alpha -= timeSpend.ElapsedGameTimeInS_LD / FadeTimeS;
                     if (_targetAlpha >= _color.Alpha)
                     {
                         _color.Alpha = _targetAlpha;

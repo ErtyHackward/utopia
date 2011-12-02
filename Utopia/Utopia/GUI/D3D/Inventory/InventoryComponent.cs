@@ -267,7 +267,7 @@ namespace Utopia.GUI.D3D.Inventory
             _dragControl.Slot = null;
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
 
             //if (_dragControl.Slot != null)

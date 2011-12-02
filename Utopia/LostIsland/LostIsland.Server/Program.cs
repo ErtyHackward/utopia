@@ -32,13 +32,13 @@ namespace LostIsland.Server
         static void IocBind(WorldParameters param)
         {
 
-            var settingsManager = new XmlSettingsManager<ServerSettings>("utopiaServer.config", SettingsStorage.ApplicationData);
+            var settingsManager = new XmlSettingsManager<ServerSettings>("utopiaServer.config");
             settingsManager.Load();
 
             if (string.IsNullOrEmpty(settingsManager.Settings.DatabasePath))
                 settingsManager.Settings.DatabasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia\\world.db");
 
-            var sqLiteStorageManager = new SQLiteStorageManager(settingsManager.Settings.DatabasePath);
+            var sqLiteStorageManager = new SQLiteStorageManager(settingsManager.Settings.DatabasePath, null);
 
             _iocContainer.Bind<WorldParameters>().ToConstant(param).InSingletonScope();
             _iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToConstant(settingsManager).InSingletonScope();
@@ -51,6 +51,7 @@ namespace LostIsland.Server
             _iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().InSingletonScope().Named("ErtyHackwardPlanWorldProcessor");
             
             _iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
+
             _iocContainer.Bind<IUsersStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
             _iocContainer.Bind<IChunksStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
             _iocContainer.Bind<IEntityStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
@@ -70,13 +71,18 @@ namespace LostIsland.Server
 
             TraceHelper.Write("Lost Island game server v{1} Protocol: v{0}", Utopia.Server.Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
 
+            var factory = new LostIslandEntityFactory(null);
+            
             _server = new Utopia.Server.Server(
                 _iocContainer.Get<XmlSettingsManager<ServerSettings>>(),
                 _iocContainer.Get<WorldGenerator>(),
                 _iocContainer.Get<IUsersStorage>(),
                 _iocContainer.Get<IChunksStorage>(),
-                _iocContainer.Get<IEntityStorage>()
+                _iocContainer.Get<IEntityStorage>(),
+                factory
                 );
+
+            factory.LandscapeManager = _server.LandscapeManager;
 
             try
             {
@@ -90,7 +96,6 @@ namespace LostIsland.Server
             {
             }
 
-            EntityFactory.Instance = new LostIslandEntityFactory(_server.LandscapeManager);
 
             _gameplay = new ServerGameplayProvider(_server);
 

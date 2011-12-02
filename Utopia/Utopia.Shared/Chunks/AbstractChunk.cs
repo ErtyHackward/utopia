@@ -85,22 +85,22 @@ namespace Utopia.Shared.Chunks
         /// Loads chunk data from bytes array (blocks and entites)
         /// </summary>
         /// <param name="bytes"></param>
-        public void Deserialize(byte[] bytes)
+        public void Deserialize(EntityFactory factory, byte[] bytes)
         {
-            Deserialize(new MemoryStream(bytes));
+            Deserialize(factory, new MemoryStream(bytes));
         }
 
         /// <summary>
         /// Loads chunk data from memory stream (blocks and entites)
         /// </summary>
         /// <param name="ms"></param>
-        public void Deserialize(MemoryStream ms)
+        public void Deserialize(EntityFactory factory, MemoryStream ms)
         {
             ms.Position = 0;
             var reader = new BinaryReader(ms);
             BlockData.SetBlockBytes(reader.ReadBytes(ChunkBlocksByteLength));
             Entities.Clear();
-            Entities.LoadEntities(ms, ChunkBlocksByteLength, (int)(ms.Length - ChunkBlocksByteLength));
+            Entities.LoadEntities(factory, ms, ChunkBlocksByteLength, (int)(ms.Length - ChunkBlocksByteLength));
             ms.Dispose();
         }
 

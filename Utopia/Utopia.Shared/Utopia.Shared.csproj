@@ -158,7 +158,6 @@
     <Compile Include="Entities\VoxelModel.cs" />
     <Compile Include="Enums\CubeFaces.cs" />
     <Compile Include="Enums\enuCubeFamilly.cs" />
-    <Compile Include="Gameplay\ServerGameplayProvider.cs" />
     <Compile Include="Interfaces\IAbstractChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
     <Compile Include="Chunks\SingleArrayChunkContainer.cs" />

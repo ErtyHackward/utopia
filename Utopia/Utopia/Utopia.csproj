@@ -233,7 +233,7 @@
     </Compile>
     <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="GameDXStates\DXStates.cs" />
-    <Compile Include="Network\Server.cs" />
+    <Compile Include="Network\ServerComponent.cs" />
     <Compile Include="StatesManager.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

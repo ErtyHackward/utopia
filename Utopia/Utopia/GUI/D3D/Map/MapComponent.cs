@@ -18,14 +18,14 @@ namespace Utopia.GUI.D3D.Map
         private readonly D3DEngine _engine;
         private readonly ActionsManager _actionManager;
         private readonly Screen _screen;
-        private readonly Server _server;
+        private readonly ServerComponent _server;
         private readonly WindowControl _mapWindow;
         private readonly WorldPlan _planGenerator;
         private readonly PlayerEntityManager _playerManager;
         private Bitmap _mapImage;
         private MapControl _mapControl;
 
-        public MapComponent(D3DEngine engine, ActionsManager actionManager, Screen screen, Server server, WorldPlan plan,PlayerEntityManager playerManager)
+        public MapComponent(D3DEngine engine, ActionsManager actionManager, Screen screen, ServerComponent server, WorldPlan plan,PlayerEntityManager playerManager)
         {
             _playerManager = playerManager;
             _engine = engine;
@@ -76,7 +76,7 @@ namespace Utopia.GUI.D3D.Map
         }
 
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             if (_mapImage == null) return;
 

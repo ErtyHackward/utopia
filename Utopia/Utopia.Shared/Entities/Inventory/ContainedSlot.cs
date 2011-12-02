@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Utopia.Shared.Structs;
 
@@ -37,9 +36,9 @@ namespace Utopia.Shared.Entities.Inventory
             return false;
         }
 
-        public override void Load(BinaryReader reader)
+        public override void LoadSlot(BinaryReader reader, EntityFactory factory)
         {
-            base.Load(reader);
+            base.LoadSlot(reader, factory);
 
             if (!IsEmpty)
             {

@@ -3,6 +3,7 @@ using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Server.Utils;
 using Utopia.Shared.Config;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
 
@@ -89,6 +90,11 @@ namespace Utopia.Server
         /// </summary>
         public LoginManager LoginManager { get; private set; }
 
+        /// <summary>
+        /// Gets or sets an entity factory
+        /// </summary>
+        public EntityFactory EntityFactory { get; private set; }
+
         #endregion
 
         /// <summary>
@@ -99,13 +105,15 @@ namespace Utopia.Server
             WorldGenerator worldGenerator,
             IUsersStorage usersStorage,
             IChunksStorage chunksStorage,
-            IEntityStorage entityStorage
+            IEntityStorage entityStorage,
+            EntityFactory entityFactory
             )
         {
             // dependency injection
             SettingsManager = settingsManager;
             UsersStorage = usersStorage;
             EntityStorage = entityStorage;
+            EntityFactory = entityFactory;
 
             var settings = SettingsManager.Settings;
 
@@ -115,8 +123,8 @@ namespace Utopia.Server
 
             Scheduler = new ScheduleManager(Clock);
 
-            LandscapeManager = new ServerLandscapeManager(this, chunksStorage, worldGenerator, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval);
-
+            LandscapeManager = new ServerLandscapeManager(this, chunksStorage, worldGenerator, EntityFactory, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval);
+            
             AreaManager = new AreaManager(this);
 
             DynamicIdHelper.SetMaxExistsId(EntityStorage.GetMaximumId());
@@ -130,8 +138,8 @@ namespace Utopia.Server
             ChatManager = new ChatManager(this);
 
             EntityManager = new EntityManager(this);
-
-            LoginManager = new LoginManager(this);
+            
+            LoginManager = new LoginManager(this, EntityFactory);
         }
 
         /// <summary>

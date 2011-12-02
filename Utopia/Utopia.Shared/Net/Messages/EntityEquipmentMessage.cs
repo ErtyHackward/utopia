@@ -33,7 +33,7 @@ namespace Utopia.Shared.Net.Messages
             get { return (byte)MessageTypes.EntityEquipment; }
         }
 
-        public static EntityEquipmentMessage Read(BinaryReader reader)
+        public static EntityEquipmentMessage Read(BinaryReader reader, EntityFactory factory)
         {
             EntityEquipmentMessage msg;
             var count = reader.ReadInt32();
@@ -42,7 +42,7 @@ namespace Utopia.Shared.Net.Messages
 
             for (int i = 0; i < count; i++)
             {
-                msg._items[i] = new EquipmentItem((EquipmentSlotType)reader.ReadUInt16(), EntityFactory.Instance.CreateFromBytes(reader));
+                msg._items[i] = new EquipmentItem((EquipmentSlotType)reader.ReadUInt16(), factory.CreateFromBytes(reader));
             }
 
             return msg;

@@ -65,11 +65,11 @@ namespace Utopia.Entities.Managers
         {
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
             {
-                entity.Update(ref timeSpent);
+                entity.Update(ref timeSpend);
             }
         }
 

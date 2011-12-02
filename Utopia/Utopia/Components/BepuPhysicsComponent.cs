@@ -127,7 +127,7 @@ namespace Utopia.Components
 
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             if (_actionsManager.isTriggered(Actions.EntityUse))
             {
