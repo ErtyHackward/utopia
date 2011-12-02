@@ -27,8 +27,8 @@ namespace Utopia.Server.Managers
             {
                 if (path != ":memory:")
                 {
-                    if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(path)))
-                        System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
+                    if (!Directory.Exists(System.IO.Path.GetDirectoryName(path)))
+                        Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
                     SQLiteConnection.CreateFile(path);
                 }
                 var conn = new SQLiteConnection("Data Source = " + Path);
@@ -58,34 +58,34 @@ namespace Utopia.Server.Managers
             command.ExecuteNonQuery();
         }
 
-        private SQLiteConnection connection = null;
+        private SQLiteConnection _connection;
         /// <summary>
         /// Returns active connection to SQLite database ()
         /// </summary>
         /// <returns></returns>
         public SQLiteConnection GetConnection()
         {
-            if (connection == null)
+            if (_connection == null)
             {
                 if (Path == ":memory:" || !File.Exists(Path))
                 {
-                    connection = CreateDataBase(Path);
-                    return connection;
+                    _connection = CreateDataBase(Path);
+                    return _connection;
                 }
                 var csb = new SQLiteConnectionStringBuilder();
                 csb.DataSource = Path;
                 
-                connection = new SQLiteConnection(csb.ToString());
-                connection.Open();
+                _connection = new SQLiteConnection(csb.ToString());
+                _connection.Open();
                 
             }
-            return connection;
+            return _connection;
         }
 
         public void Dispose()
         {
-            if (connection != null)
-                connection.Dispose();
+            if (_connection != null)
+                _connection.Dispose();
         }
 
 
