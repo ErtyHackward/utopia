@@ -24,22 +24,23 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private CreateLandScapeDelegate _createLandScapeDelegate;
         private delegate object CreateLandScapeDelegate(object chunk);
         private WorldGenerator _worldGenerator;
-        private Server _server;
+        private ServerComponent _server;
         private Dictionary<long, ChunkDataMessage> _receivedServerChunks;
         private IChunkStorageManager _chunkStorageManager;
         private S33M3Engines.Timers.TimerManager.GameTimer _timer;
         #endregion
 
-        #region Public variables/properties
+
         [Inject] // ==> This property will be automatically SET by NInject with binded WorldGenerator singleton !
         public WorldGenerator WorldGenerator
         {
             get { return _worldGenerator; }
             set { _worldGenerator = value; }
         }
-        #endregion
 
-        public LandscapeManager(Server server, IChunkStorageManager chunkStorageManager, TimerManager timerManager)
+        public EntityFactory EntityFactory { get; set; }
+
+        public LandscapeManager(ServerComponent server, IChunkStorageManager chunkStorageManager, TimerManager timerManager)
         {
             _chunkStorageManager = chunkStorageManager;
 
@@ -115,7 +116,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                         //In this case the message contains the data from the landscape !
                         case ChunkDataMessageFlag.ChunkWasModified:
                             
-                            chunk.Decompress(message.Data); //Set the data into the "Big Array"
+                            chunk.Decompress(EntityFactory, message.Data); //Set the data into the "Big Array"
                             _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
                             chunk.RefreshBorderChunk();
                             chunk.State = ChunkState.LandscapeCreated;
@@ -174,7 +175,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             if (data != null)
                             {
                                 //Data are present !
-                                chunk.Decompress(data.CubeData); //Set the data into the "Big Array"
+                                chunk.Decompress(EntityFactory, data.CubeData); //Set the data into the "Big Array"
                                 _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
                                 chunk.RefreshBorderChunk();
                                 chunk.State = ChunkState.LandscapeCreated;

@@ -67,7 +67,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             Init2D();
         }
 
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpend)
         {
         }
 

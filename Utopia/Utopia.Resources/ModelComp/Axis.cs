@@ -78,9 +78,9 @@ namespace Utopia.Resources.ModelComp
         /// Allows the game component to update itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpend)
         {
-            base.Update(ref TimeSpend);
+            base.Update(ref timeSpend);
         }
 
         public override void Draw(int index)

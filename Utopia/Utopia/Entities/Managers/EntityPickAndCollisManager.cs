@@ -30,7 +30,7 @@ namespace Utopia.Entities.Managers
         private List<VisualEntity> _entitiesNearPlayer = new List<VisualEntity>(1000);
         private PlayerEntityManager _player;
         private int _entityDistance = AbstractChunk.ChunkSize.X * 2;
-        private Server _server;
+        private ServerComponent _server;
         private ActionsManager _action;
         private IWorldChunks _worldChunks;
         #endregion
@@ -53,7 +53,7 @@ namespace Utopia.Entities.Managers
 
         public EntityPickAndCollisManager(IDynamicEntityManager dynamicEntityManager, 
                                           TimerManager timerManager,
-                                          Server server,
+                                          ServerComponent server,
                                           ActionsManager action)                                     
         {
             _dynamicEntityManager = dynamicEntityManager;

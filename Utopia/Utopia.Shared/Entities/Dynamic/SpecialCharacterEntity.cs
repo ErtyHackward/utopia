@@ -37,9 +37,9 @@ namespace Utopia.Shared.Entities.Dynamic
             Experience.Save(writer);
         }
 
-        public override void Load(System.IO.BinaryReader reader)
+        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
         {
-            base.Load(reader);
+            base.Load(reader, factory);
             PrimaryAttributes.Load(reader);
             SecondaryAttributes.Load(reader);
             Experience.Load(reader);

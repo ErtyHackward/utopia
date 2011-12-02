@@ -32,7 +32,7 @@ namespace Utopia.Shared.Entities.Concrete
             writer.Write(EntityClassId.None);
         }
 
-        public override void Load(System.IO.BinaryReader reader)
+        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
         {
             // only in this class we no need to call base members because none of any data should be saved
 

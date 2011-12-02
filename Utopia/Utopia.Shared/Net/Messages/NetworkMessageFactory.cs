@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Interfaces;
 
 namespace Utopia.Shared.Net.Messages
@@ -18,6 +19,9 @@ namespace Utopia.Shared.Net.Messages
         /// Gets factory instance
         /// </summary>
         public static NetworkMessageFactory Instance { get; private set; }
+
+
+        public EntityFactory EntityFactory { get; set; }
 
         /// <summary>
         /// Creates network message
@@ -39,14 +43,14 @@ namespace Utopia.Shared.Net.Messages
                 case MessageTypes.Login:            return LoginMessage.Read(reader);
                 case MessageTypes.LoginResult:      return LoginResultMessage.Read(reader);
                 case MessageTypes.EntityDirection:  return EntityDirectionMessage.Read(reader);
-                case MessageTypes.EntityIn:         return EntityInMessage.Read(reader);
+                case MessageTypes.EntityIn:         return EntityInMessage.Read(reader, EntityFactory);
                 case MessageTypes.EntityOut:        return EntityOutMessage.Read(reader);
                 case MessageTypes.EntityPosition:   return EntityPositionMessage.Read(reader);
                 case MessageTypes.EntityUse:        return EntityUseMessage.Read(reader);
                 case MessageTypes.Ping:             return PingMessage.Read(reader);
                 case MessageTypes.EntityVoxelModel: return EntityVoxelModelMessage.Read(reader);
                 case MessageTypes.ItemTransfer:     return ItemTransferMessage.Read(reader);
-                case MessageTypes.EntityEquipment:  return EntityEquipmentMessage.Read(reader);
+                case MessageTypes.EntityEquipment:  return EntityEquipmentMessage.Read(reader, EntityFactory);
                 case MessageTypes.Weather:          return WeatherMessage.Read(reader);
                 case MessageTypes.EntityImpulse:    return EntityImpulseMessage.Read(reader);
                 case MessageTypes.EntityLock:       return EntityLockMessage.Read(reader);

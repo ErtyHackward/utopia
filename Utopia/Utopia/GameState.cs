@@ -27,11 +27,38 @@ namespace Utopia
         /// </summary>
         public StatesManager StatesManager { get; internal set; }
 
+        public bool IsInitialized { get; set; }
+
         protected GameState()
         {
             EnabledComponents = new List<GameComponent>();
             VisibleComponents = new List<DrawableGameComponent>();
         }
+
+        /// <summary>
+        /// Make component enabled and visible if possible
+        /// </summary>
+        /// <param name="gc"></param>
+        protected void AddComponent(GameComponent gc)
+        {
+            EnabledComponents.Add(gc);
+
+            if (gc is DrawableGameComponent)
+            {
+                VisibleComponents.Add((DrawableGameComponent)gc);
+            }
+        }
+
+        protected void AddComponent(IGameComponent igc)
+        {
+            AddComponent((GameComponent)igc);
+        }
+
+        public virtual void Initialize()
+        {
+
+        }
+
 
         /// <summary>
         /// Called when componend get initialized. This is a place where you can perform custom actions

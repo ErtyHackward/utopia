@@ -19,6 +19,7 @@ namespace Utopia.Shared.World.Processors
     public class PlanWorldProcessor : IWorldProcessor
     {
         private readonly WorldParameters _worldParameters;
+        private readonly EntityFactory _factory;
 
         public int PercentCompleted
         {
@@ -39,9 +40,10 @@ namespace Utopia.Shared.World.Processors
 
         public double Scale { get; set; }
 
-        public PlanWorldProcessor(WorldParameters worldParameters)
+        public PlanWorldProcessor(WorldParameters worldParameters, EntityFactory factory)
         {
             _worldParameters = worldParameters;
+            _factory = factory;
             WorldPlan = new WorldPlan(new GenerationParameters
             {
                 CenterElevation = true,
@@ -116,7 +118,7 @@ namespace Utopia.Shared.World.Processors
                                                                             double result = r.NextDouble();
                                                                             if (result <= 0.4)
                                                                             {
-                                                                                var grass = (Grass)EntityFactory.Instance.CreateEntity(EntityClassId.Grass);
+                                                                                var grass = (Grass)_factory.CreateEntity(EntityClassId.Grass);
 
                                                                                 grass.GrowPhase = (byte)r.Next(0, 5);
                                                                                 grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
@@ -126,7 +128,7 @@ namespace Utopia.Shared.World.Processors
                                                                             }
                                                                             else if (result <= 0.6)
                                                                             {
-                                                                                var entity = (Flower1)EntityFactory.Instance.CreateEntity(EntityClassId.Flower1);
+                                                                                var entity = (Flower1)_factory.CreateEntity(EntityClassId.Flower1);
 
                                                                                 entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                                                 entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
@@ -135,7 +137,7 @@ namespace Utopia.Shared.World.Processors
                                                                             }
                                                                             else if (result <= 0.7)
                                                                             {
-                                                                                var entity = (Flower2)EntityFactory.Instance.CreateEntity(EntityClassId.Flower2);
+                                                                                var entity = (Flower2)_factory.CreateEntity(EntityClassId.Flower2);
 
                                                                                 entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                                                 entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
@@ -144,7 +146,7 @@ namespace Utopia.Shared.World.Processors
                                                                             }
                                                                             else if (result <= 0.9)
                                                                             {
-                                                                                var entity = (Mushr1)EntityFactory.Instance.CreateEntity(EntityClassId.Mushroom1);
+                                                                                var entity = (Mushr1)_factory.CreateEntity(EntityClassId.Mushroom1);
 
                                                                                 entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                                                 entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
@@ -153,7 +155,7 @@ namespace Utopia.Shared.World.Processors
                                                                             }
                                                                             else if (result <= 1)
                                                                             {
-                                                                                var entity = (Mushr2)EntityFactory.Instance.CreateEntity(EntityClassId.Mushroom2);
+                                                                                var entity = (Mushr2)_factory.CreateEntity(EntityClassId.Mushroom2);
 
                                                                                 entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                                                 entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);

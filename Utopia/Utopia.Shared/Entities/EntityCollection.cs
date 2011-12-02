@@ -344,7 +344,7 @@ namespace Utopia.Shared.Entities
         /// <param name="ms">Memory stream to deserialize</param>
         /// <param name="offset">offset in memory stream</param>
         /// <param name="length">bytes amount to process</param>
-        public void LoadEntities(MemoryStream ms, int offset, int length)
+        public void LoadEntities(EntityFactory factory, MemoryStream ms, int offset, int length)
         {
             _initialisation = true;
             using (var reader = new BinaryReader(ms))
@@ -353,7 +353,7 @@ namespace Utopia.Shared.Entities
 
                 while (ms.Position < offset + length)
                 {
-                    var entity = (IStaticEntity)EntityFactory.Instance.CreateFromBytes(reader);
+                    var entity = (IStaticEntity)factory.CreateFromBytes(reader);
                     Add(entity);
                 }
             }

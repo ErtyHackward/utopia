@@ -14,6 +14,8 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class SQLiteStorageManager : IUsersStorage, IChunksStorage, IEntityStorage
     {
+        private readonly EntityFactory _factory;
+
         /// <summary>
         /// Creates database file and required tables
         /// </summary>
@@ -232,8 +234,9 @@ namespace Utopia.Server.Managers
         /// Creates new instance of SQLite storage manager
         /// </summary>
         /// <param name="filePath"></param>
-        public SQLiteStorageManager(string filePath)
+        public SQLiteStorageManager(string filePath, EntityFactory factory)
         {
+            _factory = factory;
             Path = filePath;
             
 
@@ -357,7 +360,7 @@ namespace Utopia.Server.Managers
         public IEntity LoadEntity(uint entityId)
         {
             byte[] data = LoadEntityBytes(entityId);
-            return EntityFactory.Instance.CreateFromBytes(data);
+            return _factory.CreateFromBytes(data);
         }
 
         public byte[] LoadEntityBytes(uint entityId)

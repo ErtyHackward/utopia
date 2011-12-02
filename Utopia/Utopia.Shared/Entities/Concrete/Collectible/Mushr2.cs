@@ -1,11 +1,8 @@
 ﻿using System.IO;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
-using System;
 using Utopia.Shared.Interfaces;
-using S33M3Engines.Shared.Math;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
 {
@@ -41,8 +38,8 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         }
 
         #endregion
-        public Mushr2(ILandscapeManager2D landscapeManager)
-            : base(landscapeManager)
+        public Mushr2(ILandscapeManager2D landscapeManager, EntityFactory factory)
+            : base(landscapeManager, factory)
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;
@@ -52,24 +49,18 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
 
         #region Public methods
         // we need to override save and load!
-        public override void Load(BinaryReader reader)
+        public override void Load(BinaryReader reader, EntityFactory factory)
         {
             // first we need to load base information
-            base.Load(reader);
-            Vector3I linkedCube = new Vector3I();
-            linkedCube.X = reader.ReadInt32();
-            linkedCube.Y = reader.ReadInt32();
-            linkedCube.Z = reader.ReadInt32();
-            LinkedCube = linkedCube;
+            base.Load(reader, factory);
+            LinkedCube = reader.ReadVector3I();
         }
 
         public override void Save(BinaryWriter writer)
         {
             // first we need to save base information
             base.Save(writer);
-            writer.Write(LinkedCube.X);
-            writer.Write(LinkedCube.Y);
-            writer.Write(LinkedCube.Z);
+            writer.Write(LinkedCube);
         }
 
         #endregion

@@ -50,7 +50,7 @@ namespace Utopia.Network
         /// </summary>
         /// <param name="server"></param>
         /// <param name="playerEntity"></param>
-        public ItemMessageTranslator(Server server, PlayerCharacter playerEntity)
+        public ItemMessageTranslator(ServerComponent server, PlayerCharacter playerEntity)
         {
             if (server == null) throw new ArgumentNullException("server");
             if (playerEntity == null) throw new ArgumentNullException("playerEntity");
@@ -70,6 +70,27 @@ namespace Utopia.Network
             _connection.MessageEntityLockResult += ConnectionMessageEntityLockResult;
 
             Enabled = true;
+        }
+
+        /// <summary>
+        /// Releases all resources taken by this instance
+        /// </summary>
+        public void Dispose()
+        {
+            if (_lockedEntity != null)
+            {
+                ReleaseLock();
+            }
+
+            _playerEntity.Inventory.ItemPut -= InventoryItemPut;
+            _playerEntity.Inventory.ItemTaken -= InventoryItemTaken;
+            _playerEntity.Inventory.ItemExchanged -= InventoryItemExchanged;
+
+            _playerEntity.Equipment.ItemPut -= InventoryItemPut;
+            _playerEntity.Equipment.ItemTaken -= InventoryItemTaken;
+            _playerEntity.Equipment.ItemExchanged -= InventoryItemExchanged;
+
+            _connection.MessageEntityLockResult -= ConnectionMessageEntityLockResult;
         }
 
         void InventoryItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
@@ -271,28 +292,6 @@ namespace Utopia.Network
             if (_lockedEntity == null)
                 throw new InvalidOperationException("Unable to release the lock because no entity was locked");
             _connection.SendAsync(new EntityLockMessage { EntityLink = _lockedEntity.GetLink(), Lock = false });
-        }
-
-        /// <summary>
-        /// Releases all resources taken by this instance
-        /// </summary>
-        public void Dispose()
-        {
-            if (_lockedEntity != null)
-            {
-                ReleaseLock();
-            }
-            _playerEntity.Inventory.ItemPut -= InventoryItemPut;
-            _playerEntity.Inventory.ItemTaken -= InventoryItemTaken;
-            _playerEntity.Inventory.ItemExchanged -= InventoryItemExchanged;
-
-            _playerEntity.Equipment.ItemPut -= InventoryItemPut;
-            _playerEntity.Equipment.ItemTaken -= InventoryItemTaken;
-            _playerEntity.Equipment.ItemExchanged -= InventoryItemExchanged;
-
-            _connection.MessageEntityLockResult -= ConnectionMessageEntityLockResult;
-
-
         }
     }
 }

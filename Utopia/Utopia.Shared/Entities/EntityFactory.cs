@@ -14,14 +14,9 @@ namespace Utopia.Shared.Entities
     public class EntityFactory
     {
         /// <summary>
-        /// Singleton instance
-        /// </summary>
-        public static EntityFactory Instance;
-
-        /// <summary>
         /// Gets landscape manager used to create new tools
         /// </summary>
-        public ILandscapeManager2D LandscapeManager { get; private set; }
+        public ILandscapeManager2D LandscapeManager { get; set; }
 
         public EntityFactory(ILandscapeManager2D landscapeManager)
         {
@@ -69,19 +64,19 @@ namespace Utopia.Shared.Entities
                         entity = new Zombie();
                         break;
                     case EntityClassId.Grass:
-                        entity = new Grass(LandscapeManager);
+                        entity = new Grass(LandscapeManager, this);
                         break;
                     case EntityClassId.Flower1:
-                        entity = new Flower1(LandscapeManager);
+                        entity = new Flower1(LandscapeManager, this);
                         break;
                     case EntityClassId.Flower2:
-                        entity = new Flower2(LandscapeManager);
+                        entity = new Flower2(LandscapeManager, this);
                         break;
                     case EntityClassId.Mushroom1:
-                        entity = new Mushr1(LandscapeManager);
+                        entity = new Mushr1(LandscapeManager, this);
                         break;
                     case EntityClassId.Mushroom2:
-                        entity = new Mushr2(LandscapeManager);
+                        entity = new Mushr2(LandscapeManager, this);
                         break;
                     case EntityClassId.Tree:
                         entity = new Tree();
@@ -110,7 +105,7 @@ namespace Utopia.Shared.Entities
 
             var entity = CreateEntity(classId);
 
-            entity.Load(reader);
+            entity.Load(reader, this);
 
             return entity;
         }

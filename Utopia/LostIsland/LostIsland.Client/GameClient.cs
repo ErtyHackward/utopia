@@ -19,9 +19,11 @@ namespace LostIsland.Client
     public partial class GameClient : IDisposable
     {
         private static WelcomeScreen _welcomeForm;
-        private Server _server;
+        private ServerComponent _server;
         private IKernel _iocContainer;
         private GameExitReasonMessage _exitRease;
+        private LostIslandEntityFactory _clientFactory;
+        private LostIslandEntityFactory _serverFactory;
         
         public GameClient()
         {
@@ -38,8 +40,11 @@ namespace LostIsland.Client
 
             IocBinding();
 
-            EntityFactory.Instance = new LostIslandEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());
-            
+            _clientFactory = new LostIslandEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());
+            //Initialize the Thread Pool manager
+            S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
+
+
             var game = CreateNewGameEngine(_iocContainer); // Create the Rendering
 
             _iocContainer.Bind<Game>().ToConstant(game);
@@ -58,10 +63,7 @@ namespace LostIsland.Client
             stateManager.RegisterState(_iocContainer.Get<CreditsState>());
             stateManager.RegisterState(_iocContainer.Get<MainMenuState>());
             stateManager.RegisterState(_iocContainer.Get<GamePlayState>());
-            stateManager.RegisterState(_iocContainer.Get<GameLoadingState>());
-            stateManager.RegisterState(_iocContainer.Get<GameInventoryState>());
 
-            //stateManager.PrepareState("Login");
             // first state will be the login
             stateManager.SetGameState("Login");
 

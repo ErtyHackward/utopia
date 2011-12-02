@@ -13,12 +13,14 @@ namespace LostIsland.Shared.Tools
     public abstract class BlockRemover : VoxelItem, ITool
     {
         private readonly ILandscapeManager2D _landscapeManager;
+        private readonly EntityFactory _factory;
 
         protected HashSet<byte> RemoveableCubeIds = new HashSet<byte>();
 
-        protected BlockRemover(ILandscapeManager2D landscapeManager2D)
+        protected BlockRemover(ILandscapeManager2D landscapeManager2D, EntityFactory factory)
         {
             _landscapeManager = landscapeManager2D;
+            _factory = factory;
         }
 
         public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
@@ -91,7 +93,7 @@ namespace LostIsland.Shared.Tools
                 var character = owner as CharacterEntity;
                 if (character != null)
                 {
-                    var adder = (CubeResource)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.CubeResource);
+                    var adder = (CubeResource)_factory.CreateEntity(EntityClassId.CubeResource);
                     adder.CubeId = cube;
                     character.Inventory.PutItem(adder);
                 }

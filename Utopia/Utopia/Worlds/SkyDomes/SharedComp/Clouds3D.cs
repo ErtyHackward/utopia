@@ -104,12 +104,12 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             CreateCloudMap();
         }
 
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpend)
         {
             _cloud_MapOffset.BackUpValue();
 
-            _cloud_MapOffset.Value.X += TimeSpend.ElapsedGameTimeInS_LD * _weather.Wind.WindFlow.X * 7;
-            _cloud_MapOffset.Value.Y += TimeSpend.ElapsedGameTimeInS_LD * _weather.Wind.WindFlow.Z * 7;
+            _cloud_MapOffset.Value.X += timeSpend.ElapsedGameTimeInS_LD * _weather.Wind.WindFlow.X * 7;
+            _cloud_MapOffset.Value.Y += timeSpend.ElapsedGameTimeInS_LD * _weather.Wind.WindFlow.Z * 7;
             //_weather.Wind.WindFlow.X
         }
 

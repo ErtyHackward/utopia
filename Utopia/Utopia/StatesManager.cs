@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using S33M3Engines.D3D;
+using S33M3Engines.Threading;
 using Utopia.Components;
 
 namespace Utopia
@@ -159,21 +160,27 @@ namespace Utopia
         public void PrepareStateAsync(GameState state)
         {
             if (IsReady(state)) return;
-
-            state.EnabledComponents.ForEach(c =>
+            
+            WorkQueue.ThreadPool.QueueWorkItem(delegate
             {
-                if (!_game.GameComponents.Contains(c))
-                {
-                    _game.GameComponents.Add(c);
-                }
-            });
+                state.Initialize();
 
-            state.VisibleComponents.ForEach(c =>
-            {
-                if (!_game.GameComponents.Contains(c))
-                {
-                    _game.GameComponents.Add(c);
-                }
+                state.EnabledComponents.ForEach(c =>
+                                                    {
+                                                        if (!_game.GameComponents.Contains(c))
+                                                        {
+                                                            _game.GameComponents.Add(c);
+                                                        }
+                                                    });
+
+                state.VisibleComponents.ForEach(c =>
+                                                    {
+                                                        if (!_game.GameComponents.Contains(c))
+                                                        {
+                                                            _game.GameComponents.Add(c);
+                                                        }
+                                                    });
+                state.IsInitialized = true;
             });
         }
 
@@ -198,7 +205,7 @@ namespace Utopia
 
             PrepareStateAsync(state);
 
-            while (_game.IsStarted && !IsReady(state))
+            while (!state.IsInitialized || _game.IsStarted && !IsReady(state))
                 Thread.Sleep(0);
         }
         
@@ -209,7 +216,7 @@ namespace Utopia
         /// <returns></returns>
         public bool IsReady(GameState state)
         {
-            return state.EnabledComponents.All(c => c.IsInitialized) && state.VisibleComponents.All(c => c.IsInitialized);
+            return state.IsInitialized && state.EnabledComponents.All(c => c.IsInitialized) && state.VisibleComponents.All(c => c.IsInitialized);
         }
 
         /// <summary>

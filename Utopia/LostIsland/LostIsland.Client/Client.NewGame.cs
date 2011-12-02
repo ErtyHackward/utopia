@@ -1,4 +1,5 @@
-﻿using LostIsland.Client.GUI;
+﻿using LostIsland.Client.Components;
+using LostIsland.Client.GUI;
 using Utopia.GameDXStates;
 using Utopia;
 using Ninject;
@@ -135,20 +136,7 @@ namespace LostIsland.Client
             //    );
             //utopiaRenderer.GameComponents.Add(debugInfo);
 
-            DXStates.CreateStates(Engine); 
-
             return utopiaRenderer;
-        }
-
-        void worldChunks_LoadComplete(object sender, System.EventArgs e)
-        {
-            var manager = _iocContainer.Get<PlayerEntityManager>();
-            manager.Enabled = true;
-            var worldChunks = (WorldChunks)sender;
-            worldChunks.LoadComplete -= worldChunks_LoadComplete;
-            var loading = _iocContainer.Get<LoadingComponent>();
-            loading.Enabled = false;
-            loading.Visible = false;
         }
 
         private void BindActions(ActionsManager actionManager)

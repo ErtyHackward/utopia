@@ -236,7 +236,7 @@ namespace Utopia.Editor
             _ui = new EntityEditorUi(this);
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             if (_editedEntity == null) return;
 

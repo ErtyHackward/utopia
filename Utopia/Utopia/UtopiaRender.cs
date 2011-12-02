@@ -27,21 +27,9 @@ namespace Utopia
 
         public override void Initialize()
         {
-            //Initialize the Thread Pool manager
-            S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
-
-            Init();
-
+            DXStates.CreateStates(_d3dEngine);
             base.Initialize();
         }
-
-        //Default Utopia Init method.
-        private void Init()
-        {
-            
-        }
-
-        //Windows state management
 
         void GameWindow_Closed(object sender, EventArgs e)
         {

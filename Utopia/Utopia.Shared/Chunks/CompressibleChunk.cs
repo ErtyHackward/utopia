@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks
@@ -95,11 +96,11 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="compressedBytes"></param>
         /// <param name="getHash">Do we need to take md5hash of the chunk?</param>
-        public void Decompress(byte[] compressedBytes, bool getHash = false)
+        public void Decompress(EntityFactory factory, byte[] compressedBytes, bool getHash = false)
         {
             if (compressedBytes == null) throw new ArgumentNullException("compressedBytes");
             CompressedBytes = compressedBytes;
-            Decompress(getHash);
+            Decompress(factory, getHash);
             CompressedBytes = null;
         }
 
@@ -107,7 +108,7 @@ namespace Utopia.Shared.Chunks
         /// Tries to decompress and deserialize data from CompressedBytes property
         /// </summary>
         /// <param name="getHash">Do we need to take md5hash of the chunk?</param>
-        public void Decompress(bool getHash = false)
+        public void Decompress(EntityFactory factory, bool getHash = false)
         {
             if (CompressedBytes == null)
                 throw new InvalidOperationException("Set CompressedBytes property before decompression");
@@ -122,7 +123,7 @@ namespace Utopia.Shared.Chunks
                     Md5HashData = CalculateHash(decompressed);
                     decompressed.Position = 0;
                 }
-                Deserialize(decompressed);
+                Deserialize(factory, decompressed);
                 decompressed.Dispose();
                 CompressedDirty = false;
             }

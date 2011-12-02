@@ -55,7 +55,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _skyStarVB.Dispose();
         }
 
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpend)
         {
         }
 

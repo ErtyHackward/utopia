@@ -14,7 +14,7 @@ namespace Utopia.Worlds.Weather
     public class Weather : GameComponent, IWeather
     {
         #region Private variable
-        private Server _server;
+        private ServerComponent _server;
         private IClock _clock;
         #endregion
 
@@ -22,12 +22,25 @@ namespace Utopia.Worlds.Weather
         public IWind Wind { get; set; }
         #endregion
 
-        public Weather(IClock clock, Server server)
+        public Weather(IClock clock, ServerComponent server)
         {
             Wind = new Wind(false);
             _clock = clock;
             _server = server;
-            _server.ServerConnection.MessageWeather += ServerConnection_MessageWeather;
+
+            _server.ConnectionInitialized += _server_ConnectionInitialized;
+
+            if(_server.ServerConnection != null)
+                _server.ServerConnection.MessageWeather += ServerConnection_MessageWeather;
+        }
+
+        void _server_ConnectionInitialized(object sender, ServerComponentConnectionInitializeEventArgs e)
+        {
+            if (e.PrevoiusConnection != null)
+                e.PrevoiusConnection.MessageWeather -= ServerConnection_MessageWeather;
+
+            if (e.ServerConnection != null)
+                e.ServerConnection.MessageWeather += ServerConnection_MessageWeather;
         }
 
         public override void Dispose()
@@ -42,9 +55,9 @@ namespace Utopia.Worlds.Weather
             Wind.Initialize();
         }
 
-        public override void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
+        public override void Update(ref S33M3Engines.D3D.GameTime timeSpend)
         {
-            Wind.Update(ref TimeSpend);
+            Wind.Update(ref timeSpend);
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
