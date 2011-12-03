@@ -94,7 +94,7 @@ namespace Utopia.Entities.Renderer
             }
         }
 
-        public void Update(ref GameTime timeSpent)
+        public void Update(ref GameTime timeSpend)
         {
         }
 

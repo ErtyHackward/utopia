@@ -100,7 +100,7 @@ namespace Utopia.InputManager
             ComputeCenterViewport(_engine.ViewPort);
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             //Refresh mouse states
             _curMouseState = Mouse.GetState();

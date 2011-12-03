@@ -21,7 +21,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
     {
         #region Private variables
         private bool _initialized;
-        private Server _server;
+        private ServerComponent _server;
         private SingleArrayChunkContainer _cubesHolder;
         private IWorldChunks _worldChunks;
         private IChunkStorageManager _chunkStorageManager;
@@ -47,7 +47,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _initialized = false;
         }
 
-        public void LateInitialization(Server server,
+        public void LateInitialization(ServerComponent server,
                                         SingleArrayChunkContainer cubesHolder,
                                         IWorldChunks worldChunks,
                                         IChunkStorageManager chunkStorageManager,

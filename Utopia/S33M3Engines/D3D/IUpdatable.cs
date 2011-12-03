@@ -7,7 +7,7 @@ namespace S33M3Engines.D3D
 {
     public interface IUpdatable : IDisposable
     {
-        void Update(ref GameTime timeSpent);
+        void Update(ref GameTime timeSpend);
         void Interpolation(ref double interpolationHd, ref float interpolationLd);
     }
 }

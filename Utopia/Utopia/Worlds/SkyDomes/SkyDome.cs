@@ -42,7 +42,7 @@ namespace Utopia.Worlds.SkyDomes
             _lightDirection = new FTSValue<Vector3>() { Value = new Vector3(100.0f, 100.0f, 100.0f) };
         }
 
-        public override void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
+        public override void Update(ref S33M3Engines.D3D.GameTime timeSpend)
         {
             _lightDirection.BackUpValue();
             _lightDirection.Value = this.GetDirection();

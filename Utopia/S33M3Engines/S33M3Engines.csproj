@@ -103,6 +103,7 @@
     <Compile Include="D3D\Effects\Basics\HLSLVertexPositionNormalTexture.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLVertexPositionTexture.cs" />
     <Compile Include="D3D\Effects\Basics\HLSLPointSprite3D.cs" />
+    <Compile Include="D3D\Effects\FadeEffect.cs" />
     <Compile Include="D3D\Effects\HLSLFramework\CBuffer.cs" />
     <Compile Include="D3D\Effects\HLSLFramework\Constant.cs" />
     <Compile Include="D3D\Effects\HLSLFramework\HLSLShaderWrap.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Struct\Vertex\Helper\Interfaces.cs" />
     <Compile Include="Struct\Vertex\Helper\Enums.cs" />
     <Compile Include="Struct\Vertex\Helper\VertexDeclaration.cs" />
+    <Compile Include="Struct\Vertex\VertexPosition2.cs" />
     <Compile Include="Struct\Vertex\VertexSprite3D.cs" />
     <Compile Include="Struct\Vertex\VertexMesh.cs" />
     <Compile Include="Struct\Vertex\VertexCubeCloud.cs" />
@@ -190,6 +192,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="D3D\Effects\Basics\Billboard.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="D3D\Effects\Basics\Fade.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="D3D\Effects\Basics\Sprites.hlsl">

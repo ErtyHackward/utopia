@@ -65,13 +65,13 @@ namespace Utopia.Shared.Entities.Dynamic
             return slot != null ? (ITool)slot.Item : null;
         }
 
-        public override void Load(System.IO.BinaryReader reader)
+        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
         {
-            base.Load(reader);
+            base.Load(reader, factory);
 
             CharacterName = reader.ReadString();
-            Equipment.Load(reader);
-            Inventory.Load(reader);
+            Equipment.Load(reader, factory);
+            Inventory.Load(reader, factory);
             Health = reader.ReadInt32();
             MaxHealth = reader.ReadInt32();
         }

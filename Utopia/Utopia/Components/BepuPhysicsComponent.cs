@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -6,19 +6,13 @@ using BEPUphysics;
 using BEPUphysics.Collidables;
 using BEPUphysics.MathExtensions;
 using S33M3Engines;
-using S33M3Engines.Buffers;
 using S33M3Engines.D3D;
 using S33M3Engines.D3D.DebugTools;
-using S33M3Engines.Meshes;
-using S33M3Engines.Meshes.Factories;
-using S33M3Engines.Struct.Vertex;
 using Utopia.Action;
-using Utopia.Settings;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Chunks;
-using UtopiaContent.Effects.Entities;
 
-namespace Utopia
+namespace Utopia.Components
 {
     /// <summary>
     /// Provides entities and landscape physics interaction by means of the BEPUPhysics engine
@@ -133,7 +127,7 @@ namespace Utopia
 
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             if (_actionsManager.isTriggered(Actions.EntityUse))
             {

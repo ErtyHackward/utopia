@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
@@ -14,6 +15,11 @@ namespace Utopia.Server.Managers
     {
         private readonly Dictionary<string, ClientConnection> _connections;
         private readonly object _syncRoot = new object();
+
+        /// <summary>
+        /// Get or sets server mode, Local mode allows to accept only local connections
+        /// </summary>
+        public bool LocalMode { get; set; }
 
         /// <summary>
         /// Occurs when connection is added to connection manager
@@ -74,8 +80,16 @@ namespace Utopia.Server.Managers
 
         void ListenerIncomingConnection(object sender, IncomingConnectionEventArgs e)
         {
-            var conn = new ClientConnection(e.Socket);
+            var ipEndPoint = (IPEndPoint)e.Socket.RemoteEndPoint;
 
+            if (LocalMode && !IPAddress.IsLoopback(ipEndPoint.Address))
+            {
+                e.Socket.Dispose();
+                return;
+            }
+            
+            var conn = new ClientConnection(e.Socket);
+            
             TraceHelper.Write("{0} connected", e.Socket.RemoteEndPoint);
 
             e.Handled = Add(conn);

@@ -127,7 +127,7 @@ namespace Utopia.GUI.D3D
 
         private int _lastSlot = 9;//TODO dynamic / configurable amount of toolbar slots
                 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             //TODO skip empty toolbar slots
             
@@ -143,7 +143,7 @@ namespace Utopia.GUI.D3D
                 SelectSlot(slot);
             }
 
-            _toolbarUi.Update(ref timeSpent);
+            _toolbarUi.Update(ref timeSpend);
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd)

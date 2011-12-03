@@ -45,7 +45,7 @@ namespace S33M3Engines.Timers
             Timers.Remove(timer);
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             for (int i = 0; i < Timers.Count; i++)
             {

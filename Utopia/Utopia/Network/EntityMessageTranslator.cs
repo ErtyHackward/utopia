@@ -56,7 +56,7 @@ namespace Utopia.Network
         /// <param name="playerEntity"></param>
         /// <param name="dynamicEntityManager"></param>
         /// <param name="chunkManager"></param>
-        public EntityMessageTranslator(Server connection, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager, IWorldChunks chunkManager)
+        public EntityMessageTranslator(ServerComponent connection, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager, IWorldChunks chunkManager)
         {
             if (connection == null) throw new ArgumentNullException("connection");
             _connection = connection.ServerConnection;

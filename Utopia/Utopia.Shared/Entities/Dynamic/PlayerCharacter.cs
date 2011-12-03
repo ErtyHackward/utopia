@@ -84,9 +84,9 @@ namespace Utopia.Shared.Entities.Dynamic
             }
         }
 
-        public override void Load(System.IO.BinaryReader reader)
+        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
         {
-            base.Load(reader);
+            base.Load(reader, factory);
 
             Toolbar.Clear();
             for (int i = 0; i < 10; i++)

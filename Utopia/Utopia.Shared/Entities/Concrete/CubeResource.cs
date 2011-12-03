@@ -11,7 +11,8 @@ namespace Utopia.Shared.Entities.Concrete
     public class CubeResource : StaticEntity, ITool
     {
         private readonly ILandscapeManager2D _landscapeManager;
-        
+        private readonly EntityFactory _factory;
+
         public byte CubeId { get; set; }
     
         public EquipmentSlotType AllowedSlots
@@ -48,9 +49,10 @@ namespace Utopia.Shared.Entities.Concrete
             }
         }
         
-        public CubeResource(ILandscapeManager2D landscapeManager)
+        public CubeResource(ILandscapeManager2D landscapeManager, EntityFactory factory)
         {
             _landscapeManager = landscapeManager;
+            _factory = factory;
         }
 
         public override string DisplayName
@@ -70,10 +72,10 @@ namespace Utopia.Shared.Entities.Concrete
             var handler = CubeChanged;
             if (handler != null) handler(null, e);
         }
-        
-        public override void Load(System.IO.BinaryReader reader)
+
+        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
         {
-            base.Load(reader);
+            base.Load(reader, factory);
             CubeId = reader.ReadByte();
         }
 
@@ -124,7 +126,7 @@ namespace Utopia.Shared.Entities.Concrete
                                 IBlockLinkedEntity cubeBlockLinkedEntity = cubeEntity as IBlockLinkedEntity;
                                 if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
                                 {
-                                    var adder = (IItem)EntityFactory.Instance.CreateEntity(cubeEntity.ClassId);
+                                    var adder = (IItem)_factory.CreateEntity(cubeEntity.ClassId);
                                     if (cubeEntity is IGrowEntity)
                                     {
                                         ((IGrowEntity)adder).GrowPhase = ((IGrowEntity)cubeEntity).GrowPhase;
@@ -144,7 +146,7 @@ namespace Utopia.Shared.Entities.Concrete
                         //If the Tool Owner is a player, then Add the resource removed into the inventory
                         if (character != null)
                         {
-                            var adder = (CubeResource)EntityFactory.Instance.CreateEntity(EntityClassId.CubeResource);
+                            var adder = (CubeResource)_factory.CreateEntity(EntityClassId.CubeResource);
                             adder.CubeId = cube;
                             character.Inventory.PutItem(adder);
                         }
@@ -180,7 +182,7 @@ namespace Utopia.Shared.Entities.Concrete
             var character = owner as CharacterEntity;
             if (character != null)
             {
-                var adder = (IItem)EntityFactory.Instance.CreateEntity(entityRemoved.ClassId);
+                var adder = (IItem)_factory.CreateEntity(entityRemoved.ClassId);
                 if (entityRemoved is IGrowEntity)
                 {
                     ((IGrowEntity)adder).GrowPhase = ((IGrowEntity)entityRemoved).GrowPhase;

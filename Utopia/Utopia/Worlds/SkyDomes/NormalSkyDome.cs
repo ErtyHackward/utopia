@@ -120,11 +120,11 @@ namespace Utopia.Worlds.SkyDomes
             base.Dispose();
         }
 
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpend)
         {
-            _clouds.Update(ref TimeSpend);
+            _clouds.Update(ref timeSpend);
             RefreshSunColor();
-            base.Update(ref TimeSpend);
+            base.Update(ref timeSpend);
         }
 
         public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)

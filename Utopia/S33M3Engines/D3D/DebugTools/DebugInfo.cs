@@ -61,7 +61,7 @@ namespace S33M3Engines.D3D.DebugTools
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         /// 
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpend)
         {
             if (Activated)
             {

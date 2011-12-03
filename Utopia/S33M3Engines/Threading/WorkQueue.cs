@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Amib.Threading;
 
 namespace S33M3Engines.Threading
@@ -65,6 +66,11 @@ namespace S33M3Engines.Threading
         public static void DoWorkInThread(WorkItemCallback work, object param, IThreadStatus ThreadedObject, bool executeInGroup = false)
         {
             DoWorkInThread(work, param, ThreadedObject, WorkItemPriority.Normal, executeInGroup);
+        }
+
+        public static void DoWorkInThread(Amib.Threading.Action work)
+        {
+            ThreadPool.QueueWorkItem(work);
         }
 
         public static void DoWorkInThreadedGroup(Amib.Threading.Action work)

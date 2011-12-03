@@ -55,7 +55,7 @@ namespace Utopia.Shared.Entities
         /// Loads current entity from a binaryReader
         /// </summary>
         /// <param name="reader"></param>
-        public virtual void Load(BinaryReader reader)
+        public virtual void Load(BinaryReader reader, EntityFactory factory)
         {
             // skipping entity class id
             reader.ReadUInt16();

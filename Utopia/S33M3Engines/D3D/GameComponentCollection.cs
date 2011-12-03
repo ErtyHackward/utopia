@@ -20,7 +20,6 @@ namespace S33M3Engines.D3D
         {
             get { return _gameComponent; }
         }
-
     }
 
     public class GameComponentCollection : Collection<GameComponent>

@@ -29,10 +29,10 @@ namespace Utopia.Shared.Entities.Inventory
 
         #region Public Methods
         // we need to override save and load!
-        public override void Load(System.IO.BinaryReader reader)
+        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
         {
             // first we need to load base information
-            base.Load(reader);
+            base.Load(reader, factory);
             UniqueName = reader.ReadString();
         }
 

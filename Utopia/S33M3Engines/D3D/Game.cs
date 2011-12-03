@@ -56,6 +56,14 @@ namespace S33M3Engines.D3D
             set { _vSync = value == true ? 1 : 0; }
         }
 
+        /// <summary>
+        /// Indicates if game was started
+        /// </summary>
+        public bool IsStarted
+        {
+            get { return _gameStarted; }
+        }
+
         public GameExitReasonMessage GameExitReason;
         #endregion
 
@@ -86,8 +94,9 @@ namespace S33M3Engines.D3D
         private bool _gameStarted;
         #endregion
 
-        public Game()
+        public Game(D3DEngine engine)
         {
+            _d3dEngine = engine;
             _visibleDrawable = new List<DrawableComponentHolder>();
             _enabledUpdateable = new List<IUpdateableComponent>();
 
@@ -108,6 +117,8 @@ namespace S33M3Engines.D3D
             ////Call components Load Content
             //WorkQueue.DoWorkSingleThreadedGroup(new Amib.Threading.Action(LoadContent));
 
+            _gameStarted = true;
+
             //Call the game Initialize !
             Initialize();
 
@@ -115,7 +126,7 @@ namespace S33M3Engines.D3D
             LoadContent();
 
             _next_game_update = Stopwatch.GetTimestamp();
-            _gameStarted = true;
+            
 
             //The Pump !
             RenderLoop.Run(_d3dEngine.GameWindow, () =>
@@ -184,7 +195,7 @@ namespace S33M3Engines.D3D
         {
             for (int i = 0; i < GameComponents.Count; i++)
             {
-                WorkQueue.DoWorkInThreadedGroup(GameComponents[i].Initialize);
+                WorkQueue.DoWorkInThreadedGroup(GameComponents[i].InternalInitialize);
                 //GameComponents[i].Initialize();
             }
 
@@ -196,7 +207,7 @@ namespace S33M3Engines.D3D
         {
             for (int i = 0; i < GameComponents.Count; i++)
             {
-                WorkQueue.DoWorkInThreadedGroup(GameComponents[i].LoadContent);
+                WorkQueue.DoWorkInThreadedGroup(GameComponents[i].InternalLoadContent);
                 //GameComponents[i].LoadContent();
             }
 

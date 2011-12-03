@@ -46,7 +46,7 @@ namespace Utopia
     public class UtopiaRenderStates
     {
         public D3DEngine engine;
-        public Server server;
+        public ServerComponent server;
         public WorldFocusManager worldFocusManager;
         public WorldParameters worldParameters;
         public VisualWorldParameters visualWorldParameters;

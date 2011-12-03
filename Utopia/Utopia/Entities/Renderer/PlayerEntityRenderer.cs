@@ -87,7 +87,7 @@ namespace Utopia.Entities.Renderer
             _d3DEngine.Context.Draw(VisualEntity.VisualEntity.VertexBuffer.VertexCount, 0);
         }
 
-        public void Update(ref GameTime timeSpent)
+        public void Update(ref GameTime timeSpend)
         {
         }
 

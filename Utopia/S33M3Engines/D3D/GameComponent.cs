@@ -5,12 +5,12 @@ namespace S33M3Engines.D3D
     public abstract class GameComponent : IUpdateableComponent
     {
         #region Private variables
-        private bool _enabled = true;
+        private bool _enabled;
         private int _updateOrder = 10;
 
         private string _initStep = "Ready";
         private int _initVal = 100;
-        private bool _isInitialized = true;
+        private bool _isInitialized;
         #endregion
 
         #region Public properties
@@ -97,6 +97,7 @@ namespace S33M3Engines.D3D
         {
             LoadContent();
             OnContentLoaded();
+            _isInitialized = true;
         }
         
         public virtual void Initialize() { }
@@ -105,7 +106,7 @@ namespace S33M3Engines.D3D
 
         public virtual void UnloadContent() { }
 
-        public virtual void Update(ref GameTime timeSpent) { }
+        public virtual void Update(ref GameTime timeSpend) { }
 
         public virtual void Interpolation(ref double interpolationHd, ref float interpolationLd) { }
 

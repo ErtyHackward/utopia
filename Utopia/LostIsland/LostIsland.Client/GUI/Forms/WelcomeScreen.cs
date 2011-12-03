@@ -29,7 +29,7 @@ namespace LostIsland.Client.GUI.Forms
         private MultiPlayer _multiChild = new MultiPlayer();
         private ErrorMessage _errorMsg = new ErrorMessage();
         private Config _configChild = new Config();
-        private Server _server;
+        private ServerComponent _server;
         private TimerCallback _timerDelegate;
         private System.Threading.Timer _serverTime;
 
@@ -40,7 +40,7 @@ namespace LostIsland.Client.GUI.Forms
 
         public GameExitReasonMessage ExitReason { get; set; }
 
-        public WelcomeScreen(Server server, bool withFadeIn)
+        public WelcomeScreen(ServerComponent server, bool withFadeIn)
         {
             InitializeComponent();
 
