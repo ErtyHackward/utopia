@@ -4,6 +4,7 @@ using LostIsland.Client.Components;
 using LostIsland.Shared;
 using Ninject;
 using Ninject.Parameters;
+using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
 using S33M3Engines.D3D.DebugTools;
@@ -29,6 +30,7 @@ using Utopia.InputManager;
 using Utopia.Network;
 using Utopia.Server;
 using Utopia.Server.Managers;
+using Utopia.Settings;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Config;
@@ -39,6 +41,7 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Worlds.Chunks;
@@ -91,6 +94,12 @@ namespace LostIsland.Client.States
 
             AddComponent(loading);
             AddComponent(_ioc.Get<ServerComponent>());
+
+            var engine = _ioc.Get<D3DEngine>();
+
+            engine.MouseCapture = true;
+
+
         }
 
         private void GameplayInitialize()
@@ -106,14 +115,21 @@ namespace LostIsland.Client.States
                     sqliteStorage.Register("local", "qwe123".GetMd5Hash(), Utopia.Shared.Structs.UserRole.Administrator);
                     
                     var settings = _ioc.Get<XmlSettingsManager<ServerSettings>>();
+
                     var wp = _ioc.Get<WorldParameters>();
-                    var worldGenerator = new WorldGenerator(wp, new PlanWorldProcessor(wp, _serverFactory));
+                    var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
+                    var worldGenerator = new WorldGenerator(wp, planProcessor);
 
                     _server = new Server(settings, worldGenerator, sqliteStorage, sqliteStorage, sqliteStorage, _serverFactory);
                     _serverFactory.LandscapeManager = _server.LandscapeManager;
                     _server.ConnectionManager.LocalMode = true;
                     _server.ConnectionManager.Listen();
                     _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
+                    _server.LoginManager.GenerationParameters = planProcessor.WorldPlan.Parameters;
+
+                    // client world generator
+                    var clientGeneratpr = new WorldGenerator(wp, new PlanWorldProcessor(wp, _ioc.Get<EntityFactory>("Client")));
+                    _ioc.Bind<WorldGenerator>().ToConstant(clientGeneratpr).InSingletonScope();
                 }
 
                 if (_serverComponent == null)
@@ -123,10 +139,6 @@ namespace LostIsland.Client.States
                 }
                 _serverComponent.BindingServer("127.0.0.1");
                 _serverComponent.ConnectToServer("local", "qwe123", false);
-                if (_serverComponent.ServerConnection != null)
-                {
-                    _serverComponent.ServerConnection.MessageEntityIn += ServerConnectionMessageEntityIn;
-                }
             }
         }
 
@@ -178,13 +190,24 @@ namespace LostIsland.Client.States
         private void GameplayComponentsCreation()
         {
             //GameComponents.Add(new DebugComponent(this, _d3dEngine, _renderStates.screen, _renderStates.gameStatesManager, _renderStates.actionsManager, _renderStates.playerEntityManager));
-            
+
+            var worldParam = new WorldParameters
+            {
+                IsInfinite = true,
+                Seed = _ioc.Get<ServerComponent>().GameInformations.WorldSeed,
+                SeaLevel = _ioc.Get<ServerComponent>().GameInformations.WaterLevel,
+                WorldChunkSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,   //Define the visible Client chunk size
+                                                ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
+            };
+
+            _ioc.Rebind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
+
             // be careful with initilization order
             var serverComponent = _ioc.Get<ServerComponent>();
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
             var wordParameters = _ioc.Get<WorldParameters>();
             //var visualWorldParameters = _ioc.Get<VisualWorldParameters>();
-            var firstPersonCamera = _ioc.Get<FirstPersonCamera>();
+            var firstPersonCamera = _ioc.Get<ICamera>();
             var cameraManager = _ioc.Get<CameraManager>();
             var timerManager = _ioc.Get<TimerManager>();
             var inputsManager = _ioc.Get<InputsManager>();
@@ -214,7 +237,7 @@ namespace LostIsland.Client.States
             var worldChunks = _ioc.Get<IWorldChunks>();
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
             var worldGenerator = _ioc.Get<WorldGenerator>();
-            var worldProcessorConfig = _ioc.Get<IWorldProcessorConfig>();
+            //var worldProcessorConfig = _ioc.Get<IWorldProcessorConfig>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
@@ -229,7 +252,7 @@ namespace LostIsland.Client.States
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
 
             firstPersonCamera.CameraPlugin = playerEntityManager;
-            worldFocusManager.WorldFocus = firstPersonCamera;
+            worldFocusManager.WorldFocus = (IWorldFocus)firstPersonCamera;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             AddComponent(cameraManager);
@@ -254,6 +277,8 @@ namespace LostIsland.Client.States
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
 
+            StatesManager.UpdateCurrentStateComponents();
+            
             var debugInfo = _ioc.Get<DebugInfo>();
             debugInfo.Activated = true;
             debugInfo.SetComponants(
@@ -263,6 +288,19 @@ namespace LostIsland.Client.States
                 _ioc.Get<PlayerEntityManager>(),
                 _ioc.Get<GuiManager>()
                 );
+
+            playerEntityManager.Enabled = false;
+            worldChunks.LoadComplete += worldChunks_LoadComplete;
+        }
+
+        void worldChunks_LoadComplete(object sender, EventArgs e)
+        {
+            var loading = _ioc.Get<LoadingComponent>();
+            loading.Enabled = false;
+            loading.Visible = false;
+
+            var playerEntityManager = _ioc.Get<PlayerEntityManager>();
+            playerEntityManager.Enabled = true;
         }
 
     }

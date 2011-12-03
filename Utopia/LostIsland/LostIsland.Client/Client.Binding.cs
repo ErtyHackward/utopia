@@ -150,9 +150,9 @@ namespace LostIsland.Client
             _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();             //Chunk Management (Update/Draw)
             _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
             
-            _iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
-            _iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope();
-            _iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
+            //_iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
+            //_iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope();
+            //_iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
 
             _iocContainer.Bind<IGameStateToolManager>().To<GameStateToolManager>().InSingletonScope();
 

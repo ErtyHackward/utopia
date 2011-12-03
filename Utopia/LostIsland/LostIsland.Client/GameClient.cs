@@ -42,6 +42,8 @@ namespace LostIsland.Client
             IocBinding();
 
             _clientFactory = new LostIslandEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());
+            _iocContainer.Bind<EntityFactory>().ToConstant(_clientFactory).InSingletonScope().Named("Client");
+
             //Initialize the Thread Pool manager
             S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
 
