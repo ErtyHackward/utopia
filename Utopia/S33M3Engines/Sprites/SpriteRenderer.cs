@@ -166,11 +166,7 @@ namespace S33M3Engines.Sprites
             _currentDepth = 1;
 
             // Set the states
-            if(withDepth)
-                StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _depthStateWithDepthId);
-            else
-                StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _depthStateWithoutDepthId);
-
+            StatesRepository.ApplyStates(_rasterStateId, _blendStateId, withDepth ? _depthStateWithDepthId : _depthStateWithoutDepthId);
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
         }
 
@@ -187,8 +183,6 @@ namespace S33M3Engines.Sprites
                 }
                 else Render(drawInfo.SpriteTexture, drawInfo.Transform, drawInfo.Color4, drawInfo.SourceRect, true, drawInfo.Depth, drawInfo.TextureArrayIndex);
             }
-
-            //System.Diagnostics.Debug.WriteLine(string.Format("Sprite renderer: {0}/{1}", _spriteBuffer.DrawCalls, _spriteBuffer.TotalItems));
         }
 
         /// <summary>
@@ -265,45 +259,6 @@ namespace S33M3Engines.Sprites
         {
             _spriteBuffer.Add(spriteTexture, drawData);
         }
-
-        //public void Render(SpriteTexture spriteTexture, 
-        //                   ref Matrix transform, 
-        //                   Color4 color,
-        //                   Vector2 viewportSize,
-        //                   RectangleF sourceRect = default(RectangleF), 
-        //                   bool sourceRectInTextCoord = true)
-        //{
-        //    _vBuffer.SetToDevice(0); // Set the Vertex buffer
-
-        //    //Set Par Batch Constant
-        //    _effect.Begin();
-
-        //    _effect.CBPerDraw.Values.ViewportSize = viewportSize;
-        //    _effect.CBPerDraw.Values.TextureSize = sourceRectInTextCoord ? new Vector2(spriteTexture.Width, spriteTexture.Height) : new Vector2(1, 1);
-
-        //    _effect.CBPerDraw.IsDirty = true;
-
-        //    // Set per-instance data
-        //    _effect.CBPerInstance.Values.Transform = Matrix.Transpose(transform);
-        //    _effect.CBPerInstance.Values.TextureArrayIndex = 0;
-        //    _effect.CBPerInstance.Values.Color = color;
-        //    if (sourceRect == default(RectangleF))
-        //    {
-        //        _effect.CBPerInstance.Values.SourceRect = sourceRectInTextCoord ? new RectangleF(0, 0, spriteTexture.Width, spriteTexture.Height) : new RectangleF(0, 0, 1, 1);
-        //    }
-        //    else
-        //    {
-        //        _effect.CBPerInstance.Values.SourceRect = sourceRect;
-        //    }
-        //    _effect.CBPerInstance.IsDirty = true;
-
-        //    _effect.SpriteTexture.Value = spriteTexture.Texture;
-        //    _effect.SpriteTexture.IsDirty = true;
-
-        //    _effect.Apply(); //Set Shader to the device
-
-        //    _d3DEngine.Context.DrawIndexed(6, 0, 0);
-        //}
 
         /// <summary>
         /// Draw some text

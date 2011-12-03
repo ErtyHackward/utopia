@@ -70,6 +70,11 @@ namespace Utopia.Shared.Config
             return Path.Combine(folder, FileName);
         }
 
+        public XmlSettingsManager(string fileName) : this(fileName, SettingsStorage.ApplicationData, "")
+        {
+            
+        }
+
 
         /// <summary>
         /// Creates new instance of XmlSettings manager
@@ -77,7 +82,7 @@ namespace Utopia.Shared.Config
         /// <param name="fileName">Settings file name without path</param>
         /// <param name="storage">Storage place</param>
         /// <param name="customFolder"></param>
-        public XmlSettingsManager(string fileName, SettingsStorage storage, string customFolder = "")
+        public XmlSettingsManager(string fileName, SettingsStorage storage = SettingsStorage.ApplicationData, string customFolder = "")
         {
             FileName = fileName;
             Storage = storage;

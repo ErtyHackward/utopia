@@ -11,7 +11,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// <summary>
     /// Represents a base container implementation (this is not an entity)
     /// </summary>
-    public class SlotContainer<T> : ISlotContainer<T>, IBinaryStorable, IStaticContainer where T: ContainedSlot, new()
+    public class SlotContainer<T> : ISlotContainer<T>, IStaticContainer where T: ContainedSlot, new()
     {
         private readonly IEntity _parentEntity;
         private T[,] _items;
@@ -118,7 +118,7 @@ namespace Utopia.Shared.Entities.Inventory
             }
         }
 
-        public void Load(BinaryReader reader)
+        public void Load(BinaryReader reader, EntityFactory factory)
         {
             // read contained slots count
             _slotsCount = reader.ReadInt32();
@@ -134,7 +134,7 @@ namespace Utopia.Shared.Entities.Inventory
             {
                 var containedSlot = new T();
 
-                containedSlot.Load(reader);
+                containedSlot.LoadSlot(reader, factory);
                 _items[containedSlot.GridPosition.X, containedSlot.GridPosition.Y] = containedSlot;
             }
         }

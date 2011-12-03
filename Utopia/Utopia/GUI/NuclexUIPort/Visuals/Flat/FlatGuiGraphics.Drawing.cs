@@ -178,9 +178,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text for which a caret will be drawn</param>
         /// <param name="caretIndex">Index the caret will be drawn at</param>
-        public void DrawCaret(
-          string frameName, RectangleF bounds, string text, int caretIndex
-        )
+        public void DrawCaret(string frameName, RectangleF bounds, string text, int caretIndex)
         {
             var frame = lookupFrame(frameName);
 

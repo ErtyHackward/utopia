@@ -17,6 +17,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         IWorldChunks WorldChunks { get; set; }
         void ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId);
         void ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId);
-        void LateInitialization(Server server, SingleArrayChunkContainer cubesHolder, IWorldChunks worldChunks, IChunkStorageManager chunkStorageManager, ILightingManager lightManager);
+        void LateInitialization(ServerComponent server, SingleArrayChunkContainer cubesHolder, IWorldChunks worldChunks, IChunkStorageManager chunkStorageManager, ILightingManager lightManager);
     }
 }

@@ -35,7 +35,7 @@ namespace Utopia.Worlds.GameClocks
             base.Dispose();
         }
 
-        public override void Update(ref S33M3Engines.D3D.GameTime TimeSpend)
+        public override void Update(ref S33M3Engines.D3D.GameTime timeSpend)
         {
             _clockTime.Value = (float)(DateTime.Now.Hour * 60 + DateTime.Now.Minute) * (float)(Math.PI) / 12.0f / 60.0f;
 

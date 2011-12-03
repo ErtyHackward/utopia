@@ -50,7 +50,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
   public partial class FlatGuiGraphics : IFlatGuiGraphics, IDisposable {
 
     /// <summary>Width of the caret used for text input</summary>
-    const float CaretWidth = 2.0f;
+    const float CaretWidth = 1.0f;
 
     #region struct Frame
 

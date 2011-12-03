@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
 using S33M3Engines.Struct.Vertex.Helper;
 using SharpDX;
 using S33M3Engines.Windows;
-using System.Globalization;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 
@@ -44,5 +40,4 @@ namespace S33M3Engines.Struct.Vertex
             VertexDeclaration = new VertexDeclaration(elements);
         }
     }
-
 }

@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Utopia.Server.Structs;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
@@ -61,11 +62,9 @@ namespace Utopia.Server
         /// </summary>
         public ServerDynamicEntity ServerEntity { get; set; }
 
-        public UserRole UserRole
-        {
-            get;
-            set;
-        }
+        public UserRole UserRole { get; set; }
+
+        public static EntityFactory EntityFactory { get; set; }
 
         #endregion
 
@@ -389,7 +388,7 @@ namespace Utopia.Server
                                     OnMessageItemTransfer(ItemTransferMessage.Read(reader));
                                     break;
                                 case MessageTypes.EntityEquipment:
-                                    OnMessageEntityEquipment(EntityEquipmentMessage.Read(reader));
+                                    OnMessageEntityEquipment(EntityEquipmentMessage.Read(reader, EntityFactory));
                                     break;
                                 case MessageTypes.EntityImpulse:
                                     OnMessageEntityImpulse(EntityImpulseMessage.Read(reader));

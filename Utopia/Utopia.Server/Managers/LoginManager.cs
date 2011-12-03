@@ -19,6 +19,7 @@ namespace Utopia.Server.Managers
     public class LoginManager
     {
         private readonly Server _server;
+        private readonly EntityFactory _factory;
 
         /// <summary>
         /// Occurs when new player entity needed, entity should be placed to PlayerEntity property of the EventArgs class
@@ -33,9 +34,10 @@ namespace Utopia.Server.Managers
 
         public GenerationParameters GenerationParameters { get; set; }
 
-        public LoginManager(Server server)
+        public LoginManager(Server server, EntityFactory factory)
         {
             _server = server;
+            _factory = factory;
             _server.ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
             _server.ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
         }
@@ -147,7 +149,7 @@ namespace Utopia.Server.Managers
                         using (var ms = new MemoryStream(bytes))
                         {
                             var reader = new BinaryReader(ms);
-                            playerEntity.DynamicEntity.Load(reader);
+                            playerEntity.DynamicEntity.Load(reader, _factory);
                         }
 
                     }

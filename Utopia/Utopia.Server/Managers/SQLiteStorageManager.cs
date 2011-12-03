@@ -14,6 +14,8 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class SQLiteStorageManager : IUsersStorage, IChunksStorage, IEntityStorage
     {
+        private readonly EntityFactory _factory;
+
         /// <summary>
         /// Creates database file and required tables
         /// </summary>
@@ -25,8 +27,8 @@ namespace Utopia.Server.Managers
             {
                 if (path != ":memory:")
                 {
-                    if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(path)))
-                        System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
+                    if (!Directory.Exists(System.IO.Path.GetDirectoryName(path)))
+                        Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
                     SQLiteConnection.CreateFile(path);
                 }
                 var conn = new SQLiteConnection("Data Source = " + Path);
@@ -56,34 +58,34 @@ namespace Utopia.Server.Managers
             command.ExecuteNonQuery();
         }
 
-        private SQLiteConnection connection = null;
+        private SQLiteConnection _connection;
         /// <summary>
         /// Returns active connection to SQLite database ()
         /// </summary>
         /// <returns></returns>
         public SQLiteConnection GetConnection()
         {
-            if (connection == null)
+            if (_connection == null)
             {
                 if (Path == ":memory:" || !File.Exists(Path))
                 {
-                    connection = CreateDataBase(Path);
-                    return connection;
+                    _connection = CreateDataBase(Path);
+                    return _connection;
                 }
                 var csb = new SQLiteConnectionStringBuilder();
                 csb.DataSource = Path;
                 
-                connection = new SQLiteConnection(csb.ToString());
-                connection.Open();
+                _connection = new SQLiteConnection(csb.ToString());
+                _connection.Open();
                 
             }
-            return connection;
+            return _connection;
         }
 
         public void Dispose()
         {
-            if (connection != null)
-                connection.Dispose();
+            if (_connection != null)
+                _connection.Dispose();
         }
 
 
@@ -232,8 +234,9 @@ namespace Utopia.Server.Managers
         /// Creates new instance of SQLite storage manager
         /// </summary>
         /// <param name="filePath"></param>
-        public SQLiteStorageManager(string filePath)
+        public SQLiteStorageManager(string filePath, EntityFactory factory)
         {
+            _factory = factory;
             Path = filePath;
             
 
@@ -357,7 +360,7 @@ namespace Utopia.Server.Managers
         public IEntity LoadEntity(uint entityId)
         {
             byte[] data = LoadEntityBytes(entityId);
-            return EntityFactory.Instance.CreateFromBytes(data);
+            return _factory.CreateFromBytes(data);
         }
 
         public byte[] LoadEntityBytes(uint entityId)

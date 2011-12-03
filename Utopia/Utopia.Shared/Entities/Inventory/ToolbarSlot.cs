@@ -28,7 +28,7 @@ namespace Utopia.Shared.Entities.Inventory
             writer.Write(Right);
         }
 
-        public override void Load(BinaryReader reader)
+        public override void LoadSlot(BinaryReader reader, EntityFactory factory)
         {
             // reading toolbar slot position
             GridPosition = reader.ReadVector2I();

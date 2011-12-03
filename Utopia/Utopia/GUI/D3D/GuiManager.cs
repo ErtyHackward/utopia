@@ -43,8 +43,49 @@ namespace Utopia.GUI.D3D
         {
             _screen = screen;
             _d3DEngine = d3DEngine;
+            _d3DEngine.GameWindow.KeyPress += GameWindowKeyPress;
+            _d3DEngine.GameWindow.KeyDown += GameWindowKeyDown;
 
             DrawOrders.UpdateIndex(0, 10001);
+        }
+
+        void GameWindowKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyData)
+            {
+                case Keys.Left:
+                case Keys.Right:
+                case Keys.Up:
+                case Keys.Down:
+                    _screen.InjectKeyPress(e.KeyData);
+                    break;
+            }
+        }
+
+        public override void Dispose()
+        {
+            _d3DEngine.GameWindow.KeyPress -= GameWindowKeyPress;
+            _d3DEngine.GameWindow.KeyDown -= GameWindowKeyDown;
+        }
+
+        void GameWindowKeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (char.IsLetterOrDigit(e.KeyChar))
+                _screen.InjectCharacter(e.KeyChar);
+            else
+            {
+                switch ((Keys)e.KeyChar)
+                {
+                    case Keys.Back:
+                    case Keys.Return:
+                    case Keys.Escape:
+                        _screen.InjectKeyPress((Keys) e.KeyChar);
+                        break;
+                    case Keys.Tab:
+                        _screen.InjectKeyPress(Keys.Down);
+                        break;
+                }
+            }
         }
 
         public override void Initialize()
@@ -61,7 +102,7 @@ namespace Utopia.GUI.D3D
             if (_guiVisualizer != null) _guiVisualizer.Dispose();
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             
         }
@@ -108,32 +149,32 @@ namespace Utopia.GUI.D3D
 
             _prevMouseState = Mouse.GetState();
 
-            KeyboardState keybState = Keyboard.GetState();
+            //KeyboardState keybState = Keyboard.GetState();
 
-            Keys[] keys = keybState.GetPressedKeys();
+            //Keys[] keys = keybState.GetPressedKeys();
 
-            foreach (var key in keys)
-            {
-                if (_prevKeybState.IsKeyUp(key) )
-                {
-                    var c = (char)key;
-                    if (Char.IsLetterOrDigit((char)key))
-                    {
-                        _screen.InjectCharacter(c);
-                    }
-                    else
-                    {
-                        //switch (key)
-                        //{
-                        //    case Keys.Back: _screen.InjectKeyPress(Nuclex.UserInterface.Input.Command.
-                        //}
-                    }
+            //foreach (var key in keys)
+            //{
+            //    if (_prevKeybState.IsKeyUp(key) )
+            //    {
+            //        var c = (char)key;
+            //        if (Char.IsLetterOrDigit((char)key))
+            //        {
+            //            _screen.InjectCharacter(c);
+            //        }
+            //        else
+            //        {
+            //            //switch (key)
+            //            //{
+            //            //    case Keys.Back: _screen.InjectKeyPress(Nuclex.UserInterface.Input.Command.
+            //            //}
+            //        }
 
-                }
+            //    }
            
-            }
+            //}
 
-            _prevKeybState = Keyboard.GetState();
+            //_prevKeybState = Keyboard.GetState();
         }
 
         public string GetInfo()

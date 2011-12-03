@@ -1,14 +1,21 @@
-﻿using LostIsland.Client.GUI;
+﻿using System;
+using System.Drawing;
+using LostIsland.Client.Components;
+using LostIsland.Client.GUI;
+using LostIsland.Client.States;
 using LostIslandHD.Client;
 using Ninject;
 using Nuclex.UserInterface;
 using Utopia;
+using Utopia.Components;
 using Utopia.Editor;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.GUI.D3D.Inventory;
 using Utopia.GUI.D3D.Map;
-using Utopia.Shared.Entities;
+using Utopia.Server;
+using Utopia.Server.Managers;
+using Utopia.Shared.Config;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Worlds.GameClocks;
@@ -38,7 +45,6 @@ using Utopia.Network;
 using Utopia.InputManager;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Renderer;
-using Utopia.Settings;
 using Utopia.GUI;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
@@ -53,100 +59,125 @@ namespace LostIsland.Client
     {
         public void EarlyBinding(IKernel iocContainer)
         {
-            iocContainer.Bind<IGameStateToolManager>().To<GameStateToolManager>().InSingletonScope();  
-            iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
+            
         }
 
-        public void LateBinding(IKernel iocContainer, WorldParameters worldParam)
+        public void IocBinding()
         {
+            if (_iocContainer != null)
+                throw new InvalidOperationException();
+
+            _iocContainer = new StandardKernel();
+
+            _iocContainer.Bind<IKernel>().ToConstant(_iocContainer).InSingletonScope();
+
             //DirectX layer & Helper ===================================
-            iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope();         //DirectX Engine
-            iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope(); //Focus
+            _iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope().WithConstructorArgument("startingSize", new Size(1024, 600)).WithConstructorArgument("windowCaption", "LostIsland Client");         //DirectX Engine
+            _iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope(); //Focus
             //==========================================================
 
             //Parameters ===============================================
-            iocContainer.Bind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
-            iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
+            //iocContainer.Bind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
+            _iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
             //System Objects Management ================================
-            iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope(); //Application shared states
-            iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope(); //Type of camera used
-            iocContainer.Bind<CameraManager>().ToSelf().InSingletonScope();     //Camera manager
-            iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();      //Ingame based Timer class
-            iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class
+            _iocContainer.Bind<StatesManager>().ToSelf().InSingletonScope(); 
+            _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope(); //Application shared states
+            _iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope(); //Type of camera used
+            _iocContainer.Bind<CameraManager>().ToSelf().InSingletonScope();     //Camera manager
+            _iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();      //Ingame based Timer class
+            _iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class
 
+            // Game states ================================================
+            _iocContainer.Bind<RuntimeVariables>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<LoginState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<CreditsState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<MainMenuState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<GamePlayState>().ToSelf().InSingletonScope();
+            
             //Network Related =============================================
-            iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
-            iocContainer.Bind<ItemMessageTranslator>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
+            _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InSingletonScope();
             //=============================================================
 
             //User Input Handling ======================================
-            iocContainer.Bind<InputsManager>().ToSelf().InSingletonScope();     //Input management
-            iocContainer.Bind<ActionsManager>().ToSelf().InSingletonScope();    //Action management
+            _iocContainer.Bind<InputsManager>().ToSelf().InSingletonScope();     //Input management
+            _iocContainer.Bind<ActionsManager>().ToSelf().InSingletonScope();    //Action management
             //==========================================================
 
             //GUI =========================================================
-            iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();        //Gui base class
-            iocContainer.Bind<Screen>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();        //Gui base class
+            _iocContainer.Bind<Screen>().ToSelf().InSingletonScope();
             //=============================================================
 
             //Inventory ===================================================
-            iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();       //Icon Factory
+            _iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();       //Icon Factory
             //=============================================================
 
             //Debug displayer component ===================================
-            iocContainer.Bind<FPS>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<FPS>().ToSelf().InSingletonScope();
             //=============================================================
 
             //Game Componenents =========================================
-            iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
-            iocContainer.Bind<InventoryComponent>().ToSelf().InSingletonScope();
-            iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
-            iocContainer.Bind<MapComponent>().ToSelf().InSingletonScope();
-            iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
-            iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
-            iocContainer.Bind<CarvingEditor>().ToSelf().InSingletonScope();            
-            iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
-            iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
-            iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
-            if (ClientSettings.Current.Settings.GraphicalParameters.CloudsQuality <= 0) iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");
-            else iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds");
-            iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
-            iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
-            iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<ServerComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
+            _iocContainer.Bind<InventoryComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<MapComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<CarvingEditor>().ToSelf().InSingletonScope();            
+            _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
+            _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
+            _iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
+            _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds_flat");
+            _iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds");
+            _iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<FadeComponent>().ToSelf().InSingletonScope();
 
 
             //Landscape Creation/Acces/Management ====================================
-            iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope();
-            iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InSingletonScope().Named("SolidCubeMeshFactory");
-            iocContainer.Bind<ICubeMeshFactory>().To<LiquidCubeMeshFactory>().InSingletonScope().Named("LiquidCubeMeshFactory");
-            iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();         //The client  "Big" Array
-            iocContainer.Bind<ILandscapeManager>().To<LandscapeManager>().InSingletonScope();   //Interface betwee the big array and landscape processors
-            iocContainer.Bind<ILightingManager>().To<LightingManager>().InSingletonScope();     //Landscape lightings
-            iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InSingletonScope();   //Chunk Mesh + Entities creation
-            iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();             //Chunk Management (Update/Draw)
-            iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
-            iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
-            iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope();
-            iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
+            _iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope();
+            _iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InSingletonScope().Named("SolidCubeMeshFactory");
+            _iocContainer.Bind<ICubeMeshFactory>().To<LiquidCubeMeshFactory>().InSingletonScope().Named("LiquidCubeMeshFactory");
+            _iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();         //The client  "Big" Array
+            _iocContainer.Bind<ILandscapeManager>().To<LandscapeManager>().InSingletonScope();   //Interface betwee the big array and landscape processors
+            _iocContainer.Bind<ILightingManager>().To<LightingManager>().InSingletonScope();     //Landscape lightings
+            _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InSingletonScope();   //Chunk Mesh + Entities creation
+            _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();             //Chunk Management (Update/Draw)
+            _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
+            
+            _iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
+            _iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope();
+            _iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
+
+            _iocContainer.Bind<IGameStateToolManager>().To<GameStateToolManager>().InSingletonScope();
+
             //iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope().Named("s33m3World");
             //iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
             //iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
             //=============================================================
 
             //Entities related stuff ====================================================
-            iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InSingletonScope();         // Use to display the picking cursor on block
-            iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InSingletonScope();   //Entites picking and collision handling vs player
-            iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();         //Dynamic Entity manager
-            iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();                             //The player manager
+            _iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InSingletonScope();         // Use to display the picking cursor on block
+            _iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InSingletonScope();   //Entites picking and collision handling vs player
+            _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();         //Dynamic Entity manager
+            _iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();                             //The player manager
             //Register the Player Against IDynamicEntity and PlayerCharacter
-            iocContainer.Bind<PlayerCharacter>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope(); //Register the current Player.
-            iocContainer.Bind<IDynamicEntity>().ToConstant(iocContainer.Get<Server>().Player).InSingletonScope().Named("Player"); //Register the current Player.
-            iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");    //Rendering Player
-            iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");  //Rendering Dynamic Entities
-            iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();  //Voxel Factory
+            _iocContainer.Bind<PlayerCharacter>().ToConstant(null).InSingletonScope(); //Register the current Player.
+            _iocContainer.Bind<IDynamicEntity>().ToConstant(null).InSingletonScope().Named("Player"); //Register the current Player.
+            _iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");    //Rendering Player
+            _iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");  //Rendering Dynamic Entities
+            _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();  //Voxel Factory
             //=============================================================
 
+            // Server components ==========================================
+            _iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToSelf().InSingletonScope().WithConstructorArgument("fileName", "localServer.config");
+            _iocContainer.Bind<SQLiteStorageManager>().ToSelf().InSingletonScope();
+            
         }
     }
 }

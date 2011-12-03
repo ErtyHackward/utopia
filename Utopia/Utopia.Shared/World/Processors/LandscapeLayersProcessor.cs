@@ -23,6 +23,7 @@ namespace Utopia.Shared.World.Processors
         private SimplexNoise _sand, _gravel;
         private Random _rnd;
         private WorldParameters _worldParameters;
+        private readonly EntityFactory _factory;
 
         /// <summary>
         /// Gets overall operation progress [0; 100]
@@ -48,9 +49,10 @@ namespace Utopia.Shared.World.Processors
             get { return "Generates a flat terrain"; }
         }
 
-        public LandscapeLayersProcessor(WorldParameters worldParameters)
+        public LandscapeLayersProcessor(WorldParameters worldParameters, EntityFactory factory)
         {
             _worldParameters = worldParameters;
+            _factory = factory;
             Initialize();
         }
 
@@ -179,7 +181,7 @@ namespace Utopia.Shared.World.Processors
                                             var globalPos = new Vector3D(X + 0.5, Y + 1, Z + 0.5);
                                             if (result <= 0.4)
                                             {
-                                                var grass = (Grass)EntityFactory.Instance.CreateEntity(EntityClassId.Grass);
+                                                var grass = (Grass)_factory.CreateEntity(EntityClassId.Grass);
 
                                                 grass.GrowPhase = (byte)randomizer.Next(0, 5);
                                                 grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
@@ -189,7 +191,7 @@ namespace Utopia.Shared.World.Processors
                                             }
                                             else if (result <= 0.6)
                                             {
-                                                var entity = (Flower1)EntityFactory.Instance.CreateEntity(EntityClassId.Flower1);
+                                                var entity = (Flower1)_factory.CreateEntity(EntityClassId.Flower1);
 
                                                 entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                 entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
@@ -198,7 +200,7 @@ namespace Utopia.Shared.World.Processors
                                             }
                                             else if (result <= 0.7)
                                             {
-                                                var entity = (Flower2)EntityFactory.Instance.CreateEntity(EntityClassId.Flower2);
+                                                var entity = (Flower2)_factory.CreateEntity(EntityClassId.Flower2);
 
                                                 entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                 entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
@@ -207,7 +209,7 @@ namespace Utopia.Shared.World.Processors
                                             }
                                             else if (result <= 0.9)
                                             {
-                                                var entity = (Mushr1)EntityFactory.Instance.CreateEntity(EntityClassId.Mushroom1);
+                                                var entity = (Mushr1)_factory.CreateEntity(EntityClassId.Mushroom1);
 
                                                 entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                 entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
@@ -216,7 +218,7 @@ namespace Utopia.Shared.World.Processors
                                             }
                                             else if (result <= 1)
                                             {
-                                                var entity = (Mushr2)EntityFactory.Instance.CreateEntity(EntityClassId.Mushroom2);
+                                                var entity = (Mushr2)_factory.CreateEntity(EntityClassId.Mushroom2);
 
                                                 entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                 entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);

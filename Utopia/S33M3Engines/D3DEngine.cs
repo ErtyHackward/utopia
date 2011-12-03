@@ -116,7 +116,7 @@ namespace S33M3Engines
         #endregion
 
         //Constructor
-        public D3DEngine(System.Drawing.Size startingSize, string windowCaption)
+        public D3DEngine(Size startingSize, string windowCaption)
         {
             //Create the MainRendering Form
             _renderForm = new RenderForm()

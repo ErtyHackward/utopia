@@ -82,9 +82,9 @@ namespace Utopia.Shared.Entities
             writer.Write(StaticId);
         }
 
-        public override void Load(System.IO.BinaryReader reader)
+        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
         {
-            base.Load(reader);
+            base.Load(reader, factory);
 
             StaticId = reader.ReadUInt32();
         }

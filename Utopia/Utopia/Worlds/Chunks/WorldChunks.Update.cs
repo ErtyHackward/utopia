@@ -25,7 +25,7 @@ namespace Utopia.Worlds.Chunks
         #endregion
 
         #region public methods
-        public override void Update(ref GameTime TimeSpend)
+        public override void Update(ref GameTime timeSpend)
         {
             if (_camManager.ActiveCamera.WorldPosition.Y < 400)
             {

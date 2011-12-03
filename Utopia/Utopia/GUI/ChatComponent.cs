@@ -33,7 +33,7 @@ namespace Utopia.GUI
         private D3DEngine _d3dEngine;
         private readonly ActionsManager _actionManager;
         private readonly InputsManager _imanager;
-        private readonly Server _server;
+        private readonly ServerComponent _server;
         private readonly Queue<string> _messages = new Queue<string>();
         private bool _showCaret = false;
         private DateTime _caretSwitch;
@@ -66,7 +66,7 @@ namespace Utopia.GUI
         /// </summary>
         public string Input { get; set; }
 
-        public ChatComponent(D3DEngine engine, ActionsManager actionManager, InputsManager imanager, Server server)
+        public ChatComponent(D3DEngine engine, ActionsManager actionManager, InputsManager imanager, ServerComponent server)
         {
 
             _d3dEngine = engine;
@@ -181,7 +181,7 @@ namespace Utopia.GUI
             _spriteRender.Dispose();
         }
 
-        public override void Update(ref GameTime timeSpent)
+        public override void Update(ref GameTime timeSpend)
         {
             if (Stopwatch.GetTimestamp() > _lastUpdateTick + _hideChatInTick)
             {

@@ -111,8 +111,10 @@
     <Compile Include="Action\MouseButton.cs" />
     <Compile Include="Action\MouseTriggeredAction.cs" />
     <Compile Include="Action\MouseTriggerMode.cs" />
-    <Compile Include="BepuPhysicsComponent.cs" />
-    <Compile Include="DebugComponent.cs" />
+    <Compile Include="Components\BepuPhysicsComponent.cs" />
+    <Compile Include="Components\DebugComponent.cs" />
+    <Compile Include="Components\FadeComponent.cs" />
+    <Compile Include="Components\ISwitchComponent.cs" />
     <Compile Include="Editor\CarvingEditor.cs" />
     <Compile Include="Editor\EditorTool.cs" />
     <Compile Include="Editor\EntityEditor.cs" />
@@ -231,7 +233,7 @@
     </Compile>
     <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="GameDXStates\DXStates.cs" />
-    <Compile Include="Network\Server.cs" />
+    <Compile Include="Network\ServerComponent.cs" />
     <Compile Include="StatesManager.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

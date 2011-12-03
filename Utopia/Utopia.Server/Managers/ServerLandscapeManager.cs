@@ -109,6 +109,8 @@ namespace Utopia.Server.Managers
             get { return _chunks.Count; }
         }
 
+        public EntityFactory EntityFactory { get; internal set; }
+
         /// <summary>
         /// Gets time of last executed save operation
         /// </summary>
@@ -119,11 +121,12 @@ namespace Utopia.Server.Managers
         /// </summary>
         public int ChunksSaved { get; set; }
 
-        public ServerLandscapeManager(Server server, IChunksStorage chunksStorage, WorldGenerator generator, int chunkLiveTimeMinutes, int cleanUpInterval, int saveInterval)
+        public ServerLandscapeManager(Server server, IChunksStorage chunksStorage, WorldGenerator generator, EntityFactory factory, int chunkLiveTimeMinutes, int cleanUpInterval, int saveInterval)
         {
             ChunkLiveTimeMinutes = chunkLiveTimeMinutes;
             CleanUpInterval = cleanUpInterval;
             SaveInterval = saveInterval;
+            EntityFactory = factory;
 
             if (chunksStorage == null) throw new ArgumentNullException("chunksStorage");
             if (generator == null) throw new ArgumentNullException("generator");
@@ -266,7 +269,7 @@ namespace Utopia.Server.Managers
                         else
                         {
                             chunk = new ServerChunk { Position = position, CompressedBytes = data };
-                            chunk.Decompress();
+                            chunk.Decompress(EntityFactory);
                         }
 
                         _chunks.Add(position, chunk);
