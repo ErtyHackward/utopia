@@ -311,6 +311,8 @@ namespace Utopia.Editor
         {
             base.OnEnabledChanged();
 
+            if (!IsInitialized) return;
+
             if (Enabled)
             {
                 _playerMgr.HasMouseFocus = false;

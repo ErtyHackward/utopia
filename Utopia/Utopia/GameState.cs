@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using S33M3Engines.D3D;
 
@@ -28,7 +29,7 @@ namespace Utopia
         public StatesManager StatesManager { get; internal set; }
 
         public bool IsInitialized { get; set; }
-
+        
         protected GameState()
         {
             EnabledComponents = new List<GameComponent>();

@@ -105,8 +105,8 @@ namespace Utopia.GUI.D3D
             _font = new SpriteFont();
             _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
 
-            
-            _screen.Desktop.Children.Add(ToolbarUi);
+            if(Enabled)
+                _screen.Desktop.Children.Add(ToolbarUi);
             //the guimanager will draw the GUI screen, not the Hud !
         }
 
@@ -165,6 +165,9 @@ namespace Utopia.GUI.D3D
         protected override void OnEnabledChanged()
         {
             base.OnEnabledChanged();
+
+            if (!IsInitialized) return;
+
             if (Enabled)
             {
                 if (!_screen.Desktop.Children.Contains(ToolbarUi))

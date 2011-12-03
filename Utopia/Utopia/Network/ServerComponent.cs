@@ -32,8 +32,18 @@ namespace Utopia.Network
 
         protected void OnConnectionInitialized(ServerComponentConnectionInitializeEventArgs ea)
         {
+            if(ea.ServerConnection != null)
+                ea.ServerConnection.MessageGameInformation += ServerConnection_MessageGameInformation;
+            if (ea.PrevoiusConnection != null)
+                ea.PrevoiusConnection.MessageGameInformation -= ServerConnection_MessageGameInformation;
+
             var handler = ConnectionInitialized;
             if (handler != null) handler(this, ea);
+        }
+
+        void ServerConnection_MessageGameInformation(object sender, ProtocolMessageEventArgs<GameInformationMessage> e)
+        {
+            GameInformations = e.Message;
         }
 
 

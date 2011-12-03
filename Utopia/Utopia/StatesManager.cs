@@ -133,7 +133,25 @@ namespace Utopia
             previous.EnabledComponents.ForEach(c => { if (!current.EnabledComponents.Contains(c) && c != SwitchComponent) c.Enabled = false; });
             previous.VisibleComponents.ForEach(c => { if (!current.VisibleComponents.Contains(c) && c != SwitchComponent) c.Visible = false; });
         }
-        
+
+        public void UpdateCurrentStateComponents()
+        {
+            CurrentState.EnabledComponents.ForEach(gc =>
+            {
+                if (!_game.GameComponents.Contains(gc))
+                    _game.GameComponents.Add(gc);
+            });
+            CurrentState.VisibleComponents.ForEach(gc =>
+            {
+                if (!_game.GameComponents.Contains(gc))
+                    _game.GameComponents.Add(gc);
+            });
+
+            // enable current stuff
+            CurrentState.EnabledComponents.ForEach(c => { if (c != SwitchComponent) c.Enabled = true; });
+            CurrentState.VisibleComponents.ForEach(c => { if (c != SwitchComponent) c.Visible = true; });
+        }
+
         /// <summary>
         /// Changes current game state
         /// </summary>
