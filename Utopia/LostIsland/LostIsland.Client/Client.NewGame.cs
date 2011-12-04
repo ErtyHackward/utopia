@@ -111,7 +111,7 @@ namespace LostIsland.Client
             //states.playerEntityManager.Enabled = false;
             //states.worldChunks.LoadComplete += worldChunks_LoadComplete;
             
-            var utopiaRenderer = new UtopiaRender(Engine);
+            var utopiaRenderer = new UtopiaRender(Engine, iocContainer.Get<ActionsManager>());
             //// needed to display an nuclex forms
             //utopiaRenderer.GameComponents.Add(iocContainer.Get<GuiManager>());
             //// handles login dialog

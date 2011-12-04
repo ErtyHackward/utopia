@@ -16,11 +16,11 @@ namespace Utopia
         /// Gets an action manager
         /// </summary>
         public ActionsManager ActionsManager { get; protected set; }
-        
-        public UtopiaRender(D3DEngine engine)
+
+        public UtopiaRender(D3DEngine engine, ActionsManager actionsMaanger)
             : base(engine)
         {
-            ActionsManager = new ActionsManager(engine);
+            ActionsManager = actionsMaanger;
 
             VSync = true;                                              // Vsync ON (default)
         }

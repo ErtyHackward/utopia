@@ -23,6 +23,9 @@ namespace Utopia.Network
         public DateTime WorldDateTime { get; set; }
         public double TimeFactor { get; set; }
         public GameInformationMessage GameInformations { get; set; }
+
+        public string Login { get; set; }
+
         //===============================================================================================
 
         /// <summary>

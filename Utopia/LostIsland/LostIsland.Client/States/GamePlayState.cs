@@ -95,11 +95,8 @@ namespace LostIsland.Client.States
             AddComponent(loading);
             AddComponent(_ioc.Get<ServerComponent>());
 
-            var engine = _ioc.Get<D3DEngine>();
-
-            engine.MouseCapture = true;
-
-
+            
+            
         }
 
         private void GameplayInitialize()
@@ -126,6 +123,7 @@ namespace LostIsland.Client.States
                     _server.ConnectionManager.Listen();
                     _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
                     _server.LoginManager.GenerationParameters = planProcessor.WorldPlan.Parameters;
+                    _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
 
                     // client world generator
                     var clientGeneratpr = new WorldGenerator(wp, new PlanWorldProcessor(wp, _ioc.Get<EntityFactory>("Client")));
@@ -138,6 +136,7 @@ namespace LostIsland.Client.States
                     _serverComponent.ConnectionInitialized += ServerComponentConnectionInitialized;
                 }
                 _serverComponent.BindingServer("127.0.0.1");
+                _serverComponent.Login = "local";
                 _serverComponent.ConnectToServer("local", "qwe123", false);
             }
         }
@@ -181,9 +180,13 @@ namespace LostIsland.Client.States
         void ServerConnectionMessageEntityIn(object sender, Utopia.Shared.Net.Connections.ProtocolMessageEventArgs<Utopia.Shared.Net.Messages.EntityInMessage> e)
         {
             var player = (PlayerCharacter)e.Message.Entity;
+
+
             _ioc.Rebind<PlayerCharacter>().ToConstant(player).InSingletonScope(); //Register the current Player.
             _ioc.Rebind<IDynamicEntity>().ToConstant(player).InSingletonScope().Named("Player"); //Register the current Player.
             _serverComponent.ServerConnection.MessageEntityIn -= ServerConnectionMessageEntityIn;
+            _serverComponent.Player = player;
+
             GameplayComponentsCreation();
         }
 
@@ -291,6 +294,9 @@ namespace LostIsland.Client.States
 
             playerEntityManager.Enabled = false;
             worldChunks.LoadComplete += worldChunks_LoadComplete;
+
+            var engine = _ioc.Get<D3DEngine>();
+            engine.MouseCapture = true;
         }
 
         void worldChunks_LoadComplete(object sender, EventArgs e)

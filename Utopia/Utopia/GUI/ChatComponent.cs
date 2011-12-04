@@ -130,7 +130,7 @@ namespace Utopia.GUI
                     _actionManager.KeyboardActionsProcessing = true;
                     if (!string.IsNullOrWhiteSpace(Input))
                     {
-                        var msg = new ChatMessage { Login = _server.Player.DisplayName, Message = Input };
+                        var msg = new ChatMessage { Login = _server.Login, Message = Input };
                         if (Input.StartsWith("/me ", StringComparison.CurrentCultureIgnoreCase))
                         {
                             msg.Action = true;
