@@ -93,6 +93,7 @@ namespace LostIsland.Client
             _iocContainer.Bind<LoginState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<CreditsState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<MainMenuState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<LoadingGameState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<GamePlayState>().ToSelf().InSingletonScope();
             
             //Network Related =============================================
@@ -137,6 +138,7 @@ namespace LostIsland.Client
             _iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<FadeComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<DebugInfo>().ToSelf().InSingletonScope();
 
 
             //Landscape Creation/Acces/Management ====================================

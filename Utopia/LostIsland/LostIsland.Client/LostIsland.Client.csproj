@@ -117,6 +117,7 @@
     <Compile Include="RuntimeVariables.cs" />
     <Compile Include="States\CreditsState.cs" />
     <Compile Include="States\GamePlayState.cs" />
+    <Compile Include="States\LoadingGameState.cs" />
     <Compile Include="States\LoginState.cs" />
     <Compile Include="States\MainMenuState.cs" />
     <EmbeddedResource Include="GUI\Forms\CustControls\Config.resx">
