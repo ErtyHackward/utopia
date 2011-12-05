@@ -66,6 +66,7 @@ namespace LostIsland.Client
             stateManager.RegisterState(_iocContainer.Get<LoginState>());
             stateManager.RegisterState(_iocContainer.Get<CreditsState>());
             stateManager.RegisterState(_iocContainer.Get<MainMenuState>());
+            stateManager.RegisterState(_iocContainer.Get<LoadingGameState>());
             stateManager.RegisterState(_iocContainer.Get<GamePlayState>());
 
             // first state will be the login

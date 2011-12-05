@@ -40,12 +40,12 @@ namespace LostIsland.Client.States
         void MenuSinglePlayerPressed(object sender, EventArgs e)
         {
             _vars.SinglePlayer = true;
-            StatesManager.SetGameState("Gameplay");
+            StatesManager.SetGameState("GameLoading");
         }
 
         public override void OnEnabled(GameState previousState)
         {
-            StatesManager.PrepareStateAsync("Gameplay");
+            StatesManager.PrepareStateAsync("GameLoading");
             base.OnEnabled(previousState);
         }
         

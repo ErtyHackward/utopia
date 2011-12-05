@@ -35,7 +35,7 @@ namespace LostIsland.Client.Components
             _spriteRender = new SpriteRenderer();
             _spriteRender.Initialize(_engine);
 
-            _materia = new SpriteTexture(_engine.Device, "Images\\materia.png", new Vector2());
+            //_materia = new SpriteTexture(_engine.Device, "Images\\materia.png", new Vector2());
             _lastCheck = DateTime.Now;
         }
 
@@ -59,9 +59,9 @@ namespace LostIsland.Client.Components
         public override void Draw(int index)
         {
             _spriteRender.Begin(false);
-            _engine.Context.ClearRenderTargetView(_engine.RenderTarget, new Color4(1,1,1,1));
-            _spriteRender.Draw(_materia, new SharpDX.Rectangle(100, 100, 357, 324), Color.White);
-            _spriteRender.DrawText(_font, _loadingText, new Vector2(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 100), Color.Black);
+            _engine.Context.ClearRenderTargetView(_engine.RenderTarget, new Color4(0,0,0,1));
+            //_spriteRender.Draw(_materia, new SharpDX.Rectangle(100, 100, 357, 324), Color.White);
+            _spriteRender.DrawText(_font, _loadingText, new Vector2(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 100), Color.White);
             _spriteRender.End();
         }
     }
