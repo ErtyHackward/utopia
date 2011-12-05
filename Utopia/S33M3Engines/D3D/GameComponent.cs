@@ -95,7 +95,8 @@ namespace S33M3Engines.D3D
 
         internal void InternalLoadContent()
         {
-            LoadContent();
+            lock (Game.DxLock)
+                LoadContent();
             OnContentLoaded();
             _isInitialized = true;
         }

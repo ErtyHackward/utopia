@@ -92,6 +92,7 @@ namespace S33M3Engines.D3D
         private GameTime _gameTime = new GameTime();
         private int _vSync = 0;
         private bool _gameStarted;
+        internal static object DxLock = new object();
         #endregion
 
         public Game(D3DEngine engine)
@@ -247,7 +248,8 @@ namespace S33M3Engines.D3D
             for (int i = 0; i < _visibleDrawable.Count; i++)
             {
                 DrawableComponentHolder drawComponent = _visibleDrawable[i];
-                drawComponent.DrawableComponent.Draw(drawComponent.DrawOrder.DrawID);
+                lock (DxLock)
+                    drawComponent.DrawableComponent.Draw(drawComponent.DrawOrder.DrawID);
             }
         }
 
