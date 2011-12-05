@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using S33M3Engines.D3D;
 using S33M3Engines.D3D.DebugTools;
-using S33M3Engines.InputHandler.KeyboardHelper;
-using S33M3Engines.Sprites;
-using SharpDX;
 using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.InputHandler;
-using Utopia.GUI.D3D.Inventory;
-using S33M3Engines.Shared.Sprites;
 using S33M3Engines;
 using ButtonState = S33M3Engines.InputHandler.MouseHelper.ButtonState;
 using MouseButtons = Nuclex.UserInterface.Input.MouseButtons;
 using Screen = Nuclex.UserInterface.Screen;
-using SharpDX.Direct3D11;
 
 namespace Utopia.GUI.D3D
 {
@@ -35,7 +26,6 @@ namespace Utopia.GUI.D3D
 
         private readonly D3DEngine _d3DEngine;
         private MouseState _prevMouseState;
-        private KeyboardState _prevKeybState;
 
         private string _debugString;
 
@@ -43,13 +33,22 @@ namespace Utopia.GUI.D3D
         {
             _screen = screen;
             _d3DEngine = d3DEngine;
+
             _d3DEngine.GameWindow.KeyPress += GameWindowKeyPress;
             _d3DEngine.GameWindow.KeyDown += GameWindowKeyDown;
-            _d3DEngine.GameWindow.KeyUp += GameWindow_KeyUp;
+            _d3DEngine.GameWindow.KeyUp += GameWindowKeyUp;
+
             DrawOrders.UpdateIndex(0, 10001);
         }
 
-        void GameWindow_KeyUp(object sender, KeyEventArgs e)
+        public override void Dispose()
+        {
+            _d3DEngine.GameWindow.KeyPress -= GameWindowKeyPress;
+            _d3DEngine.GameWindow.KeyDown -= GameWindowKeyDown;
+            _d3DEngine.GameWindow.KeyUp -= GameWindowKeyUp;
+        }
+
+        void GameWindowKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.KeyData)
             {
@@ -89,13 +88,6 @@ namespace Utopia.GUI.D3D
             }
         }
 
-        public override void Dispose()
-        {
-            _d3DEngine.GameWindow.KeyPress -= GameWindowKeyPress;
-            _d3DEngine.GameWindow.KeyDown -= GameWindowKeyDown;
-            
-        }
-
         void GameWindowKeyPress(object sender, KeyPressEventArgs e)
         {
             if (char.IsLetterOrDigit(e.KeyChar))
@@ -130,16 +122,11 @@ namespace Utopia.GUI.D3D
         {
             InjectInput();
 
-            //Debug.WriteLine("Gui draw start");
             _guiVisualizer.Draw(_screen);
 
             var v = (Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer)_guiVisualizer;
-
-
+            
             _debugString = string.Format("Gui Draw calls: {0} Items: {1}", v.Graphics.DrawCalls, v.Graphics.DrawItems);
-            //v.Draw
-
-            //Debug.WriteLine("Gui draw end");
         }
 
 
@@ -162,33 +149,6 @@ namespace Utopia.GUI.D3D
             _screen.InjectMouseMove(mouseState.X, mouseState.Y);
 
             _prevMouseState = Mouse.GetState();
-
-            //KeyboardState keybState = Keyboard.GetState();
-
-            //Keys[] keys = keybState.GetPressedKeys();
-
-            //foreach (var key in keys)
-            //{
-            //    if (_prevKeybState.IsKeyUp(key) )
-            //    {
-            //        var c = (char)key;
-            //        if (Char.IsLetterOrDigit((char)key))
-            //        {
-            //            _screen.InjectCharacter(c);
-            //        }
-            //        else
-            //        {
-            //            //switch (key)
-            //            //{
-            //            //    case Keys.Back: _screen.InjectKeyPress(Nuclex.UserInterface.Input.Command.
-            //            //}
-            //        }
-
-            //    }
-           
-            //}
-
-            //_prevKeybState = Keyboard.GetState();
         }
 
         public string GetInfo()
