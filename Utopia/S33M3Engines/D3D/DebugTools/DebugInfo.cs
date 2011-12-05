@@ -86,9 +86,14 @@ namespace S33M3Engines.D3D.DebugTools
                 //    _font.Draw(_sprite, _infos[CompIndex], new System.Drawing.Rectangle(0, _fontHeight * CompIndex, Game.GameWindow.ClientSize.Width, _fontHeight * CompIndex), FontDrawFlags.NoClip, _fontColor);
                 //}
 
-                _spriteRender.Begin(false, SpriteRenderer.FilterMode.Point);
-                _spriteRender.DrawText(_font, string.Concat(_infos), _textPosition, _fontColor);
-                _spriteRender.End();
+                var resultString = string.Concat(_infos);
+
+                if(!string.IsNullOrWhiteSpace(resultString))
+                {
+                    _spriteRender.Begin(false, SpriteRenderer.FilterMode.Point);
+                    _spriteRender.DrawText(_font, resultString, _textPosition, _fontColor);
+                    _spriteRender.End();
+                }
             }
         }
 

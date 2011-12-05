@@ -169,8 +169,8 @@ namespace Utopia.Server.Managers
                     PlanGenerationParameters = GenerationParameters
                 };
                 connection.SendAsync(gameInfo);
-                connection.SendAsync(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
                 connection.SendAsync(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity, Link = playerEntity.DynamicEntity.GetLink() });
+                connection.SendAsync(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
 
                 _server.ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", e.Message.Login), Operator = true });
                 connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });

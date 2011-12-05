@@ -253,7 +253,9 @@ namespace LostIsland.Client.States
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
+            var debugInfo = _ioc.Get<DebugInfo>();
 
+            playerEntityManager.HasMouseFocus = true;
             firstPersonCamera.CameraPlugin = playerEntityManager;
             worldFocusManager.WorldFocus = (IWorldFocus)firstPersonCamera;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
@@ -272,17 +274,18 @@ namespace LostIsland.Client.States
             AddComponent(chat);
             AddComponent(map);
             AddComponent(fps);
-            AddComponent(entityEditor);
-            AddComponent(carvingEditor);
+            //AddComponent(entityEditor);
+            //AddComponent(carvingEditor);
             AddComponent(skyDome);
             AddComponent(gameClock);
             AddComponent(weather);
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
+            AddComponent(debugInfo);
 
             StatesManager.UpdateCurrentStateComponents();
             
-            var debugInfo = _ioc.Get<DebugInfo>();
+            
             debugInfo.Activated = true;
             debugInfo.SetComponants(
                 _ioc.Get<FPS>(),
