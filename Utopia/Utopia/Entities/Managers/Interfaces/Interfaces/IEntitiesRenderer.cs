@@ -13,6 +13,7 @@ namespace Utopia.Entities.Renderer.Interfaces
         List<IVisualEntityContainer> VisualEntities { get; set; }
         IVisualEntityContainer VisualEntity { get; set; }
         void Initialize();
+        void LoadContent();
         SharedFrameCB SharedFrameCB { get; set; } 
     }
 }

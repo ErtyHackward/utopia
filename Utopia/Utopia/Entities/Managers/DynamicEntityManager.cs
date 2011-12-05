@@ -63,6 +63,7 @@ namespace Utopia.Entities.Managers
 
         public override void LoadContent()
         {
+            _dynamicEntityRenderer.LoadContent();
         }
 
         public override void Update(ref GameTime timeSpend)
