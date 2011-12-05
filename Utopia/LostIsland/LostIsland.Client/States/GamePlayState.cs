@@ -255,6 +255,7 @@ namespace LostIsland.Client.States
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
             var debugInfo = _ioc.Get<DebugInfo>();
 
+            landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
             firstPersonCamera.CameraPlugin = playerEntityManager;
             worldFocusManager.WorldFocus = (IWorldFocus)firstPersonCamera;
