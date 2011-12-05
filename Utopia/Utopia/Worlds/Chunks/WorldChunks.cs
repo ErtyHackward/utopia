@@ -178,12 +178,12 @@ namespace Utopia.Worlds.Chunks
         {
             InitChunks();
             InitWrappingVariables();
-            IntilializeUpdateble();
         }
 
         public override void LoadContent()
         {
             InitDrawComponents();
+            IntilializeUpdateble();
         }
 
         public override void Dispose()
