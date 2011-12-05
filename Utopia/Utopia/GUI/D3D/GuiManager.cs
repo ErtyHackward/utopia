@@ -45,19 +45,46 @@ namespace Utopia.GUI.D3D
             _d3DEngine = d3DEngine;
             _d3DEngine.GameWindow.KeyPress += GameWindowKeyPress;
             _d3DEngine.GameWindow.KeyDown += GameWindowKeyDown;
-
+            _d3DEngine.GameWindow.KeyUp += GameWindow_KeyUp;
             DrawOrders.UpdateIndex(0, 10001);
+        }
+
+        void GameWindow_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyData)
+            {
+                case Keys.Back:
+                case Keys.Return:
+                case Keys.Escape:
+                case Keys.Left:
+                case Keys.Right:
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.Delete:
+                    _screen.InjectKeyRelease(e.KeyData);
+                    break;
+                case Keys.Tab:
+                    _screen.InjectKeyRelease(Keys.Down);
+                    break;
+            }
         }
 
         void GameWindowKeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyData)
             {
+                case Keys.Back:
+                case Keys.Return:
+                case Keys.Escape:
                 case Keys.Left:
                 case Keys.Right:
                 case Keys.Up:
                 case Keys.Down:
+                case Keys.Delete:
                     _screen.InjectKeyPress(e.KeyData);
+                    break;
+                case Keys.Tab:
+                    _screen.InjectKeyPress(Keys.Down);
                     break;
             }
         }
@@ -66,26 +93,13 @@ namespace Utopia.GUI.D3D
         {
             _d3DEngine.GameWindow.KeyPress -= GameWindowKeyPress;
             _d3DEngine.GameWindow.KeyDown -= GameWindowKeyDown;
+            
         }
 
         void GameWindowKeyPress(object sender, KeyPressEventArgs e)
         {
             if (char.IsLetterOrDigit(e.KeyChar))
                 _screen.InjectCharacter(e.KeyChar);
-            else
-            {
-                switch ((Keys)e.KeyChar)
-                {
-                    case Keys.Back:
-                    case Keys.Return:
-                    case Keys.Escape:
-                        _screen.InjectKeyPress((Keys) e.KeyChar);
-                        break;
-                    case Keys.Tab:
-                        _screen.InjectKeyPress(Keys.Down);
-                        break;
-                }
-            }
         }
 
         public override void Initialize()
