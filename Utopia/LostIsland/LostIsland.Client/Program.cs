@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
-using LostIsland.Shared;
-using LostIsland.Client;
-using Utopia;
-using Utopia.Shared.Chunks;
-using System.Globalization;
+﻿using System.Threading;
 
 namespace LostIsland.Client
 {
@@ -22,7 +13,7 @@ namespace LostIsland.Client
             {
             }
             
-            using (GameClient main = new GameClient())
+            using (var main = new GameClient())
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 main.Run();
