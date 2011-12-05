@@ -25,7 +25,7 @@ namespace LostIsland.Client.Components
         public LoadingComponent(D3DEngine engine)
         {
             _engine = engine;
-            DrawOrders.UpdateIndex(0, int.MaxValue);
+            DrawOrders.UpdateIndex(0, int.MaxValue-100);
         }
 
         public override void LoadContent()

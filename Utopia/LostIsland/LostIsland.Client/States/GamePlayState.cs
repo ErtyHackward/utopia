@@ -83,10 +83,6 @@ namespace LostIsland.Client.States
 
         public override void OnEnabled(GameState previousState)
         {
-            var loading = _ioc.Get<LoadingComponent>();
-            loading.Enabled = false;
-            loading.Visible = false;
-
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             playerEntityManager.Enabled = true;
 
