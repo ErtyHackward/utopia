@@ -534,9 +534,9 @@ namespace Utopia.Editor
 
         public override void Dispose()
         {
-            _itemEffect.Dispose();
+            if(_itemEffect != null) _itemEffect.Dispose();
             _ui = null; //TODO _ui references the texture, check if more dispose work is needed
-            Texture.Dispose();
+            if(Texture != null) Texture.Dispose();
             if (_editedEntity != null) _editedEntity.Dispose();
             base.Dispose();
         }
