@@ -182,8 +182,8 @@ namespace Utopia.Worlds.Chunks
 
         public override void LoadContent()
         {
-            InitDrawComponents();
             IntilializeUpdateble();
+            InitDrawComponents();
         }
 
         public override void Dispose()
