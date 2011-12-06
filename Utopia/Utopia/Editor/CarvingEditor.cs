@@ -383,8 +383,8 @@ namespace Utopia.Editor
 
         public override void Dispose()
         {
-            _itemEffect.Dispose();          
-            Texture.Dispose();
+            if(_itemEffect != null) _itemEffect.Dispose();
+            if (Texture != null) Texture.Dispose();
             if (_editedEntity != null) _editedEntity.Dispose();
             base.Dispose();
         }
