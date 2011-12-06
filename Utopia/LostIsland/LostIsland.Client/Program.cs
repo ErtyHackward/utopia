@@ -15,7 +15,7 @@ namespace LostIsland.Client
             
             using (var main = new GameClient())
             {
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
                 main.Run();
             }
         }

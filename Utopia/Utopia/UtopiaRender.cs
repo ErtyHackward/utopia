@@ -94,7 +94,6 @@ namespace Utopia
             base.Present();
         }
 
-
         private void InputHandling()
         {
             //Exit application
