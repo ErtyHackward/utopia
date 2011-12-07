@@ -262,7 +262,7 @@ namespace LostIsland.Client.States
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             AddComponent(cameraManager);
-            //AddComponent(_ioc.Get<ServerComponent>());
+            AddComponent(_ioc.Get<ServerComponent>());
             AddComponent(inputsManager);
             AddComponent(iconFactory);
             AddComponent(timerManager);
