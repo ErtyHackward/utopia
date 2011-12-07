@@ -2,6 +2,8 @@
 {
     public interface IGameComponent
     {
+        string Name { get; }
+
         string InitStep { get; }
         int InitVal { get; }
         bool IsInitialized { get; }

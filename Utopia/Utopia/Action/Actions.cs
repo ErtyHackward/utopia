@@ -21,6 +21,8 @@ namespace Utopia.Action
         Engine_VSync,
         Engine_ShowDebugUI,
         Engine_Exit,
+        Engine_TogglePerfMonitor,
+        Engine_ToggleDebugInfo,
         Use_Left,
         Use_LeftWhileCursorLocked,
         Use_LeftWhileCursorNotLocked,

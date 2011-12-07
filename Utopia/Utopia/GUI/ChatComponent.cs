@@ -26,7 +26,7 @@ namespace Utopia.GUI
         SpriteRenderer _spriteRender;
         Matrix _textPosition = Matrix.Translation(5, 200, 0);
 
-        private bool _chatHiden;
+        private bool _refreshDisplay;
         private long _hideChatInTick;
         private long _lastUpdateTick;
         private ByteColor _fontColor = new ByteColor(Color.White.R, Color.White.G, Color.White.B, 128);
@@ -79,7 +79,6 @@ namespace Utopia.GUI
             ChatLineLimit = 30;
             //For 5 seconds =
             _hideChatInTick = 15 * Stopwatch.Frequency;
-            _chatHiden = false;
 
             _imanager.OnKeyPressed += _imanager_OnKeyPressed;
             _d3dEngine.ViewPort_Updated += LocateChat;
@@ -119,6 +118,8 @@ namespace Utopia.GUI
             {
                 _messages.Dequeue(); //Remove the Olds messages (FIFO collection)
             }
+
+            _refreshDisplay = true;
         }
 
         void _imanager_OnKeyPressed(object sender, KeyPressEventArgs e)
@@ -181,17 +182,24 @@ namespace Utopia.GUI
             _spriteRender.Dispose();
         }
 
+        private void SetFontAlphaColor(byte color)
+        {
+            if (_fontColor.SunLight != color)
+            {
+                _fontColor.SunLight = color;
+                _refreshDisplay = true;
+            }
+        }
+
         public override void Update(ref GameTime timeSpend)
         {
             if (Stopwatch.GetTimestamp() > _lastUpdateTick + _hideChatInTick)
             {
-                _chatHiden = true;
-                _fontColor.SunLight = 50;
+                SetFontAlphaColor(50);
             }
             else
             {
-                _chatHiden = false;
-                _fontColor.SunLight = 200;
+                SetFontAlphaColor(200);
             }
 
             if (_actionManager.isTriggered(Actions.Toggle_Chat))
@@ -199,6 +207,7 @@ namespace Utopia.GUI
                 _lastUpdateTick = Stopwatch.GetTimestamp();
 
                 Activated = !Activated;
+                _refreshDisplay = true;
             }
 
             if (Activated)
@@ -208,17 +217,19 @@ namespace Utopia.GUI
                 {
                     _showCaret = !_showCaret;
                     _caretSwitch = DateTime.Now;
+                    _refreshDisplay = true;
                 }
-
             }
 
         }
 
         public override void Draw(int index)
         {
-            //if (_chatHiden) return;
-
-            _spriteRender.Begin(false, SpriteRenderer.FilterMode.Point);
+            if (!Activated && _refreshDisplay == false)
+            {
+                _spriteRender.ReplayLast();
+                return;
+            }
 
             var builder = new StringBuilder();
 
@@ -232,10 +243,13 @@ namespace Utopia.GUI
             }
             else builder.AppendLine();
 
-            _textPosition = Matrix.Translation(5, windowHeight - (100 + _messages.Count * _font.CharHeight), 0);
+
+            _spriteRender.Begin(false, SpriteRenderer.FilterMode.Point);
+             _textPosition = Matrix.Translation(5, windowHeight - (100 + _messages.Count * _font.CharHeight), 0);
 
             _spriteRender.DrawText(_font, builder.ToString(), _textPosition, _fontColor);
             _spriteRender.End();
+            _refreshDisplay = false;
         }
     }
 }

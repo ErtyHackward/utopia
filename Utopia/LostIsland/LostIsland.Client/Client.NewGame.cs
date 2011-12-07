@@ -317,6 +317,20 @@ namespace LostIsland.Client
 
             actionManager.AddActions(new KeyboardTriggeredAction()
             {
+                Action = Actions.Engine_TogglePerfMonitor,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = new KeyWithModifier() { MainKey = Keys.F10 }
+            });
+
+            actionManager.AddActions(new KeyboardTriggeredAction()
+            {
+                Action = Actions.Engine_ToggleDebugInfo,
+                TriggerType = KeyboardTriggerMode.KeyDownUp,
+                Binding = new KeyWithModifier() { MainKey = Keys.F9 }
+            });
+
+            actionManager.AddActions(new KeyboardTriggeredAction()
+            {
                 Action = Actions.DebugUI_Insert,
                 TriggerType = KeyboardTriggerMode.KeyDownUp,
                 Binding = new KeyWithModifier() { MainKey = Keys.Insert }

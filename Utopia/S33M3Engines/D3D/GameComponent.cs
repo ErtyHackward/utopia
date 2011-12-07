@@ -9,12 +9,15 @@ namespace S33M3Engines.D3D
         private int _updateOrder = 10;
 
         private string _initStep = "Ready";
+        private string _name;
         private int _initVal = 100;
         private bool _isInitialized;
         #endregion
 
         #region Public properties
-        
+
+        public virtual string Name { get { return _name; } }
+
         public virtual string InitStep { get { return _initStep; } }
 
         public virtual int InitVal { get { return _initVal; } }
@@ -48,6 +51,17 @@ namespace S33M3Engines.D3D
         }
 
         #endregion
+
+        public GameComponent()
+        {
+            string ComponentType = this.GetType().ToString();
+            _name = ComponentType.Substring(ComponentType.LastIndexOf('.') + 1, ComponentType.Length - ComponentType.LastIndexOf('.') - 1);
+        }
+
+        public GameComponent(string Name)
+        {
+            _name = Name;
+        }
 
         public event EventHandler<EventArgs> EnabledChanged;
 
