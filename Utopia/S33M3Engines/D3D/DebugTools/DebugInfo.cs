@@ -24,7 +24,7 @@ namespace S33M3Engines.D3D.DebugTools
         SpriteRenderer _spriteRender;
         Matrix _textPosition = Matrix.Translation(5, 0, 0);
 
-        IDebugInfo[] _args;
+        List<IDebugInfo> _args;
         string[] _infos;
         public bool Activated = false;
         private ByteColor _fontColor = new ByteColor(Color.Yellow.R, Color.Yellow.G, Color.Yellow.B, 255);
@@ -38,8 +38,20 @@ namespace S33M3Engines.D3D.DebugTools
 
         public void SetComponants(params IDebugInfo[] args)
         {
-            _args = args;
-            _infos = new string[_args.Length];
+            _args = new List<IDebugInfo>(args);
+            _infos = new string[_args.Count];
+        }
+
+        public void AddComponants(IDebugInfo comp)
+        {
+            _args.Add(comp);
+            _infos = new string[_args.Count];
+        }
+
+        public void RemoveComponants(IDebugInfo comp)
+        {
+            _args.Remove(comp);
+            _infos = new string[_args.Count];
         }
 
         public override void LoadContent()
@@ -65,7 +77,7 @@ namespace S33M3Engines.D3D.DebugTools
         {
             if (Activated)
             {
-                for (int CompIndex = 0; CompIndex < _args.Length; CompIndex++)
+                for (int CompIndex = 0; CompIndex < _args.Count; CompIndex++)
                 {
                     _infos[CompIndex] = _args[CompIndex].GetInfo() + "\n";
                 }

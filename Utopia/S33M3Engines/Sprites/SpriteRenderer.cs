@@ -152,12 +152,14 @@ namespace S33M3Engines.Sprites
 
         }
 
+        private bool _withDepth;
         /// <summary>
         /// Begins sprites collecting, call End() to perform actual drawing
         /// </summary>
         /// <param name="filterMode"></param>
         public void Begin(bool withDepth, FilterMode filterMode = FilterMode.DontSet)
         {
+            _withDepth = withDepth;
             //Send index buffer to Device
             _iBuffer.SetToDevice(0);
 
@@ -166,8 +168,25 @@ namespace S33M3Engines.Sprites
             _currentDepth = 1;
 
             // Set the states
-            StatesRepository.ApplyStates(_rasterStateId, _blendStateId, withDepth ? _depthStateWithDepthId : _depthStateWithoutDepthId);
+            StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _withDepth ? _depthStateWithDepthId : _depthStateWithoutDepthId);
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
+        }
+
+        /// <summary>
+        /// Begins sprites collecting, call End() to perform actual drawing
+        /// </summary>
+        /// <param name="filterMode"></param>
+        public void ReplayLast()
+        {
+            StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _withDepth ? _depthStateWithDepthId : _depthStateWithoutDepthId);
+            foreach (var drawInfo in _spriteBuffer)
+            {
+                if (drawInfo.IsGroup)
+                {
+                    RenderBatch(drawInfo.SpriteTexture, drawInfo.Group);
+                }
+                else Render(drawInfo.SpriteTexture, drawInfo.Transform, drawInfo.Color4, drawInfo.SourceRect, true, drawInfo.Depth, drawInfo.TextureArrayIndex);
+            }
         }
 
         /// <summary>

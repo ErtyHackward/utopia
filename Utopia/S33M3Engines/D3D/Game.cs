@@ -8,6 +8,7 @@ using SharpDX;
 using SharpDX.DXGI;
 using SharpDX.Windows;
 using S33M3Engines.Threading;
+using S33M3Engines.D3D.DebugTools;
 
 namespace S33M3Engines.D3D
 {
@@ -65,6 +66,8 @@ namespace S33M3Engines.D3D
         }
 
         public GameExitReasonMessage GameExitReason;
+
+        public PerfMonitor ComponentsPerfMonitor { get; set; }
         #endregion
 
         #region Private Variable
@@ -104,6 +107,8 @@ namespace S33M3Engines.D3D
             _gameComponents = new GameComponentCollection();
             _gameComponents.ComponentAdded += GameComponentAdded;
             _gameComponents.ComponentRemoved += GameComponentRemoved;
+
+            ComponentsPerfMonitor = new PerfMonitor();
         }
 
         #region Public Methods
@@ -231,7 +236,16 @@ namespace S33M3Engines.D3D
 
             for (int i = 0; i < _currentlyUpdatingComponents.Count; i++)
             {
-                _currentlyUpdatingComponents[i].Update(ref TimeSpend);
+                if (ComponentsPerfMonitor.isActivated)
+                {
+                    ComponentsPerfMonitor.StartMesure(_currentlyUpdatingComponents[i], "Update");
+                    _currentlyUpdatingComponents[i].Update(ref TimeSpend);
+                    ComponentsPerfMonitor.StopMesure(_currentlyUpdatingComponents[i], "Update");
+                }
+                else
+                {
+                    _currentlyUpdatingComponents[i].Update(ref TimeSpend);
+                }
             }
         }
 
@@ -249,7 +263,18 @@ namespace S33M3Engines.D3D
             {
                 DrawableComponentHolder drawComponent = _visibleDrawable[i];
                 lock (DxLock)
-                    drawComponent.DrawableComponent.Draw(drawComponent.DrawOrder.DrawID);
+                {
+                    if (ComponentsPerfMonitor.isActivated)
+                    {
+                        ComponentsPerfMonitor.StartMesure(drawComponent.DrawableComponent, "Draw");
+                        drawComponent.DrawableComponent.Draw(drawComponent.DrawOrder.DrawID);
+                        ComponentsPerfMonitor.StopMesure(drawComponent.DrawableComponent, "Draw");
+                    }
+                    else
+                    {
+                        drawComponent.DrawableComponent.Draw(drawComponent.DrawOrder.DrawID);
+                    }
+                }
             }
         }
 

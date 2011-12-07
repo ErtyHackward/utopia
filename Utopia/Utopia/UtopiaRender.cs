@@ -96,6 +96,37 @@ namespace Utopia
 
         private void InputHandling()
         {
+            if (ActionsManager.isTriggered(Actions.Engine_ToggleDebugInfo))
+            {
+                foreach (var gamecomp in GameComponents)
+                {
+                    if (gamecomp.GetType() == typeof(S33M3Engines.D3D.DebugTools.DebugInfo))
+                    {
+                        ((S33M3Engines.D3D.DebugTools.DebugInfo)gamecomp).Activated = !((S33M3Engines.D3D.DebugTools.DebugInfo)gamecomp).Activated;
+                    }
+                }
+            }
+
+            if (ActionsManager.isTriggered(Actions.Engine_TogglePerfMonitor))
+            {
+                foreach (var gamecomp in GameComponents)
+                {
+                    if (gamecomp.GetType() == typeof(S33M3Engines.D3D.DebugTools.DebugInfo))
+                    {
+                        ComponentsPerfMonitor.isActivated = !ComponentsPerfMonitor.isActivated;
+                        if (ComponentsPerfMonitor.isActivated)
+                        {
+                            ((S33M3Engines.D3D.DebugTools.DebugInfo)gamecomp).AddComponants(ComponentsPerfMonitor);
+                        }
+                        else
+                        {
+                            ((S33M3Engines.D3D.DebugTools.DebugInfo)gamecomp).RemoveComponants(ComponentsPerfMonitor);
+                        }
+                    }
+                }
+
+            }
+
             //Exit application
             if (ActionsManager.isTriggered(Actions.Engine_Exit))
             {
