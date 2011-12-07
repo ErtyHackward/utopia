@@ -80,7 +80,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         //New chunk Received !
         private void ServerConnection_MessageChunkData(object sender, ProtocolMessageEventArgs<ChunkDataMessage> e)
         {
-            Console.WriteLine("Chunk received from server");
+            //Console.WriteLine("Chunk received from server");
 
             //Bufferize the Data here
             if(_receivedServerChunks.ContainsKey(e.Message.Position.GetID())) _receivedServerChunks.Remove(e.Message.Position.GetID());
@@ -203,7 +203,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             else
             {
 
-                Console.WriteLine("Chunk request to server : " + chunk.ChunkID);
+                //Console.WriteLine("Chunk request to server : " + chunk.ChunkID);
 
                 chunk.IsServerRequested = true;
                 Md5Hash hash;

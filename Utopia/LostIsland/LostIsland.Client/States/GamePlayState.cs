@@ -14,6 +14,7 @@ using Utopia.GUI.D3D;
 using Utopia.GUI.D3D.Inventory;
 using Utopia.GUI.D3D.Map;
 using Utopia.InputManager;
+using Utopia.Network;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
@@ -58,7 +59,7 @@ namespace LostIsland.Client.States
             var debugInfo = _ioc.Get<DebugInfo>();
 
             AddComponent(cameraManager);
-            //AddComponent(_ioc.Get<ServerComponent>());
+            AddComponent(_ioc.Get<ServerComponent>());
             AddComponent(inputsManager);
             AddComponent(iconFactory);
             AddComponent(timerManager);
