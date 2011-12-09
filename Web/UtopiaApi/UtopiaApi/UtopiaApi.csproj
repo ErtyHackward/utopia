@@ -34,16 +34,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BLToolkit.4">
-      <HintPath>..\..\..\..\..\Users\Erty Hackward\Desktop\blt\BLToolkit.4.dll</HintPath>
+    <Reference Include="BLToolkit.4, Version=4.1.6.2057, Culture=neutral, PublicKeyToken=b1d3f6ab3aadaca3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ORM\BLToolkit.4.dll</HintPath>
     </Reference>
-    <Reference Include="BLToolkit.Data.DataProvider.MySql.4">
-      <HintPath>..\..\..\..\..\Users\Erty Hackward\Desktop\blt\DataProviders\BLToolkit.Data.DataProvider.MySql.4.dll</HintPath>
+    <Reference Include="BLToolkit.Data.DataProvider.MySql.4, Version=4.1.6.2057, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ORM\BLToolkit.Data.DataProvider.MySql.4.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.4.1.10331.0\lib\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.4.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ORM\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.Entity" />
