@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using System.Security.Cryptography;
-using System.Text;
-using System.Web;
+using System.IO;
 using System.Web.Mvc;
+using ProtoBuf;
+using UtopiaApi.Helpers;
+using UtopiaApi.Models;
 using UtopiaApi.Models.Repositories;
 
 namespace UtopiaApi.Controllers
@@ -22,13 +19,44 @@ namespace UtopiaApi.Controllers
             var password = ControllerContext.HttpContext.Request.Params["pass"];
 
             var repo = new LoginRepository();
+            var user = repo.Auth(login, password);
 
-            var auth = repo.Auth(login, password);
+            LoginResponce loginResponce;
+
+            if (user != null)
+            {
+                var r = new Random(DateTime.Now.Millisecond + login.GetHashCode());
+                var token = r.NextToken();
+                loginResponce = new LoginResponce { Logged = true, Token = token };
+                repo.WriteToken(user.id, token);
+            }
+            else
+            {
+                loginResponce = new LoginResponce { Logged = false, Error = "Invalid login/password combination" };
+            }
 
             // add protobuf serialize 
+            var ms = new MemoryStream();
+            
+            Serializer.Serialize(ms, loginResponce);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/octet-stream");
+        }
 
+        public ActionResult LogOff()
+        {
+            var token = ControllerContext.HttpContext.Request.Params["token"];
 
-            return Content("login");
+            var repo = new LoginRepository();
+            repo.DeleteToken(token);
+
+            return new EmptyResult();
+        }
+
+        public ActionResult Register()
+        {
+
+            return View();
         }
 
         public ActionResult Index()

@@ -5,18 +5,14 @@
 // | |_| | |_) | |  | |  __/ || (_| | |
 // |____/|_.__/|_|  |_|\___|\__\__,_|_|
 //
-// Auto-generated from utopiamaindb on 2011-12-09 17:33:02Z. Modified by Erty Hackward
+// Auto-generated from utopiamaindb on 2011-12-10 20:59:19Z. Modified by Erty Hackward
 // Please visit http://code.google.com/p/dblinq2007/ for more information.
 //
 namespace UtopiaApi.Models
 {
-	using System;
-	using System.ComponentModel;
-	using System.Data;
-	using System.Collections.Generic;
+    using System.Collections.Generic;
 	using BLToolkit.Data.Linq;
-	using BLToolkit.Data;
-	using BLToolkit.DataAccess;
+    using BLToolkit.DataAccess;
 	using BLToolkit.Mapping;
 	using System.Diagnostics;
 	
@@ -32,11 +28,35 @@ namespace UtopiaApi.Models
 		public UtopiaDataContext()
 		{
 		}
-
-        public UtopiaDataContext(string connectionString) : 
+		
+		public UtopiaDataContext(string connectionString) : 
 				base(connectionString)
 		{
 			this.OnCreated();
+		}
+		
+		public Table<Culture> Cultures
+		{
+			get
+			{
+				return this.GetTable<Culture>();
+			}
+		}
+		
+		public Table<Server> Servers
+		{
+			get
+			{
+				return this.GetTable<Server>();
+			}
+		}
+		
+		public Table<Token> Tokens
+		{
+			get
+			{
+				return this.GetTable<Token>();
+			}
 		}
 		
 		public Table<User> Users
@@ -48,11 +68,285 @@ namespace UtopiaApi.Models
 		}
 	}
 	
+	[TableName(Name="utopiamaindb.Cultures")]
+	public partial class Culture
+	{
+		
+		private uint _id;
+		
+		private string _name;
+		
+		private List<Server> _servers;
+		
+		private List<User> _users;
+		
+		public Culture()
+		{
+		}
+		
+		[PrimaryKey(1)]
+		[Identity()]
+		[DebuggerNonUserCode()]
+		public uint Id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				this._id = value;
+			}
+		}
+		
+		[DebuggerNonUserCode()]
+		public string Name
+		{
+			get
+			{
+				return this._name;
+			}
+			set
+			{
+				this._name = value;
+			}
+		}
+		
+		#region Children
+		[Association(Storage="_servers", OtherKey="Culture", ThisKey="Id")]
+		[DebuggerNonUserCode()]
+		public List<Server> Servers
+		{
+			get
+			{
+				return this._servers;
+			}
+			set
+			{
+				this._servers = value;
+			}
+		}
+		
+		[Association(Storage="_users", OtherKey="Culture", ThisKey="Id")]
+		[DebuggerNonUserCode()]
+		public List<User> Users
+		{
+			get
+			{
+				return this._users;
+			}
+			set
+			{
+				this._users = value;
+			}
+		}
+		#endregion
+	}
+	
+	[TableName(Name="utopiamaindb.Servers")]
+	public partial class Server
+	{
+		
+		private string _address;
+		
+		private uint _authorId;
+		
+		private uint _culture;
+		
+		private uint _id;
+		
+		private string _name;
+		
+		private Culture _cultureCulture;
+		
+		private User _user;
+		
+		public Server()
+		{
+		}
+		
+		[DebuggerNonUserCode()]
+		public string Address
+		{
+			get
+			{
+				return this._address;
+			}
+			set
+			{
+				this._address = value;
+			}
+		}
+		
+		[DebuggerNonUserCode()]
+		public uint AuthorId
+		{
+			get
+			{
+				return this._authorId;
+			}
+			set
+			{
+				this._authorId = value;
+			}
+		}
+		
+		[DebuggerNonUserCode()]
+		public uint Culture
+		{
+			get
+			{
+				return this._culture;
+			}
+			set
+			{
+				this._culture = value;
+			}
+		}
+		
+		[PrimaryKey(1)]
+		[Identity()]
+		[DebuggerNonUserCode()]
+		public uint Id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				this._id = value;
+			}
+		}
+		
+		[DebuggerNonUserCode()]
+		public string Name
+		{
+			get
+			{
+				return this._name;
+			}
+			set
+			{
+				this._name = value;
+			}
+		}
+		
+		#region Parents
+		[Association(Storage="_cultureCulture", OtherKey="Id", ThisKey="Culture")]
+		[DebuggerNonUserCode()]
+		public Culture CultureCulture
+		{
+			get
+			{
+				return this._cultureCulture;
+			}
+			set
+			{
+				this._cultureCulture = value;
+			}
+		}
+		
+		[Association(Storage="_user", OtherKey="id", ThisKey="AuthorId")]
+		[DebuggerNonUserCode()]
+		public User User
+		{
+			get
+			{
+				return this._user;
+			}
+			set
+			{
+				this._user = value;
+			}
+		}
+		#endregion
+	}
+	
+	[TableName(Name="utopiamaindb.Tokens")]
+	public partial class Token
+	{
+		
+		private System.DateTime _lastUpdate;
+		
+		private string _tokenValue;
+		
+		private uint _userId;
+		
+		private User _user;
+		
+		public Token()
+		{
+		}
+		
+		[DebuggerNonUserCode()]
+		public System.DateTime LastUpdate
+		{
+			get
+			{
+				return this._lastUpdate;
+			}
+			set
+			{
+				this._lastUpdate = value;
+			}
+		}
+		
+		[DebuggerNonUserCode()]
+		public string TokenValue
+		{
+			get
+			{
+				return this._tokenValue;
+			}
+			set
+			{
+				this._tokenValue = value;
+			}
+		}
+		
+		[PrimaryKey(1)]
+		[DebuggerNonUserCode()]
+		public uint UserId
+		{
+			get
+			{
+				return this._userId;
+			}
+			set
+			{
+				this._userId = value;
+			}
+		}
+		
+		#region Parents
+		[Association(Storage="_user", OtherKey="id", ThisKey="UserId")]
+		[DebuggerNonUserCode()]
+		public User User
+		{
+			get
+			{
+				return this._user;
+			}
+			set
+			{
+				this._user = value;
+			}
+		}
+		#endregion
+	}
+	
 	[TableName(Name="utopiamaindb.Users")]
 	public partial class User
 	{
 		
-		private int _id;
+		private byte _confirmed;
+		
+		private string _confirmToken;
+		
+		private uint _culture;
+		
+		private uint _id;
 		
 		private uint _lastIp;
 		
@@ -64,13 +358,59 @@ namespace UtopiaApi.Models
 		
 		private System.DateTime _registerDate;
 		
+		private List<Server> _servers;
+		
+		private List<Token> _tokens;
+		
+		private Culture _cultureCulture;
+		
 		public User()
 		{
 		}
 		
-		[PrimaryKey(1)]
 		[DebuggerNonUserCode()]
-		public int id
+		public byte Confirmed
+		{
+			get
+			{
+				return this._confirmed;
+			}
+			set
+			{
+				this._confirmed = value;
+			}
+		}
+		
+		[DebuggerNonUserCode()]
+		public string ConfirmToken
+		{
+			get
+			{
+				return this._confirmToken;
+			}
+			set
+			{
+				this._confirmToken = value;
+			}
+		}
+		
+		[DebuggerNonUserCode()]
+		public uint Culture
+		{
+			get
+			{
+				return this._culture;
+			}
+			set
+			{
+				this._culture = value;
+			}
+		}
+		
+		[PrimaryKey(1)]
+		[Identity()]
+		[DebuggerNonUserCode()]
+		public uint id
 		{
 			get
 			{
@@ -146,5 +486,51 @@ namespace UtopiaApi.Models
 				this._registerDate = value;
 			}
 		}
+		
+		#region Children
+		[Association(Storage="_servers", OtherKey="AuthorId", ThisKey="id")]
+		[DebuggerNonUserCode()]
+		public List<Server> Servers
+		{
+			get
+			{
+				return this._servers;
+			}
+			set
+			{
+				this._servers = value;
+			}
+		}
+		
+		[Association(Storage="_tokens", OtherKey="UserId", ThisKey="id")]
+		[DebuggerNonUserCode()]
+		public List<Token> Tokens
+		{
+			get
+			{
+				return this._tokens;
+			}
+			set
+			{
+				this._tokens = value;
+			}
+		}
+		#endregion
+		
+		#region Parents
+		[Association(Storage="_cultureCulture", OtherKey="Id", ThisKey="Culture")]
+		[DebuggerNonUserCode()]
+		public Culture CultureCulture
+		{
+			get
+			{
+				return this._cultureCulture;
+			}
+			set
+			{
+				this._cultureCulture = value;
+			}
+		}
+		#endregion
 	}
 }
