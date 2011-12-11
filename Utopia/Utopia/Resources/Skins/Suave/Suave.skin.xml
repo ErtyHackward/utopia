@@ -94,8 +94,8 @@ that uses the theme, please give due credit to the original artist!
     -->
     <frame name="label">
       <text font="default" hplacement="left" vplacement="center" yoffset="0" color="#3F3F3F" />
-    </frame>
-
+    </frame>    
+    
     <!--
       Frame used for a progress bar
     -->

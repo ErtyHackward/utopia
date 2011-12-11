@@ -86,12 +86,13 @@
     <Compile Include="Helpers\RandomHelper.cs" />
     <Compile Include="Library\EmailAttribute.cs" />
     <Compile Include="Library\PasswordAttribute.cs" />
-    <Compile Include="Models\GetServersResponce.cs" />
+    <Compile Include="Models\ServerListResponce.cs" />
     <Compile Include="Models\LoginResponce.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\RegisterModel.cs" />
     <Compile Include="Models\Repositories\LoginRepository.cs" />
     <Compile Include="Models\Repositories\Repository.cs" />
+    <Compile Include="Models\Repositories\ServerRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

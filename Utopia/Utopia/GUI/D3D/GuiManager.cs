@@ -90,7 +90,7 @@ namespace Utopia.GUI.D3D
 
         void GameWindowKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsLetterOrDigit(e.KeyChar))
+            if (char.IsLetterOrDigit(e.KeyChar) || char.IsPunctuation(e.KeyChar))
                 _screen.InjectCharacter(e.KeyChar);
         }
 
