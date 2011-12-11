@@ -84,6 +84,8 @@
     </Compile>
     <Compile Include="Helpers\HtmlExtensions.cs" />
     <Compile Include="Helpers\RandomHelper.cs" />
+    <Compile Include="Library\EmailAttribute.cs" />
+    <Compile Include="Library\PasswordAttribute.cs" />
     <Compile Include="Models\GetServersResponce.cs" />
     <Compile Include="Models\LoginResponce.cs" />
     <Compile Include="Models\Model.cs" />
@@ -160,9 +162,14 @@
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Views\Home\RegisterSuccess.cshtml" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Register.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Confirm.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
