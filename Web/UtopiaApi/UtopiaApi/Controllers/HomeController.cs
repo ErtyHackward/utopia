@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
@@ -12,7 +13,6 @@ namespace UtopiaApi.Controllers
 {
     public class HomeController : Controller
     {
-        
         public ActionResult Login()
         {
             var login = ControllerContext.HttpContext.Request.Params["login"];
@@ -29,15 +29,15 @@ namespace UtopiaApi.Controllers
                 var token = r.NextToken();
                 loginResponce = new LoginResponce { Logged = true, Token = token };
                 repo.WriteToken(user.id, token);
+
+                repo.UpdateLoginDate(user.id);
             }
             else
             {
                 loginResponce = new LoginResponce { Logged = false, Error = "Invalid login/password combination" };
             }
-
-            // add protobuf serialize 
-            var ms = new MemoryStream();
             
+            var ms = new MemoryStream();
             Serializer.Serialize(ms, loginResponce);
             ms.Position = 0;
             return new FileStreamResult(ms, "application/octet-stream");
@@ -52,6 +52,59 @@ namespace UtopiaApi.Controllers
 
             return new EmptyResult();
         }
+
+        public ActionResult ServerList()
+        {
+            var token = ControllerContext.HttpContext.Request.Params["token"];
+
+            var loginRepo = new LoginRepository();
+            var serversRepo = new ServerRepository();
+
+            if (loginRepo.IsTokenExists(token))
+            {
+                var servers = serversRepo.GetServers(1);
+
+                var responce = new ServerListResponce();
+
+                responce.Servers = new List<ServerInfo>();
+
+                foreach (var server in servers)
+                {
+                    responce.Servers.Add(new ServerInfo { ServerName = server.Name, ServerAddress = server.Address });
+                }
+
+                var ms = new MemoryStream();
+                Serializer.Serialize(ms, responce);
+                ms.Position = 0;
+                return new FileStreamResult(ms, "application/octet-stream");
+            }
+
+            return new EmptyResult();
+        }
+
+        public ActionResult ServerAlive()
+        {
+            var pars = ControllerContext.HttpContext.Request.Params;
+            var name = pars["name"];
+            var address = pars["address"];
+
+            var serverRepository = new ServerRepository();
+            serverRepository.ServerAlive(name, address);
+            return new EmptyResult();
+        }
+
+        public ActionResult UserAuthentication()
+        {
+            var login = ControllerContext.HttpContext.Request.Params["login"];
+            var password = ControllerContext.HttpContext.Request.Params["pass"];
+            var repo = new LoginRepository();
+            var user = repo.Auth(login, password);
+
+            if (user != null)
+                return Content("1");
+            return Content("0");
+        }
+
 
         public ActionResult Register()
         {
