@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using Ninject;
 using Utopia;
 using Utopia.GUI.D3D;
+using Utopia.Settings;
 
 namespace LostIsland.Client.States
 {
@@ -27,7 +29,10 @@ namespace LostIsland.Client.States
             var gui = _iocContainer.Get<GuiManager>();
             var login = _iocContainer.Get<LoginComponent>();
 
+            login.Email = ClientSettings.Current.Settings.Login;
+
             login.Login += LoginLogin;
+            login.Register += delegate { try { Process.Start("http://api.cubiquest.com/register"); } catch { } };
 
             AddComponent(gui);
             AddComponent(login);
@@ -41,7 +46,7 @@ namespace LostIsland.Client.States
 
         void LoginLogin(object sender, EventArgs e)
         {
-            // for now, while we have not a web part just open the main menu
+            // request our server for a authorization
             StatesManager.SetGameState("MainMenu");
         }
     }

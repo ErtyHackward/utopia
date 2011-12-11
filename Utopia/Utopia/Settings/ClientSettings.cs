@@ -155,6 +155,11 @@ namespace Utopia.Settings
     public class ClientConfig : IConfigClass
     {
         /// <summary>
+        /// Last user email as login
+        /// </summary>
+        public string Login { get; set; }
+
+        /// <summary>
         /// Game parameters config section
         /// </summary>
         public GameParameters GameParameters { get; set; }

@@ -39,7 +39,7 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
     public void Render(
       Controls.LabelControl control, IFlatGuiGraphics graphics
     ) {
-      graphics.DrawString("label", control.GetAbsoluteBounds(), control.Text);
+        graphics.DrawString("label", control.GetAbsoluteBounds(), control.Text);
     }
 
   }

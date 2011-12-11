@@ -17,9 +17,39 @@ namespace Utopia.GUI.D3D
         WindowControl _loginWindow;
         private readonly D3DEngine _engine;
         private readonly Screen _screen;
+        private string _email;
+        private string _password;
+        private InputControl _emailControl;
+        private InputControl _passwordControl;
+        
+        /// <summary>
+        /// Gets or sets current displayed email
+        /// </summary>
+        public string Email
+        {
+            get { return _email; }
+            set { 
+                _email = value;
+                if (_emailControl != null)
+                    _emailControl.Text = _email;
+            }
+        }
+        
+        /// <summary>
+        /// Gets or sets current password in the component
+        /// </summary>
+        public string Password
+        {
+            get { return _password; }
+            set { 
+                _password = value;
+                if (_passwordControl != null)
+                    _passwordControl.Text = _password;
+            }
+        }
 
         /// <summary>
-        /// Occurs when you press login button
+        /// Occurs when user press login button
         /// </summary>
         public event EventHandler Login;
 
@@ -29,20 +59,31 @@ namespace Utopia.GUI.D3D
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Occurs when user press a register button
+        /// </summary>
+        public event EventHandler Register;
+
+        protected void OnRegister()
+        {
+            var handler = Register;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+        
         public LoginComponent(D3DEngine engine, Screen screen)
         {
             _engine = engine;
             _screen = screen;
-            _engine.ViewPort_Updated += _engine_ViewportUpdated;
+            _engine.ViewPort_Updated += EngineViewportUpdated;
         }
 
         public override void Dispose()
         {
             _loginWindow = null;
-            _engine.ViewPort_Updated -= _engine_ViewportUpdated;
+            _engine.ViewPort_Updated -= EngineViewportUpdated;
         }
 
-        void _engine_ViewportUpdated(Viewport viewport)
+        void EngineViewportUpdated(Viewport viewport)
         {
             // locate login window
             CenterWindow(new Size((int)viewport.Width, (int)viewport.Height));
@@ -69,7 +110,7 @@ namespace Utopia.GUI.D3D
             _loginWindow.Children.Add(new LabelControl
             {
                 Bounds = new UniRectangle(dx, dy, 30, 20),
-                Text = "Login"
+                Text = "Email"
             });
 
             _loginWindow.Children.Add(new LabelControl
@@ -81,35 +122,36 @@ namespace Utopia.GUI.D3D
             var loginInput = new InputControl
             {
                 Bounds = new UniRectangle(dx + 60, dy, 140, 20),
-                Text = "",
+                Text = Email,
             };
             _loginWindow.Children.Add(loginInput);
 
             _loginWindow.Children.Add(new InputControl
             {
                 Bounds = new UniRectangle(dx + 60, dy + 30, 140, 20),
-                Text = "",
+                Text = Password,
                 IsPassword = true
             });
 
-            _loginWindow.Children.Add(new OptionControl
-            {
-                Bounds = new UniRectangle(dx, dy + 60, 100, 16),
-                Text = "Remember",
-                Selected = true
-            });
-
-            var button = new ButtonControl
+            var regButton = new ButtonControl
             {
                 Bounds = new UniRectangle(dx, dy + 90, 200, 20),
+                Text = "Register",
+            };
+
+            regButton.Pressed += delegate { OnRegister(); };
+
+            _loginWindow.Children.Add(regButton);
+
+            var loginButton = new ButtonControl
+            {
+                Bounds = new UniRectangle(dx, dy + 60, 200, 20),
                 Text = "Login"
             };
 
-            button.Pressed += delegate { 
-                OnLogin(); 
-            };
+            loginButton.Pressed += delegate { OnLogin(); };
 
-            _loginWindow.Children.Add(button);
+            _loginWindow.Children.Add(loginButton);
 
             if (Enabled)
             {

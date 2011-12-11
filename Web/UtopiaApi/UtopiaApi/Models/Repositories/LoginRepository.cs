@@ -10,7 +10,7 @@ namespace UtopiaApi.Models.Repositories
     {
         public User Auth(string login, string passwordHash)
         {
-            return Context.Users.Where(u => u.Login == login && u.PasswordHash == passwordHash).First();
+            return Context.Users.Where(u => u.Login == login && u.PasswordHash == passwordHash && u.Confirmed == 1).First();
         }
 
         public void UpdateLoginDate(uint userId)

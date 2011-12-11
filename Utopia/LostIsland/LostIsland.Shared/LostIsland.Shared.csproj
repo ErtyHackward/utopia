@@ -58,6 +58,7 @@
     <Compile Include="Tools\Carver.cs" />
     <Compile Include="Tools\Editor.cs" />
     <Compile Include="Tools\Shovel.cs" />
+    <Compile Include="UtopiaWebApi.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">

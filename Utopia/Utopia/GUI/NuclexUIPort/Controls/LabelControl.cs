@@ -37,7 +37,6 @@ namespace Nuclex.UserInterface.Controls {
 
     /// <summary>Text to be rendered in the control's frame</summary>
     public string Text;
-
   }
 
 } // namespace Nuclex.UserInterface.Controls
