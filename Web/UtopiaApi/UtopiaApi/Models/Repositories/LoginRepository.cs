@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using BLToolkit.Data.Linq;
 
 namespace UtopiaApi.Models.Repositories
@@ -24,5 +26,42 @@ namespace UtopiaApi.Models.Repositories
             Context.InsertOrReplace(t);
         }
 
+        public bool IsRegistered(string email)
+        {
+            return Context.Users.Any(u => u.Login.ToLower() == email.ToLower());
+        }
+
+        public void Register(string email, string password, string confirmToken)
+        {
+            var user = new User();
+
+            var encoded = Encoding.UTF8.GetBytes(password);
+            string passwordHash;
+
+            using (var sha1 = SHA1.Create())
+            {
+
+                byte[] hash = sha1.ComputeHash(encoded, 0, encoded.Length);
+                var formatted = new StringBuilder(hash.Length);
+                foreach (byte b in hash)
+                {
+                    formatted.AppendFormat("{0:X2}", b);
+                }
+                passwordHash = formatted.ToString();
+            }
+            
+            user.Login = email;
+            user.RegisterDate = DateTime.UtcNow;
+            user.PasswordHash = passwordHash;
+            user.ConfirmToken = confirmToken;
+            user.Culture = 1;
+
+            Context.InsertWithIdentity(user);
+        }
+
+        public bool Confirm(string token)
+        {
+            return Context.Users.Where(u => u.ConfirmToken == token).Update(u => new User { Confirmed = 1 }) > 0; 
+        }
     }
 }
