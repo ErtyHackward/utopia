@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<Database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="utopiamaindb" EntityNamespace="UtopiaApi.Models" ContextNamespace="UtopiaApi.Models" Class="utopiamaindb" BaseType="DbLinq.Data.Linq.DataContext" Provider="MySql" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="utopiamaindb.Cultures" Member="Cultures">
+    <Type Name="Culture">
+      <Association Name="FK_Servers_Cultures" Member="Servers" Storage="_servers" Type="Server" ThisKey="Id" OtherKey="Culture" DeleteRule="NO ACTION" />
+      <Association Name="FK_Users_Cultures" Member="Users" Storage="_users" Type="User" ThisKey="Id" OtherKey="Culture" DeleteRule="NO ACTION" />
+      <Column Name="Id" Member="Id" Storage="_id" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Member="Name" Storage="_name" Type="System.String" DbType="varchar(50)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="utopiamaindb.Servers" Member="Servers">
+    <Type Name="Server">
+      <Association Name="FK_Servers_Cultures" Member="CultureCulture" Storage="_cultureCulture" Type="Culture" ThisKey="Culture" OtherKey="Id" IsForeignKey="true" />
+      <Column Name="Address" Member="Address" Storage="_address" Type="System.String" DbType="varchar(255)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="Culture" Member="Culture" Storage="_culture" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="Id" Member="Id" Storage="_id" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="LastUpdate" Member="LastUpdate" Storage="_lastUpdate" Type="System.DateTime" DbType="timestamp" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="Name" Member="Name" Storage="_name" Type="System.String" DbType="varchar(50)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="utopiamaindb.Tokens" Member="Tokens">
+    <Type Name="Token">
+      <Association Name="FK_Tokens_Users" Member="User" Storage="_user" Type="User" ThisKey="UserId" OtherKey="id" IsForeignKey="true" />
+      <Column Name="LastUpdate" Member="LastUpdate" Storage="_lastUpdate" Type="System.DateTime" DbType="timestamp" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="TokenValue" Member="TokenValue" Storage="_tokenValue" Type="System.String" DbType="char(40)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="UserId" Member="UserId" Storage="_userId" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="true" IsDbGenerated="false" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="utopiamaindb.Users" Member="Users">
+    <Type Name="User">
+      <Association Name="FK_Tokens_Users" Member="Tokens" Storage="_tokens" Type="Token" ThisKey="id" OtherKey="UserId" DeleteRule="NO ACTION" />
+      <Association Name="FK_Users_Cultures" Member="CultureCulture" Storage="_cultureCulture" Type="Culture" ThisKey="Culture" OtherKey="Id" IsForeignKey="true" />
+      <Column Name="Confirmed" Member="Confirmed" Storage="_confirmed" Type="System.Byte" DbType="tinyint unsigned" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="ConfirmToken" Member="ConfirmToken" Storage="_confirmToken" Type="System.String" DbType="varchar(50)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="Culture" Member="Culture" Storage="_culture" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="id" Member="id" Storage="_id" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="LastIp" Member="LastIp" Storage="_lastIp" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="LastLogin" Member="LastLogin" Storage="_lastLogin" Type="System.DateTime" DbType="timestamp" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="true" />
+      <Column Name="Login" Member="Login" Storage="_login" Type="System.String" DbType="varchar(30)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="PasswordHash" Member="PasswordHash" Storage="_passwordHash" Type="System.String" DbType="varchar(40)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="RegisterDate" Member="RegisterDate" Storage="_registerDate" Type="System.DateTime" DbType="timestamp" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

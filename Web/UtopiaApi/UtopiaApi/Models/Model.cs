@@ -5,7 +5,7 @@
 // | |_| | |_) | |  | |  __/ || (_| | |
 // |____/|_.__/|_|  |_|\___|\__\__,_|_|
 //
-// Auto-generated from utopiamaindb on 2011-12-10 20:59:19Z. Modified by Erty Hackward
+// Auto-generated from utopiamaindb on 2011-12-11 15:17:54Z. Modified by Erty Hackward
 // Please visit http://code.google.com/p/dblinq2007/ for more information.
 //
 namespace UtopiaApi.Models
@@ -149,17 +149,15 @@ namespace UtopiaApi.Models
 		
 		private string _address;
 		
-		private uint _authorId;
-		
 		private uint _culture;
 		
 		private uint _id;
 		
+		private System.DateTime _lastUpdate;
+		
 		private string _name;
 		
 		private Culture _cultureCulture;
-		
-		private User _user;
 		
 		public Server()
 		{
@@ -175,19 +173,6 @@ namespace UtopiaApi.Models
 			set
 			{
 				this._address = value;
-			}
-		}
-		
-		[DebuggerNonUserCode()]
-		public uint AuthorId
-		{
-			get
-			{
-				return this._authorId;
-			}
-			set
-			{
-				this._authorId = value;
 			}
 		}
 		
@@ -220,6 +205,19 @@ namespace UtopiaApi.Models
 		}
 		
 		[DebuggerNonUserCode()]
+		public System.DateTime LastUpdate
+		{
+			get
+			{
+				return this._lastUpdate;
+			}
+			set
+			{
+				this._lastUpdate = value;
+			}
+		}
+		
+		[DebuggerNonUserCode()]
 		public string Name
 		{
 			get
@@ -244,20 +242,6 @@ namespace UtopiaApi.Models
 			set
 			{
 				this._cultureCulture = value;
-			}
-		}
-		
-		[Association(Storage="_user", OtherKey="id", ThisKey="AuthorId")]
-		[DebuggerNonUserCode()]
-		public User User
-		{
-			get
-			{
-				return this._user;
-			}
-			set
-			{
-				this._user = value;
 			}
 		}
 		#endregion
@@ -350,15 +334,13 @@ namespace UtopiaApi.Models
 		
 		private uint _lastIp;
 		
-		private System.DateTime _lastLogin;
+		private System.Nullable<System.DateTime> _lastLogin;
 		
 		private string _login;
 		
 		private string _passwordHash;
 		
-		private System.DateTime _registerDate;
-		
-		private List<Server> _servers;
+		private System.Nullable<System.DateTime> _registerDate;
 		
 		private List<Token> _tokens;
 		
@@ -436,7 +418,7 @@ namespace UtopiaApi.Models
 		}
 		
 		[DebuggerNonUserCode()]
-		public System.DateTime LastLogin
+		public System.Nullable<System.DateTime> LastLogin
 		{
 			get
 			{
@@ -475,7 +457,7 @@ namespace UtopiaApi.Models
 		}
 		
 		[DebuggerNonUserCode()]
-		public System.DateTime RegisterDate
+		public System.Nullable<System.DateTime> RegisterDate
 		{
 			get
 			{
@@ -488,20 +470,6 @@ namespace UtopiaApi.Models
 		}
 		
 		#region Children
-		[Association(Storage="_servers", OtherKey="AuthorId", ThisKey="id")]
-		[DebuggerNonUserCode()]
-		public List<Server> Servers
-		{
-			get
-			{
-				return this._servers;
-			}
-			set
-			{
-				this._servers = value;
-			}
-		}
-		
 		[Association(Storage="_tokens", OtherKey="UserId", ThisKey="id")]
 		[DebuggerNonUserCode()]
 		public List<Token> Tokens

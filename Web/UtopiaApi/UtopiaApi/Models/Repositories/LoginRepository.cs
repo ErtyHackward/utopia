@@ -13,6 +13,11 @@ namespace UtopiaApi.Models.Repositories
             return Context.Users.Where(u => u.Login == login && u.PasswordHash == passwordHash).First();
         }
 
+        public void UpdateLoginDate(uint userId)
+        {
+            Context.Users.Where(u => u.id == userId).Set(u => u.LastLogin, DateTime.UtcNow).Update();
+        }
+
         public void DeleteToken(string token)
         {
             //var t = new Token{ TokenValue = token };
@@ -62,6 +67,11 @@ namespace UtopiaApi.Models.Repositories
         public bool Confirm(string token)
         {
             return Context.Users.Where(u => u.ConfirmToken == token).Update(u => new User { Confirmed = 1 }) > 0; 
+        }
+
+        public bool IsTokenExists(string token)
+        {
+            return Context.Tokens.Any(t => t.TokenValue == token);
         }
     }
 }
