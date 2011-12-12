@@ -9,8 +9,8 @@ namespace Utopia.Shared.ClassExt
         {
             // step 1, calculate MD5 hash from input
             var md5 = MD5.Create();
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] hash = md5.ComputeHash(inputBytes);
+            var inputBytes = Encoding.UTF8.GetBytes(input);
+            var hash = md5.ComputeHash(inputBytes);
 
             // step 2, convert byte array to hex string
             var sb = new StringBuilder();
@@ -18,6 +18,21 @@ namespace Utopia.Shared.ClassExt
             {
                 sb.Append(hash[i].ToString("x2"));
             }
+            return sb.ToString();
+        }
+
+        public static string GetSHA1Hash(this string input)
+        {
+            var sha1 = SHA1.Create();
+            var bytes = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            var sb = new StringBuilder();
+
+            for (var i = 0; i < bytes.Length; i++)
+            {
+                sb.Append(bytes[i].ToString("x2"));
+            }
+
             return sb.ToString();
         }
     }

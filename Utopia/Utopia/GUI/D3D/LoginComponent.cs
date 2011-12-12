@@ -21,6 +21,7 @@ namespace Utopia.GUI.D3D
         private string _password;
         private InputControl _emailControl;
         private InputControl _passwordControl;
+        private ButtonControl _loginButton;
         
         /// <summary>
         /// Gets or sets current displayed email
@@ -46,6 +47,11 @@ namespace Utopia.GUI.D3D
                 if (_passwordControl != null)
                     _passwordControl.Text = _password;
             }
+        }
+
+        public bool Locked
+        {
+            set { _loginButton.Enabled = value; }
         }
 
         /// <summary>
@@ -143,15 +149,15 @@ namespace Utopia.GUI.D3D
 
             _loginWindow.Children.Add(regButton);
 
-            var loginButton = new ButtonControl
+            _loginButton = new ButtonControl
             {
                 Bounds = new UniRectangle(dx, dy + 60, 200, 20),
                 Text = "Login"
             };
 
-            loginButton.Pressed += delegate { OnLogin(); };
+            _loginButton.Pressed += delegate { OnLogin(); };
 
-            _loginWindow.Children.Add(loginButton);
+            _loginWindow.Children.Add(_loginButton);
 
             if (Enabled)
             {

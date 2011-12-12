@@ -1,4 +1,7 @@
 ﻿using System.Windows.Forms;
+using Nuclex.UserInterface;
+using Nuclex.UserInterface.Controls;
+using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.D3D;
 using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.InputHandler.MouseHelper;
@@ -117,6 +120,21 @@ namespace Utopia.GUI.D3D
         {
         }
 
+        public void MessageBox(string message, string title = "", string buttonText = "Ok")
+        {
+            var mbWindow = new WindowControl { Title = title, Bounds = new UniRectangle(100,100,100,100) };
+
+            mbWindow.Children.Add(new LabelControl { Text = message, Bounds = new UniRectangle( 10, 25, 100, 40) });
+
+            var button = new ButtonControl { Text = buttonText, Bounds = new UniRectangle(10, 65, 50, 20) };
+
+            button.Pressed += delegate { mbWindow.Close(); };
+
+            mbWindow.Children.Add(button);
+
+            _screen.Desktop.Children.Add(mbWindow);
+        }
+        
         //Draw at 2d level ! (Last draw called)
         public override void Draw(int index)
         {

@@ -22,6 +22,7 @@ namespace S33M3Engines.Sprites
         private HLSLSprites _effectInstanced;
         private SamplerState _spriteSampler;
         private D3DEngine _d3DEngine;
+        private bool _withDepth;
 
         private int _rasterStateId, _blendStateId, _depthStateWithDepthId, _depthStateWithoutDepthId;
 
@@ -151,11 +152,11 @@ namespace S33M3Engines.Sprites
             });
 
         }
-
-        private bool _withDepth;
+        
         /// <summary>
         /// Begins sprites collecting, call End() to perform actual drawing
         /// </summary>
+        /// <param name="withDepth"></param>
         /// <param name="filterMode"></param>
         public void Begin(bool withDepth, FilterMode filterMode = FilterMode.DontSet)
         {
@@ -173,20 +174,12 @@ namespace S33M3Engines.Sprites
         }
 
         /// <summary>
-        /// Begins sprites collecting, call End() to perform actual drawing
+        /// Apply a style and performs a rendering
         /// </summary>
-        /// <param name="filterMode"></param>
         public void ReplayLast()
         {
             StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _withDepth ? _depthStateWithDepthId : _depthStateWithoutDepthId);
-            foreach (var drawInfo in _spriteBuffer)
-            {
-                if (drawInfo.IsGroup)
-                {
-                    RenderBatch(drawInfo.SpriteTexture, drawInfo.Group);
-                }
-                else Render(drawInfo.SpriteTexture, drawInfo.Transform, drawInfo.Color4, drawInfo.SourceRect, true, drawInfo.Depth, drawInfo.TextureArrayIndex);
-            }
+            End();
         }
 
         /// <summary>
@@ -302,7 +295,7 @@ namespace S33M3Engines.Sprites
         /// <param name="transform"></param>
         /// <param name="color"></param>
         /// <param name="lineDefaultOffset"></param>
-        public void DrawText(SpriteFont font, string text, Matrix transform, ByteColor color, float lineDefaultOffset = -1)
+        public void DrawText(SpriteFont font, string text, Matrix transform, ByteColor color, float maxWidth = 1000, float lineDefaultOffset = -1)
         {
             var length = text.Length;
             var textTransform = Matrix.Identity;
@@ -344,8 +337,6 @@ namespace S33M3Engines.Sprites
                     textTransform.M41 += desc.Width + 1;
                 }
             }
-
-            
 
             // Submit a batch
             Draw(font.SpriteTexture, list.ToArray());

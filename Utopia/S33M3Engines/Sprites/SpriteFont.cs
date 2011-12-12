@@ -250,7 +250,82 @@ namespace S33M3Engines.Sprites
             textWidth += length; // spacing between characters
 
             return new Vector2(textWidth, textHeight);
+        }
 
+        public struct WordInfo
+        {
+            public int IndexStart;
+            public int Length;
+            public float Width;
+        }
+
+        public Vector2 MeasureString(string text, int maxWidth, out WordInfo[] infos)
+        {
+            var space = 1;
+            int arraySize = 0;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (text[i] == ' ' || text[i] == '\n')
+                    arraySize++;
+            }
+
+            var wordWidths = new WordInfo[arraySize];
+
+            // collect words lengths
+            int arrayIndex = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                var c = text[i];
+                if (c == ' ')
+                {
+                    if (wordWidths[arrayIndex].Width > 0) wordWidths[arrayIndex].Width -= space;
+                    arrayIndex++;
+                    if (wordWidths.Length < arrayIndex) wordWidths[arrayIndex].IndexStart = i+1;
+                }
+                else if (c == '\n')
+                {
+                    if (wordWidths[arrayIndex].Width > 0) wordWidths[arrayIndex].Width -= space;
+                    arrayIndex++;
+                    wordWidths[arrayIndex].Width = -1;
+                    arrayIndex++;
+                    if (wordWidths.Length < arrayIndex) wordWidths[arrayIndex].IndexStart = i+1;
+                }
+                else
+                {
+                    wordWidths[arrayIndex].Width += CharDescriptors[c].Width + space;
+                    wordWidths[arrayIndex].Length++;
+                }
+            }
+
+            // calculate the size
+            var size = new Vector2();
+            size.Y = CharHeight;
+            var width = 0f;
+
+            for (int i = 0; i < arraySize; i++)
+            {
+                if (wordWidths[i].Width == -1)
+                {
+                    size.Y += CharHeight;
+                    width = wordWidths[++i].Width;
+                }
+                else if (width + wordWidths[i].Width > maxWidth)
+                {
+                    size.Y += CharHeight;
+                    width = wordWidths[i].Width;
+                }
+                else
+                {
+                    width += wordWidths[i].Width + SpaceWidth;
+                    if (size.X <= width - SpaceWidth)
+                        size.X = width - SpaceWidth;
+                }
+            }
+
+            infos = wordWidths;
+
+            return size;
         }
 
         public Vector2 MeasureString2(string text)

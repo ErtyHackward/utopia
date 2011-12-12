@@ -3,6 +3,7 @@ using System.Drawing;
 using LostIsland.Client.Components;
 using LostIsland.Client.GUI;
 using LostIsland.Client.States;
+using LostIsland.Shared.Web;
 using LostIslandHD.Client;
 using Ninject;
 using Nuclex.UserInterface;
@@ -100,6 +101,7 @@ namespace LostIsland.Client
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<UtopiaWebApi>().ToSelf().InSingletonScope();
             //=============================================================
 
             //User Input Handling ======================================
