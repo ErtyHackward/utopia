@@ -46,11 +46,20 @@ namespace LostIsland.Client.States
 
         void WebApiLoginCompleted(object sender, WebEventArgs<LoginResponce> e)
         {
+            var login = _iocContainer.Get<LoginComponent>();
+            var gui = _iocContainer.Get<GuiManager>();
+
             if (e.Exception != null)
             {
-                var gui = _iocContainer.Get<GuiManager>();
+                gui.MessageBox("Error: "+e.Exception.Message);
+                login.Locked = false;
+                return;
+            }
 
-                gui.MessageBox("Exception occured");
+            if (!e.Responce.Logged)
+            {
+                gui.MessageBox("Wrong login/password combination, try again or register.");
+                login.Locked = false;
                 return;
             }
 
@@ -71,11 +80,13 @@ namespace LostIsland.Client.States
         {
             var login = _iocContainer.Get<LoginComponent>();
 
+            login.Locked = true;
+
             if (string.IsNullOrWhiteSpace(login.Email) || string.IsNullOrWhiteSpace(login.Password))
             {
                 var gui = _iocContainer.Get<GuiManager>();
 
-                gui.MessageBox("Please fill the form before press a login button");
+                gui.MessageBox("Please fill the form before press a login button", "Error", "Ok", delegate { login.Locked = false; });
                 return;
             }
 
@@ -83,7 +94,7 @@ namespace LostIsland.Client.States
             // request our server for a authorization
             _webApi.UserLogin(login.Email, login.Password.GetSHA1Hash());
 
-            login.Locked = true;
+            
         }
     }
 }

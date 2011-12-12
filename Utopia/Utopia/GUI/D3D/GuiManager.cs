@@ -120,19 +120,27 @@ namespace Utopia.GUI.D3D
         {
         }
 
-        public void MessageBox(string message, string title = "", string buttonText = "Ok")
+        public void MessageBox(string message, string title = "", string buttonText = "Ok", System.Action action = null)
         {
-            var mbWindow = new WindowControl { Title = title, Bounds = new UniRectangle(100,100,100,100) };
+            var screenWidth = _d3DEngine.ViewPort.Width;
+            var screenHeight = _d3DEngine.ViewPort.Height;
 
-            mbWindow.Children.Add(new LabelControl { Text = message, Bounds = new UniRectangle( 10, 25, 100, 40) });
+            var windowWidth = 300;
+            var windowHeight = 100;
 
-            var button = new ButtonControl { Text = buttonText, Bounds = new UniRectangle(10, 65, 50, 20) };
+            var mbWindow = new WindowControl { Title = title, Bounds = new UniRectangle((screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2, windowWidth, windowHeight) };
 
-            button.Pressed += delegate { mbWindow.Close(); };
+            mbWindow.Children.Add(new LabelControl { Text = message, Bounds = new UniRectangle(15, 25, windowWidth - 30, 40) });
+
+            var button = new ButtonControl { Text = buttonText, Bounds = new UniRectangle((windowWidth - 50) / 2, windowHeight - 30, 50, 20) };
+
+            button.Pressed += delegate { mbWindow.Close(); if (action != null) action(); };
 
             mbWindow.Children.Add(button);
 
             _screen.Desktop.Children.Add(mbWindow);
+
+            mbWindow.BringToFront();
         }
         
         //Draw at 2d level ! (Last draw called)

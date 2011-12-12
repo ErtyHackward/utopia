@@ -259,10 +259,10 @@ namespace S33M3Engines.Sprites
             public float Width;
         }
 
-        public Vector2 MeasureString(string text, int maxWidth, out WordInfo[] infos)
+        public Vector2 MeasureString(string text, float maxWidth, out WordInfo[] infos)
         {
             var space = 1;
-            int arraySize = 0;
+            int arraySize = 1;
 
             for (int i = 0; i < text.Length; i++)
             {
@@ -281,7 +281,7 @@ namespace S33M3Engines.Sprites
                 {
                     if (wordWidths[arrayIndex].Width > 0) wordWidths[arrayIndex].Width -= space;
                     arrayIndex++;
-                    if (wordWidths.Length < arrayIndex) wordWidths[arrayIndex].IndexStart = i+1;
+                    if (wordWidths.Length > arrayIndex) wordWidths[arrayIndex].IndexStart = i+1;
                 }
                 else if (c == '\n')
                 {
@@ -289,7 +289,7 @@ namespace S33M3Engines.Sprites
                     arrayIndex++;
                     wordWidths[arrayIndex].Width = -1;
                     arrayIndex++;
-                    if (wordWidths.Length < arrayIndex) wordWidths[arrayIndex].IndexStart = i+1;
+                    if (wordWidths.Length > arrayIndex) wordWidths[arrayIndex].IndexStart = i+1;
                 }
                 else
                 {
