@@ -279,12 +279,13 @@ namespace S33M3Engines.Sprites
         /// <param name="text"></param>
         /// <param name="pos"></param>
         /// <param name="color"></param>
-        public void DrawText(SpriteFont spriteFont, string text, Vector2 pos, Color color)
+        /// <param name="maxWidth"></param>
+        public void DrawText(SpriteFont spriteFont, string text, Vector2 pos, Color color, float maxWidth = -1)
         {
             var transform = Matrix.Translation(pos.X, pos.Y, 0);
 
             //TODO color vs color4
-            DrawText(spriteFont, text, transform, new ByteColor(color));
+            DrawText(spriteFont, text, transform, new ByteColor(color), maxWidth);
         }
 
         /// <summary>
@@ -294,8 +295,9 @@ namespace S33M3Engines.Sprites
         /// <param name="text"></param>
         /// <param name="transform"></param>
         /// <param name="color"></param>
+        /// <param name="maxWidth"></param>
         /// <param name="lineDefaultOffset"></param>
-        public void DrawText(SpriteFont font, string text, Matrix transform, ByteColor color, float maxWidth = 1000, float lineDefaultOffset = -1)
+        public void DrawText(SpriteFont font, string text, Matrix transform, ByteColor color, float maxWidth = -1, float lineDefaultOffset = -1)
         {
             var length = text.Length;
             var textTransform = Matrix.Identity;
@@ -308,33 +310,84 @@ namespace S33M3Engines.Sprites
 
             _currentDepth -= 0.001f;
 
-            for (int i = 0; i < numCharsToDraw; ++i)
+            if (maxWidth == -1)
             {
-                char character = text[i];
-                if (character == ' ')
-                    //next character will be a little bit more right
-                    textTransform.M41 += font.SpaceWidth;
-                else if (character == '\n')
+                for (int i = 0; i < numCharsToDraw; ++i)
                 {
-                    //next character will be at next line
-                    textTransform.M42 += font.CharHeight;
-                    textTransform.M41 = 0;
-                    transform.M41 = lineDefaultOffset;
+                    char character = text[i];
+                    if (character == ' ')
+                        //next character will be a little bit more right
+                        textTransform.M41 += font.SpaceWidth;
+                    else if (character == '\n')
+                    {
+                        //next character will be at next line
+                        textTransform.M42 += font.CharHeight;
+                        textTransform.M41 = 0;
+                        transform.M41 = lineDefaultOffset;
+                    }
+                    else
+                    {
+                        //New character
+                        var desc = font.CharDescriptors[character];
+
+                        list.Add(new VertexSpriteInstanced
+                                     {
+                                         Tranform = textTransform * transform,
+                                         SourceRect = desc,
+                                         Color = color,
+                                         Depth = _currentDepth
+                                     });
+
+                        textTransform.M41 += desc.Width + 1;
+                    }
                 }
-                else
+            }
+            else
+            {
+                SpriteFont.WordInfo[] infos;
+                // measure the string
+                font.MeasureString(text, maxWidth, out infos);
+
+                float currentWidth = 0;
+
+                // draw each word
+                foreach (var wordInfo in infos)
                 {
-                    //New character
-                    var desc = font.CharDescriptors[character];
-
-                    list.Add(new VertexSpriteInstanced
+                    // draw line breaks
+                    if (wordInfo.Width == -1)
+                    {
+                        textTransform.M42 += font.CharHeight;
+                        textTransform.M41 = 0;
+                        transform.M41 = lineDefaultOffset;
+                    }
+                    else
+                    {
+                        // check if we need to start a new line
+                        if (currentWidth + wordInfo.Width > maxWidth && wordInfo.Width < maxWidth)
                         {
-                            Tranform = textTransform * transform,
-                            SourceRect = desc,
-                            Color = color,
-                            Depth = _currentDepth
-                        });
+                            currentWidth = 0;
+                            textTransform.M42 += font.CharHeight;
+                            textTransform.M41 = 0;
+                            transform.M41 = lineDefaultOffset;
+                        }
 
-                    textTransform.M41 += desc.Width + 1;
+                        for (int i = wordInfo.IndexStart; i < wordInfo.IndexStart+ wordInfo.Length; i++)
+                        {
+                            var desc = font.CharDescriptors[text[i]];
+
+                            list.Add(new VertexSpriteInstanced
+                            {
+                                Tranform = textTransform * transform,
+                                SourceRect = desc,
+                                Color = color,
+                                Depth = _currentDepth
+                            });
+
+                            textTransform.M41 += desc.Width + 1;
+                        }
+                        textTransform.M41 += font.SpaceWidth;
+                        currentWidth += wordInfo.Width + font.SpaceWidth;
+                    }
                 }
             }
 

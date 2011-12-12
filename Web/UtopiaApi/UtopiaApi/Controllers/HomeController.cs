@@ -13,10 +13,11 @@ namespace UtopiaApi.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Login()
+        [HttpPost]
+        public ActionResult Login(FormCollection formCollection)
         {
-            var login = ControllerContext.HttpContext.Request.Params["login"];
-            var password = ControllerContext.HttpContext.Request.Params["pass"];
+            var login = formCollection["login"];
+            var password = formCollection["pass"];
 
             var repo = new LoginRepository();
             var user = repo.Auth(login, password);
@@ -43,9 +44,10 @@ namespace UtopiaApi.Controllers
             return new FileStreamResult(ms, "application/octet-stream");
         }
 
-        public ActionResult LogOff()
+        [HttpPost]
+        public ActionResult LogOff(FormCollection formCollection)
         {
-            var token = ControllerContext.HttpContext.Request.Params["token"];
+            var token = formCollection["token"];
 
             var repo = new LoginRepository();
             repo.DeleteToken(token);
@@ -53,9 +55,10 @@ namespace UtopiaApi.Controllers
             return new EmptyResult();
         }
 
-        public ActionResult ServerList()
+        [HttpPost]
+        public ActionResult ServerList(FormCollection formCollection)
         {
-            var token = ControllerContext.HttpContext.Request.Params["token"];
+            var token = formCollection["token"];
 
             var loginRepo = new LoginRepository();
             var serversRepo = new ServerRepository();
@@ -82,21 +85,23 @@ namespace UtopiaApi.Controllers
             return new EmptyResult();
         }
 
-        public ActionResult ServerAlive()
+        [HttpPost]
+        public ActionResult ServerAlive(FormCollection formCollection)
         {
-            var pars = ControllerContext.HttpContext.Request.Params;
-            var name = pars["name"];
-            var address = pars["address"];
+            //var pars = ControllerContext.HttpContext.Request.Params;
+            var name = formCollection["name"];
+            var address = formCollection["address"];
 
             var serverRepository = new ServerRepository();
             serverRepository.ServerAlive(name, address);
             return new EmptyResult();
         }
 
-        public ActionResult UserAuthentication()
+        [HttpPost]
+        public ActionResult UserAuthentication(FormCollection formCollection)
         {
-            var login = ControllerContext.HttpContext.Request.Params["login"];
-            var password = ControllerContext.HttpContext.Request.Params["pass"];
+            var login = formCollection["login"];
+            var password = formCollection["pass"];
             var repo = new LoginRepository();
             var user = repo.Auth(login, password);
 

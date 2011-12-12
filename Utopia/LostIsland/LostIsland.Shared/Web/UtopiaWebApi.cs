@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using ProtoBuf;
 using UtopiaApi.Models;
 
@@ -12,7 +13,7 @@ namespace LostIsland.Shared.Web
     /// </summary>
     public class UtopiaWebApi : IDisposable
     {
-        private const string ServerUrl = "http://api.cubiquest.com";
+        private const string ServerUrl = "http://api.cubiquest.com"; //"http://localhost:20753";
 
         /// <summary>
         /// Gets a token received from a login procedure
@@ -49,19 +50,23 @@ namespace LostIsland.Shared.Web
         /// <param name="callback"></param>
         public static void PostRequestAsync(string url, string pars, AsyncCallback callback)
         {
-            var postBytes = Encoding.UTF8.GetBytes(pars);
+            new ThreadStart(delegate()
+                                {
+                                    var postBytes = Encoding.UTF8.GetBytes(pars);
 
-            var request = WebRequest.Create(url);
-            request.Method = "POST";
+                                    var request = WebRequest.Create(url);
+                                    request.Method = "POST";
 
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.ContentLength = postBytes.Length;
+                                    request.ContentType = "application/x-www-form-urlencoded";
+                                    request.ContentLength = postBytes.Length;
 
-            var requestStream = request.GetRequestStream();
-            requestStream.Write(postBytes, 0, postBytes.Length);
-            requestStream.Close();
+                                    var requestStream = request.GetRequestStream();
+                                    requestStream.Write(postBytes, 0, postBytes.Length);
+                                    requestStream.Close();
 
-            request.BeginGetResponse(callback, request);
+                                    request.BeginGetResponse(callback, request);
+                                }
+            ).BeginInvoke(null, null);
         }
 
         /// <summary>

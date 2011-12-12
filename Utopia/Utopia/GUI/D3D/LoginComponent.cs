@@ -28,7 +28,7 @@ namespace Utopia.GUI.D3D
         /// </summary>
         public string Email
         {
-            get { return _email; }
+            get { return _emailControl == null ? _email : _emailControl.Text; }
             set { 
                 _email = value;
                 if (_emailControl != null)
@@ -41,7 +41,7 @@ namespace Utopia.GUI.D3D
         /// </summary>
         public string Password
         {
-            get { return _password; }
+            get { return _passwordControl == null ? _password : _passwordControl.Text; }
             set { 
                 _password = value;
                 if (_passwordControl != null)
@@ -51,7 +51,7 @@ namespace Utopia.GUI.D3D
 
         public bool Locked
         {
-            set { _loginButton.Enabled = value; }
+            set { _loginButton.Enabled = !value; }
         }
 
         /// <summary>
@@ -125,19 +125,21 @@ namespace Utopia.GUI.D3D
                 Text = "Password"
             });
 
-            var loginInput = new InputControl
+            _emailControl = new InputControl
             {
                 Bounds = new UniRectangle(dx + 60, dy, 140, 20),
                 Text = Email,
             };
-            _loginWindow.Children.Add(loginInput);
+            _loginWindow.Children.Add(_emailControl);
 
-            _loginWindow.Children.Add(new InputControl
+            _passwordControl = new InputControl
             {
                 Bounds = new UniRectangle(dx + 60, dy + 30, 140, 20),
                 Text = Password,
                 IsPassword = true
-            });
+            };
+
+            _loginWindow.Children.Add(_passwordControl);
 
             var regButton = new ButtonControl
             {
@@ -162,7 +164,7 @@ namespace Utopia.GUI.D3D
             if (Enabled)
             {
                 _screen.Desktop.Children.Add(_loginWindow);
-                _screen.FocusedControl = loginInput;
+                _screen.FocusedControl = _emailControl;
                 CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
             }
             

@@ -169,7 +169,7 @@ namespace Nuclex.UserInterface.Visuals.Flat {
             // Draw the text in all anchor locations defined by the skin
             for (var index = 0; index < frame.Texts.Length; ++index)
             {
-                spriteRenderer.DrawText(frame.Texts[index].Font, text, positionText(ref frame.Texts[index], bounds, text), frame.Texts[index].Color);
+                spriteRenderer.DrawText(frame.Texts[index].Font, text, positionText(ref frame.Texts[index], bounds, text), frame.Texts[index].Color, (int)bounds.Width);
             }
         }
 
