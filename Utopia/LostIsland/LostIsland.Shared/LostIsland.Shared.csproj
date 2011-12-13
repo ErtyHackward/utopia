@@ -53,17 +53,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Items\GoldCoin.cs" />
-    <Compile Include="Web\LoginResponce.cs" />
+    <Compile Include="Web\Responces\LoginResponce.cs" />
     <Compile Include="LostIslandEntityClassId.cs" />
     <Compile Include="LostIslandEntityFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Web\ServerListResponce.cs" />
+    <Compile Include="Web\Responces\ServerListResponce.cs" />
     <Compile Include="Tools\Annihilator.cs" />
     <Compile Include="Tools\BlockRemover.cs" />
     <Compile Include="Tools\Carver.cs" />
     <Compile Include="Tools\Editor.cs" />
     <Compile Include="Tools\Shovel.cs" />
-    <Compile Include="Web\UtopiaWebApi.cs" />
+    <Compile Include="Web\ClientWebApi.cs" />
+    <Compile Include="Web\ServerWebApi.cs" />
+    <Compile Include="Web\Responces\UserAuthenticationResponce.cs" />
+    <Compile Include="Web\UtopiaWebApiBase.cs" />
+    <Compile Include="Web\WebEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">

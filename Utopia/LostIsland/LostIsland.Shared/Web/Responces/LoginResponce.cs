@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using ProtoBuf;
+﻿using ProtoBuf;
 
-namespace UtopiaApi.Models
+namespace LostIsland.Shared.Web.Responces
 {
     [ProtoContract]
     public class LoginResponce

@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace LostIsland.Shared.Web
+namespace UtopiaApi.Models.Responces
 {
     [ProtoContract]
     public class LoginResponce

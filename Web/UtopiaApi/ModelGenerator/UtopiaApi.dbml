@@ -16,6 +16,7 @@
       <Column Name="Id" Member="Id" Storage="_id" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="LastUpdate" Member="LastUpdate" Storage="_lastUpdate" Type="System.DateTime" DbType="timestamp" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
       <Column Name="Name" Member="Name" Storage="_name" Type="System.String" DbType="varchar(50)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="UsersCount" Member="UsersCount" Storage="_usersCount" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
     </Type>
   </Table>
   <Table Name="utopiamaindb.Tokens" Member="Tokens">

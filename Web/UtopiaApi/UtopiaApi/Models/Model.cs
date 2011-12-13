@@ -5,7 +5,7 @@
 // | |_| | |_) | |  | |  __/ || (_| | |
 // |____/|_.__/|_|  |_|\___|\__\__,_|_|
 //
-// Auto-generated from utopiamaindb on 2011-12-11 15:17:54Z. Modified by Erty Hackward
+// Auto-generated from utopiamaindb on 2011-12-13 15:11:58Z. Modified by Erty Hackward
 // Please visit http://code.google.com/p/dblinq2007/ for more information.
 //
 namespace UtopiaApi.Models
@@ -157,6 +157,8 @@ namespace UtopiaApi.Models
 		
 		private string _name;
 		
+		private uint _usersCount;
+		
 		private Culture _cultureCulture;
 		
 		public Server()
@@ -227,6 +229,19 @@ namespace UtopiaApi.Models
 			set
 			{
 				this._name = value;
+			}
+		}
+		
+		[DebuggerNonUserCode()]
+		public uint UsersCount
+		{
+			get
+			{
+				return this._usersCount;
+			}
+			set
+			{
+				this._usersCount = value;
 			}
 		}
 		

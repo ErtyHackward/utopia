@@ -7,9 +7,9 @@ namespace UtopiaApi.Models.Repositories
 {
     public class ServerRepository : Repository
     {
-        public void ServerAlive(string name, string address)
+        public void ServerAlive(string name, string address, uint users)
         {
-            var server = new Server { Name = name, Address = address, Culture = 1 };
+            var server = new Server { Name = name, Address = address, Culture = 1, UsersCount = users };
 
             Context.InsertOrReplace(server);
         }

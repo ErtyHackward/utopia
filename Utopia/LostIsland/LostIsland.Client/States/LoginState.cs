@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using LostIsland.Shared.Web;
+using LostIsland.Shared.Web.Responces;
 using Ninject;
 using Utopia;
 using Utopia.GUI.D3D;
@@ -15,7 +16,7 @@ namespace LostIsland.Client.States
     public class LoginState : GameState
     {
         private readonly IKernel _iocContainer;
-        private UtopiaWebApi _webApi;
+        private ClientWebApi _webApi;
 
         public override string Name
         {
@@ -31,7 +32,7 @@ namespace LostIsland.Client.States
         {
             var gui = _iocContainer.Get<GuiManager>();
             var login = _iocContainer.Get<LoginComponent>();
-            _webApi = _iocContainer.Get<UtopiaWebApi>();
+            _webApi = _iocContainer.Get<ClientWebApi>();
 
             login.Email = ClientSettings.Current.Settings.Login;
 
@@ -92,7 +93,7 @@ namespace LostIsland.Client.States
 
 
             // request our server for a authorization
-            _webApi.UserLogin(login.Email, login.Password.GetSHA1Hash());
+            _webApi.UserLoginAsync(login.Email, login.Password.GetSHA1Hash());
 
             
         }

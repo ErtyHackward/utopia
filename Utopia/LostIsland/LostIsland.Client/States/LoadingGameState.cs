@@ -90,13 +90,9 @@ namespace LostIsland.Client.States
         {
             var loading = _ioc.Get<LoadingComponent>();
             _vars = _ioc.Get<RuntimeVariables>();
-
-
+            
             AddComponent(loading);
             AddComponent(_ioc.Get<ServerComponent>());
-
-            
-            
         }
 
         private void GameplayInitialize()
