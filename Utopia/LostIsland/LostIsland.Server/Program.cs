@@ -35,6 +35,7 @@ namespace LostIsland.Server
 
             var settingsManager = new XmlSettingsManager<ServerSettings>("utopiaServer.config");
             settingsManager.Load();
+            
 
             if (string.IsNullOrEmpty(settingsManager.Settings.DatabasePath))
                 settingsManager.Settings.DatabasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia\\world.db");
@@ -76,6 +77,8 @@ namespace LostIsland.Server
 
             IocBind(new WorldParameters());
 
+            var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
+
             TraceHelper.Write("Lost Island game server v{1} Protocol: v{0}", Utopia.Server.Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
             
             _server = new Utopia.Server.Server(
@@ -100,32 +103,29 @@ namespace LostIsland.Server
             catch (Exception)
             {
             }
-
             
-
             _gameplay = new ServerGameplayProvider(_server);
 
             _server.Services.Add(new TestNpcService());
             _server.Services.Add(new BlueprintRecorderService());
 
-            _server.Scheduler.AddTaskPeriodic("Update alive", DateTime.Now, TimeSpan.FromMinutes(5), delegate
-                                                                                                         {
-                                                                                                             var webApi = _iocContainer.Get<ServerWebApi>();
-                                                                                                             var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
-                                                                                                             webApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerAddress, (uint)_server.ConnectionManager.Count);
-                                                                                                         });
-
+            _server.Scheduler.AddTaskPeriodic("Update alive", DateTime.Now, TimeSpan.FromMinutes(5), CommitServerInfo);
             _server.ConnectionManager.Listen();
-
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
 
-            
+            CommitServerInfo();
 
             while (Console.ReadLine() != "exit")
             {
 
             }
+        }
 
+        static void CommitServerInfo()
+        {
+            var webApi = _iocContainer.Get<ServerWebApi>();
+            var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
+            webApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerPort, (uint)_server.ConnectionManager.Count);
         }
 
         static void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)

@@ -48,12 +48,8 @@ namespace Utopia.Server
         /// <summary>
         /// Server global name
         /// </summary>
+        [DefaultValue("unnamed server")]
         public string ServerName { get; set; }
-
-        /// <summary>
-        /// Full address string of the server
-        /// </summary>
-        public string ServerAddress { get; set; }
 
         public void Initialize()
         {
