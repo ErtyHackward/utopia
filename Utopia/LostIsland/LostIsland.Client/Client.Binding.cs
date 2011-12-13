@@ -96,6 +96,7 @@ namespace LostIsland.Client
             _iocContainer.Bind<MainMenuState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoadingGameState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<GamePlayState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<ServerSelectionComponent>().ToSelf().InSingletonScope();
             
             //Network Related =============================================
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)

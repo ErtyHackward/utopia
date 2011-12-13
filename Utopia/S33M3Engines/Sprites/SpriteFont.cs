@@ -266,8 +266,10 @@ namespace S33M3Engines.Sprites
 
             for (int i = 0; i < text.Length; i++)
             {
-                if (text[i] == ' ' || text[i] == '\n')
+                if (text[i] == ' ')
                     arraySize++;
+                if (text[i] == '\n')
+                    arraySize += 2;
             }
 
             var wordWidths = new WordInfo[arraySize];

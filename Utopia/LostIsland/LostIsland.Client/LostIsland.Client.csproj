@@ -74,6 +74,7 @@
     <Compile Include="Components\CreditsComponent.cs" />
     <Compile Include="Components\LoadingComponent.cs" />
     <Compile Include="Components\MainMenuComponent.cs" />
+    <Compile Include="Components\ServerSelectionComponent.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="GameStateToolManager.cs" />
     <Compile Include="GUI\Forms\CustControls\Config.cs">
@@ -120,6 +121,7 @@
     <Compile Include="States\LoadingGameState.cs" />
     <Compile Include="States\LoginState.cs" />
     <Compile Include="States\MainMenuState.cs" />
+    <Compile Include="States\SelectServerGameState.cs" />
     <EmbeddedResource Include="GUI\Forms\CustControls\Config.resx">
       <DependentUpon>Config.cs</DependentUpon>
     </EmbeddedResource>

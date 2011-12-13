@@ -1,6 +1,5 @@
 ﻿using System;
 using Nuclex.UserInterface;
-using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines;
 using S33M3Engines.D3D;
@@ -8,12 +7,13 @@ using SharpDX.Direct3D11;
 
 namespace LostIsland.Client.Components
 {
-    public class CreditsComponent : GameComponent
+    public class ServerSelectionComponent : GameComponent
     {
         private readonly D3DEngine _engine;
         private readonly Screen _screen;
-        private LabelControl _creditsLabel;
+
         private ButtonControl _backButton;
+        private ListControl _serverList;
 
         public event EventHandler BackPressed;
 
@@ -22,8 +22,8 @@ namespace LostIsland.Client.Components
             var handler = BackPressed;
             if (handler != null) handler(this, EventArgs.Empty);
         }
-
-        public CreditsComponent(D3DEngine engine, Screen screen)
+        
+        public ServerSelectionComponent(D3DEngine engine, Screen screen)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");
@@ -35,15 +35,16 @@ namespace LostIsland.Client.Components
 
         public override void Initialize()
         {
-            _creditsLabel = new LabelControl { Text = "Credits: \nGraphics engine: Fabian Ceressia\nNetwork programming: Vladislav Pozdnyakov\nShovel: Simon Lebettre" };
             _backButton = new ButtonControl { Text = "Back" };
             _backButton.Pressed += delegate { OnBackPressed(); };
+
+            _serverList = new ListControl { Bounds = new UniRectangle(100, 100, 400, 400) };
+
             UpdateLayout(_engine.ViewPort);
 
             if (Enabled)
             {
-                _screen.Desktop.Children.Add(_creditsLabel);
-                _screen.Desktop.Children.Add(_backButton);
+                //_screen.Desktop.Children.Add();
             }
         }
 
@@ -53,16 +54,16 @@ namespace LostIsland.Client.Components
 
             if (Enabled)
             {
-                _screen.Desktop.Children.Add(_creditsLabel);
+                _screen.Desktop.Children.Add(_serverList);
                 _screen.Desktop.Children.Add(_backButton);
                 UpdateLayout(_engine.ViewPort);
             }
             else
             {
-                _screen.Desktop.Children.Remove(_creditsLabel);
+                _screen.Desktop.Children.Remove(_serverList);
                 _screen.Desktop.Children.Remove(_backButton);
             }
-            
+
             base.OnEnabledChanged();
         }
 
@@ -70,12 +71,8 @@ namespace LostIsland.Client.Components
         {
             if (Enabled)
             {
-                _creditsLabel.Bounds = new UniRectangle((_engine.ViewPort.Width - 200)/2,
-                                                        (_engine.ViewPort.Height - 200)/2, 600, 200);
-                _backButton.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 60, 120,
-                                                      24);
+                _backButton.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 60, 120, 24);
             }
-            //_buttonsGroup.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 200, 200, 200);
         }
     }
 }
