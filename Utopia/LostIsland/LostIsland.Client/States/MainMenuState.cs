@@ -35,6 +35,13 @@ namespace LostIsland.Client.States
             
             menu.CreditsPressed += MenuCreditsPressed;
             menu.SinglePlayerPressed += MenuSinglePlayerPressed;
+            menu.MultiplayerPressed += MenuMultiplayerPressed;
+        }
+
+        void MenuMultiplayerPressed(object sender, EventArgs e)
+        {
+            _vars.SinglePlayer = false;
+            StatesManager.SetGameState("SelectServer");
         }
 
         void MenuSinglePlayerPressed(object sender, EventArgs e)

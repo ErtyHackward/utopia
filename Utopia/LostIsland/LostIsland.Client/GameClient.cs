@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using LostIsland.Client.Components;
 using LostIsland.Client.States;
 using LostIsland.Shared;
@@ -44,6 +45,9 @@ namespace LostIsland.Client
             _clientFactory = new LostIslandEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());
             _iocContainer.Bind<EntityFactory>().ToConstant(_clientFactory).InSingletonScope().Named("Client");
 
+            System.Net.ServicePointManager.Expect100Continue = false;
+
+
             //Initialize the Thread Pool manager
             S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
 
@@ -68,6 +72,7 @@ namespace LostIsland.Client
             stateManager.RegisterState(_iocContainer.Get<MainMenuState>());
             stateManager.RegisterState(_iocContainer.Get<LoadingGameState>());
             stateManager.RegisterState(_iocContainer.Get<GamePlayState>());
+            stateManager.RegisterState(_iocContainer.Get<SelectServerGameState>());
 
             // first state will be the login
             stateManager.SetGameState("Login");
