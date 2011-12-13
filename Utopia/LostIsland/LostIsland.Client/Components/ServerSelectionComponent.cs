@@ -15,6 +15,11 @@ namespace LostIsland.Client.Components
         private ButtonControl _backButton;
         private ListControl _serverList;
 
+        public ListControl List
+        {
+            get { return _serverList; }
+        }
+
         public event EventHandler BackPressed;
 
         private void OnBackPressed()
