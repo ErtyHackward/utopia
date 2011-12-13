@@ -13,7 +13,7 @@ namespace LostIsland.Shared.Web
     /// </summary>
     public class UtopiaWebApi : IDisposable
     {
-        private const string ServerUrl = "http://api.cubiquest.com"; //"http://localhost:20753";
+        private const string ServerUrl = "http://api.cubiquest.com"; // "http://localhost:20753";
 
         /// <summary>
         /// Gets a token received from a login procedure
