@@ -70,11 +70,13 @@ namespace LostIsland.Server
             GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"Config\" };
             GameSystemSettings.Current.Load();
 
+            var serverFactory = new LostIslandEntityFactory(null);
+
+            _iocContainer.Bind<EntityFactory>().ToConstant(serverFactory).InSingletonScope();
+
             IocBind(new WorldParameters());
 
             TraceHelper.Write("Lost Island game server v{1} Protocol: v{0}", Utopia.Server.Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
-
-            var factory = new LostIslandEntityFactory(null);
             
             _server = new Utopia.Server.Server(
                 _iocContainer.Get<XmlSettingsManager<ServerSettings>>(),
@@ -82,10 +84,10 @@ namespace LostIsland.Server
                 _iocContainer.Get<IUsersStorage>(),
                 _iocContainer.Get<IChunksStorage>(),
                 _iocContainer.Get<IEntityStorage>(),
-                factory
+                serverFactory
                 );
 
-            factory.LandscapeManager = _server.LandscapeManager;
+            serverFactory.LandscapeManager = _server.LandscapeManager;
 
             try
             {
@@ -99,11 +101,19 @@ namespace LostIsland.Server
             {
             }
 
+            
 
             _gameplay = new ServerGameplayProvider(_server);
 
             _server.Services.Add(new TestNpcService());
             _server.Services.Add(new BlueprintRecorderService());
+
+            _server.Scheduler.AddTaskPeriodic("Update alive", DateTime.Now, TimeSpan.FromMinutes(5), delegate
+                                                                                                         {
+                                                                                                             var webApi = _iocContainer.Get<ServerWebApi>();
+                                                                                                             var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
+                                                                                                             webApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerAddress, (uint)_server.ConnectionManager.Count);
+                                                                                                         });
 
             _server.ConnectionManager.Listen();
 
