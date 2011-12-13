@@ -97,7 +97,7 @@ Materials: 6
 0.000000 0.000000 0.000000 1.000000
 0.000000
 1.000000
-"..\HG Repositories\Utopia\Utopia\LostIsland\LostIsland.Resources\TexturesPacks\Default\Terran\ct03.png"
+"ct03.png"
 ""
 "5_Right"
 0.200000 0.200000 0.200000 1.000000
@@ -106,7 +106,7 @@ Materials: 6
 0.000000 0.000000 0.000000 1.000000
 0.000000
 1.000000
-"..\HG Repositories\Utopia\Utopia\LostIsland\LostIsland.Resources\TexturesPacks\Default\Terran\ct03.png"
+"ct03.png"
 ""
 "1_Front"
 0.200000 0.200000 0.200000 1.000000
@@ -115,7 +115,7 @@ Materials: 6
 0.000000 0.000000 0.000000 1.000000
 0.000000
 1.000000
-"..\HG Repositories\Utopia\Utopia\LostIsland\LostIsland.Resources\TexturesPacks\Default\Terran\ct03.png"
+"ct03.png"
 ""
 "0_Back"
 0.200000 0.200000 0.200000 1.000000
@@ -124,7 +124,7 @@ Materials: 6
 0.000000 0.000000 0.000000 1.000000
 0.000000
 1.000000
-"..\HG Repositories\Utopia\Utopia\LostIsland\LostIsland.Resources\TexturesPacks\Default\Terran\ct03.png"
+"ct03.png"
 ""
 
 Bones: 0
