@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ProtoBuf;
 
-namespace UtopiaApi.Models
+namespace UtopiaApi.Models.Responces
 {
     [ProtoContract]
     public class ServerListResponce
@@ -17,5 +17,7 @@ namespace UtopiaApi.Models
         public string ServerName { get; set; }
         [ProtoMember(2)]
         public string ServerAddress { get; set; }
+        [ProtoMember(3)]
+        public uint UsersCount { get; set; }
     }
 }

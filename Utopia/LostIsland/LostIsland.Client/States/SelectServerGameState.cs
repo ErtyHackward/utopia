@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using LostIsland.Client.Components;
 using LostIsland.Shared.Web;
+using LostIsland.Shared.Web.Responces;
 using Ninject;
 using Utopia;
 using Utopia.GUI.D3D;
@@ -28,7 +29,7 @@ namespace LostIsland.Client.States
         {
             var gui = _iocContainer.Get<GuiManager>();
             var selection = _iocContainer.Get<ServerSelectionComponent>();
-            var webApi = _iocContainer.Get<UtopiaWebApi>();
+            var webApi = _iocContainer.Get<ClientWebApi>();
 
             EnabledComponents.Add(gui);
             EnabledComponents.Add(selection);
@@ -42,7 +43,7 @@ namespace LostIsland.Client.States
 
         }
 
-        void webApi_ServerListReceived(object sender, WebEventArgs<UtopiaApi.Models.ServerListResponce> e)
+        void webApi_ServerListReceived(object sender, WebEventArgs<ServerListResponce> e)
         {
             var selection = _iocContainer.Get<ServerSelectionComponent>();
 
@@ -69,13 +70,13 @@ namespace LostIsland.Client.States
 
         public override void OnEnabled(GameState previousState)
         {
-            var webApi = _iocContainer.Get<UtopiaWebApi>();
+            var webApi = _iocContainer.Get<ClientWebApi>();
             var selection = _iocContainer.Get<ServerSelectionComponent>();
 
             selection.List.Items.Clear();
             selection.List.Items.Add("Loading...");
 
-            webApi.GetServersList();
+            webApi.GetServersListAsync();
         }
 
         void SelectionBackPressed(object sender, System.EventArgs e)

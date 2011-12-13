@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using LostIsland.Shared;
+using LostIsland.Shared.Web;
 using Ninject;
 using Utopia.Server;
 using Utopia.Server.Managers;
@@ -55,6 +56,8 @@ namespace LostIsland.Server
             _iocContainer.Bind<IUsersStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
             _iocContainer.Bind<IChunksStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
             _iocContainer.Bind<IEntityStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
+
+            _iocContainer.Bind<ClientWebApi>().ToSelf().InSingletonScope();
         }
 
         static void Main(string[] args)

@@ -102,7 +102,7 @@ namespace LostIsland.Client
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<UtopiaWebApi>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<ClientWebApi>().ToSelf().InSingletonScope();
             //=============================================================
 
             //User Input Handling ======================================

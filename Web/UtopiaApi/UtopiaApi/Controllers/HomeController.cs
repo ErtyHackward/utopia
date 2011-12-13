@@ -8,6 +8,7 @@ using ProtoBuf;
 using UtopiaApi.Helpers;
 using UtopiaApi.Models;
 using UtopiaApi.Models.Repositories;
+using UtopiaApi.Models.Responces;
 
 namespace UtopiaApi.Controllers
 {
@@ -73,7 +74,7 @@ namespace UtopiaApi.Controllers
 
                 foreach (var server in servers)
                 {
-                    responce.Servers.Add(new ServerInfo { ServerName = server.Name, ServerAddress = server.Address });
+                    responce.Servers.Add(new ServerInfo { ServerName = server.Name, ServerAddress = server.Address, UsersCount = server.UsersCount });
                 }
 
                 var ms = new MemoryStream();
@@ -91,9 +92,13 @@ namespace UtopiaApi.Controllers
             //var pars = ControllerContext.HttpContext.Request.Params;
             var name = formCollection["name"];
             var address = formCollection["address"];
+            var users = formCollection["usersCount"];
+
+            uint usersCount;
+            uint.TryParse(users, out usersCount);
 
             var serverRepository = new ServerRepository();
-            serverRepository.ServerAlive(name, address);
+            serverRepository.ServerAlive(name, address, usersCount);
             return new EmptyResult();
         }
 
@@ -105,9 +110,12 @@ namespace UtopiaApi.Controllers
             var repo = new LoginRepository();
             var user = repo.Auth(login, password);
 
-            if (user != null)
-                return Content("1");
-            return Content("0");
+            var responce = new UserAuthenticationResponce { Email = login, Valid = user != null };
+
+            var ms = new MemoryStream();
+            Serializer.Serialize(ms, responce);
+            ms.Position = 0;
+            return new FileStreamResult(ms, "application/octet-stream");
         }
 
 
