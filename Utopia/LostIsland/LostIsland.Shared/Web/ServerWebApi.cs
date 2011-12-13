@@ -18,9 +18,9 @@ namespace LostIsland.Shared.Web
             PostRequestAsync(ServerUrl + "/userauthentication", string.Format("login={0}&pass={1}", Uri.EscapeDataString(login), passwordHash), UserAuthenticationCallback);
         }
 
-        public void AliveUpdateAsync(string serverName, string serverAddress, uint usersCount)
+        public void AliveUpdateAsync(string serverName, int port, uint usersCount)
         {
-            PostRequestAsync(ServerUrl + "/serveralive", string.Format("name={0}&address={1}&usersCount={2}", serverName, serverAddress, usersCount), null);
+            PostRequestAsync(ServerUrl + "/serveralive", string.Format("name={0}&port={1}&usersCount={2}", serverName, port, usersCount), null);
         }
 
         private void UserAuthenticationCallback(IAsyncResult result)

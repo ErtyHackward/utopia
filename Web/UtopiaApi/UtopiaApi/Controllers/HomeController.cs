@@ -91,7 +91,7 @@ namespace UtopiaApi.Controllers
         {
             //var pars = ControllerContext.HttpContext.Request.Params;
             var name = formCollection["name"];
-            var address = formCollection["address"];
+            var address = Request.ServerVariables["REMOTE_ADDR"] + ":" + formCollection["port"];
             var users = formCollection["usersCount"];
 
             uint usersCount;
