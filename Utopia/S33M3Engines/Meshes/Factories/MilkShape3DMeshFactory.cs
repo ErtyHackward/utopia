@@ -112,7 +112,7 @@ namespace S33M3Engines.Meshes.Factories
 
                     _strScan.Scan(line, "{0} {1}", MeshSection_Holder);
 
-                    //For each Meshes in the Files -- Limited to the first one here
+                    //For each Meshes in the Files
                     for (int nbrMesh = 0; nbrMesh < (int)MeshSection_Holder[1]; nbrMesh++)
                     {
                         sourceVertices.Clear();

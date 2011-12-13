@@ -152,7 +152,7 @@ namespace Utopia.Network
             _connection.SendAsync(new EntityDirectionMessage 
             { 
                 Rotation = e.Entity.Rotation, 
-                EntityId = e.Entity.DynamicId 
+                EntityId = e.Entity.DynamicId
             });
         }
 

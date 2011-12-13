@@ -68,16 +68,15 @@
     <None Include="EffectsPacks\Default\Entities\Icons.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Meshes\Block.ms3d" />
     <None Include="Meshes\Block.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Meshes\test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Images\materia.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Meshes\Torch.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="TexturesPacks\Default\charactersheet.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
