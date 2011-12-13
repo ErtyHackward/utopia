@@ -14,9 +14,10 @@ namespace UtopiaApi.Models.Repositories
             Context.InsertOrReplace(server);
         }
 
-        public List<Server> GetServers(int p)
+        public List<Server> GetServers(uint cultureId)
         {
-            return Context.Servers.Where(s => s.Culture == p && s.LastUpdate > (DateTime.Now.AddMinutes(-11))).ToList();
+            var list = Context.Servers.Where(s => s.Culture == cultureId && s.LastUpdate > (DateTime.Now.AddMinutes(-11))).ToList();
+            return list;
         }
     }
 }
