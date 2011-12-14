@@ -44,7 +44,7 @@ namespace Utopia.Shared.Net.Connections
         public string Login { get; set; }
 
         /// <summary>
-        /// Gets or sets current connection user password md5 hash
+        /// Gets or sets current connection user password SHA1 hash
         /// </summary>
         public string Password { get; set; }
 

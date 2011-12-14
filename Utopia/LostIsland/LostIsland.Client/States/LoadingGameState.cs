@@ -135,12 +135,12 @@ namespace LostIsland.Client.States
                 #endregion
                 
                 _serverComponent.BindingServer("127.0.0.1");
-                _serverComponent.Login = "local";
-                _serverComponent.ConnectToServer("local", "qwe123");
+                _serverComponent.ConnectToServer("local", "qwe123".GetSHA1Hash());
             }
             else
             {
                 _serverComponent.BindingServer(_vars.CurrentServerAddress);
+                _serverComponent.ConnectToServer(_vars.Login, _vars.PasswordHash);
             }
         }
 

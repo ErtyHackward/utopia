@@ -52,6 +52,7 @@ namespace LostIsland.Client.States
             vars.SinglePlayer = false;
             vars.CurrentServerAddress = ServerList[selection.List.SelectedItems[0]].ServerAddress;
 
+            StatesManager.SetGameState("GameLoading");
         }
 
         void WebApiServerListReceived(object sender, WebEventArgs<ServerListResponce> e)
