@@ -9,7 +9,7 @@ namespace LostIsland.Shared.Web
 {
     public abstract class UtopiaWebApiBase : IDisposable
     {
-        protected const string ServerUrl = "http://api.cubiquest.com"; // "http://localhost:20753";
+        protected const string ServerUrl = "http://api.cubiquest.com"; // "http://localhost:20753"
 
         protected WebEventArgs<T> ParseResult<T>(IAsyncResult result)
         {
@@ -55,13 +55,41 @@ namespace LostIsland.Shared.Web
                 request.ContentType = "application/x-www-form-urlencoded";
                 request.ContentLength = postBytes.Length;
 
-                var requestStream = request.GetRequestStream();
-                requestStream.Write(postBytes, 0, postBytes.Length);
-                requestStream.Close();
-
+                using (var requestStream = request.GetRequestStream())
+                    requestStream.Write(postBytes, 0, postBytes.Length);
+                
                 request.BeginGetResponse(callback, request);
             }
             ).BeginInvoke(null, null);
+        }
+
+        /// <summary>
+        /// Perfoms a post request in this thread
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="pars"></param>
+        /// <returns></returns>
+        public static T PostRequest<T>(string url, string pars)
+        {
+            var postBytes = Encoding.UTF8.GetBytes(pars);
+
+            var request = WebRequest.Create(url);
+            request.Method = "POST";
+
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = postBytes.Length;
+
+            using (var requestStream = request.GetRequestStream())
+                requestStream.Write(postBytes, 0, postBytes.Length);
+
+            using (var responce = request.GetResponse())
+            {
+                using (var respStream = responce.GetResponseStream())
+                {
+                    return Serializer.Deserialize<T>(respStream);
+                }
+            }
         }
 
         public virtual void Dispose()

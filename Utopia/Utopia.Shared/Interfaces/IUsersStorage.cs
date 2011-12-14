@@ -8,7 +8,7 @@ namespace Utopia.Shared.Interfaces
     public interface IUsersStorage
     {
         /// <summary>
-        /// Tries to register user
+        /// Tries to register user, or update his passwordHash or role 
         /// </summary>
         /// <param name="login">User login</param>
         /// <param name="passwordHash">user password</param>
@@ -17,23 +17,16 @@ namespace Utopia.Shared.Interfaces
         bool Register(string login, string passwordHash, UserRole role);
 
         /// <summary>
-        /// Checks whether the specified login registered
-        /// </summary>
-        /// <param name="login"></param>
-        /// <returns></returns>
-        bool IsRegistered(string login);
-
-        /// <summary>
         /// Checks whether the specified user registered and password match
         /// </summary>
         /// <param name="login">User login</param>
-        /// <param name="passwordHash">User md5 password hash</param>
+        /// <param name="passwordHash">User SHA1 password hash</param>
         /// <param name="data">Filled login data structure if login succeed</param>
         /// <returns>true if login succeed otherwise false</returns>
         bool Login(string login, string passwordHash, out LoginData data);
 
         /// <summary>
-        /// Sets corresponding data to login. This function can be used to store any user specific information.
+        /// Sets corresponding data to a login. This function can be used to store any user specific information.
         /// </summary>
         /// <param name="login">User login</param>
         /// <param name="state">custom byte array</param>

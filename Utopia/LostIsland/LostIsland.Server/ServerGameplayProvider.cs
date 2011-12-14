@@ -1,9 +1,6 @@
-﻿using System;
-using LostIsland.Shared;
-using LostIsland.Shared.Items;
+﻿using LostIsland.Shared;
 using LostIsland.Shared.Tools;
 using S33M3Engines.Shared.Math;
-using SharpDX;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;

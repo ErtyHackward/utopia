@@ -103,7 +103,7 @@ namespace LostIsland.Client.GUI.Forms
             {
                 RegisterEvents();
             }
-            _server.ConnectToServer(_multiChild.txtUser.Text, _multiChild.txtPassword.Text, _multiChild.chkRegistering.Checked);
+            _server.ConnectToServer(_multiChild.txtUser.Text, _multiChild.txtPassword.Text);
 
             _serverTime = new System.Threading.Timer(_timerDelegate, null, 100, 100);
         }

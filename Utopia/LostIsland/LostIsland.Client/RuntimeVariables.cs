@@ -9,5 +9,10 @@
         /// Indicates if game should be started in single player mode
         /// </summary>
         public bool SinglePlayer { get; set; }
+
+        /// <summary>
+        /// Gets selected server address
+        /// </summary>
+        public string CurrentServerAddress { get; set; }
     }
 }
