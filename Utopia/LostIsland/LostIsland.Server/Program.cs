@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using LostIsland.Shared;
 using LostIsland.Shared.Web;
 using Ninject;
@@ -29,6 +30,7 @@ namespace LostIsland.Server
         private static Utopia.Server.Server _server;
         private static IKernel _iocContainer;
         private static ServerGameplayProvider _gameplay;
+        private static Timer _reportAliveTimer;
 
         static void IocBind(WorldParameters param)
         {
@@ -54,11 +56,12 @@ namespace LostIsland.Server
             
             _iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
 
-            _iocContainer.Bind<IUsersStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
+            _iocContainer.Bind<SQLiteStorageManager>().ToConstant(sqLiteStorageManager).InSingletonScope();
+            _iocContainer.Bind<IUsersStorage>().To<ServerUsersStorage>().InSingletonScope();
             _iocContainer.Bind<IChunksStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
             _iocContainer.Bind<IEntityStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
 
-            _iocContainer.Bind<ClientWebApi>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<ServerWebApi>().ToSelf().InSingletonScope();
         }
 
         static void Main(string[] args)
@@ -70,6 +73,8 @@ namespace LostIsland.Server
 
             GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"Config\" };
             GameSystemSettings.Current.Load();
+
+            System.Net.ServicePointManager.Expect100Continue = false;
 
             var serverFactory = new LostIslandEntityFactory(null);
 
@@ -108,12 +113,12 @@ namespace LostIsland.Server
 
             _server.Services.Add(new TestNpcService());
             _server.Services.Add(new BlueprintRecorderService());
-
-            _server.Scheduler.AddTaskPeriodic("Update alive", DateTime.Now, TimeSpan.FromMinutes(5), CommitServerInfo);
+            
             _server.ConnectionManager.Listen();
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
 
-            CommitServerInfo();
+            // send alive message each 5 minutes
+            _reportAliveTimer = new Timer(CommitServerInfo, null, 0, 1000 * 60 * 5);
 
             while (Console.ReadLine() != "exit")
             {
@@ -121,7 +126,7 @@ namespace LostIsland.Server
             }
         }
 
-        static void CommitServerInfo()
+        static void CommitServerInfo(object state)
         {
             var webApi = _iocContainer.Get<ServerWebApi>();
             var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();

@@ -48,8 +48,8 @@ namespace Utopia.Server.Managers
                             case ScheduleCallType.Once:
                                 if (scheduleTask.ExecuteAt < currentTime.TimeOfDay)
                                 {
-                                    scheduleTask.Call(currentTime);
                                     RemoveTask(scheduleTask);
+                                    scheduleTask.Call(currentTime);
                                 }
                                 break;
                             case ScheduleCallType.Periodic:
@@ -107,7 +107,7 @@ namespace Utopia.Server.Managers
         /// <param name="callDelegate"></param>
         public void AddTaskPeriodic(string name, DateTime startAt, TimeSpan interval, ThreadStart callDelegate)
         {
-            var task = new ScheduleTask { Name = name, CallDelegate = callDelegate, ExecuteAt = interval, StartDateTime = startAt};
+            var task = new ScheduleTask { CallType = ScheduleCallType.Periodic, Name = name, CallDelegate = callDelegate, CallInterval = interval, StartDateTime = startAt };
 
             AddTask(task);
         }

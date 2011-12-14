@@ -51,8 +51,8 @@ namespace Utopia.Server.Managers
         private void CreateDataBase(SQLiteConnection conn)
         {
             var command = conn.CreateCommand();
-            command.CommandText = @"CREATE TABLE [chunks] ([X] integer NOT NULL, [Y] integer NOT NULL,[data] blob NOT NULL, PRIMARY KEY(X,Y)); ";
-            command.CommandText += @"CREATE TABLE [users] ([id] integer PRIMARY KEY AUTOINCREMENT NOT NULL, [login] varchar(120) NOT NULL, [password] char(32) NOT NULL, [role] integer NOT NULL, [lastlogin] datetime NULL, [state] blob NULL); CREATE INDEX IDX_USERS_LOGIN on users (login);";
+            command.CommandText  = @"CREATE TABLE [chunks] ([X] integer NOT NULL, [Y] integer NOT NULL,[data] blob NOT NULL, PRIMARY KEY(X,Y)); ";
+            command.CommandText += @"CREATE TABLE [users] ([id] integer PRIMARY KEY AUTOINCREMENT NOT NULL, [login] varchar(120) NOT NULL, [password] char(32) NOT NULL, [role] integer NOT NULL, [lastlogin] datetime NULL, [state] blob NULL); CREATE UNIQUE INDEX IDX_USERS_LOGIN on users (login);";
             command.CommandText += @"CREATE TABLE [entities] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);";
             command.CommandType = CommandType.Text;
             command.ExecuteNonQuery();
@@ -255,23 +255,22 @@ namespace Utopia.Server.Managers
             if (string.IsNullOrEmpty(login)) return false;
             if (string.IsNullOrEmpty(passwordHash)) return false;
 
-            if (IsRegistered(login))
-                return false;
+            int userId = 0;
 
-            return 1 == Execute(string.Format("INSERT INTO users (login, password, role) VALUES ('{0}', '{1}', {2})", Escape(login), Escape(passwordHash), (int)role));
-        }
-
-        /// <summary>
-        /// Checks whether the specified login registered
-        /// </summary>
-        /// <param name="login"></param>
-        /// <returns></returns>
-        public bool IsRegistered(string login)
-        {
             using (var reader = Query(string.Format("SELECT id FROM users WHERE login = '{0}'", Escape(login))))
             {
-                return reader.HasRows;
+                if (reader.Read())
+                {
+                    userId = reader.GetInt32(0);
+                }
             }
+
+            if (userId > 0)
+            {
+                return 1 == Execute(string.Format("UPDATE users SET password = '{0}', role = {1} WHERE login = '{2}", passwordHash, (int)role, Escape(login)));
+            }
+            
+            return 1 == Execute(string.Format("INSERT INTO users (login, password, role) VALUES ('{0}', '{1}', {2})", Escape(login), Escape(passwordHash), (int)role));
         }
 
         /// <summary>

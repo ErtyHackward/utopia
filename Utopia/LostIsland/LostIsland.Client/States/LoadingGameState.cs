@@ -97,16 +97,23 @@ namespace LostIsland.Client.States
 
         private void GameplayInitialize()
         {
+            if (_serverComponent == null)
+            {
+                _serverComponent = _ioc.Get<ServerComponent>();
+                _serverComponent.ConnectionInitialized += ServerComponentConnectionInitialized;
+            }
+
             if (_vars.SinglePlayer)
             {
-                if(_server == null)
+                #region Initialize the local server
+                if (_server == null)
                 {
                     _serverFactory = new LostIslandEntityFactory(null);
                     var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia\\local.db");
                     var sqliteStorage = _ioc.Get<SQLiteStorageManager>(new[] { new ConstructorArgument("filePath", dbPath), new ConstructorArgument("factory", _serverFactory) });
 
-                    sqliteStorage.Register("local", "qwe123".GetMd5Hash(), Utopia.Shared.Structs.UserRole.Administrator);
-                    
+                    sqliteStorage.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
+
                     var settings = _ioc.Get<XmlSettingsManager<ServerSettings>>();
 
                     var wp = _ioc.Get<WorldParameters>();
@@ -125,15 +132,15 @@ namespace LostIsland.Client.States
                     var clientGeneratpr = new WorldGenerator(wp, new PlanWorldProcessor(wp, _ioc.Get<EntityFactory>("Client")));
                     _ioc.Bind<WorldGenerator>().ToConstant(clientGeneratpr).InSingletonScope();
                 }
-
-                if (_serverComponent == null)
-                {
-                    _serverComponent = _ioc.Get<ServerComponent>();
-                    _serverComponent.ConnectionInitialized += ServerComponentConnectionInitialized;
-                }
+                #endregion
+                
                 _serverComponent.BindingServer("127.0.0.1");
                 _serverComponent.Login = "local";
-                _serverComponent.ConnectToServer("local", "qwe123", false);
+                _serverComponent.ConnectToServer("local", "qwe123");
+            }
+            else
+            {
+                _serverComponent.BindingServer(_vars.CurrentServerAddress);
             }
         }
 

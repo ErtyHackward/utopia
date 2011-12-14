@@ -15,6 +15,8 @@ namespace LostIsland.Client.States
     {
         private readonly IKernel _iocContainer;
 
+        public List<ServerInfo> ServerList { get; set; }
+
         public override string Name
         {
             get { return "SelectServer"; }
@@ -37,13 +39,22 @@ namespace LostIsland.Client.States
             VisibleComponents.Add(gui);
 
             selection.BackPressed += SelectionBackPressed;
+            selection.ConnectPressed += SelectionConnectPressed;
 
-            webApi.ServerListReceived += webApi_ServerListReceived;
+            webApi.ServerListReceived += WebApiServerListReceived;
+        }
 
+        void SelectionConnectPressed(object sender, EventArgs e)
+        {
+            var selection = _iocContainer.Get<ServerSelectionComponent>();
+            var vars = _iocContainer.Get<RuntimeVariables>();
+
+            vars.SinglePlayer = false;
+            vars.CurrentServerAddress = ServerList[selection.List.SelectedItems[0]].ServerAddress;
 
         }
 
-        void webApi_ServerListReceived(object sender, WebEventArgs<ServerListResponce> e)
+        void WebApiServerListReceived(object sender, WebEventArgs<ServerListResponce> e)
         {
             var selection = _iocContainer.Get<ServerSelectionComponent>();
 
@@ -53,11 +64,11 @@ namespace LostIsland.Client.States
 
                 if (e.Responce.Servers != null)
                 {
-
                     foreach (var serverInfo in e.Responce.Servers)
                     {
-                        selection.List.Items.Add(serverInfo.ServerName);
+                        selection.List.Items.Add(string.Format("{0} ({1})", serverInfo.ServerName, serverInfo.UsersCount) );
                     }
+                    ServerList = e.Responce.Servers;
                 }
             }
             else
@@ -79,7 +90,7 @@ namespace LostIsland.Client.States
             webApi.GetServersListAsync();
         }
 
-        void SelectionBackPressed(object sender, System.EventArgs e)
+        void SelectionBackPressed(object sender, EventArgs e)
         {
             // when you press "back" we returning to the main menu
             StatesManager.SetGameState("MainMenu");
