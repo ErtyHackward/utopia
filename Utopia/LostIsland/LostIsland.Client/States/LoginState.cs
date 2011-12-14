@@ -66,6 +66,13 @@ namespace LostIsland.Client.States
 
             if (e.Responce != null && e.Responce.Logged)
             {
+                var vars = _iocContainer.Get<RuntimeVariables>();
+
+                vars.Login = login.Email;
+                vars.PasswordHash = login.Password.GetSHA1Hash();
+
+                login.Password = null;
+
                 StatesManager.SetGameState("MainMenu");
             }
             

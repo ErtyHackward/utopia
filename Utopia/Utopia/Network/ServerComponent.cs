@@ -83,13 +83,15 @@ namespace Utopia.Network
         }
 
         #region Public Methods
-        public void ConnectToServer(string userName, string password)
+        public void ConnectToServer(string userName, string passwordHash)
         {
+            Login = userName;
+
             if(ServerConnection.LoggedOn)
                 ServerConnection.Disconnect();
             
             ServerConnection.Login = userName;
-            ServerConnection.Password = password.GetSHA1Hash();
+            ServerConnection.Password = passwordHash;
             ServerConnection.ClientVersion = 1;
             ServerConnection.Register = false;
 

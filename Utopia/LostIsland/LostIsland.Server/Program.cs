@@ -37,7 +37,6 @@ namespace LostIsland.Server
 
             var settingsManager = new XmlSettingsManager<ServerSettings>("utopiaServer.config");
             settingsManager.Load();
-            
 
             if (string.IsNullOrEmpty(settingsManager.Settings.DatabasePath))
                 settingsManager.Settings.DatabasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia\\world.db");

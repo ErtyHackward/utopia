@@ -14,5 +14,15 @@
         /// Gets selected server address
         /// </summary>
         public string CurrentServerAddress { get; set; }
+
+        /// <summary>
+        /// Logged user email
+        /// </summary>
+        public string Login { get; set; }
+
+        /// <summary>
+        /// Logged user password SHA1 hash
+        /// </summary>
+        public string PasswordHash { get; set; }
     }
 }
