@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines;
 using S33M3Engines.D3D;
 using SharpDX.Direct3D11;
+using Screen = Nuclex.UserInterface.Screen;
 
 namespace Utopia.GUI.D3D
 {
@@ -49,9 +51,17 @@ namespace Utopia.GUI.D3D
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value of current component lock state
+        /// </summary>
         public bool Locked
         {
-            set { _loginButton.Enabled = !value; }
+            get { return !_emailControl.Enabled; }
+            set {
+                _emailControl.Enabled = !value;
+                _passwordControl.Enabled = !value;
+                _loginButton.Enabled = !value; 
+            }
         }
 
         /// <summary>
@@ -78,15 +88,36 @@ namespace Utopia.GUI.D3D
         
         public LoginComponent(D3DEngine engine, Screen screen)
         {
+            if (engine == null) throw new ArgumentNullException("engine");
+            if (screen == null) throw new ArgumentNullException("screen");
             _engine = engine;
             _screen = screen;
             _engine.ViewPort_Updated += EngineViewportUpdated;
+
+            _engine.GameWindow.KeyPress += GameWindowKeyPress;
+
         }
 
         public override void Dispose()
         {
             _loginWindow = null;
+            _emailControl = null;
+            _passwordControl = null;
+            _loginButton = null;
             _engine.ViewPort_Updated -= EngineViewportUpdated;
+            _engine.GameWindow.KeyPress -= GameWindowKeyPress;
+        }
+
+        void GameWindowKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            if ((Keys)e.KeyChar == Keys.Return)
+            {
+                if (string.IsNullOrEmpty(Email))
+                    _screen.FocusedControl = _emailControl;
+                else if (string.IsNullOrEmpty(Password))
+                    _screen.FocusedControl = _passwordControl;
+                else OnLogin();
+            }
         }
 
         void EngineViewportUpdated(Viewport viewport)
@@ -164,7 +195,7 @@ namespace Utopia.GUI.D3D
             if (Enabled)
             {
                 _screen.Desktop.Children.Add(_loginWindow);
-                _screen.FocusedControl = _emailControl;
+                _screen.FocusedControl = !string.IsNullOrEmpty(Email) ? _passwordControl : _emailControl;
                 CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
             }
             

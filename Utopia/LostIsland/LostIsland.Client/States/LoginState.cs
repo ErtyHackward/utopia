@@ -71,6 +71,9 @@ namespace LostIsland.Client.States
                 vars.Login = login.Email;
                 vars.PasswordHash = login.Password.GetSHA1Hash();
 
+                ClientSettings.Current.Settings.Login = login.Email;
+                ClientSettings.Current.Save();
+
                 login.Password = null;
 
                 StatesManager.SetGameState("MainMenu");

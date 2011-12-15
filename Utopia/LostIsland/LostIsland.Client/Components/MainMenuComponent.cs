@@ -106,8 +106,11 @@ namespace LostIsland.Client.Components
             _buttonsGroup.Children.Add(_credits);
             _buttonsGroup.Children.Add(_exitButton);
 
-            if(Enabled)
+            if (Enabled)
+            {
                 _screen.Desktop.Children.Add(_buttonsGroup);
+                _screen.FocusedControl = _multiplayer;
+            }
         }
 
         protected override void OnEnabledChanged()
@@ -118,6 +121,9 @@ namespace LostIsland.Client.Components
             {
                 _screen.Desktop.Children.Add(_buttonsGroup);
                 UpdateLayout(_engine.ViewPort);
+
+                _screen.FocusedControl = _multiplayer;
+
             }
             else
             {
