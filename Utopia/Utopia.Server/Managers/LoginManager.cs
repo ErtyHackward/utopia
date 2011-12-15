@@ -160,7 +160,7 @@ namespace Utopia.Server.Managers
                 connection.ServerEntity = playerEntity;
 
                 connection.SendAsync(new LoginResultMessage { Logged = true });
-                TraceHelper.Write("{1} logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.DynamicId);
+                TraceHelper.Write("{1} ({3}) logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.DynamicId, e.Message.DisplayName);
                 var gameInfo = new GameInformationMessage
                 {
                     ChunkSize = AbstractChunk.ChunkSize,
@@ -173,8 +173,8 @@ namespace Utopia.Server.Managers
                 connection.SendAsync(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity, Link = playerEntity.DynamicEntity.GetLink() });
                 connection.SendAsync(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
 
-                _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} joined.", e.Message.Login), Operator = true });
-                connection.SendAsync(new ChatMessage { DisplayName = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });
+                _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} joined.", e.Message.DisplayName), Operator = true });
+                connection.SendAsync(new ChatMessage { DisplayName = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.DisplayName), Operator = true });
 
                 // adding entity to world
                 _server.AreaManager.AddEntity(playerEntity);
