@@ -189,7 +189,7 @@ namespace Utopia.Server.Structs
             }
             else
             {
-                Connection.SendAsync(new ChatMessage { Login = "toolsystem", Message = "Invalid toolid provided. Can not use the tool" });
+                Connection.SendAsync(new ChatMessage { DisplayName = "toolsystem", Message = "Invalid toolid provided. Can not use the tool" });
             }
         }
 
@@ -445,7 +445,7 @@ namespace Utopia.Server.Structs
 
         private void ItemError()
         {
-            Connection.SendAsync(new ChatMessage { Login = "inventory", Message = "Invalid transfer operation" });
+            Connection.SendAsync(new ChatMessage { DisplayName = "inventory", Message = "Invalid transfer operation" });
         }
 
     }

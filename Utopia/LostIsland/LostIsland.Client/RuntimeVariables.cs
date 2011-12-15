@@ -24,5 +24,10 @@
         /// Logged user password SHA1 hash
         /// </summary>
         public string PasswordHash { get; set; }
+
+        /// <summary>
+        /// Gets or sets user display name
+        /// </summary>
+        public string DisplayName { get; set; }
     }
 }

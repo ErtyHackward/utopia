@@ -70,6 +70,7 @@ namespace LostIsland.Client.States
 
                 vars.Login = login.Email;
                 vars.PasswordHash = login.Password.GetSHA1Hash();
+                vars.DisplayName = e.Responce.DisplayName;
 
                 ClientSettings.Current.Settings.Login = login.Email;
                 ClientSettings.Current.Save();

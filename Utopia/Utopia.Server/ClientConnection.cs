@@ -58,6 +58,11 @@ namespace Utopia.Server
         public string Login { get; set; }
 
         /// <summary>
+        /// Gets or sets current player display name
+        /// </summary>
+        public string DisplayName { get; set; }
+
+        /// <summary>
         /// Gets or sets player dynamic entity
         /// </summary>
         public ServerDynamicEntity ServerEntity { get; set; }

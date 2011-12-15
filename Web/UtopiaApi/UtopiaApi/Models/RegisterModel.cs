@@ -14,6 +14,9 @@ namespace UtopiaApi.Models
         public string Email { get; set; }
 
         [Required]
+        public string DisplayName { get; set; }
+
+        [Required]
         [Password]
         public string Password { get; set; }
 

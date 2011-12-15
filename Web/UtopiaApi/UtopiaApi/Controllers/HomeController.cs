@@ -29,7 +29,7 @@ namespace UtopiaApi.Controllers
             {
                 var r = new Random(DateTime.Now.Millisecond + login.GetHashCode());
                 var token = r.NextToken();
-                loginResponce = new LoginResponce { Logged = true, Token = token };
+                loginResponce = new LoginResponce { Logged = true, DisplayName = user.DisplayName, Token = token };
                 repo.WriteToken(user.id, token);
 
                 repo.UpdateLoginDate(user.id);
@@ -117,8 +117,7 @@ namespace UtopiaApi.Controllers
             ms.Position = 0;
             return new FileStreamResult(ms, "application/octet-stream");
         }
-
-
+        
         public ActionResult Register()
         {
             return View();
@@ -135,7 +134,13 @@ namespace UtopiaApi.Controllers
 
                 if (loginRepo.IsRegistered(regModel.Email))
                 {
-                    ModelState.AddModelError("", "Such email is already registered.");
+                    ModelState.AddModelError("email", "Such email is already registered.");
+                    return View(regModel);
+                }
+
+                if (loginRepo.IsRegisteredNick(regModel.DisplayName))
+                {
+                    ModelState.AddModelError("displayName", "Such nickname is already registered. Please, choose another");
                     return View(regModel);
                 }
 
@@ -147,7 +152,7 @@ namespace UtopiaApi.Controllers
 
                 var confirmToken = new Random((int)DateTime.Now.Ticks + regModel.Email.GetHashCode()).NextToken(40);
 
-                loginRepo.Register(regModel.Email, regModel.Password, confirmToken);
+                loginRepo.Register(regModel.Email, regModel.DisplayName, regModel.Password, confirmToken);
 
                 var client = new SmtpClient("smtpout.europe.secureserver.net");
                 client.Credentials = new NetworkCredential("support@cubiquest.com", "vm6rFaqz");

@@ -34,10 +34,11 @@
       <Column Name="Confirmed" Member="Confirmed" Storage="_confirmed" Type="System.Byte" DbType="tinyint unsigned" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
       <Column Name="ConfirmToken" Member="ConfirmToken" Storage="_confirmToken" Type="System.String" DbType="varchar(50)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
       <Column Name="Culture" Member="Culture" Storage="_culture" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="DisplayName" Member="DisplayName" Storage="_displayName" Type="System.String" DbType="varchar(20)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
       <Column Name="id" Member="id" Storage="_id" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="LastIp" Member="LastIp" Storage="_lastIp" Type="System.UInt32" DbType="int unsigned" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
       <Column Name="LastLogin" Member="LastLogin" Storage="_lastLogin" Type="System.DateTime" DbType="timestamp" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="true" />
-      <Column Name="Login" Member="Login" Storage="_login" Type="System.String" DbType="varchar(30)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
+      <Column Name="Login" Member="Login" Storage="_login" Type="System.String" DbType="varchar(50)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
       <Column Name="PasswordHash" Member="PasswordHash" Storage="_passwordHash" Type="System.String" DbType="varchar(40)" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="false" />
       <Column Name="RegisterDate" Member="RegisterDate" Storage="_registerDate" Type="System.DateTime" DbType="timestamp" IsPrimaryKey="false" IsDbGenerated="false" CanBeNull="true" />
     </Type>
