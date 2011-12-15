@@ -5,7 +5,7 @@
 // | |_| | |_) | |  | |  __/ || (_| | |
 // |____/|_.__/|_|  |_|\___|\__\__,_|_|
 //
-// Auto-generated from utopiamaindb on 2011-12-13 15:11:58Z. Modified by Erty Hackward
+// Auto-generated from utopiamaindb on 2011-12-15 10:58:19Z. Modified by Erty Hackward
 // Please visit http://code.google.com/p/dblinq2007/ for more information.
 //
 namespace UtopiaApi.Models
@@ -28,8 +28,8 @@ namespace UtopiaApi.Models
 		public UtopiaDataContext()
 		{
 		}
-		
-		public UtopiaDataContext(string connectionString) : 
+
+        public UtopiaDataContext(string connectionString) : 
 				base(connectionString)
 		{
 			this.OnCreated();
@@ -345,6 +345,8 @@ namespace UtopiaApi.Models
 		
 		private uint _culture;
 		
+		private string _displayName;
+		
 		private uint _id;
 		
 		private uint _lastIp;
@@ -401,6 +403,19 @@ namespace UtopiaApi.Models
 			set
 			{
 				this._culture = value;
+			}
+		}
+		
+		[DebuggerNonUserCode()]
+		public string DisplayName
+		{
+			get
+			{
+				return this._displayName;
+			}
+			set
+			{
+				this._displayName = value;
 			}
 		}
 		

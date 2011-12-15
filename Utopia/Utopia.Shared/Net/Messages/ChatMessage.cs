@@ -13,7 +13,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Login of the sender, can be null if system message
         /// </summary>
-        private string _login;
+        private string _displayName;
         /// <summary>
         /// Actual message text
         /// </summary>
@@ -30,12 +30,12 @@ namespace Utopia.Shared.Net.Messages
         }
 
         /// <summary>
-        /// Gets or sets login of the sender, can be null if system message
+        /// Gets or sets display name of the sender, can be null if system message
         /// </summary>
-        public string Login
+        public string DisplayName
         {
-            get { return _login; }
-            set { _login = value; }
+            get { return _displayName; }
+            set { _displayName = value; }
         }
         
         /// <summary>
@@ -71,7 +71,7 @@ namespace Utopia.Shared.Net.Messages
 
             msg._action = reader.ReadBoolean();
             msg._operator = reader.ReadBoolean();
-            msg._login = reader.ReadString();
+            msg._displayName = reader.ReadString();
             msg._message = reader.ReadString();
 
             return msg;
@@ -81,7 +81,7 @@ namespace Utopia.Shared.Net.Messages
         {
             writer.Write(msg._action);
             writer.Write(msg._operator);
-            writer.Write(msg._login);
+            writer.Write(msg._displayName);
             writer.Write(msg._message);
         }
 

@@ -36,7 +36,12 @@ namespace UtopiaApi.Models.Repositories
             return Context.Users.Any(u => u.Login.ToLower() == email.ToLower());
         }
 
-        public void Register(string email, string password, string confirmToken)
+        public bool IsRegisteredNick(string nick)
+        {
+            return Context.Users.Any(u => u.DisplayName.ToLower() == nick.ToLower());
+        }
+
+        public void Register(string email, string displayName, string password, string confirmToken)
         {
             var user = new User();
 
@@ -56,6 +61,7 @@ namespace UtopiaApi.Models.Repositories
             }
             
             user.Login = email;
+            user.DisplayName = displayName;
             user.RegisterDate = DateTime.UtcNow;
             user.PasswordHash = passwordHash;
             user.ConfirmToken = confirmToken;

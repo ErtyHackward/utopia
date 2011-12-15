@@ -14,14 +14,22 @@ namespace Utopia.Shared.Net.Messages
         /// User login
         /// </summary>
         private string _login;
+
         /// <summary>
         /// User password md5 hash
         /// </summary>
         private string _password;
+
+        /// <summary>
+        /// User display name
+        /// </summary>
+        private string _displayName;
+
         /// <summary>
         /// True if client ask to register
         /// </summary>
         private bool _register;
+
         /// <summary>
         /// Client software version
         /// </summary>
@@ -53,6 +61,7 @@ namespace Utopia.Shared.Net.Messages
             set { _password = value; }
         }
 
+
         /// <summary>
         /// Gets or sets value indicating if client is asking to register
         /// </summary>
@@ -71,11 +80,21 @@ namespace Utopia.Shared.Net.Messages
             set { _version = value; }
         }
 
+        /// <summary>
+        /// Gets or sets a user display name
+        /// </summary>
+        public string DisplayName
+        {
+            get { return _displayName; }
+            set { _displayName = value; }
+        }
+
         public static LoginMessage Read(BinaryReader reader)
         {
             LoginMessage msg;
             msg._login = reader.ReadString();
             msg._password = reader.ReadString();
+            msg._displayName = reader.ReadString();
             msg._register = reader.ReadBoolean();
             msg._version = reader.ReadInt32();
             return msg;
@@ -85,6 +104,7 @@ namespace Utopia.Shared.Net.Messages
         {
             writer.Write(msg._login);
             writer.Write(msg._password);
+            writer.Write(msg._displayName);
             writer.Write(msg._register);
             writer.Write(msg._version);
         }

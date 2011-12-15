@@ -103,9 +103,9 @@ namespace Utopia.GUI
             {
                 if (e.Message.Action)
                 {
-                    AddMessage(string.Format("* {0} {1}", e.Message.Login, msgText));
+                    AddMessage(string.Format("* {0} {1}", e.Message.DisplayName, msgText));
                 }
-                else AddMessage(string.Format("<{0}> {1}", e.Message.Login, msgText));
+                else AddMessage(string.Format("<{0}> {1}", e.Message.DisplayName, msgText));
             }
 
             _lastUpdateTick = Stopwatch.GetTimestamp();
@@ -131,7 +131,7 @@ namespace Utopia.GUI
                     _actionManager.KeyboardActionsProcessing = true;
                     if (!string.IsNullOrWhiteSpace(Input))
                     {
-                        var msg = new ChatMessage { Login = _server.Login, Message = Input };
+                        var msg = new ChatMessage { DisplayName = _server.DisplayName, Message = Input };
                         if (Input.StartsWith("/me ", StringComparison.CurrentCultureIgnoreCase))
                         {
                             msg.Action = true;

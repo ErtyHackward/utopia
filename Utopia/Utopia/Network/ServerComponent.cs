@@ -14,6 +14,7 @@ namespace Utopia.Network
     /// </summary>
     public class ServerComponent : GameComponent, IDebugInfo
     {
+        
         public string Address { get; set; }
         public bool Connected { get; set; }
         public ServerConnection ServerConnection { get; set; }
@@ -25,6 +26,7 @@ namespace Utopia.Network
         public GameInformationMessage GameInformations { get; set; }
 
         public string Login { get; set; }
+        public string DisplayName { get; set; }
 
         //===============================================================================================
 
@@ -83,9 +85,10 @@ namespace Utopia.Network
         }
 
         #region Public Methods
-        public void ConnectToServer(string userName, string passwordHash)
+        public void ConnectToServer(string userName, string displayName, string passwordHash)
         {
             Login = userName;
+            DisplayName = displayName;
 
             if(ServerConnection.LoggedOn)
                 ServerConnection.Disconnect();

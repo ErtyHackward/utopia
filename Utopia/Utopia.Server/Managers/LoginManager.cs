@@ -64,7 +64,7 @@ namespace Utopia.Server.Managers
                 // tell everybody that this player is gone
                 _server.AreaManager.RemoveEntity(e.Connection.ServerEntity);
 
-                _server.ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} has left the game.", e.Connection.ServerEntity.DynamicEntity.DisplayName), Operator = true });
+                _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} has left the game.", e.Connection.ServerEntity.DynamicEntity.DisplayName), Operator = true });
 
                 e.Connection.ServerEntity.CurrentArea = null;
             }
@@ -117,6 +117,7 @@ namespace Utopia.Server.Managers
                 connection.UserId = loginData.UserId;
                 connection.UserRole = loginData.Role;
                 connection.Login = e.Message.Login;
+                connection.DisplayName = e.Message.DisplayName;
 
                 ServerDynamicEntity playerEntity;
                
@@ -172,8 +173,8 @@ namespace Utopia.Server.Managers
                 connection.SendAsync(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity, Link = playerEntity.DynamicEntity.GetLink() });
                 connection.SendAsync(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
 
-                _server.ConnectionManager.Broadcast(new ChatMessage { Login = "server", Message = string.Format("{0} joined.", e.Message.Login), Operator = true });
-                connection.SendAsync(new ChatMessage { Login = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });
+                _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} joined.", e.Message.Login), Operator = true });
+                connection.SendAsync(new ChatMessage { DisplayName = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.Login), Operator = true });
 
                 // adding entity to world
                 _server.AreaManager.AddEntity(playerEntity);

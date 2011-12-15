@@ -36,7 +36,7 @@ namespace Utopia.Server.Managers
         private void ConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
         {
             var connection = (ClientConnection)sender;
-            if (e.Message.Login == connection.Login)
+            if (e.Message.DisplayName == connection.DisplayName)
             {
                 var msg = e.Message.Message;
 
@@ -62,7 +62,7 @@ namespace Utopia.Server.Managers
 
         public void SendMessage(ClientConnection connection, string message, string nick, bool isOperator)
         {
-            connection.SendAsync(new ChatMessage { Login = nick, Message = message, Operator = isOperator });
+            connection.SendAsync(new ChatMessage { DisplayName = nick, Message = message, Operator = isOperator });
         }
 
         public void Broadcast(string message)
@@ -77,7 +77,7 @@ namespace Utopia.Server.Managers
 
         public void Broadcast(string message, string nick, bool isOperator)
         {
-            _server.ConnectionManager.Broadcast(new ChatMessage { Login = nick, Message = message, Operator = isOperator });
+            _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = nick, Message = message, Operator = isOperator });
         }
     }
 }
