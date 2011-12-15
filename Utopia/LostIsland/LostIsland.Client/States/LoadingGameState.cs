@@ -101,6 +101,12 @@ namespace LostIsland.Client.States
             {
                 _serverComponent = _ioc.Get<ServerComponent>();
                 _serverComponent.ConnectionInitialized += ServerComponentConnectionInitialized;
+
+                var wp = _ioc.Get<WorldParameters>();
+
+                // client world generator
+                var clientGeneratpr = new WorldGenerator(wp, new PlanWorldProcessor(wp, _ioc.Get<EntityFactory>("Client")));
+                _ioc.Bind<WorldGenerator>().ToConstant(clientGeneratpr).InSingletonScope();
             }
 
             if (_vars.SinglePlayer)
@@ -116,6 +122,7 @@ namespace LostIsland.Client.States
 
                     var settings = _ioc.Get<XmlSettingsManager<ServerSettings>>();
 
+                    // create a server generator
                     var wp = _ioc.Get<WorldParameters>();
                     var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
                     var worldGenerator = new WorldGenerator(wp, planProcessor);
@@ -128,9 +135,7 @@ namespace LostIsland.Client.States
                     _server.LoginManager.GenerationParameters = planProcessor.WorldPlan.Parameters;
                     _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
 
-                    // client world generator
-                    var clientGeneratpr = new WorldGenerator(wp, new PlanWorldProcessor(wp, _ioc.Get<EntityFactory>("Client")));
-                    _ioc.Bind<WorldGenerator>().ToConstant(clientGeneratpr).InSingletonScope();
+
                 }
                 #endregion
                 
