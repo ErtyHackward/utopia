@@ -94,6 +94,7 @@ namespace Utopia.Network
                 ServerConnection.Disconnect();
             
             ServerConnection.Login = userName;
+            ServerConnection.DisplayName = displayName;
             ServerConnection.Password = passwordHash;
             ServerConnection.ClientVersion = 1;
             ServerConnection.Register = false;

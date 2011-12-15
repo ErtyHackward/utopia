@@ -61,7 +61,7 @@ namespace Utopia.Shared.Net.Connections
         /// <summary>
         /// Gets or sets user display message
         /// </summary>
-        public string DisplayMessage { get; set; }
+        public string DisplayName { get; set; }
 
         #region Events
         
@@ -415,7 +415,7 @@ namespace Utopia.Shared.Net.Connections
         /// </summary>
         public void Authenticate()
         {
-            Send(new LoginMessage { Login = Login, DisplayName = DisplayMessage, Password = Password, Register = Register, Version = ClientVersion });
+            Send(new LoginMessage { Login = Login, DisplayName = DisplayName, Password = Password, Register = Register, Version = ClientVersion });
         }
 
         /// <summary>
