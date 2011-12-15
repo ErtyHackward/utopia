@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using LostIsland.Client.Components;
 using Ninject;
 using Utopia;
@@ -36,6 +37,12 @@ namespace LostIsland.Client.States
             menu.CreditsPressed += MenuCreditsPressed;
             menu.SinglePlayerPressed += MenuSinglePlayerPressed;
             menu.MultiplayerPressed += MenuMultiplayerPressed;
+            menu.ExitPressed += menu_ExitPressed;
+        }
+
+        void menu_ExitPressed(object sender, EventArgs e)
+        {
+            Application.ExitThread();
         }
 
         void MenuMultiplayerPressed(object sender, EventArgs e)
