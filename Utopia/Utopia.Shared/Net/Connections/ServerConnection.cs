@@ -347,14 +347,28 @@ namespace Utopia.Shared.Net.Connections
             {
                 _needSend.WaitOne();
 
-                while (_messages.Count > 0)
+                try
                 {
-                    IBinaryMessage msg;
-                    lock (_messages)
+                    lock (_sendSynObject)
                     {
-                        msg = _messages.Dequeue();
+                        while (_messages.Count > 0)
+                        {
+                            IBinaryMessage msg;
+                            lock (_messages)
+                            {
+                                msg = _messages.Dequeue();
+                            }
+
+                            Writer.Write(msg.MessageId);
+                            msg.Write(Writer);
+                        }
+
+                        Writer.Flush();
                     }
-                    Send(msg);
+                }
+                catch (Exception ex)
+                {
+                    SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Disconnected, Exception = ex });
                 }
             }
 // ReSharper disable FunctionNeverReturns
@@ -399,11 +413,11 @@ namespace Utopia.Shared.Net.Connections
                 }
             }
         }
-
+        
         protected override void SentFirstCommands()
         {
             Stream = new NetworkStream(socket);
-            Writer = new BinaryWriter(Stream);
+            Writer = new BinaryWriter(new BufferedStream(Stream, 32 * 1024));
 
             Authenticate();
 
