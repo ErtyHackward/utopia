@@ -134,8 +134,6 @@ namespace LostIsland.Client.States
                     _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
                     _server.LoginManager.GenerationParameters = planProcessor.WorldPlan.Parameters;
                     _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
-
-
                 }
                 #endregion
                 

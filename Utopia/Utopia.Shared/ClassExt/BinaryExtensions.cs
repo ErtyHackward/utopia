@@ -61,6 +61,26 @@ namespace System.IO
             writer.Write(loc.Z);
         }
 
+        public static void Write(this BinaryWriter writer, Color4 color)
+        {
+            writer.Write(color.Alpha);
+            writer.Write(color.Red);
+            writer.Write(color.Green);
+            writer.Write(color.Blue);
+        }
+
+        public static Color4 ReadColor4(this BinaryReader reader)
+        {
+            Color4 col;
+
+            col.Alpha = reader.ReadSingle();
+            col.Red = reader.ReadSingle();
+            col.Green = reader.ReadSingle();
+            col.Blue = reader.ReadSingle();
+
+            return col;
+        }
+
         public static Quaternion ReadQuaternion(this BinaryReader reader)
         {
             Quaternion q;
