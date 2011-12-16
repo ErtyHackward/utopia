@@ -32,7 +32,7 @@ namespace LostIsland.Server
             ContainedSlot outItem;
             //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(LostIslandEntityClassId.Annihilator) }, out outItem);
 
-            var adder = (CubeResource)_server.EntityFactory.CreateEntity(EntityClassId.CubeResource);
+            var adder = _server.EntityFactory.CreateEntity<CubeResource>();
             adder.CubeId = CubeId.HalfWoodPlank;//looting a terraincube will create a new blockadder instance or add to the stack
 
             dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
@@ -42,7 +42,7 @@ namespace LostIsland.Server
                 if (cubeId == CubeId.Air)
                     continue;
 
-                var item3 = (CubeResource)_server.EntityFactory.CreateEntity((EntityClassId.CubeResource));
+                var item3 = _server.EntityFactory.CreateEntity<CubeResource>();
                 item3.CubeId = cubeId;
                 dEntity.Inventory.PutItem(item3);
             }
@@ -52,7 +52,7 @@ namespace LostIsland.Server
 
             //dEntity.Inventory.PutItem(new GoldCoin(), 45821);
 
-            dEntity.Inventory.PutItem((Carver)_server.EntityFactory.CreateEntity((LostIslandEntityClassId.Carver)));
+            dEntity.Inventory.PutItem(_server.EntityFactory.CreateEntity<Carver>());
             
             return dEntity;
         }

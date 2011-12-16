@@ -4,6 +4,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Concrete.Collectible;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities
@@ -40,6 +41,23 @@ namespace Utopia.Shared.Entities
         }
 
         /// <summary>
+        /// Creates an entity by its type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T CreateEntity<T>() where T: Entity, new()
+        {
+            var entity = new T();
+
+            InjectFields(entity);
+
+            // allow post produce prepare
+            OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
+
+            return entity;
+        }
+
+        /// <summary>
         /// Returns new entity object by its classId. New entity will have unique ID
         /// </summary>
         /// <param name="classId">Entity class identificator</param>
@@ -64,32 +82,51 @@ namespace Utopia.Shared.Entities
                         entity = new Zombie();
                         break;
                     case EntityClassId.Grass:
-                        entity = new Grass(LandscapeManager, this);
+                        entity = new Grass();
                         break;
                     case EntityClassId.Flower1:
-                        entity = new Flower1(LandscapeManager, this);
+                        entity = new Flower1();
                         break;
                     case EntityClassId.Flower2:
-                        entity = new Flower2(LandscapeManager, this);
+                        entity = new Flower2();
                         break;
                     case EntityClassId.Mushroom1:
-                        entity = new Mushr1(LandscapeManager, this);
+                        entity = new Mushr1();
                         break;
                     case EntityClassId.Mushroom2:
-                        entity = new Mushr2(LandscapeManager, this);
+                        entity = new Mushr2();
                         break;
                     case EntityClassId.Tree:
                         entity = new Tree();
+                        break;
+                    case EntityClassId.CubeResource: 
+                        entity = new CubeResource();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException("classId");
                 }
             }
 
+            InjectFields(entity);
+
             // allow post produce prepare
             OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
 
             return entity;
+        }
+
+        /// <summary>
+        /// Sets required field for special types of entities
+        /// </summary>
+        /// <param name="entity"></param>
+        protected virtual void InjectFields(Entity entity)
+        {
+            if (entity is IWorldIntercatingEntity)
+            {
+                var item = entity as IWorldIntercatingEntity;
+                item.LandscapeManager = LandscapeManager;
+                item.Factory = this;
+            }
         }
 
         /// <summary>

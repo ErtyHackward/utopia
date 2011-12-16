@@ -139,6 +139,7 @@
     <Compile Include="Entities\Interfaces\ITorsoArmor.cs" />
     <Compile Include="Entities\Interfaces\IUsableEntity.cs" />
     <Compile Include="Entities\Interfaces\IVoxelEntity.cs" />
+    <Compile Include="Entities\Interfaces\IWorldIntercatingEntity.cs" />
     <Compile Include="Entities\Inventory\Armor.cs" />
     <Compile Include="Entities\Inventory\CharacterEquipment.cs" />
     <Compile Include="Entities\Inventory\ContainedSlot.cs" />
