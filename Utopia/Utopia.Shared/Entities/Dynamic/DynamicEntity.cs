@@ -2,6 +2,7 @@ using System;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Dynamic
