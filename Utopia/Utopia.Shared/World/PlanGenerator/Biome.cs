@@ -117,11 +117,22 @@ namespace Utopia.Shared.World.PlanGenerator
             }
         }
 
+        public static bool IsDesert(BiomeType type)
+        {
+            switch (type)
+            {
+                case BiomeType.SubtropicalDesert:
+                case BiomeType.TemperateDesert:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public static bool IsForest(BiomeType type)
         {
             switch (type)
             {
-
                 case BiomeType.Taiga:
                 case BiomeType.TemperateRainForest:
                 case BiomeType.TemperateDeciduousForest:
@@ -131,7 +142,6 @@ namespace Utopia.Shared.World.PlanGenerator
                 default:
                     return false;
             }
-
         }
     }
 }
