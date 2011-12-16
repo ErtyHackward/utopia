@@ -8,6 +8,7 @@ using S33M3Engines.Shared.Math;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.PlanGenerator;
@@ -61,120 +62,152 @@ namespace Utopia.Shared.World.Processors
 
         public void Generate(Range2 generationRange, GeneratedChunk[,] chunks)
         {
-            
             generationRange.Foreach(pos =>
                                         {
-                                            var r = new FastRandom(_worldParameters.Seed + pos.GetHashCode());
                                             var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
-                                            
-                                            for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
-                                            {
-                                                for (int z = 0; z < AbstractChunk.ChunkSize.Z; z++)
-                                                {
-                                                    var pointData = GetPointData(new Point(pos.X * AbstractChunk.ChunkSize.X + x, pos.Y * AbstractChunk.ChunkSize.Z +z));
-
-                                                    var topGroundBlock = CubeId.Grass;
-                                                    var undegroundBlock = CubeId.Dirt;
-
-                                                    if (pointData.IsRiver)
-                                                        topGroundBlock = CubeId.Water;
-                                                    
-                                                    if (pointData.Biome == BiomeType.SubtropicalDesert || pointData.Biome == BiomeType.TemperateDesert)
-                                                    {
-                                                        topGroundBlock = CubeId.Sand;
-                                                        undegroundBlock = CubeId.Sand;
-                                                    }
-                                                    bool trees = Biome.IsForest(pointData.Biome);
-
-                                                    for (int y = 0; y < AbstractChunk.ChunkSize.Y; y++)
-                                                    {
-                                                        var globalPos = new Vector3D(pos.X * AbstractChunk.ChunkSize.X + x, y, pos.Y * AbstractChunk.ChunkSize.Z + z);
-
-                                                        if (y <= pointData.Elevation)
-                                                        {
-                                                            chunk.BlockData[new Vector3I(x, y, z)] = undegroundBlock;
-                                                        }
-                                                        else if (y <= _worldParameters.SeaLevel)
-                                                        {
-                                                            chunk.BlockData[new Vector3I(x, y, z)] = CubeId.Water;
-                                                        }
-
-                                                        if (y == pointData.Elevation)
-                                                        {
-                                                            if (y >= _worldParameters.SeaLevel)
-                                                            {
-                                                                chunk.BlockData[new Vector3I(x, y, z)] = topGroundBlock;
-
-                                                                if (topGroundBlock == CubeId.Grass)
-                                                                {
-
-                                                                    if (trees && r.NextDouble() < 0.005d)
-                                                                    {
-                                                                        AddTree(chunk, new Vector3I(x, y + 1, z));
-                                                                    }
-                                                                    else
-                                                                        if (r.NextDouble() < 0.03)
-                                                                        {
-                                                                            double result = r.NextDouble();
-                                                                            if (result <= 0.4)
-                                                                            {
-                                                                                var grass = _factory.CreateEntity<Grass>();
-
-                                                                                grass.GrowPhase = (byte)r.Next(0, 5);
-                                                                                grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                                                grass.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
-
-                                                                                chunk.Entities.Add(grass);
-                                                                            }
-                                                                            else if (result <= 0.6)
-                                                                            {
-                                                                                var entity = _factory.CreateEntity<Flower1>();
-
-                                                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
-
-                                                                                chunk.Entities.Add(entity);
-                                                                            }
-                                                                            else if (result <= 0.7)
-                                                                            {
-                                                                                var entity = _factory.CreateEntity<Flower2>();
-
-                                                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
-
-                                                                                chunk.Entities.Add(entity);
-                                                                            }
-                                                                            else if (result <= 0.9)
-                                                                            {
-                                                                                var entity = _factory.CreateEntity<Mushr1>();
-
-                                                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
-
-                                                                                chunk.Entities.Add(entity);
-                                                                            }
-                                                                            else if (result <= 1)
-                                                                            {
-                                                                                var entity = _factory.CreateEntity<Mushr2>();
-
-                                                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
-
-                                                                                chunk.Entities.Add(entity);
-                                                                            }
-                                                                        }
-                                                                }
-
-                                                                break;
-                                                            }
-                                                            chunk.BlockData[new Vector3I(x, y, z)] = CubeId.Sand;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            
-
+                                            Generate(pos, chunk);
                                         });
+        }
+
+        public void Generate(Vector2I pos, GeneratedChunk chunk)
+        {
+            var r = new FastRandom(_worldParameters.Seed + pos.GetHashCode());
+            
+            for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
+            {
+                for (int z = 0; z < AbstractChunk.ChunkSize.Z; z++)
+                {
+                    var pointData = GetPointData(new Point(pos.X * AbstractChunk.ChunkSize.X + x, pos.Y * AbstractChunk.ChunkSize.Z + z));
+
+                    var topGroundBlock = CubeId.Grass;
+                    var undegroundBlock = CubeId.Dirt;
+
+                    if (pointData.IsRiver)
+                        topGroundBlock = CubeId.Water;
+
+                    if (Biome.IsDesert(pointData.Biome))
+                    {
+                        topGroundBlock = CubeId.Sand;
+                        undegroundBlock = CubeId.Sand;
+                    }
+
+                    bool trees = Biome.IsForest(pointData.Biome);
+
+                    for (int y = 0; y < AbstractChunk.ChunkSize.Y; y++)
+                    {
+                        var globalPos = new Vector3D(pos.X * AbstractChunk.ChunkSize.X + x, y, pos.Y * AbstractChunk.ChunkSize.Z + z);
+
+                        if (y <= pointData.Elevation)
+                        {
+                            chunk.BlockData[new Vector3I(x, y, z)] = undegroundBlock;
+                        }
+                        else if (y <= _worldParameters.SeaLevel)
+                        {
+                            chunk.BlockData[new Vector3I(x, y, z)] = CubeId.Water;
+                        }
+
+                        if (y == pointData.Elevation)
+                        {
+                            if (y >= _worldParameters.SeaLevel)
+                            {
+                                chunk.BlockData[new Vector3I(x, y, z)] = topGroundBlock;
+
+                                if (topGroundBlock == CubeId.Grass)
+                                {
+                                    if (trees && r.NextDouble() < 0.005d)
+                                    {
+                                        AddTree(chunk, new Vector3I(x, y + 1, z));
+                                    }
+                                    else
+                                    {
+                                        if (pointData.Biome == BiomeType.Grassland)
+                                        {
+                                            double result = r.NextDouble();
+                                            if (result < 0.3)
+                                            {
+                                                var grass = _factory.CreateEntity<Grass>();
+
+                                                grass.GrowPhase = 1;
+                                                grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                grass.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                chunk.Entities.Add(grass);
+                                            }
+                                        }
+                                        else
+                                        if (r.NextDouble() < 0.03)
+                                        {
+                                            double result = r.NextDouble();
+                                            if (result <= 0.4)
+                                            {
+                                                var grass = _factory.CreateEntity<Grass>();
+
+                                                grass.GrowPhase = (byte) r.Next(0, 5);
+                                                grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                grass.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                chunk.Entities.Add(grass);
+                                            }
+                                            else if (result <= 0.6)
+                                            {
+                                                var entity = _factory.CreateEntity<Flower1>();
+
+                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                chunk.Entities.Add(entity);
+                                            }
+                                            else if (result <= 0.7)
+                                            {
+                                                var entity = _factory.CreateEntity<Flower2>();
+
+                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                chunk.Entities.Add(entity);
+                                            }
+                                            else if (result <= 0.9)
+                                            {
+                                                var entity = _factory.CreateEntity<Mushr1>();
+
+                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                chunk.Entities.Add(entity);
+                                            }
+                                            else if (result <= 1)
+                                            {
+                                                var entity = _factory.CreateEntity<Mushr2>();
+
+                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                                chunk.Entities.Add(entity);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (topGroundBlock == CubeId.Sand)
+                                {
+                                    double result = r.NextDouble();
+                                    if (result <= 0.001)
+                                    {
+                                        var cactus = _factory.CreateEntity<Cactus>();
+
+                                        cactus.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                        cactus.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+
+                                        chunk.Entities.Add(cactus);
+                                    }
+                                }
+
+                                break;
+                            }
+                            chunk.BlockData[new Vector3I(x, y, z)] = CubeId.Sand;
+                        }
+                    }
+                }
+            }
         }
 
         private void AddTree(GeneratedChunk chunk, Vector3I vector3i)
@@ -241,7 +274,6 @@ namespace Utopia.Shared.World.Processors
             // river check
             foreach (var edge in poly.Edges)
             {
-                
                 if (edge.WaterFlow > 0)
                 {
                     var riverPath = new GraphicsPath();
@@ -253,11 +285,9 @@ namespace Utopia.Shared.World.Processors
                         break;
                     }
                 }
-
             }
             
             //graphicsPath.IsOutlineVisible(
-
             data.Biome = poly.Biome;
             data.Moisture = poly.Moisture;
             var cor = poly.Corners.Find(c => c.Point == mappoint);
@@ -268,8 +298,7 @@ namespace Utopia.Shared.World.Processors
             }
 
             // collect all nontouching corners
-
-            //var corners = (from neighboor in poly.Neighbors from corner in neighboor.Corners where !poly.Corners.Contains(corner) select corner).ToList();
+            // var corners = (from neighboor in poly.Neighbors from corner in neighboor.Corners where !poly.Corners.Contains(corner) select corner).ToList();
 
 
             var distances = poly.Corners.Select(corner => 1 / Math.Pow(Vector2I.Distance(new Vector2I(corner.Point.X, corner.Point.Y), new Vector2I(mappoint.X, mappoint.Y)),2)).ToList();

@@ -35,6 +35,11 @@
     <ClassID>3</ClassID>
     <SpriteID>10</SpriteID>
   </Entity>
+  <Entity>
+    <!-- Cactus -->
+    <ClassID>4005</ClassID>
+    <SpriteID>11</SpriteID>
+  </Entity>
   <Cube>
     <Name>Air</Name>
     <Id>0</Id>

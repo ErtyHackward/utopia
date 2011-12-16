@@ -87,6 +87,7 @@
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
     <Compile Include="Config\IConfigClass.cs" />
+    <Compile Include="Entities\Concrete\Collectible\Cactus.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower1.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower2.cs" />
     <Compile Include="Entities\Concrete\Collectible\Grass.cs" />
