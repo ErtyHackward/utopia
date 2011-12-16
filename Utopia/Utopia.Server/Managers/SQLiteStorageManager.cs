@@ -267,7 +267,7 @@ namespace Utopia.Server.Managers
 
             if (userId > 0)
             {
-                return 1 == Execute(string.Format("UPDATE users SET password = '{0}', role = {1} WHERE login = '{2}", passwordHash, (int)role, Escape(login)));
+                return 1 == Execute(string.Format("UPDATE users SET password = '{0}', role = {1} WHERE login = '{2}'", passwordHash, (int)role, Escape(login)));
             }
             
             return 1 == Execute(string.Format("INSERT INTO users (login, password, role) VALUES ('{0}', '{1}', {2})", Escape(login), Escape(passwordHash), (int)role));
