@@ -4,7 +4,7 @@ using Utopia.Shared.Structs;
 namespace Utopia.Shared.Chunks
 {
     /// <summary>
-    /// Represents a base class for chunks block storage
+    /// Represents a base class for a voxel block storage
     /// </summary>
     public abstract class ChunkDataProvider
     {
@@ -13,22 +13,24 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         public event EventHandler<ChunkDataProviderDataChangedEventArgs> BlockDataChanged;
 
-        protected void OnBlockDataChanged(ChunkDataProviderDataChangedEventArgs e)
+        public void OnBlockDataChanged(ChunkDataProviderDataChangedEventArgs e)
         {
-            if (BlockDataChanged != null) 
-                BlockDataChanged(this, e);
+            var handler = BlockDataChanged;
+            if (handler != null) handler(this, e);
         }
+
 
         /// <summary>
         /// Ocurrs when whole buffer was changed
         /// </summary>
         public event EventHandler<ChunkDataProviderBufferChangedEventArgs> BlockBufferChanged;
 
-        protected void OnBlockBufferChanged(ChunkDataProviderBufferChangedEventArgs e)
+        public void OnBlockBufferChanged(ChunkDataProviderBufferChangedEventArgs e)
         {
-            if (BlockBufferChanged != null)
-                BlockBufferChanged(this, e);
+            var handler = BlockBufferChanged;
+            if (handler != null) handler(this, e);
         }
+
 
         /// <summary>
         /// Requests a full block buffer for a chunk. This operation should be used only for saving the data

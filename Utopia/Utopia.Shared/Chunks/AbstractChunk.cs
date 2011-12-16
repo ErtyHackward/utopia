@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Security.Cryptography;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
@@ -80,10 +79,10 @@ namespace Utopia.Shared.Chunks
         }
 
 
-
         /// <summary>
         /// Loads chunk data from bytes array (blocks and entites)
         /// </summary>
+        /// <param name="factory"></param>
         /// <param name="bytes"></param>
         public void Deserialize(EntityFactory factory, byte[] bytes)
         {
@@ -93,6 +92,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Loads chunk data from memory stream (blocks and entites)
         /// </summary>
+        /// <param name="factory"></param>
         /// <param name="ms"></param>
         public void Deserialize(EntityFactory factory, MemoryStream ms)
         {
@@ -131,29 +131,7 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public Md5Hash GetMd5Hash()
         {
-            return Md5HashData ?? (Md5HashData = CalculateHash(Serialize()));
-        }
-
-        protected Md5Hash CalculateHash(byte[] bytes)
-        {
-            if (bytes == null)
-            {
-                return null;
-            }
-            var provider = new MD5CryptoServiceProvider();
-            
-            return new Md5Hash(provider.ComputeHash(bytes));
-        }
-
-        protected Md5Hash CalculateHash(MemoryStream ms)
-        {
-            if (ms == null || ms.Length == 0)
-            {
-                return null;
-            }
-            var provider = new MD5CryptoServiceProvider();
-
-            return new Md5Hash(provider.ComputeHash(ms));
+            return Md5HashData ?? (Md5HashData = Md5Hash.Calculate(Serialize()));
         }
 
         /// <summary>
