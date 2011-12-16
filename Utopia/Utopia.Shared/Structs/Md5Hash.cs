@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Security.Cryptography;
 
 namespace Utopia.Shared.Structs
 {
@@ -62,7 +64,36 @@ namespace Utopia.Shared.Structs
 
         public override int GetHashCode()
         {
-            return _bytes.GetHashCode();
+            int hash = 0;
+            for (int i = 0; i < 16; i++)
+            {
+                hash += (_bytes[i] << i*2);
+            }
+            return hash;
+        }
+
+        public static Md5Hash Calculate(byte[] bytes)
+        {
+            if (bytes == null)
+            {
+                return null;
+            }
+            using (var provider = new MD5CryptoServiceProvider())
+            {
+                return new Md5Hash(provider.ComputeHash(bytes));
+            }
+        }
+
+        public static Md5Hash Calculate(MemoryStream ms)
+        {
+            if (ms == null || ms.Length == 0)
+            {
+                return null;
+            }
+            using (var provider = new MD5CryptoServiceProvider())
+            {
+                return new Md5Hash(provider.ComputeHash(ms));
+            }
         }
     }
 }

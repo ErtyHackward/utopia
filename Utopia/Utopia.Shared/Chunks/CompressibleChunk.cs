@@ -81,7 +81,7 @@ namespace Utopia.Shared.Chunks
             using (var zip = new GZipStream(ms, CompressionMode.Compress))
             {
                 var serializedBytes = Serialize();
-                Md5HashData = hash = CalculateHash(serializedBytes);
+                Md5HashData = hash = Md5Hash.Calculate(serializedBytes);
                 zip.Write(serializedBytes, 0, serializedBytes.Length);
             }
 
@@ -94,6 +94,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Performs decompression and deserialization of the chunk using compressed bytes
         /// </summary>
+        /// <param name="factory"></param>
         /// <param name="compressedBytes"></param>
         /// <param name="getHash">Do we need to take md5hash of the chunk?</param>
         public void Decompress(EntityFactory factory, byte[] compressedBytes, bool getHash = false)
@@ -107,6 +108,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Tries to decompress and deserialize data from CompressedBytes property
         /// </summary>
+        /// <param name="factory"></param>
         /// <param name="getHash">Do we need to take md5hash of the chunk?</param>
         public void Decompress(EntityFactory factory, bool getHash = false)
         {
@@ -120,7 +122,7 @@ namespace Utopia.Shared.Chunks
                 zip.CopyTo(decompressed);
                 if (getHash)
                 {
-                    Md5HashData = CalculateHash(decompressed);
+                    Md5HashData = Md5Hash.Calculate(decompressed);
                     decompressed.Position = 0;
                 }
                 Deserialize(factory, decompressed);
