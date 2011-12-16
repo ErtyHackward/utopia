@@ -115,21 +115,22 @@ namespace Utopia.Shared.Chunks
             if (CompressedBytes == null)
                 throw new InvalidOperationException("Set CompressedBytes property before decompression");
 
-            var ms = new MemoryStream(CompressedBytes);
-            using (var zip = new GZipStream(ms, CompressionMode.Decompress))
+            using (var ms = new MemoryStream(CompressedBytes))
             {
-                var decompressed = new MemoryStream();
-                zip.CopyTo(decompressed);
-                if (getHash)
+                using (var zip = new GZipStream(ms, CompressionMode.Decompress))
                 {
-                    Md5HashData = Md5Hash.Calculate(decompressed);
-                    decompressed.Position = 0;
+                    var decompressed = new MemoryStream();
+                    zip.CopyTo(decompressed);
+                    if (getHash)
+                    {
+                        Md5HashData = Md5Hash.Calculate(decompressed);
+                        decompressed.Position = 0;
+                    }
+                    Deserialize(factory, decompressed);
+                    decompressed.Dispose();
+                    CompressedDirty = false;
                 }
-                Deserialize(factory, decompressed);
-                decompressed.Dispose();
-                CompressedDirty = false;
             }
-            ms.Dispose();
         }
 
         protected override void BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)

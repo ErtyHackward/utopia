@@ -96,6 +96,15 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Informs about tool use success
         /// </summary>
-        UseFeedback = 23
+        UseFeedback = 23,
+        /// <summary>
+        /// Requests one or more voxel models
+        /// </summary>
+        GetVoxelModels = 24,
+        /// <summary>
+        /// Contains requested voxel model
+        /// </summary>
+        VoxelModelData = 25
+
     }
 }
