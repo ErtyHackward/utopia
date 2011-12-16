@@ -2,7 +2,6 @@ using System.IO;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
-using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
 {
@@ -52,8 +51,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         }
 
         #endregion
-        public Grass(ILandscapeManager2D landscapeManager, EntityFactory factory)
-            : base(landscapeManager, factory)
+        public Grass()
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;

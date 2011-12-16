@@ -8,10 +8,17 @@ using System;
 
 namespace Utopia.Shared.Entities.Concrete
 {
-    public class CubeResource : StaticEntity, ITool
+    public class CubeResource : StaticEntity, ITool, IWorldIntercatingEntity
     {
-        private readonly ILandscapeManager2D _landscapeManager;
-        private readonly EntityFactory _factory;
+        /// <summary>
+        /// Gets landscape manager, this field is injected
+        /// </summary>
+        public ILandscapeManager2D LandscapeManager { get; set; }
+
+        /// <summary>
+        /// Gets entityFactory, this field is injected
+        /// </summary>
+        public EntityFactory Factory { get; set; }
 
         public byte CubeId { get; set; }
     
@@ -49,12 +56,6 @@ namespace Utopia.Shared.Entities.Concrete
             }
         }
         
-        public CubeResource(ILandscapeManager2D landscapeManager, EntityFactory factory)
-        {
-            _landscapeManager = landscapeManager;
-            _factory = factory;
-        }
-
         public override string DisplayName
         {
             get { return Cubes.CubeId.GetCubeTypeName(CubeId); }
@@ -113,11 +114,11 @@ namespace Utopia.Shared.Entities.Concrete
                 {
                     var character = owner as CharacterEntity;
 
-                    var cursor = _landscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
+                    var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
                     var cube = cursor.Read();
                     if (cube != Cubes.CubeId.Air)
                     {
-                        var chunk = _landscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
+                        var chunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
 
                         if (character != null)
                         {
@@ -126,7 +127,7 @@ namespace Utopia.Shared.Entities.Concrete
                                 IBlockLinkedEntity cubeBlockLinkedEntity = cubeEntity as IBlockLinkedEntity;
                                 if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
                                 {
-                                    var adder = (IItem)_factory.CreateEntity(cubeEntity.ClassId);
+                                    var adder = (IItem)Factory.CreateEntity(cubeEntity.ClassId);
                                     if (cubeEntity is IGrowEntity)
                                     {
                                         ((IGrowEntity)adder).GrowPhase = ((IGrowEntity)cubeEntity).GrowPhase;
@@ -146,7 +147,7 @@ namespace Utopia.Shared.Entities.Concrete
                         //If the Tool Owner is a player, then Add the resource removed into the inventory
                         if (character != null)
                         {
-                            var adder = (CubeResource)_factory.CreateEntity(EntityClassId.CubeResource);
+                            var adder = Factory.CreateEntity<CubeResource>();
                             adder.CubeId = cube;
                             character.Inventory.PutItem(adder);
                         }
@@ -156,7 +157,7 @@ namespace Utopia.Shared.Entities.Concrete
                 else
                 {
 
-                    var cursor = _landscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
+                    var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
                     if (cursor.Read() == Cubes.CubeId.Air)
                     {
                         cursor.Write(CubeId);
@@ -175,14 +176,14 @@ namespace Utopia.Shared.Entities.Concrete
             var impact = new ToolImpact { Success = false };
 
             EntityLink entity = owner.EntityState.PickedEntityLink;
-            IChunkLayout2D chunk = _landscapeManager.GetChunk(entity.ChunkPosition);
+            IChunkLayout2D chunk = LandscapeManager.GetChunk(entity.ChunkPosition);
             IStaticEntity entityRemoved;
             chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);
             
             var character = owner as CharacterEntity;
             if (character != null)
             {
-                var adder = (IItem)_factory.CreateEntity(entityRemoved.ClassId);
+                var adder = (IItem)Factory.CreateEntity(entityRemoved.ClassId);
                 if (entityRemoved is IGrowEntity)
                 {
                     ((IGrowEntity)adder).GrowPhase = ((IGrowEntity)entityRemoved).GrowPhase;

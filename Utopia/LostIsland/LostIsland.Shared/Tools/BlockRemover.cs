@@ -10,18 +10,19 @@ using Utopia.Shared.Interfaces;
 
 namespace LostIsland.Shared.Tools
 {
-    public abstract class BlockRemover : VoxelItem, ITool
+    public abstract class BlockRemover : VoxelItem, ITool, IWorldIntercatingEntity
     {
-        private readonly ILandscapeManager2D _landscapeManager;
-        private readonly EntityFactory _factory;
-
         protected HashSet<byte> RemoveableCubeIds = new HashSet<byte>();
 
-        protected BlockRemover(ILandscapeManager2D landscapeManager2D, EntityFactory factory)
-        {
-            _landscapeManager = landscapeManager2D;
-            _factory = factory;
-        }
+        /// <summary>
+        /// Gets landscape manager, this field is injected
+        /// </summary>
+        public ILandscapeManager2D LandscapeManager { get; set; }
+
+        /// <summary>
+        /// Gets entityFactory, this field is injected
+        /// </summary>
+        public EntityFactory Factory { get; set; }
 
         public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
         {
@@ -75,13 +76,13 @@ namespace LostIsland.Shared.Tools
         private IToolImpact BlockImpact(IDynamicEntity owner)
         {
             var impact = new ToolImpact { Success = false };
-            var cursor = _landscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
+            var cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
             byte cube = cursor.Read();
             if (cube != CubeId.Air)
             {
                 //Check static entity impact of the Block removal.
                 //Get the chunk
-                var chunk = _landscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
+                var chunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
 
                 chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
                 
@@ -93,7 +94,7 @@ namespace LostIsland.Shared.Tools
                 var character = owner as CharacterEntity;
                 if (character != null)
                 {
-                    var adder = (CubeResource)_factory.CreateEntity(EntityClassId.CubeResource);
+                    var adder = Factory.CreateEntity<CubeResource>();
                     adder.CubeId = cube;
                     character.Inventory.PutItem(adder);
                 }

@@ -38,8 +38,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
 
         #endregion
 
-        public Flower2(ILandscapeManager2D landscapeManager, EntityFactory factory)
-            : base(landscapeManager, factory)
+        public Flower2()
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;

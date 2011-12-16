@@ -39,8 +39,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
 
         #endregion
 
-        public Mushr1(ILandscapeManager2D lm, EntityFactory factory)
-            : base(lm, factory)
+        public Mushr1()
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;

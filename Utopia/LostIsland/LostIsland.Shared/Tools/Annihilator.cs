@@ -16,14 +16,7 @@ namespace LostIsland.Shared.Tools
         public override string DisplayName
         {
             get { return "Annihilator"; }
-        }
-
-        public Annihilator(ILandscapeManager2D landscapeManager, EntityFactory factory)
-            : base(landscapeManager, factory)
-        {
-            
-        }
-        
+        }        
     }
 
 }

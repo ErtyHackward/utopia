@@ -30,8 +30,7 @@ namespace LostIsland.Shared.Tools
             }
         }
 
-        public Shovel(ILandscapeManager2D landscapeManager, LostIslandEntityFactory factory)
-            : base(landscapeManager, factory)
+        public Shovel()
         {
             RemoveableCubeIds.Add(CubeId.Dirt);
             RemoveableCubeIds.Add(CubeId.Grass);

@@ -9,17 +9,17 @@ namespace Utopia.Shared.Entities
     /// <summary>
     /// Base class for items that can be placed into a world cube
     /// </summary>
-    public abstract class CubePlaceableSpriteItem : SpriteItem, ITool
+    public abstract class CubePlaceableSpriteItem : SpriteItem, ITool, IWorldIntercatingEntity
     {
-        private readonly ILandscapeManager2D _landscapeManager;
-        private readonly EntityFactory _factory;
+        /// <summary>
+        /// Gets landscape manager, this field is injected
+        /// </summary>
+        public ILandscapeManager2D LandscapeManager { get; set; }
 
-        protected CubePlaceableSpriteItem(ILandscapeManager2D landscapeManager2D, EntityFactory factory)
-        {
-            if (landscapeManager2D == null) throw new ArgumentNullException("landscapeManager2D");
-            _landscapeManager = landscapeManager2D;
-            _factory = factory;
-        }
+        /// <summary>
+        /// Gets entityFactory, this field is injected
+        /// </summary>
+        public EntityFactory Factory { get; set; }
 
         public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer)
         {
@@ -29,10 +29,10 @@ namespace Utopia.Shared.Entities
             {
                 if (owner.EntityState.IsBlockPicked)
                 {
-                    var chunk = _landscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
+                    var chunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
 
                     //Create a new version of the Grass, and put it into the world
-                    var cubeEntity = (IItem)_factory.CreateEntity(ClassId);
+                    var cubeEntity = (IItem)Factory.CreateEntity(ClassId);
                     cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f, owner.EntityState.PickedBlockPosition.Y + 1f, owner.EntityState.PickedBlockPosition.Z + 0.5f);
 
                     chunk.Entities.Add(cubeEntity);
