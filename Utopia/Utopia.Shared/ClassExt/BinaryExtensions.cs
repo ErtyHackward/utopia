@@ -101,6 +101,66 @@ namespace System.IO
             writer.Write(quaternion.W);
         }
 
+        public static void Write(this BinaryWriter writer, Matrix matrix)
+        {
+            writer.Write(matrix.M11);
+            writer.Write(matrix.M12);
+            writer.Write(matrix.M13);
+            writer.Write(matrix.M14);
+            writer.Write(matrix.M21);
+            writer.Write(matrix.M22);
+            writer.Write(matrix.M23);
+            writer.Write(matrix.M24);
+            writer.Write(matrix.M31);
+            writer.Write(matrix.M32);
+            writer.Write(matrix.M33);
+            writer.Write(matrix.M34);
+            writer.Write(matrix.M41);
+            writer.Write(matrix.M42);
+            writer.Write(matrix.M43);
+            writer.Write(matrix.M44);
+        }
+
+        public static Matrix ReadMatrix(this BinaryReader reader)
+        {
+            Matrix matrix;
+
+            matrix.M11 = reader.ReadSingle();
+            matrix.M12 = reader.ReadSingle();
+            matrix.M13 = reader.ReadSingle();
+            matrix.M14 = reader.ReadSingle();
+            matrix.M21 = reader.ReadSingle();
+            matrix.M22 = reader.ReadSingle();
+            matrix.M23 = reader.ReadSingle();
+            matrix.M24 = reader.ReadSingle();
+            matrix.M31 = reader.ReadSingle();
+            matrix.M32 = reader.ReadSingle();
+            matrix.M33 = reader.ReadSingle();
+            matrix.M34 = reader.ReadSingle();
+            matrix.M41 = reader.ReadSingle();
+            matrix.M42 = reader.ReadSingle();
+            matrix.M43 = reader.ReadSingle();
+            matrix.M44 = reader.ReadSingle();
+
+            return matrix;
+        }
+
+        public static Md5Hash ReadMd5Hash(this BinaryReader reader)
+        {
+            var bytes = reader.ReadBytes(16);
+
+            if (bytes.Length != 16)
+                throw new EndOfStreamException();
+
+            return new Md5Hash(bytes);
+        }
+
+        public static void Write(this BinaryWriter writer, Md5Hash hash)
+        {
+            if (hash == null) throw new ArgumentNullException("hash");
+            writer.Write(hash.Bytes);
+        }
+
         public static Vector2I ReadVector2I(this BinaryReader reader)
         {
             Vector2I vec;
@@ -128,7 +188,7 @@ namespace System.IO
             writer.Write(range.Size);
         }
 
-        public static byte[] ToArray(this IBinaryStorable item)
+        public static byte[] Serialize(this IBinaryStorable item)
         {
             using (var ms = new MemoryStream())
             {
@@ -136,6 +196,19 @@ namespace System.IO
                 item.Save(writer);
                 return ms.ToArray();
             }
+        }
+
+        public static T Deserialize<T>(this byte[] array) where T : IBinaryStorable, new()
+        {
+            var item = new T();
+
+            using (var ms = new MemoryStream(array))
+            {
+                var reader = new BinaryReader(ms);
+                item.Load(reader);
+            }
+            
+            return item;
         }
 
         public static void Write(this BinaryWriter writer, EntityLink link)

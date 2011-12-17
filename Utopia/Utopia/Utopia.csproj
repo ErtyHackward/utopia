@@ -248,7 +248,6 @@
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds3D.cs" />
-    <Compile Include="SQLite\SQLiteManager.cs" />
     <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
     <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
     <Compile Include="Worlds\Storage\IChunkStorageManager.cs" />

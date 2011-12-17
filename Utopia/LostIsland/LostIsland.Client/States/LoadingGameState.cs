@@ -229,8 +229,8 @@ namespace LostIsland.Client.States
             var chat = _ioc.Get<ChatComponent>();
             var map = _ioc.Get<MapComponent>();
             var hud = _ioc.Get<Hud>();
-            var entityEditor = _ioc.Get<EntityEditor>();
-            var carvingEditor = _ioc.Get<CarvingEditor>();
+            //var entityEditor = _ioc.Get<EntityEditor>();
+            //var carvingEditor = _ioc.Get<CarvingEditor>();
             var stars = _ioc.Get<IDrawableComponent>("Stars");
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();

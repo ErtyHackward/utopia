@@ -68,6 +68,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\Library\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -178,6 +181,7 @@
     <Compile Include="Interfaces\IGameStateToolManager.cs" />
     <Compile Include="Interfaces\ILandscapeCursor.cs" />
     <Compile Include="Interfaces\ILandscapeManager2D.cs" />
+    <Compile Include="Interfaces\IVoxelModelStorage.cs" />
     <Compile Include="Interfaces\ISingleArrayDataProviderUser.cs" />
     <Compile Include="Interfaces\IUsersStorage.cs" />
     <Compile Include="Interfaces\IWorldProcessor.cs" />
@@ -223,6 +227,7 @@
     <Compile Include="Settings\CubeProfile.cs" />
     <Compile Include="Settings\EntityProfile.cs" />
     <Compile Include="Settings\GameSystemSettings.cs" />
+    <Compile Include="SQLiteStorage.cs" />
     <Compile Include="Structs\ByteColor.cs" />
     <Compile Include="Structs\ByteVector3.cs" />
     <Compile Include="Structs\ByteVector4.cs" />

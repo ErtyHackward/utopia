@@ -53,7 +53,7 @@ namespace Utopia.Entities.Voxel
             _voxelMeshFactory = voxelMeshFactory;
             _overlays = overlays;
 
-            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks, _overlays, _isColorOnly);
+            //Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks, _overlays, _isColorOnly);
             VertexBuffer = _voxelMeshFactory.InitBuffer(Vertice);
 
             Altered = true;
@@ -78,7 +78,7 @@ namespace Utopia.Entities.Voxel
         public void Commit()
         {
             //send modified blocks back to server / disk storage
-            VoxelEntity.CommitModel();
+            //VoxelEntity.CommitModel();
         }
 
         public void Dispose()
@@ -94,7 +94,7 @@ namespace Utopia.Entities.Voxel
         {
             if (!Altered) return;
 
-            Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks, _overlays, _isColorOnly);
+            //Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks, _overlays, _isColorOnly);
 
             if (Vertice.Count != 0)
             {

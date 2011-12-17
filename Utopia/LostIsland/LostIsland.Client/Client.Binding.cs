@@ -130,8 +130,8 @@ namespace LostIsland.Client
             _iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<MapComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<CarvingEditor>().ToSelf().InSingletonScope();            
+            //_iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
+            //_iocContainer.Bind<CarvingEditor>().ToSelf().InSingletonScope();            
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
             _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
             _iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();

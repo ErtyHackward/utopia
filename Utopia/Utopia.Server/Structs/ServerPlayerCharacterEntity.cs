@@ -79,14 +79,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                var ms = new MemoryStream();
-                using (var writer = new BinaryWriter(ms))
-                {
-                    e.Entity.Model.Save(writer);
-                }
-
-                Connection.SendAsync(new EntityVoxelModelMessage { EntityLink = e.Entity.GetLink(), Bytes = ms.ToArray() });
-                ms.Dispose();
+                Connection.SendAsync(new EntityVoxelModelMessage { EntityLink = e.Entity.GetLink(), Hash = e.Entity.ModelHash });
             }
         }
 
@@ -185,7 +178,7 @@ namespace Utopia.Server.Structs
                 var toolImpact = tool.Use(playerCharacter, entityUseMessage.UseMode, true);
 
                 // returning tool feedback
-                Connection.SendAsync(new UseFeedbackMessage { Token = entityUseMessage.Token, EntityImpactBytes = toolImpact.ToArray() });
+                Connection.SendAsync(new UseFeedbackMessage { Token = entityUseMessage.Token, EntityImpactBytes = toolImpact.Serialize() });
             }
             else
             {

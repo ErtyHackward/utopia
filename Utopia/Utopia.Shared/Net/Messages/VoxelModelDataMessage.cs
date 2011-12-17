@@ -11,6 +11,9 @@ using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Net.Messages
 {
+    /// <summary>
+    /// Represents a message containing a voxel model
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VoxelModelDataMessage : IBinaryMessage
     {

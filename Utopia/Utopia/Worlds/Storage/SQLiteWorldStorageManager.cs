@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Data;
-using System.IO;
 using System.Threading;
 using System.Collections.Concurrent;
+using Utopia.Shared;
 using Utopia.Worlds.Storage.Structs;
-using Utopia.Shared.World;
 using Utopia.Shared.Structs;
-using Utopia.SQLite;
 
 namespace Utopia.Worlds.Storage
 {
-    public class SQLiteWorldStorageManager : SQLiteManager, IChunkStorageManager, IDisposable
+    public class SQLiteWorldStorageManager : SQLiteStorage, IChunkStorageManager
     {
         #region Private variables
-        private Thread _storageThread;
+        private readonly Thread _storageThread;
         private readonly static int _nbrTicket = 2000;
         private Queue<int> _requestTickets;
         private ConcurrentQueue<CubeRequest> _dataRequestQueue;
@@ -32,52 +26,47 @@ namespace Utopia.Worlds.Storage
         public ChunkDataStorage[] Data { get; private set; }
         public ConcurrentDictionary<long, Md5Hash> ChunkHashes { get; private set; }
         #endregion
+
         /// <summary>
         /// Sqlite Manager
         /// </summary>
-        /// <param name="path">The SQLite database path</param>
-        public SQLiteWorldStorageManager(WorldParameters worldParameters, string UserName, bool forceNew = false)
-            : base(@"Chunk_" + worldParameters.Seed + ".dat",
-                   Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Utopia\Storage\" + UserName.Replace(@"\", "_") + @"\" + @"Worlds\", 
-                   forceNew)
-        {
-            Init();
-        }
-
-        #region Public Methods
-        protected override void CreateDataBase(SQLiteConnection conn)
-        {
-            var command = conn.CreateCommand();
-            command = conn.CreateCommand();
-            command.CommandText = @"CREATE TABLE CHUNKS([ChunkId] BIGINT PRIMARY KEY NOT NULL, [X] integer NOT NULL, [Z] integer NOT NULL, [md5hash] blob, [data] blob NOT NULL);";
-            command.CommandType = CommandType.Text;
-            command.ExecuteNonQuery();
-        }
-        #endregion
-
-        #region Private Methods
-        private void Init()
+        /// <param name="fileName">The SQLite database path</param>
+        /// <param name="forceNew"></param>
+        public SQLiteWorldStorageManager(string fileName, bool forceNew = false)
+            : base(fileName, forceNew)
         {
             //Initiliaz the IChunkStorageManager
-            IChunkStorageManager_Init();
+            ChunkStorageManagerInit();
 
             //Init the MD5 chunks hashes code
             GetChunksMd5();
 
             IsRunning = true;
-            _storageThread = new Thread(new ThreadStart(StorageMainLoop)); //Start the main loop
+            _storageThread = new Thread(StorageMainLoop); //Start the main loop
             _storageThread.Start();
         }
+
+
+        protected override string CreateDataBase()
+        {
+            return @"CREATE TABLE CHUNKS([ChunkId] BIGINT PRIMARY KEY NOT NULL, [X] integer NOT NULL, [Z] integer NOT NULL, [md5hash] blob, [data] blob NOT NULL);";
+        }
+
+        #region Private Methods
 
         private void GetChunksMd5()
         {
             ChunkHashes = new ConcurrentDictionary<long, Md5Hash>();
 
-            SQLiteDataReader dataReader = _landscapeGetHash.ExecuteReader();
-
-            while (dataReader.Read())
+            using (var dataReader = _landscapeGetHash.ExecuteReader())
             {
-                while (!ChunkHashes.TryAdd(dataReader.GetInt64(0), dataReader.IsDBNull(1) ? null : new Shared.Structs.Md5Hash((byte[])dataReader.GetValue(1)))) ;
+                while (dataReader.Read())
+                {
+                    var chunkId = dataReader.GetInt64(0);
+                    var md5Hash = dataReader.IsDBNull(1) ? null : new Md5Hash((byte[]) dataReader.GetValue(1));
+
+                    ChunkHashes.TryAdd(chunkId, md5Hash);
+                }
             }
         }
 
@@ -95,12 +84,12 @@ namespace Utopia.Worlds.Storage
 
         private void ProcessQueues()
         {
-            processRequestQueue();
-            processStoreQueue();
+            ProcessRequestQueue();
+            ProcessStoreQueue();
         }
 
         //GET + REQUEST Chunk DATA ======================================================================
-        private void IChunkStorageManager_Init()
+        private void ChunkStorageManagerInit()
         {
             Data = new ChunkDataStorage[_nbrTicket + 1];
             _requestTickets = new Queue<int>(_nbrTicket);
@@ -114,19 +103,18 @@ namespace Utopia.Worlds.Storage
                 Data[i] = null;
             }
 
-            string CommandText;
             //Get a specific chunk
-            CommandText = "SELECT [ChunkId], [X], [Z], [md5hash], [data] FROM CHUNKS WHERE (CHUNKID = @CHUNKID)";
-            _landscapeGetCmd = new SQLiteCommand(CommandText, _connection);
+            var commandText = "SELECT [ChunkId], [X], [Z], [md5hash], [data] FROM CHUNKS WHERE (CHUNKID = @CHUNKID)";
+            _landscapeGetCmd = new SQLiteCommand(commandText, Connection);
             _landscapeGetCmd.Parameters.Add("@CHUNKID", System.Data.DbType.Int64);
 
             //Get All modified chunks Hashs
-            CommandText = "SELECT [ChunkId], [md5hash] FROM CHUNKS";
-            _landscapeGetHash = new SQLiteCommand(CommandText, _connection);
+            commandText = "SELECT [ChunkId], [md5hash] FROM CHUNKS";
+            _landscapeGetHash = new SQLiteCommand(commandText, Connection);
 
             //Upsert a specific chunk
-            CommandText = "INSERT OR REPLACE INTO CHUNKS ([ChunkId],[X], [Z], [md5hash], [data]) VALUES (@CHUNKID, @X, @Z, @MD5, @DATA)";
-            _landscapeInsertCmd = new SQLiteCommand(CommandText, _connection);
+            commandText = "INSERT OR REPLACE INTO CHUNKS ([ChunkId],[X], [Z], [md5hash], [data]) VALUES (@CHUNKID, @X, @Z, @MD5, @DATA)";
+            _landscapeInsertCmd = new SQLiteCommand(commandText, Connection);
             _landscapeInsertCmd.Parameters.Add("@CHUNKID", System.Data.DbType.Int64);
             _landscapeInsertCmd.Parameters.Add("@X", System.Data.DbType.Int32);
             _landscapeInsertCmd.Parameters.Add("@Z", System.Data.DbType.Int32);
@@ -137,7 +125,7 @@ namespace Utopia.Worlds.Storage
         public int RequestDataTicket_async(long chunkID)
         {
             int ticket = _requestTickets.Dequeue();
-            _dataRequestQueue.Enqueue(new CubeRequest() { ChunkId = chunkID, Ticket = ticket });
+            _dataRequestQueue.Enqueue(new CubeRequest { ChunkId = chunkID, Ticket = ticket });
             Data[ticket] = null;
             return ticket;
         }
@@ -147,36 +135,36 @@ namespace Utopia.Worlds.Storage
             _requestTickets.Enqueue(ticket);
         }
 
-        private void processRequestQueue()
+        private void ProcessRequestQueue()
         {
-            CubeRequest _processingRequest;
-            if (_dataRequestQueue.TryDequeue(out _processingRequest))
+            CubeRequest processingRequest;
+            if (_dataRequestQueue.TryDequeue(out processingRequest))
             {
-                ProcessRequest(ref _processingRequest);
+                ProcessRequest(ref processingRequest);
             }
         }
 
-        private void ProcessRequest(ref CubeRequest _processingRequest)
+        private void ProcessRequest(ref CubeRequest processingRequest)
         {
-            _landscapeGetCmd.Parameters[0].Value = _processingRequest.ChunkId;
-
-            SQLiteDataReader dataReader = _landscapeGetCmd.ExecuteReader();
+            _landscapeGetCmd.Parameters[0].Value = processingRequest.ChunkId;
 
             ChunkDataStorage cubeDataStorage = null;
-            if (dataReader.Read())
+            using (var dataReader = _landscapeGetCmd.ExecuteReader())
             {
-                cubeDataStorage = new ChunkDataStorage()
+                if (dataReader.Read())
                 {
-                    ChunkId = dataReader.GetInt64(0),
-                    ChunkX = dataReader.GetInt32(1),
-                    ChunkZ = dataReader.GetInt32(2),
-                    Md5Hash = !dataReader.IsDBNull(3) ? new Shared.Structs.Md5Hash((byte[])dataReader.GetValue(3)) : null,
-                    CubeData = (byte[])dataReader.GetValue(4)
-                };
+                    cubeDataStorage = new ChunkDataStorage
+                                          {
+                                              ChunkId = dataReader.GetInt64(0),
+                                              ChunkX = dataReader.GetInt32(1),
+                                              ChunkZ = dataReader.GetInt32(2),
+                                              Md5Hash = !dataReader.IsDBNull(3) ? new Md5Hash((byte[]) dataReader.GetValue(3)) : null,
+                                              CubeData = (byte[]) dataReader.GetValue(4)
+                                          };
+                }
             }
-
-            dataReader.Close();
-            Data[_processingRequest.Ticket] = cubeDataStorage;
+            
+            Data[processingRequest.Ticket] = cubeDataStorage;
         }
         //===============================================================================================
 
@@ -186,7 +174,7 @@ namespace Utopia.Worlds.Storage
             _dataStoreQueue.Enqueue(data);
         }
 
-        private void processStoreQueue()
+        private void ProcessStoreQueue()
         {
             ChunkDataStorage data;
             if (_dataStoreQueue.TryDequeue(out data))
@@ -209,15 +197,9 @@ namespace Utopia.Worlds.Storage
             //Add or update the Dictionnary
             //The dictionnary reflect the Chunks saved on SQLite database.
             //For a specified ChunkID it give the MD5Hash.
-            if (ChunkHashes.ContainsKey(data.ChunkId))
-            {
-                ChunkHashes[data.ChunkId] = data.Md5Hash;
-            }
-            else
-            {
-                while (!ChunkHashes.TryAdd(data.ChunkId, data.Md5Hash));
-            }
+            var chunkHash = data.Md5Hash;
 
+            ChunkHashes.AddOrUpdate(data.ChunkId, chunkHash, (id, hash) => chunkHash);
         }
         //===============================================================================================
 

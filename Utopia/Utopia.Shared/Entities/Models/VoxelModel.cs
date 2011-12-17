@@ -17,6 +17,11 @@ namespace Utopia.Shared.Entities.Models
         }
 
         /// <summary>
+        /// Gets or sets model name
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// Gets a list of parts of the model
         /// </summary>
         public List<VoxelModelPart> Parts { get; private set; }
@@ -36,8 +41,7 @@ namespace Utopia.Shared.Entities.Models
                 var writer = new BinaryWriter(ms);
                 foreach (var voxelModelPart in Parts)
                 {
-                    writer.Write(voxelModelPart.RelativePosition);
-                    writer.Write(voxelModelPart.Rotation);
+                    writer.Write(voxelModelPart.Transform);
 
                     foreach (var voxelFrame in voxelModelPart.Frames)
                     {
@@ -70,6 +74,8 @@ namespace Utopia.Shared.Entities.Models
         {
             UpdateHash();
 
+            writer.Write(Name);
+
             if (Hash != null)
             {
                 writer.Write((byte)16);
@@ -86,6 +92,8 @@ namespace Utopia.Shared.Entities.Models
 
         public void Load(BinaryReader reader)
         {
+            Name = reader.ReadString();
+
             var count = reader.ReadByte();
 
             if (count > 0)
