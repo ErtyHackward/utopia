@@ -145,7 +145,6 @@ namespace Utopia.Entities.Managers
                                    ActionsManager actions,
                                    InputsManager inputsManager,
                                    SingleArrayChunkContainer cubesHolder,
-                                   VoxelMeshFactory voxelMeshFactory,
                                    PlayerCharacter player,
                                    [Named("PlayerEntityRenderer")] IEntitiesRenderer playerRenderer,
                                    IPickingRenderer pickingRenderer,
@@ -168,7 +167,7 @@ namespace Utopia.Entities.Managers
             entityPickingManager.Player = this;
             Player = player;
 
-            VisualEntity = new VisualVoxelEntity(player, voxelModelManager, voxelMeshFactory);
+            VisualEntity = new VisualVoxelEntity(player, voxelModelManager);
 
 
 

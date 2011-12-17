@@ -14,7 +14,6 @@ namespace Utopia.Entities.Voxel
     /// </summary>
     public class VisualVoxelModel
     {
-        private readonly VisualVoxelEntity _parent;
         private readonly VoxelModel _model;
         private readonly VoxelMeshFactory _voxelMeshFactory;
 
@@ -30,9 +29,8 @@ namespace Utopia.Entities.Voxel
             get { return _model; }
         }
 
-        public VisualVoxelModel(VisualVoxelEntity parent, VoxelModel model, VoxelMeshFactory voxelMeshFactory)
+        public VisualVoxelModel(VoxelModel model, VoxelMeshFactory voxelMeshFactory)
         {
-            _parent = parent;
             _model = model;
             _voxelMeshFactory = voxelMeshFactory;
 

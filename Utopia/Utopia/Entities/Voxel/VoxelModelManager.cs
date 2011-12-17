@@ -17,8 +17,9 @@ namespace Utopia.Entities.Voxel
     {
         private readonly IVoxelModelStorage _storage;
         private readonly ServerComponent _server;
+        private readonly VoxelMeshFactory _voxelMeshFactory;
         private readonly object _syncRoot = new object();
-        private readonly Dictionary<Md5Hash, VoxelModel> _models = new Dictionary<Md5Hash, VoxelModel>();
+        private readonly Dictionary<Md5Hash, VisualVoxelModel> _models = new Dictionary<Md5Hash, VisualVoxelModel>();
         private readonly HashSet<Md5Hash> _pengingModels = new HashSet<Md5Hash>();
 
         /// <summary>
@@ -33,12 +34,13 @@ namespace Utopia.Entities.Voxel
         }
 
 
-        public VoxelModelManager(IVoxelModelStorage storage, ServerComponent server)
+        public VoxelModelManager(IVoxelModelStorage storage, ServerComponent server, VoxelMeshFactory voxelMeshFactory)
         {
             if (storage == null) throw new ArgumentNullException("storage");
             if (server == null) throw new ArgumentNullException("server");
             _storage = storage;
             _server = server;
+            _voxelMeshFactory = voxelMeshFactory;
 
             _server.ConnectionInitialized += ServerConnectionInitialized;
 
@@ -58,7 +60,7 @@ namespace Utopia.Entities.Voxel
         {
             lock (_syncRoot)
             {
-                _models.Add(e.Message.VoxelModel.Hash, e.Message.VoxelModel);
+                _models.Add(e.Message.VoxelModel.Hash, new VisualVoxelModel(e.Message.VoxelModel,_voxelMeshFactory));
                 _pengingModels.Remove(e.Message.VoxelModel.Hash);
             }
 
@@ -91,11 +93,11 @@ namespace Utopia.Entities.Voxel
         /// <param name="hash">md5 hash of the model</param>
         /// <param name="requestIfMissing"></param>
         /// <returns></returns>
-        public VoxelModel GetModel(Md5Hash hash, bool requestIfMissing = true)
+        public VisualVoxelModel GetModel(Md5Hash hash, bool requestIfMissing = true)
         {
             lock (_syncRoot)
             {
-                VoxelModel model;
+                VisualVoxelModel model;
                 if (_models.TryGetValue(hash, out model))
                     return model;
             }
@@ -110,12 +112,12 @@ namespace Utopia.Entities.Voxel
         /// Adds a new voxel model and saves it
         /// </summary>
         /// <param name="model"></param>
-        public void SaveModel(VoxelModel model)
+        public void SaveModel(VisualVoxelModel model)
         {
             lock (_syncRoot)
-                _models.Add(model.Hash, model);
+                _models.Add(model.VoxelModel.Hash, model);
 
-            _storage.Save(model);
+            _storage.Save(model.VoxelModel);
         }
 
         /// <summary>
@@ -132,7 +134,7 @@ namespace Utopia.Entities.Voxel
             _storage.Delete(hash);
         }
 
-        public IEnumerable<VoxelModel> Enumerate()
+        public IEnumerable<VisualVoxelModel> Enumerate()
         {
             lock (_syncRoot)
             {
@@ -150,7 +152,7 @@ namespace Utopia.Entities.Voxel
             {
                 foreach (var voxelModel in _storage.Enumerate())
                 {
-                    _models.Add(voxelModel.Hash, voxelModel);
+                    _models.Add(voxelModel.Hash, new VisualVoxelModel(voxelModel, _voxelMeshFactory));
                 }
             }
         }

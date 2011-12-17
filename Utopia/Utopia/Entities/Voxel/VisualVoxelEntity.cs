@@ -16,7 +16,6 @@ namespace Utopia.Entities.Voxel
     {
         private readonly IVoxelEntity _voxelEntity;
         private readonly VoxelModelManager _manager;
-        private readonly VoxelMeshFactory _voxelMeshFactory;
         private VisualVoxelModel _visualVoxelModel;
         public Matrix World;
 
@@ -46,29 +45,27 @@ namespace Utopia.Entities.Voxel
         /// Creates a VisualVoxelEntity ready to render
         /// </summary>
         /// <param name="manager"></param>
-        /// <param name="voxelMeshFactory">voxelMeshFactory responsible to create mesh</param>
         /// <param name="wrapped">wrapped VoxelEntity from server</param>
-        public VisualVoxelEntity(IVoxelEntity wrapped, VoxelModelManager manager,  VoxelMeshFactory voxelMeshFactory)
+        public VisualVoxelEntity(IVoxelEntity wrapped, VoxelModelManager manager)
             : base(wrapped.Size, wrapped)
         {
 
             _voxelEntity = wrapped;
             _manager = manager;
-            _voxelMeshFactory = voxelMeshFactory;
 
             var model = manager.GetModel(wrapped.ModelHash);
 
-            if(model == null)
-                _manager.VoxelModelReceived +=ManagerVoxelModelReceived;
+            if (model == null)
+                _manager.VoxelModelReceived += ManagerVoxelModelReceived;
             else
-                _visualVoxelModel = new VisualVoxelModel(this, model, voxelMeshFactory);
+                _visualVoxelModel = model;
         }
 
         void ManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
         {
             if (e.Model.Hash == _voxelEntity.ModelHash)
             {
-                _visualVoxelModel = new VisualVoxelModel(this, e.Model, _voxelMeshFactory);
+                _visualVoxelModel = _manager.GetModel(e.Model.Hash);
                 _manager.VoxelModelReceived -= ManagerVoxelModelReceived;
             }
         }
