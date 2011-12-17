@@ -14,6 +14,7 @@ namespace Utopia.Shared.Entities.Models
         public VoxelModel()
         {
             Parts = new List<VoxelModelPart>();
+            States = new List<VoxelModelState>();
         }
 
         /// <summary>
@@ -32,6 +33,11 @@ namespace Utopia.Shared.Entities.Models
         public Md5Hash Hash { get; private set; }
 
         /// <summary>
+        /// Geta a list of model states
+        /// </summary>
+        public List<VoxelModelState> States { get; private set; }
+
+        /// <summary>
         /// Calculates a md5 hash from a model
         /// </summary>
         public void UpdateHash()
@@ -41,8 +47,6 @@ namespace Utopia.Shared.Entities.Models
                 var writer = new BinaryWriter(ms);
                 foreach (var voxelModelPart in Parts)
                 {
-                    writer.Write(voxelModelPart.Transform);
-
                     foreach (var voxelFrame in voxelModelPart.Frames)
                     {
                         var bytes = voxelFrame.BlockData.GetBlocksBytes();
@@ -65,11 +69,17 @@ namespace Utopia.Shared.Entities.Models
                         }
                     }
                 }
+
+                foreach (var voxelModelState in States)
+                {
+                    voxelModelState.Save(writer);
+                }
+
                 ms.Position = 0;
                 Hash = Md5Hash.Calculate(ms);
             }
         }
-
+        
         public void Save(BinaryWriter writer)
         {
             UpdateHash();
@@ -87,6 +97,11 @@ namespace Utopia.Shared.Entities.Models
             foreach (var voxelModelPart in Parts)
             {
                 voxelModelPart.Save(writer);
+            }
+            writer.Write((byte)States.Count);
+            foreach (var voxelModelState in States)
+            {
+                voxelModelState.Save(writer);
             }
         }
 
@@ -115,6 +130,18 @@ namespace Utopia.Shared.Entities.Models
                 modelPart.Load(reader);
                 Parts.Add(modelPart);
             }
+
+            count = reader.ReadByte();
+
+            States.Clear();
+
+            for (int i = 0; i < count; i++)
+            {
+                var modelState = new VoxelModelState();
+                modelState.Load(reader);
+                States.Add(modelState);
+            }
+
         }
     }
 }

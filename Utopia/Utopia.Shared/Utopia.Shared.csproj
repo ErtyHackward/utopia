@@ -157,6 +157,8 @@
     <Compile Include="Entities\Inventory\ToolSlot.cs" />
     <Compile Include="Entities\Inventory\VoxelItem.cs" />
     <Compile Include="Entities\MetaEntity.cs" />
+    <Compile Include="Entities\Models\VoxelModelPartState.cs" />
+    <Compile Include="Entities\Models\VoxelModelState.cs" />
     <Compile Include="Entities\SpriteEntity.cs" />
     <Compile Include="Entities\SpriteFormat.cs" />
     <Compile Include="Entities\StaticEntity.cs" />

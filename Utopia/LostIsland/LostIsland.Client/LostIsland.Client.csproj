@@ -72,6 +72,7 @@
     <Compile Include="Client.Binding.cs" />
     <Compile Include="Client.NewGame.cs" />
     <Compile Include="Components\CreditsComponent.cs" />
+    <Compile Include="Components\EditorComponent.cs" />
     <Compile Include="Components\LoadingComponent.cs" />
     <Compile Include="Components\MainMenuComponent.cs" />
     <Compile Include="Components\ServerSelectionComponent.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeVariables.cs" />
     <Compile Include="States\CreditsState.cs" />
+    <Compile Include="States\EditorState.cs" />
     <Compile Include="States\GamePlayState.cs" />
     <Compile Include="States\LoadingGameState.cs" />
     <Compile Include="States\LoginState.cs" />

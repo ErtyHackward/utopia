@@ -37,10 +37,16 @@ namespace LostIsland.Client.States
             menu.CreditsPressed += MenuCreditsPressed;
             menu.SinglePlayerPressed += MenuSinglePlayerPressed;
             menu.MultiplayerPressed += MenuMultiplayerPressed;
-            menu.ExitPressed += menu_ExitPressed;
+            menu.EditorPressed += MenuEditorPressed;
+            menu.ExitPressed += MenuExitPressed;
         }
 
-        void menu_ExitPressed(object sender, EventArgs e)
+        void MenuEditorPressed(object sender, EventArgs e)
+        {
+            StatesManager.SetGameState("Editor");
+        }
+
+        void MenuExitPressed(object sender, EventArgs e)
         {
             Application.ExitThread();
         }

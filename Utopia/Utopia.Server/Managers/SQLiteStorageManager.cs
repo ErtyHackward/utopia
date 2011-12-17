@@ -221,7 +221,7 @@ namespace Utopia.Server.Managers
         /// <returns></returns>
         VoxelModel IVoxelModelStorage.Load(Md5Hash hash)
         {
-            using (var reader = Query(string.Format("SELECT data FROM entities WHERE id={0}", hash.GetHashCode())))
+            using (var reader = Query(string.Format("SELECT data FROM models WHERE id={0}", hash.GetHashCode())))
             {
                 reader.Read();
                 var bytes = (byte[])reader.GetValue(0);

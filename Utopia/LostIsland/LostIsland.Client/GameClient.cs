@@ -6,6 +6,7 @@ using LostIsland.Client.States;
 using LostIsland.Shared;
 using Utopia;
 using Utopia.Components;
+using Utopia.Entities;
 using Utopia.Network;
 using Ninject;
 using S33M3Engines.D3D;
@@ -14,6 +15,7 @@ using Utopia.Settings;
 using Utopia.Shared.Config;
 using LostIsland.Client.GUI.Forms;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
@@ -30,7 +32,7 @@ namespace LostIsland.Client
         
         public GameClient()
         {
-            _exitRease = new GameExitReasonMessage() { GameExitReason = ExitReason.UserRequest };
+            _exitRease = new GameExitReasonMessage { GameExitReason = ExitReason.UserRequest };
         }
 
         #region Public Methods
@@ -60,6 +62,8 @@ namespace LostIsland.Client
             var game = CreateNewGameEngine(_iocContainer); // Create the Rendering
 
             _iocContainer.Bind<Game>().ToConstant(game);
+            _iocContainer.Rebind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
+
 
             //filling stages
 
@@ -77,6 +81,7 @@ namespace LostIsland.Client
             stateManager.RegisterState(_iocContainer.Get<LoadingGameState>());
             stateManager.RegisterState(_iocContainer.Get<GamePlayState>());
             stateManager.RegisterState(_iocContainer.Get<SelectServerGameState>());
+            stateManager.RegisterState(_iocContainer.Get<EditorState>());
 
             // first state will be the login
             stateManager.SetGameState("Login");
