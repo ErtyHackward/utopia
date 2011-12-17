@@ -1,6 +1,8 @@
 ﻿using System;
 using LostIsland.Client.Components;
 using Ninject;
+using S33M3Engines.Cameras;
+using SharpDX;
 using Utopia;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
@@ -34,6 +36,11 @@ namespace LostIsland.Client.States
             var editor = _ioc.Get<EditorComponent>();
             var modelManager = _ioc.Get<VoxelModelManager>();
             var axis = _ioc.Get<EditorAxis>();
+
+
+
+            
+
 
             editor.BackPressed += EditorBackPressed;
 
