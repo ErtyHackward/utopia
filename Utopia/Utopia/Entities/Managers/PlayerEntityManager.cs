@@ -150,7 +150,8 @@ namespace Utopia.Entities.Managers
                                    [Named("PlayerEntityRenderer")] IEntitiesRenderer playerRenderer,
                                    IPickingRenderer pickingRenderer,
                                    IEntityPickingManager entityPickingManager,
-                                   IGameStateToolManager gameStateToolManager 
+                                   IGameStateToolManager gameStateToolManager,
+                                   VoxelModelManager voxelModelManager
             )
         {
             _d3DEngine = engine;
@@ -167,7 +168,7 @@ namespace Utopia.Entities.Managers
             entityPickingManager.Player = this;
             Player = player;
 
-            VisualEntity = new VisualVoxelEntity(voxelMeshFactory, player);
+            VisualEntity = new VisualVoxelEntity(player, voxelModelManager, voxelMeshFactory);
 
 
 

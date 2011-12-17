@@ -16,6 +16,7 @@ namespace LostIsland.Client.Components
         private ButtonControl _continueButton;
         private ButtonControl _singlePlayer;
         private ButtonControl _multiplayer;
+        private ButtonControl _editor;
         private ButtonControl _credits;
         private ButtonControl _exitButton;
 
@@ -43,6 +44,14 @@ namespace LostIsland.Client.Components
         private void OnMultiplayerPressed()
         {
             var handler = MultiplayerPressed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        public event EventHandler EditorPressed;
+
+        private void OnEditorPressed()
+        {
+            var handler = EditorPressed;
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
@@ -94,15 +103,19 @@ namespace LostIsland.Client.Components
             _multiplayer = CreateButton("Multiplayer", 60);
             _multiplayer.Pressed += delegate { OnMultiplayerPressed(); };
 
-            _credits = CreateButton("Credits", 90);
+            _editor = CreateButton("Editor", 90);
+            _editor.Pressed += delegate { OnEditorPressed(); };
+
+            _credits = CreateButton("Credits", 120);
             _credits.Pressed += delegate { OnCreditsPressed(); };
 
-            _exitButton = CreateButton("Exit", 120);
+            _exitButton = CreateButton("Exit", 150);
             _exitButton.Pressed += delegate { OnExitPressed(); };
 
             _buttonsGroup.Children.Add(_continueButton);
             _buttonsGroup.Children.Add(_singlePlayer);
             _buttonsGroup.Children.Add(_multiplayer);
+            _buttonsGroup.Children.Add(_editor);
             _buttonsGroup.Children.Add(_credits);
             _buttonsGroup.Children.Add(_exitButton);
 
@@ -122,7 +135,7 @@ namespace LostIsland.Client.Components
                 _screen.Desktop.Children.Add(_buttonsGroup);
                 UpdateLayout(_engine.ViewPort);
 
-                _screen.FocusedControl = _multiplayer;
+                //_screen.FocusedControl = _multiplayer;
 
             }
             else
@@ -141,7 +154,7 @@ namespace LostIsland.Client.Components
         private void UpdateLayout(Viewport viewport)
         {
             if(Enabled)
-                _buttonsGroup.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 200, 200, 200);
+                _buttonsGroup.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 230, 200, 200);
         }
     }
 }

@@ -222,7 +222,7 @@ namespace Utopia.Shared.Net.Connections
         }
 
         /// <summary>
-        /// Occurs when EntityVoxelModelMessage is received (another thread)
+        /// Occurs when EntityVoxelModelMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<EntityVoxelModelMessage>> MessageEntityVoxelModel;
 
@@ -233,7 +233,7 @@ namespace Utopia.Shared.Net.Connections
         }
 
         /// <summary>
-        /// Occurs when EntityEquipmentMessage is received (another thread)
+        /// Occurs when EntityEquipmentMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<EntityEquipmentMessage>> MessageEntityEquipment;
 
@@ -244,7 +244,7 @@ namespace Utopia.Shared.Net.Connections
         }
 
         /// <summary>
-        /// Occurs when ItemTransferMessage is received (another thread)
+        /// Occurs when ItemTransferMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<ItemTransferMessage>> MessageItemTransfer;
 
@@ -255,7 +255,7 @@ namespace Utopia.Shared.Net.Connections
         }
 
         /// <summary>
-        /// Occurs when WeatherMessage is received (another thread)
+        /// Occurs when WeatherMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<WeatherMessage>> MessageWeather;
 
@@ -266,7 +266,7 @@ namespace Utopia.Shared.Net.Connections
         }
 
         /// <summary>
-        /// Occurs when EntityImpulseMessage is received (another thread)
+        /// Occurs when EntityImpulseMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<EntityImpulseMessage>> MessageEntityImpulse;
 
@@ -277,7 +277,7 @@ namespace Utopia.Shared.Net.Connections
         }
 
         /// <summary>
-        /// Occurs when EntityLockResultMessage is received (another thread)
+        /// Occurs when EntityLockResultMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<EntityLockResultMessage>> MessageEntityLockResult;
 
@@ -288,7 +288,7 @@ namespace Utopia.Shared.Net.Connections
         }
 
         /// <summary>
-        /// Occurs when UseFeedbackMessage is received (another thread)
+        /// Occurs when UseFeedbackMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<UseFeedbackMessage>> MessageUseFeedback;
 
@@ -296,6 +296,28 @@ namespace Utopia.Shared.Net.Connections
         {
             var handler = MessageUseFeedback;
             if (handler != null) handler(this, new ProtocolMessageEventArgs<UseFeedbackMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when GetVoxelModelsMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<GetVoxelModelsMessage>> MessageGetVoxelModels;
+
+        protected void OnMessageGetVoxelModels(GetVoxelModelsMessage ea)
+        {
+            var handler = MessageGetVoxelModels;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<GetVoxelModelsMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when VoxelModelDataMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<VoxelModelDataMessage>> MessageVoxelModelData;
+
+        protected void OnMessageVoxelModelData(VoxelModelDataMessage ea)
+        {
+            var handler = MessageVoxelModelData;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<VoxelModelDataMessage> { Message = ea });
         }
 
         #endregion
@@ -542,6 +564,12 @@ namespace Utopia.Shared.Net.Connections
                     break;
                 case MessageTypes.UseFeedback:
                     OnMessageUseFeedback((UseFeedbackMessage)msg);
+                    break;
+                case MessageTypes.GetVoxelModels:
+                    OnMessageGetVoxelModels((GetVoxelModelsMessage)msg);
+                    break;
+                case MessageTypes.VoxelModelData:
+                    OnMessageVoxelModelData((VoxelModelDataMessage)msg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("msg", "Invalid message received from server");

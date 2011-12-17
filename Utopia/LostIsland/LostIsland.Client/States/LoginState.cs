@@ -75,7 +75,7 @@ namespace LostIsland.Client.States
                 ClientSettings.Current.Settings.Login = login.Email;
                 ClientSettings.Current.Save();
 
-                login.Password = null;
+                
 
                 StatesManager.SetGameState("MainMenu");
             }
@@ -86,6 +86,13 @@ namespace LostIsland.Client.States
         {
             // start preparing of the main menu
             StatesManager.PrepareStateAsync("MainMenu");
+        }
+
+        public override void OnDisabled(GameState nextState)
+        {
+            var login = _iocContainer.Get<LoginComponent>();
+            login.Password = null;
+            base.OnDisabled(nextState);
         }
 
         void LoginLogin(object sender, EventArgs e)

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using SharpDX;
 using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities.Models
@@ -25,11 +24,6 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         public ColorMapping ColorMapping { get; set; }
 
-        /// <summary>
-        /// Gets or sets current model part transformation
-        /// </summary>
-        public Matrix Transform { get; set; }
-
         public VoxelModelPart()
         {
             Frames = new List<VoxelFrame>();
@@ -37,8 +31,6 @@ namespace Utopia.Shared.Entities.Models
 
         public void Save(BinaryWriter writer)
         {
-            writer.Write(Transform);
-
             writer.Write((byte)Frames.Count);
             foreach (var voxelFrame in Frames)
             {
@@ -50,8 +42,6 @@ namespace Utopia.Shared.Entities.Models
 
         public void Load(BinaryReader reader)
         {
-            Transform = reader.ReadMatrix();
-
             Frames.Clear();
             var framesCount = reader.ReadByte();
             for (int i = 0; i < framesCount; i++)

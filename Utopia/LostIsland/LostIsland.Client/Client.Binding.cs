@@ -142,7 +142,8 @@ namespace LostIsland.Client
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<FadeComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<DebugInfo>().ToSelf().InSingletonScope();
-
+            _iocContainer.Bind<EditorComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<VoxelModelManager>().ToSelf().InSingletonScope();
 
             //Landscape Creation/Acces/Management ====================================
             _iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope();
@@ -177,6 +178,7 @@ namespace LostIsland.Client
             _iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");    //Rendering Player
             _iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");  //Rendering Dynamic Entities
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();  //Voxel Factory
+            _iocContainer.Bind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope();
             //=============================================================
 
             // Server components ==========================================

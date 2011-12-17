@@ -207,6 +207,28 @@ namespace Utopia.Server
             if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityLockMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when GetVoxelModelsMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<GetVoxelModelsMessage>> MessageGetVoxelModels;
+
+        protected void OnMessageGetVoxelModels(GetVoxelModelsMessage ea)
+        {
+            var handler = MessageGetVoxelModels;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<GetVoxelModelsMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when VoxelModelDataMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<VoxelModelDataMessage>> MessageVoxelModelData;
+
+        protected void OnMessageVoxelModelData(VoxelModelDataMessage ea)
+        {
+            var handler = MessageVoxelModelData;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<VoxelModelDataMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -400,6 +422,12 @@ namespace Utopia.Server
                                     break;
                                 case MessageTypes.EntityLock:
                                     OnMessageEntityLock(EntityLockMessage.Read(reader));
+                                    break;
+                                case MessageTypes.GetVoxelModels:
+                                    OnMessageGetVoxelModels(GetVoxelModelsMessage.Read(reader));
+                                    break;
+                                case MessageTypes.VoxelModelData:
+                                    OnMessageVoxelModelData(VoxelModelDataMessage.Read(reader));
                                     break;
                                 default:
                                     throw new ArgumentException("Invalid message id");

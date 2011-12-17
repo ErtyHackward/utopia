@@ -22,6 +22,7 @@ namespace Utopia.Entities.Managers
         #region Private variables
         private Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
         private IEntitiesRenderer _dynamicEntityRenderer;
+        private readonly VoxelModelManager _voxelModelManager;
         private VoxelMeshFactory _voxelMeshFactory;
         #endregion
 
@@ -29,11 +30,12 @@ namespace Utopia.Entities.Managers
         public List<IVisualEntityContainer> DynamicEntities { get; set; }
         #endregion
 
-        public DynamicEntityManager([Named("DefaultEntityRenderer")] IEntitiesRenderer dynamicEntityRenderer, VoxelMeshFactory voxelMeshFactory)
+        public DynamicEntityManager([Named("DefaultEntityRenderer")] IEntitiesRenderer dynamicEntityRenderer, VoxelModelManager voxelModelManager, VoxelMeshFactory voxelMeshFactory)
         {
             DynamicEntities = new List<IVisualEntityContainer>();
             _voxelMeshFactory = voxelMeshFactory;
             _dynamicEntityRenderer = dynamicEntityRenderer;
+            _voxelModelManager = voxelModelManager;
 
             _dynamicEntityRenderer.VisualEntities = DynamicEntities;
         }
@@ -49,7 +51,7 @@ namespace Utopia.Entities.Managers
         {
             VisualDynamicEntity vEntity;
 
-            vEntity = new VisualDynamicEntity(entity, new Voxel.VisualVoxelEntity(_voxelMeshFactory, entity));
+            vEntity = new VisualDynamicEntity(entity, new Voxel.VisualVoxelEntity(entity, _voxelModelManager, _voxelMeshFactory));
 
             return vEntity;
         }
