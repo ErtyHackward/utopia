@@ -53,7 +53,7 @@ namespace Utopia.Server.Managers
             using (var reader = Query(string.Format("SELECT data FROM chunks WHERE X={0} AND Y={1}", pos.X, pos.Y)))
             {
                 reader.Read();
-                return (byte[])reader.GetValue(0);
+                return reader.IsDBNull(0) ? null : (byte[])reader.GetValue(0);
             }
         }
 
@@ -184,7 +184,7 @@ namespace Utopia.Server.Managers
             using (var reader = Query(string.Format("SELECT data FROM entities WHERE id={0}", entityId)))
             {
                 reader.Read();
-                return (byte[])reader.GetValue(0);
+                return reader.IsDBNull(0) ? null : (byte[])reader.GetValue(0);
             }
         }
 

@@ -139,11 +139,13 @@ namespace LostIsland.Client.States
                 
                 _serverComponent.BindingServer("127.0.0.1");
                 _serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
+                _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Singleplayer", "world.db");
             }
             else
             {
                 _serverComponent.BindingServer(_vars.CurrentServerAddress);
                 _serverComponent.ConnectToServer(_vars.Login, _vars.DisplayName, _vars.PasswordHash);
+                _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Multiplayer", _vars.CurrentServerAddress.Replace(':','_'), "world.db");
             }
         }
 
@@ -235,7 +237,7 @@ namespace LostIsland.Client.States
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
             var clouds = _ioc.Get<IDrawableComponent>("Clouds");
-            var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("UserName", "change_this_login"));
+            var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
             var solidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("SolidCubeMeshFactory");
 
             var liquidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("LiquidCubeMeshFactory");

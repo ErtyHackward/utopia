@@ -68,7 +68,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
         protected DynamicEntity()
         {
-              
+            ModelHash = Md5Hash.Empty;
         }
 
         #region Properties
