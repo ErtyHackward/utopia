@@ -1,6 +1,6 @@
 using System;
 using Utopia.Shared.Entities.Events;
-using Utopia.Shared.Entities.Models;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
@@ -11,8 +11,9 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         event EventHandler<VoxelModelEventArgs> VoxelModelChanged;
 
-        VoxelModel Model { get; }
-
-        void CommitModel();
+        /// <summary>
+        /// Get current model md5 hash
+        /// </summary>
+        Md5Hash ModelHash { get; set; }
     }
 }

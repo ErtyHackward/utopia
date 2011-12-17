@@ -1,7 +1,8 @@
 using System;
+using System.IO;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Models;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Inventory
 {
@@ -10,17 +11,12 @@ namespace Utopia.Shared.Entities.Inventory
     /// </summary>
     public abstract class VoxelItem : StaticEntity, IItem, IVoxelEntity
     {
-        private readonly VoxelModel _model = new VoxelModel();
-
         #region Properties
 
         /// <summary>
         /// Gets voxel entity model
         /// </summary>
-        public VoxelModel Model
-        {
-            get { return _model; }
-        }
+        public Md5Hash ModelHash { get; set; }
 
         /// <summary>
         /// This is name can vary for concrete class instance (Example: Simon's steel shovel)
@@ -63,28 +59,23 @@ namespace Utopia.Shared.Entities.Inventory
             if (handler != null) handler(this, e);
         }
 
-        public void CommitModel()
-        {
-            OnVoxelModelChanged(new VoxelModelEventArgs { Model = _model });
-        }
-
         // we need to override save and load!
-        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
+        public override void Load(BinaryReader reader, EntityFactory factory)
         {
             // first we need to load base information
             base.Load(reader, factory);
 
-            Model.Load(reader);
+            ModelHash = reader.ReadMd5Hash();
 
             UniqueName = reader.ReadString();
         }
 
-        public override void Save(System.IO.BinaryWriter writer)
+        public override void Save(BinaryWriter writer)
         {
             // first we need to save base information
             base.Save(writer);
 
-            Model.Save(writer);
+            writer.Write(ModelHash);
 
             writer.Write(UniqueName);
         }      

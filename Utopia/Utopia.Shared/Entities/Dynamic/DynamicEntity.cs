@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using S33M3Engines.Shared.Math;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -12,7 +13,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// </summary>
     public abstract class DynamicEntity : Entity, IDynamicEntity
     {
-        private readonly VoxelModel _model;
+
         public DynamicEntityState _entityState;
 
         #region Events
@@ -63,14 +64,11 @@ namespace Utopia.Shared.Entities.Dynamic
 
         #endregion
         
-        public void CommitModel()
-        {
-            OnVoxelModelChanged(new VoxelModelEventArgs { Model = _model });
-        }
+
 
         protected DynamicEntity()
         {
-            _model = new VoxelModel();   
+              
         }
 
         #region Properties
@@ -78,10 +76,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets voxel entity model
         /// </summary>
-        public VoxelModel Model
-        {
-            get { return _model; }
-        }
+        public Md5Hash ModelHash { get; set; }
 
         /// <summary>
         /// Gets or sets entity state (this field should be refreshed before using the tool)
@@ -147,12 +142,12 @@ namespace Utopia.Shared.Entities.Dynamic
 
         #endregion
 
-        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
+        public override void Load(BinaryReader reader, EntityFactory factory)
         {
             base.Load(reader, factory);
-
-            Model.Load(reader);
-
+            
+            ModelHash = reader.ReadMd5Hash();
+            
             DynamicId = reader.ReadUInt32();
             DisplacementMode = (EntityDisplacementModes)reader.ReadByte();
             MoveSpeed = reader.ReadSingle();
@@ -163,7 +158,7 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             base.Save(writer);
 
-            Model.Save(writer);
+            writer.Write(ModelHash);
 
             writer.Write(DynamicId);
             writer.Write((byte)DisplacementMode);

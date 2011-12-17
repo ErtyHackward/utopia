@@ -12,7 +12,7 @@ namespace Utopia.Shared.Net.Messages
     public struct EntityVoxelModelMessage: IBinaryMessage
     {
         private EntityLink _entityLink;
-        private byte[] _bytes;
+        private Md5Hash _hash;
 
         /// <summary>
         /// Link to the entity
@@ -24,12 +24,12 @@ namespace Utopia.Shared.Net.Messages
         }
         
         /// <summary>
-        /// Serialized visual model 
+        /// New voxel model hash
         /// </summary>
-        public byte[] Bytes
+        public Md5Hash Hash
         {
-            get { return _bytes; }
-            set { _bytes = value; }
+            get { return _hash; }
+            set { _hash = value; }
         }
 
         public byte MessageId
@@ -40,24 +40,15 @@ namespace Utopia.Shared.Net.Messages
         public static EntityVoxelModelMessage Read(BinaryReader reader)
         {
             EntityVoxelModelMessage msg;
-
             msg._entityLink = reader.ReadEntityLink();
-            var bytesCount = reader.ReadInt32();
-            msg._bytes = reader.ReadBytes(bytesCount);
-
-            if (msg._bytes.Length != bytesCount)
-            {
-                throw new EndOfStreamException();
-            }
-
+            msg._hash = reader.ReadMd5Hash();
             return msg;
         }
 
         public void Write(BinaryWriter writer)
         {
             writer.Write(_entityLink);
-            writer.Write(_bytes.Length);
-            writer.Write(_bytes);
+            writer.Write(_hash);
         }
     }
 }

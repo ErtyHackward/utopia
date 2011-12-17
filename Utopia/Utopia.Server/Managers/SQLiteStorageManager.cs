@@ -1,9 +1,10 @@
-﻿using System;
-using System.Data;
-using System.Data.SQLite;
+﻿using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using Utopia.Shared;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
@@ -12,152 +13,24 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Allows to store all required data in SQLite database
     /// </summary>
-    public class SQLiteStorageManager : IUsersStorage, IChunksStorage, IEntityStorage
+    public class SQLiteStorageManager : SQLiteStorage, IUsersStorage, IChunksStorage, IEntityStorage, IVoxelModelStorage
     {
         private readonly EntityFactory _factory;
 
         /// <summary>
-        /// Creates database file and required tables
-        /// </summary>
-        /// <param name="path"></param>
-        public SQLiteConnection CreateDataBase(string path)
-        {
-            Path = path;
-            try
-            {
-                if (path != ":memory:")
-                {
-                    if (!Directory.Exists(System.IO.Path.GetDirectoryName(path)))
-                        Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
-                    SQLiteConnection.CreateFile(path);
-                }
-                var conn = new SQLiteConnection("Data Source = " + Path);
-                conn.Open();
-                CreateDataBase(conn);
-                return conn;
-            }
-            catch (Exception) { }
-            return null;
-        }
-
-        /// <summary>
-        /// Gets or sets database system path
-        /// </summary>
-        public string Path
-        {
-            get; private set;
-        }
-
-        private void CreateDataBase(SQLiteConnection conn)
-        {
-            var command = conn.CreateCommand();
-            command.CommandText  = @"CREATE TABLE [chunks] ([X] integer NOT NULL, [Y] integer NOT NULL,[data] blob NOT NULL, PRIMARY KEY(X,Y)); ";
-            command.CommandText += @"CREATE TABLE [users] ([id] integer PRIMARY KEY AUTOINCREMENT NOT NULL, [login] varchar(120) NOT NULL, [password] char(32) NOT NULL, [role] integer NOT NULL, [lastlogin] datetime NULL, [state] blob NULL); CREATE UNIQUE INDEX IDX_USERS_LOGIN on users (login);";
-            command.CommandText += @"CREATE TABLE [entities] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);";
-            command.CommandType = CommandType.Text;
-            command.ExecuteNonQuery();
-        }
-
-        private SQLiteConnection _connection;
-        /// <summary>
-        /// Returns active connection to SQLite database ()
+        /// Returns database creation query 
         /// </summary>
         /// <returns></returns>
-        public SQLiteConnection GetConnection()
+        protected override string CreateDataBase()
         {
-            if (_connection == null)
-            {
-                if (Path == ":memory:" || !File.Exists(Path))
-                {
-                    _connection = CreateDataBase(Path);
-                    return _connection;
-                }
-                var csb = new SQLiteConnectionStringBuilder();
-                csb.DataSource = Path;
-                
-                _connection = new SQLiteConnection(csb.ToString());
-                _connection.Open();
-                
-            }
-            return _connection;
-        }
+            var dbCreate = new StringBuilder();
 
-        public void Dispose()
-        {
-            if (_connection != null)
-                _connection.Dispose();
-        }
-
-
-        /// <summary>
-        /// Executes query and returns reader to get result
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public SQLiteDataReader Query(string query)
-        {
-            lock (this)
-            {
-                SQLiteDataReader reader = null;
-                try
-                {
-
-                    using (var cmd = GetConnection().CreateCommand())
-                    {
-                        cmd.CommandText = query;
-                        reader = cmd.ExecuteReader();
-                    }
-                }
-                catch { return null; }
-                return reader;
-            }
-        }
-
-        /// <summary>
-        /// Executes query and returns number of rows affected
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public int Execute(string query)
-        {
-            return Execute(query, GetConnection(), false);
-        }
-
-        public int Execute(string query, bool delayWrite)
-        {
-            return Execute(query, GetConnection(), delayWrite);
-        }
-
-        public int Execute(string query, SQLiteConnection conn, bool delayWrite)
-        {
-            lock (this)
-            {
-                int val = 0;
-                try
-                {
-                    using (var cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = query;
-                        val = cmd.ExecuteNonQuery();
-                    }
-                }
-                catch
-                {
-                    return -1;
-                }
-                return val;
-            }
-        }
-
-        /// <summary>
-        /// Escapes ' and " for SQLite query
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        private string Escape(string input)
-        {
-            if (string.IsNullOrEmpty(input)) return "";
-            return input.Replace("'", "''").Replace("\"", "\"\"");
+            dbCreate.Append(@"CREATE TABLE [chunks] ([X] integer NOT NULL, [Y] integer NOT NULL,[data] blob NOT NULL, PRIMARY KEY(X,Y)); ");
+            dbCreate.Append(@"CREATE TABLE [users] ([id] integer PRIMARY KEY AUTOINCREMENT NOT NULL, [login] varchar(120) NOT NULL, [password] char(32) NOT NULL, [role] integer NOT NULL, [lastlogin] datetime NULL, [state] blob NULL); CREATE UNIQUE INDEX IDX_USERS_LOGIN on users (login);");
+            dbCreate.Append(@"CREATE TABLE [entities] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
+            dbCreate.Append(@"CREATE TABLE [models] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
+            
+            return dbCreate.ToString();
         }
 
         /// <summary>
@@ -167,31 +40,7 @@ namespace Utopia.Server.Managers
         /// <param name="data">Chunk data</param>
         public void SaveChunk(Vector2I pos, byte[] data)
         {
-            SaveChunk(pos, data, GetConnection());
-        }
-
-        private void SaveChunk(Vector2I pos, byte[] data, SQLiteConnection conn)
-        {
-            lock (this)
-            {
-                try
-                {
-                    int val = 0;
-                    using (var cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = string.Format("INSERT OR REPLACE INTO chunks (X,Y,data) VALUES ({0},{1},@data)",pos.X,pos.Y);
-                        SQLiteParameter param = cmd.CreateParameter();
-                        param.DbType = DbType.Binary;
-                        param.ParameterName = "@data";
-                        param.Size = data.Length;
-                        param.Value = data;
-                        cmd.Parameters.Add(param);
-                        val = cmd.ExecuteNonQuery();
-                    }
-                }
-                catch (Exception) { }
-                return;
-            }
+            InsertBlob(string.Format("INSERT OR REPLACE INTO chunks (X,Y,data) VALUES ({0},{1},@blob)",pos.X,pos.Y), data);
         }
 
         /// <summary>
@@ -201,15 +50,10 @@ namespace Utopia.Server.Managers
         /// <returns></returns>
         public byte[] LoadChunkData(Vector2I pos)
         {
-            lock (this)
+            using (var reader = Query(string.Format("SELECT data FROM chunks WHERE X={0} AND Y={1}", pos.X, pos.Y)))
             {
-                byte[] data;
-                using (var cmd = GetConnection().CreateCommand())
-                {
-                    cmd.CommandText = string.Format("SELECT data FROM chunks WHERE X={0} AND Y={1}", pos.X, pos.Y);
-                    data = (byte[])cmd.ExecuteScalar();
-                }
-                return data;
+                reader.Read();
+                return (byte[])reader.GetValue(0);
             }
         }
 
@@ -220,7 +64,7 @@ namespace Utopia.Server.Managers
         /// <param name="blocksData">corresponding array of chunks data</param>
         public void SaveChunksData(Vector2I[] positions, byte[][] blocksData)
         {
-            using (var trans = GetConnection().BeginTransaction())
+            using (var trans = Connection.BeginTransaction())
             {
                 for (int i = 0; i < positions.Length; i++)
                 {
@@ -229,18 +73,15 @@ namespace Utopia.Server.Managers
                 trans.Commit();
             }
         }
-        
+
         /// <summary>
         /// Creates new instance of SQLite storage manager
         /// </summary>
         /// <param name="filePath"></param>
-        public SQLiteStorageManager(string filePath, EntityFactory factory)
+        /// <param name="factory"></param>
+        public SQLiteStorageManager(string filePath, EntityFactory factory) : base(filePath)
         {
             _factory = factory;
-            Path = filePath;
-            
-
-            GetConnection();
         }
 
         /// <summary>
@@ -311,21 +152,7 @@ namespace Utopia.Server.Managers
         /// <param name="state">custom byte array</param>
         public void SetData(string login, byte[] state)
         {
-            try
-            {
-                using (var cmd = GetConnection().CreateCommand())
-                {
-                    cmd.CommandText = string.Format("UPDATE users SET state = @data WHERE login = '{0}'", Escape(login));
-                    var param = cmd.CreateParameter();
-                    param.DbType = DbType.Binary;
-                    param.ParameterName = "@data";
-                    param.Size = state.Length;
-                    param.Value = state;
-                    cmd.Parameters.Add(param);
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (Exception) { }
+            InsertBlob(string.Format("UPDATE users SET state = @blob WHERE login = '{0}'", Escape(login)), state);
         }
 
         public void SaveDynamicEntity(IDynamicEntity entity)
@@ -343,34 +170,22 @@ namespace Utopia.Server.Managers
 
         public void SaveEntity(uint entityId, byte[] bytes)
         {
-            using (var cmd = GetConnection().CreateCommand())
-            {
-                cmd.CommandText = string.Format("INSERT OR REPLACE INTO entities (id,data) VALUES ('{0}', @data)", entityId);
-                var param = cmd.CreateParameter();
-                param.DbType = DbType.Binary;
-                param.ParameterName = "@data";
-                param.Size = bytes.Length;
-                param.Value = bytes;
-                cmd.Parameters.Add(param);
-                cmd.ExecuteNonQuery();
-            }
+            InsertBlob(string.Format("INSERT OR REPLACE INTO entities (id,data) VALUES ('{0}', @blob)", entityId), bytes);
         }
 
         public IEntity LoadEntity(uint entityId)
         {
-            byte[] data = LoadEntityBytes(entityId);
+            var data = LoadEntityBytes(entityId);
             return _factory.CreateFromBytes(data);
         }
 
         public byte[] LoadEntityBytes(uint entityId)
         {
-            byte[] data;
-            using (var cmd = GetConnection().CreateCommand())
+            using (var reader = Query(string.Format("SELECT data FROM entities WHERE id={0}", entityId)))
             {
-                cmd.CommandText = string.Format("SELECT data FROM entities WHERE id={0}", entityId);
-                data = (byte[])cmd.ExecuteScalar();
+                reader.Read();
+                return (byte[])reader.GetValue(0);
             }
-            return data;
         }
 
         public uint GetMaximumId()
@@ -383,6 +198,69 @@ namespace Utopia.Server.Managers
                     var maxNumber = reader.GetInt64(0);
                     return (uint) maxNumber;
                 } return 0;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if the storage contains a model with hash specified
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
+        bool IVoxelModelStorage.Contains(Md5Hash hash)
+        {
+            using (var reader = Query(string.Format("SELECT id FROM models WHERE id = {0}", hash.GetHashCode())))
+            {
+                return reader.HasRows;
+            }
+        }
+
+        /// <summary>
+        /// Loads a model form the storage
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
+        VoxelModel IVoxelModelStorage.Load(Md5Hash hash)
+        {
+            using (var reader = Query(string.Format("SELECT data FROM entities WHERE id={0}", hash.GetHashCode())))
+            {
+                reader.Read();
+                var bytes = (byte[])reader.GetValue(0);
+                return bytes.Deserialize<VoxelModel>();
+            }
+        }
+
+        /// <summary>
+        /// Saves a new model to the storage
+        /// </summary>
+        /// <param name="model"></param>
+        void IVoxelModelStorage.Save(VoxelModel model)
+        {
+            var bytes = model.Serialize();
+
+            InsertBlob(string.Format("INSERT INTO models (id,data) VALUES ({0}, @blob)", model.Hash.GetHashCode()), bytes);
+        }
+
+        /// <summary>
+        /// Removes model from the storage
+        /// </summary>
+        /// <param name="hash"></param>
+        void IVoxelModelStorage.Delete(Md5Hash hash)
+        {
+            Execute(string.Format("DELETE FROM models WHERE id = {0}", hash.GetHashCode()));
+        }
+
+        /// <summary>
+        /// Allows to fetch all models
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<VoxelModel> IVoxelModelStorage.Enumerate()
+        {
+            using (var reader = Query("SELECT data FROM models"))
+            {
+                while (reader.Read())
+                {
+                    yield return ((byte[])reader.GetValue(0)).Deserialize<VoxelModel>();
+                }
             }
         }
     }

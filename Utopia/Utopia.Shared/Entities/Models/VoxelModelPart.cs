@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Interfaces;
 
@@ -27,14 +26,9 @@ namespace Utopia.Shared.Entities.Models
         public ColorMapping ColorMapping { get; set; }
 
         /// <summary>
-        /// Gets or sets current model part rotation
+        /// Gets or sets current model part transformation
         /// </summary>
-        public Quaternion Rotation { get; set; }
-
-        /// <summary>
-        /// Gets or sets current model part relative position to the model position
-        /// </summary>
-        public Vector3D RelativePosition { get; set; }
+        public Matrix Transform { get; set; }
 
         public VoxelModelPart()
         {
@@ -43,6 +37,8 @@ namespace Utopia.Shared.Entities.Models
 
         public void Save(BinaryWriter writer)
         {
+            writer.Write(Transform);
+
             writer.Write((byte)Frames.Count);
             foreach (var voxelFrame in Frames)
             {
@@ -54,6 +50,8 @@ namespace Utopia.Shared.Entities.Models
 
         public void Load(BinaryReader reader)
         {
+            Transform = reader.ReadMatrix();
+
             Frames.Clear();
             var framesCount = reader.ReadByte();
             for (int i = 0; i < framesCount; i++)
