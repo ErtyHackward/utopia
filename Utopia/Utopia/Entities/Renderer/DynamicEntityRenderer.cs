@@ -93,8 +93,8 @@ namespace Utopia.Entities.Renderer
                     _entityEffect.CBPerDraw.IsDirty = true;
                     _entityEffect.Apply();
 
-                    _entityToRender.VertexBuffer.SetToDevice(0);
-                    _d3DEngine.Context.Draw(VisualEntities[i].VisualEntity.VertexBuffer.VertexCount, 0);
+                    //_entityToRender.VertexBuffer.SetToDevice(0);
+                    //_d3DEngine.Context.Draw(VisualEntities[i].VisualEntity.VertexBuffer.VertexCount, 0);
                 }
             }
         }

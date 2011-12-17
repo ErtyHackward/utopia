@@ -144,6 +144,7 @@ namespace LostIsland.Client
             _iocContainer.Bind<DebugInfo>().ToSelf().InSingletonScope();
             _iocContainer.Bind<EditorComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<VoxelModelManager>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<EditorAxis>().ToSelf().InSingletonScope();
 
             //Landscape Creation/Acces/Management ====================================
             _iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope();

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using SharpDX;
-using S33M3Engines.Struct;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.D3D;
 using S33M3Engines.StatesManager;
@@ -11,17 +7,18 @@ using S33M3Engines.Buffers;
 using S33M3Engines.D3D.Effects.Basics;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
+using Utopia.Resources.ModelComp;
 using Utopia.Shared.Structs;
 using S33M3Engines;
 using S33M3Engines.Cameras;
 using S33M3Engines.GameStates;
 
-namespace Utopia.Resources.ModelComp
+namespace Utopia.Components
 {
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
-    public class Axis : DrawableGameComponent
+    public class EditorAxis : DrawableGameComponent
     {
         float _axisSize = 1f;
         D3DEngine _d3dEngine;
@@ -32,7 +29,7 @@ namespace Utopia.Resources.ModelComp
         GameStatesManager _gameStates;
         int _renderRasterId;
 
-        public Axis(D3DEngine d3dEngine, CameraManager camManager, GameStatesManager gameStates)
+        public EditorAxis(D3DEngine d3dEngine, CameraManager camManager, GameStatesManager gameStates)
         {
             _gameStates = gameStates;
             _d3dEngine = d3dEngine;
@@ -64,7 +61,7 @@ namespace Utopia.Resources.ModelComp
         {
             // Create the 3 Lines
 
-            List<VertexPositionColor> ptList = new List<VertexPositionColor>();
+            var ptList = new List<VertexPositionColor>();
             ptList.AddRange(new Line3D(new Vector3(0, 0, 0) * _axisSize, new Vector3(1f, 0, 0) * _axisSize, Color.Red).PointsList);
             ptList.AddRange(new Line3D(new Vector3(0, 0, 0) * _axisSize, new Vector3(0, 1f, 0) * _axisSize, Color.Green).PointsList);
             ptList.AddRange(new Line3D(new Vector3(0, 0, 0) * _axisSize, new Vector3(0, 0, 1f) * _axisSize, Color.Blue).PointsList);
@@ -84,26 +81,21 @@ namespace Utopia.Resources.ModelComp
 
         public override void Draw(int index)
         {
-            if (_gameStates.DebugDisplay == 1)
-            {
-                //Set States.
-                StatesRepository.ApplyRaster(_renderRasterId);
+            StatesRepository.ApplyRaster(_renderRasterId);
 
-                //Set Effect variables
-                _wrappedEffect.Begin();
-                _wrappedEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Identity);
-                _wrappedEffect.CBPerDraw.IsDirty = true;
-                _wrappedEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View_focused);
-                _wrappedEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
-                _wrappedEffect.CBPerFrame.IsDirty = true;
-                _wrappedEffect.Apply();
+            //Set Effect variables
+            _wrappedEffect.Begin();
+            _wrappedEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Identity);
+            _wrappedEffect.CBPerDraw.IsDirty = true;
+            _wrappedEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View_focused);
+            _wrappedEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
+            _wrappedEffect.CBPerFrame.IsDirty = true;
+            _wrappedEffect.Apply();
 
-                //Set the vertex buffer to the Graphical Card.
-                _vertexBuffer.SetToDevice(0);
+            //Set the vertex buffer to the Graphical Card.
+            _vertexBuffer.SetToDevice(0);
 
-                _d3dEngine.Context.Draw(6, 0); //2 Vertex by line ! ==> 6 vertex to draw
-
-            }
+            _d3dEngine.Context.Draw(6, 0); //2 Vertex by line ! ==> 6 vertex to draw
         }
 
         public override void UnloadContent()
