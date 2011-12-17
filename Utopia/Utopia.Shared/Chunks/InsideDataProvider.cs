@@ -106,6 +106,11 @@ namespace Utopia.Shared.Chunks
             return _blockBytes[inChunkPosition.X * _chunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * _chunkSize.Y * _chunkSize.X];
         }
 
+        public byte GetBlock(int x, int y, int z)
+        {
+            return _blockBytes[x * _chunkSize.Y + y + z * _chunkSize.Y * _chunkSize.X];
+        }
+
         /// <summary>
         /// Sets a single block into location specified
         /// </summary>

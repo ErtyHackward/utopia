@@ -89,8 +89,8 @@ namespace Utopia.Entities.Renderer
             _entityEffect.CBPerDraw.IsDirty = true;
             _entityEffect.Apply();
 
-            VisualEntity.VisualEntity.VertexBuffer.SetToDevice(0);
-            _d3DEngine.Context.Draw(VisualEntity.VisualEntity.VertexBuffer.VertexCount, 0);
+            //VisualEntity.VisualEntity.VertexBuffer.SetToDevice(0);
+            //_d3DEngine.Context.Draw(VisualEntity.VisualEntity.VertexBuffer.VertexCount, 0);
         }
 
         public void Update(ref GameTime timeSpend)

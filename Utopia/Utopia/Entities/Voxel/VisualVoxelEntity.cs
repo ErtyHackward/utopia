@@ -18,9 +18,6 @@ namespace Utopia.Entities.Voxel
         private readonly VoxelModelManager _manager;
         private readonly VoxelMeshFactory _voxelMeshFactory;
         private VisualVoxelModel _visualVoxelModel;
-
-        public VertexBuffer<VertexCubeSolid> VertexBuffer;
-        public List<VertexCubeSolid> Vertice;
         public Matrix World;
 
         /// <summary>
@@ -64,14 +61,14 @@ namespace Utopia.Entities.Voxel
             if(model == null)
                 _manager.VoxelModelReceived +=ManagerVoxelModelReceived;
             else
-                _visualVoxelModel = new VisualVoxelModel(model, voxelMeshFactory);
+                _visualVoxelModel = new VisualVoxelModel(this, model, voxelMeshFactory);
         }
 
         void ManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
         {
             if (e.Model.Hash == _voxelEntity.ModelHash)
             {
-                _visualVoxelModel = new VisualVoxelModel(e.Model, _voxelMeshFactory);
+                _visualVoxelModel = new VisualVoxelModel(this, e.Model, _voxelMeshFactory);
                 _manager.VoxelModelReceived -= ManagerVoxelModelReceived;
             }
         }

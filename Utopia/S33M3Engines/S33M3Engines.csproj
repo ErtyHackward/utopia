@@ -175,6 +175,7 @@
     <Compile Include="Struct\Vertex\VertexPositionTexture.cs" />
     <Compile Include="Struct\Vertex\VertexSprite.cs" />
     <Compile Include="Struct\Vertex\VertexSpriteInstanced.cs" />
+    <Compile Include="Struct\Vertex\VertexVoxel.cs" />
     <Compile Include="Textures\ArrayTexture.cs" />
     <Compile Include="Textures\ArrayTextureHelper.cs" />
     <Compile Include="Textures\DrawableTex2D.cs" />
