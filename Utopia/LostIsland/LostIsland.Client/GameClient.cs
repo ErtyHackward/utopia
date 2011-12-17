@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using LostIsland.Client.Components;
 using LostIsland.Client.States;
 using LostIsland.Shared;
@@ -47,6 +48,9 @@ namespace LostIsland.Client
 
             System.Net.ServicePointManager.Expect100Continue = false;
 
+            var vars = _iocContainer.Get<RuntimeVariables>();
+
+            vars.ApplicationDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "LostIsland");
 
             //Initialize the Thread Pool manager
             S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);

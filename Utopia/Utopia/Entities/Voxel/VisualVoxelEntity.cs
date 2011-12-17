@@ -53,7 +53,7 @@ namespace Utopia.Entities.Voxel
             _voxelMeshFactory = voxelMeshFactory;
             _overlays = overlays;
 
-            //Vertice = _voxelMeshFactory.GenCubesFaces(VoxelEntity.Model.Blocks, _overlays, _isColorOnly);
+            Vertice = _voxelMeshFactory.GenCubesFaces( new byte[,,]{ } , _overlays, _isColorOnly);
             VertexBuffer = _voxelMeshFactory.InitBuffer(Vertice);
 
             Altered = true;

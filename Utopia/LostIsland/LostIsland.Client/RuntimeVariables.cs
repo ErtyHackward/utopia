@@ -29,5 +29,15 @@
         /// Gets or sets user display name
         /// </summary>
         public string DisplayName { get; set; }
+
+        /// <summary>
+        /// Gets or sets user world cache database
+        /// </summary>
+        public string LocalDataBasePath { get; set; }
+
+        /// <summary>
+        /// Gets application common folder for data
+        /// </summary>
+        public string ApplicationDataPath { get; set; }
     }
 }

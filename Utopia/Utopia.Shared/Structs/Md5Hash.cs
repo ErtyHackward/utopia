@@ -10,14 +10,24 @@ namespace Utopia.Shared.Structs
     /// </summary>
     public class Md5Hash : IEquatable<Md5Hash>
     {
-        private readonly byte[] _bytes;
+        private static readonly Md5Hash _empty = new Md5Hash(new byte[16]);
 
+        private readonly byte[] _bytes;
+        
         /// <summary>
         /// Gets hash bytes
         /// </summary>
         public byte[] Bytes
         {
             get { return _bytes; }
+        }
+
+        /// <summary>
+        /// Gets an empty hash
+        /// </summary>
+        public static Md5Hash Empty
+        {
+            get { return _empty; }
         }
 
         /// <summary>
