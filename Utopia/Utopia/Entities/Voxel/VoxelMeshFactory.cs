@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using S33M3Engines;
 using S33M3Engines.Buffers;
 using S33M3Engines.Struct.Vertex;
@@ -7,10 +6,7 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
-using Utopia.Worlds.Chunks.Enums;
-using Utopia.Worlds.Cubes;
 using Utopia.Shared.Enums;
-using Utopia.Shared.Settings;
 
 namespace Utopia.Entities.Voxel
 {
@@ -18,6 +14,11 @@ namespace Utopia.Entities.Voxel
     {
         private readonly D3DEngine _d3DEngine;
 
+        public D3DEngine Engine
+        {
+            get { return _d3DEngine; }
+        }
+    
         public VoxelMeshFactory(D3DEngine d3DEngine)
         {
             _d3DEngine = d3DEngine;
@@ -41,22 +42,22 @@ namespace Utopia.Entities.Voxel
                         if (blockType == 0) continue;
                         var vec = new ByteVector4(x, y, z, blockType);
                         if (IsEmpty(ref blockData, ref size, x, y, z - 1))
-                            GenerateFaces(ref blockData, CubeFaces.Back, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(CubeFaces.Back, ref dico, vec, ref vertices, ref indices);
                         
                         if (IsEmpty(ref blockData, ref size, x, y - 1, z))
-                            GenerateFaces(ref blockData, CubeFaces.Bottom, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(CubeFaces.Bottom, ref dico, vec, ref vertices, ref indices);
 
                         if (IsEmpty(ref blockData, ref size, x, y, z + 1))
-                            GenerateFaces(ref blockData, CubeFaces.Front, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(CubeFaces.Front, ref dico, vec, ref vertices, ref indices);
                         
                         if (IsEmpty(ref blockData, ref size, x - 1, y, z))
-                            GenerateFaces(ref blockData, CubeFaces.Left, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(CubeFaces.Left, ref dico, vec, ref vertices, ref indices);
 
                         if (IsEmpty(ref blockData, ref size, x + 1, y, z))
-                            GenerateFaces(ref blockData, CubeFaces.Right, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(CubeFaces.Right, ref dico, vec, ref vertices, ref indices);
 
                         if (IsEmpty(ref blockData, ref size, x, y + 1, z))
-                            GenerateFaces(ref blockData, CubeFaces.Top, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(CubeFaces.Top, ref dico, vec, ref vertices, ref indices);
                     }
                 }
             }
@@ -70,7 +71,7 @@ namespace Utopia.Entities.Voxel
             return blockData.GetBlock(x, y, z) == 0;
         }
 
-        private void GenerateFaces(ref InsideDataProvider blockData, CubeFaces cubeFace, ref Dictionary<int, int> dico, ByteVector4 cubePosition, ref List<VertexVoxel> vertices, ref List<ushort> indices)
+        private void GenerateFaces(CubeFaces cubeFace, ref Dictionary<int, int> dico, ByteVector4 cubePosition, ref List<VertexVoxel> vertices, ref List<ushort> indices)
         {
              // hash and index
 
@@ -81,6 +82,7 @@ namespace Utopia.Entities.Voxel
 
             var cubeId = cubePosition.W;
             var cubeFaceType = (int)cubeFace;
+            var faceTypeByte = (byte)cubeFace;
             int vertexOffset0, vertexOffset1, vertexOffset2, vertexOffset3;
             int hashVertex;
             bool vertexInDico;
@@ -91,10 +93,10 @@ namespace Utopia.Entities.Voxel
             {
                 case CubeFaces.Front:
 
-                    topLeft = cubePosition + new ByteVector4(0, 1, 1);
-                    topRight = cubePosition + new ByteVector4(1, 1, 1);
-                    bottomLeft = cubePosition + new ByteVector4(0, 0, 1);
-                    bottomRight = cubePosition + new ByteVector4(1, 0, 1);
+                    topLeft = cubePosition + new ByteVector4(0, 1, 1, 0);
+                    topRight = cubePosition + new ByteVector4(1, 1, 1, 0);
+                    bottomLeft = cubePosition + new ByteVector4(0, 0, 1, 0);
+                    bottomRight = cubePosition + new ByteVector4(1, 0, 1, 0);
 
                     hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
                     vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -104,7 +106,7 @@ namespace Utopia.Entities.Voxel
                         dico.Add(hashVertex, vertexOffset0);
                         
                         
-                        vertices.Add(new VertexVoxel(topLeft));
+                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -115,7 +117,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset1);
 
-                        vertices.Add(new VertexVoxel(topRight));
+                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -126,7 +128,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset2);
 
-                        vertices.Add(new VertexVoxel(bottomLeft));
+                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -137,7 +139,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset3);
 
-                        vertices.Add(new VertexVoxel(bottomRight));
+                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -154,10 +156,10 @@ namespace Utopia.Entities.Voxel
                 case CubeFaces.Back:
 
 
-                    topLeft = cubePosition + new ByteVector4(1, 1, 0, cubeFaceType);
-                    topRight = cubePosition + new ByteVector4(0, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new ByteVector4(1, 0, 0, cubeFaceType);
-                    bottomRight = cubePosition + new ByteVector4(0, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new ByteVector4(1, 1, 0, 0);
+                    topRight = cubePosition + new ByteVector4(0, 1, 0, 0);
+                    bottomLeft = cubePosition + new ByteVector4(1, 0, 0, 0);
+                    bottomRight = cubePosition + new ByteVector4(0, 0, 0, 0);
 
                     hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
                     vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -166,7 +168,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset0);
 
-                        vertices.Add(new VertexVoxel(topRight));
+                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -177,7 +179,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset1);
 
-                        vertices.Add(new VertexVoxel(topLeft));
+                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -188,7 +190,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset2);
 
-                        vertices.Add(new VertexVoxel(bottomRight));
+                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -199,7 +201,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset3);
 
-                        vertices.Add(new VertexVoxel(bottomLeft));
+                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -216,10 +218,10 @@ namespace Utopia.Entities.Voxel
                 case CubeFaces.Top:
 
 
-                    topLeft = cubePosition + new ByteVector4(0, 1, 0, cubeFaceType);
-                    topRight = cubePosition + new ByteVector4(1, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new ByteVector4(0, 1, 1, cubeFaceType);
-                    bottomRight = cubePosition + new ByteVector4(1, 1, 1, cubeFaceType);
+                    topLeft = cubePosition + new ByteVector4(0, 1, 0, 0);
+                    topRight = cubePosition + new ByteVector4(1, 1, 0, 0);
+                    bottomLeft = cubePosition + new ByteVector4(0, 1, 1, 0);
+                    bottomRight = cubePosition + new ByteVector4(1, 1, 1, 0);
 
                     hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
                     vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -228,7 +230,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset0);
 
-                        vertices.Add(new VertexVoxel(topLeft));
+                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -239,7 +241,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset1);
 
-                        vertices.Add(new VertexVoxel(bottomRight));
+                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -250,7 +252,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset2);
 
-                        vertices.Add(new VertexVoxel(bottomLeft));
+                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -261,7 +263,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset3);
 
-                        vertices.Add(new VertexVoxel(topRight));
+                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -278,10 +280,10 @@ namespace Utopia.Entities.Voxel
 
                 case CubeFaces.Bottom:
 
-                    topLeft = cubePosition + new ByteVector4(0, 0, 1, cubeFaceType);
-                    topRight = cubePosition + new ByteVector4(1, 0, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new ByteVector4(0, 0, 0, cubeFaceType);
-                    bottomRight = cubePosition + new ByteVector4(1, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new ByteVector4(0, 0, 1, 0);
+                    topRight = cubePosition + new ByteVector4(1, 0, 1, 0);
+                    bottomLeft = cubePosition + new ByteVector4(0, 0, 0, 0);
+                    bottomRight = cubePosition + new ByteVector4(1, 0, 0, 0);
 
                     hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
                     vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -290,7 +292,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset0);
 
-                        vertices.Add(new VertexVoxel(topLeft));
+                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -301,7 +303,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset1);
 
-                        vertices.Add(new VertexVoxel(bottomLeft));
+                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -312,7 +314,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset2);
 
-                        vertices.Add(new VertexVoxel(topRight));
+                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -323,7 +325,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset3);
 
-                        vertices.Add(new VertexVoxel(bottomRight));
+                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -340,10 +342,10 @@ namespace Utopia.Entities.Voxel
 
                 case CubeFaces.Left:
 
-                    topLeft = cubePosition + new ByteVector4(0, 1, 0, cubeFaceType);
-                    bottomRight = cubePosition + new ByteVector4(0, 0, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new ByteVector4(0, 0, 0, cubeFaceType);
-                    topRight = cubePosition + new ByteVector4(0, 1, 1, cubeFaceType);
+                    topLeft = cubePosition + new ByteVector4(0, 1, 0, 0);
+                    bottomRight = cubePosition + new ByteVector4(0, 0, 1, 0);
+                    bottomLeft = cubePosition + new ByteVector4(0, 0, 0, 0);
+                    topRight = cubePosition + new ByteVector4(0, 1, 1, 0);
 
                     hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
                     vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -352,7 +354,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset0);
 
-                        vertices.Add(new VertexVoxel(topLeft));
+                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -363,7 +365,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset1);
 
-                        vertices.Add(new VertexVoxel(topRight));
+                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -374,7 +376,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset2);
 
-                        vertices.Add(new VertexVoxel(bottomLeft));
+                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -385,7 +387,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset3);
 
-                        vertices.Add(new VertexVoxel(bottomRight));
+                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -400,10 +402,10 @@ namespace Utopia.Entities.Voxel
                     break;
                 case CubeFaces.Right:
 
-                    topLeft = cubePosition + new ByteVector4(1, 1, 1, cubeFaceType);
-                    topRight = cubePosition + new ByteVector4(1, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new ByteVector4(1, 0, 1, cubeFaceType);
-                    bottomRight = cubePosition + new ByteVector4(1, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new ByteVector4(1, 1, 1, 0);
+                    topRight = cubePosition + new ByteVector4(1, 1, 0, 0);
+                    bottomLeft = cubePosition + new ByteVector4(1, 0, 1, 0);
+                    bottomRight = cubePosition + new ByteVector4(1, 0, 0, 0);
 
                     hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
                     vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -412,7 +414,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset0);
 
-                        vertices.Add(new VertexVoxel(topRight));
+                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -423,7 +425,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset1);
 
-                        vertices.Add(new VertexVoxel(topLeft));
+                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -434,7 +436,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset2);
 
-                        vertices.Add(new VertexVoxel(bottomLeft));
+                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -445,7 +447,7 @@ namespace Utopia.Entities.Voxel
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
                         dico.Add(hashVertex, vertexOffset3);
 
-                        vertices.Add(new VertexVoxel(bottomRight));
+                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
                         generatedVertex++;
                     }
 
@@ -468,17 +470,24 @@ namespace Utopia.Entities.Voxel
         
         public VertexBuffer<VertexVoxel> InitBuffer(List<VertexVoxel> vertice)
         {
-            return new VertexBuffer<VertexVoxel>(_d3DEngine, vertice.Count,
+            var vb = new VertexBuffer<VertexVoxel>(_d3DEngine, vertice.Count,
                                                      VertexVoxel.VertexDeclaration,
                                                      PrimitiveTopology.TriangleList,
                                                      "VoxelMeshFactory_VB",
                                                      ResourceUsage.Default,
                                                      10);
+
+            vb.SetData(vertice.ToArray());
+            return vb;
         }
 
         public IndexBuffer<ushort> InitBuffer(List<ushort> indices)
         {
-            return new IndexBuffer<ushort>(_d3DEngine, indices.Count, SharpDX.DXGI.Format.R16_UInt, "VoxelMeshFactory_IB");
+            var ib = new IndexBuffer<ushort>(_d3DEngine, indices.Count, SharpDX.DXGI.Format.R16_UInt, "VoxelMeshFactory_IB");
+
+            ib.SetData(indices.ToArray());
+
+            return ib;
         }
     }
 }

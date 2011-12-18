@@ -1,4 +1,5 @@
 using System.IO;
+using SharpDX;
 using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities.Models
@@ -9,7 +10,15 @@ namespace Utopia.Shared.Entities.Models
     public class VoxelModelState : IBinaryStorable
     {
         private readonly VoxelModel _parentModel;
+        /// <summary>
+        /// Corresponding array for voxel model parts
+        /// </summary>
         public VoxelModelPartState[] PartsStates;
+
+        /// <summary>
+        /// Gets or sets current state bounding box
+        /// </summary>
+        public BoundingBox BoundingBox { get; set; }
 
         public VoxelModelState()
         {

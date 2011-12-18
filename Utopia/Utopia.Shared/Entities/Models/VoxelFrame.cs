@@ -1,6 +1,7 @@
 using System.IO;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Models
 {
@@ -18,23 +19,22 @@ namespace Utopia.Shared.Entities.Models
         {
             get { return _blockData; }
         }
-
-        /// <summary>
-        /// Gets or sets a color mapping, if null the parent voxel model part color mapping will be used
-        /// </summary>
-        public ColorMapping ColorMapping { get; set; }
-
+        
         public VoxelFrame()
         {
             _blockData = new InsideDataProvider();
+        }
+
+        public VoxelFrame(Vector3I size)
+        {
+            _blockData = new InsideDataProvider();
+            _blockData.UpdateChunkSize(size);
         }
 
         public void Save(BinaryWriter writer)
         {
             writer.Write(_blockData.ChunkSize);
             writer.Write(_blockData.GetBlocksBytes());
-
-            ColorMapping.Write(writer, ColorMapping);
         }
 
         public void Load(BinaryReader reader)
@@ -52,8 +52,6 @@ namespace Utopia.Shared.Entities.Models
 
             _blockData.UpdateChunkSize(size);
             _blockData.SetBlockBytes(bytes);
-
-            ColorMapping = ColorMapping.Read(reader);
         }
     }
 }

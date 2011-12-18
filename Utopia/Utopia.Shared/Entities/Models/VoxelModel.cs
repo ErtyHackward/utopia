@@ -38,6 +38,11 @@ namespace Utopia.Shared.Entities.Models
         public List<VoxelModelState> States { get; private set; }
 
         /// <summary>
+        /// Gets or sets global color mapping
+        /// </summary>
+        public ColorMapping ColorMapping { get; set; }
+
+        /// <summary>
         /// Calculates a md5 hash from a model
         /// </summary>
         public void UpdateHash()
@@ -45,20 +50,15 @@ namespace Utopia.Shared.Entities.Models
             using (var ms = new MemoryStream())
             {
                 var writer = new BinaryWriter(ms);
+
+                ColorMapping.Write(writer, ColorMapping);
+
                 foreach (var voxelModelPart in Parts)
                 {
                     foreach (var voxelFrame in voxelModelPart.Frames)
                     {
                         var bytes = voxelFrame.BlockData.GetBlocksBytes();
                         ms.Write(bytes, 0, bytes.Length);
-
-                        if (voxelFrame.ColorMapping != null)
-                        {
-                            foreach (var color in voxelFrame.ColorMapping.BlockColors)
-                            {
-                                writer.Write(color);
-                            }
-                        }
                     }
 
                     if (voxelModelPart.ColorMapping != null)
@@ -93,6 +93,8 @@ namespace Utopia.Shared.Entities.Models
             }
             else writer.Write((byte)0);
 
+            ColorMapping.Write(writer, ColorMapping);
+
             writer.Write((byte)Parts.Count);
             foreach (var voxelModelPart in Parts)
             {
@@ -119,6 +121,8 @@ namespace Utopia.Shared.Entities.Models
                 Hash = new Md5Hash(hash);
             }
             else Hash = null;
+
+            ColorMapping = ColorMapping.Read(reader);
 
             count = reader.ReadByte();
 

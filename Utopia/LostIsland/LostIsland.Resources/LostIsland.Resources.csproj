@@ -68,6 +68,9 @@
     <None Include="EffectsPacks\Default\Entities\Icons.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="EffectsPacks\Default\Entities\VoxelModel.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Meshes\Block.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

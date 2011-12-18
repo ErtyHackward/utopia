@@ -24,7 +24,11 @@ namespace S33M3Engines
     {
         #region Static Variables
         public static IntPtr WindowHandle;
+#if DEBUG
+        public static bool FULLDEBUGMODE = true;
+#else
         public static bool FULLDEBUGMODE = false;
+#endif
         #endregion
 
         #region Private variables
