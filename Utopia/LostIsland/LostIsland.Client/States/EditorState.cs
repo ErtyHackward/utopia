@@ -18,6 +18,7 @@ namespace LostIsland.Client.States
     public class EditorState : GameState
     {
         private readonly IKernel _ioc;
+        private ModelEditorComponent _modelEditor;
 
         /// <summary>
         /// Name of the state
@@ -37,7 +38,7 @@ namespace LostIsland.Client.States
             var gui = _ioc.Get<GuiManager>();
             var editor = _ioc.Get<EditorComponent>();
             var modelManager = _ioc.Get<VoxelModelManager>();
-            var modelEditor = _ioc.Get<ModelEditorComponent>();
+            _modelEditor = _ioc.Get<ModelEditorComponent>();
             var voxelFactory = _ioc.Get<VoxelMeshFactory>();
 
             #region Predefined model
@@ -51,10 +52,9 @@ namespace LostIsland.Client.States
             model.ColorMapping.BlockColors[2] = new Color4(0, 1, 0, 1);
             model.ColorMapping.BlockColors[3] = new Color4(0, 0, 1, 1);
 
-            model.Parts.Add(new VoxelModelPart { Name = "body" });
-
             var frameSize = new Vector3I(16, 16, 16);
 
+            model.Parts.Add(new VoxelModelPart { Name = "body" });
             model.Parts[0].Frames.Add(new VoxelFrame(frameSize ));
             var rnd = new Random();
 
@@ -69,14 +69,26 @@ namespace LostIsland.Client.States
                 }
             }
 
+            model.Parts.Add(new VoxelModelPart { Name = "part2" });
+            model.Parts[1].Frames.Add(new VoxelFrame(frameSize));
+
+            for (int y = 0; y < frameSize.Y; y++)
+            {
+                for (int x = 0; x < frameSize.X; x++)
+                {
+                    for (int z = 0; z < frameSize.Z; z++)
+                    {
+                        model.Parts[1].Frames[0].BlockData.SetBlock(new Vector3I(x, y, z), (byte)rnd.Next(1, 5)); //(byte) rnd.Next(1, 4)
+                    }
+                }
+            }
+
             model.States.Add(new VoxelModelState 
             { 
                 PartsStates = new[] 
                 { 
-                    new VoxelModelPartState 
-                    { 
-                        Transform = Matrix.Identity 
-                    } 
+                    new VoxelModelPartState { Transform = Matrix.Identity }, 
+                    new VoxelModelPartState { Transform = Matrix.Scaling(0.2f) * Matrix.Translation(new Vector3(18, 18, 18)) }
                 } 
             });
             
@@ -87,15 +99,33 @@ namespace LostIsland.Client.States
 
             #endregion
 
-            modelEditor.VisualVoxelModel = visualModel;
+            _modelEditor.VisualVoxelModel = visualModel;
 
 
             editor.BackPressed += EditorBackPressed;
+            editor.ViewModePressed += EditorViewModePressed;
+            editor.LayoyutModePressed += EditorLayoyutModePressed;
+            editor.FrameModePressed += EditorFrameModePressed;
 
-            AddComponent(gui);
             AddComponent(editor);
             AddComponent(modelManager);
-            AddComponent(modelEditor);
+            AddComponent(_modelEditor);
+            AddComponent(gui);
+        }
+
+        void EditorFrameModePressed(object sender, EventArgs e)
+        {
+            _modelEditor.Mode = EditorMode.FrameEdit;
+        }
+
+        void EditorLayoyutModePressed(object sender, EventArgs e)
+        {
+            _modelEditor.Mode = EditorMode.ModelLayout;
+        }
+
+        void EditorViewModePressed(object sender, EventArgs e)
+        {
+            _modelEditor.Mode = EditorMode.ModelView;
         }
 
         void EditorBackPressed(object sender, EventArgs e)
