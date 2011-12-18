@@ -58,6 +58,8 @@ PS_IN VS(VS_IN input)
 
 	float4 newPosition = {input.Position.xyz, 1.0f};
 
+	newPosition = mul(newPosition, Transform);
+
     float4 worldPosition = mul(newPosition, World);
 	output.Position = mul(worldPosition, ViewProjection);
 
@@ -67,8 +69,9 @@ PS_IN VS(VS_IN input)
 
 	float3 normal = float3(normalsX[facetype],normalsY[facetype],normalsZ[facetype]);
 	
+	normal = mul(normal, Transform);
 	normal = mul(normal, World);
-	//normal = mul(normal, ViewProjection);
+	
 
 	float3 lightDirection = float3(1,1,1);
 	

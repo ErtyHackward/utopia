@@ -20,7 +20,8 @@ namespace LostIsland.Client.Components
         private readonly Screen _screen;
 
         private ButtonControl _backButton;
-        private WindowControl _colorPaletteWindow;
+        private WindowControl _toolsWindow;
+        private WindowControl _partsListWindow;
 
         private readonly List<Control> _controls = new List<Control>();
 
@@ -42,6 +43,31 @@ namespace LostIsland.Client.Components
             var handler = BackPressed;
             if (handler != null) handler(this, EventArgs.Empty);
         }
+
+        public event EventHandler ViewModePressed;
+
+        private void OnViewModePressed()
+        {
+            var handler = ViewModePressed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        public event EventHandler LayoyutModePressed;
+
+        private void OnLayoyutModePressed()
+        {
+            var handler = LayoyutModePressed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        public event EventHandler FrameModePressed;
+
+        private void OnFrameModePressed()
+        {
+            var handler = FrameModePressed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         #endregion
 
         public EditorComponent(D3DEngine engine, Screen screen)
@@ -55,12 +81,90 @@ namespace LostIsland.Client.Components
             _backButton = new ButtonControl { Text = "Back" };
             _backButton.Pressed += delegate { OnBackPressed(); };
 
-            _colorPaletteWindow = InitColorPalette();
 
 
-            _controls.Add(_colorPaletteWindow);
+            _toolsWindow = CreateToolsWindow();
+
+            _partsListWindow = CreatePartsListWindow();
+
+            _controls.Add(_partsListWindow);
+            //_controls.Add(_colorPaletteWindow);
+            _controls.Add(_toolsWindow);
 
             base.Initialize();
+        }
+
+        private WindowControl CreatePartsListWindow()
+        {
+            var listWindow = new WindowControl { Title = "Parts" };
+            listWindow.Bounds = new UniRectangle(_engine.ViewPort.Width - 200 , 0, 200, 560);
+            
+            var partsLabel = new LabelControl { Text = "Parts" };
+            partsLabel.Bounds = new UniRectangle(10, 25, 100, 20);
+
+            var partsList = new ListControl();
+            partsList.Bounds = new UniRectangle(10, 50, 180, 230);
+
+            var framesLabel = new LabelControl { Text = "Frames" };
+            framesLabel.Bounds = new UniRectangle(10, 285, 180, 20);
+
+            var framesList = new ListControl();
+            framesList.Bounds = new UniRectangle(10, 310, 180, 230);
+
+
+            listWindow.Children.Add(partsLabel);
+            listWindow.Children.Add(partsList);
+            listWindow.Children.Add(framesLabel);
+            listWindow.Children.Add(framesList);
+
+            return listWindow;
+        }
+
+        private WindowControl CreateToolsWindow()
+        {
+            var toolsWindow = new WindowControl {Title = "Tools"};
+            toolsWindow.Bounds = new UniRectangle(0, 0, 200, 100);
+
+            var modesLabel = new LabelControl {Text = "Modes"};
+            modesLabel.Bounds = new UniRectangle(10, 25, 100, 20);
+            
+            var viewModeButton = new ButtonControl { Text = "View" };
+            viewModeButton.Bounds = new UniRectangle(2, 50, 45, 45);
+            viewModeButton.Pressed += delegate { OnViewModePressed(); };
+
+            var layoutModeButton = new ButtonControl { Text = "Layout" };
+            layoutModeButton.Bounds = new UniRectangle(52, 50, 45, 45);
+            layoutModeButton.Pressed += delegate { OnLayoyutModePressed(); };
+
+            var frameModeButton = new ButtonControl { Text = "Frame" };
+            frameModeButton.Bounds = new UniRectangle(102, 50, 45, 45);
+            frameModeButton.Pressed += delegate { OnFrameModePressed(); };
+
+            var animationModeButton = new ButtonControl { Text = "Anim" };
+            animationModeButton.Bounds = new UniRectangle(152, 50, 45, 45);
+            animationModeButton.Pressed += delegate { OnFrameModePressed(); };
+
+            toolsWindow.Children.Add(viewModeButton);
+            toolsWindow.Children.Add(layoutModeButton);
+            toolsWindow.Children.Add(frameModeButton);
+            toolsWindow.Children.Add(animationModeButton);
+
+            LayoutControls(toolsWindow.Children, 6, 50, 45, 45);
+
+            toolsWindow.Children.Add(modesLabel);
+
+            return toolsWindow;
+        }
+
+        private void LayoutControls(IList<Control> controls, int leftMargin, int topMargin, int buttonWidth, int buttonHeight)
+        {
+            int currentX = leftMargin;
+
+            for (int i = 0; i < controls.Count; i++)
+            {
+                controls[i].Bounds = new UniRectangle(currentX, topMargin, buttonWidth, buttonHeight);
+                currentX += buttonWidth;
+            }
         }
 
         private WindowControl InitColorPalette()
@@ -130,7 +234,7 @@ namespace LostIsland.Client.Components
 
         public void UpdateLayout()
         {
-            _backButton.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 60, 120, 24);
+            _backButton.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 30, 120, 24);
         }
 
     }

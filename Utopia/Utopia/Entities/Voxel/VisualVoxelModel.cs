@@ -35,7 +35,16 @@ namespace Utopia.Entities.Voxel
         {
             get { return _model; }
         }
-        
+
+        /// <summary>
+        /// Gets array of visual data (verices and indices and bounding boxes)
+        /// </summary>
+        public VisualVoxelPart[] VisualVoxelParts
+        {
+            get { return _visualParts; }
+        }
+    
+
         public VisualVoxelModel(VoxelModel model, VoxelMeshFactory voxelMeshFactory)
         {
             _model = model;
@@ -128,7 +137,7 @@ namespace Utopia.Entities.Voxel
 
                 if (_model.Parts[i].ColorMapping != null)
                 {
-                    effect.CBPerFrame.Values.ColorMapping = _model.ColorMapping.BlockColors;
+                    effect.CBPerFrame.Values.ColorMapping = _model.Parts[i].ColorMapping.BlockColors;
                     effect.CBPerFrame.IsDirty = true;
                 }
 
