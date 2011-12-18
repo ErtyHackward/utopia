@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="Effects\Entities\HLSLIcons.cs" />
     <Compile Include="Effects\Entities\HLSLStaticEntitySprite.cs" />
+    <Compile Include="Effects\Entities\HLSLVoxelModel.cs" />
     <Compile Include="Effects\SkyDome\HLSLPlanetSkyDome.cs" />
     <Compile Include="Effects\SkyDome\HLSLStars.cs" />
     <Compile Include="Effects\Terran\HLSLLiquid.cs" />

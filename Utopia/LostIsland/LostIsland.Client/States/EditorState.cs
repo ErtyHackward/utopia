@@ -7,6 +7,8 @@ using Utopia;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
+using Utopia.Shared.Entities.Models;
+using Utopia.Shared.Structs;
 
 namespace LostIsland.Client.States
 {
@@ -35,11 +37,57 @@ namespace LostIsland.Client.States
             var gui = _ioc.Get<GuiManager>();
             var editor = _ioc.Get<EditorComponent>();
             var modelManager = _ioc.Get<VoxelModelManager>();
-            var axis = _ioc.Get<EditorAxis>();
+            var modelEditor = _ioc.Get<ModelEditorComponent>();
+            var voxelFactory = _ioc.Get<VoxelMeshFactory>();
 
+            #region Predefined model
 
+            var model = new VoxelModel();
 
+            model.ColorMapping = new ColorMapping { BlockColors = new Color4[256] };
+
+            model.ColorMapping.BlockColors[0] = new Color4(1, 1, 1, 1);
+            model.ColorMapping.BlockColors[1] = new Color4(1, 0, 0, 1);
+            model.ColorMapping.BlockColors[2] = new Color4(0, 1, 0, 1);
+            model.ColorMapping.BlockColors[3] = new Color4(0, 0, 1, 1);
+
+            model.Parts.Add(new VoxelModelPart { Name = "body" });
+
+            var frameSize = new Vector3I(16, 16, 16);
+
+            model.Parts[0].Frames.Add(new VoxelFrame(frameSize ));
+            var rnd = new Random();
+
+            for (int y = 0; y < frameSize.Y; y++)
+            {
+                for (int x = y; x < frameSize.X; x++)
+                {
+                    for (int z = y; z < frameSize.Z; z++)
+                    {
+                        model.Parts[0].Frames[0].BlockData.SetBlock(new Vector3I(x, y, z), 1); //(byte) rnd.Next(1, 4)
+                    }
+                }
+            }
+
+            model.States.Add(new VoxelModelState 
+            { 
+                PartsStates = new[] 
+                { 
+                    new VoxelModelPartState 
+                    { 
+                        Transform = Matrix.Identity 
+                    } 
+                } 
+            });
             
+
+            var visualModel = new VisualVoxelModel(model, voxelFactory);
+
+            visualModel.BuildMesh();
+
+            #endregion
+
+            modelEditor.VisualVoxelModel = visualModel;
 
 
             editor.BackPressed += EditorBackPressed;
@@ -47,7 +95,7 @@ namespace LostIsland.Client.States
             AddComponent(gui);
             AddComponent(editor);
             AddComponent(modelManager);
-            AddComponent(axis);
+            AddComponent(modelEditor);
         }
 
         void EditorBackPressed(object sender, EventArgs e)

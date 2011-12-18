@@ -5,7 +5,7 @@ using Utopia.Shared.Interfaces;
 namespace Utopia.Shared.Entities.Models
 {
     /// <summary>
-    /// Contains a layput of single part of the model
+    /// Contains a layout of single part of the model and current active frame
     /// </summary>
     public class VoxelModelPartState : IBinaryStorable
     {
@@ -18,6 +18,11 @@ namespace Utopia.Shared.Entities.Models
         /// Frame transformation
         /// </summary>
         public Matrix Transform;
+
+        /// <summary>
+        /// Current part bounding box
+        /// </summary>
+        public BoundingBox BoundingBox;
 
         public void Save(BinaryWriter writer)
         {
