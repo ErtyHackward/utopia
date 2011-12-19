@@ -27,11 +27,6 @@ namespace LostIsland.Client.Components
         private readonly List<Control> _controls = new List<Control>();
 
         /// <summary>
-        /// Gets or sets current active model
-        /// </summary>
-        public VoxelModel ActiveModel { get; set; }
-
-        /// <summary>
         /// Gets or sets current model translation, rotation and scaling
         /// </summary>
         public Matrix Transform { get; set; }
@@ -102,6 +97,41 @@ namespace LostIsland.Client.Components
             base.Initialize();
         }
 
+        public void UpdateNavigation(VisualVoxelModel model, int selectedState, int selectedPart, int selectedFrame)
+        {
+            var stateList = _modelNavigationWindow.Children.Get<ListControl>("statesList");
+            var partsList = _modelNavigationWindow.Children.Get<ListControl>("partsList");
+            var framesList = _modelNavigationWindow.Children.Get<ListControl>("framesList");
+
+            stateList.Items.Clear();
+            partsList.Items.Clear();
+            framesList.Items.Clear();
+
+            if (model == null)
+            {
+                return;
+            }
+            
+            for (int i = 0; i < model.VoxelModel.States.Count; i++)
+            {
+                stateList.Items.Add(i.ToString());
+            }
+
+            foreach (var voxelModelPart in model.VoxelModel.Parts)
+            {
+                partsList.Items.Add(voxelModelPart.Name);
+            }
+
+            if (selectedPart != -1)
+            {
+                for (int i = 0; i < model.VoxelModel.Parts[selectedPart].Frames.Count; i++)
+                {
+                    framesList.Items.Add(i.ToString());
+                }
+            }
+
+        }
+
         private WindowControl CreateNavigationWindow()
         {
             var height = _engine.ViewPort.Height;
@@ -114,21 +144,21 @@ namespace LostIsland.Client.Components
             statesLabel.Bounds = new UniRectangle(0, 0, 70, 20);
             var statesAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0,0, 50, 20) };
             var statesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 50, 20) };
-            var statesList = new ListControl { LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
+            var statesList = new ListControl { Name = "statesList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             statesList.Bounds = new UniRectangle(0, 0, 180, 20);
             
             var partsLabel = new LabelControl { Text = "Parts" };
             partsLabel.Bounds = new UniRectangle(0, 0, 70, 20);
             var partsAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 50, 20) };
             var partsDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 50, 20) };
-            var partsList = new ListControl { LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
+            var partsList = new ListControl { Name = "partsList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             partsList.Bounds = new UniRectangle(0, 0, 180, 20);
 
             var framesLabel = new LabelControl { Text = "Frames" };
             framesLabel.Bounds = new UniRectangle(0, 0, 70, 20);
             var framesAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 50, 20) };
             var framesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 50, 20) };
-            var framesList = new ListControl { LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
+            var framesList = new ListControl { Name ="framesList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             framesList.Bounds = new UniRectangle(0, 0, 180, 20);
 
 
@@ -182,7 +212,7 @@ namespace LostIsland.Client.Components
             modesButtonsGroup.Children.Add(layoutModeButton);
             modesButtonsGroup.Children.Add(frameModeButton);
             modesButtonsGroup.Children.Add(animationModeButton);
-
+            
             modesButtonsGroup.UpdateLayout();
             
             toolsWindow.Children.Add(modesLabel);
@@ -191,17 +221,6 @@ namespace LostIsland.Client.Components
             toolsWindow.UpdateLayout();
 
             return toolsWindow;
-        }
-
-        private void LayoutControls(IList<Control> controls, int leftMargin, int topMargin, int buttonWidth, int buttonHeight)
-        {
-            int currentX = leftMargin;
-
-            for (int i = 0; i < controls.Count; i++)
-            {
-                controls[i].Bounds = new UniRectangle(currentX, topMargin, buttonWidth, buttonHeight);
-                currentX += buttonWidth;
-            }
         }
 
         private WindowControl InitColorPalette()

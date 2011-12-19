@@ -19,6 +19,7 @@ namespace LostIsland.Client.States
     {
         private readonly IKernel _ioc;
         private ModelEditorComponent _modelEditor;
+        private VisualVoxelModel _model;
 
         /// <summary>
         /// Name of the state
@@ -91,16 +92,17 @@ namespace LostIsland.Client.States
                     new VoxelModelPartState { Transform = Matrix.Scaling(0.2f) * Matrix.Translation(new Vector3(18, 18, 18)) }
                 } 
             });
-            
 
-            var visualModel = new VisualVoxelModel(model, voxelFactory);
 
-            visualModel.BuildMesh();
+            _model = new VisualVoxelModel(model, voxelFactory);
+
+            _model.BuildMesh();
 
             #endregion
 
-            _modelEditor.VisualVoxelModel = visualModel;
+            _modelEditor.VisualVoxelModel = _model;
 
+            
 
             editor.BackPressed += EditorBackPressed;
             editor.ViewModePressed += EditorViewModePressed;
@@ -111,6 +113,13 @@ namespace LostIsland.Client.States
             AddComponent(modelManager);
             AddComponent(_modelEditor);
             AddComponent(gui);
+        }
+
+        public override void OnEnabled(GameState previousState)
+        {
+            var editor = _ioc.Get<EditorComponent>();
+            editor.UpdateNavigation(_model, 0, 0, 0);
+            base.OnEnabled(previousState);
         }
 
         void EditorFrameModePressed(object sender, EventArgs e)
