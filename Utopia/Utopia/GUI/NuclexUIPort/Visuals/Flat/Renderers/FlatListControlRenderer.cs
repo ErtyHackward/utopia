@@ -88,7 +88,7 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
               }
 
               graphics.DrawString(Style, itemBounds, control.Items[item]);
-              itemBounds.X += rowHeight;
+              itemBounds.Y += rowHeight;
           }
       //}
 
