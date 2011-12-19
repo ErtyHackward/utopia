@@ -27,7 +27,9 @@ namespace Nuclex.UserInterface.Controls.Desktop {
   public class WindowControl : DraggableControl {
 
     /// <summary>Initializes a new window control</summary>
-    public WindowControl() : base(true) {}
+    public WindowControl() : base(true) {
+        LeftTopMargin = new Vector2(10, 28);
+    }
 
     /// <summary>Closes the window</summary>
     public void Close() {

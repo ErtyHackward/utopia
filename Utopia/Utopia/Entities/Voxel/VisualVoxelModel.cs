@@ -25,9 +25,7 @@ namespace Utopia.Entities.Voxel
         {
             get { return _initialized; }
         }
-
-        public int ActiveState { get; set; }
-
+        
         /// <summary>
         /// Gets current wrapped voxel model
         /// </summary>

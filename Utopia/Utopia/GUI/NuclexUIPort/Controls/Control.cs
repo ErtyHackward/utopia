@@ -18,7 +18,9 @@ License along with this library
 */
 #endregion
 
-using System; using SharpDX;
+using System;
+using System.Linq;
+using SharpDX;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -363,7 +365,17 @@ namespace Nuclex.UserInterface.Controls {
         this.SetParent(null);
     }
 
-    /// <summary>Location and extents of the control</summary>
+      /// <summary>
+      /// Updates layout of childs controls
+      /// </summary>
+    public void UpdateLayout()
+    {
+        _layoutManager.LayoutControls(this);
+    }
+
+    private static ControlLayout _layoutManager = new ControlLayout();
+
+      /// <summary>Location and extents of the control</summary>
     public UniRectangle Bounds;
 
     /// <summary>Control this control is contained in</summary>
@@ -382,6 +394,162 @@ namespace Nuclex.UserInterface.Controls {
     /// </remarks>
     private ParentingControlCollection children;
 
+    public ControlLayoutFlags LayoutFlags;
+
+    public Vector2 LeftTopMargin = new Vector2(5,5);
+
+    public Vector2 RightBottomMargin = new Vector2(5, 5);
+
+      /// <summary>
+      /// Vertical and horisontal space between controls
+      /// </summary>
+    public Vector2 ControlsSpacing = new Vector2(5, 5);
+
+      /// <summary>
+      /// Limit for controls with free sides
+      /// </summary>
+    public Vector2 MinimumSize = new Vector2(20, 10);
+
   }
+
+    [Flags]
+    public enum ControlLayoutFlags
+    {
+        None = 0x0,
+        FreeWidth = 0x1,
+        FreeHeight = 0x2,
+        WholeRow = 0x4,
+    }
+
+    public class ControlLayout
+    {
+        public ControlLayout()
+        {
+            Rows = new List<ControlsRow>();
+        }
+
+        public List<ControlsRow> Rows { get; set; }
+
+        public void LayoutControls(Control parent)
+        {
+
+            var controlsSpace = new Vector2(parent.Bounds.Size.X.Offset - parent.LeftTopMargin.X - parent.RightBottomMargin.X, parent.Bounds.Size.Y.Offset - parent.LeftTopMargin.Y - parent.RightBottomMargin.Y);
+            
+            Rows.Clear();
+            var currentRow = new ControlsRow(controlsSpace.X);
+            Rows.Add(currentRow);
+            
+            // put controls in rows
+            foreach (var control in parent.Children)
+            {
+                if (control.LayoutFlags.HasFlag(ControlLayoutFlags.WholeRow))
+                {
+                    if (currentRow.Controls.Count > 0)
+                    {
+                        currentRow = new ControlsRow(controlsSpace.X);
+                        Rows.Add(currentRow);
+                    }
+
+                    currentRow.AddControl(control);
+
+                    currentRow = new ControlsRow(controlsSpace.X);
+                    Rows.Add(currentRow);
+                }
+                else
+                {
+                    if (!currentRow.AddControl(control))
+                    {
+                        currentRow = new ControlsRow(controlsSpace.X);
+                        Rows.Add(currentRow);
+                        currentRow.AddControl(control);
+                    }
+                }
+            }
+
+            if (currentRow.Controls.Count == 0)
+                Rows.Remove(currentRow);
+
+            var minHeight = Rows.Sum(r => r.Height) + Rows.Count * parent.ControlsSpacing.Y;
+            var freeRows = Rows.Count(r => r.FreeHeight);
+            if (controlsSpace.Y > minHeight && freeRows > 0)
+            {
+                // we have additinal space, distribute it
+                var addition = (controlsSpace.Y - minHeight) / freeRows;
+
+                foreach (var row in Rows.Where(r => r.FreeHeight))
+                {
+                    row.SetHeight(row.Height + addition);
+                }
+            }
+
+            // update controls 
+            float y = parent.LeftTopMargin.Y;
+            foreach (var controlsRow in Rows)
+            {
+                float x = parent.LeftTopMargin.X;
+
+                foreach (var control in controlsRow.Controls)
+                {
+                    control.Bounds.Left = x;
+                    control.Bounds.Top = y;
+
+                    x += control.Bounds.Size.X.Offset + parent.ControlsSpacing.X;
+                }
+
+                y += controlsRow.Height + parent.ControlsSpacing.Y;
+            }
+
+        }
+    }
+
+    public class ControlsRow
+    {
+        private float Width;
+        public float MaxWidth;
+        public float Height;
+        public bool FreeHeight;
+
+        public ControlsRow(float maxWidth)
+        {
+            MaxWidth = maxWidth;
+            Controls = new List<Control>();
+        }
+
+        public List<Control> Controls { get; set; }
+
+        public bool AddControl(Control c)
+        {
+            if (Controls.Count > 0 && Width + c.Bounds.Size.X.Offset > MaxWidth)
+            {
+                return false;
+            }
+
+            if (c.LayoutFlags.HasFlag(ControlLayoutFlags.FreeHeight))
+            {
+                FreeHeight = true;
+                c.Bounds.Size.Y = c.MinimumSize.Y;
+            }
+
+            Height = Math.Max(Height, c.Bounds.Size.Y.Offset);
+            Width += c.Bounds.Size.X.Offset;
+
+            Controls.Add(c);
+
+            return true;
+        }
+        
+        internal void SetHeight(float p)
+        {
+            foreach (var control in Controls)
+            {
+                if (control.LayoutFlags.HasFlag(ControlLayoutFlags.FreeHeight))
+                {
+                    control.Bounds.Size.Y = p;
+                }
+            }
+
+            Height = p;
+        }
+    }
 
 } // namespace Nuclex.UserInterface.Controls
