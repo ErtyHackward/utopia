@@ -64,6 +64,30 @@ namespace LostIsland.Client.Components
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        public event EventHandler<SelectionIndexChangedEventArgs> StatesIndexChanged;
+
+        private void OnStateIndexChanged(SelectionIndexChangedEventArgs e)
+        {
+            var handler = StatesIndexChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<SelectionIndexChangedEventArgs> PartsIndexChanged;
+
+        private void OnPartsIndexChanged(SelectionIndexChangedEventArgs e)
+        {
+            var handler = PartsIndexChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<SelectionIndexChangedEventArgs> FramesIndexChanged;
+
+        private void OnFramesIndexChanged(SelectionIndexChangedEventArgs e)
+        {
+            var handler = FramesIndexChanged;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         public EditorComponent(D3DEngine engine, Screen screen)
@@ -146,6 +170,10 @@ namespace LostIsland.Client.Components
             var statesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 50, 20) };
             var statesList = new ListControl { Name = "statesList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             statesList.Bounds = new UniRectangle(0, 0, 180, 20);
+            statesList.SelectionMode = ListSelectionMode.Single;
+            statesList.SelectionChanged += delegate { 
+                OnStateIndexChanged(new SelectionIndexChangedEventArgs { Index = statesList.SelectedItems.Count > 0 ? statesList.SelectedItems[0] : -1 }); 
+            };
             
             var partsLabel = new LabelControl { Text = "Parts" };
             partsLabel.Bounds = new UniRectangle(0, 0, 70, 20);
@@ -153,6 +181,11 @@ namespace LostIsland.Client.Components
             var partsDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 50, 20) };
             var partsList = new ListControl { Name = "partsList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             partsList.Bounds = new UniRectangle(0, 0, 180, 20);
+            partsList.SelectionMode = ListSelectionMode.Single;
+            partsList.SelectionChanged += delegate
+            {
+                OnPartsIndexChanged(new SelectionIndexChangedEventArgs { Index = statesList.SelectedItems.Count > 0 ? statesList.SelectedItems[0] : -1 });
+            };
 
             var framesLabel = new LabelControl { Text = "Frames" };
             framesLabel.Bounds = new UniRectangle(0, 0, 70, 20);
@@ -160,6 +193,11 @@ namespace LostIsland.Client.Components
             var framesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 50, 20) };
             var framesList = new ListControl { Name ="framesList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             framesList.Bounds = new UniRectangle(0, 0, 180, 20);
+            framesList.SelectionMode = ListSelectionMode.Single;
+            framesList.SelectionChanged += delegate
+            {
+                OnFramesIndexChanged(new SelectionIndexChangedEventArgs { Index = statesList.SelectedItems.Count > 0 ? statesList.SelectedItems[0] : -1 });
+            };
 
 
             listWindow.Children.Add(statesLabel);
@@ -295,5 +333,10 @@ namespace LostIsland.Client.Components
             _modelNavigationWindow.UpdateLayout();
         }
 
+    }
+
+    public class SelectionIndexChangedEventArgs : EventArgs
+    {
+        public int Index { get; set; }
     }
 }

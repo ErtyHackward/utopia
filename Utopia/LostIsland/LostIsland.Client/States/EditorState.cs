@@ -124,7 +124,9 @@ namespace LostIsland.Client.States
 
         void EditorFrameModePressed(object sender, EventArgs e)
         {
-            _modelEditor.Mode = EditorMode.FrameEdit;
+            var editor = _ioc.Get<EditorComponent>();
+            editor.UpdateNavigation(_model, 0, 0, 0);
+            //_modelEditor.Mode = EditorMode.FrameEdit;
         }
 
         void EditorLayoyutModePressed(object sender, EventArgs e)
