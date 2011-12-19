@@ -12,6 +12,7 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
 using Utopia.Settings;
+using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
 using S33M3Engines;
 using UtopiaContent.Effects.Entities;
@@ -36,16 +37,21 @@ namespace Utopia.Components
         int _renderRasterId;
         int _renderModelRasterId;
 
-        private float RotateX;
-        private float RotateY;
-        private float Scale = 0.1f;
-        private Vector3 Translate;
+        // view parameters
+        private ViewParameters _mainViewData;
+        private ViewParameters _frameViewData;
+
+        private ViewParameters _currentViewData;
 
         private Matrix _transform;
         private VisualVoxelModel _visualVoxelModel;
 
         private Matrix _projection;
         private Matrix _view;
+
+        private EditorMode _mode;
+        private VoxelFrame _voxelFrame;
+
 
         public Matrix Transform
         {
@@ -59,19 +65,75 @@ namespace Utopia.Components
             set { _visualVoxelModel = value; }
         }
 
+        public int SelectedStateIndex { get; set; }
+        
+        /// <summary>
+        /// Gets or sets current editing frame
+        /// </summary>
+        public VoxelFrame VoxelFrame
+        {
+            get { return _voxelFrame; }
+            set { 
+                _voxelFrame = value;
+
+                if (_voxelFrame != null)
+                {
+                    for (int i = 0; i < _visualVoxelModel.VoxelModel.Parts.Count; i++)
+                    {
+                        var part = _visualVoxelModel.VoxelModel.Parts[i];
+                        _frameIndex = part.Frames.IndexOf(_voxelFrame);
+                        if (_frameIndex != -1)
+                        {
+                            _framePartIndex = i;
+                            break;
+                        }
+                    }
+                }
+                else _framePartIndex = -1;
+            }
+        }
+
+        private int _framePartIndex;
+        private int _frameIndex;
+
         /// <summary>
         /// Gets or sets current editor mode
         /// </summary>
-        public EditorMode Mode { get; set; }
-        
-        public ModelEditorComponent(D3DEngine d3dEngine)
+        public EditorMode Mode
         {
-            _d3DEngine = d3dEngine;
+            get { return _mode; }
+            set {
+                if (_mode != value)
+                {
+                    
+
+                    if (value == EditorMode.FrameEdit)
+                    {
+                        _mainViewData = _currentViewData;
+                        _currentViewData = _frameViewData;
+                    }
+                    else if (_mode == EditorMode.FrameEdit)
+                    {
+                        _frameViewData = _currentViewData;
+                        _currentViewData = _mainViewData;
+                    }
+                    _mode = value;
+                }
+            }
+        }
+
+        public ModelEditorComponent(D3DEngine d3DEngine)
+        {
+            _d3DEngine = d3DEngine;
             Transform = Matrix.Identity;
 
-            var aspect = d3dEngine.ViewPort.Width / d3dEngine.ViewPort.Height;
+            var aspect = d3DEngine.ViewPort.Width / d3DEngine.ViewPort.Height;
             _projection = Matrix.PerspectiveFovLH((float)Math.PI / 3, aspect, 0.5f, 100);
             _view = Matrix.LookAtLH(new Vector3(0,0,5), new Vector3(0,0,0), Vector3.UnitY);
+
+            _mainViewData.Scale = 0.1f;
+            _currentViewData.Scale = 0.1f;
+            _frameViewData.Scale = 0.1f;
         }
 
         public override void LoadContent()
@@ -124,7 +186,6 @@ namespace Utopia.Components
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(ref GameTime timeSpend)
         {
-            
             var mouseState = Mouse.GetState();
             
             var dx = ((float)mouseState.X - _prevState.X) / 100;
@@ -138,35 +199,62 @@ namespace Utopia.Components
                 if (keyboardState.IsKeyDown(System.Windows.Forms.Keys.ShiftKey))
                 {
                     // translate
-                    Translate.X -= dx;
-                    Translate.Y -= dy;
+                    _currentViewData.Translate.X -= dx;
+                    _currentViewData.Translate.Y -= dy;
                 }
                 else
                 {
                     // rotate
-                    RotateX += dx;
-                    RotateY += dy;
+                    _currentViewData.RotateX += dx;
+                    _currentViewData.RotateY += dy;
                 }
             }
 
-            Scale -= ((float)_prevState.ScrollWheelValue - mouseState.ScrollWheelValue) / 10000;
+            _currentViewData.Scale -= ((float)_prevState.ScrollWheelValue - mouseState.ScrollWheelValue) / 10000;
 
-            var horisontalRotationAxis = Vector3.UnitY;
-
-            var bb = _visualVoxelModel.VoxelModel.States[_visualVoxelModel.ActiveState].BoundingBox;
-            var translateVector = Vector3.Negate(Vector3.Subtract(bb.Maximum, bb.Minimum) / 2);
-            var translation = Matrix.Translation(translateVector);
-            var rotationX = Matrix.RotationX(RotateY);
-            _transform = translation * rotationX;
-            var axis2 = Vector3.TransformCoordinate(horisontalRotationAxis, rotationX);
-            _transform = _transform * Matrix.RotationAxis(axis2, -RotateX);
-            _transform = _transform * Matrix.Scaling(Scale);
-            _transform *= Matrix.Translation(Translate);
+            switch (Mode)
+            {
+                case EditorMode.ModelView:
+                case EditorMode.ModelLayout:
+                    var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
+                    UpdateTransformMatrix(_currentViewData, bb);
+                    break;
+                case EditorMode.FrameEdit:
+                    if (VoxelFrame != null)
+                    {
+                        var box = new BoundingBox(new Vector3(), VoxelFrame.BlockData.ChunkSize);
+                        UpdateTransformMatrix(_currentViewData, box);
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             
-
             _prevState = mouseState;
 
             base.Update(ref timeSpend);
+        }
+
+        private void UpdateTransformMatrix(ViewParameters parameters, BoundingBox modelBoundingBox)
+        {
+            var translateVector = Vector3.Negate(Vector3.Subtract(modelBoundingBox.Maximum, modelBoundingBox.Minimum) / 2);
+
+            var translation = Matrix.Translation(translateVector);
+            var rotationX = Matrix.RotationX(parameters.RotateY);
+            _transform = translation * rotationX;
+            var axis2 = Vector3.TransformCoordinate(Vector3.UnitY, rotationX);
+            _transform = _transform * Matrix.RotationAxis(axis2, -parameters.RotateX);
+            _transform = _transform * Matrix.Scaling(parameters.Scale);
+            _transform *= Matrix.Translation(parameters.Translate);
+        }
+
+        private float GetBestScale(BoundingBox bb)
+        {
+            var size = Vector3.Negate(Vector3.Subtract(bb.Maximum, bb.Minimum));
+
+            var maxValue = Math.Max(Math.Max(size.X, size.Y), size.Z);
+
+            return 2f / maxValue;
         }
 
         public override void Draw(int index)
@@ -180,7 +268,7 @@ namespace Utopia.Components
                     throw new ArgumentOutOfRangeException();
             }
         }
-
+        
         private void DrawBox(BoundingBox box)
         {
             DrawBox(box.Minimum, box.Maximum);
@@ -231,7 +319,7 @@ namespace Utopia.Components
             {
                 // draw each part with bounding box
 
-                var state = _visualVoxelModel.VoxelModel.States[_visualVoxelModel.ActiveState];
+                var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex];
 
                 //DrawBox(state.BoundingBox);
 
@@ -284,7 +372,44 @@ namespace Utopia.Components
 
         private void DrawFrameEdit()
         {
+            if (VoxelFrame != null)
+            {
+                var model = _visualVoxelModel.VoxelModel;
+                var visualParts = _visualVoxelModel.VisualVoxelParts;
 
+                StatesRepository.ApplyRaster(_renderModelRasterId);
+                if (model.ColorMapping != null)
+                {
+                    _voxelEffect.CBPerFrame.Values.ColorMapping = model.ColorMapping.BlockColors;
+                    _voxelEffect.CBPerFrame.IsDirty = true;
+                }
+
+
+                var vb = visualParts[_framePartIndex].VertexBuffers[_frameIndex];
+                var ib = visualParts[_framePartIndex].IndexBuffers[_frameIndex];
+
+                _voxelEffect.Begin();
+                _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
+                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_view * _projection);
+                _voxelEffect.CBPerFrame.IsDirty = true;
+                _voxelEffect.Apply();
+
+                vb.SetToDevice(0);
+                ib.SetToDevice(0);
+
+                if (model.Parts[_framePartIndex].ColorMapping != null)
+                {
+                    _voxelEffect.CBPerFrame.Values.ColorMapping = model.Parts[_framePartIndex].ColorMapping.BlockColors;
+                    _voxelEffect.CBPerFrame.IsDirty = true;
+                }
+
+                _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Identity);
+                _voxelEffect.CBPerPart.IsDirty = true;
+                _voxelEffect.Apply();
+
+                _d3DEngine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
+
+            }
         }
 
         public override void UnloadContent()
@@ -294,6 +419,14 @@ namespace Utopia.Components
 
             base.UnloadContent();
         }
+    }
+
+    public struct ViewParameters
+    {
+        public float RotateX;
+        public float RotateY;
+        public float Scale;
+        public Vector3 Translate;
     }
 
     public enum EditorMode

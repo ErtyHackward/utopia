@@ -8,6 +8,7 @@ using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines;
 using S33M3Engines.D3D;
 using SharpDX;
+using SharpDX.Direct3D11;
 using Utopia.Editor;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Models;
@@ -21,7 +22,7 @@ namespace LostIsland.Client.Components
 
         private ButtonControl _backButton;
         private WindowControl _toolsWindow;
-        private WindowControl _partsListWindow;
+        private WindowControl _modelNavigationWindow;
 
         private readonly List<Control> _controls = new List<Control>();
 
@@ -74,6 +75,13 @@ namespace LostIsland.Client.Components
         {
             _engine = engine;
             _screen = screen;
+
+            _engine.ViewPort_Updated += ViewportUpdated;
+        }
+
+        private void ViewportUpdated(Viewport port)
+        {
+            UpdateLayout();
         }
 
         public override void Initialize()
@@ -85,73 +93,102 @@ namespace LostIsland.Client.Components
 
             _toolsWindow = CreateToolsWindow();
 
-            _partsListWindow = CreatePartsListWindow();
+            _modelNavigationWindow = CreateNavigationWindow();
 
-            _controls.Add(_partsListWindow);
+            _controls.Add(_modelNavigationWindow);
             //_controls.Add(_colorPaletteWindow);
             _controls.Add(_toolsWindow);
 
             base.Initialize();
         }
 
-        private WindowControl CreatePartsListWindow()
+        private WindowControl CreateNavigationWindow()
         {
-            var listWindow = new WindowControl { Title = "Parts" };
-            listWindow.Bounds = new UniRectangle(_engine.ViewPort.Width - 200 , 0, 200, 560);
+            var height = _engine.ViewPort.Height;
+
+            var listWindow = new WindowControl { Title = "Navigation" };
+            listWindow.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, 0, 200, height - 40);
+
+            
+            var statesLabel = new LabelControl { Text = "States" };
+            statesLabel.Bounds = new UniRectangle(0, 0, 70, 20);
+            var statesAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0,0, 50, 20) };
+            var statesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 50, 20) };
+            var statesList = new ListControl { LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
+            statesList.Bounds = new UniRectangle(0, 0, 180, 20);
             
             var partsLabel = new LabelControl { Text = "Parts" };
-            partsLabel.Bounds = new UniRectangle(10, 25, 100, 20);
-
-            var partsList = new ListControl();
-            partsList.Bounds = new UniRectangle(10, 50, 180, 230);
+            partsLabel.Bounds = new UniRectangle(0, 0, 70, 20);
+            var partsAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 50, 20) };
+            var partsDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 50, 20) };
+            var partsList = new ListControl { LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
+            partsList.Bounds = new UniRectangle(0, 0, 180, 20);
 
             var framesLabel = new LabelControl { Text = "Frames" };
-            framesLabel.Bounds = new UniRectangle(10, 285, 180, 20);
+            framesLabel.Bounds = new UniRectangle(0, 0, 70, 20);
+            var framesAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 50, 20) };
+            var framesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 50, 20) };
+            var framesList = new ListControl { LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
+            framesList.Bounds = new UniRectangle(0, 0, 180, 20);
 
-            var framesList = new ListControl();
-            framesList.Bounds = new UniRectangle(10, 310, 180, 230);
 
+            listWindow.Children.Add(statesLabel);
+            listWindow.Children.Add(statesAddButton);
+            listWindow.Children.Add(statesDeleteButton);
+            listWindow.Children.Add(statesList);
 
             listWindow.Children.Add(partsLabel);
+            listWindow.Children.Add(partsAddButton);
+            listWindow.Children.Add(partsDeleteButton);
             listWindow.Children.Add(partsList);
+
             listWindow.Children.Add(framesLabel);
+            listWindow.Children.Add(framesAddButton);
+            listWindow.Children.Add(framesDeleteButton);
             listWindow.Children.Add(framesList);
+
+            listWindow.UpdateLayout();
 
             return listWindow;
         }
-
+        
         private WindowControl CreateToolsWindow()
         {
             var toolsWindow = new WindowControl {Title = "Tools"};
-            toolsWindow.Bounds = new UniRectangle(0, 0, 200, 100);
+            toolsWindow.Bounds = new UniRectangle(0, 0, 200, 110);
 
             var modesLabel = new LabelControl {Text = "Modes"};
             modesLabel.Bounds = new UniRectangle(10, 25, 100, 20);
+
+            var modesButtonsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 45), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
             
             var viewModeButton = new ButtonControl { Text = "View" };
-            viewModeButton.Bounds = new UniRectangle(2, 50, 45, 45);
+            viewModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
             viewModeButton.Pressed += delegate { OnViewModePressed(); };
 
             var layoutModeButton = new ButtonControl { Text = "Layout" };
-            layoutModeButton.Bounds = new UniRectangle(52, 50, 45, 45);
+            layoutModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
             layoutModeButton.Pressed += delegate { OnLayoyutModePressed(); };
 
             var frameModeButton = new ButtonControl { Text = "Frame" };
-            frameModeButton.Bounds = new UniRectangle(102, 50, 45, 45);
+            frameModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
             frameModeButton.Pressed += delegate { OnFrameModePressed(); };
 
             var animationModeButton = new ButtonControl { Text = "Anim" };
-            animationModeButton.Bounds = new UniRectangle(152, 50, 45, 45);
+            animationModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
             animationModeButton.Pressed += delegate { OnFrameModePressed(); };
 
-            toolsWindow.Children.Add(viewModeButton);
-            toolsWindow.Children.Add(layoutModeButton);
-            toolsWindow.Children.Add(frameModeButton);
-            toolsWindow.Children.Add(animationModeButton);
+            modesButtonsGroup.Children.Add(viewModeButton);
+            modesButtonsGroup.Children.Add(layoutModeButton);
+            modesButtonsGroup.Children.Add(frameModeButton);
+            modesButtonsGroup.Children.Add(animationModeButton);
 
-            LayoutControls(toolsWindow.Children, 6, 50, 45, 45);
-
+            modesButtonsGroup.UpdateLayout();
+            
             toolsWindow.Children.Add(modesLabel);
+            toolsWindow.Children.Add(modesButtonsGroup);
+
+            toolsWindow.UpdateLayout();
 
             return toolsWindow;
         }
@@ -235,6 +272,8 @@ namespace LostIsland.Client.Components
         public void UpdateLayout()
         {
             _backButton.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 30, 120, 24);
+            _modelNavigationWindow.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, 0, 200, _engine.ViewPort.Height - 40);
+            _modelNavigationWindow.UpdateLayout();
         }
 
     }
