@@ -552,4 +552,23 @@ namespace Nuclex.UserInterface.Controls {
         }
     }
 
+    public static class NuclexHelper
+    {
+        /// <summary>
+        /// Gets a control with specified name and type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="childrens"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static T Get<T>(this Collection<Control> childrens, string name)  where T: class
+        {
+            foreach (var children in childrens)
+            {
+                if (children is T && children.Name == name) return children as T;
+            }
+            return null;
+        }
+    }
+
 } // namespace Nuclex.UserInterface.Controls
