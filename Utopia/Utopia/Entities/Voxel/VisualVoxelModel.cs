@@ -51,6 +51,30 @@ namespace Utopia.Entities.Voxel
         }
 
         /// <summary>
+        /// Re-generates vertices for a model part frame
+        /// </summary>
+        /// <param name="partIndex"></param>
+        /// <param name="frameIndex"></param>
+        public void RebuildFrame(int partIndex, int frameIndex)
+        {
+            var part = _visualParts[partIndex];
+
+            List<VertexVoxel> vertices;
+            List<ushort> indices;
+
+            _voxelMeshFactory.GenerateVoxelFaces(_model.Parts[partIndex].Frames[frameIndex].BlockData, out vertices, out indices);
+
+            part.VertexBuffers[frameIndex].Dispose();
+            part.IndexBuffers[frameIndex].Dispose();
+
+            part.VertexBuffers[frameIndex] = _voxelMeshFactory.InitBuffer(vertices);
+            part.IndexBuffers[frameIndex] = _voxelMeshFactory.InitBuffer(indices);
+
+            part.BoundingBoxes[frameIndex] = new BoundingBox(new Vector3(), _model.Parts[partIndex].Frames[frameIndex].BlockData.ChunkSize);
+
+        }
+
+        /// <summary>
         /// Creation of the vertices
         /// </summary>
         public void BuildMesh()
