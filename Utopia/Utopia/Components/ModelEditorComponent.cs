@@ -74,6 +74,9 @@ namespace Utopia.Components
 
         private bool _flipAxis;
 
+        private Vector3I? _pickedCube;
+        private Vector3I? _newCube;
+
         /// <summary>
         /// Gets current editor camera transformation
         /// </summary>
@@ -415,6 +418,26 @@ namespace Utopia.Components
                         var frame = _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames[_selectedFrameIndex];
                         var box = new BoundingBox(new Vector3(), frame.BlockData.ChunkSize);
                         UpdateTransformMatrix(_currentViewData, box);
+
+                        GetSelectedCube(out _pickedCube, out _newCube);
+                        
+                        if (mouseState.LeftButton == ButtonState.Released && _prevState.LeftButton == ButtonState.Pressed)
+                        {
+                            if (_pickedCube.HasValue)
+                            {
+                                frame.BlockData.SetBlock(_pickedCube.Value, 0);
+                                RebuildFrameVertices();
+                            }
+                        }
+                        else if (mouseState.RightButton == ButtonState.Released && _prevState.RightButton == ButtonState.Pressed)
+                        {
+                            if (_newCube.HasValue)
+                            {
+                                frame.BlockData.SetBlock(_newCube.Value, 1);
+                                RebuildFrameVertices();
+                            }
+                        }
+                        
                     }
                     break;
                 default:
@@ -424,6 +447,14 @@ namespace Utopia.Components
             _prevState = mouseState;
 
             base.Update(ref timeSpent);
+        }
+
+        private void RebuildFrameVertices()
+        {
+            if (_visualVoxelModel != null && _selectedPartIndex != -1 && _selectedFrameIndex != -1)
+            {
+                _visualVoxelModel.RebuildFrame(_selectedPartIndex, _selectedFrameIndex);
+            }
         }
 
         private void UpdateTransformMatrix(ViewParameters parameters, BoundingBox modelBoundingBox)
@@ -649,21 +680,22 @@ namespace Utopia.Components
 
                 _d3DEngine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
 
-                Vector3I selectedCube;
-                if (GetSelectedCube(out selectedCube))
+                
+                if (_pickedCube != null)
                 {
                     // draw selected cube
-                    DrawBox(new BoundingBox(selectedCube, selectedCube + Vector3I.One), new Color4(1, 0, 0, 1));
+                    DrawBox(new BoundingBox(_pickedCube.Value, _pickedCube.Value + Vector3I.One), new Color4(1, 0, 0, 1));
                 }
             }
         }
 
-        private bool GetSelectedCube(out Vector3I cubePosition)
+        private void GetSelectedCube(out Vector3I? cubePosition, out Vector3I? newCubePosition)
         {
             if (_selectedPartIndex == -1 || _selectedFrameIndex == -1)
             {
-                cubePosition = new Vector3I();
-                return false;
+                cubePosition = null; 
+                newCubePosition = null;
+                return;
             }
 
             Vector3D mPosition, mLookAt;
@@ -687,12 +719,32 @@ namespace Utopia.Components
                 if (blocks.GetBlock(targetPoint) != 0)
                 {
                     cubePosition = targetPoint;
-                    return true;
+                    newCubePosition = null;
+
+                    // roll back to find a new CubePlace
+                    for (; i > 0; i -= 0.1f)
+                    {
+                        point = (mPosition + (mLookAt * i));
+                        targetPoint = (Vector3I)point;
+
+                        if (point.X < 0 || point.Y < 0 || point.Z < 0 || point.X >= size.X || point.Y >= size.Y || point.Z >= size.Z)
+                            return;
+
+                        if (blocks.GetBlock(targetPoint) == 0)
+                        {
+                            newCubePosition = targetPoint;
+                            return;
+                        }
+                    }
+
+
+                    return;
                 }
             }
 
-            cubePosition = new Vector3I();
-            return false;
+            cubePosition = null;
+            newCubePosition = null;
+            return;
         }
 
         public override void UnloadContent()
