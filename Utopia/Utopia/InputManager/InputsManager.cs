@@ -170,11 +170,11 @@ namespace Utopia.InputManager
             var y = mouseState.Y;
             
 
-            var nearClipVector = new Vector3(x, y, 0);
-            var farClipVector = new Vector3(x, y, 1);
+            var nearClipVector = new Vector3D(x, y, 0);
+            var farClipVector = new Vector3D(x, y, 1);
             
-            Vector3 unprojecNearClipVector;
-            Vector3.Unproject(ref nearClipVector,
+            Vector3D unprojecNearClipVector;
+            Vector3D.Unproject(ref nearClipVector,
                               engine.ViewPort.TopLeftX,
                               engine.ViewPort.TopLeftY,
                               engine.ViewPort.Width,
@@ -184,8 +184,8 @@ namespace Utopia.InputManager
                               ref viewProjection,
                               out unprojecNearClipVector);
 
-            Vector3 unprojecFarClipVector;
-            Vector3.Unproject(ref farClipVector,
+            Vector3D unprojecFarClipVector;
+            Vector3D.Unproject(ref farClipVector,
                               engine.ViewPort.TopLeftX,
                               engine.ViewPort.TopLeftY,
                               engine.ViewPort.Width,
@@ -196,8 +196,8 @@ namespace Utopia.InputManager
                               out unprojecFarClipVector);
 
             //To apply From Camera Position !
-            mouseWorldPosition = new Vector3D(unprojecNearClipVector);
-            mouseLookAt = new Vector3D(Vector3.Normalize(unprojecFarClipVector - unprojecNearClipVector));
+            mouseWorldPosition = unprojecNearClipVector;
+            mouseLookAt = Vector3D.Normalize(unprojecFarClipVector - unprojecNearClipVector);
         }
 
         #endregion

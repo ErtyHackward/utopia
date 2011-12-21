@@ -742,6 +742,39 @@ namespace S33M3Engines.Shared.Math
             return vector;
         }
 
+        public static void TransformCoordinate(ref Vector3D coordinate, ref Matrix transform, out Vector3D result)
+        {
+            var x = (coordinate.X * transform.M11 + coordinate.Y * transform.M21 + coordinate.Z * transform.M31) + transform.M41;
+            var y = (coordinate.X * transform.M12 + coordinate.Y * transform.M22 + coordinate.Z * transform.M32) + transform.M42;
+            var z = (coordinate.X * transform.M13 + coordinate.Y * transform.M23 + coordinate.Z * transform.M33) + transform.M43;
+            var w = (1.0 / (coordinate.X * transform.M14 + coordinate.Y * transform.M24 + coordinate.Z * transform.M34 + transform.M44));
+            result = new Vector3D(x * w, y * w, z * w);
+        }
+
+        public static Vector3D TransformCoordinate(Vector3D coordinate, ref Matrix transform)
+        {
+            Vector3D result;
+            TransformCoordinate(ref coordinate, ref transform, out result);
+            return result;
+        }
+
+        public static void Unproject(ref Vector3D vector, float x, float y, float width, float height, float minZ, float maxZ, ref Matrix worldViewProjection, out Vector3D result)
+        {
+            var coordinate = new Vector3D();
+            var result1 = new Matrix();
+            Matrix.Invert(ref worldViewProjection, out result1);
+            coordinate.X = ((vector.X - x) / width * 2.0 - 1.0);
+            coordinate.Y = -((vector.Y - y) / height * 2.0 - 1.0);
+            coordinate.Z = ((vector.Z - minZ) / (maxZ - (double)minZ));
+            TransformCoordinate(ref coordinate, ref result1, out result);
+        }
+
+        public static Vector3D Unproject(Vector3D vector, float x, float y, float width, float height, float minZ, float maxZ, Matrix worldViewProjection)
+        {
+            Vector3D result;
+            Vector3D.Unproject(ref vector, x, y, width, height, minZ, maxZ, ref worldViewProjection, out result);
+            return result;
+        }
 
         public static void Minimize(ref Vector3D value1, ref Vector3D value2, out Vector3D result)
         {

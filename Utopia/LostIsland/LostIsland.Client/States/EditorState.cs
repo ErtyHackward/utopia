@@ -1,7 +1,5 @@
 ﻿using System;
-using LostIsland.Client.Components;
 using Ninject;
-using S33M3Engines.Cameras;
 using SharpDX;
 using Utopia;
 using Utopia.Components;
