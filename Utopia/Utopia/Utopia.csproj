@@ -116,6 +116,9 @@
     <Compile Include="Components\DebugComponent.cs" />
     <Compile Include="Components\FadeComponent.cs" />
     <Compile Include="Components\ISwitchComponent.cs" />
+    <Compile Include="Components\ModelEditorComponent.Designer.cs">
+      <DependentUpon>ModelEditorComponent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editor\CarvingEditor.cs" />
     <Compile Include="Editor\EditorTool.cs" />
     <Compile Include="Editor\EntityEditor.cs" />

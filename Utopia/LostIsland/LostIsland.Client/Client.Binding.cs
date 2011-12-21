@@ -142,7 +142,6 @@ namespace LostIsland.Client
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<FadeComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<DebugInfo>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<EditorComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<VoxelModelManager>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
 
