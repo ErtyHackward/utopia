@@ -19,7 +19,6 @@ namespace LostIsland.Client.States
     {
         private readonly IKernel _ioc;
         private ModelEditorComponent _modelEditor;
-        private VisualVoxelModel _model;
 
         /// <summary>
         /// Name of the state
@@ -37,7 +36,6 @@ namespace LostIsland.Client.States
         public override void Initialize()
         {
             var gui = _ioc.Get<GuiManager>();
-            var editor = _ioc.Get<EditorComponent>();
             var modelManager = _ioc.Get<VoxelModelManager>();
             _modelEditor = _ioc.Get<ModelEditorComponent>();
             var voxelFactory = _ioc.Get<VoxelMeshFactory>();
@@ -94,49 +92,18 @@ namespace LostIsland.Client.States
             });
 
 
-            _model = new VisualVoxelModel(model, voxelFactory);
+            var visualModel = new VisualVoxelModel(model, voxelFactory);
 
-            _model.BuildMesh();
+            visualModel.BuildMesh();
 
             #endregion
 
-            _modelEditor.VisualVoxelModel = _model;
+            _modelEditor.VisualVoxelModel = visualModel;
+            _modelEditor.BackPressed += EditorBackPressed;
 
-            
-
-            editor.BackPressed += EditorBackPressed;
-            editor.ViewModePressed += EditorViewModePressed;
-            editor.LayoyutModePressed += EditorLayoyutModePressed;
-            editor.FrameModePressed += EditorFrameModePressed;
-
-            AddComponent(editor);
             AddComponent(modelManager);
             AddComponent(_modelEditor);
             AddComponent(gui);
-        }
-
-        public override void OnEnabled(GameState previousState)
-        {
-            var editor = _ioc.Get<EditorComponent>();
-            editor.UpdateNavigation(_model, 0, 0, 0);
-            base.OnEnabled(previousState);
-        }
-
-        void EditorFrameModePressed(object sender, EventArgs e)
-        {
-            var editor = _ioc.Get<EditorComponent>();
-            editor.UpdateNavigation(_model, 0, 0, 0);
-            //_modelEditor.Mode = EditorMode.FrameEdit;
-        }
-
-        void EditorLayoyutModePressed(object sender, EventArgs e)
-        {
-            _modelEditor.Mode = EditorMode.ModelLayout;
-        }
-
-        void EditorViewModePressed(object sender, EventArgs e)
-        {
-            _modelEditor.Mode = EditorMode.ModelView;
         }
 
         void EditorBackPressed(object sender, EventArgs e)

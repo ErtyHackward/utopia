@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nuclex.UserInterface;
+using Nuclex.UserInterface.Controls;
+using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
 using SharpDX;
@@ -20,22 +23,20 @@ using UtopiaContent.Effects.Entities;
 namespace Utopia.Components
 {
     /// <summary>
-    /// This is a game component that implements IUpdateable.
+    /// Allows user to edit a voxel model in a visual way
     /// </summary>
-    public class ModelEditorComponent : DrawableGameComponent
+    public partial class ModelEditorComponent : DrawableGameComponent
     {
-        float _axisSize = 16f;
-        readonly D3DEngine _d3DEngine;
-        HLSLVertexPositionColor _lines3DEffect;
-        VertexBuffer<VertexPositionColor> _boxVertexBuffer;
-        IndexBuffer<ushort> _boxIndexBuffer;
-
-        HLSLVoxelModel _voxelEffect;
-
-        MouseState _prevState;
-
-        int _renderRasterId;
-        int _renderModelRasterId;
+        private readonly D3DEngine _d3DEngine;
+        private HLSLColorLine _lines3DEffect;
+        private VertexBuffer<VertexPosition> _boxVertexBuffer;
+        private IndexBuffer<ushort> _boxIndexBuffer;
+        private HLSLVoxelModel _voxelEffect;
+        private MouseState _prevState;
+        private int _renderRasterId;
+        private int _renderModelRasterId;
+        private int _blendStateId;
+        private int _depthStateWithDepthId;
 
         // view parameters
         private ViewParameters _mainViewData;
@@ -51,50 +52,116 @@ namespace Utopia.Components
 
         private EditorMode _mode;
         private VoxelFrame _voxelFrame;
+        
+        private readonly Screen _screen;
 
+        private ButtonControl _backButton;
+        private WindowControl _toolsWindow;
+        private WindowControl _modelNavigationWindow;
 
+        private readonly List<Control> _controls = new List<Control>();
+        private ListControl _statesList;
+        private ListControl _partsList;
+        private ListControl _framesList;
+
+        private int _selectedFrameIndex;
+        private int _selectedPartIndex;
+        
+
+        /// <summary>
+        /// Gets current editor camera transformation
+        /// </summary>
         public Matrix Transform
         {
             get { return _transform; }
             set { _transform = value; }
         }
         
+        /// <summary>
+        /// Gets or sets model to edit
+        /// </summary>
         public VisualVoxelModel VisualVoxelModel
         {
             get { return _visualVoxelModel; }
-            set { _visualVoxelModel = value; }
+            set { 
+                _visualVoxelModel = value;
+                if (_visualVoxelModel != null && _statesList != null)
+                {
+                    // fill the lists
+                    _statesList.Items.Clear();
+                    _statesList.SelectedItems.Clear();
+
+                    for (int i = 0; i < _visualVoxelModel.VoxelModel.States.Count; i++)
+                    {
+                        _statesList.Items.Add(i.ToString());
+                    }
+                    SelectedStateIndex = 0;
+                    _statesList.SelectedItems.Add(SelectedStateIndex);
+
+
+                    _partsList.Items.Clear();
+                    _partsList.SelectedItems.Clear();
+
+                    foreach (var voxelModelPart in _visualVoxelModel.VoxelModel.Parts)
+                    {
+                        _partsList.Items.Add(voxelModelPart.Name);
+                    }
+                    if (_selectedPartIndex != -1)
+                        _partsList.SelectedItems.Add(_selectedPartIndex);
+                }
+            }
         }
 
-        public int SelectedStateIndex { get; set; }
+        public int SelectedStateIndex { get; private set; }
         
+        public int SelectedPartIndex
+        {
+            get { return _selectedPartIndex; }
+            private set { 
+                if(_selectedPartIndex != value)
+                {
+                    _selectedPartIndex = value;
+
+                    // update frames list
+
+
+                    _framesList.Items.Clear();
+
+                    if (_selectedPartIndex != -1)
+                    {
+
+                        for (int i = 0; i < _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames.Count; i++)
+                        {
+                            _framesList.Items.Add(i.ToString());
+                        }
+
+                        _framesList.SelectedItems.Clear();
+                        _framesList.SelectedItems.Add(0);
+                    }
+                }
+            }
+        }
+        
+        public int SelectedFrameIndex
+        {
+            get { return _selectedFrameIndex; }
+            private set {
+                _selectedFrameIndex = value;
+
+                if (Mode == EditorMode.ModelLayout)
+                {
+                    _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[_selectedPartIndex].ActiveFrame = (byte)_selectedFrameIndex;
+                }
+            }
+        }
+
         /// <summary>
-        /// Gets or sets current editing frame
+        /// Gets current editing frame in frame mode
         /// </summary>
         public VoxelFrame VoxelFrame
         {
             get { return _voxelFrame; }
-            set { 
-                _voxelFrame = value;
-
-                if (_voxelFrame != null)
-                {
-                    for (int i = 0; i < _visualVoxelModel.VoxelModel.Parts.Count; i++)
-                    {
-                        var part = _visualVoxelModel.VoxelModel.Parts[i];
-                        _frameIndex = part.Frames.IndexOf(_voxelFrame);
-                        if (_frameIndex != -1)
-                        {
-                            _framePartIndex = i;
-                            break;
-                        }
-                    }
-                }
-                else _framePartIndex = -1;
-            }
         }
-
-        private int _framePartIndex;
-        private int _frameIndex;
 
         /// <summary>
         /// Gets or sets current editor mode
@@ -105,8 +172,7 @@ namespace Utopia.Components
             set {
                 if (_mode != value)
                 {
-                    
-
+                    // frame edit have separate view transformation
                     if (value == EditorMode.FrameEdit)
                     {
                         _mainViewData = _currentViewData;
@@ -122,9 +188,32 @@ namespace Utopia.Components
             }
         }
 
-        public ModelEditorComponent(D3DEngine d3DEngine)
+        
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when back button is pressed
+        /// </summary>
+        public event EventHandler BackPressed;
+
+        private void OnBackPressed()
+        {
+            var handler = BackPressed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Creates new editor component
+        /// </summary>
+        /// <param name="d3DEngine"></param>
+        /// <param name="screen"></param>
+        public ModelEditorComponent(D3DEngine d3DEngine, Screen screen)
         {
             _d3DEngine = d3DEngine;
+            _screen = screen;
             Transform = Matrix.Identity;
 
             var aspect = d3DEngine.ViewPort.Width / d3DEngine.ViewPort.Height;
@@ -134,28 +223,111 @@ namespace Utopia.Components
             _mainViewData.Scale = 0.1f;
             _currentViewData.Scale = 0.1f;
             _frameViewData.Scale = 0.1f;
+            _d3DEngine.ViewPort_Updated += ViewportUpdated;
         }
 
+        private void ViewportUpdated(Viewport port)
+        {
+            UpdateLayout();
+        }
+
+        public override void Initialize()
+        {
+            _backButton = new ButtonControl { Text = "Back" };
+            _backButton.Pressed += delegate { OnBackPressed(); };
+            
+            _toolsWindow = CreateToolsWindow();
+            _modelNavigationWindow = CreateNavigationWindow();
+
+            _controls.Add(_modelNavigationWindow);
+            //_controls.Add(_colorPaletteWindow);
+            _controls.Add(_toolsWindow);
+
+            base.Initialize();
+        }
+
+        public void UpdateLayout()
+        {
+            _backButton.Bounds = new UniRectangle(_d3DEngine.ViewPort.Width - 200, _d3DEngine.ViewPort.Height - 30, 120, 24);
+            _modelNavigationWindow.Bounds = new UniRectangle(_d3DEngine.ViewPort.Width - 200, 0, 200, _d3DEngine.ViewPort.Height - 40);
+            _modelNavigationWindow.UpdateLayout();
+        }
+
+        protected override void OnEnabledChanged()
+        {
+            if (!IsInitialized) return;
+
+            if (Enabled)
+            {
+                foreach (var control in _controls)
+                {
+                    _screen.Desktop.Children.Add(control);
+                }
+
+                _screen.Desktop.Children.Add(_backButton);
+                UpdateLayout();
+
+                // call property setter to fill the lists
+                if(_visualVoxelModel != null)
+                    VisualVoxelModel = _visualVoxelModel;
+            }
+            else
+            {
+                foreach (var control in _controls)
+                {
+                    _screen.Desktop.Children.Remove(control);
+                }
+
+                _screen.Desktop.Children.Remove(_backButton);
+            }
+
+            base.OnEnabledChanged();
+        }
+        
         public override void LoadContent()
         {
-            _renderRasterId = StatesRepository.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.None, FillMode = FillMode.Solid });
-            _renderModelRasterId = StatesRepository.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Solid });
+            _renderRasterId = StatesRepository.AddRasterStates(new RasterizerStateDescription { CullMode = CullMode.None, FillMode = FillMode.Solid });
+            _renderModelRasterId = StatesRepository.AddRasterStates(new RasterizerStateDescription { CullMode = CullMode.Back, FillMode = FillMode.Solid });
 
-            _lines3DEffect = new HLSLVertexPositionColor(_d3DEngine, @"D3D\Effects\Basics\VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
+            var blendDescr = new BlendStateDescription { IndependentBlendEnable = false, AlphaToCoverageEnable = false };
+            for (var i = 0; i < 8; i++)
+            {
+                blendDescr.RenderTarget[i].IsBlendEnabled = true;
+                blendDescr.RenderTarget[i].BlendOperation = BlendOperation.Add;
+                blendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
+                blendDescr.RenderTarget[i].DestinationBlend = BlendOption.InverseSourceAlpha;
+                blendDescr.RenderTarget[i].DestinationAlphaBlend = BlendOption.One;
+                blendDescr.RenderTarget[i].SourceBlend = BlendOption.One;
+                blendDescr.RenderTarget[i].SourceAlphaBlend = BlendOption.One;
+                blendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
+            }
+            _blendStateId = StatesRepository.AddBlendStates(blendDescr);
+
+            _depthStateWithDepthId = StatesRepository.AddDepthStencilStates(new DepthStencilStateDescription
+            {
+                IsDepthEnabled = true,
+                DepthComparison = Comparison.Less,
+                DepthWriteMask = DepthWriteMask.All,
+                IsStencilEnabled = false,
+                BackFace = new DepthStencilOperationDescription { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep },
+                FrontFace = new DepthStencilOperationDescription { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep }
+            });
+
+            _lines3DEffect = new HLSLColorLine(_d3DEngine, ClientSettings.EffectPack + @"Entities\ColorLine.hlsl", VertexPosition.VertexDeclaration);
 
             
-            var ptList = new List<VertexPositionColor>();
+            var ptList = new List<VertexPosition>();
 
             var color = Color.White;
 
-            var topLeftFront =      new VertexPositionColor(new Vector3(0, 1, 1), color);
-            var topLeftBack =       new VertexPositionColor(new Vector3(0, 1, 0), color);
-            var topRightFront =     new VertexPositionColor(new Vector3(1, 1, 1), color);
-            var topRightBack =      new VertexPositionColor(new Vector3(1, 1, 0), color);
-            var bottomLeftFront =   new VertexPositionColor(new Vector3(0, 0, 1), color);
-            var bottomLeftBack =    new VertexPositionColor(new Vector3(0, 0, 0), color);
-            var bottomRightFront =  new VertexPositionColor(new Vector3(1, 0, 1), color);
-            var bottomRightBack =   new VertexPositionColor(new Vector3(1, 0, 0), color);
+            var topLeftFront        = new VertexPosition(new Vector3(0, 1, 1));
+            var topLeftBack         = new VertexPosition(new Vector3(0, 1, 0));
+            var topRightFront       = new VertexPosition(new Vector3(1, 1, 1));
+            var topRightBack        = new VertexPosition(new Vector3(1, 1, 0));
+            var bottomLeftFront     = new VertexPosition(new Vector3(0, 0, 1));
+            var bottomLeftBack      = new VertexPosition(new Vector3(0, 0, 0));
+            var bottomRightFront    = new VertexPosition(new Vector3(1, 0, 1));
+            var bottomRightBack     = new VertexPosition(new Vector3(1, 0, 0));
 
             ptList.Add(topLeftFront);       // 0
             ptList.Add(topLeftBack);        // 1
@@ -167,8 +339,8 @@ namespace Utopia.Components
             ptList.Add(bottomRightBack);    // 7
 
             var indices = new ushort[] { 0, 1, 1, 3, 3, 2, 2, 0, 4, 5, 5, 7, 7, 6, 6, 4, 0, 4, 2, 6, 1, 5, 3, 7 };
-            
-            _boxVertexBuffer = new VertexBuffer<VertexPositionColor>(_d3DEngine, 8, VertexPositionColor.VertexDeclaration, PrimitiveTopology.LineList, "EditorBox_vertexBuffer");
+
+            _boxVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine, 8, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorBox_vertexBuffer");
             _boxVertexBuffer.SetData(ptList.ToArray());
 
             _boxIndexBuffer = new IndexBuffer<ushort>(_d3DEngine, indices.Length, SharpDX.DXGI.Format.R16_UInt, "EditorBox_indexBuffer");
@@ -179,12 +351,12 @@ namespace Utopia.Components
 
             base.LoadContent();
         }
-        
+
         /// <summary>
         /// Allows the game component to update itself.
         /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        public override void Update(ref GameTime timeSpend)
+        /// <param name="timeSpent">Provides a snapshot of timing values.</param>
+        public override void Update(ref GameTime timeSpent)
         {
             var mouseState = Mouse.GetState();
             
@@ -216,13 +388,17 @@ namespace Utopia.Components
             {
                 case EditorMode.ModelView:
                 case EditorMode.ModelLayout:
-                    var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
-                    UpdateTransformMatrix(_currentViewData, bb);
+                    if (SelectedStateIndex != -1)
+                    {
+                        var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
+                        UpdateTransformMatrix(_currentViewData, bb);
+                    }
                     break;
                 case EditorMode.FrameEdit:
-                    if (VoxelFrame != null)
+                    if (_selectedPartIndex != -1 && _selectedFrameIndex != -1)
                     {
-                        var box = new BoundingBox(new Vector3(), VoxelFrame.BlockData.ChunkSize);
+                        var frame = _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames[_selectedFrameIndex];
+                        var box = new BoundingBox(new Vector3(), frame.BlockData.ChunkSize);
                         UpdateTransformMatrix(_currentViewData, box);
                     }
                     break;
@@ -232,7 +408,7 @@ namespace Utopia.Components
             
             _prevState = mouseState;
 
-            base.Update(ref timeSpend);
+            base.Update(ref timeSpent);
         }
 
         private void UpdateTransformMatrix(ViewParameters parameters, BoundingBox modelBoundingBox)
@@ -268,25 +444,29 @@ namespace Utopia.Components
                     throw new ArgumentOutOfRangeException();
             }
         }
-        
+
         private void DrawBox(BoundingBox box)
         {
-            DrawBox(box.Minimum, box.Maximum);
+            DrawBox(box, new Color4(1, 1, 1, 1));
         }
 
-        private void DrawBox(Vector3 min, Vector3 max)
+        private void DrawBox(BoundingBox box, Color4 color)
         {
+            DrawBox(box.Minimum, box.Maximum, color);
+        }
 
+        private void DrawBox(Vector3 min, Vector3 max, Color4 color)
+        {
             var size = Vector3.Subtract(max, min);
-            StatesRepository.ApplyRaster(_renderRasterId);
+            //StatesRepository.ApplyStates(_renderRasterId, _blendStateId, _depthStateWithDepthId);
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             //Set Effect variables
             _lines3DEffect.Begin();
+            _lines3DEffect.CBPerDraw.Values.Color = color;
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(size) * Matrix.Translation(min) * _transform); //Matrix.Translation(new Vector3(-0.5f,-0.5f,-0.5f)) *
+            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_view * _projection);
             _lines3DEffect.CBPerDraw.IsDirty = true;
-            _lines3DEffect.CBPerFrame.Values.View = Matrix.Transpose(_view);
-            _lines3DEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_projection);
-            _lines3DEffect.CBPerFrame.IsDirty = true;
             _lines3DEffect.Apply();
 
             //Set the vertex buffer to the Graphical Card.
@@ -340,8 +520,6 @@ namespace Utopia.Components
                 for (int i = 0; i < state.PartsStates.Length; i++)
                 {
                     var voxelModelPartState = state.PartsStates[i];
-
-                    DrawBox(voxelModelPartState.BoundingBox);
                     
                     var vb = visualParts[i].VertexBuffers[voxelModelPartState.ActiveFrame];
                     var ib = visualParts[i].IndexBuffers[voxelModelPartState.ActiveFrame];
@@ -367,12 +545,21 @@ namespace Utopia.Components
 
                     _d3DEngine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
                 }
+
+                // draw bounding boxes
+                for (int i = 0; i < state.PartsStates.Length; i++)
+                {
+                    var voxelModelPartState = state.PartsStates[i];
+                    DrawBox(voxelModelPartState.BoundingBox, i == _selectedPartIndex ? new Color4(0, 1, 0, 0.1f) : new Color4(1, 1, 1, 0.1f));
+                }
+
+                
             }
         }
 
         private void DrawFrameEdit()
         {
-            if (VoxelFrame != null)
+            if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
             {
                 var model = _visualVoxelModel.VoxelModel;
                 var visualParts = _visualVoxelModel.VisualVoxelParts;
@@ -385,8 +572,8 @@ namespace Utopia.Components
                 }
 
 
-                var vb = visualParts[_framePartIndex].VertexBuffers[_frameIndex];
-                var ib = visualParts[_framePartIndex].IndexBuffers[_frameIndex];
+                var vb = visualParts[SelectedPartIndex].VertexBuffers[SelectedFrameIndex];
+                var ib = visualParts[SelectedPartIndex].IndexBuffers[SelectedFrameIndex];
 
                 _voxelEffect.Begin();
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
@@ -397,9 +584,9 @@ namespace Utopia.Components
                 vb.SetToDevice(0);
                 ib.SetToDevice(0);
 
-                if (model.Parts[_framePartIndex].ColorMapping != null)
+                if (model.Parts[SelectedPartIndex].ColorMapping != null)
                 {
-                    _voxelEffect.CBPerFrame.Values.ColorMapping = model.Parts[_framePartIndex].ColorMapping.BlockColors;
+                    _voxelEffect.CBPerFrame.Values.ColorMapping = model.Parts[SelectedPartIndex].ColorMapping.BlockColors;
                     _voxelEffect.CBPerFrame.IsDirty = true;
                 }
 

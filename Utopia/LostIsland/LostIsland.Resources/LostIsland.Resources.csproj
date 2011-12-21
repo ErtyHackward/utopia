@@ -65,6 +65,9 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="EffectsPacks\Default\Entities\ColorLine.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="EffectsPacks\Default\Entities\Icons.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
