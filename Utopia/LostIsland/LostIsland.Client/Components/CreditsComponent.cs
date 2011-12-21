@@ -35,7 +35,7 @@ namespace LostIsland.Client.Components
 
         public override void Initialize()
         {
-            _creditsLabel = new LabelControl { Text = "Credits: \nGraphics engine: Fabian Ceressia\nNetwork programming: Vladislav Pozdnyakov\nShovel: Simon Lebettre" };
+            _creditsLabel = new LabelControl { Text = "Credits: \nFabian Ceressia\nSimon Lebettre\nVladislav Pozdnyakov" };
             _backButton = new ButtonControl { Text = "Back" };
             _backButton.Pressed += delegate { OnBackPressed(); };
             UpdateLayout(_engine.ViewPort);
