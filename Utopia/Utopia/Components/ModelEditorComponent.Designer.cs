@@ -43,8 +43,8 @@ namespace Utopia.Components
             framesLabel.Bounds = new UniRectangle(0, 0, 70, 20);
             var framesAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 50, 20) };
             var framesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 50, 20) };
-            _framesList = new ListControl { Name = "framesList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
-            _framesList.Bounds = new UniRectangle(0, 0, 180, 20);
+            _framesList = new ListControl { Name = "framesList", LayoutFlags = ControlLayoutFlags.WholeRow };
+            _framesList.Bounds = new UniRectangle(0, 0, 180, 50);
             _framesList.SelectionMode = ListSelectionMode.Single;
             _framesList.SelectionChanged += delegate { SelectedFrameIndex = _framesList.SelectedItems.Count > 0 ? _framesList.SelectedItems[0] : -1; };
 
