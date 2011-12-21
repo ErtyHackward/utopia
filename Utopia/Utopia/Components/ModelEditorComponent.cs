@@ -40,7 +40,6 @@ namespace Utopia.Components
         private IndexBuffer<ushort> _boxIndexBuffer;
 
         private VertexBuffer<VertexPosition> _crosshairVertexBuffer;
-        
 
         private HLSLVoxelModel _voxelEffect;
         private MouseState _prevState;
@@ -224,7 +223,7 @@ namespace Utopia.Components
             Transform = Matrix.Identity;
 
             var aspect = d3DEngine.ViewPort.Width / d3DEngine.ViewPort.Height;
-            var projection = Matrix.PerspectiveFovLH((float)Math.PI / 3, aspect, 0.5f, 100);
+            var projection = Matrix.PerspectiveFovLH((float)Math.PI / 3, aspect, 1f, 100);
             var view = Matrix.LookAtLH(new Vector3(0,0,5), new Vector3(0,0,0), Vector3.UnitY);
 
             _viewProjection = view * projection;
@@ -335,7 +334,11 @@ namespace Utopia.Components
 
             _crosshairVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine, 4, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorCrosshair_vertexBuffer");
             _crosshairVertexBuffer.SetData(ptList.ToArray());
-            
+
+            ptList.Clear();
+            ptList.Add(new VertexPosition(new Vector3(0, 0, 0)));
+            ptList.Add(new VertexPosition(new Vector3(1, 0, 0)));
+
             _voxelEffect = new HLSLVoxelModel(_d3DEngine, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
             
 
@@ -664,13 +667,23 @@ namespace Utopia.Components
             }
 
             Vector3D mPosition, mLookAt;
-            InputsManager.UnprojectMouseCursor(_d3DEngine, ref _viewProjection, out mPosition, out mLookAt);
 
+            var worldViewProjection = _transform * _viewProjection;
+
+            InputsManager.UnprojectMouseCursor(_d3DEngine, ref worldViewProjection, out mPosition, out mLookAt);
+            
             var blocks = _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames[_selectedFrameIndex].BlockData;
+
+            var size = blocks.ChunkSize;
 
             for (float i = 0; i < 100; i += 0.1f)
             {
-                var targetPoint = (Vector3I)(mPosition + (mLookAt * i));
+                var point = (mPosition + (mLookAt * i));
+                var targetPoint = (Vector3I)point;
+
+                if (point.X < 0 || point.Y < 0 || point.Z < 0 || point.X >= size.X || point.Y >= size.Y || point.Z >= size.Z)
+                    continue;
+
                 if (blocks.GetBlock(targetPoint) != 0)
                 {
                     cubePosition = targetPoint;
