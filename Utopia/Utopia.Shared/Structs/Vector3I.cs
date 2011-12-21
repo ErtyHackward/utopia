@@ -1,4 +1,5 @@
 ﻿using System;
+using S33M3Engines.Shared.Math;
 using SharpDX;
 
 namespace Utopia.Shared.Structs
@@ -138,6 +139,16 @@ namespace Utopia.Shared.Structs
         }
 
         public static explicit operator Vector3I(Vector3 vec)
+        {
+            Vector3I pos;
+            pos.X = (int)vec.X;
+            pos.Y = (int)vec.Y;
+            pos.Z = (int)vec.Z;
+
+            return pos;
+        }
+
+        public static explicit operator Vector3I(Vector3D vec)
         {
             Vector3I pos;
             pos.X = (int)vec.X;

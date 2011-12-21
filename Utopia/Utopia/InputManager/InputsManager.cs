@@ -160,6 +160,46 @@ namespace Utopia.InputManager
             MouseWorldPosition = new Vector3D(UnprojecNearClipVector);
             MouseLookAt = new Vector3D(Vector3.Normalize(UnprojecFarClipVector - UnprojecNearClipVector));
         }
+
+        public static void UnprojectMouseCursor(D3DEngine engine, ref Matrix viewProjection, out Vector3D mouseWorldPosition, out Vector3D mouseLookAt)
+        {
+            //Get mouse Position on the screen
+            var mouseState = Mouse.GetState();
+
+            var x = mouseState.X;
+            var y = mouseState.Y;
+            
+
+            var nearClipVector = new Vector3(x, y, 0);
+            var farClipVector = new Vector3(x, y, 1);
+            
+            Vector3 unprojecNearClipVector;
+            Vector3.Unproject(ref nearClipVector,
+                              engine.ViewPort.TopLeftX,
+                              engine.ViewPort.TopLeftY,
+                              engine.ViewPort.Width,
+                              engine.ViewPort.Height,
+                              engine.ViewPort.MinDepth,
+                              engine.ViewPort.MaxDepth,
+                              ref viewProjection,
+                              out unprojecNearClipVector);
+
+            Vector3 unprojecFarClipVector;
+            Vector3.Unproject(ref farClipVector,
+                              engine.ViewPort.TopLeftX,
+                              engine.ViewPort.TopLeftY,
+                              engine.ViewPort.Width,
+                              engine.ViewPort.Height,
+                              engine.ViewPort.MinDepth,
+                              engine.ViewPort.MaxDepth,
+                              ref viewProjection,
+                              out unprojecFarClipVector);
+
+            //To apply From Camera Position !
+            mouseWorldPosition = new Vector3D(unprojecNearClipVector);
+            mouseLookAt = new Vector3D(Vector3.Normalize(unprojecFarClipVector - unprojecNearClipVector));
+        }
+
         #endregion
 
         #region Private Methods

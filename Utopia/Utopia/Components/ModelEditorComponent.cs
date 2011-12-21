@@ -5,6 +5,7 @@ using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
+using S33M3Engines.Shared.Math;
 using SharpDX;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.D3D;
@@ -14,6 +15,7 @@ using S33M3Engines.D3D.Effects.Basics;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
+using Utopia.InputManager;
 using Utopia.Settings;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
@@ -52,8 +54,7 @@ namespace Utopia.Components
         private Matrix _transform;
         private VisualVoxelModel _visualVoxelModel;
 
-        private Matrix _projection;
-        private Matrix _view;
+        private Matrix _viewProjection;
 
         private EditorMode _mode;
         private VoxelFrame _voxelFrame;
@@ -223,8 +224,10 @@ namespace Utopia.Components
             Transform = Matrix.Identity;
 
             var aspect = d3DEngine.ViewPort.Width / d3DEngine.ViewPort.Height;
-            _projection = Matrix.PerspectiveFovLH((float)Math.PI / 3, aspect, 0.5f, 100);
-            _view = Matrix.LookAtLH(new Vector3(0,0,5), new Vector3(0,0,0), Vector3.UnitY);
+            var projection = Matrix.PerspectiveFovLH((float)Math.PI / 3, aspect, 0.5f, 100);
+            var view = Matrix.LookAtLH(new Vector3(0,0,5), new Vector3(0,0,0), Vector3.UnitY);
+
+            _viewProjection = view * projection;
 
             _mainViewData.Scale = 0.1f;
             _currentViewData.Scale = 0.1f;
@@ -358,7 +361,7 @@ namespace Utopia.Components
             {
                 
 
-                if (keyboardState.IsKeyDown(System.Windows.Forms.Keys.ShiftKey))
+                if (keyboardState.IsKeyDown(Keys.ShiftKey))
                 {
                     // translate
                     _currentViewData.Translate.X -= dx;
@@ -474,7 +477,7 @@ namespace Utopia.Components
             _lines3DEffect.Begin();
             _lines3DEffect.CBPerDraw.Values.Color = color;
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(size) * Matrix.Translation(min) * _transform); //Matrix.Translation(new Vector3(-0.5f,-0.5f,-0.5f)) *
-            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_view * _projection);
+            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
@@ -500,7 +503,7 @@ namespace Utopia.Components
             _lines3DEffect.Begin();
             _lines3DEffect.CBPerDraw.Values.Color = new Color4(0,1,0,1);
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform);
-            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_view * _projection);
+            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
@@ -519,7 +522,7 @@ namespace Utopia.Components
 
                 _voxelEffect.Begin();
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
-                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_view * _projection);
+                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply();
 
@@ -560,7 +563,7 @@ namespace Utopia.Components
 
                     _voxelEffect.Begin();
                     _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
-                    _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_view * _projection);
+                    _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                     _voxelEffect.CBPerFrame.IsDirty = true;
                     _voxelEffect.Apply();
 
@@ -624,7 +627,7 @@ namespace Utopia.Components
 
                 _voxelEffect.Begin();
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
-                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_view * _projection);
+                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply();
 
@@ -643,7 +646,40 @@ namespace Utopia.Components
 
                 _d3DEngine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
 
+                Vector3I selectedCube;
+                if (GetSelectedCube(out selectedCube))
+                {
+                    // draw selected cube
+                    DrawBox(new BoundingBox(selectedCube, selectedCube + Vector3I.One), new Color4(1, 0, 0, 1));
+                }
             }
+        }
+
+        private bool GetSelectedCube(out Vector3I cubePosition)
+        {
+            if (_selectedPartIndex == -1 || _selectedFrameIndex == -1)
+            {
+                cubePosition = new Vector3I();
+                return false;
+            }
+
+            Vector3D mPosition, mLookAt;
+            InputsManager.UnprojectMouseCursor(_d3DEngine, ref _viewProjection, out mPosition, out mLookAt);
+
+            var blocks = _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames[_selectedFrameIndex].BlockData;
+
+            for (float i = 0; i < 100; i += 0.1f)
+            {
+                var targetPoint = (Vector3I)(mPosition + (mLookAt * i));
+                if (blocks.GetBlock(targetPoint) != 0)
+                {
+                    cubePosition = targetPoint;
+                    return true;
+                }
+            }
+
+            cubePosition = new Vector3I();
+            return false;
         }
 
         public override void UnloadContent()
