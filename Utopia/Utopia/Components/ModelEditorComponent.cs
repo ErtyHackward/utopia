@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using Nuclex.UserInterface;
-using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
@@ -19,6 +19,10 @@ using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
 using S33M3Engines;
 using UtopiaContent.Effects.Entities;
+using ButtonState = S33M3Engines.InputHandler.MouseHelper.ButtonState;
+using Control = Nuclex.UserInterface.Controls.Control;
+using ListControl = Nuclex.UserInterface.Controls.Desktop.ListControl;
+using Screen = Nuclex.UserInterface.Screen;
 
 namespace Utopia.Components
 {
@@ -29,14 +33,15 @@ namespace Utopia.Components
     {
         private readonly D3DEngine _d3DEngine;
         private HLSLColorLine _lines3DEffect;
+        
         private VertexBuffer<VertexPosition> _boxVertexBuffer;
         private IndexBuffer<ushort> _boxIndexBuffer;
+
+        private VertexBuffer<VertexPosition> _crosshairVertexBuffer;
+        
+
         private HLSLVoxelModel _voxelEffect;
         private MouseState _prevState;
-        private int _renderRasterId;
-        private int _renderModelRasterId;
-        private int _blendStateId;
-        private int _depthStateWithDepthId;
 
         // view parameters
         private ViewParameters _mainViewData;
@@ -66,7 +71,8 @@ namespace Utopia.Components
 
         private int _selectedFrameIndex;
         private int _selectedPartIndex;
-        
+
+        private bool _flipAxis;
 
         /// <summary>
         /// Gets current editor camera transformation
@@ -286,39 +292,10 @@ namespace Utopia.Components
         
         public override void LoadContent()
         {
-            _renderRasterId = StatesRepository.AddRasterStates(new RasterizerStateDescription { CullMode = CullMode.None, FillMode = FillMode.Solid });
-            _renderModelRasterId = StatesRepository.AddRasterStates(new RasterizerStateDescription { CullMode = CullMode.Back, FillMode = FillMode.Solid });
-
-            var blendDescr = new BlendStateDescription { IndependentBlendEnable = false, AlphaToCoverageEnable = false };
-            for (var i = 0; i < 8; i++)
-            {
-                blendDescr.RenderTarget[i].IsBlendEnabled = true;
-                blendDescr.RenderTarget[i].BlendOperation = BlendOperation.Add;
-                blendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
-                blendDescr.RenderTarget[i].DestinationBlend = BlendOption.InverseSourceAlpha;
-                blendDescr.RenderTarget[i].DestinationAlphaBlend = BlendOption.One;
-                blendDescr.RenderTarget[i].SourceBlend = BlendOption.One;
-                blendDescr.RenderTarget[i].SourceAlphaBlend = BlendOption.One;
-                blendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
-            }
-            _blendStateId = StatesRepository.AddBlendStates(blendDescr);
-
-            _depthStateWithDepthId = StatesRepository.AddDepthStencilStates(new DepthStencilStateDescription
-            {
-                IsDepthEnabled = true,
-                DepthComparison = Comparison.Less,
-                DepthWriteMask = DepthWriteMask.All,
-                IsStencilEnabled = false,
-                BackFace = new DepthStencilOperationDescription { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep },
-                FrontFace = new DepthStencilOperationDescription { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep }
-            });
-
             _lines3DEffect = new HLSLColorLine(_d3DEngine, ClientSettings.EffectPack + @"Entities\ColorLine.hlsl", VertexPosition.VertexDeclaration);
-
             
             var ptList = new List<VertexPosition>();
-
-            var color = Color.White;
+            
 
             var topLeftFront        = new VertexPosition(new Vector3(0, 1, 1));
             var topLeftBack         = new VertexPosition(new Vector3(0, 1, 0));
@@ -346,6 +323,16 @@ namespace Utopia.Components
             _boxIndexBuffer = new IndexBuffer<ushort>(_d3DEngine, indices.Length, SharpDX.DXGI.Format.R16_UInt, "EditorBox_indexBuffer");
             _boxIndexBuffer.SetData(indices);
 
+            ptList.Clear();
+
+            ptList.Add(new VertexPosition(new Vector3(0,0,-1)));
+            ptList.Add(new VertexPosition(new Vector3(0, 0, 1)));
+            ptList.Add(new VertexPosition(new Vector3(0, -1, 0)));
+            ptList.Add(new VertexPosition(new Vector3(0, 1, 0)));
+
+            _crosshairVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine, 4, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorCrosshair_vertexBuffer");
+            _crosshairVertexBuffer.SetData(ptList.ToArray());
+            
             _voxelEffect = new HLSLVoxelModel(_d3DEngine, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
             
 
@@ -359,14 +346,17 @@ namespace Utopia.Components
         public override void Update(ref GameTime timeSpent)
         {
             var mouseState = Mouse.GetState();
-            
+            var keyboardState = Keyboard.GetState();
+
+            _flipAxis = keyboardState.IsKeyDown(Keys.ShiftKey);
+
             var dx = ((float)mouseState.X - _prevState.X) / 100;
             var dy = ((float)mouseState.Y - _prevState.Y) / 100;
             
 
             if (mouseState.MiddleButton == ButtonState.Pressed && _prevState.X != 0 && _prevState.Y != 0)
             {
-                var keyboardState = Keyboard.GetState();
+                
 
                 if (keyboardState.IsKeyDown(System.Windows.Forms.Keys.ShiftKey))
                 {
@@ -387,11 +377,30 @@ namespace Utopia.Components
             switch (Mode)
             {
                 case EditorMode.ModelView:
+                    if (SelectedStateIndex != -1)
+                    {
+                        var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
+                        UpdateTransformMatrix(_currentViewData, bb);
+                    }
+                    break;
                 case EditorMode.ModelLayout:
                     if (SelectedStateIndex != -1)
                     {
                         var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
                         UpdateTransformMatrix(_currentViewData, bb);
+
+                        if (_selectedPartIndex != -1)
+                        {
+                            if (mouseState.LeftButton == ButtonState.Pressed)
+                            {
+                                var translationVector = _flipAxis ? new Vector3(-dx, -dy, 0) : new Vector3(0, -dy, -dx);
+                                // send translation to current state
+                                var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[_selectedPartIndex];
+                                var translationMatrix = Matrix.Translation(translationVector);
+                                state.Transform *= translationMatrix;
+                                state.BoundingBox = new BoundingBox(Vector3.TransformCoordinate(state.BoundingBox.Minimum, translationMatrix), Vector3.TransformCoordinate(state.BoundingBox.Maximum, translationMatrix));
+                            }
+                        }
                     }
                     break;
                 case EditorMode.FrameEdit:
@@ -476,12 +485,37 @@ namespace Utopia.Components
             _d3DEngine.Context.DrawIndexed(24, 0, 0); 
         }
 
+        private void DrawCrosshair(Vector3 position, float size, bool turnAxis)
+        {
+            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+
+            var transform = Matrix.Scaling(size) * Matrix.Translation(position) * _transform;
+
+            if (turnAxis)
+            {
+                transform = Matrix.RotationY((float)Math.PI / 2) * transform;
+            }
+
+            //Set Effect variables
+            _lines3DEffect.Begin();
+            _lines3DEffect.CBPerDraw.Values.Color = new Color4(0,1,0,1);
+            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform);
+            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_view * _projection);
+            _lines3DEffect.CBPerDraw.IsDirty = true;
+            _lines3DEffect.Apply();
+
+            //Set the vertex buffer to the Graphical Card.
+            _crosshairVertexBuffer.SetToDevice(0);
+            
+            _d3DEngine.Context.Draw(4, 0); 
+        }
+
         private void DrawModelView()
         {
             // draw the model
             if (_visualVoxelModel != null)
             {
-                StatesRepository.ApplyRaster(_renderModelRasterId);
+                StatesRepository.ApplyRaster(GameDXStates.DXStates.Rasters.Default);
 
                 _voxelEffect.Begin();
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
@@ -503,7 +537,7 @@ namespace Utopia.Components
 
                 //DrawBox(state.BoundingBox);
 
-                StatesRepository.ApplyRaster(_renderModelRasterId);
+                StatesRepository.ApplyRaster(GameDXStates.DXStates.Rasters.Default);
                 
                 
 
@@ -551,6 +585,19 @@ namespace Utopia.Components
                 {
                     var voxelModelPartState = state.PartsStates[i];
                     DrawBox(voxelModelPartState.BoundingBox, i == _selectedPartIndex ? new Color4(0, 1, 0, 0.1f) : new Color4(1, 1, 1, 0.1f));
+
+                    if (i == _selectedPartIndex)
+                    {
+                        var bb = voxelModelPartState.BoundingBox;
+                        var size = Vector3.Subtract(bb.Maximum, bb.Minimum);
+                        var sizef = Math.Max(Math.Max(size.X, size.Y), size.Z);
+                        
+                        var center = new Vector3((bb.Maximum.X - bb.Minimum.X)/2,(bb.Maximum.Y - bb.Minimum.Y)/2,(bb.Maximum.Z - bb.Minimum.Z)/2);
+
+                        var translate = voxelModelPartState.Transform.TranslationVector + center;
+
+                        DrawCrosshair(translate, sizef, _flipAxis); 
+                    }
                 }
 
                 
@@ -564,7 +611,7 @@ namespace Utopia.Components
                 var model = _visualVoxelModel.VoxelModel;
                 var visualParts = _visualVoxelModel.VisualVoxelParts;
 
-                StatesRepository.ApplyRaster(_renderModelRasterId);
+                StatesRepository.ApplyRaster(GameDXStates.DXStates.Rasters.Default);
                 if (model.ColorMapping != null)
                 {
                     _voxelEffect.CBPerFrame.Values.ColorMapping = model.ColorMapping.BlockColors;
@@ -602,7 +649,10 @@ namespace Utopia.Components
         public override void UnloadContent()
         {
             if (_boxVertexBuffer != null) _boxVertexBuffer.Dispose();
+            if (_boxIndexBuffer != null) _boxIndexBuffer.Dispose();
+            if (_crosshairVertexBuffer != null) _crosshairVertexBuffer.Dispose();
             _lines3DEffect.Dispose();
+            _voxelEffect.Dispose();
 
             base.UnloadContent();
         }
