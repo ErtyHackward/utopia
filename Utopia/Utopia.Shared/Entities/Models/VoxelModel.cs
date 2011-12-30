@@ -15,6 +15,7 @@ namespace Utopia.Shared.Entities.Models
         {
             Parts = new List<VoxelModelPart>();
             States = new List<VoxelModelState>();
+            Animations = new List<VoxelModelAnimation>();
         }
 
         /// <summary>
@@ -37,6 +38,11 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         public List<VoxelModelState> States { get; private set; }
 
+        /// <summary>
+        /// Gets a list of model animations
+        /// </summary>
+        public List<VoxelModelAnimation> Animations { get; private set; }
+        
         /// <summary>
         /// Gets or sets global color mapping
         /// </summary>
@@ -75,6 +81,11 @@ namespace Utopia.Shared.Entities.Models
                     voxelModelState.Save(writer);
                 }
 
+                foreach (var animation in Animations)
+                {
+                    animation.Save(writer);
+                }
+
                 ms.Position = 0;
                 Hash = Md5Hash.Calculate(ms);
             }
@@ -104,6 +115,11 @@ namespace Utopia.Shared.Entities.Models
             foreach (var voxelModelState in States)
             {
                 voxelModelState.Save(writer);
+            }
+            writer.Write((byte)Animations.Count);
+            foreach (var voxelModelAnimation in Animations)
+            {
+                voxelModelAnimation.Save(writer);
             }
         }
 
@@ -145,6 +161,18 @@ namespace Utopia.Shared.Entities.Models
                 modelState.Load(reader);
                 States.Add(modelState);
             }
+
+            count = reader.ReadByte();
+
+            Animations.Clear();
+
+            for (int i = 0; i < count; i++)
+            {
+                var modelState = new VoxelModelAnimation();
+                modelState.Load(reader);
+                Animations.Add(modelState);
+            }
+
 
         }
     }

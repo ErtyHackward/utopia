@@ -412,14 +412,15 @@ namespace Nuclex.UserInterface.Controls {
 
   }
 
-    [Flags]
-    public enum ControlLayoutFlags
-    {
-        None = 0x0,
-        FreeWidth = 0x1,
-        FreeHeight = 0x2,
-        WholeRow = 0x4,
-    }
+  [Flags]
+  public enum ControlLayoutFlags
+  {
+      None = 0x0,
+      FreeWidth = 0x1,
+      FreeHeight = 0x2,
+      WholeRow = 0x4,
+      WholeRowCenter = 0x8,
+  }
 
     public class ControlLayout
     {
@@ -442,7 +443,7 @@ namespace Nuclex.UserInterface.Controls {
             // put controls in rows
             foreach (var control in parent.Children)
             {
-                if (control.LayoutFlags.HasFlag(ControlLayoutFlags.WholeRow))
+                if (control.LayoutFlags.HasFlag(ControlLayoutFlags.WholeRow) || control.LayoutFlags.HasFlag(ControlLayoutFlags.WholeRowCenter))
                 {
                     if (currentRow.Controls.Count > 0)
                     {
@@ -483,14 +484,21 @@ namespace Nuclex.UserInterface.Controls {
             }
 
             // update controls 
-            float y = parent.LeftTopMargin.Y;
+            var y = parent.LeftTopMargin.Y;
             foreach (var controlsRow in Rows)
             {
-                float x = parent.LeftTopMargin.X;
+                var x = parent.LeftTopMargin.X;
 
                 foreach (var control in controlsRow.Controls)
                 {
-                    control.Bounds.Left = x;
+                    if (control.LayoutFlags.HasFlag(ControlLayoutFlags.WholeRowCenter))
+                    {
+                        control.Bounds.Left = x + (controlsSpace.X - control.Bounds.Size.X.Offset) / 2;
+                    }
+                    else
+                    {
+                        control.Bounds.Left = x;
+                    }
                     control.Bounds.Top = y;
 
                     x += control.Bounds.Size.X.Offset + parent.ControlsSpacing.X;

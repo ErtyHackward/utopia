@@ -179,6 +179,7 @@
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ButtonControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ChoiceControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\CloseWindowButtonControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\DialogControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\DraggableControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\HorizontalSliderControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IListRowLocator.cs" />
