@@ -6,6 +6,7 @@ using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines.InputHandler;
 using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.Shared.Math;
+using S33M3Engines.Sprites;
 using SharpDX;
 using S33M3Engines.Struct.Vertex;
 using S33M3Engines.D3D;
@@ -35,6 +36,7 @@ namespace Utopia.Components
     {
         private readonly D3DEngine _d3DEngine;
         private HLSLColorLine _lines3DEffect;
+        private SpriteFont _font;
         
         private VertexBuffer<VertexPosition> _boxVertexBuffer;
         private IndexBuffer<ushort> _boxIndexBuffer;
@@ -59,15 +61,10 @@ namespace Utopia.Components
         private VoxelFrame _voxelFrame;
         
         private readonly Screen _screen;
-
-        private ButtonControl _backButton;
-        private WindowControl _toolsWindow;
-        private WindowControl _modelNavigationWindow;
-
+        private readonly VoxelModelManager _manager;
+        private readonly VoxelMeshFactory _meshFactory;
+        private readonly SpriteRenderer _spriteRendrer;
         private readonly List<Control> _controls = new List<Control>();
-        private ListControl _statesList;
-        private ListControl _partsList;
-        private ListControl _framesList;
 
         private int _selectedFrameIndex;
         private int _selectedPartIndex;
@@ -76,6 +73,7 @@ namespace Utopia.Components
 
         private Vector3I? _pickedCube;
         private Vector3I? _newCube;
+        
 
         /// <summary>
         /// Gets current editor camera transformation
@@ -117,6 +115,15 @@ namespace Utopia.Components
                     }
                     if (_selectedPartIndex != -1)
                         _partsList.SelectedItems.Add(_selectedPartIndex);
+
+                    _animationsList.Items.Clear();
+                    _animationsList.SelectedItems.Clear();
+
+                    foreach (var animation in _visualVoxelModel.VoxelModel.Animations)
+                    {
+                        _animationsList.Items.Add(animation.Name);
+                    }
+
                 }
             }
         }
@@ -163,6 +170,8 @@ namespace Utopia.Components
                 }
             }
         }
+
+        public int SelectedAnimationIndex { get; private set; }
 
         /// <summary>
         /// Gets current editing frame in frame mode
@@ -219,10 +228,15 @@ namespace Utopia.Components
         /// </summary>
         /// <param name="d3DEngine"></param>
         /// <param name="screen"></param>
-        public ModelEditorComponent(D3DEngine d3DEngine, Screen screen)
+        /// <param name="manager"> </param>
+        /// <param name="meshFactory"> </param>
+        public ModelEditorComponent(D3DEngine d3DEngine, Screen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, SpriteRenderer spriteRendrer)
         {
             _d3DEngine = d3DEngine;
             _screen = screen;
+            _manager = manager;
+            _meshFactory = meshFactory;
+            _spriteRendrer = spriteRendrer;
             Transform = Matrix.Identity;
 
             var aspect = d3DEngine.ViewPort.Width / d3DEngine.ViewPort.Height;
@@ -244,24 +258,15 @@ namespace Utopia.Components
 
         public override void Initialize()
         {
-            _backButton = new ButtonControl { Text = "Back" };
-            _backButton.Pressed += delegate { OnBackPressed(); };
-            
-            _toolsWindow = CreateToolsWindow();
-            _modelNavigationWindow = CreateNavigationWindow();
+            InitializeGui();
 
-            _controls.Add(_modelNavigationWindow);
-            //_controls.Add(_colorPaletteWindow);
-            _controls.Add(_toolsWindow);
+            foreach (var model in _manager.Enumerate())
+            {
+                _modelsList.Items.Add(model.VoxelModel.Name);
+            }
+            
 
             base.Initialize();
-        }
-
-        public void UpdateLayout()
-        {
-            _backButton.Bounds = new UniRectangle(_d3DEngine.ViewPort.Width - 200, _d3DEngine.ViewPort.Height - 30, 120, 24);
-            _modelNavigationWindow.Bounds = new UniRectangle(_d3DEngine.ViewPort.Width - 200, 0, 200, _d3DEngine.ViewPort.Height - 40);
-            _modelNavigationWindow.UpdateLayout();
         }
 
         protected override void OnEnabledChanged()
@@ -297,6 +302,9 @@ namespace Utopia.Components
         
         public override void LoadContent()
         {
+            _font = new SpriteFont();
+            _font.Initialize("Tahoma", 13f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
+
             _lines3DEffect = new HLSLColorLine(_d3DEngine, ClientSettings.EffectPack + @"Entities\ColorLine.hlsl", VertexPosition.VertexDeclaration);
             
             var ptList = new List<VertexPosition>();
@@ -348,12 +356,32 @@ namespace Utopia.Components
             base.LoadContent();
         }
 
+        private void OnModelsAddPressed()
+        {
+            _modelEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogModelEditStruct(), "Add new model", OnCreateModel);
+        }
+
+        private void OnCreateModel(DialogModelEditStruct e)
+        {
+            if (string.IsNullOrEmpty(e.Name))
+                e.Name = "rename_me";
+            var model = new VisualVoxelModel(new VoxelModel { Name = e.Name }, _meshFactory);
+            model.VoxelModel.States.Add(new VoxelModelState(model.VoxelModel));
+                
+
+            VisualVoxelModel = model;
+
+            _modelsList.Items.Add(e.Name);
+        }
+
         /// <summary>
         /// Allows the game component to update itself.
         /// </summary>
         /// <param name="timeSpent">Provides a snapshot of timing values.</param>
         public override void Update(ref GameTime timeSpent)
         {
+            if (_visualVoxelModel == null) return;
+
             var mouseState = Mouse.GetState();
             var keyboardState = Keyboard.GetState();
 
@@ -481,6 +509,17 @@ namespace Utopia.Components
 
         public override void Draw(int index)
         {
+            if (_visualVoxelModel == null)
+            {
+                _infoLabel.Text = "Choose a model to open or create new";
+                return;
+            }
+
+            if (_visualVoxelModel.VoxelModel.Parts.Count == 0)
+            {
+                _infoLabel.Text = "Please go to Frames mode and add at least one part to the model";
+            }
+
             switch (Mode)
             {
                 case EditorMode.ModelView: DrawModelView(); break;
@@ -754,6 +793,7 @@ namespace Utopia.Components
             if (_crosshairVertexBuffer != null) _crosshairVertexBuffer.Dispose();
             _lines3DEffect.Dispose();
             _voxelEffect.Dispose();
+            _font.Dispose();
 
             base.UnloadContent();
         }

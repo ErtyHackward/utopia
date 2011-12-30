@@ -9,7 +9,7 @@ namespace Utopia.Shared.Entities.Models
     public class ColorMapping
     {
         /// <summary>
-        /// Gets colors scheme, maximum 256 items
+        /// Gets colors scheme, maximum 64 items
         /// </summary>
         public Color4[] BlockColors { get; set; }
 

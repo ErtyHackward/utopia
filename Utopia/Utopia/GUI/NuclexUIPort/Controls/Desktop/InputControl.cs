@@ -95,9 +95,11 @@ namespace Nuclex.UserInterface.Controls.Desktop {
     }
 
       /// <summary>
-      /// Indicates if this
+      /// Indicates if this a password
       /// </summary>
       public bool IsPassword { get; set; }
+
+      public bool IsNumeric { get; set; }
 
       /// <summary>Elapsed milliseconds since the user last moved the caret</summary>
     /// <remarks>

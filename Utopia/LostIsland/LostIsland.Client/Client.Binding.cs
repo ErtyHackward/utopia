@@ -7,6 +7,7 @@ using LostIsland.Shared.Web;
 using LostIslandHD.Client;
 using Ninject;
 using Nuclex.UserInterface;
+using S33M3Engines.Sprites;
 using Utopia;
 using Utopia.Components;
 using Utopia.Editor;
@@ -88,6 +89,7 @@ namespace LostIsland.Client
             _iocContainer.Bind<CameraManager>().ToSelf().InSingletonScope();     //Camera manager
             _iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();      //Ingame based Timer class
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class
+            _iocContainer.Bind<SpriteRenderer>().ToSelf().InSingletonScope();
 
             // Game states ================================================
             _iocContainer.Bind<RuntimeVariables>().ToSelf().InSingletonScope();

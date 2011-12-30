@@ -52,6 +52,37 @@ namespace Nuclex.UserInterface.Controls.Desktop {
     /// <summary>Text in the title bar of the window</summary>
     public string Title;
 
+    /// <summary>
+    /// Shows form at default position
+    /// </summary>
+    /// <param name="screen"></param>
+    public void Show(Screen screen)
+    {
+        screen.Desktop.Children.Add(this);
+    }
+
+    /// <summary>
+    /// Shows windows at screen center
+    /// </summary>
+    /// <param name="screen"></param>
+    /// <param name="viewport"></param>
+    public void Show(Screen screen, SharpDX.Direct3D11.Viewport viewport)
+    {
+        Bounds.Location.X = (viewport.Width - Bounds.Size.X.Offset) / 2;
+        Bounds.Location.Y = (viewport.Height - Bounds.Size.Y.Offset) / 2;
+
+        Show(screen);
+    }
+
+    /// <summary>
+    /// Hides current window
+    /// </summary>
+    public void Hide()
+    {
+        if(Screen != null)
+            Screen.Desktop.Children.Remove(this);
+    }
+
   }
 
 } // namespace Nuclex.UserInterface.Controls.Desktop
