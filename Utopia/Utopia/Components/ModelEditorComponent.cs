@@ -16,6 +16,8 @@ using S33M3Engines.D3D.Effects.Basics;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
+using Utopia.GUI.D3D;
+using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using Utopia.InputManager;
 using Utopia.Settings;
 using Utopia.Shared.Entities.Models;
@@ -64,6 +66,7 @@ namespace Utopia.Components
         private readonly VoxelModelManager _manager;
         private readonly VoxelMeshFactory _meshFactory;
         private readonly SpriteRenderer _spriteRendrer;
+        private readonly GuiManager _gui;
         private readonly List<Control> _controls = new List<Control>();
 
         private int _selectedFrameIndex;
@@ -74,6 +77,7 @@ namespace Utopia.Components
         private Vector3I? _pickedCube;
         private Vector3I? _newCube;
         
+
 
         /// <summary>
         /// Gets current editor camera transformation
@@ -230,13 +234,14 @@ namespace Utopia.Components
         /// <param name="screen"></param>
         /// <param name="manager"> </param>
         /// <param name="meshFactory"> </param>
-        public ModelEditorComponent(D3DEngine d3DEngine, Screen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, SpriteRenderer spriteRendrer)
+        public ModelEditorComponent(D3DEngine d3DEngine, Screen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, SpriteRenderer spriteRendrer, GuiManager gui)
         {
             _d3DEngine = d3DEngine;
             _screen = screen;
             _manager = manager;
             _meshFactory = meshFactory;
             _spriteRendrer = spriteRendrer;
+            _gui = gui;
             Transform = Matrix.Identity;
 
             var aspect = d3DEngine.ViewPort.Width / d3DEngine.ViewPort.Height;
@@ -355,12 +360,13 @@ namespace Utopia.Components
 
             base.LoadContent();
         }
+        #region Buttons handlers
 
         private void OnModelsAddPressed()
         {
-            _modelEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogModelEditStruct(), "Add new model", OnCreateModel);
+            _modelEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogModelEditStruct(), "Add a new model", OnCreateModel);
         }
-
+        
         private void OnCreateModel(DialogModelEditStruct e)
         {
             if (string.IsNullOrEmpty(e.Name))
@@ -373,6 +379,80 @@ namespace Utopia.Components
 
             _modelsList.Items.Add(e.Name);
         }
+
+        private void OnPartsAddPressed()
+        {
+            _partEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogPartsEditStruct(), "Add a new part", OnCreatePart);
+        }
+
+        private void OnCreatePart(DialogPartsEditStruct e)
+        {
+            if (string.IsNullOrEmpty(e.Name))
+                e.Name = "noname part";
+
+            var part = new VoxelModelPart { Name = e.Name };
+
+            part.Frames.Add(new VoxelFrame(new Vector3I(16,16,16)));
+
+            _visualVoxelModel.VoxelModel.Parts.Add(part);
+
+            _partsList.Items.Add(part.Name);
+        }
+
+        private void OnPartsEditPressed()
+        {
+            if (SelectedPartIndex == -1)
+            {
+                _gui.MessageBox("Please select a part to edit");
+                return;
+            }
+
+            var s = new DialogPartsEditStruct();
+
+            var part = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex];
+
+            s.Name = part.Name;
+            s.IsHead = part.IsHead;
+            s.IsArm = part.IsArm;
+
+            _partEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, s, "Add a new part", OnPartEdited);
+
+        }
+
+        private void OnPartEdited(DialogPartsEditStruct e)
+        {
+            if (string.IsNullOrEmpty(e.Name))
+                e.Name = "noname part";
+
+            var part = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex];
+
+            part.Name = e.Name;
+            part.IsHead = e.IsHead;
+            part.IsArm = e.IsArm;
+
+            _partsList.Items[SelectedPartIndex] = e.Name;
+        }
+
+        private void OnPartsDeletePressed()
+        {
+            if (SelectedPartIndex == -1)
+            {
+                _gui.MessageBox("Please select a part to delete");
+                return;
+            }
+
+            _visualVoxelModel.VoxelModel.Parts.RemoveAt(SelectedPartIndex);
+
+            foreach (var voxelModelState in _visualVoxelModel.VoxelModel.States)
+            {
+                voxelModelState.PartsStates.RemoveAt(SelectedPartIndex);
+            }
+
+            _visualVoxelModel.RemovePartAt(SelectedPartIndex);
+
+        }
+
+        #endregion
 
         /// <summary>
         /// Allows the game component to update itself.
@@ -627,7 +707,7 @@ namespace Utopia.Components
                 }
 
                 // draw each part of the model
-                for (int i = 0; i < state.PartsStates.Length; i++)
+                for (int i = 0; i < state.PartsStates.Count; i++)
                 {
                     var voxelModelPartState = state.PartsStates[i];
                     
@@ -657,7 +737,7 @@ namespace Utopia.Components
                 }
 
                 // draw bounding boxes
-                for (int i = 0; i < state.PartsStates.Length; i++)
+                for (int i = 0; i < state.PartsStates.Count; i++)
                 {
                     var voxelModelPartState = state.PartsStates[i];
                     DrawBox(voxelModelPartState.BoundingBox, i == _selectedPartIndex ? new Color4(0, 1, 0, 0.1f) : new Color4(1, 1, 1, 0.1f));
@@ -797,6 +877,8 @@ namespace Utopia.Components
 
             base.UnloadContent();
         }
+
+
     }
 
     public struct ViewParameters

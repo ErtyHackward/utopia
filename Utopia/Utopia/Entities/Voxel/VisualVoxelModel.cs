@@ -7,6 +7,7 @@ using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using Utopia.Shared.Entities.Models;
 using UtopiaContent.Effects.Entities;
+using Utopia.Shared.ClassExt;
 
 namespace Utopia.Entities.Voxel
 {
@@ -48,6 +49,24 @@ namespace Utopia.Entities.Voxel
             _model = model;
             _voxelMeshFactory = voxelMeshFactory;
             
+        }
+
+        /// <summary>
+        /// Removes a part from the model, free dx resources
+        /// </summary>
+        /// <param name="index"></param>
+        public void RemovePartAt(int index)
+        {
+            var vp = _visualParts[index];
+
+            // free all frames buffers
+            for (int i = 0; i < vp.VertexBuffers.Length; i++)
+            {
+                vp.VertexBuffers[i].Dispose();
+                vp.IndexBuffers[i].Dispose();
+            }
+
+            ArrayHelper.RemoveAt(ref _visualParts, index);
         }
 
         /// <summary>
@@ -112,7 +131,7 @@ namespace Utopia.Entities.Voxel
                 var state = _model.States[index];
 
                 // calculate bounding boxes for each part state
-                for (int i = 0; i < state.PartsStates.Length; i++)
+                for (int i = 0; i < state.PartsStates.Count; i++)
                 {
                     var partState = state.PartsStates[i];
                     var bb = _visualParts[i].BoundingBoxes[partState.ActiveFrame];
@@ -147,7 +166,7 @@ namespace Utopia.Entities.Voxel
             }
 
             // draw each part of the model
-            for (int i = 0; i < state.PartsStates.Length; i++)
+            for (int i = 0; i < state.PartsStates.Count; i++)
             {
                 var voxelModelPartState = state.PartsStates[i];
 

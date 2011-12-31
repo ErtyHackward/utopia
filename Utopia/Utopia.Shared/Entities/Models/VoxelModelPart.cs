@@ -15,6 +15,16 @@ namespace Utopia.Shared.Entities.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// Indicates if this part is the head
+        /// </summary>
+        public bool IsHead { get; set; }
+
+        /// <summary>
+        /// Indicates if this part is the arm
+        /// </summary>
+        public bool IsArm { get; set; }
+
+        /// <summary>
         /// Gets a list of frames
         /// </summary>
         public List<VoxelFrame> Frames { get; set; }
@@ -31,6 +41,9 @@ namespace Utopia.Shared.Entities.Models
 
         public void Save(BinaryWriter writer)
         {
+            writer.Write(IsHead);
+            writer.Write(IsArm);
+
             writer.Write((byte)Frames.Count);
             foreach (var voxelFrame in Frames)
             {
@@ -42,6 +55,9 @@ namespace Utopia.Shared.Entities.Models
 
         public void Load(BinaryReader reader)
         {
+            IsHead = reader.ReadBoolean();
+            IsArm = reader.ReadBoolean();
+
             Frames.Clear();
             var framesCount = reader.ReadByte();
             for (int i = 0; i < framesCount; i++)

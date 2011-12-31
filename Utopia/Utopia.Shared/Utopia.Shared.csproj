@@ -89,6 +89,7 @@
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
+    <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="Config\IConfigClass.cs" />
     <Compile Include="Entities\Models\ColorMapping.cs" />
     <Compile Include="Entities\Concrete\Collectible\Cactus.cs" />

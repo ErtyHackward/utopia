@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using SharpDX;
 using Utopia.Shared.Interfaces;
@@ -10,10 +11,11 @@ namespace Utopia.Shared.Entities.Models
     public class VoxelModelState : IBinaryStorable
     {
         private readonly VoxelModel _parentModel;
+
         /// <summary>
         /// Corresponding array for voxel model parts
         /// </summary>
-        public VoxelModelPartState[] PartsStates;
+        public List<VoxelModelPartState> PartsStates { get; private set; }
 
         /// <summary>
         /// Gets or sets current state bounding box
@@ -22,24 +24,25 @@ namespace Utopia.Shared.Entities.Models
 
         public VoxelModelState()
         {
-            
+            PartsStates = new List<VoxelModelPartState>();
         }
 
         public VoxelModelState(VoxelModel parentModel)
         {
-            _parentModel = parentModel;
-            PartsStates = new VoxelModelPartState[_parentModel.Parts.Count];
+            PartsStates = new List<VoxelModelPartState>();
 
-            for (int i = 0; i < PartsStates.Length; i++)
+            _parentModel = parentModel;
+            
+            for (int i = 0; i < _parentModel.Parts.Count; i++)
             {
-                PartsStates[i] = new VoxelModelPartState();
+                PartsStates.Add(new VoxelModelPartState());
             }
 
         }
 
         public void Save(BinaryWriter writer)
         {
-            writer.Write((byte)PartsStates.Length);
+            writer.Write((byte)PartsStates.Count);
             foreach (var voxelModelPartState in PartsStates)
             {
                 voxelModelPartState.Save(writer);
@@ -49,13 +52,13 @@ namespace Utopia.Shared.Entities.Models
         public void Load(BinaryReader reader)
         {
             var count = reader.ReadByte();
-            PartsStates = new VoxelModelPartState[count];
+            PartsStates.Clear();
 
             for (int i = 0; i < count; i++)
             {
                 var partState = new VoxelModelPartState();
                 partState.Load(reader);
-                PartsStates[i] = partState;
+                PartsStates.Add(partState);
             }
         }
     }

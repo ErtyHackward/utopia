@@ -17,10 +17,18 @@ namespace Utopia.Components
             public string Name;
         }
 
+        private struct DialogPartsEditStruct
+        {
+            public string Name;
+            public bool IsHead;
+            public bool IsArm;
+        }
+
         private ButtonControl _backButton;
         private WindowControl _toolsWindow;
         private WindowControl _modelNavigationWindow;
         private DialogControl<DialogModelEditStruct> _modelEditDialog;
+        private DialogControl<DialogPartsEditStruct> _partEditDialog;
         private LabelControl _infoLabel;
 
         // navigation groups
@@ -44,6 +52,7 @@ namespace Utopia.Components
             _toolsWindow = CreateToolsWindow();
             _modelNavigationWindow = CreateNavigationWindow();
             _modelEditDialog = new DialogControl<DialogModelEditStruct>();
+            _partEditDialog = new DialogControl<DialogPartsEditStruct>();
             _infoLabel = new LabelControl { Bounds = new UniRectangle(300, 20, 600, 20) };
 
             _controls.Add(_modelNavigationWindow);
@@ -131,7 +140,11 @@ namespace Utopia.Components
             _partsList.Bounds = new UniRectangle(0, 0, 180, 20);
             _partsList.SelectionMode = ListSelectionMode.Single;
             _partsList.SelectionChanged += delegate { SelectedPartIndex = _partsList.SelectedItems.Count > 0 ? _partsList.SelectedItems[0] : -1; };
-            
+
+            partsAddButton.Pressed += delegate { OnPartsAddPressed(); };
+            partsEditButton.Pressed += delegate { OnPartsEditPressed(); };
+            partsDeleteButton.Pressed += delegate { OnPartsDeletePressed(); };
+
             _partsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 0), LayoutFlags = ControlLayoutFlags.FreeHeight | ControlLayoutFlags.WholeRow };
             _partsGroup.Children.Add(partsLabel);
             _partsGroup.Children.Add(partsAddButton);
@@ -174,7 +187,7 @@ namespace Utopia.Components
 
             return listWindow;
         }
-
+        
         private void OnViewMode()
         {
             _modelNavigationWindow.Children.Clear();

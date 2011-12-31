@@ -73,16 +73,6 @@ namespace Nuclex.UserInterface.Controls.Desktop {
 
         Show(screen);
     }
-
-    /// <summary>
-    /// Hides current window
-    /// </summary>
-    public void Hide()
-    {
-        if(Screen != null)
-            Screen.Desktop.Children.Remove(this);
-    }
-
   }
 
 } // namespace Nuclex.UserInterface.Controls.Desktop
