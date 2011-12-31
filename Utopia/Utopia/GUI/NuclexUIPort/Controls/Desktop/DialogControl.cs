@@ -28,36 +28,48 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
         public DialogControl()
         {
             // generate inputs controls
-            // supported types: string, int, float
+            // supported types: string, int, float, bool
 
             var type = typeof(T);
             var fieldInfos = type.GetFields();
+
+            const int LabelWidth = 80;
+            const int EditWidth = 80;
 
             foreach (var fieldInfo in fieldInfos)
             {
                 if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(int))
                 {
-                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = fieldInfo.Name };
+                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
                     Children.Add(label);
-                    var edit = new InputControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, 60, 20), IsNumeric = true };
+                    var edit = new InputControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 20), IsNumeric = true };
                     Children.Add(edit);
                     Bounds.Size.Y += 25;
                 }
 
                 if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(float))
                 {
-                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = fieldInfo.Name };
+                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
                     Children.Add(label);
-                    var edit = new InputControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, 60, 20), IsNumeric = true };
+                    var edit = new InputControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 20), IsNumeric = true };
                     Children.Add(edit);
                     Bounds.Size.Y += 25;
                 }
 
                 if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(string))
                 {
-                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = fieldInfo.Name };
+                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
                     Children.Add(label);
-                    var edit = new InputControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0,0, 60, 20) };
+                    var edit = new InputControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 20) };
+                    Children.Add(edit);
+                    Bounds.Size.Y += 25;
+                }
+
+                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(bool))
+                {
+                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
+                    Children.Add(label);
+                    var edit = new OptionControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 20) };
                     Children.Add(edit);
                     Bounds.Size.Y += 25;
                 }
@@ -115,6 +127,12 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                         var edit = (InputControl)control;
                         fi.SetValueDirect(__makeref(t), edit.Text);
                     }
+
+                    if (fi.FieldType == typeof(bool))
+                    {
+                        var edit = (OptionControl)control;
+                        fi.SetValueDirect(__makeref(t), edit.Selected);
+                    }
                 }
             }
 
@@ -127,9 +145,8 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
 
         private void HideDialog()
         {
-            DialogHelper.DialogBg.Clicked -= DialogBgClicked;
             Screen.Desktop.Children.Remove(DialogHelper.DialogBg); 
-            Hide();
+            Close();
         }
 
         /// <summary>
@@ -168,10 +185,17 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                     var obj =  fieldInfo.GetValue(t);
                     edit.Text = obj == null ? null : obj.ToString();
                 }
+
+                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(bool))
+                {
+                    var edit = Children.Get<OptionControl>(fieldInfo.Name);
+                    var obj = fieldInfo.GetValue(t);
+                    edit.Selected = (bool)obj;
+                }
+
             }
 
             screen.Desktop.Children.Add(DialogHelper.DialogBg);
-            DialogHelper.DialogBg.Clicked += DialogBgClicked;
             DialogHelper.DialogBg.BringToFront();
 
             Show(screen, port);
@@ -184,11 +208,7 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                     break;
                 }
             }
-        }
-
-        void DialogBgClicked(object sender, EventArgs e)
-        {
-            BringToFront();
+            this.BringToFront();
         }
     }
 }

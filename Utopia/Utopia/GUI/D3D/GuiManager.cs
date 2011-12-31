@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
@@ -7,6 +8,7 @@ using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.InputHandler;
 using S33M3Engines;
+using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using ButtonState = S33M3Engines.InputHandler.MouseHelper.ButtonState;
 using MouseButtons = Nuclex.UserInterface.Input.MouseButtons;
 using Screen = Nuclex.UserInterface.Screen;
@@ -134,15 +136,21 @@ namespace Utopia.GUI.D3D
 
             var button = new ButtonControl { Text = buttonText, Bounds = new UniRectangle((windowWidth - 50) / 2, windowHeight - 30, 50, 20) };
 
-            button.Pressed += delegate { mbWindow.Close(); if (action != null) action(); };
+            button.Pressed += delegate { _screen.Desktop.Children.Remove(DialogHelper.DialogBg); mbWindow.Close(); if (action != null) action(); };
 
             mbWindow.Children.Add(button);
 
             _screen.Desktop.Children.Add(mbWindow);
 
+            // block all underlying controls
+            _screen.Desktop.Children.Add(DialogHelper.DialogBg);
+            DialogHelper.DialogBg.BringToFront();
+
             mbWindow.BringToFront();
         }
-        
+
+
+
         //Draw at 2d level ! (Last draw called)
         public override void Draw(int index)
         {
