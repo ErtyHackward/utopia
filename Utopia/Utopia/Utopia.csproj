@@ -111,6 +111,7 @@
     <Compile Include="Action\MouseButton.cs" />
     <Compile Include="Action\MouseTriggeredAction.cs" />
     <Compile Include="Action\MouseTriggerMode.cs" />
+    <Compile Include="Components\EditorMode.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />
     <Compile Include="Components\BepuPhysicsComponent.cs" />
     <Compile Include="Components\DebugComponent.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Components\ModelEditorComponent.Designer.cs">
       <DependentUpon>ModelEditorComponent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\ViewParameters.cs" />
     <Compile Include="Editor\CarvingEditor.cs" />
     <Compile Include="Editor\EditorTool.cs" />
     <Compile Include="Editor\EntityEditor.cs" />

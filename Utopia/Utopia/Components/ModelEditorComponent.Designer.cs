@@ -24,11 +24,19 @@ namespace Utopia.Components
             public bool IsArm;
         }
 
+        private struct DialogFrameEditStruct
+        {
+            public int SizeX;
+            public int SizeY;
+            public int SizeZ;
+        }
+
         private ButtonControl _backButton;
         private WindowControl _toolsWindow;
         private WindowControl _modelNavigationWindow;
         private DialogControl<DialogModelEditStruct> _modelEditDialog;
         private DialogControl<DialogPartsEditStruct> _partEditDialog;
+        private DialogControl<DialogFrameEditStruct> _frameEditDialog;
         private LabelControl _infoLabel;
 
         // navigation groups
@@ -53,6 +61,7 @@ namespace Utopia.Components
             _modelNavigationWindow = CreateNavigationWindow();
             _modelEditDialog = new DialogControl<DialogModelEditStruct>();
             _partEditDialog = new DialogControl<DialogPartsEditStruct>();
+            _frameEditDialog = new DialogControl<DialogFrameEditStruct>();
             _infoLabel = new LabelControl { Bounds = new UniRectangle(300, 20, 600, 20) };
 
             _controls.Add(_modelNavigationWindow);
@@ -164,6 +173,9 @@ namespace Utopia.Components
             _framesList.SelectionMode = ListSelectionMode.Single;
             _framesList.SelectionChanged += delegate { SelectedFrameIndex = _framesList.SelectedItems.Count > 0 ? _framesList.SelectedItems[0] : -1; };
 
+            framesAddButton.Pressed += delegate { OnFrameAddPressed(); };
+            framesEditButton.Pressed += delegate { OnFrameEditPressed(); };
+            framesDeleteButton.Pressed += delegate { OnFrameDeletePressed(); };
             _framesGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 90), LayoutFlags = ControlLayoutFlags.WholeRow };
 
             _framesGroup.Children.Add(framesLabel);

@@ -101,6 +101,21 @@ namespace Utopia.Entities.Voxel
             var minPoint = new Vector3();
             var maxPoint = new Vector3();
 
+            if (_visualParts != null)
+            {
+                // dispose prevoious dx data
+                foreach (var visualVoxelPart in _visualParts)
+                {
+                    for (int i = 0; i < visualVoxelPart.VertexBuffers.Length; i++)
+                    {
+                        visualVoxelPart.VertexBuffers[i].Dispose();
+                        visualVoxelPart.IndexBuffers[i].Dispose();
+                    }
+                }
+
+            }
+
+
             _visualParts = new VisualVoxelPart[_model.Parts.Count];
 
             for (int i = 0; i < _visualParts.Length; i++)
