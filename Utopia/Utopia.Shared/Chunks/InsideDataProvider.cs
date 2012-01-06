@@ -103,11 +103,13 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public override byte GetBlock(Vector3I inChunkPosition)
         {
+            if (_blockBytes == null) return 0;
             return _blockBytes[inChunkPosition.X * _chunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * _chunkSize.Y * _chunkSize.X];
         }
 
         public byte GetBlock(int x, int y, int z)
         {
+            if (_blockBytes == null) return 0;
             return _blockBytes[x * _chunkSize.Y + y + z * _chunkSize.Y * _chunkSize.X];
         }
 

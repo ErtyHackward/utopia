@@ -476,8 +476,8 @@ namespace Utopia.Entities.Voxel
                                                      "VoxelMeshFactory_VB",
                                                      ResourceUsage.Default,
                                                      10);
-
-            vb.SetData(vertice.ToArray());
+            if(vertice.Count > 0)
+                vb.SetData(vertice.ToArray());
             return vb;
         }
 
@@ -485,7 +485,8 @@ namespace Utopia.Entities.Voxel
         {
             var ib = new IndexBuffer<ushort>(_d3DEngine, indices.Count, SharpDX.DXGI.Format.R16_UInt, "VoxelMeshFactory_IB");
 
-            ib.SetData(indices.ToArray());
+            if(indices.Count > 0)
+                ib.SetData(indices.ToArray());
 
             return ib;
         }
