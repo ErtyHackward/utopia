@@ -278,7 +278,6 @@ namespace Utopia.Components
             modesButtonsGroup.Children.Add(animationModeButton);
             
 
-
             modesButtonsGroup.UpdateLayout();
 
             toolsWindow.Children.Add(modesLabel);
