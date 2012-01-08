@@ -51,6 +51,15 @@ namespace Utopia.Components
         private Vector3 _gridLeftNormal = new Vector3(1,0,0);
         private Vector3 _gridRightNormal = new Vector3(-1,0,0);
 
+        private Plane _gridBackPlane;
+        private Plane _gridFrontPlane;
+        private Plane _gridTopPlane;
+        private Plane _gridBottomPlane;
+        private Plane _gridLeftPlane;
+        private Plane _gridRightPlane;
+
+        private Plane[] _gridPlanes;
+
 
         private VertexBuffer<VertexPosition> _crosshairVertexBuffer;
 
@@ -251,6 +260,16 @@ namespace Utopia.Components
             _meshFactory = meshFactory;
             _gui = gui;
             Transform = Matrix.Identity;
+
+
+            _gridBackPlane = new Plane(new Vector3(), _gridBackNormal);
+            _gridFrontPlane = new Plane(new Vector3(1,1,1), _gridFrontNormal);
+            _gridTopPlane = new Plane(new Vector3(1,1,1), _gridTopNormal);
+            _gridBottomPlane = new Plane(new Vector3(), _gridBottomNormal);
+            _gridLeftPlane = new Plane(new Vector3(), _gridLeftNormal);
+            _gridRightPlane = new Plane(new Vector3(1,1,1), _gridRightNormal);
+
+            _gridPlanes = new[] { _gridBackPlane, _gridFrontPlane, _gridTopPlane, _gridBottomPlane, _gridLeftPlane, _gridRightPlane };
 
             var aspect = d3DEngine.ViewPort.Width / d3DEngine.ViewPort.Height;
             var projection = Matrix.PerspectiveFovLH((float)Math.PI / 3, aspect, 1f, 100);
@@ -693,6 +712,56 @@ namespace Utopia.Components
                 }
             }
 
+            // try to find a plain cross
+
+            //var r  = new Ray(mPosition.AsVector3(), mLookAt.AsVector3());
+
+            //Plane? farest = null;
+            //float distance = 0;
+
+            //for (int i = 0; i < _gridPlanes.Length; i++)
+            //{
+            //    float d;
+            //    if (r.Intersects(ref _gridPlanes[i], out d) && d > distance)
+            //    {
+            //        distance = d;
+            //        farest = _gridPlanes[i];
+            //    }
+            //}
+
+            //if (farest != null)
+            //{
+            //    Vector3 point;
+
+            //    r.Intersects(ref farest.Value,
+
+            //    if (farest.Value == _gridBottomPlane)
+            //    {
+
+            //    }
+            //    if (farest.Value == _gridTopPlane)
+            //    {
+
+            //    }
+            //    if (farest.Value == _gridFrontPlane)
+            //    {
+
+            //    }
+            //    if (farest.Value == _gridBackPlane)
+            //    {
+
+            //    }
+            //    if (farest.Value == _gridLeftPlane)
+            //    {
+
+            //    }
+            //    if (farest.Value == _gridRightPlane)
+            //    {
+
+            //    }
+            //}
+
+
             cubePosition = null;
             newCubePosition = null;
         }
@@ -908,16 +977,15 @@ namespace Utopia.Components
             // x-z
 
             var eye = new Vector3(0,0,5);
-            var point = new Vector3();
-
-            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
-            var viewVector = eye -point ;
+            var point = new Vector3(1, 0, 1);
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationX((float)Math.PI/2) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
-            //viewVector = Vector3.TransformCoordinate(viewVector, _transform);
-            var bottomNormal = _gridBottomNormal; // Vector3.TransformCoordinate(_gridBottomNormal, _transform);
+
+            var bottomNormal = Vector3.TransformNormal(_gridBottomNormal, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            var viewVector = eye - point;
             var dot = Vector3.Dot(viewVector, bottomNormal);
             if (dot < 0)
             {
@@ -925,45 +993,85 @@ namespace Utopia.Components
                 _d3DEngine.Context.Draw(_xGridVertextBuffer.VertexCount, 0);
             }
 
+            point = new Vector3(1, 1, 1);
+
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationX((float)Math.PI / 2) * Matrix.Translation(0,_gridSize.Y,0) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
-            _xGridVertextBuffer.SetToDevice(0);
-            _d3DEngine.Context.Draw(_xGridVertextBuffer.VertexCount, 0);
-
+            var topNormal = Vector3.TransformNormal(_gridTopNormal, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            viewVector = eye - point;
+            dot = Vector3.Dot(viewVector, topNormal);
+            if (dot < 0)
+            {
+                _xGridVertextBuffer.SetToDevice(0);
+                _d3DEngine.Context.Draw(_xGridVertextBuffer.VertexCount, 0);
+            }
             // x-y
+
+            point = new Vector3();
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(_transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
+            var backNormal = Vector3.TransformNormal(_gridBackNormal, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            viewVector = eye - point;
+            dot = Vector3.Dot(viewVector, backNormal);
+            if (dot < 0)
+            {
+                _yGridVertextBuffer.SetToDevice(0);
+                _d3DEngine.Context.Draw(_yGridVertextBuffer.VertexCount, 0);
+            }
 
-            _yGridVertextBuffer.SetToDevice(0);
-            _d3DEngine.Context.Draw(_yGridVertextBuffer.VertexCount, 0);
+            point = new Vector3(1, 1, 1);
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Translation(0, 0, _gridSize.Z) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
-
-            _yGridVertextBuffer.SetToDevice(0);
-            _d3DEngine.Context.Draw(_yGridVertextBuffer.VertexCount, 0);
-
+            var frontNormal = Vector3.TransformNormal(_gridFrontNormal, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            viewVector = eye - point;
+            dot = Vector3.Dot(viewVector, frontNormal);
+            if (dot < 0)
+            {
+                _yGridVertextBuffer.SetToDevice(0);
+                _d3DEngine.Context.Draw(_yGridVertextBuffer.VertexCount, 0);
+            }
             // z-y
+
+            point = new Vector3();
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationY(-(float)Math.PI / 2) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
-            _zGridVertextBuffer.SetToDevice(0);
-            _d3DEngine.Context.Draw(_zGridVertextBuffer.VertexCount, 0);
+            var leftNormal = Vector3.TransformNormal(_gridLeftNormal, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            viewVector = eye - point;
+            dot = Vector3.Dot(viewVector, leftNormal);
+            if (dot < 0)
+            {
+                _zGridVertextBuffer.SetToDevice(0);
+                _d3DEngine.Context.Draw(_zGridVertextBuffer.VertexCount, 0);
+            }
+
+            point = new Vector3(1, 1, 1);
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationY(-(float)Math.PI / 2) * Matrix.Translation(_gridSize.X, 0 , 0) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
-            _zGridVertextBuffer.SetToDevice(0);
-            _d3DEngine.Context.Draw(_zGridVertextBuffer.VertexCount, 0);
-
+            var rightNormal = Vector3.TransformNormal(_gridRightNormal, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            viewVector = eye - point;
+            dot = Vector3.Dot(viewVector, rightNormal);
+            if (dot < 0)
+            {
+                _zGridVertextBuffer.SetToDevice(0);
+                _d3DEngine.Context.Draw(_zGridVertextBuffer.VertexCount, 0);
+            }
         }
 
         private void DrawFrameEdit()
