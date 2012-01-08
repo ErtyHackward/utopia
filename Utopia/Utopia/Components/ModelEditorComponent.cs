@@ -275,6 +275,7 @@ namespace Utopia.Components
 
         private void InitPlanes(Vector3I chunkSize)
         {
+            chunkSize = new Vector3I() - chunkSize;
             _gridBackPlane = new Plane(new Vector3(), _gridBackNormal);
             _gridFrontPlane = new Plane(chunkSize, _gridFrontNormal);
             _gridTopPlane = new Plane(chunkSize, _gridTopNormal);
@@ -751,15 +752,15 @@ namespace Utopia.Components
                                 distance = d;
                             }
                         }
-                        //if (_gridPlanes[i] == _gridTopPlane)
-                        //{
-                        //    pos.Y = size.Y - 1;
-                        //    if (InChunk(size, pos))
-                        //    {
-                        //        newCubePosition = pos;
-                        //        distance = d;
-                        //    }
-                        //}
+                        if (_gridPlanes[i] == _gridTopPlane)
+                        {
+                            pos.Y = size.Y - 1;
+                            if (InChunk(size, pos))
+                            {
+                                newCubePosition = pos;
+                                distance = d;
+                            }
+                        }
                         if (_gridPlanes[i] == _gridLeftPlane)
                         {
                             pos.X = 0;
@@ -769,24 +770,24 @@ namespace Utopia.Components
                                 distance = d;
                             }
                         }
-                        //if (_gridPlanes[i] == _gridRightPlane)
-                        //{
-                        //    pos.X = size.X - 1;
-                        //    if (InChunk(size, pos))
-                        //    {
-                        //        newCubePosition = pos;
-                        //        distance = d;
-                        //    }
-                        //}
-                        //if (_gridPlanes[i] == _gridFrontPlane)
-                        //{
-                        //    pos.Z = size.Z - 1;
-                        //    if (InChunk(size, pos))
-                        //    {
-                        //        newCubePosition = pos;
-                        //        distance = d;
-                        //    }
-                        //}
+                        if (_gridPlanes[i] == _gridRightPlane)
+                        {
+                            pos.X = size.X - 1;
+                            if (InChunk(size, pos))
+                            {
+                                newCubePosition = pos;
+                                distance = d;
+                            }
+                        }
+                        if (_gridPlanes[i] == _gridFrontPlane)
+                        {
+                            pos.Z = size.Z - 1;
+                            if (InChunk(size, pos))
+                            {
+                                newCubePosition = pos;
+                                distance = d;
+                            }
+                        }
                         if (_gridPlanes[i] == _gridBackPlane)
                         {
                             pos.Z = 0;
