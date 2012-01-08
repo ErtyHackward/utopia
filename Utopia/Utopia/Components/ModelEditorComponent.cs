@@ -260,17 +260,7 @@ namespace Utopia.Components
             _meshFactory = meshFactory;
             _gui = gui;
             Transform = Matrix.Identity;
-
-
-            _gridBackPlane = new Plane(new Vector3(), _gridBackNormal);
-            _gridFrontPlane = new Plane(new Vector3(1,1,1), _gridFrontNormal);
-            _gridTopPlane = new Plane(new Vector3(1,1,1), _gridTopNormal);
-            _gridBottomPlane = new Plane(new Vector3(), _gridBottomNormal);
-            _gridLeftPlane = new Plane(new Vector3(), _gridLeftNormal);
-            _gridRightPlane = new Plane(new Vector3(1,1,1), _gridRightNormal);
-
-            _gridPlanes = new[] { _gridBackPlane, _gridFrontPlane, _gridTopPlane, _gridBottomPlane, _gridLeftPlane, _gridRightPlane };
-
+            
             var aspect = d3DEngine.ViewPort.Width / d3DEngine.ViewPort.Height;
             var projection = Matrix.PerspectiveFovLH((float)Math.PI / 3, aspect, 1f, 100);
             _view = Matrix.LookAtLH(new Vector3(0, 0, 5), new Vector3(0, 0, 0), Vector3.UnitY);
@@ -281,6 +271,18 @@ namespace Utopia.Components
             _currentViewData.Scale = 0.1f;
             _frameViewData.Scale = 0.1f;
             _d3DEngine.ViewPort_Updated += ViewportUpdated;
+        }
+
+        private void InitPlanes(Vector3I chunkSize)
+        {
+            _gridBackPlane = new Plane(new Vector3(), _gridBackNormal);
+            _gridFrontPlane = new Plane(chunkSize, _gridFrontNormal);
+            _gridTopPlane = new Plane(chunkSize, _gridTopNormal);
+            _gridBottomPlane = new Plane(new Vector3(), _gridBottomNormal);
+            _gridLeftPlane = new Plane(new Vector3(), _gridLeftNormal);
+            _gridRightPlane = new Plane(chunkSize, _gridRightNormal);
+
+            _gridPlanes = new[] { _gridBackPlane, _gridFrontPlane, _gridTopPlane, _gridBottomPlane, _gridLeftPlane, _gridRightPlane };
         }
 
         private void ViewportUpdated(Viewport port)
@@ -630,7 +632,17 @@ namespace Utopia.Components
                         UpdateTransformMatrix(_currentViewData, box);
 
                         GetSelectedCube(out _pickedCube, out _newCube);
-                        
+                        _infoLabel.Text = "";
+
+                        if (_pickedCube != null)
+                        {
+                            _infoLabel.Text = "Picked "+ _pickedCube.Value.ToString();
+                        }
+                        if (_newCube != null)
+                        {
+                            _infoLabel.Text += " New " + _newCube.Value.ToString();
+                        }
+
                         if (mouseState.LeftButton == ButtonState.Released && _prevState.LeftButton == ButtonState.Pressed)
                         {
                             if (_pickedCube.HasValue)
@@ -712,60 +724,93 @@ namespace Utopia.Components
                 }
             }
 
-            // try to find a plain cross
-
-            //var r  = new Ray(mPosition.AsVector3(), mLookAt.AsVector3());
-
-            //Plane? farest = null;
-            //float distance = 0;
-
-            //for (int i = 0; i < _gridPlanes.Length; i++)
-            //{
-            //    float d;
-            //    if (r.Intersects(ref _gridPlanes[i], out d) && d > distance)
-            //    {
-            //        distance = d;
-            //        farest = _gridPlanes[i];
-            //    }
-            //}
-
-            //if (farest != null)
-            //{
-            //    Vector3 point;
-
-            //    r.Intersects(ref farest.Value,
-
-            //    if (farest.Value == _gridBottomPlane)
-            //    {
-
-            //    }
-            //    if (farest.Value == _gridTopPlane)
-            //    {
-
-            //    }
-            //    if (farest.Value == _gridFrontPlane)
-            //    {
-
-            //    }
-            //    if (farest.Value == _gridBackPlane)
-            //    {
-
-            //    }
-            //    if (farest.Value == _gridLeftPlane)
-            //    {
-
-            //    }
-            //    if (farest.Value == _gridRightPlane)
-            //    {
-
-            //    }
-            //}
-
-
-            cubePosition = null;
             newCubePosition = null;
+
+            if (_gridPlanes != null)
+            {
+
+                // try to find a plain cross
+                var r = new Ray(mPosition.AsVector3(), mLookAt.AsVector3());
+                float distance = 0;
+                for (int i = 0; i < _gridPlanes.Length; i++)
+                {
+                    float d;
+                    if (r.Intersects(ref _gridPlanes[i], out d) && d > distance)
+                    {
+                        Vector3 point;
+                        r.Intersects(ref _gridPlanes[i], out point);
+
+                        //var pos = new Vector3I(Math.Floor(point.X), Math.Floor(point.Y), Math.Floor(point.Z));
+                        var pos = (Vector3I)point;
+                        if (_gridPlanes[i] == _gridBottomPlane)
+                        {
+                            pos.Y = 0;
+                            if (InChunk(size, pos))
+                            {
+                                newCubePosition = pos;
+                                distance = d;
+                            }
+                        }
+                        //if (_gridPlanes[i] == _gridTopPlane)
+                        //{
+                        //    pos.Y = size.Y - 1;
+                        //    if (InChunk(size, pos))
+                        //    {
+                        //        newCubePosition = pos;
+                        //        distance = d;
+                        //    }
+                        //}
+                        if (_gridPlanes[i] == _gridLeftPlane)
+                        {
+                            pos.X = 0;
+                            if (InChunk(size, pos))
+                            {
+                                newCubePosition = pos;
+                                distance = d;
+                            }
+                        }
+                        //if (_gridPlanes[i] == _gridRightPlane)
+                        //{
+                        //    pos.X = size.X - 1;
+                        //    if (InChunk(size, pos))
+                        //    {
+                        //        newCubePosition = pos;
+                        //        distance = d;
+                        //    }
+                        //}
+                        //if (_gridPlanes[i] == _gridFrontPlane)
+                        //{
+                        //    pos.Z = size.Z - 1;
+                        //    if (InChunk(size, pos))
+                        //    {
+                        //        newCubePosition = pos;
+                        //        distance = d;
+                        //    }
+                        //}
+                        if (_gridPlanes[i] == _gridBackPlane)
+                        {
+                            pos.Z = 0;
+                            if (InChunk(size, pos))
+                            {
+                                newCubePosition = pos;
+                                distance = d;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            cubePosition = null;
+            
         }
-        
+
+        private bool InChunk(Vector3I size, Vector3I pos)
+        {
+            if (pos.X >= 0 && pos.Y >= 0 && pos.Z >= 0 && pos.X < size.X && pos.Y < size.Y && pos.Z < size.Z)
+                return true;
+            return false;
+        }
+
         private void RebuildFrameVertices()
         {
             if (_visualVoxelModel != null && _selectedPartIndex != -1 && _selectedFrameIndex != -1)
@@ -983,11 +1028,11 @@ namespace Utopia.Components
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
-            var bottomNormal = Vector3.TransformNormal(_gridBottomNormal, _transform * _viewProjection);
+            var bottomNormal = Vector3.TransformNormal(_gridBottomNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
             var viewVector = eye - point;
             var dot = Vector3.Dot(viewVector, bottomNormal);
-            if (dot < 0)
+            if (dot > 0)
             {
                 _xGridVertextBuffer.SetToDevice(0);
                 _d3DEngine.Context.Draw(_xGridVertextBuffer.VertexCount, 0);
@@ -999,11 +1044,11 @@ namespace Utopia.Components
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
-            var topNormal = Vector3.TransformNormal(_gridTopNormal, _transform * _viewProjection);
+            var topNormal = Vector3.TransformNormal(_gridTopNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, topNormal);
-            if (dot < 0)
+            if (dot > 0)
             {
                 _xGridVertextBuffer.SetToDevice(0);
                 _d3DEngine.Context.Draw(_xGridVertextBuffer.VertexCount, 0);
@@ -1015,11 +1060,11 @@ namespace Utopia.Components
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(_transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
-            var backNormal = Vector3.TransformNormal(_gridBackNormal, _transform * _viewProjection);
+            var backNormal = Vector3.TransformNormal(_gridBackNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, backNormal);
-            if (dot < 0)
+            if (dot > 0)
             {
                 _yGridVertextBuffer.SetToDevice(0);
                 _d3DEngine.Context.Draw(_yGridVertextBuffer.VertexCount, 0);
@@ -1030,11 +1075,11 @@ namespace Utopia.Components
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Translation(0, 0, _gridSize.Z) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
-            var frontNormal = Vector3.TransformNormal(_gridFrontNormal, _transform * _viewProjection);
+            var frontNormal = Vector3.TransformNormal(_gridFrontNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, frontNormal);
-            if (dot < 0)
+            if (dot > 0)
             {
                 _yGridVertextBuffer.SetToDevice(0);
                 _d3DEngine.Context.Draw(_yGridVertextBuffer.VertexCount, 0);
@@ -1047,11 +1092,11 @@ namespace Utopia.Components
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
-            var leftNormal = Vector3.TransformNormal(_gridLeftNormal, _transform * _viewProjection);
+            var leftNormal = Vector3.TransformNormal(_gridLeftNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, leftNormal);
-            if (dot < 0)
+            if (dot > 0)
             {
                 _zGridVertextBuffer.SetToDevice(0);
                 _d3DEngine.Context.Draw(_zGridVertextBuffer.VertexCount, 0);
@@ -1063,11 +1108,11 @@ namespace Utopia.Components
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
-            var rightNormal = Vector3.TransformNormal(_gridRightNormal, _transform * _viewProjection);
+            var rightNormal = Vector3.TransformNormal(_gridRightNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, rightNormal);
-            if (dot < 0)
+            if (dot > 0)
             {
                 _zGridVertextBuffer.SetToDevice(0);
                 _d3DEngine.Context.Draw(_zGridVertextBuffer.VertexCount, 0);
@@ -1084,6 +1129,7 @@ namespace Utopia.Components
                 var frame = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex];
                 if (_gridSize != frame.BlockData.ChunkSize)
                 {
+                    InitPlanes(frame.BlockData.ChunkSize);
                     BuildGrid(frame.BlockData.ChunkSize);
                 }
 
@@ -1094,7 +1140,7 @@ namespace Utopia.Components
                 var model = _visualVoxelModel.VoxelModel;
                 var visualParts = _visualVoxelModel.VisualVoxelParts;
 
-                StatesRepository.ApplyRaster(GameDXStates.DXStates.Rasters.Default);
+                StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
                 if (model.ColorMapping != null)
                 {
                     _voxelEffect.CBPerFrame.Values.ColorMapping = model.ColorMapping.BlockColors;
@@ -1131,6 +1177,11 @@ namespace Utopia.Components
                 {
                     // draw selected cube
                     DrawBox(new BoundingBox(_pickedCube.Value, _pickedCube.Value + Vector3I.One), new Color4(1, 0, 0, 1));
+                }
+                else if (_newCube != null)
+                {
+                    // draw selected cube
+                    DrawBox(new BoundingBox(_newCube.Value, _newCube.Value + Vector3I.One), new Color4(1, 0, 0, 0.5f));
                 }
             }
         }
