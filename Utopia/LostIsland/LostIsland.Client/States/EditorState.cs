@@ -1,12 +1,9 @@
 ﻿using System;
 using Ninject;
-using SharpDX;
 using Utopia;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
-using Utopia.Shared.Entities.Models;
-using Utopia.Shared.Structs;
 
 namespace LostIsland.Client.States
 {

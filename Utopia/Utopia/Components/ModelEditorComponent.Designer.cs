@@ -7,6 +7,7 @@ using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
 using SharpDX;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
+using Utopia.Shared.Entities.Models;
 
 namespace Utopia.Components
 {
@@ -46,11 +47,19 @@ namespace Utopia.Components
         private Control _partsGroup;
         private Control _framesGroup;
 
+        // tools group
+        private Control _frameToolsGroup;
+        private Control _layoutToolsGroup;
+
+        private List<ColorButtonControl> _colorPalette = new List<ColorButtonControl>();
+
         private ListControl _modelsList;
         private ListControl _animationsList;
         private ListControl _statesList;
         private ListControl _partsList;
         private ListControl _framesList;
+        private Control _modesButtonsGroup;
+
 
         private void InitializeGui()
         {
@@ -204,6 +213,10 @@ namespace Utopia.Components
         {
             _modelNavigationWindow.Children.Clear();
             _modelNavigationWindow.Children.Add(_modelsGroup);
+
+            _toolsWindow.Children.Clear();
+            _toolsWindow.Children.Add(_modesButtonsGroup);
+
             UpdateLayout();
         }
 
@@ -213,6 +226,10 @@ namespace Utopia.Components
             _modelNavigationWindow.Children.Add(_statesGroup);
             _modelNavigationWindow.Children.Add(_partsGroup);
             _modelNavigationWindow.Children.Add(_framesGroup);
+
+            _toolsWindow.Children.Clear();
+            _toolsWindow.Children.Add(_modesButtonsGroup);
+
             UpdateLayout();
         }
 
@@ -221,6 +238,11 @@ namespace Utopia.Components
             _modelNavigationWindow.Children.Clear();
             _modelNavigationWindow.Children.Add(_partsGroup);
             _modelNavigationWindow.Children.Add(_framesGroup);
+
+            _toolsWindow.Children.Clear();
+            _toolsWindow.Children.Add(_modesButtonsGroup);
+            _toolsWindow.Children.Add(_frameToolsGroup);
+
             UpdateLayout();
         }
 
@@ -229,6 +251,10 @@ namespace Utopia.Components
             _modelNavigationWindow.Children.Clear();
             _modelNavigationWindow.Children.Add(_animationsGroup);
             _modelNavigationWindow.Children.Add(_statesGroup);
+
+            _toolsWindow.Children.Clear();
+            _toolsWindow.Children.Add(_modesButtonsGroup);
+
             UpdateLayout();
         }
 
@@ -246,15 +272,35 @@ namespace Utopia.Components
             return window;
         }
 
+        private void UpdateColorPalette(ColorMapping mapping, int selectedColorIndex)
+        {
+            foreach (var colorButtonControl in _colorPalette)
+            {
+                colorButtonControl.Pressed -= OnColorSelected;
+            }
+
+            _colorPalette.Clear();
+
+            for (int i = 0; i < mapping.BlockColors.Length; i++)
+            {
+                var colorControl = new ColorButtonControl { Name = "color" + i, Color = new Shared.Structs.Color(mapping.BlockColors[i].ToVector3()), Sticked = i == selectedColorIndex };
+                colorControl.Pressed += OnColorSelected;
+                _colorPalette.Add(colorControl);
+            }
+
+        }
+        
+        private void OnColorSelected(object sender, EventArgs e)
+        {
+
+        }
+
         private WindowControl CreateToolsWindow()
         {
             var toolsWindow = new WindowControl { Title = "Tools" };
-            toolsWindow.Bounds = new UniRectangle(0, 0, 200, 110);
+            toolsWindow.Bounds = new UniRectangle(0, 0, 200, 400);
 
-            var modesLabel = new LabelControl { Text = "Modes" };
-            modesLabel.Bounds = new UniRectangle(10, 25, 100, 20);
-
-            var modesButtonsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 45), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            _modesButtonsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 45), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
             var viewModeButton = new ButtonControl { Text = "View" };
             viewModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
@@ -272,16 +318,51 @@ namespace Utopia.Components
             animationModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
             animationModeButton.Pressed += delegate { Mode = EditorMode.ModelLayout; OnAnimationMode(); };
 
-            modesButtonsGroup.Children.Add(viewModeButton);
-            modesButtonsGroup.Children.Add(layoutModeButton);
-            modesButtonsGroup.Children.Add(frameModeButton);
-            modesButtonsGroup.Children.Add(animationModeButton);
+            _modesButtonsGroup.Children.Add(viewModeButton);
+            _modesButtonsGroup.Children.Add(layoutModeButton);
+            _modesButtonsGroup.Children.Add(frameModeButton);
+            _modesButtonsGroup.Children.Add(animationModeButton);
             
+            _modesButtonsGroup.UpdateLayout();
 
-            modesButtonsGroup.UpdateLayout();
+            _frameToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 300), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
-            toolsWindow.Children.Add(modesLabel);
-            toolsWindow.Children.Add(modesButtonsGroup);
+            _frameToolsGroup.Children.Add(new LabelControl { Text = "Tools", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
+
+            _frameToolsGroup.Children.Add(new ButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 70, 20) });
+            _frameToolsGroup.Children.Add(new ButtonControl { Text = "Color brush", Bounds = new UniRectangle(0, 0, 70, 20) });
+            _frameToolsGroup.Children.Add(new ButtonControl { Text = "Color fill", Bounds = new UniRectangle(0, 0, 70, 20) });
+
+            _frameToolsGroup.Children.Add(new LabelControl { Text = "Presets", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
+            _frameToolsGroup.Children.Add(new ButtonControl { Text = "Cube", Bounds = new UniRectangle(0, 0, 50, 20) });
+
+            _frameToolsGroup.Children.Add(new LabelControl { Text = "Colors", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
+
+            var rnd = new Random();
+
+            for (int i = 0; i < 64; i++)
+            {
+                _frameToolsGroup.Children.Add(new ColorButtonControl { Bounds = new UniRectangle(0, 0, 20, 20), Color = new Shared.Structs.Color((int)(rnd.NextDouble() * 255), (int)(rnd.NextDouble() * 255), (int)(rnd.NextDouble() * 255)) });    
+            }
+
+            var colorsButtons = new Control { LayoutFlags = ControlLayoutFlags.WholeRow, Bounds = new UniRectangle(0,0,180,25) };
+
+            colorsButtons.Children.Add(new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 50, 20) });
+            colorsButtons.Children.Add(new ButtonControl { Text = "Rem", Bounds = new UniRectangle(0, 0, 50, 20) });
+            colorsButtons.Children.Add(new ButtonControl { Text = "Change", Bounds = new UniRectangle(0, 0, 50, 20) });
+
+            colorsButtons.UpdateLayout();
+
+            _frameToolsGroup.Children.Add(colorsButtons);
+
+            _frameToolsGroup.UpdateLayout();
+
+            _layoutToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 100), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+
+
+
+
+            toolsWindow.Children.Add(_modesButtonsGroup);
 
             toolsWindow.UpdateLayout();
 
@@ -294,6 +375,12 @@ namespace Utopia.Components
             _modelNavigationWindow.Bounds = new UniRectangle(_d3DEngine.ViewPort.Width - 200, 0, 200, _d3DEngine.ViewPort.Height - 40);
             _modelNavigationWindow.UpdateLayout();
             foreach (var group in _modelNavigationWindow.Children)
+            {
+                group.UpdateLayout();
+            }
+
+            _toolsWindow.UpdateLayout();
+            foreach (var group in _toolsWindow.Children)
             {
                 group.UpdateLayout();
             }

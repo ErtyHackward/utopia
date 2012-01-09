@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
@@ -8,6 +7,7 @@ using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.InputHandler.MouseHelper;
 using S33M3Engines.InputHandler;
 using S33M3Engines;
+using SharpDX.Direct3D11;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using ButtonState = S33M3Engines.InputHandler.MouseHelper.ButtonState;
 using MouseButtons = Nuclex.UserInterface.Input.MouseButtons;
@@ -154,6 +154,7 @@ namespace Utopia.GUI.D3D
         //Draw at 2d level ! (Last draw called)
         public override void Draw(int index)
         {
+            _d3DEngine.Context.ClearDepthStencilView(_d3DEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
             _guiVisualizer.Draw(_screen);
             var v = (Nuclex.UserInterface.Visuals.Flat.FlatGuiVisualizer)_guiVisualizer;
             _debugString = string.Format("Gui Draw calls: {0} Items: {1}", v.Graphics.DrawCalls, v.Graphics.DrawItems);
@@ -161,7 +162,7 @@ namespace Utopia.GUI.D3D
 
         private void InjectInput()
         {
-            MouseState mouseState = Mouse.GetState();
+            var mouseState = Mouse.GetState();
 
             if (_prevMouseState.LeftButton == ButtonState.Released && mouseState.LeftButton == ButtonState.Pressed)
                 _screen.InjectMousePress(MouseButtons.Left);

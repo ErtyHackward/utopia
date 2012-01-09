@@ -71,6 +71,7 @@ namespace Utopia.Components
         private ViewParameters _frameViewData;
 
         private ViewParameters _currentViewData;
+        private Vector2 _accumulatedPosition;
 
         private Matrix _transform;
         private VisualVoxelModel _visualVoxelModel;
@@ -94,6 +95,8 @@ namespace Utopia.Components
 
         private Vector3I? _pickedCube;
         private Vector3I? _newCube;
+        
+
         #endregion
 
         #region Properties
@@ -271,6 +274,8 @@ namespace Utopia.Components
             _currentViewData.Scale = 0.1f;
             _frameViewData.Scale = 0.1f;
             _d3DEngine.ViewPort_Updated += ViewportUpdated;
+
+            DrawOrders.UpdateIndex(0, 15);
         }
 
         private void InitPlanes(Vector3I chunkSize)
@@ -427,6 +432,11 @@ namespace Utopia.Components
 
             part.Frames.Add(new VoxelFrame(new Vector3I(16,16,16)));
 
+            foreach (var voxelModelState in _visualVoxelModel.VoxelModel.States)
+            {
+                voxelModelState.PartsStates.Add(new VoxelModelPartState { Transform = Matrix.Identity });
+            }
+
             _visualVoxelModel.VoxelModel.Parts.Add(part);
             _visualVoxelModel.BuildMesh();
             _partsList.Items.Add(part.Name);
@@ -488,7 +498,7 @@ namespace Utopia.Components
         {
             if (SelectedPartIndex == -1)
             {
-                _gui.MessageBox("Please select a part and frame to delete");
+                _gui.MessageBox("Please select a part to add a frame to");
                 return;
             }
 
@@ -574,7 +584,6 @@ namespace Utopia.Components
 
             var dx = ((float)mouseState.X - _prevState.X) / 100;
             var dy = ((float)mouseState.Y - _prevState.Y) / 100;
-            
 
             if (mouseState.MiddleButton == ButtonState.Pressed && _prevState.X != 0 && _prevState.Y != 0)
             {
@@ -615,6 +624,21 @@ namespace Utopia.Components
                         {
                             if (mouseState.LeftButton == ButtonState.Pressed)
                             {
+                                _accumulatedPosition.X += dx*4;
+                                _accumulatedPosition.Y += dy*4;
+
+                                if (_accumulatedPosition.X > 1 || _accumulatedPosition.X < 1)
+                                {
+                                    dx = (int)_accumulatedPosition.X;
+                                    _accumulatedPosition.X = _accumulatedPosition.X % 1;
+                                }
+
+                                if (_accumulatedPosition.Y > 1 || _accumulatedPosition.Y < 1)
+                                {
+                                    dy = (int)_accumulatedPosition.Y;
+                                    _accumulatedPosition.Y = _accumulatedPosition.Y % 1;
+                                }
+
                                 var translationVector = _flipAxis ? new Vector3(-dx, -dy, 0) : new Vector3(0, -dy, -dx);
                                 // send translation to current state
                                 var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[_selectedPartIndex];
@@ -633,16 +657,6 @@ namespace Utopia.Components
                         UpdateTransformMatrix(_currentViewData, box);
 
                         GetSelectedCube(out _pickedCube, out _newCube);
-                        _infoLabel.Text = "";
-
-                        if (_pickedCube != null)
-                        {
-                            _infoLabel.Text = "Picked "+ _pickedCube.Value.ToString();
-                        }
-                        if (_newCube != null)
-                        {
-                            _infoLabel.Text += " New " + _newCube.Value.ToString();
-                        }
 
                         if (mouseState.LeftButton == ButtonState.Released && _prevState.LeftButton == ButtonState.Pressed)
                         {
@@ -949,8 +963,7 @@ namespace Utopia.Components
 
                 //DrawBox(state.BoundingBox);
 
-                StatesRepository.ApplyRaster(GameDXStates.DXStates.Rasters.Default);
-                
+                StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
                 
 
                 var model = _visualVoxelModel.VoxelModel;

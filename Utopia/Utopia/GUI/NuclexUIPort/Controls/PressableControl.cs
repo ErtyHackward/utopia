@@ -37,6 +37,8 @@ namespace Nuclex.UserInterface.Controls {
       this.Enabled = true;
     }
 
+      
+
     /// <summary>Whether the mouse pointer is hovering over the control</summary>
     public bool MouseHovering {
       get { return this.mouseHovering; }

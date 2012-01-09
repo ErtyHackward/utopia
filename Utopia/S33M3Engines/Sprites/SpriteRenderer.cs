@@ -167,7 +167,6 @@ namespace S33M3Engines.Sprites
             _spriteBuffer.Clear();
 
             _currentDepth = 1;
-
             // Set the states
             StatesRepository.ApplyStates(_rasterStateId, _blendStateId, _withDepth ? _depthStateWithDepthId : _depthStateWithoutDepthId);
             //Change the Sampler Filter Mode ==> Need external Sampler for it ! At this moment it is forced inside the shader !
@@ -187,6 +186,7 @@ namespace S33M3Engines.Sprites
         /// </summary>
         public void End()
         {
+            
             foreach (var drawInfo in _spriteBuffer)
             {
                 if (drawInfo.IsGroup)
