@@ -521,6 +521,13 @@ that uses the theme, please give due credit to the original artist!
       <text font="itemsFont" color="#000000" hplacement="left" vplacement="top" xoffset="1" yoffset="1" />
     </frame>
 
+    <!--
+      Frame used for a highlighted checkbox that is in an unspecified state
+    -->
+    <frame name="button.color">
+      <region source="controls" hplacement="stretch" vplacement="stretch" x="92" y="76" w="13" h="13" />
+    </frame>
+
   </frames>
 
 </skin>

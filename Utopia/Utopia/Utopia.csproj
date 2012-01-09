@@ -181,6 +181,7 @@
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ButtonControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ChoiceControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\CloseWindowButtonControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ColorButtonControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\DialogControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\DraggableControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\HorizontalSliderControl.cs" />
@@ -192,6 +193,7 @@
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\OptionControl.cs" />
     <Compile Include="Editor\PaletteButtonControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\SliderControl.cs" />
+    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\StickyButtonControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\VerticalSliderControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\Desktop\WindowControl.cs" />
     <Compile Include="GUI\NuclexUIPort\Controls\IFocusable.cs" />
@@ -214,6 +216,7 @@
     <Compile Include="GUI\NuclexUIPort\Struct\UniVector.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatButtonControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatChoiceControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatColorButtonControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatHorizontalSliderControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatInputControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatLabelControlRenderer.cs" />
@@ -221,6 +224,7 @@
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatOptionControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatPanelControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatProgressControlRenderer.cs" />
+    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatStickyButtonRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatVerticalSliderControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatWindowControlRenderer.cs" />
     <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.cs" />
