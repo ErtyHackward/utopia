@@ -1043,7 +1043,7 @@ namespace Utopia.Components
             _lines3DEffect.Apply();
 
             var bottomNormal = Vector3.TransformNormal(_gridBottomNormal, _transform);
-            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform);
             var viewVector = eye - point;
             var dot = Vector3.Dot(viewVector, bottomNormal);
             if (dot > 0)
@@ -1052,14 +1052,14 @@ namespace Utopia.Components
                 _d3DEngine.Context.Draw(_xGridVertextBuffer.VertexCount, 0);
             }
 
-            point = new Vector3(1, 1, 1);
+            point = new Vector3(0, _gridSize.Y, 0);
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationX((float)Math.PI / 2) * Matrix.Translation(0,_gridSize.Y,0) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
             var topNormal = Vector3.TransformNormal(_gridTopNormal, _transform);
-            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, topNormal);
             if (dot > 0)
@@ -1075,7 +1075,7 @@ namespace Utopia.Components
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
             var backNormal = Vector3.TransformNormal(_gridBackNormal, _transform);
-            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, backNormal);
             if (dot > 0)
@@ -1084,13 +1084,13 @@ namespace Utopia.Components
                 _d3DEngine.Context.Draw(_yGridVertextBuffer.VertexCount, 0);
             }
 
-            point = new Vector3(1, 1, 1);
+            point = new Vector3(0, 0, _gridSize.Z);
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Translation(0, 0, _gridSize.Z) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
             var frontNormal = Vector3.TransformNormal(_gridFrontNormal, _transform);
-            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, frontNormal);
             if (dot > 0)
@@ -1107,7 +1107,7 @@ namespace Utopia.Components
             _lines3DEffect.Apply();
 
             var leftNormal = Vector3.TransformNormal(_gridLeftNormal, _transform);
-            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, leftNormal);
             if (dot > 0)
@@ -1116,14 +1116,14 @@ namespace Utopia.Components
                 _d3DEngine.Context.Draw(_zGridVertextBuffer.VertexCount, 0);
             }
 
-            point = new Vector3(1, 1, 1);
+            point = new Vector3(_gridSize.X,0,0);
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationY(-(float)Math.PI / 2) * Matrix.Translation(_gridSize.X, 0 , 0) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply();
 
             var rightNormal = Vector3.TransformNormal(_gridRightNormal, _transform);
-            point = Vector3.TransformCoordinate(point, _transform * _viewProjection);
+            point = Vector3.TransformCoordinate(point, _transform);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, rightNormal);
             if (dot > 0)
