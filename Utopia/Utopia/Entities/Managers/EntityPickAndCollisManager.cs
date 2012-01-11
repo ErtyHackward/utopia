@@ -199,17 +199,19 @@ namespace Utopia.Entities.Managers
 
                             newPosition2Evaluate = newPositionWithColliding;
 
-                            //Send an impulse message to the Entity, following my "LookAtVector" !
-                            float impulsePower = 1;
-                            if (_action.isTriggered(Actions.Move_Run)) impulsePower = 2;
-
-                            _server.ServerConnection.SendAsync(new EntityImpulseMessage
+                            if (entityTesting.Entity is IDynamicEntity)
                             {
-                                //TODO: Fabian, we can push only dynamic entities or static too ? (Vlad)
-                                DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
-                                Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.Rotation) * impulsePower
+                                //Send an impulse message to the Entity, following my "LookAtVector" !
+                                float impulsePower = 1;
+                                if (_action.isTriggered(Actions.Move_Run)) impulsePower = 2;
+
+                                _server.ServerConnection.SendAsync(new EntityImpulseMessage
+                                {
+                                    DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
+                                    Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.Rotation) * impulsePower
+                                }
+                                );
                             }
-                            );
                         }
                         else
                         {
