@@ -13,7 +13,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
     {
         #region Public properties/variables
         public override bool IsPickable { get { return true; } }
-        public override bool IsPlayerCollidable { get { return false; } }
+        public override bool IsPlayerCollidable { get { return true; } }
         public Vector3I LinkedCube { get; set; }
 
         public override ushort ClassId
@@ -46,7 +46,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
             Type = EntityType.Static;
             UniqueName = DisplayName;
             Format = SpriteFormat.Cross;
-            Size = new Vector3(1f, 1f, 1f);
+            Size = new Vector3(1f, 2f, 1f);
         }
 
         #region Public methods

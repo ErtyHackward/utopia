@@ -51,7 +51,7 @@ static const float3 billboardCorners[5] = {
 											{0.5, 1.0f, 0.0f},
 											{0.5, 0.0f, 0.0f},
 											{-0.5, 0.0f, 0.0f}
-									};
+										  };
 
 //--------------------------------------------------------------------------------------
 // Vertex Shader
@@ -59,17 +59,25 @@ static const float3 billboardCorners[5] = {
 PSInput VS (VSInput input)
 {
 	PSInput output;
+	float4 worldPosition;
 
-	//Get the billboard template corner
-	float3 billboardVertexPosition = billboardCorners[input.Position.w];
-	//Multiply the template by the Billboard size (Scale)
-	billboardVertexPosition *= input.MetaData;
+	[branch] if(input.Position.w > 0) //If i'm a billboard
+	{
+		//Get the billboard template corner
+		float3 billboardVertexPosition = billboardCorners[input.Position.w];
+		//Multiply the template by the Billboard size (Scale)
+		billboardVertexPosition *= input.MetaData;
 
-	//Rotating it
-	billboardVertexPosition = float4(mul(billboardVertexPosition, (float3x3)View),0); //Rotate the billboard following Ca
+		//Rotating it
+		billboardVertexPosition = float4(mul(billboardVertexPosition, (float3x3)View),0); //Rotate the billboard following Camera position
 
-	//Translating
-	float4 worldPosition = {billboardVertexPosition.xyz + input.Position.xyz, 1.0f};
+		//Translating
+		worldPosition = float4(billboardVertexPosition.xyz + input.Position.xyz, 1.0f);
+	}else{ 
+		//I'm not a billboard
+		worldPosition = float4(input.Position.xyz, 1.0f);
+	}
+
 
 	worldPosition = mul(worldPosition, WorldFocus); //Translate to vertex to the correct location
 	output.Position = mul(worldPosition, ViewProjection);
