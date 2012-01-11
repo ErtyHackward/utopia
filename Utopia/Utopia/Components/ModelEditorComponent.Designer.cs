@@ -50,6 +50,8 @@ namespace Utopia.Components
         // tools group
         private Control _frameToolsGroup;
         private Control _layoutToolsGroup;
+        private Control _modesButtonsGroup;
+        private Control _colorPaletteGroup;
 
         private List<ColorButtonControl> _colorPalette = new List<ColorButtonControl>();
 
@@ -58,7 +60,7 @@ namespace Utopia.Components
         private ListControl _statesList;
         private ListControl _partsList;
         private ListControl _framesList;
-        private Control _modesButtonsGroup;
+        
 
 
         private void InitializeGui()
@@ -283,11 +285,23 @@ namespace Utopia.Components
 
             for (int i = 0; i < mapping.BlockColors.Length; i++)
             {
-                var colorControl = new ColorButtonControl { Name = "color" + i, Color = new Shared.Structs.Color(mapping.BlockColors[i].ToVector3()), Sticked = i == selectedColorIndex };
+                var colorControl = new ColorButtonControl { Bounds = new UniRectangle(0, 0, 20, 20), Name = "color" + i, Color = new Shared.Structs.Color(mapping.BlockColors[i].ToVector3()), Sticked = i == selectedColorIndex };
                 colorControl.Pressed += OnColorSelected;
                 _colorPalette.Add(colorControl);
             }
 
+            _colorPaletteGroup.Children.Clear();
+
+            foreach (var colorButtonControl in _colorPalette)
+            {
+                _colorPaletteGroup.Children.Add(colorButtonControl);
+            }
+
+            var rowsCount = _colorPaletteGroup.Children.Count%7 > 0 ? _colorPaletteGroup.Children.Count/7 + 1 : _colorPaletteGroup.Children.Count/7;
+            
+            _colorPaletteGroup.UpdateLayout();
+            _colorPaletteGroup.Bounds.Size.Y.Offset = 20 * rowsCount;
+            _frameToolsGroup.UpdateLayout();
         }
         
         private void OnColorSelected(object sender, EventArgs e)
@@ -338,12 +352,9 @@ namespace Utopia.Components
 
             _frameToolsGroup.Children.Add(new LabelControl { Text = "Colors", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
-            var rnd = new Random();
+            _colorPaletteGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 200) };
 
-            for (int i = 0; i < 64; i++)
-            {
-                _frameToolsGroup.Children.Add(new ColorButtonControl { Bounds = new UniRectangle(0, 0, 20, 20), Color = new Shared.Structs.Color((int)(rnd.NextDouble() * 255), (int)(rnd.NextDouble() * 255), (int)(rnd.NextDouble() * 255)) });    
-            }
+            _frameToolsGroup.Children.Add(_colorPaletteGroup);
 
             var colorsButtons = new Control { LayoutFlags = ControlLayoutFlags.WholeRow, Bounds = new UniRectangle(0,0,180,25) };
 
