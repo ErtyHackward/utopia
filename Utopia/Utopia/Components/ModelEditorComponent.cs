@@ -14,6 +14,7 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
+using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using Utopia.InputManager;
 using Utopia.Settings;
 using Utopia.Shared.Entities.Models;
@@ -95,8 +96,9 @@ namespace Utopia.Components
 
         private Vector3I? _pickedCube;
         private Vector3I? _newCube;
-        
 
+        private int _selectedColorIndex;
+        
         #endregion
 
         #region Properties
@@ -149,6 +151,7 @@ namespace Utopia.Components
                         _animationsList.Items.Add(animation.Name);
                     }
 
+                    UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, 0);
                 }
             }
         }
@@ -408,7 +411,14 @@ namespace Utopia.Components
                 e.Name = "rename_me";
             var model = new VisualVoxelModel(new VoxelModel { Name = e.Name }, _meshFactory);
             model.VoxelModel.States.Add(new VoxelModelState(model.VoxelModel));
-                
+            model.VoxelModel.ColorMapping = new ColorMapping { BlockColors = new Color4[64] };
+
+            // set some initial colors
+            model.VoxelModel.ColorMapping.BlockColors[0] = new Color4(1, 1, 1, 1);
+            model.VoxelModel.ColorMapping.BlockColors[1] = new Color4(0, 0, 0, 1);
+            model.VoxelModel.ColorMapping.BlockColors[2] = new Color4(1, 0, 0, 1);
+            model.VoxelModel.ColorMapping.BlockColors[3] = new Color4(0, 1, 0, 1);
+            model.VoxelModel.ColorMapping.BlockColors[4] = new Color4(0, 0, 1, 1);
 
             VisualVoxelModel = model;
 
@@ -587,8 +597,6 @@ namespace Utopia.Components
 
             if (mouseState.MiddleButton == ButtonState.Pressed && _prevState.X != 0 && _prevState.Y != 0)
             {
-                
-
                 if (keyboardState.IsKeyDown(Keys.ShiftKey))
                 {
                     // translate
@@ -670,7 +678,7 @@ namespace Utopia.Components
                         {
                             if (_newCube.HasValue)
                             {
-                                frame.BlockData.SetBlock(_newCube.Value, 1);
+                                frame.BlockData.SetBlock(_newCube.Value, (byte)(_selectedColorIndex + 1));
                                 RebuildFrameVertices();
                             }
                         }
@@ -1272,6 +1280,77 @@ namespace Utopia.Components
             }
 
             base.UnloadContent();
+        }
+
+        private void OnColorAddPressed()
+        {
+            if (_colorPalette.Count == 64)
+            {
+                _gui.MessageBox("Sorry the maximum number of the colors is 64, consider changing one of existing colors");
+                return;
+            }
+
+            using (var colorDialog = new ColorDialog())
+            {
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_colorPalette.Count] = colorDialog.Color;
+                    UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
+                }
+            }
+
+
+        }
+
+        private void OnColorChangePressed()
+        {
+            using (var colorDialog = new ColorDialog())
+            {
+                colorDialog.Color = _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex];
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex] = colorDialog.Color;
+                    UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
+                    _visualVoxelModel.BuildMesh();
+                }
+            }
+        }
+
+        private void OnColorRemPressed()
+        {
+            if (_colorPalette.Count == 1)
+            {
+                _gui.MessageBox("The model should have at least one color");
+                return;
+            }
+            var array = _visualVoxelModel.VoxelModel.ColorMapping.BlockColors;
+
+            if (_selectedColorIndex != 63)
+            {
+                Array.Copy(array, _selectedColorIndex + 1, array, _selectedColorIndex, 64 - _selectedColorIndex);
+            }
+            array[63] = new Color4();
+            UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
+
+            // shift all blocks to save old colors
+            foreach (var voxelModelPart in _visualVoxelModel.VoxelModel.Parts)
+            {
+                foreach (var voxelFrame in voxelModelPart.Frames)
+                {
+                    var buffer = voxelFrame.BlockData.BlockBytes;
+                    for (int i = 0; i < buffer.Length; i++)
+                    {
+                        if (buffer[i] == _selectedColorIndex)
+                            buffer[i] = 1;
+                        else if (buffer[i] > _selectedColorIndex)
+                        {
+                            buffer[i]--;
+                        }
+                    }
+                }
+            }
+
+            _visualVoxelModel.BuildMesh();
         }
     }
 }
