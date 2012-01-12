@@ -60,8 +60,8 @@ namespace Utopia.Components
         private ListControl _statesList;
         private ListControl _partsList;
         private ListControl _framesList;
-        
 
+        private ColorButtonControl _selectedColorControl;
 
         private void InitializeGui()
         {
@@ -285,9 +285,16 @@ namespace Utopia.Components
 
             for (int i = 0; i < mapping.BlockColors.Length; i++)
             {
+                if (mapping.BlockColors[i].Alpha == 0)
+                    break;
+
                 var colorControl = new ColorButtonControl { Bounds = new UniRectangle(0, 0, 20, 20), Name = "color" + i, Color = new Shared.Structs.Color(mapping.BlockColors[i].ToVector3()), Sticked = i == selectedColorIndex };
                 colorControl.Pressed += OnColorSelected;
                 _colorPalette.Add(colorControl);
+
+                if (i == selectedColorIndex)
+                    _selectedColorControl = colorControl;
+
             }
 
             _colorPaletteGroup.Children.Clear();
@@ -297,16 +304,22 @@ namespace Utopia.Components
                 _colorPaletteGroup.Children.Add(colorButtonControl);
             }
 
-            var rowsCount = _colorPaletteGroup.Children.Count%7 > 0 ? _colorPaletteGroup.Children.Count/7 + 1 : _colorPaletteGroup.Children.Count/7;
+            var rowsCount = _colorPaletteGroup.Children.Count%8 > 0 ? _colorPaletteGroup.Children.Count/8 + 1 : _colorPaletteGroup.Children.Count/8;
             
             _colorPaletteGroup.UpdateLayout();
-            _colorPaletteGroup.Bounds.Size.Y.Offset = 20 * rowsCount;
+            _colorPaletteGroup.Bounds.Size.Y.Offset = 20 * rowsCount + 20;
             _frameToolsGroup.UpdateLayout();
         }
         
         private void OnColorSelected(object sender, EventArgs e)
         {
+            var control = (ColorButtonControl)sender;
+            int.TryParse(control.Name.Substring(5), out _selectedColorIndex);
 
+            if (_selectedColorControl != null)
+                _selectedColorControl.Release();
+
+            _selectedColorControl = control;
         }
 
         private WindowControl CreateToolsWindow()
@@ -352,15 +365,22 @@ namespace Utopia.Components
 
             _frameToolsGroup.Children.Add(new LabelControl { Text = "Colors", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
-            _colorPaletteGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 200) };
+            _colorPaletteGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 200), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
             _frameToolsGroup.Children.Add(_colorPaletteGroup);
 
             var colorsButtons = new Control { LayoutFlags = ControlLayoutFlags.WholeRow, Bounds = new UniRectangle(0,0,180,25) };
 
-            colorsButtons.Children.Add(new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 50, 20) });
-            colorsButtons.Children.Add(new ButtonControl { Text = "Rem", Bounds = new UniRectangle(0, 0, 50, 20) });
-            colorsButtons.Children.Add(new ButtonControl { Text = "Change", Bounds = new UniRectangle(0, 0, 50, 20) });
+            var colorAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 50, 20) };
+            colorAddButton.Pressed += delegate { OnColorAddPressed(); };
+            var colorRemButton = new ButtonControl { Text = "Rem", Bounds = new UniRectangle(0, 0, 50, 20) };
+            colorRemButton.Pressed += delegate { OnColorRemPressed(); };
+            var colorChangeButton = new ButtonControl { Text = "Change", Bounds = new UniRectangle(0, 0, 50, 20) };
+            colorChangeButton.Pressed += delegate { OnColorChangePressed(); };
+
+            colorsButtons.Children.Add(colorAddButton);
+            colorsButtons.Children.Add(colorRemButton);
+            colorsButtons.Children.Add(colorChangeButton);
 
             colorsButtons.UpdateLayout();
 

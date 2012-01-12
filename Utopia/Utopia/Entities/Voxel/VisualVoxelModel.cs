@@ -94,7 +94,7 @@ namespace Utopia.Entities.Voxel
         }
 
         /// <summary>
-        /// Creation of the vertices
+        /// Performs (re)creation of the vertices
         /// </summary>
         public void BuildMesh()
         {
