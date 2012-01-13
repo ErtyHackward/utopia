@@ -54,6 +54,7 @@ namespace Utopia.Components
         private Control _colorPaletteGroup;
 
         private List<ColorButtonControl> _colorPalette = new List<ColorButtonControl>();
+        private List<StickyButtonControl> _toolsButtons = new List<StickyButtonControl>();
 
         private ListControl _modelsList;
         private ListControl _animationsList;
@@ -356,12 +357,31 @@ namespace Utopia.Components
 
             _frameToolsGroup.Children.Add(new LabelControl { Text = "Tools", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
-            _frameToolsGroup.Children.Add(new ButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 70, 20) });
-            _frameToolsGroup.Children.Add(new ButtonControl { Text = "Color brush", Bounds = new UniRectangle(0, 0, 70, 20) });
-            _frameToolsGroup.Children.Add(new ButtonControl { Text = "Color fill", Bounds = new UniRectangle(0, 0, 70, 20) });
+            var toolEditButton = new StickyButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 70, 20), Sticked = true };
+            toolEditButton.Pressed += delegate { OnToolSelected(0); };
+            var toolColorBrushButton = new StickyButtonControl { Text = "Color brush", Bounds = new UniRectangle(0, 0, 70, 20) };
+            toolColorBrushButton.Pressed += delegate { OnToolSelected(1); };
+            var toolColorFillButton = new StickyButtonControl { Text = "Color fill", Bounds = new UniRectangle(0, 0, 70, 20) };
+            toolColorFillButton.Pressed += delegate { OnToolSelected(2); };
+
+            _frameToolsGroup.Children.Add(toolEditButton);
+            _frameToolsGroup.Children.Add(toolColorBrushButton);
+            _frameToolsGroup.Children.Add(toolColorFillButton);
+
+            _toolsButtons.Add(toolEditButton);
+            _toolsButtons.Add(toolColorBrushButton);
+            _toolsButtons.Add(toolColorFillButton);
+            
 
             _frameToolsGroup.Children.Add(new LabelControl { Text = "Presets", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
-            _frameToolsGroup.Children.Add(new ButtonControl { Text = "Cube", Bounds = new UniRectangle(0, 0, 50, 20) });
+
+            var cubePresetButton = new ButtonControl { Text = "Cube", Bounds = new UniRectangle(0, 0, 50, 20) };
+            cubePresetButton.Pressed += delegate { OnCubePresetPressed(); };
+            _frameToolsGroup.Children.Add(cubePresetButton);
+
+            var spherePresetButton = new ButtonControl { Text = "Sphere", Bounds = new UniRectangle(0, 0, 50, 20) };
+            spherePresetButton.Pressed += delegate { OnSpherePresetPressed(); };
+            _frameToolsGroup.Children.Add(spherePresetButton);
 
             _frameToolsGroup.Children.Add(new LabelControl { Text = "Colors", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
@@ -400,6 +420,8 @@ namespace Utopia.Components
             return toolsWindow;
         }
 
+
+        
         public void UpdateLayout()
         {
             _backButton.Bounds = new UniRectangle(_d3DEngine.ViewPort.Width - 200, _d3DEngine.ViewPort.Height - 30, 120, 24);

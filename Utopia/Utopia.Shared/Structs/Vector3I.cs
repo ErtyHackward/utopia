@@ -169,6 +169,17 @@ namespace Utopia.Shared.Structs
             return res;
         }
 
+        public static Vector3I operator /(Vector3I pos, int value)
+        {
+            Vector3I res;
+
+            res.X = pos.X / value;
+            res.Y = pos.Y / value;
+            res.Z = pos.Z / value;
+
+            return res;
+        }
+
         public static Vector3I operator +(Vector3I pos, Vector3I value)
         {
             Vector3I res;

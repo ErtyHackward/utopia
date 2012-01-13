@@ -27,6 +27,9 @@ namespace Utopia.GUI.NuclexUIPort.Visuals.Flat.Renderers
                 }
             }
 
+            if (control.Sticked)
+                stateIndex = 3;
+
             // Draw the button's frame
             graphics.DrawElement(States[stateIndex], controlBounds);
 
