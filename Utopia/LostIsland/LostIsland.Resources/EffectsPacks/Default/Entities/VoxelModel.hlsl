@@ -9,6 +9,7 @@ cbuffer PerFrame
 	float3 SunColor;			  // Diffuse lighting color
 	float fogdist;
 	float4 colorMapping[64];
+	float3 LightDirection;
 };
 
 cbuffer PerPart
@@ -23,7 +24,7 @@ static float3 Nightfogcolor = {0, 0, 0 };
 //	cube face						ba	F	Bo	T	L   R
 static const float normalsX[6] = {  0,  0,  0,  0, -1,  1};
 static const float normalsY[6] = {  0,  0, -1,  1,  0,  0};
-static const float normalsZ[6] = {  1, -1,  0,  0,  0,  0};		
+static const float normalsZ[6] = { -1,  1,  0,  0,  0,  0};		
 
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
@@ -70,25 +71,22 @@ PS_IN VS(VS_IN input)
 
 	float3 normal = float3(normalsX[facetype],normalsY[facetype],normalsZ[facetype]);
 	
-	normal = mul(normal, Transform);
-	normal = mul(normal, World);
+	Matrix wvp = World;// * ViewProjection;
+
+	// transform normal
+	normal.x = normal.x * wvp._11 + normal.y * wvp._21 + normal.z * wvp._31;
+    normal.y = normal.x * wvp._12 + normal.y * wvp._22 + normal.z * wvp._32;
+    normal.z = normal.x * wvp._13 + normal.y * wvp._23 + normal.z * wvp._33;
+	
 	
 	output.Light = input.faceType.y;
 
-	float3 lightDirection = float3(1,1,1);
-	
-	//emmissiveLight from terran.hlsl : bug, removes the color when a = 1 
-	//float3 emmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
-	
-	float3 emmissiveLight = float3(0,0,0); //input.Col.rgb;
+	//float3 lightDirection = float3(0,0,-5);
+	float3 ambient = float3(0.4, 0.4, 0.4);	
 
-	float DiffuseIntensity = 0.7;
-	float3 DiffuseColor = float3( 1, 1, 1);
-	//float3 DiffuseColor = colorMapping[output.colorIndex].rgb;
+	float3 diffuse = dot( normal, LightDirection );
 
-	float3 diffuse = dot( normal, lightDirection ) * DiffuseIntensity * DiffuseColor;
-
-	output.EmissiveLight=saturate(emmissiveLight+diffuse);
+	output.EmissiveLight=saturate(diffuse + ambient);
     return output;
 }	
 

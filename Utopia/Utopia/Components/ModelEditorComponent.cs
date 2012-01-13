@@ -1303,6 +1303,7 @@ namespace Utopia.Components
                 _voxelEffect.Begin();
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
+                _voxelEffect.CBPerFrame.Values.LightDirection = new Vector3(1, 1, 1);
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply();
 

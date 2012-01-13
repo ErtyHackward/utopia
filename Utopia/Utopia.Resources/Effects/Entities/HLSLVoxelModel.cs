@@ -18,7 +18,7 @@ namespace UtopiaContent.Effects.Entities
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 1168)]
+        [StructLayout(LayoutKind.Explicit, Size = 1184)]
         public struct CBPerFrameStructure
         {
             [FieldOffset(0)]
@@ -31,6 +31,8 @@ namespace UtopiaContent.Effects.Entities
             public float FogDistance;
             [FieldOffset(144), MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
             public Color4[] ColorMapping; //64 values
+            [FieldOffset(1168)]
+            public Vector3 LightDirection;
         }
 
 
