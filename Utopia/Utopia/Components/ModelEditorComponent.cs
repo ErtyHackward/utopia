@@ -1454,7 +1454,7 @@ namespace Utopia.Components
 
             if (_selectedColorIndex != 63)
             {
-                Array.Copy(array, _selectedColorIndex + 1, array, _selectedColorIndex, 64 - _selectedColorIndex);
+                Array.Copy(array, _selectedColorIndex + 1, array, _selectedColorIndex, 63 - _selectedColorIndex);
             }
             array[63] = new Color4();
             UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);

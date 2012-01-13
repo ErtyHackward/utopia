@@ -8,7 +8,7 @@ cbuffer PerFrame
 	matrix ViewProjection;
 	float3 SunColor;			  // Diffuse lighting color
 	float fogdist;
-	float4 colorMapping[256];
+	float4 colorMapping[64];
 };
 
 cbuffer PerPart
@@ -38,7 +38,8 @@ struct PS_IN
 	float4 Position				: SV_POSITION;
 	float fogPower				: VARIOUS0;
 	int colorIndex              : VARIOUS1;
-	float3 EmissiveLight		: Light0;
+	float3 EmissiveLight        : Light0;
+	float Light					: Light1;
 	float3 normal				: NORMAL0;
 };
 
@@ -72,6 +73,7 @@ PS_IN VS(VS_IN input)
 	normal = mul(normal, Transform);
 	normal = mul(normal, World);
 	
+	output.Light = input.faceType.y;
 
 	float3 lightDirection = float3(1,1,1);
 	
@@ -95,9 +97,10 @@ PS_IN VS(VS_IN input)
 //--------------------------------------------------------------------------------------
 float4 PS(PS_IN input) : SV_Target
 {
-	float4 color = float4(input.EmissiveLight, 1); //input.EmissiveLight * colorMapping[input.colorIndex]
-	
-	
+	float intensity = input.Light / 255;
+
+	float4 color = float4(input.EmissiveLight.rgb * intensity, 1);
+		
 	//maybe i just want to take color if coloroverlay is transparent(alpha=0) instead of lerping
 	color = lerp(color, colorMapping[input.colorIndex], 0.25);
 

@@ -42,22 +42,22 @@ namespace Utopia.Entities.Voxel
                         if (blockType == 0) continue;
                         var vec = new ByteVector4(x, y, z, blockType);
                         if (IsEmpty(ref blockData, ref size, x, y, z - 1))
-                            GenerateFaces(CubeFaces.Back, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref blockData, CubeFaces.Back, ref dico, vec, ref vertices, ref indices);
                         
                         if (IsEmpty(ref blockData, ref size, x, y - 1, z))
-                            GenerateFaces(CubeFaces.Bottom, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref blockData, CubeFaces.Bottom, ref dico, vec, ref vertices, ref indices);
 
                         if (IsEmpty(ref blockData, ref size, x, y, z + 1))
-                            GenerateFaces(CubeFaces.Front, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref blockData, CubeFaces.Front, ref dico, vec, ref vertices, ref indices);
                         
                         if (IsEmpty(ref blockData, ref size, x - 1, y, z))
-                            GenerateFaces(CubeFaces.Left, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref blockData, CubeFaces.Left, ref dico, vec, ref vertices, ref indices);
 
                         if (IsEmpty(ref blockData, ref size, x + 1, y, z))
-                            GenerateFaces(CubeFaces.Right, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref blockData, CubeFaces.Right, ref dico, vec, ref vertices, ref indices);
 
                         if (IsEmpty(ref blockData, ref size, x, y + 1, z))
-                            GenerateFaces(CubeFaces.Top, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref blockData, CubeFaces.Top, ref dico, vec, ref vertices, ref indices);
                     }
                 }
             }
@@ -71,15 +71,21 @@ namespace Utopia.Entities.Voxel
             return blockData.GetBlock(x, y, z) == 0;
         }
 
-        private void GenerateFaces(CubeFaces cubeFace, ref Dictionary<int, int> dico, ByteVector4 cubePosition, ref List<VertexVoxel> vertices, ref List<ushort> indices)
+        private byte Avg(int b1, int b2, int b3, int b4)
         {
-             // hash and index
+            return (byte)((b1 + b2 + b3 + b4)/4);
+        }
+
+        private void GenerateFaces(ref InsideDataProvider blockData, CubeFaces cubeFace, ref Dictionary<int, int> dico, ByteVector4 cubePosition, ref List<VertexVoxel> vertices, ref List<ushort> indices)
+        {
+            // hash and index
 
             ByteVector4 topLeft;
             ByteVector4 topRight;
             ByteVector4 bottomLeft;
             ByteVector4 bottomRight;
 
+            var chunkSize = blockData.ChunkSize;
             var cubeId = cubePosition.W;
             var cubeFaceType = (int)cubeFace;
             var faceTypeByte = (byte)cubeFace;
@@ -88,384 +94,512 @@ namespace Utopia.Entities.Voxel
             bool vertexInDico;
             int generatedVertex = 0;
             var verticeCubeOffset = vertices.Count;
-
+            
             switch (cubeFace)
             {
+                #region Front
                 case CubeFaces.Front:
-
-                    topLeft = cubePosition + new ByteVector4(0, 1, 1, 0);
-                    topRight = cubePosition + new ByteVector4(1, 1, 1, 0);
-                    bottomLeft = cubePosition + new ByteVector4(0, 0, 1, 0);
-                    bottomRight = cubePosition + new ByteVector4(1, 0, 1, 0);
-
-                    hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
-                    if ( !vertexInDico)
                     {
-                        vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset0);
-                        
-                        
-                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
-                        generatedVertex++;
+                        var lfront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y, cubePosition.Z + 1) ? 255 : 0;
+                        var ltopFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
+                        var lbottomFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
+                        var lrightFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y, cubePosition.Z + 1) ? 255 : 0;
+                        var lfrontLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y, cubePosition.Z + 1) ? 255 : 0;
+                        var ltopLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
+                        var ltopFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
+                        var lbottomLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
+                        var lbottomFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
+
+                        topLeft = cubePosition + new ByteVector4(0, 1, 1, 0);
+                        topRight = cubePosition + new ByteVector4(1, 1, 1, 0);
+                        bottomLeft = cubePosition + new ByteVector4(0, 0, 1, 0);
+                        bottomRight = cubePosition + new ByteVector4(1, 0, 1, 0);
+
+                        hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset0 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset0);
+
+                            var light = Avg(lfront, lfrontLeft, ltopFront, ltopLeftFront);
+
+                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset1 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset1);
+
+                            var light = Avg(lfront, ltopFront, lrightFront, ltopFrontRight);
+
+                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset2 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset2);
+
+                            var light = Avg(lfront, lfrontLeft, lbottomFront, lbottomLeftFront);
+
+                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset3 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset3);
+
+                            var light = Avg(lfront, lrightFront, lbottomFront, lbottomFrontRight);
+
+                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        //Create Vertices
+                        indices.Add((ushort)(vertexOffset0));
+                        indices.Add((ushort)(vertexOffset2));
+                        indices.Add((ushort)(vertexOffset1));
+
+                        indices.Add((ushort)(vertexOffset2));
+                        indices.Add((ushort)(vertexOffset3));
+                        indices.Add((ushort)(vertexOffset1));
                     }
-
-                    hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset1);
-
-                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset2);
-
-                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset3);
-
-                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    //Create Vertices
-                    indices.Add((ushort)(vertexOffset0));
-                    indices.Add((ushort)(vertexOffset2));
-                    indices.Add((ushort)(vertexOffset1));
-
-                    indices.Add((ushort)(vertexOffset2));
-                    indices.Add((ushort)(vertexOffset3));
-                    indices.Add((ushort)(vertexOffset1));
-
                     break;
+                #endregion
+                #region Back
                 case CubeFaces.Back:
-
-
-                    topLeft = cubePosition + new ByteVector4(1, 1, 0, 0);
-                    topRight = cubePosition + new ByteVector4(0, 1, 0, 0);
-                    bottomLeft = cubePosition + new ByteVector4(1, 0, 0, 0);
-                    bottomRight = cubePosition + new ByteVector4(0, 0, 0, 0);
-
-                    hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
-                    if ( !vertexInDico)
                     {
-                        vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset0);
+                        var lback = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y, cubePosition.Z - 1) ? 255 : 0;
+                        var ltopBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
+                        var lbottomBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
+                        var lbackRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y, cubePosition.Z - 1) ? 255 : 0;
+                        var lleftback = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y, cubePosition.Z - 1) ? 255 : 0;
+                        var ltopRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
+                        var ltopBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
+                        var lbottomRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
+                        var lbottomBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
 
-                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
-                        generatedVertex++;
+                        topLeft = cubePosition + new ByteVector4(1, 1, 0, 0); // topRightBack
+                        topRight = cubePosition + new ByteVector4(0, 1, 0, 0); // topLeftBack
+                        bottomLeft = cubePosition + new ByteVector4(1, 0, 0, 0); // bottomRightBack
+                        bottomRight = cubePosition + new ByteVector4(0, 0, 0, 0); // bottomLeftBack
+
+                        hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset0 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset0);
+
+                            var light = Avg(lback, ltopBack, lleftback, ltopBackLeft);
+
+                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset1 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset1);
+
+                            var light = Avg(lback, lbackRight, ltopBack, ltopRightBack);
+                            
+                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset2 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset2);
+                            
+                            var light = Avg(lback, lbottomBack, lleftback, lbottomBackLeft);
+
+                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset3 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset3);
+                            
+                            var light = Avg(lback, lbackRight, lbottomBack, lbottomRightBack);
+                            
+                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        //Create Vertices
+                        indices.Add((ushort)(vertexOffset0));
+                        indices.Add((ushort)(vertexOffset1));
+                        indices.Add((ushort)(vertexOffset2));
+
+                        indices.Add((ushort)(vertexOffset2));
+                        indices.Add((ushort)(vertexOffset1));
+                        indices.Add((ushort)(vertexOffset3));
                     }
-
-                    hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset1);
-
-                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset2);
-
-                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset3);
-
-                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    //Create Vertices
-                    indices.Add((ushort)(vertexOffset0));
-                    indices.Add((ushort)(vertexOffset1));
-                    indices.Add((ushort)(vertexOffset2));
-
-                    indices.Add((ushort)(vertexOffset2));
-                    indices.Add((ushort)(vertexOffset1));
-                    indices.Add((ushort)(vertexOffset3));
-
                     break;
+                #endregion
+                #region Top
                 case CubeFaces.Top:
-
-
-                    topLeft = cubePosition + new ByteVector4(0, 1, 0, 0);
-                    topRight = cubePosition + new ByteVector4(1, 1, 0, 0);
-                    bottomLeft = cubePosition + new ByteVector4(0, 1, 1, 0);
-                    bottomRight = cubePosition + new ByteVector4(1, 1, 1, 0);
-
-                    hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
-                    if (!vertexInDico)
                     {
-                        vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset0);
+                        var ltop = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y + 1, cubePosition.Z) ? 255 : 0;
+                        var ltopLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z) ? 255 : 0;
+                        var ltopBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
+                        var ltopRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z) ? 255 : 0;
+                        var ltopFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
+                        var ltopLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
+                        var ltopFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
+                        var ltopRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
+                        var ltopBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
 
-                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
-                        generatedVertex++;
+                        topLeft = cubePosition + new ByteVector4(0, 1, 0, 0); // topLeftBack
+                        topRight = cubePosition + new ByteVector4(1, 1, 0, 0); // topRightBack
+                        bottomLeft = cubePosition + new ByteVector4(0, 1, 1, 0); // topLeftFront
+                        bottomRight = cubePosition + new ByteVector4(1, 1, 1, 0); // topRightFront
+
+                        hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset0 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset0);
+                            
+                            // topLeftBack
+                            var light = Avg(ltop, ltopLeft, ltopBack, ltopBackLeft);
+
+                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset1 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset1);
+
+                            // topRightFront
+                            var light = Avg(ltop, ltopRight, ltopFront, ltopFrontRight);
+
+                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset2 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset2);
+
+                            // topLeftFront
+                            var light = Avg(ltop, ltopLeft, ltopFront, ltopLeftFront);
+
+                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset3 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset3);
+
+                            // topRightBack
+                            var light = Avg(ltop, ltopRight, ltopBack, ltopRightBack);
+
+                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        //Create Vertices
+                        indices.Add((ushort)(vertexOffset0));
+                        indices.Add((ushort)(vertexOffset2));
+                        indices.Add((ushort)(vertexOffset1));
+
+                        indices.Add((ushort)(vertexOffset0));
+                        indices.Add((ushort)(vertexOffset1));
+                        indices.Add((ushort)(vertexOffset3));
                     }
-
-                    hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
-                    if (!vertexInDico)
-                    {
-                        vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset1);
-
-                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
-                    if (!vertexInDico)
-                    {
-                        vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset2);
-
-                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
-                    if (!vertexInDico)
-                    {
-                        vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset3);
-
-                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    //Create Vertices
-                    indices.Add((ushort)(vertexOffset0));
-                    indices.Add((ushort)(vertexOffset2));
-                    indices.Add((ushort)(vertexOffset1));
-
-                    indices.Add((ushort)(vertexOffset0));
-                    indices.Add((ushort)(vertexOffset1));
-                    indices.Add((ushort)(vertexOffset3));
-
                     break;
-
+                #endregion
+                #region Bottom
                 case CubeFaces.Bottom:
-
-                    topLeft = cubePosition + new ByteVector4(0, 0, 1, 0);
-                    topRight = cubePosition + new ByteVector4(1, 0, 1, 0);
-                    bottomLeft = cubePosition + new ByteVector4(0, 0, 0, 0);
-                    bottomRight = cubePosition + new ByteVector4(1, 0, 0, 0);
-
-                    hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
-                    if (!vertexInDico)
                     {
-                        vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset0);
+                        var lbottom = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y - 1, cubePosition.Z) ? 255 : 0;
+                        var lbottomLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z) ? 255 : 0;
+                        var lbottomBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
+                        var lbottomright = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z) ? 255 : 0;
+                        var lbottomFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
+                        var lbottomLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
+                        var lbottomFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
+                        var lbottomRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
+                        var lbottomBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
 
-                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
-                        generatedVertex++;
+                        topLeft = cubePosition + new ByteVector4(0, 0, 1, 0); // bottomLeftFront
+                        topRight = cubePosition + new ByteVector4(1, 0, 1, 0); // bottomRightFront
+                        bottomLeft = cubePosition + new ByteVector4(0, 0, 0, 0); // bottomLeftBack
+                        bottomRight = cubePosition + new ByteVector4(1, 0, 0, 0); // bottomRightBack
+
+                        hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset0 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset0);
+
+                            // bottomLeftFront
+                            var light = Avg(lbottom, lbottomLeft, lbottomFront, lbottomLeftFront);
+
+                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset1 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset1);
+
+                            // bottomLeftBack
+                            var light = Avg(lbottom, lbottomLeft, lbottomBack, lbottomBackLeft);
+
+                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset2 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset2);
+
+                            // bottomRightFront
+                            var light = Avg(lbottom, lbottomright, lbottomFront, lbottomFrontRight);
+
+                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset3 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset3);
+
+                            // bottomRightBack
+                            var light = Avg(lbottom, lbottomright, lbottomBack, lbottomRightBack);
+
+                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        //Create Vertices
+                        indices.Add((ushort)(vertexOffset0));
+                        indices.Add((ushort)(vertexOffset1));
+                        indices.Add((ushort)(vertexOffset2));
+
+                        indices.Add((ushort)(vertexOffset1));
+                        indices.Add((ushort)(vertexOffset3));
+                        indices.Add((ushort)(vertexOffset2));
                     }
-
-                    hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
-                    if (!vertexInDico)
-                    {
-                        vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset1);
-
-                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
-                    if (!vertexInDico)
-                    {
-                        vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset2);
-
-                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
-                    if (!vertexInDico)
-                    {
-                        vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset3);
-
-                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    //Create Vertices
-                    indices.Add((ushort)(vertexOffset0));
-                    indices.Add((ushort)(vertexOffset1));
-                    indices.Add((ushort)(vertexOffset2));
-
-                    indices.Add((ushort)(vertexOffset1));
-                    indices.Add((ushort)(vertexOffset3));
-                    indices.Add((ushort)(vertexOffset2));
-
                     break;
-
+                #endregion
+                #region Left
                 case CubeFaces.Left:
-
-                    topLeft = cubePosition + new ByteVector4(0, 1, 0, 0);
-                    bottomRight = cubePosition + new ByteVector4(0, 0, 1, 0);
-                    bottomLeft = cubePosition + new ByteVector4(0, 0, 0, 0);
-                    topRight = cubePosition + new ByteVector4(0, 1, 1, 0);
-
-                    hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
-                    if ( !vertexInDico)
                     {
-                        vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset0);
+                        var lleft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y, cubePosition.Z) ? 255 : 0;
+                        var ltopLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z) ? 255 : 0;
+                        var lbottomLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z) ? 255 : 0;
+                        var lfrontLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y, cubePosition.Z + 1) ? 255 : 0;
+                        var lleftback = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y, cubePosition.Z - 1) ? 255 : 0;
+                        var ltopLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
+                        var ltopBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
+                        var lbottomLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
+                        var lbottomBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
 
-                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
-                        generatedVertex++;
+                        topLeft = cubePosition + new ByteVector4(0, 1, 0, 0); // topLeftBack
+                        bottomRight = cubePosition + new ByteVector4(0, 0, 1, 0); // bottomLeftFront
+                        bottomLeft = cubePosition + new ByteVector4(0, 0, 0, 0); // bottomLeftBack
+                        topRight = cubePosition + new ByteVector4(0, 1, 1, 0); // topLeftFront
+
+                        hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset0 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset0);
+
+                            // topLeftBack
+                            var light = Avg(lleft, ltopLeft, lleftback, ltopBackLeft);
+
+                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset1 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset1);
+
+                            // topLeftFront
+                            var light = Avg(lleft, ltopLeft, lfrontLeft, ltopLeftFront);
+
+                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset2 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset2);
+
+                            // bottomLeftBack
+                            var light = Avg(lleft, lbottomLeft, lleftback, lbottomBackLeft);
+
+                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset3 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset3);
+
+                            // bottomLeftFront
+                            var light = Avg(lleft, lbottomLeft, lfrontLeft, lbottomLeftFront);
+
+                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        //Create Vertices
+                        indices.Add((ushort)(vertexOffset0));
+                        indices.Add((ushort)(vertexOffset2));
+                        indices.Add((ushort)(vertexOffset3));
+
+                        indices.Add((ushort)(vertexOffset1));
+                        indices.Add((ushort)(vertexOffset0));
+                        indices.Add((ushort)(vertexOffset3));
                     }
-
-                    hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset1);
-
-                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset2);
-
-                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset3);
-
-                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    //Create Vertices
-                    indices.Add((ushort)(vertexOffset0));
-                    indices.Add((ushort)(vertexOffset2));
-                    indices.Add((ushort)(vertexOffset3));
-
-                    indices.Add((ushort)(vertexOffset1));
-                    indices.Add((ushort)(vertexOffset0));
-                    indices.Add((ushort)(vertexOffset3));
                     break;
+                #endregion
+                #region Right
                 case CubeFaces.Right:
-
-                    topLeft = cubePosition + new ByteVector4(1, 1, 1, 0);
-                    topRight = cubePosition + new ByteVector4(1, 1, 0, 0);
-                    bottomLeft = cubePosition + new ByteVector4(1, 0, 1, 0);
-                    bottomRight = cubePosition + new ByteVector4(1, 0, 0, 0);
-
-                    hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
-                    if ( !vertexInDico)
                     {
-                        vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset0);
+                        var lright = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y, cubePosition.Z) ? 255 : 0;
+                        var ltopRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z) ? 255 : 0;
+                        var lbottomright = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z) ? 255 : 0;
+                        var lbackRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y, cubePosition.Z - 1) ? 255 : 0;
+                        var lrightFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y, cubePosition.Z + 1) ? 255 : 0;
+                        var ltopFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
+                        var ltopRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
+                        var lbottomFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
+                        var lbottomRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
 
-                        vertices.Add(new VertexVoxel(topRight, faceTypeByte));
-                        generatedVertex++;
+                        topLeft = cubePosition + new ByteVector4(1, 1, 1, 0); // topRightFront
+                        topRight = cubePosition + new ByteVector4(1, 1, 0, 0); // topRightBack
+                        bottomLeft = cubePosition + new ByteVector4(1, 0, 1, 0); // bottomRightFront
+                        bottomRight = cubePosition + new ByteVector4(1, 0, 0, 0); // bottonRightBack
+
+                        hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset0 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset0);
+
+                            // topRightBack
+                            var light = Avg(lright, ltopRight, lbackRight, ltopRightBack);
+
+                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset1 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset1);
+
+                            // topRightFront
+                            var light = Avg(lright, ltopRight, lrightFront, ltopFrontRight);
+
+                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset2 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset2);
+
+                            // bottomRightFront
+                            var light = Avg(lright, lbottomright, lrightFront, lbottomFrontRight);
+
+                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
+                        vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
+                        if (!vertexInDico)
+                        {
+                            vertexOffset3 = generatedVertex + verticeCubeOffset;
+                            dico.Add(hashVertex, vertexOffset3);
+
+                            // bottonRightBack
+                            var light = Avg(lright, lbottomright, lbackRight, lbottomRightBack);
+
+                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            generatedVertex++;
+                        }
+
+                        //Create Vertices
+                        indices.Add((ushort)(vertexOffset0));
+                        indices.Add((ushort)(vertexOffset2));
+                        indices.Add((ushort)(vertexOffset3));
+
+                        indices.Add((ushort)(vertexOffset1));
+                        indices.Add((ushort)(vertexOffset2));
+                        indices.Add((ushort)(vertexOffset0));
                     }
-
-                    hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset1);
-
-                        vertices.Add(new VertexVoxel(topLeft, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (bottomLeft.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset2);
-
-                        vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    hashVertex = cubeFaceType + (bottomRight.GetHashCode() << 4);
-                    vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
-                    if ( !vertexInDico)
-                    {
-                        vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        dico.Add(hashVertex, vertexOffset3);
-
-                        vertices.Add(new VertexVoxel(bottomRight, faceTypeByte));
-                        generatedVertex++;
-                    }
-
-                    //Create Vertices
-                    indices.Add((ushort)(vertexOffset0));
-                    indices.Add((ushort)(vertexOffset2));
-                    indices.Add((ushort)(vertexOffset3));
-
-                    indices.Add((ushort)(vertexOffset1));
-                    indices.Add((ushort)(vertexOffset2));
-                    indices.Add((ushort)(vertexOffset0));
-
                     break;
+                #endregion
             }
-
-
-
-
         }
         
         public VertexBuffer<VertexVoxel> InitBuffer(List<VertexVoxel> vertice)
