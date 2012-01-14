@@ -12,6 +12,7 @@ using S33M3Engines.StatesManager;
 using S33M3Engines.Buffers;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
+using Utopia.Action;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
@@ -88,6 +89,7 @@ namespace Utopia.Components
         private readonly VoxelModelManager _manager;
         private readonly VoxelMeshFactory _meshFactory;
         private readonly GuiManager _gui;
+        private readonly ActionsManager _actions;
         private readonly List<Control> _controls = new List<Control>();
 
         private int _selectedFrameIndex;
@@ -100,6 +102,13 @@ namespace Utopia.Components
 
         private int _selectedColorIndex;
         private int _selectedToolIndex;
+
+        /// <summary>
+        /// Provides a plane for a part translating
+        /// </summary>
+        private Plane _translatePlane;
+        private bool _drawGround;
+        private Vector3? _translatePoint;
 
         #endregion
 
@@ -423,12 +432,9 @@ namespace Utopia.Components
             model.VoxelModel.ColorMapping = new ColorMapping { BlockColors = new Color4[64] };
 
             // set some initial colors
-            model.VoxelModel.ColorMapping.BlockColors[0] = new Color4(1, 1, 1, 1);
-            model.VoxelModel.ColorMapping.BlockColors[1] = new Color4(0, 0, 0, 1);
-            model.VoxelModel.ColorMapping.BlockColors[2] = new Color4(1, 0, 0, 1);
-            model.VoxelModel.ColorMapping.BlockColors[3] = new Color4(0, 1, 0, 1);
-            model.VoxelModel.ColorMapping.BlockColors[4] = new Color4(0, 0, 1, 1);
 
+            ColorLookup.Colours.CopyTo(model.VoxelModel.ColorMapping.BlockColors,0);            
+            
             VisualVoxelModel = model;
 
             _modelsList.Items.Add(e.Name);
@@ -665,7 +671,10 @@ namespace Utopia.Components
         /// <param name="timeSpent">Provides a snapshot of timing values.</param>
         public override void Update(ref GameTime timeSpent)
         {
-            if (_visualVoxelModel == null) return;
+            if (_visualVoxelModel == null || !_d3DEngine.HasFocus || DialogHelper.DialogBg.Parent != null) return;
+
+            if (GuiManager.DialogClosed)
+                _prevState = Mouse.GetState();
 
             var mouseState = Mouse.GetState();
             var keyboardState = Keyboard.GetState();
@@ -674,7 +683,7 @@ namespace Utopia.Components
 
             var dx = ((float)mouseState.X - _prevState.X) / 100;
             var dy = ((float)mouseState.Y - _prevState.Y) / 100;
-
+            
             if (mouseState.MiddleButton == ButtonState.Pressed && _prevState.X != 0 && _prevState.Y != 0)
             {
                 if (keyboardState.IsKeyDown(Keys.ShiftKey))
@@ -710,29 +719,49 @@ namespace Utopia.Components
 
                         if (_selectedPartIndex != -1)
                         {
+                            var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex];
+                            var partState = state.PartsStates[_selectedPartIndex];
+                            bb = partState.BoundingBox;
+                            var center = new Vector3((bb.Maximum.X - bb.Minimum.X)/2,(bb.Maximum.Y - bb.Minimum.Y)/2,(bb.Maximum.Z - bb.Minimum.Z)/2) + partState.Transform.TranslationVector;
+                            _translatePlane = new Plane(center, _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
+
+                            if (mouseState.LeftButton == ButtonState.Released)
+                            {
+                                _translatePoint = null;
+                                // recalculate state bounding box
+                                state.UpdateBoundingBox();
+                            }
+
                             if (mouseState.LeftButton == ButtonState.Pressed)
                             {
-                                _accumulatedPosition.X += dx*4;
-                                _accumulatedPosition.Y += dy*4;
+                                Vector3D mPosition, mLookAt;
+                                var worldViewProjection = _transform * _viewProjection;
+                                InputsManager.UnprojectMouseCursor(_d3DEngine, ref worldViewProjection, out mPosition, out mLookAt);
+                                var r = new Ray(mPosition.AsVector3(), mLookAt.AsVector3());
 
-                                if (_accumulatedPosition.X > 1 || _accumulatedPosition.X < 1)
+                                Vector3 intersectPoint;
+                                var intersects = r.Intersects(ref _translatePlane, out intersectPoint);
+
+                                if (_translatePoint == null)
                                 {
-                                    dx = (int)_accumulatedPosition.X;
-                                    _accumulatedPosition.X = _accumulatedPosition.X % 1;
+                                    if (intersects)
+                                    {
+                                        _translatePoint = intersectPoint;
+                                    }
+                                    else return;
                                 }
 
-                                if (_accumulatedPosition.Y > 1 || _accumulatedPosition.Y < 1)
-                                {
-                                    dy = (int)_accumulatedPosition.Y;
-                                    _accumulatedPosition.Y = _accumulatedPosition.Y % 1;
-                                }
+                                var translationVector = intersectPoint - _translatePoint.Value;
 
-                                var translationVector = _flipAxis ? new Vector3(-dx, -dy, 0) : new Vector3(0, -dy, -dx);
+                                _translatePoint = intersectPoint;
+
                                 // send translation to current state
-                                var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[_selectedPartIndex];
+                                //var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[_selectedPartIndex];
                                 var translationMatrix = Matrix.Translation(translationVector);
-                                state.Transform *= translationMatrix;
-                                state.BoundingBox = new BoundingBox(Vector3.TransformCoordinate(state.BoundingBox.Minimum, translationMatrix), Vector3.TransformCoordinate(state.BoundingBox.Maximum, translationMatrix));
+                                partState.Transform.TranslationVector += translationVector;
+                                partState.BoundingBox = new BoundingBox(Vector3.TransformCoordinate(partState.BoundingBox.Minimum, translationMatrix), Vector3.TransformCoordinate(partState.BoundingBox.Maximum, translationMatrix));
+
+
                             }
                         }
                     }
@@ -761,8 +790,10 @@ namespace Utopia.Components
                                     case 2:
                                         // color fill 
                                         var fillIndex = frame.BlockData.GetBlock(_pickedCube.Value);
+                                        var fillWith = (byte)(_selectedColorIndex + 1);
                                         // recursive change all adjacent cubes
-                                        ColorFill(frame, _pickedCube.Value, fillIndex, (byte)(_selectedColorIndex + 1));
+                                        if (fillIndex != fillWith)
+                                            ColorFill(frame, _pickedCube.Value, fillIndex, fillWith);
                                         break;
                                 }
 
@@ -818,9 +849,7 @@ namespace Utopia.Components
                 }
             }
         }
-
         
-
         private void GetSelectedCube(out Vector3I? cubePosition, out Vector3I? newCubePosition)
         {
             if (_selectedPartIndex == -1 || _selectedFrameIndex == -1)
@@ -835,6 +864,13 @@ namespace Utopia.Components
             var worldViewProjection = _transform * _viewProjection;
 
             InputsManager.UnprojectMouseCursor(_d3DEngine, ref worldViewProjection, out mPosition, out mLookAt);
+
+            if (double.IsNaN(mPosition.X) || double.IsNaN(mLookAt.X))
+            {
+                cubePosition = null;
+                newCubePosition = null;
+                return;
+            }
 
             var blocks = _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames[_selectedFrameIndex].BlockData;
 
@@ -971,7 +1007,7 @@ namespace Utopia.Components
 
         private void UpdateTransformMatrix(ViewParameters parameters, BoundingBox modelBoundingBox)
         {
-            var translateVector = Vector3.Negate(Vector3.Subtract(modelBoundingBox.Maximum, modelBoundingBox.Minimum) / 2);
+            var translateVector = Vector3.Negate(Vector3.Add(modelBoundingBox.Maximum, modelBoundingBox.Minimum) / 2);
 
             var translation = Matrix.Translation(translateVector);
             var rotationX = Matrix.RotationX(parameters.RotateY);
@@ -1159,6 +1195,8 @@ namespace Utopia.Components
                         DrawCrosshair(translate, sizef, _flipAxis); 
                     }
                 }
+
+                DrawBox(state.BoundingBox, new Color4(1, 1, 1, 0.1f));
             }
         }
 

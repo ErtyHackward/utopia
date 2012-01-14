@@ -61,8 +61,7 @@ namespace Utopia.Components
         private ListControl _statesList;
         private ListControl _partsList;
         private ListControl _framesList;
-
-        private ColorButtonControl _selectedColorControl;
+        
 
         private void InitializeGui()
         {
@@ -219,7 +218,7 @@ namespace Utopia.Components
 
             _toolsWindow.Children.Clear();
             _toolsWindow.Children.Add(_modesButtonsGroup);
-
+            
             UpdateLayout();
         }
 
@@ -293,9 +292,6 @@ namespace Utopia.Components
                 colorControl.Pressed += OnColorSelected;
                 _colorPalette.Add(colorControl);
 
-                if (i == selectedColorIndex)
-                    _selectedColorControl = colorControl;
-
             }
 
             _colorPaletteGroup.Children.Clear();
@@ -308,7 +304,7 @@ namespace Utopia.Components
             var rowsCount = _colorPaletteGroup.Children.Count%8 > 0 ? _colorPaletteGroup.Children.Count/8 + 1 : _colorPaletteGroup.Children.Count/8;
             
             _colorPaletteGroup.UpdateLayout();
-            _colorPaletteGroup.Bounds.Size.Y.Offset = 20 * rowsCount + 20;
+            _colorPaletteGroup.Bounds.Size.Y.Offset = 20 * rowsCount + 5;
             _frameToolsGroup.UpdateLayout();
         }
         
@@ -316,11 +312,6 @@ namespace Utopia.Components
         {
             var control = (ColorButtonControl)sender;
             int.TryParse(control.Name.Substring(5), out _selectedColorIndex);
-
-            if (_selectedColorControl != null)
-                _selectedColorControl.Release();
-
-            _selectedColorControl = control;
         }
 
         private WindowControl CreateToolsWindow()
@@ -330,19 +321,19 @@ namespace Utopia.Components
 
             _modesButtonsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 45), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
-            var viewModeButton = new ButtonControl { Text = "View" };
+            var viewModeButton = new StickyButtonControl { Text = "View", Sticked = true };
             viewModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
             viewModeButton.Pressed += delegate { Mode = EditorMode.ModelView; OnViewMode(); };
 
-            var layoutModeButton = new ButtonControl { Text = "Layout" };
+            var layoutModeButton = new StickyButtonControl { Text = "Layout" };
             layoutModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
             layoutModeButton.Pressed += delegate { Mode = EditorMode.ModelLayout; OnLayoutMode(); };
 
-            var frameModeButton = new ButtonControl { Text = "Frame" };
+            var frameModeButton = new StickyButtonControl { Text = "Frame" };
             frameModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
             frameModeButton.Pressed += delegate { Mode = EditorMode.FrameEdit; OnFrameMode(); };
 
-            var animationModeButton = new ButtonControl { Text = "Anim" };
+            var animationModeButton = new StickyButtonControl { Text = "Anim" };
             animationModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
             animationModeButton.Pressed += delegate { Mode = EditorMode.ModelLayout; OnAnimationMode(); };
 
@@ -353,7 +344,8 @@ namespace Utopia.Components
             
             _modesButtonsGroup.UpdateLayout();
 
-            _frameToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 300), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            #region Frame tools
+            _frameToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 310), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
             _frameToolsGroup.Children.Add(new LabelControl { Text = "Tools", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
@@ -407,10 +399,17 @@ namespace Utopia.Components
             _frameToolsGroup.Children.Add(colorsButtons);
 
             _frameToolsGroup.UpdateLayout();
+            #endregion
+
+
 
             _layoutToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 100), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
+            _layoutToolsGroup.Children.Add(new LabelControl { Text = "View", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
+            var groundCheck = new OptionControl { Bounds = new UniRectangle(0,0, 70, 20), Text ="Ground" };
+            groundCheck.Changed += delegate { _drawGround = !_drawGround; };
+            _layoutToolsGroup.Children.Add(groundCheck);
 
 
             toolsWindow.Children.Add(_modesButtonsGroup);

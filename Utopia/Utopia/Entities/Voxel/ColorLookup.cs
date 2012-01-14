@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using SharpDX;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Entities.Voxel
@@ -12,7 +10,7 @@ namespace Utopia.Entities.Voxel
     /// </summary>
     public static class ColorLookup
     {
-        public static readonly Color[] Colours;
+        public static readonly Color4[] Colours;
 
         /// <summary>
         /// Palette of 64 nice colours
@@ -30,7 +28,7 @@ namespace Utopia.Entities.Voxel
 
         static ColorLookup()
         {
-            Colours = new Color[_palette.Length];
+            Colours = new Color4[_palette.Length];
             for (int i = 0; i < _palette.Length; i++)
             {
                 Colours[i] = HexStringToColor(_palette[i]);
@@ -38,22 +36,18 @@ namespace Utopia.Entities.Voxel
         }
 
 
-        private static Color HexStringToColor(string hexColor)
+        private static Color4 HexStringToColor(string hexColor)
         {
-
+            
             string a = hexColor.Substring(0, 2);
             string r = hexColor.Substring(2, 2);
             string g = hexColor.Substring(4, 2);
             string b = hexColor.Substring(6, 2);
-            int ai
-               = Int32.Parse(a, System.Globalization.NumberStyles.HexNumber);
-            int ri
-               = Int32.Parse(r, System.Globalization.NumberStyles.HexNumber);
-            int gi
-               = Int32.Parse(g, System.Globalization.NumberStyles.HexNumber);
-            int bi
-               = Int32.Parse(b, System.Globalization.NumberStyles.HexNumber);
-            return new Color(ri, gi, bi, ai);
+            var ai = (float)Int32.Parse(a, System.Globalization.NumberStyles.HexNumber);
+            var ri = (float)Int32.Parse(r, System.Globalization.NumberStyles.HexNumber);
+            var gi = (float)Int32.Parse(g, System.Globalization.NumberStyles.HexNumber);
+            var bi = (float)Int32.Parse(b, System.Globalization.NumberStyles.HexNumber);
+            return new Color4(ri/255, gi/255, bi/255, ai/255);
         }
 
     }

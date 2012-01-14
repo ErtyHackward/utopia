@@ -4,15 +4,16 @@ using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
 using SharpDX;
 using SharpDX.Direct3D11;
+using Utopia.GUI.D3D;
 
 namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
 {
-    internal static class DialogHelper
+    public static class DialogHelper
     {
         /// <summary>
         /// This control prevents interaction with other active GUI while dialog is shown
         /// </summary>
-        internal static Control DialogBg = new Control { Bounds = new UniRectangle(0, 0, 10000, 10000) };
+        public static Control DialogBg = new Control { Bounds = new UniRectangle(0, 0, 10000, 10000) };
     }
 
     /// <summary>
@@ -145,6 +146,7 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
 
         private void HideDialog()
         {
+            GuiManager.DialogClosed = true;
             Screen.Desktop.Children.Remove(DialogHelper.DialogBg); 
             Close();
         }

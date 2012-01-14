@@ -98,9 +98,6 @@ namespace Utopia.Entities.Voxel
         /// </summary>
         public void BuildMesh()
         {
-            var minPoint = new Vector3();
-            var maxPoint = new Vector3();
-
             if (_visualParts != null)
             {
                 // dispose prevoious dx data
@@ -141,28 +138,9 @@ namespace Utopia.Entities.Voxel
                 _visualParts[i] = part;
             }
 
-            for (int index = 0; index < _model.States.Count; index++)
+            foreach (var state in _model.States)
             {
-                var state = _model.States[index];
-
-                // calculate bounding boxes for each part state
-                for (int i = 0; i < state.PartsStates.Count; i++)
-                {
-                    var partState = state.PartsStates[i];
-                    var bb = _visualParts[i].BoundingBoxes[partState.ActiveFrame];
-
-                    bb.Minimum = Vector3.TransformCoordinate(bb.Minimum, partState.Transform);
-                    bb.Maximum = Vector3.TransformCoordinate(bb.Maximum, partState.Transform);
-
-                    partState.BoundingBox = bb;
-
-                    minPoint = Vector3.Min(minPoint, bb.Minimum);
-                    minPoint = Vector3.Min(minPoint, bb.Maximum);
-                    maxPoint = Vector3.Max(maxPoint, bb.Maximum);
-                    maxPoint = Vector3.Max(maxPoint, bb.Minimum);
-                }
-                
-                state.BoundingBox = new BoundingBox(minPoint, maxPoint);
+                state.UpdateBoundingBox();
             }
             
             _initialized = true;
