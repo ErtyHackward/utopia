@@ -73,7 +73,7 @@ namespace Utopia.Entities.Voxel
 
         private byte Avg(int b1, int b2, int b3, int b4)
         {
-            return (byte)((b1 + b2 + b3 + b4)/4);
+            return (byte)((b2 + b3 + b4)/3);
         }
 
         private void GenerateFaces(ref InsideDataProvider blockData, CubeFaces cubeFace, ref Dictionary<int, int> dico, ByteVector4 cubePosition, ref List<VertexVoxel> vertices, ref List<ushort> indices)
@@ -110,10 +110,10 @@ namespace Utopia.Entities.Voxel
                         var lbottomLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
                         var lbottomFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
 
-                        topLeft = cubePosition + new ByteVector4(0, 1, 1, 0);
-                        topRight = cubePosition + new ByteVector4(1, 1, 1, 0);
-                        bottomLeft = cubePosition + new ByteVector4(0, 0, 1, 0);
-                        bottomRight = cubePosition + new ByteVector4(1, 0, 1, 0);
+                        topLeft = cubePosition + new ByteVector4(0, 1, 1, 0); // topLeftFront
+                        topRight = cubePosition + new ByteVector4(1, 1, 1, 0); // topRightFront
+                        bottomLeft = cubePosition + new ByteVector4(0, 0, 1, 0); // bottomLeftFront
+                        bottomRight = cubePosition + new ByteVector4(1, 0, 1, 0); // bottomRightFront
 
                         hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -122,6 +122,7 @@ namespace Utopia.Entities.Voxel
                             vertexOffset0 = generatedVertex + verticeCubeOffset;
                             dico.Add(hashVertex, vertexOffset0);
 
+                            // topLeftFront
                             var light = Avg(lfront, lfrontLeft, ltopFront, ltopLeftFront);
 
                             vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
@@ -135,6 +136,7 @@ namespace Utopia.Entities.Voxel
                             vertexOffset1 = generatedVertex + verticeCubeOffset;
                             dico.Add(hashVertex, vertexOffset1);
 
+                            // topRightFront
                             var light = Avg(lfront, ltopFront, lrightFront, ltopFrontRight);
 
                             vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
@@ -148,6 +150,7 @@ namespace Utopia.Entities.Voxel
                             vertexOffset2 = generatedVertex + verticeCubeOffset;
                             dico.Add(hashVertex, vertexOffset2);
 
+                            // bottomLeftFront
                             var light = Avg(lfront, lfrontLeft, lbottomFront, lbottomLeftFront);
 
                             vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
@@ -161,6 +164,7 @@ namespace Utopia.Entities.Voxel
                             vertexOffset3 = generatedVertex + verticeCubeOffset;
                             dico.Add(hashVertex, vertexOffset3);
 
+                            // bottomRightFront
                             var light = Avg(lfront, lrightFront, lbottomFront, lbottomFrontRight);
 
                             vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
@@ -203,6 +207,7 @@ namespace Utopia.Entities.Voxel
                             vertexOffset0 = generatedVertex + verticeCubeOffset;
                             dico.Add(hashVertex, vertexOffset0);
 
+                            // topLeftBack
                             var light = Avg(lback, ltopBack, lleftback, ltopBackLeft);
 
                             vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
@@ -216,6 +221,7 @@ namespace Utopia.Entities.Voxel
                             vertexOffset1 = generatedVertex + verticeCubeOffset;
                             dico.Add(hashVertex, vertexOffset1);
 
+                            // topRightBack
                             var light = Avg(lback, lbackRight, ltopBack, ltopRightBack);
                             
                             vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
@@ -228,7 +234,8 @@ namespace Utopia.Entities.Voxel
                         {
                             vertexOffset2 = generatedVertex + verticeCubeOffset;
                             dico.Add(hashVertex, vertexOffset2);
-                            
+
+                            // bottomLeftBack
                             var light = Avg(lback, lbottomBack, lleftback, lbottomBackLeft);
 
                             vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
@@ -241,7 +248,8 @@ namespace Utopia.Entities.Voxel
                         {
                             vertexOffset3 = generatedVertex + verticeCubeOffset;
                             dico.Add(hashVertex, vertexOffset3);
-                            
+
+                            // bottomRightBack
                             var light = Avg(lback, lbackRight, lbottomBack, lbottomRightBack);
                             
                             vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));

@@ -34,6 +34,11 @@ namespace Utopia.GUI.D3D
 
         private string _debugString;
 
+        /// <summary>
+        /// Indicates that some dialog just closed
+        /// </summary>
+        public static bool DialogClosed;
+
         public GuiManager(Screen screen, D3DEngine d3DEngine)
         {
             _screen = screen;
@@ -115,6 +120,7 @@ namespace Utopia.GUI.D3D
 
         public override void Update(ref GameTime timeSpend)
         {
+            DialogClosed = false;
             InjectInput();
         }
 
@@ -136,7 +142,7 @@ namespace Utopia.GUI.D3D
 
             var button = new ButtonControl { Text = buttonText, Bounds = new UniRectangle((windowWidth - 50) / 2, windowHeight - 30, 50, 20) };
 
-            button.Pressed += delegate { _screen.Desktop.Children.Remove(DialogHelper.DialogBg); mbWindow.Close(); if (action != null) action(); };
+            button.Pressed += delegate { _screen.Desktop.Children.Remove(DialogHelper.DialogBg); mbWindow.Close(); DialogClosed = true; if (action != null) action(); };
 
             mbWindow.Children.Add(button);
 
