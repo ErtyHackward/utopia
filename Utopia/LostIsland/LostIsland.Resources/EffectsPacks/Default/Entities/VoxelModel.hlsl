@@ -39,7 +39,7 @@ struct PS_IN
 	float4 Position				: SV_POSITION;
 	float fogPower				: VARIOUS0;
 	int colorIndex              : VARIOUS1;
-	float3 EmissiveLight        : Light0;
+	float EmissiveLight         : Light0;
 	float Light					: Light1;
 	float3 normal				: NORMAL0;
 };
@@ -84,9 +84,9 @@ PS_IN VS(VS_IN input)
 	//float3 lightDirection = float3(0,0,-5);
 	float3 ambient = float3(0.4, 0.4, 0.4);	
 
-	float3 diffuse = dot( normal, LightDirection );
+	float diffuse = dot( normal, LightDirection );
 
-	output.EmissiveLight=saturate(diffuse + ambient);
+	output.EmissiveLight=saturate(diffuse);
     return output;
 }	
 
@@ -96,17 +96,6 @@ PS_IN VS(VS_IN input)
 float4 PS(PS_IN input) : SV_Target
 {
 	float intensity = input.Light / 255;
-
-	float4 color = float4(input.EmissiveLight.rgb * intensity, 1);
-		
-	//maybe i just want to take color if coloroverlay is transparent(alpha=0) instead of lerping
-	color = lerp(color, colorMapping[input.colorIndex], 0.25);
-
-	//float4 Finalfogcolor = {SunColor / 1.5, color.a};
-	
-	// Apply fog on output color
-	//color = lerp(color, Finalfogcolor, input.fogPower);
-		
-    return color;
+	return float4(lerp(colorMapping[input.colorIndex].rgb * intensity,input.EmissiveLight, 0.4 ),1);
 }
 

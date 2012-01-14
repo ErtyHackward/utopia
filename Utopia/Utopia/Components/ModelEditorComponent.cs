@@ -428,16 +428,30 @@ namespace Utopia.Components
             if (string.IsNullOrEmpty(e.Name))
                 e.Name = "rename_me";
             var model = new VisualVoxelModel(new VoxelModel { Name = e.Name }, _meshFactory);
-            model.VoxelModel.States.Add(new VoxelModelState(model.VoxelModel));
+            var voxelModelState = new VoxelModelState(model.VoxelModel);
+            model.VoxelModel.States.Add(voxelModelState);
             model.VoxelModel.ColorMapping = new ColorMapping { BlockColors = new Color4[64] };
 
             // set some initial colors
-
             ColorLookup.Colours.CopyTo(model.VoxelModel.ColorMapping.BlockColors,0);            
             
+            // add default part
+
+            var part = new VoxelModelPart { Name = "Main" };
+            part.Frames.Add(new VoxelFrame(new Vector3I(16, 16, 16)));
+            voxelModelState.PartsStates.Add(new VoxelModelPartState { Transform = Matrix.Identity });
+
+
+            model.VoxelModel.Parts.Add(part);
+            model.BuildMesh();
+            _partsList.Items.Add(part.Name);
+
+
             VisualVoxelModel = model;
 
             _modelsList.Items.Add(e.Name);
+            _modelsList.SelectedItems.Clear();
+            _modelsList.SelectedItems.Add(_modelsList.Items.Count - 1);
         }
 
         private void OnPartsAddPressed()

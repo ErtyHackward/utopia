@@ -73,7 +73,7 @@ namespace Utopia.Entities.Voxel
 
         private byte Avg(int b1, int b2, int b3, int b4)
         {
-            return (byte)((b2 + b3 + b4)/3);
+            return (byte)((b1 + b2 + b3 + b4)/4);
         }
 
         private void GenerateFaces(ref InsideDataProvider blockData, CubeFaces cubeFace, ref Dictionary<int, int> dico, ByteVector4 cubePosition, ref List<VertexVoxel> vertices, ref List<ushort> indices)
