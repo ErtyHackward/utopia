@@ -87,7 +87,7 @@ namespace Nuclex.UserInterface.Visuals.Flat.Renderers {
                   graphics.DrawElement("list.selection", itemBounds);
               }
 
-              graphics.DrawString(Style, itemBounds, control.Items[item]);
+              graphics.DrawString(Style, itemBounds, control.Items[item].ToString());
               itemBounds.Y += rowHeight;
           }
       //}

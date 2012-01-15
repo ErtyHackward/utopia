@@ -105,7 +105,7 @@ namespace LostIsland.Client.States
             {
                 var gui = _iocContainer.Get<GuiManager>();
 
-                gui.MessageBox("Please fill the form before press a login button", "Error", "Ok", delegate { login.Locked = false; });
+                gui.MessageBox("Please fill the form before press a login button", "Error", null, delegate { login.Locked = false; });
                 return;
             }
 

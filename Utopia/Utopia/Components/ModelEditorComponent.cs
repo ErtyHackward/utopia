@@ -110,6 +110,8 @@ namespace Utopia.Components
         private bool _drawGround;
         private Vector3? _translatePoint;
 
+        private bool _needSave;
+
         #endregion
 
         #region Properties
@@ -138,9 +140,9 @@ namespace Utopia.Components
                     _statesList.Items.Clear();
                     _statesList.SelectedItems.Clear();
 
-                    for (int i = 0; i < _visualVoxelModel.VoxelModel.States.Count; i++)
+                    foreach (var state in _visualVoxelModel.VoxelModel.States)
                     {
-                        _statesList.Items.Add(i.ToString());
+                        _statesList.Items.Add(state);
                     }
                     SelectedStateIndex = 0;
                     _statesList.SelectedItems.Add(SelectedStateIndex);
@@ -151,7 +153,7 @@ namespace Utopia.Components
 
                     foreach (var voxelModelPart in _visualVoxelModel.VoxelModel.Parts)
                     {
-                        _partsList.Items.Add(voxelModelPart.Name);
+                        _partsList.Items.Add(voxelModelPart);
                     }
                     if (_selectedPartIndex != -1)
                         _partsList.SelectedItems.Add(_selectedPartIndex);
@@ -161,7 +163,7 @@ namespace Utopia.Components
 
                     foreach (var animation in _visualVoxelModel.VoxelModel.Animations)
                     {
-                        _animationsList.Items.Add(animation.Name);
+                        _animationsList.Items.Add(animation);
                     }
 
                     UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, 0);
@@ -190,7 +192,8 @@ namespace Utopia.Components
 
                         for (int i = 0; i < _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames.Count; i++)
                         {
-                            _framesList.Items.Add(i.ToString());
+                            var frame = _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames[i];
+                            _framesList.Items.Add(frame);
                         }
 
                         _framesList.SelectedItems.Clear();
@@ -323,7 +326,7 @@ namespace Utopia.Components
 
             foreach (var model in _manager.Enumerate())
             {
-                _modelsList.Items.Add(model.VoxelModel.Name);
+                _modelsList.Items.Add(model);
             }
             
 
@@ -444,12 +447,13 @@ namespace Utopia.Components
 
             model.VoxelModel.Parts.Add(part);
             model.BuildMesh();
-            _partsList.Items.Add(part.Name);
+            _partsList.Items.Add(part);
 
 
             VisualVoxelModel = model;
+            _needSave = true;
 
-            _modelsList.Items.Add(e.Name);
+            _modelsList.Items.Add(model);
             _modelsList.SelectedItems.Clear();
             _modelsList.SelectedItems.Add(_modelsList.Items.Count - 1);
         }
@@ -484,7 +488,7 @@ namespace Utopia.Components
 
             _visualVoxelModel.VoxelModel.Parts.Add(part);
             _visualVoxelModel.BuildMesh();
-            _partsList.Items.Add(part.Name);
+            _partsList.Items.Add(part);
         }
 
         private void OnPartsEditPressed()
@@ -517,7 +521,7 @@ namespace Utopia.Components
             part.IsHead = e.IsHead;
             part.IsArm = e.IsArm;
 
-            _partsList.Items[SelectedPartIndex] = e.Name;
+            //_partsList.Items[SelectedPartIndex] = part;
         }
 
         private void OnPartsDeletePressed()
@@ -559,7 +563,7 @@ namespace Utopia.Components
             var frame = new VoxelFrame(new Vector3I(e.SizeX, e.SizeY, e.SizeZ));
             _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames.Add(frame);
             _visualVoxelModel.BuildMesh();
-            _framesList.Items.Add(_framesList.Items.Count.ToString());
+            _framesList.Items.Add(frame);
         }
         
         private void OnFrameEditPressed()
@@ -610,6 +614,103 @@ namespace Utopia.Components
                 return;
             }
 
+        }
+
+        private void OnColorAddPressed()
+        {
+            if (_colorPalette.Count == 64)
+            {
+                _gui.MessageBox("Sorry the maximum number of the colors is 64, consider changing one of existing colors");
+                return;
+            }
+
+            using (var colorDialog = new ColorDialog())
+            {
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_colorPalette.Count] = colorDialog.Color;
+                    UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
+                }
+            }
+            GuiManager.DialogClosed = true;
+
+        }
+
+        private void OnColorChangePressed()
+        {
+            using (var colorDialog = new ColorDialog())
+            {
+                colorDialog.Color = _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex];
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex] = colorDialog.Color;
+                    UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
+                    _visualVoxelModel.BuildMesh();
+                }
+                GuiManager.DialogClosed = true;
+            }
+        }
+
+        private void OnColorRemPressed()
+        {
+            if (_colorPalette.Count == 1)
+            {
+                _gui.MessageBox("The model should have at least one color");
+                return;
+            }
+            var array = _visualVoxelModel.VoxelModel.ColorMapping.BlockColors;
+
+            if (_selectedColorIndex != 63)
+            {
+                Array.Copy(array, _selectedColorIndex + 1, array, _selectedColorIndex, 63 - _selectedColorIndex);
+            }
+            array[63] = new Color4();
+            UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
+
+            // shift all blocks to save old colors
+            foreach (var voxelModelPart in _visualVoxelModel.VoxelModel.Parts)
+            {
+                foreach (var voxelFrame in voxelModelPart.Frames)
+                {
+                    var buffer = voxelFrame.BlockData.BlockBytes;
+                    if (buffer == null) continue;
+                    for (int i = 0; i < buffer.Length; i++)
+                    {
+                        if (buffer[i] == _selectedColorIndex)
+                            buffer[i] = 1;
+                        else if (buffer[i] > _selectedColorIndex)
+                        {
+                            buffer[i]--;
+                        }
+                    }
+                }
+            }
+
+            _visualVoxelModel.BuildMesh();
+        }
+
+        private void OnModelsSelected()
+        {
+            var newModel = (VisualVoxelModel)_modelsList.SelectedItem;
+
+            if (newModel != VisualVoxelModel && _needSave)
+            {
+                _gui.MessageBox("Current model was modified. Would you like to save the changes?", "Confirm", new[] { "Save", "Drop changes" }, OnModelSaveConfirm);
+                return;
+            }
+
+            VisualVoxelModel = newModel;
+        }
+
+        private void OnModelSaveConfirm(string button)
+        {
+            if (button == "Save")
+            {
+                _manager.SaveModel(VisualVoxelModel);
+            }
+            _needSave = false;
+            var newModel = (VisualVoxelModel)_modelsList.SelectedItem;
+            VisualVoxelModel = newModel;
         }
 
         #region Presets
@@ -1462,76 +1563,6 @@ namespace Utopia.Components
             base.UnloadContent();
         }
 
-        private void OnColorAddPressed()
-        {
-            if (_colorPalette.Count == 64)
-            {
-                _gui.MessageBox("Sorry the maximum number of the colors is 64, consider changing one of existing colors");
-                return;
-            }
 
-            using (var colorDialog = new ColorDialog())
-            {
-                if (colorDialog.ShowDialog() == DialogResult.OK)
-                {
-                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_colorPalette.Count] = colorDialog.Color;
-                    UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
-                }
-            }
-
-
-        }
-
-        private void OnColorChangePressed()
-        {
-            using (var colorDialog = new ColorDialog())
-            {
-                colorDialog.Color = _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex];
-                if (colorDialog.ShowDialog() == DialogResult.OK)
-                {
-                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex] = colorDialog.Color;
-                    UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
-                    _visualVoxelModel.BuildMesh();
-                }
-            }
-        }
-
-        private void OnColorRemPressed()
-        {
-            if (_colorPalette.Count == 1)
-            {
-                _gui.MessageBox("The model should have at least one color");
-                return;
-            }
-            var array = _visualVoxelModel.VoxelModel.ColorMapping.BlockColors;
-
-            if (_selectedColorIndex != 63)
-            {
-                Array.Copy(array, _selectedColorIndex + 1, array, _selectedColorIndex, 63 - _selectedColorIndex);
-            }
-            array[63] = new Color4();
-            UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
-
-            // shift all blocks to save old colors
-            foreach (var voxelModelPart in _visualVoxelModel.VoxelModel.Parts)
-            {
-                foreach (var voxelFrame in voxelModelPart.Frames)
-                {
-                    var buffer = voxelFrame.BlockData.BlockBytes;
-                    if (buffer == null) continue;
-                    for (int i = 0; i < buffer.Length; i++)
-                    {
-                        if (buffer[i] == _selectedColorIndex)
-                            buffer[i] = 1;
-                        else if (buffer[i] > _selectedColorIndex)
-                        {
-                            buffer[i]--;
-                        }
-                    }
-                }
-            }
-
-            _visualVoxelModel.BuildMesh();
-        }
     }
 }
