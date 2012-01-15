@@ -53,5 +53,10 @@ namespace Utopia.Shared.Entities.Models
             _blockData.UpdateChunkSize(size);
             _blockData.SetBlockBytes(bytes);
         }
+
+        public override string ToString()
+        {
+            return _blockData.ChunkSize.ToString();
+        }
     }
 }

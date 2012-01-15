@@ -6,6 +6,7 @@ using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
 using SharpDX;
+using Utopia.Entities.Voxel;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using Utopia.Shared.Entities.Models;
 
@@ -102,7 +103,7 @@ namespace Utopia.Components
             _modelsList = new ListControl { Name = "modelsList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             _modelsList.Bounds = new UniRectangle(0, 0, 180, 20);
             _modelsList.SelectionMode = ListSelectionMode.Single;
-            _modelsList.SelectionChanged += delegate { SelectedAnimationIndex = _animationsList.SelectedItems.Count > 0 ? _animationsList.SelectedItems[0] : -1; };
+            _modelsList.SelectionChanged += delegate { OnModelsSelected(); };
             _modelsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 0), LayoutFlags = ControlLayoutFlags.FreeHeight | ControlLayoutFlags.WholeRow };
 
             _modelsGroup.Children.Add(modelsLabel);

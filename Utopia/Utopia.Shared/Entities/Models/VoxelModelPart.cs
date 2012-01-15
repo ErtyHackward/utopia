@@ -69,5 +69,10 @@ namespace Utopia.Shared.Entities.Models
 
             ColorMapping = ColorMapping.Read(reader);
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

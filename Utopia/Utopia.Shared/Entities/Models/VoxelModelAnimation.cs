@@ -61,6 +61,11 @@ namespace Utopia.Shared.Entities.Models
                 Steps.Add(step);
             }
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     /// <summary>

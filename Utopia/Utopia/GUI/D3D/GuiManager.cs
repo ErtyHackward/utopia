@@ -10,6 +10,7 @@ using S33M3Engines;
 using SharpDX.Direct3D11;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using ButtonState = S33M3Engines.InputHandler.MouseHelper.ButtonState;
+using Control = Nuclex.UserInterface.Controls.Control;
 using MouseButtons = Nuclex.UserInterface.Input.MouseButtons;
 using Screen = Nuclex.UserInterface.Screen;
 
@@ -128,7 +129,7 @@ namespace Utopia.GUI.D3D
         {
         }
 
-        public void MessageBox(string message, string title = "", string buttonText = "Ok", System.Action action = null)
+        public void MessageBox(string message, string title = "", string[] buttonsText = null, System.Action<string> action = null)
         {
             var screenWidth = _d3DEngine.ViewPort.Width;
             var screenHeight = _d3DEngine.ViewPort.Height;
@@ -136,15 +137,36 @@ namespace Utopia.GUI.D3D
             var windowWidth = 300;
             var windowHeight = 100;
 
+            if (buttonsText == null)
+                buttonsText = new[] { "Ok" };
+
             var mbWindow = new WindowControl { Title = title, Bounds = new UniRectangle((screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2, windowWidth, windowHeight) };
 
-            mbWindow.Children.Add(new LabelControl { Text = message, Bounds = new UniRectangle(15, 25, windowWidth - 30, 40) });
+            mbWindow.Children.Add(new LabelControl { Text = message, Bounds = new UniRectangle(15, 25, windowWidth - 40, 40) });
 
-            var button = new ButtonControl { Text = buttonText, Bounds = new UniRectangle((windowWidth - 50) / 2, windowHeight - 30, 50, 20) };
+            var buttonsPlace = new Control { Bounds = new UniRectangle(0, 0, 50 * buttonsText.Length + (10 * buttonsText.Length - 1), 20), LayoutFlags = ControlLayoutFlags.WholeRowCenter, LeftTopMargin = new SharpDX.Vector2() };
 
-            button.Pressed += delegate { _screen.Desktop.Children.Remove(DialogHelper.DialogBg); mbWindow.Close(); DialogClosed = true; if (action != null) action(); };
+            foreach (var text in buttonsText)
+            {
+                var button = new ButtonControl { Text = text, Bounds = new UniRectangle((windowWidth - 50) / 2, windowHeight - 30, 50, 20) };
 
-            mbWindow.Children.Add(button);
+                var text1 = text;
+                button.Pressed += delegate
+                {
+
+                    _screen.Desktop.Children.Remove(DialogHelper.DialogBg);
+                    mbWindow.Close();
+                    DialogClosed = true;
+                    if (action != null) action(text1);
+                };
+
+                buttonsPlace.Children.Add(button);
+            }
+
+            buttonsPlace.UpdateLayout();
+
+            mbWindow.Children.Add(buttonsPlace);
+            mbWindow.UpdateLayout();
 
             _screen.Desktop.Children.Add(mbWindow);
 
@@ -154,8 +176,6 @@ namespace Utopia.GUI.D3D
 
             mbWindow.BringToFront();
         }
-
-
 
         //Draw at 2d level ! (Last draw called)
         public override void Draw(int index)

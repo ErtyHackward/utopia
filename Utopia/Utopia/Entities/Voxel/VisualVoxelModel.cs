@@ -182,6 +182,11 @@ namespace Utopia.Entities.Voxel
                 _voxelMeshFactory.Engine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
             }
         }
+
+        public override string ToString()
+        {
+            return _model.Name;
+        }
     }
 
     public class VisualVoxelPart
