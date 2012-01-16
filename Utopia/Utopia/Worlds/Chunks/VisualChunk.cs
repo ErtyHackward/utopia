@@ -369,6 +369,7 @@ namespace Utopia.Worlds.Chunks
         {
             RefreshVisualEntities();
             _entityPickingManager.isDirty = true; //Tell the Picking manager that it must force the picking entity list !
+
             //Change chunk state in order to rebuild the Entity collections change
             State = ChunkState.LandscapeCreated;
             ThreadPriority = Amib.Threading.WorkItemPriority.Highest;

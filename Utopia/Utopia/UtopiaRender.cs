@@ -105,13 +105,6 @@ namespace Utopia
                         ((S33M3Engines.D3D.DebugTools.DebugInfo)gamecomp).Activated = !((S33M3Engines.D3D.DebugTools.DebugInfo)gamecomp).Activated;
                     }
                 }
-
-                S33M3Engines.Meshes.Factories.IMeshFactory meshfactory = new S33M3Engines.Meshes.Factories.MilkShape3DMeshFactory();
-                S33M3Engines.Meshes.Mesh meshBluePrint;
-
-                meshfactory.LoadMesh(@"\Meshes\Torch.txt", out meshBluePrint, 0);
-
-
             }
 
             if (ActionsManager.isTriggered(Actions.Engine_TogglePerfMonitor))
