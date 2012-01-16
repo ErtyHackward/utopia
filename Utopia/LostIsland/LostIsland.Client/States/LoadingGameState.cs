@@ -173,6 +173,11 @@ namespace LostIsland.Client.States
                 item3.CubeId = cubeId;
                 dEntity.Inventory.PutItem(item3);
             }
+            var goldCoins = _server.EntityFactory.CreateEntity<LostIsland.Shared.Items.GoldCoin>();
+            dEntity.Inventory.PutItem(goldCoins);
+            //var Torch = _server.EntityFactory.CreateEntity<LostIsland.Shared.Items.Torch>();
+            //dEntity.Inventory.PutItem(Torch);
+
             e.PlayerEntity = dEntity;
         }
 

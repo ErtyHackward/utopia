@@ -66,7 +66,7 @@ namespace Utopia.Shared.Entities
         {
             // todo: implement this method correctly, create appropriate class here
 
-            var entity = CreateCustomEntity(classId);
+            var entity = CreateCustomEntity(classId); // External implementation of the entity creation.
 
             if (entity == null)
             {

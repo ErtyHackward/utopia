@@ -284,7 +284,6 @@ namespace Utopia.Server.Structs
                 if (itemTransferMessage.ItemEntityId != 0)
                 {
                     // check if entity have this item
-
                     var chunk = _server.LandscapeManager.GetChunk(playerCharacter.Position);
                     
                     // check if we have correct entityId

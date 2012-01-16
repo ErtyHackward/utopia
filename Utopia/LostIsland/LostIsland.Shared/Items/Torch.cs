@@ -1,19 +1,19 @@
-﻿using Utopia.Shared.Entities.Inventory;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities;
 
 namespace LostIsland.Shared.Items
 {
-    /// <summary>
-    /// Represents a gold coin entity
-    /// </summary>
-    public sealed class GoldCoin : SpriteItem
+    public class Torch : VoxelItem
     {
-        public GoldCoin()
+        public Torch()
         {
             UniqueName = DisplayName;
-            Format = SpriteFormat.Billboard;
             Type = EntityType.Static;
-            Size = new SharpDX.Vector3(0.3f, 0.3f, 0.3f);
+            ModelHash = new Utopia.Shared.Structs.Md5Hash(null);
         }
 
         public override int MaxStackSize
@@ -21,19 +21,20 @@ namespace LostIsland.Shared.Items
             get { return int.MaxValue; }
         }
 
+        
         public override string Description
         {
-            get { return "A coin made of gold. Very valuable thing."; }
+            get { return "Let there be light"; }
         }
 
         public override ushort ClassId
         {
-            get { return LostIslandEntityClassId.GoldCoin; }
+            get { return LostIslandEntityClassId.Torch; }
         }
 
         public override string DisplayName
         {
-            get { return "Gold coin"; }
+            get { return "Torch"; }
         }
     }
 }

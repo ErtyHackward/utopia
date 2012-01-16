@@ -37,6 +37,7 @@ namespace LostIsland.Server
 
             dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
+            //Add Items in inventory, every cubes
             foreach (var cubeId in CubeId.All())
             {
                 if (cubeId == CubeId.Air)
@@ -46,6 +47,11 @@ namespace LostIsland.Server
                 item3.CubeId = cubeId;
                 dEntity.Inventory.PutItem(item3);
             }
+            //Add coins + Torch
+            var goldCoins = _server.EntityFactory.CreateEntity<LostIsland.Shared.Items.GoldCoin>();
+            dEntity.Inventory.PutItem(goldCoins);
+            var Torch = _server.EntityFactory.CreateEntity<LostIsland.Shared.Items.Torch>();
+            dEntity.Inventory.PutItem(Torch);
 
             //var item = (IItem)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.Shovel));
             //dEntity.Inventory.PutItem(item);

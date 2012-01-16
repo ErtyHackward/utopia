@@ -21,6 +21,7 @@ namespace LostIsland.Shared
                 case LostIslandEntityClassId.GoldCoin: return new GoldCoin();
                 case LostIslandEntityClassId.Editor: return new Editor();
                 case LostIslandEntityClassId.Carver: return new Carver();
+                case LostIslandEntityClassId.Torch: return new Torch();
             }
 
             return null;

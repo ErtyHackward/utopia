@@ -11,5 +11,6 @@ namespace LostIsland.Shared
         public const ushort Editor = 4;
 
         public const ushort GoldCoin = 100;
+        public const ushort Torch = 101;
     }
 }
