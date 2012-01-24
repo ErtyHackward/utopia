@@ -5061,6 +5061,16 @@
             <returns>Value of the metadata</returns>
             <unmanaged>HRESULT IWICMetadataQueryReader::GetMetadataByName([In] const wchar_t* wzName,[InOut, Optional] PROPVARIANT* pvarValue)</unmanaged>
         </member>
+        <member name="M:SharpDX.WIC.MetadataQueryReader.Dump(System.IO.TextWriter,System.Int32)">
+            <summary>
+            Dumps all metadatas.
+            </summary>
+            <param name="writer">The text writer output.</param>
+            <param name="level">The level of tabulations.</param>
+            <remarks>
+            This is a simple helper method to dump metadata stored in this instance.
+            </remarks>
+        </member>
         <member name="P:SharpDX.WIC.MetadataQueryReader.ContainerFormat">
             <summary>	
             Gets the metadata query readers container format.	
@@ -11020,7 +11030,7 @@
             </summary>	
             <param name="renderTarget">an instance of <see cref="T:SharpDX.Direct2D1.RenderTarget"/></param>
             <param name="size">The dimension of the bitmap to create in pixels.</param>
-            <unmanaged>HRESULT CreateBitmap([None] D2D1_SIZE_U size,[In, Optional] const void* srcData,[None] UINT32 pitch,[In] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateBitmap([In] D2D_SIZE_U size,[In, Optional] const void* srcData,[In] unsigned int pitch,[In] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out, Fast] ID2D1Bitmap** bitmap)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.Bitmap.#ctor(SharpDX.Direct2D1.RenderTarget,System.Drawing.Size,SharpDX.Direct2D1.BitmapProperties)">
             <summary>	
@@ -11029,7 +11039,7 @@
             <param name="renderTarget">an instance of <see cref="T:SharpDX.Direct2D1.RenderTarget"/></param>
             <param name="size">The dimension of the bitmap to create in pixels.</param>
             <param name="bitmapProperties">The pixel format and dots per inch (DPI) of the bitmap to create.</param>
-            <unmanaged>HRESULT CreateBitmap([None] D2D1_SIZE_U size,[In, Optional] const void* srcData,[None] UINT32 pitch,[In] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateBitmap([In] D2D_SIZE_U size,[In, Optional] const void* srcData,[In] unsigned int pitch,[In] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out, Fast] ID2D1Bitmap** bitmap)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.Bitmap.#ctor(SharpDX.Direct2D1.RenderTarget,System.Drawing.Size,SharpDX.DataStream,System.Int32)">
             <summary>	
@@ -11039,7 +11049,7 @@
             <param name="size">The dimension of the bitmap to create in pixels.</param>
             <param name="dataStream">A pointer to the memory location of the image data, or NULL to create an uninitialized bitmap.</param>
             <param name="pitch">The byte count of each scanline, which is equal to (the image width in pixels * the number of bytes per pixel) + memory padding. If srcData is NULL, this value is ignored. (Note that pitch is also sometimes called stride.)</param>
-            <unmanaged>HRESULT CreateBitmap([None] D2D1_SIZE_U size,[In, Optional] const void* srcData,[None] UINT32 pitch,[In] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateBitmap([In] D2D_SIZE_U size,[In, Optional] const void* srcData,[In] unsigned int pitch,[In] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out, Fast] ID2D1Bitmap** bitmap)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.Bitmap.#ctor(SharpDX.Direct2D1.RenderTarget,System.Drawing.Size,SharpDX.DataStream,System.Int32,SharpDX.Direct2D1.BitmapProperties)">
             <summary>	
@@ -11050,7 +11060,7 @@
             <param name="dataStream">A pointer to the memory location of the image data, or NULL to create an uninitialized bitmap.</param>
             <param name="pitch">The byte count of each scanline, which is equal to (the image width in pixels * the number of bytes per pixel) + memory padding. If srcData is NULL, this value is ignored. (Note that pitch is also sometimes called stride.)</param>
             <param name="bitmapProperties">The pixel format and dots per inch (DPI) of the bitmap to create.</param>
-            <unmanaged>HRESULT CreateBitmap([None] D2D1_SIZE_U size,[In, Optional] const void* srcData,[None] UINT32 pitch,[In] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateBitmap([In] D2D_SIZE_U size,[In, Optional] const void* srcData,[In] unsigned int pitch,[In] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out, Fast] ID2D1Bitmap** bitmap)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.Bitmap.#ctor(SharpDX.Direct2D1.RenderTarget,SharpDX.Direct2D1.Bitmap)">
             <summary>	
@@ -11058,7 +11068,7 @@
             </summary>	
             <param name="renderTarget">an instance of <see cref="T:SharpDX.Direct2D1.RenderTarget"/></param>
             <param name="bitmap">An <see cref="T:SharpDX.Direct2D1.Bitmap"/> that contains the data to share with the new ID2D1Bitmap. For more information, see the Remarks section.</param>
-            <unmanaged>HRESULT CreateSharedBitmap([In] REFIID riid,[InOut] void* data,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateSharedBitmap([In] const GUID&amp; riid,[In] void* data,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out, Fast] ID2D1Bitmap** bitmap)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.Bitmap.#ctor(SharpDX.Direct2D1.RenderTarget,SharpDX.Direct2D1.Bitmap,System.Nullable{SharpDX.Direct2D1.BitmapProperties})">
             <summary>	
@@ -11067,7 +11077,7 @@
             <param name="renderTarget">an instance of <see cref="T:SharpDX.Direct2D1.RenderTarget"/></param>
             <param name="bitmap">An <see cref="T:SharpDX.Direct2D1.Bitmap"/> that contains the data to share with the new ID2D1Bitmap. For more information, see the Remarks section.</param>
             <param name="bitmapProperties">The pixel format  and DPI of the bitmap to create . The <see cref="T:SharpDX.DXGI.Format"/> portion of the pixel format  must match the <see cref="T:SharpDX.DXGI.Format"/> of data or the method will fail, but the alpha modes don't have to match. To prevent a  mismatch, you can pass NULL or the value obtained from the {{D2D1::PixelFormat}} helper function. The DPI settings do not have to match those of data. If both dpiX and dpiY are  0.0f, the default DPI, 96, is used.</param>
-            <unmanaged>HRESULT CreateSharedBitmap([In] REFIID riid,[InOut] void* data,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateSharedBitmap([In] const GUID&amp; riid,[In] void* data,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out, Fast] ID2D1Bitmap** bitmap)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.Bitmap.#ctor(SharpDX.Direct2D1.RenderTarget,SharpDX.DXGI.Surface)">
             <summary>	
@@ -11075,7 +11085,7 @@
             </summary>	
             <param name="renderTarget">an instance of <see cref="T:SharpDX.Direct2D1.RenderTarget"/></param>
             <param name="surface">An <see cref="T:SharpDX.DXGI.Surface"/> that contains the data to share with the new ID2D1Bitmap. For more information, see the Remarks section.</param>
-            <unmanaged>HRESULT CreateSharedBitmap([In] REFIID riid,[InOut] void* data,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateSharedBitmap([In] const GUID&amp; riid,[In] void* data,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out, Fast] ID2D1Bitmap** bitmap)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.Bitmap.#ctor(SharpDX.Direct2D1.RenderTarget,SharpDX.DXGI.Surface,System.Nullable{SharpDX.Direct2D1.BitmapProperties})">
             <summary>	
@@ -11084,18 +11094,18 @@
             <param name="renderTarget">an instance of <see cref="T:SharpDX.Direct2D1.RenderTarget"/></param>
             <param name="surface">An <see cref="T:SharpDX.DXGI.Surface"/> that contains the data to share with the new ID2D1Bitmap. For more information, see the Remarks section.</param>
             <param name="bitmapProperties">The pixel format  and DPI of the bitmap to create . The <see cref="T:SharpDX.DXGI.Format"/> portion of the pixel format  must match the <see cref="T:SharpDX.DXGI.Format"/> of data or the method will fail, but the alpha modes don't have to match. To prevent a  mismatch, you can pass NULL or the value obtained from the {{D2D1::PixelFormat}} helper function. The DPI settings do not have to match those of data. If both dpiX and dpiY are  0.0f, the default DPI, 96, is used.</param>
-            <unmanaged>HRESULT CreateSharedBitmap([In] REFIID riid,[InOut] void* data,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateSharedBitmap([In] const GUID&amp; riid,[In] void* data,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out, Fast] ID2D1Bitmap** bitmap)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct2D1.Bitmap.FromWicBitmapSource(SharpDX.Direct2D1.RenderTarget,SharpDX.WIC.BitmapSource)">
+        <member name="M:SharpDX.Direct2D1.Bitmap.FromWicBitmap(SharpDX.Direct2D1.RenderTarget,SharpDX.WIC.BitmapSource)">
             <summary>
             Creates a Bitmap from a wic bitmap.
             </summary>
             <param name="renderTarget">The render target.</param>
             <param name="wicBitmapSource">A reference to a <see cref="T:SharpDX.WIC.BitmapSource"/> wic bitmap.</param>
             <returns></returns>
-            <unmanaged>HRESULT CreateSharedBitmap([In] REFIID riid,[InOut] void* data,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateBitmapFromWicBitmap([In] IWICBitmapSource* wicBitmapSource,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct2D1.Bitmap.FromWicBitmap(SharpDX.Direct2D1.RenderTarget,SharpDX.WIC.Bitmap,SharpDX.Direct2D1.BitmapProperties)">
+        <member name="M:SharpDX.Direct2D1.Bitmap.FromWicBitmap(SharpDX.Direct2D1.RenderTarget,SharpDX.WIC.BitmapSource,SharpDX.Direct2D1.BitmapProperties)">
             <summary>
             Creates a Bitmap from a wic bitmap.
             </summary>
@@ -11103,7 +11113,7 @@
             <param name="wicBitmap">The wic bitmap.</param>
             <param name="bitmapProperties">The bitmap properties.</param>
             <returns></returns>
-            <unmanaged>HRESULT CreateSharedBitmap([In] REFIID riid,[InOut] void* data,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateBitmapFromWicBitmap([In] IWICBitmapSource* wicBitmapSource,[In, Optional] const D2D1_BITMAP_PROPERTIES* bitmapProperties,[Out] ID2D1Bitmap** bitmap)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.Bitmap.FromBitmap(SharpDX.Direct2D1.Bitmap)">
             <summary>	
@@ -11454,7 +11464,7 @@
             </summary>	
             <param name="renderTarget">an instance of <see cref="T:SharpDX.Direct2D1.RenderTarget"/></param>
             <param name="bitmap">The bitmap contents of the new brush.</param>
-            <unmanaged>HRESULT CreateBitmapBrush([In] ID2D1Bitmap* bitmap,[In, Optional] const D2D1_BITMAP_BRUSH_PROPERTIES* bitmapBrushProperties,[In, Optional] const D2D1_BRUSH_PROPERTIES* brushProperties,[Out] ID2D1BitmapBrush** bitmapBrush)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateBitmapBrush([In] ID2D1Bitmap* bitmap,[In, Optional] const D2D1_BITMAP_BRUSH_PROPERTIES* bitmapBrushProperties,[In, Optional] const D2D1_BRUSH_PROPERTIES* brushProperties,[Out, Fast] ID2D1BitmapBrush** bitmapBrush)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.BitmapBrush.#ctor(SharpDX.Direct2D1.RenderTarget,SharpDX.Direct2D1.Bitmap,SharpDX.Direct2D1.BitmapBrushProperties)">
             <summary>	
@@ -11463,7 +11473,7 @@
             <param name="renderTarget">an instance of <see cref="T:SharpDX.Direct2D1.RenderTarget"/></param>
             <param name="bitmap">The bitmap contents of the new brush.</param>
             <param name="bitmapBrushProperties">The extend modes and interpolation mode of the new brush, or NULL. If this parameter is NULL, the brush defaults to the <see cref="F:SharpDX.Direct2D1.ExtendMode.Clamp"/> horizontal and vertical extend modes and the <see cref="F:SharpDX.Direct2D1.BitmapInterpolationMode.Linear"/> interpolation mode. </param>
-            <unmanaged>HRESULT CreateBitmapBrush([In] ID2D1Bitmap* bitmap,[In, Optional] const D2D1_BITMAP_BRUSH_PROPERTIES* bitmapBrushProperties,[In, Optional] const D2D1_BRUSH_PROPERTIES* brushProperties,[Out] ID2D1BitmapBrush** bitmapBrush)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateBitmapBrush([In] ID2D1Bitmap* bitmap,[In, Optional] const D2D1_BITMAP_BRUSH_PROPERTIES* bitmapBrushProperties,[In, Optional] const D2D1_BRUSH_PROPERTIES* brushProperties,[Out, Fast] ID2D1BitmapBrush** bitmapBrush)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.BitmapBrush.#ctor(SharpDX.Direct2D1.RenderTarget,SharpDX.Direct2D1.Bitmap,SharpDX.Direct2D1.BrushProperties)">
             <summary>	
@@ -11472,7 +11482,7 @@
             <param name="renderTarget">an instance of <see cref="T:SharpDX.Direct2D1.RenderTarget"/></param>
             <param name="bitmap">The bitmap contents of the new brush.</param>
             <param name="brushProperties">The opacity and transform of the new brush, or NULL. If this parameter is NULL, the brush defaults to an opacity of 1.0f and its transform is the identity matrix.</param>
-            <unmanaged>HRESULT CreateBitmapBrush([In] ID2D1Bitmap* bitmap,[In, Optional] const D2D1_BITMAP_BRUSH_PROPERTIES* bitmapBrushProperties,[In, Optional] const D2D1_BRUSH_PROPERTIES* brushProperties,[Out] ID2D1BitmapBrush** bitmapBrush)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateBitmapBrush([In] ID2D1Bitmap* bitmap,[In, Optional] const D2D1_BITMAP_BRUSH_PROPERTIES* bitmapBrushProperties,[In, Optional] const D2D1_BRUSH_PROPERTIES* brushProperties,[Out, Fast] ID2D1BitmapBrush** bitmapBrush)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.BitmapBrush.#ctor(SharpDX.Direct2D1.RenderTarget,SharpDX.Direct2D1.Bitmap,System.Nullable{SharpDX.Direct2D1.BitmapBrushProperties},System.Nullable{SharpDX.Direct2D1.BrushProperties})">
             <summary>	
@@ -11482,7 +11492,7 @@
             <param name="bitmap">The bitmap contents of the new brush.</param>
             <param name="bitmapBrushProperties">The extend modes and interpolation mode of the new brush, or NULL. If this parameter is NULL, the brush defaults to the <see cref="F:SharpDX.Direct2D1.ExtendMode.Clamp"/> horizontal and vertical extend modes and the <see cref="F:SharpDX.Direct2D1.BitmapInterpolationMode.Linear"/> interpolation mode. </param>
             <param name="brushProperties">The opacity and transform of the new brush, or NULL. If this parameter is NULL, the brush defaults to an opacity of 1.0f and its transform is the identity matrix.</param>
-            <unmanaged>HRESULT CreateBitmapBrush([In] ID2D1Bitmap* bitmap,[In, Optional] const D2D1_BITMAP_BRUSH_PROPERTIES* bitmapBrushProperties,[In, Optional] const D2D1_BRUSH_PROPERTIES* brushProperties,[Out] ID2D1BitmapBrush** bitmapBrush)</unmanaged>
+            <unmanaged>HRESULT ID2D1RenderTarget::CreateBitmapBrush([In] ID2D1Bitmap* bitmap,[In, Optional] const D2D1_BITMAP_BRUSH_PROPERTIES* bitmapBrushProperties,[In, Optional] const D2D1_BRUSH_PROPERTIES* brushProperties,[Out, Fast] ID2D1BitmapBrush** bitmapBrush)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct2D1.BitmapBrush.#ctor(System.IntPtr)">
             <summary>

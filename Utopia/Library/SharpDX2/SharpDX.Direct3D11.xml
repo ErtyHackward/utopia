@@ -1131,6 +1131,10 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11Device']/*"/>	
             <unmanaged>ID3D11Device</unmanaged>	
         </member>
+        <member name="F:SharpDX.Direct3D11.Device.MultisampleCountMaximum">
+            <summary>Constant MultisampleCountMaximum.</summary>
+            <unmanaged>D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT</unmanaged>
+        </member>
         <member name="M:SharpDX.Direct3D11.Device.#ctor(SharpDX.Direct3D.DriverType)">
             <summary>
               Constructor for a D3D11 Device. See <see cref="M:SharpDX.Direct3D11.D3D11.CreateDevice(SharpDX.DXGI.Adapter,SharpDX.Direct3D.DriverType,System.IntPtr,SharpDX.Direct3D11.DeviceCreationFlags,SharpDX.Direct3D.FeatureLevel[],System.Int32,System.Int32,SharpDX.Direct3D11.Device,SharpDX.Direct3D.FeatureLevel@,SharpDX.Direct3D11.DeviceContext@)"/> for more information.
@@ -1333,7 +1337,7 @@
             <param name="texture1DOut">No documentation.</param>	
             <returns>If the method succeeds, the return code is <see cref="F:SharpDX.Result.Ok"/>. See Direct3D 11 Return Codes for failing error codes.</returns>	
             <remarks>	
-            CreateTexture1D creates a 1D texture resource, which can contain a number of 1D subresources. The number of textures is specified in the texture description. All textures in a resource must have the same format, size, and number of mipmap levels.All resources are made up of one or more subresources. To load data into the texture, applications can supply the data initially as an array of <see cref="T:SharpDX.DataBox"/> structures pointed to by pInitialData, or they can use one of the D3DX texture functions such as <see cref="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D11.Resource@,SharpDX.Result@)"/>.For a 32 width texture with a full mipmap chain, the pInitialData array has the following 6 elements:pInitialData[0] = 32x1 pInitialData[1] = 16x1 pInitialData[2] = 8x1 pInitialData[3] = 4x1	
+            CreateTexture1D creates a 1D texture resource, which can contain a number of 1D subresources. The number of textures is specified in the texture description. All textures in a resource must have the same format, size, and number of mipmap levels.All resources are made up of one or more subresources. To load data into the texture, applications can supply the data initially as an array of <see cref="T:SharpDX.DataBox"/> structures pointed to by pInitialData, or they can use one of the D3DX texture functions such as <see cref="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)"/>.For a 32 width texture with a full mipmap chain, the pInitialData array has the following 6 elements:pInitialData[0] = 32x1 pInitialData[1] = 16x1 pInitialData[2] = 8x1 pInitialData[3] = 4x1	
              pInitialData[4] = 2x1	
              pInitialData[5] = 1x1	
             </remarks>	
@@ -1349,7 +1353,7 @@
             <param name="texture2DOut">No documentation.</param>	
             <returns>If the method succeeds, the return code is <see cref="F:SharpDX.Result.Ok"/>. See Direct3D 11 Return Codes for failing error codes.</returns>	
             <remarks>	
-            CreateTexture2D creates a 2D texture resource, which can contain a number of 2D subresources. The number of textures is specified in the texture description. All textures in a resource must have the same format, size, and number of mipmap levels.All resources are made up of one or more subresources. To load data into the texture, applications can supply the data initially as an array of <see cref="T:SharpDX.DataBox"/> structures pointed to by pInitialData, or it may use one of the D3DX texture functions such as <see cref="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D11.Resource@,SharpDX.Result@)"/>.For a 32 x 32 texture with a full mipmap chain, the pInitialData array has the following 6 elements:pInitialData[0] = 32x32 pInitialData[1] = 16x16 pInitialData[2] = 8x8 pInitialData[3] = 4x4	
+            CreateTexture2D creates a 2D texture resource, which can contain a number of 2D subresources. The number of textures is specified in the texture description. All textures in a resource must have the same format, size, and number of mipmap levels.All resources are made up of one or more subresources. To load data into the texture, applications can supply the data initially as an array of <see cref="T:SharpDX.DataBox"/> structures pointed to by pInitialData, or it may use one of the D3DX texture functions such as <see cref="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)"/>.For a 32 x 32 texture with a full mipmap chain, the pInitialData array has the following 6 elements:pInitialData[0] = 32x32 pInitialData[1] = 16x16 pInitialData[2] = 8x8 pInitialData[3] = 4x4	
              pInitialData[4] = 2x2	
              pInitialData[5] = 1x1	
             </remarks>	
@@ -1365,7 +1369,7 @@
             <param name="texture3DOut">No documentation.</param>	
             <returns>If the method succeeds, the return code is <see cref="F:SharpDX.Result.Ok"/>. See Direct3D 11 Return Codes for failing error codes.</returns>	
             <remarks>	
-            CreateTexture3D creates a 3D texture resource, which can contain a number of 3D subresources. The number of textures is specified in the texture description. All textures in a resource must have the same format, size, and number of mipmap levels.All resources are made up of one or more subresources. To load data into the texture, applications can supply the data initially as an array of <see cref="T:SharpDX.DataBox"/> structures pointed to by pInitialData, or they can use one of the D3DX texture functions such as <see cref="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D11.Resource@,SharpDX.Result@)"/>.Each element of pInitialData provides all of the slices that are defined for a given miplevel. For example, for a 32 x 32 x 4 volume texture with a full mipmap chain, the array has the following 6 elements:pInitialData[0] = 32x32 with 4 slices pInitialData[1] = 16x16 with 2 slices pInitialData[2] = 8x8 with 1 slice pInitialData[3] = 4x4	
+            CreateTexture3D creates a 3D texture resource, which can contain a number of 3D subresources. The number of textures is specified in the texture description. All textures in a resource must have the same format, size, and number of mipmap levels.All resources are made up of one or more subresources. To load data into the texture, applications can supply the data initially as an array of <see cref="T:SharpDX.DataBox"/> structures pointed to by pInitialData, or they can use one of the D3DX texture functions such as <see cref="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)"/>.Each element of pInitialData provides all of the slices that are defined for a given miplevel. For example, for a 32 x 32 x 4 volume texture with a full mipmap chain, the array has the following 6 elements:pInitialData[0] = 32x32 with 4 slices pInitialData[1] = 16x16 with 2 slices pInitialData[2] = 8x8 with 1 slice pInitialData[3] = 4x4	
             with 1 slice pInitialData[4] = 2x2	
             with 1 slice pInitialData[5] = 1x1	
             with 1 slice	
@@ -1706,7 +1710,7 @@
             <param name="sampleCount"><para>The number of samples during multisampling.</para></param>	
             <returns><para>Number of quality levels supported by the adapter. See remarks.</para></returns>	
             <remarks>	
-            When multisampling a texture, the number of quality levels available for an adapter is dependent on the texture format used and the number of  samples requested. The maximum number of quality levels is defined by D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT in D3D11.h. If this method returns 0, the format  and sample count combination is not supported for the installed adapter.Furthermore, the definition of a quality level is up to each hardware vendor to define, however no facility is provided by Direct3D to help discover  this information.Note that FEATURE_LEVEL_10_1 devices are required to support 4x MSAA for all render targets except R32G32B32A32 and R32G32B32. FEATURE_LEVEL_11_0 devices are required to support 4x MSAA for all render target formats, and 8x MSAA for all render target formats  except R32G32B32A32 formats.	
+            When multisampling a texture, the number of quality levels available for an adapter is dependent on the texture format used and the number of  samples requested. The maximum number of quality levels is defined by <see cref="F:SharpDX.Direct3D11.Device.MultisampleCountMaximum"/> in D3D11.h. If this method returns 0, the format  and sample count combination is not supported for the installed adapter.Furthermore, the definition of a quality level is up to each hardware vendor to define, however no facility is provided by Direct3D to help discover  this information.Note that FEATURE_LEVEL_10_1 devices are required to support 4x MSAA for all render targets except R32G32B32A32 and R32G32B32. FEATURE_LEVEL_11_0 devices are required to support 4x MSAA for all render target formats, and 8x MSAA for all render target formats  except R32G32B32A32 formats.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11Device::CheckMultisampleQualityLevels']/*"/>	
             <unmanaged>HRESULT ID3D11Device::CheckMultisampleQualityLevels([In] DXGI_FORMAT Format,[In] unsigned int SampleCount,[Out] unsigned int* pNumQualityLevels)</unmanaged>	
@@ -4073,6 +4077,12 @@
             <param name="minZ">The min Z.</param>
             <param name="maxZ">The max Z.</param>
         </member>
+        <member name="M:SharpDX.Direct3D11.RasterizerStage.SetViewports(SharpDX.Direct3D11.Viewport)">
+            <summary>
+            Binds a single viewport to the rasterizer stage.
+            </summary>
+            <param name="viewport">The viewport.</param>
+        </member>
         <member name="M:SharpDX.Direct3D11.RasterizerStage.SetViewports(SharpDX.Direct3D11.Viewport[])">
             <summary>
               Binds a set of viewports to the rasterizer stage.
@@ -4115,7 +4125,7 @@
             <param name="numRects"><para>Number of scissor rectangles to bind.</para></param>	
             <param name="rectsRef"><para>An array of scissor rectangles (see D3D11_RECT).</para></param>	
             <remarks>	
-            All scissor rects must be set atomically as one operation. Any scissor rects not defined by the call are disabled.The scissor rectangles will only be used if ScissorEnable is set to true in the rasterizer state (see <see cref="T:SharpDX.Direct3D11.RasterizerStateDescription"/>).Which scissor rectangle to use is determined by the SV_ViewportArrayIndex semantic output by a geometry shader (see shader semantic syntax). If a geometry shader does not make use of the SV_ViewportArrayIndex semantic then Direct3D will use the first scissor rectangle in the array.Each scissor rectangle in the array corresponds to a viewport in an array of viewports (see <see cref="M:SharpDX.Direct3D11.RasterizerStage.SetViewports(SharpDX.Direct3D11.Viewport[])"/>).	
+            All scissor rects must be set atomically as one operation. Any scissor rects not defined by the call are disabled.The scissor rectangles will only be used if ScissorEnable is set to true in the rasterizer state (see <see cref="T:SharpDX.Direct3D11.RasterizerStateDescription"/>).Which scissor rectangle to use is determined by the SV_ViewportArrayIndex semantic output by a geometry shader (see shader semantic syntax). If a geometry shader does not make use of the SV_ViewportArrayIndex semantic then Direct3D will use the first scissor rectangle in the array.Each scissor rectangle in the array corresponds to a viewport in an array of viewports (see <see cref="M:SharpDX.Direct3D11.RasterizerStage.SetViewports(SharpDX.Direct3D11.Viewport)"/>).	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11DeviceContext::RSSetScissorRects']/*"/>	
             <unmanaged>void ID3D11DeviceContext::RSSetScissorRects([In] unsigned int NumRects,[In, Buffer, Optional] const void* pRects)</unmanaged>	
@@ -15316,7 +15326,7 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX11CheckVersion']/*"/>	
             <unmanaged>HRESULT D3DX11CheckVersion([In] unsigned int D3DSdkVersion,[In] unsigned int D3DX11SdkVersion)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromResource(SharpDX.Direct3D11.Device,System.IntPtr,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D11.Resource@,SharpDX.Result@)">
+        <member name="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromResource(SharpDX.Direct3D11.Device,System.IntPtr,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)">
             <summary>	
             Create a texture from another resource.	
             </summary>	
@@ -15329,7 +15339,7 @@
             <param name="hResultRef"><para>A reference to the return value. May be <c>null</c>. If pPump is not <c>null</c>, then pHResult must be a valid memory location until the asynchronous execution completes.</para></param>	
             <returns>The return value is one of the values listed in Direct3D 11 Return Codes.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX11CreateTextureFromResourceW']/*"/>	
-            <unmanaged>HRESULT D3DX11CreateTextureFromResourceW([In] ID3D11Device* pDevice,[In] HINSTANCE hSrcModule,[In] const wchar_t* pSrcResource,[In, Optional] D3DX11_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX11ThreadPump* pPump,[Out] ID3D11Resource** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
+            <unmanaged>HRESULT D3DX11CreateTextureFromResourceW([In] ID3D11Device* pDevice,[In] HINSTANCE hSrcModule,[In] const wchar_t* pSrcResource,[In, Optional] D3DX11_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX11ThreadPump* pPump,[Out] void** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct3D11.D3DX11.CreateShaderResourceViewFromResource(SharpDX.Direct3D11.Device,System.IntPtr,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D11.ShaderResourceView@,SharpDX.Result@)">
             <summary>	
@@ -15346,7 +15356,7 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX11CreateShaderResourceViewFromResourceW']/*"/>	
             <unmanaged>HRESULT D3DX11CreateShaderResourceViewFromResourceW([In] ID3D11Device* pDevice,[In] HINSTANCE hSrcModule,[In] const wchar_t* pSrcResource,[In, Optional] D3DX11_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX11ThreadPump* pPump,[In] ID3D11ShaderResourceView** ppShaderResourceView,[Out] HRESULT* pHResult)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromMemory(SharpDX.Direct3D11.Device,System.IntPtr,SharpDX.PointerSize,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D11.Resource@,SharpDX.Result@)">
+        <member name="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromMemory(SharpDX.Direct3D11.Device,System.IntPtr,SharpDX.PointerSize,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)">
             <summary>	
             Create a texture resource from a file residing in system memory.	
             </summary>	
@@ -15359,7 +15369,7 @@
             <param name="hResultRef"><para>A reference to the return value. May be <c>null</c>. If pPump is not <c>null</c>, then pHResult must be a valid memory location until the asynchronous execution completes.</para></param>	
             <returns>The return value is one of the values listed in Direct3D 11 Return Codes.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX11CreateTextureFromMemory']/*"/>	
-            <unmanaged>HRESULT D3DX11CreateTextureFromMemory([In] ID3D11Device* pDevice,[In] const void* pSrcData,[In] SIZE_T SrcDataSize,[In, Optional] D3DX11_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX11ThreadPump* pPump,[Out] ID3D11Resource** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
+            <unmanaged>HRESULT D3DX11CreateTextureFromMemory([In] ID3D11Device* pDevice,[In] const void* pSrcData,[In] SIZE_T SrcDataSize,[In, Optional] D3DX11_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX11ThreadPump* pPump,[Out] void** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct3D11.D3DX11.GetImageInfoFromMemory(System.IntPtr,SharpDX.PointerSize,System.IntPtr,SharpDX.Direct3D11.ImageInformation@,SharpDX.Result@)">
             <summary>	
@@ -15398,7 +15408,7 @@
             <param name="channel"><para>One <see cref="!:SharpDX.Direct3D9.Channel"/> flag specifying the source of height information.</para></param>	
             <param name="amplitude"><para>Constant value multiplier that increases (or decreases) the values in the normal map. Higher values usually make bumps more visible, lower values usually make bumps less visible.</para></param>	
             <param name="destTextureRef"><para>Pointer to an <see cref="T:SharpDX.Direct3D11.Texture2D"/> interface, representing the destination texture.</para></param>	
-            <returns>If the function succeeds, the return value is D3D_OK. If the function fails, the return value can be the following value: D3DERR_INVALIDCALL.</returns>	
+            <returns>If the function succeeds, the return value is <see cref="!:SharpDX.Direct3D9.ResultCode.Success"/>. If the function fails, the return value can be the following value: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>.</returns>	
             <remarks>	
             This method computes the normal by using the central difference with a kernel size of 3x3. RGB channels in the destination contain biased (x,y,z) components of the normal. The central differencing denominator is hardcoded to 2.0.	
             </remarks>	
@@ -15429,7 +15439,7 @@
             <param name="pumpRef"><para>Optional thread pump that can be used to load the info asynchronously. Can be <c>null</c>. See <see cref="T:System.IntPtr"/> Interface.</para></param>	
             <param name="srcInfoRef"><para>Pointer to a <see cref="T:SharpDX.Direct3D11.ImageInformation"/> structure to be filled with the description of the data in the source file.</para></param>	
             <param name="hResultRef"><para>A reference to the return value. May be <c>null</c>. If pPump is not <c>null</c>, then pHResult must be a valid memory location until the asynchronous execution completes.</para></param>	
-            <returns>If the function succeeds, the return value is D3D_OK. If the function fails, the return value can be the following: D3DERR_INVALIDCALL</returns>	
+            <returns>If the function succeeds, the return value is <see cref="!:SharpDX.Direct3D9.ResultCode.Success"/>. If the function fails, the return value can be the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/></returns>	
             <remarks>	
             The compiler setting also determines the function version. If Unicode is defined, the function call resolves to <see cref="M:SharpDX.Direct3D11.D3DX11.GetImageInfoFromResource(System.IntPtr,System.String,System.IntPtr,SharpDX.Direct3D11.ImageInformation@,SharpDX.Result@)"/>. Otherwise, the function call resolves to D3DX11GetImageInfoFromResourceA because ANSI strings are being used.	
             </remarks>	
@@ -15470,14 +15480,14 @@
             <param name="pumpRef"><para>Optional thread pump that can be used to load the info asynchronously. Can be <c>null</c>. See <see cref="T:System.IntPtr"/> Interface.</para></param>	
             <param name="srcInfoRef"><para>Pointer to a <see cref="T:SharpDX.Direct3D11.ImageInformation"/> to be filled with the description of the data in the source file.</para></param>	
             <param name="hResultRef"><para>A reference to the return value. May be <c>null</c>. If pPump is not <c>null</c>, then pHResult must be a valid memory location until the asynchronous execution completes.</para></param>	
-            <returns>If the function succeeds, the return value is D3D_OK. If the function fails, the return value can be the following: D3DERR_INVALIDCALL</returns>	
+            <returns>If the function succeeds, the return value is <see cref="!:SharpDX.Direct3D9.ResultCode.Success"/>. If the function fails, the return value can be the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/></returns>	
             <remarks>	
             This function supports both Unicode and ANSI strings.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX11GetImageInfoFromFileW']/*"/>	
             <unmanaged>HRESULT D3DX11GetImageInfoFromFileW([In] const wchar_t* pSrcFile,[In] ID3DX11ThreadPump* pPump,[In] D3DX11_IMAGE_INFO* pSrcInfo,[Out] HRESULT* pHResult)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D11.Resource@,SharpDX.Result@)">
+        <member name="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)">
             <summary>	
             Create a texture resource from a file.	
             </summary>	
@@ -15489,7 +15499,7 @@
             <param name="hResultRef"><para>A reference to the return value. May be <c>null</c>. If pPump is not <c>null</c>, then pHResult must be a valid memory location until the asynchronous execution completes.</para></param>	
             <returns>The return value is one of the values listed in Direct3D 11 Return Codes.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX11CreateTextureFromFileW']/*"/>	
-            <unmanaged>HRESULT D3DX11CreateTextureFromFileW([In] ID3D11Device* pDevice,[In] const wchar_t* pSrcFile,[In, Optional] D3DX11_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX11ThreadPump* pPump,[Out] ID3D11Resource** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
+            <unmanaged>HRESULT D3DX11CreateTextureFromFileW([In] ID3D11Device* pDevice,[In] const wchar_t* pSrcFile,[In, Optional] D3DX11_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX11ThreadPump* pPump,[Out] void** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct3D11.D3DX11.SaveTextureToMemory(SharpDX.Direct3D11.DeviceContext,SharpDX.Direct3D11.Resource,SharpDX.Direct3D11.ImageFileFormat,SharpDX.Direct3D.Blob@,System.Int32)">
             <summary>	
@@ -19226,7 +19236,7 @@
             Optionally provide information to texture loader APIs to control how textures get loaded. A value of D3DX11_DEFAULT for any of these parameters will cause D3DX to automatically pick use the value from the source file.	
             </summary>	
             <remarks>	
-            When initializing the structure, you may set any member to D3DX11_DEFAULT and D3DX will initialize it with a default value from the source texture when the texture is loaded.This structure can be used by APIs that:Create resources, such as <see cref="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D11.Resource@,SharpDX.Result@)"/> and <see cref="M:SharpDX.Direct3D11.D3DX11.CreateShaderResourceViewFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D11.ShaderResourceView@,SharpDX.Result@)"/>. Create data processors, such as D3DX11CreateAsyncTextureInfoProcessor or	
+            When initializing the structure, you may set any member to D3DX11_DEFAULT and D3DX will initialize it with a default value from the source texture when the texture is loaded.This structure can be used by APIs that:Create resources, such as <see cref="M:SharpDX.Direct3D11.D3DX11.CreateTextureFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)"/> and <see cref="M:SharpDX.Direct3D11.D3DX11.CreateShaderResourceViewFromFile(SharpDX.Direct3D11.Device,System.String,System.Nullable{SharpDX.Direct3D11.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D11.ShaderResourceView@,SharpDX.Result@)"/>. Create data processors, such as D3DX11CreateAsyncTextureInfoProcessor or	
             D3DX11CreateAsyncShaderResourceViewProcessor.The default values are:<code>	
              Width = D3DX11_DEFAULT; Height = D3DX11_DEFAULT; Depth = D3DX11_DEFAULT; FirstMipLevel = D3DX11_DEFAULT; MipLevels = D3DX11_DEFAULT; Usage = (<see cref="T:SharpDX.Direct3D11.ResourceUsage"/>) D3DX11_DEFAULT; BindFlags = D3DX11_DEFAULT; CpuAccessFlags = D3DX11_DEFAULT; MiscFlags = D3DX11_DEFAULT; Format = DXGI_FORMAT_FROM_FILE; Filter = D3DX11_DEFAULT; MipFilter = D3DX11_DEFAULT; pSrcInfo = <c>null</c>;	
             	

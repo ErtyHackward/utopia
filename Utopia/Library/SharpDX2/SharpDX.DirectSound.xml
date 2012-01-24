@@ -3233,6 +3233,13 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DSBLOCK_ENTIREBUFFER']/*"/>	
             <unmanaged>DSBLOCK_ENTIREBUFFER</unmanaged>	
         </member>
+        <member name="F:SharpDX.DirectSound.LockFlags.None">
+            <summary>	
+            None.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='']/*"/>	
+            <unmanaged>None</unmanaged>	
+        </member>
         <member name="T:SharpDX.DirectSound.Mode3D">
             <summary>	
             No documentation.	
@@ -4596,7 +4603,7 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDirectSoundBuffer::SetCurrentPosition']/*"/>	
             <unmanaged>HRESULT IDirectSoundBuffer::SetCurrentPosition([In] unsigned int dwNewPosition)</unmanaged>	
         </member>
-        <member name="M:SharpDX.DirectSound.SoundBuffer.SetFormat(SharpDX.Multimedia.WaveFormat@)">
+        <member name="M:SharpDX.DirectSound.SoundBuffer.SetFormat(System.IntPtr)">
             <summary>	
             <code>	
             <see cref="T:SharpDX.Result"/> SetFormat( LPCWAVEFORMATEX 	
@@ -4611,7 +4618,7 @@
             <param name="cfxFormatRef">Address of a <see cref="T:SharpDX.Multimedia.WaveFormat"/> structure that describes the new format for the primary sound buffer.</param>	
             <returns><para>If the method succeeds, the return value is DS_OK. If the method fails, the return value may be one of the following error values:</para>  Return code DSERR_BADFORMAT  DSERR_INVALIDCALL  DSERR_INVALIDPARAM  DSERR_OUTOFMEMORY  DSERR_PRIOLEVELNEEDED  DSERR_UNSUPPORTED</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDirectSoundBuffer::SetFormat']/*"/>	
-            <unmanaged>HRESULT IDirectSoundBuffer::SetFormat([In] const WAVEFORMATEX* pcfxFormat)</unmanaged>	
+            <unmanaged>HRESULT IDirectSoundBuffer::SetFormat([In] const void* pcfxFormat)</unmanaged>	
         </member>
         <member name="M:SharpDX.DirectSound.SoundBuffer.SetVolume(System.Int32)">
             <summary>	
@@ -4814,19 +4821,13 @@
             <unmanaged>HRESULT IDirectSoundBuffer::SetCurrentPosition([In] unsigned int dwNewPosition)</unmanaged>
         </member>
         <member name="P:SharpDX.DirectSound.SoundBuffer.Format">
-            <summary>	
-            <code>	
-            <see cref="T:SharpDX.Result"/> SetFormat( LPCWAVEFORMATEX 	
-            </code>	
-              Parameters<list>	
-            <item><term>pcfxFormat</term><description> Address of a <see cref="T:SharpDX.Multimedia.WaveFormat"/> structure that describes the new format for the primary sound buffer. </description></item>	
-            </list>	
-             Return Value <para>If the method succeeds, the return value is DS_OK. If the method fails, the return value may be one of the following error values:</para>	
-              Return code	
-             DSERR_BADFORMAT  DSERR_INVALIDCALL  DSERR_INVALIDPARAM  DSERR_OUTOFMEMORY  DSERR_PRIOLEVELNEEDED  DSERR_UNSUPPORTED	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDirectSoundBuffer::SetFormat']/*"/>	
-            <unmanaged>SetFormat</unmanaged>	
+            <summary>
+            Sets the new format for the primary sound buffer.
+            </summary>
+            <value>
+            The wave format.
+            </value>
+            <!-- Failed to insert some or all of included XML --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDirectSoundBuffer::SetFormat']/*"/>
             <unmanaged>HRESULT IDirectSoundBuffer::SetFormat([In] const WAVEFORMATEX* pcfxFormat)</unmanaged>
         </member>
         <member name="M:SharpDX.DirectSound.SecondarySoundBuffer.#ctor(System.IntPtr)">

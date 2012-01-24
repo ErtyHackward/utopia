@@ -1014,13 +1014,15 @@
             Helper class for PIX.
             </summary>
         </member>
-        <member name="M:SharpDX.Direct3D.PixHelper.BeginEvent(System.Drawing.Color,System.String)">
+        <member name="M:SharpDX.Direct3D.PixHelper.BeginEvent(System.String,System.Object[])">
             <summary>
             Marks the beginning of a user-defined event. PIX can use this event to trigger an action.
             </summary>
-            <param name="color">The Event color.</param>
             <param name="name">The Event Name.</param>
-            <returns>The zero-based level of the hierarchy that this event is starting in. If an error occurs, the return value will be negative.</returns>
+            <param name="stringParameters">The string parameters.</param>
+            <returns>
+            The zero-based level of the hierarchy that this event is starting in. If an error occurs, the return value will be negative.
+            </returns>
             <unmanaged>D3DPERF_BeginEvent</unmanaged>
         </member>
         <member name="M:SharpDX.Direct3D.PixHelper.EndEvent">
@@ -1030,12 +1032,12 @@
             <returns>The level of the hierarchy in which the event is ending. If an error occurs, this value is negative.</returns>
             <unmanaged>D3DPERF_EndEvent</unmanaged>
         </member>
-        <member name="M:SharpDX.Direct3D.PixHelper.SetMarker(System.Drawing.Color,System.String)">
+        <member name="M:SharpDX.Direct3D.PixHelper.SetMarker(System.String,System.Object[])">
             <summary>
             Mark an instantaneous event. PIX can use this event to trigger an action.
             </summary>
-            <param name="color">The color.</param>
             <param name="name">The name.</param>
+            <param name="stringParameters">The string parameters.</param>
             <unmanaged>D3DPERF_SetMarker</unmanaged>
         </member>
         <member name="M:SharpDX.Direct3D.PixHelper.AllowProfiling(System.Boolean)">
@@ -2917,14 +2919,30 @@
             <summary>
               Query Interface for a particular GUID.
             </summary>
-            <param name = "guid">GUID query interface</param>
-            <param name = "outPtr">output object associated with this GUID, IntPtr.Zero in interface is not supported</param>
+            <param name="guid">GUID query interface</param>
+            <param name="outPtr">output object associated with this GUID, IntPtr.Zero in interface is not supported</param>
+            <exception cref="T:SharpDX.SharpDXException">If this object doesn't support the interface</exception>
+        </member>
+        <member name="M:SharpDX.ComObject.QueryInterfaceOrNull(System.Guid)">
+            <summary>
+              Query Interface for a particular GUID.
+            </summary>
+            <param name="guid">GUID query interface</param>
+            <exception cref="T:SharpDX.SharpDXException">If this object doesn't support the interface</exception>
         </member>
         <member name="M:SharpDX.ComObject.QueryInterface``1">
             <summary>
              Query Interface for a particular interface support.
             </summary>
             <typeparam name="T"></typeparam>
+            <returns>An instance of the queried interface</returns>
+             <exception cref="T:SharpDX.SharpDXException">If this object doesn't support the interface</exception>
+        </member>
+        <member name="M:SharpDX.ComObject.QueryInterfaceOrNull``1">
+            <summary>
+             Query Interface for a particular interface support.
+            </summary>
+            <returns>An instance of the queried interface or null if it is not supported</returns>
             <returns></returns>
         </member>
         <member name="M:SharpDX.ComObject.QueryInterfaceFrom``1(``0)">
@@ -3297,15 +3315,16 @@
             </summary>
             <param name="buffer">The buffer.</param>
         </member>
-        <member name="M:SharpDX.DataStream.Create``1(``0[],System.Boolean,System.Boolean)">
+        <member name="M:SharpDX.DataStream.Create``1(``0[],System.Boolean,System.Boolean,System.Boolean)">
             <summary>
-              Initializes a new instance of the <see cref="T:SharpDX.DataStream"/> class, using a managed buffer as a backing store.
+            Initializes a new instance of the <see cref="T:SharpDX.DataStream"/> class, using a managed buffer as a backing store.
             </summary>
+            <typeparam name="T"></typeparam>
             <param name="userBuffer">A managed array to be used as a backing store.</param>
-            <param name="canRead">
-              <c>true</c> if reading from the buffer should be allowed; otherwise, <c>false</c>.</param>
-            <param name="canWrite">
-              <c>true</c> if writing to the buffer should be allowed; otherwise, <c>false</c>.</param>
+            <param name="canRead"><c>true</c> if reading from the buffer should be allowed; otherwise, <c>false</c>.</param>
+            <param name="canWrite"><c>true</c> if writing to the buffer should be allowed; otherwise, <c>false</c>.</param>
+            <param name="makeCopy">if set to <c>true</c> [make copy].</param>
+            <returns></returns>
         </member>
         <member name="M:SharpDX.DataStream.#ctor(System.Int32,System.Boolean,System.Boolean)">
             <summary>
@@ -5581,7 +5600,7 @@
             <!-- No matching elements were found for the following include tag --><include file="..\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D_SHADER_MACRO::Definition']/*"/>	
             <unmanaged>const char* Definition</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D.ShaderMacro.#ctor(System.String,System.String)">
+        <member name="M:SharpDX.Direct3D.ShaderMacro.#ctor(System.String,System.Object)">
             <summary>
               Default Constructor for a ShaderMacro
             </summary>
@@ -24282,12 +24301,28 @@
             <param name="sizeInBytesToCopy">The count.</param>
             <returns></returns>
         </member>
+        <member name="M:SharpDX.Utilities.ClearMemory(System.IntPtr,System.Int32,System.Int32)">
+            <summary>
+            Clears the memory.
+            </summary>
+            <param name="dest">The dest.</param>
+            <param name="value">The value.</param>
+            <param name="sizeInBytesToClear">The size in bytes to clear.</param>
+        </member>
         <member name="M:SharpDX.Utilities.SizeOf``1">
             <summary>
             Return the sizeof a struct from a CLR. Equivalent to sizeof operator but works on generics too.
             </summary>
             <typeparam name="T">a struct to evaluate</typeparam>
             <returns>sizeof this struct</returns>
+        </member>
+        <member name="M:SharpDX.Utilities.SizeOf``1(``0[])">
+            <summary>
+            Return the sizeof an array of struct. Equivalent to sizeof operator but works on generics too.
+            </summary>
+            <typeparam name="T">a struct</typeparam>
+            <param name="array">The array of struct to evaluate.</param>
+            <returns>sizeof in bytes of this array of struct</returns>
         </member>
         <member name="M:SharpDX.Utilities.Pin``1(``0@,System.Action{System.IntPtr})">
             <summary>
@@ -24414,7 +24449,15 @@
             <param name="array">The array.</param>
             <returns>a string with array elements serparated by the seperator</returns>
         </member>
-        <member name="M:SharpDX.Utilities.Join``1(System.String,System.Collections.Generic.IEnumerable{``0})">
+        <member name="M:SharpDX.Utilities.Join(System.String,System.Collections.IEnumerable)">
+            <summary>
+            String helper join method to display an enumrable of object as a single string.
+            </summary>
+            <param name="separator">The separator.</param>
+            <param name="elements">The enumerable.</param>
+            <returns>a string with array elements serparated by the seperator</returns>
+        </member>
+        <member name="M:SharpDX.Utilities.Join(System.String,System.Collections.IEnumerator)">
             <summary>
             String helper join method to display an enumrable of object as a single string.
             </summary>
@@ -27043,6 +27086,68 @@
             <value>
               <c>true</c> if [inherit handle]; otherwise, <c>false</c>.
             </value>
+        </member>
+        <member name="T:SharpDX.Win32.Variant">
+            <summary>
+            Variant COM.
+            </summary>
+            <unmanaged>PROPVARIANT</unmanaged>
+        </member>
+        <member name="P:SharpDX.Win32.Variant.ElementType">
+            <summary>
+            Gets the type of the element.
+            </summary>
+            <value>
+            The type of the element.
+            </value>
+        </member>
+        <member name="P:SharpDX.Win32.Variant.Type">
+            <summary>
+            Gets the type.
+            </summary>
+        </member>
+        <member name="P:SharpDX.Win32.Variant.Value">
+            <summary>
+            Gets or sets the value.
+            </summary>
+            <value>
+            The value.
+            </value>
+        </member>
+        <member name="T:SharpDX.Win32.VariantElementType">
+            <summary>
+            Type of a simple variant value.
+            </summary>
+        </member>
+        <member name="T:SharpDX.Win32.VariantType">
+            <summary>
+            Type of a variant
+            </summary>
+        </member>
+        <member name="F:SharpDX.Win32.VariantType.Default">
+            <summary>
+            Simple value
+            </summary>
+        </member>
+        <member name="F:SharpDX.Win32.VariantType.Vector">
+            <summary>
+            Vector value.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Win32.VariantType.Array">
+            <summary>
+            Array value.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Win32.VariantType.ByRef">
+            <summary>
+            By reference.
+            </summary>
+        </member>
+        <member name="F:SharpDX.Win32.VariantType.Reserved">
+            <summary>
+            Reserved value.
+            </summary>
         </member>
         <member name="T:SharpDX.Windows.RenderLoop">
             <summary>

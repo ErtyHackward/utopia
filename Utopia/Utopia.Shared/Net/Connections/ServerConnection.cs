@@ -367,8 +367,6 @@ namespace Utopia.Shared.Net.Connections
         {
             while (_isrunning)
             {
-                _needSend.WaitOne();
-                if (_isrunning == false) break;
                 try
                 {
                     lock (_sendSynObject)
@@ -392,6 +390,8 @@ namespace Utopia.Shared.Net.Connections
                 {
                     SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Disconnected, Exception = ex });
                 }
+
+                _needSend.WaitOne(); //Put at the end, in order to test the isrunning variable after triggered
             }
 // ReSharper disable FunctionNeverReturns
         }
@@ -463,7 +463,7 @@ namespace Utopia.Shared.Net.Connections
             if (disposing)
             {
                 _isrunning = false;
-                _needSend.Set();
+                _needSend.Set(); // Release the Message reading thread (running being false, it will exit the thread)
                 _needSend.Dispose();
                 if(Writer != null)
                     Writer.Dispose();
