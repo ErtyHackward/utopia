@@ -103,7 +103,7 @@ namespace Utopia.GUI.D3D
             _spriteRender.Initialize(_d3DEngine);
 
             _font = new SpriteFont();
-            _font.Initialize("Segoe UI Mono", 13f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
+            _font.Initialize("Lucida Console", 13f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
 
             if(Enabled)
                 _screen.Desktop.Children.Add(ToolbarUi);

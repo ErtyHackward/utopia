@@ -42,9 +42,19 @@ namespace S33M3Engines.D3D.DebugTools
             PerfTimer.StartPerfMeasure(gc, Sufix);
         }
 
+        public void StartMesure(string gcName, string Sufix)
+        {
+            PerfTimer.StartPerfMeasure(gcName, Sufix);
+        }
+
         public void StopMesure(IGameComponent gc, string Sufix)
         {
             PerfTimer.StopPerfMeasure(gc, Sufix);
+        }
+
+        public void StopMesure(string gcName, string Sufix)
+        {
+            PerfTimer.StopPerfMeasure(gcName, Sufix);
         }
 
         #endregion

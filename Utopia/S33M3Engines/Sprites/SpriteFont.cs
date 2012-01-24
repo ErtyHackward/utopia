@@ -18,9 +18,9 @@ namespace S33M3Engines.Sprites
     public class SpriteFont
     {
         static char StartChar = '!';
-        static char EndChar = (char)127;
+        static char EndChar = (char)255;
         static int NumChars = EndChar - StartChar;
-        static int TexWidth = 1024;
+        static int TexWidth = 2048;
 
         #region Public Variables
         public SpriteTexture SpriteTexture;
@@ -53,10 +53,10 @@ namespace S33M3Engines.Sprites
 
             int size = (int)(fontSize * NumChars * 2) + 1;
 
-            Bitmap sizeBitmap = new Bitmap(size, size, PixelFormat.Format32bppArgb);
+            Bitmap measuringBitmap = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
 
-            _fontGraphics = Graphics.FromImage(sizeBitmap);
-
+            _fontGraphics = Graphics.FromImage(measuringBitmap);
+            
             _fontGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             _fontGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             _fontGraphics.TextRenderingHint = hint;
@@ -81,6 +81,8 @@ namespace S33M3Engines.Sprites
             int tempSize = (int)(fontSize * 2);
             Bitmap drawBitmap = new Bitmap(tempSize, tempSize, PixelFormat.Format32bppArgb);
             Graphics drawGraphics = Graphics.FromImage(drawBitmap);
+            drawGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            drawGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             drawGraphics.TextRenderingHint = hint;
 
             // Create a temporary Bitmap + Graphics for creating a full character set
@@ -104,7 +106,6 @@ namespace S33M3Engines.Sprites
                 // Draw the character
                 drawGraphics.Clear(Color.FromArgb(0, 255, 255, 255));
                 drawGraphics.DrawString(new string(charString[0], 1), _font, brush, new PointF(0, 0));
-
                 // Figure out the amount of blank space before the character
                 int minX = 0;
                 for (int x = 0; x < tempSize; ++x)
@@ -157,6 +158,7 @@ namespace S33M3Engines.Sprites
                 // Copy the character over 
                 int height = (int)(_charHeight + 1);
                 textGraphics.DrawImage(drawBitmap, currentX, currentY, new Rectangle(minX, 0, charWidth, height), GraphicsUnit.Pixel);
+
                 currentX += charWidth + 1;
             }
 
@@ -200,6 +202,12 @@ namespace S33M3Engines.Sprites
 
             SpriteTexture = new SpriteTexture(texture, _srView, new Vector2(0, 0));
             texture.Dispose();
+
+            measuringBitmap.Dispose();
+            textGraphics.Dispose();
+            drawGraphics.Dispose();
+            drawBitmap.Dispose();
+
         }
         #endregion
 

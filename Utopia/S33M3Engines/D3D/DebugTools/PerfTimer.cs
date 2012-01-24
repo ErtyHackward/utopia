@@ -58,15 +58,20 @@ namespace S33M3Engines.D3D.DebugTools
 
         PerfTimerResult p;
 
-        public void StartPerfMeasure(IGameComponent gameComponent, string Sufix)
+        public void StartPerfMeasure(string componentName, string Sufix)
         {
-            if (!PerfTimerResults.TryGetValue(gameComponent.Name + Sufix, out p))
+            if (!PerfTimerResults.TryGetValue(componentName + Sufix, out p))
             {
-                p = new PerfTimerResult() { PerfSamplingName = gameComponent.Name + " " + Sufix };
-                PerfTimerResults.Add(gameComponent.Name + Sufix, p);
+                p = new PerfTimerResult() { PerfSamplingName = componentName + " " + Sufix };
+                PerfTimerResults.Add(componentName + Sufix, p);
             }
 
             p.BeginValue = Stopwatch.GetTimestamp();
+        }
+
+        public void StartPerfMeasure(IGameComponent gameComponent, string Sufix)
+        {
+            StartPerfMeasure(gameComponent.Name, Sufix);
         }
 
         public void ResetMinMax()
@@ -78,9 +83,9 @@ namespace S33M3Engines.D3D.DebugTools
         }
 
         long deltaTime;
-        public void StopPerfMeasure(IGameComponent gameComponent, string Sufix)
+        public void StopPerfMeasure(string componentName, string Sufix)
         {
-            if (!PerfTimerResults.TryGetValue(gameComponent.Name + Sufix, out p)) return;
+            if (!PerfTimerResults.TryGetValue(componentName + Sufix, out p)) return;
 
             deltaTime = Stopwatch.GetTimestamp() - p.BeginValue;
 
@@ -89,6 +94,11 @@ namespace S33M3Engines.D3D.DebugTools
             if (p.DeltaIndex >= PerfTimerResult.Echantillon) p.DeltaIndex = 0;
             if (p.MaxValue < deltaTime) p.MaxValue = deltaTime;
             if (p.MinValue > deltaTime) p.MinValue = deltaTime;
+        }
+
+        public void StopPerfMeasure(IGameComponent gameComponent, string Sufix)
+        {
+            StopPerfMeasure(gameComponent.Name, Sufix);
         }
     }
 }

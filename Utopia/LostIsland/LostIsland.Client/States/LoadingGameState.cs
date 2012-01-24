@@ -241,7 +241,7 @@ namespace LostIsland.Client.States
             var stars = _ioc.Get<IDrawableComponent>("Stars");
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
-            var clouds = _ioc.Get<IDrawableComponent>("Clouds");
+            var clouds = _ioc.Get<IDrawableComponent>("Clouds_flat");
             var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
             var solidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("SolidCubeMeshFactory");
 

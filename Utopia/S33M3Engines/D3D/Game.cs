@@ -280,7 +280,16 @@ namespace S33M3Engines.D3D
 
         public void Present()
         {
-            _d3dEngine.SwapChain.Present(_vSync, PresentFlags.None); // Send BackBuffer to screen
+            if (ComponentsPerfMonitor.isActivated)
+            {
+                ComponentsPerfMonitor.StartMesure("GC Present", "Draw");
+                _d3dEngine.SwapChain.Present(_vSync, PresentFlags.None); // Send BackBuffer to screen
+                ComponentsPerfMonitor.StopMesure("GC Present", "Draw");
+            }
+            else
+            {
+                _d3dEngine.SwapChain.Present(_vSync, PresentFlags.None); // Send BackBuffer to screen
+            }
 
             HLSLShaderWrap.ResetEffectStateTracker();
             VertexBuffer.ResetVertexStateTracker();
