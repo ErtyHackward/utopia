@@ -62,8 +62,8 @@ that uses the theme, please give due credit to the original artist!
     Resources used to draw GUI elements using this skin
   -->
   <resources> 
-    <font name="title" contentPath="TitleFont" fontName ="Lucida Console" fontSize ="11.5" fontStyle="Regular" />
-    <font name="default" contentPath="DefaultFont" fontName ="Lucida Console" fontSize ="11.5" fontStyle="Regular" />
+    <font name="title" contentPath="TitleFont" fontName ="Lucida Console" fontSize ="10" fontStyle="Regular" />
+    <font name="default" contentPath="DefaultFont" fontName ="Lucida Console" fontSize ="10" fontStyle="Regular" />
     <font name="itemsFont" contentPath="ItemsFont" fontName ="Small Fonts " fontSize ="11.0" fontStyle="Bold" />
     <bitmap name="controls" contentPath="SuaveSheet" />
   </resources>

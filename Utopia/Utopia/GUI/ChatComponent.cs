@@ -171,7 +171,7 @@ namespace Utopia.GUI
         public override void LoadContent()
         {
             _font = new SpriteFont();
-            _font.Initialize("Lucida Console", 13f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
+            _font.Initialize("Lucida Console", 12f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
             _spriteRender = new SpriteRenderer();
             _spriteRender.Initialize(_d3dEngine);
         }
