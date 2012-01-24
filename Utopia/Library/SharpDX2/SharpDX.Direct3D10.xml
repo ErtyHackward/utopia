@@ -447,7 +447,7 @@
             </summary>
             <returns>The buffer interface, or <c>null</c> on failure.</returns>
         </member>
-        <member name="M:SharpDX.Direct3D10.Resource.CalculateSubresourceIndex(System.Int32,System.Int32,System.Int32)">
+        <member name="M:SharpDX.Direct3D10.Resource.CalculateSubResourceIndex(System.Int32,System.Int32,System.Int32)">
             <summary>
             Calculates a subresource index.
             </summary>
@@ -5250,7 +5250,7 @@
             Retrieve the Direct3D device associated with the font object.	
             </summary>	
             <param name="deviceOut"><para>Address of a reference to an <see cref="T:SharpDX.Direct3D10.Device"/> interface, representing the Direct3D device object associated with the font object.</para></param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: D3DERR_INVALIDCALL, D3DXERR_INVALIDDATA.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, D3DXERR_INVALIDDATA.</returns>	
             <remarks>	
             Note??Calling this method will increase the internal reference count on the <see cref="T:SharpDX.Direct3D10.Device"/> interface. Be sure to call <see cref="T:SharpDX.ComObject"/> when you are done using this <see cref="T:SharpDX.Direct3D10.Device"/> interface or you will have a memory leak.	
             </remarks>	
@@ -5262,7 +5262,7 @@
             Get a description of the current font object.	
             </summary>	
             <param name="descRef"><para>Pointer to a <see cref="T:SharpDX.Direct3D10.FontDescription"/> structure that describes the font object. If UNICODE is defined, a reference to a D3DX10FONT_DESCW is returned; otherwise a reference to a D3DX10FONT_DESCA is returned.</para></param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: D3DERR_INVALIDCALL.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>.</returns>	
             <remarks>	
             This method describes Unicode font objects if UNICODE is defined. Otherwise GetDescA is called, which returns a reference to the D3DX10FONT_DESCA structure.	
             </remarks>	
@@ -5294,7 +5294,7 @@
             <param name="textureOut"><para>Address of a reference to a ID3D10Texture object that contains the glyph.</para></param>	
             <param name="blackBoxRef"><para>Pointer to the smallest rectangle object that completely encloses the glyph. See <see cref="T:SharpDX.Rectangle"/>.</para></param>	
             <param name="cellIncRef"><para>Pointer to the two-dimensional vector that connects the origin of the current character cell to the origin of the next character cell. See <see cref="T:System.Drawing.Point"/>.</para></param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: D3DERR_INVALIDCALL, D3DXERR_INVALIDDATA.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, D3DXERR_INVALIDDATA.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Font::GetGlyphData']/*"/>	
             <unmanaged>HRESULT ID3DX10Font::GetGlyphData([In] unsigned int Glyph,[Out] ID3D10ShaderResourceView** ppTexture,[Out] RECT* pBlackBox,[Out] POINT* pCellInc)</unmanaged>	
         </member>
@@ -5304,7 +5304,7 @@
             </summary>	
             <param name="first"><para>ID of the first character to be loaded into video memory.</para></param>	
             <param name="last"><para>ID of the last character to be loaded into video memory.</para></param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: D3DERR_INVALIDCALL, D3DXERR_INVALIDDATA.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, D3DXERR_INVALIDDATA.</returns>	
             <remarks>	
             This method generates textures containing glyphs that represent the input characters. The glyphs are drawn as a series of triangles.Characters will not be rendered to the device; <see cref="M:SharpDX.Direct3D10.Font.DrawText(SharpDX.Direct3D10.Sprite,System.String,SharpDX.Rectangle,SharpDX.Direct3D10.FontDrawFlags,SharpDX.Color4)"/> must still be called to render the characters. However, by pre-loading characters into video memory, <see cref="M:SharpDX.Direct3D10.Font.DrawText(SharpDX.Direct3D10.Sprite,System.String,SharpDX.Rectangle,SharpDX.Direct3D10.FontDrawFlags,SharpDX.Color4)"/> will use substantially fewer CPU resources.This method internally converts characters to glyphs using the GDI function GetCharacterPlacement.	
             </remarks>	
@@ -5317,7 +5317,7 @@
             </summary>	
             <param name="first"><para>ID of the first glyph to be loaded into video memory.</para></param>	
             <param name="last"><para>ID of the last glyph to be loaded into video memory.</para></param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: D3DERR_INVALIDCALL, D3DXERR_INVALIDDATA.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, D3DXERR_INVALIDDATA.</returns>	
             <remarks>	
             This method generates textures that contain the input glyphs. The glyphs are drawn as a series of triangles.Glyphs will not be rendered to the device; <see cref="M:SharpDX.Direct3D10.Font.DrawText(SharpDX.Direct3D10.Sprite,System.String,SharpDX.Rectangle,SharpDX.Direct3D10.FontDrawFlags,SharpDX.Color4)"/> must still be called to render the glyphs. However, by pre-loading glyphs into video memory, <see cref="M:SharpDX.Direct3D10.Font.DrawText(SharpDX.Direct3D10.Sprite,System.String,SharpDX.Rectangle,SharpDX.Direct3D10.FontDrawFlags,SharpDX.Color4)"/> will use substantially fewer CPU resources.	
             </remarks>	
@@ -5330,7 +5330,7 @@
             </summary>	
             <param name="stringRef"><para>Pointer to a string of characters to be loaded into video memory. If the compiler settings require Unicode, the data type LPCTSTR resolves to LPCWSTR; otherwise, the data type resolves to LPCSTR. See Remarks.</para></param>	
             <param name="count"><para>Number of characters in the text string.</para></param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: D3DERR_INVALIDCALL, D3DXERR_INVALIDDATA.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, D3DXERR_INVALIDDATA.</returns>	
             <remarks>	
             The compiler setting also determines the function version. If Unicode is defined, the function call resolves to PreloadTextW. Otherwise, the function call resolves to PreloadTextA because ANSI strings are being used.This method generates textures that contain glyphs that represent the input text. The glyphs are drawn as a series of triangles.Text will not be rendered to the device; <see cref="M:SharpDX.Direct3D10.Font.DrawText(SharpDX.Direct3D10.Sprite,System.String,SharpDX.Rectangle,SharpDX.Direct3D10.FontDrawFlags,SharpDX.Color4)"/> must still be called to render the text. However, by preloading text into video memory, <see cref="M:SharpDX.Direct3D10.Font.DrawText(SharpDX.Direct3D10.Sprite,System.String,SharpDX.Rectangle,SharpDX.Direct3D10.FontDrawFlags,SharpDX.Color4)"/> will use substantially fewer CPU resources.This method internally converts characters to glyphs using the GDI function GetCharacterPlacement.	
             </remarks>	
@@ -11874,7 +11874,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <param name="pitchAndFamily"><para>Pitch and family index.</para></param>	
             <param name="faceNameRef"><para>String containing the typeface name. If the compiler settings require Unicode, the data type LPCTSTR resolves to LPCWSTR. Otherwise, the data type resolves to LPCSTR. See Remarks. </para></param>	
             <param name="fontOut"><para>Returns a reference to an <see cref="T:SharpDX.Direct3D10.Font"/> interface, representing the created font object.</para></param>	
-            <returns>If the function succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the function fails, the return value can be one of the following: D3DERR_INVALIDCALL, D3DXERR_INVALIDDATA, E_OUTOFMEMORY.</returns>	
+            <returns>If the function succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the function fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, D3DXERR_INVALIDDATA, E_OUTOFMEMORY.</returns>	
             <remarks>	
             The compiler setting also determines the function version. If Unicode is defined, the function call resolves to <see cref="!:SharpDX.Direct3D9.D3DX9.CreateFontW"/>. Otherwise, the function call resolves to <see cref="!:SharpDX.Direct3D9.D3DX9.CreateFontA"/> because ANSI strings are being used.If you want more information about font parameters, see The Logical Font.	
             </remarks>	
@@ -11888,7 +11888,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <param name="deviceRef"><para>A reference to the device (see <see cref="T:SharpDX.Direct3D10.Device"/> Interface) that will draw the sprite.</para></param>	
             <param name="cDeviceBufferSize"><para>The size of the vertex buffer, in number of sprites, that will be sent to the device when <see cref="M:SharpDX.Direct3D10.Sprite.Flush"/> or <see cref="M:SharpDX.Direct3D10.Sprite.DrawSpritesImmediate(SharpDX.Direct3D10.SpriteInstance[],System.Int32,System.Int32,System.Int32)"/> is called. This should be a small number if you know you will be rendering a small number of sprites at a time (to save memory) and a large number if you know you will be rendering a large number of sprites at a time. The maximum value is 4096. If 0 is specified, the vertex buffer size will automatically be set to 4096.</para></param>	
             <param name="spriteOut"><para>The address of a reference to a sprite interface (see <see cref="T:SharpDX.Direct3D10.Sprite"/> Interface).</para></param>	
-            <returns>If the function succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the function fails, the return value can be one of the following: D3DERR_INVALIDCALL, E_OUTOFMEMORY.</returns>	
+            <returns>If the function succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the function fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, E_OUTOFMEMORY.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10CreateSprite']/*"/>	
             <unmanaged>HRESULT D3DX10CreateSprite([In] ID3D10Device* pDevice,[In] unsigned int cDeviceBufferSize,[Out, Fast] ID3DX10Sprite** ppSprite)</unmanaged>	
         </member>
@@ -11978,7 +11978,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10SHProjectCubeMap']/*"/>	
             <unmanaged>HRESULT D3DX10SHProjectCubeMap([In] unsigned int Order,[In] ID3D10Texture2D* pCubeMap,[Out, Buffer] float* pROut,[Out, Buffer, Optional] float* pGOut,[Out, Buffer, Optional] float* pBOut)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D10.D3DX10.CreateTextureFromResource(SharpDX.Direct3D10.Device,System.IntPtr,System.String,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D10.Resource@,SharpDX.Result@)">
+        <member name="M:SharpDX.Direct3D10.D3DX10.CreateTextureFromResource(SharpDX.Direct3D10.Device,System.IntPtr,System.String,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)">
             <summary>	
             Create a texture from another resource.	
             </summary>	
@@ -11994,7 +11994,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             For a list of supported image formats see <see cref="T:SharpDX.Direct3D10.ImageFileFormat"/>.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10CreateTextureFromResourceW']/*"/>	
-            <unmanaged>HRESULT D3DX10CreateTextureFromResourceW([In] ID3D10Device* pDevice,[In] HINSTANCE hSrcModule,[In] const wchar_t* pSrcResource,[In, Optional] D3DX10_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX10ThreadPump* pPump,[Out] ID3D10Resource** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
+            <unmanaged>HRESULT D3DX10CreateTextureFromResourceW([In] ID3D10Device* pDevice,[In] HINSTANCE hSrcModule,[In] const wchar_t* pSrcResource,[In, Optional] D3DX10_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX10ThreadPump* pPump,[Out] void** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct3D10.D3DX10.LoadTextureFromTexture(SharpDX.Direct3D10.Resource,SharpDX.Direct3D10.TextureLoadInformation,SharpDX.Direct3D10.Resource)">
             <summary>	
@@ -12015,7 +12015,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <param name="pumpRef"><para>Optional thread pump that can be used to load the info asynchronously. Can be <c>null</c>. See <see cref="T:System.IntPtr"/>.</para></param>	
             <param name="srcInfoRef"><para>Pointer to a <see cref="T:SharpDX.Direct3D10.ImageInformation"/> structure to be filled with the description of the data in the source file.</para></param>	
             <param name="hResultRef"><para>A reference to the return value. May be <c>null</c>. If pPump is not <c>null</c>, then pHResult must be a valid memory location until the asynchronous execution completes.</para></param>	
-            <returns>If the function succeeds, the return value is D3D_OK. If the function fails, the return value can be the following: D3DERR_INVALIDCALL</returns>	
+            <returns>If the function succeeds, the return value is <see cref="!:SharpDX.Direct3D9.ResultCode.Success"/>. If the function fails, the return value can be the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/></returns>	
             <remarks>	
             This function supports both Unicode and ANSI strings.	
             </remarks>	
@@ -12071,14 +12071,14 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <param name="channel"><para>One <see cref="!:SharpDX.Direct3D9.Channel"/> flag specifying the source of height information.</para></param>	
             <param name="amplitude"><para>Constant value multiplier that increases (or decreases) the values in the normal map. Higher values usually make bumps more visible, lower values usually make bumps less visible.</para></param>	
             <param name="destTextureRef"><para>Pointer to an <see cref="T:SharpDX.Direct3D10.Texture2D"/> interface, representing the destination texture.</para></param>	
-            <returns>If the function succeeds, the return value is D3D_OK. If the function fails, the return value can be the following value: D3DERR_INVALIDCALL.</returns>	
+            <returns>If the function succeeds, the return value is <see cref="!:SharpDX.Direct3D9.ResultCode.Success"/>. If the function fails, the return value can be the following value: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>.</returns>	
             <remarks>	
             This method computes the normal by using the central difference with a kernel size of 3x3. RGB channels in the destination contain biased (x,y,z) components of the normal. The central differencing denominator is hardcoded to 2.0.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10ComputeNormalMap']/*"/>	
             <unmanaged>HRESULT D3DX10ComputeNormalMap([In] ID3D10Texture2D* pSrcTexture,[In] D3DX10_NORMALMAP_FLAG Flags,[In] D3DX10_CHANNEL_FLAG Channel,[In] float Amplitude,[In] ID3D10Texture2D* pDestTexture)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D10.D3DX10.CreateTextureFromMemory(SharpDX.Direct3D10.Device,System.IntPtr,SharpDX.PointerSize,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D10.Resource@,SharpDX.Result@)">
+        <member name="M:SharpDX.Direct3D10.D3DX10.CreateTextureFromMemory(SharpDX.Direct3D10.Device,System.IntPtr,SharpDX.PointerSize,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)">
             <summary>	
             Create a texture resource from a file residing in system memory.	
             </summary>	
@@ -12094,7 +12094,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             For a list of supported image formats see <see cref="T:SharpDX.Direct3D10.ImageFileFormat"/>.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10CreateTextureFromMemory']/*"/>	
-            <unmanaged>HRESULT D3DX10CreateTextureFromMemory([In] ID3D10Device* pDevice,[In] const void* pSrcData,[In] SIZE_T SrcDataSize,[In, Optional] D3DX10_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX10ThreadPump* pPump,[Out] ID3D10Resource** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
+            <unmanaged>HRESULT D3DX10CreateTextureFromMemory([In] ID3D10Device* pDevice,[In] const void* pSrcData,[In] SIZE_T SrcDataSize,[In, Optional] D3DX10_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX10ThreadPump* pPump,[Out] void** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct3D10.D3DX10.GetImageInfoFromMemory(System.IntPtr,SharpDX.PointerSize,System.IntPtr,SharpDX.Direct3D10.ImageInformation@,SharpDX.Result@)">
             <summary>	
@@ -12118,14 +12118,14 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <param name="pumpRef"><para>Optional thread pump that can be used to load the info asynchronously. Can be <c>null</c>. See <see cref="T:System.IntPtr"/>.</para></param>	
             <param name="srcInfoRef"><para>Pointer to a <see cref="T:SharpDX.Direct3D10.ImageInformation"/> structure to be filled with the description of the data in the source file.</para></param>	
             <param name="hResultRef"><para>A reference to the return value. May be <c>null</c>. If pPump is not <c>null</c>, then pHResult must be a valid memory location until the asynchronous execution completes.</para></param>	
-            <returns>If the function succeeds, the return value is D3D_OK. If the function fails, the return value can be the following: D3DERR_INVALIDCALL</returns>	
+            <returns>If the function succeeds, the return value is <see cref="!:SharpDX.Direct3D9.ResultCode.Success"/>. If the function fails, the return value can be the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/></returns>	
             <remarks>	
             The compiler setting also determines the function version. If Unicode is defined, the function call resolves to <see cref="M:SharpDX.Direct3D10.D3DX10.GetImageInfoFromResource(System.IntPtr,System.String,System.IntPtr,SharpDX.Direct3D10.ImageInformation@,SharpDX.Result@)"/>. Otherwise, the function call resolves to D3DX10GetImageInfoFromResourceA because ANSI strings are being used.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10GetImageInfoFromResourceW']/*"/>	
             <unmanaged>HRESULT D3DX10GetImageInfoFromResourceW([In] HINSTANCE hSrcModule,[In] const wchar_t* pSrcResource,[In] ID3DX10ThreadPump* pPump,[In] D3DX10_IMAGE_INFO* pSrcInfo,[Out] HRESULT* pHResult)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D10.D3DX10.CreateTextureFromFile(SharpDX.Direct3D10.Device,System.String,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D10.Resource@,SharpDX.Result@)">
+        <member name="M:SharpDX.Direct3D10.D3DX10.CreateTextureFromFile(SharpDX.Direct3D10.Device,System.String,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)">
             <summary>	
             Create a texture resource from a file.	
             </summary>	
@@ -12140,7 +12140,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             For a list of supported image formats see <see cref="T:SharpDX.Direct3D10.ImageFileFormat"/>.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10CreateTextureFromFileW']/*"/>	
-            <unmanaged>HRESULT D3DX10CreateTextureFromFileW([In] ID3D10Device* pDevice,[In] const wchar_t* pSrcFile,[In, Optional] D3DX10_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX10ThreadPump* pPump,[Out] ID3D10Resource** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
+            <unmanaged>HRESULT D3DX10CreateTextureFromFileW([In] ID3D10Device* pDevice,[In] const wchar_t* pSrcFile,[In, Optional] D3DX10_IMAGE_LOAD_INFO* pLoadInfo,[In] ID3DX10ThreadPump* pPump,[Out] void** ppTexture,[Out] HRESULT* pHResult)</unmanaged>	
         </member>
         <member name="M:SharpDX.Direct3D10.D3DX10.CreateShaderResourceViewFromResource(SharpDX.Direct3D10.Device,System.IntPtr,System.String,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D10.ShaderResourceView@,SharpDX.Result@)">
             <summary>	
@@ -12174,7 +12174,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             Creates an empty skin mesh object using a declarator.	
             </summary>	
             <param name="skinInfoOut"><para>Address of a reference to an <see cref="T:SharpDX.Direct3D10.SkinInfo"/> Interface, representing the created skin mesh object.</para></param>	
-            <returns>If the function succeeds, the return value is D3D_OK. If the function fails, the return value can be: E_OUTOFMEMORY.</returns>	
+            <returns>If the function succeeds, the return value is <see cref="!:SharpDX.Direct3D9.ResultCode.Success"/>. If the function fails, the return value can be: E_OUTOFMEMORY.</returns>	
             <remarks>	
             Use the <see cref="M:SharpDX.Direct3D10.SkinInfo.SetBoneInfluence(System.Int32,System.Int32,System.Single)"/> to populate the empty skin mesh object returned by this method.	
             </remarks>	
@@ -12193,7 +12193,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <param name="faceCount"><para>Number of faces for the mesh. The valid range for this number is greater than 0, and one less than the maximum DWORD (typically 65534), because the last index is reserved.</para></param>	
             <param name="options"><para>Combination of one or more flags from the D3DX10_MESH, specifying options for the mesh. </para></param>	
             <param name="meshOut"><para>Address of a reference to an <see cref="T:SharpDX.Direct3D10.Mesh"/> Interface, representing the created mesh object.</para></param>	
-            <returns>If the function succeeds, the return value is D3D_OK. If the function fails, the return value can be one of the following: D3DERR_INVALIDCALL, E_OUTOFMEMORY.</returns>	
+            <returns>If the function succeeds, the return value is <see cref="!:SharpDX.Direct3D9.ResultCode.Success"/>. If the function fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, E_OUTOFMEMORY.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10CreateMesh']/*"/>	
             <unmanaged>HRESULT D3DX10CreateMesh([In] ID3D10Device* pDevice,[In, Buffer] const D3D10_INPUT_ELEMENT_DESC* pDeclaration,[In] unsigned int DeclCount,[In] const char* pPositionSemantic,[In] unsigned int VertexCount,[In] unsigned int FaceCount,[In] unsigned int Options,[Out, Fast] ID3DX10Mesh** ppMesh)</unmanaged>	
         </member>
@@ -14533,7 +14533,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <param name="boneIndex"><para>An index that specifies an existing bone. Must be between 0 and the value returned by <see cref="M:SharpDX.Direct3D10.SkinInfo.GetNumBones"/>.</para></param>	
             <param name="influenceIndex"><para>An index into the bone's list of vertices that it influences.</para></param>	
             <param name="weight"><para>The amount of influence, between 0 and 1, that the bone has over the vertex.</para></param>	
-            <returns>If the method succeeds, the return value is D3D_OK. If the method fails, the return value can be E_INVALIDARG.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="!:SharpDX.Direct3D9.ResultCode.Success"/>. If the method fails, the return value can be E_INVALIDARG.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10SkinInfo::SetBoneInfluence']/*"/>	
             <unmanaged>HRESULT ID3DX10SkinInfo::SetBoneInfluence([In] unsigned int BoneIndex,[In] unsigned int InfluenceIndex,[In] float Weight)</unmanaged>	
         </member>
@@ -14544,7 +14544,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <param name="boneIndex"><para>An index that specifies an existing bone. Must be between 0 and the value returned by <see cref="M:SharpDX.Direct3D10.SkinInfo.GetNumBones"/>.</para></param>	
             <param name="influenceIndex"><para>An index into the bone's list of vertices that it influences.</para></param>	
             <param name="weightRef"><para>The amount of influence, between 0 and 1, that the bone has over the vertex.</para></param>	
-            <returns>If the method succeeds, the return value is D3D_OK. If the method fails, the return value can be E_INVALIDARG.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="!:SharpDX.Direct3D9.ResultCode.Success"/>. If the method fails, the return value can be E_INVALIDARG.</returns>	
             <remarks>	
             Use <see cref="M:SharpDX.Direct3D10.SkinInfo.GetBoneInfluenceCount(System.Int32)"/> to find out how many vertices the bone influences.	
             </remarks>	
@@ -14662,7 +14662,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             Prepare a device for drawing sprites.	
             </summary>	
             <param name="flags"><para>Flags that control how the sprites will be drawn. See <see cref="T:SharpDX.Direct3D10.SpriteFlags"/>.</para></param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: D3DERR_INVALIDCALL, D3DERR_OUTOFVIDEOMEMORY, D3DXERR_INVALIDDATA, E_OUTOFMEMORY.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, <see cref="!:SharpDX.Direct3D9.ResultCode.OutOfVideoMemory"/>, D3DXERR_INVALIDDATA, E_OUTOFMEMORY.</returns>	
             <remarks>	
             Every call to Begin must be matched with a call to <see cref="M:SharpDX.Direct3D10.Sprite.End"/>.	
             </remarks>	
@@ -14675,7 +14675,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             </summary>	
             <param name="spritesRef">No documentation.</param>	
             <param name="cSprites">No documentation.</param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: D3DERR_INVALIDCALL, D3DXERR_INVALIDDATA.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, D3DXERR_INVALIDDATA.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Sprite::DrawSpritesBuffered']/*"/>	
             <unmanaged>HRESULT ID3DX10Sprite::DrawSpritesBuffered([In, Buffer] D3DX10_SPRITE* pSprites,[In] unsigned int cSprites)</unmanaged>	
         </member>
@@ -14683,7 +14683,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <summary>	
             Force all batched sprites to be submitted to the device. Device states remain as they were after the last call to <see cref="M:SharpDX.Direct3D10.Sprite.Begin(SharpDX.Direct3D10.SpriteFlags)"/>. The list of batched sprites is then cleared.	
             </summary>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: D3DERR_INVALIDCALL.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Sprite::Flush']/*"/>	
             <unmanaged>HRESULT ID3DX10Sprite::Flush()</unmanaged>	
         </member>
@@ -14695,7 +14695,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <param name="cSprites">No documentation.</param>	
             <param name="cbSprite">No documentation.</param>	
             <param name="flags">No documentation.</param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: D3DERR_INVALIDCALL, D3DXERR_INVALIDDATA.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, D3DXERR_INVALIDDATA.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Sprite::DrawSpritesImmediate']/*"/>	
             <unmanaged>HRESULT ID3DX10Sprite::DrawSpritesImmediate([In, Buffer] D3DX10_SPRITE* pSprites,[In] unsigned int cSprites,[In] unsigned int cbSprite,[In] unsigned int flags)</unmanaged>	
         </member>
@@ -14703,7 +14703,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <summary>	
             Call this after <see cref="M:SharpDX.Direct3D10.Sprite.Flush"/>. If  <see cref="F:SharpDX.Direct3D10.SpriteFlags.SaveState"/> was specified when <see cref="M:SharpDX.Direct3D10.Sprite.Begin(SharpDX.Direct3D10.SpriteFlags)"/> was called, this API will restore the device state to how it was before <see cref="M:SharpDX.Direct3D10.Sprite.Begin(SharpDX.Direct3D10.SpriteFlags)"/> was called.	
             </summary>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: D3DERR_INVALIDCALL.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Sprite::End']/*"/>	
             <unmanaged>HRESULT ID3DX10Sprite::End()</unmanaged>	
         </member>
@@ -14712,7 +14712,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             Get the view transform that applies to all sprites.	
             </summary>	
             <param name="viewTransformRef"><para>Pointer to a D3DX10MATRIX that will be set to the transform of the sprite from the original world space.</para></param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: D3DERR_INVALIDCALL.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Sprite::GetViewTransform']/*"/>	
             <unmanaged>HRESULT ID3DX10Sprite::GetViewTransform([Out] D3DXMATRIX* pViewTransform)</unmanaged>	
         </member>
@@ -14721,7 +14721,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             Set the view transform that applies to all sprites.	
             </summary>	
             <param name="viewTransformRef"><para>Pointer to a <see cref="T:SharpDX.Matrix"/> that contains a transform of the sprite from the original world space. Use this transform to scale, rotate, or transform the sprite.</para></param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: D3DERR_INVALIDCALL.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Sprite::SetViewTransform']/*"/>	
             <unmanaged>HRESULT ID3DX10Sprite::SetViewTransform([In] D3DXMATRIX* pViewTransform)</unmanaged>	
         </member>
@@ -14748,7 +14748,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             Retrieve the device associated with the sprite object.	
             </summary>	
             <param name="deviceOut"><para>Address of a reference to an <see cref="T:SharpDX.Direct3D10.Device"/> interface, representing the Direct3D device object associated with the sprite object.</para></param>	
-            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: D3DERR_INVALIDCALL.</returns>	
+            <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the following value will be returned: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>.</returns>	
             <remarks>	
             Calling this method will increase the internal reference count on the <see cref="T:SharpDX.Direct3D10.Device"/> interface.	
             </remarks>	
@@ -16283,7 +16283,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             Optionally provide information to texture loader APIs to control how textures get loaded. A value of D3DX10_DEFAULT for any of these parameters will cause D3DX to automatically use the value from the source file.	
             </summary>	
             <remarks>	
-            When initializing the structure, you may set any member to D3DX10_DEFAULT and D3DX will initialize it with a default value from the source texture when the texture is loaded.This structure can be used by APIs that:Create resources, such as <see cref="M:SharpDX.Direct3D10.D3DX10.CreateTextureFromFile(SharpDX.Direct3D10.Device,System.String,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D10.Resource@,SharpDX.Result@)"/> and <see cref="M:SharpDX.Direct3D10.D3DX10.CreateShaderResourceViewFromFile(SharpDX.Direct3D10.Device,System.String,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D10.ShaderResourceView@,SharpDX.Result@)"/>. Create data processors, such as D3DX10CreateAsyncTextureInfoProcessor or	
+            When initializing the structure, you may set any member to D3DX10_DEFAULT and D3DX will initialize it with a default value from the source texture when the texture is loaded.This structure can be used by APIs that:Create resources, such as <see cref="M:SharpDX.Direct3D10.D3DX10.CreateTextureFromFile(SharpDX.Direct3D10.Device,System.String,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,System.IntPtr@,SharpDX.Result@)"/> and <see cref="M:SharpDX.Direct3D10.D3DX10.CreateShaderResourceViewFromFile(SharpDX.Direct3D10.Device,System.String,System.Nullable{SharpDX.Direct3D10.ImageLoadInformation},System.IntPtr,SharpDX.Direct3D10.ShaderResourceView@,SharpDX.Result@)"/>. Create data processors, such as D3DX10CreateAsyncTextureInfoProcessor or	
             D3DX10CreateAsyncShaderResourceViewProcessor.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10_IMAGE_LOAD_INFO']/*"/>	
