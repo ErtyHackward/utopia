@@ -8,7 +8,7 @@ namespace Utopia.Shared
     /// <summary>
     /// Base class for storage using SQLite database
     /// </summary>
-    public abstract class SQLiteStorage
+    public abstract class SQLiteStorage : IDisposable
     {
         private readonly SQLiteConnection _connection;
         private readonly string _path;

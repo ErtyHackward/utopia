@@ -368,7 +368,7 @@ namespace Utopia.Shared.Net.Connections
             while (_isrunning)
             {
                 _needSend.WaitOne();
-
+                if (_isrunning == false) break;
                 try
                 {
                     lock (_sendSynObject)
@@ -463,6 +463,7 @@ namespace Utopia.Shared.Net.Connections
             if (disposing)
             {
                 _isrunning = false;
+                _needSend.Set();
                 _needSend.Dispose();
                 if(Writer != null)
                     Writer.Dispose();
