@@ -138,7 +138,7 @@ namespace LostIsland.Client
             _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
             _iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
             _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds_flat");
-            _iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds");
+            _iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds_3D");
             _iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();

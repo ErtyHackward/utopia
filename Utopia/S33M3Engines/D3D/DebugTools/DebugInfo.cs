@@ -57,7 +57,7 @@ namespace S33M3Engines.D3D.DebugTools
         public override void LoadContent()
         {
             _font = new SpriteFont();
-            _font.Initialize("Segoe UI Mono", 11.5f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
+            _font.Initialize("Lucida Console", 11.5f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
             _spriteRender = new SpriteRenderer();
             _spriteRender.Initialize(_d3dEngine);
         }
