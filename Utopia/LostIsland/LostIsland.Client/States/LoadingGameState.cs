@@ -296,10 +296,7 @@ namespace LostIsland.Client.States
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
 
-            StatesManager.UpdateCurrentStateComponents();
-            
-            
-
+            StatesManager.UpdateCurrentStateComponents();           
 
             playerEntityManager.Enabled = false;
             worldChunks.LoadComplete += worldChunks_LoadComplete;

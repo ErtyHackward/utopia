@@ -284,8 +284,7 @@ namespace S33M3Engines
                 {
                     try
                     {
-                        Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.Debug, SwapDesc, out Device,
-                                                   out _swapChain);
+                        Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.Debug, SwapDesc, out Device, out _swapChain);
                     }
                     catch (SharpDXException ex)
                     {
