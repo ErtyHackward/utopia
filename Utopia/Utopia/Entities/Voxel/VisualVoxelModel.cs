@@ -39,7 +39,7 @@ namespace Utopia.Entities.Voxel
         }
 
         /// <summary>
-        /// Gets array of visual data (verices and indices and bounding boxes)
+        /// Gets array of visual data (verices and indices and transformed bounding boxes)
         /// </summary>
         public VisualVoxelPart[] VisualVoxelParts
         {

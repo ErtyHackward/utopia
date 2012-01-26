@@ -14,6 +14,17 @@ namespace Utopia.Components
 {
     public partial class ModelEditorComponent
     {
+        private struct DialogAnimationEditStruct
+        {
+            public string Name;
+        }
+
+        private struct DialogAnimationStepStruct
+        {
+            public int Index;
+            public int Duration;
+        }
+
         private struct DialogModelEditStruct
         {
             public string Name;
@@ -41,6 +52,9 @@ namespace Utopia.Components
         private ButtonControl _backButton;
         private WindowControl _toolsWindow;
         private WindowControl _modelNavigationWindow;
+
+        private DialogControl<DialogAnimationEditStruct> _animationsEditDialog;
+        private DialogControl<DialogAnimationStepStruct> _animationStepDialog;
         private DialogControl<DialogStateEditStruct> _stateEditDialog;
         private DialogControl<DialogModelEditStruct> _modelEditDialog;
         private DialogControl<DialogPartsEditStruct> _partEditDialog;
@@ -65,6 +79,7 @@ namespace Utopia.Components
 
         private ListControl _modelsList;
         private ListControl _animationsList;
+        private ListControl _animationStepsList;
         private ListControl _statesList;
         private ListControl _partsList;
         private ListControl _framesList;
@@ -77,6 +92,8 @@ namespace Utopia.Components
 
             _toolsWindow = CreateToolsWindow();
             _modelNavigationWindow = CreateNavigationWindow();
+            _animationsEditDialog = new DialogControl<DialogAnimationEditStruct>();
+            _animationStepDialog = new DialogControl<DialogAnimationStepStruct>();
             _stateEditDialog = new DialogControl<DialogStateEditStruct>();
             _modelEditDialog = new DialogControl<DialogModelEditStruct>();
             _partEditDialog = new DialogControl<DialogPartsEditStruct>();
@@ -122,22 +139,53 @@ namespace Utopia.Components
 
 
 
-            var animationsLabel = new LabelControl { Text = "Animations" };
-            animationsLabel.Bounds = new UniRectangle(0, 0, 60, 20);
+            var animationsLabel = new LabelControl { Text = "Animations", Bounds = new UniRectangle(0, 0, 60, 20) };
+            var animationsStepsLabel = new LabelControl { Text = "Steps", Bounds = new UniRectangle(0, 0, 60, 20) };
             var animationsAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 35, 20) };
             var animationsEditButton = new ButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 35, 20) };
             var animationsDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 35, 20) };
+
+            animationsAddButton.Pressed += delegate { OnAnimationsAddButtonPressed(); };
+            animationsEditButton.Pressed += delegate { OnAnimationsEditButtonPressed(); };
+            animationsDeleteButton.Pressed += delegate { OnAnimationsDeleteButtonPressed(); };
+
+            var animationStepAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 35, 20) };
+            var animationStepEditButton = new ButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 35, 20) };
+            var animationStepDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 35, 20) };
+
+            animationStepAddButton.Pressed += delegate { OnAnimationStepAddButtonPressed(); };
+            animationStepEditButton.Pressed += delegate { OnAnimationStepEditButtonPressed(); };
+            animationStepDeleteButton.Pressed += delegate { OnAnimationStepDeleteButtonPressed(); };
+
+            var animationPlayButton = new ButtonControl { Text = "Play", Bounds = new UniRectangle(0, 0, 85, 20) };
+            var animationStopButton = new ButtonControl { Text = "Stop", Bounds = new UniRectangle(0, 0, 85, 20) };
+
+            animationPlayButton.Pressed += delegate { OnAnimationPlayButtonPressed(); };
+            animationStopButton.Pressed += delegate { OnAnimationStopButtonPressed(); };
+
             _animationsList = new ListControl { Name = "animationsList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             _animationsList.Bounds = new UniRectangle(0, 0, 180, 20);
             _animationsList.SelectionMode = ListSelectionMode.Single;
             _animationsList.SelectionChanged += delegate { SelectedAnimationIndex = _animationsList.SelectedItems.Count > 0 ? _animationsList.SelectedItems[0] : -1; };
             _animationsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 0), LayoutFlags = ControlLayoutFlags.FreeHeight | ControlLayoutFlags.WholeRow };
 
+            _animationStepsList = new ListControl { Name = "animationSteps", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
+            _animationStepsList.Bounds = new UniRectangle(0, 0, 180, 20);
+            _animationStepsList.SelectionMode = ListSelectionMode.Single;
+            _animationStepsList.SelectionChanged += delegate { SelectedAnimationStepIndex = _animationStepsList.SelectedItems.Count > 0 ? _animationStepsList.SelectedItems[0] : -1; };
+
             _animationsGroup.Children.Add(animationsLabel);
             _animationsGroup.Children.Add(animationsAddButton);
             _animationsGroup.Children.Add(animationsEditButton);
             _animationsGroup.Children.Add(animationsDeleteButton);
             _animationsGroup.Children.Add(_animationsList);
+            _animationsGroup.Children.Add(animationsStepsLabel);
+            _animationsGroup.Children.Add(animationStepAddButton);
+            _animationsGroup.Children.Add(animationStepEditButton);
+            _animationsGroup.Children.Add(animationStepDeleteButton);
+            _animationsGroup.Children.Add(_animationStepsList);
+            _animationsGroup.Children.Add(animationPlayButton);
+            _animationsGroup.Children.Add(animationStopButton);
 
 
             var statesLabel = new LabelControl { Text = "States" };
@@ -265,7 +313,6 @@ namespace Utopia.Components
         {
             _modelNavigationWindow.Children.Clear();
             _modelNavigationWindow.Children.Add(_animationsGroup);
-            _modelNavigationWindow.Children.Add(_statesGroup);
 
             _toolsWindow.Children.Clear();
             _toolsWindow.Children.Add(_modesButtonsGroup);

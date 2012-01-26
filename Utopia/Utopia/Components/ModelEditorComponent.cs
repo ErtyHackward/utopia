@@ -94,6 +94,7 @@ namespace Utopia.Components
 
         private int _selectedFrameIndex;
         private int _selectedPartIndex;
+        private int _selectedAnimationIndex;
 
         private bool _flipAxis;
 
@@ -218,7 +219,40 @@ namespace Utopia.Components
             }
         }
 
-        public int SelectedAnimationIndex { get; private set; }
+        public int SelectedAnimationIndex
+        {
+            get { return _selectedAnimationIndex; }
+            private set
+            {
+                if (_selectedAnimationIndex != value)
+                {
+                    _selectedAnimationIndex = value;
+
+                    // update steps list
+
+                    _animationStepsList.Items.Clear();
+
+                    if (_selectedAnimationIndex != -1)
+                    {
+
+                        for (int i = 0;
+                             i < _visualVoxelModel.VoxelModel.Animations[_selectedAnimationIndex].Steps.Count;
+                             i++)
+                        {
+                            var step = _visualVoxelModel.VoxelModel.Animations[_selectedAnimationIndex].Steps[i];
+                            _framesList.Items.Add(step);
+                        }
+
+                        _animationStepsList.SelectedItems.Clear();
+                        _animationStepsList.SelectedItems.Add(0);
+                    }
+                }
+
+            }
+        }
+
+        public int SelectedAnimationStepIndex { get; private set; }
+
 
         /// <summary>
         /// Gets current editing frame in frame mode
@@ -454,7 +488,7 @@ namespace Utopia.Components
 
             // set some initial colors
             ColorLookup.Colours.CopyTo(model.VoxelModel.ColorMapping.BlockColors,0);            
-            
+
             // add default part
 
             var part = new VoxelModelPart { Name = "Main" };
@@ -751,7 +785,6 @@ namespace Utopia.Components
             _stateEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogStateEditStruct(), "Add a new state", OnStateAdded);
             
         }
-        
         private void OnStateAdded(DialogStateEditStruct e)
         {
             var vms = new VoxelModelState(VisualVoxelModel.VoxelModel);
@@ -790,7 +823,7 @@ namespace Utopia.Components
         {
             if (VisualVoxelModel == null)
             {
-                _gui.MessageBox("Select a model before add a state");
+                _gui.MessageBox("Select a model before delete");
                 return;
             }
             if (VisualVoxelModel.VoxelModel.States.Count == 1)
@@ -801,8 +834,159 @@ namespace Utopia.Components
 
             _statesList.Items.RemoveAt(SelectedStateIndex);
             VisualVoxelModel.VoxelModel.RemoveStateAt(SelectedStateIndex);
-            if (SelectedStateIndex > 0)
-                SelectedStateIndex--;
+        }
+
+        private void OnAnimationsAddButtonPressed()
+        {
+            if (VisualVoxelModel == null)
+            {
+                _gui.MessageBox("Select a model before add a state");
+                return;
+            }
+
+            _animationsEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationEditStruct(), "Add a new animation", OnAnimationAdded);
+        }
+        private void OnAnimationAdded(DialogAnimationEditStruct e)
+        {
+            if (string.IsNullOrEmpty(e.Name))
+                e.Name = "unnamed";
+            
+            var animation = new VoxelModelAnimation();
+            
+            animation.Name = e.Name;
+
+            VisualVoxelModel.VoxelModel.Animations.Add(animation);
+            _animationsList.Items.Add(animation);
+        }
+        
+        private void OnAnimationsEditButtonPressed()
+        {
+            if (VisualVoxelModel == null)
+            {
+                _gui.MessageBox("Select a model before edit");
+                return;
+            }
+
+            if (SelectedAnimationIndex == -1)
+            {
+                _gui.MessageBox("Select an animation to edit");
+                return;
+            }
+
+            var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
+
+            _animationsEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationEditStruct { Name = animation.Name }, "Animation edit", OnAnimationEdited);
+        }
+        private void OnAnimationEdited(DialogAnimationEditStruct e)
+        {
+            var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
+            animation.Name = e.Name;
+        }
+
+        private void OnAnimationsDeleteButtonPressed()
+        {
+            if (VisualVoxelModel == null)
+            {
+                _gui.MessageBox("Select a model before delete");
+                return;
+            }
+
+            VisualVoxelModel.VoxelModel.Animations.RemoveAt(SelectedAnimationIndex);
+            _animationsList.Items.RemoveAt(SelectedAnimationIndex);
+
+        }
+
+        private void OnAnimationStepAddButtonPressed()
+        {
+            if (VisualVoxelModel == null)
+            {
+                _gui.MessageBox("Select a model before add a state");
+                return;
+            }
+            if (SelectedAnimationIndex == -1)
+            {
+                _gui.MessageBox("Select an animation to add step to");
+                return;
+            }
+
+            _animationStepDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationStepStruct(), "Add a new animation step", OnAnimationStepAdded);
+        }
+        private void OnAnimationStepAdded(DialogAnimationStepStruct e)
+        {
+            var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
+
+            var step = new AnimationStep { Duration = e.Duration, StateIndex = (byte)e.Index };
+            animation.Steps.Add(step);
+            _animationStepsList.Items.Add(step);
+
+        }
+
+        private void OnAnimationStepEditButtonPressed()
+        {
+            if (VisualVoxelModel == null)
+            {
+                _gui.MessageBox("Select a model before edit");
+                return;
+            }
+
+            if (SelectedAnimationIndex == -1)
+            {
+                _gui.MessageBox("Select an animation to edit");
+                return;
+            }
+
+            var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
+            var step = animation.Steps[SelectedAnimationStepIndex];
+
+            _animationStepDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationStepStruct { Duration = step.Duration, Index = step.StateIndex }, "Step edit", OnAnimationStepEdited);
+        }
+        private void OnAnimationStepEdited(DialogAnimationStepStruct e)
+        {
+            var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
+            var step = animation.Steps[SelectedAnimationStepIndex];
+            step.Duration = e.Duration;
+            step.StateIndex = (byte)e.Index;
+            animation.Steps[SelectedAnimationStepIndex] = step;
+        }
+
+        private void OnAnimationStepDeleteButtonPressed()
+        {
+            if (SelectedAnimationIndex == -1)
+            {
+                _gui.MessageBox("Select an animation to edit");
+                return;
+            }
+
+            if (SelectedAnimationStepIndex == -1)
+            {
+                _gui.MessageBox("Select an animation step to edit");
+                return;
+            }
+
+            var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
+            animation.Steps.RemoveAt(SelectedAnimationStepIndex);
+            _animationStepsList.Items.RemoveAt(SelectedAnimationStepIndex);
+
+            if (_animationStepsList.Items.Count == 0)
+            {
+                SelectedAnimationStepIndex = -1;
+            }
+
+            if (SelectedAnimationStepIndex == _animationStepsList.Items.Count)
+            {
+                SelectedAnimationIndex--;
+            }
+
+        }
+
+        private void OnAnimationPlayButtonPressed()
+        {
+            
+        }
+
+        private void OnAnimationStopButtonPressed()
+        {
+            
         }
 
         #region Presets
@@ -1672,6 +1856,6 @@ namespace Utopia.Components
         }
 
 
-
+        
     }
 }
