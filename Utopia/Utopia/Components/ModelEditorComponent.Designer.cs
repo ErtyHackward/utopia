@@ -19,6 +19,11 @@ namespace Utopia.Components
             public string Name;
         }
 
+        private struct DialogStateEditStruct
+        {
+            public string Name;
+        }
+
         private struct DialogPartsEditStruct
         {
             public string Name;
@@ -36,6 +41,7 @@ namespace Utopia.Components
         private ButtonControl _backButton;
         private WindowControl _toolsWindow;
         private WindowControl _modelNavigationWindow;
+        private DialogControl<DialogStateEditStruct> _stateEditDialog;
         private DialogControl<DialogModelEditStruct> _modelEditDialog;
         private DialogControl<DialogPartsEditStruct> _partEditDialog;
         private DialogControl<DialogFrameEditStruct> _frameEditDialog;
@@ -71,6 +77,7 @@ namespace Utopia.Components
 
             _toolsWindow = CreateToolsWindow();
             _modelNavigationWindow = CreateNavigationWindow();
+            _stateEditDialog = new DialogControl<DialogStateEditStruct>();
             _modelEditDialog = new DialogControl<DialogModelEditStruct>();
             _partEditDialog = new DialogControl<DialogPartsEditStruct>();
             _frameEditDialog = new DialogControl<DialogFrameEditStruct>();
@@ -138,6 +145,11 @@ namespace Utopia.Components
             var statesAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 35, 20) };
             var statesEditButton = new ButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 35, 20) };
             var statesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 35, 20) };
+
+            statesAddButton.Pressed += delegate { OnStateAddButtonPressed(); };
+            statesEditButton.Pressed += delegate { OnStateEditButtonPressed(); };
+            statesDeleteButton.Pressed += delegate { OnStateDeleteButtonPressed(); };
+
             _statesList = new ListControl { Name = "statesList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             _statesList.Bounds = new UniRectangle(0, 0, 180, 20);
             _statesList.SelectionMode = ListSelectionMode.Single;

@@ -448,6 +448,7 @@ namespace Utopia.Components
                 e.Name = "rename_me";
             var model = new VisualVoxelModel(new VoxelModel { Name = e.Name }, _meshFactory);
             var voxelModelState = new VoxelModelState(model.VoxelModel);
+            voxelModelState.Name = "Default";
             model.VoxelModel.States.Add(voxelModelState);
             model.VoxelModel.ColorMapping = new ColorMapping { BlockColors = new Color4[64] };
 
@@ -739,6 +740,71 @@ namespace Utopia.Components
             VisualVoxelModel = newModel;
         }
 
+        private void OnStateAddButtonPressed()
+        {
+            if (VisualVoxelModel == null)
+            {
+                _gui.MessageBox("Select a model before add a state");
+                return;
+            }
+
+            _stateEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogStateEditStruct(), "Add a new state", OnStateAdded);
+            
+        }
+        
+        private void OnStateAdded(DialogStateEditStruct e)
+        {
+            var vms = new VoxelModelState(VisualVoxelModel.VoxelModel);
+            if (string.IsNullOrEmpty(e.Name))
+                e.Name = "unnamed";
+            vms.Name = e.Name;
+            VisualVoxelModel.VoxelModel.States.Add(vms);
+            _statesList.Items.Add(vms);
+        }
+        
+        private void OnStateEditButtonPressed()
+        {
+            if (VisualVoxelModel == null)
+            {
+                _gui.MessageBox("Select a model before add a state");
+                return;
+            }
+
+            if (SelectedStateIndex == -1)
+            {
+                _gui.MessageBox("Select a state to edit");
+                return;
+            }
+
+            var state = VisualVoxelModel.VoxelModel.States[SelectedStateIndex];
+
+            _stateEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogStateEditStruct { Name = state.Name }, "State edit", OnStateEdited);
+        }
+        private void OnStateEdited(DialogStateEditStruct e)
+        {
+            var state = VisualVoxelModel.VoxelModel.States[SelectedStateIndex];
+            state.Name = e.Name;
+        }
+
+        private void OnStateDeleteButtonPressed()
+        {
+            if (VisualVoxelModel == null)
+            {
+                _gui.MessageBox("Select a model before add a state");
+                return;
+            }
+            if (VisualVoxelModel.VoxelModel.States.Count == 1)
+            {
+                _gui.MessageBox("Model should have at least one state");
+                return;
+            }
+
+            _statesList.Items.RemoveAt(SelectedStateIndex);
+            VisualVoxelModel.VoxelModel.RemoveStateAt(SelectedStateIndex);
+            if (SelectedStateIndex > 0)
+                SelectedStateIndex--;
+        }
+
         #region Presets
         private void OnCubePresetPressed()
         {
@@ -894,7 +960,23 @@ namespace Utopia.Components
 
                                 var translationVector = intersectPoint - _translatePoint.Value;
 
-                                _translatePoint = intersectPoint;
+                                if (keyboardState.IsKeyDown(Keys.Alt))
+                                {
+                                    _translatePoint = intersectPoint;
+                                }
+                                else
+                                {
+                                    translationVector.X = (int)translationVector.X;
+                                    translationVector.Y = (int)translationVector.Y;
+                                    translationVector.Z = (int)translationVector.Z;
+
+                                    if (Math.Abs(translationVector.X) >= 1 || Math.Abs(translationVector.Y) >= 1 ||
+                                        Math.Abs(translationVector.Z) >= 1)
+                                    {
+
+                                        _translatePoint = intersectPoint;
+                                    }
+                                }
 
                                 // send translation to current state
                                 //var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[_selectedPartIndex];
@@ -1588,6 +1670,7 @@ namespace Utopia.Components
 
             base.UnloadContent();
         }
+
 
 
     }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using SharpDX;
@@ -12,6 +11,11 @@ namespace Utopia.Shared.Entities.Models
     public class VoxelModelState : IBinaryStorable
     {
         private readonly VoxelModel _parentModel;
+
+        /// <summary>
+        /// Gets or sets the state name
+        /// </summary>
+        public string Name { get; set; }
 
         /// <summary>
         /// Corresponding array for voxel model parts
@@ -31,13 +35,16 @@ namespace Utopia.Shared.Entities.Models
             
             for (int i = 0; i < _parentModel.Parts.Count; i++)
             {
-                PartsStates.Add(new VoxelModelPartState());
+                PartsStates.Add(new VoxelModelPartState { Transform = Matrix.Identity } );
             }
 
         }
 
         public void Save(BinaryWriter writer)
         {
+            if (string.IsNullOrEmpty(Name))
+                Name = "unnamed";
+            writer.Write(Name);
             writer.Write((byte)PartsStates.Count);
             foreach (var voxelModelPartState in PartsStates)
             {
@@ -47,6 +54,7 @@ namespace Utopia.Shared.Entities.Models
 
         public void Load(BinaryReader reader)
         {
+            Name = reader.ReadString();
             var count = reader.ReadByte();
             PartsStates.Clear();
 
@@ -89,6 +97,11 @@ namespace Utopia.Shared.Entities.Models
             }
 
             BoundingBox = new BoundingBox(minPoint, maxPoint);
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }
