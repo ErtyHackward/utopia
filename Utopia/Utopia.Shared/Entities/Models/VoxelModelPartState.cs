@@ -24,6 +24,18 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         public BoundingBox BoundingBox;
 
+        public VoxelModelPartState()
+        {
+            
+        }
+
+        public VoxelModelPartState(VoxelModelPartState copyFrom)
+        {
+            ActiveFrame = copyFrom.ActiveFrame;
+            Transform = copyFrom.Transform;
+            BoundingBox = copyFrom.BoundingBox;
+        }
+
         public void Save(BinaryWriter writer)
         {
             writer.Write(ActiveFrame);
