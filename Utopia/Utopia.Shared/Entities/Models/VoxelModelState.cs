@@ -27,6 +27,23 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         public BoundingBox BoundingBox { get; set; }
 
+        /// <summary>
+        /// Initialize a copy of the state
+        /// </summary>
+        /// <param name="copyFrom"></param>
+        public VoxelModelState(VoxelModelState copyFrom)
+        {
+            PartsStates = new List<VoxelModelPartState>();
+            _parentModel = copyFrom._parentModel;
+            Name = copyFrom.Name;
+            BoundingBox = copyFrom.BoundingBox;
+            for (int i = 0; i < _parentModel.Parts.Count; i++)
+            {
+                PartsStates.Add(new VoxelModelPartState(copyFrom.PartsStates[i]));
+            }
+
+        }
+
         public VoxelModelState(VoxelModel parentModel)
         {
             PartsStates = new List<VoxelModelPartState>();
