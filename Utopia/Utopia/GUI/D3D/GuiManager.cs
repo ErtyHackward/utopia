@@ -144,11 +144,14 @@ namespace Utopia.GUI.D3D
 
             mbWindow.Children.Add(new LabelControl { Text = message, Bounds = new UniRectangle(15, 25, windowWidth - 40, 40) });
 
-            var buttonsPlace = new Control { Bounds = new UniRectangle(0, 0, 50 * buttonsText.Length + (10 * buttonsText.Length - 1), 20), LayoutFlags = ControlLayoutFlags.WholeRowCenter, LeftTopMargin = new SharpDX.Vector2() };
+            var buttonsPlace = new Control { Bounds = new UniRectangle(0, 0, 0, 20), LayoutFlags = ControlLayoutFlags.WholeRowCenter, LeftTopMargin = new SharpDX.Vector2() };
 
             foreach (var text in buttonsText)
             {
-                var button = new ButtonControl { Text = text, Bounds = new UniRectangle((windowWidth - 50) / 2, windowHeight - 30, 50, 20) };
+                var button = new ButtonControl { Text = text, Bounds = new UniRectangle((windowWidth - 50) / 2, windowHeight - 30, 20 + 5 * text.Length, 20) };
+
+                buttonsPlace.Bounds.Size.X += button.Bounds.Size.X + 5;
+
 
                 var text1 = text;
                 button.Pressed += delegate

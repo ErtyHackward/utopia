@@ -23,11 +23,6 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         public BoundingBox BoundingBox { get; set; }
 
-        public VoxelModelState()
-        {
-            PartsStates = new List<VoxelModelPartState>();
-        }
-
         public VoxelModelState(VoxelModel parentModel)
         {
             PartsStates = new List<VoxelModelPartState>();

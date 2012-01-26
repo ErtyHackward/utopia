@@ -23,9 +23,11 @@ namespace Utopia.Shared.Entities.Models
             {
                 colorMapping = new ColorMapping();
 
+                colorMapping.BlockColors = new Color4[colorMappingLength];
+
                 for (var i = 0; i < colorMappingLength; i++)
                 {
-                    colorMapping.BlockColors[i] = reader.ReadColor4();
+                    colorMapping.BlockColors[i] = reader.ReadInt32();
                 }
             }
 

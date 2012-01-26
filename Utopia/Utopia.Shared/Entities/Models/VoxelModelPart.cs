@@ -41,6 +41,10 @@ namespace Utopia.Shared.Entities.Models
 
         public void Save(BinaryWriter writer)
         {
+            if (string.IsNullOrEmpty(Name))
+                Name = "unnamed";
+
+            writer.Write(Name);
             writer.Write(IsHead);
             writer.Write(IsArm);
 
@@ -55,6 +59,7 @@ namespace Utopia.Shared.Entities.Models
 
         public void Load(BinaryReader reader)
         {
+            Name = reader.ReadString();
             IsHead = reader.ReadBoolean();
             IsArm = reader.ReadBoolean();
 

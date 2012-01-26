@@ -265,8 +265,24 @@ namespace Utopia.Components
 
         private void OnBackPressed()
         {
+            if (_needSave)
+            {
+                AskModelSave(OnBackModelSave);
+                return;
+            }
+
             var handler = BackPressed;
             if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        private void OnBackModelSave(string button)
+        {
+            if (button == "Save")
+            {
+                _manager.SaveModel(VisualVoxelModel);
+            }
+            _needSave = false;
+            OnBackPressed();
         }
 
         #endregion
@@ -450,12 +466,12 @@ namespace Utopia.Components
             _partsList.Items.Add(part);
 
 
-            VisualVoxelModel = model;
-            _needSave = true;
-
             _modelsList.Items.Add(model);
             _modelsList.SelectedItems.Clear();
             _modelsList.SelectedItems.Add(_modelsList.Items.Count - 1);
+
+            VisualVoxelModel = model;
+            _needSave = true;
         }
 
         private void OnPartsAddPressed()
@@ -695,11 +711,21 @@ namespace Utopia.Components
 
             if (newModel != VisualVoxelModel && _needSave)
             {
-                _gui.MessageBox("Current model was modified. Would you like to save the changes?", "Confirm", new[] { "Save", "Drop changes" }, OnModelSaveConfirm);
+                AskModelSave(OnModelSaveConfirm);
                 return;
             }
 
             VisualVoxelModel = newModel;
+            if (VisualVoxelModel != null && !VisualVoxelModel.Initialized)
+            {
+                VisualVoxelModel.BuildMesh();
+            }
+
+        }
+
+        private void AskModelSave(Action<string> callback)
+        {
+            _gui.MessageBox("Current model was modified. Would you like to save the changes?", "Confirm", new[] { "Save", "Drop changes" }, callback );
         }
 
         private void OnModelSaveConfirm(string button)

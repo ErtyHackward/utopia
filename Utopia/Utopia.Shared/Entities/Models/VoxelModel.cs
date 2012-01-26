@@ -157,7 +157,7 @@ namespace Utopia.Shared.Entities.Models
 
             for (int i = 0; i < count; i++)
             {
-                var modelState = new VoxelModelState();
+                var modelState = new VoxelModelState(this);
                 modelState.Load(reader);
                 States.Add(modelState);
             }
