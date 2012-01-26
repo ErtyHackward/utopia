@@ -172,7 +172,25 @@ namespace Utopia.Shared.Entities.Models
                 modelState.Load(reader);
                 Animations.Add(modelState);
             }
+        }
 
+        /// <summary>
+        /// Removes a state from index, updates animations indices
+        /// </summary>
+        /// <param name="selectedStateIndex"></param>
+        public void RemoveStateAt(int selectedStateIndex)
+        {
+            States.RemoveAt(selectedStateIndex);
+
+            foreach (var voxelModelAnimation in Animations)
+            {
+                for (int i = 0; i < voxelModelAnimation.Steps.Count; i++)
+                {
+                    var animationStep = voxelModelAnimation.Steps[i];
+                    if (animationStep.StateIndex > selectedStateIndex)
+                        animationStep.StateIndex--;
+                }
+            }
 
         }
     }
