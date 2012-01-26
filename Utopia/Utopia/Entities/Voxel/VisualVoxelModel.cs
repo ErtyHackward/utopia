@@ -22,6 +22,9 @@ namespace Utopia.Entities.Voxel
 
         private bool _initialized;
 
+        /// <summary>
+        /// Gets a value indicating if the model have a dx mesh and can be displayed. Call BuildMesh to get model initialized
+        /// </summary>
         public bool Initialized
         {
             get { return _initialized; }

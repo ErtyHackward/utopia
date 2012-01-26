@@ -114,6 +114,8 @@ namespace Utopia.Entities.Voxel
         /// <param name="model"></param>
         public void SaveModel(VisualVoxelModel model)
         {
+            model.VoxelModel.UpdateHash();
+
             lock (_syncRoot)
                 _models.Add(model.VoxelModel.Hash, model);
 
