@@ -2,6 +2,7 @@
 using S33M3Engines.D3D;
 using SharpDX;
 using Utopia.Shared.Entities.Models;
+using UtopiaContent.Effects.Entities;
 
 namespace Utopia.Entities.Voxel
 {
@@ -146,6 +147,18 @@ namespace Utopia.Entities.Voxel
                     Matrix.SmoothStep(ref state0.PartsStates[i].Transform, ref state1.PartsStates[i].Transform, step, out _internalState.PartsStates[i].Transform);
                 }
             }
+        }
+
+        /// <summary>
+        /// Draws a model using its instance data
+        /// </summary>
+        /// <param name="effect"></param>
+        /// <param name="world"></param>
+        public void Draw(HLSLVoxelModel effect, Matrix world)
+        {
+            effect.CBPerFrame.Values.World = world;
+            effect.CBPerFrame.IsDirty = true;
+            VisualVoxelModel.Draw(effect, State);
         }
 
         /// <summary>
