@@ -149,11 +149,12 @@ namespace Utopia.Entities.Voxel
             _initialized = true;
         }
 
-        public void Draw(HLSLVoxelModel effect)
+        public void Draw(HLSLVoxelModel effect, VoxelModelState state)
         {
             if (!_initialized) return;
 
-            var state = _model.States[0];
+            if(state == null)
+                state = _model.States[0];
 
             if (_model.ColorMapping != null)
             {
