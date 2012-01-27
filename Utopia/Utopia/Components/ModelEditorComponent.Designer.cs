@@ -395,7 +395,7 @@ namespace Utopia.Components
 
             var animationModeButton = new StickyButtonControl { Text = "Anim" };
             animationModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
-            animationModeButton.Pressed += delegate { Mode = EditorMode.ModelLayout; OnAnimationMode(); };
+            animationModeButton.Pressed += delegate { Mode = EditorMode.ModelView; OnAnimationMode(); };
 
             _modesButtonsGroup.Children.Add(viewModeButton);
             _modesButtonsGroup.Children.Add(layoutModeButton);

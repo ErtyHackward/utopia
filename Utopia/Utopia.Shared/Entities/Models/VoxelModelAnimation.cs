@@ -85,5 +85,10 @@ namespace Utopia.Shared.Entities.Models
         /// State transition animation time
         /// </summary>
         public int Duration;
+
+        public override string ToString()
+        {
+            return string.Format("State {0} Time {1}", StateIndex, Duration);
+        }
     }
 }
