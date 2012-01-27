@@ -149,7 +149,12 @@ namespace Utopia.Entities.Voxel
             _initialized = true;
         }
 
-        public void Draw(HLSLVoxelModel effect, VoxelModelState state)
+        /// <summary>
+        /// Draws a model with default state, to perform real drawing use VoxelModelInstance class
+        /// </summary>
+        /// <param name="effect"></param>
+        /// <param name="state"></param>
+        public void Draw(HLSLVoxelModel effect, VoxelModelState state = null)
         {
             if (!_initialized) return;
 
@@ -185,6 +190,11 @@ namespace Utopia.Entities.Voxel
 
                 _voxelMeshFactory.Engine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
             }
+        }
+
+        public VoxelModelInstance CreateInstance()
+        {
+            return new VoxelModelInstance(this);
         }
 
         public override string ToString()

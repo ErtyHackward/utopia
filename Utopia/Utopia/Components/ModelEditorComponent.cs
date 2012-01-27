@@ -112,6 +112,7 @@ namespace Utopia.Components
         private Vector3? _translatePoint;
 
         private bool _needSave;
+        private VoxelModelInstance _instance;
 
         #endregion
 
@@ -168,6 +169,8 @@ namespace Utopia.Components
                     }
 
                     UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, 0);
+
+                    _instance = _visualVoxelModel.CreateInstance();
                 }
             }
         }
@@ -540,6 +543,8 @@ namespace Utopia.Components
             _visualVoxelModel.VoxelModel.Parts.Add(part);
             _visualVoxelModel.BuildMesh();
             _partsList.Items.Add(part);
+
+            _instance.UpdateStates();
         }
 
         private void OnPartsEditPressed()
@@ -981,12 +986,17 @@ namespace Utopia.Components
 
         private void OnAnimationPlayButtonPressed()
         {
-            
+            if (SelectedAnimationIndex == -1)
+            {
+                _gui.MessageBox("Select an animation to play");
+                return;
+            }
+            _instance.Play(SelectedAnimationIndex);
         }
 
         private void OnAnimationStopButtonPressed()
         {
-            
+            _instance.Stop();
         }
 
         #region Presets
@@ -1100,6 +1110,8 @@ namespace Utopia.Components
                     {
                         var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
                         UpdateTransformMatrix(_currentViewData, bb);
+                        if (_instance != null)
+                            _instance.Update(ref timeSpent);
                     }
                     break;
                 case EditorMode.ModelLayout:
@@ -1527,7 +1539,7 @@ namespace Utopia.Components
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply();
 
-                _visualVoxelModel.Draw(_voxelEffect);
+                _instance.Draw(_voxelEffect);
             }
         }
 

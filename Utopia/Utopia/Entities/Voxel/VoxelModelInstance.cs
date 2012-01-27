@@ -11,7 +11,7 @@ namespace Utopia.Entities.Voxel
     /// </summary>
     public class VoxelModelInstance
     {
-        private readonly VoxelModelState _internalState;
+        private VoxelModelState _internalState;
 
         /// <summary>
         /// Gets a parent visual voxel model
@@ -59,9 +59,19 @@ namespace Utopia.Entities.Voxel
 
         public VoxelModelInstance(VisualVoxelModel model)
         {
+            AnimationIndex = -1;
+
             if (model == null) throw new ArgumentNullException("model");
             VisualVoxelModel = model;
             _internalState = new VoxelModelState(model.VoxelModel.States[0]);
+        }
+
+        /// <summary>
+        /// Call this method when the parent model has changed parts count (Editor use case)
+        /// </summary>
+        public void UpdateStates()
+        {
+            _internalState = new VoxelModelState(VisualVoxelModel.VoxelModel.States[0]);
         }
 
         /// <summary>
@@ -150,7 +160,7 @@ namespace Utopia.Entities.Voxel
         }
 
         /// <summary>
-        /// Draws a model using its instance data
+        /// Draws a model using its instance data and a world marix
         /// </summary>
         /// <param name="effect"></param>
         /// <param name="world"></param>
@@ -158,6 +168,15 @@ namespace Utopia.Entities.Voxel
         {
             effect.CBPerFrame.Values.World = world;
             effect.CBPerFrame.IsDirty = true;
+            VisualVoxelModel.Draw(effect, State);
+        }
+
+        /// <summary>
+        /// Draws current instance
+        /// </summary>
+        /// <param name="effect"></param>
+        public void Draw(HLSLVoxelModel effect)
+        {
             VisualVoxelModel.Draw(effect, State);
         }
 
