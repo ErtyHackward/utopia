@@ -125,7 +125,7 @@ namespace Utopia.GUI.D3D
             InjectInput();
         }
 
-        public override void Interpolation(ref double interpolatioHd, ref float interpolationHd)
+        public override void Interpolation(ref double interpolatioHd, ref float interpolationHd, ref long timePassed)
         {
         }
 

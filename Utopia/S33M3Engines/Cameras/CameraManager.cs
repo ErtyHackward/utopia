@@ -51,9 +51,9 @@ namespace S33M3Engines.Cameras
             ActiveCamera.Update(ref timeSpend);
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
         {
-            ActiveCamera.Interpolation(ref interpolation_hd, ref interpolation_ld);
+            ActiveCamera.Interpolation(ref interpolation_hd, ref interpolation_ld, ref timePassed);
         }
 
         #endregion

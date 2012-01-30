@@ -127,10 +127,10 @@ namespace Utopia.Worlds.SkyDomes
             base.Update(ref timeSpend);
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
         {
-            _clouds.Interpolation(ref interpolation_hd, ref interpolation_ld);
-            base.Interpolation(ref interpolation_hd, ref interpolation_ld);
+            _clouds.Interpolation(ref interpolation_hd, ref interpolation_ld, ref timePassed);
+            base.Interpolation(ref interpolation_hd, ref interpolation_ld, ref timePassed);
         }
 
         public override void Draw(int index)

@@ -1066,6 +1066,12 @@ namespace Utopia.Components
 
         #endregion
 
+        public override void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
+        {
+            if (_instance != null)
+                _instance.Update(ref timePassed);
+        }
+
         /// <summary>
         /// Allows the game component to update itself.
         /// </summary>
@@ -1110,8 +1116,6 @@ namespace Utopia.Components
                     {
                         var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
                         UpdateTransformMatrix(_currentViewData, bb);
-                        if (_instance != null)
-                            _instance.Update(ref timeSpent);
                     }
                     break;
                 case EditorMode.ModelLayout:

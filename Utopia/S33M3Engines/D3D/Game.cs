@@ -132,8 +132,8 @@ namespace S33M3Engines.D3D
             LoadContent();
 
             _next_game_update = Stopwatch.GetTimestamp();
-            
 
+            var lastTimestamp = _next_game_update;
             //The Pump !
             RenderLoop.Run(_d3dEngine.GameWindow, () =>
             {
@@ -148,9 +148,14 @@ namespace S33M3Engines.D3D
                     _updateWithoutrenderingCount++;
                 }
 
-                _interpolation_hd = (double) (Stopwatch.GetTimestamp() + GameUpdateDelta - _next_game_update) / GameUpdateDelta;
+                var timestamp = Stopwatch.GetTimestamp();
+
+                var passed = timestamp - lastTimestamp;
+                lastTimestamp = timestamp;
+                _interpolation_hd = (double)(timestamp + GameUpdateDelta - _next_game_update) / GameUpdateDelta;
                 _interpolation_ld = (float)_interpolation_hd;
-                Interpolation(ref _interpolation_hd, ref _interpolation_ld);
+
+                Interpolation(ref _interpolation_hd, ref _interpolation_ld, ref passed);
 
                 Draw();
             });
@@ -229,7 +234,11 @@ namespace S33M3Engines.D3D
             }
         }
 
-        public virtual void Update(ref GameTime TimeSpend)
+        /// <summary>
+        /// Performs game logic update. Always called with fixed time step
+        /// </summary>
+        /// <param name="timeSpent">Gives an amount of seconds passed since last call [runtime constant]</param>
+        public virtual void Update(ref GameTime timeSpent)
         {
             _currentlyUpdatingComponents.Clear();
             for (int i = 0; i < _enabledUpdateable.Count; i++) _currentlyUpdatingComponents.Add(_enabledUpdateable[i]);
@@ -239,21 +248,28 @@ namespace S33M3Engines.D3D
                 if (ComponentsPerfMonitor.isActivated)
                 {
                     ComponentsPerfMonitor.StartMesure(_currentlyUpdatingComponents[i], "Update");
-                    _currentlyUpdatingComponents[i].Update(ref TimeSpend);
+                    _currentlyUpdatingComponents[i].Update(ref timeSpent);
                     ComponentsPerfMonitor.StopMesure(_currentlyUpdatingComponents[i], "Update");
                 }
                 else
                 {
-                    _currentlyUpdatingComponents[i].Update(ref TimeSpend);
+                    _currentlyUpdatingComponents[i].Update(ref timeSpent);
                 }
             }
         }
 
-        public virtual void Interpolation(ref double interpolationHd, ref float interpolationLd)
+        /// <summary>
+        /// Performs gamecomponents interpolation. This method called right before each Draw call.
+        /// Only visual interpolation should be done here.
+        /// </summary>
+        /// <param name="interpolationHd">Value in range [0;1] that indicates factor of interpolation between Update calls</param>
+        /// <param name="interpolationLd">Value in range [0;1] that indicates factor of interpolation between Update calls</param>
+        /// <param name="timePassed">Time passed since last method call [milliseconds]</param>
+        public virtual void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
         {
             for (int i = 0; i < _currentlyUpdatingComponents.Count; i++)
             {
-                _currentlyUpdatingComponents[i].Interpolation(ref interpolationHd, ref interpolationLd);
+                _currentlyUpdatingComponents[i].Interpolation(ref interpolationHd, ref interpolationLd, ref timePassed);
             }
         }
 

@@ -103,7 +103,7 @@ namespace Utopia.Entities.Renderer
         {
         }
 
-        public void Interpolation(ref double interpolationHd, ref float interpolationLd)
+        public void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
         {
         }
 

@@ -74,7 +74,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
+        public override void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
             {

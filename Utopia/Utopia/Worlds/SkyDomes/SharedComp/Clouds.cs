@@ -71,7 +71,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
         {
         }
 

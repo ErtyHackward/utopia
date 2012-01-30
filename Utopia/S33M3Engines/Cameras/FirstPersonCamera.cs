@@ -77,7 +77,7 @@ namespace S33M3Engines.Cameras
         }
 
         //Called once before the drawing sequence ==> Computed interpolated values here !
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
         {
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolation_hd, out _worldPosition.ValueInterp);
 
