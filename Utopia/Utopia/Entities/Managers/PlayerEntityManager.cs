@@ -694,7 +694,7 @@ namespace Utopia.Entities.Managers
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
         }
 
-        public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
+        public override void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
         {
             //TODO FIXME NAsty bug here, not a number float arithmetic exception sometimes - surely a server side fix to do !
             Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);

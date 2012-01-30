@@ -80,10 +80,10 @@ namespace Utopia
             InputHandling();
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
         {
             ActionsManager.FetchInputs();
-            base.Interpolation(ref interpolation_hd, ref interpolation_ld);
+            base.Interpolation(ref interpolation_hd, ref interpolation_ld, ref timePassed);
         }
 
         public override void Draw()

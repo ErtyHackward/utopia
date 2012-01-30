@@ -146,7 +146,7 @@ namespace Utopia.GUI.D3D
             _toolbarUi.Update(ref timeSpend);
         }
 
-        public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
+        public override void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
         {
         }
 

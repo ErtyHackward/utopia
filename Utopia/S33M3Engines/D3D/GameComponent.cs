@@ -123,7 +123,7 @@ namespace S33M3Engines.D3D
 
         public virtual void Update(ref GameTime timeSpend) { }
 
-        public virtual void Interpolation(ref double interpolationHd, ref float interpolationLd) { }
+        public virtual void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed) { }
 
         public virtual void Dispose() { }
     }

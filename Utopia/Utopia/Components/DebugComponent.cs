@@ -35,10 +35,6 @@ namespace Utopia.Components
             KeyboardStateHandling();
         }
 
-        public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
-        {
-        }
-
         private void KeyboardStateHandling()
         {
             //if (_inputHandler.PrevKeyboardState.IsKeyDown(ClientSettings.Current.Settings.KeyboardMapping.DebugMode) &&

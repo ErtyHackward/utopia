@@ -35,7 +35,7 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        public override void Interpolation(ref double interpolationHd, ref float interpolationLd)
+        public override void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
         {
         }
 

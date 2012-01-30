@@ -60,9 +60,9 @@ namespace Utopia.Worlds.Weather
             Wind.Update(ref timeSpend);
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
         {
-            Wind.Interpolation(ref interpolation_hd, ref interpolation_ld);
+            Wind.Interpolation(ref interpolation_hd, ref interpolation_ld, ref timePassed);
         }
         #endregion 
 

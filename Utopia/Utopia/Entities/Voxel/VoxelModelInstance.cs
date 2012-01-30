@@ -114,11 +114,11 @@ namespace Utopia.Entities.Voxel
         /// <summary>
         /// Updates current animation
         /// </summary>
-        /// <param name="timeSpent"></param>
-        public void Update(ref GameTime timeSpent)
+        /// <param name="timePassed"></param>
+        public void Update(ref long timePassed)
         {
             if (!Playing) return;
-            var ms = (int)(timeSpent.ElapsedGameTimeInS_HD * 1000);
+            var ms = (int)timePassed;
 
             Elapsed += ms;
 

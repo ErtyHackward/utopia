@@ -124,7 +124,7 @@ namespace Utopia.Worlds.GameClocks
         {
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld)
+        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
         {
             float recomputedClock = _clockTime.Value;
             if (_clockTime.Value < _clockTime.ValuePrev)
