@@ -243,7 +243,7 @@ namespace Utopia.Components
                              i++)
                         {
                             var step = _visualVoxelModel.VoxelModel.Animations[_selectedAnimationIndex].Steps[i];
-                            _framesList.Items.Add(step);
+                            _animationStepsList.Items.Add(step);
                         }
 
                         _animationStepsList.SelectedItems.Clear();
@@ -455,10 +455,10 @@ namespace Utopia.Components
 
             ptList.Clear();
 
-            ptList.Add(new VertexPosition(new Vector3(0,0,-1)));
-            ptList.Add(new VertexPosition(new Vector3(0, 0, 1)));
-            ptList.Add(new VertexPosition(new Vector3(0, -1, 0)));
-            ptList.Add(new VertexPosition(new Vector3(0, 1, 0)));
+            ptList.Add(new VertexPosition(new Vector3(0,  0, -1)));
+            ptList.Add(new VertexPosition(new Vector3(0,  0,  1)));
+            ptList.Add(new VertexPosition(new Vector3(0, -1,  0)));
+            ptList.Add(new VertexPosition(new Vector3(0,  1,  0)));
 
             _crosshairVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine, 4, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorCrosshair_vertexBuffer");
             _crosshairVertexBuffer.SetData(ptList.ToArray());

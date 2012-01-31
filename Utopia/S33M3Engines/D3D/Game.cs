@@ -150,7 +150,7 @@ namespace S33M3Engines.D3D
 
                 var timestamp = Stopwatch.GetTimestamp();
 
-                var passed = timestamp - lastTimestamp;
+                var passed = (timestamp - lastTimestamp) / (Stopwatch.Frequency / 1000);
                 lastTimestamp = timestamp;
                 _interpolation_hd = (double)(timestamp + GameUpdateDelta - _next_game_update) / GameUpdateDelta;
                 _interpolation_ld = (float)_interpolation_hd;
