@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls;
 using Nuclex.UserInterface.Controls.Desktop;
@@ -8,6 +9,13 @@ using Utopia.GUI.D3D;
 
 namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
 {
+
+    public class DialogSelection
+    {
+        public IEnumerable Elements;
+        public int SelectedIndex;
+    }
+
     public static class DialogHelper
     {
         /// <summary>
@@ -29,7 +37,7 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
         public DialogControl()
         {
             // generate inputs controls
-            // supported types: string, int, float, bool
+            // supported types: string, int, float, bool, array
 
             var type = typeof(T);
             var fieldInfos = type.GetFields();
@@ -73,6 +81,15 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                     var edit = new OptionControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 20) };
                     Children.Add(edit);
                     Bounds.Size.Y += 25;
+                }
+
+                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(DialogSelection))
+                {
+                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
+                    Children.Add(label);
+                    var edit = new ListControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 80), SelectionMode = ListSelectionMode.Single };
+                    Children.Add(edit);
+                    Bounds.Size.Y += 85;
                 }
             }
 
@@ -134,6 +151,17 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                         var edit = (OptionControl)control;
                         fi.SetValueDirect(__makeref(t), edit.Selected);
                     }
+
+                    if (fi.FieldType == typeof(DialogSelection))
+                    {
+                        var edit = (ListControl)control;
+
+                        var ds = (DialogSelection)edit.Tag;
+
+                        ds.SelectedIndex = edit.SelectedItems[0];
+
+                        fi.SetValueDirect(__makeref(t), ds);
+                    }
                 }
             }
 
@@ -193,6 +221,25 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                     var edit = Children.Get<OptionControl>(fieldInfo.Name);
                     var obj = fieldInfo.GetValue(t);
                     edit.Selected = (bool)obj;
+                }
+
+                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(DialogSelection))
+                {
+                    var edit = Children.Get<ListControl>(fieldInfo.Name);
+                    var obj = fieldInfo.GetValue(t);
+                    var ds = (DialogSelection)obj;
+
+                    edit.Items.Clear();
+                    edit.SelectedItems.Clear();
+
+                    foreach (var element in ds.Elements)
+                    {
+                        edit.Items.Add(element);
+                    }
+
+                    if(ds.SelectedIndex != -1)
+                        edit.SelectedItems.Add(ds.SelectedIndex);
+                    edit.Tag = ds;
                 }
 
             }
