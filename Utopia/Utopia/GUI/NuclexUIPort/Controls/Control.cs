@@ -117,6 +117,8 @@ namespace Nuclex.UserInterface.Controls {
       get { return this.parent; }
     }
 
+      public object Tag { get; set; }
+
     /// <summary>Name that can be used to uniquely identify the control</summary>
     /// <remarks>
     ///   This name acts as an unique identifier for a control. It primarily serves

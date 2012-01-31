@@ -21,7 +21,7 @@ namespace Utopia.Components
 
         private struct DialogAnimationStepStruct
         {
-            public int Index;
+            public DialogSelection State;
             public int Duration;
         }
 

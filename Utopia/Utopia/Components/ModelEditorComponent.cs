@@ -913,17 +913,27 @@ namespace Utopia.Components
                 _gui.MessageBox("Select an animation to add step to");
                 return;
             }
+            var e = new DialogAnimationStepStruct();
+            e.State = new DialogSelection { SelectedIndex = -1, Elements = VisualVoxelModel.VoxelModel.States };
 
-            _animationStepDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationStepStruct(), "Add a new animation step", OnAnimationStepAdded);
+            _animationStepDialog.ShowDialog(_screen, _d3DEngine.ViewPort, e, "Add a new animation step", OnAnimationStepAdded);
         }
         private void OnAnimationStepAdded(DialogAnimationStepStruct e)
         {
             var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
 
-            var step = new AnimationStep { Duration = e.Duration, StateIndex = (byte)e.Index };
+            var step = new AnimationStep { Duration = e.Duration, StateIndex = (byte)e.State.SelectedIndex };
             animation.Steps.Add(step);
             _animationStepsList.Items.Add(step);
+        }
 
+        private void UpdateAnimationStepsList()
+        {
+            _animationStepsList.Items.Clear();
+            foreach (var animationStep in VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex].Steps)
+            {
+                _animationStepsList.Items.Add(animationStep);
+            }
         }
 
         private void OnAnimationStepEditButtonPressed()
@@ -943,15 +953,16 @@ namespace Utopia.Components
             var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
             var step = animation.Steps[SelectedAnimationStepIndex];
 
-            _animationStepDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationStepStruct { Duration = step.Duration, Index = step.StateIndex }, "Step edit", OnAnimationStepEdited);
+            _animationStepDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationStepStruct { Duration = step.Duration, State = new DialogSelection { SelectedIndex = step.StateIndex, Elements = VisualVoxelModel.VoxelModel.States } }, "Step edit", OnAnimationStepEdited);
         }
         private void OnAnimationStepEdited(DialogAnimationStepStruct e)
         {
             var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
             var step = animation.Steps[SelectedAnimationStepIndex];
             step.Duration = e.Duration;
-            step.StateIndex = (byte)e.Index;
+            step.StateIndex = (byte)e.State.SelectedIndex;
             animation.Steps[SelectedAnimationStepIndex] = step;
+            UpdateAnimationStepsList();
         }
 
         private void OnAnimationStepDeleteButtonPressed()
