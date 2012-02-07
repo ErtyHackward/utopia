@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using S33M3Engines.Buffers;
-using S33M3Engines.Struct.Vertex;
 using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
@@ -53,8 +50,9 @@ namespace Utopia.Entities.Voxel
             _voxelEntity = wrapped;
             _manager = manager;
 
-            var model = manager.GetModel(wrapped.ModelHash);
+            var model = manager.GetModel(wrapped.ModelInstance.ModelHash);
 
+            // set the model or wait for it
             if (model == null)
                 _manager.VoxelModelReceived += ManagerVoxelModelReceived;
             else
@@ -63,7 +61,8 @@ namespace Utopia.Entities.Voxel
 
         void ManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
         {
-            if (e.Model.Hash == _voxelEntity.ModelHash)
+            // our model just downloaded, set it
+            if (e.Model.Hash == _voxelEntity.ModelInstance.ModelHash)
             {
                 _visualVoxelModel = _manager.GetModel(e.Model.Hash);
                 _manager.VoxelModelReceived -= ManagerVoxelModelReceived;

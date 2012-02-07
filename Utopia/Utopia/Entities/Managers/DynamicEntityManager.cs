@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using S33M3Engines.D3D;
 using Utopia.Entities.Voxel;
-using Utopia.Entities.Renderer;
 using Ninject;
-using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Shared.Entities.Interfaces;

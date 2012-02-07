@@ -88,7 +88,7 @@ namespace Utopia.Entities.Voxel
         }
 
         /// <summary>
-        /// Gets a model from manager, if model not found requests it from the server
+        /// Gets a model from manager, if the model not found requests it from the server
         /// </summary>
         /// <param name="hash">md5 hash of the model</param>
         /// <param name="requestIfMissing"></param>

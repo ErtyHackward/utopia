@@ -170,7 +170,7 @@ namespace Utopia.Components
 
                     UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, 0);
 
-                    _instance = _visualVoxelModel.CreateInstance();
+                    _instance = _visualVoxelModel.VoxelModel.CreateInstance();
                 }
             }
         }
@@ -1554,7 +1554,7 @@ namespace Utopia.Components
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply();
 
-                _instance.Draw(_voxelEffect);
+                _visualVoxelModel.Draw(_voxelEffect, _instance.State);
             }
         }
 

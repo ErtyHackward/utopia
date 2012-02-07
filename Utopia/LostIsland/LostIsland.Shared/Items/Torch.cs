@@ -13,7 +13,6 @@ namespace LostIsland.Shared.Items
         {
             UniqueName = DisplayName;
             Type = EntityType.Static;
-            ModelHash = new Utopia.Shared.Structs.Md5Hash(null);
         }
 
         public override int MaxStackSize
