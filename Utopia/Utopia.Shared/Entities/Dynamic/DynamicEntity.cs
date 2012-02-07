@@ -116,22 +116,6 @@ namespace Utopia.Shared.Entities.Dynamic
             }
         }
 
-        public override SharpDX.Quaternion Rotation
-        {
-            get
-            {
-                return base.Rotation;
-            }
-            set
-            {
-                if (base.Rotation != value)
-                {
-                    base.Rotation = value;
-                    OnViewChanged(new EntityViewEventArgs { Entity = this });
-                }
-            }
-        }
-
         /// <summary>
         /// Gets or sets dynamic entity id
         /// </summary>

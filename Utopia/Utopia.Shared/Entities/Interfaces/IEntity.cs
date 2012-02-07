@@ -36,11 +36,6 @@ namespace Utopia.Shared.Entities.Interfaces
         Vector3D Position { get; set; }
 
         /// <summary>
-        /// Gets or sets entity rotation information
-        /// </summary>
-        Quaternion Rotation { get; set; }
-
-        /// <summary>
         /// Gets a displayed entity name
         /// </summary>
         string DisplayName { get; }
