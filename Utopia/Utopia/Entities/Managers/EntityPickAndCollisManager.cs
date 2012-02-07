@@ -208,14 +208,15 @@ namespace Utopia.Entities.Managers
                                 _server.ServerConnection.SendAsync(new EntityImpulseMessage
                                 {
                                     DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
-                                    Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.Rotation) * impulsePower
+                                    Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.ModelInstance.Rotation) * impulsePower
                                 }
                                 );
                             }
                         }
                         else
                         {
-                            Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(entityTesting.Entity.Rotation);
+                            var dynEntity =  (IDynamicEntity)entityTesting.Entity;
+                            Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(dynEntity.ModelInstance.Rotation);
                             newPosition2Evaluate += lookAt * 0.1;
                         }
                     }

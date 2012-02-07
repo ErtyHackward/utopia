@@ -42,19 +42,15 @@ namespace Utopia.Shared.Entities
         public virtual Vector3D Position { get; set; }
 
         /// <summary>
-        /// Gets or sets entity rotation information
-        /// </summary>
-        public virtual Quaternion Rotation { get; set; }
-
-        /// <summary>
         /// Gets a displayed entity name
         /// </summary>
         public abstract string DisplayName { get; }
-        
+
         /// <summary>
         /// Loads current entity from a binaryReader
         /// </summary>
         /// <param name="reader"></param>
+        /// <param name="factory"> </param>
         public virtual void Load(BinaryReader reader, EntityFactory factory)
         {
             // skipping entity class id
@@ -64,7 +60,6 @@ namespace Utopia.Shared.Entities
 
             Size = reader.ReadVector3();
             Position = reader.ReadVector3D();
-            Rotation = reader.ReadQuaternion();
         }
 
         /// <summary>
@@ -79,7 +74,6 @@ namespace Utopia.Shared.Entities
 
             writer.Write(Size);
             writer.Write(Position);
-            writer.Write(Rotation);
         }
 
         public abstract EntityLink GetLink();

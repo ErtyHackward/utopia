@@ -89,7 +89,7 @@ namespace Utopia.Network
         {
             var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
             if (entity != null)
-                entity.Rotation = e.Message.Rotation;
+                entity.ModelInstance.Rotation = e.Message.Rotation;
             else
             {
                 Debug.WriteLine("Unable to update direction of an entity");
@@ -151,7 +151,7 @@ namespace Utopia.Network
         {
             _connection.SendAsync(new EntityDirectionMessage 
             { 
-                Rotation = e.Entity.Rotation, 
+                Rotation = e.Entity.ModelInstance.Rotation, 
                 EntityId = e.Entity.DynamicId
             });
         }
