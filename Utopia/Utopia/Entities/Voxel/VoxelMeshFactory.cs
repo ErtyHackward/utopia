@@ -10,6 +10,9 @@ using Utopia.Shared.Enums;
 
 namespace Utopia.Entities.Voxel
 {
+    /// <summary>
+    /// Creates meshes for voxel models
+    /// </summary>
     public class VoxelMeshFactory
     {
         private readonly D3DEngine _d3DEngine;

@@ -192,11 +192,6 @@ namespace Utopia.Entities.Voxel
             }
         }
 
-        public VoxelModelInstance CreateInstance()
-        {
-            return new VoxelModelInstance(this);
-        }
-
         public override string ToString()
         {
             return _model.Name;

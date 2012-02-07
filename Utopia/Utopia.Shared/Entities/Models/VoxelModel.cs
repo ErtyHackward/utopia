@@ -193,5 +193,10 @@ namespace Utopia.Shared.Entities.Models
             }
 
         }
+
+        public VoxelModelInstance CreateInstance()
+        {
+            return new VoxelModelInstance(this);
+        }
     }
 }

@@ -62,24 +62,9 @@ namespace Utopia.Shared.Entities
 
             Type = (EntityType)reader.ReadByte();
 
-            Vector3 entitySize;
-            entitySize.X = reader.ReadSingle();
-            entitySize.Y = reader.ReadSingle();
-            entitySize.Z = reader.ReadSingle();
-            Size = entitySize;
-
-            Vector3D position;
-            position.X = reader.ReadDouble();
-            position.Y = reader.ReadDouble();
-            position.Z = reader.ReadDouble();
-            Position = position;
-
-            Quaternion quaternion;
-            quaternion.X = reader.ReadSingle();
-            quaternion.Y = reader.ReadSingle();
-            quaternion.Z = reader.ReadSingle();
-            quaternion.W = reader.ReadSingle();
-            Rotation = quaternion;
+            Size = reader.ReadVector3();
+            Position = reader.ReadVector3D();
+            Rotation = reader.ReadQuaternion();
         }
 
         /// <summary>
@@ -92,19 +77,9 @@ namespace Utopia.Shared.Entities
 
             writer.Write((byte)Type);
 
-            writer.Write(Size.X);
-            writer.Write(Size.Y);
-            writer.Write(Size.Z);
-
-            writer.Write(Position.X);
-            writer.Write(Position.Y);
-            writer.Write(Position.Z);
-
-            writer.Write(Rotation.X);
-            writer.Write(Rotation.Y);
-            writer.Write(Rotation.Z);
-            writer.Write(Rotation.W);
-
+            writer.Write(Size);
+            writer.Write(Position);
+            writer.Write(Rotation);
         }
 
         public abstract EntityLink GetLink();

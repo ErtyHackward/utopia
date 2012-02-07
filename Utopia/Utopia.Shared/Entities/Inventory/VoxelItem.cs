@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Inventory
@@ -16,7 +17,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Gets voxel entity model
         /// </summary>
-        public Md5Hash ModelHash { get; set; }
+        public VoxelModelInstance ModelInstance { get; set; }
 
         /// <summary>
         /// This is name can vary for concrete class instance (Example: Simon's steel shovel)
@@ -65,7 +66,8 @@ namespace Utopia.Shared.Entities.Inventory
             // first we need to load base information
             base.Load(reader, factory);
 
-            ModelHash = reader.ReadMd5Hash();
+            ModelInstance = new VoxelModelInstance();
+            ModelInstance.Load(reader);
 
             UniqueName = reader.ReadString();
         }
@@ -75,7 +77,7 @@ namespace Utopia.Shared.Entities.Inventory
             // first we need to save base information
             base.Save(writer);
 
-            writer.Write(ModelHash);
+            ModelInstance.Save(writer);
 
             writer.Write(UniqueName);
         }      

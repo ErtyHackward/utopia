@@ -79,7 +79,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.SendAsync(new EntityVoxelModelMessage { EntityLink = e.Entity.GetLink(), Hash = e.Entity.ModelHash });
+                Connection.SendAsync(new EntityVoxelModelMessage { EntityLink = e.Entity.GetLink(), Hash = e.Entity.ModelInstance.ModelHash });
             }
         }
 

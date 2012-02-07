@@ -13,7 +13,6 @@ namespace Utopia.Shared.Entities.Dynamic
     /// </summary>
     public abstract class DynamicEntity : Entity, IDynamicEntity
     {
-
         public DynamicEntityState _entityState;
 
         #region Events
@@ -64,11 +63,9 @@ namespace Utopia.Shared.Entities.Dynamic
 
         #endregion
         
-
-
         protected DynamicEntity()
         {
-            ModelHash = Md5Hash.Empty;
+
         }
 
         #region Properties
@@ -76,7 +73,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets voxel entity model
         /// </summary>
-        public Md5Hash ModelHash { get; set; }
+        public VoxelModelInstance ModelInstance { get; set; }
 
         /// <summary>
         /// Gets or sets entity state (this field should be refreshed before using the tool)
@@ -146,7 +143,8 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             base.Load(reader, factory);
             
-            ModelHash = reader.ReadMd5Hash();
+            ModelInstance = new VoxelModelInstance();
+            ModelInstance.Load(reader);
             
             DynamicId = reader.ReadUInt32();
             DisplacementMode = (EntityDisplacementModes)reader.ReadByte();
@@ -154,11 +152,11 @@ namespace Utopia.Shared.Entities.Dynamic
             RotationSpeed = reader.ReadSingle();
         }
 
-        public override void Save(System.IO.BinaryWriter writer)
+        public override void Save(BinaryWriter writer)
         {
             base.Save(writer);
 
-            writer.Write(ModelHash);
+            ModelInstance.Save(writer);
 
             writer.Write(DynamicId);
             writer.Write((byte)DisplacementMode);
