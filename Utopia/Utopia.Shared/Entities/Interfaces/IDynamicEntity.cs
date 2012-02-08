@@ -1,4 +1,5 @@
 using System;
+using SharpDX;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 
@@ -49,5 +50,9 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         uint DynamicId { get; }
 
+        /// <summary>
+        /// Gets or sets entity head rotation
+        /// </summary>
+        Quaternion HeadRotation { get; set; }
     }
 }

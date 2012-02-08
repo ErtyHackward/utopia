@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Utopia.Entities.Managers.Interfaces;
 using SharpDX;
-using Utopia.Entities.Voxel;
 using S33M3Engines.Shared.Math;
 using S33M3Engines.Maths;
 using S33M3Engines.Timers;
@@ -206,17 +203,17 @@ namespace Utopia.Entities.Managers
                                 if (_action.isTriggered(Actions.Move_Run)) impulsePower = 2;
 
                                 _server.ServerConnection.SendAsync(new EntityImpulseMessage
-                                {
-                                    DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
-                                    Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.ModelInstance.Rotation) * impulsePower
-                                }
+                                    {
+                                        DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
+                                        Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.HeadRotation) * impulsePower
+                                    }
                                 );
                             }
                         }
                         else
                         {
                             var dynEntity =  (IDynamicEntity)entityTesting.Entity;
-                            Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(dynEntity.ModelInstance.Rotation);
+                            Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(dynEntity.HeadRotation);
                             newPosition2Evaluate += lookAt * 0.1;
                         }
                     }

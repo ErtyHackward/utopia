@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using S33M3Engines.Shared.Math;
+using SharpDX;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
@@ -14,6 +15,7 @@ namespace Utopia.Shared.Entities.Dynamic
     public abstract class DynamicEntity : Entity, IDynamicEntity
     {
         public DynamicEntityState _entityState;
+        private Quaternion _headRotation;
 
         #region Events
 
@@ -112,6 +114,25 @@ namespace Utopia.Shared.Entities.Dynamic
                     var prev = base.Position;
                     base.Position = value;
                     OnPositionChanged(new EntityMoveEventArgs { Entity = this, PreviousPosition = prev });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets entity head rotation
+        /// </summary>
+        public Quaternion HeadRotation 
+        {
+            get 
+            {
+                return _headRotation;
+            }
+            set
+            {
+                if (_headRotation != value)
+                {
+                    _headRotation = value;
+                    OnViewChanged(new EntityViewEventArgs { Entity = this });
                 }
             }
         }

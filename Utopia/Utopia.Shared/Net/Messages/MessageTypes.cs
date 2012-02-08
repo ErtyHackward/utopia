@@ -105,6 +105,5 @@ namespace Utopia.Shared.Net.Messages
         /// Contains requested voxel model
         /// </summary>
         VoxelModelData = 25
-
     }
 }
