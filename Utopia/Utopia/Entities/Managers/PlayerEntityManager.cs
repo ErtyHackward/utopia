@@ -455,7 +455,7 @@ namespace Utopia.Entities.Managers
             //Send the Actual Position to the Entity object only of it has change !!!
             //The Change check is done at DynamicEntity level
             Player.Position = _worldPosition.Value;
-            Player.ModelInstance.Rotation = _lookAtDirection.Value;
+            Player.HeadRotation = _lookAtDirection.Value;
         }
 
         #region Movement Management
@@ -657,7 +657,7 @@ namespace Utopia.Entities.Managers
 
             //Set LookAt
             //Take back only the saved server Yaw rotation (Or Heading) and only using it;
-            _lookAtDirection.Value = Player.ModelInstance.Rotation;
+            _lookAtDirection.Value = Player.HeadRotation;
 
             double playerSavedYaw = MQuaternion.getYaw(ref _lookAtDirection.Value);
             Quaternion.RotationAxis(ref MVector3.Up, (float)playerSavedYaw, out _lookAtDirection.Value);            

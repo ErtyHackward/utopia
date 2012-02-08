@@ -66,7 +66,7 @@ namespace Utopia.Entities
             VisualEntity.RefreshWorldBoundingBox(ref WorldPosition.Value);
 
             //Set LookAt
-            LookAtDirection.Value = DynamicEntity.ModelInstance.Rotation;
+            LookAtDirection.Value = DynamicEntity.HeadRotation;
             LookAtDirection.ValuePrev = LookAtDirection.Value;
 
             //Set Move direction = to LookAtDirection
@@ -87,7 +87,7 @@ namespace Utopia.Entities
             LookAtDirection.BackUpValue();
 
             _netLocation.Value = DynamicEntity.Position;
-            LookAtDirection.Value = DynamicEntity.ModelInstance.Rotation;
+            LookAtDirection.Value = DynamicEntity.HeadRotation;
 
             Networkinterpolation();
         }
