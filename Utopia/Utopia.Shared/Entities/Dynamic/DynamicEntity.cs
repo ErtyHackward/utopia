@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using S33M3Engines.Shared.Math;
 using SharpDX;
@@ -100,7 +101,10 @@ namespace Utopia.Shared.Entities.Dynamic
         /// The displacement mode use by this entity (Walk, swim, fly, ...)
         /// </summary>
         public EntityDisplacementModes DisplacementMode { get; set; }
-        
+
+        /// <summary>
+        /// Gets or sets entity position
+        /// </summary>
         public override Vector3D Position
         {
             get
@@ -147,10 +151,15 @@ namespace Utopia.Shared.Entities.Dynamic
         public override void Load(BinaryReader reader, EntityFactory factory)
         {
             base.Load(reader, factory);
-            
-            ModelInstance = new VoxelModelInstance();
-            ModelInstance.Load(reader);
-            
+
+            var containsModel = reader.ReadBoolean();
+
+            if (containsModel)
+            {
+                ModelInstance = new VoxelModelInstance();
+                ModelInstance.Load(reader);
+            }
+
             DynamicId = reader.ReadUInt32();
             DisplacementMode = (EntityDisplacementModes)reader.ReadByte();
             MoveSpeed = reader.ReadSingle();
@@ -161,7 +170,12 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             base.Save(writer);
 
-            ModelInstance.Save(writer);
+            if (ModelInstance != null)
+            {
+                writer.Write(true);
+                ModelInstance.Save(writer);
+            }
+            else writer.Write(false);
 
             writer.Write(DynamicId);
             writer.Write((byte)DisplacementMode);

@@ -50,6 +50,10 @@ namespace Utopia.Entities.Voxel
             _voxelEntity = wrapped;
             _manager = manager;
 
+            if (wrapped.ModelInstance == null)
+                return;
+            
+
             var model = manager.GetModel(wrapped.ModelInstance.ModelHash);
 
             // set the model or wait for it

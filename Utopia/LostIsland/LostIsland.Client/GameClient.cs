@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
-using LostIsland.Client.Components;
 using LostIsland.Client.States;
 using LostIsland.Shared;
 using Utopia;
@@ -16,7 +14,6 @@ using Utopia.Shared.Config;
 using LostIsland.Client.GUI.Forms;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
@@ -83,7 +80,7 @@ namespace LostIsland.Client
             stateManager.RegisterState(_iocContainer.Get<SelectServerGameState>());
             stateManager.RegisterState(_iocContainer.Get<EditorState>());
 
-            // first state will be the login
+            // first state will be the login state
             stateManager.SetGameState("Login");
 
             game.Run();

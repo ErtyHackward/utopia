@@ -35,7 +35,7 @@ namespace Utopia.Launcher
 
             foreach (var filePath in Directory.EnumerateFiles(path))
             {
-                var relativePath = filePath.Remove(0, _localPath.Length);
+                var relativePath = filePath.Remove(0, _localPath.Length+1);
 
                 var item = new UpdateFile { FilePath = relativePath };
 
