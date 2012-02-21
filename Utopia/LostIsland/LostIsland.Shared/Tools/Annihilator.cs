@@ -1,7 +1,4 @@
-using Utopia.Shared.Entities;
-using Utopia.Shared.Interfaces;
-
-namespace LostIsland.Shared.Tools
+namespace Sandbox.Shared.Tools
 {
     /// <summary>
     /// Test tool that can remove anything

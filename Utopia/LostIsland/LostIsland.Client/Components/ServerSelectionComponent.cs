@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using LostIsland.Shared.Web.Responces;
 using Nuclex.UserInterface;
 using Nuclex.UserInterface.Controls.Desktop;
 using S33M3Engines;
 using S33M3Engines.D3D;
 using SharpDX.Direct3D11;
 
-namespace LostIsland.Client.Components
+namespace Sandbox.Client.Components
 {
     public class ServerSelectionComponent : GameComponent
     {

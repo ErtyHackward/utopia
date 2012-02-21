@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
-using LostIsland.Client.States;
-using LostIsland.Shared;
+using Sandbox.Client.GUI.Forms;
+using Sandbox.Client.States;
+using Sandbox.Shared;
 using Utopia;
 using Utopia.Components;
 using Utopia.Entities;
@@ -11,13 +12,12 @@ using S33M3Engines.D3D;
 using System.Windows.Forms;
 using Utopia.Settings;
 using Utopia.Shared.Config;
-using LostIsland.Client.GUI.Forms;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
-namespace LostIsland.Client
+namespace Sandbox.Client
 {
     public partial class GameClient : IDisposable
     {

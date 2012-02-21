@@ -1,10 +1,10 @@
 ﻿using System;
-using LostIsland.Shared.Web;
+using Sandbox.Shared.Web;
 using Utopia.Server.Managers;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs.Helpers;
 
-namespace LostIsland.Server
+namespace Sandbox.Server
 {
     /// <summary>
     /// Provides common login system

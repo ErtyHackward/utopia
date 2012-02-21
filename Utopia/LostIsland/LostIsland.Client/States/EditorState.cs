@@ -5,7 +5,7 @@ using Utopia.Components;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 
-namespace LostIsland.Client.States
+namespace Sandbox.Client.States
 {
     /// <summary>
     /// Voxel model editor state

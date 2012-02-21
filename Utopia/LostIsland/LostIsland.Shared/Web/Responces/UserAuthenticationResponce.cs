@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace LostIsland.Shared.Web.Responces
+namespace Sandbox.Shared.Web.Responces
 {
     [ProtoContract]
     public class UserAuthenticationResponce

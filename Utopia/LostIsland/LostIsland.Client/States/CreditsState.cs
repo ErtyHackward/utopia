@@ -1,9 +1,9 @@
-﻿using LostIsland.Client.Components;
-using Ninject;
+﻿using Ninject;
+using Sandbox.Client.Components;
 using Utopia;
 using Utopia.GUI.D3D;
 
-namespace LostIsland.Client.States
+namespace Sandbox.Client.States
 {
     /// <summary>
     /// Controls display of the authors

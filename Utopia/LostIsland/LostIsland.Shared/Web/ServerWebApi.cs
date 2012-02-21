@@ -1,7 +1,7 @@
 ﻿using System;
-using LostIsland.Shared.Web.Responces;
+using Sandbox.Shared.Web.Responces;
 
-namespace LostIsland.Shared.Web
+namespace Sandbox.Shared.Web
 {
     public class ServerWebApi : UtopiaWebApiBase
     {

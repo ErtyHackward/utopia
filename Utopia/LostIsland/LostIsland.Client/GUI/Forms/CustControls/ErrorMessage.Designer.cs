@@ -1,4 +1,4 @@
-﻿namespace LostIsland.Client.GUI.Forms.CustControls
+﻿namespace Sandbox.Client.GUI.Forms.CustControls
 {
     partial class ErrorMessage
     {

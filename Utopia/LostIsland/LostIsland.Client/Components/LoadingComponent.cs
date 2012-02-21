@@ -7,7 +7,7 @@ using S33M3Engines.Sprites;
 using SharpDX;
 using Color = Utopia.Shared.Structs.Color;
 
-namespace LostIsland.Client.Components
+namespace Sandbox.Client.Components
 {
     /// <summary>
     /// Component to show something while game loading

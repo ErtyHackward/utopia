@@ -1,4 +1,4 @@
-﻿namespace LostIsland.Client
+﻿namespace Sandbox.Client
 {
     /// <summary>
     /// Contains various runtime game variables

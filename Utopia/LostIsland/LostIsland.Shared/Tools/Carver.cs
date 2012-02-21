@@ -3,7 +3,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 
-namespace LostIsland.Shared.Tools
+namespace Sandbox.Shared.Tools
 {
     /// <summary>
     /// Carver is a spriteItem to show an icon in UI 

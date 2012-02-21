@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LostIsland.Client.Components;
-using LostIsland.Shared.Web;
-using LostIsland.Shared.Web.Responces;
 using Ninject;
+using Sandbox.Client.Components;
+using Sandbox.Shared.Web;
+using Sandbox.Shared.Web.Responces;
 using Utopia;
 using Utopia.GUI.D3D;
 
-namespace LostIsland.Client.States
+namespace Sandbox.Client.States
 {
     public class SelectServerGameState : GameState
     {

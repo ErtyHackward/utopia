@@ -324,9 +324,9 @@
       <Project>{C0D52C9F-14B8-4008-8DDC-109C27561A5C}</Project>
       <Name>BEPUphysics</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LostIsland\LostIsland.Shared\LostIsland.Shared.csproj">
+    <ProjectReference Include="..\LostIsland\LostIsland.Shared\Sandbox.Shared.csproj">
       <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
-      <Name>LostIsland.Shared</Name>
+      <Name>Sandbox.Shared</Name>
     </ProjectReference>
     <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
       <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>

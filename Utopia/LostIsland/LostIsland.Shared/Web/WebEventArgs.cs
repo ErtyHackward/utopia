@@ -1,6 +1,6 @@
 using System;
 
-namespace LostIsland.Shared.Web
+namespace Sandbox.Shared.Web
 {
     public class WebEventArgs<T> : EventArgs
     {

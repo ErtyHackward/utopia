@@ -1,6 +1,6 @@
 ﻿using Utopia.Shared.Entities;
 
-namespace LostIsland.Shared
+namespace Sandbox.Shared
 {
     public class LostIslandEntityClassId : EntityClassId
     {

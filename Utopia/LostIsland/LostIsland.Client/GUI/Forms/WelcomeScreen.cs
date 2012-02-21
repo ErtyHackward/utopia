@@ -1,23 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using LostIsland.Client.GUI.Forms.CustControls;
+using Sandbox.Client.GUI.Forms.CustControls;
 using Utopia.Network;
 using System.Threading;
 using Utopia.Settings;
 using S33M3Engines.D3D;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
-using ErrorMessage = LostIsland.Client.GUI.Forms.CustControls.ErrorMessage;
+using ErrorMessage = Sandbox.Client.GUI.Forms.CustControls.ErrorMessage;
 
-namespace LostIsland.Client.GUI.Forms
+namespace Sandbox.Client.GUI.Forms
 {
     public partial class WelcomeScreen : Form, IDisposable
     {

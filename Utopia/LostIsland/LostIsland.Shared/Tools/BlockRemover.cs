@@ -8,7 +8,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 
-namespace LostIsland.Shared.Tools
+namespace Sandbox.Shared.Tools
 {
     public abstract class BlockRemover : VoxelItem, ITool, IWorldIntercatingEntity
     {

@@ -1,18 +1,13 @@
-﻿using LostIsland.Client.Components;
-using LostIsland.Client.GUI;
-using Utopia.GameDXStates;
-using Utopia;
+﻿using Utopia;
 using Ninject;
 using Utopia.Settings;
 using Utopia.Action;
 using Utopia.Shared.Config;
-using Utopia.Worlds.Chunks;
-using Utopia.Entities.Managers;
 using S33M3Engines;
 using System.Windows.Forms;
 using Utopia.Shared.Settings;
 
-namespace LostIsland.Client
+namespace Sandbox.Client
 {
     public partial class GameClient
     {

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using LostIsland.Client.Components;
-using LostIsland.Shared;
 using Ninject;
 using Ninject.Parameters;
 using S33M3Engines;
@@ -12,14 +10,15 @@ using S33M3Engines.Shared.Math;
 using S33M3Engines.Threading;
 using S33M3Engines.Timers;
 using S33M3Engines.WorldFocus;
+using Sandbox.Client.Components;
+using Sandbox.Shared;
+using Sandbox.Shared.Items;
 using Utopia;
 using Utopia.Action;
-using Utopia.Editor;
 using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
-using Utopia.Entities.Renderer;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
@@ -40,7 +39,6 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
@@ -56,7 +54,7 @@ using Utopia.Worlds.SkyDomes;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Weather;
 
-namespace LostIsland.Client.States
+namespace Sandbox.Client.States
 {
     /// <summary>
     /// Main gameplay stuff. Displaying the chunks, an entities, handling an input
@@ -173,7 +171,7 @@ namespace LostIsland.Client.States
                 item3.CubeId = cubeId;
                 dEntity.Inventory.PutItem(item3);
             }
-            var goldCoins = _server.EntityFactory.CreateEntity<LostIsland.Shared.Items.GoldCoin>();
+            var goldCoins = _server.EntityFactory.CreateEntity<GoldCoin>();
             dEntity.Inventory.PutItem(goldCoins);
             //var Torch = _server.EntityFactory.CreateEntity<LostIsland.Shared.Items.Torch>();
             //dEntity.Inventory.PutItem(Torch);

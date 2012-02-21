@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace LostIsland.Client
+namespace Sandbox.Client
 {
     static class Program
     {
