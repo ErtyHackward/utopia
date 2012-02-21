@@ -324,7 +324,7 @@
       <Project>{C0D52C9F-14B8-4008-8DDC-109C27561A5C}</Project>
       <Name>BEPUphysics</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LostIsland\LostIsland.Shared\Sandbox.Shared.csproj">
+    <ProjectReference Include="..\Sandbox\Sandbox.Shared\Sandbox.Shared.csproj">
       <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
       <Name>Sandbox.Shared</Name>
     </ProjectReference>
