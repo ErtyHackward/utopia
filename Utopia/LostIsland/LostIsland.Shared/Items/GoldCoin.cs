@@ -1,7 +1,7 @@
 ﻿using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities;
 
-namespace LostIsland.Shared.Items
+namespace Sandbox.Shared.Items
 {
     /// <summary>
     /// Represents a gold coin entity

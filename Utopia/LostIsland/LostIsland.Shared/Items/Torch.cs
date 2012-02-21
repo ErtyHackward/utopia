@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Shared.Entities.Inventory;
+﻿using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities;
 
-namespace LostIsland.Shared.Items
+namespace Sandbox.Shared.Items
 {
     public class Torch : VoxelItem
     {

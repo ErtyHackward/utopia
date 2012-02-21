@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
-using LostIsland.Shared.Web;
-using LostIsland.Shared.Web.Responces;
 using Ninject;
+using Sandbox.Shared.Web;
+using Sandbox.Shared.Web.Responces;
 using Utopia;
 using Utopia.GUI.D3D;
 using Utopia.Settings;
 using Utopia.Shared.ClassExt;
 
-namespace LostIsland.Client.States
+namespace Sandbox.Client.States
 {
     /// <summary>
     /// First state of the game, requests login and password

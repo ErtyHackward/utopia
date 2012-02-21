@@ -1,9 +1,9 @@
-﻿using LostIsland.Shared.Items;
-using LostIsland.Shared.Tools;
+﻿using Sandbox.Shared.Items;
+using Sandbox.Shared.Tools;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 
-namespace LostIsland.Shared
+namespace Sandbox.Shared
 {
     public class LostIslandEntityFactory : EntityFactory
     {

@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Drawing;
-using LostIsland.Client.Components;
-using LostIsland.Client.GUI;
-using LostIsland.Client.States;
-using LostIsland.Shared.Web;
-using LostIslandHD.Client;
 using Ninject;
 using Nuclex.UserInterface;
 using S33M3Engines.Sprites;
+using Sandbox.Client.Components;
+using Sandbox.Client.States;
+using Sandbox.Shared.Web;
 using Utopia;
 using Utopia.Components;
-using Utopia.Editor;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.D3D;
 using Utopia.GUI.D3D.Inventory;
@@ -34,12 +31,10 @@ using Utopia.Worlds.Chunks;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Chunks.ChunkLandscape;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.World.Processors;
 using Utopia.Worlds.Chunks.ChunkMesh;
 using Utopia.Worlds.Cubes;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
-using Utopia.Shared.World.WorldConfigs;
 using Utopia.Entities;
 using Utopia.Worlds.Storage;
 using Utopia.Action;
@@ -55,7 +50,7 @@ using Utopia.Entities.Renderer.Interfaces;
 using S33M3Engines.D3D.DebugTools;
 using Utopia.Effects.Shared;
 
-namespace LostIsland.Client
+namespace Sandbox.Client
 {
     public partial class GameClient
     {

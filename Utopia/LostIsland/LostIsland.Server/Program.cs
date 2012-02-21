@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using LostIsland.Shared;
-using LostIsland.Shared.Web;
 using Ninject;
+using Sandbox.Shared;
+using Sandbox.Shared.Web;
 using Utopia.Server;
 using Utopia.Server.Managers;
 using Utopia.Server.Sample;
@@ -18,7 +18,7 @@ using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.WorldConfigs;
 using Utopia.Shared.Settings;
 
-namespace LostIsland.Server
+namespace Sandbox.Server
 {
     class Program
     {

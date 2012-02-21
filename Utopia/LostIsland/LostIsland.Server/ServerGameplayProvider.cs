@@ -1,6 +1,6 @@
-﻿using LostIsland.Shared;
-using LostIsland.Shared.Tools;
-using S33M3Engines.Shared.Math;
+﻿using S33M3Engines.Shared.Math;
+using Sandbox.Shared.Items;
+using Sandbox.Shared.Tools;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
@@ -8,7 +8,7 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 
-namespace LostIsland.Server
+namespace Sandbox.Server
 {
     /// <summary>
     /// Provides all gameplay functionality
@@ -48,9 +48,9 @@ namespace LostIsland.Server
                 dEntity.Inventory.PutItem(item3);
             }
             //Add coins + Torch
-            var goldCoins = _server.EntityFactory.CreateEntity<LostIsland.Shared.Items.GoldCoin>();
+            var goldCoins = _server.EntityFactory.CreateEntity<GoldCoin>();
             dEntity.Inventory.PutItem(goldCoins);
-            var Torch = _server.EntityFactory.CreateEntity<LostIsland.Shared.Items.Torch>();
+            var Torch = _server.EntityFactory.CreateEntity<Torch>();
             dEntity.Inventory.PutItem(Torch);
 
             //var item = (IItem)EntityFactory.Instance.CreateEntity((LostIslandEntityClassId.Shovel));

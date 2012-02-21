@@ -1,4 +1,4 @@
-﻿namespace LostIsland.Client.GUI.Forms
+﻿namespace Sandbox.Client.GUI.Forms
 {
     partial class WelcomeScreen
     {

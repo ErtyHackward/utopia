@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Utopia.Network;
-using LostIsland.Client.GUI.Forms.CustControls;
 using System.IO;
 
-namespace LostIsland.Client.GUI.Forms.CustControls
+namespace Sandbox.Client.GUI.Forms.CustControls
 {
     public partial class MultiPlayer : UserControl
     {

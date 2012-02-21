@@ -1,5 +1,4 @@
-﻿using LostIsland.Client.Components;
-using Ninject;
+﻿using Ninject;
 using S33M3Engines.Cameras;
 using S33M3Engines.D3D.DebugTools;
 using S33M3Engines.Timers;
@@ -20,7 +19,7 @@ using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Worlds.Weather;
 
-namespace LostIsland.Client.States
+namespace Sandbox.Client.States
 {
     public class GamePlayState : GameState
     {

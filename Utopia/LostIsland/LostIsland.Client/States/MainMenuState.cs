@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
-using LostIsland.Client.Components;
 using Ninject;
+using Sandbox.Client.Components;
 using Utopia;
 using Utopia.GUI.D3D;
 
-namespace LostIsland.Client.States
+namespace Sandbox.Client.States
 {
     /// <summary>
     /// Main menu state handling

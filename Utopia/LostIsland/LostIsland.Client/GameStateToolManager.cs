@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LostIsland.Shared.Tools;
-using Ninject;
-using Utopia.Editor;
+﻿using Ninject;
+using Sandbox.Shared.Tools;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 
-namespace LostIslandHD.Client
+namespace Sandbox.Client
 {
     /// <summary>
     /// 

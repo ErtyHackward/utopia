@@ -1,5 +1,5 @@
 ﻿
-namespace LostIsland.Client.GUI.Forms.CustControls
+namespace Sandbox.Client.GUI.Forms.CustControls
 {
     partial class MultiPlayer
     {
@@ -52,7 +52,7 @@ namespace LostIsland.Client.GUI.Forms.CustControls
             this.txtEffectPack = new System.Windows.Forms.TextBox();
             this.pickTexturePack = new System.Windows.Forms.Button();
             this.PickEffectPack = new System.Windows.Forms.Button();
-            this.srvList = new LostIsland.Client.GUI.Forms.CustControls.RefreshingListBox();
+            this.srvList = new RefreshingListBox();
             this.SuspendLayout();
             // 
             // label1

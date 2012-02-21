@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using ProtoBuf;
 
-namespace LostIsland.Shared.Web
+namespace Sandbox.Shared.Web
 {
     public abstract class UtopiaWebApiBase : IDisposable
     {

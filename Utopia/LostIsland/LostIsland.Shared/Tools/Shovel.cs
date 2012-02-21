@@ -1,7 +1,6 @@
 using Utopia.Shared.Cubes;
-using Utopia.Shared.Interfaces;
 
-namespace LostIsland.Shared.Tools
+namespace Sandbox.Shared.Tools
 {
     /// <summary>
     /// a shovel is blockRemover restricted to grass & dirt
