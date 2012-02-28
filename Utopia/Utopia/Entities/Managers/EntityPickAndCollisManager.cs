@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Utopia.Entities.Managers.Interfaces;
 using SharpDX;
 using S33M3Engines.Shared.Math;
@@ -87,6 +88,11 @@ namespace Utopia.Entities.Managers
             {
                 chunk = _worldChunks.SortedChunks[i];
                 //Limit to projected 
+                if (chunk == null)
+                {
+                    Debug.WriteLine("CollectSurrendingStaticEntities bug, fix me please");
+                    continue;
+                }
                 foreach (var entity in chunk.VisualSpriteEntities)
                 {
                     //Add entity only if at <= 10 block distance !

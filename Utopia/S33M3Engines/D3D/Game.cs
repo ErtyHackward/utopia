@@ -91,7 +91,7 @@ namespace S33M3Engines.D3D
         private int _debugDisplay = 0;
         private bool _debugActif = false;
         private readonly GameComponentCollection _gameComponents;
-        private Color4 _backBufferColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
+        private Color4 _backBufferColor = new Color4(1.0f, 0.0f, 0.0f, 0.0f);
         private GameTime _gameTime = new GameTime();
         private int _vSync = 0;
         private bool _gameStarted;

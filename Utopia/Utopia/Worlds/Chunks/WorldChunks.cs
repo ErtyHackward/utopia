@@ -173,7 +173,7 @@ namespace Utopia.Worlds.Chunks
             _cubesHolder.BlockDataChanged += ChunkCubes_BlockDataChanged;
             IsInitialLoadCompleted = false;
 
-            DrawOrders.UpdateIndex(SOLID_DRAW, 10);
+            DrawOrders.UpdateIndex(SOLID_DRAW, 11);
             DrawOrders.AddIndex(ENTITIES_DRAW, 20);
             DrawOrders.AddIndex(TRANSPARENT_DRAW, 1050);
         }
