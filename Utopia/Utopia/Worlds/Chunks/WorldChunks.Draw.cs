@@ -52,6 +52,7 @@ namespace Utopia.Worlds.Chunks
                 case SOLID_DRAW:
                     _chunkDrawByFrame = 0;
                     StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                    //StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
                     DrawSolidFaces();
 #if DEBUG
                     DrawDebug();

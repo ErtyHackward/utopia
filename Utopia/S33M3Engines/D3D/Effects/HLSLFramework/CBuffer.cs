@@ -18,6 +18,7 @@ namespace S33M3Engines.D3D.Effects
         void Set2Device(bool forced = false);
         void Update();
         bool GlobalCB { get; set; }
+        iCBuffer Clone();
     }
 
     public class CBuffer<T> : iCBuffer, IDisposable
@@ -27,11 +28,12 @@ namespace S33M3Engines.D3D.Effects
         bool _isDirty;
         string _name;
         Shaders _shadersImpacted;
-        Buffer _CBuffer;
+        Buffer _CBufferValue;
         D3DEngine _engine;
         DataStream _dataStream;
-        int[] _slot = new int[ShaderIDs.NbrShaders];
+        int[] _slot;
         int _size;
+        bool _isCloned = false;
         #endregion
 
         #region public Properties
@@ -62,29 +64,56 @@ namespace S33M3Engines.D3D.Effects
         public bool GlobalCB { get; set; }
         #endregion
 
-        public CBuffer(D3DEngine engine, string Name)
+        public CBuffer(D3DEngine engine, string Name, Buffer CBufferValue)
         {
             _name = Name;
             _engine = engine;
 
-            _size = Marshal.SizeOf(typeof(T));
-            _CBuffer = new Buffer(_engine.Device,
-                                    new BufferDescription
-                                    {
-                                        Usage = ResourceUsage.Default,
-                                        BindFlags = BindFlags.ConstantBuffer,
-                                        SizeInBytes = _size,
-                                        CpuAccessFlags = CpuAccessFlags.None,
-                                        OptionFlags = ResourceOptionFlags.None,
-                                        StructureByteStride = 0
-                                    }
-            );
+            _slot = new int[ShaderIDs.NbrShaders];
 
-            Tools.Resource.SetName(_CBuffer, "CBuffer : " + Name);
+            //Set Default slot value to -1 => Not used by the shader
+            for (int iSlot = 0; iSlot <= ShaderIDs.NbrShaders - 1; iSlot++)
+            {
+                _slot[iSlot] = -1;
+            }
 
-            _dataStream = new DataStream(_size, true, true);
+            if (CBufferValue == null)
+            {
+                _size = Marshal.SizeOf(typeof(T));
+                _CBufferValue = new Buffer(_engine.Device,
+                                        new BufferDescription
+                                        {
+                                            Usage = ResourceUsage.Default,
+                                            BindFlags = BindFlags.ConstantBuffer,
+                                            SizeInBytes = _size,
+                                            CpuAccessFlags = CpuAccessFlags.None,
+                                            OptionFlags = ResourceOptionFlags.None,
+                                            StructureByteStride = 0
+                                        }
+                );
+                _dataStream = new DataStream(_size, true, true);
+                _isCloned = false;
+                GlobalCB = false;
+            }
+            else
+            {
+                _CBufferValue = CBufferValue;
+                _isCloned = true;
+                GlobalCB = true;
+            }
 
-            GlobalCB = false;
+            Tools.Resource.SetName(_CBufferValue, "CBuffer : " + Name);
+        }
+
+        public CBuffer(D3DEngine engine, string Name)
+            : this(engine, Name, null)
+        {
+        }
+
+        //Create a CBuffer copy, linked to the same Buffer
+        public iCBuffer Clone()
+        {
+            return new CBuffer<T>(_engine, this.Name, _CBufferValue);
         }
 
         public void Update()
@@ -101,7 +130,7 @@ namespace S33M3Engines.D3D.Effects
             }
 
             DataBox dataBox = new DataBox(_dataStream.DataPointer,_size, _size);
-            _engine.Context.UpdateSubresource(dataBox, _CBuffer, 0);
+            _engine.Context.UpdateSubresource(dataBox, _CBufferValue, 0);
         }
 
         public void Set2Device(bool forced = false)
@@ -109,9 +138,9 @@ namespace S33M3Engines.D3D.Effects
             if (_isDirty || forced || GlobalCB)
             {
                 if (!GlobalCB) Update();
-                if ((_shadersImpacted & Shaders.VS) == Shaders.VS) _engine.Context.VertexShader.SetConstantBuffer(_slot[ShaderIDs.VS], _CBuffer);
-                if ((_shadersImpacted & Shaders.GS) == Shaders.GS) _engine.Context.GeometryShader.SetConstantBuffer(_slot[ShaderIDs.GS], _CBuffer);
-                if ((_shadersImpacted & Shaders.PS) == Shaders.PS) _engine.Context.PixelShader.SetConstantBuffer(_slot[ShaderIDs.PS], _CBuffer);
+                if ((_shadersImpacted & Shaders.VS) == Shaders.VS) _engine.Context.VertexShader.SetConstantBuffer(_slot[ShaderIDs.VS], _CBufferValue);
+                if ((_shadersImpacted & Shaders.GS) == Shaders.GS) _engine.Context.GeometryShader.SetConstantBuffer(_slot[ShaderIDs.GS], _CBufferValue);
+                if ((_shadersImpacted & Shaders.PS) == Shaders.PS) _engine.Context.PixelShader.SetConstantBuffer(_slot[ShaderIDs.PS], _CBufferValue);
 
                 _isDirty = false;
             }
@@ -119,8 +148,11 @@ namespace S33M3Engines.D3D.Effects
 
         public void Dispose()
         {
-            _dataStream.Dispose();
-            _CBuffer.Dispose();
+            if (_isCloned == false)
+            {
+                _dataStream.Dispose();
+                _CBufferValue.Dispose();
+            }
         }
     }
 }

@@ -61,7 +61,7 @@ namespace Utopia.Resources.Effects.Terran
             CBPerDraw = new CBuffer<CBPerDraw_Struct>(_d3dEngine, "PerDraw");
             CBuffers.Add(CBPerDraw);
 
-            if (CBPerFrame != null) CBuffers.Add(CBPerFrame);
+            if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());
 
             //Create the resource interfaces ==================================================
             TerraTexture = new ShaderResource(_d3dEngine, "TerraTexture");
