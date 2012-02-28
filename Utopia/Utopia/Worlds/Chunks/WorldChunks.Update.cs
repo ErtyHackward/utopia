@@ -38,7 +38,7 @@ namespace Utopia.Worlds.Chunks
             for (int i = _transparentChunks.Count - 1; i >= 0; i--)
             {
                 var transparentChunk = _transparentChunks[i];
-                transparentChunk.Opaque += 0.001f * timeSpend.ElapsedGameTimeInS_LD;
+                transparentChunk.Opaque += 2f * timeSpend.ElapsedGameTimeInS_LD;
                 if (transparentChunk.Opaque >= 1)
                 {
                     transparentChunk.Opaque = 1;
