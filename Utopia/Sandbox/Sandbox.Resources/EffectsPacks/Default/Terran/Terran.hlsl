@@ -108,7 +108,7 @@ float4 PS(PS_IN input) : SV_Target
 	float4 Finalfogcolor = {SunColor / 1.5, color.a};
 	color = lerp(color, Finalfogcolor, input.fogPower);
 
-	//color.a *= Opaque;
+	color.a *= Opaque;
 
 	// Apply fog on output color
     return color;

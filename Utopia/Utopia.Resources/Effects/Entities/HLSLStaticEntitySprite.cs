@@ -61,7 +61,7 @@ namespace Utopia.Resources.Effects.Entities
             CBPerFrameLocal = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrameLocal");
             CBuffers.Add(CBPerFrameLocal);
 
-            if (CBPerFrame != null) CBuffers.Add(CBPerFrame);
+            if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());
 
             //Create the resource interfaces ==================================================
             DiffuseTexture = new ShaderResource(_d3dEngine, "DiffuseTexture");

@@ -24,7 +24,7 @@ namespace Utopia.Resources.Effects.Terran
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 96)]
+        [StructLayout(LayoutKind.Explicit, Size = 80)]
         public struct CBPerDraw_Struct
         {
             [FieldOffset(0)]
@@ -39,7 +39,7 @@ namespace Utopia.Resources.Effects.Terran
             /// <summary>
             /// Allows to create chunk slowly appear effect
             /// </summary>
-            [FieldOffset(80)]
+            [FieldOffset(68)]
             public float Opaque;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
@@ -70,7 +70,7 @@ namespace Utopia.Resources.Effects.Terran
             CBuffers.Add(CBPerDraw);
 
             //CBPerFrame = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrame");
-            if (CBPerFrame != null) CBuffers.Add(CBPerFrame);
+            if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());
 
             //Create the resource interfaces ==================================================
             TerraTexture = new ShaderResource(_d3dEngine, "TerraTexture");
