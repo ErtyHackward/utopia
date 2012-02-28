@@ -76,6 +76,12 @@ namespace Utopia.Worlds.Chunks
         private IEntityPickingManager _pickingManager;
         private int _readyToDrawCount;
         private readonly object _counterLock = new object();
+
+        /// <summary>
+        /// List of chunks that still _slowly_ appearing
+        /// </summary>
+        private List<VisualChunk> _transparentChunks = new List<VisualChunk>();
+
         #endregion
 
         #region Public Property/Variables
@@ -501,6 +507,10 @@ namespace Utopia.Worlds.Chunks
 
         void ChunkReadyToDraw(object sender, EventArgs e)
         {
+            var chunk = (VisualChunk)sender;
+            chunk.Opaque = 0f;
+            _transparentChunks.Add(chunk);
+
             lock (_counterLock)
             {
                 _readyToDrawCount++;
@@ -529,6 +539,7 @@ namespace Utopia.Worlds.Chunks
 
 
         #endregion
+
 
         #region Events Handling
         /// <summary>

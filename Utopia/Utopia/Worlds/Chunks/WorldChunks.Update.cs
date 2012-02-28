@@ -33,6 +33,18 @@ namespace Utopia.Worlds.Chunks
                 if (!_gameStates.DebugActif) CheckWrapping();     // Handle Playerzz impact on Terra (Mainly the location will trigger chunk creation/destruction)
                 SortChunks();
             }
+
+            // make chunks appear slowly and not hurt the eyes
+            for (int i = _transparentChunks.Count - 1; i >= 0; i--)
+            {
+                var transparentChunk = _transparentChunks[i];
+                transparentChunk.Opaque += 0.001f * timeSpend.ElapsedGameTimeInS_LD;
+                if (transparentChunk.Opaque >= 1)
+                {
+                    transparentChunk.Opaque = 1;
+                    _transparentChunks.RemoveAt(i);
+                }
+            }
         }
 
         public override void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)

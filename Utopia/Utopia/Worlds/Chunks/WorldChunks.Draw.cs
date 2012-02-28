@@ -51,7 +51,7 @@ namespace Utopia.Worlds.Chunks
             {
                 case SOLID_DRAW:
                     _chunkDrawByFrame = 0;
-                    StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                    StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
                     DrawSolidFaces();
 #if DEBUG
                     DrawDebug();
@@ -101,6 +101,7 @@ namespace Utopia.Worlds.Chunks
                         _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                         _terraEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _terraEffect.CBPerDraw.Values.popUpYOffset = 0;
+                        _terraEffect.CBPerDraw.Values.Opaque = chunk.Opaque;
                         _terraEffect.CBPerDraw.IsDirty = true;
                         _terraEffect.Apply();
 
@@ -135,6 +136,7 @@ namespace Utopia.Worlds.Chunks
                     {
                         _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                         _liquidEffect.CBPerDraw.Values.popUpYOffset = 0;
+                        _liquidEffect.CBPerDraw.Values.Opaque = chunk.Opaque;
                         _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _liquidEffect.CBPerDraw.IsDirty = true;
                         _liquidEffect.Apply();

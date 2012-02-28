@@ -6,6 +6,7 @@ cbuffer PerDraw
 {
 	matrix World;
 	float popUpYOffset;
+	float Opaque;
 };
 
 cbuffer PerFrame
@@ -15,7 +16,7 @@ cbuffer PerFrame
 	float fogdist;
 };
 
-static const float foglength = 45;
+static const float foglength = 20;
 static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
 static float3 Nightfogcolor = {0, 0, 0 };
 
@@ -100,6 +101,8 @@ float4 PS(PS_IN input) : SV_Target
 
 	float4 Finalfogcolor = {SunColor / 1.5, color.a};
 	color = lerp(color, Finalfogcolor, input.fogPower);
+
+	//color.a *= Opaque;
 
     return color;
 }
