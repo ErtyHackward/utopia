@@ -99,10 +99,10 @@ float4 PS(PS_IN input) : SV_Target
 {
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW) * float4(input.EmissiveLight, 1);
 
-	float4 Finalfogcolor = {SunColor / 1.5, color.a};
-	color = lerp(color, Finalfogcolor, input.fogPower);
+	//float4 Finalfogcolor = {SunColor / 1.5, color.a};
+	//color = lerp(color, Finalfogcolor, input.fogPower);
 
-	//color.a *= Opaque;
+	color.a = min(min(Opaque, 1 -input.fogPower), color.a);
 
     return color;
 }

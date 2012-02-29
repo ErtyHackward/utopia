@@ -53,9 +53,7 @@ namespace Utopia.Worlds.Chunks
                     _chunkDrawByFrame = 0;
 
                     StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-                    DrawSolidFaces(true);
-                    StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-                    DrawSolidFaces(false);
+                    DrawSolidFaces();
 #if DEBUG
                     DrawDebug();
 #endif
@@ -87,7 +85,7 @@ namespace Utopia.Worlds.Chunks
         #endregion
 
         #region Private methods
-        private void DrawSolidFaces(bool WithTransparency)
+        private void DrawSolidFaces()
         {
             VisualChunk chunk;
             Matrix worldFocus = Matrix.Identity;
@@ -96,9 +94,6 @@ namespace Utopia.Worlds.Chunks
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
-
-                if (WithTransparency == true && chunk.Opaque >= 1) continue;
-                if (WithTransparency == false && chunk.Opaque < 1) continue;
 
                 if (chunk.IsReady2Draw)
                 {
