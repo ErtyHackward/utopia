@@ -101,7 +101,7 @@ float4 PS(PS_IN input) : SV_Target
 {
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW);
 	
-	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
+	clip( color.a < 0.6f ? -1:1 ); //Remove the pixel if alpha < 0.1
 
 	color = color * float4(input.EmissiveLight, 1);
 

@@ -216,7 +216,7 @@ namespace Sandbox.Client.States
 
             _ioc.Rebind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
 
-            // be careful with initilization order
+            // be careful with initialization order
             var serverComponent = _ioc.Get<ServerComponent>();
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
             var wordParameters = _ioc.Get<WorldParameters>();
