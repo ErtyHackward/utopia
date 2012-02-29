@@ -94,7 +94,7 @@ namespace Utopia.GUI.D3D
             _screen = screen;
             _engine.ViewPort_Updated += EngineViewportUpdated;
 
-            _engine.GameWindow.KeyPress += GameWindowKeyPress;
+            
 
         }
 
@@ -105,7 +105,7 @@ namespace Utopia.GUI.D3D
             _passwordControl = null;
             _loginButton = null;
             _engine.ViewPort_Updated -= EngineViewportUpdated;
-            _engine.GameWindow.KeyPress -= GameWindowKeyPress;
+            
         }
 
         void GameWindowKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -194,11 +194,17 @@ namespace Utopia.GUI.D3D
 
             if (Enabled)
             {
-                _screen.Desktop.Children.Add(_loginWindow);
-                _screen.FocusedControl = !string.IsNullOrEmpty(Email) ? _passwordControl : _emailControl;
-                CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
+                EnableComponent();
             }
             
+        }
+
+        private void EnableComponent()
+        {
+            _screen.Desktop.Children.Add(_loginWindow);
+            _screen.FocusedControl = !string.IsNullOrEmpty(Email) ? _passwordControl : _emailControl;
+            CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
+            _engine.GameWindow.KeyPress += GameWindowKeyPress;
         }
 
         protected override void OnEnabledChanged()
@@ -207,12 +213,12 @@ namespace Utopia.GUI.D3D
 
             if (Enabled)
             {
-                _screen.Desktop.Children.Add(_loginWindow);
-                CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
+                EnableComponent();
             }
             else
             {
                 _screen.Desktop.Children.Remove(_loginWindow);
+                _engine.GameWindow.KeyPress -= GameWindowKeyPress;
             }
 
             base.OnEnabledChanged();
