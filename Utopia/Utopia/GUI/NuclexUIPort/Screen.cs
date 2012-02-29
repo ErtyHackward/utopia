@@ -48,6 +48,8 @@ namespace Nuclex.UserInterface {
       /// <summary>Triggered when the control in focus changes</summary>
       public event EventHandler<ControlEventArgs> FocusChanged;
 
+      
+
       /// <summary>Initializes a new GUI</summary>
     public Screen() : this(0, 0) { }
 
@@ -587,7 +589,7 @@ namespace Nuclex.UserInterface {
     /// <summary>Control the user has activated through one of the input devices</summary>
     private Control activatedControl;
 
-    /// <summary>Number of keys being held down on the keyboard</summary>
+      /// <summary>Number of keys being held down on the keyboard</summary>
     private int heldKeyCount;
     /// <summary>Keys on the keyboard the user is currently holding down</summary>
     BitArray heldKeys;

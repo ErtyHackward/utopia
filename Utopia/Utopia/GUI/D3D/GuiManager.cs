@@ -40,11 +40,19 @@ namespace Utopia.GUI.D3D
         /// </summary>
         public static bool DialogClosed;
 
+        /// <summary>
+        /// Gets gui main screen
+        /// </summary>
+        public Screen Screen
+        {
+            get { return _screen; }
+        }
+
         public GuiManager(Screen screen, D3DEngine d3DEngine)
         {
             _screen = screen;
             _d3DEngine = d3DEngine;
-
+            
             _d3DEngine.GameWindow.KeyPress += GameWindowKeyPress;
             _d3DEngine.GameWindow.KeyDown += GameWindowKeyDown;
             _d3DEngine.GameWindow.KeyUp += GameWindowKeyUp;

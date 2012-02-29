@@ -469,19 +469,19 @@ namespace Utopia.Components
 
             _layoutToolsGroup.Children.Add(new LabelControl { Text = "View", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
-            var groundCheck = new OptionControl { Bounds = new UniRectangle(0,0, 70, 20), Text ="Ground" };
-            groundCheck.Changed += delegate { _drawGround = !_drawGround; };
+            //var groundCheck = new OptionControl { Bounds = new UniRectangle(0,0, 70, 20), Text ="Ground" };
+            //groundCheck.Changed += delegate { _drawGround = !_drawGround; };
 
-            var layoutCopy = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Copy" };
+            //var layoutCopy = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Copy" };
 
             
 
-            var layoutPaste = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Paste" };
+            //var layoutPaste = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Paste" };
 
 
-            _layoutToolsGroup.Children.Add(layoutCopy);
-            _layoutToolsGroup.Children.Add(layoutPaste);
-            _layoutToolsGroup.Children.Add(groundCheck);
+            //_layoutToolsGroup.Children.Add(layoutCopy);
+            //_layoutToolsGroup.Children.Add(layoutPaste);
+            //_layoutToolsGroup.Children.Add(groundCheck);
             #endregion
 
             toolsWindow.Children.Add(_modesButtonsGroup);
