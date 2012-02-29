@@ -155,15 +155,15 @@ namespace Utopia.Worlds.Chunks
             _staticSpriteEffect.Begin();
             _staticSpriteEffect.CBPerFrameLocal.Values.WorldFocus = Matrix.Transpose(_worldFocusManager.CenterOnFocus(ref MMatrix.Identity));
 
-            	// Calculate the rotation that needs to be applied to the billboard model to face the current camera position using the arc tangent function.
-//    angle = atan2(modelPosition.x - cameraPosition.x, modelPosition.z - cameraPosition.z) * (180.0 / D3DX_PI);
+            // Calculate the rotation that needs to be applied to the billboard model to face the current camera position using the arc tangent function.
+            //    angle = atan2(modelPosition.x - cameraPosition.x, modelPosition.z - cameraPosition.z) * (180.0 / D3DX_PI);
 
-//    // Convert rotation into radians.
-//    rotation = (float)angle * 0.0174532925f;
-//Use the rotation to first rotate the world matrix accordingly, and then translate to the position of the billboard in the world.
+            //    // Convert rotation into radians.
+            //    rotation = (float)angle * 0.0174532925f;
+            //Use the rotation to first rotate the world matrix accordingly, and then translate to the position of the billboard in the world.
 
-//    // Setup the rotation the billboard at the origin using the world matrix.
-//    D3DXMatrixRotationY(&worldMatrix, rotation);
+            //    // Setup the rotation the billboard at the origin using the world matrix.
+            //    D3DXMatrixRotationY(&worldMatrix, rotation);
 
             _staticSpriteEffect.CBPerFrameLocal.Values.View = Matrix.RotationQuaternion(_camManager.ActiveCamera.YAxisOrientation);
             _staticSpriteEffect.CBPerFrameLocal.Values.WindPower = _weather.Wind.FlatWindFlowNormalizedWithNoise;

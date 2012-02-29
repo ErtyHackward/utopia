@@ -798,6 +798,19 @@ namespace Utopia.Components
             vms.Name = e.Name;
             VisualVoxelModel.VoxelModel.States.Add(vms);
             _statesList.Items.Add(vms);
+
+
+            // copy the previouis state
+            var previousState = VisualVoxelModel.VoxelModel.States[VisualVoxelModel.VoxelModel.States.Count - 2];
+
+            for (int i = 0; i < previousState.PartsStates.Count; i++)
+            {
+                var partState = previousState.PartsStates[i];
+
+                vms.PartsStates[i].ActiveFrame = partState.ActiveFrame;
+                vms.PartsStates[i].BoundingBox = partState.BoundingBox;
+                vms.PartsStates[i].Transform = partState.Transform;
+            }
         }
         
         private void OnStateEditButtonPressed()
@@ -1094,6 +1107,11 @@ namespace Utopia.Components
             if (GuiManager.DialogClosed)
                 _prevState = Mouse.GetState();
 
+            if (_gui.Screen.IsMouseOverGui)
+            {
+                return;
+            }
+
             var mouseState = Mouse.GetState();
             var keyboardState = Keyboard.GetState();
 
@@ -1119,6 +1137,8 @@ namespace Utopia.Components
             }
 
             _currentViewData.Scale -= ((float)_prevState.ScrollWheelValue - mouseState.ScrollWheelValue) / 10000;
+
+
 
             switch (Mode)
             {
