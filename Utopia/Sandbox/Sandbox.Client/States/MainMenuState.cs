@@ -27,10 +27,12 @@ namespace Sandbox.Client.States
 
         public override void Initialize()
         {
+            var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
             var menu = _iocContainer.Get<MainMenuComponent>();
             _vars = _iocContainer.Get<RuntimeVariables>();
 
+            AddComponent(bg);
             AddComponent(gui);
             AddComponent(menu);
             

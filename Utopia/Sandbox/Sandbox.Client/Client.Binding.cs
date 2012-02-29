@@ -141,6 +141,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<DebugInfo>().ToSelf().InSingletonScope();
             _iocContainer.Bind<VoxelModelManager>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<BlackBgComponent>().ToSelf().InSingletonScope();
 
             //Landscape Creation/Acces/Management ====================================
             _iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope();

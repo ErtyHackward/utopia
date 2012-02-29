@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Ninject;
+using Sandbox.Client.Components;
 using Sandbox.Shared.Web;
 using Sandbox.Shared.Web.Responces;
 using Utopia;
@@ -30,6 +31,7 @@ namespace Sandbox.Client.States
 
         public override void Initialize()
         {
+            var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
             var login = _iocContainer.Get<LoginComponent>();
             _webApi = _iocContainer.Get<ClientWebApi>();
@@ -41,6 +43,7 @@ namespace Sandbox.Client.States
 
             _webApi.LoginCompleted += WebApiLoginCompleted;
 
+            AddComponent(bg);
             AddComponent(gui);
             AddComponent(login);
         }

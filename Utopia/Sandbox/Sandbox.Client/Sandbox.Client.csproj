@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Client.Binding.cs" />
     <Compile Include="Client.NewGame.cs" />
+    <Compile Include="Components\BlackBgComponent.cs" />
     <Compile Include="Components\CreditsComponent.cs" />
     <Compile Include="Components\LoadingComponent.cs" />
     <Compile Include="Components\MainMenuComponent.cs" />

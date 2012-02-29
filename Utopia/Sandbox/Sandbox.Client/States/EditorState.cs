@@ -1,5 +1,6 @@
 ﻿using System;
 using Ninject;
+using Sandbox.Client.Components;
 using Utopia;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
@@ -30,12 +31,14 @@ namespace Sandbox.Client.States
 
         public override void Initialize()
         {
+            var bg = _ioc.Get<BlackBgComponent>();
             var gui = _ioc.Get<GuiManager>();
             var modelManager = _ioc.Get<VoxelModelManager>();
             _modelEditor = _ioc.Get<ModelEditorComponent>();
             
             _modelEditor.BackPressed += EditorBackPressed;
 
+            AddComponent(bg);
             AddComponent(modelManager);
             AddComponent(_modelEditor);
             AddComponent(gui);
