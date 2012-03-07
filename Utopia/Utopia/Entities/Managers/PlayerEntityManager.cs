@@ -216,11 +216,11 @@ namespace Utopia.Entities.Managers
                     }
                     else
                     {                     
-                    //sends the client server event that does tool.use on server
-                    Player.LeftToolUse(ToolUseMode.LeftMouse);
+                        //sends the client server event that does tool.use on server
+                        Player.LeftToolUse(ToolUseMode.LeftMouse);
 
-                    //client invocation to keep the client inventory in synch
-                    Player.Equipment.LeftTool.Use(Player, ToolUseMode.LeftMouse);
+                        //client invocation to keep the client inventory in synch
+                        Player.Equipment.LeftTool.Use(Player, ToolUseMode.LeftMouse);
                     }
                 }
             }
@@ -321,7 +321,7 @@ namespace Utopia.Entities.Managers
                     
                     bool newPlacechanged = false;
                     
-                    //Find the Potential new block place, by roling back !
+                    //Find the potential new block place, by rolling back !
                     while (ptNbr > 0)
                     {
                         pickingWorldPosition -= pickingLookAt * 0.02;
@@ -348,9 +348,9 @@ namespace Utopia.Entities.Managers
             return Player._entityState.IsBlockPicked; //Return true if a new block or Entity has been picked up !
         }
 
-        private void ComputeBlockBoundingBox(ref Vector3I BlockPlace, out BoundingBox BlockBoundingBox)
+        private void ComputeBlockBoundingBox(ref Vector3I blockPlace, out BoundingBox blockBoundingBox)
         {
-            BlockBoundingBox = new BoundingBox(new Vector3(BlockPlace.X, BlockPlace.Y, BlockPlace.Z), new Vector3(BlockPlace.X + 1, BlockPlace.Y + 1, BlockPlace.Z + 1));
+            blockBoundingBox = new BoundingBox(new Vector3(blockPlace.X, blockPlace.Y, blockPlace.Z), new Vector3(blockPlace.X + 1, blockPlace.Y + 1, blockPlace.Z + 1));
         }
         #endregion
 
@@ -375,14 +375,14 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region Physic simulation for Collision detection
-        private void PhysicOnEntity(EntityDisplacementModes mode, ref GameTime TimeSpend)
+        private void PhysicOnEntity(EntityDisplacementModes mode, ref GameTime timeSpent)
         {
             switch (mode)
             {
                 case EntityDisplacementModes.Flying:
                     break;
                 case EntityDisplacementModes.Walking:
-                    PhysicSimulation(ref TimeSpend);
+                    PhysicSimulation(ref timeSpent);
                     break;
                 default:
                     break;
@@ -392,8 +392,8 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// Check if the player is on the ground, or not.
         /// </summary>
-        /// <param name="TimeSpend"></param>
-        private void PhysicSimulation(ref GameTime TimeSpend)
+        /// <param name="timeSpent"></param>
+        private void PhysicSimulation(ref GameTime timeSpent)
         {
             TerraCubeWithPosition groundCube;
             Vector3I GroundDirection = new Vector3I(0, -1, 0);
@@ -406,7 +406,7 @@ namespace Utopia.Entities.Managers
             _groundBelowEntity = groundCube.Position.Y + 1 - BlockOffset;
             PlayerOnOffsettedBlock = BlockOffset != 0;
 
-            _physicSimu.Simulate(ref TimeSpend, out newWorldPosition);
+            _physicSimu.Simulate(ref timeSpent, out newWorldPosition);
             _worldPosition.Value = newWorldPosition;
 
             if (_worldPosition.Value.Y > _groundBelowEntity)
@@ -459,7 +459,7 @@ namespace Utopia.Entities.Managers
         }
 
         #region Movement Management
-        private void EntityMovementsOnEvents(EntityDisplacementModes mode, ref GameTime TimeSpend)
+        private void EntityMovementsOnEvents(EntityDisplacementModes mode, ref GameTime timeSpent)
         {
             switch (mode)
             {
@@ -467,7 +467,7 @@ namespace Utopia.Entities.Managers
                     FreeFirstPersonMove();
                     break;
                 case EntityDisplacementModes.Walking:
-                    WalkingFirstPerson(ref TimeSpend);
+                    WalkingFirstPerson(ref timeSpent);
                     break;
                 default:
                     break;
@@ -495,7 +495,7 @@ namespace Utopia.Entities.Managers
                 _worldPosition.Value += Vector3D.Up * _moveDelta;
         }
 
-        private void WalkingFirstPerson(ref GameTime TimeSpend)
+        private void WalkingFirstPerson(ref GameTime timeSpent)
         {
             float jumpPower;
             _physicSimu.Freeze(true, false, true);
@@ -504,7 +504,7 @@ namespace Utopia.Entities.Managers
             if (!_physicSimu.OnGround) _moveDelta /= 2f;
 
             if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _actions.isTriggered(Actions.Move_Jump, out jumpPower))
-                _physicSimu.Impulses.Add(new Impulse(ref TimeSpend) { ForceApplied = new Vector3D(0, 300 + (200 * jumpPower), 0) });
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 300 + (200 * jumpPower), 0) });
 
             if (_actions.isTriggered(Actions.Move_Forward))
                 if (_actions.isTriggered(Actions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f; //Running makes the entity go twice faster

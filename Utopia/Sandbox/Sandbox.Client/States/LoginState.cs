@@ -5,6 +5,7 @@ using Sandbox.Client.Components;
 using Sandbox.Shared.Web;
 using Sandbox.Shared.Web.Responces;
 using Utopia;
+using Utopia.Components;
 using Utopia.GUI.D3D;
 using Utopia.Settings;
 using Utopia.Shared.ClassExt;
@@ -34,6 +35,7 @@ namespace Sandbox.Client.States
             var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
             var login = _iocContainer.Get<LoginComponent>();
+            var sound = _iocContainer.Get<SoundManager>();
             _webApi = _iocContainer.Get<ClientWebApi>();
 
             login.Email = ClientSettings.Current.Settings.Login;
@@ -46,6 +48,7 @@ namespace Sandbox.Client.States
             AddComponent(bg);
             AddComponent(gui);
             AddComponent(login);
+            AddComponent(sound);
         }
 
         void WebApiLoginCompleted(object sender, WebEventArgs<LoginResponce> e)
