@@ -64,6 +64,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="irrKlang.NET4">
+      <HintPath>..\Library\irrKlang.NET4.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\Library\Ninject.dll</HintPath>
     </Reference>
