@@ -75,6 +75,7 @@
     <Compile Include="Components\CreditsComponent.cs" />
     <Compile Include="Components\LoadingComponent.cs" />
     <Compile Include="Components\MainMenuComponent.cs" />
+    <Compile Include="Components\SandboxSoundManager.cs" />
     <Compile Include="Components\ServerSelectionComponent.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="GameStateToolManager.cs" />

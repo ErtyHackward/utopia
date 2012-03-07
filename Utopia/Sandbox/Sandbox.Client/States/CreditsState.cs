@@ -25,15 +25,15 @@ namespace Sandbox.Client.States
 
         public override void Initialize()
         {
+            var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
             var credits = _iocContainer.Get<CreditsComponent>();
 
-            EnabledComponents.Add(gui);
-            EnabledComponents.Add(credits);
-
-            VisibleComponents.Add(gui);
-
             credits.BackPressed += CreditsBackPressed;
+
+            AddComponent(bg);
+            AddComponent(gui);
+            AddComponent(credits);
         }
 
         void CreditsBackPressed(object sender, System.EventArgs e)

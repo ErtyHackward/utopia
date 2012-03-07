@@ -10,8 +10,8 @@ namespace S33M3Engines.D3D
         /// <summary>
         /// Performs game logic update. Always called with fixed time step
         /// </summary>
-        /// <param name="timeSpend">Gives an amount of seconds passed since last call [runtime constant]</param>
-        void Update(ref GameTime timeSpend);
+        /// <param name="timeSpent">Gives an amount of seconds passed since last call [runtime constant]</param>
+        void Update(ref GameTime timeSpent);
 
         /// <summary>
         /// Performs gamecomponents interpolation. This method called right before each Draw call.

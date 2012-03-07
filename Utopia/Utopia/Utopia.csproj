@@ -123,6 +123,7 @@
     <Compile Include="Components\ModelEditorComponent.Designer.cs">
       <DependentUpon>ModelEditorComponent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\SoundManager.cs" />
     <Compile Include="Components\ViewParameters.cs" />
     <Compile Include="Editor\CarvingEditor.cs" />
     <Compile Include="Editor\EditorTool.cs" />
@@ -140,9 +141,9 @@
     <Compile Include="Entities\Renderer\DynamicEntityRenderer.cs" />
     <Compile Include="Entities\Managers\DynamicEntityManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IDynamicEntityManager.cs" />
-    <Compile Include="Entities\Managers\Interfaces\Interfaces\IEntitiesRenderer.cs" />
-    <Compile Include="Entities\Managers\Interfaces\Interfaces\IPickingRenderer.cs" />
-    <Compile Include="Entities\Managers\Interfaces\Interfaces\IStaticSpriteEntityRenderer.cs" />
+    <Compile Include="Entities\Managers\Interfaces\IEntitiesRenderer.cs" />
+    <Compile Include="Entities\Managers\Interfaces\IPickingRenderer.cs" />
+    <Compile Include="Entities\Managers\Interfaces\IStaticSpriteEntityRenderer.cs" />
     <Compile Include="Entities\Renderer\PickingRenderer.cs" />
     <Compile Include="Entities\Renderer\PlayerEntityRenderer.cs" />
     <Compile Include="Entities\VisualDynamicEntity.cs" />
@@ -356,9 +357,7 @@
     <EmbeddedResource Include="Resources\skin.xsd" />
     <None Include="Resources\WelcomeScreen.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Entities\Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>
