@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Worlds.Chunks.ChunkWrapper
 {
@@ -89,7 +90,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
         {
             _processingType = operationType;
             Range<int> NewCubeRange, ActualCubeRange, NewWorldRange;
-            Location2<int> NewWrapEnd;
+            Vector2I NewWrapEnd;
             int NewMinWorldValue;
 
             NewWorldRange = WorldChunks.VisualWorldParameters.WorldRange;
@@ -110,8 +111,8 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                         ActualCubeRange = chunk.CubeRange;
                         NewCubeRange = new Range<int>()
                         {
-                            Min = new Vector3I(NewMinWorldValue, ActualCubeRange.Min.Y, ActualCubeRange.Min.Z),
-                            Max = new Vector3I(NewMinWorldValue + AbstractChunk.ChunkSize.X, ActualCubeRange.Max.Y, ActualCubeRange.Max.Z)
+                            Min = new Location3<int>(NewMinWorldValue, ActualCubeRange.Min.Y, ActualCubeRange.Min.Z),
+                            Max = new Location3<int>(NewMinWorldValue + AbstractChunk.ChunkSize.X, ActualCubeRange.Max.Y, ActualCubeRange.Max.Z)
                         };
                         chunk.CubeRange = NewCubeRange;
                     }
@@ -136,8 +137,8 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                         ActualCubeRange = chunk.CubeRange;
                         NewCubeRange = new Range<int>()
                         {
-                            Min = new Vector3I(NewMinWorldValue - AbstractChunk.ChunkSize.X, ActualCubeRange.Min.Y, ActualCubeRange.Min.Z),
-                            Max = new Vector3I(NewMinWorldValue, ActualCubeRange.Max.Y, ActualCubeRange.Max.Z)
+                            Min = new Location3<int>(NewMinWorldValue - AbstractChunk.ChunkSize.X, ActualCubeRange.Min.Y, ActualCubeRange.Min.Z),
+                            Max = new Location3<int>(NewMinWorldValue, ActualCubeRange.Max.Y, ActualCubeRange.Max.Z)
                         };
                         chunk.CubeRange = NewCubeRange;
                     }
@@ -162,8 +163,8 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                         ActualCubeRange = chunk.CubeRange;
                         NewCubeRange = new Range<int>()
                         {
-                            Min = new Vector3I(ActualCubeRange.Min.X, ActualCubeRange.Min.Y, NewMinWorldValue),
-                            Max = new Vector3I(ActualCubeRange.Max.X, ActualCubeRange.Max.Y, NewMinWorldValue + AbstractChunk.ChunkSize.Z)
+                            Min = new Location3<int>(ActualCubeRange.Min.X, ActualCubeRange.Min.Y, NewMinWorldValue),
+                            Max = new Location3<int>(ActualCubeRange.Max.X, ActualCubeRange.Max.Y, NewMinWorldValue + AbstractChunk.ChunkSize.Z)
                         };
                         chunk.CubeRange = NewCubeRange;
                     }
@@ -187,8 +188,8 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                         ActualCubeRange = chunk.CubeRange;
                         NewCubeRange = new Range<int>()
                         {
-                            Min = new Vector3I(ActualCubeRange.Min.X, ActualCubeRange.Min.Y, NewMinWorldValue - AbstractChunk.ChunkSize.Z),
-                            Max = new Vector3I(ActualCubeRange.Max.X, ActualCubeRange.Max.Y, NewMinWorldValue)
+                            Min = new Location3<int>(ActualCubeRange.Min.X, ActualCubeRange.Min.Y, NewMinWorldValue - AbstractChunk.ChunkSize.Z),
+                            Max = new Location3<int>(ActualCubeRange.Max.X, ActualCubeRange.Max.Y, NewMinWorldValue)
                         };
                         chunk.CubeRange = NewCubeRange;
                     }

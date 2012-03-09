@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
 using Utopia.Settings;
-using S33M3Engines;
-using S33M3Engines.InputHandler;
-using Utopia.Action;
 using Utopia.Network;
-using S33M3Engines.Shared.Math;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
+using S33M3_CoreComponents.Inputs.Actions;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Worlds.GameClocks
 {
@@ -68,7 +66,7 @@ namespace Utopia.Worlds.GameClocks
             base.Dispose();
         }
 
-        public override void Update(ref S33M3Engines.D3D.GameTime timeSpend)
+        public override void Update(GameTime timeSpend)
         {
             InputHandler();
 
@@ -108,10 +106,6 @@ namespace Utopia.Worlds.GameClocks
         #region Private methods
         private void InputHandler()
         {
-            if (_actions.isTriggered(Actions.World_FreezeTime))
-            {
-                _frozenTime = !_frozenTime;
-            }
         }
 
         //Synchronize hour with server

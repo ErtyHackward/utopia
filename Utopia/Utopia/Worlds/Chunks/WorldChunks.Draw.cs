@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
-using S33M3Engines.Struct.Vertex;
 using SharpDX.Direct3D11;
-using S33M3Engines.Textures;
-using S33M3Engines.StatesManager;
-using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Chunks;
-using S33M3Engines.Maths;
 using Utopia.Settings;
 using Utopia.Resources.Effects.Terran;
 using Utopia.Resources.Effects.Entities;
+using S33M3_DXEngine.RenderStates;
+using S33M3_DXEngine.Textures;
+using S33M3_Resources.Struct.Vertex;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -38,54 +36,57 @@ namespace Utopia.Worlds.Chunks
 
         #region Public methods
 
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
             
 
 #if DEBUG
-            if (_gameStates.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            if (_gameStates.DebugDisplay == 2) RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 #endif
-            _terraEffect.Begin();
+            _terraEffect.Begin(context);
 
-            switch (index)
+
+            if (index == SOLID_DRAW)
             {
-                case SOLID_DRAW:
-                    _chunkDrawByFrame = 0;
+                _chunkDrawByFrame = 0;
 
-                    StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-                    DrawSolidFaces();
+                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                DrawSolidFaces();
 #if DEBUG
-                    DrawDebug();
+                DrawDebug();
 #endif
-                    break;
-                case TRANSPARENT_DRAW:
-                    //Only 2 index registered, no need to test the value of the index here it is for transparent one !
-                    if (!_playerManager.IsHeadInsideWater)
-                    {
-                        //Head not inside Water => Draw water front Faces
-                        StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-                    }
-                    else
-                    {
-                        //Head inside Water block, draw back faces only
-                        StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullFront, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-                    }
-                    DefaultDrawLiquid(); 
-                    break;
+                return;
+            }
 
-                case ENTITIES_DRAW:
-                    StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-                    DrawStaticEntities();
-                    break;
-                default:
-                    break;
+            if (index == TRANSPARENT_DRAW)
+            {
+                //Only 2 index registered, no need to test the value of the index here it is for transparent one !
+                if (!_playerManager.IsHeadInsideWater)
+                {
+                    //Head not inside Water => Draw water front Faces
+                    RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                }
+                else
+                {
+                    //Head inside Water block, draw back faces only
+                    RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.CullFront, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                }
+                DefaultDrawLiquid();
+                return;
+            }
+
+            if (index == ENTITIES_DRAW)
+            {
+                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                DrawStaticEntities();
+                return;
             }
 
         }
         #endregion
 
         #region Private methods
-        private void DrawSolidFaces()
+        private void DrawSolidFaces(DeviceContext context)
         {
             VisualChunk chunk;
             Matrix worldFocus = Matrix.Identity;
@@ -104,9 +105,9 @@ namespace Utopia.Worlds.Chunks
                         _terraEffect.CBPerDraw.Values.popUpYOffset = 0;
                         _terraEffect.CBPerDraw.Values.Opaque = chunk.Opaque;
                         _terraEffect.CBPerDraw.IsDirty = true;
-                        _terraEffect.Apply();
+                        _terraEffect.Apply(context);
 
-                        chunk.DrawSolidFaces();
+                        chunk.DrawSolidFaces(context);
 
                         _chunkDrawByFrame++;
                     }
@@ -115,17 +116,17 @@ namespace Utopia.Worlds.Chunks
         }
 
         //Default Liquid Drawing
-        private void DefaultDrawLiquid()
+        private void DefaultDrawLiquid(DeviceContext context)
         {
             Matrix worldFocus = Matrix.Identity;
 
 #if DEBUG
-            if (_gameStates.DebugDisplay == 2) StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            if (_gameStates.DebugDisplay == 2) RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 #endif
 
             VisualChunk chunk;
 
-            _liquidEffect.Begin();
+            _liquidEffect.Begin(context);
 
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
@@ -140,19 +141,19 @@ namespace Utopia.Worlds.Chunks
                         _liquidEffect.CBPerDraw.Values.Opaque = chunk.Opaque;
                         _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _liquidEffect.CBPerDraw.IsDirty = true;
-                        _liquidEffect.Apply();
+                        _liquidEffect.Apply(context);
                         chunk.DrawLiquidFaces();
                     }
                 }
             }
         }
 
-        private void DrawStaticEntities()
+        private void DrawStaticEntities(DeviceContext context)
         {
             VisualChunk chunk;
             Matrix worldFocus = Matrix.Identity;
 
-            _staticSpriteEffect.Begin();
+            _staticSpriteEffect.Begin(context);
             _staticSpriteEffect.CBPerFrameLocal.Values.WorldFocus = Matrix.Transpose(_worldFocusManager.CenterOnFocus(ref MMatrix.Identity));
 
             // Calculate the rotation that needs to be applied to the billboard model to face the current camera position using the arc tangent function.
@@ -169,7 +170,7 @@ namespace Utopia.Worlds.Chunks
             _staticSpriteEffect.CBPerFrameLocal.Values.WindPower = _weather.Wind.FlatWindFlowNormalizedWithNoise;
             _staticSpriteEffect.CBPerFrameLocal.Values.KeyFrameAnimation = (float)_weather.Wind.KeyFrameAnimation;
             _staticSpriteEffect.CBPerFrameLocal.IsDirty = true;
-            _staticSpriteEffect.Apply();
+            _staticSpriteEffect.Apply(context);
 
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
@@ -211,17 +212,17 @@ namespace Utopia.Worlds.Chunks
         {
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _terra_View);
 
-            _terraEffect = new HLSLTerran(_d3dEngine, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _terraEffect.TerraTexture.Value = _terra_View;
-            _terraEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
+            _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
 
-            _liquidEffect = new HLSLLiquid(_d3dEngine, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _liquidEffect.TerraTexture.Value = _terra_View;
-            _liquidEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
+            _liquidEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
 
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
-            _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration, _sharedFrameCB.CBPerFrame);
-            _staticSpriteEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
+            _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            _staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
             _staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
         }
 

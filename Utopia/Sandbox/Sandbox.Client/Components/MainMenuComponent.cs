@@ -1,17 +1,17 @@
 ﻿using System;
-using Nuclex.UserInterface;
-using Nuclex.UserInterface.Controls;
-using Nuclex.UserInterface.Controls.Desktop;
-using S33M3Engines;
-using S33M3Engines.D3D;
 using SharpDX.Direct3D11;
+using S33M3_DXEngine.Main;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.GUI.Nuclex;
+using S33M3_CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3_CoreComponents.GUI.Nuclex.Controls;
 
 namespace Sandbox.Client.Components
 {
     public class MainMenuComponent : GameComponent
     {
         private readonly D3DEngine _engine;
-        private readonly Screen _screen;
+        private readonly MainScreen _screen;
 
         private ButtonControl _continueButton;
         private ButtonControl _singlePlayer;
@@ -72,7 +72,7 @@ namespace Sandbox.Client.Components
         }
         #endregion
 
-        public MainMenuComponent(D3DEngine engine,  Screen screen)
+        public MainMenuComponent(D3DEngine engine, MainScreen screen)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");
@@ -119,18 +119,18 @@ namespace Sandbox.Client.Components
             _buttonsGroup.Children.Add(_credits);
             _buttonsGroup.Children.Add(_exitButton);
 
-            if (Enabled)
+            if (Updatable)
             {
                 _screen.Desktop.Children.Add(_buttonsGroup);
                 _screen.FocusedControl = _multiplayer;
             }
         }
 
-        protected override void OnEnabledChanged()
+        protected override void OnEnabledChanged(object sender, EventArgs args)
         {
             if (!IsInitialized) return;
 
-            if (Enabled)
+            if (Updatable)
             {
                 _screen.Desktop.Children.Add(_buttonsGroup);
                 UpdateLayout(_engine.ViewPort);
@@ -142,9 +142,9 @@ namespace Sandbox.Client.Components
             {
                 _screen.Desktop.Children.Remove(_buttonsGroup);
             }
-            
-            base.OnEnabledChanged();
+            base.OnEnabledChanged(sender, args);
         }
+
 
         private ButtonControl CreateButton(string text, int position)
         {
@@ -153,7 +153,7 @@ namespace Sandbox.Client.Components
 
         private void UpdateLayout(Viewport viewport)
         {
-            if(Enabled)
+            if(Updatable)
                 _buttonsGroup.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 230, 200, 200);
         }
     }

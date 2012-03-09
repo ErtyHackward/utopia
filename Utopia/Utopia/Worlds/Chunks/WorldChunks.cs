@@ -4,15 +4,9 @@ using Utopia.Shared.Net.Messages;
 using Utopia.Shared.World;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
-using S33M3Engines.Shared.Math;
-using S33M3Engines.D3D;
 using Utopia.Worlds.GameClocks;
-using S33M3Engines;
-using S33M3Engines.Cameras;
-using S33M3Engines.GameStates;
 using Utopia.Worlds.Chunks.ChunkLandscape;
 using Utopia.Worlds.Chunks.ChunkMesh;
-using S33M3Engines.WorldFocus;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Network;
@@ -23,8 +17,16 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Weather;
 using Utopia.Effects.Shared;
 using SharpDX;
-using S33M3Physics.Verlet;
 using Utopia.Shared.Settings;
+using S33M3_DXEngine.Main;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.Cameras;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3_CoreComponents.States;
+using S33M3_CoreComponents.WorldFocus;
+using S33M3_CoreComponents.Maths;
+using S33M3_Resources.Structs;
+using S33M3_CoreComponents.Physics.Verlet;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -52,13 +54,13 @@ namespace Utopia.Worlds.Chunks
     /// </summary>
     public partial class WorldChunks : DrawableGameComponent, IWorldChunks
     {
-        private const int SOLID_DRAW = 0;
-        private const int TRANSPARENT_DRAW = 1;
-        private const int ENTITIES_DRAW = 2;
+        private readonly int SOLID_DRAW = 0;
+        private readonly int TRANSPARENT_DRAW;
+        private readonly int ENTITIES_DRAW;
 
         #region Private variables
         private D3DEngine _d3dEngine;
-        private CameraManager _camManager;
+        private CameraManager<ICameraFocused> _camManager;
         private GameStatesManager _gameStates;
         private SingleArrayChunkContainer _cubesHolder;
         private IClock _gameClock;
@@ -126,7 +128,7 @@ namespace Utopia.Worlds.Chunks
         public bool IsInitialLoadCompleted { get; set; }
 
         public WorldChunks(D3DEngine d3dEngine, 
-                           CameraManager camManager,
+                           CameraManager<ICameraFocused> camManager,
                            VisualWorldParameters visualWorldParameters,
                            WorldFocusManager worldFocusManager,
                            GameStatesManager gameStates, 
@@ -174,8 +176,8 @@ namespace Utopia.Worlds.Chunks
             IsInitialLoadCompleted = false;
 
             DrawOrders.UpdateIndex(SOLID_DRAW, 11);
-            DrawOrders.AddIndex(ENTITIES_DRAW, 20);
-            DrawOrders.AddIndex(TRANSPARENT_DRAW, 1050);
+            TRANSPARENT_DRAW = DrawOrders.AddIndex(20, "TRANSPARENT_DRAW");
+            ENTITIES_DRAW = DrawOrders.AddIndex(1050, "ENTITIES_DRAW");
         }
 
         #region Public methods
@@ -428,8 +430,8 @@ namespace Utopia.Worlds.Chunks
             //Defining the World Offset, to be used to reference the 2d circular array of dim defined in chunk
             VisualWorldParameters.WorldRange = new Range<int>()
             {
-                Min = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X, 0, VisualWorldParameters.WorldChunkStartUpPosition.Y),
-                Max = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + VisualWorldParameters.WorldVisibleSize.X, VisualWorldParameters.WorldVisibleSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Y + VisualWorldParameters.WorldVisibleSize.Z)
+                Min = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X, 0, VisualWorldParameters.WorldChunkStartUpPosition.Y),
+                Max = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X + VisualWorldParameters.WorldVisibleSize.X, VisualWorldParameters.WorldVisibleSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Y + VisualWorldParameters.WorldVisibleSize.Z)
             };
 
             //Create the chunks that will be used as "Rendering" array
@@ -451,8 +453,8 @@ namespace Utopia.Worlds.Chunks
                 {
                     cubeRange = new Range<int>()
                     {
-                        Min = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, VisualWorldParameters.WorldChunkStartUpPosition.Y + (chunkZ * AbstractChunk.ChunkSize.Z)),
-                        Max = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + ((chunkX + 1) * AbstractChunk.ChunkSize.X), AbstractChunk.ChunkSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Y + ((chunkZ + 1) * AbstractChunk.ChunkSize.Z))
+                        Min = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, VisualWorldParameters.WorldChunkStartUpPosition.Y + (chunkZ * AbstractChunk.ChunkSize.Z)),
+                        Max = new Location3<int>(VisualWorldParameters.WorldChunkStartUpPosition.X + ((chunkX + 1) * AbstractChunk.ChunkSize.X), AbstractChunk.ChunkSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Y + ((chunkZ + 1) * AbstractChunk.ChunkSize.Z))
                     };
 
                     arrayX = MathHelper.Mod(cubeRange.Min.X, VisualWorldParameters.WorldVisibleSize.X);
@@ -534,7 +536,7 @@ namespace Utopia.Worlds.Chunks
             while (MathHelper.Mod(XWrap, VisualWorldParameters.WorldVisibleSize.X) != 0) XWrap++;
             while (MathHelper.Mod(ZWrap, VisualWorldParameters.WorldVisibleSize.Z) != 0) ZWrap++;
 
-            VisualWorldParameters.WrapEnd = new Location2<int>(XWrap, ZWrap);
+            VisualWorldParameters.WrapEnd = new Vector2I(XWrap, ZWrap);
         }
 
 

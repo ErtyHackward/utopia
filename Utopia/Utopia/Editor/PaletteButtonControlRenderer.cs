@@ -1,43 +1,50 @@
 ﻿using System.Drawing;
-using Nuclex.UserInterface.Visuals.Flat;
-using Nuclex.UserInterface.Visuals.Flat.Renderers;
-using RectangleF = Nuclex.UserInterface.RectangleF;
+using RectangleF = S33M3_CoreComponents.GUI.Nuclex.RectangleF;
+using S33M3_CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
+using SharpDX;
 
 namespace Utopia.Editor
 {
     public class PaletteButtonControlRenderer : IFlatControlRenderer<PaletteButtonControl> {
 
-    public void Render(
-     PaletteButtonControl control, IFlatGuiGraphics graphics
-    ) {
-      RectangleF controlBounds = control.GetAbsoluteBounds();
+        public void Render(PaletteButtonControl control, IFlatGuiGraphics graphics)
+        {
+            RectangleF controlBounds = control.GetAbsoluteBounds();
 
-      // Determine the style to use for the button
-      int stateIndex = 0;
-      if(control.Enabled) {
-        if(control.Depressed) {
-          stateIndex = 3;
-        } else if(control.MouseHovering || control.HasFocus) {
-          stateIndex = 2;
-        } else {
-          stateIndex = 1;
+            // Determine the style to use for the button
+            int stateIndex = 0;
+            if (control.Enabled)
+            {
+                if (control.Depressed)
+                {
+                    stateIndex = 3;
+                }
+                else if (control.MouseHovering || control.HasFocus)
+                {
+                    stateIndex = 2;
+                }
+                else
+                {
+                    stateIndex = 1;
+                }
+            }
+
+            // Draw the button's frame
+            Color4 color = control.Color;
+            graphics.DrawElement(states[stateIndex], ref controlBounds, ref color);
+
+            RectangleF innerBounds = controlBounds;
+            innerBounds.Inflate(-1f, -1f);
+
+            if (control.Texture != null)
+                graphics.DrawCustomTexture(control.Texture, ref innerBounds);
+
+            // If there's text assigned to the button, draw it into the button
+            if (!string.IsNullOrEmpty(control.Text))
+            {
+                graphics.DrawString(states[stateIndex],ref controlBounds, control.Text, true);
+            }
         }
-      }
-
-      // Draw the button's frame
-        graphics.DrawElement(states[stateIndex], controlBounds, control.Color);
-
-        RectangleF innerBounds = controlBounds;
-        innerBounds.Inflate(-1f, -1f);
-
-        if (control.Texture != null)
-            graphics.DrawCustomTexture(control.Texture, innerBounds);
-
-        // If there's text assigned to the button, draw it into the button
-      if(!string.IsNullOrEmpty(control.Text)) {
-        graphics.DrawString(states[stateIndex], controlBounds, control.Text);
-      }
-    }
 
     /// <summary>Names of the states the button control can be in</summary>
     /// <remarks>

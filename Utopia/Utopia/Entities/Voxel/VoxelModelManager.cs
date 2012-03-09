@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using S33M3Engines.D3D;
 using Utopia.Network;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
+using S33M3_DXEngine.Main;
 
 namespace Utopia.Entities.Voxel
 {

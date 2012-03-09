@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
-using S33M3Engines.Struct.Vertex;
 using Utopia.Entities.Sprites;
+using S33M3_DXEngine.Main.Interfaces;
 
 namespace Utopia.Entities.Renderer.Interfaces
 {

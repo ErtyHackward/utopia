@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.Buffers;
-using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using Utopia.Shared.Entities.Models;
 using UtopiaContent.Effects.Entities;
 using Utopia.Shared.ClassExt;
+using S33M3_Resources.Struct.Vertex;
+using S33M3_DXEngine.Buffers;
+using SharpDX.Direct3D11;
 
 namespace Utopia.Entities.Voxel
 {
@@ -154,7 +155,7 @@ namespace Utopia.Entities.Voxel
         /// </summary>
         /// <param name="effect"></param>
         /// <param name="state"></param>
-        public void Draw(HLSLVoxelModel effect, VoxelModelState state = null)
+        public void Draw(DeviceContext context, HLSLVoxelModel effect, VoxelModelState state = null)
         {
             if (!_initialized) return;
 
@@ -175,8 +176,8 @@ namespace Utopia.Entities.Voxel
                 var vb = _visualParts[i].VertexBuffers[voxelModelPartState.ActiveFrame];
                 var ib = _visualParts[i].IndexBuffers[voxelModelPartState.ActiveFrame];
 
-                vb.SetToDevice(0);
-                ib.SetToDevice(0);
+                vb.SetToDevice(context, 0);
+                ib.SetToDevice(context, 0);
 
                 if (_model.Parts[i].ColorMapping != null)
                 {
@@ -186,7 +187,7 @@ namespace Utopia.Entities.Voxel
 
                 effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform);
                 effect.CBPerPart.IsDirty = true;
-                effect.Apply();
+                effect.Apply(context);
 
                 _voxelMeshFactory.Engine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
             }

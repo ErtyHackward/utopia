@@ -1,6 +1,6 @@
 using System;
-using S33M3Engines.Shared.Math;
 using Utopia.Server.Structs;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Server.Events
 {

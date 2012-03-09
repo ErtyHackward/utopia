@@ -1,6 +1,7 @@
-﻿using S33M3Engines;
-using S33M3Engines.D3D;
-using SharpDX;
+﻿using SharpDX;
+using SharpDX.Direct3D11;
+using S33M3_DXEngine.Main;
+using S33M3_DXEngine;
 
 namespace Sandbox.Client.Components
 {
@@ -17,10 +18,10 @@ namespace Sandbox.Client.Components
             DrawOrders.UpdateIndex(0, 0);
         }
 
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
-            _engine.Context.ClearRenderTargetView(_engine.RenderTarget, new Color4());
-            base.Draw(index);
+            context.ClearRenderTargetView(_engine.RenderTarget, new Color4());
+            base.Draw(context, index);
         }
     }
 }

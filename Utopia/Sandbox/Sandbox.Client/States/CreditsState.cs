@@ -1,7 +1,8 @@
 ﻿using Ninject;
 using Sandbox.Client.Components;
 using Utopia;
-using Utopia.GUI.D3D;
+using S33M3_CoreComponents.GUI;
+using S33M3_CoreComponents.States;
 
 namespace Sandbox.Client.States
 {
@@ -17,7 +18,8 @@ namespace Sandbox.Client.States
             get { return "Credits"; }
         }
 
-        public CreditsState(IKernel iocContainer)
+        public CreditsState(GameStatesManager stateManager, IKernel iocContainer)
+            :base(stateManager)
         {
             _iocContainer = iocContainer;
 

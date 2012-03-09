@@ -1,16 +1,16 @@
 ﻿using System;
-using Nuclex.UserInterface;
-using Nuclex.UserInterface.Controls.Desktop;
-using S33M3Engines;
-using S33M3Engines.D3D;
 using SharpDX.Direct3D11;
+using S33M3_DXEngine.Main;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.GUI.Nuclex;
+using S33M3_CoreComponents.GUI.Nuclex.Controls.Desktop;
 
 namespace Sandbox.Client.Components
 {
     public class ServerSelectionComponent : GameComponent
     {
         private readonly D3DEngine _engine;
-        private readonly Screen _screen;
+        private readonly MainScreen _screen;
 
         private ButtonControl _backButton;
         private ButtonControl _connectButton;
@@ -38,7 +38,7 @@ namespace Sandbox.Client.Components
         }
 
 
-        public ServerSelectionComponent(D3DEngine engine, Screen screen)
+        public ServerSelectionComponent(D3DEngine engine, MainScreen screen)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");
@@ -61,7 +61,7 @@ namespace Sandbox.Client.Components
 
             UpdateLayout(_engine.ViewPort);
 
-            if (Enabled)
+            if (Updatable)
             {
                 //_screen.Desktop.Children.Add();
             }
@@ -72,11 +72,11 @@ namespace Sandbox.Client.Components
             _connectButton.Enabled = _serverList.SelectedItems.Count > 0;
         }
 
-        protected override void OnEnabledChanged()
+        protected override void OnEnabledChanged(object sender, EventArgs args)
         {
             if (!IsInitialized) return;
 
-            if (Enabled)
+            if (Updatable)
             {
                 _screen.Desktop.Children.Add(_serverList);
                 _screen.Desktop.Children.Add(_connectButton);
@@ -90,12 +90,12 @@ namespace Sandbox.Client.Components
                 _screen.Desktop.Children.Remove(_backButton);
             }
 
-            base.OnEnabledChanged();
+            base.OnEnabledChanged(sender, args);
         }
 
         private void UpdateLayout(Viewport viewport)
         {
-            if (Enabled)
+            if (Updatable)
             {
                 _connectButton.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 100, 120, 24);
                 _backButton.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 60, 120, 24);

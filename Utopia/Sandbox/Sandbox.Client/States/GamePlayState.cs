@@ -1,7 +1,4 @@
 ﻿using Ninject;
-using S33M3Engines.Cameras;
-using S33M3Engines.D3D.DebugTools;
-using S33M3Engines.Timers;
 using Utopia;
 using Utopia.Effects.Shared;
 using Utopia.Entities;
@@ -9,15 +6,16 @@ using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.GUI;
-using Utopia.GUI.D3D;
-using Utopia.GUI.D3D.Inventory;
-using Utopia.GUI.D3D.Map;
-using Utopia.InputManager;
 using Utopia.Network;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Worlds.Weather;
+using S33M3_CoreComponents.States;
+using S33M3_CoreComponents.Cameras;
+using S33M3_CoreComponents.Timers;
+using S33M3_CoreComponents.Inputs;
+using S33M3_CoreComponents.GUI;
 
 namespace Sandbox.Client.States
 {
@@ -30,7 +28,8 @@ namespace Sandbox.Client.States
             get { return "Gameplay"; }
         }
 
-        public GamePlayState(IKernel ioc)
+        public GamePlayState(GameStatesManager stateManager, IKernel ioc)
+            :base(stateManager)
         {
             _ioc = ioc;
         }
@@ -42,7 +41,6 @@ namespace Sandbox.Client.States
             var inputsManager = _ioc.Get<InputsManager>();
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
-            var fps = _ioc.Get<FPS>();
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
             var chat = _ioc.Get<ChatComponent>();
@@ -55,7 +53,6 @@ namespace Sandbox.Client.States
             var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
-            var debugInfo = _ioc.Get<DebugInfo>();
 
             AddComponent(cameraManager);
             AddComponent(_ioc.Get<ServerComponent>());
@@ -84,7 +81,7 @@ namespace Sandbox.Client.States
         public override void OnEnabled(GameState previousState)
         {
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
-            playerEntityManager.Enabled = true;
+            playerEntityManager.EnableComponent();
 
             var debugInfo = _ioc.Get<DebugInfo>();
             debugInfo.Activated = true;

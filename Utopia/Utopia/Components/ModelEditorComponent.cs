@@ -1,30 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using S33M3Engines.InputHandler;
-using S33M3Engines.InputHandler.MouseHelper;
-using S33M3Engines.Shared.Math;
-using S33M3Engines.Sprites;
 using SharpDX;
-using S33M3Engines.Struct.Vertex;
-using S33M3Engines.D3D;
-using S33M3Engines.StatesManager;
-using S33M3Engines.Buffers;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
-using Utopia.Action;
 using Utopia.Entities.Voxel;
-using Utopia.GUI.D3D;
-using Utopia.GUI.NuclexUIPort.Controls.Desktop;
-using Utopia.InputManager;
 using Utopia.Settings;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
-using S33M3Engines;
 using UtopiaContent.Effects.Entities;
-using ButtonState = S33M3Engines.InputHandler.MouseHelper.ButtonState;
-using Control = Nuclex.UserInterface.Controls.Control;
-using Screen = Nuclex.UserInterface.Screen;
+using S33M3_Resources.Structs;
+using S33M3_Resources.Struct.Vertex;
+using S33M3_CoreComponents.Sprites;
+using S33M3_DXEngine.Buffers;
+using S33M3_DXEngine.Main;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.Inputs.MouseHandler;
+using S33M3_CoreComponents.GUI;
+using S33M3_CoreComponents.Inputs.Actions;
+using S33M3_CoreComponents.GUI.Nuclex;
+using S33M3_CoreComponents.GUI.Nuclex.Controls;
+using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 
 namespace Utopia.Components
 {
@@ -85,7 +80,7 @@ namespace Utopia.Components
         private EditorMode _mode;
         private VoxelFrame _voxelFrame;
 
-        private readonly Screen _screen;
+        private readonly MainScreen _screen;
         private readonly VoxelModelManager _manager;
         private readonly VoxelMeshFactory _meshFactory;
         private readonly GuiManager _gui;
@@ -332,7 +327,7 @@ namespace Utopia.Components
         /// <param name="manager"> </param>
         /// <param name="meshFactory"> </param>
         /// <param name="gui"> </param>
-        public ModelEditorComponent(D3DEngine d3DEngine, Screen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, GuiManager gui)
+        public ModelEditorComponent(D3DEngine d3DEngine, MainScreen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, GuiManager gui)
         {
             _d3DEngine = d3DEngine;
             _screen = screen;
@@ -386,11 +381,11 @@ namespace Utopia.Components
             base.Initialize();
         }
 
-        protected override void OnEnabledChanged()
+        protected override void OnEnabledChanged(object sender, EventArgs args)
         {
             if (!IsInitialized) return;
 
-            if (Enabled)
+            if (Updatable)
             {
                 foreach (var control in _controls)
                 {
@@ -401,7 +396,7 @@ namespace Utopia.Components
                 UpdateLayout();
 
                 // call property setter to fill the lists
-                if(_visualVoxelModel != null)
+                if (_visualVoxelModel != null)
                     VisualVoxelModel = _visualVoxelModel;
             }
             else
@@ -414,15 +409,17 @@ namespace Utopia.Components
                 _screen.Desktop.Children.Remove(_backButton);
             }
 
-            base.OnEnabledChanged();
+            base.OnEnabledChanged(sender, args);
         }
+
         
-        public override void LoadContent()
+
+        public override void LoadContent(DeviceContext Context)
         {
             _font = new SpriteFont();
             _font.Initialize("Tahoma", 13f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
 
-            _lines3DEffect = new HLSLColorLine(_d3DEngine, ClientSettings.EffectPack + @"Entities\ColorLine.hlsl", VertexPosition.VertexDeclaration);
+            _lines3DEffect = new HLSLColorLine(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\ColorLine.hlsl", VertexPosition.VertexDeclaration);
             
             var ptList = new List<VertexPosition>();
             
@@ -447,11 +444,11 @@ namespace Utopia.Components
 
             var indices = new ushort[] { 0, 1, 1, 3, 3, 2, 2, 0, 4, 5, 5, 7, 7, 6, 6, 4, 0, 4, 2, 6, 1, 5, 3, 7 };
 
-            _boxVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine, 8, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorBox_vertexBuffer");
-            _boxVertexBuffer.SetData(ptList.ToArray());
+            _boxVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, 8, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorBox_vertexBuffer");
+            _boxVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
-            _boxIndexBuffer = new IndexBuffer<ushort>(_d3DEngine, indices.Length, SharpDX.DXGI.Format.R16_UInt, "EditorBox_indexBuffer");
-            _boxIndexBuffer.SetData(indices);
+            _boxIndexBuffer = new IndexBuffer<ushort>(_d3DEngine.Device, indices.Length, SharpDX.DXGI.Format.R16_UInt, "EditorBox_indexBuffer");
+            _boxIndexBuffer.SetData(_d3DEngine.ImmediateContext, indices);
 
             ptList.Clear();
 
@@ -460,17 +457,17 @@ namespace Utopia.Components
             ptList.Add(new VertexPosition(new Vector3(0, -1,  0)));
             ptList.Add(new VertexPosition(new Vector3(0,  1,  0)));
 
-            _crosshairVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine, 4, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorCrosshair_vertexBuffer");
-            _crosshairVertexBuffer.SetData(ptList.ToArray());
+            _crosshairVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, 4, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorCrosshair_vertexBuffer");
+            _crosshairVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
             ptList.Clear();
             ptList.Add(new VertexPosition(new Vector3(0, 0, 0)));
             ptList.Add(new VertexPosition(new Vector3(1, 0, 0)));
 
-            _voxelEffect = new HLSLVoxelModel(_d3DEngine, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
-            
+            _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
 
-            base.LoadContent();
+
+            base.LoadContent(Context);
         }
 
         #region Buttons handlers
@@ -1100,7 +1097,7 @@ namespace Utopia.Components
         /// Allows the game component to update itself.
         /// </summary>
         /// <param name="timeSpent">Provides a snapshot of timing values.</param>
-        public override void Update(ref GameTime timeSpent)
+        public override void Update( GameTime timeSpent)
         {
             if (_visualVoxelModel == null || !_d3DEngine.HasFocus || DialogHelper.DialogBg.Parent != null) return;
 
@@ -1282,7 +1279,7 @@ namespace Utopia.Components
             
             _prevState = mouseState;
 
-            base.Update(ref timeSpent);
+            base.Update(timeSpent);
         }
 
         private void ColorFill(VoxelFrame frame, Vector3I vector3I, byte fillIndex, byte newIndex)
@@ -1482,7 +1479,7 @@ namespace Utopia.Components
         }
 
         #region Draw
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
             if (_visualVoxelModel == null)
             {
@@ -1518,8 +1515,8 @@ namespace Utopia.Components
         private void DrawBox(Vector3 min, Vector3 max, Color4 color)
         {
             var size = Vector3.Subtract(max, min);
-            //StatesRepository.ApplyStates(_renderRasterId, _blendStateId, _depthStateWithDepthId);
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            //RenderStatesRepo.ApplyStates(_renderRasterId, _blendStateId, _depthStateWithDepthId);
+            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             //Set Effect variables
             _lines3DEffect.Begin();
@@ -1538,7 +1535,7 @@ namespace Utopia.Components
 
         private void DrawCrosshair(Vector3 position, float size, bool turnAxis)
         {
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             var transform = Matrix.Scaling(size) * Matrix.Translation(position) * _transform;
 
@@ -1566,7 +1563,7 @@ namespace Utopia.Components
             // draw the model
             if (_visualVoxelModel != null)
             {
-                StatesRepository.ApplyRaster(GameDXStates.DXStates.Rasters.Default);
+                RenderStatesRepo.ApplyRaster(GameDXStates.DXStates.Rasters.Default);
 
                 _voxelEffect.Begin();
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
@@ -1588,7 +1585,7 @@ namespace Utopia.Components
 
                 //DrawBox(state.BoundingBox);
 
-                StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
                 
 
                 var model = _visualVoxelModel.VoxelModel;
@@ -1764,7 +1761,7 @@ namespace Utopia.Components
         {
             if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
             {
-                StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
                 #region Grid
                 var frame = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex];
@@ -1781,7 +1778,7 @@ namespace Utopia.Components
                 var model = _visualVoxelModel.VoxelModel;
                 var visualParts = _visualVoxelModel.VisualVoxelParts;
 
-                StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
                 if (model.ColorMapping != null)
                 {
                     _voxelEffect.CBPerFrame.Values.ColorMapping = model.ColorMapping.BlockColors;

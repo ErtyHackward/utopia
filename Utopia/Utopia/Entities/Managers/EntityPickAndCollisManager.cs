@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Utopia.Entities.Managers.Interfaces;
 using SharpDX;
-using S33M3Engines.Shared.Math;
-using S33M3Engines.Maths;
-using S33M3Engines.Timers;
 using Utopia.Shared.Chunks;
 using Utopia.Network;
-using Utopia.Action;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
-using S33M3Physics.Verlet;
+using S33M3_CoreComponents.Timers;
+using S33M3_CoreComponents.Inputs.Actions;
+using S33M3_Resources.Structs;
+using S33M3_CoreComponents.Physics.Verlet;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Entities.Managers
 {
@@ -24,7 +24,7 @@ namespace Utopia.Entities.Managers
     {
         #region private variables
         private IDynamicEntityManager _dynamicEntityManager;
-        private S33M3Engines.Timers.TimerManager.GameTimer _timer;
+        private TimerManager.GameTimer _timer;
         private List<VisualEntity> _entitiesNearPlayer = new List<VisualEntity>(1000);
         private PlayerEntityManager _player;
         private int _entityDistance = AbstractChunk.ChunkSize.X * 2;

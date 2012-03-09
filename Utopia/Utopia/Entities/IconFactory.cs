@@ -1,27 +1,24 @@
 ﻿using System;
-using S33M3Engines;
-using S33M3Engines.D3D;
-using S33M3Engines.Shared.Sprites;
-using S33M3Engines.Textures;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Settings;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using S33M3Engines.Meshes.Factories;
-using S33M3Engines.Meshes;
-using S33M3Engines.Buffers;
-using S33M3Engines.Struct.Vertex;
-using S33M3Engines.Shared.Math;
 using UtopiaContent.Effects.Entities;
 using Utopia.Shared.Cubes;
 using Utopia.Worlds.Cubes;
 using System.Collections.Generic;
-using S33M3Engines.StatesManager;
-using S33M3Engines.Sprites;
 using SharpDX.DXGI;
 using Utopia.Shared.Settings;
+using S33M3_DXEngine.Main;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.Sprites;
+using S33M3_DXEngine.Textures;
+using S33M3_DXEngine.Buffers;
+using S33M3_Resources.Struct.Vertex;
+using S33M3_CoreComponents.Textures;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Entities
 {
@@ -170,11 +167,11 @@ namespace Utopia.Entities
             Texture2D SpriteTexture = new Texture2D(_d3DEngine.Device, SpriteTextureDesc);
 
             DataStream dataStream;
-            DataBox data = _d3DEngine.Context.MapSubresource(SpriteTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out dataStream);
+            DataBox data = _d3DEngine.ImmediateContext.MapSubresource(SpriteTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out dataStream);
             dataStream.Position = 0;
             dataStream.Write<Vector4>(new Vector4(1.0f, 1.0f, 1.0f, 1.0f)); //Ecrire dans la texture
             dataStream.Position = 0;
-            _d3DEngine.Context.UnmapSubresource(SpriteTexture, 0);
+            _d3DEngine.ImmediateContext.UnmapSubresource(SpriteTexture, 0);
             dataStream.Dispose();
 
             SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, SpriteTexture, new Vector2(0, 0));
@@ -182,7 +179,7 @@ namespace Utopia.Entities
             SpriteTexture.Dispose();
 
             //Create the Shadder used to render on the texture.
-            HLSLIcons shader = new HLSLIcons(_d3DEngine,
+            HLSLIcons shader = new HLSLIcons(_d3DEngine.Device,
                                              ClientSettings.EffectPack + @"Entities/Icons.hlsl",
                                              VertexMesh.VertexDeclaration);
 
@@ -233,9 +230,9 @@ namespace Utopia.Entities
                 //Begin Drawing
                 texture.Begin();
 
-                StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
-                shader.Begin();
+                shader.Begin(_d3DEngine.ImmediateContext);
 
                 shader.CBPerFrame.Values.DiffuseLightDirection = new Vector3(-0.8f, -0.9f, 1.5f) * -1;
                 shader.CBPerFrame.Values.View = Matrix.Transpose(view);
@@ -255,20 +252,20 @@ namespace Utopia.Entities
                 shader.CBPerDraw.IsDirty = true;
 
                 shader.DiffuseTexture.Value = _cubesTexture;
-                shader.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);  
+                shader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
-                shader.Apply();
+                shader.Apply(_d3DEngine.ImmediateContext);
                 //Set the buffer to the device
-                vb.SetToDevice(0);
-                ib.SetToDevice(0);
+                vb.SetToDevice(_d3DEngine.ImmediateContext, 0);
+                ib.SetToDevice(_d3DEngine.ImmediateContext, 0);
 
                 //Draw things here.
-                _d3DEngine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
+                _d3DEngine.ImmediateContext.DrawIndexed(ib.IndicesCount, 0, 0);
 
                 //Draw a sprite for lighting block
                 if (profile.IsEmissiveColorLightSource)
                 {
-                    spriteRenderer.Begin(false, SpriteRenderer.FilterMode.Point);
+                    spriteRenderer.Begin(_d3DEngine.ImmediateContext, false, SpriteRenderer.FilterMode.Point);
                     spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, new Color4(profile.EmissiveColor.R / 255, profile.EmissiveColor.G / 255, profile.EmissiveColor.B / 255, 0.5f), new RectangleF(0, 0, textureSize, textureSize));
                     spriteRenderer.End();
                 }
@@ -283,7 +280,7 @@ namespace Utopia.Entities
             }
 
             //Reset device Default render target
-            _d3DEngine.ResetDefaultRenderTargetsAndViewPort();
+            _d3DEngine.SetRenderTargetsAndViewPort();
 
             //Dispose temp resource.
             texture.Dispose();

@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using Ninject;
-using Nuclex.UserInterface;
-using S33M3Engines.Sprites;
 using Sandbox.Client.Components;
 using Sandbox.Client.States;
 using Sandbox.Shared.Web;
 using Utopia;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
-using Utopia.GUI.D3D;
-using Utopia.GUI.D3D.Inventory;
-using Utopia.GUI.D3D.Map;
 using Utopia.Server;
 using Utopia.Server.Managers;
 using Utopia.Shared.Config;
@@ -19,12 +14,7 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
-using S33M3Engines.WorldFocus;
-using S33M3Engines.GameStates;
-using S33M3Engines;
-using S33M3Engines.Cameras;
 using Utopia.Worlds.SkyDomes.SharedComp;
-using S33M3Engines.D3D;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks;
@@ -37,18 +27,25 @@ using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Entities;
 using Utopia.Worlds.Storage;
-using Utopia.Action;
 using Utopia.Network;
-using Utopia.InputManager;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Renderer;
 using Utopia.GUI;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
-using S33M3Engines.Timers;
 using Utopia.Entities.Renderer.Interfaces;
-using S33M3Engines.D3D.DebugTools;
 using Utopia.Effects.Shared;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.WorldFocus;
+using S33M3_CoreComponents.States;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3_CoreComponents.Cameras;
+using S33M3_CoreComponents.Timers;
+using S33M3_CoreComponents.Sprites;
+using S33M3_CoreComponents.Inputs;
+using S33M3_CoreComponents.Inputs.Actions;
+using S33M3_CoreComponents.GUI;
+using S33M3_CoreComponents.GUI.Nuclex;
 
 namespace Sandbox.Client
 {
@@ -109,15 +106,11 @@ namespace Sandbox.Client
 
             //GUI =========================================================
             _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();        //Gui base class
-            _iocContainer.Bind<Screen>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<MainScreen>().ToSelf().InSingletonScope();
             //=============================================================
 
             //Inventory ===================================================
             _iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();       //Icon Factory
-            //=============================================================
-
-            //Debug displayer component ===================================
-            _iocContainer.Bind<FPS>().ToSelf().InSingletonScope();
             //=============================================================
 
             //Game Componenents =========================================

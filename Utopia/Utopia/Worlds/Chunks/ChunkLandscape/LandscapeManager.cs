@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using S33M3Engines.Threading;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -12,9 +11,11 @@ using Amib.Threading;
 using Utopia.Network;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Storage.Structs;
-using S33M3Engines.Timers;
 using Ninject;
 using Utopia.Entities.Sprites;
+using S33M3_CoreComponents.Timers;
+using S33M3_DXEngine.Threading;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {

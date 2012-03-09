@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Structs;
 using SharpDX;
-using S33M3Engines.Shared.Math;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Entities.Interfaces;
 

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.Struct.Vertex.Helper;
 using System.Runtime.InteropServices;
 using SharpDX;
-using S33M3Engines.D3D.Effects;
-using S33M3Engines.D3D;
-using S33M3Engines;
+using S33M3_DXEngine;
+using S33M3_DXEngine.Effects.HLSLFramework;
+using S33M3_DXEngine.VertexFormat;
+using SharpDX.Direct3D11;
 
 namespace Utopia.Resources.Effects.Weather
 {
@@ -54,19 +54,19 @@ namespace Utopia.Resources.Effects.Weather
         };
         #endregion
 
-        public HLSLClouds2D(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(d3dEngine, shaderPath, VertexDeclaration)
+        public HLSLClouds2D(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+            : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDraw_Struct>(_d3dEngine, "PerDraw");
+            CBPerDraw = new CBuffer<CBPerDraw_Struct>(device, "PerDraw");
             CBuffers.Add(CBPerDraw);
 
             //Create the resource interfaces ==================================================
-            CloudTexture = new ShaderResource(_d3dEngine, "CloudTexture");
+            CloudTexture = new ShaderResource( "CloudTexture");
             ShaderResources.Add(CloudTexture);
 
             //Create the Sampler interface ==================================================
-            cloudSampler = new ShaderSampler(_d3dEngine, "cloudSampler");
+            cloudSampler = new ShaderSampler( "cloudSampler");
             ShaderSamplers.Add(cloudSampler);
 
             //Load the shaders

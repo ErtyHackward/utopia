@@ -1,7 +1,7 @@
 ﻿using System;
 using IrrKlang;
-using Nuclex.UserInterface.Controls.Desktop;
-using S33M3Engines.D3D;
+using S33M3_CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3_DXEngine.Main;
 
 namespace Utopia.Components
 {
@@ -52,7 +52,7 @@ namespace Utopia.Components
             }
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update( GameTime timeSpend)
         {
             _soundEngine.Update();
         }

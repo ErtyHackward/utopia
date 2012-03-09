@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Weathers.SharedComp;
 using Utopia.Worlds.GameClocks;
 using Utopia.Network;
+using S33M3_DXEngine.Main;
 
 namespace Utopia.Worlds.Weather
 {
@@ -55,14 +55,14 @@ namespace Utopia.Worlds.Weather
             Wind.Initialize();
         }
 
-        public override void Update(ref S33M3Engines.D3D.GameTime timeSpend)
+        public override void Update(GameTime timeSpend)
         {
-            Wind.Update(ref timeSpend);
+            Wind.Update(timeSpend);
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
+        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
         {
-            Wind.Interpolation(ref interpolation_hd, ref interpolation_ld, ref timePassed);
+            Wind.Interpolation(interpolation_hd, interpolation_ld, timePassed);
         }
         #endregion 
 

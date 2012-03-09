@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
-using S33M3Engines.D3D.Effects.Basics;
-using S33M3Engines;
-using S33M3Engines.Struct.Vertex;
 using SharpDX;
-using S33M3Engines.WorldFocus;
-using S33M3Engines.Cameras;
-using S33M3Engines.StatesManager;
 using Utopia.Entities.Voxel;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Settings;
 using Utopia.Resources.ModelComp;
+using S33M3_DXEngine.Main;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.WorldFocus;
+using S33M3_CoreComponents.Cameras;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3_Resources.Effects.Basics;
+using S33M3_Resources.VertexFormats;
+using SharpDX.Direct3D11;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Entities.Renderer
 {
@@ -46,7 +48,7 @@ namespace Utopia.Entities.Renderer
         public PickingRenderer(D3DEngine engine,
                                       WorldFocusManager focusManager,
                                       IDynamicEntity player,
-                                      CameraManager camManager)
+                                      CameraManager<ICameraFocused> camManager)
         {
             _engine = engine;
             _focusManager = focusManager;
@@ -80,7 +82,7 @@ namespace Utopia.Entities.Renderer
         #region public methods
         public override void LoadContent()
         {
-            _blockpickedUPEffect = new HLSLVertexPositionColor(_engine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
+            _blockpickedUPEffect = new HLSLVertexPositionColor(_engine.Device);
             _pickedCube = new BoundingBox3D(_engine, _focusManager, new Vector3(1.000f, 1.000f, 1.000f), _blockpickedUPEffect, _cursorColor);
         }
 
@@ -90,10 +92,10 @@ namespace Utopia.Entities.Renderer
             if (_pickedCube != null) _pickedCube.Dispose();
         }
 
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
             //Applying Correct Render States
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             if (_player.EntityState.IsBlockPicked || _player.EntityState.IsEntityPicked)
             {

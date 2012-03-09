@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.StatesManager;
-using S33M3Engines;
 using SharpDX.Direct3D11;
+using S33M3_DXEngine;
+using S33M3_DXEngine.RenderStates;
 
 namespace Utopia.GameDXStates
 {
@@ -13,7 +13,7 @@ namespace Utopia.GameDXStates
         public static void CreateStates(D3DEngine engine)
         {
             //Init the Repository Objects
-            StatesRepository.Initialize(engine);
+            RenderStatesRepo.Initialize(engine);
 
             CreateRasterStatesCollection();
             CreateBlendStatesCollection();
@@ -35,24 +35,24 @@ namespace Utopia.GameDXStates
         private static void CreateRasterStatesCollection()
         {
             //Rasters.Default
-            Rasters.Default = StatesRepository.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Solid });
+            Rasters.Default = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Solid });
 
             //Rasters.CullNone
-            Rasters.CullNone = StatesRepository.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.None, FillMode = FillMode.Solid });
+            Rasters.CullNone = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.None, FillMode = FillMode.Solid });
 
             //Rasters.CullFront
-            Rasters.CullFront = StatesRepository.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Front, FillMode = FillMode.Solid });
+            Rasters.CullFront = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Front, FillMode = FillMode.Solid });
 
             //Rasters.Wired
-            Rasters.Wired = StatesRepository.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Wireframe });
+            Rasters.Wired = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Wireframe });
 
             //Rasters.Sprite
-            Rasters.Sprite = StatesRepository.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Wireframe });
+            Rasters.Sprite = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Wireframe });
         }
 
         public static void Dispose()
         {
-            StatesRepository.CleanUp();
+            RenderStatesRepo.Dispose();
         }
 
         public static class Blenders
@@ -81,7 +81,7 @@ namespace Utopia.GameDXStates
                 BlendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
                 BlendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
             }
-            Blenders.Enabled = StatesRepository.AddBlendStates(BlendDescr);
+            Blenders.Enabled = RenderStatesRepo.AddBlendStates(BlendDescr);
 
             //Blender.Disabled
             BlendDescr = new BlendStateDescription();
@@ -98,7 +98,7 @@ namespace Utopia.GameDXStates
                 BlendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
                 BlendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
             }
-            Blenders.Disabled = StatesRepository.AddBlendStates(BlendDescr);
+            Blenders.Disabled = RenderStatesRepo.AddBlendStates(BlendDescr);
 
             //Blender.Sprite
             BlendDescr = new BlendStateDescription();
@@ -115,7 +115,7 @@ namespace Utopia.GameDXStates
                 BlendDescr.RenderTarget[i].SourceAlphaBlend = BlendOption.One;
                 BlendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
             }
-            Blenders.Sprite = StatesRepository.AddBlendStates(BlendDescr);
+            Blenders.Sprite = RenderStatesRepo.AddBlendStates(BlendDescr);
 
             //Blender.AlphaToCoverage
             BlendDescr = new BlendStateDescription();
@@ -132,7 +132,7 @@ namespace Utopia.GameDXStates
                 BlendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
                 BlendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
             }
-            Blenders.AlphaToCoverage = StatesRepository.AddBlendStates(BlendDescr);
+            Blenders.AlphaToCoverage = RenderStatesRepo.AddBlendStates(BlendDescr);
         }
 
         public static class DepthStencils
@@ -146,7 +146,7 @@ namespace Utopia.GameDXStates
             List<DepthStencilStateDescription> statesCollection = new List<DepthStencilStateDescription>();
 
             //DepthStencil.DepthEnabled
-            DepthStencils.DepthEnabled = StatesRepository.AddDepthStencilStates(new DepthStencilStateDescription()
+            DepthStencils.DepthEnabled = RenderStatesRepo.AddDepthStencilStates(new DepthStencilStateDescription()
             {
                 IsDepthEnabled = true,
                 IsStencilEnabled = false,
@@ -158,7 +158,7 @@ namespace Utopia.GameDXStates
                                  );
 
             //DepthStencil.DepthDisabled
-            DepthStencils.DepthDisabled = StatesRepository.AddDepthStencilStates(new DepthStencilStateDescription()
+            DepthStencils.DepthDisabled = RenderStatesRepo.AddDepthStencilStates(new DepthStencilStateDescription()
             {
                 IsDepthEnabled = false,
                 IsStencilEnabled = false,
@@ -183,7 +183,7 @@ namespace Utopia.GameDXStates
         private static void CreateSamplerStatesCollection()
         {
             //Samplers.UVClamp_MinMagMipPoint
-            Samplers.UVClamp_MinMagMipPoint = StatesRepository.AddSamplerStates(new SamplerStateDescription()
+            Samplers.UVClamp_MinMagMipPoint = RenderStatesRepo.AddSamplerStates(new SamplerStateDescription()
             {
                 AddressU = TextureAddressMode.Clamp,
                 AddressV = TextureAddressMode.Clamp,
@@ -195,7 +195,7 @@ namespace Utopia.GameDXStates
                                 );
 
             //Samplers.UVWrap_MinLinearMagPointMipLinear
-            Samplers.UVWrap_MinLinearMagPointMipLinear = StatesRepository.AddSamplerStates(new SamplerStateDescription()
+            Samplers.UVWrap_MinLinearMagPointMipLinear = RenderStatesRepo.AddSamplerStates(new SamplerStateDescription()
             {
                 AddressU = TextureAddressMode.Wrap,
                 AddressV = TextureAddressMode.Wrap,
@@ -207,7 +207,7 @@ namespace Utopia.GameDXStates
                     );
 
             //Samplers.UVWrap_MinMagMipPoint
-            Samplers.UVWrap_MinMagMipPoint = StatesRepository.AddSamplerStates(new SamplerStateDescription()
+            Samplers.UVWrap_MinMagMipPoint = RenderStatesRepo.AddSamplerStates(new SamplerStateDescription()
             {
                 AddressU = TextureAddressMode.Wrap,
                 AddressV = TextureAddressMode.Wrap,
@@ -219,7 +219,7 @@ namespace Utopia.GameDXStates
                     );
 
             //Samplers.UWrapVClamp_MinMagMipLinear
-            Samplers.UWrapVClamp_MinMagMipLinear = StatesRepository.AddSamplerStates(new SamplerStateDescription()
+            Samplers.UWrapVClamp_MinMagMipLinear = RenderStatesRepo.AddSamplerStates(new SamplerStateDescription()
             {
                 AddressU = TextureAddressMode.Wrap,
                 AddressV = TextureAddressMode.Clamp,
@@ -231,7 +231,7 @@ namespace Utopia.GameDXStates
                     );
 
             //Samplers.UVWrap_MinMagMipLinear
-            Samplers.UVWrap_MinMagMipLinear = StatesRepository.AddSamplerStates(new SamplerStateDescription()
+            Samplers.UVWrap_MinMagMipLinear = RenderStatesRepo.AddSamplerStates(new SamplerStateDescription()
             {
                 AddressU = TextureAddressMode.Wrap,
                 AddressV = TextureAddressMode.Wrap,

@@ -2,27 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines;
-using Utopia.GUI.D3D.Inventory;
 using Utopia.Network;
-using S33M3Engines.WorldFocus;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.World;
-using S33M3Engines.GameStates;
-using S33M3Engines.Cameras;
-using S33M3Engines.Timers;
-using Utopia.InputManager;
-using Utopia.Action;
-using Utopia.GUI.D3D;
-using Nuclex.UserInterface;
 using Utopia.Entities;
-using S33M3Engines.D3D.DebugTools;
 using Utopia.Worlds.GameClocks;
 using Utopia.GUI;
-using Utopia.GUI.D3D.Map;
 using Utopia.Editor;
-using S33M3Engines.D3D;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Worlds.Weather;
 using Utopia.Worlds.Storage;
@@ -40,6 +27,16 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Voxel;
 using Utopia.Effects.Shared;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.WorldFocus;
+using S33M3_CoreComponents.States;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3_CoreComponents.Timers;
+using S33M3_CoreComponents.Inputs;
+using S33M3_CoreComponents.Inputs.Actions;
+using S33M3_CoreComponents.GUI;
+using System.Windows.Forms;
+using S33M3_DXEngine.Main.Interfaces;
 
 namespace Utopia
 {
@@ -61,7 +58,6 @@ namespace Utopia
         public GuiManager guiManager;
         public Screen screen;
         public IconFactory iconFactory;
-        public FPS fps;
         public IClock gameClock;
         public InventoryComponent inventoryComponent;
         public ChatComponent chatComponent;

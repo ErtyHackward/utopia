@@ -1,5 +1,5 @@
-using S33M3Engines.Shared.Math;
 using Utopia.Shared.Structs;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Shared.Interfaces
 {

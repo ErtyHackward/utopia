@@ -1,5 +1,6 @@
 ﻿using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Cubes;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Shared.Structs
 {

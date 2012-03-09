@@ -5,19 +5,18 @@ using System.Linq;
 using BEPUphysics;
 using BEPUphysics.Collidables;
 using BEPUphysics.MathExtensions;
-using S33M3Engines;
-using S33M3Engines.D3D;
-using S33M3Engines.D3D.DebugTools;
-using Utopia.Action;
 using Utopia.Shared.Chunks;
 using Utopia.Worlds.Chunks;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.Inputs.Actions;
+using S33M3_DXEngine;
 
 namespace Utopia.Components
 {
     /// <summary>
     /// Provides entities and landscape physics interaction by means of the BEPUPhysics engine
     /// </summary>
-    public class BepuPhysicsComponent : GameComponent, IDebugInfo
+    public class BepuPhysicsComponent : GameComponent
     {
         private readonly IWorldChunks _chunkManager;
         private readonly ActionsManager _actionsManager;
@@ -127,7 +126,7 @@ namespace Utopia.Components
 
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update(GameTime timeSpend)
         {
             if (_actionsManager.isTriggered(Actions.EntityUse))
             {

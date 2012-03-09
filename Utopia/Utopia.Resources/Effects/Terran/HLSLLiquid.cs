@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.Struct.Vertex.Helper;
 using System.Runtime.InteropServices;
 using SharpDX;
-using S33M3Engines.D3D.Effects;
-using S33M3Engines.D3D;
-using S33M3Engines;
+using S33M3_DXEngine.VertexFormat;
+using S33M3_DXEngine.Effects.HLSLFramework;
+using S33M3_DXEngine;
+using SharpDX.Direct3D11;
 
 namespace Utopia.Resources.Effects.Terran
 {
@@ -54,21 +54,22 @@ namespace Utopia.Resources.Effects.Terran
         };
         #endregion
 
-        public HLSLLiquid(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
-            : base(d3dEngine, shaderPath, VertexDeclaration)
+        public HLSLLiquid(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
+            : base(device, shaderPath, VertexDeclaration)
         {
+
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDraw_Struct>(_d3dEngine, "PerDraw");
+            CBPerDraw = new CBuffer<CBPerDraw_Struct>(device, "PerDraw");
             CBuffers.Add(CBPerDraw);
 
             if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());
 
             //Create the resource interfaces ==================================================
-            TerraTexture = new ShaderResource(_d3dEngine, "TerraTexture");
+            TerraTexture = new ShaderResource("TerraTexture");
             ShaderResources.Add(TerraTexture);
 
             //Create the Sampler interface ==================================================
-            SamplerDiffuse = new ShaderSampler(_d3dEngine, "SamplerDiffuse");
+            SamplerDiffuse = new ShaderSampler("SamplerDiffuse");
             ShaderSamplers.Add(SamplerDiffuse);
 
             //Load the shaders

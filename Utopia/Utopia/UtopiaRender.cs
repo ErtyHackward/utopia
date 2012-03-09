@@ -1,12 +1,13 @@
 ﻿using System;
-using S33M3Engines;
-using S33M3Engines.D3D;
 using SharpDX.Direct3D11;
 using Utopia.GameDXStates;
 using Utopia.Settings;
-using Utopia.Action;
 using Utopia.Shared.Settings;
-using S33M3Engines.D3D.Effects.Basics;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.Inputs.Actions;
+using S33M3_DXEngine;
+using System.Drawing;
+using S33M3_CoreComponents.Inputs;
 
 namespace Utopia
 {
@@ -15,19 +16,22 @@ namespace Utopia
         /// <summary>
         /// Gets an action manager
         /// </summary>
-        public ActionsManager ActionsManager { get; protected set; }
+        private InputsManager _inputManager;
 
-        public UtopiaRender(D3DEngine engine, ActionsManager actionsMaanger)
-            : base(engine)
+        public UtopiaRender(InputsManager inputManager, Size startingWindowsSize, string WindowsCaption, Size ResolutionSize = default(Size))
+            : base(startingWindowsSize, WindowsCaption, ResolutionSize)
         {
-            ActionsManager = actionsMaanger;
+            _inputManager = inputManager;
 
             VSync = true;                                              // Vsync ON (default)
         }
 
         public override void Initialize()
         {
-            DXStates.CreateStates(_d3dEngine);
+            _inputManager.MouseManager.IsRunning = true; //Start Mosue pooling
+            _inputManager.EnableComponent();
+
+            DXStates.CreateStates(Engine);
             base.Initialize();
         }
 
@@ -36,121 +40,44 @@ namespace Utopia
             _isFormClosed = true; //Subscribe to Close event
         }
 
-        //State management
-
-        /// <summary>
-        /// Check server connection change state !!
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //void ServerConnection_ConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
-        //{
-        //    if (e.Status == ConnectionStatus.Disconnected && e.Exception != null)
-        //    {
-        //        GameExitReasonMessage msg = new GameExitReasonMessage()
-        //        {
-        //            GameExitReason = ExitReason.Error,
-        //            MainMessage = "Server connection lost",
-        //            DetailedMessage = "Reason : " + e.Reason.ToString() + Environment.NewLine + "Detail : " + e.Exception.Message
-        //        };
-        //        Exit(msg);
-        //    }
-        //}
-
-        
-
-        public override void LoadContent()
+        public override void Update(GameTime TimeSpend)
         {
-            base.LoadContent();
-        }
-
-        public override void UnloadContent()
-        {
-            base.UnloadContent();
-            DXStates.Dispose();
-        }
-
-        public override void Update(ref GameTime TimeSpend)
-        {
-            ActionsManager.FetchInputs();
-            ActionsManager.Update();
-            base.Update(ref TimeSpend);
+            base.Update(TimeSpend);
 
             //After all update are done, Check against "System" keys like Exit, ...
             InputHandling();
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
+        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
         {
-            ActionsManager.FetchInputs();
-            base.Interpolation(ref interpolation_hd, ref interpolation_ld, ref timePassed);
-        }
-
-        public override void Draw()
-        {
-            lock (Game.DxLock)
-            {
-                _d3dEngine.Context.ClearRenderTargetView(_d3dEngine.RenderTarget, BackBufferColor);
-                _d3dEngine.Context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
-            }
-            base.Draw();
-            base.Present();
+            base.Interpolation(interpolation_hd, interpolation_ld, timePassed);
         }
 
         private void InputHandling()
         {
-            if (ActionsManager.isTriggered(Actions.Engine_ToggleDebugInfo))
+            //Make the game exit
+            if (_inputManager.ActionsManager.isTriggered(Actions.EngineExit))
             {
-                foreach (var gamecomp in GameComponents)
-                {
-                    if (gamecomp.GetType() == typeof(S33M3Engines.D3D.DebugTools.DebugInfo))
-                    {
-                        ((S33M3Engines.D3D.DebugTools.DebugInfo)gamecomp).Activated = !((S33M3Engines.D3D.DebugTools.DebugInfo)gamecomp).Activated;
-                    }
-                }
+                this.Exit();
             }
 
-            if (ActionsManager.isTriggered(Actions.Engine_TogglePerfMonitor))
+            //Switch full screen state
+            if (_inputManager.ActionsManager.isTriggered(Actions.EngineFullScreen))
             {
-                foreach (var gamecomp in GameComponents)
-                {
-                    if (gamecomp.GetType() == typeof(S33M3Engines.D3D.DebugTools.DebugInfo))
-                    {
-                        ComponentsPerfMonitor.isActivated = !ComponentsPerfMonitor.isActivated;
-                        if (ComponentsPerfMonitor.isActivated)
-                        {
-                            ((S33M3Engines.D3D.DebugTools.DebugInfo)gamecomp).AddComponants(ComponentsPerfMonitor);
-                        }
-                        else
-                        {
-                            ((S33M3Engines.D3D.DebugTools.DebugInfo)gamecomp).RemoveComponants(ComponentsPerfMonitor);
-                        }
-                    }
-                }
-
+                Engine.isFullScreen = !Engine.isFullScreen;
             }
 
-            //Exit application
-            if (ActionsManager.isTriggered(Actions.Engine_Exit))
+            //Mouse capture mode
+            if (_inputManager.ActionsManager.isTriggered(Actions.MouseCapture))
             {
-                GameExitReasonMessage msg = new GameExitReasonMessage()
-                {
-                    GameExitReason = ExitReason.UserRequest,
-                    MainMessage = "User Requested exit"
-                };
-            
-                Exit(msg);
+                _inputManager.MouseManager.MouseCapture = !_inputManager.MouseManager.MouseCapture;
             }
-            if (ActionsManager.isTriggered(Actions.Engine_LockMouseCursor)) _d3dEngine.MouseCapture = !_d3dEngine.MouseCapture;
-            if (ActionsManager.isTriggered(Actions.Engine_FullScreen)) _d3dEngine.isFullScreen = !_d3dEngine.isFullScreen;
+
         }
 
         public override void Dispose()
         {
-#if DEBUG
-            DebugEffect.Dispose();
-#endif
-            _d3dEngine.GameWindow.Closed -= GameWindow_Closed; //Subscribe to Close event
+            DXStates.Dispose();
 
             GameSystemSettings.Current.Settings.CleanUp();
             base.Dispose();

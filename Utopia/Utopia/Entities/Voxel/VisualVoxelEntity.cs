@@ -1,7 +1,7 @@
 ﻿using System;
-using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Entities.Voxel
 {

@@ -54,10 +54,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
-      <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
-      <Name>S33M3Engines.Shared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utopia.Server\Utopia.Server.csproj">
       <Project>{0DE240B7-B340-43AD-B663-65CFA43351ED}</Project>
       <Name>Utopia.Server</Name>

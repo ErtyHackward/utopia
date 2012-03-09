@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D.Effects;
 using System.Runtime.InteropServices;
 using SharpDX;
-using S33M3Engines;
-using S33M3Engines.Struct.Vertex.Helper;
+using S33M3_DXEngine.VertexFormat;
+using S33M3_DXEngine.Effects.HLSLFramework;
+using SharpDX.Direct3D11;
 
 namespace UtopiaContent.Effects.Entities
 {
@@ -61,22 +61,22 @@ namespace UtopiaContent.Effects.Entities
         };
         #endregion
 
-        public HLSLIcons(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(d3dEngine, shaderPath, VertexDeclaration)
+        public HLSLIcons(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+            : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDraw_Struct>(_d3dEngine, "PerDraw");
+            CBPerDraw = new CBuffer<CBPerDraw_Struct>(device, "PerDraw");
             CBuffers.Add(CBPerDraw);
 
-            CBPerFrame = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrame");
+            CBPerFrame = new CBuffer<CBPerFrame_Struct>(device, "PerFrame");
             CBuffers.Add(CBPerFrame);
 
             //Create the resource interfaces ==================================================
-            DiffuseTexture = new ShaderResource(_d3dEngine, "DiffuseTexture");
+            DiffuseTexture = new ShaderResource("DiffuseTexture");
             ShaderResources.Add(DiffuseTexture);
 
             //Create the Sampler interface ==================================================
-            SamplerDiffuse = new ShaderSampler(_d3dEngine, "SamplerDiffuse");
+            SamplerDiffuse = new ShaderSampler("SamplerDiffuse");
             ShaderSamplers.Add(SamplerDiffuse);
 
             //Load the shaders

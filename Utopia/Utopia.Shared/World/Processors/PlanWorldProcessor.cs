@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
-using S33M3Engines.Shared.Math;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Concrete;
@@ -14,6 +13,8 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.World.PlanGenerator;
 using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities;
+using S33M3_Resources.Structs;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Shared.World.Processors
 {

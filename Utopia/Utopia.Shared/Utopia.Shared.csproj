@@ -55,6 +55,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Library\Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="S33M3_CoreComponents">
+      <HintPath>..\Library\S33M3_CoreComponents.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3_DXEngine">
+      <HintPath>..\Library\S33M3_DXEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3_Resources">
+      <HintPath>..\Library\S33M3_Resources.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Library\SharpDX2\SharpDX.dll</HintPath>
@@ -233,21 +242,14 @@
     <Compile Include="Settings\EntityProfile.cs" />
     <Compile Include="Settings\GameSystemSettings.cs" />
     <Compile Include="SQLiteStorage.cs" />
-    <Compile Include="Structs\ByteColor.cs" />
-    <Compile Include="Structs\ByteVector3.cs" />
-    <Compile Include="Structs\ByteVector4.cs" />
-    <Compile Include="Structs\Color.cs" />
     <Compile Include="ClassExt\BinaryExtensions.cs" />
     <Compile Include="Structs\DynamicUpdateState.cs" />
     <Compile Include="Structs\EntityLink.cs" />
     <Compile Include="Structs\Helpers\HalfUtils.cs" />
-    <Compile Include="Structs\HalfVector2.cs" />
-    <Compile Include="Structs\HalfVector4.cs" />
     <Compile Include="Structs\Helpers\PackUtils.cs" />
     <Compile Include="Structs\Helpers\TraceHelper.cs" />
     <Compile Include="Structs\Line.cs" />
     <Compile Include="Structs\UserRole.cs" />
-    <Compile Include="Structs\Vector2I.cs" />
     <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />
     <Compile Include="Structs\Located.cs" />
@@ -259,7 +261,6 @@
     <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />
-    <Compile Include="Structs\Vector3I.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
     <Compile Include="World\PlanGenerator\BiomeType.cs" />
     <Compile Include="World\PlanGenerator\Corner.cs" />
@@ -308,12 +309,6 @@
   <ItemGroup>
     <None Include="ChunkHierarchy.cd" />
     <None Include="EntityObjectModel.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
-      <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
-      <Name>S33M3Engines.Shared</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

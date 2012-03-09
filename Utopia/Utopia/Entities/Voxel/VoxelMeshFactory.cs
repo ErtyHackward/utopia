@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
-using S33M3Engines;
-using S33M3Engines.Buffers;
-using S33M3Engines.Struct.Vertex;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Enums;
+using S33M3_Resources.Struct.Vertex;
+using S33M3_DXEngine.Buffers;
+using S33M3_DXEngine;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Entities.Voxel
 {
@@ -43,7 +44,7 @@ namespace Utopia.Entities.Voxel
                     {
                         byte blockType = blockData.GetBlock(x, y, z);
                         if (blockType == 0) continue;
-                        var vec = new ByteVector4(x, y, z, blockType);
+                        var vec = new Vector4B(x, y, z, blockType);
                         if (IsEmpty(ref blockData, ref size, x, y, z - 1))
                             GenerateFaces(ref blockData, CubeFaces.Back, ref dico, vec, ref vertices, ref indices);
                         
@@ -79,14 +80,14 @@ namespace Utopia.Entities.Voxel
             return (byte)((b1 + b2 + b3 + b4)/4);
         }
 
-        private void GenerateFaces(ref InsideDataProvider blockData, CubeFaces cubeFace, ref Dictionary<int, int> dico, ByteVector4 cubePosition, ref List<VertexVoxel> vertices, ref List<ushort> indices)
+        private void GenerateFaces(ref InsideDataProvider blockData, CubeFaces cubeFace, ref Dictionary<int, int> dico, Vector4B cubePosition, ref List<VertexVoxel> vertices, ref List<ushort> indices)
         {
             // hash and index
 
-            ByteVector4 topLeft;
-            ByteVector4 topRight;
-            ByteVector4 bottomLeft;
-            ByteVector4 bottomRight;
+            Vector4B topLeft;
+            Vector4B topRight;
+            Vector4B bottomLeft;
+            Vector4B bottomRight;
 
             var chunkSize = blockData.ChunkSize;
             var cubeId = cubePosition.W;
@@ -113,10 +114,10 @@ namespace Utopia.Entities.Voxel
                         var lbottomLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
                         var lbottomFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
 
-                        topLeft = cubePosition + new ByteVector4(0, 1, 1, 0); // topLeftFront
-                        topRight = cubePosition + new ByteVector4(1, 1, 1, 0); // topRightFront
-                        bottomLeft = cubePosition + new ByteVector4(0, 0, 1, 0); // bottomLeftFront
-                        bottomRight = cubePosition + new ByteVector4(1, 0, 1, 0); // bottomRightFront
+                        topLeft = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
+                        topRight = cubePosition + new Vector4B(1, 1, 1, 0); // topRightFront
+                        bottomLeft = cubePosition + new Vector4B(0, 0, 1, 0); // bottomLeftFront
+                        bottomRight = cubePosition + new Vector4B(1, 0, 1, 0); // bottomRightFront
 
                         hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -198,10 +199,10 @@ namespace Utopia.Entities.Voxel
                         var lbottomRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
                         var lbottomBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
 
-                        topLeft = cubePosition + new ByteVector4(1, 1, 0, 0); // topRightBack
-                        topRight = cubePosition + new ByteVector4(0, 1, 0, 0); // topLeftBack
-                        bottomLeft = cubePosition + new ByteVector4(1, 0, 0, 0); // bottomRightBack
-                        bottomRight = cubePosition + new ByteVector4(0, 0, 0, 0); // bottomLeftBack
+                        topLeft = cubePosition + new Vector4B(1, 1, 0, 0); // topRightBack
+                        topRight = cubePosition + new Vector4B(0, 1, 0, 0); // topLeftBack
+                        bottomLeft = cubePosition + new Vector4B(1, 0, 0, 0); // bottomRightBack
+                        bottomRight = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
 
                         hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -283,10 +284,10 @@ namespace Utopia.Entities.Voxel
                         var ltopRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
                         var ltopBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
 
-                        topLeft = cubePosition + new ByteVector4(0, 1, 0, 0); // topLeftBack
-                        topRight = cubePosition + new ByteVector4(1, 1, 0, 0); // topRightBack
-                        bottomLeft = cubePosition + new ByteVector4(0, 1, 1, 0); // topLeftFront
-                        bottomRight = cubePosition + new ByteVector4(1, 1, 1, 0); // topRightFront
+                        topLeft = cubePosition + new Vector4B(0, 1, 0, 0); // topLeftBack
+                        topRight = cubePosition + new Vector4B(1, 1, 0, 0); // topRightBack
+                        bottomLeft = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
+                        bottomRight = cubePosition + new Vector4B(1, 1, 1, 0); // topRightFront
 
                         hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -368,10 +369,10 @@ namespace Utopia.Entities.Voxel
                         var lbottomRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
                         var lbottomBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
 
-                        topLeft = cubePosition + new ByteVector4(0, 0, 1, 0); // bottomLeftFront
-                        topRight = cubePosition + new ByteVector4(1, 0, 1, 0); // bottomRightFront
-                        bottomLeft = cubePosition + new ByteVector4(0, 0, 0, 0); // bottomLeftBack
-                        bottomRight = cubePosition + new ByteVector4(1, 0, 0, 0); // bottomRightBack
+                        topLeft = cubePosition + new Vector4B(0, 0, 1, 0); // bottomLeftFront
+                        topRight = cubePosition + new Vector4B(1, 0, 1, 0); // bottomRightFront
+                        bottomLeft = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
+                        bottomRight = cubePosition + new Vector4B(1, 0, 0, 0); // bottomRightBack
 
                         hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -453,10 +454,10 @@ namespace Utopia.Entities.Voxel
                         var lbottomLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
                         var lbottomBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
 
-                        topLeft = cubePosition + new ByteVector4(0, 1, 0, 0); // topLeftBack
-                        bottomRight = cubePosition + new ByteVector4(0, 0, 1, 0); // bottomLeftFront
-                        bottomLeft = cubePosition + new ByteVector4(0, 0, 0, 0); // bottomLeftBack
-                        topRight = cubePosition + new ByteVector4(0, 1, 1, 0); // topLeftFront
+                        topLeft = cubePosition + new Vector4B(0, 1, 0, 0); // topLeftBack
+                        bottomRight = cubePosition + new Vector4B(0, 0, 1, 0); // bottomLeftFront
+                        bottomLeft = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
+                        topRight = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
 
                         hashVertex = cubeFaceType + (topLeft.GetHashCode() << 4);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -538,10 +539,10 @@ namespace Utopia.Entities.Voxel
                         var lbottomFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
                         var lbottomRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
 
-                        topLeft = cubePosition + new ByteVector4(1, 1, 1, 0); // topRightFront
-                        topRight = cubePosition + new ByteVector4(1, 1, 0, 0); // topRightBack
-                        bottomLeft = cubePosition + new ByteVector4(1, 0, 1, 0); // bottomRightFront
-                        bottomRight = cubePosition + new ByteVector4(1, 0, 0, 0); // bottonRightBack
+                        topLeft = cubePosition + new Vector4B(1, 1, 1, 0); // topRightFront
+                        topRight = cubePosition + new Vector4B(1, 1, 0, 0); // topRightBack
+                        bottomLeft = cubePosition + new Vector4B(1, 0, 1, 0); // bottomRightFront
+                        bottomRight = cubePosition + new Vector4B(1, 0, 0, 0); // bottonRightBack
 
                         hashVertex = cubeFaceType + (topRight.GetHashCode() << 4);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -615,23 +616,23 @@ namespace Utopia.Entities.Voxel
         
         public VertexBuffer<VertexVoxel> InitBuffer(List<VertexVoxel> vertice)
         {
-            var vb = new VertexBuffer<VertexVoxel>(_d3DEngine, vertice.Count,
+            var vb = new VertexBuffer<VertexVoxel>(_d3DEngine.Device, vertice.Count,
                                                      VertexVoxel.VertexDeclaration,
                                                      PrimitiveTopology.TriangleList,
                                                      "VoxelMeshFactory_VB",
                                                      ResourceUsage.Default,
                                                      10);
             if(vertice.Count > 0)
-                vb.SetData(vertice.ToArray());
+                vb.SetData(_d3DEngine.ImmediateContext ,vertice.ToArray());
             return vb;
         }
 
         public IndexBuffer<ushort> InitBuffer(List<ushort> indices)
         {
-            var ib = new IndexBuffer<ushort>(_d3DEngine, indices.Count, SharpDX.DXGI.Format.R16_UInt, "VoxelMeshFactory_IB");
+            var ib = new IndexBuffer<ushort>(_d3DEngine.Device, indices.Count, SharpDX.DXGI.Format.R16_UInt, "VoxelMeshFactory_IB");
 
             if(indices.Count > 0)
-                ib.SetData(indices.ToArray());
+                ib.SetData(_d3DEngine.ImmediateContext, indices.ToArray());
 
             return ib;
         }

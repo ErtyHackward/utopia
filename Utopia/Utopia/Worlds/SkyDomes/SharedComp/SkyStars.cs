@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
-using S33M3Engines.Buffers;
 using Utopia.Worlds.GameClocks;
-using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using SharpDX.Direct3D;
 using Utopia.Shared.Structs;
-using S33M3Engines.StatesManager;
-using S33M3Engines.Shared.Math;
-using S33M3Engines;
-using S33M3Engines.Cameras;
 using Utopia.Settings;
 using Utopia.Resources.Effects.Skydome;
+using S33M3_Resources.VertexFormats;
+using S33M3_DXEngine.Buffers;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.Cameras;
+using S33M3_DXEngine;
+using S33M3_Resources.Structs;
+using SharpDX.Direct3D11;
+using S33M3_DXEngine.RenderStates;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -22,20 +25,20 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
     {
         #region private variables
         private int _nbrStars = 1000;
-        private VertexBuffer<VertexPositionColor> _skyStarVB;
+        private VertexBuffer<VertexPosition3Color> _skyStarVB;
 
         private HLSLStars _effectStars;
         private Matrix _world = Matrix.Identity;
         private IClock _gameClock;
         private float _visibility;
         private D3DEngine _d3dEngine;
-        private CameraManager _camManager;
+        private CameraManager<ICameraFocused> _camManager;
         #endregion
 
         #region Public Properties
         #endregion
 
-        public SkyStars(D3DEngine d3dEngine, CameraManager camManager , IClock gameClock)
+        public SkyStars(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager , IClock gameClock)
         {
             _d3dEngine = d3dEngine;
             _gameClock = gameClock;
@@ -45,7 +48,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #region public methods
         public override void Initialize()
         {
-            _effectStars = new HLSLStars(_d3dEngine, ClientSettings.EffectPack + @"SkyDome\Stars.hlsl", VertexPositionColor.VertexDeclaration);
+            _effectStars = new HLSLStars(_d3dEngine.Device, ClientSettings.EffectPack + @"SkyDome\Stars.hlsl", VertexPosition3Color.VertexDeclaration);
             CreateBuffer();
         }
 
@@ -55,7 +58,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _skyStarVB.Dispose();
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update( GameTime timeSpend)
         {
         }
 
@@ -64,11 +67,11 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
         }
 
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled);
+            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled);
 
-            _effectStars.Begin();
+            _effectStars.Begin(context);
             _effectStars.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
 
             //Compute Vibility !
@@ -87,26 +90,26 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _effectStars.CBPerDraw.Values.Visibility = _visibility;
             _effectStars.CBPerDraw.IsDirty = true;
 
-            _effectStars.Apply();
+            _effectStars.Apply(context);
 
-            _skyStarVB.SetToDevice(0);
-            _d3dEngine.Context.Draw(_skyStarVB.VertexCount, 0);
+            _skyStarVB.SetToDevice(context, 0);
+            context.Draw(_skyStarVB.VertexCount, 0);
         }
         #endregion
 
         #region Private Methods
         private void CreateBuffer()
         {
-            VertexPositionColor[] vertices = GenerateSpherePoints(_nbrStars, 1500);
-            _skyStarVB = new VertexBuffer<VertexPositionColor>(_d3dEngine, vertices.Length, VertexPositionColor.VertexDeclaration, PrimitiveTopology.PointList, "_skyStarVB");
-            _skyStarVB.SetData(vertices);
+            VertexPosition3Color[] vertices = GenerateSpherePoints(_nbrStars, 1500);
+            _skyStarVB = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, vertices.Length, VertexPosition3Color.VertexDeclaration, PrimitiveTopology.PointList, "_skyStarVB");
+            _skyStarVB.SetData(_d3dEngine.ImmediateContext, vertices);
         }
 
         //http://www.cgafaq.info/wiki/Random_Points_On_Sphere
-        private VertexPositionColor[] GenerateSpherePoints(int n, float scale)
+        private VertexPosition3Color[] GenerateSpherePoints(int n, float scale)
         {
             Random rnd = new Random();
-            VertexPositionColor[] result = new VertexPositionColor[n];
+            VertexPosition3Color[] result = new VertexPosition3Color[n];
             int size;
             int i;
             double x, y, z, w, t;
@@ -119,7 +122,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                 x = w * Math.Cos(t);
                 y = w * Math.Sin(t);
                 size = rnd.Next(0, 256);
-                result[i] = new VertexPositionColor(new Vector3((float)x * scale, (float)y * scale, (float)z * scale), new Color(size, 0, 0));
+                result[i] = new VertexPosition3Color(new Vector3((float)x * scale, (float)y * scale, (float)z * scale), new ByteColor(size, 0, 0, 0));
             }
 
             return result;

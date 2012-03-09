@@ -5,6 +5,7 @@ using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using System;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Shared.Entities.Concrete
 {

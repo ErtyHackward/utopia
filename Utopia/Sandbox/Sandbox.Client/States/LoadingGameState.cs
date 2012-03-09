@@ -22,10 +22,6 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
-using Utopia.GUI.D3D;
-using Utopia.GUI.D3D.Inventory;
-using Utopia.GUI.D3D.Map;
-using Utopia.InputManager;
 using Utopia.Network;
 using Utopia.Server;
 using Utopia.Server.Managers;
@@ -53,6 +49,8 @@ using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Weather;
+using S33M3_CoreComponents.States;
+using S33M3_DXEngine.Threading;
 
 namespace Sandbox.Client.States
 {
@@ -72,14 +70,15 @@ namespace Sandbox.Client.States
             get { return "GameLoading"; }
         }
 
-        public LoadingGameState(IKernel ioc)
+        public LoadingGameState(GameStatesManager stateManager, IKernel ioc)
+            :base(stateManager)
         {
             _ioc = ioc;
         }
 
         public override void OnEnabled(GameState previousState)
         {
-            WorkQueue.DoWorkInThread(GameplayInitialize);
+            SmartThread.ThreadPool.QueueWorkItem(GameplayInitialize);
             
             base.OnEnabled(previousState);
         }

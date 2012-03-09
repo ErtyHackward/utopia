@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using S33M3Engines.Shared.Math;
 using Utopia.Server.Commands;
 using Utopia.Server.Entities;
 using Utopia.Server.Events;
 using Utopia.Server.Services;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities.Concrete;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Server.Sample
 {

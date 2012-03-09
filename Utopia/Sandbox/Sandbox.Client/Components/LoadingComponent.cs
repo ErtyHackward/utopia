@@ -1,11 +1,11 @@
 using System;
 using System.Drawing;
-using S33M3Engines;
-using S33M3Engines.D3D;
-using S33M3Engines.Shared.Sprites;
-using S33M3Engines.Sprites;
 using SharpDX;
-using Color = Utopia.Shared.Structs.Color;
+using S33M3_CoreComponents.Sprites;
+using S33M3_DXEngine.Main;
+using S33M3_DXEngine;
+using SharpDX.Direct3D11;
+using S33M3_Resources.Structs;
 
 namespace Sandbox.Client.Components
 {
@@ -21,6 +21,7 @@ namespace Sandbox.Client.Components
         string _loadingText = "Loading...";
         DateTime _lastCheck;
         int _points;
+        ByteColor color = Colors.White;
 
         public LoadingComponent(D3DEngine engine)
         {
@@ -39,7 +40,7 @@ namespace Sandbox.Client.Components
             _lastCheck = DateTime.Now;
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update(GameTime timeSpend)
         {
             if ((DateTime.Now - _lastCheck).TotalSeconds > 0.5)
             {
@@ -53,15 +54,15 @@ namespace Sandbox.Client.Components
                 _lastCheck = DateTime.Now;
             }
 
-            base.Update(ref timeSpend);
+            base.Update(timeSpend);
         }
 
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
-            _spriteRender.Begin(false);
-            _engine.Context.ClearRenderTargetView(_engine.RenderTarget, new Color4(0,0,0,1));
+            _spriteRender.Begin(context, false);
+            context.ClearRenderTargetView(_engine.RenderTarget, new Color4(0, 0, 0, 1));
             //_spriteRender.Draw(_materia, new SharpDX.Rectangle(100, 100, 357, 324), Color.White);
-            _spriteRender.DrawText(_font, _loadingText, new Vector2(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 100), Color.White);
+            _spriteRender.DrawText(_font, _loadingText, new Vector2(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 100), color);
             _spriteRender.End();
         }
     }

@@ -6,21 +6,21 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
-using S33M3Engines.Threading;
 using Amib.Threading;
-using S33M3Engines.Struct.Vertex;
 using SharpDX;
-using S33M3Engines.Buffers;
-using S33M3Engines;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
-using S33M3Engines.WorldFocus;
 using Utopia.Shared.World;
 using Utopia.Entities;
 using Utopia.Resources.ModelComp;
-using S33M3Engines.Shared.Math;
 using Utopia.Entities.Sprites;
 using Utopia.Entities.Managers.Interfaces;
+using S33M3_Resources.Structs;
+using S33M3_DXEngine.Threading;
+using S33M3_DXEngine;
+using S33M3_Resources.Struct.Vertex;
+using S33M3_DXEngine.Buffers;
+using S33M3_CoreComponents.WorldFocus;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -240,16 +240,16 @@ namespace Utopia.Worlds.Chunks
 
                 if (SolidCubeVB == null)
                 {
-                    SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_d3dEngine, SolidCubeVertices.Count, VertexCubeSolid.VertexDeclaration, PrimitiveTopology.TriangleList, "SolidCubeVB", ResourceUsage.Default, 10);
+                    SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_d3dEngine.Device, SolidCubeVertices.Count, VertexCubeSolid.VertexDeclaration, PrimitiveTopology.TriangleList, "SolidCubeVB", ResourceUsage.Default, 10);
                 }
-                SolidCubeVB.SetData(SolidCubeVertices.ToArray());
+                SolidCubeVB.SetData(_d3dEngine.ImmediateContext ,SolidCubeVertices.ToArray());
                 SolidCubeVertices.Clear();
 
                 if (SolidCubeIB == null)
                 {
-                    SolidCubeIB = new IndexBuffer<ushort>(_d3dEngine, SolidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt , "SolidCubeIB");
+                    SolidCubeIB = new IndexBuffer<ushort>(_d3dEngine.Device, SolidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt , "SolidCubeIB");
                 }
-                SolidCubeIB.SetData(SolidCubeIndices.ToArray());
+                SolidCubeIB.SetData(_d3dEngine.ImmediateContext, SolidCubeIndices.ToArray());
                 SolidCubeIndices.Clear();
 
                 CubeVerticeDico.Clear();
@@ -272,16 +272,16 @@ namespace Utopia.Worlds.Chunks
 
                 if (LiquidCubeVB == null)
                 {
-                    LiquidCubeVB = new VertexBuffer<VertexCubeLiquid>(_d3dEngine, LiquidCubeVertices.Count, VertexCubeLiquid.VertexDeclaration, PrimitiveTopology.TriangleList, "LiquidCubeVB", ResourceUsage.Default, 10);
+                    LiquidCubeVB = new VertexBuffer<VertexCubeLiquid>(_d3dEngine.Device, LiquidCubeVertices.Count, VertexCubeLiquid.VertexDeclaration, PrimitiveTopology.TriangleList, "LiquidCubeVB", ResourceUsage.Default, 10);
                 }
-                LiquidCubeVB.SetData(LiquidCubeVertices.ToArray());
+                LiquidCubeVB.SetData(_d3dEngine.ImmediateContext, LiquidCubeVertices.ToArray());
                 LiquidCubeVertices.Clear();
 
                 if (LiquidCubeIB == null)
                 {
-                    LiquidCubeIB = new IndexBuffer<ushort>(_d3dEngine, LiquidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt,"LiquidCubeIB");
+                    LiquidCubeIB = new IndexBuffer<ushort>(_d3dEngine.Device, LiquidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt,"LiquidCubeIB");
                 }
-                LiquidCubeIB.SetData(LiquidCubeIndices.ToArray());
+                LiquidCubeIB.SetData(_d3dEngine.ImmediateContext, LiquidCubeIndices.ToArray());
                 LiquidCubeIndices.Clear();
             }
         }
@@ -299,16 +299,16 @@ namespace Utopia.Worlds.Chunks
 
                 if (StaticSpritesVB == null)
                 {
-                    StaticSpritesVB = new VertexBuffer<VertexSprite3D>(_d3dEngine, StaticSpritesVertices.Count, VertexSprite3D.VertexDeclaration, PrimitiveTopology.TriangleList, "StaticEntityVB", ResourceUsage.Default, 5);
+                    StaticSpritesVB = new VertexBuffer<VertexSprite3D>(_d3dEngine.Device, StaticSpritesVertices.Count, VertexSprite3D.VertexDeclaration, PrimitiveTopology.TriangleList, "StaticEntityVB", ResourceUsage.Default, 5);
                 }
-                StaticSpritesVB.SetData(StaticSpritesVertices.ToArray());
+                StaticSpritesVB.SetData(_d3dEngine.ImmediateContext, StaticSpritesVertices.ToArray());
                 StaticSpritesVertices.Clear();
 
                 if (StaticSpritesIB == null)
                 {
-                    StaticSpritesIB = new IndexBuffer<ushort>(_d3dEngine, StaticSpritesIndices.Count, SharpDX.DXGI.Format.R16_UInt, "StaticEntityIB");
+                    StaticSpritesIB = new IndexBuffer<ushort>(_d3dEngine.Device, StaticSpritesIndices.Count, SharpDX.DXGI.Format.R16_UInt, "StaticEntityIB");
                 }
-                StaticSpritesIB.SetData(StaticSpritesIndices.ToArray());
+                StaticSpritesIB.SetData(_d3dEngine.ImmediateContext, StaticSpritesIndices.ToArray());
                 StaticSpritesIndices.Clear();
             }
         }
@@ -321,9 +321,9 @@ namespace Utopia.Worlds.Chunks
             {
                 if (SolidCubeVB != null)
                 {
-                    SolidCubeVB.SetToDevice(0);
-                    SolidCubeIB.SetToDevice(0);
-                    _d3dEngine.Context.DrawIndexed(SolidCubeIB.IndicesCount, 0, 0);
+                    SolidCubeVB.SetToDevice(_d3dEngine.ImmediateContext, 0);
+                    SolidCubeIB.SetToDevice(_d3dEngine.ImmediateContext, 0);
+                    _d3dEngine.ImmediateContext.DrawIndexed(SolidCubeIB.IndicesCount, 0, 0);
                 }
             }
         }
@@ -335,9 +335,9 @@ namespace Utopia.Worlds.Chunks
             {
                 if (LiquidCubeVB != null)
                 {
-                    LiquidCubeVB.SetToDevice(0);
-                    LiquidCubeIB.SetToDevice(0);
-                    _d3dEngine.Context.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
+                    LiquidCubeVB.SetToDevice(_d3dEngine.ImmediateContext, 0);
+                    LiquidCubeIB.SetToDevice(_d3dEngine.ImmediateContext, 0);
+                    _d3dEngine.ImmediateContext.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
                 }
             }
         }
@@ -349,9 +349,9 @@ namespace Utopia.Worlds.Chunks
             {
                 if (StaticSpritesVB != null)
                 {
-                    StaticSpritesVB.SetToDevice(0);
-                    StaticSpritesIB.SetToDevice(0);
-                    _d3dEngine.Context.DrawIndexed(StaticSpritesIB.IndicesCount, 0, 0);
+                    StaticSpritesVB.SetToDevice(_d3dEngine.ImmediateContext, 0);
+                    StaticSpritesIB.SetToDevice(_d3dEngine.ImmediateContext, 0);
+                    _d3dEngine.ImmediateContext.DrawIndexed(StaticSpritesIB.IndicesCount, 0, 0);
                 }
             }
         }

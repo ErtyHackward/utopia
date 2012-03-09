@@ -1,14 +1,14 @@
 ﻿using System;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
-using S33M3Engines.Threading;
 using Amib.Threading;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Settings;
 using Utopia.Entities;
-using S33M3Engines.Shared.Math;
 using Utopia.Shared.Settings;
+using S33M3_DXEngine.Threading;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
@@ -116,9 +116,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         }
                         if (!blockLight)
                         {
-                            _cubesHolder.Cubes[index].EmissiveColor.SunLight = (byte)maxSunLight;
+                            _cubesHolder.Cubes[index].EmissiveColor.A = (byte)maxSunLight;
                         }
-                        else _cubesHolder.Cubes[index].EmissiveColor.SunLight = 0;
+                        else _cubesHolder.Cubes[index].EmissiveColor.A = 0;
 
                         if (cubeprofile.IsEmissiveColorLightSource)
                         {
@@ -185,7 +185,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id];
                         if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) continue;
 
-                        if (_cubesHolder.Cubes[index].EmissiveColor.SunLight == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.SunLight, LightComponent.SunLight, true, index);
+                        if (_cubesHolder.Cubes[index].EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.SunLight, LightComponent.SunLight, true, index);
                         if (cubeprofile.IsEmissiveColorLightSource || (borderAsLightSource && borderchunk))
                         {
                             if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(X,Y,Z, _cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
@@ -248,8 +248,8 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 switch (lightComp)
                 {
                     case LightComponent.SunLight:
-                        if (cube.EmissiveColor.SunLight >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
-                        _cubesHolder.Cubes[index].EmissiveColor.SunLight = (byte)LightValue;
+                        if (cube.EmissiveColor.A >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        _cubesHolder.Cubes[index].EmissiveColor.A = (byte)LightValue;
                         break;
                     case LightComponent.Red:
                         if (cube.EmissiveColor.R >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   

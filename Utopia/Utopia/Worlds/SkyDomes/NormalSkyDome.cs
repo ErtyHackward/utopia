@@ -2,27 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
 using Utopia.Worlds.GameClocks;
-using S33M3Engines.Buffers;
-using S33M3Engines.Struct.Vertex;
-using S33M3Engines.Struct;
 using SharpDX.Direct3D11;
-using S33M3Engines.D3D.Effects.Basics;
 using SharpDX;
-using S33M3Engines.Shared.Math;
 using SharpDX.Direct3D;
-using S33M3Engines.StatesManager;
-using S33M3Engines.Maths;
 using Utopia.Worlds.SkyDomes.SharedComp;
 using Utopia.Worlds.Weather;
 using Utopia.Shared.World;
-using S33M3Engines;
-using S33M3Engines.Cameras;
-using S33M3Engines.WorldFocus;
 using Ninject;
 using Utopia.Settings;
 using Utopia.Resources.Effects.Skydome;
+using S33M3_Resources.Struct.Vertex;
+using S33M3_CoreComponents.Cameras;
+using S33M3_CoreComponents.WorldFocus;
+using S33M3_DXEngine.Main.Interfaces;
+using S33M3_DXEngine.Buffers;
+using S33M3_Resources.Effects.Basics;
+using S33M3_DXEngine;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Worlds.SkyDomes
 {
@@ -95,9 +93,9 @@ namespace Utopia.Worlds.SkyDomes
             _glowTex_View = ShaderResourceView.FromFile(_d3dEngine.Device, ClientSettings.TexturePack + @"SkyDome\moonglow.png");
 
             _skyDomeEffect.TerraTexture.Value = _skyTex_View;
-            _skyDomeEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UWrapVClamp_MinMagMipLinear);
+            _skyDomeEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UWrapVClamp_MinMagMipLinear);
 
-            _posiTextureEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+            _posiTextureEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
             base.Initialize();
         }
@@ -120,25 +118,25 @@ namespace Utopia.Worlds.SkyDomes
             base.Dispose();
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update(GameTime timeSpend)
         {
-            _clouds.Update(ref timeSpend);
+            _clouds.Update(timeSpend);
             RefreshSunColor();
-            base.Update(ref timeSpend);
+            base.Update(timeSpend);
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
+        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
         {
-            _clouds.Interpolation(ref interpolation_hd, ref interpolation_ld, ref timePassed);
-            base.Interpolation(ref interpolation_hd, ref interpolation_ld, ref timePassed);
+            _clouds.Interpolation(interpolation_hd, interpolation_ld, timePassed);
+            base.Interpolation(interpolation_hd, interpolation_ld, timePassed);
         }
 
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
             DrawingDome();
             DrawingMoon();
-            _skyStars.Draw(index);
-            _clouds.Draw(index);
+            _skyStars.Draw(context, index);
+            _clouds.Draw(context, index);
         }
         #endregion
 
@@ -305,14 +303,14 @@ namespace Utopia.Worlds.SkyDomes
 
         }
 
-        private void DrawingDome()
+        private void DrawingDome(Devi)
         {
             Matrix World = Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.X, -(float)_camManager.ActiveCamera.WorldPosition.Y, (float)_camManager.ActiveCamera.WorldPosition.Z);
 
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
             //Set States.
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             _skyDomeEffect.Begin();
             _skyDomeEffect.CBPerDraw.Values.ViewProj = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
@@ -354,7 +352,7 @@ namespace Utopia.Worlds.SkyDomes
         {
             float alpha = (float)Math.Abs(Math.Sin(_clock.ClockTime.Time + (float)Math.PI / 2.0f));
             //Set States.
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled);
+            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled);
 
             Matrix World = Matrix.Scaling(2f, 2f, 2f) * Matrix.RotationX(_clock.ClockTime.Time + (float)Math.PI / 2.0f) *
                             Matrix.RotationY(-_fPhi + (float)Math.PI / 2.0f) *

@@ -41,6 +41,15 @@
     <Reference Include="Nuclex.Support">
       <HintPath>..\..\Library\Nuclex.Support.dll</HintPath>
     </Reference>
+    <Reference Include="S33M3_CoreComponents">
+      <HintPath>..\..\Library\S33M3_CoreComponents.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3_DXEngine">
+      <HintPath>..\..\Library\S33M3_DXEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3_Resources">
+      <HintPath>..\..\Library\S33M3_Resources.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\..\Library\SharpDX2\SharpDX.dll</HintPath>
     </Reference>
@@ -168,10 +177,6 @@
     <None Include="Resources\WelcomeScreen.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
-      <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
-      <Name>S33M3Engines.Shared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Utopia.Server\Utopia.Server.csproj">
       <Project>{0DE240B7-B340-43AD-B663-65CFA43351ED}</Project>
       <Name>Utopia.Server</Name>
@@ -183,10 +188,6 @@
     <ProjectReference Include="..\Sandbox.Resources\Sandbox.Resources.csproj">
       <Project>{C09A8BDD-5E9F-43D9-91C5-7C6F6362A0B7}</Project>
       <Name>Sandbox.Resources</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\S33M3Engines\S33M3Engines.csproj">
-      <Project>{E1E5C757-C550-4E62-8BE3-2E9553F023F7}</Project>
-      <Name>S33M3Engines</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>

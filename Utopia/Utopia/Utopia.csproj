@@ -73,6 +73,15 @@
     <Reference Include="Nuclex.Support">
       <HintPath>..\Library\Nuclex.Support.dll</HintPath>
     </Reference>
+    <Reference Include="S33M3_CoreComponents">
+      <HintPath>..\Library\S33M3_CoreComponents.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3_DXEngine">
+      <HintPath>..\Library\S33M3_DXEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3_Resources">
+      <HintPath>..\Library\S33M3_Resources.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Library\SharpDX2\SharpDX.dll</HintPath>
@@ -107,19 +116,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Action\ActionsManager.cs" />
-    <Compile Include="Action\KeyboardTriggerMode.cs" />
-    <Compile Include="Action\Actions.cs" />
-    <Compile Include="Action\KeyboardTriggeredAction.cs" />
-    <Compile Include="Action\MouseButton.cs" />
-    <Compile Include="Action\MouseTriggeredAction.cs" />
-    <Compile Include="Action\MouseTriggerMode.cs" />
     <Compile Include="Components\EditorMode.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />
     <Compile Include="Components\BepuPhysicsComponent.cs" />
-    <Compile Include="Components\DebugComponent.cs" />
-    <Compile Include="Components\FadeComponent.cs" />
-    <Compile Include="Components\ISwitchComponent.cs" />
     <Compile Include="Components\ModelEditorComponent.Designer.cs">
       <DependentUpon>ModelEditorComponent.cs</DependentUpon>
     </Compile>
@@ -154,105 +153,13 @@
     <Compile Include="Entities\Voxel\IVisualEntityContainer.cs" />
     <Compile Include="Entities\Voxel\VisualVoxelEntity.cs" />
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
-    <Compile Include="GameState.cs" />
-    <Compile Include="GUI\ChatComponent.cs" />
-    <Compile Include="GUI\D3D\DebugUI\DebugUI.cs" />
-    <Compile Include="GUI\D3D\Hud.cs" />
-    <Compile Include="GUI\D3D\Inventory\InventoryComponent.cs" />
-    <Compile Include="GUI\D3D\Inventory\ItemInfoWindow.cs" />
-    <Compile Include="GUI\D3D\Inventory\PlayerInventory.cs" />
-    <Compile Include="GUI\D3D\Inventory\ButtonItemControlRenderer.cs" />
-    <Compile Include="GUI\D3D\Inventory\ContainerControl.cs" />
-    <Compile Include="GUI\D3D\Inventory\ContainerRenderer.cs" />
-    <Compile Include="GUI\D3D\Inventory\IDropTarget.cs" />
-    <Compile Include="GUI\D3D\Inventory\InventoryCell.cs" />
-    <Compile Include="GUI\D3D\Inventory\InventoryCellRenderer.cs" />
-    <Compile Include="GUI\D3D\Inventory\InventoryWindow.cs" />
-    <Compile Include="GUI\D3D\Inventory\ToolBarUI.cs" />
-    <Compile Include="GUI\D3D\GuiManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUI\D3D\LoginComponent.cs" />
-    <Compile Include="GUI\D3D\Map\MapComponent.cs" />
-    <Compile Include="GUI\D3D\Map\MapControl.cs" />
-    <Compile Include="GUI\D3D\Map\MapRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Arcade\CommandControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Arcade\PanelControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Control.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Control.Input.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\ControlEventArgs.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\DesktopControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ButtonControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ChoiceControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\CloseWindowButtonControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ColorButtonControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\DialogControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\DraggableControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\HorizontalSliderControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IListRowLocator.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\InputControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IOpeningLocator.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\IThumbLocator.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\ListControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\OptionControl.cs" />
     <Compile Include="Editor\PaletteButtonControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\SliderControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\StickyButtonControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\VerticalSliderControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\Desktop\WindowControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\IFocusable.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\IWritable.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\LabelControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\ParentingControlCollection.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\PressableControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\Controls\ProgressControl.cs" />
-    <Compile Include="GUI\NuclexUIPort\DuplicateNameException.cs" />
-    <Compile Include="GUI\NuclexUIPort\IGuiService.cs" />
-    <Compile Include="GUI\NuclexUIPort\Input\Command.cs" />
-    <Compile Include="GUI\NuclexUIPort\Input\IInputCapturer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Input\IInputReceiver.cs" />
-    <Compile Include="GUI\NuclexUIPort\Input\MouseButtons.cs" />
-    <Compile Include="GUI\NuclexUIPort\Struct\RectangleF.cs" />
-    <Compile Include="GUI\NuclexUIPort\Screen.cs" />
-    <Compile Include="GUI\NuclexUIPort\UniAssertHelper.cs" />
-    <Compile Include="GUI\NuclexUIPort\Struct\UniRectangle.cs" />
-    <Compile Include="GUI\NuclexUIPort\Struct\UniScalar.cs" />
-    <Compile Include="GUI\NuclexUIPort\Struct\UniVector.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatButtonControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatChoiceControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatColorButtonControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatHorizontalSliderControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatInputControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatLabelControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatListControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatOptionControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatPanelControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatProgressControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatStickyButtonRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatVerticalSliderControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\Renderers\FlatWindowControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.Drawing.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.SkinParsing.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiGraphics.SkinParsing2.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\FlatGuiVisualizer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\IFlatControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\IFlatGuiGraphics.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\Flat\OpeningLocator.cs" />
     <Compile Include="Editor\PaletteButtonControlRenderer.cs" />
-    <Compile Include="GUI\NuclexUIPort\Visuals\IGuiVisualizer.cs" />
-    <Compile Include="InputManager\InputsManager.cs" />
     <Compile Include="Network\EntityMessageTranslator.cs" />
     <Compile Include="Network\ItemMessageTranslator.cs" />
-    <Compile Include="Resources\SuaveSkinResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SuaveSkinResources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="GameDXStates\DXStates.cs" />
     <Compile Include="Network\ServerComponent.cs" />
-    <Compile Include="StatesManager.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UtopiaRenderStates.cs" />
@@ -305,10 +212,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Resources\SuaveSkinResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SuaveSkinResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Content\Layouts\MainMenu.layout">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -332,14 +235,6 @@
       <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
       <Name>Sandbox.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
-      <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
-      <Name>S33M3Engines.Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\S33M3Physics\S33M3Physics.csproj">
-      <Project>{A5C84956-C735-457B-9BF5-C5359F427418}</Project>
-      <Name>S33M3Physics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>
@@ -348,14 +243,6 @@
       <Project>{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}</Project>
       <Name>Utopia.Resources</Name>
     </ProjectReference>
-    <ProjectReference Include="..\S33M3Engines\S33M3Engines.csproj">
-      <Project>{E1E5C757-C550-4E62-8BE3-2E9553F023F7}</Project>
-      <Name>S33M3Engines</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\skin.xsd" />
-    <None Include="Resources\WelcomeScreen.png" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -379,15 +266,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Skins\Suave\Suave.skin.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Skins\Suave\SuaveSheet.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

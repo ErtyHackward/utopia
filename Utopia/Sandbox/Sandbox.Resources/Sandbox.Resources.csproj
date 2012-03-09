@@ -46,6 +46,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="S33M3_CoreComponents">
+      <HintPath>..\..\Library\S33M3_CoreComponents.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3_DXEngine">
+      <HintPath>..\..\Library\S33M3_DXEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3_Resources">
+      <HintPath>..\..\Library\S33M3_Resources.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\..\Library\SharpDX2\SharpDX.dll</HintPath>
     </Reference>
@@ -485,12 +494,6 @@
     <None Include="TexturesPacks\HD\Gui\Crosshair.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\S33M3Engines\S33M3Engines.csproj">
-      <Project>{E1E5C757-C550-4E62-8BE3-2E9553F023F7}</Project>
-      <Name>S33M3Engines</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

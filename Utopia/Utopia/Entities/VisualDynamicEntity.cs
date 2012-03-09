@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
 using SharpDX;
-using S33M3Engines.Struct;
-using S33M3Engines.Shared.Math;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
+using S33M3_DXEngine.Main;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Entities
 {
@@ -121,7 +120,7 @@ namespace Utopia.Entities
         #endregion
 
         #region Public Methods
-        public void Update(ref GameTime timeSpent)
+        public void Update(GameTime timeSpent)
         {
             RefreshEntityMovementAndRotation(); 
         }

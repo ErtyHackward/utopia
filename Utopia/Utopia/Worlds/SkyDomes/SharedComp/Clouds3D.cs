@@ -2,26 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
-using S33M3Engines;
-using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
-using S33M3Engines.Cameras;
 using Utopia.Worlds.Weather;
 using Utopia.Shared.Chunks;
 using Utopia.Settings;
 using SharpDX.Direct3D11;
-using S33M3Engines.StatesManager;
-using S33M3Engines.Struct.Vertex;
-using S33M3Engines.Buffers;
 using SharpDX.Direct3D;
-using S33M3Engines.Shared.Math.Noises;
-using S33M3Engines.D3D.Effects.Basics;
-using S33M3Engines.WorldFocus;
-using S33M3Engines.Struct;
 using Utopia.Worlds.GameClocks;
+using S33M3_Resources.Effects.Basics;
+using S33M3_DXEngine.Buffers;
+using S33M3_CoreComponents.Maths.Noises;
+using S33M3_Resources.Struct.Vertex;
+using S33M3_Resources.Structs;
+using S33M3_Resources.VertexFormats;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.WorldFocus;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.Cameras;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3_CoreComponents.Maths;
+using S33M3_DXEngine.RenderStates;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -31,7 +33,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private D3DEngine _d3dEngine;
         private VisualWorldParameters _worldParam;
         private IWeather _weather;
-        private CameraManager _camManager;
+        private CameraManager<ICameraFocused> _camManager;
         private WorldFocusManager _worldFocusManager;
         private IClock _worldclock;
 
@@ -44,16 +46,16 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private SimplexNoise _noise;
 
         private IndexBuffer<ushort> _cloudIB;
-        private VertexBuffer<VertexPositionColor> _cloudVB;
+        private VertexBuffer<VertexPosition3Color> _cloudVB;
         private ushort[] _indices;
-        private VertexPositionColor[] _vertices;
+        private VertexPosition3Color[] _vertices;
         private int _nbrIndices, _nbrVertices;
         private int _maxNbrIndices, _maxNbrVertices;
         private HLSLVertexPositionColor _effect;
         private FTSValue<Vector2> _cloud_MapOffset;
-        private Color _topFace, _side1Face, _side2Face, _bottomFace;
+        private ByteColor _topFace, _side1Face, _side2Face, _bottomFace;
 
-        private VertexPositionColor[] _faces;
+        private VertexPosition3Color[] _faces;
 
         private int _cloudMapSize;
         private int _cloudMapSizeSquare;
@@ -63,7 +65,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #region Public properties
         #endregion
 
-        public Clouds3D(D3DEngine d3dEngine, CameraManager camManager, IWeather weather, VisualWorldParameters worldParam, WorldFocusManager worldFocusManager, IClock worldclock)
+        public Clouds3D(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager, IWeather weather, VisualWorldParameters worldParam, WorldFocusManager worldFocusManager, IClock worldclock)
         {
             _d3dEngine = d3dEngine;
             _worldParam = worldParam;
@@ -85,26 +87,26 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
             _noise = new SimplexNoise(new Random());
             _noise.SetParameters(0.075, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
-            _effect = new HLSLVertexPositionColor(_d3dEngine, @"D3D/Effects/Basics/VertexPositionColor.hlsl", VertexPositionColor.VertexDeclaration);
+            _effect = new HLSLVertexPositionColor(_d3dEngine.Device);
 
             _maxNbrIndices = 15000;
             _maxNbrVertices = 10000;
             _indices = new ushort[_maxNbrIndices];
-            _vertices = new VertexPositionColor[_maxNbrVertices];
+            _vertices = new VertexPosition3Color[_maxNbrVertices];
             _nbrIndices = 0;
             _nbrVertices = 0;
 
-            _topFace = new Color(_brightness * 240, _brightness * 240, _brightness * 255, 200);
-            _side1Face = new Color(_brightness * 230, _brightness * 230, _brightness * 255, 200);
-            _side2Face = new Color(_brightness * 220, _brightness * 220, _brightness * 245, 200);
-            _bottomFace = new Color(_brightness * 205, _brightness * 205, _brightness * 230, 200);
+            _topFace = new Color4(_brightness * 240, _brightness * 240, _brightness * 255, 200);
+            _side1Face = new Color4(_brightness * 230, _brightness * 230, _brightness * 255, 200);
+            _side2Face = new Color4(_brightness * 220, _brightness * 220, _brightness * 245, 200);
+            _bottomFace = new Color4(_brightness * 205, _brightness * 205, _brightness * 230, 200);
 
-            _faces = new VertexPositionColor[4];
+            _faces = new VertexPosition3Color[4];
 
             CreateCloudMap();
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update( GameTime timeSpend)
         {
             _cloud_MapOffset.BackUpValue();
 
@@ -118,7 +120,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             Vector2.Lerp(ref _cloud_MapOffset.ValuePrev, ref _cloud_MapOffset.Value, interpolation_ld, out _cloud_MapOffset.ValueInterp);
         }
 
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
 
             Vector2 m_camera_pos = new Vector2((float)_camManager.ActiveCamera.WorldPosition.X, (float)_camManager.ActiveCamera.WorldPosition.Z); //Position de la caméra en X et Z, sans la composante Y
@@ -231,7 +233,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                             _maxNbrIndices += 36 * 100; //Add the posibility to store 100 clouds
                             _maxNbrVertices += 24 * 100; //Add the posibility to store 100 clouds
                             Array.Resize<ushort>(ref _indices, _maxNbrIndices);
-                            Array.Resize<VertexPositionColor>(ref _vertices, _maxNbrVertices);
+                            Array.Resize<VertexPosition3Color>(ref _vertices, _maxNbrVertices);
                         }
 
                         //Translate the local coordinate into world coordinate
@@ -262,15 +264,15 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             if (_nbrIndices == 0) return;
             //Create/Update the Buffer
-            if (_cloudIB == null) _cloudIB = new IndexBuffer<ushort>(_d3dEngine, _nbrIndices, SharpDX.DXGI.Format.R16_UInt, "_cloudIB" ,10, ResourceUsage.Dynamic);
-            _cloudIB.SetData(_indices, 0, _nbrIndices, true);
+            if (_cloudIB == null) _cloudIB = new IndexBuffer<ushort>(_d3dEngine.Device, _nbrIndices, SharpDX.DXGI.Format.R16_UInt, "_cloudIB" ,10, ResourceUsage.Dynamic);
+            _cloudIB.SetData(_d3dEngine.ImmediateContext, _indices, 0, _nbrIndices, true);
 
-            if (_cloudVB == null) _cloudVB = new VertexBuffer<VertexPositionColor>(_d3dEngine, _nbrVertices, VertexPositionColor.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB", ResourceUsage.Dynamic, 10);
-            _cloudVB.SetData(_vertices, 0 , _nbrVertices, true);
+            if (_cloudVB == null) _cloudVB = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, _nbrVertices, VertexPosition3Color.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB", ResourceUsage.Dynamic, 10);
+            _cloudVB.SetData(_d3dEngine.ImmediateContext , _vertices, 0, _nbrVertices, true);
 
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
-            _effect.Begin();
+            _effect.Begin(_d3dEngine.ImmediateContext);
             _effect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View_focused);
             _effect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
             _effect.CBPerFrame.IsDirty = true;
@@ -282,14 +284,14 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _effect.CBPerDraw.Values.World = Matrix.Transpose(world);
             _effect.CBPerDraw.IsDirty = true;
 
-            _effect.Apply();
+            _effect.Apply(_d3dEngine.ImmediateContext);
 
             //Set the buffer to the graphical card
-            _cloudIB.SetToDevice(0);
-            _cloudVB.SetToDevice(0);
+            _cloudIB.SetToDevice(_d3dEngine.ImmediateContext, 0);
+            _cloudVB.SetToDevice(_d3dEngine.ImmediateContext, 0);
 
             //Draw
-            _d3dEngine.Context.DrawIndexed(_cloudIB.IndicesCount, 0, 0);
+            _d3dEngine.ImmediateContext.DrawIndexed(_cloudIB.IndicesCount, 0, 0);
         }
 
         public override void Dispose()
