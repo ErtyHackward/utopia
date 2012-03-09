@@ -7,6 +7,7 @@ using System.Threading;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Shared.Net.Connections
 {

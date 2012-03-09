@@ -1,17 +1,17 @@
 ﻿using System;
-using Nuclex.UserInterface;
-using Nuclex.UserInterface.Controls;
-using Nuclex.UserInterface.Controls.Desktop;
-using S33M3Engines;
-using S33M3Engines.D3D;
 using SharpDX.Direct3D11;
+using S33M3_DXEngine.Main;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.GUI.Nuclex;
+using S33M3_CoreComponents.GUI.Nuclex.Controls;
+using S33M3_CoreComponents.GUI.Nuclex.Controls.Desktop;
 
 namespace Sandbox.Client.Components
 {
     public class CreditsComponent : GameComponent
     {
         private readonly D3DEngine _engine;
-        private readonly Screen _screen;
+        private readonly MainScreen _screen;
         private LabelControl _creditsLabel;
         private ButtonControl _backButton;
 
@@ -23,7 +23,7 @@ namespace Sandbox.Client.Components
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
-        public CreditsComponent(D3DEngine engine, Screen screen)
+        public CreditsComponent(D3DEngine engine, MainScreen screen)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");
@@ -40,18 +40,18 @@ namespace Sandbox.Client.Components
             _backButton.Pressed += delegate { OnBackPressed(); };
             UpdateLayout(_engine.ViewPort);
 
-            if (Enabled)
+            if (Updatable)
             {
                 _screen.Desktop.Children.Add(_creditsLabel);
                 _screen.Desktop.Children.Add(_backButton);
             }
         }
 
-        protected override void OnEnabledChanged()
+        protected override void OnEnabledChanged(object sender, EventArgs args)
         {
             if (!IsInitialized) return;
 
-            if (Enabled)
+            if (Updatable)
             {
                 _screen.Desktop.Children.Add(_creditsLabel);
                 _screen.Desktop.Children.Add(_backButton);
@@ -63,12 +63,12 @@ namespace Sandbox.Client.Components
                 _screen.Desktop.Children.Remove(_backButton);
             }
             
-            base.OnEnabledChanged();
+            base.OnEnabledChanged(sender, args);
         }
 
         private void UpdateLayout(Viewport viewport)
         {
-            if (Enabled)
+            if (Updatable)
             {
                 _creditsLabel.Bounds = new UniRectangle((_engine.ViewPort.Width - 200)/2,
                                                         (_engine.ViewPort.Height - 200)/2, 600, 200);

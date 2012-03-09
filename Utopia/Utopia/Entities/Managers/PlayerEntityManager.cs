@@ -1,24 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using S33M3Engines;
-using S33M3Engines.Cameras;
-using S33M3Engines.D3D;
-using S33M3Engines.D3D.DebugTools;
-using S33M3Engines.Maths;
-using S33M3Engines.Shared.Math;
-using S33M3Engines.Shared.Sprites;
-using S33M3Engines.Struct;
-using S33M3Engines.WorldFocus;
-using S33M3Physics;
-using S33M3Physics.Verlet;
 using SharpDX;
-using Utopia.Action;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer;
 using Utopia.Entities.Voxel;
-using Utopia.GUI.D3D.Inventory;
-using Utopia.InputManager;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
@@ -33,17 +19,25 @@ using Ninject;
 using Utopia.Settings;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Cubes;
-using Screen = Nuclex.UserInterface.Screen;
 using Utopia.Shared.Settings;
+using S33M3_Resources.Structs;
+using S33M3_CoreComponents.Physics.Verlet;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.Cameras;
+using S33M3_CoreComponents.WorldFocus;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3_CoreComponents.Inputs.Actions;
+using S33M3_CoreComponents.Inputs;
 
 namespace Utopia.Entities.Managers
 {
-    public class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualEntityContainer, IDebugInfo
+    public class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualEntityContainer
     {
         #region Private variables
         //Engine System variables
         private D3DEngine _d3DEngine;
-        private CameraManager _cameraManager;
+        private CameraManager<ICameraFocused> _cameraManager;
         private WorldFocusManager _worldFocusManager;
         private ActionsManager _actions;
         private InputsManager _inputsManager;
@@ -140,7 +134,7 @@ namespace Utopia.Entities.Managers
         #endregion
 
         public PlayerEntityManager(D3DEngine engine,
-                                   CameraManager cameraManager,
+                                   CameraManager<ICameraFocused> cameraManager,
                                    WorldFocusManager worldFocusManager,
                                    ActionsManager actions,
                                    InputsManager inputsManager,
@@ -174,7 +168,7 @@ namespace Utopia.Entities.Managers
             //Give the Renderer acces to the Voxel buffers, ...
             _playerRenderer.VisualEntity = this;
 
-            HasMouseFocus = Enabled;
+            HasMouseFocus = Updatable;
             HandleToolsUse = true;
             UpdateOrder = 0;
         }
@@ -680,7 +674,7 @@ namespace Utopia.Entities.Managers
             _playerRenderer.LoadContent();
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update( GameTime timeSpend)
         {
             inputHandler();             //Input handling
 
@@ -710,7 +704,7 @@ namespace Utopia.Entities.Managers
             //===================================================================================================================================
         }
 
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
             _playerRenderer.Draw(index);
         }

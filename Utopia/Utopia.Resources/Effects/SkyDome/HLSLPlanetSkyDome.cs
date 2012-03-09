@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.Struct.Vertex.Helper;
 using System.Runtime.InteropServices;
 using SharpDX;
-using S33M3Engines.D3D.Effects;
-using S33M3Engines.D3D;
-using S33M3Engines;
+using S33M3_DXEngine.Effects.HLSLFramework;
+using SharpDX.Direct3D11;
+using S33M3_DXEngine.VertexFormat;
 
 namespace Utopia.Resources.Effects.Skydome
 {
@@ -58,19 +57,19 @@ namespace Utopia.Resources.Effects.Skydome
         };
         #endregion
 
-        public HLSLPlanetSkyDome(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(d3dEngine, shaderPath, VertexDeclaration)
+        public HLSLPlanetSkyDome(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+            : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDraw_Struct>(_d3dEngine, "PerDraw");
+            CBPerDraw = new CBuffer<CBPerDraw_Struct>(device, "PerDraw");
             CBuffers.Add(CBPerDraw);
 
             //Create the resource interfaces ==================================================
-            TerraTexture = new ShaderResource(_d3dEngine, "DiffuseTexture");
+            TerraTexture = new ShaderResource("DiffuseTexture");
             ShaderResources.Add(TerraTexture);
 
             //Create the Sampler interface ==================================================
-            SamplerDiffuse = new ShaderSampler(_d3dEngine, "SkySampler");
+            SamplerDiffuse = new ShaderSampler("SkySampler");
             ShaderSamplers.Add(SamplerDiffuse);
 
             //Load the shaders

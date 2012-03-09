@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using S33M3Engines.D3D;
 using Utopia.Entities.Voxel;
 using Ninject;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Shared.Entities.Interfaces;
+using S33M3_DXEngine.Main;
+using SharpDX.Direct3D11;
 
 namespace Utopia.Entities.Managers
 {
@@ -61,11 +62,11 @@ namespace Utopia.Entities.Managers
             _dynamicEntityRenderer.LoadContent();
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update(GameTime timeSpend)
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
             {
-                entity.Update(ref timeSpend);
+                entity.Update(timeSpend);
             }
         }
 
@@ -77,10 +78,10 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
             //Only Draw the Entities that are in View Client scope !
-            _dynamicEntityRenderer.Draw(index);
+            _dynamicEntityRenderer.Draw(context, index);
         }
 
         public void AddEntity(IDynamicEntity entity)

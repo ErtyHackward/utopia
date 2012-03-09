@@ -1,8 +1,8 @@
 ﻿using System.Runtime.InteropServices;
-using S33M3Engines;
-using S33M3Engines.D3D.Effects;
-using S33M3Engines.Struct.Vertex.Helper;
 using SharpDX;
+using S33M3_DXEngine.Effects.HLSLFramework;
+using SharpDX.Direct3D11;
+using S33M3_DXEngine.VertexFormat;
 
 namespace UtopiaContent.Effects.Entities
 {
@@ -58,15 +58,14 @@ namespace UtopiaContent.Effects.Entities
         };
         #endregion
 
-        public HLSLVoxelModel(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(d3dEngine, shaderPath, VertexDeclaration)
+        public HLSLVoxelModel(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+            : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerFrame = new CBuffer<CBPerFrameStructure>(_d3dEngine, "PerFrame");
+            CBPerFrame = new CBuffer<CBPerFrameStructure>(device, "PerFrame");
             CBuffers.Add(CBPerFrame);
-            CBPerFrame.MarshalUpdate = true;
 
-            CBPerPart = new CBuffer<CBPerPartStructure>(_d3dEngine, "PerPart");
+            CBPerPart = new CBuffer<CBPerPartStructure>(device, "PerPart");
             CBuffers.Add(CBPerPart);
             
             //Load the shaders

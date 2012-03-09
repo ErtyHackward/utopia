@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using S33M3Engines;
-using S33M3Engines.D3D.Effects;
-using S33M3Engines.Struct.Vertex.Helper;
+
 using SharpDX;
+using S33M3_DXEngine.VertexFormat;
+using S33M3_DXEngine.Effects.HLSLFramework;
+using SharpDX.Direct3D11;
 
 namespace UtopiaContent.Effects.Entities
 {
@@ -47,11 +48,11 @@ namespace UtopiaContent.Effects.Entities
         };
         #endregion
 
-        public HLSLColorLine(D3DEngine d3dEngine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(d3dEngine, shaderPath, VertexDeclaration)
+        public HLSLColorLine(Device engine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+            : base(engine, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDrawStructure>(_d3dEngine, "PerDraw");
+            CBPerDraw = new CBuffer<CBPerDrawStructure>(engine, "PerDraw");
             CBuffers.Add(CBPerDraw);
             
             //Load the shaders

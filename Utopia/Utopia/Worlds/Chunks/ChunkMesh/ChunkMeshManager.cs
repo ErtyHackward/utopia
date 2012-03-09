@@ -1,6 +1,5 @@
 ﻿using System;
 using Amib.Threading;
-using S33M3Engines.Threading;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
@@ -11,12 +10,14 @@ using Utopia.Worlds.Chunks.Enums;
 using Utopia.Worlds.Cubes;
 using Utopia.Entities;
 using System.Collections.Generic;
-using S33M3Engines.Struct.Vertex;
 using SharpDX;
 using Utopia.Entities.Sprites;
 using Ninject;
 using Utopia.Shared.Enums;
 using Utopia.Shared.Settings;
+using S33M3_DXEngine.Threading;
+using S33M3_Resources.Structs;
+using S33M3_Resources.Struct.Vertex;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -99,7 +100,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             TerraCube currentCube, neightborCube;
             CubeProfile cubeProfile;
 
-            ByteVector4 cubePosiInChunk;
+            Vector4B cubePosiInChunk;
             Vector3I cubePosiInWorld;
             int XWorld, YWorld, ZWorld;
             int neightborCubeIndex;
@@ -155,7 +156,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[currentCube.Id];
 
                         cubePosiInWorld = new Vector3I(XWorld, YWorld, ZWorld);
-                        cubePosiInChunk = new ByteVector4(x, y, z);
+                        cubePosiInChunk = new Vector4B(x, y, z);
 
                         //Check to see if the face needs to be generated or not !
                         //Border Chunk test ! ==> Don't generate faces that are "border" chunks

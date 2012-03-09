@@ -1,5 +1,6 @@
 using System;
 using Utopia.Shared.Entities.Interfaces;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Shared.Entities.Inventory
 {
@@ -27,7 +28,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Creates new instance of character eqipment
         /// </summary>
-        public CharacterEquipment(IDynamicEntity parent) : base(parent,new Structs.Vector2I(1, 10))
+        public CharacterEquipment(IDynamicEntity parent) : base(parent,new Vector2I(1, 10))
         {
             ItemPut += CharacterEquipmentItemPut;
             ItemTaken += CharacterEquipmentItemTaken;
@@ -67,14 +68,14 @@ namespace Utopia.Shared.Entities.Inventory
         /// <returns></returns>
         public ContainedSlot this[EquipmentSlotType slotType] 
         {
-            get { return PeekSlot( new Structs.Vector2I(0, (int)slotType)); }
+            get { return PeekSlot( new Vector2I(0, (int)slotType)); }
         }
 
         public bool Equip(EquipmentSlotType slotType, ContainedSlot slot, out ContainedSlot itemTaken)
         {
             itemTaken = null;
 
-            var internalPosition = new Structs.Vector2I(0, (int)slotType);
+            var internalPosition = new Vector2I(0, (int)slotType);
             var actualSlot = PeekSlot(internalPosition);
 
             if (actualSlot == null || actualSlot.CanStackWith(slot))
@@ -89,7 +90,7 @@ namespace Utopia.Shared.Entities.Inventory
         {
             itemTaken = null;
 
-            var internalPosition = new Structs.Vector2I(0, (int)slotType);
+            var internalPosition = new Vector2I(0, (int)slotType);
             var actualSlot = PeekSlot(internalPosition);
 
             if (actualSlot == null)
@@ -103,7 +104,7 @@ namespace Utopia.Shared.Entities.Inventory
         public ITool LeftTool
         {
             get {
-                var leftTool = PeekSlot(new Structs.Vector2I(0, (int)EquipmentSlotType.LeftHand));
+                var leftTool = PeekSlot(new Vector2I(0, (int)EquipmentSlotType.LeftHand));
                 if (leftTool != null)
                     return (ITool)leftTool.Item;
                 return null;
@@ -114,14 +115,14 @@ namespace Utopia.Shared.Entities.Inventory
         {
             get
             {
-                var tool = PeekSlot(new Structs.Vector2I(0, (int)EquipmentSlotType.RightHand));
+                var tool = PeekSlot(new Vector2I(0, (int)EquipmentSlotType.RightHand));
                 if (tool != null)
                     return (ITool)tool.Item;
                 return null;
             }
         }
 
-        protected override bool ValidateItem(IItem item, Structs.Vector2I position)
+        protected override bool ValidateItem(IItem item, Vector2I position)
         {
             switch ((EquipmentSlotType)position.Y)
             {

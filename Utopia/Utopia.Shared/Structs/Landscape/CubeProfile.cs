@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data;
+using SharpDX;
 
 namespace Utopia.Shared.Structs.Landscape
 {
@@ -47,7 +48,7 @@ namespace Utopia.Shared.Structs.Landscape
                 {
                     profile.IsEmissiveColorLightSource = true;
                     emissiveColor = cubeProfil.ItemArray[dt.Columns["EmissiveColor"].Ordinal].ToString().Split(new char[] { ',' });
-                    profile.EmissiveColor = new Color(int.Parse(emissiveColor[0]), int.Parse(emissiveColor[1]), int.Parse(emissiveColor[2]), int.Parse(emissiveColor[3]));
+                    profile.EmissiveColor = new Color4(int.Parse(emissiveColor[0]), int.Parse(emissiveColor[1]), int.Parse(emissiveColor[2]), int.Parse(emissiveColor[3]));
                 }
 
                 CubesProfile[Id] = profile;
@@ -65,6 +66,6 @@ namespace Utopia.Shared.Structs.Landscape
         public bool IsFlooding;
         public int FloodingPropagationPower;
         public float YBlockOffset;
-        public Color EmissiveColor;
+        public Color4 EmissiveColor;
     }
 }

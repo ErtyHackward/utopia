@@ -4,7 +4,8 @@ using Sandbox.Client.Components;
 using Utopia;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
-using Utopia.GUI.D3D;
+using S33M3_CoreComponents.States;
+using S33M3_CoreComponents.GUI;
 
 namespace Sandbox.Client.States
 {
@@ -24,7 +25,8 @@ namespace Sandbox.Client.States
             get { return "Editor"; }
         }
 
-        public EditorState(IKernel iocContainer)
+        public EditorState(GameStatesManager stateManager, IKernel iocContainer)
+            :base(stateManager)
         {
             _ioc = iocContainer;
         }

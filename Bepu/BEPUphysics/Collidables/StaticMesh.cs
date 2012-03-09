@@ -11,8 +11,8 @@ using BEPUphysics.CollisionShapes.ConvexShapes;
 using BEPUphysics.ResourceManagement;
 using BEPUphysics.CollisionTests.CollisionAlgorithms;
 using BEPUphysics.CollisionTests.CollisionAlgorithms.GJK;
-using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs;
+using S33M3_Resources.Struct.Vertex;
 
 namespace BEPUphysics.Collidables
 {

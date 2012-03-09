@@ -1,7 +1,7 @@
-﻿using S33M3Engines.Shared.Math;
-using SharpDX;
+﻿using SharpDX;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
+using S33M3_Resources.Structs;
 
 namespace System.IO
 {

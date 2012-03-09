@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Interfaces;
+using S33M3_DXEngine.Main.Interfaces;
 
 namespace Utopia.Entities.Managers.Interfaces
 {

@@ -1,26 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using S33M3Engines;
-using S33M3Engines.Cameras;
-using S33M3Engines.D3D;
-using S33M3Engines.D3D.DebugTools;
-using S33M3Engines.InputHandler;
-using S33M3Engines.InputHandler.MouseHelper;
-using S33M3Engines.Shared.Math;
-using S33M3Engines.StatesManager;
-using S33M3Engines.Struct.Vertex;
-using S33M3Engines.Textures;
-using S33M3Engines.WorldFocus;
 using SharpDX;
 using SharpDX.Direct3D11;
-using Utopia.Action;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
-using Utopia.GUI.D3D;
-using Utopia.InputManager;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
@@ -30,7 +16,6 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Worlds.Cubes;
-using Screen = Nuclex.UserInterface.Screen;
 using Utopia.Settings;
 using Utopia.Resources.Effects.Terran;
 using Utopia.Effects.Shared;
@@ -230,12 +215,12 @@ namespace Utopia.Editor
     //        _itemEffect.TerraTexture.Value = Texture;
 
     //        _itemEffect.SamplerDiffuse.Value =
-    //            StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+    //            RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
     //        _ui = new EntityEditorUi(this);
     //    }
 
-    //    public override void Update(ref GameTime timeSpend)
+    //    public override void Update( GameTime timeSpend)
     //    {
     //        if (_editedEntity == null) return;
 
@@ -301,7 +286,7 @@ namespace Utopia.Editor
     //        }
     //    }
 
-    //    public override void Draw(int index)
+    //    public override void Draw(DeviceContext context, int index)
     //    {
     //        DrawItems();
     //    }
@@ -364,7 +349,7 @@ namespace Utopia.Editor
     //        if (_editedEntity == null) return;
 
     //        //Applying Correct Render States
-    //        StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet,
+    //        RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet,
     //                                     GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
     //        _itemEffect.Begin();

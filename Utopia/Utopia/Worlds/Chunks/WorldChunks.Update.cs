@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
-using S33M3Engines.Maths;
-using S33M3Engines.Threading;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using System.Threading;
 using Utopia.Shared.Chunks;
 using Amib.Threading;
-using S33M3Engines.Shared.Math;
-using S33M3Engines.Struct;
+using S33M3_DXEngine.Threading;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.Maths;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -25,7 +24,7 @@ namespace Utopia.Worlds.Chunks
         #endregion
 
         #region public methods
-        public override void Update(ref GameTime timeSpend)
+        public override void Update(GameTime timeSpend)
         {
             if (_camManager.ActiveCamera.WorldPosition.Y < 400)
             {
@@ -84,7 +83,7 @@ namespace Utopia.Worlds.Chunks
 
                 if (chunk.State == ChunkState.Empty)
                 {
-                    _landscapeManager.CreateLandScape(chunk, S33M3Engines.Threading.WorkQueue.ThreadingActif);
+                    _landscapeManager.CreateLandScape(chunk, SmartThread.ThreadingActif);
                 }
             }
         }
@@ -101,7 +100,7 @@ namespace Utopia.Worlds.Chunks
                 if (chunk.State == ChunkState.LandscapeCreated ||
                     chunk.State == ChunkState.UserChanged)
                 {
-                    _lightingManager.CreateChunkLightSources(chunk, S33M3Engines.Threading.WorkQueue.ThreadingActif);
+                    _lightingManager.CreateChunkLightSources(chunk, SmartThread.ThreadingActif);
                 }
             }
         }
@@ -121,7 +120,7 @@ namespace Utopia.Worlds.Chunks
 
                     if (chunk.State == ChunkState.LandscapeLightsSourceCreated)
                     {
-                        _lightingManager.PropagateChunkLightSources(chunk, S33M3Engines.Threading.WorkQueue.ThreadingActif);
+                        _lightingManager.PropagateChunkLightSources(chunk, SmartThread.ThreadingActif);
                     }
                 }
             }
@@ -142,7 +141,7 @@ namespace Utopia.Worlds.Chunks
 
                     if (chunk.State == ChunkState.LandscapeLightsPropagated)
                     {
-                        _chunkMeshManager.CreateChunkMesh(chunk, S33M3Engines.Threading.WorkQueue.ThreadingActif);
+                        _chunkMeshManager.CreateChunkMesh(chunk, SmartThread.ThreadingActif);
                     }
                 }
             }

@@ -3,16 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.Entities.Voxel;
-using S33M3Engines.D3D;
-using S33M3Engines;
-using S33M3Engines.Cameras;
-using S33M3Engines.WorldFocus;
-using S33M3Engines.StatesManager;
 using SharpDX;
-using S33M3Engines.Buffers;
-using S33M3Engines.Struct.Vertex;
 using SharpDX.Direct3D11;
-using S33M3Engines.Textures;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
@@ -20,6 +12,12 @@ using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Settings;
 using Utopia.Resources.Effects.Terran;
 using Utopia.Effects.Shared;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.WorldFocus;
+using S33M3_CoreComponents.Cameras;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3_Resources.Struct.Vertex;
+using S33M3_DXEngine.Textures;
 
 namespace Utopia.Entities.Renderer
 {
@@ -40,7 +38,7 @@ namespace Utopia.Entities.Renderer
         #endregion
 
         public PlayerEntityRenderer(D3DEngine d3DEngine,
-                                    CameraManager camManager,
+                                    CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
                                     ISkyDome skydome,
                                     VisualWorldParameters visualWorldParameters)
@@ -58,11 +56,11 @@ namespace Utopia.Entities.Renderer
 
         public void LoadContent()
         {
-            _entityEffect = new HLSLTerran(_d3DEngine, ClientSettings.EffectPack + @"Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCB.CBPerFrame);
+            _entityEffect = new HLSLTerran(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCB.CBPerFrame);
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
 
             _entityEffect.TerraTexture.Value = _cubeTexture_View;
-            _entityEffect.SamplerDiffuse.Value = StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
+            _entityEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
         }
 
         #endregion
@@ -74,7 +72,7 @@ namespace Utopia.Entities.Renderer
             if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson) return;
 
             //Applying Correct Render States
-            StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             _entityEffect.Begin();
 

@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
 using Utopia.Worlds.Chunks;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using Utopia.Worlds.Chunks.ChunkLandscape;
-using S33M3Engines.D3D.DebugTools;
-using S33M3Physics.Verlet;
 using SharpDX;
-using S33M3Engines.Shared.Math;
+using S33M3_Resources.Structs;
+using S33M3_DXEngine.Main.Interfaces;
+using S33M3_DXEngine.Debug.Interfaces;
+using S33M3_CoreComponents.Physics.Verlet;
 
 namespace Utopia.Worlds.Chunks
 {

@@ -46,6 +46,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="S33M3_CoreComponents">
+      <HintPath>..\Library\S33M3_CoreComponents.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3_DXEngine">
+      <HintPath>..\Library\S33M3_DXEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3_Resources">
+      <HintPath>..\Library\S33M3_Resources.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Library\SharpDX2\SharpDX.dll</HintPath>
@@ -76,7 +85,6 @@
     <Compile Include="Effects\Terran\HLSLLiquid.cs" />
     <Compile Include="Effects\Terran\HLSLTerran.cs" />
     <Compile Include="Effects\Weather\HLSLClouds2D.cs" />
-    <Compile Include="ModelComp\Axis.cs" />
     <Compile Include="ModelComp\BoundingBox3D.cs" />
     <Compile Include="ModelComp\Interfaces.cs" />
     <Compile Include="ModelComp\Line3d.cs" />
@@ -105,10 +113,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\S33M3Engines\S33M3Engines.csproj">
-      <Project>{E1E5C757-C550-4E62-8BE3-2E9553F023F7}</Project>
-      <Name>S33M3Engines</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>

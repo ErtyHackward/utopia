@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Shared.Structs.Landscape
 {
@@ -34,7 +35,7 @@ namespace Utopia.Shared.Structs.Landscape
             EmissiveColor.R = 0;
             EmissiveColor.G = 0;
             EmissiveColor.B = 0;
-            EmissiveColor.SunLight = 0;
+            EmissiveColor.A = 0;
         }
     }
 }

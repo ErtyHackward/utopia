@@ -147,12 +147,12 @@ namespace Utopia.Editor
     //        _itemEffect.TerraTexture.Value = Texture;
 
     //        _itemEffect.SamplerDiffuse.Value =
-    //            StatesRepository.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+    //            RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
     //        //_ui = new EntityEditorUi(this);
     //    }
 
-    //    public override void Update(ref GameTime timeSpend)
+    //    public override void Update( GameTime timeSpend)
     //    {
     //        if (_editedEntity == null) return;
 
@@ -217,7 +217,7 @@ namespace Utopia.Editor
     //        }
     //    }
 
-    //    public override void Draw(int index)
+    //    public override void Draw(DeviceContext context, int index)
     //    {
     //        DrawItems();
     //    }
@@ -266,7 +266,7 @@ namespace Utopia.Editor
     //        if (_editedEntity == null) return;
 
     //        //Applying Correct Render States
-    //        StatesRepository.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet,
+    //        RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.NotSet,
     //                                     GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
     //        _itemEffect.Begin();

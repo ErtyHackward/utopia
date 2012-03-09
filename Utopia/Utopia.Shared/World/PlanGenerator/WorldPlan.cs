@@ -6,7 +6,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Xml.Serialization;
 using BenTools.Mathematics;
-using S33M3Engines.Shared.Math.Noises;
+using S33M3_CoreComponents.Maths.Noises;
 
 namespace Utopia.Shared.World.PlanGenerator
 {

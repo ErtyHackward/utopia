@@ -1,8 +1,10 @@
 ﻿#region
 
-using Nuclex.UserInterface.Controls.Desktop;
-using S33M3Engines.Shared.Sprites;
 using Utopia.Shared.Structs;
+using S33M3_CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3_CoreComponents.Sprites;
+using S33M3_Resources.Structs;
+using SharpDX;
 
 #endregion
 
@@ -12,10 +14,10 @@ namespace Utopia.Editor
     {
         public PaletteButtonControl()
         {
-            Color = Color.White;
+            Color = Colors.White;
         }
 
-        public Color Color { get; set; }
+        public Color4 Color { get; set; }
         public SpriteTexture Texture { get; set; }
     }
 }

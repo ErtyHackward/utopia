@@ -2,6 +2,7 @@ using System;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Interfaces;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Shared.Chunks
 {

@@ -8,7 +8,6 @@ using Utopia.Components;
 using Utopia.Entities;
 using Utopia.Network;
 using Ninject;
-using S33M3Engines.D3D;
 using System.Windows.Forms;
 using Utopia.Settings;
 using Utopia.Shared.Config;
@@ -24,12 +23,10 @@ namespace Sandbox.Client
         private static WelcomeScreen _welcomeForm;
         private ServerComponent _server;
         private IKernel _iocContainer;
-        private GameExitReasonMessage _exitRease;
         private SandboxEntityFactory _clientFactory;
         
         public GameClient()
         {
-            _exitRease = new GameExitReasonMessage { GameExitReason = ExitReason.UserRequest };
         }
 
         #region Public Methods

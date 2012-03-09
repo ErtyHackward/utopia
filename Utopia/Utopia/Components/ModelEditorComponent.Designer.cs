@@ -9,6 +9,9 @@ using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using Utopia.Shared.Entities.Models;
+using S33M3_CoreComponents.GUI.Nuclex.Controls;
+using S33M3_CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3_CoreComponents.GUI.Nuclex;
 
 namespace Utopia.Components
 {

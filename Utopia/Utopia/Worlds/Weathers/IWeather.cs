@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
 using Utopia.Worlds.Weathers.SharedComp;
+using S33M3_DXEngine.Main.Interfaces;
 
 namespace Utopia.Worlds.Weather
 {
-    public interface IWeather : IUpdateableComponent,IGameComponent
+    public interface IWeather : IUpdatableComponent,IGameComponent
     {
         IWind Wind { get; set; }
     }

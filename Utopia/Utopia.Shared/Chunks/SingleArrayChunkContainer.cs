@@ -8,10 +8,11 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
-using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Settings;
+using S33M3_Resources.Structs;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Shared.Chunks
 {

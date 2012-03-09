@@ -4,15 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using SharpDX;
-using S33M3Engines.D3D.Effects;
-using S33M3Engines;
-using S33M3Engines.D3D;
-using S33M3Engines.Cameras;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Renderer.Interfaces;
 using Ninject;
+using S33M3_DXEngine.Main;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.Cameras;
+using S33M3_DXEngine.Effects.HLSLFramework;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using SharpDX.Direct3D11;
 
 namespace Utopia.Effects.Shared
 {
@@ -33,7 +35,7 @@ namespace Utopia.Effects.Shared
         }
 
         private D3DEngine _engine;
-        private CameraManager _cameraManager;
+        private CameraManager<ICameraFocused> _cameraManager;
         private ISkyDome _skydome;
         private VisualWorldParameters _visualWorldParam;
         private PlayerEntityManager _playerManager;
@@ -41,7 +43,7 @@ namespace Utopia.Effects.Shared
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
         public SharedFrameCB(D3DEngine engine,
-                             CameraManager cameraManager,
+                             CameraManager<ICameraFocused> cameraManager,
                              ISkyDome skydome,
                              VisualWorldParameters visualWorldParam,
                              PlayerEntityManager playerManager,
@@ -61,11 +63,10 @@ namespace Utopia.Effects.Shared
 
             DrawOrders.UpdateIndex(0, 0);
 
-            CBPerFrame = new CBuffer<CBPerFrame_Struct>(_engine, "PerFrame");
-            CBPerFrame.GlobalCB = true;
+            CBPerFrame = new CBuffer<CBPerFrame_Struct>(_engine.Device, "PerFrame");
         }
 
-        public override void Draw(int index)
+        public override void Draw(DeviceContext context, int index)
         {
             CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D_focused);
             if (_playerManager.IsHeadInsideWater) CBPerFrame.Values.SunColor = new Vector3(_skydome.SunColor.X / 3, _skydome.SunColor.Y / 3, _skydome.SunColor.Z);
@@ -73,7 +74,7 @@ namespace Utopia.Effects.Shared
             CBPerFrame.Values.fogdist = ((_visualWorldParam.WorldVisibleSize.X) / 2) - 48;
             CBPerFrame.IsDirty = false;
 
-            CBPerFrame.Update(); //Send updated data to Graphical Card
+            CBPerFrame.Update(context); //Send updated data to Graphical Card
         }
 
         public override void Dispose()

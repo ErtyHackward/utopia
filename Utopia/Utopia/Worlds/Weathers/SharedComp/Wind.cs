@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
 using SharpDX;
 using Utopia.Worlds.Weathers.SharedComp;
-using S33M3Engines.Struct;
-using S33M3Engines.Shared.Math;
+using S33M3_Resources.Structs;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Worlds.Weather
 {
@@ -68,7 +68,7 @@ namespace Utopia.Worlds.Weather
             Vector3.Lerp(ref _flatWindFlowNormalizedWithNoise.ValuePrev, ref _flatWindFlowNormalizedWithNoise.Value, interpolationLd, out _flatWindFlowNormalizedWithNoise.ValueInterp);
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update( GameTime timeSpend)
         {
             _keyFrameAnimation.BackUpValue();
             _flatWindFlowNormalizedWithNoise.BackUpValue();

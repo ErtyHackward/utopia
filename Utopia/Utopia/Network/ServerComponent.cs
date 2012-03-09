@@ -1,18 +1,17 @@
 ﻿using System;
-using S33M3Engines.D3D.DebugTools;
 using Utopia.Shared;
 using Utopia.Shared.ClassExt;
-using S33M3Engines.D3D;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
+using S33M3_DXEngine.Main;
 
 namespace Utopia.Network
 {
     /// <summary>
     /// Handles the server connection
     /// </summary>
-    public class ServerComponent : GameComponent, IDebugInfo
+    public class ServerComponent : GameComponent
     {
         
         public string Address { get; set; }
@@ -82,6 +81,8 @@ namespace Utopia.Network
             }
 
             if (ServerConnection != null) ServerConnection.Dispose();
+
+            base.Dispose();
         }
 
         #region Public Methods
@@ -109,7 +110,7 @@ namespace Utopia.Network
             }
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update( GameTime timeSpend)
         {
             if(ServerConnection != null)
                 ServerConnection.FetchPendingMessages();

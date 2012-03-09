@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
-using S33M3Engines.Shared.Math;
 using Utopia.Server.AStar;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
@@ -18,6 +17,7 @@ using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Server.Managers
 {

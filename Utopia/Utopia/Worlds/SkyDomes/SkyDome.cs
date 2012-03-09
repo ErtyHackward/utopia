@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
 using Utopia.Worlds.GameClocks;
-using S33M3Engines.Struct;
 using SharpDX;
 using Utopia.Worlds.Weather;
 using Utopia.Shared.World;
-using S33M3Engines;
+using S33M3_DXEngine;
+using S33M3_Resources.Structs;
+using S33M3_DXEngine.Main;
 
 namespace Utopia.Worlds.SkyDomes
 {
@@ -42,7 +42,7 @@ namespace Utopia.Worlds.SkyDomes
             _lightDirection = new FTSValue<Vector3>() { Value = new Vector3(100.0f, 100.0f, 100.0f) };
         }
 
-        public override void Update(ref S33M3Engines.D3D.GameTime timeSpend)
+        public override void Update(GameTime timeSpend)
         {
             _lightDirection.BackUpValue();
             _lightDirection.Value = this.GetDirection();

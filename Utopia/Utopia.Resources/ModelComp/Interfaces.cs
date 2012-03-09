@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.Cameras;
 using SharpDX;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.Resources.ModelComp
 {

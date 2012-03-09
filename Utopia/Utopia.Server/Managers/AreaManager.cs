@@ -9,8 +9,8 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Structs;
 using System.Threading;
-using S33M3Engines.Shared.Math;
 using Utopia.Shared.Structs.Helpers;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Server.Managers
 {

@@ -7,7 +7,8 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
-using S33M3Engines.Shared.Math;
+using S33M3_Resources.Structs;
+using S33M3_CoreComponents.Maths;
 
 namespace Utopia.Shared.World
 {

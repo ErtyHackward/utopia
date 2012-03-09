@@ -120,7 +120,7 @@ namespace Utopia.Worlds.GameClocks
         {
         }
 
-        public override void Update(ref S33M3Engines.D3D.GameTime timeSpend)
+        public override void Update( S33M3Engines.D3D.GameTime timeSpend)
         {
         }
 

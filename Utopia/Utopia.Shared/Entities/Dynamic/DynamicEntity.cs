@@ -1,12 +1,12 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using S33M3Engines.Shared.Math;
 using SharpDX;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Shared.Entities.Dynamic
 {

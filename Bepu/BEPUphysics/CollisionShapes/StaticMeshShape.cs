@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using BEPUphysics.MathExtensions;
- 
 using BEPUphysics.DataStructures;
-using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs;
+using S33M3_Resources.Struct.Vertex;
 
 namespace BEPUphysics.CollisionShapes
 {
