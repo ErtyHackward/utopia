@@ -58,7 +58,7 @@ namespace Utopia.Shared.World.Processors
         #region Public Methods
         public void Generate(Structs.Range2 generationRange, Chunks.GeneratedChunk[,] chunks)
         {
-            Range<int> chunkWorldRange;
+            RangeI chunkWorldRange;
             _totalChunks = generationRange.Count;
             _chunksDone = 0;
             generationRange.Foreach(pos =>
@@ -66,7 +66,7 @@ namespace Utopia.Shared.World.Processors
                 var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
                 var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
 
-                chunkWorldRange = new Range<int>() { Min = new Location3<int>(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z), Max = new Location3<int>((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
+                chunkWorldRange = new RangeI() { Min = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z), Max = new Vector3I((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
 
                 GenerateLayoutFrom3DNoise(chunkBytes, ref chunkWorldRange);
 
@@ -111,7 +111,7 @@ namespace Utopia.Shared.World.Processors
         /// <param name="Cubes">Cube array result</param>
         /// <param name="TerraCubes">TerraCube array result</param>
         /// <param name="workingRange">The chunk working range</param>
-        private void GenerateLayoutFrom3DNoise(byte[] Cubes, ref Range<int> workingRange)
+        private void GenerateLayoutFrom3DNoise(byte[] Cubes, ref RangeI workingRange)
         {
             double[] _baseTerranResult = null;
             double[] _landHeightResult = null;
@@ -269,7 +269,7 @@ namespace Utopia.Shared.World.Processors
         /// <param name="TerraCubes"></param>
         /// <param name="dataNoises"></param>
         private  void CreateLandscapeFromNoisesResult(int XSamplingCount, int ZSamplingCount, int YSamplingCount,
-                                                     ref Range<int> workingRange, ref byte[] Cubes, ref double[] dataNoises)
+                                                     ref RangeI workingRange, ref byte[] Cubes, ref double[] dataNoises)
         {
             int XSamplingCount2 = XSamplingCount + 1;
             int ZSamplingCount2 = ZSamplingCount + 1;

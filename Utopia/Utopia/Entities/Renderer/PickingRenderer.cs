@@ -18,6 +18,7 @@ using S33M3_Resources.Effects.Basics;
 using S33M3_Resources.VertexFormats;
 using SharpDX.Direct3D11;
 using S33M3_Resources.Structs;
+using S33M3_DXEngine.RenderStates;
 
 namespace Utopia.Entities.Renderer
 {
@@ -31,11 +32,11 @@ namespace Utopia.Entities.Renderer
         private BoundingBox3D _pickedCube;
         private HLSLVertexPositionColor _blockpickedUPEffect;
 
-        private Color _cursorColor = Color.Red;//Color.FromNonPremultiplied(20,20,20, 255);
+        private ByteColor _cursorColor = Colors.Red;//Color.FromNonPremultiplied(20,20,20, 255);
         private D3DEngine _engine;
         private WorldFocusManager _focusManager;
         private IDynamicEntity _player;
-        private CameraManager _camManager;
+        private CameraManager<ICameraFocused> _camManager;
 
         private Vector3 _cubeScaling = new Vector3(1.005f, 1.005f, 1.005f);
 
@@ -60,6 +61,9 @@ namespace Utopia.Entities.Renderer
 
         public override void Dispose()
         {
+            if (_blockpickedUPEffect != null) _blockpickedUPEffect.Dispose();
+            if (_pickedCube != null) _pickedCube.Dispose();
+            base.Dispose();
         }
 
         #region private methods
@@ -80,16 +84,10 @@ namespace Utopia.Entities.Renderer
         #endregion
 
         #region public methods
-        public override void LoadContent()
+        public override void LoadContent(DeviceContext Context)
         {
             _blockpickedUPEffect = new HLSLVertexPositionColor(_engine.Device);
             _pickedCube = new BoundingBox3D(_engine, _focusManager, new Vector3(1.000f, 1.000f, 1.000f), _blockpickedUPEffect, _cursorColor);
-        }
-
-        public override void UnloadContent()
-        {
-            if (_blockpickedUPEffect != null) _blockpickedUPEffect.Dispose();
-            if (_pickedCube != null) _pickedCube.Dispose();
         }
 
         public override void Draw(DeviceContext context, int index)

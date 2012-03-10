@@ -21,6 +21,8 @@ using S33M3_Resources.Effects.Basics;
 using S33M3_DXEngine;
 using S33M3_DXEngine.Main;
 using S33M3_CoreComponents.Maths;
+using S33M3_DXEngine.RenderStates;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.Worlds.SkyDomes
 {
@@ -28,7 +30,7 @@ namespace Utopia.Worlds.SkyDomes
     {
         #region Private variables
         // Dome Mesh building Variables
-        private CameraManager _camManager;
+        private CameraManager<ICameraFocused> _camManager;
         private WorldFocusManager _worldFocusManager;
         private IDrawableComponent _skyStars;
         private IDrawableComponent _clouds;
@@ -59,7 +61,7 @@ namespace Utopia.Worlds.SkyDomes
         /// <summary>
         /// Regular Skydome loading
         /// </summary>
-        public RegularSkyDome(D3DEngine d3dEngine, CameraManager camManager, WorldFocusManager worldFocusManager, IClock clock, IWeather weather, [Named("Stars")] IDrawableComponent skyStars, [Named("Clouds_flat")] IDrawableComponent clouds)
+        public RegularSkyDome(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager, WorldFocusManager worldFocusManager, IClock clock, IWeather weather, [Named("Stars")] IDrawableComponent skyStars, [Named("Clouds_flat")] IDrawableComponent clouds)
             : base(d3dEngine, clock, weather)
         {
             _camManager = camManager;
@@ -84,8 +86,8 @@ namespace Utopia.Worlds.SkyDomes
             BuffersToDevice(); //Create Buffers
 
             //Init effects
-            _skyDomeEffect = new HLSLPlanetSkyDome(_d3dEngine, ClientSettings.EffectPack + @"SkyDome\PlanetSkyDome.hlsl", VertexPosition.VertexDeclaration);
-            _posiTextureEffect = new HLSLVertexPositionTexture(_d3dEngine, @"D3D\Effects\Basics\VertexPositionTexture.hlsl", VertexPositionTexture.VertexDeclaration);
+            _skyDomeEffect = new HLSLPlanetSkyDome(_d3dEngine.Device, ClientSettings.EffectPack + @"SkyDome\PlanetSkyDome.hlsl", VertexPosition.VertexDeclaration);
+            _posiTextureEffect = new HLSLVertexPositionTexture(_d3dEngine.Device);
 
             //Init Textures
             _skyTex_View = ShaderResourceView.FromFile(_d3dEngine.Device, ClientSettings.TexturePack + @"SkyDome\skyText.png");
@@ -133,8 +135,8 @@ namespace Utopia.Worlds.SkyDomes
 
         public override void Draw(DeviceContext context, int index)
         {
-            DrawingDome();
-            DrawingMoon();
+            DrawingDome(context);
+            DrawingMoon(context);
             _skyStars.Draw(context, index);
             _clouds.Draw(context, index);
         }
@@ -303,7 +305,7 @@ namespace Utopia.Worlds.SkyDomes
 
         }
 
-        private void DrawingDome(Devi)
+        private void DrawingDome(DeviceContext context)
         {
             Matrix World = Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.X, -(float)_camManager.ActiveCamera.WorldPosition.Y, (float)_camManager.ActiveCamera.WorldPosition.Z);
 
@@ -312,19 +314,19 @@ namespace Utopia.Worlds.SkyDomes
             //Set States.
             RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
-            _skyDomeEffect.Begin();
+            _skyDomeEffect.Begin(context);
             _skyDomeEffect.CBPerDraw.Values.ViewProj = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _skyDomeEffect.CBPerDraw.Values.CameraWorldPosition = _camManager.ActiveCamera.WorldPosition.AsVector3();
             _skyDomeEffect.CBPerDraw.Values.time = _clock.ClockTime.ClockTimeNormalized;
             _skyDomeEffect.CBPerDraw.Values.World = Matrix.Transpose(World);
             _skyDomeEffect.CBPerDraw.Values.LightDirection = LightDirection;
             _skyDomeEffect.CBPerDraw.IsDirty = true;
-            _skyDomeEffect.Apply();
+            _skyDomeEffect.Apply(context);
 
-            _domeVertexBuffer.SetToDevice(0);
-            _domeIndexBuffer.SetToDevice(0);
+            _domeVertexBuffer.SetToDevice(context,0);
+            _domeIndexBuffer.SetToDevice(context,0);
 
-            _d3dEngine.Context.DrawIndexed(_domeIb.Length, 0, 0);
+            context.DrawIndexed(_domeIb.Length, 0, 0);
         }
 
         private void GenerateMoon()
@@ -348,7 +350,7 @@ namespace Utopia.Worlds.SkyDomes
             _moonIb = new short[] { 0, 2, 1, 2, 0, 3 };
         }
 
-        private void DrawingMoon()
+        private void DrawingMoon(DeviceContext context)
         {
             float alpha = (float)Math.Abs(Math.Sin(_clock.ClockTime.Time + (float)Math.PI / 2.0f));
             //Set States.
@@ -361,7 +363,7 @@ namespace Utopia.Worlds.SkyDomes
 
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
-            _posiTextureEffect.Begin();
+            _posiTextureEffect.Begin(context);
             _posiTextureEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
             _posiTextureEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View_focused);
             _posiTextureEffect.CBPerFrame.IsDirty = true;
@@ -377,11 +379,11 @@ namespace Utopia.Worlds.SkyDomes
             _posiTextureEffect.CBPerDraw.IsDirty = true;
             _posiTextureEffect.DiffuseTexture.Value = _moonTex_View;
             _posiTextureEffect.DiffuseTexture.IsDirty = true;
-            _posiTextureEffect.Apply();
+            _posiTextureEffect.Apply(context);
 
-            _moonIndexBuffer.SetToDevice(0);
-            _moonVertexBuffer.SetToDevice(0);
-            _d3dEngine.Context.DrawIndexed(_moonIb.Length, 0, 0);
+            _moonIndexBuffer.SetToDevice(context,0);
+            _moonVertexBuffer.SetToDevice(context,0);
+            context.DrawIndexed(_moonIb.Length, 0, 0);
 
             //Draw moonLight
             World = Matrix.Scaling(6f, 6f, 6f) *
@@ -398,25 +400,25 @@ namespace Utopia.Worlds.SkyDomes
             _posiTextureEffect.DiffuseTexture.Value = _glowTex_View;
             _posiTextureEffect.DiffuseTexture.IsDirty = true;
 
-            _posiTextureEffect.Apply();
+            _posiTextureEffect.Apply(context);
 
-            _d3dEngine.Context.DrawIndexed(_moonIb.Length, 0, 0);
+            context.DrawIndexed(_moonIb.Length, 0, 0);
         }
 
         private void BuffersToDevice()
         {
             //Copy Dome to graphic buffers
             //SkyDome
-            _domeIndexBuffer = new IndexBuffer<short>(_d3dEngine, _domeIb.Length, SharpDX.DXGI.Format.R16_UInt, "_domeIndexBuffer");
-            _domeIndexBuffer.SetData(_domeIb);
-            _domeVertexBuffer = new VertexBuffer<VertexPositionNormalTexture>(_d3dEngine, _domeVerts.Length, VertexPositionNormalTexture.VertexDeclaration, PrimitiveTopology.TriangleList, "_domeVertexBuffer");
-            _domeVertexBuffer.SetData(_domeVerts);
+            _domeIndexBuffer = new IndexBuffer<short>(_d3dEngine.Device, _domeIb.Length, SharpDX.DXGI.Format.R16_UInt, "_domeIndexBuffer");
+            _domeIndexBuffer.SetData(_d3dEngine.ImmediateContext, _domeIb);
+            _domeVertexBuffer = new VertexBuffer<VertexPositionNormalTexture>(_d3dEngine.Device, _domeVerts.Length, VertexPositionNormalTexture.VertexDeclaration, PrimitiveTopology.TriangleList, "_domeVertexBuffer");
+            _domeVertexBuffer.SetData(_d3dEngine.ImmediateContext,_domeVerts);
 
             //Moon
-            _moonVertexBuffer = new VertexBuffer<VertexPositionTexture>(_d3dEngine, _moonVerts.Length, VertexPositionTexture.VertexDeclaration, PrimitiveTopology.TriangleList, "_moonVertexBuffer");
-            _moonVertexBuffer.SetData(_moonVerts);
-            _moonIndexBuffer = new IndexBuffer<short>(_d3dEngine, _moonIb.Length, SharpDX.DXGI.Format.R16_UInt, "_moonIndexBuffer");
-            _moonIndexBuffer.SetData(_moonIb);
+            _moonVertexBuffer = new VertexBuffer<VertexPositionTexture>(_d3dEngine.Device, _moonVerts.Length, VertexPositionTexture.VertexDeclaration, PrimitiveTopology.TriangleList, "_moonVertexBuffer");
+            _moonVertexBuffer.SetData(_d3dEngine.ImmediateContext,_moonVerts);
+            _moonIndexBuffer = new IndexBuffer<short>(_d3dEngine.Device, _moonIb.Length, SharpDX.DXGI.Format.R16_UInt, "_moonIndexBuffer");
+            _moonIndexBuffer.SetData(_d3dEngine.ImmediateContext,_moonIb);
         }
         #endregion
     }

@@ -31,7 +31,7 @@ namespace Utopia.Worlds.Chunks
     {
         #region Private variables
         private VisualWorldParameters _visualWorldParameters;
-        private Range<int> _cubeRange;
+        private RangeI _cubeRange;
         private D3DEngine _d3dEngine;
 
         private object Lock_DrawChunksSolidFaces = new object();       //Multithread Locker
@@ -101,13 +101,13 @@ namespace Utopia.Worlds.Chunks
 
         public bool IsServerRequested { get; set; }           //If the chunk has been requested to the server
 
-        public Location2<int> LightPropagateBorderOffset;
+        public Vector2I LightPropagateBorderOffset;
 
         public List<VisualEntity> VisualSpriteEntities;
 
         public int StorageRequestTicket { get; set; }
 
-        public Range<int> CubeRange
+        public RangeI CubeRange
         {
             get { return _cubeRange; }
             set
@@ -162,7 +162,7 @@ namespace Utopia.Worlds.Chunks
                             D3DEngine d3dEngine, 
                             WorldFocusManager worldFocusManager, 
                             VisualWorldParameters visualWorldParameter, 
-                            ref Range<int> cubeRange, 
+                            ref RangeI cubeRange, 
                             SingleArrayChunkContainer singleArrayContainer,
                             IEntityPickingManager entityPickingManager)
             : base(new SingleArrayDataProvider(singleArrayContainer))
@@ -179,7 +179,7 @@ namespace Utopia.Worlds.Chunks
             _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
             IsReady2Draw = false;
-            LightPropagateBorderOffset = new Location2<int>(0, 0);
+            LightPropagateBorderOffset = new Vector2I(0, 0);
             Entities.CollectionDirty += Entities_CollectionDirty;
         }
         #region Public methods
@@ -315,43 +315,43 @@ namespace Utopia.Worlds.Chunks
 
 
         //Ask the Graphical card to Draw the solid faces
-        public void DrawSolidFaces()
+        public void DrawSolidFaces(DeviceContext context)
         {
             lock (Lock_DrawChunksSolidFaces)
             {
                 if (SolidCubeVB != null)
                 {
-                    SolidCubeVB.SetToDevice(_d3dEngine.ImmediateContext, 0);
-                    SolidCubeIB.SetToDevice(_d3dEngine.ImmediateContext, 0);
-                    _d3dEngine.ImmediateContext.DrawIndexed(SolidCubeIB.IndicesCount, 0, 0);
+                    SolidCubeVB.SetToDevice(context, 0);
+                    SolidCubeIB.SetToDevice(context, 0);
+                    context.DrawIndexed(SolidCubeIB.IndicesCount, 0, 0);
                 }
             }
         }
 
         //Ask the Graphical card to Draw the solid faces
-        public void DrawLiquidFaces()
+        public void DrawLiquidFaces(DeviceContext context)
         {
             lock (Lock_DrawChunksSeeThrough1Faces)
             {
                 if (LiquidCubeVB != null)
                 {
-                    LiquidCubeVB.SetToDevice(_d3dEngine.ImmediateContext, 0);
-                    LiquidCubeIB.SetToDevice(_d3dEngine.ImmediateContext, 0);
-                    _d3dEngine.ImmediateContext.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
+                    LiquidCubeVB.SetToDevice(context, 0);
+                    LiquidCubeIB.SetToDevice(context, 0);
+                    context.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
                 }
             }
         }
 
         //Ask the Graphical card to Draw the solid faces
-        public void DrawStaticEntities()
+        public void DrawStaticEntities(DeviceContext context)
         {
             lock (Lock_Draw)
             {
                 if (StaticSpritesVB != null)
                 {
-                    StaticSpritesVB.SetToDevice(_d3dEngine.ImmediateContext, 0);
-                    StaticSpritesIB.SetToDevice(_d3dEngine.ImmediateContext, 0);
-                    _d3dEngine.ImmediateContext.DrawIndexed(StaticSpritesIB.IndicesCount, 0, 0);
+                    StaticSpritesVB.SetToDevice(context, 0);
+                    StaticSpritesIB.SetToDevice(context, 0);
+                    context.DrawIndexed(StaticSpritesIB.IndicesCount, 0, 0);
                 }
             }
         }

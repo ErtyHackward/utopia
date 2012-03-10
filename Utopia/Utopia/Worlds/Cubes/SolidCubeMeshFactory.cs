@@ -5,7 +5,6 @@ using System.Text;
 using Utopia.Shared.Structs;
 using Utopia.Worlds.Chunks.Enums;
 using Utopia.Worlds.Chunks;
-using S33M3Engines.Struct.Vertex;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Enums;

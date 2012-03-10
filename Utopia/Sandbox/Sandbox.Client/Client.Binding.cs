@@ -46,6 +46,9 @@ using S33M3_CoreComponents.Inputs;
 using S33M3_CoreComponents.Inputs.Actions;
 using S33M3_CoreComponents.GUI;
 using S33M3_CoreComponents.GUI.Nuclex;
+using Utopia.GUI.Inventory;
+using Utopia.GUI.Map;
+using S33M3_DXEngine.Main.Interfaces;
 
 namespace Sandbox.Client
 {
@@ -75,10 +78,9 @@ namespace Sandbox.Client
             _iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
             //System Objects Management ================================
-            _iocContainer.Bind<StatesManager>().ToSelf().InSingletonScope(); 
             _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope(); //Application shared states
             _iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope(); //Type of camera used
-            _iocContainer.Bind<CameraManager>().ToSelf().InSingletonScope();     //Camera manager
+            _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InSingletonScope();     //Camera manager
             _iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();      //Ingame based Timer class
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class
             _iocContainer.Bind<SpriteRenderer>().ToSelf().InSingletonScope();
@@ -130,8 +132,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<FadeComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<DebugInfo>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<FadeSwitchComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<VoxelModelManager>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<BlackBgComponent>().ToSelf().InSingletonScope();

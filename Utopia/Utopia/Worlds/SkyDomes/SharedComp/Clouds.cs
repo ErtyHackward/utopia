@@ -68,14 +68,6 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             Init2D();
         }
 
-        public override void Update( GameTime timeSpend)
-        {
-        }
-
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
-        {
-        }
-
         public override void Draw(DeviceContext context, int index)
         {
             if (_camManager.ActiveCamera.WorldPosition.Y > 500) return;

@@ -1,5 +1,4 @@
-﻿using S33M3Engines.Shared.Math;
-using Sandbox.Shared.Items;
+﻿using Sandbox.Shared.Items;
 using Sandbox.Shared.Tools;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
@@ -7,6 +6,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using S33M3_Resources.Structs;
 
 namespace Sandbox.Server
 {

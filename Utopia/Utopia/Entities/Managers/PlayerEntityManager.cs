@@ -21,14 +21,18 @@ using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Cubes;
 using Utopia.Shared.Settings;
 using S33M3_Resources.Structs;
-using S33M3_CoreComponents.Physics.Verlet;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.Cameras;
-using S33M3_CoreComponents.WorldFocus;
 using S33M3_DXEngine.Main;
 using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3_DXEngine;
+using S33M3_CoreComponents.Cameras;
 using S33M3_CoreComponents.Inputs.Actions;
+using S33M3_CoreComponents.WorldFocus;
 using S33M3_CoreComponents.Inputs;
+using S33M3_CoreComponents.Physics.Verlet;
+using S33M3_CoreComponents.Maths;
+using SharpDX.Direct3D11;
+using Utopia.Action;
+using S33M3_CoreComponents.Physics;
 
 namespace Utopia.Entities.Managers
 {
@@ -39,7 +43,6 @@ namespace Utopia.Entities.Managers
         private D3DEngine _d3DEngine;
         private CameraManager<ICameraFocused> _cameraManager;
         private WorldFocusManager _worldFocusManager;
-        private ActionsManager _actions;
         private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
 
@@ -97,6 +100,7 @@ namespace Utopia.Entities.Managers
         public virtual Vector3D CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
         public virtual Quaternion CameraOrientation { get { return _lookAtDirection.Value; } }
         public virtual Quaternion CameraYAxisOrientation { get { return _cameraYAxisOrientation.Value; } }
+        public virtual int CameraUpdateOrder { get { return this.UpdateOrder; } }
 
         public bool IsHeadInsideWater { get; set; }
 
@@ -136,7 +140,6 @@ namespace Utopia.Entities.Managers
         public PlayerEntityManager(D3DEngine engine,
                                    CameraManager<ICameraFocused> cameraManager,
                                    WorldFocusManager worldFocusManager,
-                                   ActionsManager actions,
                                    InputsManager inputsManager,
                                    SingleArrayChunkContainer cubesHolder,
                                    PlayerCharacter player,
@@ -150,7 +153,6 @@ namespace Utopia.Entities.Managers
             _d3DEngine = engine;
             _cameraManager = cameraManager;
             _worldFocusManager = worldFocusManager;
-            _actions = actions;
             _inputsManager = inputsManager;
             _cubesHolder = cubesHolder;
             _playerRenderer = playerRenderer;
@@ -186,7 +188,7 @@ namespace Utopia.Entities.Managers
         /// </summary>
         private void inputHandler()
         {
-            if (_actions.isTriggered(Actions.Move_Mode))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Mode))
             {
                 if (_displacementMode == EntityDisplacementModes.Flying)
                 {
@@ -200,7 +202,7 @@ namespace Utopia.Entities.Managers
             
             if (!HasMouseFocus) return; //the editor(s) can acquire the mouseFocus
 
-            if (HandleToolsUse && _actions.isTriggered(Actions.Use_Left))
+            if (HandleToolsUse && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Left))
             {
                 if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool!=null)
                 {
@@ -219,7 +221,7 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (HandleToolsUse && _actions.isTriggered(Actions.Use_Right))
+            if (HandleToolsUse && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right))
             {
                 if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool != null)
                 {
@@ -238,13 +240,13 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (_actions.isTriggered(Actions.EntityUse))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse))
             {
                 //TODO implement use 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
                 //like opening a chest or a door  
             }
 
-            if (_actions.isTriggered(Actions.EntityThrow))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityThrow))
             {
                 //TODO unequip left item and throw it on the ground, (version 0 = place it at newCubeplace, animation later)                
                 // and next, throw the right tool if left tool is already thrown
@@ -258,7 +260,7 @@ namespace Utopia.Entities.Managers
         {
             bool newpicking;
 
-            if (MousepickDisabled || _d3DEngine.MouseCapture)
+            if (MousepickDisabled || _inputsManager.MouseManager.MouseCapture)
             {
                 Vector3D pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
                 newpicking = RefreshPicking(ref pickingPointInLine, ref _lookAt, 1);
@@ -267,7 +269,7 @@ namespace Utopia.Entities.Managers
             {
                 Vector3D mouseWorldPosition;
                 Vector3D mouseLookAtPosition;
-                _inputsManager.UnprojectMouseCursor(out mouseWorldPosition, out mouseLookAtPosition);
+                _inputsManager.MouseManager.UnprojectMouseCursor(out mouseWorldPosition, out mouseLookAtPosition);
                 newpicking = RefreshPicking(ref mouseWorldPosition, ref mouseLookAtPosition, 2);
             }
 
@@ -470,22 +472,22 @@ namespace Utopia.Entities.Managers
 
         private void FreeFirstPersonMove()
         {
-            if (_actions.isTriggered(Actions.Move_Forward))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
                 _worldPosition.Value += _lookAt * _moveDelta;
 
-            if (_actions.isTriggered(Actions.Move_Backward))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
                 _worldPosition.Value -= _lookAt * _moveDelta;
 
-            if (_actions.isTriggered(Actions.Move_StrafeLeft))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
                 _worldPosition.Value -= _entityHeadXAxis * _moveDelta;
 
-            if (_actions.isTriggered(Actions.Move_StrafeRight))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
                 _worldPosition.Value += _entityHeadXAxis * _moveDelta;
 
-            if (_actions.isTriggered(Actions.Move_Down))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Down))
                 _worldPosition.Value += Vector3D.Down * _moveDelta;
 
-            if (_actions.isTriggered(Actions.Move_Up))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Up))
                 _worldPosition.Value += Vector3D.Up * _moveDelta;
         }
 
@@ -497,20 +499,20 @@ namespace Utopia.Entities.Managers
             //Move 3 time slower if not touching ground
             if (!_physicSimu.OnGround) _moveDelta /= 2f;
 
-            if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _actions.isTriggered(Actions.Move_Jump, out jumpPower))
+            if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
                 _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 300 + (200 * jumpPower), 0) });
 
-            if (_actions.isTriggered(Actions.Move_Forward))
-                if (_actions.isTriggered(Actions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f; //Running makes the entity go twice faster
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
+                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f; //Running makes the entity go twice faster
                 else _physicSimu.PrevPosition += _entityZAxis * _moveDelta;
 
-            if (_actions.isTriggered(Actions.Move_Backward))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
                 _physicSimu.PrevPosition -= _entityZAxis * _moveDelta;
 
-            if (_actions.isTriggered(Actions.Move_StrafeLeft))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
                 _physicSimu.PrevPosition += _entityXAxis * _moveDelta;
 
-            if (_actions.isTriggered(Actions.Move_StrafeRight))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
                 _physicSimu.PrevPosition -= _entityXAxis * _moveDelta;
         }
         #endregion
@@ -518,9 +520,9 @@ namespace Utopia.Entities.Managers
         #region Head + Body Rotation management
         private void EntityRotationsOnEvents(EntityDisplacementModes mode)
         {
-            if (_d3DEngine.MouseCapture)
+            if (_inputsManager.MouseManager.MouseCapture)
             {
-                Rotate(_inputsManager.MouseMoveDelta.X, _inputsManager.MouseMoveDelta.Y, 0.0f, mode);
+                Rotate(_inputsManager.MouseManager.MouseMoveDelta.X, _inputsManager.MouseManager.MouseMoveDelta.Y, 0.0f, mode);
             }
         }
 
@@ -669,7 +671,7 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// The allocated object here must be disposed
         /// </summary>
-        public override void LoadContent()
+        public override void LoadContent(DeviceContext Context)
         {
             _playerRenderer.LoadContent();
         }
@@ -688,7 +690,7 @@ namespace Utopia.Entities.Managers
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
         }
 
-        public override void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
+        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
             //TODO FIXME NAsty bug here, not a number float arithmetic exception sometimes - surely a server side fix to do !
             Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
@@ -706,7 +708,7 @@ namespace Utopia.Entities.Managers
 
         public override void Draw(DeviceContext context, int index)
         {
-            _playerRenderer.Draw(index);
+            _playerRenderer.Draw(context, index);
         }
 
         #endregion
@@ -721,5 +723,11 @@ namespace Utopia.Entities.Managers
                                                                                   Player._entityState.IsBlockPicked ? Player._entityState.NewBlockPosition.ToString() : "None"
                                                                                   );
         }
+
+
+
+
+
+
     }
 }

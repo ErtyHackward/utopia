@@ -6,7 +6,6 @@ using Sandbox.Client.GUI.Forms.CustControls;
 using Utopia.Network;
 using System.Threading;
 using Utopia.Settings;
-using S33M3Engines.D3D;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -32,8 +31,6 @@ namespace Sandbox.Client.GUI.Forms
         {
             Interval = 50
         };
-
-        public GameExitReasonMessage ExitReason { get; set; }
 
         public WelcomeScreen(ServerComponent server, bool withFadeIn)
         {
@@ -386,23 +383,9 @@ namespace Sandbox.Client.GUI.Forms
             Data = new FormData();
             Data.RequestAction = FormRequestedAction.ExitGame;
         }
-
-        private void AnalyseExitReason(GameExitReasonMessage exitReason)
-        {
-            if (exitReason.GameExitReason == S33M3Engines.D3D.ExitReason.Error)
-            {
-                this.ChildContainer.Controls.Clear();
-                this.ChildContainer.BackColor = Color.FromArgb(0, 255, 255, 255);
-                this.ChildContainer.Controls.Add(_errorMsg);
-
-                _errorMsg.Message.Text = exitReason.MainMessage;
-                _errorMsg.MessageDetail.Text = exitReason.DetailedMessage;
-            }
-        }
-
+        
         private void WelcomeScreen_Shown(object sender, EventArgs e)
         {
-            AnalyseExitReason(ExitReason);
         }
 
     }

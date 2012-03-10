@@ -23,12 +23,12 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
     {
         #region Private variable
         private CreateLandScapeDelegate _createLandScapeDelegate;
-        private delegate object CreateLandScapeDelegate(object chunk);
+        private delegate void CreateLandScapeDelegate(VisualChunk chunk);
         private WorldGenerator _worldGenerator;
         private ServerComponent _server;
         private Dictionary<long, ChunkDataMessage> _receivedServerChunks;
         private IChunkStorageManager _chunkStorageManager;
-        private S33M3Engines.Timers.TimerManager.GameTimer _timer;
+        private TimerManager.GameTimer _timer;
         #endregion
 
 
@@ -244,7 +244,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
             if (Async)
             {
-                WorkQueue.DoWorkInThread(new WorkItemCallback(createLandScape_threaded), chunk, chunk as IThreadStatus, chunk.ThreadPriority);
+                chunk.ThreadStatus = ThreadStatus.Locked;
+                SmartThread.ThreadPool.QueueWorkItem(createLandScape_threaded, chunk, chunk.ThreadPriority);
             }
             else
             {
@@ -254,9 +255,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         }
 
         //Create the landscape for the chunk
-        private object createLandScape_threaded(object chunk)
+        private void createLandScape_threaded(VisualChunk visualChunk)
         {
-            VisualChunk visualChunk = (VisualChunk)chunk;
             GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
             
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
@@ -266,8 +266,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
             visualChunk.State = ChunkState.LandscapeCreated;
             visualChunk.ThreadStatus = ThreadStatus.Idle;
-
-            return null;
         }
 
         private void CreateVisualEntities(AbstractChunk source, VisualChunk target)

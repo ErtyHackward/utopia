@@ -51,7 +51,7 @@ namespace Utopia.Worlds.Chunks
                 _chunkDrawByFrame = 0;
 
                 RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-                DrawSolidFaces();
+                DrawSolidFaces(context);
 #if DEBUG
                 DrawDebug();
 #endif
@@ -71,14 +71,14 @@ namespace Utopia.Worlds.Chunks
                     //Head inside Water block, draw back faces only
                     RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.CullFront, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
                 }
-                DefaultDrawLiquid();
+                DefaultDrawLiquid(context);
                 return;
             }
 
             if (index == ENTITIES_DRAW)
             {
                 RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-                DrawStaticEntities();
+                DrawStaticEntities(context);
                 return;
             }
 
@@ -142,7 +142,7 @@ namespace Utopia.Worlds.Chunks
                         _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _liquidEffect.CBPerDraw.IsDirty = true;
                         _liquidEffect.Apply(context);
-                        chunk.DrawLiquidFaces();
+                        chunk.DrawLiquidFaces(context);
                     }
                 }
             }
@@ -180,7 +180,7 @@ namespace Utopia.Worlds.Chunks
                 {
                     if (!chunk.isFrustumCulled)
                     {
-                        chunk.DrawStaticEntities();
+                        chunk.DrawStaticEntities(context);
                     }
                 }
             }

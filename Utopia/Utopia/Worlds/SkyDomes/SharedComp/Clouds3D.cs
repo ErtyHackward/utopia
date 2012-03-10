@@ -115,7 +115,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             //_weather.Wind.WindFlow.X
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
+        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
         {
             Vector2.Lerp(ref _cloud_MapOffset.ValuePrev, ref _cloud_MapOffset.Value, interpolation_ld, out _cloud_MapOffset.ValueInterp);
         }
@@ -127,8 +127,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             Vector2 CloudsMapOffset = _cloud_MapOffset.ValueInterp - m_camera_pos;                      //Speed * Time = Distance
             Vector2 CloudsMapOffsetWithCamera = -(CloudsMapOffset - m_camera_pos); //Je retire la position de ma caméra, pour compenser le mouvement de la caméra
-            Location2<int> center_of_drawing_in_noise_i = new Location2<int>((int)(CloudsMapOffsetWithCamera.X / _cloud_size), (int)(CloudsMapOffsetWithCamera.Y / _cloud_size));
-            Vector2 world_center_of_drawing_in_noise_f = new Vector2(center_of_drawing_in_noise_i.X * _cloud_size, center_of_drawing_in_noise_i.Z * _cloud_size) + CloudsMapOffset;
+            Vector2I center_of_drawing_in_noise_i = new Vector2I((int)(CloudsMapOffsetWithCamera.X / _cloud_size), (int)(CloudsMapOffsetWithCamera.Y / _cloud_size));
+            Vector2 world_center_of_drawing_in_noise_f = new Vector2(center_of_drawing_in_noise_i.X * _cloud_size, center_of_drawing_in_noise_i.Y * _cloud_size) + CloudsMapOffset;
 
             int _cloudMapXIndex, _cloudMapZIndex;
             _nbrIndices = 0;
@@ -158,12 +158,12 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             {
                 for (int xi = -_cloudMap_size; xi < _cloudMap_size; xi++)
                 {
-                    Location2<int> p_in_noise_i = new Location2<int>(xi + center_of_drawing_in_noise_i.X, zi + center_of_drawing_in_noise_i.Z);
+                    Vector2I p_in_noise_i = new Vector2I(xi + center_of_drawing_in_noise_i.X, zi + center_of_drawing_in_noise_i.Y);
 
                     Vector2 p0 = new Vector2(xi, zi) * _cloud_size + world_center_of_drawing_in_noise_f;
 
                     _cloudMapXIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize);
-                    _cloudMapZIndex = MathHelper.Mod(p_in_noise_i.Z, _cloudMapSize);
+                    _cloudMapZIndex = MathHelper.Mod(p_in_noise_i.Y, _cloudMapSize);
                     if (!_cloudMap[_cloudMapXIndex + (_cloudMapZIndex*_cloudMapSize)]) continue;
                     //var noiseResult = _noise.GetNoise2DValue(p_in_noise_i.X, p_in_noise_i.Z, 2, 0.9);
                     //float noiseValue = MathHelper.FullLerp(0, 1, noiseResult);
@@ -187,7 +187,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                                 _faces[3].Position.X = rx; _faces[3].Position.Y = ry; _faces[3].Position.Z = -rz; _faces[3].Color = _topFace;
                                 break;
                             case 1: // back
-                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Z - 1, _cloudMapSize)) * _cloudMapSize);
+                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Y - 1, _cloudMapSize)) * _cloudMapSize);
                                 if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
 
                                 _faces[0].Position.X = -rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = -rz; _faces[0].Color = _side1Face;
@@ -196,7 +196,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                                 _faces[3].Position.X = -rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = -rz; _faces[3].Color = _side1Face;
                                 break;
                             case 2: //right
-                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X + 1, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Z, _cloudMapSize)) * _cloudMapSize);
+                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X + 1, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Y, _cloudMapSize)) * _cloudMapSize);
                                 if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
                                 _faces[0].Position.X = rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = -rz; _faces[0].Color = _side2Face;
                                 _faces[1].Position.X = rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = rz; _faces[1].Color = _side2Face;
@@ -204,7 +204,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                                 _faces[3].Position.X = rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = -rz; _faces[3].Color = _side2Face;
                                 break;
                             case 3: // front
-                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Z + 1, _cloudMapSize)) * _cloudMapSize);
+                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Y + 1, _cloudMapSize)) * _cloudMapSize);
                                 if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
                                 _faces[0].Position.X = rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = rz; _faces[0].Color = _side1Face;
                                 _faces[1].Position.X = -rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = rz; _faces[1].Color = _side1Face;
@@ -212,7 +212,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                                 _faces[3].Position.X = rx; _faces[3].Position.Y = -ry; _faces[3].Position.Z = rz; _faces[3].Color = _side1Face;
                                 break;
                             case 4: // left
-                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X - 1, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Z, _cloudMapSize)) * _cloudMapSize);
+                                neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X - 1, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Y, _cloudMapSize)) * _cloudMapSize);
                                 if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
                                 _faces[0].Position.X = -rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = rz; _faces[0].Color = _side2Face;
                                 _faces[1].Position.X = -rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = -rz; _faces[1].Color = _side2Face;

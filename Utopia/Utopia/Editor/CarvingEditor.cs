@@ -1,26 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Nuclex.UserInterface;
-using S33M3Engines;
-using S33M3Engines.Cameras;
-using S33M3Engines.D3D;
-using S33M3Engines.InputHandler;
-using S33M3Engines.InputHandler.MouseHelper;
-using S33M3Engines.Shared.Math;
-using S33M3Engines.StatesManager;
-using S33M3Engines.Struct.Vertex;
-using S33M3Engines.Textures;
-using S33M3Engines.WorldFocus;
 using SharpDX;
 using SharpDX.Direct3D11;
-using Utopia.Action;
 using Utopia.Effects.Shared;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
-using Utopia.GUI.D3D;
-using Utopia.InputManager;
 using Utopia.Resources.Effects.Terran;
 using Utopia.Settings;
 using Utopia.Shared.Entities.Concrete;
@@ -133,7 +119,7 @@ namespace Utopia.Editor
     //    }
 
 
-    //    public override void LoadContent()
+    //    public override void LoadContent(DeviceContext Context)
     //    {
     //        String[] dirs = new[] {ClientSettings.TexturePack + @"Terran/", ClientSettings.TexturePack + @"Editor/"};
 

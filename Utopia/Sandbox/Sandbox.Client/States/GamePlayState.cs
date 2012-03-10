@@ -16,6 +16,10 @@ using S33M3_CoreComponents.Cameras;
 using S33M3_CoreComponents.Timers;
 using S33M3_CoreComponents.Inputs;
 using S33M3_CoreComponents.GUI;
+using SharpDX.Direct3D11;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using Utopia.GUI.Inventory;
+using Utopia.GUI.Map;
 
 namespace Sandbox.Client.States
 {
@@ -34,9 +38,9 @@ namespace Sandbox.Client.States
             _ioc = ioc;
         }
 
-        public override void Initialize()
+        public override void Initialize(DeviceContext context)
         {
-            var cameraManager = _ioc.Get<CameraManager>();
+            var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
             var timerManager = _ioc.Get<TimerManager>();
             var inputsManager = _ioc.Get<InputsManager>();
             var guiManager = _ioc.Get<GuiManager>();
@@ -67,7 +71,6 @@ namespace Sandbox.Client.States
             AddComponent(inventory);
             AddComponent(chat);
             AddComponent(map);
-            AddComponent(fps);
             //AddComponent(entityEditor);
             //AddComponent(carvingEditor);
             AddComponent(skyDome);
@@ -75,23 +78,14 @@ namespace Sandbox.Client.States
             AddComponent(weather);
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
-            AddComponent(debugInfo);
+
+            base.Initialize(context);
         }
 
         public override void OnEnabled(GameState previousState)
         {
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             playerEntityManager.EnableComponent();
-
-            var debugInfo = _ioc.Get<DebugInfo>();
-            debugInfo.Activated = true;
-            debugInfo.SetComponants(
-                _ioc.Get<FPS>(),
-                _ioc.Get<IClock>(),
-                _ioc.Get<IWorldChunks>(),
-                _ioc.Get<PlayerEntityManager>(),
-                _ioc.Get<GuiManager>()
-                );
 
             base.OnEnabled(previousState);
         }

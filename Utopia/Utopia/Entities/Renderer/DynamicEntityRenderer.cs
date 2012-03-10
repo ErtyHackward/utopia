@@ -19,6 +19,7 @@ using S33M3_CoreComponents.WorldFocus;
 using S33M3_Resources.Struct.Vertex;
 using S33M3_DXEngine.Textures;
 using S33M3_DXEngine.Main;
+using S33M3_DXEngine.RenderStates;
 
 namespace Utopia.Entities.Renderer
 {
@@ -103,7 +104,7 @@ namespace Utopia.Entities.Renderer
         {
         }
 
-        public void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
+        public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
         }
         #endregion

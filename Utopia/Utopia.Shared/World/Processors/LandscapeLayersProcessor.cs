@@ -80,7 +80,7 @@ namespace Utopia.Shared.World.Processors
         {
             _totalChunks = generationRange.Count;
             _chunksDone = 0;
-            Range<int> chunkWorldRange;
+            RangeI chunkWorldRange;
 
             generationRange.Foreach(pos =>
             {
@@ -89,7 +89,7 @@ namespace Utopia.Shared.World.Processors
 
                 //var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
 
-                chunkWorldRange = new Range<int>() { Min = new Location3<int>(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z), Max = new Location3<int>((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
+                chunkWorldRange = new RangeI() { Min = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z), Max = new Vector3I((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
 
                 TerraForming(chunk, ref chunkWorldRange, r);
 
@@ -98,7 +98,7 @@ namespace Utopia.Shared.World.Processors
             });
         }
 
-        private void TerraForming(GeneratedChunk chunk, ref Range<int> workingRange, FastRandom randomizer)
+        private void TerraForming(GeneratedChunk chunk, ref RangeI workingRange, FastRandom randomizer)
         {
             byte cubeId;
             int index;

@@ -202,7 +202,7 @@ namespace Utopia.Editor
     //    }
 
 
-    //    public override void LoadContent()
+    //    public override void LoadContent(DeviceContext Context)
     //    {
     //        String[] dirs = new[] { ClientSettings.TexturePack + @"Terran/", ClientSettings.TexturePack + @"Editor/" };
 

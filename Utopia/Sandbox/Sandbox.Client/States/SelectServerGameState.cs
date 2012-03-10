@@ -5,7 +5,8 @@ using Sandbox.Client.Components;
 using Sandbox.Shared.Web;
 using Sandbox.Shared.Web.Responces;
 using Utopia;
-using Utopia.GUI.D3D;
+using S33M3_CoreComponents.States;
+using S33M3_CoreComponents.GUI;
 
 namespace Sandbox.Client.States
 {
@@ -20,26 +21,27 @@ namespace Sandbox.Client.States
             get { return "SelectServer"; }
         }
 
-        public SelectServerGameState(IKernel iocContainer)
+        public SelectServerGameState(GameStatesManager stateManager, IKernel iocContainer)
+            :base(stateManager)
         {
             _iocContainer = iocContainer;
         }
 
-        public override void Initialize()
+        public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
             var gui = _iocContainer.Get<GuiManager>();
             var selection = _iocContainer.Get<ServerSelectionComponent>();
             var webApi = _iocContainer.Get<ClientWebApi>();
 
-            EnabledComponents.Add(gui);
-            EnabledComponents.Add(selection);
-
-            VisibleComponents.Add(gui);
+            GameComponents.Add(gui);
+            GameComponents.Add(selection);
 
             selection.BackPressed += SelectionBackPressed;
             selection.ConnectPressed += SelectionConnectPressed;
 
             webApi.ServerListReceived += WebApiServerListReceived;
+
+            base.Initialize(context);
         }
 
         void SelectionConnectPressed(object sender, EventArgs e)

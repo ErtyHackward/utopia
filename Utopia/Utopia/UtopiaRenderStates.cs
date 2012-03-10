@@ -37,6 +37,9 @@ using S33M3_CoreComponents.Inputs.Actions;
 using S33M3_CoreComponents.GUI;
 using System.Windows.Forms;
 using S33M3_DXEngine.Main.Interfaces;
+using S33M3_CoreComponents.Cameras;
+using Utopia.GUI.Inventory;
+using Utopia.GUI.Map;
 
 namespace Utopia
 {
@@ -49,7 +52,7 @@ namespace Utopia
         public VisualWorldParameters visualWorldParameters;
         public GameStatesManager gameStatesManager;
         public ICamera firstPersonCamera;
-        public CameraManager cameraManager;
+        public CameraManager<ICameraFocused> cameraManager;
         public TimerManager timerManager;
         public EntityMessageTranslator entityMessageTranslator;
         public ItemMessageTranslator itemMessageTranslator;

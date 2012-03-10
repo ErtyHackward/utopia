@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
-using S33M3Engines.D3D.DebugTools;
+using S33M3_DXEngine.Main.Interfaces;
+using S33M3_DXEngine.Debug.Interfaces;
 
 namespace Utopia.Worlds.GameClocks
 {
-    public interface IClock : IUpdateableComponent, IGameComponent, IDebugInfo
+    public interface IClock : IUpdatableComponent, IGameComponent, IDebugInfo
     {
         Clock.VisualClockTime ClockTime { get; set; }
     }
