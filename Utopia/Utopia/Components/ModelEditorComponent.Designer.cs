@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Nuclex.UserInterface;
-using Nuclex.UserInterface.Controls;
-using Nuclex.UserInterface.Controls.Desktop;
 using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
@@ -353,7 +350,7 @@ namespace Utopia.Components
                 if (mapping.BlockColors[i].Alpha == 0)
                     break;
 
-                var colorControl = new ColorButtonControl { Bounds = new UniRectangle(0, 0, 20, 20), Name = "color" + i, Color = new Shared.Structs.Color(mapping.BlockColors[i].ToVector3()), Sticked = i == selectedColorIndex };
+                var colorControl = new ColorButtonControl { Bounds = new UniRectangle(0, 0, 20, 20), Name = "color" + i, Color = mapping.BlockColors[i], Sticked = i == selectedColorIndex };
                 colorControl.Pressed += OnColorSelected;
                 _colorPalette.Add(colorControl);
 

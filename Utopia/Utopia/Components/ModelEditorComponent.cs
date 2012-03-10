@@ -20,6 +20,9 @@ using S33M3_CoreComponents.Inputs.Actions;
 using S33M3_CoreComponents.GUI.Nuclex;
 using S33M3_CoreComponents.GUI.Nuclex.Controls;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
+using System.Windows.Forms;
+using S33M3_CoreComponents.Inputs;
+using S33M3_DXEngine.RenderStates;
 
 namespace Utopia.Components
 {
@@ -30,6 +33,7 @@ namespace Utopia.Components
     {
         #region Fields
 
+        private readonly InputsManager _inputManager;
         private readonly D3DEngine _d3DEngine;
         private HLSLColorLine _lines3DEffect;
         private SpriteFont _font;
@@ -62,7 +66,6 @@ namespace Utopia.Components
         private VertexBuffer<VertexPosition> _crosshairVertexBuffer;
 
         private HLSLVoxelModel _voxelEffect;
-        private MouseState _prevState;
 
         // view parameters
         private ViewParameters _mainViewData;
@@ -85,7 +88,7 @@ namespace Utopia.Components
         private readonly VoxelMeshFactory _meshFactory;
         private readonly GuiManager _gui;
         private readonly ActionsManager _actions;
-        private readonly List<Control> _controls = new List<Control>();
+        private readonly List<S33M3_CoreComponents.GUI.Nuclex.Controls.Control> _controls = new List<S33M3_CoreComponents.GUI.Nuclex.Controls.Control>();
 
         private int _selectedFrameIndex;
         private int _selectedPartIndex;
@@ -327,8 +330,9 @@ namespace Utopia.Components
         /// <param name="manager"> </param>
         /// <param name="meshFactory"> </param>
         /// <param name="gui"> </param>
-        public ModelEditorComponent(D3DEngine d3DEngine, MainScreen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, GuiManager gui)
+        public ModelEditorComponent(D3DEngine d3DEngine, MainScreen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, GuiManager gui, InputsManager inputManager)
         {
+            _inputManager = inputManager;
             _d3DEngine = d3DEngine;
             _screen = screen;
             _manager = manager;
@@ -1087,7 +1091,7 @@ namespace Utopia.Components
 
         #endregion
 
-        public override void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
+        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
             if (_instance != null)
                 _instance.Update(ref timePassed);
@@ -1101,25 +1105,21 @@ namespace Utopia.Components
         {
             if (_visualVoxelModel == null || !_d3DEngine.HasFocus || DialogHelper.DialogBg.Parent != null) return;
 
-            if (GuiManager.DialogClosed)
-                _prevState = Mouse.GetState();
-
             if (_gui.Screen.IsMouseOverGui)
             {
                 return;
             }
 
-            var mouseState = Mouse.GetState();
-            var keyboardState = Keyboard.GetState();
+            _flipAxis = _inputManager.KeyboardManager.CurKeyboardState.IsKeyDown(Keys.ShiftKey);
 
-            _flipAxis = keyboardState.IsKeyDown(Keys.ShiftKey);
-
-            var dx = ((float)mouseState.X - _prevState.X) / 100;
-            var dy = ((float)mouseState.Y - _prevState.Y) / 100;
+            var dx = (_inputManager.MouseManager.MouseMoveDelta.X) / 100.0f;
+            var dy = (_inputManager.MouseManager.MouseMoveDelta.Y) / 100.0f;
             
-            if (mouseState.MiddleButton == ButtonState.Pressed && _prevState.X != 0 && _prevState.Y != 0)
+            if (_inputManager.MouseManager.CurMouseState.MiddleButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Pressed &&
+                _inputManager.MouseManager.PrevMouseState.X != 0 &&
+                _inputManager.MouseManager.PrevMouseState.Y != 0)
             {
-                if (keyboardState.IsKeyDown(Keys.ShiftKey))
+                if (_inputManager.KeyboardManager.CurKeyboardState.IsKeyDown(Keys.ShiftKey))
                 {
                     // translate
                     _currentViewData.Translate.X -= dx;
@@ -1133,9 +1133,7 @@ namespace Utopia.Components
                 }
             }
 
-            _currentViewData.Scale -= ((float)_prevState.ScrollWheelValue - mouseState.ScrollWheelValue) / 10000;
-
-
+            _currentViewData.Scale -= (_inputManager.MouseManager.ScroolWheelDeltaValue / 10000.0f);
 
             switch (Mode)
             {
@@ -1160,18 +1158,18 @@ namespace Utopia.Components
                             var center = new Vector3((bb.Maximum.X - bb.Minimum.X)/2,(bb.Maximum.Y - bb.Minimum.Y)/2,(bb.Maximum.Z - bb.Minimum.Z)/2) + partState.Transform.TranslationVector;
                             _translatePlane = new Plane(center, _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
 
-                            if (mouseState.LeftButton == ButtonState.Released)
+                            if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Released)
                             {
                                 _translatePoint = null;
                                 // recalculate state bounding box
                                 state.UpdateBoundingBox();
                             }
 
-                            if (mouseState.LeftButton == ButtonState.Pressed)
+                            if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
                             {
                                 Vector3D mPosition, mLookAt;
                                 var worldViewProjection = _transform * _viewProjection;
-                                InputsManager.UnprojectMouseCursor(_d3DEngine, ref worldViewProjection, out mPosition, out mLookAt);
+                                _inputManager.MouseManager.UnprojectMouseCursor(ref worldViewProjection, out mPosition, out mLookAt);
                                 var r = new Ray(mPosition.AsVector3(), mLookAt.AsVector3());
 
                                 Vector3 intersectPoint;
@@ -1188,7 +1186,7 @@ namespace Utopia.Components
 
                                 var translationVector = intersectPoint - _translatePoint.Value;
 
-                                if (keyboardState.IsKeyDown(Keys.Alt))
+                                if (_inputManager.KeyboardManager.CurKeyboardState.IsKeyDown(Keys.Alt))
                                 {
                                     _translatePoint = intersectPoint;
                                 }
@@ -1226,7 +1224,8 @@ namespace Utopia.Components
 
                         GetSelectedCube(out _pickedCube, out _newCube);
 
-                        if (mouseState.LeftButton == ButtonState.Released && _prevState.LeftButton == ButtonState.Pressed)
+                        if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Released && 
+                            _inputManager.MouseManager.PrevMouseState.LeftButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
                         {
                             if (_pickedCube.HasValue)
                             {
@@ -1252,7 +1251,8 @@ namespace Utopia.Components
                                 RebuildFrameVertices();
                             }
                         }
-                        else if (mouseState.RightButton == ButtonState.Released && _prevState.RightButton == ButtonState.Pressed)
+                        else if (_inputManager.MouseManager.CurMouseState.RightButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Released && 
+                                 _inputManager.MouseManager.PrevMouseState.RightButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
                         {
                             if (_newCube.HasValue)
                             {
@@ -1277,8 +1277,6 @@ namespace Utopia.Components
                     throw new ArgumentOutOfRangeException();
             }
             
-            _prevState = mouseState;
-
             base.Update(timeSpent);
         }
 
@@ -1314,7 +1312,7 @@ namespace Utopia.Components
 
             var worldViewProjection = _transform * _viewProjection;
 
-            InputsManager.UnprojectMouseCursor(_d3DEngine, ref worldViewProjection, out mPosition, out mLookAt);
+            _inputManager.MouseManager.UnprojectMouseCursor(ref worldViewProjection, out mPosition, out mLookAt);
 
             if (double.IsNaN(mPosition.X) || double.IsNaN(mLookAt.X))
             {
@@ -1494,9 +1492,9 @@ namespace Utopia.Components
 
             switch (Mode)
             {
-                case EditorMode.ModelView: DrawModelView(); break;
-                case EditorMode.ModelLayout: DrawModelLayout(); break;
-                case EditorMode.FrameEdit: DrawFrameEdit(); break;
+                case EditorMode.ModelView: DrawModelView(context); break;
+                case EditorMode.ModelLayout: DrawModelLayout(context); break;
+                case EditorMode.FrameEdit: DrawFrameEdit(context); break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1519,18 +1517,18 @@ namespace Utopia.Components
             RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             //Set Effect variables
-            _lines3DEffect.Begin();
+            _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
             _lines3DEffect.CBPerDraw.Values.Color = color;
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(size) * Matrix.Translation(min) * _transform); //Matrix.Translation(new Vector3(-0.5f,-0.5f,-0.5f)) *
             _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
             _lines3DEffect.CBPerDraw.IsDirty = true;
-            _lines3DEffect.Apply();
+            _lines3DEffect.Apply(_d3DEngine.ImmediateContext);
 
             //Set the vertex buffer to the Graphical Card.
-            _boxVertexBuffer.SetToDevice(0);
-            _boxIndexBuffer.SetToDevice(0);
+            _boxVertexBuffer.SetToDevice(_d3DEngine.ImmediateContext, 0);
+            _boxIndexBuffer.SetToDevice(_d3DEngine.ImmediateContext, 0);
 
-            _d3DEngine.Context.DrawIndexed(24, 0, 0); 
+            _d3DEngine.ImmediateContext.DrawIndexed(24, 0, 0); 
         }
 
         private void DrawCrosshair(Vector3 position, float size, bool turnAxis)
@@ -1545,37 +1543,37 @@ namespace Utopia.Components
             }
 
             //Set Effect variables
-            _lines3DEffect.Begin();
+            _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
             _lines3DEffect.CBPerDraw.Values.Color = new Color4(0,1,0,1);
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform);
             _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
             _lines3DEffect.CBPerDraw.IsDirty = true;
-            _lines3DEffect.Apply();
+            _lines3DEffect.Apply(_d3DEngine.ImmediateContext);
 
             //Set the vertex buffer to the Graphical Card.
-            _crosshairVertexBuffer.SetToDevice(0);
-            
-            _d3DEngine.Context.Draw(4, 0); 
+            _crosshairVertexBuffer.SetToDevice(_d3DEngine.ImmediateContext, 0);
+
+            _d3DEngine.ImmediateContext.Draw(4, 0); 
         }
 
-        private void DrawModelView()
+        private void DrawModelView(DeviceContext context)
         {
             // draw the model
             if (_visualVoxelModel != null)
             {
                 RenderStatesRepo.ApplyRaster(GameDXStates.DXStates.Rasters.Default);
 
-                _voxelEffect.Begin();
+                _voxelEffect.Begin(context);
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                 _voxelEffect.CBPerFrame.IsDirty = true;
-                _voxelEffect.Apply();
+                _voxelEffect.Apply(context);
 
-                _visualVoxelModel.Draw(_voxelEffect, _instance.State);
+                _visualVoxelModel.Draw(context, _voxelEffect, _instance.State);
             }
         }
 
-        private void DrawModelLayout()
+        private void DrawModelLayout(DeviceContext context)
         {
             if (_visualVoxelModel != null)
             {
@@ -1605,14 +1603,14 @@ namespace Utopia.Components
                     var vb = visualParts[i].VertexBuffers[voxelModelPartState.ActiveFrame];
                     var ib = visualParts[i].IndexBuffers[voxelModelPartState.ActiveFrame];
 
-                    _voxelEffect.Begin();
+                    _voxelEffect.Begin(context);
                     _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
                     _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                     _voxelEffect.CBPerFrame.IsDirty = true;
-                    _voxelEffect.Apply();
+                    _voxelEffect.Apply(context);
 
-                    vb.SetToDevice(0);
-                    ib.SetToDevice(0);
+                    vb.SetToDevice(context, 0);
+                    ib.SetToDevice(context, 0);
 
                     if (model.Parts[i].ColorMapping != null)
                     {
@@ -1622,9 +1620,9 @@ namespace Utopia.Components
 
                     _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform);
                     _voxelEffect.CBPerPart.IsDirty = true;
-                    _voxelEffect.Apply();
+                    _voxelEffect.Apply(context);
 
-                    _d3DEngine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
+                    context.DrawIndexed(ib.IndicesCount, 0, 0);
                 }
 
                 // draw bounding boxes
@@ -1651,9 +1649,9 @@ namespace Utopia.Components
             }
         }
 
-        private void DrawGrid()
+        private void DrawGrid(DeviceContext context)
         {
-            _lines3DEffect.Begin();
+            _lines3DEffect.Begin(context);
             _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
             _lines3DEffect.CBPerDraw.Values.Color = new Color4(1, 1, 1, 0.1f);
 
@@ -1664,7 +1662,7 @@ namespace Utopia.Components
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationX((float)Math.PI/2) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
-            _lines3DEffect.Apply();
+            _lines3DEffect.Apply(context);
 
             var bottomNormal = Vector3.TransformNormal(_gridBottomNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform);
@@ -1672,15 +1670,15 @@ namespace Utopia.Components
             var dot = Vector3.Dot(viewVector, bottomNormal);
             if (dot > 0)
             {
-                _xGridVertextBuffer.SetToDevice(0);
-                _d3DEngine.Context.Draw(_xGridVertextBuffer.VertexCount, 0);
+                _xGridVertextBuffer.SetToDevice(context, 0);
+                context.Draw(_xGridVertextBuffer.VertexCount, 0);
             }
 
             point = new Vector3(0, _gridSize.Y, 0);
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationX((float)Math.PI / 2) * Matrix.Translation(0,_gridSize.Y,0) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
-            _lines3DEffect.Apply();
+            _lines3DEffect.Apply(context);
 
             var topNormal = Vector3.TransformNormal(_gridTopNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform);
@@ -1688,8 +1686,8 @@ namespace Utopia.Components
             dot = Vector3.Dot(viewVector, topNormal);
             if (dot > 0)
             {
-                _xGridVertextBuffer.SetToDevice(0);
-                _d3DEngine.Context.Draw(_xGridVertextBuffer.VertexCount, 0);
+                _xGridVertextBuffer.SetToDevice(context, 0);
+                context.Draw(_xGridVertextBuffer.VertexCount, 0);
             }
             // x-y
 
@@ -1697,30 +1695,30 @@ namespace Utopia.Components
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(_transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
-            _lines3DEffect.Apply();
+            _lines3DEffect.Apply(context);
             var backNormal = Vector3.TransformNormal(_gridBackNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, backNormal);
             if (dot > 0)
             {
-                _yGridVertextBuffer.SetToDevice(0);
-                _d3DEngine.Context.Draw(_yGridVertextBuffer.VertexCount, 0);
+                _yGridVertextBuffer.SetToDevice(context, 0);
+                context.Draw(_yGridVertextBuffer.VertexCount, 0);
             }
 
             point = new Vector3(0, 0, _gridSize.Z);
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Translation(0, 0, _gridSize.Z) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
-            _lines3DEffect.Apply();
+            _lines3DEffect.Apply(context);
             var frontNormal = Vector3.TransformNormal(_gridFrontNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform);
             viewVector = eye - point;
             dot = Vector3.Dot(viewVector, frontNormal);
             if (dot > 0)
             {
-                _yGridVertextBuffer.SetToDevice(0);
-                _d3DEngine.Context.Draw(_yGridVertextBuffer.VertexCount, 0);
+                _yGridVertextBuffer.SetToDevice(context, 0);
+                context.Draw(_yGridVertextBuffer.VertexCount, 0);
             }
             // z-y
 
@@ -1728,7 +1726,7 @@ namespace Utopia.Components
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationY(-(float)Math.PI / 2) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
-            _lines3DEffect.Apply();
+            _lines3DEffect.Apply(context);
 
             var leftNormal = Vector3.TransformNormal(_gridLeftNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform);
@@ -1736,15 +1734,15 @@ namespace Utopia.Components
             dot = Vector3.Dot(viewVector, leftNormal);
             if (dot > 0)
             {
-                _zGridVertextBuffer.SetToDevice(0);
-                _d3DEngine.Context.Draw(_zGridVertextBuffer.VertexCount, 0);
+                _zGridVertextBuffer.SetToDevice(context, 0);
+                context.Draw(_zGridVertextBuffer.VertexCount, 0);
             }
 
             point = new Vector3(_gridSize.X,0,0);
 
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.RotationY(-(float)Math.PI / 2) * Matrix.Translation(_gridSize.X, 0 , 0) * _transform);
             _lines3DEffect.CBPerDraw.IsDirty = true;
-            _lines3DEffect.Apply();
+            _lines3DEffect.Apply(context);
 
             var rightNormal = Vector3.TransformNormal(_gridRightNormal, _transform);
             point = Vector3.TransformCoordinate(point, _transform);
@@ -1752,12 +1750,12 @@ namespace Utopia.Components
             dot = Vector3.Dot(viewVector, rightNormal);
             if (dot > 0)
             {
-                _zGridVertextBuffer.SetToDevice(0);
-                _d3DEngine.Context.Draw(_zGridVertextBuffer.VertexCount, 0);
+                _zGridVertextBuffer.SetToDevice(context, 0);
+                context.Draw(_zGridVertextBuffer.VertexCount, 0);
             }
         }
 
-        private void DrawFrameEdit()
+        private void DrawFrameEdit(DeviceContext context)
         {
             if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
             {
@@ -1771,7 +1769,7 @@ namespace Utopia.Components
                     BuildGrid(frame.BlockData.ChunkSize);
                 }
 
-                DrawGrid();
+                DrawGrid(context);
 
                 #endregion
 
@@ -1789,15 +1787,15 @@ namespace Utopia.Components
                 var vb = visualParts[SelectedPartIndex].VertexBuffers[SelectedFrameIndex];
                 var ib = visualParts[SelectedPartIndex].IndexBuffers[SelectedFrameIndex];
 
-                _voxelEffect.Begin();
+                _voxelEffect.Begin(context);
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                 _voxelEffect.CBPerFrame.Values.LightDirection = new Vector3(1, 1, 1);
                 _voxelEffect.CBPerFrame.IsDirty = true;
-                _voxelEffect.Apply();
+                _voxelEffect.Apply(context);
 
-                vb.SetToDevice(0);
-                ib.SetToDevice(0);
+                vb.SetToDevice(context,0);
+                ib.SetToDevice(context,0);
 
                 if (model.Parts[SelectedPartIndex].ColorMapping != null)
                 {
@@ -1807,9 +1805,9 @@ namespace Utopia.Components
 
                 _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Identity);
                 _voxelEffect.CBPerPart.IsDirty = true;
-                _voxelEffect.Apply();
+                _voxelEffect.Apply(context);
 
-                _d3DEngine.Context.DrawIndexed(ib.IndicesCount, 0, 0);
+                context.DrawIndexed(ib.IndicesCount, 0, 0);
 
                 
                 if (_pickedCube != null)
@@ -1834,8 +1832,8 @@ namespace Utopia.Components
                     _xGridVertextBuffer.Dispose();
                 var list = new List<VertexPosition>();
                 FillGrid(list, size.X, size.Z);
-                _xGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine, list.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorXGrid");
-                _xGridVertextBuffer.SetData(list.ToArray());
+                _xGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, list.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorXGrid");
+                _xGridVertextBuffer.SetData(_d3DEngine.ImmediateContext, list.ToArray());
             }
 
             if (_gridSize.X != size.X || _gridSize.Y != size.Y)
@@ -1844,8 +1842,8 @@ namespace Utopia.Components
                     _yGridVertextBuffer.Dispose();
                 var list = new List<VertexPosition>();
                 FillGrid(list, size.X, size.Y);
-                _yGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine, list.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorYGrid");
-                _yGridVertextBuffer.SetData(list.ToArray());
+                _yGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, list.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorYGrid");
+                _yGridVertextBuffer.SetData(_d3DEngine.ImmediateContext ,list.ToArray());
             }
 
             if (_gridSize.Z != size.Z || _gridSize.Y != size.Y)
@@ -1854,8 +1852,8 @@ namespace Utopia.Components
                     _zGridVertextBuffer.Dispose();
                 var list = new List<VertexPosition>();
                 FillGrid(list, size.Z, size.Y);
-                _zGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine, list.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorYGrid");
-                _zGridVertextBuffer.SetData(list.ToArray());
+                _zGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, list.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorYGrid");
+                _zGridVertextBuffer.SetData(_d3DEngine.ImmediateContext, list.ToArray());
             }
 
             _gridSize = size;
@@ -1876,7 +1874,7 @@ namespace Utopia.Components
             }
         }
 
-        public override void UnloadContent()
+        public override void Dispose()
         {
             if (_boxVertexBuffer != null) _boxVertexBuffer.Dispose();
             if (_boxIndexBuffer != null) _boxIndexBuffer.Dispose();
@@ -1895,11 +1893,8 @@ namespace Utopia.Components
                 _yGridVertextBuffer = null;
                 _zGridVertextBuffer = null;
             }
-
-            base.UnloadContent();
+            base.Dispose();
         }
-
-
         
     }
 }

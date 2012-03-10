@@ -29,7 +29,7 @@ namespace Utopia.Worlds.Chunks
             if (_camManager.ActiveCamera.WorldPosition.Y < 400)
             {
                 ChunkUpdateManager();
-                if (!_gameStates.DebugActif) CheckWrapping();     // Handle Playerzz impact on Terra (Mainly the location will trigger chunk creation/destruction)
+                CheckWrapping();     // Handle Playerzz impact on Terra (Mainly the location will trigger chunk creation/destruction)
                 SortChunks();
             }
 
@@ -44,10 +44,6 @@ namespace Utopia.Worlds.Chunks
                     _transparentChunks.RemoveAt(i);
                 }
             }
-        }
-
-        public override void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
-        {
         }
 
         #endregion

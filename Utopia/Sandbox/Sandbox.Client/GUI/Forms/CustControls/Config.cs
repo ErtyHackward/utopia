@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using Utopia.Settings;
 using System.Reflection;
 using Utopia.Shared.Config;
+using S33M3_CoreComponents.Inputs.KeyboardHandler;
+using S33M3_CoreComponents.Unsafe;
 
 namespace Sandbox.Client.GUI.Forms.CustControls
 {
@@ -213,10 +215,10 @@ namespace Sandbox.Client.GUI.Forms.CustControls
             //Get selected cell
             bool isLShift, isRShift, isLControl, isRControl;
             string ModifierStr = string.Empty;
-            isLShift = (S33M3Engines.Windows.UnsafeNativeMethods.GetKeyState(0xA0) & 0x80) != 0; // VK_LSHIFT    
-            isRShift = (S33M3Engines.Windows.UnsafeNativeMethods.GetKeyState(0xA1) & 0x80) != 0; // VK_RSHIFT        
-            isLControl = (S33M3Engines.Windows.UnsafeNativeMethods.GetKeyState(162) & 0x80) != 0; // VK_LCONTROL              
-            isRControl = (S33M3Engines.Windows.UnsafeNativeMethods.GetKeyState(0xA3) & 0x80) != 0; // VK_RCONTROL              
+            isLShift = (UnsafeNativeMethods.GetKeyState(0xA0) & 0x80) != 0; // VK_LSHIFT    
+            isRShift = (UnsafeNativeMethods.GetKeyState(0xA1) & 0x80) != 0; // VK_RSHIFT        
+            isLControl = (UnsafeNativeMethods.GetKeyState(162) & 0x80) != 0; // VK_LCONTROL              
+            isRControl = (UnsafeNativeMethods.GetKeyState(0xA3) & 0x80) != 0; // VK_RCONTROL              
 
             if (isLShift) ModifierStr += ModifierStr.Length > 0 ? "+ LShiftKey" : "LShiftKey";
             if (isRShift) ModifierStr += ModifierStr.Length > 0 ? "+ RShiftKey" : "RShiftKey";

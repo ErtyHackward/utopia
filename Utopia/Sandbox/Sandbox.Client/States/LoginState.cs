@@ -6,9 +6,11 @@ using Sandbox.Shared.Web;
 using Sandbox.Shared.Web.Responces;
 using Utopia;
 using Utopia.Components;
-using Utopia.GUI.D3D;
 using Utopia.Settings;
 using Utopia.Shared.ClassExt;
+using S33M3_CoreComponents.States;
+using Utopia.GUI;
+using S33M3_CoreComponents.GUI;
 
 namespace Sandbox.Client.States
 {
@@ -25,12 +27,13 @@ namespace Sandbox.Client.States
             get { return "Login"; }
         }
 
-        public LoginState(IKernel iocContainer)
+        public LoginState(GameStatesManager stateManager, IKernel iocContainer)
+            :base(stateManager)
         {
             _iocContainer = iocContainer;
         }
 
-        public override void Initialize()
+        public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
             var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
@@ -49,6 +52,7 @@ namespace Sandbox.Client.States
             AddComponent(gui);
             AddComponent(login);
             AddComponent(sound);
+            base.Initialize(context);
         }
 
         void WebApiLoginCompleted(object sender, WebEventArgs<LoginResponce> e)

@@ -116,7 +116,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Action\Actions.cs" />
     <Compile Include="Components\EditorMode.cs" />
+    <Compile Include="Components\FadeSwitchComponent.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />
     <Compile Include="Components\BepuPhysicsComponent.cs" />
     <Compile Include="Components\ModelEditorComponent.Designer.cs">
@@ -155,6 +157,24 @@
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
     <Compile Include="Editor\PaletteButtonControl.cs" />
     <Compile Include="Editor\PaletteButtonControlRenderer.cs" />
+    <Compile Include="GUI\ChatComponent.cs" />
+    <Compile Include="GUI\Hud.cs" />
+    <Compile Include="GUI\Inventory\ButtonItemControlRenderer.cs" />
+    <Compile Include="GUI\Inventory\ContainerControl.cs" />
+    <Compile Include="GUI\Inventory\ContainerRenderer.cs" />
+    <Compile Include="GUI\Inventory\IDropTarget.cs" />
+    <Compile Include="GUI\Inventory\InventoryCell.cs" />
+    <Compile Include="GUI\Inventory\InventoryCellRenderer.cs" />
+    <Compile Include="GUI\Inventory\InventoryComponent.cs" />
+    <Compile Include="GUI\Inventory\InventoryWindow.cs" />
+    <Compile Include="GUI\Inventory\ItemInfoWindow.cs" />
+    <Compile Include="GUI\Inventory\PlayerInventory.cs" />
+    <Compile Include="GUI\Inventory\ToolBarUI.cs" />
+    <Compile Include="GUI\Inventory\Vector2I.cs" />
+    <Compile Include="GUI\LoginComponent.cs" />
+    <Compile Include="GUI\Map\MapComponent.cs" />
+    <Compile Include="GUI\Map\MapControl.cs" />
+    <Compile Include="GUI\Map\MapRenderer.cs" />
     <Compile Include="Network\EntityMessageTranslator.cs" />
     <Compile Include="Network\ItemMessageTranslator.cs" />
     <Compile Include="Settings\ClientSettings.cs" />

@@ -18,8 +18,17 @@ namespace Utopia
         /// </summary>
         private InputsManager _inputManager;
 
-        public UtopiaRender(InputsManager inputManager, Size startingWindowsSize, string WindowsCaption, Size ResolutionSize = default(Size))
-            : base(startingWindowsSize, WindowsCaption, ResolutionSize)
+        //Not Engine injected constructor
+        public UtopiaRender(InputsManager inputManager, Size startingWindowsSize, string WindowsCaption, Size ResolutionSize = default(Size), bool withComObjectDisposeTracking = false)
+            : base(startingWindowsSize, WindowsCaption, ResolutionSize, withComObjectDisposeTracking)
+        {
+            _inputManager = inputManager;
+
+            VSync = true;                                              // Vsync ON (default)
+        }
+
+        public UtopiaRender(D3DEngine engine, InputsManager inputManager, bool withComObjectDisposeTracking)
+            : base(engine, withComObjectDisposeTracking)
         {
             _inputManager = inputManager;
 

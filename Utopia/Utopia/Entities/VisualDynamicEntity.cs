@@ -8,6 +8,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3_DXEngine.Main;
 using S33M3_Resources.Structs;
+using S33M3_Resources.Strucs;
 
 namespace Utopia.Entities
 {

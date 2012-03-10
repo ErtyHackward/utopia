@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Engines.D3D;
-using S33M3Engines.Struct;
-using S33M3Engines.Shared.Math;
-using S33M3Engines.D3D.DebugTools;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.Maths;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Worlds.GameClocks
 {
@@ -120,11 +119,11 @@ namespace Utopia.Worlds.GameClocks
         {
         }
 
-        public override void Update( S33M3Engines.D3D.GameTime timeSpend)
+        public override void Update(GameTime timeSpend)
         {
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
+        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
         {
             float recomputedClock = _clockTime.Value;
             if (_clockTime.Value < _clockTime.ValuePrev)
@@ -149,7 +148,8 @@ namespace Utopia.Worlds.GameClocks
 
         #endregion
 
-        public virtual string GetInfo()
+        public virtual bool ShowDebugInfo { get; set; }
+        public virtual string GetDebugInfo()
         {
             return "<Clock Info> Current time : " + ClockTime.ToString(); // +" normalized : " + ClockTime.ClockTimeNormalized2 + " ; " + ClockTime.ClockTimeNormalized + " ; " + ClockTime;
         }

@@ -3,6 +3,7 @@ using Utopia.Shared.Config;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections.Generic;
+using S33M3_CoreComponents.Inputs.KeyboardHandler;
 
 namespace Utopia.Settings
 {

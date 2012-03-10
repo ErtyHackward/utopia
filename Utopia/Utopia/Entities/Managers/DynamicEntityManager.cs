@@ -57,7 +57,7 @@ namespace Utopia.Entities.Managers
             _dynamicEntityRenderer.Initialize();
         }
 
-        public override void LoadContent()
+        public override void LoadContent(DeviceContext Context)
         {
             _dynamicEntityRenderer.LoadContent();
         }
@@ -70,7 +70,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public override void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
+        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
             {

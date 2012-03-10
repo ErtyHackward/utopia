@@ -3,7 +3,8 @@ using System.Windows.Forms;
 using Ninject;
 using Sandbox.Client.Components;
 using Utopia;
-using Utopia.GUI.D3D;
+using S33M3_CoreComponents.States;
+using S33M3_CoreComponents.GUI;
 
 namespace Sandbox.Client.States
 {
@@ -20,12 +21,13 @@ namespace Sandbox.Client.States
             get { return "MainMenu"; }
         }
 
-        public MainMenuState(IKernel iocContainer)
+        public MainMenuState(GameStatesManager stateManager, IKernel iocContainer)
+            :base(stateManager)
         {
             _iocContainer = iocContainer;
         }
 
-        public override void Initialize()
+        public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
             var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
@@ -35,12 +37,14 @@ namespace Sandbox.Client.States
             AddComponent(bg);
             AddComponent(gui);
             AddComponent(menu);
-            
+
             menu.CreditsPressed += MenuCreditsPressed;
             menu.SinglePlayerPressed += MenuSinglePlayerPressed;
             menu.MultiplayerPressed += MenuMultiplayerPressed;
             menu.EditorPressed += MenuEditorPressed;
             menu.ExitPressed += MenuExitPressed;
+
+            base.Initialize(context);
         }
 
         void MenuEditorPressed(object sender, EventArgs e)

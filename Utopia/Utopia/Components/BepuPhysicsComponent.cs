@@ -10,6 +10,7 @@ using Utopia.Worlds.Chunks;
 using S33M3_DXEngine.Main;
 using S33M3_CoreComponents.Inputs.Actions;
 using S33M3_DXEngine;
+using Utopia.Action;
 
 namespace Utopia.Components
 {
@@ -128,9 +129,8 @@ namespace Utopia.Components
 
         public override void Update(GameTime timeSpend)
         {
-            if (_actionsManager.isTriggered(Actions.EntityUse))
+            if (_actionsManager.isTriggered(UtopiaActions.EntityUse))
             {
-
             }
 
 

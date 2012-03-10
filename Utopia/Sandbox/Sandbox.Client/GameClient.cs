@@ -15,6 +15,8 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using S33M3_DXEngine.Main;
+using S33M3_CoreComponents.States;
 
 namespace Sandbox.Client
 {
@@ -48,9 +50,6 @@ namespace Sandbox.Client
 
             vars.ApplicationDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Utopia.Sandbox");
 
-            //Initialize the Thread Pool manager
-            S33M3Engines.Threading.WorkQueue.Initialize(ClientSettings.Current.Settings.GraphicalParameters.AllocatedThreadsModifier);
-
             NetworkMessageFactory.Instance.EntityFactory = _clientFactory;
 
             var game = CreateNewGameEngine(_iocContainer); // Create the Rendering
@@ -61,9 +60,9 @@ namespace Sandbox.Client
 
             //filling stages
 
-            var stateManager = _iocContainer.Get<StatesManager>();
+            var stateManager = _iocContainer.Get<GameStatesManager>();
 
-            var fade = _iocContainer.Get<FadeComponent>();
+            var fade = _iocContainer.Get<FadeSwitchComponent>();
 
             fade.Color = new SharpDX.Color4(0,0,0,1);
 
@@ -83,7 +82,6 @@ namespace Sandbox.Client
             game.Run();
 
             //Get windows Exit reason
-            _exitRease = game.GameExitReason;
             game.Dispose();
 
             _iocContainer.Dispose();

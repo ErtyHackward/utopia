@@ -31,19 +31,20 @@ namespace Sandbox.Client.States
             _ioc = iocContainer;
         }
 
-        public override void Initialize()
+        public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
             var bg = _ioc.Get<BlackBgComponent>();
             var gui = _ioc.Get<GuiManager>();
             var modelManager = _ioc.Get<VoxelModelManager>();
             _modelEditor = _ioc.Get<ModelEditorComponent>();
-            
+
             _modelEditor.BackPressed += EditorBackPressed;
 
             AddComponent(bg);
             AddComponent(modelManager);
             AddComponent(_modelEditor);
             AddComponent(gui);
+            base.Initialize(context);
         }
 
         void EditorBackPressed(object sender, EventArgs e)

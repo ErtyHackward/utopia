@@ -2,14 +2,6 @@
 using System.IO;
 using Ninject;
 using Ninject.Parameters;
-using S33M3Engines;
-using S33M3Engines.Cameras;
-using S33M3Engines.D3D;
-using S33M3Engines.D3D.DebugTools;
-using S33M3Engines.Shared.Math;
-using S33M3Engines.Threading;
-using S33M3Engines.Timers;
-using S33M3Engines.WorldFocus;
 using Sandbox.Client.Components;
 using Sandbox.Shared;
 using Sandbox.Shared.Items;
@@ -51,6 +43,19 @@ using Utopia.Worlds.Storage;
 using Utopia.Worlds.Weather;
 using S33M3_CoreComponents.States;
 using S33M3_DXEngine.Threading;
+using S33M3_Resources.Structs;
+using S33M3_CoreComponents.WorldFocus;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3_CoreComponents.Cameras;
+using S33M3_CoreComponents.Timers;
+using S33M3_CoreComponents.Inputs;
+using S33M3_CoreComponents.Inputs.Actions;
+using S33M3_CoreComponents.GUI;
+using Utopia.GUI.Inventory;
+using Utopia.GUI.Map;
+using S33M3_DXEngine.Main.Interfaces;
+using S33M3_CoreComponents.WorldFocus.Interfaces;
+using S33M3_DXEngine;
 
 namespace Sandbox.Client.States
 {
@@ -83,13 +88,14 @@ namespace Sandbox.Client.States
             base.OnEnabled(previousState);
         }
 
-        public override void Initialize()
+        public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
             var loading = _ioc.Get<LoadingComponent>();
             _vars = _ioc.Get<RuntimeVariables>();
-            
+
             AddComponent(loading);
             AddComponent(_ioc.Get<ServerComponent>());
+            base.Initialize(context);
         }
 
         private void GameplayInitialize()
@@ -209,7 +215,7 @@ namespace Sandbox.Client.States
                 IsInfinite = true,
                 Seed = _ioc.Get<ServerComponent>().GameInformations.WorldSeed,
                 SeaLevel = _ioc.Get<ServerComponent>().GameInformations.WaterLevel,
-                WorldChunkSize = new Location2<int>(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,   //Define the visible Client chunk size
+                WorldChunkSize = new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,   //Define the visible Client chunk size
                                                 ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
             };
 
@@ -221,13 +227,12 @@ namespace Sandbox.Client.States
             var wordParameters = _ioc.Get<WorldParameters>();
             //var visualWorldParameters = _ioc.Get<VisualWorldParameters>();
             var firstPersonCamera = _ioc.Get<ICamera>();
-            var cameraManager = _ioc.Get<CameraManager>();
+            var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
             var timerManager = _ioc.Get<TimerManager>();
             var inputsManager = _ioc.Get<InputsManager>();
             var actionsManager = _ioc.Get<ActionsManager>();
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
-            var fps = _ioc.Get<FPS>();
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
             var chat = _ioc.Get<ChatComponent>();
@@ -284,7 +289,6 @@ namespace Sandbox.Client.States
             AddComponent(inventory);
             AddComponent(chat);
             AddComponent(map);
-            AddComponent(fps);
             //AddComponent(entityEditor);
             //AddComponent(carvingEditor);
             AddComponent(skyDome);
@@ -293,13 +297,13 @@ namespace Sandbox.Client.States
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
 
-            StatesManager.UpdateCurrentStateComponents();           
+            StatesManager.SendCurrentStateToMainLoop();           
 
-            playerEntityManager.Enabled = false;
+            playerEntityManager.EnableComponent();
             worldChunks.LoadComplete += worldChunks_LoadComplete;
 
             var engine = _ioc.Get<D3DEngine>();
-            engine.MouseCapture = true;
+            inputsManager.MouseManager.MouseCapture = true;
         }
 
         void worldChunks_LoadComplete(object sender, EventArgs e)

@@ -22,7 +22,7 @@ namespace Utopia.Shared.World
             set { _worldParameters = value; newWorldParameters();}
         }
 
-        public Range<int> WorldRange;
+        public RangeI WorldRange;
         public Vector2I WrapEnd;
         public Vector3I WorldVisibleSize;
         public int WorldVisibleSizeXY;

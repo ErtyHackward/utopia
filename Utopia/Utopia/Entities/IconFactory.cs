@@ -19,6 +19,9 @@ using S33M3_DXEngine.Buffers;
 using S33M3_Resources.Struct.Vertex;
 using S33M3_CoreComponents.Textures;
 using S33M3_CoreComponents.Maths;
+using S33M3_DXEngine.RenderStates;
+using S33M3_CoreComponents.Meshes;
+using S33M3_CoreComponents.Meshes.Factories;
 
 namespace Utopia.Entities
 {
@@ -46,7 +49,7 @@ namespace Utopia.Entities
             _d3DEngine = d3DEngine;
         }
 
-        public override void LoadContent()
+        public override void LoadContent(DeviceContext Context)
         {
             List<Texture2D> icons;
             ShaderResourceView cubeTextureView;
@@ -139,12 +142,12 @@ namespace Utopia.Entities
             
             meshfactory.LoadMesh(@"\Meshes\block.txt", out meshBluePrint, 0);
             //Create Vertex/Index Buffer to store the loaded mesh.
-            VertexBuffer<VertexMesh> vb = new VertexBuffer<VertexMesh>(_d3DEngine,
+            VertexBuffer<VertexMesh> vb = new VertexBuffer<VertexMesh>(_d3DEngine.Device,
                                                                        meshBluePrint.Vertices.Length,
                                                                        VertexMesh.VertexDeclaration,
                                                                        SharpDX.Direct3D.PrimitiveTopology.TriangleList,
                                                                        "Block VB");
-            IndexBuffer<ushort> ib = new IndexBuffer<ushort>(_d3DEngine, meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB");
+            IndexBuffer<ushort> ib = new IndexBuffer<ushort>(_d3DEngine.Device, meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB");
 
             //Create the render texture
             RenderedTexture2D texture = new RenderedTexture2D(_d3DEngine, textureSize, textureSize, SharpDX.DXGI.Format.R8G8B8A8_UNorm)
@@ -224,8 +227,8 @@ namespace Utopia.Entities
 
                 Mesh mesh = meshBluePrint.Clone(MaterialChangeMapping);
                 //Stored the mesh data inside the buffers
-                vb.SetData(mesh.Vertices);
-                ib.SetData(mesh.Indices);
+                vb.SetData(_d3DEngine.ImmediateContext, mesh.Vertices);
+                ib.SetData(_d3DEngine.ImmediateContext, mesh.Indices);
 
                 //Begin Drawing
                 texture.Begin();

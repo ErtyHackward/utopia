@@ -42,15 +42,11 @@ namespace Utopia.Worlds.GameClocks
             _visualClockTime.Time = _clockTime.ValueInterp;
         }
 
-        public override void Interpolation(ref double interpolation_hd, ref float interpolation_ld, ref long timePassed)
+        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
         {
-            base.Interpolation(ref interpolation_hd, ref interpolation_ld, ref timePassed);
+            base.Interpolation(interpolation_hd, interpolation_ld, timePassed);
         }
 
-        public override string GetInfo()
-        {
-            return base.GetInfo();
-        }
         #endregion
 
         #region Private methods

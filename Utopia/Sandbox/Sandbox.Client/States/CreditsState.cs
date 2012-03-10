@@ -25,7 +25,7 @@ namespace Sandbox.Client.States
 
         }
 
-        public override void Initialize()
+        public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
             var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
@@ -36,6 +36,8 @@ namespace Sandbox.Client.States
             AddComponent(bg);
             AddComponent(gui);
             AddComponent(credits);
+
+            base.Initialize(context);
         }
 
         void CreditsBackPressed(object sender, System.EventArgs e)

@@ -58,7 +58,8 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             //1) Request Server the chunk
             //2) If chunk is a "pure" chunk on the server, then generate it localy.
             //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
-             WorkQueue.DoWorkInThread(new WorkItemCallback(CreateLightSources_threaded), chunk, chunk as IThreadStatus, chunk.ThreadPriority);
+            chunk.ThreadStatus = ThreadStatus.Locked;
+            SmartThread.ThreadPool.QueueWorkItem(CreateLightSources_threaded, chunk, chunk.ThreadPriority);
         }
 
         //Create the LightSources for a specific range
@@ -67,28 +68,25 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             //1) Request Server the chunk
             //2) If chunk is a "pure" chunk on the server, then generate it localy.
             //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
-            WorkQueue.DoWorkInThread(new WorkItemCallback(PropagatesLightSources_threaded), chunk, chunk as IThreadStatus, chunk.ThreadPriority);
+            chunk.ThreadStatus = ThreadStatus.Locked;
+            SmartThread.ThreadPool.QueueWorkItem(PropagatesLightSources_threaded, chunk, chunk.ThreadPriority);
         }
 
         #endregion
 
         #region Private methods
         //Create the landscape for the chunk
-        private object CreateLightSources_threaded(object Params)
+        private void CreateLightSources_threaded(VisualChunk chunk)
         {
-            VisualChunk chunk = (VisualChunk)Params;
-
-            Range<int> cubeRange = chunk.CubeRange;
+            RangeI cubeRange = chunk.CubeRange;
 
             CreateLightSources(ref cubeRange);
 
             chunk.State = ChunkState.LandscapeLightsSourceCreated;
             chunk.ThreadStatus = ThreadStatus.Idle;
-
-            return null;
         }
 
-        public void CreateLightSources(ref Range<int> cubeRange)
+        public void CreateLightSources(ref RangeI cubeRange)
         {
             int index;
             bool blockLight = false;
@@ -139,18 +137,16 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
 
         //Create the landscape for the chunk
-        private object PropagatesLightSources_threaded(object Params)
+        private void PropagatesLightSources_threaded(VisualChunk chunk)
         {
-            VisualChunk chunk = (VisualChunk)Params;
-
             bool borderAsLightSource = false;
-            if (chunk.LightPropagateBorderOffset.X != 0 || chunk.LightPropagateBorderOffset.Z != 0) borderAsLightSource = true;
-            Range<int> cubeRangeWithOffset = chunk.CubeRange;
+            if (chunk.LightPropagateBorderOffset.X != 0 || chunk.LightPropagateBorderOffset.Y != 0) borderAsLightSource = true;
+            RangeI cubeRangeWithOffset = chunk.CubeRange;
             if (chunk.LightPropagateBorderOffset.X > 0) cubeRangeWithOffset.Max.X += chunk.LightPropagateBorderOffset.X;
             else cubeRangeWithOffset.Min.X += chunk.LightPropagateBorderOffset.X;
 
-            if (chunk.LightPropagateBorderOffset.Z > 0) cubeRangeWithOffset.Max.Z += chunk.LightPropagateBorderOffset.Z;
-            else cubeRangeWithOffset.Min.Z += chunk.LightPropagateBorderOffset.Z;
+            if (chunk.LightPropagateBorderOffset.Y > 0) cubeRangeWithOffset.Max.Z += chunk.LightPropagateBorderOffset.Y;
+            else cubeRangeWithOffset.Min.Z += chunk.LightPropagateBorderOffset.Y;
 
             PropagateLightSources(ref cubeRangeWithOffset, borderAsLightSource);
 
@@ -158,13 +154,11 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
             chunk.State = ChunkState.LandscapeLightsPropagated;
             chunk.ThreadStatus = ThreadStatus.Idle;
-
-            return null;
         }
 
 
         //Can only be done if surrounding chunks have their landscape initialized !
-        public void PropagateLightSources(ref Range<int> cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false)
+        public void PropagateLightSources(ref RangeI cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false)
         {
             CubeProfile cubeprofile;
             bool borderchunk = false;
@@ -185,7 +179,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id];
                         if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) continue;
 
-                        if (_cubesHolder.Cubes[index].EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.SunLight, LightComponent.SunLight, true, index);
+                        if (_cubesHolder.Cubes[index].EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.A, LightComponent.SunLight, true, index);
                         if (cubeprofile.IsEmissiveColorLightSource || (borderAsLightSource && borderchunk))
                         {
                             if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(X,Y,Z, _cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
@@ -199,7 +193,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         }
 
         //Propagate the light inside the chunk entities
-        private void PropagateLightInsideStaticEntities(ref Range<int> cubeRange)
+        private void PropagateLightInsideStaticEntities(ref RangeI cubeRange)
         {
             VisualChunk chunk;
             //Find all chunk from the Cube range !

@@ -187,7 +187,6 @@
     <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
-    <Compile Include="Config\KeyWithModifier.cs" />
     <Compile Include="Config\XmlSettingsManager.cs" />
     <Compile Include="Interfaces\IBinaryStorable.cs" />
     <Compile Include="Interfaces\IChunkLayout2D.cs" />
@@ -253,11 +252,9 @@
     <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />
     <Compile Include="Structs\Located.cs" />
-    <Compile Include="Structs\Location2.cs" />
-    <Compile Include="Structs\Location3.cs" />
     <Compile Include="Structs\LoginData.cs" />
     <Compile Include="Structs\Md5Hash.cs" />
-    <Compile Include="Structs\Range.cs" />
+    <Compile Include="Structs\RangeI.cs" />
     <Compile Include="Structs\Range2.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />

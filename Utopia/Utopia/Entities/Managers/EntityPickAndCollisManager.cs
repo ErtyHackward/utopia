@@ -13,6 +13,7 @@ using S33M3_CoreComponents.Inputs.Actions;
 using S33M3_Resources.Structs;
 using S33M3_CoreComponents.Physics.Verlet;
 using S33M3_CoreComponents.Maths;
+using Utopia.Action;
 
 namespace Utopia.Entities.Managers
 {
@@ -206,7 +207,7 @@ namespace Utopia.Entities.Managers
                             {
                                 //Send an impulse message to the Entity, following my "LookAtVector" !
                                 float impulsePower = 1;
-                                if (_action.isTriggered(Actions.Move_Run)) impulsePower = 2;
+                                if (_action.isTriggered(UtopiaActions.Move_Run)) impulsePower = 2;
 
                                 _server.ServerConnection.SendAsync(new EntityImpulseMessage
                                     {

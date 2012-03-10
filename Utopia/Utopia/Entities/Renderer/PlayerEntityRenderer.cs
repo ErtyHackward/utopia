@@ -18,6 +18,8 @@ using S33M3_CoreComponents.Cameras;
 using S33M3_CoreComponents.Cameras.Interfaces;
 using S33M3_Resources.Struct.Vertex;
 using S33M3_DXEngine.Textures;
+using S33M3_DXEngine.RenderStates;
+using S33M3_DXEngine.Main;
 
 namespace Utopia.Entities.Renderer
 {
@@ -26,7 +28,7 @@ namespace Utopia.Entities.Renderer
         #region Private variables
         private HLSLTerran _entityEffect;
         private D3DEngine _d3DEngine;
-        private CameraManager _camManager;
+        private CameraManager<ICameraFocused> _camManager;
         private WorldFocusManager _worldFocusManager;
         private ShaderResourceView _cubeTexture_View;
         public SharedFrameCB SharedFrameCB { get; set;} 
@@ -66,7 +68,7 @@ namespace Utopia.Entities.Renderer
         #endregion
 
         #region Public Methods
-        public void Draw(int index)
+        public void Draw(DeviceContext context, int index)
         {
             //If camera is first person Don't draw the body.
             if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson) return;
@@ -74,7 +76,7 @@ namespace Utopia.Entities.Renderer
             //Applying Correct Render States
             RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
-            _entityEffect.Begin();
+            _entityEffect.Begin(context);
 
             //_entityEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             //_entityEffect.CBPerFrame.Values.SunColor = _skydome.SunColor;
@@ -85,17 +87,17 @@ namespace Utopia.Entities.Renderer
 
             _entityEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
             _entityEffect.CBPerDraw.IsDirty = true;
-            _entityEffect.Apply();
+            _entityEffect.Apply(context);
 
             //VisualEntity.VisualEntity.VertexBuffer.SetToDevice(0);
             //_d3DEngine.Context.Draw(VisualEntity.VisualEntity.VertexBuffer.VertexCount, 0);
         }
 
-        public void Update(ref GameTime timeSpend)
+        public void Update(GameTime timeSpend)
         {
         }
 
-        public void Interpolation(ref double interpolationHd, ref float interpolationLd, ref long timePassed)
+        public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
         }
 

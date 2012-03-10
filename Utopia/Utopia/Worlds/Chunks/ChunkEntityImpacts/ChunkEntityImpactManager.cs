@@ -99,7 +99,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             Int64 mainChunkId;
 
             //Compute the Range impacted by the cube change
-            Range<int> cubeRange = new Range<int>()
+            RangeI cubeRange = new RangeI()
             {
                 Min = new Vector3I(cubeCoordinates.X - _lightManager.LightPropagateSteps, 0, cubeCoordinates.Z - _lightManager.LightPropagateSteps),
                 Max = new Vector3I(cubeCoordinates.X + _lightManager.LightPropagateSteps, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, cubeCoordinates.Z + _lightManager.LightPropagateSteps)
