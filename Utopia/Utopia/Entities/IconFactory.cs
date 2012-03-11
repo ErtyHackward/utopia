@@ -54,7 +54,7 @@ namespace Utopia.Entities
             List<Texture2D> icons;
             ShaderResourceView cubeTextureView;
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out cubeTextureView);
-            icons = Create3DBlockIcons(cubeTextureView);
+            icons = Create3DBlockIcons(context, cubeTextureView);
 
             _nbrCubeIcon = icons.Count;
 
@@ -128,7 +128,7 @@ namespace Utopia.Entities
             _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());
         }
 
-        private List<Texture2D> Create3DBlockIcons(ShaderResourceView _cubesTexture)
+        private List<Texture2D> Create3DBlockIcons(DeviceContext context, ShaderResourceView _cubesTexture)
         {
             List<Texture2D> createdIconsTexture = new List<Texture2D>();
 
@@ -170,11 +170,11 @@ namespace Utopia.Entities
             Texture2D SpriteTexture = new Texture2D(_d3DEngine.Device, SpriteTextureDesc);
 
             DataStream dataStream;
-            DataBox data = _d3DEngine.ImmediateContext.MapSubresource(SpriteTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out dataStream);
+            DataBox data = context.MapSubresource(SpriteTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out dataStream);
             dataStream.Position = 0;
             dataStream.Write<Vector4>(new Vector4(1.0f, 1.0f, 1.0f, 1.0f)); //Ecrire dans la texture
             dataStream.Position = 0;
-            _d3DEngine.ImmediateContext.UnmapSubresource(SpriteTexture, 0);
+            context.UnmapSubresource(SpriteTexture, 0);
             dataStream.Dispose();
 
             SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, SpriteTexture, new Vector2(0, 0));
@@ -227,15 +227,15 @@ namespace Utopia.Entities
 
                 Mesh mesh = meshBluePrint.Clone(MaterialChangeMapping);
                 //Stored the mesh data inside the buffers
-                vb.SetData(_d3DEngine.ImmediateContext, mesh.Vertices);
-                ib.SetData(_d3DEngine.ImmediateContext, mesh.Indices);
+                vb.SetData(context, mesh.Vertices);
+                ib.SetData(context, mesh.Indices);
 
                 //Begin Drawing
                 texture.Begin();
 
                 RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
-                shader.Begin(_d3DEngine.ImmediateContext);
+                shader.Begin(context);
 
                 shader.CBPerFrame.Values.DiffuseLightDirection = new Vector3(-0.8f, -0.9f, 1.5f) * -1;
                 shader.CBPerFrame.Values.View = Matrix.Transpose(view);
@@ -257,18 +257,18 @@ namespace Utopia.Entities
                 shader.DiffuseTexture.Value = _cubesTexture;
                 shader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
-                shader.Apply(_d3DEngine.ImmediateContext);
+                shader.Apply(context);
                 //Set the buffer to the device
-                vb.SetToDevice(_d3DEngine.ImmediateContext, 0);
-                ib.SetToDevice(_d3DEngine.ImmediateContext, 0);
+                vb.SetToDevice(context, 0);
+                ib.SetToDevice(context, 0);
 
                 //Draw things here.
-                _d3DEngine.ImmediateContext.DrawIndexed(ib.IndicesCount, 0, 0);
+                context.DrawIndexed(ib.IndicesCount, 0, 0);
 
                 //Draw a sprite for lighting block
                 if (profile.IsEmissiveColorLightSource)
                 {
-                    spriteRenderer.Begin(_d3DEngine.ImmediateContext, false, SpriteRenderer.FilterMode.Point);
+                    spriteRenderer.Begin(context, false, SpriteRenderer.FilterMode.Point);
                     spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, new Color4(profile.EmissiveColor.R / 255, profile.EmissiveColor.G / 255, profile.EmissiveColor.B / 255, 0.5f), new RectangleF(0, 0, textureSize, textureSize));
                     spriteRenderer.End();
                 }
