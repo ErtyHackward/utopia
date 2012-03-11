@@ -46,12 +46,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="S33M3_CoreComponents">
-      <HintPath>..\Library\S33M3_CoreComponents.dll</HintPath>
-    </Reference>
-    <Reference Include="S33M3_DXEngine">
-      <HintPath>..\Library\S33M3_DXEngine.dll</HintPath>
-    </Reference>
     <Reference Include="S33M3_Resources">
       <HintPath>..\Library\S33M3_Resources.dll</HintPath>
     </Reference>
@@ -113,6 +107,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Programmation\S33M3Engines\S33M3_CoreComponents\S33M3_CoreComponents.csproj">
+      <Project>{D0C4DB7F-547E-4A40-A5CA-41391A310938}</Project>
+      <Name>S33M3_CoreComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Programmation\S33M3Engines\S33M3_DXEngine\S33M3_DXEngine.csproj">
+      <Project>{27574C31-E46C-4E4D-BA36-404346F897C8}</Project>
+      <Name>S33M3_DXEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>

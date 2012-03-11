@@ -9,6 +9,7 @@ using Utopia.Shared.Net.Messages;
 using S33M3_CoreComponents.Inputs.Actions;
 using S33M3_DXEngine.Main;
 using S33M3_CoreComponents.Maths;
+using S33M3_CoreComponents.Inputs;
 
 namespace Utopia.Worlds.GameClocks
 {
@@ -17,7 +18,7 @@ namespace Utopia.Worlds.GameClocks
         #region Private variables
         private float _deltaTime;
         private bool _frozenTime;
-        private ActionsManager _actions;
+        private InputsManager _input;
         private ServerComponent _server;
         #endregion
 
@@ -31,11 +32,11 @@ namespace Utopia.Worlds.GameClocks
         /// <param name="game">Base tools class</param>
         /// <param name="clockSpeed">The Ingame time speed in "Nbr of second ingame for each realtime seconds"; ex : 1 = Real time, 60 = 60times faster than realtime</param>
         /// <param name="gameTimeStatus">The startup time</param>
-        public WorldClock(ActionsManager actions, ServerComponent server)
+        public WorldClock(InputsManager input, ServerComponent server)
         {
             if (server == null) throw new ArgumentNullException("server");
             _server = server;
-            _actions = actions;
+            _input = input;
             AssignTimeAndFactor(server.TimeFactor, server.WorldDateTime);
 
             _server.ConnectionInitialized += _server_ConnectionInitialized;

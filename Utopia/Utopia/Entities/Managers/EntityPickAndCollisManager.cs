@@ -14,6 +14,7 @@ using S33M3_Resources.Structs;
 using S33M3_CoreComponents.Physics.Verlet;
 using S33M3_CoreComponents.Maths;
 using Utopia.Action;
+using S33M3_CoreComponents.Inputs;
 
 namespace Utopia.Entities.Managers
 {
@@ -30,7 +31,7 @@ namespace Utopia.Entities.Managers
         private PlayerEntityManager _player;
         private int _entityDistance = AbstractChunk.ChunkSize.X * 2;
         private ServerComponent _server;
-        private ActionsManager _action;
+        private InputsManager _input;
         private IWorldChunks _worldChunks;
         #endregion
 
@@ -53,12 +54,12 @@ namespace Utopia.Entities.Managers
         public EntityPickAndCollisManager(IDynamicEntityManager dynamicEntityManager, 
                                           TimerManager timerManager,
                                           ServerComponent server,
-                                          ActionsManager action)                                     
+                                          InputsManager _input)                                     
         {
             _dynamicEntityManager = dynamicEntityManager;
             _timer = timerManager.AddTimer(1, 100);         //10 times/s
             _timer.OnTimerRaised += _timer_OnTimerRaised;
-            _action = action;
+            _input = _input;
             _server = server;
         }
 
@@ -207,7 +208,7 @@ namespace Utopia.Entities.Managers
                             {
                                 //Send an impulse message to the Entity, following my "LookAtVector" !
                                 float impulsePower = 1;
-                                if (_action.isTriggered(UtopiaActions.Move_Run)) impulsePower = 2;
+                                if (_input.ActionsManager.isTriggered(UtopiaActions.Move_Run)) impulsePower = 2;
 
                                 _server.ServerConnection.SendAsync(new EntityImpulseMessage
                                     {

@@ -230,7 +230,6 @@ namespace Sandbox.Client.States
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
             var timerManager = _ioc.Get<TimerManager>();
             var inputsManager = _ioc.Get<InputsManager>();
-            var actionsManager = _ioc.Get<ActionsManager>();
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();

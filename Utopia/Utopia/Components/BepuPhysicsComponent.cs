@@ -11,6 +11,7 @@ using S33M3_DXEngine.Main;
 using S33M3_CoreComponents.Inputs.Actions;
 using S33M3_DXEngine;
 using Utopia.Action;
+using S33M3_CoreComponents.Inputs;
 
 namespace Utopia.Components
 {
@@ -20,7 +21,7 @@ namespace Utopia.Components
     public class BepuPhysicsComponent : GameComponent
     {
         private readonly IWorldChunks _chunkManager;
-        private readonly ActionsManager _actionsManager;
+        private readonly InputsManager _inputManager;
         private readonly D3DEngine _engine;
         private readonly Dictionary<VisualChunk, StaticMesh> _meshes = new Dictionary<VisualChunk, StaticMesh>();
         private VisualChunk[] _chunks;
@@ -41,13 +42,13 @@ namespace Utopia.Components
         /// </summary>
         /// <param name="chunkManager"></param>
         /// <param name="actionsManager"></param>
-        public BepuPhysicsComponent(IWorldChunks chunkManager, ActionsManager actionsManager, D3DEngine engine)
+        public BepuPhysicsComponent(IWorldChunks chunkManager, InputsManager inputManager, D3DEngine engine)
         {
             if (chunkManager == null) throw new ArgumentNullException("chunkManager");
-            if (actionsManager == null) throw new ArgumentNullException("actionsManager");
+            if (inputManager == null) throw new ArgumentNullException("actionsManager");
             if (engine == null) throw new ArgumentNullException("engine");
             _chunkManager = chunkManager;
-            _actionsManager = actionsManager;
+            _inputManager = inputManager;
             _engine = engine;
 
             // when array is initialized we need to listen all visual chunks mesh update event
@@ -129,7 +130,7 @@ namespace Utopia.Components
 
         public override void Update(GameTime timeSpend)
         {
-            if (_actionsManager.isTriggered(UtopiaActions.EntityUse))
+            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.EntityUse))
             {
             }
 

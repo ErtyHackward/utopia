@@ -30,6 +30,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox.Resources", "Sandbo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEPUphysics", "..\Bepu\BEPUphysics\BEPUphysics.csproj", "{C0D52C9F-14B8-4008-8DDC-109C27561A5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S33M3_DXEngine", "..\..\..\Programmation\S33M3Engines\S33M3_DXEngine\S33M3_DXEngine.csproj", "{27574C31-E46C-4E4D-BA36-404346F897C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S33M3_CoreComponents", "..\..\..\Programmation\S33M3Engines\S33M3_CoreComponents\S33M3_CoreComponents.csproj", "{D0C4DB7F-547E-4A40-A5CA-41391A310938}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Utopia.vsmdi
@@ -154,6 +158,26 @@ Global
 		{C0D52C9F-14B8-4008-8DDC-109C27561A5C}.Release|Mixed Platforms.Build.0 = Release|x86
 		{C0D52C9F-14B8-4008-8DDC-109C27561A5C}.Release|x86.ActiveCfg = Release|x86
 		{C0D52C9F-14B8-4008-8DDC-109C27561A5C}.Release|x86.Build.0 = Release|x86
+		{27574C31-E46C-4E4D-BA36-404346F897C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27574C31-E46C-4E4D-BA36-404346F897C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27574C31-E46C-4E4D-BA36-404346F897C8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{27574C31-E46C-4E4D-BA36-404346F897C8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{27574C31-E46C-4E4D-BA36-404346F897C8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{27574C31-E46C-4E4D-BA36-404346F897C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27574C31-E46C-4E4D-BA36-404346F897C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27574C31-E46C-4E4D-BA36-404346F897C8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{27574C31-E46C-4E4D-BA36-404346F897C8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{27574C31-E46C-4E4D-BA36-404346F897C8}.Release|x86.ActiveCfg = Release|Any CPU
+		{D0C4DB7F-547E-4A40-A5CA-41391A310938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0C4DB7F-547E-4A40-A5CA-41391A310938}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0C4DB7F-547E-4A40-A5CA-41391A310938}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D0C4DB7F-547E-4A40-A5CA-41391A310938}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D0C4DB7F-547E-4A40-A5CA-41391A310938}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D0C4DB7F-547E-4A40-A5CA-41391A310938}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0C4DB7F-547E-4A40-A5CA-41391A310938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0C4DB7F-547E-4A40-A5CA-41391A310938}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D0C4DB7F-547E-4A40-A5CA-41391A310938}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D0C4DB7F-547E-4A40-A5CA-41391A310938}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

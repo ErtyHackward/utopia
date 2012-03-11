@@ -36,7 +36,6 @@ namespace Utopia.GUI
         private readonly PlayerCharacter _player;
         private readonly IconFactory _iconFactory;
         private readonly InputsManager _inputManager;
-        private readonly ActionsManager _actions;
 
         public event EventHandler<SlotClickedEventArgs> SlotClicked;
 
@@ -46,10 +45,9 @@ namespace Utopia.GUI
             if (handler != null) handler(this, e);
         }
 
-        public Hud(MainScreen screen, D3DEngine d3DEngine, PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager, ActionsManager actions)
+        public Hud(MainScreen screen, D3DEngine d3DEngine, PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager)
         {
             _screen = screen;
-            _actions = actions;
             _iconFactory = iconFactory;
             _inputManager = inputManager;
             _player = player;
@@ -132,13 +130,13 @@ namespace Utopia.GUI
                 }
             }
 
-            if (_actions.isTriggered(UtopiaActions.ToolBar_SelectPrevious))
+            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToolBar_SelectPrevious))
             {
                 var slot = _selectedSlot == 0 ?  _lastSlot : _selectedSlot-1;
                 SelectSlot(slot);
             }
 
-            else if (_actions.isTriggered(UtopiaActions.ToolBar_SelectNext))
+            else if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToolBar_SelectNext))
             {
                 var slot = _selectedSlot == _lastSlot ? 0 : _selectedSlot + 1;
                 SelectSlot(slot);

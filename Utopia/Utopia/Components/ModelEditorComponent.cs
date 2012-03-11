@@ -87,7 +87,6 @@ namespace Utopia.Components
         private readonly VoxelModelManager _manager;
         private readonly VoxelMeshFactory _meshFactory;
         private readonly GuiManager _gui;
-        private readonly ActionsManager _actions;
         private readonly List<S33M3_CoreComponents.GUI.Nuclex.Controls.Control> _controls = new List<S33M3_CoreComponents.GUI.Nuclex.Controls.Control>();
 
         private int _selectedFrameIndex;

@@ -192,7 +192,7 @@ namespace Utopia.Worlds.Chunks
         public override void LoadContent(DeviceContext Context)
         {
             IntilializeUpdateble();
-            InitDrawComponents();
+            InitDrawComponents(Context);
         }
 
         public override void Dispose()
