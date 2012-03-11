@@ -49,6 +49,7 @@ using S33M3_CoreComponents.GUI.Nuclex;
 using Utopia.GUI.Inventory;
 using Utopia.GUI.Map;
 using S33M3_DXEngine.Main.Interfaces;
+using Utopia.Action;
 
 namespace Sandbox.Client
 {
@@ -59,7 +60,7 @@ namespace Sandbox.Client
             
         }
 
-        public void IocBinding()
+        public void IocBinding(string WindowsCaption, Size windowStartingSize, Size resolutionSize = default(Size))
         {
             if (_iocContainer != null)
                 throw new InvalidOperationException();
@@ -69,7 +70,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<IKernel>().ToConstant(_iocContainer).InSingletonScope();
 
             //DirectX layer & Helper ===================================
-            _iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope().WithConstructorArgument("startingSize", new Size(1024, 600)).WithConstructorArgument("windowCaption", "Utopia Sandbox Client");         //DirectX Engine
+            _iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope().WithConstructorArgument("startingSize", windowStartingSize).WithConstructorArgument("windowCaption", WindowsCaption).WithConstructorArgument("renderResolution", resolutionSize);         //DirectX Engine
             _iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope(); //Focus
             //==========================================================
 
@@ -79,7 +80,7 @@ namespace Sandbox.Client
 
             //System Objects Management ================================
             _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope(); //Application shared states
-            _iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope(); //Type of camera used
+            _iocContainer.Bind<ICamera>().To<FirstPersonCamera>().InSingletonScope().WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
             _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InSingletonScope();     //Camera manager
             _iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();      //Ingame based Timer class
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class
@@ -102,12 +103,11 @@ namespace Sandbox.Client
             //=============================================================
 
             //User Input Handling ======================================
-            _iocContainer.Bind<InputsManager>().ToSelf().InSingletonScope();     //Input management
-            _iocContainer.Bind<ActionsManager>().ToSelf().InSingletonScope();    //Action management
+            _iocContainer.Bind<InputsManager>().ToSelf().InSingletonScope().WithConstructorArgument("actionType", typeof(UtopiaActions));     //Input management
             //==========================================================
 
             //GUI =========================================================
-            _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope();        //Gui base class
+            _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope().WithConstructorArgument("skinPath", @"GUI\Skins\Default\Default.skin.xml");        //Gui base class
             _iocContainer.Bind<MainScreen>().ToSelf().InSingletonScope();
             //=============================================================
 

@@ -3725,11 +3725,6 @@
             <summary>Constant AllObjects.</summary>
             <unmanaged>GUID_All_Objects</unmanaged>
         </member>
-        <member name="F:SharpDX.DirectSound.DSound.DllHandle0_">
-            <summary>
-            DLLs loaders
-            </summary>
-        </member>
         <member name="M:SharpDX.DirectSound.DSound.FullDuplexCreate(System.Nullable{System.Guid},System.Nullable{System.Guid},SharpDX.DirectSound.CaptureBufferDescription,SharpDX.DirectSound.SoundBufferDescription,System.IntPtr,System.Int32,SharpDX.DirectSound.FullDuplex,SharpDX.DirectSound.CaptureBuffer@,SharpDX.DirectSound.SecondarySoundBuffer@,SharpDX.ComObject)">
             <summary>	
             The DirectSoundFullDuplexCreate function is documented under a different name. For complete documentation of this function, see DirectSoundFullDuplexCreate8.	
