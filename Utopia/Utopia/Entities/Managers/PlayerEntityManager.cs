@@ -673,7 +673,7 @@ namespace Utopia.Entities.Managers
         /// </summary>
         public override void LoadContent(DeviceContext Context)
         {
-            _playerRenderer.LoadContent();
+            _playerRenderer.LoadContent(Context);
         }
 
         public override void Update( GameTime timeSpend)

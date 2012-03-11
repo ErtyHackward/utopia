@@ -57,7 +57,6 @@ namespace Utopia
         public EntityMessageTranslator entityMessageTranslator;
         public ItemMessageTranslator itemMessageTranslator;
         public InputsManager inputsManager;
-        public ActionsManager actionsManager;
         public GuiManager guiManager;
         public Screen screen;
         public IconFactory iconFactory;

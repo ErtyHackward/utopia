@@ -73,12 +73,6 @@
     <Reference Include="Nuclex.Support">
       <HintPath>..\Library\Nuclex.Support.dll</HintPath>
     </Reference>
-    <Reference Include="S33M3_CoreComponents">
-      <HintPath>..\Library\S33M3_CoreComponents.dll</HintPath>
-    </Reference>
-    <Reference Include="S33M3_DXEngine">
-      <HintPath>..\Library\S33M3_DXEngine.dll</HintPath>
-    </Reference>
     <Reference Include="S33M3_Resources">
       <HintPath>..\Library\S33M3_Resources.dll</HintPath>
     </Reference>
@@ -247,6 +241,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Programmation\S33M3Engines\S33M3_CoreComponents\S33M3_CoreComponents.csproj">
+      <Project>{D0C4DB7F-547E-4A40-A5CA-41391A310938}</Project>
+      <Name>S33M3_CoreComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Programmation\S33M3Engines\S33M3_DXEngine\S33M3_DXEngine.csproj">
+      <Project>{27574C31-E46C-4E4D-BA36-404346F897C8}</Project>
+      <Name>S33M3_DXEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Bepu\BEPUphysics\BEPUphysics.csproj">
       <Project>{C0D52C9F-14B8-4008-8DDC-109C27561A5C}</Project>
       <Name>BEPUphysics</Name>

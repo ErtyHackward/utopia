@@ -49,11 +49,11 @@ namespace Utopia.Entities
             _d3DEngine = d3DEngine;
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
             List<Texture2D> icons;
             ShaderResourceView cubeTextureView;
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out cubeTextureView);
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out cubeTextureView);
             icons = Create3DBlockIcons(cubeTextureView);
 
             _nbrCubeIcon = icons.Count;
@@ -62,7 +62,7 @@ namespace Utopia.Entities
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out spriteTextures, 1);
 
             icons.AddRange(spriteTextures);
-            CreateTextureArray(icons);
+            CreateTextureArray(context, icons);
 
             cubeTextureView.Dispose();
             foreach (Texture2D tex in spriteTextures) tex.Dispose();
@@ -119,10 +119,10 @@ namespace Utopia.Entities
 
         #region Private methods
 
-        private void CreateTextureArray(List<Texture2D> textureArray)
+        private void CreateTextureArray(DeviceContext context, List<Texture2D> textureArray)
         {
             //Create the Icon texture Array
-            ArrayTexture.CreateTexture2D(_d3DEngine.Device, textureArray.ToArray(), FilterFlags.Linear, "Icon's ArrayTexture", out _iconsTextureArray);
+            ArrayTexture.CreateTexture2D(_d3DEngine.Device, context, textureArray.ToArray(), FilterFlags.Linear, "Icon's ArrayTexture", out _iconsTextureArray);
 
             // indexes into array corresponds textures with modifier +1 (Air)
             _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());

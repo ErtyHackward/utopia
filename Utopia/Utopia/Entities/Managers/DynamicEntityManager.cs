@@ -59,7 +59,7 @@ namespace Utopia.Entities.Managers
 
         public override void LoadContent(DeviceContext Context)
         {
-            _dynamicEntityRenderer.LoadContent();
+            _dynamicEntityRenderer.LoadContent(Context);
         }
 
         public override void Update(GameTime timeSpend)

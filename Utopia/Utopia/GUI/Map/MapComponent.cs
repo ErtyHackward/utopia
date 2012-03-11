@@ -10,6 +10,7 @@ using S33M3_CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3_CoreComponents.Sprites;
 using SharpDX.Direct3D11;
 using Utopia.Action;
+using S33M3_CoreComponents.Inputs;
 
 namespace Utopia.GUI.Map
 {
@@ -19,7 +20,7 @@ namespace Utopia.GUI.Map
     public class MapComponent : GameComponent
     {
         private readonly D3DEngine _engine;
-        private readonly ActionsManager _actionManager;
+        private readonly InputsManager _inputManager;
         private readonly MainScreen _screen;
         private readonly ServerComponent _server;
         private readonly WindowControl _mapWindow;
@@ -28,11 +29,11 @@ namespace Utopia.GUI.Map
         private Bitmap _mapImage;
         private MapControl _mapControl;
 
-        public MapComponent(D3DEngine engine, ActionsManager actionManager, MainScreen screen, ServerComponent server, WorldPlan plan, PlayerEntityManager playerManager)
+        public MapComponent(D3DEngine engine, InputsManager inputManager, MainScreen screen, ServerComponent server, WorldPlan plan, PlayerEntityManager playerManager)
         {
             _playerManager = playerManager;
             _engine = engine;
-            _actionManager = actionManager;
+            _inputManager = inputManager;
             _screen = screen;
             _server = server;
 
@@ -85,7 +86,7 @@ namespace Utopia.GUI.Map
 
             _mapControl.MarkerPosition = new Point((int)_playerManager.Player.Position.X, (int)_playerManager.Player.Position.Z);
 
-            if (_actionManager.isTriggered(UtopiaActions.OpenMap))
+            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.OpenMap))
             {
                 if (_screen.Desktop.Children.Contains(_mapWindow))
                     _screen.Desktop.Children.Remove(_mapWindow);

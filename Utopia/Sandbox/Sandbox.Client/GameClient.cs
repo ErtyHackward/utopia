@@ -18,6 +18,8 @@ using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using S33M3_DXEngine.Main;
 using S33M3_CoreComponents.States;
 using S33M3_DXEngine.Threading;
+using S33M3_CoreComponents.Inputs;
+using S33M3_CoreComponents.GUI;
 
 namespace Sandbox.Client
 {
@@ -76,6 +78,14 @@ namespace Sandbox.Client
             stateManager.RegisterState(_iocContainer.Get<GamePlayState>());
             stateManager.RegisterState(_iocContainer.Get<SelectServerGameState>());
             stateManager.RegisterState(_iocContainer.Get<EditorState>());
+
+
+            InputsManager inputManager = _iocContainer.Get<InputsManager>();
+            inputManager.MouseManager.IsRunning = true;
+            game.GameComponents.Add(inputManager);
+
+            //Add the StateManager to the main loop
+            game.GameComponents.Add(stateManager);
 
             // first state will be the login state
             stateManager.ActivateGameState("Login");
