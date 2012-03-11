@@ -6251,11 +6251,6 @@ First-person action game device. The following subtypes are defined.
             <summary>Constant SdkVersion.</summary>
             <unmanaged>DIRECTINPUT_VERSION</unmanaged>
         </member>
-        <member name="F:SharpDX.DirectInput.DInput.DllHandle0_">
-            <summary>
-            DLLs loaders
-            </summary>
-        </member>
         <member name="M:SharpDX.DirectInput.DInput.DirectInput8Create(System.IntPtr,System.Int32,System.Guid,System.IntPtr@,SharpDX.ComObject)">
             <summary>	
             IDirectInput8 Interface	

@@ -17,6 +17,7 @@ using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using S33M3_DXEngine.Main;
 using S33M3_CoreComponents.States;
+using S33M3_DXEngine.Threading;
 
 namespace Sandbox.Client
 {
@@ -39,7 +40,7 @@ namespace Sandbox.Client
             
             LoadClientsSettings();
 
-            IocBinding();
+            IocBinding("Utopia Sandbox mode", new System.Drawing.Size(800,600));
 
             _clientFactory = new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());
             _iocContainer.Bind<EntityFactory>().ToConstant(_clientFactory).InSingletonScope().Named("Client");
@@ -57,9 +58,9 @@ namespace Sandbox.Client
             _iocContainer.Bind<Game>().ToConstant(game);
             _iocContainer.Rebind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
 
+            SmartThread.SetOptimumNbrThread(0);
 
             //filling stages
-
             var stateManager = _iocContainer.Get<GameStatesManager>();
 
             var fade = _iocContainer.Get<FadeSwitchComponent>();

@@ -375,11 +375,6 @@
             Speed of sound in the air.
             </summary>
         </member>
-        <member name="F:SharpDX.X3DAudio.X3DAudio.DllHandle0_">
-            <summary>
-            DLLs loaders
-            </summary>
-        </member>
         <member name="M:SharpDX.X3DAudio.X3DAudio.X3DAudioInitialize(SharpDX.Multimedia.Speakers,System.Single,SharpDX.X3DAudio.X3DAudioHandle@)">
             <summary>	
             <code>	

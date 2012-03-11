@@ -431,11 +431,10 @@
             <returns>The return value is one of the values listed in {{Direct3D 10 Return Codes}}. </returns>
             <unmanaged>HRESULT D3DX10LoadTextureFromTexture([None] ID3D10Resource* pSrcTexture,[None] D3DX10_TEXTURE_LOAD_INFO* pLoadInfo,[None] ID3D10Resource* pDstTexture)</unmanaged>
         </member>
-        <member name="M:SharpDX.Direct3D10.Resource.FilterTexture(SharpDX.Direct3D10.Resource,System.Int32,SharpDX.Direct3D10.FilterFlags)">
+        <member name="M:SharpDX.Direct3D10.Resource.FilterTexture(System.Int32,SharpDX.Direct3D10.FilterFlags)">
             <summary>	
             Generates mipmap chain using a particular texture filter.	
             </summary>	
-            <param name="texture">The texture object to be filtered. See <see cref="T:SharpDX.Direct3D10.Resource"/>. </param>
             <param name="sourceLevel">The mipmap level whose data is used to generate the rest of the mipmap chain. </param>
             <param name="mipFilter">Flags controlling how each miplevel is filtered (or D3DX10_DEFAULT for D3DX10_FILTER_BOX). See <see cref="T:SharpDX.Direct3D10.FilterFlags"/>. </param>
             <returns>The return value is one of the values listed in {{Direct3D 10 Return Codes}}. </returns>
@@ -5187,6 +5186,13 @@
             <param name="device">The device.</param>
             <param name="fontDescription">The font description.</param>
         </member>
+        <member name="M:SharpDX.Direct3D10.Font.#ctor(SharpDX.Direct3D10.Device,System.Drawing.Font)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.Direct3D10.Font"/> class from a <see cref="T:System.Drawing.Font"/>
+            </summary>
+            <param name="device">The device.</param>
+            <param name="font">The font.</param>
+        </member>
         <member name="M:SharpDX.Direct3D10.Font.#ctor(SharpDX.Direct3D10.Device,System.Int32,System.Int32,SharpDX.Direct3D10.FontWeight,System.Int32,System.Boolean,SharpDX.Direct3D10.FontCharacterSet,SharpDX.Direct3D10.FontPrecision,SharpDX.Direct3D10.FontQuality,SharpDX.Direct3D10.FontPitchAndFamily,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:SharpDX.Direct3D10.Font"/> class.
@@ -5216,7 +5222,7 @@
         </member>
         <member name="M:SharpDX.Direct3D10.Font.DrawText(SharpDX.Direct3D10.Sprite,System.String,SharpDX.Rectangle,SharpDX.Direct3D10.FontDrawFlags,SharpDX.Color4)">
             <summary>	
-            Draw formatted text. This method supports ANSI and Unicode strings.	
+            Draw formatted text.
             </summary>	
             <remarks>	
             The parameters of this method are very similar to those of the {{GDI DrawText}} function. This method supports both ANSI and Unicode strings. Unless the DT_NOCLIP format is used, this method clips the text so that it does not appear outside the specified rectangle. All formatting is assumed to have multiple lines unless the DT_SINGLELINE format is specified. If the selected font is too large for the rectangle, this method does not attempt to substitute a smaller font. This method supports only fonts whose escapement and orientation are both zero. 	
@@ -5229,16 +5235,26 @@
             <returns>If the function succeeds, the return value is the height of the text in logical units. If DT_VCENTER or DT_BOTTOM is specified, the return value is the offset from pRect (top to the bottom) of the drawn text. If the function fails, the return value is zero. </returns>
             <unmanaged>int ID3DX10Font::DrawTextW([None] LPD3DX10SPRITE pSprite,[None] const wchar_t* pString,[None] int Count,[None] RECT* pRect,[None] int Format,[None] D3DXCOLOR Color)</unmanaged>
         </member>
-        <member name="M:SharpDX.Direct3D10.Font.Measure(SharpDX.Direct3D10.Sprite,System.String,SharpDX.Rectangle,SharpDX.Direct3D10.FontDrawFlags)">
+        <member name="M:SharpDX.Direct3D10.Font.DrawText(SharpDX.Direct3D10.Sprite,System.String,System.Int32,System.Int32,SharpDX.Color4)">
             <summary>
-            Measures the specified sprite.
+            Draw formatted text at the specified position.
             </summary>
-            <param name="sprite">Reference to an ID3DX10Sprite object that contains the string you wish to draw. Can be NULL, in which case Direct3D will render the string with its own sprite object. To improve efficiency, a sprite object should be specified if ID3DX10Font::DrawText is to be called more than once in a row. </param>
-            <param name="text">A string to measure. </param>
-            <param name="rect">A <see cref="T:SharpDX.Rectangle"/> structure that contains the rectangle, in logical coordinates, in which the text is to be formatted. As with any RECT object, the coordinate value of the rectangle's right side must be greater than that of its left side. Likewise, the coordinate value of the bottom must be greater than that of the top.</param>
-            <param name="drawFlags">Specify the method of formatting the text.</param>
-            <returns></returns>
+            <param name="sprite">Reference to an ID3DX10Sprite object that contains the string you wish to draw. Can be NULL, in which case Direct3D will render the string with its own sprite object. To improve efficiency, a sprite object should be specified if ID3DX10Font::DrawText is to be called more than once in a row.</param>
+            <param name="text">Pointer to a string to draw. If UNICODE is defined, this parameter type resolves to an LPCWSTR, otherwise, the type resolves to an LPCSTR. If the Count parameter is -1, the string must be NULL terminated.</param>
+            <param name="x">The x.</param>
+            <param name="y">The y.</param>
+            <param name="color">Color of the text. See <see cref="T:SharpDX.Color4"/>.</param>
+            <returns>
+            If the function succeeds, the return value is the height of the text in logical units. If DT_VCENTER or DT_BOTTOM is specified, the return value is the offset from pRect (top to the bottom) of the drawn text. If the function fails, the return value is zero.
+            </returns>
+            <unmanaged>int ID3DX10Font::DrawTextW([None] LPD3DX10SPRITE pSprite,[None] const wchar_t* pString,[None] int Count,[None] RECT* pRect,[None] int Format,[None] D3DXCOLOR Color)</unmanaged>
+            <remarks>
+            The parameters of this method are very similar to those of the {{GDI DrawText}} function. This method supports both ANSI and Unicode strings. Unless the DT_NOCLIP format is used, this method clips the text so that it does not appear outside the specified rectangle. All formatting is assumed to have multiple lines unless the DT_SINGLELINE format is specified. If the selected font is too large for the rectangle, this method does not attempt to substitute a smaller font. This method supports only fonts whose escapement and orientation are both zero.
+            </remarks>
+            <unmanaged>int ID3DX10Font::DrawTextW([In] ID3DX10Sprite* pSprite,[In] const wchar_t* pString,[In] int Count,[In] RECT* pRect,[In] unsigned int Format,[In] D3DXCOLOR Color)</unmanaged>	
         </member>
+        <!-- Badly formed XML comment ignored for member "M:SharpDX.Direct3D10.Font.MeasureText(SharpDX.Direct3D10.Sprite,System.String,SharpDX.Rectangle,SharpDX.Direct3D10.FontDrawFlags)" -->
+        <!-- Badly formed XML comment ignored for member "M:SharpDX.Direct3D10.Font.MeasureText(SharpDX.Direct3D10.Sprite,System.String,SharpDX.Rectangle,SharpDX.Direct3D10.FontDrawFlags,System.Int32@)" -->
         <member name="M:SharpDX.Direct3D10.Font.#ctor(System.IntPtr)">
             <summary>
             Initializes a new instance of the <see cref="T:SharpDX.Direct3D10.Font"/> class.
@@ -5278,7 +5294,7 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Font::GetTextMetricsW']/*"/>	
             <unmanaged>BOOL ID3DX10Font::GetTextMetricsW([In] void* pTextMetrics)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D10.Font.GetDisplayDeviceContext">
+        <member name="M:SharpDX.Direct3D10.Font.GetDeviceContext">
             <summary>	
             Return a handle to a display device context (DC) that has the font set onto it.	
             </summary>	
@@ -5286,14 +5302,14 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Font::GetDC']/*"/>	
             <unmanaged>HDC ID3DX10Font::GetDC()</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D10.Font.GetGlyphData(System.Int32,SharpDX.Direct3D10.ShaderResourceView@,SharpDX.Rectangle@,System.Drawing.Point@)">
+        <member name="M:SharpDX.Direct3D10.Font.GetGlyphData(System.Int32,SharpDX.Direct3D10.ShaderResourceView@,SharpDX.Rectangle@,SharpDX.DrawingPoint@)">
             <summary>	
             Return information about the placement and orientation of a glyph in a character cell.	
             </summary>	
             <param name="glyph"><para>Glyph identifier.</para></param>	
             <param name="textureOut"><para>Address of a reference to a ID3D10Texture object that contains the glyph.</para></param>	
             <param name="blackBoxRef"><para>Pointer to the smallest rectangle object that completely encloses the glyph. See <see cref="T:SharpDX.Rectangle"/>.</para></param>	
-            <param name="cellIncRef"><para>Pointer to the two-dimensional vector that connects the origin of the current character cell to the origin of the next character cell. See <see cref="T:System.Drawing.Point"/>.</para></param>	
+            <param name="cellIncRef"><para>Pointer to the two-dimensional vector that connects the origin of the current character cell to the origin of the next character cell. See <see cref="T:SharpDX.DrawingPoint"/>.</para></param>	
             <returns>If the method succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the method fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, D3DXERR_INVALIDDATA.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Font::GetGlyphData']/*"/>	
             <unmanaged>HRESULT ID3DX10Font::GetGlyphData([In] unsigned int Glyph,[Out] ID3D10ShaderResourceView** ppTexture,[Out] RECT* pBlackBox,[Out] POINT* pCellInc)</unmanaged>	
@@ -5337,7 +5353,7 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Font::PreloadTextW']/*"/>	
             <unmanaged>HRESULT ID3DX10Font::PreloadTextW([In] const wchar_t* pString,[In] int Count)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D10.Font.DrawText(SharpDX.Direct3D10.Sprite,System.String,System.Int32,SharpDX.Rectangle,System.Int32,SharpDX.Color4)">
+        <member name="M:SharpDX.Direct3D10.Font.DrawText(SharpDX.Direct3D10.Sprite,System.String,System.Int32,System.IntPtr,System.Int32,SharpDX.Color4)">
             <summary>	
             Draw formatted text. This method supports ANSI and Unicode strings.	
             </summary>	
@@ -5352,7 +5368,7 @@
             The parameters of this method are very similar to those of the GDI DrawText function.This method supports both ANSI and Unicode strings.Unless the DT_NOCLIP format is used, this method clips the text so that it does not appear outside the specified rectangle. All formatting is assumed to have multiple lines unless the DT_SINGLELINE format is specified.If the selected font is too large for the rectangle, this method does not attempt to substitute a smaller font.This method supports only fonts whose escapement and orientation are both zero.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX10Font::DrawTextW']/*"/>	
-            <unmanaged>int ID3DX10Font::DrawTextW([In] ID3DX10Sprite* pSprite,[In] const wchar_t* pString,[In] int Count,[In] RECT* pRect,[In] unsigned int Format,[In] D3DXCOLOR Color)</unmanaged>	
+            <unmanaged>int ID3DX10Font::DrawTextW([In] ID3DX10Sprite* pSprite,[In] const wchar_t* pString,[In] int Count,[In] void* pRect,[In] unsigned int Format,[In] D3DXCOLOR Color)</unmanaged>	
         </member>
         <member name="P:SharpDX.Direct3D10.Font.Device">
             <summary>	
@@ -5376,7 +5392,7 @@
             <unmanaged>GetDescW</unmanaged>	
             <unmanaged>HRESULT ID3DX10Font::GetDescW([Out] D3DX10_FONT_DESCW* pDesc)</unmanaged>
         </member>
-        <member name="P:SharpDX.Direct3D10.Font.DisplayDeviceContext">
+        <member name="P:SharpDX.Direct3D10.Font.DeviceContext">
             <summary>	
             Return a handle to a display device context (DC) that has the font set onto it.	
             </summary>	
@@ -11648,11 +11664,6 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <summary>Constant SdkVersion1.</summary>
             <unmanaged>D3D10_1_SDK_VERSION</unmanaged>
         </member>
-        <member name="F:SharpDX.Direct3D10.D3D10.DllHandle0_">
-            <summary>
-            DLLs loaders
-            </summary>
-        </member>
         <member name="M:SharpDX.Direct3D10.D3D10.CreateDeviceAndSwapChain1(SharpDX.DXGI.Adapter,SharpDX.Direct3D10.DriverType,System.IntPtr,SharpDX.Direct3D10.DeviceCreationFlags,SharpDX.Direct3D10.FeatureLevel,System.Int32,SharpDX.DXGI.SwapChainDescription@,SharpDX.DXGI.SwapChain@,SharpDX.Direct3D10.Device1@)">
             <summary>	
             Create a Direct3D 10.1 device and a swap chain.	
@@ -11837,11 +11848,6 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             </summary>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='SharpDX.Direct3D10.D3DX10']/*"/>	
         </member>
-        <member name="F:SharpDX.Direct3D10.D3DX10.DllHandle0_">
-            <summary>
-            DLLs loaders
-            </summary>
-        </member>
         <member name="M:SharpDX.Direct3D10.D3DX10.CreateDevice(SharpDX.DXGI.Adapter,SharpDX.Direct3D10.DriverType,System.IntPtr,System.Int32,SharpDX.Direct3D10.Device@)">
             <summary>	
             Create the best Direct3D 10 device that represents the display adapter.  If a Direct3D 10.1-compatible device can be created, it will be possible to acquire an <see cref="T:SharpDX.Direct3D10.Device1"/> Interface reference from the returned device interface reference.	
@@ -11876,7 +11882,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             <param name="fontOut"><para>Returns a reference to an <see cref="T:SharpDX.Direct3D10.Font"/> interface, representing the created font object.</para></param>	
             <returns>If the function succeeds, the return value is <see cref="F:SharpDX.Result.Ok"/>. If the function fails, the return value can be one of the following: <see cref="!:SharpDX.Direct3D9.ResultCode.InvalidCall"/>, D3DXERR_INVALIDDATA, E_OUTOFMEMORY.</returns>	
             <remarks>	
-            The compiler setting also determines the function version. If Unicode is defined, the function call resolves to <see cref="!:SharpDX.Direct3D9.D3DX9.CreateFontW"/>. Otherwise, the function call resolves to <see cref="!:SharpDX.Direct3D9.D3DX9.CreateFontA"/> because ANSI strings are being used.If you want more information about font parameters, see The Logical Font.	
+            The compiler setting also determines the function version. If Unicode is defined, the function call resolves to <see cref="!:SharpDX.Direct3D9.D3DX9.CreateFont"/>. Otherwise, the function call resolves to D3DXCreateFontA because ANSI strings are being used.If you want more information about font parameters, see The Logical Font.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10CreateFontW']/*"/>	
             <unmanaged>HRESULT D3DX10CreateFontW([In] ID3D10Device* pDevice,[In] int Height,[In] unsigned int Width,[In] unsigned int Weight,[In] unsigned int MipLevels,[In] BOOL Italic,[In] unsigned int CharSet,[In] unsigned int OutputPrecision,[In] unsigned int Quality,[In] unsigned int PitchAndFamily,[In] const wchar_t* pFaceName,[Out, Fast] ID3DX10Font** ppFont)</unmanaged>	
@@ -11927,7 +11933,7 @@ Flags that defines the behavior of method <see cref="M:SharpDX.Direct3D10.Asynch
             Creates a font object.	
             </summary>	
             <param name="deviceRef"><para>Pointer to an <see cref="T:SharpDX.Direct3D10.Device"/> Interface interface.</para></param>	
-            <param name="descRef"><para>Pointer to a <see cref="T:SharpDX.Direct3D10.FontDescription"/> structure, describing the attributes of the font object to create. If Unicode is defined, the function call resolves to <see cref="!:SharpDX.Direct3D9.D3DX9.CreateFontIndirectW"/>. Otherwise, the function call resolves to D3DXCreateFontIndirectA because ANSI strings are being used.</para></param>	
+            <param name="descRef"><para>Pointer to a <see cref="T:SharpDX.Direct3D10.FontDescription"/> structure, describing the attributes of the font object to create. If Unicode is defined, the function call resolves to <see cref="!:SharpDX.Direct3D9.D3DX9.CreateFontIndirect"/>. Otherwise, the function call resolves to D3DXCreateFontIndirectA because ANSI strings are being used.</para></param>	
             <param name="fontOut"><para>Returns a reference to an <see cref="T:SharpDX.Direct3D10.Font"/> Interface.</para></param>	
             <returns>The return value is one of the values listed in Direct3D 10 Return Codes.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3DX10CreateFontIndirectW']/*"/>	

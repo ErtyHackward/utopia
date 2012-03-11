@@ -603,11 +603,6 @@
             <summary>Constant CLSID_FXEcho.</summary>
             <unmanaged>CLSID_FXEcho</unmanaged>
         </member>
-        <member name="F:SharpDX.XAPO.Fx.XAPOFx.DllHandle0_">
-            <summary>
-            DLLs loaders
-            </summary>
-        </member>
         <member name="M:SharpDX.XAPO.Fx.XAPOFx.CreateFX(System.Guid,SharpDX.ComObject)">
             <summary>	
             <code>	
