@@ -77,7 +77,7 @@ namespace Sandbox.Client
             stateManager.RegisterState(_iocContainer.Get<EditorState>());
 
             // first state will be the login state
-            stateManager.SetGameState("Login");
+            stateManager.ActivateGameState("Login");
 
             game.Run();
 

@@ -49,7 +49,7 @@ namespace Sandbox.Client.States
 
         void MenuEditorPressed(object sender, EventArgs e)
         {
-            StatesManager.SetGameState("Editor");
+            StatesManager.ActivateGameState("Editor");
         }
 
         void MenuExitPressed(object sender, EventArgs e)
@@ -60,25 +60,25 @@ namespace Sandbox.Client.States
         void MenuMultiplayerPressed(object sender, EventArgs e)
         {
             _vars.SinglePlayer = false;
-            StatesManager.SetGameState("SelectServer");
+            StatesManager.ActivateGameState("SelectServer");
         }
 
         void MenuSinglePlayerPressed(object sender, EventArgs e)
         {
             _vars.SinglePlayer = true;
-            StatesManager.SetGameState("GameLoading");
+            StatesManager.ActivateGameState("GameLoading");
         }
 
         public override void OnEnabled(GameState previousState)
         {
-            StatesManager.PrepareStateAsync("GameLoading");
+            StatesManager.PrepareState("GameLoading");
             base.OnEnabled(previousState);
         }
         
         void MenuCreditsPressed(object sender, EventArgs e)
         {
             // showing the credits
-            StatesManager.SetGameState("Credits");
+            StatesManager.ActivateGameState("Credits");
         }
     }
 }

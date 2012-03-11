@@ -40,9 +40,6 @@ namespace Utopia.Worlds.Chunks
         {
             
 
-#if DEBUG
-            if (_gameStates.DebugDisplay == 2) RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-#endif
             _terraEffect.Begin(context);
 
 
@@ -52,9 +49,6 @@ namespace Utopia.Worlds.Chunks
 
                 RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
                 DrawSolidFaces(context);
-#if DEBUG
-                DrawDebug();
-#endif
                 return;
             }
 
@@ -120,10 +114,6 @@ namespace Utopia.Worlds.Chunks
         {
             Matrix worldFocus = Matrix.Identity;
 
-#if DEBUG
-            if (_gameStates.DebugDisplay == 2) RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Wired, GameDXStates.DXStates.NotSet, GameDXStates.DXStates.DepthStencils.DepthEnabled);
-#endif
-
             VisualChunk chunk;
 
             _liquidEffect.Begin(context);
@@ -185,28 +175,6 @@ namespace Utopia.Worlds.Chunks
                 }
             }
         }
-
-#if DEBUG
-        private void DrawDebug()
-        {
-            VisualChunk chunk;
-            Matrix worldFocus = Matrix.Identity;
-
-            for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Y; chunkIndice++)
-            {
-                chunk = SortedChunks[chunkIndice];
-
-                if (chunk.IsReady2Draw)
-                {
-                    if (!chunk.isFrustumCulled)
-                    {
-                        if (_gameStates.DebugDisplay == 1) chunk.ChunkBoundingBoxDisplay.Draw(_camManager.ActiveCamera);
-                    }
-
-                }
-            }
-        }
-#endif
 
         private void InitDrawComponents()
         {

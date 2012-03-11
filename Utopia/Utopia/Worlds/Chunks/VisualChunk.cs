@@ -169,9 +169,6 @@ namespace Utopia.Worlds.Chunks
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 
-#if DEBUG
-            _chunkBoundingBoxDisplay = new BoundingBox3D(d3dEngine, worldFocusManager, new Vector3((float)(cubeRange.Max.X - cubeRange.Min.X), (float)(cubeRange.Max.Y - cubeRange.Min.Y), (float)(cubeRange.Max.Z - cubeRange.Min.Z)), S33M3Engines.D3D.Effects.Basics.DebugEffect.DebugEffectVPC, Color.Tomato);
-#endif
             _d3dEngine = d3dEngine;
             _visualWorldParameters = visualWorldParameter;
             VisualSpriteEntities = new List<VisualEntity>();
