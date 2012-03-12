@@ -73,7 +73,7 @@
       <HintPath>..\..\Library\SharpDX2\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="SmartThreadPool">
-      <HintPath>..\..\Libraries\SmartThreadPool.dll</HintPath>
+      <HintPath>..\..\Library\SmartThreadPool.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
