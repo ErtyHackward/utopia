@@ -79,7 +79,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
             //System Objects Management ================================
-            _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope(); //Application shared states
+            _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope().WithConstructorArgument("allocatedThreadPool", 3); //Application shared states
             _iocContainer.Bind<ICameraFocused>().To<FirstPersonCameraWithFocus>().InSingletonScope().WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
             _iocContainer.Bind<ICamera>().To<FirstPersonCameraWithFocus>().InSingletonScope().WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
             _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InSingletonScope();     //Camera manager
