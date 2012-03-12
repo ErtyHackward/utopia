@@ -15,7 +15,6 @@ namespace Utopia.Network
     {
         
         public string Address { get; set; }
-        public bool Connected { get; set; }
         public ServerConnection ServerConnection { get; set; }
 
         //Initilialization received Data, should be move inside a proper class/struct !
@@ -53,7 +52,6 @@ namespace Utopia.Network
 
         public ServerComponent()
         {
-            Connected = false;
         }
 
         public bool BindingServer(string address)

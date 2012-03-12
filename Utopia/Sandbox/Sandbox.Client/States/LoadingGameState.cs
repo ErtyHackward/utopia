@@ -140,16 +140,24 @@ namespace Sandbox.Client.States
                     _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
                 }
                 #endregion
-                
-                _serverComponent.BindingServer("127.0.0.1");
-                _serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
-                _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Singleplayer", "world.db");
+
+                if (_serverComponent.ServerConnection == null || 
+                    _serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
+                {
+                    _serverComponent.BindingServer("127.0.0.1");
+                    _serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
+                    _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Singleplayer", "world.db");
+                }
             }
             else
             {
-                _serverComponent.BindingServer(_vars.CurrentServerAddress);
-                _serverComponent.ConnectToServer(_vars.Login, _vars.DisplayName, _vars.PasswordHash);
-                _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Multiplayer", _vars.CurrentServerAddress.Replace(':','_'), "world.db");
+                if (_serverComponent.ServerConnection == null || 
+                    _serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
+                {
+                    _serverComponent.BindingServer(_vars.CurrentServerAddress);
+                    _serverComponent.ConnectToServer(_vars.Login, _vars.DisplayName, _vars.PasswordHash);
+                    _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Multiplayer", _vars.CurrentServerAddress.Replace(':', '_'), "world.db");
+                }
             }
         }
 
