@@ -135,6 +135,13 @@ namespace Utopia.Entities.Managers
 
         public bool HandleToolsUse { get; set; }
 
+        private bool _landscapeInitiazed;
+        public bool LandscapeInitiazed
+        {
+            get { return _landscapeInitiazed; }
+            set { _landscapeInitiazed = value; }
+        }
+
         #endregion
 
         public PlayerEntityManager(D3DEngine engine,
@@ -269,7 +276,7 @@ namespace Utopia.Entities.Managers
             {
                 Vector3D mouseWorldPosition;
                 Vector3D mouseLookAtPosition;
-                _inputsManager.MouseManager.UnprojectMouseCursor(out mouseWorldPosition, out mouseLookAtPosition);
+                _inputsManager.MouseManager.UnprojectMouseCursor(_cameraManager.ActiveCamera, out mouseWorldPosition, out mouseLookAtPosition);
                 newpicking = RefreshPicking(ref mouseWorldPosition, ref mouseLookAtPosition, 2);
             }
 
@@ -378,7 +385,7 @@ namespace Utopia.Entities.Managers
                 case EntityDisplacementModes.Flying:
                     break;
                 case EntityDisplacementModes.Walking:
-                    PhysicSimulation(ref timeSpent);
+                    //PhysicSimulation(ref timeSpent);
                     break;
                 default:
                     break;
@@ -678,6 +685,8 @@ namespace Utopia.Entities.Managers
 
         public override void Update( GameTime timeSpend)
         {
+            if (_landscapeInitiazed == false) return;
+
             inputHandler();             //Input handling
 
             GetSelectedEntity();         //Player Block Picking handling

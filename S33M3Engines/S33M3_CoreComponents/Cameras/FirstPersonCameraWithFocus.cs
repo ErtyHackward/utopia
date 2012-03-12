@@ -69,6 +69,10 @@ namespace S33M3_CoreComponents.Cameras
             if (CameraPlugin != null)
             {
                 //Get the Camera Position and Rotation from the attached Entity to the camera !
+                if (CameraPlugin.CameraWorldPosition.Y < -100.0)
+                {
+                    //Console.WriteLine("");
+                }
                 _worldPosition = CameraPlugin.CameraWorldPosition;
                 _cameraOrientation = CameraPlugin.CameraOrientation;
                 _cameraYAxisOrientation = CameraPlugin.CameraYAxisOrientation;

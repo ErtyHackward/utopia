@@ -84,10 +84,6 @@ namespace Sandbox.Client.States
 
         public override void OnEnabled(GameState previousState)
         {
-            var playerEntityManager = _ioc.Get<PlayerEntityManager>();
-            playerEntityManager.EnableComponent();
-
-         
             base.OnEnabled(previousState);
         }
     }

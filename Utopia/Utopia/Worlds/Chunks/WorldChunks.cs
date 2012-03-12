@@ -126,6 +126,8 @@ namespace Utopia.Worlds.Chunks
         {
             var handler = LoadComplete;
             if (handler != null) handler(this, EventArgs.Empty);
+
+            _playerManager.LandscapeInitiazed = true;
         }
 
         public bool IsInitialLoadCompleted { get; set; }

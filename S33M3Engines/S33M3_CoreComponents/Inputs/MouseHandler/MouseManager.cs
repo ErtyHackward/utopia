@@ -17,7 +17,6 @@ namespace S33M3_CoreComponents.Inputs.MouseHandler
 
         #region Private Variables
         private D3DEngine _engine;
-        private CameraManager<ICamera> _cameraManager;
         private Vector2I _centerViewPort;
         private Vector2I _mousePosiBeforeCaptureMode;
         private bool _mouseCapture;
@@ -70,14 +69,12 @@ namespace S33M3_CoreComponents.Inputs.MouseHandler
         }
         #endregion
 
-        public MouseManager(D3DEngine engine,
-                            CameraManager<ICamera> cameraManager)
+        public MouseManager(D3DEngine engine)
         {
 #if DEBUG
             logger.Warn("No camera attached to the MouseManager => UnprojectMouseCursor won't be usable !");
 #endif
             _engine = engine;
-            _cameraManager = cameraManager;
 
             _engine.ViewPort_Updated += _engine_ViewPort_Updated;
             _engine.GameWindow.GotFocus += GameWindow_GotFocus;
@@ -173,21 +170,15 @@ namespace S33M3_CoreComponents.Inputs.MouseHandler
         /// <param name="MouseWorldPosition"></param>
         /// <param name="MouseLookAt"></param>
         /// <param name="fixToCenter">to bypass the mouse pick and use screen center instead, useful for debug</param>
-        public void UnprojectMouseCursor(ref Matrix cameraWVP, out Vector3D MouseWorldPosition, out Vector3D MouseLookAt, bool fixToCenter = false)
+        public void UnprojectMouseCursor(ICamera camera, out Vector3D MouseWorldPosition, out Vector3D MouseLookAt, bool fixToCenter = false)
         {
-            if (_cameraManager == null)
-            {
-                logger.Error("Cannot use UnprojectMouseCursor without Camera !!");
-                throw new Exception("Cannot use UnprojectMouseCursor without Camera !!");
-            }
-
             //Get mouse Position on the screen
             var mouseState = Mouse.GetState();
             int x, y;
             if (fixToCenter)
             {
-                y = (int)_cameraManager.ActiveCamera.Viewport.Height / 2;
-                x = (int)_cameraManager.ActiveCamera.Viewport.Width / 2;
+                y = (int)camera.Viewport.Height / 2;
+                x = (int)camera.Viewport.Width / 2;
             }
             else
             {
@@ -197,6 +188,8 @@ namespace S33M3_CoreComponents.Inputs.MouseHandler
 
             Vector3 nearClipVector = new Vector3(x, y, 0);
             Vector3 farClipVector = new Vector3(x, y, 1);
+
+            Matrix cameraWVP = camera.ViewProjection3D;
 
             Vector3 UnprojecNearClipVector;
             Vector3.Unproject(ref nearClipVector,
@@ -225,19 +218,45 @@ namespace S33M3_CoreComponents.Inputs.MouseHandler
             MouseLookAt = new Vector3D(Vector3.Normalize(UnprojecFarClipVector - UnprojecNearClipVector));
         }
 
-        /// <summary>
-        /// Will tranform the mouse screen position into world coordinate + a direction vector called "MouseLookat"
-        /// </summary>
-        /// <param name="MouseWorldPosition"></param>
-        /// <param name="MouseLookAt"></param>
-        /// <param name="fixToCenter">to bypass the mouse pick and use screen center instead, useful for debug</param>
-        public void UnprojectMouseCursor(out Vector3D MouseWorldPosition, out Vector3D MouseLookAt, bool fixToCenter = false)
+        public void UnprojectMouseCursor(ref Matrix viewProjection, out Vector3D mouseWorldPosition, out Vector3D mouseLookAt)
         {
-            Matrix wvp = _cameraManager.ActiveCamera.ViewProjection3D;
-            UnprojectMouseCursor(ref wvp, out MouseWorldPosition, out MouseLookAt, fixToCenter);
+            //Get mouse Position on the screen
+            var mouseState = Mouse.GetState();
+
+            var x = mouseState.X;
+            var y = mouseState.Y;
+
+
+            var nearClipVector = new Vector3D(x, y, 0);
+            var farClipVector = new Vector3D(x, y, 1);
+
+            Vector3D unprojecNearClipVector;
+            Vector3D.Unproject(ref nearClipVector,
+                              _engine.ViewPort.TopLeftX,
+                              _engine.ViewPort.TopLeftY,
+                              _engine.ViewPort.Width,
+                              _engine.ViewPort.Height,
+                              _engine.ViewPort.MinDepth,
+                              _engine.ViewPort.MaxDepth,
+                              ref viewProjection,
+                              out unprojecNearClipVector);
+
+            Vector3D unprojecFarClipVector;
+            Vector3D.Unproject(ref farClipVector,
+                              _engine.ViewPort.TopLeftX,
+                              _engine.ViewPort.TopLeftY,
+                              _engine.ViewPort.Width,
+                              _engine.ViewPort.Height,
+                              _engine.ViewPort.MinDepth,
+                              _engine.ViewPort.MaxDepth,
+                              ref viewProjection,
+                              out unprojecFarClipVector);
+
+            //To apply From Camera Position !
+            mouseWorldPosition = unprojecNearClipVector;
+            mouseLookAt = Vector3D.Normalize(unprojecFarClipVector - unprojecNearClipVector);
         }
 
-        
         private void HideMouseCursor()
         {
             while (_mouseHideCount >= 0)
