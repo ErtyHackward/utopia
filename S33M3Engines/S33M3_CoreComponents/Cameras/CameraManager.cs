@@ -75,6 +75,7 @@ namespace S33M3_CoreComponents.Cameras
             _activeCamera.CameraUpdateOrderChanged -= ActiveCamera_CameraUpdateOrderChanged;
             _activeCamera.CameraUpdateOrderChanged += ActiveCamera_CameraUpdateOrderChanged;
             if (ActiveCamera_Changed != null) ActiveCamera_Changed(newCamera);
+
         }
 
         private void ActiveCamera_CameraUpdateOrderChanged(ICamera camera, int newOrderId)

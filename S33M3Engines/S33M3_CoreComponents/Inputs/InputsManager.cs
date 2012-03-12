@@ -24,7 +24,6 @@ namespace S33M3_CoreComponents.Inputs
     {
         #region Private variables
         private D3DEngine _engine;
-        private CameraManager<ICamera> _cameraManager;
         #endregion
 
         #region Public variables/Properties
@@ -40,13 +39,11 @@ namespace S33M3_CoreComponents.Inputs
         /// <param name="cameraManager">The Camera Manager</param>
         /// <param name="actionType">The type presenting the collection of Actions at disposal via Const variables</param>
         public InputsManager(D3DEngine engine, 
-                            CameraManager<ICamera> cameraManager,
                             Type actionType)
         {
             _engine = engine;
-            _cameraManager = cameraManager;
 
-            MouseManager = ToDispose(new MouseManager(_engine, _cameraManager));
+            MouseManager = ToDispose(new MouseManager(_engine));
             ActionsManager = ToDispose(new ActionsManager(_engine, MouseManager, actionType));
             KeyboardManager = ToDispose(new KeyboardManager(_engine));
 

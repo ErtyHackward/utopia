@@ -580,7 +580,6 @@ namespace Utopia.Shared.Chunks
                 }
             }
 
-
             cubeWithPosition.Position = new Vector3I(X, Y, Z);
         }
 
