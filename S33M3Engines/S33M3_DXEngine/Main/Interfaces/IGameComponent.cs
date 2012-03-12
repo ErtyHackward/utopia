@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using SharpDX.Direct3D11;
+
+namespace S33M3_DXEngine.Main.Interfaces
+{
+    public interface IGameComponent
+    {
+        string Name { get; }
+        bool IsSystemComponent { get; }
+        bool IsDefferedLoadContent { get; }
+        void EnableComponent();
+        void DisableComponent();
+        void Initialize();
+        void LoadContent(DeviceContext Context);
+    }
+}

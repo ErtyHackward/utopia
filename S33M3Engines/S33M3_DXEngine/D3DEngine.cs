@@ -1,0 +1,462 @@
+﻿using System;
+using System.Drawing;
+using S33M3_DXEngine.RenderStates;
+using SharpDX;
+using SharpDX.D3DCompiler;
+using SharpDX.Direct3D;
+using SharpDX.Direct3D11;
+using SharpDX.DXGI;
+using SharpDX.Windows;
+using Device = SharpDX.Direct3D11.Device;
+using Resource = SharpDX.Direct3D11.Resource;
+
+namespace S33M3_DXEngine
+{
+    //3D Engine based on SharpDX - target microsoft D3D10
+    public class D3DEngine : IDisposable
+    {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        #region Static Variables
+        public static IntPtr WindowHandle;
+        //Trick to avoid VertexBuffer PrimitiveTopology change when not needed
+        //CANNOT be use in a multithreaded buffer approch !
+        public static bool SingleThreadRenderingOptimization = true; 
+#if DEBUG
+        public static bool FULLDEBUGMODE = true;
+#else
+        public static bool FULLDEBUGMODE = false;
+#endif
+        #endregion
+
+        #region Private variables
+        private bool _isResizing = false;
+        private RenderForm _renderForm;
+        private SwapChain _swapChain;
+        private RenderTargetView _renderTarget;
+        private DepthStencilView _depthStencil;
+        private Viewport _viewPort;
+        private Factory _dx11factory;
+        private Texture2D _backBuffer, _staggingBackBufferTexture;
+#if DEBUG
+        public static readonly ShaderFlags ShaderFlags = ShaderFlags.Debug | ShaderFlags.SkipOptimization;
+#else
+        public static readonly ShaderFlags ShaderFlags = ShaderFlags.OptimizationLevel3;
+#endif
+        #endregion
+
+        #region Public properties
+        public Device Device;
+
+        public delegate void ViewPortUpdated(Viewport viewport);
+        public event ViewPortUpdated ViewPort_Updated;
+
+        public Viewport ViewPort { get { return _viewPort; } set { _viewPort = value; } }
+        public RenderForm GameWindow { get { return _renderForm; } }
+        public SwapChain SwapChain { get { return _swapChain; } }
+
+        public RenderTargetView RenderTarget { get { return _renderTarget; } }
+        public DepthStencilView DepthStencilTarget { get { return _depthStencil; } }
+        public ShaderResourceView StaggingBackBuffer;
+        /// <summary>
+        /// Leave at 0:0 to use optimal resolution display.
+        /// </summary>
+        public Size RenderResolution { get; set; }
+
+        public bool B8G8R8A8_UNormSupport { get; set; }
+
+        public DeviceContext ImmediateContext;
+
+        public bool HasFocus;
+
+        public bool isFullScreen
+        {
+            get
+            {
+                return !_swapChain.Description.IsWindowed;
+            }
+            set
+            {
+                if (value != !_swapChain.Description.IsWindowed)
+                {
+                    _swapChain.SetFullscreenState(value, null);
+                    WindowSizeChanged();
+                }
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Creating a new D3DEngine
+        /// </summary>
+        /// <param name="startingSize">Windows starting size</param>
+        /// <param name="windowCaption">Window Caption</param>
+        /// <param name="RenderResolution">if not passed or equal to 0;0 then the resolution will be the one from the Windows Size</param>
+        public D3DEngine(Size startingSize, string windowCaption, Size renderResolution = default(Size))
+        {
+
+
+            //Create the MainRendering Form
+            _renderForm = new RenderForm()
+            {
+                Text = windowCaption,
+                ClientSize = startingSize,
+                StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
+            };
+            WindowHandle = _renderForm.Handle;
+            _renderForm.KeyUp += new System.Windows.Forms.KeyEventHandler(_renderForm_KeyUp);
+
+            this.RenderResolution = renderResolution;
+
+            Initialize();
+
+            //Init State repo
+            RenderStatesRepo.Initialize(this);
+        }
+
+        //Remove default F10 (Open menu) Form key push !
+        void _renderForm_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyCode == System.Windows.Forms.Keys.F10) e.Handled = true;
+        }
+
+        #region Private methods
+        #endregion
+
+        #region Public Methods
+        public void Initialize()
+        {
+            _dx11factory = new Factory();
+
+            using (Adapter adapter = _dx11factory.GetAdapter(0))
+            {
+                using (Output output = adapter.GetOutput(0))
+                {
+                    B8G8R8A8_UNormSupport = false;                
+                    foreach (var mode in output.GetDisplayModeList(Format.B8G8R8A8_UNorm, DisplayModeEnumerationFlags.Interlaced))
+                    {
+                        B8G8R8A8_UNormSupport = true;
+                    }
+
+                    logger.Info("B8G8R8A8_UNormSupport compatibility = {0}", B8G8R8A8_UNormSupport);
+                }
+            }
+
+            CreateSwapChain();
+            CreateRenderTarget();
+            CreateDepthStencil();
+            CreateViewPort();
+            CreateStaggingBackBuffer();
+
+            logger.Debug("Creation of SwapChain, RenderTarget, DepthStencil, StaggingBackBuffer and viewport");
+
+            //Set Viewport and rendertarget to the device
+            SetRenderTargets();
+
+            //Remove the some built-in fonctionnality of DXGI
+            _dx11factory.MakeWindowAssociation(_renderForm.Handle, WindowAssociationFlags.IgnoreAll | WindowAssociationFlags.IgnoreAltEnter);
+
+            _renderForm.ResizeBegin += _renderForm_ResizeBegin;
+            _renderForm.ResizeEnd += _renderForm_ResizeEnd;
+            _renderForm.Resize += _renderForm_Resize;
+            _renderForm.LostFocus += GameWindow_LostFocus;
+            _renderForm.GotFocus += GameWindow_GotFocus;
+
+            _renderForm.Show();
+            _renderForm.Focus();
+            _renderForm.TopMost = true;
+            HasFocus = true;
+            _renderForm.TopMost = false;
+        }
+
+        public void SetRenderTargets()
+        {
+            ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget);
+        }
+
+        public void SetRenderTargetsAndViewPort()
+        {
+            ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget);
+            ImmediateContext.Rasterizer.SetViewports(_viewPort);
+        }
+
+        public void RefreshBackBufferAsTexture()
+        {
+            ImmediateContext.CopyResource(_backBuffer, _staggingBackBufferTexture);
+
+            //if(StaggingBackBuffer != null) StaggingBackBuffer.Dispose();
+            //StaggingBackBuffer = new ShaderResourceView(GraphicsDevice, _staggingBackBufferTexture);
+            //Texture2D.SaveTextureToFile(Context, _staggingBackBufferTexture, ImageFileFormat.Png, @"e:\Img.png");
+        }
+
+        public SharpDX.Rectangle[] ScissorRectangles
+        {
+            get 
+            {
+                return ImmediateContext.Rasterizer.GetScissorRectangles();
+            }
+            set
+            {
+                ImmediateContext.Rasterizer.SetScissorRectangles(value);
+            }
+        }
+
+        void _renderForm_ResizeBegin(object sender, EventArgs e)
+        {
+            _isResizing = true;
+        }
+
+        void _renderForm_Resize(object sender, EventArgs e)
+        {
+            //Only If maximized !
+            if (!_isResizing)
+            {
+                WindowSizeChanged();
+            }
+        }
+
+        void _renderForm_ResizeEnd(object sender, EventArgs e)
+        {
+            if (_isResizing)
+            {
+                WindowSizeChanged();
+                _isResizing = false;
+            }
+        }
+
+        void GameWindow_GotFocus(object sender, EventArgs e)
+        {
+            HasFocus = true;
+        }
+
+        void GameWindow_LostFocus(object sender, EventArgs e)
+        {
+            HasFocus = false;
+        }
+
+        private void CreateSwapChain()
+        {
+            if (_swapChain == null)
+            {
+                //Create the SwapChain Param object
+                SwapChainDescription SwapDesc = new SwapChainDescription()
+                {
+                    BufferCount = 1,
+                    Usage = Usage.RenderTargetOutput | Usage.ShaderInput,
+                    OutputHandle = _renderForm.Handle,
+                    IsWindowed = true,                    
+                    //    ModeDescription = new ModeDescription(_renderForm.ClientSize.Width, _renderForm.ClientSize.Height, new Rational(60, 1), Format.R8G8B8A8_UNorm),
+                    ModeDescription = RenderResolution == default(Size) ? new ModeDescription() { Format = Format.R8G8B8A8_UNorm } 
+                                                                        : new ModeDescription() { Format = Format.R8G8B8A8_UNorm, Width = _renderForm.ClientSize.Width, Height = _renderForm.ClientSize.Height},
+                    SampleDescription = new SampleDescription(1, 0),
+                    SwapEffect = SwapEffect.Discard
+                };
+
+                if (!FULLDEBUGMODE)
+                {
+                    Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.None, SwapDesc, out Device, out _swapChain);
+                    logger.Info("Device and swapchain created in Release mode");
+                }
+                else
+                {
+                    try
+                    {
+                        Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.Debug, SwapDesc, out Device, out _swapChain);
+                        logger.Info("Device et swapchain created in FULLDEBUGMODE mode");
+                    }
+                    catch (SharpDXException ex)
+                    {
+                        logger.Warn("Error Creating SwapChain or Device in debug mode : {0}", ex.Message);
+                        Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.None, SwapDesc, out Device, out _swapChain);
+                        logger.Info("Device et swapchain created in Release mode");
+                    }
+                }
+
+                //Create the threaded contexts
+                ImmediateContext = Device.ImmediateContext;
+
+#if DEBUG
+                //Set resource Name, will only be done at debug time.
+                Device.DebugName = "Main Created DX11 device";
+                _swapChain.DebugName = "Main Swap Chain";
+                ImmediateContext.DebugName = "Immediat Context";
+#endif
+            }
+            else
+            {
+                if (RenderResolution == default(Size))
+                {
+                    _swapChain.ResizeBuffers(0, 0, 0, Format.R8G8B8A8_UNorm, (int)SwapChainFlags.None); //Automatically resize to the optimum resolution
+                }
+                else
+                {
+                    _swapChain.ResizeBuffers(0, RenderResolution.Width, RenderResolution.Height, Format.R8G8B8A8_UNorm, (int)SwapChainFlags.None);
+                }
+            }
+            // Get the created BackBuffer
+            _backBuffer = Resource.FromSwapChain<Texture2D>(_swapChain, 0);
+
+#if DEBUG
+            //Set resource Name, will only be done at debug time.
+            _backBuffer.DebugName = "Device BackBuffer";
+#endif
+        }
+
+        private void CreateRenderTarget()
+        {
+            //Create RenderTargetView 
+            _renderTarget = new RenderTargetView(Device, _backBuffer);
+        }
+
+        private void CreateDepthStencil()
+        {
+            //Create the Depth Stencil Texture
+            Texture2DDescription DepthStencilDescr = new Texture2DDescription()
+            {
+                Width = _backBuffer.Description.Width,
+                Height = _backBuffer.Description.Height,
+                MipLevels = 1,
+                ArraySize = 1,
+                Format = Format.D32_Float,
+                SampleDescription = new SampleDescription() { Count = 1, Quality = 0 },
+                Usage = ResourceUsage.Default,
+                BindFlags = BindFlags.DepthStencil,
+                CpuAccessFlags = CpuAccessFlags.None,
+                OptionFlags = ResourceOptionFlags.None,
+            };
+            Texture2D DepthStencilBuffer = new Texture2D(Device, DepthStencilDescr);
+
+#if DEBUG
+            //Set resource Name, will only be done at debug time.
+            DepthStencilBuffer.DebugName = "DepthStencilBuffer Texture";
+#endif
+
+            //Create the Depth Stencil View + View
+            DepthStencilViewDescription DepthStencilViewDescr = new DepthStencilViewDescription()
+            {
+                Format = DepthStencilDescr.Format,
+                Dimension = DepthStencilViewDimension.Texture2D,
+                Texture2D = new DepthStencilViewDescription.Texture2DResource() { MipSlice = 0 }
+            };
+            //Create the Depth Stencil view
+            _depthStencil = new DepthStencilView(Device, DepthStencilBuffer, DepthStencilViewDescr);
+
+            DepthStencilBuffer.Dispose();
+        }
+
+        private void CreateViewPort()
+        {
+            //Create ViewPort
+            _viewPort = new Viewport(0, 0, _backBuffer.Description.Width, _backBuffer.Description.Height, 0, 1);
+            if (ViewPort_Updated != null) ViewPort_Updated(_viewPort);
+            ImmediateContext.Rasterizer.SetViewports(_viewPort);
+
+            logger.Debug("ViewPort Updated new size Width : {0}px Height : {1}px", _backBuffer.Description.Width, _backBuffer.Description.Height);
+        }
+
+        private void CreateStaggingBackBuffer()
+        {
+            Texture2DDescription StaggingBackBufferDescr = new Texture2DDescription()
+            {
+                Width = _backBuffer.Description.Width,
+                Height = _backBuffer.Description.Height,
+                MipLevels = 1,
+                ArraySize = 1,
+                Format = Format.R8G8B8A8_UNorm,
+                SampleDescription = new SampleDescription() { Count = 1, Quality = 0 },
+                Usage = ResourceUsage.Default,
+                BindFlags = BindFlags.ShaderResource,
+                CpuAccessFlags = CpuAccessFlags.None,
+                OptionFlags = ResourceOptionFlags.None,
+            };
+
+            _staggingBackBufferTexture = new Texture2D(Device, StaggingBackBufferDescr);
+            StaggingBackBuffer = new ShaderResourceView(Device, _staggingBackBufferTexture);
+        }
+
+        private void ReleaseBackBufferLinkedResources()
+        {
+            if (_backBuffer != null)
+            {
+                _backBuffer.Dispose(); _backBuffer = null;
+            }
+            if (_renderTarget != null)
+            {
+                _renderTarget.Dispose(); _renderTarget = null;
+            }
+            if (_depthStencil != null)
+            {
+                _depthStencil.Dispose(); _depthStencil = null;
+            }
+            if (StaggingBackBuffer != null)
+            {
+                if (_staggingBackBufferTexture != null) _staggingBackBufferTexture.Dispose();
+                StaggingBackBuffer.Dispose(); StaggingBackBuffer = null;
+            }
+        }
+
+
+        private void WindowSizeChanged()
+        {
+            logger.Debug("Window size changed new size = Width : {0}px Height : {1}px", _renderForm.ClientSize.Width, _renderForm.ClientSize.Height);
+
+            ReleaseBackBufferLinkedResources();
+
+            //Resize renderTarget based on the new backbuffer size
+            CreateSwapChain();
+            CreateRenderTarget();
+            CreateDepthStencil();
+            CreateViewPort();
+            CreateStaggingBackBuffer();
+
+            SetRenderTargets();
+
+            logger.Debug("SwapChain, RenderTarget, DepthStencil, StaggingBackBuffer and viewport recreated");
+        }
+        
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            //Clean Up event Delegates
+            if (ViewPort_Updated != null)
+            {
+                //Remove all Events associated to this control (That haven't been unsubscribed !)
+                foreach (Delegate d in ViewPort_Updated.GetInvocationList())
+                {
+                    ViewPort_Updated -= (ViewPortUpdated)d;
+                }
+            }
+
+
+            //Dispo State repo
+            RenderStatesRepo.Dispose();
+
+            _renderForm.ResizeBegin -= _renderForm_ResizeBegin;
+            _renderForm.ResizeEnd -= _renderForm_ResizeEnd;
+            _renderForm.Resize -= _renderForm_Resize;
+            _renderForm.LostFocus -= GameWindow_LostFocus;
+            _renderForm.GotFocus -= GameWindow_GotFocus;
+
+            ////Dispose the created states
+            _backBuffer.Dispose();
+            _dx11factory.Dispose();
+            _depthStencil.Dispose();
+            _renderTarget.Dispose();
+            _swapChain.Dispose();
+            _staggingBackBufferTexture.Dispose();
+            StaggingBackBuffer.Dispose();
+
+            ImmediateContext.ClearState();
+            ImmediateContext.Flush();
+
+            //The Context is automaticaly disposed by the Device
+            Device.Dispose();
+        }
+
+        #endregion
+    }
+}
