@@ -414,10 +414,19 @@ namespace Utopia.Worlds.Chunks
 
         private void RangeChanged() // Start it also if the World offset Change !!!
         {
-            ChunkID = (((Int64)_cubeRange.Min.X) << 32) + _cubeRange.Min.Z;
+            //ChunkID = (((Int64)_cubeRange.Min.X) << 32) + _cubeRange.Min.Z;
 
             ChunkPositionBlockUnit = new Vector2I() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
+
             ChunkPosition = new Vector2I() { X = _cubeRange.Min.X / AbstractChunk.ChunkSize.X, Y = _cubeRange.Min.Z / AbstractChunk.ChunkSize.Z };
+
+            ChunkID = ChunkPosition.GetID();
+
+            if (ChunkPosition.X == -5 && ChunkPosition.Y == -5)
+            {
+                Console.WriteLine("");
+            }
+
             RefreshWorldMatrix();
 
             ChunkCenter = new Vector3D(_cubeRange.Min.X + (_cubeRange.Max.X - _cubeRange.Min.X) / 2.0,

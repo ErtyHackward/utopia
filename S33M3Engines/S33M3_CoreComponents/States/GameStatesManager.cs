@@ -51,7 +51,7 @@ namespace S33M3_CoreComponents.States
             private set
             {
                 //Not State switcher defined, do the activatino directly
-                if (SwitchComponent == null)
+                if (SwitchComponent == null || value == _currentState)
                 {
                     SwitchActiveGameState(value);
                 }
