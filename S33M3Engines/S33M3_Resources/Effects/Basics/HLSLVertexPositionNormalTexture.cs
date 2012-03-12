@@ -64,7 +64,7 @@ namespace S33M3_Resources.Effects.Basics
         #endregion
 
         public HLSLVertexPositionNormalTexture(Device device)
-            : base(device, @"D3D\Effects\Basics\VertexPositionNormalTexture.hlsl", VertexPositionNormalTexture.VertexDeclaration)
+            : base(device, @"Effects\Basics\VertexPositionNormalTexture.hlsl", VertexPositionNormalTexture.VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));

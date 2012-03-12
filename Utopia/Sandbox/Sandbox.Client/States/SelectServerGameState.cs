@@ -52,7 +52,7 @@ namespace Sandbox.Client.States
             vars.SinglePlayer = false;
             vars.CurrentServerAddress = ServerList[selection.List.SelectedItems[0]].ServerAddress;
 
-            StatesManager.ActivateGameState("GameLoading");
+            StatesManager.ActivateGameState("LoadingGame");
         }
 
         void WebApiServerListReceived(object sender, WebEventArgs<ServerListResponce> e)

@@ -50,19 +50,16 @@ namespace S33M3_CoreComponents.States
             get { return _currentState; }
             private set
             {
-                if (_currentState != value)
+                //Not State switcher defined, do the activatino directly
+                if (SwitchComponent == null)
                 {
-                    //Not State switcher defined, do the activatino directly
-                    if (SwitchComponent == null)
-                    {
-                        SwitchActiveGameState(value);
-                    }
-                    else
-                    {
-                        _nextState = value;
-                        SwitchComponent.BeginSwitch();
-                        SwitchComponent.EnableComponent();
-                    }
+                    SwitchActiveGameState(value);
+                }
+                else
+                {
+                    _nextState = value;
+                    SwitchComponent.BeginSwitch();
+                    SwitchComponent.EnableComponent();
                 }
             }
         }
@@ -159,6 +156,10 @@ namespace S33M3_CoreComponents.States
 
             _inActivationProcess = false;
             _currentState.IsActivationRequested = false;
+
+#if DEBUG
+            logger.Debug("State activated : {0}", newState.Name);
+#endif
         }
 
         /// <summary>
@@ -179,7 +180,7 @@ namespace S33M3_CoreComponents.States
                 }
             }
 
-            // Enable current stuff, except the Switch Component
+            // Enable current stuff, except the system Component
             foreach (GameComponent gc in current.GameComponents)
             {
                 if (gc.IsSystemComponent) continue;
@@ -215,8 +216,6 @@ namespace S33M3_CoreComponents.States
 
         public override void Update(GameTime timeSpent)
         {
-            if(AsyncStateInitResults.Count == 0) return;
-
             //For each Pending Initizalion running
             for (int i = AsyncStateInitResults.Count - 1; i >= 0; i--)
             {
@@ -257,6 +256,9 @@ namespace S33M3_CoreComponents.States
                         if (!_game.GameComponents.Contains(gc)) _game.GameComponents.Add(gc);
                     });
 
+#if DEBUG
+                    logger.Debug("State Initialization finished : {0}", state.Name);
+#endif
 
                     //The states is initialized, was it an initialization requested from an activation ?
                     if (state.IsActivationRequested == true)
@@ -278,6 +280,9 @@ namespace S33M3_CoreComponents.States
 
         public void PrepareState(GameState state)
         {
+#if DEBUG
+            logger.Debug("State Initialization requested (by Prepare) : {0}", state.Name);
+#endif
              AsyncStateInitResults.Add(GameStatesManagerThreadPoolGrp.QueueWorkItem(new Amib.Threading.Func<GameState, GameState>(InitializeComponentsAsync), state));
         }
 
@@ -299,6 +304,10 @@ namespace S33M3_CoreComponents.States
                 _inActivationProcess = true;
                 state.IsActivationRequested = true;
 
+#if DEBUG
+                logger.Debug("State requested for activation : {0}", state.Name);
+#endif
+
                 //If ALL the components inside the states are already initiazed, switch directly the States
                 if (state.GameComponents.Count > 0 && state.IsInitialized)
                 {
@@ -306,11 +315,14 @@ namespace S33M3_CoreComponents.States
                     return;
                 }
 
+#if DEBUG
+                logger.Debug("State Initialization requested : {0}", state.Name);
+#endif
                 AsyncStateInitResults.Add(GameStatesManagerThreadPoolGrp.QueueWorkItem(new Amib.Threading.Func<GameState, GameState>(InitializeComponentsAsync), state));
             }
             else
             {
-                logger.Warn("{0} requested to be activated while another activation requested is in initialization state, the request is dropped", state.Name);
+                logger.Warn("{0} state requested to be activated while another activation requested is in initialization state, the request is dropped", state.Name);
             }
         }
 
