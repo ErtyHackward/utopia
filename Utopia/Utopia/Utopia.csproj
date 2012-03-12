@@ -65,34 +65,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="irrKlang.NET4">
-      <HintPath>..\Library\irrKlang.NET4.dll</HintPath>
+      <HintPath>..\..\Library\irrKlang.NET4.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>..\Library\Ninject.dll</HintPath>
+      <HintPath>..\..\Library\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="Nuclex.Support">
       <HintPath>..\Library\Nuclex.Support.dll</HintPath>
     </Reference>
-    <Reference Include="S33M3_Resources">
-      <HintPath>..\Library\S33M3_Resources.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Library\SharpDX2\SharpDX.dll</HintPath>
+    <Reference Include="SharpDX">
+      <HintPath>..\..\Library\SharpDX2\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Diagnostics">
-      <HintPath>..\Library\SharpDX2\SharpDX.Diagnostics.dll</HintPath>
+      <HintPath>..\..\Library\SharpDX2\SharpDX.Diagnostics.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D11, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Library\SharpDX2\SharpDX.Direct3D11.dll</HintPath>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>..\..\Library\SharpDX2\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.DXGI, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Library\SharpDX2\SharpDX.DXGI.dll</HintPath>
+    <Reference Include="SharpDX.DXGI">
+      <HintPath>..\..\Library\SharpDX2\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="SmartThreadPool">
-      <HintPath>..\Library\SmartThreadPool.dll</HintPath>
+      <HintPath>..\..\Library\SmartThreadPool.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -241,17 +235,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Programmation\S33M3Engines\S33M3_CoreComponents\S33M3_CoreComponents.csproj">
-      <Project>{D0C4DB7F-547E-4A40-A5CA-41391A310938}</Project>
-      <Name>S33M3_CoreComponents</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Programmation\S33M3Engines\S33M3_DXEngine\S33M3_DXEngine.csproj">
-      <Project>{27574C31-E46C-4E4D-BA36-404346F897C8}</Project>
-      <Name>S33M3_DXEngine</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Bepu\BEPUphysics\BEPUphysics.csproj">
       <Project>{C0D52C9F-14B8-4008-8DDC-109C27561A5C}</Project>
       <Name>BEPUphysics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\S33M3Engines\S33M3_CoreComponents\S33M3_CoreComponents.csproj">
+      <Project>{D0C4DB7F-547E-4A40-A5CA-41391A310938}</Project>
+      <Name>S33M3_CoreComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\S33M3Engines\S33M3_DXEngine\S33M3_DXEngine.csproj">
+      <Project>{27574C31-E46C-4E4D-BA36-404346F897C8}</Project>
+      <Name>S33M3_DXEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\S33M3Engines\S33M3_Resources\S33M3_Resources.csproj">
+      <Project>{52E1F2EF-4462-4CC3-A783-2D3A352A2602}</Project>
+      <Name>S33M3_Resources</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sandbox\Sandbox.Shared\Sandbox.Shared.csproj">
       <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
