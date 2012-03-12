@@ -21,6 +21,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
     public class LandscapeManager : ILandscapeManager
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private variable
         private CreateLandScapeDelegate _createLandScapeDelegate;
         private delegate void CreateLandScapeDelegate(VisualChunk chunk);
@@ -81,7 +83,9 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         //New chunk Received !
         private void ServerConnection_MessageChunkData(object sender, ProtocolMessageEventArgs<ChunkDataMessage> e)
         {
-            //Console.WriteLine("Chunk received from server");
+#if DEBUG
+            logger.Trace("Chunk received from server id : {0}; Position : {1}", e.Message.Position.GetID(), e.Message.Position);
+#endif
 
             //Bufferize the Data here
             if(_receivedServerChunks.ContainsKey(e.Message.Position.GetID())) _receivedServerChunks.Remove(e.Message.Position.GetID());
@@ -204,7 +208,9 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             else
             {
 
-                //Console.WriteLine("Chunk request to server : " + chunk.ChunkID);
+#if DEBUG
+                logger.Trace("Chunk request to server : " + chunk.ChunkID);
+#endif
 
                 chunk.IsServerRequested = true;
                 Md5Hash hash;

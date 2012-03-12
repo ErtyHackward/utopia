@@ -65,6 +65,8 @@ namespace S33M3_DXEngine.Threading
 
             STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };
             ThreadPool = new SmartThreadPool(_stpInfo);
+
+            ThreadingActif = true;
         }
     }
 }

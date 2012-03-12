@@ -55,6 +55,8 @@ namespace Utopia.Worlds.Chunks
     /// </summary>
     public partial class WorldChunks : DrawableGameComponent, IWorldChunks
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly int SOLID_DRAW = 0;
         private readonly int TRANSPARENT_DRAW;
         private readonly int ENTITIES_DRAW;
@@ -483,10 +485,8 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
-            _server.ServerConnection.SendAsync(
-            new GetChunksMessage()
-            {
-                Range = new Range2(
+
+            Range2 chunkRange = new Range2(
                     new Vector2I(
                         VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X,
                         VisualWorldParameters.WorldChunkStartUpPosition.Y / AbstractChunk.ChunkSize.Z
@@ -495,7 +495,16 @@ namespace Utopia.Worlds.Chunks
                         VisualWorldParameters.WorldParameters.WorldChunkSize.X,
                         VisualWorldParameters.WorldParameters.WorldChunkSize.Y
                         )
-                    ),
+                    );
+
+#if DEBUG
+            logger.Trace("Chunk bulk request to server (Init Phases, data in chunk unit) position : {0} ; Size : {1}", chunkRange.Position, chunkRange.Size);
+#endif
+
+            _server.ServerConnection.SendAsync(
+            new GetChunksMessage()
+            {
+                Range = chunkRange,
                 Md5Hashes = chunkHash.ToArray(),
                 Positions = chunkPosition.ToArray(),
                 HashesCount = chunkHash.Count,

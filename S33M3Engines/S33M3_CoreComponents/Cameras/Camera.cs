@@ -204,6 +204,7 @@ namespace S33M3_CoreComponents.Cameras
             Matrix.PerspectiveFovLH((float) Math.PI/3, aspectRatio, NearPlane, FarPlane, out _projection3D);
             Matrix.OrthoLH(Viewport.Width, Viewport.Height, NearPlane, FarPlane, out _projection2D);
 
+            if (_frustum == null) _frustum = new BoundingFrustum(Matrix.Identity);
         }
 
         protected virtual void newCameraPluginDriver()

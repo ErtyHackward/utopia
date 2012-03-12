@@ -31,8 +31,6 @@ namespace S33M3_CoreComponents.Cameras
         public CameraManager(CamType camera)
         {
             ActiveCamera = camera;
-            //In case the Camera update order change
-            ActiveCamera.CameraUpdateOrderChanged += ActiveCamera_CameraUpdateOrderChanged;
         }
 
         public override void Dispose()
