@@ -35,6 +35,9 @@ namespace S33M3_CoreComponents.States
         internal IWorkItemsGroup GameStatesManagerThreadPoolGrp;
         internal IWorkItemsGroup InitializeThreadPoolGrp;
         private List<IWorkItemResult<GameState>> AsyncStateInitResults = new List<IWorkItemResult<GameState>>();
+
+        //The GameStateManager will use its own ThreadPool, in order to not impact the Main rendering default pool !
+        private SmartThreadPool _statesThreadPool;
         #endregion
 
         #region Public properties/variables
@@ -96,12 +99,12 @@ namespace S33M3_CoreComponents.States
         }
         #endregion
 
-        public GameStatesManager(D3DEngine engine, Game game)
-            : this(engine, game, null)
+        public GameStatesManager(D3DEngine engine, Game game, int allocatedThreadPool = 3)
+            : this(engine, game, null, allocatedThreadPool)
         {
         }
 
-        public GameStatesManager(D3DEngine engine, Game game, ISwitchComponent switchComponent)
+        public GameStatesManager(D3DEngine engine, Game game, ISwitchComponent switchComponent, int allocatedThreadPool = 3)
         {
             if (game == null)
             {
@@ -117,9 +120,13 @@ namespace S33M3_CoreComponents.States
 #if DEBUG
             _loadContext.DebugName = "GameState Deffered Context";
 #endif
-            //Create the 2 ThreadPool "Group" with different concurrency
-            InitializeThreadPoolGrp = SmartThread.ThreadPool.CreateWorkItemsGroup(SmartThread.ThreadPool.Concurrency);           //Max possible concurrency possible
-            GameStatesManagerThreadPoolGrp = SmartThread.ThreadPool.CreateWorkItemsGroup(SmartThread.ThreadPool.Concurrency);    //Max possible concurrency possible
+            //Create a pool with 3 threads.
+            STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = allocatedThreadPool, MinWorkerThreads = allocatedThreadPool, ThreadPriority = System.Threading.ThreadPriority.Lowest };
+            _statesThreadPool = ToDispose(new SmartThreadPool());
+
+            //Create the 2 ThreadPool "Group" with a concurrency of 1 (Only one running at the same time)
+            GameStatesManagerThreadPoolGrp = _statesThreadPool.CreateWorkItemsGroup(1);                        //Single thread concurrency
+            InitializeThreadPoolGrp = _statesThreadPool.CreateWorkItemsGroup(_statesThreadPool.Concurrency);   //Max possible concurrency possible
 
             //Activate this component
             this.EnableComponent();
