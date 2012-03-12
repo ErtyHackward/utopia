@@ -72,7 +72,7 @@ namespace Sandbox.Client.States
 
         public override string Name
         {
-            get { return "GameLoading"; }
+            get { return "LoadingGame"; }
         }
 
         public LoadingGameState(GameStatesManager stateManager, IKernel ioc)
@@ -95,6 +95,7 @@ namespace Sandbox.Client.States
 
             AddComponent(loading);
             AddComponent(_ioc.Get<ServerComponent>());
+
             base.Initialize(context);
         }
 

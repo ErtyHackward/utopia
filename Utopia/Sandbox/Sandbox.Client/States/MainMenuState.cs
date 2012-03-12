@@ -66,12 +66,12 @@ namespace Sandbox.Client.States
         void MenuSinglePlayerPressed(object sender, EventArgs e)
         {
             _vars.SinglePlayer = true;
-            StatesManager.ActivateGameState("GameLoading");
+            StatesManager.ActivateGameState("LoadingGame");
         }
 
         public override void OnEnabled(GameState previousState)
         {
-            StatesManager.PrepareState("GameLoading");
+            StatesManager.PrepareState("LoadingGame");
             base.OnEnabled(previousState);
         }
         
