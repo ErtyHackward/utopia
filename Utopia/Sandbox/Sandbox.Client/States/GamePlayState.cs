@@ -87,6 +87,7 @@ namespace Sandbox.Client.States
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             playerEntityManager.EnableComponent();
 
+         
             base.OnEnabled(previousState);
         }
     }
