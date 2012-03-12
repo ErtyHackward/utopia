@@ -81,7 +81,9 @@ namespace Sandbox.Client
             //System Objects Management ================================
             _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope().WithConstructorArgument("allocatedThreadPool", 3); //Application shared states
             _iocContainer.Bind<ICameraFocused>().To<FirstPersonCameraWithFocus>().InSingletonScope().WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
-            _iocContainer.Bind<ICamera>().To<FirstPersonCameraWithFocus>().InSingletonScope().WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
+            //Force ICamera to use the same singleton as ICameraFocused !
+            _iocContainer.Bind<ICamera>().ToMethod(x => x.Kernel.Get<ICameraFocused>()).InSingletonScope();
+
             _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InSingletonScope();     //Camera manager
             _iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();      //Ingame based Timer class
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class

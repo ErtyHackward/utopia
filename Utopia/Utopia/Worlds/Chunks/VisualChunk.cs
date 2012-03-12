@@ -422,11 +422,6 @@ namespace Utopia.Worlds.Chunks
 
             ChunkID = ChunkPosition.GetID();
 
-            if (ChunkPosition.X == -5 && ChunkPosition.Y == -5)
-            {
-                Console.WriteLine("");
-            }
-
             RefreshWorldMatrix();
 
             ChunkCenter = new Vector3D(_cubeRange.Min.X + (_cubeRange.Max.X - _cubeRange.Min.X) / 2.0,

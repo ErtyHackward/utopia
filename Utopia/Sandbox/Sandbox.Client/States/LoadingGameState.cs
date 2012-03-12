@@ -307,7 +307,7 @@ namespace Sandbox.Client.States
 
             StatesManager.ActivateGameState(this);           
 
-            playerEntityManager.EnableComponent();
+            //playerEntityManager.EnableComponent();
             worldChunks.LoadComplete += worldChunks_LoadComplete;
 
             var engine = _ioc.Get<D3DEngine>();
