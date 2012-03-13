@@ -1,7 +1,9 @@
 ﻿using System;
 using IrrKlang;
 using Nuclex.UserInterface.Controls.Desktop;
+using S33M3Engines.Cameras;
 using S33M3Engines.D3D;
+using SharpDX;
 
 namespace Utopia.Components
 {
@@ -11,6 +13,7 @@ namespace Utopia.Components
     /// </summary>
     public class SoundManager : GameComponent
     {
+        private readonly CameraManager _cameraManager;
         private readonly ISoundEngine _soundEngine;
 
         private string _buttonPressSound;
@@ -23,8 +26,10 @@ namespace Utopia.Components
             get { return _soundEngine; }
         }
 
-        public SoundManager()
+        public SoundManager(CameraManager cameraManager)
         {
+            if (cameraManager == null) throw new ArgumentNullException("cameraManager");
+            _cameraManager = cameraManager;
             _soundEngine = new ISoundEngine();
         }
 
@@ -52,8 +57,13 @@ namespace Utopia.Components
             }
         }
 
-        public override void Update(ref GameTime timeSpend)
+        public override void Update(ref GameTime timeSpent)
         {
+            var pos = new Vector3D((float)_cameraManager.ActiveCamera.WorldPosition.X, (float)_cameraManager.ActiveCamera.WorldPosition.Y, (float)_cameraManager.ActiveCamera.WorldPosition.Z);
+            var rotationMatrix = Matrix.RotationQuaternion(_cameraManager.ActiveCamera.Orientation);
+            var lookAt = new Vector3D(rotationMatrix.M13, rotationMatrix.M23, rotationMatrix.M33);
+            
+            _soundEngine.SetListenerPosition(pos, lookAt);
             _soundEngine.Update();
         }
 
