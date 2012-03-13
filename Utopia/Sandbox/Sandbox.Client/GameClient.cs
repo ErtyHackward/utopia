@@ -23,6 +23,7 @@ using S33M3_DXEngine.Threading;
 using S33M3_CoreComponents.Inputs;
 using S33M3_CoreComponents.GUI;
 using S33M3_CoreComponents.Debug;
+using Ninject.Parameters;
 
 namespace Sandbox.Client
 {
@@ -87,7 +88,7 @@ namespace Sandbox.Client
             inputManager.MouseManager.IsRunning = true;
             game.GameComponents.Add(inputManager);
 
-            var debugComponents = _iocContainer.Get<DebugComponent>();
+            var debugComponents = _iocContainer.Get<DebugComponent>(new ConstructorArgument("withDisplayInfoActivated", true));
             debugComponents.EnableComponent();
             game.GameComponents.Add(debugComponents);
 

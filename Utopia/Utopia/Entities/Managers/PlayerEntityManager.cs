@@ -33,10 +33,11 @@ using S33M3_CoreComponents.Maths;
 using SharpDX.Direct3D11;
 using Utopia.Action;
 using S33M3_CoreComponents.Physics;
+using S33M3_DXEngine.Debug.Interfaces;
 
 namespace Utopia.Entities.Managers
 {
-    public class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualEntityContainer
+    public class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualEntityContainer, IDebugInfo
     {
         #region Private variables
         //Engine System variables
@@ -722,9 +723,11 @@ namespace Utopia.Entities.Managers
 
         #endregion
 
-        public string GetInfo()
+        //Debug Info interface
+        public bool ShowDebugInfo { get; set; }
+        public string GetDebugInfo()
         {
-            return string.Format("Player {0} Pos:[{1}; {2}; {3}] PickedBlock:{4}; NewBlockPlace:{5}", Player.CharacterName,
+            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] PickedBlock: {4}; NewBlockPlace: {5}", Player.CharacterName,
                                                                                   Math.Round(Player.Position.X, 1),
                                                                                   Math.Round(Player.Position.Y, 1),
                                                                                   Math.Round(Player.Position.Z, 1),

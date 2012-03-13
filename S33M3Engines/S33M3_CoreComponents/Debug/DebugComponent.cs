@@ -37,7 +37,7 @@ namespace S33M3_CoreComponents.Debug
         #region Public variables
         #endregion
 
-        public DebugComponent(InputsManager inputManager, GuiManager guiManager, Game game, D3DEngine engine)
+        public DebugComponent(InputsManager inputManager, GuiManager guiManager, Game game, D3DEngine engine, bool withDisplayInfoActivated = false)
         {
             this.IsSystemComponent = true;
             _inputManager = inputManager;
@@ -45,8 +45,10 @@ namespace S33M3_CoreComponents.Debug
             _guiManager = guiManager;
             _game = game;
             _displayInfo = ToDispose(new DisplayInfo(_engine, game));
+            _displayInfo.EnableComponent();
 
             _fps = ToDispose(new FPSComponent());
+            if(withDisplayInfoActivated) _fps.EnableComponent();
             _fps.ShowDebugInfo = true;
 
             _displayInfo.AddComponants(_fps);
