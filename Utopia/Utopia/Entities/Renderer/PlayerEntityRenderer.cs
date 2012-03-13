@@ -20,6 +20,7 @@ using S33M3_Resources.Struct.Vertex;
 using S33M3_DXEngine.Textures;
 using S33M3_DXEngine.RenderStates;
 using S33M3_DXEngine.Main;
+using S33M3_DXEngine.Debug.Interfaces;
 
 namespace Utopia.Entities.Renderer
 {
@@ -107,6 +108,5 @@ namespace Utopia.Entities.Renderer
             _entityEffect.Dispose();
         }
         #endregion
-
     }
 }

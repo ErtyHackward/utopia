@@ -65,7 +65,6 @@ namespace S33M3_CoreComponents.GUI
                           List<Assembly> plugInComponentAssemblies = null)
         {
 
-            this.ShowDebugInfo = true;
             _plugInComponentAssemblies = plugInComponentAssemblies;
             _screen = screen;
             _d3DEngine = d3DEngine;

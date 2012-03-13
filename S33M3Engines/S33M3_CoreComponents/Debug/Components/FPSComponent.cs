@@ -70,7 +70,7 @@ namespace S33M3_CoreComponents.Debug.Components
 
         public string GetDebugInfo()
         {
-            return string.Concat("FPS : ", _fps.ToString("000"), " Active background thread(s) : ", SmartThread.ThreadPool.InUseThreads);
+            return string.Concat("FPS : ", _fps.ToString("000"), " Active background threads : ", SmartThread.ThreadPool.InUseThreads);
         }
         #endregion
 
