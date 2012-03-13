@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.GUI.Inventory;
-using S33M3_CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
-using S33M3_CoreComponents.GUI.Nuclex;
-using RectangleF = S33M3_CoreComponents.GUI.Nuclex.RectangleF;
+using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
+using S33M3CoreComponents.GUI.Nuclex;
+using RectangleF = S33M3CoreComponents.GUI.Nuclex.RectangleF;
 using System.Drawing;
 
 namespace Utopia.GUI.Map

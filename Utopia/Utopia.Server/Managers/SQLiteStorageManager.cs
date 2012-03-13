@@ -7,7 +7,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Server.Managers
 {

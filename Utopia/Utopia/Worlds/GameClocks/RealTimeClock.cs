@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.Settings;
-using S33M3_DXEngine.Main;
+using S33M3DXEngine.Main;
 
 namespace Utopia.Worlds.GameClocks
 {

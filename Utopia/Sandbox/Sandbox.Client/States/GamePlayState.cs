@@ -11,16 +11,16 @@ using Utopia.Worlds.Chunks;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Worlds.Weather;
-using S33M3_CoreComponents.States;
-using S33M3_CoreComponents.Cameras;
-using S33M3_CoreComponents.Timers;
-using S33M3_CoreComponents.Inputs;
-using S33M3_CoreComponents.GUI;
+using S33M3CoreComponents.States;
+using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.Timers;
+using S33M3CoreComponents.Inputs;
+using S33M3CoreComponents.GUI;
 using SharpDX.Direct3D11;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.GUI.Inventory;
 using Utopia.GUI.Map;
-using S33M3_CoreComponents.Debug;
+using S33M3CoreComponents.Debug;
 
 namespace Sandbox.Client.States
 {

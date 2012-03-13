@@ -4,10 +4,10 @@ using SharpDX.Direct3D11;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Enums;
-using S33M3_Resources.Struct.Vertex;
-using S33M3_DXEngine.Buffers;
-using S33M3_DXEngine;
-using S33M3_Resources.Structs;
+using S33M3Resources.Struct.Vertex;
+using S33M3DXEngine.Buffers;
+using S33M3DXEngine;
+using S33M3Resources.Structs;
 
 namespace Utopia.Entities.Voxel
 {

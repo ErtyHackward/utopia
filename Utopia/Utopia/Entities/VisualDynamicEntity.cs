@@ -6,9 +6,9 @@ using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
-using S33M3_DXEngine.Main;
-using S33M3_Resources.Structs;
-using S33M3_Resources.Strucs;
+using S33M3DXEngine.Main;
+using S33M3Resources.Structs;
+using S33M3Resources.Strucs;
 
 namespace Utopia.Entities
 {

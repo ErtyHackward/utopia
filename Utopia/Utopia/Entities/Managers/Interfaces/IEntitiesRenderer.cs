@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Entities.Voxel;
 using Utopia.Effects.Shared;
-using S33M3_DXEngine.Main.Interfaces;
+using S33M3DXEngine.Main.Interfaces;
 using SharpDX.Direct3D11;
 
 namespace Utopia.Entities.Renderer.Interfaces

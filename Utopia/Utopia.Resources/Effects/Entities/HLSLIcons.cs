@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using SharpDX;
-using S33M3_DXEngine.VertexFormat;
-using S33M3_DXEngine.Effects.HLSLFramework;
+using S33M3DXEngine.VertexFormat;
+using S33M3DXEngine.Effects.HLSLFramework;
 using SharpDX.Direct3D11;
 
 namespace UtopiaContent.Effects.Entities

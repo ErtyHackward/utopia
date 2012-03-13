@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3_DXEngine.Main;
-using S33M3_CoreComponents.Maths;
-using S33M3_Resources.Structs;
+using S33M3DXEngine.Main;
+using S33M3CoreComponents.Maths;
+using S33M3Resources.Structs;
 
 namespace Utopia.Worlds.GameClocks
 {

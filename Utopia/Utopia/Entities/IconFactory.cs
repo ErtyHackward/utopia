@@ -11,17 +11,17 @@ using Utopia.Worlds.Cubes;
 using System.Collections.Generic;
 using SharpDX.DXGI;
 using Utopia.Shared.Settings;
-using S33M3_DXEngine.Main;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.Sprites;
-using S33M3_DXEngine.Textures;
-using S33M3_DXEngine.Buffers;
-using S33M3_Resources.Struct.Vertex;
-using S33M3_CoreComponents.Textures;
-using S33M3_CoreComponents.Maths;
-using S33M3_DXEngine.RenderStates;
-using S33M3_CoreComponents.Meshes;
-using S33M3_CoreComponents.Meshes.Factories;
+using S33M3DXEngine.Main;
+using S33M3DXEngine;
+using S33M3CoreComponents.Sprites;
+using S33M3DXEngine.Textures;
+using S33M3DXEngine.Buffers;
+using S33M3Resources.Struct.Vertex;
+using S33M3CoreComponents.Textures;
+using S33M3CoreComponents.Maths;
+using S33M3DXEngine.RenderStates;
+using S33M3CoreComponents.Meshes;
+using S33M3CoreComponents.Meshes.Factories;
 
 namespace Utopia.Entities
 {

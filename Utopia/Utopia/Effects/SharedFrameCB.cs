@@ -9,11 +9,11 @@ using Utopia.Shared.World;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Renderer.Interfaces;
 using Ninject;
-using S33M3_DXEngine.Main;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.Cameras;
-using S33M3_DXEngine.Effects.HLSLFramework;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3DXEngine.Main;
+using S33M3DXEngine;
+using S33M3CoreComponents.Cameras;
+using S33M3DXEngine.Effects.HLSLFramework;
+using S33M3CoreComponents.Cameras.Interfaces;
 using SharpDX.Direct3D11;
 
 namespace Utopia.Effects.Shared

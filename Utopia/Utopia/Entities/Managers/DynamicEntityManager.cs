@@ -4,7 +4,7 @@ using Ninject;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Shared.Entities.Interfaces;
-using S33M3_DXEngine.Main;
+using S33M3DXEngine.Main;
 using SharpDX.Direct3D11;
 
 namespace Utopia.Entities.Managers

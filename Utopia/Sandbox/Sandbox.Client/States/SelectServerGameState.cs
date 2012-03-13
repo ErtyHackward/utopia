@@ -5,8 +5,8 @@ using Sandbox.Client.Components;
 using Sandbox.Shared.Web;
 using Sandbox.Shared.Web.Responces;
 using Utopia;
-using S33M3_CoreComponents.States;
-using S33M3_CoreComponents.GUI;
+using S33M3CoreComponents.States;
+using S33M3CoreComponents.GUI;
 
 namespace Sandbox.Client.States
 {

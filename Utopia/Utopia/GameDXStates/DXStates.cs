@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SharpDX.Direct3D11;
-using S33M3_DXEngine;
-using S33M3_DXEngine.RenderStates;
+using S33M3DXEngine;
+using S33M3DXEngine.RenderStates;
 
 namespace Utopia.GameDXStates
 {

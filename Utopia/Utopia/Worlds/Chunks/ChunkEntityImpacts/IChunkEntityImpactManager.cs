@@ -8,7 +8,7 @@ using Utopia.Shared.Structs;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Worlds.Storage;
 using Utopia.Network;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {

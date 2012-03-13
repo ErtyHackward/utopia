@@ -7,8 +7,8 @@ using Utopia.Shared.World;
 using Utopia.Settings;
 using Utopia.Entities;
 using Utopia.Shared.Settings;
-using S33M3_DXEngine.Threading;
-using S33M3_CoreComponents.Maths;
+using S33M3DXEngine.Threading;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {

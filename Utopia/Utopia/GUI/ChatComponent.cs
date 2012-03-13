@@ -9,14 +9,14 @@ using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using System.Diagnostics;
-using S33M3_DXEngine.Main;
-using S33M3_CoreComponents.Sprites;
-using S33M3_Resources.Structs;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.Inputs.Actions;
-using S33M3_CoreComponents.Inputs;
+using S33M3DXEngine.Main;
+using S33M3CoreComponents.Sprites;
+using S33M3Resources.Structs;
+using S33M3DXEngine;
+using S33M3CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.Inputs;
 using Utopia.Action;
-using S33M3_CoreComponents.Inputs.KeyboardHandler;
+using S33M3CoreComponents.Inputs.KeyboardHandler;
 
 namespace Utopia.GUI
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Worlds.Chunks.ChunkWrapper
 {

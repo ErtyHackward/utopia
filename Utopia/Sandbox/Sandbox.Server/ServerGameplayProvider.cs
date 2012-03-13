@@ -6,7 +6,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Sandbox.Server
 {

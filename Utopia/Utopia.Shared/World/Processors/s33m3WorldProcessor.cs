@@ -6,9 +6,9 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
-using S33M3_CoreComponents.Maths.Noises;
-using S33M3_Resources.Structs;
-using S33M3_CoreComponents.Maths;
+using S33M3CoreComponents.Maths.Noises;
+using S33M3Resources.Structs;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Shared.World.Processors
 {

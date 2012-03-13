@@ -3,11 +3,11 @@ using System.Drawing;
 using Utopia.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Inventory;
-using S33M3_CoreComponents.Sprites;
-using S33M3_CoreComponents.GUI.Nuclex;
-using S33M3_CoreComponents.GUI.Nuclex.Controls;
-using S33M3_Resources.Structs;
-using S33M3_CoreComponents.Inputs;
+using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.GUI.Nuclex;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3Resources.Structs;
+using S33M3CoreComponents.Inputs;
 
 namespace Utopia.GUI.Inventory
 {

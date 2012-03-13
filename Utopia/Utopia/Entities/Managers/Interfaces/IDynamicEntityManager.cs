@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Interfaces;
-using S33M3_DXEngine.Main.Interfaces;
+using S33M3DXEngine.Main.Interfaces;
 
 namespace Utopia.Entities.Managers.Interfaces
 {

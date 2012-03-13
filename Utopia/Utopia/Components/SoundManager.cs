@@ -1,7 +1,7 @@
 ﻿using System;
 using IrrKlang;
-using S33M3_CoreComponents.GUI.Nuclex.Controls.Desktop;
-using S33M3_DXEngine.Main;
+using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3DXEngine.Main;
 
 namespace Utopia.Components
 {

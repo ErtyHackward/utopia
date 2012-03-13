@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Shared.World.PlanGenerator
 {

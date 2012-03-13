@@ -6,10 +6,10 @@ using Utopia.Settings;
 using Utopia.Network;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
-using S33M3_CoreComponents.Inputs.Actions;
-using S33M3_DXEngine.Main;
-using S33M3_CoreComponents.Maths;
-using S33M3_CoreComponents.Inputs;
+using S33M3CoreComponents.Inputs.Actions;
+using S33M3DXEngine.Main;
+using S33M3CoreComponents.Maths;
+using S33M3CoreComponents.Inputs;
 
 namespace Utopia.Worlds.GameClocks
 {

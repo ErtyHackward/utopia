@@ -6,7 +6,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
-using S33M3_DXEngine.Main;
+using S33M3DXEngine.Main;
 
 namespace Utopia.Entities.Voxel
 {

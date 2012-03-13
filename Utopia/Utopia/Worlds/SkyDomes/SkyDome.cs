@@ -6,9 +6,9 @@ using Utopia.Worlds.GameClocks;
 using SharpDX;
 using Utopia.Worlds.Weather;
 using Utopia.Shared.World;
-using S33M3_DXEngine;
-using S33M3_Resources.Structs;
-using S33M3_DXEngine.Main;
+using S33M3DXEngine;
+using S33M3Resources.Structs;
+using S33M3DXEngine.Main;
 
 namespace Utopia.Worlds.SkyDomes
 {

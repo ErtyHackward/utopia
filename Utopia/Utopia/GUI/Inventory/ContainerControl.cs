@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SharpDX.Direct3D11;
-using S33M3_CoreComponents.GUI.Nuclex.Controls;
-using S33M3_CoreComponents.Sprites;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.Sprites;
 
 
 namespace Utopia.GUI.Inventory

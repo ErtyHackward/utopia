@@ -4,7 +4,7 @@ using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Server.Structs
 {

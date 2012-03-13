@@ -5,14 +5,14 @@ using System.Text;
 using SharpDX;
 using SharpDX.Direct3D;
 using Utopia.Shared.Structs;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.WorldFocus;
-using S33M3_Resources.Effects.Basics;
-using S33M3_DXEngine.Buffers;
-using S33M3_Resources.Struct.Vertex;
-using S33M3_Resources.VertexFormats;
-using S33M3_Resources.Structs;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3DXEngine;
+using S33M3CoreComponents.WorldFocus;
+using S33M3Resources.Effects.Basics;
+using S33M3DXEngine.Buffers;
+using S33M3Resources.Struct.Vertex;
+using S33M3Resources.VertexFormats;
+using S33M3Resources.Structs;
+using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.Resources.ModelComp
 {

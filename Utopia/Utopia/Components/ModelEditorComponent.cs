@@ -8,21 +8,21 @@ using Utopia.Settings;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
 using UtopiaContent.Effects.Entities;
-using S33M3_Resources.Structs;
-using S33M3_Resources.Struct.Vertex;
-using S33M3_CoreComponents.Sprites;
-using S33M3_DXEngine.Buffers;
-using S33M3_DXEngine.Main;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.Inputs.MouseHandler;
-using S33M3_CoreComponents.GUI;
-using S33M3_CoreComponents.Inputs.Actions;
-using S33M3_CoreComponents.GUI.Nuclex;
-using S33M3_CoreComponents.GUI.Nuclex.Controls;
+using S33M3Resources.Structs;
+using S33M3Resources.Struct.Vertex;
+using S33M3CoreComponents.Sprites;
+using S33M3DXEngine.Buffers;
+using S33M3DXEngine.Main;
+using S33M3DXEngine;
+using S33M3CoreComponents.Inputs.MouseHandler;
+using S33M3CoreComponents.GUI;
+using S33M3CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.GUI.Nuclex;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using System.Windows.Forms;
-using S33M3_CoreComponents.Inputs;
-using S33M3_DXEngine.RenderStates;
+using S33M3CoreComponents.Inputs;
+using S33M3DXEngine.RenderStates;
 
 namespace Utopia.Components
 {
@@ -87,7 +87,7 @@ namespace Utopia.Components
         private readonly VoxelModelManager _manager;
         private readonly VoxelMeshFactory _meshFactory;
         private readonly GuiManager _gui;
-        private readonly List<S33M3_CoreComponents.GUI.Nuclex.Controls.Control> _controls = new List<S33M3_CoreComponents.GUI.Nuclex.Controls.Control>();
+        private readonly List<S33M3CoreComponents.GUI.Nuclex.Controls.Control> _controls = new List<S33M3CoreComponents.GUI.Nuclex.Controls.Control>();
 
         private int _selectedFrameIndex;
         private int _selectedPartIndex;
@@ -1114,7 +1114,7 @@ namespace Utopia.Components
             var dx = (_inputManager.MouseManager.MouseMoveDelta.X) / 100.0f;
             var dy = (_inputManager.MouseManager.MouseMoveDelta.Y) / 100.0f;
             
-            if (_inputManager.MouseManager.CurMouseState.MiddleButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Pressed &&
+            if (_inputManager.MouseManager.CurMouseState.MiddleButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed &&
                 _inputManager.MouseManager.PrevMouseState.X != 0 &&
                 _inputManager.MouseManager.PrevMouseState.Y != 0)
             {
@@ -1157,14 +1157,14 @@ namespace Utopia.Components
                             var center = new Vector3((bb.Maximum.X - bb.Minimum.X)/2,(bb.Maximum.Y - bb.Minimum.Y)/2,(bb.Maximum.Z - bb.Minimum.Z)/2) + partState.Transform.TranslationVector;
                             _translatePlane = new Plane(center, _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
 
-                            if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Released)
+                            if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Released)
                             {
                                 _translatePoint = null;
                                 // recalculate state bounding box
                                 state.UpdateBoundingBox();
                             }
 
-                            if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
+                            if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
                             {
                                 Vector3D mPosition, mLookAt;
                                 var worldViewProjection = _transform * _viewProjection;
@@ -1223,8 +1223,8 @@ namespace Utopia.Components
 
                         GetSelectedCube(out _pickedCube, out _newCube);
 
-                        if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Released && 
-                            _inputManager.MouseManager.PrevMouseState.LeftButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
+                        if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Released && 
+                            _inputManager.MouseManager.PrevMouseState.LeftButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
                         {
                             if (_pickedCube.HasValue)
                             {
@@ -1250,8 +1250,8 @@ namespace Utopia.Components
                                 RebuildFrameVertices();
                             }
                         }
-                        else if (_inputManager.MouseManager.CurMouseState.RightButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Released && 
-                                 _inputManager.MouseManager.PrevMouseState.RightButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
+                        else if (_inputManager.MouseManager.CurMouseState.RightButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Released && 
+                                 _inputManager.MouseManager.PrevMouseState.RightButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
                         {
                             if (_newCube.HasValue)
                             {

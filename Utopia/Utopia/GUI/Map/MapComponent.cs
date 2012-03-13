@@ -2,15 +2,15 @@
 using Utopia.Entities.Managers;
 using Utopia.Network;
 using Utopia.Shared.World.PlanGenerator;
-using S33M3_DXEngine.Main;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.Inputs.Actions;
-using S33M3_CoreComponents.GUI.Nuclex;
-using S33M3_CoreComponents.GUI.Nuclex.Controls.Desktop;
-using S33M3_CoreComponents.Sprites;
+using S33M3DXEngine.Main;
+using S33M3DXEngine;
+using S33M3CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.GUI.Nuclex;
+using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3CoreComponents.Sprites;
 using SharpDX.Direct3D11;
 using Utopia.Action;
-using S33M3_CoreComponents.Inputs;
+using S33M3CoreComponents.Inputs;
 
 namespace Utopia.GUI.Map
 {

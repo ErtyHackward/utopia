@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3_CoreComponents.States;
-using S33M3_DXEngine;
-using S33M3_DXEngine.Buffers;
-using S33M3_Resources.Effects.Basics;
+using S33M3CoreComponents.States;
+using S33M3DXEngine;
+using S33M3DXEngine.Buffers;
+using S33M3Resources.Effects.Basics;
 using SharpDX;
-using S33M3_Resources.Struct.Vertex;
+using S33M3Resources.Struct.Vertex;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
-using S33M3_DXEngine.RenderStates;
+using S33M3DXEngine.RenderStates;
 using Utopia.GameDXStates;
 
 namespace Utopia.Components
@@ -98,7 +98,7 @@ namespace Utopia.Components
             base.LoadContent(Context);
         }
 
-        public override void Update(S33M3_DXEngine.Main.GameTime timeSpent)
+        public override void Update(S33M3DXEngine.Main.GameTime timeSpent)
         {
             if (_targetAlpha != _color.Alpha)
             {
