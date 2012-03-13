@@ -37,8 +37,8 @@ namespace S33M3_Resources.VertexFormats
         static VertexPosition3Color()
         {
             InputElement[] elements = new InputElement[] { 
-                                                            new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0), 
-                                                            new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, 16, 0)
+                                                            new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0), 
+                                                            new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0)
                                                             };
             VertexDeclaration = new VertexDeclaration(elements);
         }

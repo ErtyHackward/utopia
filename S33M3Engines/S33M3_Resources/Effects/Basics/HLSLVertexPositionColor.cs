@@ -10,6 +10,7 @@ using S33M3_DXEngine.Effects.HLSLFramework;
 using S33M3_DXEngine;
 using S33M3_DXEngine.VertexFormat;
 using S33M3_Resources.Struct.Vertex;
+using S33M3_Resources.VertexFormats;
 
 namespace S33M3_Resources.Effects.Basics
 {
@@ -56,7 +57,7 @@ namespace S33M3_Resources.Effects.Basics
         #endregion
 
         public HLSLVertexPositionColor(Device device)
-            : base(device, @"Effects\Basics\VertexPositionColor.hlsl", VertexPosition4Color.VertexDeclaration)
+            : base(device, @"Effects\Basics\VertexPositionColor.hlsl", VertexPosition3Color.VertexDeclaration)
         {
 
             //Create Constant Buffers interfaces
