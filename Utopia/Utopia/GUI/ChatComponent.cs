@@ -15,6 +15,8 @@ using S33M3_Resources.Structs;
 using S33M3_DXEngine;
 using S33M3_CoreComponents.Inputs.Actions;
 using S33M3_CoreComponents.Inputs;
+using Utopia.Action;
+using S33M3_CoreComponents.Inputs.KeyboardHandler;
 
 namespace Utopia.GUI
 {
@@ -23,113 +25,104 @@ namespace Utopia.GUI
     /// </summary>
     public class ChatComponent : DrawableGameComponent
     {
-        //SpriteFont _font;
-        //SpriteRenderer _spriteRender;
-        //Matrix _textPosition = Matrix.Translation(5, 200, 0);
+        SpriteFont _font;
+        SpriteRenderer _spriteRender;
+        Matrix _textPosition = Matrix.Translation(5, 200, 0);
 
-        //private bool _refreshDisplay;
-        //private long _hideChatInTick;
-        //private long _lastUpdateTick;
-        //private ByteColor _fontColor = new ByteColor((byte)Colors.White.Red * 255, (byte)Colors.White.Green * 255, (byte)Colors.White.Blue * 255, (byte)128);
-        //private D3DEngine _d3dEngine;
-        //private readonly ActionsManager _actionManager;
-        //private readonly InputsManager _imanager;
-        //private readonly ServerComponent _server;
-        //private readonly Queue<string> _messages = new Queue<string>();
-        //private bool _showCaret = false;
-        //private DateTime _caretSwitch;
-        //private float windowHeight;
+        private TextInput _textInput;
+        private bool _refreshDisplay;
+        private long _hideChatInTick;
+        private long _lastUpdateTime;
+        private ByteColor _fontColor = new ByteColor((byte)Colors.White.Red * 255, (byte)Colors.White.Green * 255, (byte)Colors.White.Blue * 255, (byte)128);
+        private D3DEngine _d3dEngine;
+        private readonly InputsManager _imanager;
+        private readonly ServerComponent _server;
+        private readonly Queue<string> _messages = new Queue<string>();
+        private float windowHeight;
 
 
-        //public int ChatLineLimit { get; set; }
+        public int ChatLineLimit { get; set; }
 
-        //private bool _activated;
+        private bool _activated;
 
-        //public bool Activated
-        //{
-        //    get { return _activated; }
-        //    private set
-        //    {
-        //        _activated = value;
-        //        if (value)
-        //        {
-        //            _actionManager.isKeyboardActionsEnabled = false;
-        //        }
-        //        else
-        //        {
-        //            _actionManager.isKeyboardActionsEnabled = true;
-        //        }
-        //    }
-        //}
+        public bool Activated
+        {
+            get { return _activated; }
+            private set
+            {
+                _activated = value;
+                if (value)
+                {
+                    //_imanager.ActionsManager.isKeyboardActionsEnabled = false;
+                }
+                else
+                {
+                    _imanager.ActionsManager.isKeyboardActionsEnabled = true;
+                }
+            }
+        }
 
-        ///// <summary>
-        ///// Current line 
-        ///// </summary>
-        //public string Input { get; set; }
+        public ChatComponent(D3DEngine engine, InputsManager imanager, ServerComponent server)
+        {
 
-        //public ChatComponent(D3DEngine engine, ActionsManager actionManager, InputsManager imanager, ServerComponent server)
-        //{
+            _d3dEngine = engine;
+            _imanager = imanager;
+            _server = server;
 
-        //    _d3dEngine = engine;
-        //    _actionManager = actionManager;
-        //    _imanager = imanager;
-        //    _server = server;
+            _server.ServerConnection.MessageChat += ServerConnectionMessageChat;
 
-        //    _server.ServerConnection.MessageChat += ServerConnectionMessageChat;
+            ChatLineLimit = 30;
+            //For 5 seconds =
+            _hideChatInTick = 15 * Stopwatch.Frequency;
 
-        //    ChatLineLimit = 30;
-        //    //For 5 seconds =
-        //    _hideChatInTick = 15 * Stopwatch.Frequency;
+            _d3dEngine.ViewPort_Updated += LocateChat;
 
-        //    _imanager.OnKeyPressed += _imanager_OnKeyPressed;
-        //    _d3dEngine.ViewPort_Updated += LocateChat;
+            LocateChat(_d3dEngine.ViewPort);
 
-        //    LocateChat(_d3dEngine.ViewPort);
+            // make it drawn on top
+            DrawOrders.UpdateIndex(0, 10001);
+        }
 
-        //    // make it drawn on top
-        //    DrawOrders.UpdateIndex(0, 10001);
-        //}
+        public override void Dispose()
+        {
+            _server.ServerConnection.MessageChat -= ServerConnectionMessageChat;
+            _d3dEngine.ViewPort_Updated -= LocateChat;
+            base.Dispose();
+        }
 
-        //public override void Dispose()
-        //{
-        //    _server.ServerConnection.MessageChat -= ServerConnectionMessageChat;
-        //    _d3dEngine.ViewPort_Updated -= LocateChat;
-        //    base.Dispose();
-        //}
+        void ServerConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
+        {
+            //Cut the received message by line feed
+            foreach (var msgText in e.Message.Message.Split('\n'))
+            {
+                if (e.Message.Action)
+                {
+                    AddMessage(string.Format("* {0} {1}", e.Message.DisplayName, msgText));
+                }
+                else AddMessage(string.Format("<{0}> {1}", e.Message.DisplayName, msgText));
+            }
 
-        //void ServerConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
-        //{
-        //    //Cut the received message by line feed
-        //    foreach (var msgText in e.Message.Message.Split('\n'))
-        //    {
-        //        if (e.Message.Action)
-        //        {
-        //            AddMessage(string.Format("* {0} {1}", e.Message.DisplayName, msgText));
-        //        }
-        //        else AddMessage(string.Format("<{0}> {1}", e.Message.DisplayName, msgText));
-        //    }
+            _lastUpdateTime = Stopwatch.GetTimestamp();
+        }
 
-        //    _lastUpdateTick = Stopwatch.GetTimestamp();
-        //}
+        public void AddMessage(string message)
+        {
+            _messages.Enqueue(string.Format("[{1}] {0}", message, DateTime.Now.TimeOfDay.ToString(@"hh\:mm\:ss")));
+            if (_messages.Count > ChatLineLimit)
+            {
+                _messages.Dequeue(); //Remove the Olds messages (FIFO collection)
+            }
 
-        //public void AddMessage(string message)
-        //{
-        //    _messages.Enqueue(string.Format("[{1}] {0}", message, DateTime.Now.TimeOfDay.ToString(@"hh\:mm\:ss")));
-        //    if (_messages.Count > ChatLineLimit)
-        //    {
-        //        _messages.Dequeue(); //Remove the Olds messages (FIFO collection)
-        //    }
-
-        //    _refreshDisplay = true;
-        //}
+            _refreshDisplay = true;
+        }
 
         //void _imanager_OnKeyPressed(object sender, KeyPressEventArgs e)
         //{
         //    if (Activated)
         //    {
-        //        if (e.KeyChar == (char)Keys.Enter)
+        //        if (_imanager.ActionsManager.isTriggered(UtopiaActions.Toggle_Chat))
         //        {
-        //            _actionManager.KeyboardActionsProcessing = true;
+        //            _actionManager.isKeyboardActionsEnabled = true;
         //            if (!string.IsNullOrWhiteSpace(Input))
         //            {
         //                var msg = new ChatMessage { DisplayName = _server.DisplayName, Message = Input };
@@ -157,100 +150,119 @@ namespace Utopia.GUI
         //            }
         //            return;
         //        }
-
         //        Input += e.KeyChar;
 
         //        _lastUpdateTick = Stopwatch.GetTimestamp();
         //    }
         //}
 
-        //private void LocateChat(Viewport viewport)
-        //{
-        //    windowHeight = viewport.Height;
-        //}
+        private void LocateChat(Viewport viewport)
+        {
+            windowHeight = viewport.Height;
+        }
 
-        //public override void LoadContent(DeviceContext Context)
-        //{
-        //    _font = new SpriteFont();
-        //    _font.Initialize("Lucida Console", 12f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
-        //    _spriteRender = new SpriteRenderer();
-        //    _spriteRender.Initialize(_d3dEngine);
-        //}
+        public override void Initialize()
+        {
+            _textInput = new TextInput(_imanager.KeyboardManager);
+        }
 
-        //public override void UnloadContent()
-        //{
-        //    _font.Dispose();
-        //    _spriteRender.Dispose();
-        //}
+        public override void LoadContent(DeviceContext Context)
+        {
+            _font = ToDispose( new SpriteFont());
+            _font.Initialize("Lucida Console", 12f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
+            _spriteRender = ToDispose(new SpriteRenderer());
+            _spriteRender.Initialize(_d3dEngine);
+        }
 
-        //private void SetFontAlphaColor(byte color)
-        //{
-        //    if (_fontColor.A != color)
-        //    {
-        //        _fontColor.A = color;
-        //        _refreshDisplay = true;
-        //    }
-        //}
+        private void SetFontAlphaColor(byte color)
+        {
+            if (_fontColor.A != color)
+            {
+                _fontColor.A = color;
+                _refreshDisplay = true;
+            }
+        }
 
-        //public override void Update(ref GameTime timeSpend)
-        //{
-        //    if (Stopwatch.GetTimestamp() > _lastUpdateTick + _hideChatInTick)
-        //    {
-        //        SetFontAlphaColor(50);
-        //    }
-        //    else
-        //    {
-        //        SetFontAlphaColor(200);
-        //    }
+        public override void Update(GameTime timeSpend)
+        {
 
-        //    if (_actionManager.isTriggered(Actions.Toggle_Chat))
-        //    {
-        //        _lastUpdateTick = Stopwatch.GetTimestamp();
+            if (Stopwatch.GetTimestamp() > _lastUpdateTime + _hideChatInTick)
+            {
+                SetFontAlphaColor(50);
+            }
+            else
+            {
+                SetFontAlphaColor(200);
+            }
 
-        //        Activated = !Activated;
-        //        _refreshDisplay = true;
-        //    }
+            if (_imanager.ActionsManager.isTriggered(UtopiaActions.Toggle_Chat))
+            {
+                if (Activated == false)
+                {
+                    _lastUpdateTime = Stopwatch.GetTimestamp();
 
-        //    if (Activated)
-        //    {
-        //        // swap caret
-        //        if ((DateTime.Now - _caretSwitch).TotalSeconds > 0.5)
-        //        {
-        //            _showCaret = !_showCaret;
-        //            _caretSwitch = DateTime.Now;
-        //            _refreshDisplay = true;
-        //        }
-        //    }
+                    Activated = !Activated;
+                    _refreshDisplay = true;
+                    _textInput.Clear();
+                    _textInput.isListening = true;
+                }
+                else
+                {
+                    //Send message to server !
+                    _imanager.ActionsManager.isKeyboardActionsEnabled = true;
+                    string Input = _textInput.GetText();
+                    Input = Input.Replace("\r", "").Replace("\n","");
+                    if (!string.IsNullOrWhiteSpace(Input))
+                    {
+                        var msg = new ChatMessage { DisplayName = _server.DisplayName, Message = Input };
+                        if (Input.StartsWith("/me ", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            msg.Action = true;
+                            msg.Message = Input.Remove(0, 4);
+                        }
+                        _server.ServerConnection.SendAsync(msg);
+                    }
+                    _textInput.isListening = false;
+                }
+            }
 
-        //}
+            _textInput.Refresh();
 
-        //public override void Draw(DeviceContext context, int index)
-        //{
-        //    if (!Activated && _refreshDisplay == false)
-        //    {
-        //        _spriteRender.ReplayLast();
-        //        return;
-        //    }
+        }
 
-        //    var builder = new StringBuilder();
+        public override void Draw(DeviceContext context, int index)
+        {
+            if (!Activated && _refreshDisplay == false)
+            {
+                _spriteRender.ReplayLast();
+                return;
+            }
 
-        //    foreach (var message in _messages)
-        //    {
-        //        builder.AppendLine(message);
-        //    }
-        //    if (Activated)
-        //    {
-        //        builder.AppendFormat(">{0}{1}\n", Input, _showCaret ? "|" : "");
-        //    }
-        //    else builder.AppendLine();
+            int _showCaret = -1;
+            string Input = string.Empty;
+            var builder = new StringBuilder();
 
+            foreach (var message in _messages)
+            {
+                builder.AppendLine(message); //Display the "OLD" test.
+            }
+            if (Activated)
+            {
+                if (_textInput.GetText(out Input, out _showCaret))
+                {
+                    _lastUpdateTime = Stopwatch.GetTimestamp();
+                    _refreshDisplay = true;
+                }
 
-        //    _spriteRender.Begin(context, false, SpriteRenderer.FilterMode.Point);
-        //     _textPosition = Matrix.Translation(5, windowHeight - (100 + _messages.Count * _font.CharHeight), 0);
+                if(_showCaret != -1) _showCaret += builder.Length + 2;
+                builder.Append(string.Format("{0} {1}", ">", Input));
+            }
 
-        //    _spriteRender.DrawText(_font, builder.ToString(), _textPosition, _fontColor);
-        //    _spriteRender.End();
-        //    _refreshDisplay = false;
-        //}
+            _spriteRender.Begin(context, false, SpriteRenderer.FilterMode.Point);
+            _textPosition = Matrix.Translation(5, windowHeight - (100 + _messages.Count * _font.CharHeight), 0);
+            _spriteRender.DrawText(_font, builder.ToString(), _textPosition, _fontColor, -1, -1,  _showCaret);
+            _spriteRender.End();
+            _refreshDisplay = false;
+        }
     }
 }

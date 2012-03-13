@@ -54,12 +54,12 @@ namespace Utopia.Entities.Managers
         public EntityPickAndCollisManager(IDynamicEntityManager dynamicEntityManager, 
                                           TimerManager timerManager,
                                           ServerComponent server,
-                                          InputsManager _input)                                     
+                                          InputsManager input)                                     
         {
             _dynamicEntityManager = dynamicEntityManager;
             _timer = timerManager.AddTimer(1, 100);         //10 times/s
             _timer.OnTimerRaised += _timer_OnTimerRaised;
-            _input = _input;
+            _input = input;
             _server = server;
         }
 
@@ -72,7 +72,6 @@ namespace Utopia.Entities.Managers
         //Started everyseconds
         private void _timer_OnTimerRaised()
         {
-
 
             CollectSurrendingDynamicPlayerEntities(); //They have their own collection
             CollectSurrendingStaticEntities();  //They are stored inside chunks !

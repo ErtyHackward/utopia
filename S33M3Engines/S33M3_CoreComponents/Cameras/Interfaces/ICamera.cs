@@ -27,6 +27,7 @@ namespace S33M3_CoreComponents.Cameras.Interfaces
         BoundingFrustum Frustum { get; }
         ICameraPlugin CameraPlugin { get; set; }
         CameraType CameraType { get; set; }
+        Vector3 LookAt { get; }
 
         /// <summary>
         /// Event that must be raised when the UpdateOrderId is changed

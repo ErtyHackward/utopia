@@ -1000,7 +1000,7 @@ namespace S33M3_Resources.Structs
         public override string ToString()
         {
             object[] args = new object[] { this.X.ToString(CultureInfo.CurrentCulture), this.Y.ToString(CultureInfo.CurrentCulture), this.Z.ToString(CultureInfo.CurrentCulture) };
-            return string.Format(CultureInfo.CurrentCulture, "X:{0} Y:{1} Z:{2}", args);
+            return string.Format(CultureInfo.CurrentCulture, "[X:{0} Y:{1} Z:{2}]", args);
         }
 
         public override int GetHashCode()

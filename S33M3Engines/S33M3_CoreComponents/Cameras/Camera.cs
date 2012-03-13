@@ -130,6 +130,11 @@ namespace S33M3_CoreComponents.Cameras
             get { return _cameraOrientation; }
         }
 
+        public Vector3 LookAt
+        {
+            get { return _lookAt; }
+        }
+
         public Quaternion YAxisOrientation
         {
             get { return _cameraYAxisOrientation; }
