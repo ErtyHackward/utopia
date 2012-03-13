@@ -385,7 +385,7 @@ namespace Utopia.Entities.Managers
                 case EntityDisplacementModes.Flying:
                     break;
                 case EntityDisplacementModes.Walking:
-                    //PhysicSimulation(ref timeSpent);
+                    PhysicSimulation(ref timeSpent);
                     break;
                 default:
                     break;

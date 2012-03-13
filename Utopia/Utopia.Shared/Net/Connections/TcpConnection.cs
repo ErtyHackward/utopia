@@ -284,6 +284,7 @@ namespace Utopia.Shared.Net.Connections
         /// </summary>
         /// <param name="address">String representation of a IP/DNS address</param>
         /// <param name="prt">Int port representation</param>
+        //HACK [DebuggerStepThrough on TcpConnection] To avoid breaking inside while debugging => Remove it to give the possibility for the debugger to stop inside this function
         [DebuggerStepThrough()]
         public TcpConnection(string address, int prt)
             : this()
@@ -308,6 +309,7 @@ namespace Utopia.Shared.Net.Connections
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
+        //HACK [DebuggerStepThrough on ParseAddress] To avoid breaking inside while debugging => Remove it to give the possibility for the debugger to stop inside this function
         [DebuggerStepThrough()]
         protected IPEndPoint ParseAddress(string address)
         {
@@ -640,6 +642,8 @@ namespace Utopia.Shared.Net.Connections
         /// died.
         /// </summary>
         /// <param name="ar"></param>
+        //HACK [DebuggerStepThrough on OnRecievedData] To avoid breaking inside while debugging => Remove it to give the possibility for the debugger to stop inside this function
+        [DebuggerStepThrough()]
         protected virtual void OnRecievedData(IAsyncResult ar)
         {
             if (disposed) return;

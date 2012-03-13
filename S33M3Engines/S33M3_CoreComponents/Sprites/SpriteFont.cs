@@ -218,8 +218,6 @@ namespace S33M3_CoreComponents.Sprites
         public Vector2 MeasureString3(string text)
         {
             text += StartChar;
-            //return new Vector2(text.Length * _size, _charHeight);
-            //HACK SpriteFont.MasureString is approximated to Vector2(text.Length * _size, _charHeight)
             SizeF sizeRect = (_fontGraphics.MeasureString(text, _font));
             sizeRect.Width -= CharDescriptors[StartChar].Width;
             return new Vector2(sizeRect.Width, sizeRect.Height);
@@ -347,6 +345,6 @@ namespace S33M3_CoreComponents.Sprites
             return new Vector2(rect.Right + 1.0f, _charHeight);
         }
 
-        public float LineSpacing { get { return _charHeight * 0.1f; } } //HACK SpriteFont.LineSpacing hardcoded
+        public float LineSpacing { get { return _charHeight * 0.1f; } } 
     }
 }

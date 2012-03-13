@@ -329,11 +329,11 @@ namespace S33M3_CoreComponents.GUI.Nuclex.Visuals.Flat
         /// <param name="skinPath">
         ///   Path to the skin description this GUI visualizer will load
         /// </param>
-        public static FlatGuiVisualizer FromFile(D3DEngine d3dEngine, string skinPath)
+        public static FlatGuiVisualizer FromFile(D3DEngine d3dEngine, string skinPath, List<Assembly> plugInAssemblies = null)
         {
             using (FileStream skinStream = new FileStream(skinPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                return new FlatGuiVisualizer(d3dEngine, skinStream, Path.GetDirectoryName(skinPath));
+                return new FlatGuiVisualizer(d3dEngine, skinStream, Path.GetDirectoryName(skinPath), plugInAssemblies);
             }
         }
 
@@ -344,13 +344,20 @@ namespace S33M3_CoreComponents.GUI.Nuclex.Visuals.Flat
         /// <param name="skinStream">
         ///   Stream from which the GUI Visualizer will read the skin description
         /// </param>
-        protected FlatGuiVisualizer(D3DEngine d3dEngine, Stream skinStream, string resourceDirectory)
+        protected FlatGuiVisualizer(D3DEngine d3dEngine, Stream skinStream, string resourceDirectory, List<Assembly> plugInAssemblies = null)
         {
             this.employer = new ControlRendererEmployer();
             this.pluginHost = new PluginHost(this.employer);
 
             // Employ our own assembly in order to obtain the default GUI renderers
             this.pluginHost.Repository.AddAssembly(Self);
+            if (plugInAssemblies != null)
+            {
+                foreach (var assembly in plugInAssemblies)
+                {
+                    this.pluginHost.Repository.AddAssembly(assembly);
+                }
+            }
 
             this.flatGuiGraphics = new FlatGuiGraphics(d3dEngine, skinStream, resourceDirectory);
             this.controlStack = new Stack<ControlWithBounds>();

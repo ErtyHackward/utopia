@@ -69,7 +69,7 @@ namespace Utopia.Worlds.Chunks
         public ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
         public WorkItemPriority ThreadPriority { get; set; }  // Thread Priority value
         public int UserChangeOrder { get; set; }              // Variable for sync drawing at rebuild time.
-        public bool IsBorderChunk { get; set; }                 // Set to true if the chunk is located at the border of the visible world !
+        public bool IsBorderChunk { get; set; }               // Set to true if the chunk is located at the border of the visible world !
         private bool _ready2Draw;
         /// <summary>
         /// Whenever the chunk mesh are ready to be rendered to screen
@@ -82,8 +82,7 @@ namespace Utopia.Worlds.Chunks
                 if (_ready2Draw != value)
                 {
                     _ready2Draw = value;
-                    if (_ready2Draw)
-                        OnReadyToDraw();
+                    if (_ready2Draw) OnReadyToDraw(); //Event raised when the chunk is full ready to be rendered
                 }
             }
         }
@@ -140,7 +139,6 @@ namespace Utopia.Worlds.Chunks
         /// Occurs when chunk mesh updated
         /// </summary>
         public event EventHandler ChunkMeshUpdated;
-
         internal void OnChunkMeshUpdated()
         {
             var handler = ChunkMeshUpdated;
@@ -151,7 +149,6 @@ namespace Utopia.Worlds.Chunks
         /// Occurs when chunk is ready to draw ;)
         /// </summary>
         public event EventHandler ReadyToDraw;
-
         private void OnReadyToDraw()
         {
             var handler = ReadyToDraw;
@@ -447,9 +444,6 @@ namespace Utopia.Worlds.Chunks
 
         public void Dispose()
         {
-#if DEBUG
-            ChunkBoundingBoxDisplay.Dispose();
-#endif
             if (SolidCubeVB != null) SolidCubeVB.Dispose();
             if (SolidCubeIB != null) SolidCubeIB.Dispose();
             if (LiquidCubeVB != null) LiquidCubeVB.Dispose();

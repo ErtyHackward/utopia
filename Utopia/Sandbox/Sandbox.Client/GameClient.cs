@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define SINGLEPLAYERSTART
+
+using System;
 using System.IO;
 using Sandbox.Client.GUI.Forms;
 using Sandbox.Client.States;
@@ -42,7 +44,7 @@ namespace Sandbox.Client
             
             LoadClientsSettings();
 
-            IocBinding("Utopia Sandbox mode", new System.Drawing.Size(800,600));
+            IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 600));
 
             _clientFactory = new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());
             _iocContainer.Bind<EntityFactory>().ToConstant(_clientFactory).InSingletonScope().Named("Client");
@@ -87,8 +89,19 @@ namespace Sandbox.Client
             //Add the StateManager to the main loop
             game.GameComponents.Add(stateManager);
 
+#if SINGLEPLAYERSTART
             // first state will be the login state
+            vars.SinglePlayer = true;
+            vars.Login = "test";
+            vars.PasswordHash = "";
+            vars.DisplayName = "s33m3";
+
+            //ClientSettings.Current.Settings.Login = vars.Login;
+            //ClientSettings.Current.Save();
+            stateManager.ActivateGameState("LoadingGame");
+#else
             stateManager.ActivateGameState("Login");
+#endif
 
             game.Run();
 

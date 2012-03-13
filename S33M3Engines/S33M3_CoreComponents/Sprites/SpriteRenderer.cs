@@ -334,7 +334,6 @@ namespace S33M3_CoreComponents.Sprites
         {
             var transform = Matrix.Translation(pos.X, pos.Y, 0);
 
-            //TODO color vs color4
             DrawText(spriteFont, text, transform, color, maxWidth, -1 , withCarret);
         }
 

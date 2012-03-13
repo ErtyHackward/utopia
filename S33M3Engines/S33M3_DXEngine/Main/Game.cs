@@ -178,6 +178,7 @@ namespace S33M3_DXEngine.Main
         }
 
         //Close Window to stop the Window Pump !
+        //HACK [DebuggerStepThrough on EXIT] To avoid breaking inside while debugging => Remove it to give the possibility for the debugger to stop inside this function
         [DebuggerStepThrough()]
         public void Exit()
         {
