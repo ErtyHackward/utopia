@@ -34,6 +34,14 @@ namespace S33M3_CoreComponents.Maths
             return lookAt;
         }
 
+        public static void GetLookAtFromQuaternion(ref Quaternion rotation, out Vector3 lookAt )
+        {
+            Matrix entityRotation = Matrix.RotationQuaternion(rotation);
+            Matrix.Transpose(ref entityRotation, out entityRotation);
+            lookAt = new Vector3(-entityRotation.M13, -entityRotation.M23, -entityRotation.M33);
+            lookAt.Normalize();
+        }
+
         public static Vector3D GetLookAtFromQuaternion_V3D(Quaternion rotation)
         {
             Matrix entityRotation = Matrix.RotationQuaternion(rotation);
@@ -41,6 +49,14 @@ namespace S33M3_CoreComponents.Maths
             Vector3D lookAt = new Vector3D(-entityRotation.M13, -entityRotation.M23, -entityRotation.M33);
             lookAt.Normalize();
             return lookAt;
+        }
+
+        public static void GetLookAtFromQuaternion_V3D(ref Quaternion rotation, out Vector3D lookAt)
+        {
+            Matrix entityRotation = Matrix.RotationQuaternion(rotation);
+            Matrix.Transpose(ref entityRotation, out entityRotation);
+            lookAt = new Vector3D(-entityRotation.M13, -entityRotation.M23, -entityRotation.M33);
+            lookAt.Normalize();
         }
     }
 }

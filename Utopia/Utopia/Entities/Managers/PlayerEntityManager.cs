@@ -87,6 +87,13 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region Public variables/properties
+
+        public Vector3D LookAt
+        {
+            get { return _lookAt; }
+            set { _lookAt = value; }
+        }
+
         /// <summary>
         /// The Player
         /// </summary>
@@ -538,6 +545,7 @@ namespace Utopia.Entities.Managers
         {
             if (headingDegrees == 0 && pitchDegrees == 0 && rollDegrees == 0) return;
 
+            //Affect mouse sensibility stored in Delta to the mouvement that has been realized
             headingDegrees *= _rotationDelta;
             pitchDegrees *= _rotationDelta;
             rollDegrees *= _rotationDelta;
@@ -584,6 +592,7 @@ namespace Utopia.Entities.Managers
 
         private void RotateLookAt(double headingDegrees, double pitchDegrees)
         {
+            //To avoid the Camera to make full loop on the Pitch axis
             _accumPitchDegrees += pitchDegrees;
 
             if (_accumPitchDegrees > 90.0f)
@@ -598,23 +607,24 @@ namespace Utopia.Entities.Managers
                 _accumPitchDegrees = -90.0f;
             }
 
-            double heading = MathHelper.ToRadians(headingDegrees);
-            double pitch = MathHelper.ToRadians(pitchDegrees);
+            //Inverse the mouse move impact on the rotation
+            double heading = MathHelper.ToRadians(headingDegrees) * -1;
+            double pitch = MathHelper.ToRadians(pitchDegrees) * -1;
             Quaternion rotation;
-
-            // Rotate the camera about the world Y axis.
-            if (heading != 0.0f)
-            {
-                Quaternion.RotationAxis(ref MVector3.Up, (float)heading, out rotation);
-                _lookAtDirection.Value = rotation * _lookAtDirection.Value;
-                _cameraYAxisOrientation.Value = rotation * _cameraYAxisOrientation.Value;
-            }
 
             // Rotate the camera about its local X axis.
             if (pitch != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Right, (float)pitch, out rotation);
-                _lookAtDirection.Value = _lookAtDirection.Value * rotation;
+                _lookAtDirection.Value = rotation * _lookAtDirection.Value;
+            }
+
+            // Rotate the camera about the world Y axis.
+            if (heading != 0.0f)
+            {
+                Quaternion.RotationAxis(ref MVector3.Up, (float)heading, out rotation); //Transform the rotation angle from mouse into a quaternion
+                _lookAtDirection.Value = _lookAtDirection.Value * rotation;             //Add this value to the existing Entity quaternion rotation
+                _cameraYAxisOrientation.Value = _cameraYAxisOrientation.Value * rotation;
             }
 
             _lookAtDirection.Value.Normalize();
@@ -623,7 +633,8 @@ namespace Utopia.Entities.Managers
 
         private void UpdateHeadData()
         {
-            Matrix.RotationQuaternion(ref _lookAtDirection.Value, out _headRotation);
+            //Get the lookAt vector
+            _headRotation = Matrix.RotationQuaternion(Quaternion.Conjugate(_lookAtDirection.Value));
 
             _entityHeadXAxis = new Vector3D(_headRotation.M11, _headRotation.M21, _headRotation.M31);
             _entityHeadYAxis = new Vector3D(_headRotation.M12, _headRotation.M22, _headRotation.M32);
@@ -727,19 +738,14 @@ namespace Utopia.Entities.Managers
         public bool ShowDebugInfo { get; set; }
         public string GetDebugInfo()
         {
-            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] PickedBlock: {4}; NewBlockPlace: {5}", Player.CharacterName,
+            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] LookAt : {4} PickedBlock: {5}; NewBlockPlace: {6}", Player.CharacterName,
                                                                                   Math.Round(Player.Position.X, 1),
                                                                                   Math.Round(Player.Position.Y, 1),
                                                                                   Math.Round(Player.Position.Z, 1),
+                                                                                  _lookAt,
                                                                                   Player._entityState.IsBlockPicked ? Player._entityState.PickedBlockPosition.ToString() : "None",
                                                                                   Player._entityState.IsBlockPicked ? Player._entityState.NewBlockPosition.ToString() : "None"
-                                                                                  );
+                                                                                  );            
         }
-
-
-
-
-
-
     }
 }

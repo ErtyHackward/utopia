@@ -171,6 +171,17 @@ namespace S33M3_CoreComponents.Inputs.KeyboardHandler
 
             return _textChanged;
         }
+
+        /// <summary>
+        /// Get the string
+        /// </summary>
+        /// <param name="text">The Text</param>
+        /// <param name="carretPositionInString">The Carret position, -1 if it should not be displayed</param>
+        /// <returns>True if the string has change since last GetText call</returns>
+        public string GetText()
+        {
+            return _stringBuilder.ToString();
+        }
         #endregion
     }
 }

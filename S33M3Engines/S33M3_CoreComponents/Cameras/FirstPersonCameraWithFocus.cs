@@ -79,13 +79,17 @@ namespace S33M3_CoreComponents.Cameras
             FocusPointMatrix.ValueInterp = Matrix.Translation(-1 * _worldPosition.AsVector3());
             
             Matrix MTranslation = Matrix.Translation((_worldPosition - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3() * -1); //Inverse the Translation
-            Matrix MRotation = Matrix.RotationQuaternion(_cameraOrientation);                                             //Inverse the rotation
+            Quaternion inverseRotation = Quaternion.Conjugate(_cameraOrientation); //Inverse the rotation
+            Matrix MRotation = Matrix.RotationQuaternion(inverseRotation);                                             
             Matrix.Multiply(ref MTranslation, ref MRotation, out _view_focused);
 
             _viewProjection3D_focused = _view_focused * _projection3D;
             _viewProjection3D = Matrix.Translation(_worldPosition.AsVector3() * -1) * MRotation * _projection3D;
 
             _frustum = new BoundingFrustum(_viewProjection3D);
+
+            //Refresh the lookat camera vector
+            _lookAt = MQuaternion.GetLookAtFromQuaternion(inverseRotation);
         }
 
         protected override void CameraInitialize()

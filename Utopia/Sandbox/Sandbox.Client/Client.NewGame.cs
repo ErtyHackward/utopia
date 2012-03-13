@@ -223,6 +223,8 @@ namespace Sandbox.Client
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Map
             });
+
+            
         }
     }
 }
