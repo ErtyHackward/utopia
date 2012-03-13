@@ -56,6 +56,7 @@ using Utopia.GUI.Map;
 using S33M3_DXEngine.Main.Interfaces;
 using S33M3_CoreComponents.WorldFocus.Interfaces;
 using S33M3_DXEngine;
+using S33M3_CoreComponents.Debug;
 
 namespace Sandbox.Client.States
 {
@@ -276,7 +277,7 @@ namespace Sandbox.Client.States
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
-            
+           
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;

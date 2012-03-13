@@ -51,6 +51,7 @@ namespace S33M3_CoreComponents.Debug
 
             _displayInfo.AddComponants(_fps);
 
+            this.DrawOrders.UpdateIndex(0, 10000);
             this.DrawOrders.AddIndex(_guiManager.DrawOrders.DrawOrdersCollection[0].Order + 1, "Chart");
         }
 
@@ -80,8 +81,8 @@ namespace S33M3_CoreComponents.Debug
             });
 
             _mainControl = ToDispose(new DebugWindowControl(_game, _displayInfo, _fps));
-            _mainControl.ControlClosed += HideControl;
-            _guiManager.Screen.Desktop.Children.Add(_mainControl.DebugWindow);
+            //_mainControl.ControlClosed += HideControl;
+            //_guiManager.Screen.Desktop.Children.Add(_mainControl.DebugWindow);
 
             _chart = ToDispose(new ColumnChart(_engine, new SharpDX.Rectangle((int)_mainControl.DebugWindow.Bounds.Left.Offset,
                                                                     (int)_engine.ViewPort.Height - (int)_mainControl.DebugWindow.Bounds.Bottom.Offset,
@@ -91,6 +92,8 @@ namespace S33M3_CoreComponents.Debug
             _displayInfo.Initialize();
             _fps.Initialize();
             _chart.Initialize();
+
+            this.EnableComponent();
         }
 
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext Context)

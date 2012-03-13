@@ -52,6 +52,7 @@ using S33M3_DXEngine.Main.Interfaces;
 using Utopia.Action;
 using System.Collections.Generic;
 using System.Reflection;
+using S33M3_CoreComponents.Debug;
 
 namespace Sandbox.Client
 {
@@ -186,7 +187,11 @@ namespace Sandbox.Client
             // Server components ==========================================
             _iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToSelf().InSingletonScope().WithConstructorArgument("fileName", "localServer.config");
             _iocContainer.Bind<SQLiteStorageManager>().ToSelf().InSingletonScope();
-            
+            //=============================================================
+
+            //Debug Components ===========================================
+            _iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope();
+            //=============================================================
         }
     }
 }
