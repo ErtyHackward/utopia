@@ -22,6 +22,7 @@ using S33M3_CoreComponents.States;
 using S33M3_DXEngine.Threading;
 using S33M3_CoreComponents.Inputs;
 using S33M3_CoreComponents.GUI;
+using S33M3_CoreComponents.Debug;
 
 namespace Sandbox.Client
 {
@@ -81,10 +82,15 @@ namespace Sandbox.Client
             stateManager.RegisterState(_iocContainer.Get<SelectServerGameState>());
             stateManager.RegisterState(_iocContainer.Get<EditorState>());
 
-
+            //Add system components that will be share with all possible states !
             InputsManager inputManager = _iocContainer.Get<InputsManager>();
             inputManager.MouseManager.IsRunning = true;
             game.GameComponents.Add(inputManager);
+
+            var debugComponents = _iocContainer.Get<DebugComponent>();
+            debugComponents.EnableComponent();
+            game.GameComponents.Add(debugComponents);
+
 
             //Add the StateManager to the main loop
             game.GameComponents.Add(stateManager);

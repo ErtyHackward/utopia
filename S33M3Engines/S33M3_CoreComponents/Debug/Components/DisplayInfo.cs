@@ -42,9 +42,9 @@ namespace S33M3_CoreComponents.Components.Debug
             DrawOrders.UpdateIndex(0, 10000);
 
             //Add all exiting components
-            foreach (IDebugInfo comp in _game.GameComponents)
+            foreach (var components in _game.GameComponents)
             {
-                AddComponants(comp);
+                if (components is IDebugInfo) AddComponants((IDebugInfo)components);
             }
         }
 

@@ -97,9 +97,9 @@ namespace Utopia.Entities.Managers
         public VisualVoxelEntity VisualEntity { get; set; }
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
-        public virtual Vector3D CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
-        public virtual Quaternion CameraOrientation { get { return _lookAtDirection.Value; } }
-        public virtual Quaternion CameraYAxisOrientation { get { return _cameraYAxisOrientation.Value; } }
+        public virtual Vector3D CameraWorldPosition { get { return _worldPosition.ValueInterp + _entityEyeOffset; } }
+        public virtual Quaternion CameraOrientation { get { return _lookAtDirection.ValueInterp; } }
+        public virtual Quaternion CameraYAxisOrientation { get { return _cameraYAxisOrientation.ValueInterp; } }
         public virtual int CameraUpdateOrder { get { return this.UpdateOrder; } }
 
         public bool IsHeadInsideWater { get; set; }

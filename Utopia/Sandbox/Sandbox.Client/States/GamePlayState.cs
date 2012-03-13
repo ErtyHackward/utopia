@@ -20,6 +20,7 @@ using SharpDX.Direct3D11;
 using S33M3_CoreComponents.Cameras.Interfaces;
 using Utopia.GUI.Inventory;
 using Utopia.GUI.Map;
+using S33M3_CoreComponents.Debug;
 
 namespace Sandbox.Client.States
 {
