@@ -198,6 +198,13 @@ namespace Sandbox.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
+                ActionId = UtopiaActions.Exit_Chat,
+                TriggerType = KeyboardTriggerMode.KeyReleased,
+                Binding = new KeyWithModifier() { MainKey = Keys.Escape }
+            });
+
+            inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
+            {
                 ActionId = UtopiaActions.EntityUse,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Use

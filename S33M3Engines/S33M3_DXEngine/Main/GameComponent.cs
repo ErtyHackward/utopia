@@ -31,6 +31,8 @@ namespace S33M3_DXEngine.Main
             set { _isInitialized = value; }
         }
 
+        public bool CatchExclusiveActions { get; set; }
+
         public bool Updatable
         {
             get { return _updatable; }

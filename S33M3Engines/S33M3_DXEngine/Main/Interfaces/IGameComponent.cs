@@ -11,6 +11,7 @@ namespace S33M3_DXEngine.Main.Interfaces
         string Name { get; }
         bool IsSystemComponent { get; }
         bool IsDefferedLoadContent { get; }
+        bool CatchExclusiveActions { get; set; }
         void EnableComponent();
         void DisableComponent();
         void Initialize();

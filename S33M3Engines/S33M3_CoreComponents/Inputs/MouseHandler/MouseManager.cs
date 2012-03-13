@@ -102,9 +102,9 @@ namespace S33M3_CoreComponents.Inputs.MouseHandler
             if (_mouseCapture && _engine.HasFocus)
             {
                 //Set the mouse to the Center Screen
-                Mouse.SetPosition(_centerViewPort.X, _centerViewPort.Y);
                 MouseMoveDelta.X = _centerViewPort.X - CurMouseState.X;
                 MouseMoveDelta.Y = _centerViewPort.Y - CurMouseState.Y;
+                Mouse.SetPosition(_centerViewPort.X, _centerViewPort.Y);
             }
             else
             {
@@ -121,6 +121,7 @@ namespace S33M3_CoreComponents.Inputs.MouseHandler
             CurMouseState = Mouse.GetState();
             _mousePosiBeforeCaptureMode.X = CurMouseState.X;
             _mousePosiBeforeCaptureMode.Y = CurMouseState.Y;
+            Mouse.SetPosition(_centerViewPort.X, _centerViewPort.Y);
         }
 
         private void RestoreMousePosition()

@@ -26,9 +26,10 @@ namespace Utopia.Action
         public const int ToolBar_SelectNext                 =36;
         public const int ToolBar_SelectPrevious             =37;
         public const int Toggle_Chat                        =38;
-        public const int EntityUse                          =39;
-        public const int EntityThrow                        =40;
-        public const int OpenInventory                      =41;
-        public const int OpenMap                            =42;
+        public const int Exit_Chat                          =39;
+        public const int EntityUse                          =40;
+        public const int EntityThrow                        =41;
+        public const int OpenInventory                      =42;
+        public const int OpenMap                            =43;
     }
 }

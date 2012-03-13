@@ -348,8 +348,6 @@ namespace S33M3_CoreComponents.Sprites
         /// <param name="lineDefaultOffset">If specified, when a new line is created, this value is used as offset from left windo border</param>
         public void DrawText(SpriteFont font, string text, Matrix transform, ByteColor color, float maxWidth = -1, float lineDefaultOffset = -1, int withCarret = -1)
         {
-            text = text.Replace("\n\r", "\r");
-
             var length = text.Length;
             var textTransform = Matrix.Identity;
 
@@ -402,7 +400,7 @@ namespace S33M3_CoreComponents.Sprites
                         }
                     }
                     //next character will be a little bit more right
-                    else if (character == '\r')
+                    else if (character == '\n')
                     {
                         //next character will be at next line
                         textTransform.M42 += font.CharHeight;

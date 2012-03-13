@@ -62,12 +62,21 @@ namespace S33M3_CoreComponents.Debug
         {
             _mainControl.ControlClosed -= HideControl;
             _guiManager.Screen.Desktop.Children.Remove(_mainControl.DebugWindow);
+            ReleaseExclusiveMode();
         }
 
         private void ShowControl(object sender, EventArgs e)
         {
             _mainControl.ControlClosed += HideControl;
             _guiManager.Screen.Desktop.Children.Add(_mainControl.DebugWindow);
+        }
+
+        private void ReleaseExclusiveMode()
+        {
+            this.CatchExclusiveActions = false;
+            _guiManager.CatchExclusiveActions = false;
+            _inputManager.ActionsManager.IsExclusiveMode = false;
+            _inputManager.MouseManager.MouseCapture = true;
         }
         #endregion
 
@@ -108,12 +117,22 @@ namespace S33M3_CoreComponents.Debug
         public override void Update(GameTime timeSpent)
         {
             //Show GUI debug interface
-            if (_inputManager.ActionsManager.isTriggered(Actions.EngineShowDebugUI))
+            if (_inputManager.ActionsManager.isTriggered(Actions.EngineShowDebugUI, CatchExclusiveActions))
             {
                 if (_guiManager.Screen.Desktop.Children.Contains(_mainControl.DebugWindow))
+                {
                     HideControl(this, null);
+                    ReleaseExclusiveMode();
+                }
                 else
+                {
+                    //Show the GUI, and start the action exclusive mode
                     ShowControl(this, null);
+                    this.CatchExclusiveActions = true;
+                    _guiManager.CatchExclusiveActions = true;
+                    _inputManager.ActionsManager.IsExclusiveMode = true;
+                    _inputManager.MouseManager.MouseCapture = false;
+                }
             }
 
             //Relay Debug Component Update

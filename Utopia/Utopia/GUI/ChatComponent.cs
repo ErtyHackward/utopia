@@ -40,7 +40,6 @@ namespace Utopia.GUI
         private readonly Queue<string> _messages = new Queue<string>();
         private float windowHeight;
 
-
         public int ChatLineLimit { get; set; }
 
         private bool _activated;
@@ -53,11 +52,11 @@ namespace Utopia.GUI
                 _activated = value;
                 if (value)
                 {
-                    //_imanager.ActionsManager.isKeyboardActionsEnabled = false;
+                    _imanager.ActionsManager.IsExclusiveMode = true;
                 }
                 else
                 {
-                    _imanager.ActionsManager.isKeyboardActionsEnabled = true;
+                    _imanager.ActionsManager.IsExclusiveMode = false;
                 }
             }
         }
@@ -116,46 +115,6 @@ namespace Utopia.GUI
             _refreshDisplay = true;
         }
 
-        //void _imanager_OnKeyPressed(object sender, KeyPressEventArgs e)
-        //{
-        //    if (Activated)
-        //    {
-        //        if (_imanager.ActionsManager.isTriggered(UtopiaActions.Toggle_Chat))
-        //        {
-        //            _actionManager.isKeyboardActionsEnabled = true;
-        //            if (!string.IsNullOrWhiteSpace(Input))
-        //            {
-        //                var msg = new ChatMessage { DisplayName = _server.DisplayName, Message = Input };
-        //                if (Input.StartsWith("/me ", StringComparison.CurrentCultureIgnoreCase))
-        //                {
-        //                    msg.Action = true;
-        //                    msg.Message = Input.Remove(0, 4);
-        //                }
-
-        //                _server.ServerConnection.SendAsync(msg);
-        //            }
-
-        //            Input = string.Empty;
-        //            return;
-        //        }
-        //        if (e.KeyChar == (char)Keys.Back)
-        //        {
-        //            if (Input != null && Input.Length > 0)
-        //            {
-        //                Input = Input.Remove(Input.Length - 1);
-        //            }
-        //            else
-        //            {
-        //                Activated = false;
-        //            }
-        //            return;
-        //        }
-        //        Input += e.KeyChar;
-
-        //        _lastUpdateTick = Stopwatch.GetTimestamp();
-        //    }
-        //}
-
         private void LocateChat(Viewport viewport)
         {
             windowHeight = viewport.Height;
@@ -195,13 +154,23 @@ namespace Utopia.GUI
                 SetFontAlphaColor(200);
             }
 
-            if (_imanager.ActionsManager.isTriggered(UtopiaActions.Toggle_Chat))
+
+            if (Activated == true && _imanager.ActionsManager.isTriggered(UtopiaActions.Exit_Chat, CatchExclusiveActions))
+            {
+                Activated = false;
+                _textInput.Clear();
+                _lastUpdateTime = Stopwatch.GetTimestamp();
+                _refreshDisplay = true;
+            }
+
+            if (_imanager.ActionsManager.isTriggered(UtopiaActions.Toggle_Chat, CatchExclusiveActions))
             {
                 if (Activated == false)
                 {
+                    CatchExclusiveActions = true;
                     _lastUpdateTime = Stopwatch.GetTimestamp();
 
-                    Activated = !Activated;
+                    Activated = true;
                     _refreshDisplay = true;
                     _textInput.Clear();
                     _textInput.isListening = true;
@@ -209,9 +178,9 @@ namespace Utopia.GUI
                 else
                 {
                     //Send message to server !
-                    _imanager.ActionsManager.isKeyboardActionsEnabled = true;
+                    Activated = false;
+                    CatchExclusiveActions = false;
                     string Input = _textInput.GetText();
-                    Input = Input.Replace("\r", "").Replace("\n","");
                     if (!string.IsNullOrWhiteSpace(Input))
                     {
                         var msg = new ChatMessage { DisplayName = _server.DisplayName, Message = Input };
@@ -226,6 +195,7 @@ namespace Utopia.GUI
                 }
             }
 
+            
             _textInput.Refresh();
 
         }
