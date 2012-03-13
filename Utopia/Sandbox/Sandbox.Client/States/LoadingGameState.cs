@@ -41,22 +41,22 @@ using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Weather;
-using S33M3_CoreComponents.States;
-using S33M3_DXEngine.Threading;
-using S33M3_Resources.Structs;
-using S33M3_CoreComponents.WorldFocus;
-using S33M3_CoreComponents.Cameras.Interfaces;
-using S33M3_CoreComponents.Cameras;
-using S33M3_CoreComponents.Timers;
-using S33M3_CoreComponents.Inputs;
-using S33M3_CoreComponents.Inputs.Actions;
-using S33M3_CoreComponents.GUI;
+using S33M3CoreComponents.States;
+using S33M3DXEngine.Threading;
+using S33M3Resources.Structs;
+using S33M3CoreComponents.WorldFocus;
+using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.Timers;
+using S33M3CoreComponents.Inputs;
+using S33M3CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.GUI;
 using Utopia.GUI.Inventory;
 using Utopia.GUI.Map;
-using S33M3_DXEngine.Main.Interfaces;
-using S33M3_CoreComponents.WorldFocus.Interfaces;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.Debug;
+using S33M3DXEngine.Main.Interfaces;
+using S33M3CoreComponents.WorldFocus.Interfaces;
+using S33M3DXEngine;
+using S33M3CoreComponents.Debug;
 
 namespace Sandbox.Client.States
 {

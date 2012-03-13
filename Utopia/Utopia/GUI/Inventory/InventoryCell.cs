@@ -2,10 +2,10 @@
 using Utopia.Entities;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
-using S33M3_Resources.Structs;
-using S33M3_CoreComponents.GUI.Nuclex.Input;
-using S33M3_CoreComponents.GUI.Nuclex.Controls;
-using S33M3_CoreComponents.Inputs;
+using S33M3Resources.Structs;
+using S33M3CoreComponents.GUI.Nuclex.Input;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.Inputs;
 
 namespace Utopia.GUI.Inventory
 {

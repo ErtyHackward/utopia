@@ -8,16 +8,16 @@ using SharpDX.Direct3D;
 using Utopia.Shared.Structs;
 using Utopia.Settings;
 using Utopia.Resources.Effects.Skydome;
-using S33M3_Resources.VertexFormats;
-using S33M3_DXEngine.Buffers;
-using S33M3_DXEngine.Main;
-using S33M3_CoreComponents.Cameras;
-using S33M3_DXEngine;
-using S33M3_Resources.Structs;
+using S33M3Resources.VertexFormats;
+using S33M3DXEngine.Buffers;
+using S33M3DXEngine.Main;
+using S33M3CoreComponents.Cameras;
+using S33M3DXEngine;
+using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
-using S33M3_DXEngine.RenderStates;
-using S33M3_CoreComponents.Cameras.Interfaces;
-using S33M3_CoreComponents.Maths;
+using S33M3DXEngine.RenderStates;
+using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {

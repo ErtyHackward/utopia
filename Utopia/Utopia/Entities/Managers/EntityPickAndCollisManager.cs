@@ -8,13 +8,13 @@ using Utopia.Network;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
-using S33M3_CoreComponents.Timers;
-using S33M3_CoreComponents.Inputs.Actions;
-using S33M3_Resources.Structs;
-using S33M3_CoreComponents.Physics.Verlet;
-using S33M3_CoreComponents.Maths;
+using S33M3CoreComponents.Timers;
+using S33M3CoreComponents.Inputs.Actions;
+using S33M3Resources.Structs;
+using S33M3CoreComponents.Physics.Verlet;
+using S33M3CoreComponents.Maths;
 using Utopia.Action;
-using S33M3_CoreComponents.Inputs;
+using S33M3CoreComponents.Inputs;
 
 namespace Utopia.Entities.Managers
 {

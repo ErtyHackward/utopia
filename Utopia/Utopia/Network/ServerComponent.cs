@@ -4,7 +4,7 @@ using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
-using S33M3_DXEngine.Main;
+using S33M3DXEngine.Main;
 
 namespace Utopia.Network
 {

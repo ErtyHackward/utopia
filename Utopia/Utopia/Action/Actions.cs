@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3_CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.Inputs.Actions;
 
 namespace Utopia.Action
 {

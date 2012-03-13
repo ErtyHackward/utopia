@@ -1,11 +1,11 @@
 using System;
 using System.Drawing;
 using SharpDX;
-using S33M3_CoreComponents.Sprites;
-using S33M3_DXEngine.Main;
-using S33M3_DXEngine;
+using S33M3CoreComponents.Sprites;
+using S33M3DXEngine.Main;
+using S33M3DXEngine;
 using SharpDX.Direct3D11;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Sandbox.Client.Components
 {

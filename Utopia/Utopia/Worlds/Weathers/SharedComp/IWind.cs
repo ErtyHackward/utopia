@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SharpDX;
-using S33M3_DXEngine.Main.Interfaces;
+using S33M3DXEngine.Main.Interfaces;
 
 namespace Utopia.Worlds.Weathers.SharedComp
 {

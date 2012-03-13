@@ -35,24 +35,24 @@ using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Effects.Shared;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.WorldFocus;
-using S33M3_CoreComponents.States;
-using S33M3_CoreComponents.Cameras.Interfaces;
-using S33M3_CoreComponents.Cameras;
-using S33M3_CoreComponents.Timers;
-using S33M3_CoreComponents.Sprites;
-using S33M3_CoreComponents.Inputs;
-using S33M3_CoreComponents.Inputs.Actions;
-using S33M3_CoreComponents.GUI;
-using S33M3_CoreComponents.GUI.Nuclex;
+using S33M3DXEngine;
+using S33M3CoreComponents.WorldFocus;
+using S33M3CoreComponents.States;
+using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.Timers;
+using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Inputs;
+using S33M3CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.GUI;
+using S33M3CoreComponents.GUI.Nuclex;
 using Utopia.GUI.Inventory;
 using Utopia.GUI.Map;
-using S33M3_DXEngine.Main.Interfaces;
+using S33M3DXEngine.Main.Interfaces;
 using Utopia.Action;
 using System.Collections.Generic;
 using System.Reflection;
-using S33M3_CoreComponents.Debug;
+using S33M3CoreComponents.Debug;
 
 namespace Sandbox.Client
 {

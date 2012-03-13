@@ -6,7 +6,7 @@ using Utopia.Server.Events;
 using Utopia.Server.Services;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities.Concrete;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Server.Sample
 {

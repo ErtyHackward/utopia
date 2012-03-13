@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using S33M3_CoreComponents.Sprites;
-using S33M3_CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
 
 namespace Utopia.GUI.Map
 {

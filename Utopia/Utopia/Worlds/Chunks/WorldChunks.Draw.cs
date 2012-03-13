@@ -8,10 +8,10 @@ using Utopia.Shared.Chunks;
 using Utopia.Settings;
 using Utopia.Resources.Effects.Terran;
 using Utopia.Resources.Effects.Entities;
-using S33M3_DXEngine.RenderStates;
-using S33M3_DXEngine.Textures;
-using S33M3_Resources.Struct.Vertex;
-using S33M3_CoreComponents.Maths;
+using S33M3DXEngine.RenderStates;
+using S33M3DXEngine.Textures;
+using S33M3Resources.Struct.Vertex;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Worlds.Chunks
 {

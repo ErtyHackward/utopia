@@ -7,11 +7,11 @@
 //using BEPUphysics.MathExtensions;
 //using Utopia.Shared.Chunks;
 //using Utopia.Worlds.Chunks;
-//using S33M3_DXEngine.Main;
-//using S33M3_CoreComponents.Inputs.Actions;
-//using S33M3_DXEngine;
+//using S33M3DXEngine.Main;
+//using S33M3CoreComponents.Inputs.Actions;
+//using S33M3DXEngine;
 //using Utopia.Action;
-//using S33M3_CoreComponents.Inputs;
+//using S33M3CoreComponents.Inputs;
 
 //namespace Utopia.Components
 //{

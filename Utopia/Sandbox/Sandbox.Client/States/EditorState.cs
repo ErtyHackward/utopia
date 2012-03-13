@@ -4,8 +4,8 @@ using Sandbox.Client.Components;
 using Utopia;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
-using S33M3_CoreComponents.States;
-using S33M3_CoreComponents.GUI;
+using S33M3CoreComponents.States;
+using S33M3CoreComponents.GUI;
 
 namespace Sandbox.Client.States
 {

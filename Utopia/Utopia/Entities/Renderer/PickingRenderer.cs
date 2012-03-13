@@ -9,16 +9,16 @@ using Utopia.Entities.Voxel;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Settings;
 using Utopia.Resources.ModelComp;
-using S33M3_DXEngine.Main;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.WorldFocus;
-using S33M3_CoreComponents.Cameras;
-using S33M3_CoreComponents.Cameras.Interfaces;
-using S33M3_Resources.Effects.Basics;
-using S33M3_Resources.VertexFormats;
+using S33M3DXEngine.Main;
+using S33M3DXEngine;
+using S33M3CoreComponents.WorldFocus;
+using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3Resources.Effects.Basics;
+using S33M3Resources.VertexFormats;
 using SharpDX.Direct3D11;
-using S33M3_Resources.Structs;
-using S33M3_DXEngine.RenderStates;
+using S33M3Resources.Structs;
+using S33M3DXEngine.RenderStates;
 
 namespace Utopia.Entities.Renderer
 {

@@ -1,7 +1,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Utopia.Shared.Net.Interfaces;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Net.Messages
 {

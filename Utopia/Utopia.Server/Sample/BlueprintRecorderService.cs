@@ -6,7 +6,7 @@ using Utopia.Server.Structs;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Server.Sample
 {

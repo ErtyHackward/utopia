@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using SharpDX;
 using Utopia.Worlds.Weathers.SharedComp;
-using S33M3_Resources.Structs;
-using S33M3_DXEngine.Main;
-using S33M3_CoreComponents.Maths;
+using S33M3Resources.Structs;
+using S33M3DXEngine.Main;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Worlds.Weather
 {

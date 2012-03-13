@@ -13,9 +13,9 @@ using Utopia.Worlds.Storage;
 using Utopia.Worlds.Storage.Structs;
 using Ninject;
 using Utopia.Entities.Sprites;
-using S33M3_CoreComponents.Timers;
-using S33M3_DXEngine.Threading;
-using S33M3_Resources.Structs;
+using S33M3CoreComponents.Timers;
+using S33M3DXEngine.Threading;
+using S33M3Resources.Structs;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {

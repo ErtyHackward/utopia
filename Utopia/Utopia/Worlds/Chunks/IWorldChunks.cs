@@ -7,10 +7,10 @@ using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using Utopia.Worlds.Chunks.ChunkLandscape;
 using SharpDX;
-using S33M3_Resources.Structs;
-using S33M3_DXEngine.Main.Interfaces;
-using S33M3_DXEngine.Debug.Interfaces;
-using S33M3_CoreComponents.Physics.Verlet;
+using S33M3Resources.Structs;
+using S33M3DXEngine.Main.Interfaces;
+using S33M3DXEngine.Debug.Interfaces;
+using S33M3CoreComponents.Physics.Verlet;
 
 namespace Utopia.Worlds.Chunks
 {

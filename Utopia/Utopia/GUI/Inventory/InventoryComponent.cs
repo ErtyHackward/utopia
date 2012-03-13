@@ -9,15 +9,15 @@ using Utopia.Settings;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
-using S33M3_DXEngine.Main;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.Inputs.Actions;
-using S33M3_CoreComponents.Sprites;
-using S33M3_CoreComponents.GUI.Nuclex;
-using S33M3_Resources.Structs;
+using S33M3DXEngine.Main;
+using S33M3DXEngine;
+using S33M3CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.GUI.Nuclex;
+using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
 using Utopia.Action;
-using S33M3_CoreComponents.Inputs;
+using S33M3CoreComponents.Inputs;
 
 namespace Utopia.GUI.Inventory
 {
@@ -191,7 +191,7 @@ namespace Utopia.GUI.Inventory
                 {
                     var itemsCount = slot.ItemsCount;
 
-                    if (e.MouseState.RightButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
+                    if (e.MouseState.RightButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
                         itemsCount = 1;
 
                     if (keyboard.IsKeyDown(Keys.ShiftKey) && itemsCount > 1)
@@ -230,7 +230,7 @@ namespace Utopia.GUI.Inventory
 
                     var itemsCount = _dragControl.Slot.ItemsCount;
 
-                    if (e.MouseState.RightButton == S33M3_CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
+                    if (e.MouseState.RightButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
                     {
                         if (keyboard.IsKeyDown(Keys.ShiftKey) && itemsCount > 1)
                             itemsCount = itemsCount / 2;

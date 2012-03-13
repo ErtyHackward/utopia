@@ -12,15 +12,15 @@ using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Settings;
 using Utopia.Resources.Effects.Terran;
 using Utopia.Effects.Shared;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.WorldFocus;
-using S33M3_CoreComponents.Cameras;
-using S33M3_CoreComponents.Cameras.Interfaces;
-using S33M3_Resources.Struct.Vertex;
-using S33M3_DXEngine.Textures;
-using S33M3_DXEngine.RenderStates;
-using S33M3_DXEngine.Main;
-using S33M3_DXEngine.Debug.Interfaces;
+using S33M3DXEngine;
+using S33M3CoreComponents.WorldFocus;
+using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3Resources.Struct.Vertex;
+using S33M3DXEngine.Textures;
+using S33M3DXEngine.RenderStates;
+using S33M3DXEngine.Main;
+using S33M3DXEngine.Debug.Interfaces;
 
 namespace Utopia.Entities.Renderer
 {

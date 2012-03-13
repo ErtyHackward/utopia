@@ -3,11 +3,11 @@ using SharpDX.Direct3D11;
 using Utopia.GameDXStates;
 using Utopia.Settings;
 using Utopia.Shared.Settings;
-using S33M3_DXEngine.Main;
-using S33M3_CoreComponents.Inputs.Actions;
-using S33M3_DXEngine;
+using S33M3DXEngine.Main;
+using S33M3CoreComponents.Inputs.Actions;
+using S33M3DXEngine;
 using System.Drawing;
-using S33M3_CoreComponents.Inputs;
+using S33M3CoreComponents.Inputs;
 
 namespace Utopia
 {

@@ -10,7 +10,7 @@ using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Structs;
 using System.Threading;
 using Utopia.Shared.Structs.Helpers;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Server.Managers
 {

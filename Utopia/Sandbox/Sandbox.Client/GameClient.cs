@@ -17,12 +17,12 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
-using S33M3_DXEngine.Main;
-using S33M3_CoreComponents.States;
-using S33M3_DXEngine.Threading;
-using S33M3_CoreComponents.Inputs;
-using S33M3_CoreComponents.GUI;
-using S33M3_CoreComponents.Debug;
+using S33M3DXEngine.Main;
+using S33M3CoreComponents.States;
+using S33M3DXEngine.Threading;
+using S33M3CoreComponents.Inputs;
+using S33M3CoreComponents.GUI;
+using S33M3CoreComponents.Debug;
 using Ninject.Parameters;
 
 namespace Sandbox.Client

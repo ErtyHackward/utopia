@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Utopia.Shared.Structs;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Server.AStar
 {

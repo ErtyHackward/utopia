@@ -1,9 +1,9 @@
 ﻿using System;
 using SharpDX.Direct3D11;
-using S33M3_DXEngine.Main;
-using S33M3_DXEngine;
-using S33M3_CoreComponents.GUI.Nuclex;
-using S33M3_CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3DXEngine.Main;
+using S33M3DXEngine;
+using S33M3CoreComponents.GUI.Nuclex;
+using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 
 namespace Sandbox.Client.Components
 {

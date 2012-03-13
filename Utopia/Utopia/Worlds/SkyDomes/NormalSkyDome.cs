@@ -12,17 +12,17 @@ using Utopia.Shared.World;
 using Ninject;
 using Utopia.Settings;
 using Utopia.Resources.Effects.Skydome;
-using S33M3_Resources.Struct.Vertex;
-using S33M3_CoreComponents.Cameras;
-using S33M3_CoreComponents.WorldFocus;
-using S33M3_DXEngine.Main.Interfaces;
-using S33M3_DXEngine.Buffers;
-using S33M3_Resources.Effects.Basics;
-using S33M3_DXEngine;
-using S33M3_DXEngine.Main;
-using S33M3_CoreComponents.Maths;
-using S33M3_DXEngine.RenderStates;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3Resources.Struct.Vertex;
+using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.WorldFocus;
+using S33M3DXEngine.Main.Interfaces;
+using S33M3DXEngine.Buffers;
+using S33M3Resources.Effects.Basics;
+using S33M3DXEngine;
+using S33M3DXEngine.Main;
+using S33M3CoreComponents.Maths;
+using S33M3DXEngine.RenderStates;
+using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.Worlds.SkyDomes
 {

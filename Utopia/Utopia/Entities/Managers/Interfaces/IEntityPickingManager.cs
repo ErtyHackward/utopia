@@ -5,8 +5,8 @@ using System.Text;
 using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.Worlds.Chunks;
-using S33M3_CoreComponents.Physics.Verlet;
-using S33M3_Resources.Structs;
+using S33M3CoreComponents.Physics.Verlet;
+using S33M3Resources.Structs;
 
 namespace Utopia.Entities.Managers.Interfaces
 {

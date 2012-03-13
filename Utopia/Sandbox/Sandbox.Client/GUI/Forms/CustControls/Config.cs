@@ -6,8 +6,8 @@ using System.Windows.Forms;
 using Utopia.Settings;
 using System.Reflection;
 using Utopia.Shared.Config;
-using S33M3_CoreComponents.Inputs.KeyboardHandler;
-using S33M3_CoreComponents.Unsafe;
+using S33M3CoreComponents.Inputs.KeyboardHandler;
+using S33M3CoreComponents.Unsafe;
 
 namespace Sandbox.Client.GUI.Forms.CustControls
 {

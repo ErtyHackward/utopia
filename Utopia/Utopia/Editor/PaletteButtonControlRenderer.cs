@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
-using RectangleF = S33M3_CoreComponents.GUI.Nuclex.RectangleF;
-using S33M3_CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
+using RectangleF = S33M3CoreComponents.GUI.Nuclex.RectangleF;
+using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using SharpDX;
 
 namespace Utopia.Editor
