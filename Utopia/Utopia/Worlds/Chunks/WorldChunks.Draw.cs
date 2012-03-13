@@ -47,7 +47,7 @@ namespace Utopia.Worlds.Chunks
             {
                 _chunkDrawByFrame = 0;
 
-                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
                 DrawSolidFaces(context);
                 return;
             }

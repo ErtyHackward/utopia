@@ -110,26 +110,20 @@ namespace Utopia.Worlds.Chunks
         /// Occurs when array of visual chunks get initialized
         /// </summary>
         public event EventHandler ChunksArrayInitialized;
-
         private void OnChunksArrayInitialized()
         {
-            var handler = ChunksArrayInitialized;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (ChunksArrayInitialized != null) ChunksArrayInitialized(this, EventArgs.Empty);
         }
 
         /// <summary>
         /// Occurs when all chunks is loaded
         /// </summary>
         public event EventHandler LoadComplete;
-
         private void OnInitialLoadComplete()
         {
-            var handler = LoadComplete;
-            if (handler != null) handler(this, EventArgs.Empty);
-
+            if (LoadComplete != null) LoadComplete(this, EventArgs.Empty);
             _playerManager.LandscapeInitiazed = true;
         }
-
         public bool IsInitialLoadCompleted { get; set; }
 
         public WorldChunks(D3DEngine d3dEngine, 
@@ -519,11 +513,15 @@ namespace Utopia.Worlds.Chunks
             OnChunksArrayInitialized();
         }
 
+        //Call everytime a chunk has been initialized (= New chunk rebuild form scratch).
         void ChunkReadyToDraw(object sender, EventArgs e)
         {
             var chunk = (VisualChunk)sender;
             chunk.Opaque = 0f;
-            _transparentChunks.Add(chunk);
+
+            //_transparentChunks.Add(chunk);
+
+            if (IsInitialLoadCompleted) return;
 
             lock (_counterLock)
             {

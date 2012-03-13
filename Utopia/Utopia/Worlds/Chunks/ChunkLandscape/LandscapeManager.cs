@@ -97,7 +97,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         {
             ChunkBufferCleanup();
         }
-        //TODO call from Time to Time ?? how ?? When ??
+
         private void ChunkBufferCleanup()
         {
             var expiredIndex = _receivedServerChunks.Where(x => DateTime.Now.Subtract(x.Value.MessageRecTime).TotalSeconds > 60).ToList();

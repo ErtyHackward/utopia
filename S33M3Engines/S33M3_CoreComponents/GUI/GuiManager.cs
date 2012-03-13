@@ -20,6 +20,7 @@ using Screen = S33M3_CoreComponents.GUI.Nuclex.MainScreen;
 using S33M3_CoreComponents.Inputs;
 using S33M3_CoreComponents.Inputs.Actions;
 using S33M3_DXEngine.Debug.Interfaces;
+using System.Reflection;
 
 namespace S33M3_CoreComponents.GUI
 {
@@ -33,6 +34,8 @@ namespace S33M3_CoreComponents.GUI
     {
         /// <summary>Draws the GUI</summary>
         private IGuiVisualizer _guiVisualizer;
+        //The assembly that will contains the "user" made components, it will be looked by reflection to find the components
+        private List<Assembly> _plugInComponentAssemblies;
 
         /// <summary>The GUI screen representing the desktop</summary>
         private readonly Screen _screen;
@@ -55,11 +58,15 @@ namespace S33M3_CoreComponents.GUI
         /// </summary>
         public static bool DialogClosed;
 
-        public GuiManager(Screen screen, D3DEngine d3DEngine, InputsManager inputManager, string skinPath = @"GUI\Skins\Default\Default.skin.xml")
+        public GuiManager(Screen screen, 
+                          D3DEngine d3DEngine, 
+                          InputsManager inputManager, 
+                          string skinPath = @"GUI\Skins\Default\Default.skin.xml",
+                          List<Assembly> plugInComponentAssemblies = null)
         {
 
             this.ShowDebugInfo = true;
-
+            _plugInComponentAssemblies = plugInComponentAssemblies;
             _screen = screen;
             _d3DEngine = d3DEngine;
             _inputManager = inputManager;
@@ -170,7 +177,7 @@ namespace S33M3_CoreComponents.GUI
 
         public override void Initialize()
         {
-            _guiVisualizer = ToDispose(FlatGuiVisualizer.FromFile(_d3DEngine, _skinPath));
+            _guiVisualizer = ToDispose(FlatGuiVisualizer.FromFile(_d3DEngine, _skinPath, _plugInComponentAssemblies));
         }
 
         public override void Update(GameTime timeSpend)

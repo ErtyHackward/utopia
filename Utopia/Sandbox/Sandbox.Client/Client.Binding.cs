@@ -50,6 +50,8 @@ using Utopia.GUI.Inventory;
 using Utopia.GUI.Map;
 using S33M3_DXEngine.Main.Interfaces;
 using Utopia.Action;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Sandbox.Client
 {
@@ -110,7 +112,11 @@ namespace Sandbox.Client
             //==========================================================
 
             //GUI =========================================================
-            _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope().WithConstructorArgument("skinPath", @"GUI\Skins\Default\Default.skin.xml");        //Gui base class
+            //Create a list of assembly where GUI components will be looked into.
+            List<Assembly> componentsAssemblies = new List<Assembly>();
+            componentsAssemblies.Add(typeof(Utopia.GUI.LoginComponent).Assembly);
+            _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope().WithConstructorArgument("skinPath", @"GUI\Skins\Default\Default.skin.xml")
+                                                                        .WithConstructorArgument("plugInComponentAssemblies", componentsAssemblies);        //Gui base class
             _iocContainer.Bind<MainScreen>().ToSelf().InSingletonScope();
             //=============================================================
 
@@ -132,7 +138,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
             _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds_flat");
             _iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds_3D");
-            _iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
+            //_iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<FadeSwitchComponent>().ToSelf().InSingletonScope();

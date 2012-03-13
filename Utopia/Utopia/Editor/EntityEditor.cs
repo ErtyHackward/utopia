@@ -442,7 +442,6 @@ namespace Utopia.Editor
     //        double start = 0;
     //        //how far you need to be from the edited cube. 0 means you can pick right in your eye (ouch) 
     //        double end = start + 16;
-    //        //TODO magic number for editor picking, should be related to scale and block array size  
 
     //        PickedCubeLoc = null;
     //        //loose the state of the pickedBlock : the for loop must find a new one, we dont want a stale picked blocks 

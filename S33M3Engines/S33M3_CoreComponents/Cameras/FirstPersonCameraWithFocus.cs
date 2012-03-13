@@ -69,10 +69,6 @@ namespace S33M3_CoreComponents.Cameras
             if (CameraPlugin != null)
             {
                 //Get the Camera Position and Rotation from the attached Entity to the camera !
-                if (CameraPlugin.CameraWorldPosition.Y < -100.0)
-                {
-                    //Console.WriteLine("");
-                }
                 _worldPosition = CameraPlugin.CameraWorldPosition;
                 _cameraOrientation = CameraPlugin.CameraOrientation;
                 _cameraYAxisOrientation = CameraPlugin.CameraYAxisOrientation;
@@ -83,7 +79,7 @@ namespace S33M3_CoreComponents.Cameras
             FocusPointMatrix.ValueInterp = Matrix.Translation(-1 * _worldPosition.AsVector3());
             
             Matrix MTranslation = Matrix.Translation((_worldPosition - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3() * -1); //Inverse the Translation
-            Matrix MRotation = Matrix.RotationQuaternion(Quaternion.Conjugate(_cameraOrientation));                                             //Inverse the rotation
+            Matrix MRotation = Matrix.RotationQuaternion(_cameraOrientation);                                             //Inverse the rotation
             Matrix.Multiply(ref MTranslation, ref MRotation, out _view_focused);
 
             _viewProjection3D_focused = _view_focused * _projection3D;

@@ -243,10 +243,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Bepu\BEPUphysics\BEPUphysics.csproj">
-      <Project>{C0D52C9F-14B8-4008-8DDC-109C27561A5C}</Project>
-      <Name>BEPUphysics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\S33M3Engines\S33M3_CoreComponents\S33M3_CoreComponents.csproj">
       <Project>{D0C4DB7F-547E-4A40-A5CA-41391A310938}</Project>
       <Name>S33M3_CoreComponents</Name>
