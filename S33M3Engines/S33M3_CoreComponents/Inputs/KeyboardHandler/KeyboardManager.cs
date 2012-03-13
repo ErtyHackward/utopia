@@ -33,6 +33,7 @@ namespace S33M3_CoreComponents.Inputs.KeyboardHandler
         public CharKey[] KeyBuffer;
         public int BufferSize;
         public KeyboardState CurKeyboardState;
+        public KeyboardState PrevKeyboardState;
         #endregion
 
         public KeyboardManager(D3DEngine engine)
@@ -69,16 +70,26 @@ namespace S33M3_CoreComponents.Inputs.KeyboardHandler
 
         void GameWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (
-                e.KeyCode != Keys.Right && 
-                e.KeyCode != Keys.Left && 
-                e.KeyCode != Keys.Up && 
-                e.KeyCode != Keys.Down && 
-                e.KeyCode != Keys.Delete &&
-                e.KeyCode != Keys.Home &&
-                e.KeyCode != Keys.End) return;
+            //if (
+            //    e.KeyCode != Keys.Right && 
+            //    e.KeyCode != Keys.Left && 
+            //    e.KeyCode != Keys.Up && 
+            //    e.KeyCode != Keys.Down && 
+            //    e.KeyCode != Keys.Delete &&
+            //    e.KeyCode != Keys.Home &&
+            //    e.KeyCode != Keys.Enter &&
+            //    e.KeyCode != Keys.End) return;
 
             if (_bufferUpdated) ResetBuffer();
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                //Add the \n character
+                KeyBuffer[BufferSize].Char = '\n';
+                KeyBuffer[BufferSize].isChar = true;
+                BufferSize++;
+            }
+
             KeyBuffer[BufferSize].Key = e.KeyCode;
             KeyBuffer[BufferSize].isChar = false;
             BufferSize++;
@@ -102,12 +113,31 @@ namespace S33M3_CoreComponents.Inputs.KeyboardHandler
         #region Public methods
         public void Update()
         {
+            PrevKeyboardState = CurKeyboardState;
             CurKeyboardState = Keyboard.GetState();
             if (_bufferUpdated) ResetBuffer();
             _bufferUpdated = true;
         }
 
-        public IEnumerable<CharKey> GetPressedKeys()
+        public IEnumerable<Keys> GetPressedKeys()
+        {
+            for (int i = 0; i < BufferSize; i++)
+            {
+                if(KeyBuffer[i].isChar == false)
+                yield return KeyBuffer[i].Key;
+            }
+        }
+
+        public IEnumerable<char> GetPressedChars()
+        {
+            for (int i = 0; i < BufferSize; i++)
+            {
+                if (KeyBuffer[i].isChar == true)
+                    yield return KeyBuffer[i].Char;
+            }
+        }
+
+        public IEnumerable<CharKey> GetPressed()
         {
             for (int i = 0; i < BufferSize; i++)
             {

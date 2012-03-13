@@ -112,6 +112,8 @@ namespace Utopia.Entities.Managers
 
         public bool IsHeadInsideWater { get; set; }
 
+        public bool CatchExclusiveAction { get; set; }
+
         public EntityDisplacementModes DisplacementMode
         {
             get { return _displacementMode; }
@@ -203,7 +205,7 @@ namespace Utopia.Entities.Managers
         /// </summary>
         private void inputHandler()
         {
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Mode))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Mode, CatchExclusiveAction))
             {
                 if (_displacementMode == EntityDisplacementModes.Flying)
                 {
@@ -217,7 +219,7 @@ namespace Utopia.Entities.Managers
             
             if (!HasMouseFocus) return; //the editor(s) can acquire the mouseFocus
 
-            if (HandleToolsUse && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Left))
+            if (HandleToolsUse && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Left, CatchExclusiveAction))
             {
                 if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool!=null)
                 {
@@ -236,7 +238,7 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (HandleToolsUse && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right))
+            if (HandleToolsUse && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
             {
                 if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool != null)
                 {
@@ -255,13 +257,13 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse, CatchExclusiveAction))
             {
                 //TODO implement use 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
                 //like opening a chest or a door  
             }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityThrow))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityThrow, CatchExclusiveAction))
             {
                 //TODO unequip left item and throw it on the ground, (version 0 = place it at newCubeplace, animation later)                
                 // and next, throw the right tool if left tool is already thrown
@@ -487,22 +489,22 @@ namespace Utopia.Entities.Managers
 
         private void FreeFirstPersonMove()
         {
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward, CatchExclusiveAction))
                 _worldPosition.Value += _lookAt * _moveDelta;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward, CatchExclusiveAction))
                 _worldPosition.Value -= _lookAt * _moveDelta;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft, CatchExclusiveAction))
                 _worldPosition.Value -= _entityHeadXAxis * _moveDelta;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight, CatchExclusiveAction))
                 _worldPosition.Value += _entityHeadXAxis * _moveDelta;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Down))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Down, CatchExclusiveAction))
                 _worldPosition.Value += Vector3D.Down * _moveDelta;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Up))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Up, CatchExclusiveAction))
                 _worldPosition.Value += Vector3D.Up * _moveDelta;
         }
 

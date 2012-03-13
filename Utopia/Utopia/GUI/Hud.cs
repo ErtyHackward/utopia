@@ -111,9 +111,9 @@ namespace Utopia.GUI
         public override void Update(GameTime timeSpend)
         {
             //Process pressed keys by "event"
-            foreach(var keyPressed in _inputManager.KeyboardManager.GetPressedKeys())
+            foreach(var keyPressed in _inputManager.KeyboardManager.GetPressedChars())
             {
-                switch (keyPressed.Char)
+                switch (keyPressed)
                 {
                     case '1': SelectSlot(0); break;
                     case '2': SelectSlot(1); break;

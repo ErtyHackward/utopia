@@ -47,11 +47,22 @@ namespace S33M3_CoreComponents.Inputs.Actions
 
         private Type _actionType;                        //The Type that contains the possible actions
         private MouseManager _mouseManager;
+
+        private bool _isExclusiveMode;
         #endregion
 
         #region Public variables/properties
         public bool isKeyboardActionsEnabled { get; set; }
         public bool isMouseActionsEnabled { get; set; }
+        public bool IsExclusiveMode
+        {
+            get { return _isExclusiveMode; }
+            set
+            {
+                _isExclusiveMode = value;
+                ClearBuffer();
+            }
+        }
 
         public Type ActionType
         {
@@ -125,6 +136,14 @@ namespace S33M3_CoreComponents.Inputs.Actions
         }
 
         /// <summary>
+        /// Clear all buffered Actions raised
+        /// </summary>
+        public void ClearBuffer()
+        {
+            Array.Clear(_actions, 0, _actions.Length);
+        }
+
+        /// <summary>
         /// Process inputs handlers to update Actions
         /// This must be called as much as possible
         /// </summary>
@@ -138,8 +157,9 @@ namespace S33M3_CoreComponents.Inputs.Actions
         /// </summary>
         /// <param name="action">The action to look at</param>
         /// <returns></returns>
-        public bool isTriggered(int actionId)
+        public bool isTriggered(int actionId, bool withExclusive = false)
         {
+            if (_isExclusiveMode && withExclusive == false) return false;
             return _actions[actionId].Triggered;
         }
 
@@ -148,8 +168,13 @@ namespace S33M3_CoreComponents.Inputs.Actions
         /// </summary>
         /// <param name="action">The action to look at</param>
         /// <returns></returns>
-        public bool isTriggered(int actionId, out float ActionTimeElapsedInS)
+        public bool isTriggered(int actionId, out float ActionTimeElapsedInS, bool withExclusive = false)
         {
+            if (_isExclusiveMode && withExclusive == false)
+            {
+                ActionTimeElapsedInS = default(float);
+                return false;
+            }
             ActionData data = _actions[actionId];
             ActionTimeElapsedInS = data.ElapsedTimeInS;
             return data.Triggered;

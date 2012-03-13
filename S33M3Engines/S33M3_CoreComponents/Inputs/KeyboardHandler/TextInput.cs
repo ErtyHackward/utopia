@@ -36,6 +36,8 @@ namespace S33M3_CoreComponents.Inputs.KeyboardHandler
                 ChangeKeyboardEventListening();
             }
         }
+
+        public bool IsMultiline { get; set; }
         #endregion
 
         public TextInput(KeyboardManager keyboardManager, string InitTexte = "")
@@ -103,6 +105,7 @@ namespace S33M3_CoreComponents.Inputs.KeyboardHandler
                         }
                         return;
                     default:
+                        if (IsMultiline == false && (Key.Char == '\n' || Key.Char == '\r')) return;
                         //Pure char character !
                         if (_carretPositionInString == _stringBuilder.Length)
                         {
@@ -134,7 +137,7 @@ namespace S33M3_CoreComponents.Inputs.KeyboardHandler
 
             if (_isListening == false && _showCaret == false) return;
 
-            foreach (CharKey KeyChar in _keyboardManager.GetPressedKeys())
+            foreach (CharKey KeyChar in _keyboardManager.GetPressed())
             {
                 AddCharacterToDisplay(KeyChar);
                 _textChanged = true;
@@ -182,6 +185,7 @@ namespace S33M3_CoreComponents.Inputs.KeyboardHandler
         {
             return _stringBuilder.ToString();
         }
+
         #endregion
     }
 }

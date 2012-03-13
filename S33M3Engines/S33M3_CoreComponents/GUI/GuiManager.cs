@@ -43,8 +43,7 @@ namespace S33M3_CoreComponents.GUI
         public Screen Screen
         {
             get { return _screen; }
-        } 
-
+        }
 
         private readonly D3DEngine _d3DEngine;
         private InputsManager _inputManager;
@@ -252,32 +251,32 @@ namespace S33M3_CoreComponents.GUI
 
         private void InjectMouseInput()
         {
-            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMousePressed))
+            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMousePressed, CatchExclusiveActions))
             {
                 _screen.InjectMousePress(MouseButtons.Left);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMouseRelease))
+            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMouseRelease, CatchExclusiveActions))
             {
                 _screen.InjectMouseRelease(MouseButtons.Left);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.RightMousePressed))
+            if (_inputManager.ActionsManager.isTriggered(Actions.RightMousePressed, CatchExclusiveActions))
             {
                 _screen.InjectMousePress(MouseButtons.Right);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.RightMouseRelease))
+            if (_inputManager.ActionsManager.isTriggered(Actions.RightMouseRelease, CatchExclusiveActions))
             {
                 _screen.InjectMouseRelease(MouseButtons.Right);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward))
+            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward, CatchExclusiveActions))
             {
                 _screen.InjectMouseWheel(1);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward))
+            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward, CatchExclusiveActions))
             {
                 _screen.InjectMouseWheel(-1);
             }
