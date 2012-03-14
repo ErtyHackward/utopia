@@ -5,13 +5,14 @@ using System.Text;
 using Utopia.Components;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
+using Utopia.Shared.Chunks;
 
 namespace Sandbox.Client.Components
 {
     public class SandboxSoundManager : SoundManager
     {
-        public SandboxSoundManager(CameraManager<ICameraFocused> cameraManager)
-            :base(cameraManager)
+        public SandboxSoundManager(CameraManager<ICameraFocused> cameraManager, SingleArrayChunkContainer singleArray)
+            : base(cameraManager, singleArray)
         {
             SetGuiButtonSound("Sounds\\Interface\\button_press.wav");
         }
