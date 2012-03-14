@@ -235,7 +235,7 @@ namespace Sandbox.Client.States
             var serverComponent = _ioc.Get<ServerComponent>();
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
             var wordParameters = _ioc.Get<WorldParameters>();
-            //var visualWorldParameters = _ioc.Get<VisualWorldParameters>();
+            var visualWorldParameters = _ioc.Get<VisualWorldParameters>();
             var firstPersonCamera = _ioc.Get<ICamera>();
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
             var timerManager = _ioc.Get<TimerManager>();

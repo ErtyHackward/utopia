@@ -58,6 +58,9 @@ namespace Utopia.GUI.Inventory
             ItemMessageTranslator itemMessageTranslator, 
             Hud hud)
         {
+
+            this.IsDefferedLoadContent = true;
+
             _engine = engine;
             _inputManager = inputManager;
             _guiManager = guiManager;

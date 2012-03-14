@@ -64,6 +64,8 @@ namespace Utopia.Worlds.SkyDomes
         public RegularSkyDome(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager, WorldFocusManager worldFocusManager, IClock clock, IWeather weather, [Named("Stars")] IDrawableComponent skyStars, [Named("Clouds_flat")] IDrawableComponent clouds)
             : base(d3dEngine, clock, weather)
         {
+            this.IsDefferedLoadContent = true;
+
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
             _clock = clock;
@@ -100,6 +102,12 @@ namespace Utopia.Worlds.SkyDomes
             _posiTextureEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
             base.Initialize();
+        }
+
+        public override void LoadContent(DeviceContext Context)
+        {
+            _skyStars.LoadContent(Context);
+            _clouds.LoadContent(Context);
         }
 
         public override void Dispose()

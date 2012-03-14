@@ -205,7 +205,7 @@
     <Compile Include="Worlds\Chunks\IWorldChunks.cs" />
     <Compile Include="Worlds\Liquid\enuFloodDirection.cs" />
     <Compile Include="Worlds\SkyDomes\ISkyDome.cs" />
-    <Compile Include="Worlds\SkyDomes\NormalSkyDome.cs" />
+    <Compile Include="Worlds\SkyDomes\RegularSkyDome.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.cs" />
     <Compile Include="Worlds\SkyDomes\SkyDome.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.cs" />

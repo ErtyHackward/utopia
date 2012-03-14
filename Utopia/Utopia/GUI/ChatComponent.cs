@@ -63,6 +63,7 @@ namespace Utopia.GUI
 
         public ChatComponent(D3DEngine engine, InputsManager imanager, ServerComponent server)
         {
+            this.IsDefferedLoadContent = true;
 
             _d3dEngine = engine;
             _imanager = imanager;
