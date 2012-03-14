@@ -25,8 +25,9 @@ namespace Utopia.Components
 
         private Vector3I _lastPosition;
         private Range3 _lastRange;
+        private Vector3D _listenerPosition;
 
-        private readonly Dictionary<Vector3I, ISound> _activeSounds = new Dictionary<Vector3I, ISound>();
+        private readonly SortedList<string, KeyValuePair<ISound, List<Vector3D>>> _sharedSounds = new SortedList<string, KeyValuePair<ISound, List<Vector3D>>>();
         
         private string _buttonPressSound;
 
@@ -77,12 +78,12 @@ namespace Utopia.Components
 
         public override void Update(GameTime timeSpent)
         {
-            var pos = new Vector3D((float) _cameraManager.ActiveCamera.WorldPosition.X,
+            _listenerPosition = new Vector3D((float)_cameraManager.ActiveCamera.WorldPosition.X,
                                    (float) _cameraManager.ActiveCamera.WorldPosition.Y,
                                    (float) _cameraManager.ActiveCamera.WorldPosition.Z);
             var lookAt = new Vector3D(_cameraManager.ActiveCamera.LookAt.X, _cameraManager.ActiveCamera.LookAt.Y,
                                       _cameraManager.ActiveCamera.LookAt.Z);
-            _soundEngine.SetListenerPosition(pos, lookAt);
+            _soundEngine.SetListenerPosition(_listenerPosition, lookAt);
             _soundEngine.Update();
 
             // update all sounds
@@ -98,6 +99,8 @@ namespace Utopia.Components
 
                 ListenCubes(listenRange);
             }
+
+            PlayClosestSound();
         }
 
         /// <summary>
@@ -109,11 +112,27 @@ namespace Utopia.Components
             // remove sounds that are far away
             foreach (var position in _lastRange.AllExclude(range))
             {
-                ISound sound;
-                if (_activeSounds.TryGetValue(position, out sound))
+                Vector3D soundPos;
+                soundPos.X = position.X + 0.5f;
+                soundPos.Y = position.Y + 0.5f;
+                soundPos.Z = position.Z + 0.5f;
+
+                for (int i = _sharedSounds.Count - 1; i >= 0; i--)
                 {
-                    sound.Stop();
-                    _activeSounds.Remove(position);
+                    for (int j = _sharedSounds.Values[i].Value.Count - 1; j >= 0; j--)
+                    {
+                        var pos = _sharedSounds.Values[i].Value[j];
+                        if (pos == soundPos)
+                        {
+                            _sharedSounds.Values[i].Value.RemoveAt(j);
+                        }
+                    }
+
+                    if (_sharedSounds.Values[i].Value.Count == 0)
+                    {
+                        _sharedSounds.Values[i].Key.Stop();
+                        _sharedSounds.RemoveAt(i);
+                    }
                 }
             }
 
@@ -122,13 +141,51 @@ namespace Utopia.Components
             {
                 if (_singleArray.GetCube(position).Id == CubeId.Water)
                 {
-                    var sound = _soundEngine.Play3D("Sounds\\Ambiance\\water_stream.ogg", position.X + 0.5f, position.Y + 0.5f, position.Z + 0.5f, true);
-                    _activeSounds.Add(position, sound);
+                    var soundPosition = new Vector3D(position.X + 0.5f, position.Y + 0.5f, position.Z + 0.5f);
+                    
+                    if (_sharedSounds.ContainsKey("Sounds\\Ambiance\\water_stream.ogg"))
+                        _sharedSounds["Sounds\\Ambiance\\water_stream.ogg"].Value.Add(soundPosition);
+                    else
+                    {
+                        var sound = _soundEngine.Play3D("Sounds\\Ambiance\\water_stream.ogg", soundPosition, true, false, StreamMode.AutoDetect);
+                        _sharedSounds.Add("Sounds\\Ambiance\\water_stream.ogg", new KeyValuePair<ISound, List<Vector3D>>(sound, new List<Vector3D>{ soundPosition }));
+                    }
                 }
             }
 
             _lastRange = range;
         }
+
+        /// <summary>
+        /// Select the closest sound position
+        /// </summary>
+        public void PlayClosestSound()
+        {
+            foreach (var pair in _sharedSounds)
+            {
+                // only one position available
+                if (pair.Value.Value.Count == 1) continue;
+
+                // choose the closest
+                var distance = _listenerPosition.GetDistanceFrom(pair.Value.Value[0]);
+                var position = pair.Value.Value[0];
+
+                for (int i = 1; i < pair.Value.Value.Count; i++)
+                {
+                    var d = _listenerPosition.GetDistanceFrom(pair.Value.Value[i]);
+                    if (d < distance)
+                    {
+                        position = pair.Value.Value[i];
+                        distance = d;
+                    }
+                }
+
+                pair.Value.Key.Position = position;
+            }
+        }
+
+
+
 
     }
 }
