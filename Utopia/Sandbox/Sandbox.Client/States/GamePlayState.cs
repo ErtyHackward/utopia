@@ -1,4 +1,5 @@
 ﻿using Ninject;
+using Sandbox.Client.Components;
 using Utopia;
 using Utopia.Effects.Shared;
 using Utopia.Entities;
@@ -58,6 +59,7 @@ namespace Sandbox.Client.States
             var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
+            var soundManager = _ioc.Get<SandboxSoundManager>();
 
             AddComponent(cameraManager);
             AddComponent(_ioc.Get<ServerComponent>());
@@ -79,6 +81,7 @@ namespace Sandbox.Client.States
             AddComponent(weather);
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
+            AddComponent(soundManager);
 
             base.Initialize(context);
         }
