@@ -82,7 +82,7 @@ namespace Utopia.Components
                                    (float) _cameraManager.ActiveCamera.WorldPosition.Y,
                                    (float) _cameraManager.ActiveCamera.WorldPosition.Z);
             var lookAt = new Vector3D(_cameraManager.ActiveCamera.LookAt.X, _cameraManager.ActiveCamera.LookAt.Y,
-                                      _cameraManager.ActiveCamera.LookAt.Z);
+                                      -_cameraManager.ActiveCamera.LookAt.Z);
             _soundEngine.SetListenerPosition(_listenerPosition, lookAt);
             _soundEngine.Update();
 
