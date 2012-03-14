@@ -20,8 +20,8 @@ namespace Utopia.Components
     public class SoundManager : GameComponent
     {
         private readonly CameraManager<ICameraFocused> _cameraManager;
-        private readonly SingleArrayChunkContainer _singleArray;
         private readonly ISoundEngine _soundEngine;
+        private SingleArrayChunkContainer _singleArray;
 
         private Vector3I _lastPosition;
         private Range3 _lastRange;
@@ -38,13 +38,17 @@ namespace Utopia.Components
             get { return _soundEngine; }
         }
 
-        public SoundManager(CameraManager<ICameraFocused> cameraManager, SingleArrayChunkContainer singleArray)
+        public SoundManager(CameraManager<ICameraFocused> cameraManager)
         {
             if (cameraManager == null) throw new ArgumentNullException("cameraManager");
-            if (singleArray == null) throw new ArgumentNullException("singleArray");
             _cameraManager = cameraManager;
-            _singleArray = singleArray;
             _soundEngine = new ISoundEngine();
+        }
+
+        public void LateInitialization(SingleArrayChunkContainer singleArray)
+        {
+            if (singleArray == null) throw new ArgumentNullException("singleArray");
+            _singleArray = singleArray;
         }
 
         public void SetGuiButtonSound(string filePath)
