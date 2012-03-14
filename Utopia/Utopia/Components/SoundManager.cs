@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using IrrKlang;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3DXEngine.Debug.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
@@ -17,7 +19,7 @@ namespace Utopia.Components
     /// Wrapper around irrKlang library to provide sound playback
     /// Used to play all sound media
     /// </summary>
-    public class SoundManager : GameComponent
+    public class SoundManager : GameComponent, IDebugInfo
     {
         private readonly CameraManager<ICameraFocused> _cameraManager;
         private readonly ISoundEngine _soundEngine;
@@ -30,6 +32,8 @@ namespace Utopia.Components
         private readonly SortedList<string, KeyValuePair<ISound, List<Vector3D>>> _sharedSounds = new SortedList<string, KeyValuePair<ISound, List<Vector3D>>>();
         
         private string _buttonPressSound;
+        private string _debugInfo;
+        long _listenCubesTime;
 
         /// <summary>
         /// Gets irrKlang sound engine object
@@ -82,25 +86,40 @@ namespace Utopia.Components
                                    (float) _cameraManager.ActiveCamera.WorldPosition.Y,
                                    (float) _cameraManager.ActiveCamera.WorldPosition.Z);
             var lookAt = new Vector3D(_cameraManager.ActiveCamera.LookAt.X, _cameraManager.ActiveCamera.LookAt.Y,
-                                      _cameraManager.ActiveCamera.LookAt.Z);
+                                      -_cameraManager.ActiveCamera.LookAt.Z);
+
+            var sw = Stopwatch.StartNew();
+
             _soundEngine.SetListenerPosition(_listenerPosition, lookAt);
             _soundEngine.Update();
+            sw.Stop();
 
+            _debugInfo = "Sounds playing: " + _sharedSounds.Count + ", Update " + sw.ElapsedMilliseconds + " ms, ";
+
+            
             // update all sounds
             if ((Vector3I)_cameraManager.ActiveCamera.WorldPosition != _lastPosition)
             {
+                sw.Restart();
                 _lastPosition = (Vector3I)_cameraManager.ActiveCamera.WorldPosition;
 
                 Range3 listenRange;
 
-                listenRange.Position = _lastPosition - new Vector3I(8,8,8);
+                listenRange.Position = _lastPosition - new Vector3I(16,16,16);
 
-                listenRange.Size = new Vector3I(16,16,16);
+                listenRange.Size = new Vector3I(32,32,32);
 
                 ListenCubes(listenRange);
+                sw.Stop();
+                _listenCubesTime = sw.ElapsedMilliseconds;
             }
 
+            sw.Restart();
+
             PlayClosestSound();
+            sw.Stop();
+            _debugInfo += " cubes:" + _listenCubesTime + " ms, select closest: " + sw.ElapsedMilliseconds;
+
         }
 
         /// <summary>
@@ -187,5 +206,16 @@ namespace Utopia.Components
 
 
 
+
+        public bool ShowDebugInfo
+        {
+            get;
+            set;
+        }
+
+        public string GetDebugInfo()
+        {
+            return _debugInfo;
+        }
     }
 }
