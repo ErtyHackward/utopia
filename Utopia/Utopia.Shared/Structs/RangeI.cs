@@ -6,6 +6,7 @@ using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Structs
 {
+    [Obsolete("Use Range3 instead of RangeI")]
     public struct RangeI
     {
         public Vector3I Min;

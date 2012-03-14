@@ -37,6 +37,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -234,6 +235,7 @@
     <Compile Include="Structs\Helpers\PackUtils.cs" />
     <Compile Include="Structs\Helpers\TraceHelper.cs" />
     <Compile Include="Structs\Line.cs" />
+    <Compile Include="Structs\Range3.cs" />
     <Compile Include="Structs\UserRole.cs" />
     <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />
