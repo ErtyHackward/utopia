@@ -31,6 +31,7 @@ namespace S33M3CoreComponents.Debug
         private ColumnChart _chart;
         private D3DEngine _engine;
 
+        private bool _wasMouseCaptured;
         private Game _game;
         #endregion
 
@@ -75,8 +76,8 @@ namespace S33M3CoreComponents.Debug
         {
             this.CatchExclusiveActions = false;
             _guiManager.CatchExclusiveActions = false;
-            _inputManager.ActionsManager.IsExclusiveMode = false;
-            _inputManager.MouseManager.MouseCapture = true;
+            _inputManager.ActionsManager.IsFullExclusiveMode = false;
+            _inputManager.MouseManager.MouseCapture = _wasMouseCaptured;
         }
         #endregion
 
@@ -130,7 +131,8 @@ namespace S33M3CoreComponents.Debug
                     ShowControl(this, null);
                     this.CatchExclusiveActions = true;
                     _guiManager.CatchExclusiveActions = true;
-                    _inputManager.ActionsManager.IsExclusiveMode = true;
+                    _inputManager.ActionsManager.IsFullExclusiveMode = true;
+                    _wasMouseCaptured = _inputManager.MouseManager.MouseCapture;
                     _inputManager.MouseManager.MouseCapture = false;
                 }
             }

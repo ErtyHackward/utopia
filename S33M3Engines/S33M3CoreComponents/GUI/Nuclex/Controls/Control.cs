@@ -283,12 +283,18 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         /// <summary>
         ///   Called when the mouse has left the control and is no longer hovering over it
         /// </summary>
-        protected virtual void OnMouseLeft() { }
+        protected virtual void OnMouseLeft()
+        {
+
+        }
 
         /// <summary>
         ///   Called when the mouse has entered the control and is now hovering over it
         /// </summary>
-        protected virtual void OnMouseEntered() { }
+        protected virtual void OnMouseEntered()
+        {
+
+        }
 
         /// <summary>Called when the mouse wheel has been rotated</summary>
         /// <param name="ticks">Number of ticks that the mouse wheel has been rotated</param>

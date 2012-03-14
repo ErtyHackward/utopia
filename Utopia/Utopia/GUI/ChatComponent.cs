@@ -52,11 +52,11 @@ namespace Utopia.GUI
                 _activated = value;
                 if (value)
                 {
-                    _imanager.ActionsManager.IsExclusiveMode = true;
+                    _imanager.ActionsManager.IsFullExclusiveMode = true;
                 }
                 else
                 {
-                    _imanager.ActionsManager.IsExclusiveMode = false;
+                    _imanager.ActionsManager.IsFullExclusiveMode = false;
                 }
             }
         }
