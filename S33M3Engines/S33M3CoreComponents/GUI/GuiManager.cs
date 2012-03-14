@@ -49,7 +49,6 @@ namespace S33M3CoreComponents.GUI
         private InputsManager _inputManager;
 
         private string _debugString;
-
         private string _skinPath;
 
         /// <summary>
@@ -180,6 +179,22 @@ namespace S33M3CoreComponents.GUI
 
         public override void Update(GameTime timeSpend)
         {
+            //Check for Mouse Overing states on the gui
+            if (_screen.IsMouseOverGui == true && this.CatchExclusiveActions == false)
+            {
+                this.CatchExclusiveActions = true;
+
+                _inputManager.ActionsManager.IsMouseExclusiveMode = true;
+            }
+            else
+            {
+                if (_screen.IsMouseOverGui == false && this.CatchExclusiveActions == true)
+                {
+                    this.CatchExclusiveActions = false;
+                    _inputManager.ActionsManager.IsMouseExclusiveMode = false;
+                }
+            }
+
             DialogClosed = false;
             InjectMouseInput();
         }

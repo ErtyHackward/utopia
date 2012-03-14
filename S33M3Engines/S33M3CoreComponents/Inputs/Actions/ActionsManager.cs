@@ -20,10 +20,19 @@ namespace S33M3CoreComponents.Inputs.Actions
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        [Flags]
+        public enum ActionRaisedSources
+        {
+            None = 0,
+            Mouse = 1,
+            Keyboard = 2
+        }
+
         public struct ActionData
         {
             public bool Triggered;
             public float ElapsedTimeInS;
+            public ActionRaisedSources RaisedSources;
         }
 
         #region Private variables
@@ -48,19 +57,53 @@ namespace S33M3CoreComponents.Inputs.Actions
         private Type _actionType;                        //The Type that contains the possible actions
         private MouseManager _mouseManager;
 
-        private bool _isExclusiveMode;
+        private bool _isMouseExclusiveMode;
+        private int _isMouseExclusiveModeCpt = 0;
+        private bool _isKeyboardExclusiveMode;
+        private int _isKeyboardExclusiveModeCpt = 0;
         #endregion
 
         #region Public variables/properties
         public bool isKeyboardActionsEnabled { get; set; }
         public bool isMouseActionsEnabled { get; set; }
-        public bool IsExclusiveMode
+
+        public bool IsFullExclusiveMode
         {
-            get { return _isExclusiveMode; }
+            get { return _isMouseExclusiveMode && _isKeyboardExclusiveMode; }
             set
             {
-                _isExclusiveMode = value;
+                IsMouseExclusiveMode = value;
+                IsKeyboardExclusiveMode = value;
                 ClearBuffer();
+            }
+        }
+
+        public bool IsMouseExclusiveMode
+        {
+            get { return _isMouseExclusiveMode; }
+            set
+            {
+                _isMouseExclusiveMode = value;
+                if (value) _isMouseExclusiveModeCpt++;
+                else _isMouseExclusiveModeCpt--;
+                _isMouseExclusiveMode = _isMouseExclusiveModeCpt > 0;
+#if DEBUG
+                logger.Trace("Action Manager MouseExclusive Mode change to {0} ; Cpt : {1}", _isMouseExclusiveMode, _isMouseExclusiveModeCpt);
+#endif
+            }
+        }
+
+        public bool IsKeyboardExclusiveMode
+        {
+            get { return _isKeyboardExclusiveMode; }
+            set
+            {
+                if (value) _isKeyboardExclusiveModeCpt++;
+                else _isKeyboardExclusiveModeCpt--;
+                _isKeyboardExclusiveMode = _isKeyboardExclusiveModeCpt > 0;
+#if DEBUG
+                logger.Trace("Action Manager KeyboardExclusive Mode change to {0} ; Cpt : {1}", _isKeyboardExclusiveMode, _isKeyboardExclusiveModeCpt);
+#endif
             }
         }
 
@@ -159,7 +202,23 @@ namespace S33M3CoreComponents.Inputs.Actions
         /// <returns></returns>
         public bool isTriggered(int actionId, bool withExclusive = false)
         {
-            if (_isExclusiveMode && withExclusive == false) return false;
+            if (withExclusive == false)
+            {
+                //If I'm not in keyboard exclusive mode, and this action has been at least raised by the keyboard, Do the trigger test
+                if (_isKeyboardExclusiveMode == false && (_actions[actionId].RaisedSources & ActionRaisedSources.Keyboard) == ActionRaisedSources.Keyboard)
+                {
+                    return true;
+                }
+
+                //If I'm not in Mouse exclusive mode, and this action has been at least raised by the Mouse, Do the trigger test
+                if (_isMouseExclusiveMode == false && (_actions[actionId].RaisedSources & ActionRaisedSources.Mouse) == ActionRaisedSources.Mouse)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
             return _actions[actionId].Triggered;
         }
 
@@ -170,13 +229,26 @@ namespace S33M3CoreComponents.Inputs.Actions
         /// <returns></returns>
         public bool isTriggered(int actionId, out float ActionTimeElapsedInS, bool withExclusive = false)
         {
-            if (_isExclusiveMode && withExclusive == false)
-            {
-                ActionTimeElapsedInS = default(float);
-                return false;
-            }
             ActionData data = _actions[actionId];
             ActionTimeElapsedInS = data.ElapsedTimeInS;
+
+            if (withExclusive == false)
+            {
+                //If I'm not in keyboard exclusive mode, and this action has been at least raised by the keyboard, Do the trigger test
+                if (_isKeyboardExclusiveMode == false && (data.RaisedSources & ActionRaisedSources.Keyboard) == ActionRaisedSources.Keyboard)
+                {
+                    return true;
+                }
+
+                //If I'm not in Mouse exclusive mode, and this action has been at least raised by the Mouse, Do the trigger test
+                if (_isMouseExclusiveMode == false && (data.RaisedSources & ActionRaisedSources.Mouse) == ActionRaisedSources.Mouse)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
             return data.Triggered;
         }
 
@@ -248,22 +320,22 @@ namespace S33M3CoreComponents.Inputs.Actions
                         switch (_mouseAction.Binding)
                         {
                             case MouseButton.LeftButton:
-                                if (_curMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.LeftButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.MiddleButton:
-                                if (_curMouseState.MiddleButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.MiddleButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.RightButton:
-                                if (_curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.RightButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.XButton1:
-                                if (_curMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.XButton1 == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.XButton2:
-                                if (_curMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.XButton2 == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.LeftAndRightButton:
-                                if (_curMouseState.LeftButton == ButtonState.Pressed && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.LeftButton == ButtonState.Pressed && _curMouseState.RightButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                         }
                         break;
@@ -272,22 +344,22 @@ namespace S33M3CoreComponents.Inputs.Actions
                         switch (_mouseAction.Binding)
                         {
                             case MouseButton.LeftButton:
-                                if (_curMouseState.LeftButton == ButtonState.Released && _prevMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.LeftButton == ButtonState.Released && _prevMouseState.LeftButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.MiddleButton:
-                                if (_curMouseState.MiddleButton == ButtonState.Released && _prevMouseState.MiddleButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.MiddleButton == ButtonState.Released && _prevMouseState.MiddleButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.RightButton:
-                                if (_curMouseState.RightButton == ButtonState.Released && _prevMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.RightButton == ButtonState.Released && _prevMouseState.RightButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.XButton1:
-                                if (_curMouseState.XButton1 == ButtonState.Released && _prevMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.XButton1 == ButtonState.Released && _prevMouseState.XButton1 == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.XButton2:
-                                if (_curMouseState.XButton2 == ButtonState.Released && _prevMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.XButton2 == ButtonState.Released && _prevMouseState.XButton2 == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.LeftAndRightButton:
-                                if (_curMouseState.LeftButton == ButtonState.Released && _prevMouseState.LeftButton == ButtonState.Pressed && _curMouseState.RightButton == ButtonState.Released && _prevMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_curMouseState.LeftButton == ButtonState.Released && _prevMouseState.LeftButton == ButtonState.Pressed && _curMouseState.RightButton == ButtonState.Released && _prevMouseState.RightButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                         }
                         break;
@@ -296,32 +368,30 @@ namespace S33M3CoreComponents.Inputs.Actions
                         switch (_mouseAction.Binding)
                         {
                             case MouseButton.LeftButton:
-                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.MiddleButton:
-                                if (_prevMouseState.MiddleButton == ButtonState.Released && _curMouseState.MiddleButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_prevMouseState.MiddleButton == ButtonState.Released && _curMouseState.MiddleButton == ButtonState.Pressed) {  _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.RightButton:
-                                if (_prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.XButton1:
-                                if (_prevMouseState.XButton1 == ButtonState.Released && _curMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_prevMouseState.XButton1 == ButtonState.Released && _curMouseState.XButton1 == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
-                            case MouseButton.XButton2:
-                                if (_prevMouseState.XButton2 == ButtonState.Released && _curMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                            case MouseButton.XButton2: 
+                                if (_prevMouseState.XButton2 == ButtonState.Released && _curMouseState.XButton2 == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                             case MouseButton.LeftAndRightButton:
-                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed && _prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed && _prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                                 break;
                         }
                         break;
                     case MouseTriggerMode.ScrollWheelForward:
-                        if (_curMouseState.ScrollWheelTicks > _prevMouseState.ScrollWheelTicks)
-                            _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                        if (_curMouseState.ScrollWheelTicks > _prevMouseState.ScrollWheelTicks) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                         break;
                     case MouseTriggerMode.ScrollWheelBackWard:
-                        if (_curMouseState.ScrollWheelTicks < _prevMouseState.ScrollWheelTicks)
-                            _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true;
+                        if (_curMouseState.ScrollWheelTicks < _prevMouseState.ScrollWheelTicks) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
                         break;
                 }
             }
@@ -341,8 +411,7 @@ namespace S33M3CoreComponents.Inputs.Actions
                 {
                     case KeyboardTriggerMode.KeyDown:
                         //Set the Action Flag if required
-                        if (_curKeyboardState.IsKeyDown(_keyboardAction.Binding))
-                            _bufferedActionsInProgress[_keyboardAction.ActionId].Triggered = true;
+                        if (_curKeyboardState.IsKeyDown(_keyboardAction.Binding)) { _bufferedActionsInProgress[_keyboardAction.ActionId].Triggered = true; _bufferedActionsInProgress[_keyboardAction.ActionId].RaisedSources |= ActionRaisedSources.Keyboard; }
                         break;
                     case KeyboardTriggerMode.KeyReleased:
                         //Set start Action Flag if required
@@ -356,6 +425,7 @@ namespace S33M3CoreComponents.Inputs.Actions
                         if (_prevKeyboardState.IsKeyDown(_keyboardAction.Binding) && _curKeyboardState.IsKeyUp(_keyboardAction.Binding))
                         {
                             _bufferedActionsInProgress[_keyboardAction.ActionId].Triggered = true;
+                            _bufferedActionsInProgress[_keyboardAction.ActionId].RaisedSources |= ActionRaisedSources.Keyboard;
                             if (_keyboardAction.WithTimeElapsed)
                             {
                                 _actionTimeElapsedInS = (float)(((Stopwatch.GetTimestamp() - _keyboardAction.StartTimeElapsedInTick) / (float)Stopwatch.Frequency));
@@ -368,14 +438,10 @@ namespace S33M3CoreComponents.Inputs.Actions
                     case KeyboardTriggerMode.KeyPressed:
                         //Set the Action Flag if required
 
-                        if (_keyboardAction.ActionId == 0)
-                        {
-                            //Console.WriteLine("_curKeyboardState key test : " + _curKeyboardState.IsKeyDown(_keyboardAction.Binding) + " _prevKeyboardState Key test : " + _prevKeyboardState.IsKeyUp(_keyboardAction.Binding));
-                        }
-
                         if (_curKeyboardState.IsKeyDown(_keyboardAction.Binding) && _prevKeyboardState.IsKeyUp(_keyboardAction.Binding))
                         {
                             _bufferedActionsInProgress[_keyboardAction.ActionId].Triggered = true;
+                            _bufferedActionsInProgress[_keyboardAction.ActionId].RaisedSources |= ActionRaisedSources.Keyboard;
                         }
                         break;
                 }

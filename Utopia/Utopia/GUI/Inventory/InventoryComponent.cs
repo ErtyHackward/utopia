@@ -18,6 +18,7 @@ using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs;
+using S33M3CoreComponents.GUI;
 
 namespace Utopia.GUI.Inventory
 {
@@ -28,7 +29,7 @@ namespace Utopia.GUI.Inventory
     {
         private readonly D3DEngine _engine;
         private readonly InputsManager _inputManager;
-        private readonly MainScreen _screen;
+        private readonly GuiManager _guiManager;
         private readonly PlayerEntityManager _playerManager;
         private readonly IconFactory _iconFactory;
         private readonly ItemMessageTranslator _itemMessageTranslator;
@@ -51,7 +52,7 @@ namespace Utopia.GUI.Inventory
         public InventoryComponent(
             D3DEngine engine, 
             InputsManager inputManager, 
-            MainScreen screen, 
+            GuiManager guiManager, 
             PlayerEntityManager playerManager, 
             IconFactory iconFactory,
             ItemMessageTranslator itemMessageTranslator, 
@@ -59,7 +60,7 @@ namespace Utopia.GUI.Inventory
         {
             _engine = engine;
             _inputManager = inputManager;
-            _screen = screen;
+            _guiManager = guiManager;
             _playerManager = playerManager;
             _iconFactory = iconFactory;
             _itemMessageTranslator = itemMessageTranslator;
@@ -67,7 +68,7 @@ namespace Utopia.GUI.Inventory
             _toolBar = hud.ToolbarUi;
 
             _hud.SlotClicked += HudSlotClicked;
-            _screen.Desktop.Clicked += DesktopClicked;
+            _guiManager.Screen.Desktop.Clicked += DesktopClicked;
 
             _itemMessageTranslator.Enabled = false;
 
@@ -156,8 +157,8 @@ namespace Utopia.GUI.Inventory
                 _itemMessageTranslator.SetToolBar(e.Cell.InventoryPosition.Y, _dragControl.Slot.Item.StaticId);
 
                 _sourceContainer.PutItem(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount);
-                
-                _screen.Desktop.Children.Remove(_dragControl);
+
+                _guiManager.Screen.Desktop.Children.Remove(_dragControl);
                 _dragControl.Slot = null;
 
                 _sourceContainer = null;
@@ -253,7 +254,7 @@ namespace Utopia.GUI.Inventory
         private void BeginDrag(ContainedSlot slot)
         {
             _dragControl.Slot = slot;
-            _screen.Desktop.Children.Add(_dragControl);
+            _guiManager.Screen.Desktop.Children.Add(_dragControl);
             _dragControl.BringToFront();
         }
 
@@ -265,7 +266,7 @@ namespace Utopia.GUI.Inventory
 
         private void EndDrag()
         {
-            _screen.Desktop.Children.Remove(_dragControl);
+            _guiManager.Screen.Desktop.Children.Remove(_dragControl);
             _dragControl.Slot = null;
         }
 
@@ -280,10 +281,10 @@ namespace Utopia.GUI.Inventory
 
             if (_inputManager.ActionsManager.isTriggered(UtopiaActions.OpenInventory))
             {
-                if (_screen.Desktop.Children.Contains(_inventoryUi))
+                if (_guiManager.Screen.Desktop.Children.Contains(_inventoryUi))
                 {
-                    _screen.Desktop.Children.Remove(_infoWindow);
-                    _screen.Desktop.Children.Remove(_inventoryUi);
+                    _guiManager.Screen.Desktop.Children.Remove(_infoWindow);
+                    _guiManager.Screen.Desktop.Children.Remove(_inventoryUi);
                     _itemMessageTranslator.Enabled = false;
                     _playerManager.HandleToolsUse = true;
                     _inputManager.MouseManager.MouseCapture = true;
@@ -291,8 +292,8 @@ namespace Utopia.GUI.Inventory
                 }
                 else
                 {
-                    _screen.Desktop.Children.Add(_infoWindow);
-                    _screen.Desktop.Children.Add(_inventoryUi);
+                    _guiManager.Screen.Desktop.Children.Add(_infoWindow);
+                    _guiManager.Screen.Desktop.Children.Add(_inventoryUi);
                     _itemMessageTranslator.Enabled = true;
                     _playerManager.HandleToolsUse = false;
                     _inputManager.MouseManager.MouseCapture = false;
@@ -305,7 +306,7 @@ namespace Utopia.GUI.Inventory
         {
             _hud.SlotClicked -= HudSlotClicked;
             _inventoryUi.InventorySlotClicked -= InventoryUiSlotClicked;
-            _screen.Desktop.Clicked -= DesktopClicked;
+            _guiManager.Screen.Desktop.Clicked -= DesktopClicked;
             _backgroundTex.Dispose();
         }
     }
