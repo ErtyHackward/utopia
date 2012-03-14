@@ -49,7 +49,7 @@ namespace Sandbox.Client.States
 
         void EditorBackPressed(object sender, EventArgs e)
         {
-            StatesManager.ActivateGameState("MainMenu");
+            StatesManager.ActivateGameStateAsync("MainMenu");
         }
     }
 }

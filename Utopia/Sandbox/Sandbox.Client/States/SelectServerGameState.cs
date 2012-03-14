@@ -52,7 +52,7 @@ namespace Sandbox.Client.States
             vars.SinglePlayer = false;
             vars.CurrentServerAddress = ServerList[selection.List.SelectedItems[0]].ServerAddress;
 
-            StatesManager.ActivateGameState("LoadingGame");
+            StatesManager.ActivateGameStateAsync("LoadingGame");
         }
 
         void WebApiServerListReceived(object sender, WebEventArgs<ServerListResponce> e)
@@ -94,7 +94,7 @@ namespace Sandbox.Client.States
         void SelectionBackPressed(object sender, EventArgs e)
         {
             // when you press "back" we returning to the main menu
-            StatesManager.ActivateGameState("MainMenu");
+            StatesManager.ActivateGameStateAsync("MainMenu");
         }
     }
 }

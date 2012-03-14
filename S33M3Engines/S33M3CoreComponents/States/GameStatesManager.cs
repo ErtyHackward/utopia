@@ -273,12 +273,12 @@ namespace S33M3CoreComponents.States
             }
         }
 
-        public void PrepareState(string stateName)
+        public void PrepareStateAsync(string stateName)
         {
-            PrepareState(GetByName(stateName));
+            PrepareStateAsync(GetByName(stateName));
         }
 
-        public void PrepareState(GameState state)
+        public void PrepareStateAsync(GameState state)
         {
 #if DEBUG
             logger.Debug("State Initialization requested (by Prepare) : {0}", state.Name);
@@ -290,12 +290,12 @@ namespace S33M3CoreComponents.States
         /// Changes current game state by its name
         /// </summary>
         /// <param name="name"></param>
-        public void ActivateGameState(string stateName)
+        public void ActivateGameStateAsync(string stateName)
         {
-            ActivateGameState(GetByName(stateName));
+            ActivateGameStateAsync(GetByName(stateName));
         }
 
-        public void ActivateGameState(GameState state)
+        public void ActivateGameStateAsync(GameState state)
         {
             //_inActivationProcess filter that only one Activation can be requested at a time !
             //state.IsActivationRequested filter the case where the requested state is already on an Activation process (Cannot request it twice)

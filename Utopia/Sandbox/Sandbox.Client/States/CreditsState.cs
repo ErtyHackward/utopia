@@ -43,7 +43,7 @@ namespace Sandbox.Client.States
         void CreditsBackPressed(object sender, System.EventArgs e)
         {
             // when you press "back" we returning to the main menu
-            StatesManager.ActivateGameState("MainMenu");
+            StatesManager.ActivateGameStateAsync("MainMenu");
         }
     }
 }
