@@ -22,6 +22,7 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.GUI.Inventory;
 using Utopia.GUI.Map;
 using S33M3CoreComponents.Debug;
+using Utopia.Components;
 
 namespace Sandbox.Client.States
 {
@@ -59,7 +60,7 @@ namespace Sandbox.Client.States
             var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
-            var soundManager = _ioc.Get<SandboxSoundManager>();
+            var soundManager = _ioc.Get<SoundManager>();
 
             AddComponent(cameraManager);
             AddComponent(_ioc.Get<ServerComponent>());

@@ -57,6 +57,7 @@ using S33M3DXEngine.Main.Interfaces;
 using S33M3CoreComponents.WorldFocus.Interfaces;
 using S33M3DXEngine;
 using S33M3CoreComponents.Debug;
+using Utopia.Components;
 
 namespace Sandbox.Client.States
 {
@@ -210,6 +211,7 @@ namespace Sandbox.Client.States
 
             _ioc.Rebind<PlayerCharacter>().ToConstant(player).InSingletonScope(); //Register the current Player.
             _ioc.Rebind<IDynamicEntity>().ToConstant(player).InSingletonScope().Named("Player"); //Register the current Player.
+
             _serverComponent.ServerConnection.MessageEntityIn -= ServerConnectionMessageEntityIn;
             _serverComponent.Player = player;
 
@@ -277,6 +279,7 @@ namespace Sandbox.Client.States
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
+            var soundManager = _ioc.Get<SoundManager>();
            
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
@@ -284,6 +287,9 @@ namespace Sandbox.Client.States
             firstPersonCamera.CameraPlugin = playerEntityManager;
             worldFocusManager.WorldFocus = (IWorldFocus)firstPersonCamera;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
+
+            //Late Inject PlayerCharacter into VisualWorldParameters
+            soundManager.LateInitialization(singleArrayChunkContainer);
 
             AddComponent(cameraManager);
             AddComponent(_ioc.Get<ServerComponent>());
