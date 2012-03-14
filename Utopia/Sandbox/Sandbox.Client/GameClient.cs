@@ -107,7 +107,7 @@ namespace Sandbox.Client
             //ClientSettings.Current.Save();
             stateManager.ActivateGameStateAsync("LoadingGame");
 #else
-            stateManager.ActivateGameState("Login");
+            stateManager.ActivateGameStateAsync("Login");
 #endif
 
             game.Run();

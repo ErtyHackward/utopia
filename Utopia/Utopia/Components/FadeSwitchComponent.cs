@@ -49,6 +49,8 @@ namespace Utopia.Components
 
         public FadeSwitchComponent(D3DEngine engine)
         {
+            this.IsDefferedLoadContent = true;
+
             _engine = engine;
 
             DrawOrders.UpdateIndex(0, int.MaxValue); //Must ne draw the last
@@ -89,11 +91,11 @@ namespace Utopia.Components
                                           new VertexPosition2(new Vector2(1.00f, 1.00f)),
                                           new VertexPosition2(new Vector2(-1.00f, 1.00f))
                                       };
-            _vBuffer.SetData(_engine.ImmediateContext, vertices);
+            _vBuffer.SetData(Context, vertices);
 
             //Load data into the IB => NOT Thread safe, MUST be done in the loadcontent
             short[] indices = { 3, 0, 2, 0, 1, 2 };
-            _iBuffer.SetData(_engine.ImmediateContext, indices);
+            _iBuffer.SetData(Context, indices);
 
             base.LoadContent(Context);
         }

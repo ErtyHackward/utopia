@@ -47,6 +47,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         public Clouds(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager , IWeather weather, WorldParameters worldParam)
         {
+            this.IsDefferedLoadContent = true;
+
             _d3dEngine = d3dEngine;
             _worldParam = worldParam;
             _weather = weather;
@@ -65,7 +67,11 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
             _nbrLayer = 1;// 
             _cloudMap = ShaderResourceView.FromFile(_d3dEngine.Device, ClientSettings.TexturePack + @"Weather\clouds.png");
-            Init2D();
+        }
+
+        public override void LoadContent(DeviceContext Context)
+        {
+            Init2D(Context);
         }
 
         public override void Draw(DeviceContext context, int index)
@@ -88,7 +94,6 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _previousCameraPosition = _camManager.ActiveCamera.WorldPosition;
 
-
             Draw2D();
 
         }
@@ -104,7 +109,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #endregion
 
         #region private methods
-        private void Init2D()
+        private void Init2D(DeviceContext Context)
         {
             _cloudEffect2D = new HLSLClouds2D(_d3dEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds2D.hlsl", VertexCubeCloud.VertexDeclaration);
 
@@ -153,7 +158,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                 nbrVertex++;
 
                 _cloudVB2D = new VertexBuffer<VertexCubeCloud>(_d3dEngine.Device, 4, VertexCubeCloud.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB2D");
-                _cloudVB2D.SetData(_d3dEngine.ImmediateContext, _vb);
+                _cloudVB2D.SetData(Context, _vb);
 
                 //Create Vertices
                 _ib[nbrIndices] = (ushort)(MeshVertexOffset); nbrIndices++;
@@ -167,7 +172,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             }
 
             _cloudIB = new IndexBuffer<ushort>(_d3dEngine.Device, 6, SharpDX.DXGI.Format.R16_UInt, "_cloudIB");
-            _cloudIB.SetData(_d3dEngine.ImmediateContext, _ib);
+            _cloudIB.SetData(Context, _ib);
         }
 
         private void Draw2D()

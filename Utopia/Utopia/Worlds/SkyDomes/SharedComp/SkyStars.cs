@@ -40,6 +40,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         public SkyStars(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager , IClock gameClock)
         {
+            this.IsDefferedLoadContent = true;
+
             _d3dEngine = d3dEngine;
             _gameClock = gameClock;
             _camManager = camManager;
@@ -49,7 +51,13 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         public override void Initialize()
         {
             _effectStars = new HLSLStars(_d3dEngine.Device, ClientSettings.EffectPack + @"SkyDome\Stars.hlsl", VertexPosition3Color.VertexDeclaration);
-            CreateBuffer();
+        }
+
+        public override void LoadContent(DeviceContext Context)
+        {
+            VertexPosition3Color[] vertices = GenerateSpherePoints(_nbrStars, 1500);
+            _skyStarVB = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, vertices.Length, VertexPosition3Color.VertexDeclaration, PrimitiveTopology.PointList, "_skyStarVB");
+            _skyStarVB.SetData(Context, vertices);
         }
 
         public override void Dispose()
@@ -98,12 +106,6 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #endregion
 
         #region Private Methods
-        private void CreateBuffer()
-        {
-            VertexPosition3Color[] vertices = GenerateSpherePoints(_nbrStars, 1500);
-            _skyStarVB = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, vertices.Length, VertexPosition3Color.VertexDeclaration, PrimitiveTopology.PointList, "_skyStarVB");
-            _skyStarVB.SetData(_d3dEngine.ImmediateContext, vertices);
-        }
 
         //http://www.cgafaq.info/wiki/Random_Points_On_Sphere
         private VertexPosition3Color[] GenerateSpherePoints(int n, float scale)

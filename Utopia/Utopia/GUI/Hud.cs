@@ -47,6 +47,8 @@ namespace Utopia.GUI
 
         public Hud(MainScreen screen, D3DEngine d3DEngine, PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager)
         {
+            this.IsDefferedLoadContent = true;
+
             _screen = screen;
             _iconFactory = iconFactory;
             _inputManager = inputManager;

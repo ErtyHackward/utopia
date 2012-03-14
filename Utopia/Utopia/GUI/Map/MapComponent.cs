@@ -31,6 +31,8 @@ namespace Utopia.GUI.Map
 
         public MapComponent(D3DEngine engine, InputsManager inputManager, MainScreen screen, ServerComponent server, WorldPlan plan, PlayerEntityManager playerManager)
         {
+            this.IsDefferedLoadContent = true;
+
             _playerManager = playerManager;
             _engine = engine;
             _inputManager = inputManager;
