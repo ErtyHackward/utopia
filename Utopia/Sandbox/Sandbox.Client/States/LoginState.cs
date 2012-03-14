@@ -85,7 +85,7 @@ namespace Sandbox.Client.States
                 ClientSettings.Current.Settings.Login = login.Email;
                 ClientSettings.Current.Save();
 
-                StatesManager.ActivateGameState("MainMenu");
+                StatesManager.ActivateGameStateAsync("MainMenu");
             }
             
         }
@@ -93,7 +93,7 @@ namespace Sandbox.Client.States
         public override void OnEnabled(GameState previousState)
         {
             // start preparing of the main menu
-            StatesManager.PrepareState("MainMenu");
+            StatesManager.PrepareStateAsync("MainMenu");
         }
 
         public override void OnDisabled(GameState nextState)

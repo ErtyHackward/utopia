@@ -306,7 +306,7 @@ namespace Sandbox.Client.States
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
 
-            StatesManager.ActivateGameState(this);           
+            StatesManager.ActivateGameStateAsync(this);           
 
             worldChunks.LoadComplete += worldChunks_LoadComplete;
 
@@ -316,7 +316,7 @@ namespace Sandbox.Client.States
 
         void worldChunks_LoadComplete(object sender, EventArgs e)
         {
-            StatesManager.ActivateGameState("Gameplay");
+            StatesManager.ActivateGameStateAsync("Gameplay");
         }
 
     }
