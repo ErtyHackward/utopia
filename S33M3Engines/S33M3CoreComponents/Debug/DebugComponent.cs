@@ -76,7 +76,7 @@ namespace S33M3CoreComponents.Debug
         {
             this.CatchExclusiveActions = false;
             _guiManager.CatchExclusiveActions = false;
-            _inputManager.ActionsManager.IsFullExclusiveMode = false;
+            _inputManager.ActionsManager.IsMouseExclusiveMode = false;
             _inputManager.MouseManager.MouseCapture = _wasMouseCaptured;
         }
         #endregion
@@ -131,7 +131,7 @@ namespace S33M3CoreComponents.Debug
                     ShowControl(this, null);
                     this.CatchExclusiveActions = true;
                     _guiManager.CatchExclusiveActions = true;
-                    _inputManager.ActionsManager.IsFullExclusiveMode = true;
+                    _inputManager.ActionsManager.IsMouseExclusiveMode = true;
                     _wasMouseCaptured = _inputManager.MouseManager.MouseCapture;
                     _inputManager.MouseManager.MouseCapture = false;
                 }

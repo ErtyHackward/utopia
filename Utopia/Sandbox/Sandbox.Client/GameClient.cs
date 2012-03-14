@@ -1,4 +1,4 @@
-﻿//#define SINGLEPLAYERSTART
+﻿#define SINGLEPLAYERSTART
 
 using System;
 using System.IO;
@@ -24,6 +24,7 @@ using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.Debug;
 using Ninject.Parameters;
+using SharpDX;
 
 namespace Sandbox.Client
 {
@@ -45,7 +46,6 @@ namespace Sandbox.Client
             Application.SetCompatibleTextRenderingDefault(false);
             
             LoadClientsSettings();
-
             IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 600));
 
             _clientFactory = new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());

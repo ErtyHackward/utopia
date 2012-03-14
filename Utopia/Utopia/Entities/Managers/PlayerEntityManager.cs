@@ -180,6 +180,8 @@ namespace Utopia.Entities.Managers
             entityPickingManager.Player = this;
             Player = player;
 
+            this.ShowDebugInfo = true;
+
             VisualEntity = new VisualVoxelEntity(player, voxelModelManager);
 
 
