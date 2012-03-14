@@ -16,7 +16,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public SingleArrayLandscapeCursor(IChunkEntityImpactManager landscapeManager, Vector3I blockPosition)
         {
-            if (landscapeManager == null) throw new ArgumentNullException("landscapeManger");
+            if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
             _landscapeManager = landscapeManager;
             GlobalPosition = blockPosition;
             if (!landscapeManager.CubesHolder.IndexSafe(blockPosition.X, blockPosition.Y, blockPosition.Z, out _bigArrayIndex))
@@ -26,7 +26,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public Vector3I GlobalPosition
         {
             get { return _globalPosition; }
-            set { _globalPosition = value; }
+            set { 
+                _globalPosition = value;
+                _bigArrayIndex = _landscapeManager.CubesHolder.Index(ref _globalPosition);
+            }
         }
 
         public byte Read()
@@ -102,7 +105,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public ILandscapeCursor Move(Vector3I moveVector)
         {
-            _bigArrayIndex = _landscapeManager.CubesHolder.Index(ref moveVector);
+            _globalPosition += moveVector;
+            _bigArrayIndex = _landscapeManager.CubesHolder.Index(ref _globalPosition);
             return this;
         }
     }
