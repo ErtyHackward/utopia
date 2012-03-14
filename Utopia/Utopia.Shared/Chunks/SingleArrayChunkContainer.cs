@@ -628,6 +628,10 @@ namespace Utopia.Shared.Chunks
 
             if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Vector3I { X = X, Y = Y, Z = Z } }, Bytes = new[] { cube.Id } });
         }
-       
+
+        public TerraCube GetCube(Vector3I pos)
+        {
+            return Cubes[Index(pos.X, pos.Y, pos.Z)];
+        }
     }
 }
