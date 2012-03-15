@@ -74,6 +74,7 @@ namespace Utopia.Entities.Renderer
         #region Public Methods
         public void Draw(DeviceContext context, int index)
         {
+            if (VisualEntities.Count == 0) return;
             //Applying Correct Render States
             RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
             _entityEffect.Begin(context);

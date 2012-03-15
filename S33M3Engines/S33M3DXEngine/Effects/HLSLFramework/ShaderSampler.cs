@@ -8,12 +8,15 @@ namespace S33M3DXEngine.Effects.HLSLFramework
 {
     public class ShaderSampler
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private variables
         private int[] _slot = new int[ShaderIDs.NbrShaders];
         private bool _isDirty;
         private SamplerState _sampler;
         Shaders _shadersImpacted;
         string _name;
+        bool _isStaticResource;
         #endregion
 
         #region Public properties and Variables
@@ -44,14 +47,21 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         }
         #endregion
 
-        public ShaderSampler(string Name)
+        public ShaderSampler(string Name, bool isStaticResource = true)
         {
             _name = Name;
+            _isStaticResource = isStaticResource;
         }
 
-        public void Set2Device(DeviceContext context, bool forced = false)
+        public void Set2Device(DeviceContext context, bool forceStaticResourcesOnly)
         {
-            if (_isDirty || forced)
+            if (forceStaticResourcesOnly && _isStaticResource == false) return;
+
+#if DEBUG
+            if (_sampler == null) logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
+#endif
+
+            if (_isDirty || forceStaticResourcesOnly)
             {
                 if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetSampler(_slot[ShaderIDs.VS], _sampler);
                 if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetSampler(_slot[ShaderIDs.GS], _sampler);
