@@ -129,31 +129,26 @@ namespace Utopia.Components
         public void ListenCubes(Range3 range)
         {
             // remove sounds that are far away
-            foreach (var position in _lastRange.AllExclude(range))
+            
+            for (int i = _sharedSounds.Count - 1; i >= 0; i--)
             {
-                Vector3D soundPos;
-                soundPos.X = position.X + 0.5f;
-                soundPos.Y = position.Y + 0.5f;
-                soundPos.Z = position.Z + 0.5f;
-
-                for (int i = _sharedSounds.Count - 1; i >= 0; i--)
+                for (int j = _sharedSounds.Values[i].Value.Count - 1; j >= 0; j--)
                 {
-                    for (int j = _sharedSounds.Values[i].Value.Count - 1; j >= 0; j--)
+                    var pos = _sharedSounds.Values[i].Value[j];
+                    var position = new Vector3I((int)pos.X, (int)pos.Y, (int)pos.Z);
+                    if (!range.Contains(position))
                     {
-                        var pos = _sharedSounds.Values[i].Value[j];
-                        if (pos == soundPos)
-                        {
-                            _sharedSounds.Values[i].Value.RemoveAt(j);
-                        }
-                    }
-
-                    if (_sharedSounds.Values[i].Value.Count == 0)
-                    {
-                        _sharedSounds.Values[i].Key.Stop();
-                        _sharedSounds.RemoveAt(i);
+                        _sharedSounds.Values[i].Value.RemoveAt(j);
                     }
                 }
+
+                if (_sharedSounds.Values[i].Value.Count == 0)
+                {
+                    _sharedSounds.Values[i].Key.Stop();
+                    _sharedSounds.RemoveAt(i);
+                }
             }
+            
 
             // add new sounds
             foreach (var position in range.AllExclude(_lastRange))
