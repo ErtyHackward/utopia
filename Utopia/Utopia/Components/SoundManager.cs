@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using IrrKlang;
+using Ninject;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3DXEngine.Debug.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Entities.Managers;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
 using Vector3D = IrrKlang.Vector3D;
 
@@ -22,6 +25,7 @@ namespace Utopia.Components
     public class SoundManager : GameComponent, IDebugInfo
     {
         private readonly CameraManager<ICameraFocused> _cameraManager;
+        private readonly DynamicEntityManager _dynamicEntityManager;
         private readonly ISoundEngine _soundEngine;
         private SingleArrayChunkContainer _singleArray;
 
@@ -35,6 +39,8 @@ namespace Utopia.Components
         private string _debugInfo;
         long _listenCubesTime;
 
+        readonly List<KeyValuePair<IDynamicEntity, S33M3Resources.Structs.Vector3D>> _stepsTracker = new List<KeyValuePair<IDynamicEntity, S33M3Resources.Structs.Vector3D>>();
+
         /// <summary>
         /// Gets irrKlang sound engine object
         /// </summary>
@@ -43,11 +49,27 @@ namespace Utopia.Components
             get { return _soundEngine; }
         }
 
-        public SoundManager(CameraManager<ICameraFocused> cameraManager)
+        public SoundManager(CameraManager<ICameraFocused> cameraManager, DynamicEntityManager dynamicEntityManager)
         {
             if (cameraManager == null) throw new ArgumentNullException("cameraManager");
+            if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             _cameraManager = cameraManager;
+            _dynamicEntityManager = dynamicEntityManager;
+
+            _dynamicEntityManager.EntityAdded += DynamicEntityManagerEntityAdded;
+            _dynamicEntityManager.EntityRemoved += DynamicEntityManagerEntityRemoved;
+
             _soundEngine = new ISoundEngine();
+        }
+
+        void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
+        {
+            _stepsTracker.RemoveAt(_stepsTracker.FindIndex(p => p.Key == e.Entity));
+        }
+
+        void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
+        {
+            _stepsTracker.Add(new KeyValuePair<IDynamicEntity, S33M3Resources.Structs.Vector3D>(e.Entity, e.Entity.Position));
         }
 
         public void LateInitialization(SingleArrayChunkContainer singleArray)

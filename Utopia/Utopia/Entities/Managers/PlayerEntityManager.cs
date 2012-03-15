@@ -694,9 +694,9 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// The allocated object here must be disposed
         /// </summary>
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
-            _playerRenderer.LoadContent(Context);
+            _playerRenderer.LoadContent(context);
         }
 
         public override void Update( GameTime timeSpend)

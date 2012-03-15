@@ -29,7 +29,7 @@ namespace Sandbox.Client.Components
             DrawOrders.UpdateIndex(0, int.MaxValue-100);
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
             _font = new SpriteFont();
             _font.Initialize("Lucida Console", 16f, FontStyle.Bold, true, _engine.Device);

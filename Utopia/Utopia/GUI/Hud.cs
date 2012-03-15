@@ -77,7 +77,7 @@ namespace Utopia.GUI
             set { _toolbarUi = value; }
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
             _crosshair = new SpriteTexture(_d3DEngine.Device, ClientSettings.TexturePack + @"Gui\Crosshair.png", _d3DEngine, _d3DEngine.ViewPort);
 

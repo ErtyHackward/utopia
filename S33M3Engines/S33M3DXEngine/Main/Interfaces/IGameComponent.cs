@@ -15,6 +15,6 @@ namespace S33M3DXEngine.Main.Interfaces
         void EnableComponent();
         void DisableComponent();
         void Initialize();
-        void LoadContent(DeviceContext Context);
+        void LoadContent(DeviceContext context);
     }
 }

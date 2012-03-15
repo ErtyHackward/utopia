@@ -53,11 +53,11 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _effectStars = new HLSLStars(_d3dEngine.Device, ClientSettings.EffectPack + @"SkyDome\Stars.hlsl", VertexPosition3Color.VertexDeclaration);
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
             VertexPosition3Color[] vertices = GenerateSpherePoints(_nbrStars, 1500);
             _skyStarVB = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, vertices.Length, VertexPosition3Color.VertexDeclaration, PrimitiveTopology.PointList, "_skyStarVB");
-            _skyStarVB.SetData(Context, vertices);
+            _skyStarVB.SetData(context, vertices);
         }
 
         public override void Dispose()

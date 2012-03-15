@@ -187,10 +187,10 @@ namespace Utopia.Worlds.Chunks
             InitWrappingVariables();
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
             IntilializeUpdateble();
-            InitDrawComponents(Context);
+            InitDrawComponents(context);
         }
 
         public override void Dispose()

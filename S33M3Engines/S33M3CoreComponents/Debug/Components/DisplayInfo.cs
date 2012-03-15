@@ -84,7 +84,7 @@ namespace S33M3CoreComponents.Components.Debug
             _components.Remove(comp);
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
             _font = ToDispose(new SpriteFont());
             _font.Initialize("Lucida Console", 10f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);

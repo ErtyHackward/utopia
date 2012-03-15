@@ -108,11 +108,11 @@ namespace S33M3CoreComponents.Debug
             this.EnableComponent();
         }
 
-        public override void LoadContent(SharpDX.Direct3D11.DeviceContext Context)
+        public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
-            _displayInfo.LoadContent(Context);
-            _fps.LoadContent(Context);
-            _chart.LoadContent(Context);
+            _displayInfo.LoadContent(context);
+            _fps.LoadContent(context);
+            _chart.LoadContent(context);
         }
 
         public override void Update(GameTime timeSpent)

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Utopia.Entities.Voxel;
 using Ninject;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
+using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main;
 using SharpDX.Direct3D11;
@@ -16,14 +18,30 @@ namespace Utopia.Entities.Managers
     public class DynamicEntityManager : DrawableGameComponent, IDynamicEntityManager
     {
         #region Private variables
-        private Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
-        private IEntitiesRenderer _dynamicEntityRenderer;
+        private readonly Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
+        private readonly IEntitiesRenderer _dynamicEntityRenderer;
         private readonly VoxelModelManager _voxelModelManager;
         #endregion
 
         #region Public variables/properties
         public List<IVisualEntityContainer> DynamicEntities { get; set; }
         #endregion
+
+        public event EventHandler<DynamicEntityEventArgs> EntityAdded;
+
+        private void OnEntityAdded(DynamicEntityEventArgs e)
+        {
+            var handler = EntityAdded;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<DynamicEntityEventArgs> EntityRemoved;
+
+        private void OnEntityRemoved(DynamicEntityEventArgs e)
+        {
+            var handler = EntityRemoved;
+            if (handler != null) handler(this, e);
+        }
 
         public DynamicEntityManager([Named("DefaultEntityRenderer")] IEntitiesRenderer dynamicEntityRenderer, VoxelModelManager voxelModelManager)
         {
@@ -43,12 +61,9 @@ namespace Utopia.Entities.Managers
         #region Private Methods
         private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
         {
-            VisualDynamicEntity vEntity;
-
-            vEntity = new VisualDynamicEntity(entity, new Voxel.VisualVoxelEntity(entity, _voxelModelManager));
-
-            return vEntity;
+            return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
         }
+
         #endregion
 
         #region Public Methods
@@ -57,16 +72,16 @@ namespace Utopia.Entities.Managers
             _dynamicEntityRenderer.Initialize();
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
-            _dynamicEntityRenderer.LoadContent(Context);
+            _dynamicEntityRenderer.LoadContent(context);
         }
 
-        public override void Update(GameTime timeSpend)
+        public override void Update(GameTime timeSpent)
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
             {
-                entity.Update(timeSpend);
+                entity.Update(timeSpent);
             }
         }
 
@@ -91,6 +106,8 @@ namespace Utopia.Entities.Managers
                 VisualDynamicEntity newEntity = CreateVisualEntity(entity);
                 _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
                 DynamicEntities.Add(newEntity);
+
+                OnEntityAdded(new DynamicEntityEventArgs { Entity = entity });
             }
         }
 
@@ -102,6 +119,8 @@ namespace Utopia.Entities.Managers
                 DynamicEntities.Remove(visualEntity);
                 _dynamicEntitiesDico.Remove(entity.DynamicId);
                 visualEntity.Dispose();
+
+                OnEntityRemoved(new DynamicEntityEventArgs { Entity = entity });
             }
         }
 
@@ -113,6 +132,7 @@ namespace Utopia.Entities.Managers
                 DynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
                 _dynamicEntitiesDico.Remove(entityId);
                 if (dispose) visualEntity.Dispose();
+                OnEntityRemoved(new DynamicEntityEventArgs { Entity = visualEntity.DynamicEntity });
             }
         }
 

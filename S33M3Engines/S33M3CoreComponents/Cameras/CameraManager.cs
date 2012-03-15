@@ -52,7 +52,7 @@ namespace S33M3CoreComponents.Cameras
         {
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
         }
 

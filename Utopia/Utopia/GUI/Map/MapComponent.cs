@@ -57,7 +57,7 @@ namespace Utopia.GUI.Map
             _mapImage = _planGenerator.Render();
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
             if (_mapImage == null) return;
 

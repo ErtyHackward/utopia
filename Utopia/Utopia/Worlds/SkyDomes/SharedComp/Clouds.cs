@@ -69,9 +69,9 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _cloudMap = ShaderResourceView.FromFile(_d3dEngine.Device, ClientSettings.TexturePack + @"Weather\clouds.png");
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
-            Init2D(Context);
+            Init2D(context);
         }
 
         public override void Draw(DeviceContext context, int index)
