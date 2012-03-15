@@ -388,6 +388,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             if (this.heldKeyCount > 0)
             {
                 logger.Warn("ProcessKeyRelease() called more often then ProcessKeyPress()");
+                return;
             }
 
             // If we receive a release, we must have a control on which the mouse
