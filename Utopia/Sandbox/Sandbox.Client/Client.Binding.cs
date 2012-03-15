@@ -90,6 +90,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InSingletonScope();     //Camera manager
             _iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();      //Ingame based Timer class
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class
+            _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InSingletonScope();
             _iocContainer.Bind<SpriteRenderer>().ToSelf().InSingletonScope();
 
             // Game states ================================================

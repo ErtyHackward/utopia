@@ -34,6 +34,7 @@ namespace S33M3DXEngine
         private RenderForm _renderForm;
         private SwapChain _swapChain;
         private RenderTargetView _renderTarget;
+        private RenderTargetView _renderStaggingTarget;
         private DepthStencilView _depthStencil;
         private Viewport _viewPort;
         private Factory _dx11factory;
@@ -56,8 +57,11 @@ namespace S33M3DXEngine
         public SwapChain SwapChain { get { return _swapChain; } }
 
         public RenderTargetView RenderTarget { get { return _renderTarget; } }
+        public RenderTargetView RenderStaggingTarget { get { return _renderStaggingTarget; } }
+
         public DepthStencilView DepthStencilTarget { get { return _depthStencil; } }
         public ShaderResourceView StaggingBackBuffer;
+        public Vector2 BackBufferSize;
         /// <summary>
         /// Leave at 0:0 to use optimal resolution display.
         /// </summary>
@@ -95,8 +99,7 @@ namespace S33M3DXEngine
         /// <param name="RenderResolution">if not passed or equal to 0;0 then the resolution will be the one from the Windows Size</param>
         public D3DEngine(Size startingSize, string windowCaption, Size renderResolution = default(Size))
         {
-
-
+            
             //Create the MainRendering Form
             _renderForm = new RenderForm()
             {
@@ -143,16 +146,7 @@ namespace S33M3DXEngine
                 }
             }
 
-            CreateSwapChain();
-            CreateRenderTarget();
-            CreateDepthStencil();
-            CreateViewPort();
-            CreateStaggingBackBuffer();
-
-            logger.Debug("Creation of SwapChain, RenderTarget, DepthStencil, StaggingBackBuffer and viewport");
-
-            //Set Viewport and rendertarget to the device
-            SetRenderTargets();
+            RefreshResources();
 
             //Remove the some built-in fonctionnality of DXGI
             _dx11factory.MakeWindowAssociation(_renderForm.Handle, WindowAssociationFlags.IgnoreAll | WindowAssociationFlags.IgnoreAltEnter);
@@ -172,22 +166,26 @@ namespace S33M3DXEngine
 
         public void SetRenderTargets()
         {
+            ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget, _renderStaggingTarget);
+        }
+
+        public void SetSingleRenderTargets()
+        {
             ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget);
         }
 
         public void SetRenderTargetsAndViewPort()
         {
-            ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget);
+            ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget, _renderStaggingTarget);
             ImmediateContext.Rasterizer.SetViewports(_viewPort);
         }
 
         public void RefreshBackBufferAsTexture()
         {
-            ImmediateContext.CopyResource(_backBuffer, _staggingBackBufferTexture);
-
+            //ImmediateContext.CopyResource(_backBuffer, _staggingBackBufferTexture);
             //if(StaggingBackBuffer != null) StaggingBackBuffer.Dispose();
             //StaggingBackBuffer = new ShaderResourceView(GraphicsDevice, _staggingBackBufferTexture);
-            //Texture2D.SaveTextureToFile(Context, _staggingBackBufferTexture, ImageFileFormat.Png, @"e:\Img.png");
+            //Texture2D.ToFile<Texture2D>(ImmediateContext, _staggingBackBufferTexture, ImageFileFormat.Png, @"e:\Img.png");
         }
 
         public SharpDX.Rectangle[] ScissorRectangles
@@ -349,6 +347,7 @@ namespace S33M3DXEngine
         {
             //Create ViewPort
             _viewPort = new Viewport(0, 0, _backBuffer.Description.Width, _backBuffer.Description.Height, 0, 1);
+            BackBufferSize = new Vector2(_viewPort.Width, _viewPort.Height);
             if (ViewPort_Updated != null) ViewPort_Updated(_viewPort);
             ImmediateContext.Rasterizer.SetViewports(_viewPort);
 
@@ -366,13 +365,14 @@ namespace S33M3DXEngine
                 Format = Format.R8G8B8A8_UNorm,
                 SampleDescription = new SampleDescription() { Count = 1, Quality = 0 },
                 Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.ShaderResource,
+                BindFlags =  BindFlags.ShaderResource | BindFlags.RenderTarget,
                 CpuAccessFlags = CpuAccessFlags.None,
                 OptionFlags = ResourceOptionFlags.None,
             };
 
             _staggingBackBufferTexture = new Texture2D(Device, StaggingBackBufferDescr);
             StaggingBackBuffer = new ShaderResourceView(Device, _staggingBackBufferTexture);
+            _renderStaggingTarget = new RenderTargetView(Device, _staggingBackBufferTexture, _renderTarget.Description);
         }
 
         private void ReleaseBackBufferLinkedResources()
@@ -402,7 +402,12 @@ namespace S33M3DXEngine
             logger.Debug("Window size changed new size = Width : {0}px Height : {1}px", _renderForm.ClientSize.Width, _renderForm.ClientSize.Height);
 
             ReleaseBackBufferLinkedResources();
+            RefreshResources();
 
+        }
+
+        private void RefreshResources()
+        {
             //Resize renderTarget based on the new backbuffer size
             CreateSwapChain();
             CreateRenderTarget();
@@ -414,7 +419,7 @@ namespace S33M3DXEngine
 
             logger.Debug("SwapChain, RenderTarget, DepthStencil, StaggingBackBuffer and viewport recreated");
         }
-        
+
         #endregion
 
         #region IDisposable Members

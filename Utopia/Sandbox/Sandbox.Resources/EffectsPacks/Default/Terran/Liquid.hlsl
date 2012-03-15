@@ -9,6 +9,11 @@ cbuffer PerDraw
 	float Opaque;
 };
 
+cbuffer PerDrawGroup
+{
+	float2 BackBufferSize;
+};
+
 cbuffer PerFrame
 {
 	matrix ViewProjection;
@@ -40,6 +45,14 @@ SamplerState SamplerDiffuse
 	AddressV = Wrap ;
 };
 
+Texture2D SolidBackBuffer;
+SamplerState SamplerBackBuffer
+{
+	Filter = MIN_MAG_MIP_POINT;
+	AddressU = CLAMP ; 
+	AddressV = CLAMP ;
+};
+
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 
@@ -57,6 +70,11 @@ struct PS_IN
 	float3 UVW					: TEXCOORD0;
 	float3 EmissiveLight		: Light0;
 	float fogPower				: VARIOUS0;
+};
+
+struct PS_OUT
+{
+	float4 Color				: SV_TARGET0;
 };
 
 //--------------------------------------------------------------------------------------
@@ -95,15 +113,24 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 PS(PS_IN input) : SV_Target
+PS_OUT PS(PS_IN input)
 {
-	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW) * float4(input.EmissiveLight, 1);
+	PS_OUT output;
+
+	float4 colorInput = TerraTexture.Sample(SamplerDiffuse, input.UVW) * float4(input.EmissiveLight, 1);
+	float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
+	float4 backBufferColor = SolidBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+
+	//Manual Blending with SolidBackBuffer color received
+	float4 color = {(colorInput.rgb * colorInput.a) + (backBufferColor.rgb * (1 - colorInput.a)), colorInput.a};
 
 	float4 Finalfogcolor = {SunColor / 1.5, color.a};
 	color = lerp(color, Finalfogcolor, input.fogPower);
 
 	//color.a = min(min(Opaque, 1 -input.fogPower), color.a);
 
-    return color;
+	output.Color = color;
+
+    return output;
 }
 

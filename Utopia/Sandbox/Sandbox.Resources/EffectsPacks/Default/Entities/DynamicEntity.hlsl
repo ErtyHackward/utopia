@@ -47,6 +47,13 @@ struct PS_IN
 	float3 EmissiveLight		: Light0;
 };
 
+struct PS_OUT
+{
+	float4 Color				: SV_TARGET0;
+	float4 ColorSolidBuffer		: SV_TARGET1;
+};
+
+
 //--------------------------------------------------------------------------------------
 // Fonctions
 //--------------------------------------------------------------------------------------
@@ -85,14 +92,17 @@ PS_IN VS(VS_IN input)
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 PS(PS_IN input) : SV_Target
+PS_OUT PS(PS_IN input)
 {
+	PS_OUT output;
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW) * float4(input.EmissiveLight, 1);
 
 	float4 Finalfogcolor = {SunColor / 1.5, color.a};
 	color = lerp(color, Finalfogcolor, input.fogPower);
 
 	// Apply fog on output color
-    return color;
+	output.Color = color;
+	output.ColorSolidBuffer = output.Color;
+    return output;
 }
 

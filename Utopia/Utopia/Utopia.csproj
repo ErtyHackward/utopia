@@ -118,6 +118,7 @@
       <DependentUpon>ModelEditorComponent.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\SoundManager.cs" />
+    <Compile Include="Components\StaggingBackBuffer.cs" />
     <Compile Include="Components\ViewParameters.cs" />
     <Compile Include="Editor\CarvingEditor.cs" />
     <Compile Include="Editor\EditorTool.cs" />
