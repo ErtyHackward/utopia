@@ -71,6 +71,8 @@ namespace Utopia.Worlds.SkyDomes
             _clock = clock;
             _skyStars = skyStars;
             _clouds = clouds;
+
+            this.DrawOrders.UpdateIndex(0, 998);
         }
 
         #region Public Methods

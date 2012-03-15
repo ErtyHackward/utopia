@@ -392,9 +392,10 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
 
             // If we receive a release, we must have a control on which the mouse
             // was pressed (possibly even ourselves)
-            if (this.activatedControl != null)
+            if (this.activatedControl == null)
             {
-                logger.Warn("No control defining where the mouse did click !!");
+                logger.Warn("No active control set");
+                return;
             }
 
             --this.heldKeyCount;

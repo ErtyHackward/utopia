@@ -14,6 +14,7 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         private ShaderResourceView _resourceView;
         Shaders _shadersImpacted;
         string _name;
+        bool _isStaticResource;
         #endregion
 
         #region Public properties and Variables
@@ -30,6 +31,13 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             get { return _shadersImpacted; }
             set { _shadersImpacted = value; }
         }
+
+        public bool IsStaticResource
+        {
+            get { return _isStaticResource; }
+            set { _isStaticResource = value; }
+        }
+
         public int[] Slot
         {
             get { return _slot; }
@@ -47,14 +55,22 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         }
         #endregion
 
-        public ShaderResource(string Name)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Name">Resource Name</param>
+        /// <param name="isStaticResource">Will this resource be considered as static, if yes then it will automatically by pushed to the device when the effect Begin()</param>
+        public ShaderResource(string Name, bool isStaticResource = true)
         {
             _name = Name;
+            _isStaticResource = isStaticResource;
         }
 
-        public void Set2Device(DeviceContext context, bool forced = false)
+        public void Set2Device(DeviceContext context, bool forceStaticResourcesOnly)
         {
-            if (_isDirty || forced)
+            if (forceStaticResourcesOnly && _isStaticResource == false) return;
+
+            if (_isDirty || forceStaticResourcesOnly)
             {
                 if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetShaderResource(_slot[ShaderIDs.VS], _resourceView);
                 if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetShaderResource(_slot[ShaderIDs.GS], _resourceView);

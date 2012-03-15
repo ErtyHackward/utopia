@@ -115,7 +115,6 @@ namespace S33M3DXEngine.Effects.HLSLFramework
                 logger.Error("Shadder loading error : {0}, Error : {1}", _fileName, e.Message);
                 throw;
             }
-
         }
 
         #region Shader Loading & Parsing
@@ -309,9 +308,14 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             //Set the resources
             for (int i = 0; i < _shaderResources.Length; i++)
             {
-                _shaderResources[i].Set2Device(context);
+                _shaderResources[i].Set2Device(context, false);
             }
         }
+
+        public virtual void End(DeviceContext context)
+        {
+        }
+
     }
 
 

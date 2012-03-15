@@ -39,10 +39,6 @@ namespace Utopia.Worlds.Chunks
         public override void Draw(DeviceContext context, int index)
         {
             
-
-            _terraEffect.Begin(context);
-
-
             if (index == SOLID_DRAW)
             {
                 _chunkDrawByFrame = 0;
@@ -84,6 +80,8 @@ namespace Utopia.Worlds.Chunks
         {
             VisualChunk chunk;
             Matrix worldFocus = Matrix.Identity;
+
+            _terraEffect.Begin(context);
 
             //Foreach faces type
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
