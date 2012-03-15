@@ -108,7 +108,7 @@ namespace S33M3DXEngine.Main
         {
         }
 
-        public virtual void LoadContent(DeviceContext Context)
+        public virtual void LoadContent(DeviceContext context)
         {
         }
 

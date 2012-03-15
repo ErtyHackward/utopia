@@ -417,7 +417,7 @@ namespace Utopia.Components
 
         
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
             _font = new SpriteFont();
             _font.Initialize("Tahoma", 13f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
@@ -470,7 +470,7 @@ namespace Utopia.Components
             _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
 
 
-            base.LoadContent(Context);
+            base.LoadContent(context);
         }
 
         #region Buttons handlers

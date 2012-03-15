@@ -115,7 +115,7 @@ namespace S33M3CoreComponents.Debug.Components
             });
         }
 
-        public override void LoadContent(SharpDX.Direct3D11.DeviceContext Context)
+        public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
             _effect = ToDispose(new HLSLColumnChart(_engine.Device));
 
@@ -131,7 +131,7 @@ namespace S33M3CoreComponents.Debug.Components
             _vBufferInstanced = ToDispose(new InstancedVertexBuffer<VertexPosition2, VertexColumnChart>(_engine.Device, VertexColumnChart.VertexDeclaration, PrimitiveTopology.LineList));
             _vBufferInstanced.SetFixedData(vertices);
 
-            base.LoadContent(Context);
+            base.LoadContent(context);
         }
 
         public override void Update(GameTime timeSpent)

@@ -104,10 +104,10 @@ namespace Utopia.Worlds.SkyDomes
             base.Initialize();
         }
 
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
-            _skyStars.LoadContent(Context);
-            _clouds.LoadContent(Context);
+            _skyStars.LoadContent(context);
+            _clouds.LoadContent(context);
         }
 
         public override void Dispose()

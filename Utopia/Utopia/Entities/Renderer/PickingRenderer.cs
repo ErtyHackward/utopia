@@ -84,7 +84,7 @@ namespace Utopia.Entities.Renderer
         #endregion
 
         #region public methods
-        public override void LoadContent(DeviceContext Context)
+        public override void LoadContent(DeviceContext context)
         {
             _blockpickedUPEffect = new HLSLVertexPositionColor(_engine.Device);
             _pickedCube = new BoundingBox3D(_engine, _focusManager, new Vector3(1.000f, 1.000f, 1.000f), _blockpickedUPEffect, _cursorColor);

@@ -82,7 +82,7 @@ namespace Utopia.Components
             _iBuffer = ToDispose(new IndexBuffer<short>(_engine.Device, 6, SharpDX.DXGI.Format.R16_UInt, "Fade_iBuffer"));
         }
 
-        public override void LoadContent(SharpDX.Direct3D11.DeviceContext Context)
+        public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
             //Load data into the VB  => NOT Thread safe, MUST be done in the loadcontent
             VertexPosition2[] vertices = { 
@@ -91,13 +91,13 @@ namespace Utopia.Components
                                           new VertexPosition2(new Vector2(1.00f, 1.00f)),
                                           new VertexPosition2(new Vector2(-1.00f, 1.00f))
                                       };
-            _vBuffer.SetData(Context, vertices);
+            _vBuffer.SetData(context, vertices);
 
             //Load data into the IB => NOT Thread safe, MUST be done in the loadcontent
             short[] indices = { 3, 0, 2, 0, 1, 2 };
-            _iBuffer.SetData(Context, indices);
+            _iBuffer.SetData(context, indices);
 
-            base.LoadContent(Context);
+            base.LoadContent(context);
         }
 
         public override void Update(S33M3DXEngine.Main.GameTime timeSpent)
