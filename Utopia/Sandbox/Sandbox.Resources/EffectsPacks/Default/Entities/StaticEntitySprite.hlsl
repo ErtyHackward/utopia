@@ -40,6 +40,12 @@ struct PSInput {
 	float3 EmissiveLight		: Light0;
 };
 
+struct PS_OUT
+{
+	float4 Color				: SV_TARGET0;
+	float4 ColorSolidBuffer		: SV_TARGET1;
+};
+
 //--------------------------------------------------------------------------------------
 
 static const float foglength = 45;
@@ -92,8 +98,9 @@ PSInput VS (VSInput input)
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 PS(PSInput IN) : SV_Target
+PS_OUT PS(PSInput IN)
 {	
+	PS_OUT output;
 	//Texture Sampling
 	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW) * float4(IN.EmissiveLight, 1);;
 	
@@ -102,7 +109,9 @@ float4 PS(PSInput IN) : SV_Target
 	float4 Finalfogcolor = {SunColor / 1.5, color.a};
 	color = lerp(color, Finalfogcolor, IN.fogPower);
 
-	return color;	
+	output.Color = color;
+	output.ColorSolidBuffer = output.Color;
+    return output;
 }
 
 //--------------------------------------------------------------------------------------

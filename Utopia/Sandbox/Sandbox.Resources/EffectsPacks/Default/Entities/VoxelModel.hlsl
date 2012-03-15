@@ -44,6 +44,12 @@ struct PS_IN
 	float3 normal				: NORMAL0;
 };
 
+struct PS_OUT
+{
+	float4 Color				: SV_TARGET0;
+	float4 ColorSolidBuffer		: SV_TARGET1;
+};
+
 //--------------------------------------------------------------------------------------
 // Fonctions
 //--------------------------------------------------------------------------------------
@@ -93,9 +99,14 @@ PS_IN VS(VS_IN input)
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 PS(PS_IN input) : SV_Target
+PS_OUT PS(PS_IN input)
 {
+	PS_OUT output;
+
 	float intensity = input.Light / 255;
-	return float4(lerp(colorMapping[input.colorIndex].rgb * intensity,input.EmissiveLight, 0.4 ),1);
+	
+	output.Color = float4(lerp(colorMapping[input.colorIndex].rgb * intensity,input.EmissiveLight, 0.4 ),1);
+	output.ColorSolidBuffer = output.Color;
+    return output;
 }
 

@@ -35,14 +35,24 @@ namespace Utopia.Resources.Effects.Terran
             public float Opaque;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
+
+        [StructLayout(LayoutKind.Explicit, Size = 16)]
+        public struct CBPerDrawGroup_Struct
+        {
+            [FieldOffset(0)]
+            public Vector2 BackBufferSize;
+        }
+        public CBuffer<CBPerDrawGroup_Struct> CBPerDrawGroup;
         #endregion
 
         #region Resources
         public ShaderResource TerraTexture;
+        public ShaderResource SolidBackBuffer;
         #endregion
 
         #region Sampler
         public ShaderSampler SamplerDiffuse;
+        public ShaderSampler SamplerBackBuffer;
         #endregion
 
         #region Define Shaders EntryPoints Names
@@ -62,18 +72,38 @@ namespace Utopia.Resources.Effects.Terran
             CBPerDraw = new CBuffer<CBPerDraw_Struct>(device, "PerDraw");
             CBuffers.Add(CBPerDraw);
 
+            CBPerDrawGroup = new CBuffer<CBPerDrawGroup_Struct>(device, "PerDrawGroup");
+            CBuffers.Add(CBPerDrawGroup);
+
             if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());
 
             //Create the resource interfaces ==================================================
             TerraTexture = new ShaderResource("TerraTexture");
             ShaderResources.Add(TerraTexture);
 
+            SolidBackBuffer = new ShaderResource("SolidBackBuffer", false);
+            ShaderResources.Add(SolidBackBuffer);
+
             //Create the Sampler interface ==================================================
             SamplerDiffuse = new ShaderSampler("SamplerDiffuse");
             ShaderSamplers.Add(SamplerDiffuse);
 
+            SamplerBackBuffer = new ShaderSampler("SamplerBackBuffer");
+            ShaderSamplers.Add(SamplerBackBuffer);
+
             //Load the shaders
             base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);
+        }
+
+        //Special clean up needs to be done here, the SamplerBackBuffer Texture must be detached before being used again.
+        public override void End(DeviceContext context)
+        {
+            //Detach the RenderTarget from the Effect
+            if (SolidBackBuffer.Value != null)
+            {
+                SolidBackBuffer.Value = null;
+                SolidBackBuffer.Set2Device(context, false);
+            }
         }
 
     }

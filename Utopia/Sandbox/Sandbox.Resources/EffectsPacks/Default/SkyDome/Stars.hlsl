@@ -35,6 +35,12 @@ struct PSInput {
 	float4 Position	 			: SV_POSITION;
 };
 
+struct PS_OUT
+{
+	float4 Color				: SV_TARGET0;
+	float4 ColorSolidBuffer		: SV_TARGET1;
+};
+
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
@@ -70,9 +76,13 @@ void GS( point GSInput Input[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 PS(PSInput IN) : SV_Target
+PS_OUT PS(PSInput IN)
 {	
-	return float4(1,1,1,1 * Visibility);	
+	PS_OUT output;
+	
+	output.Color = float4(1,1,1,1 * Visibility);
+	output.ColorSolidBuffer = output.Color;
+    return output;
 }
 
 //--------------------------------------------------------------------------------------

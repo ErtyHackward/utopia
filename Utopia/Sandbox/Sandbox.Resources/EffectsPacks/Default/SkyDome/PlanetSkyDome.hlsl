@@ -38,6 +38,12 @@ struct vertexOutput {
 	float3 WorldEyeDirection	: TEXCOORD2;
 };
 
+struct PS_OUT
+{
+	float4 Color				: SV_TARGET0;
+	float4 ColorSolidBuffer		: SV_TARGET1;
+};
+
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
@@ -59,8 +65,9 @@ vertexOutput mainVS (appdata IN)
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 mainPS(vertexOutput IN) : SV_Target
+PS_OUT mainPS(vertexOutput IN)
 {	
+	PS_OUT output;
 	float4 colorOutput = float4(0,0,0,1);		
 	float3 lightVec = normalize(IN.WorldLightVec);
 	float3 eyeVec = normalize(IN.WorldEyeDirection);
@@ -77,5 +84,7 @@ float4 mainPS(vertexOutput IN) : SV_Target
 
 	colorOutput.a *= 1 - (min(max(CameraWorldPosition.y - 127, 0), 173) / 173);
 
-	return colorOutput;
+	output.Color = colorOutput;
+	output.ColorSolidBuffer = output.Color;
+    return output;
 }

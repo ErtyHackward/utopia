@@ -61,6 +61,7 @@ namespace Sandbox.Client.States
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var soundManager = _ioc.Get<SoundManager>();
+            var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>();
 
             AddComponent(cameraManager);
             AddComponent(_ioc.Get<ServerComponent>());
@@ -82,6 +83,7 @@ namespace Sandbox.Client.States
             AddComponent(weather);
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
+            AddComponent(staggingBackBuffer);
             AddComponent(soundManager);
 
             base.Initialize(context);
