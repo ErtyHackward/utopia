@@ -9,7 +9,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.WorldFocus;
 using S33M3Resources.Effects.Basics;
 using S33M3DXEngine.Buffers;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using S33M3Resources.VertexFormats;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Cameras.Interfaces;

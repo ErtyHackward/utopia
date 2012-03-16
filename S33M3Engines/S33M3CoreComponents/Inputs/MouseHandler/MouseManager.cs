@@ -149,7 +149,7 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
             _centerViewPort = new Vector2I((int)viewport.Width / 2, (int)viewport.Height / 2);
         }
 
-        private void _engine_ViewPort_Updated(Viewport viewport)
+        private void _engine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             ComputeCenterViewport(viewport);
         }

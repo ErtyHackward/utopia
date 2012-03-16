@@ -266,7 +266,6 @@ namespace S33M3DXEngine.Main
             //Draw everything
             for (int i = 0; i < _visibleDrawable.Count; i++)
             {
-
                 DrawableComponentHolder drawComponent = _visibleDrawable[i];
                 if (ComponentsPerfMonitor.Updatable)
                 {

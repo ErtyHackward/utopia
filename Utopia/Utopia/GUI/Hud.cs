@@ -93,7 +93,7 @@ namespace Utopia.GUI
         }
 
         //Refresh Sprite Centering when the viewPort size change !
-        private void D3DEngineViewPortUpdated(Viewport viewport)
+        private void D3DEngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             ToolbarUi.Bounds = new UniRectangle(0.0f, viewport.Height - 46, viewport.Width, 80.0f);
             ToolbarUi.Resized();

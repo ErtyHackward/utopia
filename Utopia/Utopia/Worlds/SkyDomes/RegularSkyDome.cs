@@ -12,7 +12,7 @@ using Utopia.Shared.World;
 using Ninject;
 using Utopia.Settings;
 using Utopia.Resources.Effects.Skydome;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.WorldFocus;
 using S33M3DXEngine.Main.Interfaces;

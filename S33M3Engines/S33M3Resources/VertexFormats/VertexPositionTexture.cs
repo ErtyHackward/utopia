@@ -11,7 +11,7 @@ using S33M3Resources.VertexFormats.Interfaces;
 using S33M3Resources.Structs.Helpers;
 using S33M3DXEngine.VertexFormat;
 
-namespace S33M3Resources.Struct.Vertex
+namespace S33M3Resources.Structs.Vertex
 {
     [Serializable, StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionTexture : IVertexType

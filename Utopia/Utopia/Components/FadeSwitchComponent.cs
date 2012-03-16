@@ -7,7 +7,7 @@ using S33M3DXEngine;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.Effects.Basics;
 using SharpDX;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using S33M3DXEngine.RenderStates;

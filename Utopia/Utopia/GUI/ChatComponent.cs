@@ -77,7 +77,7 @@ namespace Utopia.GUI
 
             _d3dEngine.ViewPort_Updated += LocateChat;
 
-            LocateChat(_d3dEngine.ViewPort);
+            LocateChat(_d3dEngine.ViewPort, _d3dEngine.BackBufferTex.Description);
 
             // make it drawn on top
             DrawOrders.UpdateIndex(0, 10001);
@@ -116,7 +116,7 @@ namespace Utopia.GUI
             _refreshDisplay = true;
         }
 
-        private void LocateChat(Viewport viewport)
+        private void LocateChat(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             windowHeight = viewport.Height;
         }

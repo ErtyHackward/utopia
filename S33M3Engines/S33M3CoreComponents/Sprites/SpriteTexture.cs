@@ -52,7 +52,7 @@ namespace S33M3CoreComponents.Sprites
         }
 
         //Refresh Sprite Centering when the viewPort size change !
-        private void D3dEngine_ViewPort_Updated(Viewport viewport)
+        private void D3dEngine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             ScreenPosition.M41 = (viewport.Width / 2) - (Width / 2);
             ScreenPosition.M42 = (viewport.Height / 2) - (Height / 2);

@@ -6,7 +6,7 @@ using S33M3Resources.VertexFormats.Interfaces;
 using S33M3DXEngine.VertexFormat;
 using S33M3Resources.Structs;
 
-namespace S33M3Resources.Struct.Vertex
+namespace S33M3Resources.Structs.Vertex
 {
     [Serializable, StructLayout(LayoutKind.Sequential)]
     public struct VertexVoxel : IVertexType

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using SharpDX;
 using Utopia.Shared.Structs;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3Resources.VertexFormats;
 using S33M3Resources.Structs;

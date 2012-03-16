@@ -10,7 +10,7 @@ using Utopia.Resources.Effects.Terran;
 using Utopia.Resources.Effects.Entities;
 using S33M3DXEngine.RenderStates;
 using S33M3DXEngine.Textures;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Maths;
 
 namespace Utopia.Worlds.Chunks
@@ -130,10 +130,10 @@ namespace Utopia.Worlds.Chunks
                         _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _liquidEffect.CBPerDraw.IsDirty = true;
 
-                        _liquidEffect.CBPerDrawGroup.Values.BackBufferSize = _d3dEngine.BackBufferSize;
+                        _liquidEffect.CBPerDrawGroup.Values.BackBufferSize = _solidBackBuffer.SolidStaggingBackBufferSize;
                         _liquidEffect.CBPerDrawGroup.IsDirty = true;
 
-                        _liquidEffect.SolidBackBuffer.Value = _d3dEngine.StaggingBackBuffer;
+                        _liquidEffect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
                         _liquidEffect.SolidBackBuffer.IsDirty = true;
 
                         _liquidEffect.Apply(context);

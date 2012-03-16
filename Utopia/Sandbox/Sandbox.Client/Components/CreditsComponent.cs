@@ -38,7 +38,7 @@ namespace Sandbox.Client.Components
             _creditsLabel = new LabelControl { Text = "Credits: \nFabian Ceressia\nSimon Lebettre\nVladislav Pozdnyakov" };
             _backButton = new ButtonControl { Text = "Back" };
             _backButton.Pressed += delegate { OnBackPressed(); };
-            UpdateLayout(_engine.ViewPort);
+            UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
 
             if (Updatable)
             {
@@ -55,7 +55,7 @@ namespace Sandbox.Client.Components
             {
                 _screen.Desktop.Children.Add(_creditsLabel);
                 _screen.Desktop.Children.Add(_backButton);
-                UpdateLayout(_engine.ViewPort);
+                UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
             }
             else
             {
@@ -66,7 +66,7 @@ namespace Sandbox.Client.Components
             base.OnEnabledChanged(sender, args);
         }
 
-        private void UpdateLayout(Viewport viewport)
+        private void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             if (Updatable)
             {

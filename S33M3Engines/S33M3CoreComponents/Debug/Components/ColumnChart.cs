@@ -6,7 +6,7 @@ using S33M3DXEngine.Buffers;
 using S33M3DXEngine.Main;
 using S33M3DXEngine.RenderStates;
 using S33M3Resources.Effects.Debug;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using S33M3Resources.VertexFormats;
 using SharpDX;
 using SharpDX.Direct3D;

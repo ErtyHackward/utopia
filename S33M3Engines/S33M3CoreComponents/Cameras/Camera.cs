@@ -219,7 +219,7 @@ namespace S33M3CoreComponents.Cameras
             if (CameraUpdateOrderChanged != null) CameraUpdateOrderChanged(this, _cameraPlugin.CameraUpdateOrder);
         }
 
-        private void D3dEngine_ViewPort_Updated(Viewport viewport)
+        private void D3dEngine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             Viewport = viewport;
         }

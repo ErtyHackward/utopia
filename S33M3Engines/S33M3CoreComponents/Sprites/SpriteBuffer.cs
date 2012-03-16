@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using SharpDX;
 using S33M3Resources.Structs;
 

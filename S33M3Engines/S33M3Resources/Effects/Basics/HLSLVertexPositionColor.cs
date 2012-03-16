@@ -9,7 +9,7 @@ using Buffer = SharpDX.Direct3D11.Buffer;
 using S33M3DXEngine.Effects.HLSLFramework;
 using S33M3DXEngine;
 using S33M3DXEngine.VertexFormat;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using S33M3Resources.VertexFormats;
 
 namespace S33M3Resources.Effects.Basics
