@@ -210,7 +210,7 @@ namespace Utopia.Components
                             List<string> sounds;
                             if (_stepsSounds.TryGetValue(downCube.Id, out sounds))
                             {
-                                _soundEngine.Play3D(sounds[0], (float) entity.Position.X, (float) entity.Position.Y, (float) entity.Position.Z);
+                                _soundEngine.Play3D(sounds[r.Next(0, sounds.Count)], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
                             }
                         }
                     }

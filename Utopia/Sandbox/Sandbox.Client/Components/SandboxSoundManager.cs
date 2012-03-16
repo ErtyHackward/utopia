@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Components;
+﻿using Utopia.Components;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.Entities.Managers;
-using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Interfaces;
 
@@ -39,9 +34,6 @@ namespace Sandbox.Client.Components
             AddStepSound(CubeId.Stone, "Sounds\\Footsteps\\footsteps_stone04.ogg");
 
             AddStepSound(CubeId.Water, "Sounds\\Footsteps\\footsteps_water01.ogg");
-            AddStepSound(CubeId.Water, "Sounds\\Footsteps\\footsteps_water02.ogg");
-            AddStepSound(CubeId.Water, "Sounds\\Footsteps\\footsteps_water03.ogg");
-            AddStepSound(CubeId.Water, "Sounds\\Footsteps\\footsteps_water04.ogg");
 
         }
     }
