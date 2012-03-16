@@ -64,6 +64,12 @@ namespace Utopia.Entities
             icons.AddRange(spriteTextures);
             CreateTextureArray(context, icons);
 
+            //Array created i can dispose the various icons
+            foreach (var icon in icons)
+            {
+                icon.Dispose();
+            }
+
             cubeTextureView.Dispose();
             foreach (Texture2D tex in spriteTextures) tex.Dispose();
         }
@@ -150,10 +156,10 @@ namespace Utopia.Entities
             IndexBuffer<ushort> ib = new IndexBuffer<ushort>(_d3DEngine.Device, meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB");
 
             //Create the render texture
-            RenderedTexture2D texture = new RenderedTexture2D(_d3DEngine, textureSize, textureSize, SharpDX.DXGI.Format.R8G8B8A8_UNorm)
+            RenderedTexture2D texture = ToDispose(new RenderedTexture2D(_d3DEngine, textureSize, textureSize, SharpDX.DXGI.Format.R8G8B8A8_UNorm)
             {
                 BackGroundColor = new Color4(255, 255, 255, 0)
-            };
+            });
 
             Texture2DDescription SpriteTextureDesc = new Texture2DDescription()
             {
@@ -177,7 +183,7 @@ namespace Utopia.Entities
             context.UnmapSubresource(SpriteTexture, 0);
             dataStream.Dispose();
 
-            SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, SpriteTexture, new Vector2(0, 0));
+            SpriteTexture spriteTexture = ToDispose(new SpriteTexture(_d3DEngine.Device, SpriteTexture, new Vector2(0, 0)));
             spriteTexture.ScreenPosition = Matrix.Scaling(textureSize) * spriteTexture.ScreenPosition;
             SpriteTexture.Dispose();
 
@@ -286,7 +292,6 @@ namespace Utopia.Entities
             _d3DEngine.SetRenderTargetsAndViewPort();
 
             //Dispose temp resource.
-            texture.Dispose();
             shader.Dispose();
             vb.Dispose();
             ib.Dispose();

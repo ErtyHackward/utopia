@@ -90,7 +90,7 @@ namespace S33M3CoreComponents.Sprites
                                                             MaximumLod = float.MaxValue,
                                                             MinimumLod = 0
                                                         });
-
+            
             _effect.SpriteSampler.Value = _spriteSampler;
             _effectInstanced.SpriteSampler.Value = _spriteSampler;
 

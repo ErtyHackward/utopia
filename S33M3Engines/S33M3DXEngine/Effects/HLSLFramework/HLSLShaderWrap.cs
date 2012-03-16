@@ -186,8 +186,12 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             {
                 if (_shaderEntryPoint.PixelShader_EntryPoint != null)
                 {
+                    var bytecode2 = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null);
+                    bytecode2.Dispose();
+
                     using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null))
                     {
+
                         _ps = ToDispose(new PixelShader(device, bytecode));
 #if DEBUG
                         //Set resource Name, will only be done at debug time.

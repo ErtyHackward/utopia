@@ -19,7 +19,7 @@ namespace Sandbox.Client
             GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"Config\" };
             GameSystemSettings.Current.Load();
 
-            var utopiaRenderer = new UtopiaRender(iocContainer.Get<D3DEngine>(), iocContainer.Get<InputsManager>(), false);
+            var utopiaRenderer = new UtopiaRender(iocContainer.Get<D3DEngine>(), iocContainer.Get<InputsManager>(), true);
             
             BindActions(iocContainer.Get<InputsManager>());    //Bind the various actions
 
