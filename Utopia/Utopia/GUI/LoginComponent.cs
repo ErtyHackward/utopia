@@ -119,7 +119,7 @@ namespace Utopia.GUI
             }
         }
 
-        void EngineViewportUpdated(Viewport viewport)
+        void EngineViewportUpdated(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             // locate login window
             CenterWindow(new Size((int)viewport.Width, (int)viewport.Height));

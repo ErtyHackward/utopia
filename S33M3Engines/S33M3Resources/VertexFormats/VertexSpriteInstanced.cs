@@ -13,7 +13,7 @@ using S33M3Resources.Structs;
 using S33M3DXEngine.VertexFormat;
 using RectangleF = System.Drawing.RectangleF;
 
-namespace S33M3Resources.Struct.Vertex
+namespace S33M3Resources.Structs.Vertex
 {
     [Serializable, StructLayout(LayoutKind.Sequential)]
     public struct VertexSpriteInstanced : IVertexType

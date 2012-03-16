@@ -12,7 +12,7 @@ using S33M3Resources.Structs.Helpers;
 using S33M3Resources.Structs;
 using S33M3DXEngine.VertexFormat;
 
-namespace S33M3Resources.Struct.Vertex
+namespace S33M3Resources.Structs.Vertex
 {
     [Serializable, StructLayout(LayoutKind.Sequential)]
     public struct VertexSprite3D : IVertexType

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 
 namespace S33M3CoreComponents.Meshes
 {

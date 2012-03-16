@@ -6,7 +6,7 @@ using SharpDX;
 using Utopia.Shared.Entities.Models;
 using UtopiaContent.Effects.Entities;
 using Utopia.Shared.ClassExt;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
 using SharpDX.Direct3D11;
 

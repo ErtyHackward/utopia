@@ -4,7 +4,7 @@ using SharpDX.Direct3D11;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Enums;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine;
 using S33M3Resources.Structs;

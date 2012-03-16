@@ -28,6 +28,7 @@ using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Physics.Verlet;
 using SharpDX.Direct3D11;
+using Utopia.Components;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -80,6 +81,7 @@ namespace Utopia.Worlds.Chunks
         private SharedFrameCB _sharedFrameCB;
         private IEntityPickingManager _pickingManager;
         private int _readyToDrawCount;
+        private StaggingBackBuffer _solidBackBuffer;
         private readonly object _counterLock = new object();
 
         /// <summary>
@@ -143,7 +145,8 @@ namespace Utopia.Worlds.Chunks
                            ISkyDome skydome,
                            IEntityPickingManager pickingManager,
                            IWeather weather,
-                           SharedFrameCB sharedFrameCB)
+                           SharedFrameCB sharedFrameCB,
+                           StaggingBackBuffer solidBackBuffer)
         {
             _server = server;
             _chunkstorage = chunkstorage;
@@ -163,6 +166,7 @@ namespace Utopia.Worlds.Chunks
             _weather = weather;
             _sharedFrameCB = sharedFrameCB;
             _pickingManager = pickingManager;
+            _solidBackBuffer = solidBackBuffer;
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;

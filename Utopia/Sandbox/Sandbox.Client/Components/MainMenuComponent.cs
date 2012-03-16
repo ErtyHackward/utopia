@@ -91,7 +91,7 @@ namespace Sandbox.Client.Components
         {
             _buttonsGroup = new Control();
 
-            UpdateLayout(_engine.ViewPort);
+            UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
 
             _continueButton = CreateButton("Continue", 0);
             _continueButton.Enabled = false;
@@ -133,7 +133,7 @@ namespace Sandbox.Client.Components
             if (Updatable)
             {
                 _screen.Desktop.Children.Add(_buttonsGroup);
-                UpdateLayout(_engine.ViewPort);
+                UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
 
                 //_screen.FocusedControl = _multiplayer;
 
@@ -151,7 +151,7 @@ namespace Sandbox.Client.Components
             return new ButtonControl { Text = text, Bounds = new UniRectangle(0, position, 120, 24) };
         }
 
-        private void UpdateLayout(Viewport viewport)
+        private void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             if(Updatable)
                 _buttonsGroup.Bounds = new UniRectangle(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 230, 200, 200);

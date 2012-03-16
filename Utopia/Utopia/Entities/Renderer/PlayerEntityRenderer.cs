@@ -16,7 +16,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.WorldFocus;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Textures;
 using S33M3DXEngine.RenderStates;
 using S33M3DXEngine.Main;

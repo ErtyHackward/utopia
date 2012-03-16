@@ -9,7 +9,7 @@ using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
 using UtopiaContent.Effects.Entities;
 using S33M3Resources.Structs;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Sprites;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine.Main;
@@ -366,7 +366,7 @@ namespace Utopia.Components
             _gridPlanes = new[] { _gridBackPlane, _gridFrontPlane, _gridTopPlane, _gridBottomPlane, _gridLeftPlane, _gridRightPlane };
         }
 
-        private void ViewportUpdated(Viewport port)
+        private void ViewportUpdated(Viewport port, Texture2DDescription newBackBufferDescr)
         {
             UpdateLayout();
         }

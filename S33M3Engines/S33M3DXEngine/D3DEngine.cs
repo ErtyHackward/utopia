@@ -34,11 +34,9 @@ namespace S33M3DXEngine
         private RenderForm _renderForm;
         private SwapChain _swapChain;
         private RenderTargetView _renderTarget;
-        private RenderTargetView _renderStaggingTarget;
         private DepthStencilView _depthStencil;
         private Viewport _viewPort;
         private Factory _dx11factory;
-        private Texture2D _backBuffer, _staggingBackBufferTexture;
 #if DEBUG
         public static readonly ShaderFlags ShaderFlags = ShaderFlags.Debug | ShaderFlags.SkipOptimization;
 #else
@@ -49,7 +47,7 @@ namespace S33M3DXEngine
         #region Public properties
         public Device Device;
 
-        public delegate void ViewPortUpdated(Viewport viewport);
+        public delegate void ViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer);
         public event ViewPortUpdated ViewPort_Updated;
 
         public Viewport ViewPort { get { return _viewPort; } set { _viewPort = value; } }
@@ -59,8 +57,8 @@ namespace S33M3DXEngine
         public RenderTargetView RenderTarget { get { return _renderTarget; } }
 
         public DepthStencilView DepthStencilTarget { get { return _depthStencil; } }
-        public ShaderResourceView StaggingBackBuffer;
         public Vector2 BackBufferSize;
+        public Texture2D BackBufferTex;
         /// <summary>
         /// Leave at 0:0 to use optimal resolution display.
         /// </summary>
@@ -165,26 +163,14 @@ namespace S33M3DXEngine
 
         public void SetRenderTargets()
         {
-            ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget, _renderStaggingTarget);
-        }
-
-        public void SetSingleRenderTargets()
-        {
             ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget);
         }
 
         public void SetRenderTargetsAndViewPort()
         {
-            ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget, _renderStaggingTarget);
+            SetRenderTargets();
+            ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget);
             ImmediateContext.Rasterizer.SetViewports(_viewPort);
-        }
-
-        public void RefreshBackBufferAsTexture()
-        {
-            ImmediateContext.CopyResource(_backBuffer, _staggingBackBufferTexture);
-            //if(StaggingBackBuffer != null) StaggingBackBuffer.Dispose();
-            //StaggingBackBuffer = new ShaderResourceView(GraphicsDevice, _staggingBackBufferTexture);
-            //Texture2D.ToFile<Texture2D>(ImmediateContext, _staggingBackBufferTexture, ImageFileFormat.Png, @"e:\Img.png");
         }
 
         public SharpDX.Rectangle[] ScissorRectangles
@@ -240,7 +226,7 @@ namespace S33M3DXEngine
                 SwapChainDescription SwapDesc = new SwapChainDescription()
                 {
                     BufferCount = 1,
-                    Usage = Usage.RenderTargetOutput | Usage.ShaderInput,
+                    Usage = Usage.RenderTargetOutput,
                     OutputHandle = _renderForm.Handle,
                     IsWindowed = true,                    
                     //    ModeDescription = new ModeDescription(_renderForm.ClientSize.Width, _renderForm.ClientSize.Height, new Rational(60, 1), Format.R8G8B8A8_UNorm),
@@ -292,18 +278,18 @@ namespace S33M3DXEngine
                 }
             }
             // Get the created BackBuffer
-            _backBuffer = Resource.FromSwapChain<Texture2D>(_swapChain, 0);
+            BackBufferTex = Resource.FromSwapChain<Texture2D>(_swapChain, 0);
 
 #if DEBUG
             //Set resource Name, will only be done at debug time.
-            _backBuffer.DebugName = "Device BackBuffer";
+            BackBufferTex.DebugName = "Device BackBuffer";
 #endif
         }
 
         private void CreateRenderTarget()
         {
             //Create RenderTargetView 
-            _renderTarget = new RenderTargetView(Device, _backBuffer);
+            _renderTarget = new RenderTargetView(Device, BackBufferTex);
         }
 
         private void CreateDepthStencil()
@@ -311,8 +297,8 @@ namespace S33M3DXEngine
             //Create the Depth Stencil Texture
             Texture2DDescription DepthStencilDescr = new Texture2DDescription()
             {
-                Width = _backBuffer.Description.Width,
-                Height = _backBuffer.Description.Height,
+                Width = BackBufferTex.Description.Width,
+                Height = BackBufferTex.Description.Height,
                 MipLevels = 1,
                 ArraySize = 1,
                 Format = Format.D32_Float,
@@ -345,39 +331,19 @@ namespace S33M3DXEngine
         private void CreateViewPort()
         {
             //Create ViewPort
-            _viewPort = new Viewport(0, 0, _backBuffer.Description.Width, _backBuffer.Description.Height, 0, 1);
+            _viewPort = new Viewport(0, 0, BackBufferTex.Description.Width, BackBufferTex.Description.Height, 0, 1);
             BackBufferSize = new Vector2(_viewPort.Width, _viewPort.Height);
-            if (ViewPort_Updated != null) ViewPort_Updated(_viewPort);
+            if (ViewPort_Updated != null) ViewPort_Updated(_viewPort, BackBufferTex.Description);
             ImmediateContext.Rasterizer.SetViewports(_viewPort);
 
-            logger.Debug("ViewPort Updated new size Width : {0}px Height : {1}px", _backBuffer.Description.Width, _backBuffer.Description.Height);
-        }
-
-        private void CreateStaggingBackBuffer()
-        {
-            Texture2DDescription StaggingBackBufferDescr = new Texture2DDescription()
-            {
-                Width = _backBuffer.Description.Width,
-                Height = _backBuffer.Description.Height,
-                MipLevels = 1,
-                ArraySize = 1,
-                Format = Format.R8G8B8A8_UNorm,
-                SampleDescription = new SampleDescription() { Count = 1, Quality = 0 },
-                Usage = ResourceUsage.Default,
-                BindFlags =  BindFlags.ShaderResource | BindFlags.RenderTarget,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None,
-            };
-
-            _staggingBackBufferTexture = new Texture2D(Device, StaggingBackBufferDescr);
-            StaggingBackBuffer = new ShaderResourceView(Device, _staggingBackBufferTexture);
+            logger.Debug("ViewPort Updated new size Width : {0}px Height : {1}px", BackBufferTex.Description.Width, BackBufferTex.Description.Height);
         }
 
         private void ReleaseBackBufferLinkedResources()
         {
-            if (_backBuffer != null)
+            if (BackBufferTex != null)
             {
-                _backBuffer.Dispose(); _backBuffer = null;
+                BackBufferTex.Dispose(); BackBufferTex = null;
             }
             if (_renderTarget != null)
             {
@@ -386,11 +352,6 @@ namespace S33M3DXEngine
             if (_depthStencil != null)
             {
                 _depthStencil.Dispose(); _depthStencil = null;
-            }
-            if (StaggingBackBuffer != null)
-            {
-                if (_staggingBackBufferTexture != null) _staggingBackBufferTexture.Dispose();
-                StaggingBackBuffer.Dispose(); StaggingBackBuffer = null;
             }
         }
 
@@ -411,7 +372,6 @@ namespace S33M3DXEngine
             CreateRenderTarget();
             CreateDepthStencil();
             CreateViewPort();
-            CreateStaggingBackBuffer();
 
             SetRenderTargets();
 
@@ -445,13 +405,11 @@ namespace S33M3DXEngine
             _renderForm.GotFocus -= GameWindow_GotFocus;
 
             ////Dispose the created states
-            _backBuffer.Dispose();
+            BackBufferTex.Dispose();
             _dx11factory.Dispose();
             _depthStencil.Dispose();
             _renderTarget.Dispose();
             _swapChain.Dispose();
-            _staggingBackBufferTexture.Dispose();
-            StaggingBackBuffer.Dispose();
 
             ImmediateContext.ClearState();
             ImmediateContext.Flush();

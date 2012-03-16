@@ -59,7 +59,7 @@ namespace Sandbox.Client.Components
             _serverList = new ListControl { Bounds = new UniRectangle(100, 100, 400, 400), SelectionMode = ListSelectionMode.Single };
             _serverList.SelectionChanged += ServerListSelectionChanged;
 
-            UpdateLayout(_engine.ViewPort);
+            UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
 
             if (Updatable)
             {
@@ -81,7 +81,7 @@ namespace Sandbox.Client.Components
                 _screen.Desktop.Children.Add(_serverList);
                 _screen.Desktop.Children.Add(_connectButton);
                 _screen.Desktop.Children.Add(_backButton);
-                UpdateLayout(_engine.ViewPort);
+                UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
             }
             else
             {
@@ -93,7 +93,7 @@ namespace Sandbox.Client.Components
             base.OnEnabledChanged(sender, args);
         }
 
-        private void UpdateLayout(Viewport viewport)
+        private void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             if (Updatable)
             {

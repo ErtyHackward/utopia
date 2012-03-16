@@ -6,7 +6,7 @@ using S33M3DXEngine;
 using S33M3DXEngine.Buffers;
 using SharpDX.Direct3D11;
 using SharpDX;
-using S33M3Resources.Struct.Vertex;
+using S33M3Resources.Structs.Vertex;
 using RectangleF = System.Drawing.RectangleF;
 using SharpDX.Direct3D;
 using S33M3Resources.Structs;
