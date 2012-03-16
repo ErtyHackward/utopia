@@ -141,8 +141,6 @@ namespace Utopia.Worlds.Chunks
                     }
                 }
             }
-
-            _liquidEffect.End(context);
         }
 
         private void DrawStaticEntities(DeviceContext context)

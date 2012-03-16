@@ -94,17 +94,5 @@ namespace Utopia.Resources.Effects.Terran
             //Load the shaders
             base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);
         }
-
-        //Special clean up needs to be done here, the SamplerBackBuffer Texture must be detached before being used again.
-        public override void End(DeviceContext context)
-        {
-            //Detach the RenderTarget from the Effect
-            if (SolidBackBuffer.Value != null)
-            {
-                SolidBackBuffer.Value = null;
-                SolidBackBuffer.Set2Device(context, false);
-            }
-        }
-
     }
 }
