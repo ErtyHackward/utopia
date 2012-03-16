@@ -58,7 +58,7 @@ namespace Utopia.Resources.Effects.Weather
             : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDraw_Struct>(device, "PerDraw");
+            CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));
             CBuffers.Add(CBPerDraw);
 
             //Create the resource interfaces ==================================================

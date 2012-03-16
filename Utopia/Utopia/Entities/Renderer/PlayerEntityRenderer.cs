@@ -24,7 +24,7 @@ using S33M3DXEngine.Debug.Interfaces;
 
 namespace Utopia.Entities.Renderer
 {
-    public class PlayerEntityRenderer : IEntitiesRenderer
+    public class PlayerEntityRenderer : Component, IEntitiesRenderer
     {
         #region Private variables
         private HLSLTerran _entityEffect;
@@ -59,7 +59,7 @@ namespace Utopia.Entities.Renderer
 
         public void LoadContent(DeviceContext context)
         {
-            _entityEffect = new HLSLTerran(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCB.CBPerFrame);
+            _entityEffect = ToDispose(new HLSLTerran(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCB.CBPerFrame));
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
 
             _entityEffect.TerraTexture.Value = _cubeTexture_View;

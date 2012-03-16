@@ -448,6 +448,8 @@ namespace Utopia.Worlds.Chunks
             if (SolidCubeIB != null) SolidCubeIB.Dispose();
             if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
             if (LiquidCubeIB != null) LiquidCubeIB.Dispose();
+            if (StaticSpritesIB != null) StaticSpritesIB.Dispose();
+            if (StaticSpritesVB != null) StaticSpritesVB.Dispose();
             Entities.CollectionDirty -= Entities_CollectionDirty;
 
         }

@@ -129,12 +129,6 @@ namespace S33M3CoreComponents.States
             this.EnableComponent();
         }
 
-        public override void Dispose()
-        {
-
-            base.Dispose();
-        }
-
         #region Private methods
 
         //End of activation process where the new state is pushed for rendering

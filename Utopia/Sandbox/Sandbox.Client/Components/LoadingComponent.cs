@@ -31,9 +31,9 @@ namespace Sandbox.Client.Components
 
         public override void LoadContent(DeviceContext context)
         {
-            _font = new SpriteFont();
+            _font = ToDispose(new SpriteFont());
             _font.Initialize("Lucida Console", 16f, FontStyle.Bold, true, _engine.Device);
-            _spriteRender = new SpriteRenderer();
+            _spriteRender = ToDispose(new SpriteRenderer());
             _spriteRender.Initialize(_engine);
 
             //_materia = new SpriteTexture(_engine.Device, "Images\\materia.png", new Vector2());
