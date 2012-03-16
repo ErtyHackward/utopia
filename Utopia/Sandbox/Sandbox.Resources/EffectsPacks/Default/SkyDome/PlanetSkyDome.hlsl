@@ -41,7 +41,6 @@ struct vertexOutput {
 struct PS_OUT
 {
 	float4 Color				: SV_TARGET0;
-	float4 ColorSolidBuffer		: SV_TARGET1;
 };
 
 //--------------------------------------------------------------------------------------
@@ -85,6 +84,5 @@ PS_OUT mainPS(vertexOutput IN)
 	colorOutput.a *= 1 - (min(max(CameraWorldPosition.y - 127, 0), 173) / 173);
 
 	output.Color = colorOutput;
-	output.ColorSolidBuffer = output.Color;
     return output;
 }

@@ -33,7 +33,7 @@ namespace Utopia.Components
         #region Public Methods
         public override void Draw(SharpDX.Direct3D11.DeviceContext context, int index)
         {
-            _engine.SetSingleRenderTargets();
+            //_engine.RefreshBackBufferAsTexture();
         }
         #endregion
 

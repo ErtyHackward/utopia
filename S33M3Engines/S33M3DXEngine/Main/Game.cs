@@ -260,9 +260,7 @@ namespace S33M3DXEngine.Main
         public virtual void Draw()
         {
             //Init New Frame before drawing components
-            Engine.SetRenderTargets();
             Engine.ImmediateContext.ClearRenderTargetView(Engine.RenderTarget, BackBufferColor);
-            Engine.ImmediateContext.ClearRenderTargetView(Engine.RenderStaggingTarget, BackBufferColor);
             Engine.ImmediateContext.ClearDepthStencilView(Engine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
 
             //Draw everything

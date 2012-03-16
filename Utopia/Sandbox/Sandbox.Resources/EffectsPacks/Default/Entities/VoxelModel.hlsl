@@ -47,7 +47,6 @@ struct PS_IN
 struct PS_OUT
 {
 	float4 Color				: SV_TARGET0;
-	float4 ColorSolidBuffer		: SV_TARGET1;
 };
 
 //--------------------------------------------------------------------------------------
@@ -106,7 +105,6 @@ PS_OUT PS(PS_IN input)
 	float intensity = input.Light / 255;
 	
 	output.Color = float4(lerp(colorMapping[input.colorIndex].rgb * intensity,input.EmissiveLight, 0.4 ),1);
-	output.ColorSolidBuffer = output.Color;
     return output;
 }
 
