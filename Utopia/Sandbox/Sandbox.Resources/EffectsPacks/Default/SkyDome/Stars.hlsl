@@ -38,7 +38,6 @@ struct PSInput {
 struct PS_OUT
 {
 	float4 Color				: SV_TARGET0;
-	float4 ColorSolidBuffer		: SV_TARGET1;
 };
 
 //--------------------------------------------------------------------------------------
@@ -81,7 +80,6 @@ PS_OUT PS(PSInput IN)
 	PS_OUT output;
 	
 	output.Color = float4(1,1,1,1 * Visibility);
-	output.ColorSolidBuffer = output.Color;
     return output;
 }
 

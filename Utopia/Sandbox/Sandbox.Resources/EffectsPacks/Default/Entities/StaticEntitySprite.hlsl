@@ -43,7 +43,6 @@ struct PSInput {
 struct PS_OUT
 {
 	float4 Color				: SV_TARGET0;
-	float4 ColorSolidBuffer		: SV_TARGET1;
 };
 
 //--------------------------------------------------------------------------------------
@@ -110,7 +109,6 @@ PS_OUT PS(PSInput IN)
 	color = lerp(color, Finalfogcolor, IN.fogPower);
 
 	output.Color = color;
-	output.ColorSolidBuffer = output.Color;
     return output;
 }
 

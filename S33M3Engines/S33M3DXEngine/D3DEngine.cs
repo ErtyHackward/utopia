@@ -57,7 +57,6 @@ namespace S33M3DXEngine
         public SwapChain SwapChain { get { return _swapChain; } }
 
         public RenderTargetView RenderTarget { get { return _renderTarget; } }
-        public RenderTargetView RenderStaggingTarget { get { return _renderStaggingTarget; } }
 
         public DepthStencilView DepthStencilTarget { get { return _depthStencil; } }
         public ShaderResourceView StaggingBackBuffer;
@@ -182,7 +181,7 @@ namespace S33M3DXEngine
 
         public void RefreshBackBufferAsTexture()
         {
-            //ImmediateContext.CopyResource(_backBuffer, _staggingBackBufferTexture);
+            ImmediateContext.CopyResource(_backBuffer, _staggingBackBufferTexture);
             //if(StaggingBackBuffer != null) StaggingBackBuffer.Dispose();
             //StaggingBackBuffer = new ShaderResourceView(GraphicsDevice, _staggingBackBufferTexture);
             //Texture2D.ToFile<Texture2D>(ImmediateContext, _staggingBackBufferTexture, ImageFileFormat.Png, @"e:\Img.png");
@@ -372,7 +371,6 @@ namespace S33M3DXEngine
 
             _staggingBackBufferTexture = new Texture2D(Device, StaggingBackBufferDescr);
             StaggingBackBuffer = new ShaderResourceView(Device, _staggingBackBufferTexture);
-            _renderStaggingTarget = new RenderTargetView(Device, _staggingBackBufferTexture, _renderTarget.Description);
         }
 
         private void ReleaseBackBufferLinkedResources()
