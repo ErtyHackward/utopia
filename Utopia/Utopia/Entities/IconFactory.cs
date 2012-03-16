@@ -78,6 +78,7 @@ namespace Utopia.Entities
         {
             _iconsTextureArray.Dispose();
             _iconTextureArray.Dispose();
+            base.Dispose();
         }
 
         #region Public methods
@@ -183,7 +184,7 @@ namespace Utopia.Entities
             context.UnmapSubresource(SpriteTexture, 0);
             dataStream.Dispose();
 
-            SpriteTexture spriteTexture = ToDispose(new SpriteTexture(_d3DEngine.Device, SpriteTexture, new Vector2(0, 0)));
+            SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, SpriteTexture, new Vector2(0, 0));
             spriteTexture.ScreenPosition = Matrix.Scaling(textureSize) * spriteTexture.ScreenPosition;
             SpriteTexture.Dispose();
 

@@ -71,9 +71,6 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
 
         public MouseManager(D3DEngine engine)
         {
-#if DEBUG
-            logger.Warn("No camera attached to the MouseManager => UnprojectMouseCursor won't be usable !");
-#endif
             _engine = engine;
 
             _engine.ViewPort_Updated += _engine_ViewPort_Updated;

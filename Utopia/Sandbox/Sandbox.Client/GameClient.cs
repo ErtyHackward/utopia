@@ -25,6 +25,7 @@ using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.Debug;
 using Ninject.Parameters;
 using SharpDX;
+using S33M3DXEngine;
 
 namespace Sandbox.Client
 {
@@ -33,6 +34,7 @@ namespace Sandbox.Client
         private static WelcomeScreen _welcomeForm;
         private ServerComponent _server;
         private IKernel _iocContainer;
+        private D3DEngine _d3dEngine;
         private SandboxEntityFactory _clientFactory;
         
         public GameClient()
@@ -112,13 +114,14 @@ namespace Sandbox.Client
 
             game.Run();
 
-            //Get windows Exit reason
+            _iocContainer.Dispose();
+
             game.Dispose();
 
-            _iocContainer.Dispose();
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
+
         }
         #endregion
 

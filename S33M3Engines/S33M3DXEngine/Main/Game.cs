@@ -454,7 +454,6 @@ namespace S33M3DXEngine.Main
         {
             GameComponentCleaning();
             base.Dispose();
-
 #if DEBUG
             if (Configuration.EnableObjectTracking)
             {

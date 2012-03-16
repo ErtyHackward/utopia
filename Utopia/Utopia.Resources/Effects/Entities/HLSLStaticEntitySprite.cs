@@ -58,7 +58,7 @@ namespace Utopia.Resources.Effects.Entities
             : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerFrameLocal = new CBuffer<CBPerFrame_Struct>(device, "PerFrameLocal");
+            CBPerFrameLocal = ToDispose(new CBuffer<CBPerFrame_Struct>(device, "PerFrameLocal"));
             CBuffers.Add(CBPerFrameLocal);
 
             if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());

@@ -69,10 +69,10 @@ namespace Utopia.Resources.Effects.Terran
         {
 
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDraw_Struct>(device, "PerDraw");
+            CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));
             CBuffers.Add(CBPerDraw);
 
-            CBPerDrawGroup = new CBuffer<CBPerDrawGroup_Struct>(device, "PerDrawGroup");
+            CBPerDrawGroup = ToDispose(new CBuffer<CBPerDrawGroup_Struct>(device, "PerDrawGroup"));
             CBuffers.Add(CBPerDrawGroup);
 
             if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());

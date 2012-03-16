@@ -210,13 +210,14 @@ namespace S33M3CoreComponents.Sprites
                 }
             };
 
-            Texture = ToDispose(new ShaderResourceView(device, texture, viewDesc));
+            Texture = new ShaderResourceView(device, texture, viewDesc);
             Width = texture.Description.Width;
             Height = texture.Description.Height;
         }
 
         public override void Dispose()
         {
+            Texture.Dispose();
             if (_d3dEngine != null) _d3dEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
             base.Dispose();
         }

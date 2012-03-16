@@ -65,15 +65,17 @@ namespace Sandbox.Client
 
         public void IocBinding(string WindowsCaption, Size windowStartingSize, Size resolutionSize = default(Size))
         {
-            if (_iocContainer != null)
+            if (_iocContainer != null || _d3dEngine != null)
                 throw new InvalidOperationException();
 
             _iocContainer = new StandardKernel();
-
             _iocContainer.Bind<IKernel>().ToConstant(_iocContainer).InSingletonScope();
 
+            _d3dEngine = new D3DEngine(windowStartingSize, WindowsCaption, resolutionSize);
+            _iocContainer.Bind<D3DEngine>().ToConstant(_d3dEngine).InSingletonScope();
+
             //DirectX layer & Helper ===================================
-            _iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope().WithConstructorArgument("startingSize", windowStartingSize).WithConstructorArgument("windowCaption", WindowsCaption).WithConstructorArgument("renderResolution", resolutionSize);         //DirectX Engine
+            //_iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope().WithConstructorArgument("startingSize", windowStartingSize).WithConstructorArgument("windowCaption", WindowsCaption).WithConstructorArgument("renderResolution", resolutionSize);         //DirectX Engine
             _iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope(); //Focus
             //==========================================================
 
