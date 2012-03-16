@@ -65,10 +65,10 @@ namespace UtopiaContent.Effects.Entities
             : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = new CBuffer<CBPerDraw_Struct>(device, "PerDraw");
+            CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));
             CBuffers.Add(CBPerDraw);
 
-            CBPerFrame = new CBuffer<CBPerFrame_Struct>(device, "PerFrame");
+            CBPerFrame = ToDispose(new CBuffer<CBPerFrame_Struct>(device, "PerFrame"));
             CBuffers.Add(CBPerFrame);
 
             //Create the resource interfaces ==================================================

@@ -11,11 +11,10 @@ using S33M3DXEngine;
 
 namespace S33M3CoreComponents.Sprites
 {
-    public class SpriteTexture : IDisposable
+    public class SpriteTexture : Component
     {
         private D3DEngine _d3dEngine;
         public ShaderResourceView Texture;
-        public bool _textureDispose = true;
 
         public int Width;
         public int Height;
@@ -72,7 +71,6 @@ namespace S33M3CoreComponents.Sprites
 
         public SpriteTexture(Texture2D texture, ShaderResourceView textureShader, Vector2 screenPosition)
         {
-            _textureDispose = false;
             Texture = textureShader;
             Width = texture.Description.Width;
             Height = texture.Description.Height;
@@ -81,7 +79,6 @@ namespace S33M3CoreComponents.Sprites
 
         public SpriteTexture(int width, int height, ShaderResourceView textureShader, Vector2 screenPosition)
         {
-            _textureDispose = false;
             Texture = textureShader;
             Width = width;
             Height = height;
@@ -90,8 +87,6 @@ namespace S33M3CoreComponents.Sprites
 
         public SpriteTexture(Device device, Bitmap image, Vector2 screenPosition, SharpDX.DXGI.Format bitmapFormat)
         {
-            _textureDispose = true;
-
             Width = image.Width;
             Height = image.Height;
 
@@ -125,7 +120,7 @@ namespace S33M3CoreComponents.Sprites
             srDesc.Dimension = ShaderResourceViewDimension.Texture2DArray;
             srDesc.Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource() { MostDetailedMip = 0, MipLevels = 1, FirstArraySlice = 0, ArraySize = 1 };
 
-            Texture = new ShaderResourceView(device, texture2d, srDesc);
+            Texture = ToDispose(new ShaderResourceView(device, texture2d, srDesc));
             texture2d.Dispose();
 
             ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
@@ -133,8 +128,6 @@ namespace S33M3CoreComponents.Sprites
 
         public unsafe SpriteTexture(Device device, Bitmap image, Vector2 screenPosition, bool B8G8R8A8_UNormSupport)
         {
-            _textureDispose = true;
-
             SharpDX.DXGI.Format bitmapFormat;
             B8G8R8A8_UNormSupport = !B8G8R8A8_UNormSupport;
             if (!B8G8R8A8_UNormSupport)
@@ -193,7 +186,7 @@ namespace S33M3CoreComponents.Sprites
             srDesc.Dimension = ShaderResourceViewDimension.Texture2DArray;
             srDesc.Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource() { MostDetailedMip = 0, MipLevels = 1, FirstArraySlice = 0, ArraySize = 1 };
 
-            Texture = new ShaderResourceView(device, texture2d, srDesc);
+            Texture = ToDispose(new ShaderResourceView(device, texture2d, srDesc));
             texture2d.Dispose();
 
             ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
@@ -217,15 +210,15 @@ namespace S33M3CoreComponents.Sprites
                 }
             };
 
-            Texture = new ShaderResourceView(device, texture, viewDesc);
+            Texture = ToDispose(new ShaderResourceView(device, texture, viewDesc));
             Width = texture.Description.Width;
             Height = texture.Description.Height;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            if (_textureDispose) Texture.Dispose();
             if (_d3dEngine != null) _d3dEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
+            base.Dispose();
         }
     }
 }
