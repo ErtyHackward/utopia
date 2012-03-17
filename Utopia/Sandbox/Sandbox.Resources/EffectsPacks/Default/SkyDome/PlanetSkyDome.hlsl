@@ -33,7 +33,7 @@ struct appdata {
 //Pixel shader Input
 struct vertexOutput {
 	float4 HPosition	 		: SV_POSITION;
-	float3 texcoord				: TEXCOORD0;
+	float2 texcoord				: TEXCOORD0;
 	float3 WorldLightVec		: TEXCOORD1;
 	float3 WorldEyeDirection	: TEXCOORD2;
 };
@@ -52,7 +52,7 @@ vertexOutput mainVS (appdata IN)
 
 	//Center the sky on the Camera
 	OUT.HPosition = mul(float4(IN.Position.xyz, 1), World);
-	OUT.WorldEyeDirection = - OUT.HPosition; //CameraWorldPosition.xyz - OUT.HPosition;
+	OUT.WorldEyeDirection = float3(-OUT.HPosition.xyz); //CameraWorldPosition.xyz - OUT.HPosition;
 	OUT.HPosition = mul(OUT.HPosition, ViewProj);
 	OUT.WorldLightVec = -LightDirection; 
 	OUT.texcoord.y = 1-((IN.Position.y + 347.0f) / 2000.0f);

@@ -74,7 +74,7 @@ PSInput VS (VSInput input)
 		billboardVertexPosition *= input.MetaData;
 
 		//Rotating it
-		billboardVertexPosition = float4(mul(billboardVertexPosition, (float3x3)View),0); //Rotate the billboard following Camera position
+		billboardVertexPosition = float3(mul(billboardVertexPosition, (float3x3)View)); //Rotate the billboard following Camera position
 
 		//Translating
 		worldPosition = float4(billboardVertexPosition.xyz + input.Position.xyz, 1.0f);

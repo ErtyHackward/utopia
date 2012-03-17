@@ -913,6 +913,11 @@
             Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
             </summary>
         </member>
+        <member name="M:SharpDX.DisposeBase.CheckAndDispose(System.Boolean)">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
         <member name="M:SharpDX.DisposeBase.Dispose(System.Boolean)">
             <summary>
             Releases unmanaged and - optionally - managed resources
