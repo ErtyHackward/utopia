@@ -65,15 +65,5 @@ namespace Utopia.Shared.Chunks
         {
             return GetCursor(new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
         }
-
-        /// <summary>
-        /// Returns block position based on entity position
-        /// </summary>
-        /// <param name="entityPosition"></param>
-        /// <returns></returns>
-        public static Vector3I EntityToBlockPosition(Vector3D entityPosition)
-        {
-            return new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z));
-        }
     }
 }

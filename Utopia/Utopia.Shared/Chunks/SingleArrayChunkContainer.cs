@@ -426,7 +426,7 @@ namespace Utopia.Shared.Chunks
         {
             int cubeIndex;
 
-            Vector3I cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
+            var cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
 
             if (Index(ref cubePosition, true, out cubeIndex))
             {
@@ -629,9 +629,33 @@ namespace Utopia.Shared.Chunks
             if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Vector3I { X = X, Y = Y, Z = Z } }, Bytes = new[] { cube.Id } });
         }
 
+        /// <summary>
+        /// Tells wich cube is at this cube position
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         public TerraCube GetCube(Vector3I pos)
         {
             return Cubes[Index(pos.X, pos.Y, pos.Z)];
+        }
+
+        /// <summary>
+        /// Tells wich cube is at this absolute position, takes into account the fact of non full size blocks
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        public TerraCube GetCube(Vector3D pos)
+        {
+            var cubePos = pos.ToCubePosition();
+            var cube = Cubes[Index(cubePos.X, cubePos.Y, cubePos.Z)];
+
+            var offset = GameSystemSettings.Current.Settings.CubesProfile[cube.Id].YBlockOffset;
+
+            if (offset == 0f || offset > pos.Y % 1)
+                return cube;
+
+            cube.Id = CubeId.Air;
+            return cube;
         }
     }
 }
