@@ -125,7 +125,6 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             {
                 if (_shaderEntryPoint.VertexShader_EntryPoint != null)
                 {
-                    var test = File.Exists(_filePathName);
                     using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null))
                     {
                         //Get the VS Input signature from the Vertex Shader
@@ -186,9 +185,6 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             {
                 if (_shaderEntryPoint.PixelShader_EntryPoint != null)
                 {
-                    var bytecode2 = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null);
-                    bytecode2.Dispose();
-
                     using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null))
                     {
 
