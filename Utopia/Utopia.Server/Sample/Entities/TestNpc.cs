@@ -4,6 +4,7 @@ using SharpDX;
 using Utopia.Server.AStar;
 using Utopia.Server.Managers;
 using Utopia.Server.Structs;
+using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
@@ -61,7 +62,7 @@ namespace Utopia.Server.Entities
 
         public void Goto(Vector3I location)
         {
-            _server.LandscapeManager.CalculatePathAsync(ServerLandscapeManager.EntityToBlockPosition(this.DynamicEntity.Position), location, PathCalculated);
+            _server.LandscapeManager.CalculatePathAsync(Vector3DExtensions.ToCubePosition(this.DynamicEntity.Position), location, PathCalculated);
         }
 
         private void PathCalculated(Path3D path)

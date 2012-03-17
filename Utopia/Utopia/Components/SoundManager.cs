@@ -13,7 +13,9 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
-using Vector3D = IrrKlang.Vector3D;
+using Utopia.Worlds.Chunks.ChunkLandscape;
+using IrrVector3 = IrrKlang.Vector3D;
+using Vector3D = S33M3Resources.Structs.Vector3D;
 
 namespace Utopia.Components
 {
@@ -30,27 +32,15 @@ namespace Utopia.Components
 
         private Vector3I _lastPosition;
         private Range3 _lastRange;
-        private Vector3D _listenerPosition;
+        private IrrVector3 _listenerPosition;
 
-        private struct Pair<TKey, TValue>
-        {
-            public TKey Key;
-            public TValue Value;
-
-            public Pair(TKey key, TValue value)
-            {
-                Key = key;
-                Value = value;
-            }
-        }
-
-        private readonly SortedList<string, Pair<ISound, List<Vector3D>>> _sharedSounds = new SortedList<string, Pair<ISound, List<Vector3D>>>();
+        private readonly SortedList<string, KeyValuePair<ISound, List<IrrVector3>>> _sharedSounds = new SortedList<string, KeyValuePair<ISound, List<IrrVector3>>>();
         
         private string _buttonPressSound;
         private string _debugInfo;
         private long _listenCubesTime;
 
-        private readonly List<Pair<IDynamicEntity, S33M3Resources.Structs.Vector3D>> _stepsTracker = new List<Pair<IDynamicEntity, S33M3Resources.Structs.Vector3D>>();
+        private readonly List<KeyValuePair<IDynamicEntity, Vector3D>> _stepsTracker = new List<KeyValuePair<IDynamicEntity, Vector3D>>();
         private readonly Dictionary<byte, List<string>> _stepsSounds = new Dictionary<byte, List<string>>();
 
 
@@ -74,7 +64,7 @@ namespace Utopia.Components
 
             _soundEngine = new ISoundEngine();
 
-            _stepsTracker.Add(new Pair<IDynamicEntity,S33M3Resources.Structs.Vector3D>(player, player.Position));
+            _stepsTracker.Add(new KeyValuePair<IDynamicEntity, Vector3D>(player, player.Position));
 
         }
 
@@ -85,7 +75,7 @@ namespace Utopia.Components
 
         void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
         {
-            _stepsTracker.Add(new Pair<IDynamicEntity, S33M3Resources.Structs.Vector3D>(e.Entity, e.Entity.Position));
+            _stepsTracker.Add(new KeyValuePair<IDynamicEntity, Vector3D>(e.Entity, e.Entity.Position));
         }
 
         public void AddStepSound(byte blockId, string sound)
@@ -132,10 +122,10 @@ namespace Utopia.Components
 
         public override void Update(GameTime timeSpent)
         {
-            _listenerPosition = new Vector3D((float)_cameraManager.ActiveCamera.WorldPosition.X,
+            _listenerPosition = new IrrVector3((float)_cameraManager.ActiveCamera.WorldPosition.X,
                                    (float) _cameraManager.ActiveCamera.WorldPosition.Y,
                                    (float) _cameraManager.ActiveCamera.WorldPosition.Z);
-            var lookAt = new Vector3D(_cameraManager.ActiveCamera.LookAt.X, _cameraManager.ActiveCamera.LookAt.Y,
+            var lookAt = new IrrVector3(_cameraManager.ActiveCamera.LookAt.X, _cameraManager.ActiveCamera.LookAt.Y,
                                       -_cameraManager.ActiveCamera.LookAt.Z);
 
             var sw = Stopwatch.StartNew();
@@ -147,7 +137,7 @@ namespace Utopia.Components
             _debugInfo = "Sounds playing: " + _sharedSounds.Count + ", Update " + sw.ElapsedMilliseconds + " ms, ";
 
             
-            // update all sounds
+            // update all cubes sounds
             if ((Vector3I)_cameraManager.ActiveCamera.WorldPosition != _lastPosition)
             {
                 sw.Restart();
@@ -174,49 +164,66 @@ namespace Utopia.Components
 
             var r = new Random();
 
+            // foreach dynamic entity
             for (int i = 0; i < _stepsTracker.Count; i++)
             {
                 var pair = _stepsTracker[i];
                 var entity = pair.Key;
 
-                if (S33M3Resources.Structs.Vector3D.Distance(pair.Value, entity.Position) > 2.0f)
+                // first let's detect if the entity is in air
+
+                var underTheFeets = entity.Position;
+                underTheFeets.Y -= 0.01f;
+                
+                var downCube = _singleArray.GetCube(underTheFeets);
+
+                // no need to play step if the entity is in air
+                if (downCube.Id == CubeId.Air)
                 {
-                    if (entity.Position.Y % 1 < 0.01f)
-                    {
-                        Vector3I position;
+                    var item = new KeyValuePair<IDynamicEntity, Vector3D>(_stepsTracker[i].Key, entity.Position);
+                    _stepsTracker[i] = item;
+                    continue;
+                }
 
-                        position.X = (int) Math.Floor(entity.Position.X);
-                        position.Y = (int) Math.Floor(entity.Position.Y) - 1;
-                        position.Z = (int) Math.Floor(entity.Position.Z);
+                // possible that entity just landed after the jump, so we need to check if the entity was in the air last time to play the landing sound
+                var prevUnderTheFeets = pair.Value;
+                prevUnderTheFeets.Y -= 0.01f;
+                var prevCube = _singleArray.GetCube(prevUnderTheFeets);
 
-                        var downCube = _singleArray.GetCube(position);
-                        var currentCube = _singleArray.GetCube(position + new Vector3I(0, 1, 0));
+                double distance;
+
+                distance = prevCube.Id == CubeId.Air ? 2.0f : Vector3D.Distance(pair.Value, entity.Position);
+
+                // do we need to play the step sound?
+                if (distance >= 2.0f)
+                {
+                    
+                    var currentCube = _singleArray.GetCube(entity.Position);
                         
-                        if (currentCube.Id == CubeId.Water && downCube.Id != CubeId.Water) 
-                        {
-                            var upCube = _singleArray.GetCube(position + new Vector3I(0, 2, 0));
-                            if (upCube.Id == CubeId.Air)
-                            {
-                                List<string> sounds;
-                                if (_stepsSounds.TryGetValue(currentCube.Id, out sounds))
-                                {
-                                    //r.Next(0, sounds.Count)
-                                    _soundEngine.Play3D(sounds[0], (float) entity.Position.X, (float) entity.Position.Y, (float) entity.Position.Z);
-                                }
-                            }
-                        }
-                        else if (downCube.Id != CubeId.Air)
+                    if (currentCube.Id == CubeId.Water && downCube.Id != CubeId.Water) 
+                    {
+                        var upCube = _singleArray.GetCube(entity.Position + new Vector3I(0, 1, 0));
+                        if (upCube.Id == CubeId.Air)
                         {
                             List<string> sounds;
-                            if (_stepsSounds.TryGetValue(downCube.Id, out sounds))
+                            if (_stepsSounds.TryGetValue(currentCube.Id, out sounds))
                             {
-                                _soundEngine.Play3D(sounds[r.Next(0, sounds.Count)], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                                //r.Next(0, sounds.Count)
+                                _soundEngine.Play3D(sounds[0], (float) entity.Position.X, (float) entity.Position.Y, (float) entity.Position.Z);
                             }
                         }
                     }
+                    else if (downCube.Id != CubeId.Air)
+                    {
+                        List<string> sounds;
+                        if (_stepsSounds.TryGetValue(downCube.Id, out sounds))
+                        {
+                            _soundEngine.Play3D(sounds[r.Next(0, sounds.Count)], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                        }
+                    }
+                    
 
-                    var item = _stepsTracker[i];
-                    item.Value = entity.Position;
+                    var item = new KeyValuePair<IDynamicEntity, Vector3D>(_stepsTracker[i].Key, entity.Position);
                     _stepsTracker[i] = item;
                 }
             }
@@ -256,14 +263,14 @@ namespace Utopia.Components
             {
                 if (_singleArray.GetCube(position).Id == CubeId.Water)
                 {
-                    var soundPosition = new Vector3D(position.X + 0.5f, position.Y + 0.5f, position.Z + 0.5f);
+                    var soundPosition = new IrrVector3(position.X + 0.5f, position.Y + 0.5f, position.Z + 0.5f);
                     
                     if (_sharedSounds.ContainsKey("Sounds\\Ambiance\\water_stream.ogg"))
                         _sharedSounds["Sounds\\Ambiance\\water_stream.ogg"].Value.Add(soundPosition);
                     else
                     {
                         var sound = _soundEngine.Play3D("Sounds\\Ambiance\\water_stream.ogg", soundPosition, true, false, StreamMode.AutoDetect);
-                        _sharedSounds.Add("Sounds\\Ambiance\\water_stream.ogg", new Pair<ISound, List<Vector3D>>(sound, new List<Vector3D>{ soundPosition }));
+                        _sharedSounds.Add("Sounds\\Ambiance\\water_stream.ogg", new KeyValuePair<ISound, List<IrrVector3>>(sound, new List<IrrVector3> { soundPosition }));
                     }
                 }
             }
