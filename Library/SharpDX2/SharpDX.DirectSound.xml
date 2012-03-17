@@ -1429,7 +1429,7 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDirectSound8::VerifyCertification']/*"/>	
             <unmanaged>HRESULT IDirectSound8::VerifyCertification([Out] unsigned int* pdwCertified)</unmanaged>	
         </member>
-        <member name="P:SharpDX.DirectSound.DirectSound.IsCeritified">
+        <member name="P:SharpDX.DirectSound.DirectSound.IsCertified">
             <summary>
             Verifies the certification.
             </summary>

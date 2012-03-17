@@ -174,19 +174,20 @@ namespace Utopia.Entities
                 BindFlags = BindFlags.ShaderResource,
                 CpuAccessFlags = CpuAccessFlags.Write
             };
-            Texture2D SpriteTexture = new Texture2D(_d3DEngine.Device, SpriteTextureDesc);
+            Texture2D sTexture = new Texture2D(_d3DEngine.Device, SpriteTextureDesc);
 
             DataStream dataStream;
-            DataBox data = context.MapSubresource(SpriteTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out dataStream);
+            DataBox data = context.MapSubresource(sTexture, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out dataStream);
             dataStream.Position = 0;
             dataStream.Write<Vector4>(new Vector4(1.0f, 1.0f, 1.0f, 1.0f)); //Ecrire dans la texture
             dataStream.Position = 0;
-            context.UnmapSubresource(SpriteTexture, 0);
+            context.UnmapSubresource(sTexture, 0);
             dataStream.Dispose();
 
-            SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, SpriteTexture, new Vector2(0, 0));
+            SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, sTexture, new Vector2(0, 0));
             spriteTexture.ScreenPosition = Matrix.Scaling(textureSize) * spriteTexture.ScreenPosition;
-            SpriteTexture.Dispose();
+            spriteTexture.Dispose();
+            sTexture.Dispose();
 
             //Create the Shadder used to render on the texture.
             HLSLIcons shader = new HLSLIcons(_d3DEngine.Device,

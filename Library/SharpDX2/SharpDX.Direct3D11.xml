@@ -7219,6 +7219,50 @@
             <returns>an <see cref="T:SharpDX.Direct3D11.FastFourierTransform"/> interface reference.</returns>
             <unmanaged>HRESULT D3DX11CreateFFT1DReal([None] ID3D11DeviceContext* pDeviceContext,[None] int X,[None] int Flags,[Out] D3DX11_FFT_BUFFER_INFO* pBufferInfo,[Out] ID3DX11FFT** ppFFT)</unmanaged>
         </member>
+        <member name="M:SharpDX.Direct3D11.FastFourierTransform.ForwardTransform(SharpDX.Direct3D11.UnorderedAccessView)">
+            <summary>
+            Performs a forward FFT.
+            </summary>
+            <param name="inputBufferRef">Pointer to <see cref="T:SharpDX.Direct3D11.UnorderedAccessView"/> onto the input buffer.</param>
+            <returns>
+            Returns the computation in a temp buffers; in addition, the last buffer written to is returned.
+            </returns>
+            <unmanaged>HRESULT ID3DX11FFT::ForwardTransform([In] const ID3D11UnorderedAccessView* pInputBuffer,[InOut] void** ppOutputBuffer)</unmanaged>
+            <remarks>
+            ForwardTransform can be called after buffers have been attached to the context using <see cref="M:SharpDX.Direct3D11.FastFourierTransform.AttachBuffersAndPrecompute(SharpDX.Direct3D11.UnorderedAccessView[],SharpDX.Direct3D11.UnorderedAccessView[])"/>. The combination of pInputBuffer and *ppOuputBuffer can be one of the temp buffers.The format of complex data is interleaved components (for example, (Real0, Imag0),  (Real1, Imag1) ... , and so on). Data is stored in row major order.
+            </remarks>
+        </member>
+        <member name="M:SharpDX.Direct3D11.FastFourierTransform.InverseTransform(SharpDX.Direct3D11.UnorderedAccessView)">
+            <summary>	
+            Performs an inverse FFT.	
+            </summary>	
+            <param name="inputBufferRef"><para>Pointer to <see cref="T:SharpDX.Direct3D11.UnorderedAccessView"/> onto the input buffer.</para></param>	
+            <returns>
+            Returns the computation in a temp buffers; in addition, the last buffer written to is returned.
+            </returns>
+            <unmanaged>HRESULT ID3DX11FFT::InverseTransform([In] const ID3D11UnorderedAccessView* pInputBuffer,[InOut] void** ppOutputBuffer)</unmanaged>	
+        </member>
+        <member name="M:SharpDX.Direct3D11.FastFourierTransform.ForwardTransform(SharpDX.Direct3D11.UnorderedAccessView,SharpDX.Direct3D11.UnorderedAccessView)">
+            <summary>
+            Performs a forward FFT.
+            </summary>
+            <param name="inputBufferRef">Pointer to <see cref="T:SharpDX.Direct3D11.UnorderedAccessView"/> onto the input buffer.</param>
+            <param name="outputBufferView"><para>Buffer <see cref="T:SharpDX.Direct3D11.UnorderedAccessView"/> reference used as the output buffer.</para></param>	
+            <returns>Returns one of the return codes described in the topic Direct3D 11 Return Codes.</returns>	
+            <unmanaged>HRESULT ID3DX11FFT::ForwardTransform([In] const ID3D11UnorderedAccessView* pInputBuffer,[InOut] void** ppOutputBuffer)</unmanaged>
+            <remarks>
+            ForwardTransform can be called after buffers have been attached to the context using <see cref="M:SharpDX.Direct3D11.FastFourierTransform.AttachBuffersAndPrecompute(SharpDX.Direct3D11.UnorderedAccessView[],SharpDX.Direct3D11.UnorderedAccessView[])"/>. The combination of pInputBuffer and *ppOuputBuffer can be one of the temp buffers.The format of complex data is interleaved components (for example, (Real0, Imag0),  (Real1, Imag1) ... , and so on). Data is stored in row major order.
+            </remarks>
+        </member>
+        <member name="M:SharpDX.Direct3D11.FastFourierTransform.InverseTransform(SharpDX.Direct3D11.UnorderedAccessView,SharpDX.Direct3D11.UnorderedAccessView)">
+            <summary>	
+            Performs an inverse FFT.	
+            </summary>	
+            <param name="inputBufferRef"><para>Pointer to <see cref="T:SharpDX.Direct3D11.UnorderedAccessView"/> onto the input buffer.</para></param>	
+            <param name="outputBufferView"><para>Buffer <see cref="T:SharpDX.Direct3D11.UnorderedAccessView"/> reference used as the output buffer.</para></param>	
+            <returns>Returns one of the return codes described in the topic Direct3D 11 Return Codes.</returns>	
+            <unmanaged>HRESULT ID3DX11FFT::InverseTransform([In] const ID3D11UnorderedAccessView* pInputBuffer,[InOut] void** ppOutputBuffer)</unmanaged>	
+        </member>
         <member name="M:SharpDX.Direct3D11.FastFourierTransform.#ctor(System.IntPtr)">
             <summary>
             Initializes a new instance of the <see cref="T:SharpDX.Direct3D11.FastFourierTransform"/> class.
@@ -7232,7 +7276,7 @@
             <param name="forwardScale"><para>The scale to use for forward transforms.  Setting ForwardScale to 0 causes the default values of 1 to be used.</para></param>	
             <returns>Returns one of the return codes described in the topic Direct3D 11 Return Codes.</returns>	
             <remarks>	
-            SetForwardScale sets the scale used by <see cref="M:SharpDX.Direct3D11.FastFourierTransform.ForwardTransform(SharpDX.Direct3D11.UnorderedAccessView,SharpDX.Direct3D11.UnorderedAccessView)"/>.	
+            SetForwardScale sets the scale used by <see cref="M:SharpDX.Direct3D11.FastFourierTransform.ForwardTransform(SharpDX.Direct3D11.UnorderedAccessView)"/>.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX11FFT::SetForwardScale']/*"/>	
             <unmanaged>HRESULT ID3DX11FFT::SetForwardScale([In] float ForwardScale)</unmanaged>	
@@ -7252,7 +7296,7 @@
             <param name="inverseScale"><para>Scale used for inverse transforms.  Setting InverseScale to 0 causes the default value of 1/N to be used,  where N is the product of the transformed dimension lengths.</para></param>	
             <returns>Returns one of the return codes described in the topic Direct3D 11 Return Codes.</returns>	
             <remarks>	
-            SetInverseScale sets the scale used by <see cref="M:SharpDX.Direct3D11.FastFourierTransform.InverseTransform(SharpDX.Direct3D11.UnorderedAccessView,SharpDX.Direct3D11.UnorderedAccessView)"/>.	
+            SetInverseScale sets the scale used by <see cref="M:SharpDX.Direct3D11.FastFourierTransform.InverseTransform(SharpDX.Direct3D11.UnorderedAccessView)"/>.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX11FFT::SetInverseScale']/*"/>	
             <unmanaged>HRESULT ID3DX11FFT::SetInverseScale([In] float InverseScale)</unmanaged>	
@@ -7295,7 +7339,7 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX11FFT::AttachBuffersAndPrecompute']/*"/>	
             <unmanaged>HRESULT ID3DX11FFT::AttachBuffersAndPrecompute([In] unsigned int NumTempBuffers,[In, Buffer] const ID3D11UnorderedAccessView** ppTempBuffers,[In] unsigned int NumPrecomputeBuffers,[In, Buffer] const ID3D11UnorderedAccessView** ppPrecomputeBufferSizes)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D11.FastFourierTransform.ForwardTransform(SharpDX.Direct3D11.UnorderedAccessView,SharpDX.Direct3D11.UnorderedAccessView)">
+        <member name="M:SharpDX.Direct3D11.FastFourierTransform.ForwardTransform(SharpDX.Direct3D11.UnorderedAccessView,System.IntPtr@)">
             <summary>	
             Performs a forward FFT.	
             </summary>	
@@ -7306,9 +7350,9 @@
             ForwardTransform can be called after buffers have been attached to the context using <see cref="M:SharpDX.Direct3D11.FastFourierTransform.AttachBuffersAndPrecompute(SharpDX.Direct3D11.UnorderedAccessView[],SharpDX.Direct3D11.UnorderedAccessView[])"/>. The combination of pInputBuffer and *ppOuputBuffer can be one of the temp buffers.The format of complex data is interleaved components (for example, (Real0, Imag0),  (Real1, Imag1) ... , and so on). Data is stored in row major order.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX11FFT::ForwardTransform']/*"/>	
-            <unmanaged>HRESULT ID3DX11FFT::ForwardTransform([In] const ID3D11UnorderedAccessView* pInputBuffer,[InOut] ID3D11UnorderedAccessView** ppOutputBuffer)</unmanaged>	
+            <unmanaged>HRESULT ID3DX11FFT::ForwardTransform([In] const ID3D11UnorderedAccessView* pInputBuffer,[InOut] void** ppOutputBuffer)</unmanaged>	
         </member>
-        <member name="M:SharpDX.Direct3D11.FastFourierTransform.InverseTransform(SharpDX.Direct3D11.UnorderedAccessView,SharpDX.Direct3D11.UnorderedAccessView)">
+        <member name="M:SharpDX.Direct3D11.FastFourierTransform.InverseTransform(SharpDX.Direct3D11.UnorderedAccessView,System.IntPtr@)">
             <summary>	
             Performs an inverse FFT.	
             </summary>	
@@ -7316,7 +7360,7 @@
             <param name="outputBufferOut"><para>Pointer to a <see cref="T:SharpDX.Direct3D11.UnorderedAccessView"/> reference.  If *ppOutput is <c>null</c>, then the computation will switch between temp buffers; in addition, the last buffer written to is stored at *ppOutput. Otherwise, *ppOutput is used as the output buffer (which might incur an extra copy).</para></param>	
             <returns>Returns one of the return codes described in the topic Direct3D 11 Return Codes.</returns>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3DX11FFT::InverseTransform']/*"/>	
-            <unmanaged>HRESULT ID3DX11FFT::InverseTransform([In] const ID3D11UnorderedAccessView* pInputBuffer,[InOut] ID3D11UnorderedAccessView** ppOutputBuffer)</unmanaged>	
+            <unmanaged>HRESULT ID3DX11FFT::InverseTransform([In] const ID3D11UnorderedAccessView* pInputBuffer,[InOut] void** ppOutputBuffer)</unmanaged>	
         </member>
         <member name="P:SharpDX.Direct3D11.FastFourierTransform.BufferRequirements">
             <summary>
@@ -18089,6 +18133,16 @@
             <param name = "channel">One or more flag specifying the source of height information.</param>
             <param name = "amplitude">Constant value multiplier that increases (or decreases) the values in the normal map. Higher values usually make bumps more visible, lower values usually make bumps less visible.</param>
             <returns>A <see cref = "T:SharpDX.Result" /> object describing the result of the operation.</returns>
+        </member>
+        <member name="M:SharpDX.Direct3D11.Texture2D.SHProjectCubeMap(SharpDX.Direct3D11.DeviceContext,SharpDX.Direct3D11.Texture2D,System.Int32)">
+            <summary>	
+            Projects a function represented in a cube map into spherical harmonics.	
+            </summary>	
+            <param name="context"><para>A reference to an <see cref="T:SharpDX.Direct3D11.DeviceContext"/> object.</para></param>	
+            <param name="cubeMap"><para>A reference to an <see cref="T:SharpDX.Direct3D11.Texture2D"/> that represents a cubemap that is going to be projected into spherical harmonics.</para></param>	
+            <param name="order"><para>Order of the SH evaluation, generates Order^2 coefficients whose degree is Order-1. Valid range is between 2 and 6.</para></param>	
+            <returns>An array of SH Vector for red, green and blue components with a length Order^2.</returns>	
+            <unmanaged>HRESULT D3DX11SHProjectCubeMap([In] ID3D11DeviceContext* pContext,[In] unsigned int Order,[In] ID3D11Texture2D* pCubeMap,[Out, Buffer] float* pROut,[Out, Buffer, Optional] float* pGOut,[Out, Buffer, Optional] float* pBOut)</unmanaged>	
         </member>
         <member name="P:SharpDX.Direct3D11.Texture2D.Description">
             <summary>	
