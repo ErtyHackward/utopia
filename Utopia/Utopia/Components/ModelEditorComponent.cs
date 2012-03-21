@@ -1072,6 +1072,49 @@ namespace Utopia.Components
                 RebuildFrameVertices();
             }
         }
+
+
+        private void OnOutlinePresetPressed()
+        {
+            if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
+            {
+                // fill the frame 
+                var frame = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
+
+                // clear everything
+                frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
+
+                int xMax = frame.ChunkSize.X - 1;
+                int yMax = frame.ChunkSize.Y - 1;
+                int zMax = frame.ChunkSize.Z - 1;
+
+
+                for (int x = 0; x < frame.ChunkSize.X; x++)
+                {
+                    for (int y = 0; y < frame.ChunkSize.Y; y++)
+                    {
+                        for (int z = 0; z < frame.ChunkSize.Z; z++)
+                        {
+                            int n = 0;
+                            if (x == 0) n++;
+                            if (y == 0) n++;
+                            if (z == 0) n++;
+                            if (x == xMax) n++;
+                            if (y == yMax) n++;
+                            if (z == zMax) n++;
+                            
+                            if (n > 1)
+                            {
+                             frame.SetBlock(new Vector3I(x,y,z), (byte)(_selectedColorIndex + 1));                                       
+                            }
+                        }
+                    }
+                }
+
+                RebuildFrameVertices();
+            }
+        }
+
         #endregion
 
         private void OnToolSelected(int toolIndex)
