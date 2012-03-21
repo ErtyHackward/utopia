@@ -437,6 +437,11 @@ namespace Utopia.Components
             spherePresetButton.Pressed += delegate { OnSpherePresetPressed(); };
             _frameToolsGroup.Children.Add(spherePresetButton);
 
+            var outlinePresetButton = new ButtonControl { Text = "Outline", Bounds = new UniRectangle(0, 0, 50, 20) };
+            outlinePresetButton.Pressed += delegate { OnOutlinePresetPressed(); };
+            _frameToolsGroup.Children.Add(outlinePresetButton);
+
+
             _frameToolsGroup.Children.Add(new LabelControl { Text = "Colors", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
             _colorPaletteGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 200), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
