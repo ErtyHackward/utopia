@@ -161,7 +161,7 @@ namespace Utopia.Worlds.Chunks
             //    // Setup the rotation the billboard at the origin using the world matrix.
             //    D3DXMatrixRotationY(&worldMatrix, rotation);
 
-            _staticSpriteEffect.CBPerFrameLocal.Values.View = Matrix.RotationQuaternion(_camManager.ActiveCamera.YAxisOrientation);
+            _staticSpriteEffect.CBPerFrameLocal.Values.View = Matrix.RotationQuaternion(Quaternion.Conjugate(_camManager.ActiveCamera.YAxisOrientation));
             _staticSpriteEffect.CBPerFrameLocal.Values.WindPower = _weather.Wind.FlatWindFlowNormalizedWithNoise;
             _staticSpriteEffect.CBPerFrameLocal.Values.KeyFrameAnimation = (float)_weather.Wind.KeyFrameAnimation;
             _staticSpriteEffect.CBPerFrameLocal.IsDirty = true;

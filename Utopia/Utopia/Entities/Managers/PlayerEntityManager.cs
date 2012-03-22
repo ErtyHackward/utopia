@@ -462,6 +462,7 @@ namespace Utopia.Entities.Managers
             //Backup previous values
             _lookAtDirection.BackUpValue();
             _worldPosition.BackUpValue();
+            _cameraYAxisOrientation.BackUpValue();
 
             //Rotation with mouse
             EntityRotationsOnEvents(Player.DisplacementMode);
@@ -751,6 +752,7 @@ namespace Utopia.Entities.Managers
         {
             //TODO FIXME NAsty bug here, not a number float arithmetic exception sometimes - surely a server side fix to do !
             Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
+            Quaternion.Slerp(ref _cameraYAxisOrientation.ValuePrev, ref _cameraYAxisOrientation.Value, interpolationLd, out _cameraYAxisOrientation.ValueInterp);
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 
             //TODO To remove when Voxel Entity merge will done with Entity

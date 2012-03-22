@@ -47,11 +47,10 @@ namespace Sandbox.Client
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             
+            //Load Client config XML file
             LoadClientsSettings();
+            //Bings all components
             IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 600));
-
-            _clientFactory = new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>());
-            _iocContainer.Bind<EntityFactory>().ToConstant(_clientFactory).InSingletonScope().Named("Client");
 
             System.Net.ServicePointManager.Expect100Continue = false;
 
@@ -112,7 +111,7 @@ namespace Sandbox.Client
             stateManager.ActivateGameStateAsync("Login");
 #endif
 
-            game.Run();
+            game.Run(); //Start the Main render loop
 
             _iocContainer.Dispose();
 

@@ -84,6 +84,7 @@ namespace Sandbox.Client
             //iocContainer.Bind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
             _iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
 
+
             //System Objects Management ================================
             _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope().WithConstructorArgument("allocatedThreadPool", 3); //Application shared states
             _iocContainer.Bind<ICameraFocused>().To<FirstPersonCameraWithFocus>().InSingletonScope().WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
@@ -196,6 +197,7 @@ namespace Sandbox.Client
             //Debug Components ===========================================
             _iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope();
             //=============================================================
+
         }
     }
 }

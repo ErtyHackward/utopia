@@ -83,13 +83,8 @@ namespace Sandbox.Client.States
             _ioc = ioc;
         }
 
-        public override void OnEnabled(GameState previousState)
-        {
-            SmartThread.ThreadPool.QueueWorkItem(GameplayInitialize);
-            
-            base.OnEnabled(previousState);
-        }
-
+        //State Initialization =>
+        //Add Loading screen animation, and ServerComponent
         public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
             var loading = _ioc.Get<LoadingComponent>();
@@ -101,8 +96,17 @@ namespace Sandbox.Client.States
             base.Initialize(context);
         }
 
-        private void GameplayInitialize()
+        //The state is enabled, start loading other components in background while the Loading is shown
+        public override void OnEnabled(GameState previousState)
         {
+            SmartThread.ThreadPool.QueueWorkItem(GameplayInitializeAsync);
+
+            base.OnEnabled(previousState);
+        }
+
+        private void GameplayInitializeAsync()
+        {
+            //The first time itz goes here, the server component will be null
             if (_serverComponent == null)
             {
                 _serverComponent = _ioc.Get<ServerComponent>();
@@ -117,7 +121,7 @@ namespace Sandbox.Client.States
 
             if (_vars.SinglePlayer)
             {
-                #region Initialize the local server
+                #region Initialize the local server first single player game
                 if (_server == null)
                 {
                     _serverFactory = new SandboxEntityFactory(null);
@@ -220,7 +224,6 @@ namespace Sandbox.Client.States
 
         private void GameplayComponentsCreation()
         {
-            //GameComponents.Add(new DebugComponent(this, _d3dEngine, _renderStates.screen, _renderStates.gameStatesManager, _renderStates.actionsManager, _renderStates.playerEntityManager));
 
             var worldParam = new WorldParameters
             {
