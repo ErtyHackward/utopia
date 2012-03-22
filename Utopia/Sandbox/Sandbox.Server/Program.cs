@@ -79,7 +79,12 @@ namespace Sandbox.Server
 
             _iocContainer.Bind<EntityFactory>().ToConstant(serverFactory).InSingletonScope();
 
-            IocBind(new WorldParameters());
+            IocBind(new WorldParameters()
+            {
+                Seed = 12695362,
+                SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2
+            }
+            );
 
             var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
 

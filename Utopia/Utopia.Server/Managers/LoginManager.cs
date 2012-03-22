@@ -165,8 +165,8 @@ namespace Utopia.Server.Managers
                 {
                     ChunkSize = AbstractChunk.ChunkSize,
                     MaxViewRange = 32,
-                    WorldSeed = _server.LandscapeManager.WorldGenerator.WorldParametes.Seed,
-                    WaterLevel = _server.LandscapeManager.WorldGenerator.WorldParametes.SeaLevel,
+                    WorldSeed = _server.LandscapeManager.WorldGenerator.WorldParameters.Seed,
+                    WaterLevel = _server.LandscapeManager.WorldGenerator.WorldParameters.SeaLevel,
                     PlanGenerationParameters = GenerationParameters
                 };
                 connection.SendAsync(gameInfo);

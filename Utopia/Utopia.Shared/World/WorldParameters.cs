@@ -8,15 +8,10 @@ namespace Utopia.Shared.World
     /// </summary>
     public class WorldParameters
     {
-        /// <summary>
-        /// World size in chunk unit (width and length)
-        /// </summary>
-        public Vector2I WorldChunkSize { get; set; }
-
-        /// <summary>
-        /// Indicates if world is infinite of final
-        /// </summary>
-        public bool IsInfinite { get; set; }
+        ///// <summary>
+        ///// World size in chunk unit (width and length)
+        ///// </summary>
+        //public Vector2I WorldChunkSize { get; set; }
 
         /// <summary>
         /// Base seed to use in random initializers
@@ -30,9 +25,6 @@ namespace Utopia.Shared.World
 
         public WorldParameters()
         {
-            //Define default values
-            SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2;
-            Seed = 12695362;
         }
     }
 }
