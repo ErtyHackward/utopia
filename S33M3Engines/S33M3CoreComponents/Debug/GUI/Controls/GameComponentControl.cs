@@ -203,7 +203,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
 
             ColumnTitles = ToDispose(new LabelControl());
             ColumnTitles.FontStyle = System.Drawing.FontStyle.Bold;
-            ColumnTitles.Bounds = new UniRectangle(150.0f, 5.0f, 110.0f, 18.0f);
+            ColumnTitles.Bounds = new UniRectangle(150.0f, 5.0f, 90.0f, 18.0f);
             ColumnTitles.Text = "Updating";
             ColumnTitles.Color = Colors.DarkBlue;
             ColumnTitles.WithForcedColor = true;
@@ -334,9 +334,12 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
                 }
             }
 
-            if(_sortDescending){
+            if (_sortDescending)
+            {
                 GameCompHolders = GameCompHolders.OrderByDescending(x => x.OrderId).ToList();
-            }else{
+            }
+            else
+            {
                 GameCompHolders = GameCompHolders.OrderBy(x => x.OrderId).ToList();
             }
 
