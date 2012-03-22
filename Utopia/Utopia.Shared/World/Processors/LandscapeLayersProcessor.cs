@@ -171,62 +171,62 @@ namespace Utopia.Shared.World.Processors
                                 {
                                     Cubes[index] = CubeId.Grass;
 
-                                    if (randomizer.NextDouble() < 0.005d)
-                                    {
-                                        //AddTree(chunk, new Vector3I(X, Y + 1, Z));
-                                    }
-                                    else
-                                        if (randomizer.NextDouble() < 0.03)
-                                        {
-                                            double result = randomizer.NextDouble();
-                                            var globalPos = new Vector3D(X + 0.5, Y + 1, Z + 0.5);
-                                            if (result <= 0.4)
-                                            {
-                                                var grass = _factory.CreateEntity<Grass>();
+                                    //if (randomizer.NextDouble() < 0.005d)
+                                    //{
+                                    //    //AddTree(chunk, new Vector3I(X, Y + 1, Z));
+                                    //}
+                                    //else
+                                    //    if (randomizer.NextDouble() < 0.03)
+                                    //    {
+                                    //        double result = randomizer.NextDouble();
+                                    //        var globalPos = new Vector3D(X + 0.5, Y + 1, Z + 0.5);
+                                    //        if (result <= 0.4)
+                                    //        {
+                                    //            var grass = _factory.CreateEntity<Grass>();
 
-                                                grass.GrowPhase = (byte)randomizer.Next(0, 5);
-                                                grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                grass.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+                                    //            grass.GrowPhase = (byte)randomizer.Next(0, 5);
+                                    //            grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                    //            grass.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
-                                                chunk.Entities.Add(grass);
-                                            }
-                                            else if (result <= 0.6)
-                                            {
-                                                var entity = _factory.CreateEntity<Flower1>();
+                                    //            chunk.Entities.Add(grass);
+                                    //        }
+                                    //        else if (result <= 0.6)
+                                    //        {
+                                    //            var entity = _factory.CreateEntity<Flower1>();
 
-                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+                                    //            entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                    //            entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
-                                                chunk.Entities.Add(entity);
-                                            }
-                                            else if (result <= 0.7)
-                                            {
-                                                var entity = _factory.CreateEntity<Flower2>();
+                                    //            chunk.Entities.Add(entity);
+                                    //        }
+                                    //        else if (result <= 0.7)
+                                    //        {
+                                    //            var entity = _factory.CreateEntity<Flower2>();
 
-                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+                                    //            entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                    //            entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
-                                                chunk.Entities.Add(entity);
-                                            }
-                                            else if (result <= 0.9)
-                                            {
-                                                var entity = _factory.CreateEntity<Mushr1>();
+                                    //            chunk.Entities.Add(entity);
+                                    //        }
+                                    //        else if (result <= 0.9)
+                                    //        {
+                                    //            var entity = _factory.CreateEntity<Mushr1>();
 
-                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+                                    //            entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                    //            entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
-                                                chunk.Entities.Add(entity);
-                                            }
-                                            else if (result <= 1)
-                                            {
-                                                var entity = _factory.CreateEntity<Mushr2>();
+                                    //            chunk.Entities.Add(entity);
+                                    //        }
+                                    //        else if (result <= 1)
+                                    //        {
+                                    //            var entity = _factory.CreateEntity<Mushr2>();
 
-                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+                                    //            entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                    //            entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
-                                                chunk.Entities.Add(entity);
-                                            }
-                                        }
+                                    //            chunk.Entities.Add(entity);
+                                    //        }
+                                    //    }
 
 
 

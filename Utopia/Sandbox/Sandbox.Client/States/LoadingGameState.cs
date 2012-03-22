@@ -58,6 +58,7 @@ using S33M3CoreComponents.WorldFocus.Interfaces;
 using S33M3DXEngine;
 using S33M3CoreComponents.Debug;
 using Utopia.Components;
+using Utopia.Shared.Interfaces;
 
 namespace Sandbox.Client.States
 {
@@ -111,12 +112,6 @@ namespace Sandbox.Client.States
             {
                 _serverComponent = _ioc.Get<ServerComponent>();
                 _serverComponent.ConnectionInitialized += ServerComponentConnectionInitialized;
-
-                var wp = _ioc.Get<WorldParameters>();
-
-                // client world generator
-                var clientGeneratpr = new WorldGenerator(wp, new PlanWorldProcessor(wp, _ioc.Get<EntityFactory>("Client")));
-                _ioc.Bind<WorldGenerator>().ToConstant(clientGeneratpr).InSingletonScope();
             }
 
             if (_vars.SinglePlayer)
@@ -134,15 +129,21 @@ namespace Sandbox.Client.States
 
                     // create a server generator
                     var wp = _ioc.Get<WorldParameters>();
-                    var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
-                    var worldGenerator = new WorldGenerator(wp, planProcessor);
+                    wp.SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2;
+                    wp.Seed = 12695362;
+
+                    IWorldProcessor processor1 = new s33m3WorldProcessor(wp);
+                    IWorldProcessor processor2 = new LandscapeLayersProcessor(wp, _serverFactory);
+                    var worldGenerator = new WorldGenerator(wp, processor1, processor2);
+                    //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
+                    //var worldGenerator = new WorldGenerator(wp, planProcessor);
 
                     _server = new Server(settings, worldGenerator, sqliteStorage, sqliteStorage, sqliteStorage, _serverFactory);
                     _serverFactory.LandscapeManager = _server.LandscapeManager;
                     _server.ConnectionManager.LocalMode = true;
                     _server.ConnectionManager.Listen();
                     _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
-                    _server.LoginManager.GenerationParameters = planProcessor.WorldPlan.Parameters;
+                    _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
                     _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
                 }
                 #endregion
@@ -224,23 +225,29 @@ namespace Sandbox.Client.States
 
         private void GameplayComponentsCreation()
         {
-
-            var worldParam = new WorldParameters
+            //_ioc.Get<ServerComponent>().GameInformations was set by the MessageGameInformation received by the server
+            WorldParameters clientSideworldParam = new WorldParameters
             {
-                IsInfinite = true,
                 Seed = _ioc.Get<ServerComponent>().GameInformations.WorldSeed,
-                SeaLevel = _ioc.Get<ServerComponent>().GameInformations.WaterLevel,
-                WorldChunkSize = new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize,   //Define the visible Client chunk size
-                                                ClientSettings.Current.Settings.GraphicalParameters.WorldSize)
+                SeaLevel = _ioc.Get<ServerComponent>().GameInformations.WaterLevel
             };
 
-            _ioc.Rebind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
+            _ioc.Bind<WorldParameters>().ToConstant(clientSideworldParam).InSingletonScope();  
+
+            // client world generator
+            //var clientGeneratpr = new WorldGenerator(clientSideworldParam, new PlanWorldProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client")));
+            //_ioc.Bind<WorldGenerator>().ToConstant(clientGeneratpr).InSingletonScope();
+
+            IWorldProcessor processor1 = new s33m3WorldProcessor(clientSideworldParam);
+            IWorldProcessor processor2 = new LandscapeLayersProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
+            var worldGenerator = new WorldGenerator(clientSideworldParam, processor1, processor2);
+            _ioc.Bind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 
             // be careful with initialization order
             var serverComponent = _ioc.Get<ServerComponent>();
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
             var wordParameters = _ioc.Get<WorldParameters>();
-            var visualWorldParameters = _ioc.Get<VisualWorldParameters>();
+            var visualWorldParameters = _ioc.Get<VisualWorldParameters>(new ConstructorArgument("visibleChunkInWorld", new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize, ClientSettings.Current.Settings.GraphicalParameters.WorldSize)));
             var firstPersonCamera = _ioc.Get<ICamera>();
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
             var timerManager = _ioc.Get<TimerManager>();
@@ -250,7 +257,7 @@ namespace Sandbox.Client.States
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
             var chat = _ioc.Get<ChatComponent>();
-            var map = _ioc.Get<MapComponent>();
+            //var map = _ioc.Get<MapComponent>();
             var hud = _ioc.Get<Hud>();
             //var entityEditor = _ioc.Get<EntityEditor>();
             //var carvingEditor = _ioc.Get<CarvingEditor>();
@@ -268,7 +275,6 @@ namespace Sandbox.Client.States
             var chunkMeshManager = _ioc.Get<IChunkMeshManager>();
             var worldChunks = _ioc.Get<IWorldChunks>();
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
-            var worldGenerator = _ioc.Get<WorldGenerator>();
             //var worldProcessorConfig = _ioc.Get<IWorldProcessorConfig>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
@@ -306,7 +312,7 @@ namespace Sandbox.Client.States
             AddComponent(pickingRenderer);
             AddComponent(inventory);
             AddComponent(chat);
-            AddComponent(map);
+            //AddComponent(map);
             //AddComponent(entityEditor);
             //AddComponent(carvingEditor);
             AddComponent(skyDome);

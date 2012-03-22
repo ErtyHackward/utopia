@@ -19,7 +19,7 @@ namespace Utopia.Shared.World
         /// <summary>
         /// Gets or sets current world designer
         /// </summary>
-        public WorldParameters WorldParametes { get; set; }
+        public WorldParameters WorldParameters { get; set; }
 
         /// <summary>
         /// Gets a generation stages manager
@@ -37,7 +37,7 @@ namespace Utopia.Shared.World
         public WorldGenerator(WorldParameters worldParameters, params IWorldProcessor[] processors)
         {
             if (worldParameters == null) throw new ArgumentNullException("worldParameters");
-            WorldParametes = worldParameters;
+            WorldParameters = worldParameters;
 
             Stages = new WorldGenerationStagesManager();
             Stages.AddStages(processors);

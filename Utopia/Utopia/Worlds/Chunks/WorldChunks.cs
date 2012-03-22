@@ -227,7 +227,7 @@ namespace Utopia.Worlds.Chunks
             int chunkX = arrayX >> VisualWorldParameters.ChunkPOWsize;
             int chunkZ = arrayZ >> VisualWorldParameters.ChunkPOWsize;
 
-            return Chunks[chunkX + chunkZ * VisualWorldParameters.WorldParameters.WorldChunkSize.X];
+            return Chunks[chunkX + chunkZ * VisualWorldParameters.VisibleChunkInWorld.X];
         }
 
         /// <summary>
@@ -297,7 +297,7 @@ namespace Utopia.Worlds.Chunks
         {
             int Z;
             Z = WorldMinZ;
-            for (int chunkInd = 0; chunkInd < VisualWorldParameters.WorldParameters.WorldChunkSize.Y; chunkInd++)
+            for (int chunkInd = 0; chunkInd < VisualWorldParameters.VisibleChunkInWorld.Y; chunkInd++)
             {
                 yield return GetChunk(FixedX, Z);
                 Z += AbstractChunk.ChunkSize.Z;
@@ -314,7 +314,7 @@ namespace Utopia.Worlds.Chunks
         {
             int X;
             X = WorldMinX;
-            for (int chunkInd = 0; chunkInd < VisualWorldParameters.WorldParameters.WorldChunkSize.X; chunkInd++)
+            for (int chunkInd = 0; chunkInd < VisualWorldParameters.VisibleChunkInWorld.X; chunkInd++)
             {
                 yield return GetChunk(X, FixedZ);
                 X += AbstractChunk.ChunkSize.X;
@@ -438,8 +438,8 @@ namespace Utopia.Worlds.Chunks
             };
 
             //Create the chunks that will be used as "Rendering" array
-            Chunks = new VisualChunk[VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Y];
-            SortedChunks = new VisualChunk[VisualWorldParameters.WorldParameters.WorldChunkSize.X * VisualWorldParameters.WorldParameters.WorldChunkSize.Y];
+            Chunks = new VisualChunk[VisualWorldParameters.VisibleChunkInWorld.X * VisualWorldParameters.VisibleChunkInWorld.Y];
+            SortedChunks = new VisualChunk[VisualWorldParameters.VisibleChunkInWorld.X * VisualWorldParameters.VisibleChunkInWorld.Y];
 
             RangeI cubeRange; //Used to define the blocks inside the chunks
             int arrayX, arrayZ;   //Chunk Array indexes
@@ -450,9 +450,9 @@ namespace Utopia.Worlds.Chunks
             List<Md5Hash> chunkHash = new List<Md5Hash>();
             Md5Hash chunkMD5;
 
-            for (int chunkX = 0; chunkX < VisualWorldParameters.WorldParameters.WorldChunkSize.X; chunkX++)
+            for (int chunkX = 0; chunkX < VisualWorldParameters.VisibleChunkInWorld.X; chunkX++)
             {
-                for (int chunkZ = 0; chunkZ < VisualWorldParameters.WorldParameters.WorldChunkSize.Y; chunkZ++)
+                for (int chunkZ = 0; chunkZ < VisualWorldParameters.VisibleChunkInWorld.Y; chunkZ++)
                 {
                     cubeRange = new RangeI()
                     {
@@ -472,8 +472,8 @@ namespace Utopia.Worlds.Chunks
                     chunk.ReadyToDraw += ChunkReadyToDraw;
 
                     //Store this chunk inside the arrays.
-                    Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
-                    SortedChunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.WorldParameters.WorldChunkSize.X] = chunk;
+                    Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.VisibleChunkInWorld.X] = chunk;
+                    SortedChunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.VisibleChunkInWorld.X] = chunk;
 
                     //Is this chunk inside the Client storae manager ?
                     if (_chunkstorage.ChunkHashes.TryGetValue(chunk.ChunkID, out chunkMD5))
@@ -492,8 +492,8 @@ namespace Utopia.Worlds.Chunks
                         VisualWorldParameters.WorldChunkStartUpPosition.Y / AbstractChunk.ChunkSize.Z
                         ),
                     new Vector2I(
-                        VisualWorldParameters.WorldParameters.WorldChunkSize.X,
-                        VisualWorldParameters.WorldParameters.WorldChunkSize.Y
+                        VisualWorldParameters.VisibleChunkInWorld.X,
+                        VisualWorldParameters.VisibleChunkInWorld.Y
                         )
                     );
 

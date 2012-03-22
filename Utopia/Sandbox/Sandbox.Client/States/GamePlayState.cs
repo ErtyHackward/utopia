@@ -51,7 +51,7 @@ namespace Sandbox.Client.States
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
             var chat = _ioc.Get<ChatComponent>();
-            var map = _ioc.Get<MapComponent>();
+            //var map = _ioc.Get<MapComponent>();
             var hud = _ioc.Get<Hud>();
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
@@ -75,7 +75,7 @@ namespace Sandbox.Client.States
             AddComponent(pickingRenderer);
             AddComponent(inventory);
             AddComponent(chat);
-            AddComponent(map);
+            //AddComponent(map);
             //AddComponent(entityEditor);
             //AddComponent(carvingEditor);
             AddComponent(skyDome);

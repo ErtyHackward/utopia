@@ -15,12 +15,15 @@ namespace Utopia.Shared.World
     public class VisualWorldParameters
     {
         public int ChunkPOWsize;
+
         WorldParameters _worldParameters;
         public WorldParameters WorldParameters
         {
             get { return _worldParameters; }
             set { _worldParameters = value; newWorldParameters();}
         }
+
+        public Vector2I VisibleChunkInWorld; 
 
         public RangeI WorldRange;
         public Vector2I WrapEnd;
@@ -29,13 +32,14 @@ namespace Utopia.Shared.World
         public int WorldVisibleSizeXYZ;
         public Vector2I WorldChunkStartUpPosition;
 
-        public VisualWorldParameters(WorldParameters worldParameters, PlayerCharacter player)
+        public VisualWorldParameters(WorldParameters worldParameters, PlayerCharacter player, Vector2I visibleChunkInWorld)
         {
+            VisibleChunkInWorld = visibleChunkInWorld;
             WorldParameters = worldParameters;
 
             //Find the chunk location
-            int X = (MathHelper.Fastfloor(player.Position.X / 16) * 16) - ((worldParameters.WorldChunkSize.X / 2) * 16);
-            int Z = (MathHelper.Fastfloor(player.Position.Z / 16) * 16) - ((worldParameters.WorldChunkSize.Y / 2) * 16);
+            int X = (MathHelper.Fastfloor(player.Position.X / 16) * 16) - ((VisibleChunkInWorld.X / 2) * 16);
+            int Z = (MathHelper.Fastfloor(player.Position.Z / 16) * 16) - ((VisibleChunkInWorld.Y / 2) * 16);
 
             WorldChunkStartUpPosition = new Vector2I(X, Z);
         }
@@ -44,9 +48,9 @@ namespace Utopia.Shared.World
         {
             WorldVisibleSize = new Vector3I()
             {
-                X = AbstractChunk.ChunkSize.X * _worldParameters.WorldChunkSize.X,
+                X = AbstractChunk.ChunkSize.X * VisibleChunkInWorld.X,
                 Y = AbstractChunk.ChunkSize.Y,
-                Z = AbstractChunk.ChunkSize.Z * _worldParameters.WorldChunkSize.Y,
+                Z = AbstractChunk.ChunkSize.Z * VisibleChunkInWorld.Y,
             };
 
             WorldVisibleSizeXY = WorldVisibleSize.X * WorldVisibleSize.Y;

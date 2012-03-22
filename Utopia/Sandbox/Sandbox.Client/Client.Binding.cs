@@ -54,6 +54,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using S33M3CoreComponents.Debug;
 using S33M3_CoreComponents.Sprites;
+using Utopia.Shared.Entities;
+using Sandbox.Shared;
 
 namespace Sandbox.Client
 {
@@ -108,6 +110,7 @@ namespace Sandbox.Client
             
             //Network Related =============================================
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
+            _iocContainer.Bind<EntityFactory>().ToConstant(new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>())).InSingletonScope().Named("Client");
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ClientWebApi>().ToSelf().InSingletonScope();
@@ -135,7 +138,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
             _iocContainer.Bind<InventoryComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<MapComponent>().ToSelf().InSingletonScope();
+            //_iocContainer.Bind<MapComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
             //_iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
             //_iocContainer.Bind<CarvingEditor>().ToSelf().InSingletonScope();            

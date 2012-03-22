@@ -31,11 +31,8 @@ namespace Sandbox.Client
 {
     public partial class GameClient : IDisposable
     {
-        private static WelcomeScreen _welcomeForm;
-        private ServerComponent _server;
         private IKernel _iocContainer;
         private D3DEngine _d3dEngine;
-        private SandboxEntityFactory _clientFactory;
         
         public GameClient()
         {
@@ -58,7 +55,7 @@ namespace Sandbox.Client
 
             vars.ApplicationDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Utopia.Sandbox");
 
-            NetworkMessageFactory.Instance.EntityFactory = _clientFactory;
+            NetworkMessageFactory.Instance.EntityFactory = _iocContainer.Get<EntityFactory>();
 
             var game = CreateNewGameEngine(_iocContainer); // Create the Rendering
 

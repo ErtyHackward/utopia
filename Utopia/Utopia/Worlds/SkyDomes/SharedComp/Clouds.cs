@@ -31,7 +31,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private VertexBuffer<VertexCubeCloud> _cloudVB2D;
         private IndexBuffer<ushort> _cloudIB;
         private IWeather _weather;
-        private WorldParameters _worldParam;
+        private VisualWorldParameters _visuWorldParam;
         private Vector3I _visibleWorldSize;
         private int _nbrLayer;
         private int _cloudThicknes = 3;
@@ -45,20 +45,20 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         #region Public properties
         #endregion
 
-        public Clouds(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager , IWeather weather, WorldParameters worldParam)
+        public Clouds(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager , IWeather weather, VisualWorldParameters visuWorldParam)
         {
             this.IsDefferedLoadContent = true;
 
             _d3dEngine = d3dEngine;
-            _worldParam = worldParam;
+            _visuWorldParam = visuWorldParam;
             _weather = weather;
             _camManager = camManager;
 
             _visibleWorldSize = new Vector3I()
             {
-                X = AbstractChunk.ChunkSize.X * worldParam.WorldChunkSize.X,
+                X = AbstractChunk.ChunkSize.X * _visuWorldParam.VisibleChunkInWorld.X,
                 Y = AbstractChunk.ChunkSize.Y,
-                Z = AbstractChunk.ChunkSize.Z * worldParam.WorldChunkSize.Y,
+                Z = AbstractChunk.ChunkSize.Z * _visuWorldParam.VisibleChunkInWorld.Y,
             };
         }
 

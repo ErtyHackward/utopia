@@ -49,7 +49,6 @@ namespace Utopia.Network
             GameInformations = e.Message;
         }
 
-
         public ServerComponent()
         {
         }
