@@ -162,7 +162,7 @@ namespace Utopia.Components
 
             #region check for steps sounds
 
-            var r = new Random();
+            Random rnd = new Random();
 
             // foreach dynamic entity
             for (int i = 0; i < _stepsTracker.Count; i++)
@@ -227,13 +227,13 @@ namespace Utopia.Components
                     }
                     else
                     {
-                        //Play a feet step sound only if the block under feet is solid to entity. (No water, no air, ...)
+                        //Play a foot step sound only if the block under feet is solid to entity. (No water, no air, ...)
                         if (GameSystemSettings.Current.Settings.CubesProfile[cubeUnderFeet.Id].IsSolidToEntity)
                         {
                             List<string> sounds;
                             if (_stepsSounds.TryGetValue(cubeUnderFeet.Id, out sounds))
                             {
-                                _soundEngine.Play3D(sounds[r.Next(0, sounds.Count)], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                                _soundEngine.Play3D(sounds[rnd.Next(0, sounds.Count)], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
                             }
                         }
                     }

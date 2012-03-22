@@ -133,12 +133,12 @@
   <Cube>
     <Name>Water</Name>
     <Id>5</Id>
-    <Tex_Top>5</Tex_Top>
-    <Tex_Bottom>5</Tex_Bottom>
-    <Tex_Front>5</Tex_Front>
-    <Tex_Back>5</Tex_Back>
-    <Tex_Left>5</Tex_Left>
-    <Tex_Right>5</Tex_Right>
+    <Tex_Top>21</Tex_Top>
+    <Tex_Bottom>21</Tex_Bottom>
+    <Tex_Front>21</Tex_Front>
+    <Tex_Back>21</Tex_Back>
+    <Tex_Left>21</Tex_Left>
+    <Tex_Right>21</Tex_Right>
     <IsBlockingLight>false</IsBlockingLight>
     <IsSeeThrough>true</IsSeeThrough>
     <IsPickable>false</IsPickable>
@@ -149,7 +149,7 @@
     <FloodingPropagationPower>7</FloodingPropagationPower>
     <CubeFamilly>Liquid</CubeFamilly>
     <LiquidType>FreshWater</LiquidType>
-    <YBlockOffset>0.7</YBlockOffset>
+    <YBlockOffset>0.1</YBlockOffset>
   </Cube>
   <Cube>
     <Name>LightRed</Name>
@@ -560,7 +560,7 @@
     <FloodingPropagationPower>7</FloodingPropagationPower>
     <CubeFamilly>Liquid</CubeFamilly>
     <LiquidType>Ocean</LiquidType>
-    <YBlockOffset>0.7</YBlockOffset>
+    <YBlockOffset>0.1</YBlockOffset>
   </Cube>
   <Cube>
     <Name>Player</Name>
