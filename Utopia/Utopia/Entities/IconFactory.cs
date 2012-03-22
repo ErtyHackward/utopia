@@ -188,7 +188,6 @@ namespace Utopia.Entities
 
             SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, sTexture, Vector2I.Zero);
             spriteTexture.ScreenPosition = new Rectangle(spriteTexture.ScreenPosition.X, spriteTexture.ScreenPosition.Y, spriteTexture.ScreenPosition.X + textureSize, spriteTexture.ScreenPosition.Y + textureSize) ;
-            spriteTexture.Dispose();
             sTexture.Dispose();
 
             //Create the Shadder used to render on the texture.
@@ -243,7 +242,7 @@ namespace Utopia.Entities
                 //Begin Drawing
                 texture.Begin();
 
-                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthDisabled);
 
                 shader.Begin(context);
 
@@ -278,16 +277,16 @@ namespace Utopia.Entities
                 //Draw a sprite for lighting block
                 if (profile.IsEmissiveColorLightSource)
                 {
-                    spriteRenderer.Begin(false);
-                    ByteColor color = new ByteColor(profile.EmissiveColor.R, profile.EmissiveColor.G, profile.EmissiveColor.B, (byte)125);
+                    spriteRenderer.Begin(true);
+                    ByteColor color = new ByteColor(profile.EmissiveColor.R, profile.EmissiveColor.G, profile.EmissiveColor.B, (byte)127);
                     spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, ref color);
-                    spriteRenderer.End(context);
+                    spriteRenderer.EndWithCustomProjection(context, ref texture.Projection2D);
                 }
 
                 //End Drawing
                 texture.End(false);
-                
-                //Texture2D.ToFile<Texture2D>(_d3DEngine.Context, texture.RenderTargetTexture, ImageFileFormat.Png, @"E:\text\Block" + profile.Name + ".png");
+
+                //Texture2D.ToFile<Texture2D>(_d3DEngine.ImmediateContext, texture.RenderTargetTexture, ImageFileFormat.Png, @"E:\text\Block" + profile.Name + ".png");
 
                 //Must be staging as these needs to have CPU read/write access (to create the Texture2d array from them)
                 createdIconsTexture.Add(texture.CloneTexture(ResourceUsage.Staging));
@@ -297,6 +296,7 @@ namespace Utopia.Entities
             _d3DEngine.SetRenderTargetsAndViewPort();
 
             //Dispose temp resource.
+            spriteTexture.Dispose();
             shader.Dispose();
             vb.Dispose();
             ib.Dispose();
