@@ -176,7 +176,6 @@
     <Compile Include="Network\ServerComponent.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UtopiaRenderStates.cs" />
     <Compile Include="Worlds\Chunks\ChunkEntityImpacts\ChunkEntityImpactManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkEntityImpacts\IChunkEntityImpactManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkEntityImpacts\SingleArrayLandscapeCursor.cs" />
