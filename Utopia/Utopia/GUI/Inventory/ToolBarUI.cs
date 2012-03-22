@@ -40,7 +40,7 @@ namespace Utopia.GUI.Inventory
             int nbrButton = 10;
             _buttons = new List<InventoryCell>(nbrButton);
 
-            float fromX = ((bounds.Right.Offset - bounds.Left.Offset) - (ButtonSize * (nbrButton-3))) / 2;
+            float fromX = ((bounds.Right.Offset - bounds.Left.Offset) - (ButtonSize * (nbrButton))) / 2;
 
             for (int x = 0; x < nbrButton; x++)
             {
@@ -48,9 +48,9 @@ namespace Utopia.GUI.Inventory
                 var btn = new InventoryCell(null, iconFactory, new Vector2I(0, x), inputManager)
                               {
                                   Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize)
-                                  
                               };
                 btn.MouseDown += BtnMouseDown;
+
                 
                 if (_player.Toolbar[x] != 0)
                     btn.Slot = new ContainedSlot { Item = _player.FindToolById(_player.Toolbar[x]) };
@@ -80,6 +80,7 @@ namespace Utopia.GUI.Inventory
             foreach (var bt in _buttons)
             {
                 bt.Bounds = new UniRectangle(fromX + (btNbr * ButtonSize), 0, ButtonSize, ButtonSize);
+
                 btNbr++;
             }
         }

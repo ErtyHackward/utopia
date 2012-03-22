@@ -14,6 +14,7 @@ using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Action;
 using S33M3_CoreComponents.Sprites;
 using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3DXEngine.RenderStates;
 
 namespace Utopia.GUI
 {
@@ -155,7 +156,7 @@ namespace Utopia.GUI
             //Clear the Depth Buffer Befor render the GUI !! => This draw must be DONE AFTER ALL other "3D" Draw.
             context.ClearDepthStencilView(_d3DEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
 
-            _spriteRender.Begin(false);
+            _spriteRender.Begin(true);
             _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, ref _crosshair.ColorModifier);
             _spriteRender.End(context);
 
