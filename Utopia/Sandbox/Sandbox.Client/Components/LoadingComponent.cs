@@ -6,6 +6,7 @@ using S33M3DXEngine.Main;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3Resources.Structs;
+using S33M3_CoreComponents.Sprites;
 
 namespace Sandbox.Client.Components
 {
@@ -33,8 +34,7 @@ namespace Sandbox.Client.Components
         {
             _font = ToDispose(new SpriteFont());
             _font.Initialize("Lucida Console", 16f, FontStyle.Bold, true, _engine.Device);
-            _spriteRender = ToDispose(new SpriteRenderer());
-            _spriteRender.Initialize(_engine);
+            _spriteRender = ToDispose(new SpriteRenderer(_engine));
 
             //_materia = new SpriteTexture(_engine.Device, "Images\\materia.png", new Vector2());
             _lastCheck = DateTime.Now;
@@ -59,11 +59,12 @@ namespace Sandbox.Client.Components
 
         public override void Draw(DeviceContext context, int index)
         {
-            _spriteRender.Begin(context, false);
+            _spriteRender.Begin(false);
             context.ClearRenderTargetView(_engine.RenderTarget, new Color4(0, 0, 0, 1));
-            //_spriteRender.Draw(_materia, new SharpDX.Rectangle(100, 100, 357, 324), Color.White);
-            _spriteRender.DrawText(_font, _loadingText, new Vector2(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 100), color);
-            _spriteRender.End();
+
+            Vector2 position = new Vector2(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 100);
+            _spriteRender.DrawText(_font, _loadingText,ref position,ref color);
+            _spriteRender.End(context);
         }
     }
 }

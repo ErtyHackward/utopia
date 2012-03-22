@@ -93,6 +93,7 @@
     <Compile Include="Cameras\FirstPersonCameraWithFocus.cs" />
     <Compile Include="Cameras\Interfaces\ICamera.cs" />
     <Compile Include="Cameras\Interfaces\ICameraFocused.cs" />
+    <Compile Include="Cameras\Interfaces\ICameraManager.cs" />
     <Compile Include="Cameras\Interfaces\ICameraPlugin.cs" />
     <Compile Include="Debug\Components\ColumnChart.cs" />
     <Compile Include="Debug\Components\FPSComponent.cs" />
@@ -221,8 +222,9 @@
     <Compile Include="Physics\States\EntityState.cs" />
     <Compile Include="Physics\Verlet\VerletSimulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sprites\DrawInfo.cs" />
-    <Compile Include="Sprites\SpriteBuffer.cs" />
+    <Compile Include="Sprites\Interfaces\ISpriteRenderer.cs" />
+    <Compile Include="Sprites\SpriteDrawBuffer.cs" />
+    <Compile Include="Sprites\SpriteDrawInfo.cs" />
     <Compile Include="Sprites\SpriteFont.cs" />
     <Compile Include="Sprites\SpriteRenderer.cs" />
     <Compile Include="Sprites\SpriteTexture.cs" />

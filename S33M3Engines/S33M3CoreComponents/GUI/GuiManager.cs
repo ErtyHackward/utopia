@@ -21,6 +21,7 @@ using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
 using S33M3DXEngine.Debug.Interfaces;
 using System.Reflection;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 namespace S33M3CoreComponents.GUI
 {
@@ -56,11 +57,12 @@ namespace S33M3CoreComponents.GUI
         /// </summary>
         public static bool DialogClosed;
 
-        public GuiManager(Screen screen, 
-                          D3DEngine d3DEngine, 
-                          InputsManager inputManager, 
+        public GuiManager(Screen screen,
+                          D3DEngine d3DEngine,
+                          InputsManager inputManager,
                           string skinPath = @"GUI\Skins\Default\Default.skin.xml",
-                          List<Assembly> plugInComponentAssemblies = null)
+                          List<Assembly> plugInComponentAssemblies = null
+                          )
         {
 
             _plugInComponentAssemblies = plugInComponentAssemblies;
@@ -260,7 +262,7 @@ namespace S33M3CoreComponents.GUI
 
             if (ShowDebugInfo)
             {
-                _debugString = string.Format("Gui Draw calls : {0} Items: {1}", v.Graphics.DrawCalls, v.Graphics.DrawItems);
+                _debugString = string.Format("Gui Draw calls : {0} Sprites : {1}", v.Graphics.DrawCalls, v.Graphics.DrawItems);
             }
         }
 

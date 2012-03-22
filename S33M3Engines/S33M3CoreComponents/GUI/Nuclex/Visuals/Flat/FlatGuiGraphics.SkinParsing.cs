@@ -31,6 +31,7 @@ using SharpDX.Direct3D11;
 using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.GUI.Nuclex.Support;
 using System.Drawing;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 {
@@ -423,7 +424,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
                 string contentPath = element.Attribute("contentPath").Value;
 
                 //Create the SpriteTexture
-                SpriteTexture bitmap = new SpriteTexture(_d3dEngine.Device, _resourceDirectory + @"\" + contentPath + ".png", new Vector2(0, 0));
+                SpriteTexture bitmap = new SpriteTexture(_d3dEngine.Device, _resourceDirectory + @"\" + contentPath + ".png", Vector2I.Zero);
 
                 this.bitmaps.Add(bitmapName, bitmap);
             }

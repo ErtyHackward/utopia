@@ -10,14 +10,16 @@ using S33M3CoreComponents.Sprites;
 using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
 using S33M3DXEngine.Debug.Interfaces;
+using S33M3_CoreComponents.Sprites;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 namespace S33M3CoreComponents.Components.Debug
 {
     public class DisplayInfo : DrawableGameComponent
     {
-        SpriteFont _font;
-        SpriteRenderer _spriteRender;
-        Matrix _textPosition = Matrix.Translation(5, 0, 0);
+        private SpriteFont _font;
+        private SpriteRenderer _spriteRender;
+        private Vector2 _textPosition = new Vector2(5, 0);
         private StringBuilder _sb = new StringBuilder();
         private Game _game;
 
@@ -34,7 +36,6 @@ namespace S33M3CoreComponents.Components.Debug
         public DisplayInfo(D3DEngine d3dEngine, Game game)
         {
             _game = game;
-
             _game.GameComponents.ComponentAdded += GameComponents_ComponentAdded;
             _game.GameComponents.ComponentRemoved += GameComponents_ComponentRemoved;
 
@@ -88,8 +89,7 @@ namespace S33M3CoreComponents.Components.Debug
         {
             _font = ToDispose(new SpriteFont());
             _font.Initialize("Lucida Console", 10f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
-            _spriteRender = ToDispose(new SpriteRenderer());
-            _spriteRender.Initialize(_d3dEngine);
+            _spriteRender = ToDispose(new SpriteRenderer(_d3dEngine));
         }
 
         /// <summary>
@@ -112,9 +112,9 @@ namespace S33M3CoreComponents.Components.Debug
         public override void Draw(DeviceContext context, int index)
         {
             //Afficher la console, ou bien les infos !
-            _spriteRender.Begin(context ,false, SpriteRenderer.FilterMode.Point);
-            _spriteRender.DrawText(_font, _sb.ToString(), _textPosition, _fontColor);
-            _spriteRender.End();
+            _spriteRender.Begin(false);
+            _spriteRender.DrawText(_font, _sb.ToString(), ref _textPosition, ref _fontColor, -1, -1, SpriteRenderer.TextFontPosition.RelativeToFontUp);
+            _spriteRender.End(context);
         }
 
     }

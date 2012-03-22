@@ -129,7 +129,7 @@ namespace Utopia.GUI.Inventory
 
         public override void LoadContent(DeviceContext context)
         {
-            _backgroundTex = new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"charactersheet.png", new Vector2(0, 0));
+            _backgroundTex = new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"charactersheet.png", Vector2I.Zero);
 
             _infoWindow = new ItemInfoWindow(_iconFactory, _inputManager);
 

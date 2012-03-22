@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using SharpDX;
+using S33M3Resources.Structs;
 
 
 
@@ -65,7 +66,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
             RectangleF absoluteBounds = control.GetAbsoluteBounds();
             if (control.WithForcedColor)
             {
-                Color4 color = control.Color;
+                ByteColor color = control.Color;
                 graphics.DrawString(styleFrame, ref absoluteBounds, control.Text, ref color, control.Autosizing);
             }
             else

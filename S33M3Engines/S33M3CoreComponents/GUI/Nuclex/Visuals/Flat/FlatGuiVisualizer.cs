@@ -18,7 +18,8 @@ License along with this library
 */
 #endregion
 
-using System; using SharpDX;
+using System;
+using SharpDX;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -28,6 +29,7 @@ using S33M3CoreComponents.GUI.Nuclex.Visuals.Interfaces;
 using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.GUI.Nuclex.Support;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat

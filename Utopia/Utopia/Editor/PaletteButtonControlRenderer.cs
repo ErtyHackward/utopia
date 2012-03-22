@@ -2,6 +2,7 @@
 using RectangleF = S33M3CoreComponents.GUI.Nuclex.RectangleF;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using SharpDX;
+using S33M3Resources.Structs;
 
 namespace Utopia.Editor
 {
@@ -30,7 +31,7 @@ namespace Utopia.Editor
             }
 
             // Draw the button's frame
-            Color4 color = control.Color;
+            ByteColor color = control.Color;
             graphics.DrawElement(states[stateIndex], ref controlBounds, ref color);
 
             RectangleF innerBounds = controlBounds;

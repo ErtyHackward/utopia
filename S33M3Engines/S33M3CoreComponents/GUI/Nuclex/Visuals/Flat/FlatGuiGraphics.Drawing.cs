@@ -23,6 +23,7 @@ using Rectangle = System.Drawing.Rectangle;
 using S33M3CoreComponents.Sprites;
 using System;
 using SharpDX.Direct3D11;
+using S33M3Resources.Structs;
 
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
@@ -30,10 +31,12 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 
     partial class FlatGuiGraphics
     {
+        private ByteColor _defaultColor = Colors.White;
+
         /// <summary>Needs to be called before the GUI drawing process begins</summary>
         public void BeginDrawing()
         {
-            spriteRenderer.Begin(_d3dEngine.ImmediateContext, true, SpriteRenderer.FilterMode.DontSet);
+            spriteRenderer.Begin(true);
 
             DrawCalls = 0;
             DrawItems = 0;
@@ -43,15 +46,15 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         public void FlushPendingData()
         {
             // flushing all pending draw calls to the device
-            spriteRenderer.End();
+            spriteRenderer.End(_d3dEngine.ImmediateContext);
 
             DrawCalls += spriteRenderer.DrawCalls;
-            DrawItems += spriteRenderer.DrawItems;
+            DrawItems += spriteRenderer.SpritesDraw;
         }
 
         public void ContinueDrawing()
         {
-            spriteRenderer.Restart(_d3dEngine.ImmediateContext);
+            spriteRenderer.Restart();
         }
 
         public void SetScissorMode(bool isScissorMode)
@@ -64,11 +67,11 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         public void EndDrawing()
         {
             // flushing all pending draw calls to the device
-            spriteRenderer.End();
+            spriteRenderer.End(_d3dEngine.ImmediateContext);
 
             // update stati
             DrawCalls += spriteRenderer.DrawCalls;
-            DrawItems += spriteRenderer.DrawItems;
+            DrawItems += spriteRenderer.SpritesDraw;
         }
 
         /// <summary>Sets the clipping region for any future drawing commands</summary>
@@ -132,7 +135,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         ///     GUI elements are the basic building blocks of a GUI: 
         ///   </para>
         /// </remarks>
-        public void DrawElement(string frameName, ref RectangleF bounds, ref Color4 color)
+        public void DrawElement(string frameName, ref RectangleF bounds, ref ByteColor color)
         {
             Frame frame = lookupFrame(frameName);
 
@@ -142,18 +145,18 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             for (int index = 0; index < frame.Regions.Length; ++index)
             {
                 Rectangle destinationRegion = calculateDestinationRectangle(ref bounds, ref frame.Regions[index].DestinationRegion);
-
-                spriteRenderer.Draw(frame.Regions[index].Texture, destinationRegion, frame.Regions[index].SourceRegion, color);
+                Rectangle sourceRegion = frame.Regions[index].SourceRegion;
+                spriteRenderer.Draw(frame.Regions[index].Texture, ref destinationRegion, ref sourceRegion, ref color);
             }
         }
 
         public void DrawElement(string frameName, ref RectangleF bounds)
         {
-            Color4 color = Colors.White;
+            ByteColor color = Colors.White;
             DrawElement(frameName, ref bounds, ref color);
         }
 
-        //the 2 DrawCustomTexture methods were added by Simon ! 
+        //the 2 DrawCustomTexture! 
         public void DrawCustomTexture(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0)
         {
 
@@ -161,8 +164,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             var destinationRegion = calculateDestinationRectangle(
               ref bounds, ref offset
             );
-
-            spriteRenderer.Draw(customTex, destinationRegion, new SharpDX.Rectangle(0, 0, customTex.Width, customTex.Height), Colors.White, true, textureArrayIndex);
+            Rectangle srcRegion = new Rectangle(0, 0, customTex.Width, customTex.Height);
+            spriteRenderer.Draw(customTex, ref destinationRegion, ref srcRegion, ref _defaultColor, textureArrayIndex, true);
         }
 
         public void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds)
@@ -173,22 +176,21 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
               ref bounds, ref offset
             );
 
-            spriteRenderer.Draw(customTex, destinationRegion, textureSourceRect, Colors.White);
-
+            spriteRenderer.Draw(customTex, ref destinationRegion, ref textureSourceRect, ref _defaultColor);
         }
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        public void DrawString(string frameName, ref RectangleF bounds, string text, ref Color4 color, bool withMaxWidth, int carretPosition = -1)
+        public void DrawString(string frameName, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return;
 
             var frame = lookupFrame(frameName);
-
-            spriteRenderer.DrawText(frame.Texts[0].Font, text, positionText(ref frame.Texts[0], bounds, text), color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
+            Vector2 position = positionText(ref frame.Texts[0], bounds, text);
+            spriteRenderer.DrawText(frame.Texts[0].Font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
         }
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
@@ -201,8 +203,9 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
                 return;
 
             var frame = lookupFrame(frameName);
-
-            spriteRenderer.DrawText(frame.Texts[0].Font, text, positionText(ref frame.Texts[0], bounds, text), frame.Texts[0].Color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
+            Vector2 position = positionText(ref frame.Texts[0], bounds, text);
+            ByteColor color = frame.Texts[0].Color;
+            spriteRenderer.DrawText(frame.Texts[0].Font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
         }
 
         /// <summary>Measures the extents of a string in the frame's area</summary>

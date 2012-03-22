@@ -12,6 +12,8 @@ using S33M3DXEngine;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Action;
+using S33M3_CoreComponents.Sprites;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.GUI
 {
@@ -80,9 +82,9 @@ namespace Utopia.GUI
         public override void LoadContent(DeviceContext context)
         {
             _crosshair = new SpriteTexture(_d3DEngine.Device, ClientSettings.TexturePack + @"Gui\Crosshair.png", _d3DEngine, _d3DEngine.ViewPort);
+            _crosshair.ColorModifier = new Color4(0, 0, 1, 1);
 
-            _spriteRender = new SpriteRenderer();
-            _spriteRender.Initialize(_d3DEngine);
+            _spriteRender = new SpriteRenderer(_d3DEngine);
 
             _font = new SpriteFont();
             _font.Initialize("Lucida Console", 10f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
@@ -153,9 +155,9 @@ namespace Utopia.GUI
             //Clear the Depth Buffer Befor render the GUI !! => This draw must be DONE AFTER ALL other "3D" Draw.
             context.ClearDepthStencilView(_d3DEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
 
-            _spriteRender.Begin(context, true, SpriteRenderer.FilterMode.Linear);
-            _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, new Color4(0, 0, 1, 1));
-            _spriteRender.End();
+            _spriteRender.Begin(false);
+            _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, ref _crosshair.ColorModifier);
+            _spriteRender.End(context);
 
         }
 

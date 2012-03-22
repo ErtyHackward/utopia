@@ -127,6 +127,9 @@ namespace S33M3DXEngine.Effects.HLSLFramework
                 {
                     using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null))
                     {
+                        //Log Compilation Warning
+                        if (bytecode.Message != null) logger.Warn("Vertex Shader [{0}] compilation message returned :\n{1}", _fileName, bytecode.Message);
+
                         //Get the VS Input signature from the Vertex Shader
                         _signature = ToDispose(ShaderSignature.GetInputSignature(bytecode));
                         //Create the inputLayout from the signature (Must Match the Vertex Format used with this effect !!!)
@@ -159,6 +162,9 @@ namespace S33M3DXEngine.Effects.HLSLFramework
                 {
                     using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null))
                     {
+                        //Log Compilation Warning
+                        if (bytecode.Message != null) logger.Warn("Geometry Shader [{0}] compilation message returned :\n{1}", _fileName, bytecode.Message);
+
                         _gs = ToDispose(new GeometryShader(device, bytecode));
 #if DEBUG
                         //Set resource Name, will only be done at debug time.
@@ -187,6 +193,8 @@ namespace S33M3DXEngine.Effects.HLSLFramework
                 {
                     using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null))
                     {
+                        //Log Compilation Warning
+                        if (bytecode.Message != null) logger.Warn("Pixel Shader [{0}] compilation message returned :\n{1}", _fileName, bytecode.Message);
 
                         _ps = ToDispose(new PixelShader(device, bytecode));
 #if DEBUG

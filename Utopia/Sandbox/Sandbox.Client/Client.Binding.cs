@@ -53,6 +53,7 @@ using Utopia.Action;
 using System.Collections.Generic;
 using System.Reflection;
 using S33M3CoreComponents.Debug;
+using S33M3_CoreComponents.Sprites;
 
 namespace Sandbox.Client
 {

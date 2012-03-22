@@ -8,6 +8,8 @@ using SharpDX.Direct3D;
 using System.Drawing.Imaging;
 using System.Drawing;
 using S33M3DXEngine;
+using S33M3Resources.Structs;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace S33M3CoreComponents.Sprites
 {
@@ -15,16 +17,12 @@ namespace S33M3CoreComponents.Sprites
     {
         private D3DEngine _d3dEngine;
         public ShaderResourceView Texture;
+        public ByteColor ColorModifier;
 
         public int Width;
         public int Height;
 
-        public Matrix ScreenPosition;
-
-        /// <summary>
-        /// otional index of texture in texture array
-        /// </summary>
-        public int Index;
+        public Rectangle ScreenPosition;
 
         /// <summary>
         /// Use this Constructor the Force the centering of the spriteTexture to the ViewPort !
@@ -39,8 +37,8 @@ namespace S33M3CoreComponents.Sprites
         {
             Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath);
             CreateResource(device, tex,
-                           new Vector2((currentViewPort.Width / 2) - (tex.Description.Width / 2),
-                                       (currentViewPort.Height) / 2 - (tex.Description.Height / 2)));
+                           new Vector2I((int)(currentViewPort.Width / 2) - (tex.Description.Width / 2),
+                                        (int)(currentViewPort.Height) / 2 - (tex.Description.Height / 2)));
 
             _d3dEngine = d3dEngine;
             _d3dEngine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
@@ -53,18 +51,17 @@ namespace S33M3CoreComponents.Sprites
         //Refresh Sprite Centering when the viewPort size change !
         private void D3dEngine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
-            ScreenPosition.M41 = (viewport.Width / 2) - (Width / 2);
-            ScreenPosition.M42 = (viewport.Height / 2) - (Height / 2);
+            ScreenPosition = new Rectangle((int)(viewport.Width / 2) - (Width / 2), (int)(viewport.Height / 2) - (Height / 2), Width, Height);
         }
 
-        public SpriteTexture(Device device, string texturePath, Vector2 screenPosition)
+        public SpriteTexture(Device device, string texturePath, Vector2I screenPosition)
         {
             Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath);
             CreateResource(device, tex, screenPosition);
             tex.Dispose();
         }
 
-        public SpriteTexture(Device device, Texture2D texture, Vector2 screenPosition)
+        public SpriteTexture(Device device, Texture2D texture, Vector2I screenPosition)
         {
             CreateResource(device, texture, screenPosition);
         }
@@ -74,7 +71,6 @@ namespace S33M3CoreComponents.Sprites
             Texture = textureShader;
             Width = texture.Description.Width;
             Height = texture.Description.Height;
-            ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
         }
 
         public SpriteTexture(int width, int height, ShaderResourceView textureShader, Vector2 screenPosition)
@@ -82,7 +78,6 @@ namespace S33M3CoreComponents.Sprites
             Texture = textureShader;
             Width = width;
             Height = height;
-            ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
         }
 
         public SpriteTexture(Device device, Bitmap image, Vector2 screenPosition, SharpDX.DXGI.Format bitmapFormat)
@@ -122,8 +117,6 @@ namespace S33M3CoreComponents.Sprites
 
             Texture = ToDispose(new ShaderResourceView(device, texture2d, srDesc));
             texture2d.Dispose();
-
-            ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
         }
 
         public unsafe SpriteTexture(Device device, Bitmap image, Vector2 screenPosition, bool B8G8R8A8_UNormSupport)
@@ -188,13 +181,12 @@ namespace S33M3CoreComponents.Sprites
 
             Texture = ToDispose(new ShaderResourceView(device, texture2d, srDesc));
             texture2d.Dispose();
-
-            ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
         }
 
-        private void CreateResource(Device device, Texture2D texture, Vector2 screenPosition)
+        private void CreateResource(Device device, Texture2D texture, Vector2I screenPosition)
         {
-            ScreenPosition = Matrix.Translation(screenPosition.X, screenPosition.Y, 0);
+            ScreenPosition = new Rectangle(screenPosition.X, screenPosition.Y, Width, Height);
+
             //By default all textures will need to be single array texture
 
             ShaderResourceViewDescription viewDesc = new ShaderResourceViewDescription()

@@ -14,6 +14,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.Debug.Components;
 using S33M3CoreComponents.GUI;
 using SharpDX.Direct3D11;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 namespace S33M3CoreComponents.Debug
 {
@@ -49,7 +50,7 @@ namespace S33M3CoreComponents.Debug
             _displayInfo.EnableComponent();
 
             _fps = ToDispose(new FPSComponent());
-            if(withDisplayInfoActivated) _fps.EnableComponent();
+            if (withDisplayInfoActivated) _fps.EnableComponent();
             _fps.ShowDebugInfo = true;
 
             _displayInfo.AddComponants(_fps);
@@ -165,7 +166,7 @@ namespace S33M3CoreComponents.Debug
                             _chart.ScreenPosition = new SharpDX.Rectangle((int)_mainControl.DebugWindow.Bounds.Left.Offset + (int)_mainControl.Dpc.Bounds.Left.Offset + 10,
                                                                     (int)_engine.ViewPort.Height - (int)_mainControl.DebugWindow.Bounds.Bottom.Offset + 10,
                                                                     (int)_mainControl.DebugWindow.Bounds.Left.Offset + (int)_mainControl.Dpc.Bounds.Left.Offset + (int)_mainControl.Dpc.Bounds.Size.X.Offset - 10,
-                                                                    (int)_engine.ViewPort.Height - (int)_mainControl.DebugWindow.Bounds.Bottom.Offset + 150 );
+                                                                    (int)_engine.ViewPort.Height - (int)_mainControl.DebugWindow.Bounds.Bottom.Offset + 150);
 
                             _chart.Draw(context, 0);
                         }

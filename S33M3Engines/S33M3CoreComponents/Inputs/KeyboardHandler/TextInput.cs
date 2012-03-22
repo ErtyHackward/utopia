@@ -70,7 +70,7 @@ namespace S33M3CoreComponents.Inputs.KeyboardHandler
                 switch (Key.Key)
                 {
                     case Keys.Left:
-                        _carretPositionInString--;
+                        if(_carretPositionInString > 0) _carretPositionInString--;
                         break;
                     case Keys.Right:
                         if (_carretPositionInString < _stringBuilder.Length) _carretPositionInString++;
@@ -139,6 +139,7 @@ namespace S33M3CoreComponents.Inputs.KeyboardHandler
 
             foreach (CharKey KeyChar in _keyboardManager.GetPressed())
             {
+                if (KeyChar.isChar && KeyChar.Char == '\r') continue;
                 AddCharacterToDisplay(KeyChar);
                 _textChanged = true;
             }

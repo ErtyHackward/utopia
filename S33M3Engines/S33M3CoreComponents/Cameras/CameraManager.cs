@@ -5,11 +5,12 @@ using System.Text;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras.Interfaces;
 using SharpDX.Direct3D11;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 namespace S33M3CoreComponents.Cameras
 {
     //Class handling the currently active camera.
-    public class CameraManager<CamType> : GameComponent where CamType : ICamera
+    public class CameraManager<CamType> : GameComponent, ICameraManager where CamType : ICamera
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -24,7 +25,11 @@ namespace S33M3CoreComponents.Cameras
             set { ChangeActiveCamera(value); }
         }
 
-        public delegate void CameraChange(ICamera newCamera);
+        public ICamera ActiveBaseCamera
+        {
+            get { return _activeCamera; }
+        }
+
         public event CameraChange ActiveCamera_Changed;
         #endregion
 
