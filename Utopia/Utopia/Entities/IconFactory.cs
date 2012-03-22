@@ -244,6 +244,9 @@ namespace Utopia.Entities
 
                 RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthDisabled);
 
+                //Set sampler
+                shader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+
                 shader.Begin(context);
 
                 shader.CBPerFrame.Values.DiffuseLightDirection = new Vector3(-0.8f, -0.9f, 1.5f) * -1;
@@ -264,7 +267,6 @@ namespace Utopia.Entities
                 shader.CBPerDraw.IsDirty = true;
 
                 shader.DiffuseTexture.Value = _cubesTexture;
-                shader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
 
                 shader.Apply(context);
                 //Set the buffer to the device
