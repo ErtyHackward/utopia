@@ -34,6 +34,14 @@ namespace S33M3CoreComponents.Physics.Verlet
         public List<Impulse> Impulses { get { return _impulses; } }
         public bool WithCollisionBouncing { get { return _withCollisionBounsing; } set { _withCollisionBounsing = value; } }
         public bool SubjectToGravity { get { return _subjectToGravity; } set { _subjectToGravity = value; } }
+        /// <summary>
+        /// Variables that will impact globally all forced applied to the entity
+        /// 0 = All forces are nullified 
+        /// 1 = No change to the forces
+        /// 0.5 = Each forces appleid are divided by 2
+        /// ...
+        /// </summary>
+        public float EnvironmentForceModifier { get; set; }
         public bool OnGround { get { return _onGround; } set { _onGround = value; } }
 
         public Vector3D CurPosition { get { return _curPosition; } set { _curPosition = value; } }
@@ -50,6 +58,7 @@ namespace S33M3CoreComponents.Physics.Verlet
         public void StartSimulation(ref Vector3D StartingPosition, ref Vector3D PreviousPosition)
         {
             _isRunning = true;
+            EnvironmentForceModifier = 1;
             _prevPosition = PreviousPosition;
             _curPosition = StartingPosition;
         }
@@ -87,13 +96,13 @@ namespace S33M3CoreComponents.Physics.Verlet
             _forcesAccum.Z = 0;
 
             if (_subjectToGravity && !_onGround)
-                _forcesAccum.Y += -SimulatorCst.Gravity;
+                _forcesAccum.Y += -(SimulatorCst.Gravity * EnvironmentForceModifier);
 
             for (int ImpulseIndex = 0; ImpulseIndex < _impulses.Count; ImpulseIndex++)
             {
                 if (_impulses[ImpulseIndex].IsActive)
                 {
-                    _forcesAccum += _impulses[ImpulseIndex].ForceApplied;
+                    _forcesAccum += (_impulses[ImpulseIndex].ForceApplied * EnvironmentForceModifier);
                     _impulses[ImpulseIndex].AmountOfTime -= dt.ElapsedGameTimeInS_LD;
                 }
             }

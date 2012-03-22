@@ -183,8 +183,6 @@ namespace Utopia.Entities.Managers
 
             VisualEntity = new VisualVoxelEntity(player, voxelModelManager);
 
-
-
             //Give the Renderer acces to the Voxel buffers, ...
             _playerRenderer.VisualEntity = this;
 
@@ -379,9 +377,12 @@ namespace Utopia.Entities.Managers
                 {
                     //TODO Take into account the Offseting in case of Offseted Water !
                     IsHeadInsideWater = true;
+
+                    if(Player.DisplacementMode == EntityDisplacementModes.Walking) Player.DisplacementMode = EntityDisplacementModes.Swiming;
                 }
                 else
                 {
+                    if (Player.DisplacementMode == EntityDisplacementModes.Swiming) Player.DisplacementMode = EntityDisplacementModes.Walking;
                     IsHeadInsideWater = false;
                 }
             }
@@ -395,7 +396,12 @@ namespace Utopia.Entities.Managers
             {
                 case EntityDisplacementModes.Flying:
                     break;
+                case EntityDisplacementModes.Swiming:
+                    _physicSimu.EnvironmentForceModifier = 0.2f;
+                    PhysicSimulation(ref timeSpent);
+                    break;
                 case EntityDisplacementModes.Walking:
+                    _physicSimu.EnvironmentForceModifier = 1.0f;
                     PhysicSimulation(ref timeSpent);
                     break;
                 default:
@@ -443,7 +449,7 @@ namespace Utopia.Entities.Managers
                     _gravityInfluence = 1;
                     break;
                 case EntityDisplacementModes.Swiming:
-                    _gravityInfluence = 1 / 2; // We will move 2 times slower when swimming
+                    _gravityInfluence = 1 / 2.0f; // We will move 2 times slower when swimming
                     break;
                 default:
                     break;
@@ -477,6 +483,9 @@ namespace Utopia.Entities.Managers
         {
             switch (mode)
             {
+                case EntityDisplacementModes.Swiming:
+                    SwimmingFreeFirstPersonMove(ref timeSpent);
+                    break;
                 case EntityDisplacementModes.Flying:
                     FreeFirstPersonMove();
                     break;
@@ -486,6 +495,32 @@ namespace Utopia.Entities.Managers
                 default:
                     break;
             }
+        }
+
+        private void SwimmingFreeFirstPersonMove(ref GameTime timeSpent)
+        {
+            float jumpPower;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, (7 * _gravityInfluence) + (2 * jumpPower), 0) });
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward, CatchExclusiveAction))
+                _worldPosition.Value += _lookAt * _moveDelta;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward, CatchExclusiveAction))
+                _worldPosition.Value -= _lookAt * _moveDelta;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft, CatchExclusiveAction))
+                _worldPosition.Value -= _entityHeadXAxis * _moveDelta;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight, CatchExclusiveAction))
+                _worldPosition.Value += _entityHeadXAxis * _moveDelta;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Down, CatchExclusiveAction))
+                _worldPosition.Value += Vector3D.Down * _moveDelta;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Up, CatchExclusiveAction))
+                _worldPosition.Value += Vector3D.Up * _moveDelta;
         }
 
         private void FreeFirstPersonMove()
@@ -555,11 +590,9 @@ namespace Utopia.Entities.Managers
 
             switch (mode)
             {
-                case EntityDisplacementModes.Flying:
-                    RotateLookAt(headingDegrees, pitchDegrees);
-                    RotateMove(headingDegrees);
-                    break;
                 case EntityDisplacementModes.Walking:
+                case EntityDisplacementModes.Flying:
+                case EntityDisplacementModes.Swiming:
                     RotateLookAt(headingDegrees, pitchDegrees);
                     RotateMove(headingDegrees);
                     break;
