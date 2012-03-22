@@ -519,7 +519,7 @@ namespace Utopia.Entities.Managers
             if (!_physicSimu.OnGround) _moveDelta /= 2f;
 
             if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 300 + (200 * jumpPower), 0) });
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 7 + (2 * jumpPower), 0) });
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
                 if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f; //Running makes the entity go twice faster

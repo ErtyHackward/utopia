@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System;
 
 namespace Sandbox.Client
 {
@@ -7,6 +8,7 @@ namespace Sandbox.Client
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        [STAThread]
         static void Main(string[] args)
         {
             foreach (string arg in args)
