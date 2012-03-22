@@ -185,7 +185,6 @@ namespace S33M3CoreComponents.Sprites
 
         private void CreateResource(Device device, Texture2D texture, Vector2I screenPosition)
         {
-            ScreenPosition = new Rectangle(screenPosition.X, screenPosition.Y, Width, Height);
 
             //By default all textures will need to be single array texture
 
@@ -205,6 +204,8 @@ namespace S33M3CoreComponents.Sprites
             Texture = new ShaderResourceView(device, texture, viewDesc);
             Width = texture.Description.Width;
             Height = texture.Description.Height;
+
+            ScreenPosition = new Rectangle(screenPosition.X, screenPosition.Y, Width, Height);
         }
 
         public override void Dispose()
