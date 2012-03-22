@@ -634,9 +634,30 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
-        public TerraCube GetCube(Vector3I pos)
+        public TerraCube GetCube(Vector3I pos, bool withYCheck = true)
         {
-            return Cubes[Index(pos.X, pos.Y, pos.Z)];
+            int cubeIndex;
+            if (withYCheck)
+            {
+                if (!IndexSafe(pos.X, pos.Y, pos.Z, out cubeIndex))
+                {
+                    return new TerraCube(CubeId.Error);
+                }
+            }
+            else
+            {
+                cubeIndex = Index(pos.X, pos.Y, pos.Z);
+            }
+
+            var cube = Cubes[cubeIndex];
+
+            var offset = GameSystemSettings.Current.Settings.CubesProfile[cube.Id].YBlockOffset;
+
+            if (offset == 0f || offset > pos.Y % 1)
+                return cube;
+
+            cube.Id = CubeId.Air;
+            return cube;
         }
 
         /// <summary>
@@ -644,10 +665,24 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
-        public TerraCube GetCube(Vector3D pos)
+        public TerraCube GetCube(Vector3D pos, bool withYCheck = true)
         {
             var cubePos = pos.ToCubePosition();
-            var cube = Cubes[Index(cubePos.X, cubePos.Y, cubePos.Z)];
+
+            int cubeIndex;
+            if (withYCheck)
+            {
+                if (!IndexSafe(cubePos.X, cubePos.Y, cubePos.Z, out cubeIndex))
+                {
+                    return new TerraCube(CubeId.Error);
+                }
+            }
+            else
+            {
+                cubeIndex = Index(cubePos.X, cubePos.Y, cubePos.Z);
+            }
+
+            var cube = Cubes[cubeIndex];
 
             var offset = GameSystemSettings.Current.Settings.CubesProfile[cube.Id].YBlockOffset;
 

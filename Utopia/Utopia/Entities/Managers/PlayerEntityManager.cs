@@ -68,7 +68,6 @@ namespace Utopia.Entities.Managers
 
         //Mouvement handling variables
         private VerletSimulator _physicSimu;
-        private EntityDisplacementModes _displacementMode;
         private double _accumPitchDegrees;
         private double _gravityInfluence;
         private float _groundBelowEntity;
@@ -116,11 +115,11 @@ namespace Utopia.Entities.Managers
 
         public EntityDisplacementModes DisplacementMode
         {
-            get { return _displacementMode; }
+            get { return Player.DisplacementMode; }
             set
             {
-                _displacementMode = value;
-                if (_displacementMode == EntityDisplacementModes.Walking)
+                Player.DisplacementMode = value;
+                if (value == EntityDisplacementModes.Walking)
                 {
                     _physicSimu.StartSimulation(ref _worldPosition.Value, ref _worldPosition.Value);
                 }
@@ -209,7 +208,7 @@ namespace Utopia.Entities.Managers
         {
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Mode, CatchExclusiveAction))
             {
-                if (_displacementMode == EntityDisplacementModes.Flying)
+                if (Player.DisplacementMode == EntityDisplacementModes.Flying)
                 {
                     DisplacementMode = EntityDisplacementModes.Walking;
                 }
@@ -435,7 +434,7 @@ namespace Utopia.Entities.Managers
 
         private void RefreshEntityMovementAndRotation(ref GameTime timeSpent)
         {
-            switch (_displacementMode)
+            switch (Player.DisplacementMode)
             {
                 case EntityDisplacementModes.Flying:
                     _gravityInfluence = 3;  // We will move 6 times faster if flying
@@ -459,13 +458,13 @@ namespace Utopia.Entities.Managers
             _worldPosition.BackUpValue();
 
             //Rotation with mouse
-            EntityRotationsOnEvents(_displacementMode);
+            EntityRotationsOnEvents(Player.DisplacementMode);
 
             //Movement
-            EntityMovementsOnEvents(_displacementMode, ref timeSpent);
+            EntityMovementsOnEvents(Player.DisplacementMode, ref timeSpent);
 
             //Physic simulation !
-            PhysicOnEntity(_displacementMode, ref timeSpent);
+            PhysicOnEntity(Player.DisplacementMode, ref timeSpent);
 
             //Send the Actual Position to the Entity object only of it has change !!!
             //The Change check is done at DynamicEntity level

@@ -16,6 +16,8 @@ using Utopia.Shared.Structs;
 using Utopia.Worlds.Chunks.ChunkLandscape;
 using IrrVector3 = IrrKlang.Vector3D;
 using Vector3D = S33M3Resources.Structs.Vector3D;
+using Utopia.Shared.Structs.Landscape;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Components
 {
@@ -65,7 +67,6 @@ namespace Utopia.Components
             _soundEngine = new ISoundEngine();
 
             _stepsTracker.Add(new KeyValuePair<IDynamicEntity, Vector3D>(player, player.Position));
-
         }
 
         void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
@@ -135,7 +136,6 @@ namespace Utopia.Components
             sw.Stop();
 
             _debugInfo = "Sounds playing: " + _sharedSounds.Count + ", Update " + sw.ElapsedMilliseconds + " ms, ";
-
             
             // update all cubes sounds
             if ((Vector3I)_cameraManager.ActiveCamera.WorldPosition != _lastPosition)
@@ -147,7 +147,7 @@ namespace Utopia.Components
 
                 listenRange.Position = _lastPosition - new Vector3I(16,16,16);
 
-                listenRange.Size = new Vector3I(32,32,32);
+                listenRange.Size = new Vector3I(32,32,32); // 32768 block scan around player
 
                 ListenCubes(listenRange);
                 sw.Stop();
@@ -158,7 +158,7 @@ namespace Utopia.Components
 
             PlayClosestSound();
             sw.Stop();
-            _debugInfo += " cubes:" + _listenCubesTime + " ms, select closest: " + sw.ElapsedMilliseconds;
+            _debugInfo += " cubes: " + _listenCubesTime + " ms, select closest: " + sw.ElapsedMilliseconds;
 
             #region check for steps sounds
 
@@ -168,61 +168,77 @@ namespace Utopia.Components
             for (int i = 0; i < _stepsTracker.Count; i++)
             {
                 var pair = _stepsTracker[i];
-                var entity = pair.Key;
+                IDynamicEntity entity = pair.Key;
 
                 // first let's detect if the entity is in air
 
-                var underTheFeets = entity.Position;
+                Vector3D underTheFeets = entity.Position;
                 underTheFeets.Y -= 0.01f;
                 
-                var downCube = _singleArray.GetCube(underTheFeets);
+                TerraCube cubeUnderFeet = _singleArray.GetCube(underTheFeets);
 
-                // no need to play step if the entity is in air
-                if (downCube.Id == CubeId.Air)
+                // no need to play step if the entity is in air or not in walking displacement mode
+                if (cubeUnderFeet.Id == CubeId.Error || 
+                    cubeUnderFeet.Id == CubeId.Air || 
+                    _stepsTracker[i].Key.DisplacementMode !=  Shared.Entities.EntityDisplacementModes.Walking)
                 {
-                    var item = new KeyValuePair<IDynamicEntity, Vector3D>(_stepsTracker[i].Key, entity.Position);
+                    var item = new KeyValuePair<IDynamicEntity, Vector3D>(_stepsTracker[i].Key, entity.Position); //Save the position of the entity
                     _stepsTracker[i] = item;
                     continue;
                 }
 
                 // possible that entity just landed after the jump, so we need to check if the entity was in the air last time to play the landing sound
-                var prevUnderTheFeets = pair.Value;
+                Vector3D prevUnderTheFeets = pair.Value; //Containing the previous DynamicEntity Position
                 prevUnderTheFeets.Y -= 0.01f;
-                var prevCube = _singleArray.GetCube(prevUnderTheFeets);
 
-                double distance;
+                TerraCube prevCube = _singleArray.GetCube(prevUnderTheFeets);
 
-                distance = prevCube.Id == CubeId.Air ? 2.0f : Vector3D.Distance(pair.Value, entity.Position);
+                //Compute the distance between the previous and current position, set to
+                double distance = Vector3D.Distance(pair.Value, entity.Position);
 
                 // do we need to play the step sound?
-                if (distance >= 2.0f)
+                //Trigger only if the difference between previous memorize position and current is > 2.0 meters
+                //Or if the previous position was in the air
+                if (distance >= 2.0f || prevCube.Id == CubeId.Air)
                 {
-                    
-                    var currentCube = _singleArray.GetCube(entity.Position);
+                    TerraCube currentCube = _singleArray.GetCube(entity.Position);
                         
-                    if (currentCube.Id == CubeId.Water && downCube.Id != CubeId.Water) 
+                    //If walking on the ground, but with Feets and legs inside water block
+                    if (currentCube.Id == CubeId.Water && cubeUnderFeet.Id != CubeId.Water)
                     {
-                        var upCube = _singleArray.GetCube(entity.Position + new Vector3I(0, 1, 0));
-                        if (upCube.Id == CubeId.Air)
+                        //If my Head is not inside a Water block (Meaning = I've only the feet inside water)
+                        TerraCube headCube = _singleArray.GetCube(entity.Position + new Vector3I(0, entity.Size.Y, 0));
+                        if (headCube.Id == CubeId.Air)
                         {
                             List<string> sounds;
                             if (_stepsSounds.TryGetValue(currentCube.Id, out sounds))
                             {
-                                //r.Next(0, sounds.Count)
-                                _soundEngine.Play3D(sounds[0], (float) entity.Position.X, (float) entity.Position.Y, (float) entity.Position.Z);
+                                _soundEngine.Play3D(sounds[0], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                            }
+                        }
+                        else
+                        {
+                            if (headCube.Id == CubeId.Water)
+                            {
+                                //Play Sound ??
+                                //Entity having its head, and feet inside water, but "walking" on the ground.
                             }
                         }
                     }
-                    else if (downCube.Id != CubeId.Air)
+                    else
                     {
-                        List<string> sounds;
-                        if (_stepsSounds.TryGetValue(downCube.Id, out sounds))
+                        //Play a feet step sound only if the block under feet is solid to entity. (No water, no air, ...)
+                        if (GameSystemSettings.Current.Settings.CubesProfile[cubeUnderFeet.Id].IsSolidToEntity)
                         {
-                            _soundEngine.Play3D(sounds[r.Next(0, sounds.Count)], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                            List<string> sounds;
+                            if (_stepsSounds.TryGetValue(cubeUnderFeet.Id, out sounds))
+                            {
+                                _soundEngine.Play3D(sounds[r.Next(0, sounds.Count)], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                            }
                         }
                     }
                     
-
+                    //Save the Entity last position.
                     var item = new KeyValuePair<IDynamicEntity, Vector3D>(_stepsTracker[i].Key, entity.Position);
                     _stepsTracker[i] = item;
                 }
@@ -236,8 +252,7 @@ namespace Utopia.Components
         /// <param name="range"></param>
         public void ListenCubes(Range3 range)
         {
-            // remove sounds that are far away
-            
+            // remove sounds that are far away from the sound collection that are out of current player range
             for (int i = _sharedSounds.Count - 1; i >= 0; i--)
             {
                 for (int j = _sharedSounds.Values[i].Value.Count - 1; j >= 0; j--)
@@ -262,17 +277,19 @@ namespace Utopia.Components
             // add new sounds
             foreach (var position in range.AllExclude(_lastRange))
             {
-
+                //Get the block index, checking for World limit on the Y side
                 if (_singleArray.IndexSafe(position.X, position.Y, position.Z, out cubeIndex))
                 {
                     if (_singleArray.Cubes[cubeIndex].Id == CubeId.Water)
                     {
                         var soundPosition = new IrrVector3(position.X + 0.5f, position.Y + 0.5f, position.Z + 0.5f);
 
+                        //Add the 3d position of a sound instance in the collection
                         if (_sharedSounds.ContainsKey("Sounds\\Ambiance\\water_stream.ogg"))
                             _sharedSounds["Sounds\\Ambiance\\water_stream.ogg"].Value.Add(soundPosition);
                         else
                         {
+                            //Add new sound type collection
                             var sound = _soundEngine.Play3D("Sounds\\Ambiance\\water_stream.ogg", soundPosition, true, false, StreamMode.AutoDetect);
                             _sharedSounds.Add("Sounds\\Ambiance\\water_stream.ogg", new KeyValuePair<ISound, List<IrrVector3>>(sound, new List<IrrVector3> { soundPosition }));
                         }
@@ -310,10 +327,6 @@ namespace Utopia.Components
                 pair.Value.Key.Position = position;
             }
         }
-
-
-
-
 
         public bool ShowDebugInfo
         {
