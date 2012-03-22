@@ -305,6 +305,20 @@ namespace S33M3_CoreComponents.Sprites
                 SlopeScaledDepthBias = 0,
             });
 
+            _rasterStateWithScissorId = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription
+            {
+                IsAntialiasedLineEnabled = false,
+                CullMode = CullMode.None,
+                DepthBias = 0,
+                DepthBiasClamp = 1f,
+                IsDepthClipEnabled = true,
+                FillMode = FillMode.Solid,
+                IsFrontCounterClockwise = false,
+                IsMultisampleEnabled = true,
+                IsScissorEnabled = true,
+                SlopeScaledDepthBias = 0,
+            });
+
             var blendDescr = new BlendStateDescription { IndependentBlendEnable = false, AlphaToCoverageEnable = false };
             for (var i = 0; i < 8; i++)
             {

@@ -154,9 +154,9 @@ namespace Utopia.GUI
         public override void Draw(DeviceContext context, int index)
         {
             //Clear the Depth Buffer Befor render the GUI !! => This draw must be DONE AFTER ALL other "3D" Draw.
-            context.ClearDepthStencilView(_d3DEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
+            //context.ClearDepthStencilView(_d3DEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
 
-            _spriteRender.Begin(true);
+            _spriteRender.Begin(false);
             _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, ref _crosshair.ColorModifier);
             _spriteRender.End(context);
 
