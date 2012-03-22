@@ -22,7 +22,6 @@ namespace S33M3CoreComponents.Textures
         private RenderTargetView _renderTargetView;
         private DepthStencilView _depthStencilView;
         private D3DEngine _d3dEngine;
-        private Viewport _viewport;
 
         private Format _textureFormat;
         private int _textureWidth;
@@ -31,6 +30,8 @@ namespace S33M3CoreComponents.Textures
         #endregion
 
         #region Public variables
+        public Viewport Viewport;
+        public Matrix Projection2D;
         public Texture2D RenderTargetTexture;
         public ShaderResourceView ShaderResourceView;
 
@@ -59,12 +60,15 @@ namespace S33M3CoreComponents.Textures
         private void Initialize()
         {
             //ViewPort Initialization
-            _viewport.Height = _textureHeight;
-            _viewport.Width = _textureWidth;
-            _viewport.TopLeftX = 0;
-            _viewport.TopLeftY = 0;
-            _viewport.MinDepth = 0.0f;
-            _viewport.MaxDepth = 1.0f;
+            Viewport.Height = _textureHeight;
+            Viewport.Width = _textureWidth;
+            Viewport.TopLeftX = 0;
+            Viewport.TopLeftY = 0;
+            Viewport.MinDepth = 0.0f;
+            Viewport.MaxDepth = 1.0f;
+
+            //Create the TExture viewport 2D Projection Matrix
+            Matrix.OrthoOffCenterLH(0, Viewport.Width, Viewport.Height, 0, 0, 1, out Projection2D); // Make the 0,0 bottom/left, 1,1 Up/right
 
             // Setup the render target texture description.
             _textureDesc = new Texture2DDescription()
@@ -144,7 +148,7 @@ namespace S33M3CoreComponents.Textures
         {
             _d3dEngine.ImmediateContext.OutputMerger.SetTargets(_depthStencilView, _renderTargetView);
             //Set the viewport associated to the Texture renderer
-            _d3dEngine.ImmediateContext.Rasterizer.SetViewports(_viewport);
+            _d3dEngine.ImmediateContext.Rasterizer.SetViewports(Viewport);
 
             // Clear the back buffer.
             _d3dEngine.ImmediateContext.ClearRenderTargetView(_renderTargetView, _backGroundColor);

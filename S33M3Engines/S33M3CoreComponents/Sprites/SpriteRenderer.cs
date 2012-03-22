@@ -88,10 +88,32 @@ namespace S33M3_CoreComponents.Sprites
             End(context);
         }
 
+        public void EndWithCustomProjection(DeviceContext context, ref Matrix Projection2D)
+        {
+            //ForEach sprite group
+            foreach (SpriteDrawInfo spriteGroup in _spriteBuffer.GetAllSpriteGroups())
+            {
+                _vb.SetData(context, spriteGroup.Vertices.ToArray());
+                _ib.SetData(context, spriteGroup.Indices.ToArray());
+
+                _effect.Begin(context);
+                _effect.SpriteTexture.Value = spriteGroup.Texture.Texture;
+                _effect.CBPerDraw.Values.OrthoProjection = Matrix.Transpose(Projection2D);
+                _effect.CBPerDraw.IsDirty = true;
+                _effect.Apply(context);
+
+                _vb.SetToDevice(context, 0);
+                _ib.SetToDevice(context, 0);
+
+                context.DrawIndexed(_ib.IndicesCount, 0, 0);
+                DrawCalls++;
+                SpritesDraw += _ib.IndicesCount / 6;
+            }
+        }
+
         public void End(DeviceContext context)
         {
             //ForEach sprite group
-
             foreach (SpriteDrawInfo spriteGroup in _spriteBuffer.GetAllSpriteGroups())
             {
                 _vb.SetData(context, spriteGroup.Vertices.ToArray());
