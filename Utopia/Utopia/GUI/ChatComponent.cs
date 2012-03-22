@@ -17,6 +17,8 @@ using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.Inputs;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
+using S33M3_CoreComponents.Sprites;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.GUI
 {
@@ -27,7 +29,7 @@ namespace Utopia.GUI
     {
         SpriteFont _font;
         SpriteRenderer _spriteRender;
-        Matrix _textPosition = Matrix.Translation(5, 200, 0);
+        Vector2 _textPosition = new Vector2(5, 200);
 
         private TextInput _textInput;
         private bool _refreshDisplay;
@@ -130,8 +132,7 @@ namespace Utopia.GUI
         {
             _font = ToDispose( new SpriteFont());
             _font.Initialize("Lucida Console", 12f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
-            _spriteRender = ToDispose(new SpriteRenderer());
-            _spriteRender.Initialize(_d3dEngine);
+            _spriteRender = ToDispose(new SpriteRenderer(_d3dEngine));
         }
 
         private void SetFontAlphaColor(byte color)
@@ -205,7 +206,7 @@ namespace Utopia.GUI
         {
             if (!Activated && _refreshDisplay == false)
             {
-                _spriteRender.ReplayLast();
+                _spriteRender.ReplayLast(context);
                 return;
             }
 
@@ -229,10 +230,10 @@ namespace Utopia.GUI
                 builder.Append(string.Format("{0} {1}", ">", Input));
             }
 
-            _spriteRender.Begin(context, false, SpriteRenderer.FilterMode.Point);
-            _textPosition = Matrix.Translation(5, windowHeight - (100 + _messages.Count * _font.CharHeight), 0);
-            _spriteRender.DrawText(_font, builder.ToString(), _textPosition, _fontColor, -1, -1,  _showCaret);
-            _spriteRender.End();
+            _spriteRender.Begin(false);
+            _textPosition = new Vector2(5, windowHeight - (100 + _messages.Count * _font.CharHeight));
+            _spriteRender.DrawText(_font, builder.ToString(), ref _textPosition, ref _fontColor, -1, _showCaret);
+            _spriteRender.End(context);
             _refreshDisplay = false;
         }
     }

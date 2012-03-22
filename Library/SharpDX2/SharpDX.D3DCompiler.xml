@@ -4,6 +4,28 @@
         <name>SharpDX.D3DCompiler</name>
     </assembly>
     <members>
+        <member name="T:SharpDX.D3DCompiler.CompilationResult">
+            <summary>
+            Shader compilation results.
+            </summary>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.CompilationResult.#ctor(SharpDX.D3DCompiler.ShaderBytecode,SharpDX.Result,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.CompilationResult"/> class.
+            </summary>
+            <param name="bytecode">The bytecode.</param>
+            <param name="resultCode">The result code.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.CompilationResult.op_Implicit(SharpDX.D3DCompiler.CompilationResult)~SharpDX.D3DCompiler.ShaderBytecode">
+            <summary>
+            Performs an implicit conversion from <see cref="T:SharpDX.D3DCompiler.CompilationResult"/> to <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/>.
+            </summary>
+            <param name="input">The input.</param>
+            <returns>
+            The result of the conversion.
+            </returns>
+        </member>
         <member name="T:SharpDX.D3DCompiler.D3D">
             <summary>
             Warming, the following code is manually copied from generated code from Direct3D10 compiler.

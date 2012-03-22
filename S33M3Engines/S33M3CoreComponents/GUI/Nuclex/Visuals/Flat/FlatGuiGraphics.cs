@@ -18,7 +18,8 @@ License along with this library
 */
 #endregion
 
-using System; using SharpDX;
+using System;
+using SharpDX;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -33,6 +34,8 @@ using RasterizerState = SharpDX.Direct3D11.RasterizerState;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3DXEngine;
 using S33M3CoreComponents.Sprites;
+using S33M3_CoreComponents.Sprites;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
@@ -181,7 +184,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             {
                 this.flatGuiGraphics.FlushPendingData();
                 _d3dEngine.ScissorRectangles = this.oldScissorRectangles;
-                this.flatGuiGraphics.SetScissorMode(false);                
+                this.flatGuiGraphics.SetScissorMode(false);
             }
 
             /// <summary>
@@ -213,8 +216,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             _d3dEngine = d3dEngine;
             _resourceDirectory = resourceDirectory;
 
-            this.spriteRenderer = new SpriteRenderer();
-            this.spriteRenderer.Initialize(_d3dEngine);
+            this.spriteRenderer = new SpriteRenderer(_d3dEngine);
 
             this.openingLocator = new OpeningLocator();
             this.stringBuilder = new StringBuilder(64);

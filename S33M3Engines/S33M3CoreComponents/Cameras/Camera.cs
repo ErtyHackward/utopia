@@ -42,8 +42,6 @@ namespace S33M3CoreComponents.Cameras
         protected Matrix _viewProjection3D;
         protected Matrix _worldViewMatrix;
 
-        protected Matrix _projection2D;
-
         protected BoundingFrustum _frustum;
 
         private ICameraPlugin _cameraPlugin;
@@ -71,7 +69,7 @@ namespace S33M3CoreComponents.Cameras
                 {
                     _viewport = _d3dEngine.ViewPort;
                 }
-                return ((Viewport) _viewport);
+                return ((Viewport)_viewport);
             }
             set
             {
@@ -92,7 +90,7 @@ namespace S33M3CoreComponents.Cameras
 
         public Matrix Projection2D
         {
-            get { return _projection2D; }
+            get { return _d3dEngine.Projection2D; }
         }
 
         public Matrix ViewProjection3D
@@ -154,7 +152,7 @@ namespace S33M3CoreComponents.Cameras
         #region Public methods
 
         //Constructors
-        public Camera(D3DEngine d3dEngine, 
+        public Camera(D3DEngine d3dEngine,
                       float nearPlane,
                       float farPlane)
         {
@@ -204,10 +202,9 @@ namespace S33M3CoreComponents.Cameras
         {
             _cameraOrientation = Quaternion.Identity;
 
-            float aspectRatio = Viewport.Width/Viewport.Height;
+            float aspectRatio = Viewport.Width / Viewport.Height;
 
-            Matrix.PerspectiveFovLH((float) Math.PI/3, aspectRatio, NearPlane, FarPlane, out _projection3D);
-            Matrix.OrthoLH(Viewport.Width, Viewport.Height, NearPlane, FarPlane, out _projection2D);
+            Matrix.PerspectiveFovLH((float)Math.PI / 3, aspectRatio, NearPlane, FarPlane, out _projection3D);
 
             if (_frustum == null) _frustum = new BoundingFrustum(Matrix.Identity);
         }

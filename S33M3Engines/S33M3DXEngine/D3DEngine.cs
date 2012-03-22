@@ -21,7 +21,7 @@ namespace S33M3DXEngine
         public static IntPtr WindowHandle;
         //Trick to avoid VertexBuffer PrimitiveTopology change when not needed
         //CANNOT be use in a multithreaded buffer approch !
-        public static bool SingleThreadRenderingOptimization = true; 
+        public static bool SingleThreadRenderingOptimization = true;
 #if DEBUG
         public static bool FULLDEBUGMODE = true;
 #else
@@ -59,6 +59,8 @@ namespace S33M3DXEngine
         public DepthStencilView DepthStencilTarget { get { return _depthStencil; } }
         public Vector2 BackBufferSize;
         public Texture2D BackBufferTex;
+
+        public Matrix Projection2D;
         /// <summary>
         /// Leave at 0:0 to use optimal resolution display.
         /// </summary>
@@ -96,7 +98,7 @@ namespace S33M3DXEngine
         /// <param name="RenderResolution">if not passed or equal to 0;0 then the resolution will be the one from the Windows Size</param>
         public D3DEngine(Size startingSize, string windowCaption, Size renderResolution = default(Size))
         {
-            
+
             //Create the MainRendering Form
             _renderForm = new RenderForm()
             {
@@ -133,7 +135,7 @@ namespace S33M3DXEngine
             {
                 using (Output output = adapter.GetOutput(0))
                 {
-                    B8G8R8A8_UNormSupport = false;                
+                    B8G8R8A8_UNormSupport = false;
                     foreach (var mode in output.GetDisplayModeList(Format.B8G8R8A8_UNorm, DisplayModeEnumerationFlags.Interlaced))
                     {
                         B8G8R8A8_UNormSupport = true;
@@ -175,7 +177,7 @@ namespace S33M3DXEngine
 
         public SharpDX.Rectangle[] ScissorRectangles
         {
-            get 
+            get
             {
                 return ImmediateContext.Rasterizer.GetScissorRectangles();
             }
@@ -228,10 +230,10 @@ namespace S33M3DXEngine
                     BufferCount = 1,
                     Usage = Usage.RenderTargetOutput,
                     OutputHandle = _renderForm.Handle,
-                    IsWindowed = true,                    
+                    IsWindowed = true,
                     //    ModeDescription = new ModeDescription(_renderForm.ClientSize.Width, _renderForm.ClientSize.Height, new Rational(60, 1), Format.R8G8B8A8_UNorm),
-                    ModeDescription = RenderResolution == default(Size) ? new ModeDescription() { Format = Format.R8G8B8A8_UNorm } 
-                                                                        : new ModeDescription() { Format = Format.R8G8B8A8_UNorm, Width = _renderForm.ClientSize.Width, Height = _renderForm.ClientSize.Height},
+                    ModeDescription = RenderResolution == default(Size) ? new ModeDescription() { Format = Format.R8G8B8A8_UNorm }
+                                                                        : new ModeDescription() { Format = Format.R8G8B8A8_UNorm, Width = _renderForm.ClientSize.Width, Height = _renderForm.ClientSize.Height },
                     SampleDescription = new SampleDescription(1, 0),
                     SwapEffect = SwapEffect.Discard
                 };
@@ -333,6 +335,10 @@ namespace S33M3DXEngine
             //Create ViewPort
             _viewPort = new Viewport(0, 0, BackBufferTex.Description.Width, BackBufferTex.Description.Height, 0, 1);
             BackBufferSize = new Vector2(_viewPort.Width, _viewPort.Height);
+
+            //Refresh the Projection2D Matrix (Doesn't a camera to set it up !)
+            Matrix.OrthoOffCenterLH(0, _viewPort.Width, _viewPort.Height, 0, 0, 1, out Projection2D); // Make the 0,0 bottom/left, 1,1 Up/right
+
             if (ViewPort_Updated != null) ViewPort_Updated(_viewPort, BackBufferTex.Description);
             ImmediateContext.Rasterizer.SetViewports(_viewPort);
 

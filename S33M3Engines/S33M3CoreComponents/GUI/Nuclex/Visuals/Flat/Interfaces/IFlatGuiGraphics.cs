@@ -18,11 +18,13 @@ License along with this library
 */
 #endregion
 
-using System; using SharpDX;
+using System;
+using SharpDX;
 using System.Collections.Generic;
 using SharpDX.Direct3D11;
 using Rectangle = System.Drawing.Rectangle;
 using S33M3CoreComponents.Sprites;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
 {
@@ -35,19 +37,19 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
     public interface IFlatGuiGraphics
     {
 
-         //<summary>Sets the clipping region for any future drawing commands</summary>
-         //<param name="clipRegion">Clipping region that will be set</param>
-         //<returns>
-         //  An object that will unset the clipping region upon its destruction.
-         //</returns>
-         //<remarks>
-         //  Clipping regions can be stacked, though this is not very typical for
-         //  a game GUI and also not recommended practice due to performance constraints.
-         //  Unless clipping is implemented in software, setting up a clip region
-         //  on current hardware requires the drawing queue to be flushed, negatively
-         //  impacting rendering performance (in technical terms, a clipping region
-         //  change likely causes 2 more DrawPrimitive() calls from the painter).
-         //</remarks>
+        //<summary>Sets the clipping region for any future drawing commands</summary>
+        //<param name="clipRegion">Clipping region that will be set</param>
+        //<returns>
+        //  An object that will unset the clipping region upon its destruction.
+        //</returns>
+        //<remarks>
+        //  Clipping regions can be stacked, though this is not very typical for
+        //  a game GUI and also not recommended practice due to performance constraints.
+        //  Unless clipping is implemented in software, setting up a clip region
+        //  on current hardware requires the drawing queue to be flushed, negatively
+        //  impacting rendering performance (in technical terms, a clipping region
+        //  change likely causes 2 more DrawPrimitive() calls from the painter).
+        //</remarks>
         IDisposable SetClipRegion(ref RectangleF clipRegion);
 
         /// <summary>Draws a GUI element onto the drawing buffer</summary>
@@ -67,7 +69,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        void DrawString(string frameName, ref RectangleF bounds, string text, ref Color4 color, bool withMaxWidth, int carretPosition = -1);
+        void DrawString(string frameName, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1);
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
@@ -94,6 +96,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         /// <returns>The index of the gap the position is closest to</returns>
         int GetClosestOpening(string frameName, ref RectangleF bounds, string text, ref Vector2 position);
 
-        void DrawElement(string frameName, ref RectangleF controlBounds, ref Color4 color);
+        void DrawElement(string frameName, ref RectangleF controlBounds, ref ByteColor color);
     }
 }

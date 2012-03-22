@@ -258,7 +258,7 @@ namespace S33M3CoreComponents.Sprites
             public float Width;
         }
 
-        public Vector2 MeasureString(string text, float maxWidth, out WordInfo[] infos)
+        public void MeasureStringWords(string text, float maxWidth, out WordInfo[] infos)
         {
             var space = 1;
             int arraySize = 1;
@@ -300,34 +300,34 @@ namespace S33M3CoreComponents.Sprites
                 }
             }
 
-            // calculate the size
-            var size = new Vector2();
-            size.Y = CharHeight;
-            var width = 0f;
+            //// calculate the size
+            //var size = new Vector2();
+            //size.Y = CharHeight;
+            //var width = 0f;
 
-            for (int i = 0; i < arraySize; i++)
-            {
-                if (wordWidths[i].Width == -1)
-                {
-                    size.Y += CharHeight;
-                    width = wordWidths[++i].Width;
-                }
-                else if (width + wordWidths[i].Width > maxWidth)
-                {
-                    size.Y += CharHeight;
-                    width = wordWidths[i].Width;
-                }
-                else
-                {
-                    width += wordWidths[i].Width + SpaceWidth;
-                    if (size.X <= width - SpaceWidth)
-                        size.X = width - SpaceWidth;
-                }
-            }
+            //for (int i = 0; i < arraySize; i++)
+            //{
+            //    if (wordWidths[i].Width == -1)
+            //    {
+            //        size.Y += CharHeight;
+            //        width = wordWidths[++i].Width;
+            //    }
+            //    else if (width + wordWidths[i].Width > maxWidth)
+            //    {
+            //        size.Y += CharHeight;
+            //        width = wordWidths[i].Width;
+            //    }
+            //    else
+            //    {
+            //        width += wordWidths[i].Width + SpaceWidth;
+            //        if (size.X <= width - SpaceWidth)
+            //            size.X = width - SpaceWidth;
+            //    }
+            //}
 
             infos = wordWidths;
 
-            return size;
+            //return size;
         }
 
         public Vector2 MeasureString2(string text)

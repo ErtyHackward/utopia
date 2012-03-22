@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using SharpDX;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop.Interfaces;
+using S33M3Resources.Structs;
 
 
 
@@ -99,7 +100,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 
                 if (control.ColorSet)
                 {
-                    Color4 color = control.Color;
+                    ByteColor color = control.Color;
                     graphics.DrawString(Style, ref controlBounds, textToDraw, ref color, false, withCarret);
                 }
                 else

@@ -42,7 +42,7 @@ namespace Utopia.GUI.NuclexUIPort.Visuals.Flat.Renderers
             colorBounds.Width -= 6;
             colorBounds.Height -= 6;
 
-            graphics.DrawElement(States[4],ref colorBounds,ref control.Color);
+            graphics.DrawElement(States[4],ref colorBounds, ref control.Color);
         }
 
         /// <summary>Names of the states the button control can be in</summary>

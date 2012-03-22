@@ -82,6 +82,7 @@
     <Compile Include="Effects\Basics\HLSLVertexPositionColorTexture.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionNormalTexture.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionTexture.cs" />
+    <Compile Include="Effects\Sprites\HLSLSprites2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs\ByteColor.cs" />
     <Compile Include="Structs\NetworkValue.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="VertexFormats\VertexPositionNormalTexture.cs" />
     <Compile Include="VertexFormats\VertexPositionTexture.cs" />
     <Compile Include="VertexFormats\VertexSprite.cs" />
+    <Compile Include="VertexFormats\VertexSprite2.cs" />
     <Compile Include="VertexFormats\VertexSprite3D.cs" />
     <Compile Include="VertexFormats\VertexSpriteInstanced.cs" />
     <Compile Include="VertexFormats\VertexVoxel.cs" />
@@ -144,6 +146,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Effects\Basics\VertexPositionTextureArrays.fx" />
+    <None Include="Effects\Sprites\Sprites2.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Effects\Basics\ScreenSpaceRect.hlsl">

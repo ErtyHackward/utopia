@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using SharpDX;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 {
@@ -40,7 +41,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
         public void Render(Controls.Arcade.PanelControl control, IFlatGuiGraphics graphics)
         {
             RectangleF absoluteBound = control.GetAbsoluteBounds();
-            Color4 color = control.Color;
+            ByteColor color = control.Color;
             // This is simple! A panel consists of a single element we need to draw.
             graphics.DrawElement("panel", ref absoluteBound, ref color);
         }

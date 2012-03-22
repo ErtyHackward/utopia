@@ -7,6 +7,7 @@ using SharpDX.DXGI;
 using S33M3DXEngine;
 using SharpDX;
 using S33M3CoreComponents.Sprites;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.Textures
 {
@@ -162,7 +163,7 @@ namespace S33M3CoreComponents.Textures
         {
             Texture2D clonedTexture = new Texture2D(_d3dEngine.Device, _textureDesc);
             _d3dEngine.ImmediateContext.CopyResource(RenderTargetTexture, clonedTexture);
-            return new SpriteTexture(_d3dEngine.Device, clonedTexture, Vector2.Zero);
+            return new SpriteTexture(_d3dEngine.Device, clonedTexture, Vector2I.Zero);
         }
 
         public Texture2D CloneTexture(ResourceUsage defaultResourceUsage)

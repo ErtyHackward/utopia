@@ -22,6 +22,9 @@ using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
 using S33M3CoreComponents.Meshes;
 using S33M3CoreComponents.Meshes.Factories;
+using S33M3_CoreComponents.Sprites;
+using S33M3Resources.Structs;
+using S33M3_CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.Entities
 {
@@ -139,8 +142,7 @@ namespace Utopia.Entities
         {
             List<Texture2D> createdIconsTexture = new List<Texture2D>();
 
-            SpriteRenderer spriteRenderer = new SpriteRenderer();
-            spriteRenderer.Initialize(_d3DEngine);
+            SpriteRenderer spriteRenderer = new SpriteRenderer(_d3DEngine);
             //Get the "Block" mesh that will be used to draw the various blocks.
             IMeshFactory meshfactory = new MilkShape3DMeshFactory();
             Mesh meshBluePrint;
@@ -184,8 +186,8 @@ namespace Utopia.Entities
             context.UnmapSubresource(sTexture, 0);
             dataStream.Dispose();
 
-            SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, sTexture, new Vector2(0, 0));
-            spriteTexture.ScreenPosition = Matrix.Scaling(textureSize) * spriteTexture.ScreenPosition;
+            SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, sTexture, Vector2I.Zero);
+            spriteTexture.ScreenPosition = new Rectangle(spriteTexture.ScreenPosition.X, spriteTexture.ScreenPosition.Y, spriteTexture.ScreenPosition.X + textureSize, spriteTexture.ScreenPosition.Y + textureSize) ;
             spriteTexture.Dispose();
             sTexture.Dispose();
 
@@ -276,9 +278,10 @@ namespace Utopia.Entities
                 //Draw a sprite for lighting block
                 if (profile.IsEmissiveColorLightSource)
                 {
-                    spriteRenderer.Begin(context, false, SpriteRenderer.FilterMode.Point);
-                    spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, new Color4(profile.EmissiveColor.R / 255, profile.EmissiveColor.G / 255, profile.EmissiveColor.B / 255, 0.5f), new RectangleF(0, 0, textureSize, textureSize));
-                    spriteRenderer.End();
+                    spriteRenderer.Begin(false);
+                    ByteColor color = new ByteColor(profile.EmissiveColor.R, profile.EmissiveColor.G, profile.EmissiveColor.B, (byte)125);
+                    spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, ref color);
+                    spriteRenderer.End(context);
                 }
 
                 //End Drawing
