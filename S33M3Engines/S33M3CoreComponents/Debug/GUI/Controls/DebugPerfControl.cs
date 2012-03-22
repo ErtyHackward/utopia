@@ -27,7 +27,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
         #region Private variables
         private Game _game;
         private LabelControl _avgFrameTime;
-        private LabelControl[,] _displayedResults = new LabelControl[5,10];
+        private LabelControl[,] _displayedResults = new LabelControl[5, 10];
         private int[] _displayResultsColumnPosi = new int[5];
         private LabelResultColumn _columnSorted = LabelResultColumn.Component;
         private bool _orderDescending = false;
@@ -41,7 +41,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
 
         #endregion
 
-        public DebugPerfControl(Control parent, UniRectangle bounds, Game game )
+        public DebugPerfControl(Control parent, UniRectangle bounds, Game game)
         {
             _game = game;
             this.Bounds = bounds;
@@ -87,7 +87,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             oc.Text = "Avg in %";
             oc.Changed += (sender, e) =>
             {
-                _showInPercent = ! _showInPercent;
+                _showInPercent = !_showInPercent;
             };
             oc.Selected = _showInPercent;
             Children.Add(oc);
@@ -327,8 +327,8 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             }
 
             int LineToDisplay = 0;
-            int MaxLineToDisplay =_displayedResults.GetLength(1);
-            int lineNbr=0;
+            int MaxLineToDisplay = _displayedResults.GetLength(1);
+            int lineNbr = 0;
 
             _totalItems = MainResult.Count();
 
@@ -350,17 +350,13 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
 
             _totalItems += compList.Count;
 
-            if (lineNbr < _displayedResults.GetLength(1))
+            foreach (var data in compList)
             {
-                //Add components not in the sorted list
-                foreach (var data in compList)
+                if (LineToDisplay < MaxLineToDisplay)
                 {
-                    if (LineToDisplay < MaxLineToDisplay)
-                    {
-                        PerfTimerResult perfData = linkedResult[data];
-                        refreshArray(perfData, linkedResult, LineToDisplay, mainResultIsUpdate, total, true);
-                        LineToDisplay++;
-                    }
+                    PerfTimerResult perfData = linkedResult[data];
+                    refreshArray(perfData, linkedResult, LineToDisplay, mainResultIsUpdate, total, true);
+                    LineToDisplay++;
                 }
             }
 
@@ -376,7 +372,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             updateSlider();
 
             if (totalTimeFrame == 0) return 0;
-            else return (1 / totalTimeFrame * 1000.0f); 
+            else return (1 / totalTimeFrame * 1000.0f);
         }
 
         private double refreshArray(PerfTimerResult data, Dictionary<string, PerfTimerResult> linkedResult, int lineNbr, bool mainResultIsUpdate, double total, bool withEmptyMain = false)
