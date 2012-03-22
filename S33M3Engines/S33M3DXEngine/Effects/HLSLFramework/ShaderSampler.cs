@@ -58,7 +58,8 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             if (forceStaticResourcesOnly && _isStaticResource == false) return;
 
 #if DEBUG
-            if (_sampler == null) logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
+            if (_sampler == null) 
+                logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
 #endif
 
             if (_isDirty || forceStaticResourcesOnly)
