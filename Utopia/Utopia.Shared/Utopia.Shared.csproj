@@ -55,6 +55,10 @@
     <Reference Include="Ninject">
       <HintPath>..\..\Library\Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\..\Library\SharpDX2\SharpDX.dll</HintPath>
     </Reference>

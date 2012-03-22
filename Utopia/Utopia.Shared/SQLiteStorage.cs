@@ -10,6 +10,8 @@ namespace Utopia.Shared
     /// </summary>
     public abstract class SQLiteStorage : IDisposable
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly SQLiteConnection _connection;
         private readonly string _path;
         private readonly object _syncRoot = new object();
@@ -153,14 +155,22 @@ namespace Utopia.Shared
             {
                 using (var cmd = _connection.CreateCommand())
                 {
-                    cmd.CommandText = query;
-                    var param = cmd.CreateParameter();
-                    param.DbType = DbType.Binary;
-                    param.ParameterName = "@blob";
-                    param.Size = blob.Length;
-                    param.Value = blob;
-                    cmd.Parameters.Add(param);
-                    return cmd.ExecuteNonQuery();
+                    if (cmd.Connection.State == ConnectionState.Open)
+                    {
+                        cmd.CommandText = query;
+                        var param = cmd.CreateParameter();
+                        param.DbType = DbType.Binary;
+                        param.ParameterName = "@blob";
+                        param.Size = blob.Length;
+                        param.Value = blob;
+                        cmd.Parameters.Add(param);
+                        return cmd.ExecuteNonQuery();
+                    }
+                    else
+                    {
+                        logger.Warn("Trying to insert Blob Data while the connection status is not open : {0}", cmd.Connection.State);
+                        return 0;
+                    }
                 }
             }
         }

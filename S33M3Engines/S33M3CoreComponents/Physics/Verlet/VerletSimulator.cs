@@ -10,6 +10,8 @@ namespace S33M3CoreComponents.Physics.Verlet
 {
     public class VerletSimulator
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private Vector3D _curPosition;
 
         private Vector3D _prevPosition;
@@ -87,7 +89,7 @@ namespace S33M3CoreComponents.Physics.Verlet
             _forcesAccum.Z = 0;
 
             if (_subjectToGravity && !_onGround)
-                _forcesAccum.Y += -SimulatorCst.Gravity;
+                _forcesAccum.Y += -(SimulatorCst.Gravity); // / dt.ElapsedGameTimeInS_HD);
 
             for (int ImpulseIndex = 0; ImpulseIndex < _impulses.Count; ImpulseIndex++)
             {
@@ -100,12 +102,18 @@ namespace S33M3CoreComponents.Physics.Verlet
 
             //CleanUp impulses
             _impulses.RemoveAll(x => x.IsActive == false);
-
         }
 
         private void Verlet(ref GameTime dt, out Vector3D newPosition)
         {
             newPosition = _curPosition + _curPosition - _prevPosition + (_forcesAccum * dt.ElapsedGameTimeInS_HD * dt.ElapsedGameTimeInS_HD);
+
+            //var test = newPosition - _curPosition;
+            //if (test.Y != 0)
+            //{
+            //    logger.Info("Vitesse Y en fct du temp observé : {0} m/s", test.Y / dt.ElapsedGameTimeInS_HD);
+            //}
+
             _prevPosition = _curPosition;
             _curPosition = newPosition;
         }

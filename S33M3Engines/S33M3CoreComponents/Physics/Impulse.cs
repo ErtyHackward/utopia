@@ -27,7 +27,7 @@ namespace S33M3CoreComponents.Physics
         {
             get
             {
-                return _amountOfTime != 0.00001 ? _forceApplied : _forceApplied * _timeStep.ElapsedGameTimeInS_HD;
+                return _amountOfTime != 0.00001 ? _forceApplied / (_timeStep.ElapsedGameTimeInS_HD) : _forceApplied;
             }
             set { _forceApplied = value; }
         }

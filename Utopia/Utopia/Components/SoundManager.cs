@@ -258,19 +258,24 @@ namespace Utopia.Components
             }
             
 
+            int cubeIndex;
             // add new sounds
             foreach (var position in range.AllExclude(_lastRange))
             {
-                if (_singleArray.GetCube(position).Id == CubeId.Water)
+
+                if (_singleArray.IndexSafe(position.X, position.Y, position.Z, out cubeIndex))
                 {
-                    var soundPosition = new IrrVector3(position.X + 0.5f, position.Y + 0.5f, position.Z + 0.5f);
-                    
-                    if (_sharedSounds.ContainsKey("Sounds\\Ambiance\\water_stream.ogg"))
-                        _sharedSounds["Sounds\\Ambiance\\water_stream.ogg"].Value.Add(soundPosition);
-                    else
+                    if (_singleArray.Cubes[cubeIndex].Id == CubeId.Water)
                     {
-                        var sound = _soundEngine.Play3D("Sounds\\Ambiance\\water_stream.ogg", soundPosition, true, false, StreamMode.AutoDetect);
-                        _sharedSounds.Add("Sounds\\Ambiance\\water_stream.ogg", new KeyValuePair<ISound, List<IrrVector3>>(sound, new List<IrrVector3> { soundPosition }));
+                        var soundPosition = new IrrVector3(position.X + 0.5f, position.Y + 0.5f, position.Z + 0.5f);
+
+                        if (_sharedSounds.ContainsKey("Sounds\\Ambiance\\water_stream.ogg"))
+                            _sharedSounds["Sounds\\Ambiance\\water_stream.ogg"].Value.Add(soundPosition);
+                        else
+                        {
+                            var sound = _soundEngine.Play3D("Sounds\\Ambiance\\water_stream.ogg", soundPosition, true, false, StreamMode.AutoDetect);
+                            _sharedSounds.Add("Sounds\\Ambiance\\water_stream.ogg", new KeyValuePair<ISound, List<IrrVector3>>(sound, new List<IrrVector3> { soundPosition }));
+                        }
                     }
                 }
             }
