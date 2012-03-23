@@ -47,7 +47,7 @@ namespace Sandbox.Client
             //Load Client config XML file
             LoadClientsSettings();
             //Bings all components
-            IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 600));
+            IocBinding("Utopia Sandbox mode", new System.Drawing.Size(854, 480));
 
             System.Net.ServicePointManager.Expect100Continue = false;
 
