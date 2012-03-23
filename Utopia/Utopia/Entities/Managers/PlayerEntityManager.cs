@@ -417,14 +417,14 @@ namespace Utopia.Entities.Managers
             switch (mode)
             {
                 case EntityDisplacementModes.Flying:
-                    _physicSimu.EnvironmentViscosity = 1f;
+                    _physicSimu.EnvironmentViscosity = 0f;
                     break;
                 case EntityDisplacementModes.Swiming:
                     _physicSimu.EnvironmentViscosity = 0.3f;
                     PhysicSimulation(ref timeSpent);
                     break;
                 case EntityDisplacementModes.Walking:
-                    _physicSimu.EnvironmentViscosity = 1f;
+                    _physicSimu.EnvironmentViscosity = 0f;
                     PhysicSimulation(ref timeSpent);
                     break;
                 default:
