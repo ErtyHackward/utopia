@@ -162,9 +162,9 @@ namespace Utopia.GUI
 
         }
 
-        protected override void OnEnabledChanged(object sender, EventArgs args)
+        protected override void OnUpdatableChanged(object sender, EventArgs args)
         {
-            base.OnEnabledChanged(sender, args);
+            base.OnUpdatableChanged(sender, args);
 
             if (!IsInitialized) return;
 

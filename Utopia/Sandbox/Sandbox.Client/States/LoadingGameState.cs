@@ -288,8 +288,7 @@ namespace Sandbox.Client.States
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
-            var soundManager = _ioc.Get<SoundManager>();
-           
+            var soundManager = _ioc.Get<SoundManager>();          
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;

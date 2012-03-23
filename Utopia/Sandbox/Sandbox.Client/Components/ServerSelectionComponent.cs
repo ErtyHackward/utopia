@@ -72,7 +72,7 @@ namespace Sandbox.Client.Components
             _connectButton.Enabled = _serverList.SelectedItems.Count > 0;
         }
 
-        protected override void OnEnabledChanged(object sender, EventArgs args)
+        protected override void OnUpdatableChanged(object sender, EventArgs args)
         {
             if (!IsInitialized) return;
 
@@ -90,7 +90,7 @@ namespace Sandbox.Client.Components
                 _screen.Desktop.Children.Remove(_backButton);
             }
 
-            base.OnEnabledChanged(sender, args);
+            base.OnUpdatableChanged(sender, args);
         }
 
         private void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)

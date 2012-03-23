@@ -26,6 +26,7 @@ using S33M3CoreComponents.Debug;
 using Ninject.Parameters;
 using SharpDX;
 using S33M3DXEngine;
+using Sandbox.Client.Components;
 
 namespace Sandbox.Client
 {
@@ -85,12 +86,9 @@ namespace Sandbox.Client
             InputsManager inputManager = _iocContainer.Get<InputsManager>();
             inputManager.MouseManager.IsRunning = true;
             game.GameComponents.Add(inputManager);
-
             var debugComponents = _iocContainer.Get<DebugComponent>(new ConstructorArgument("withDisplayInfoActivated", true));
             debugComponents.EnableComponent();
             game.GameComponents.Add(debugComponents);
-
-
             //Add the StateManager to the main loop
             game.GameComponents.Add(stateManager);
 
@@ -107,6 +105,8 @@ namespace Sandbox.Client
 #else
             stateManager.ActivateGameStateAsync("Login");
 #endif
+
+            game.MenuRequested += new EventHandler(game_MenuRequested);
 
             game.Run(); //Start the Main render loop
 
@@ -153,6 +153,12 @@ namespace Sandbox.Client
             }
 
             return needSave;
+        }
+
+
+        private void game_MenuRequested(object sender, EventArgs e)
+        {
+            _iocContainer.Get<GameStatesManager>().ActivateGameStateAsync(_iocContainer.Get<MainMenuState>());
         }
         #endregion
 
