@@ -34,15 +34,10 @@ namespace S33M3CoreComponents.Physics.Verlet
         public List<Impulse> Impulses { get { return _impulses; } }
         public bool WithCollisionBouncing { get { return _withCollisionBounsing; } set { _withCollisionBounsing = value; } }
         public bool SubjectToGravity { get { return _subjectToGravity; } set { _subjectToGravity = value; } }
-        /// <summary>
-        /// Variables that will impact globally all forced applied to the entity
-        /// 0 = All forces are nullified 
-        /// 1 = No change to the forces
-        /// 0.5 = Each forces appleid are divided by 2
-        /// ...
-        /// </summary>
-        public float EnvironmentForceModifier { get; set; }
         public bool OnGround { get { return _onGround; } set { _onGround = value; } }
+
+        //If set to value other than 0, then the enviroment will emit a force that will absorbe all force being applied to the entity.
+        public float EnvironmentViscosity { get; set; }
 
         public Vector3D CurPosition { get { return _curPosition; } set { _curPosition = value; } }
         public Vector3D PrevPosition { get { return _prevPosition; } set { _prevPosition = value; } }
@@ -53,12 +48,12 @@ namespace S33M3CoreComponents.Physics.Verlet
         public VerletSimulator(ref BoundingBox localBoundingBox)
         {
             _localBoundingBox = localBoundingBox;
+            EnvironmentViscosity = 1;
         }
 
         public void StartSimulation(ref Vector3D StartingPosition, ref Vector3D PreviousPosition)
         {
             _isRunning = true;
-            EnvironmentForceModifier = 1;
             _prevPosition = PreviousPosition;
             _curPosition = StartingPosition;
         }
@@ -96,13 +91,13 @@ namespace S33M3CoreComponents.Physics.Verlet
             _forcesAccum.Z = 0;
 
             if (_subjectToGravity && !_onGround)
-                _forcesAccum.Y += -(SimulatorCst.Gravity * EnvironmentForceModifier);
+                _forcesAccum.Y += -((SimulatorCst.Gravity));
 
             for (int ImpulseIndex = 0; ImpulseIndex < _impulses.Count; ImpulseIndex++)
             {
                 if (_impulses[ImpulseIndex].IsActive)
                 {
-                    _forcesAccum += (_impulses[ImpulseIndex].ForceApplied * EnvironmentForceModifier);
+                    _forcesAccum += (_impulses[ImpulseIndex].ForceApplied);
                     _impulses[ImpulseIndex].AmountOfTime -= dt.ElapsedGameTimeInS_LD;
                 }
             }
@@ -111,8 +106,17 @@ namespace S33M3CoreComponents.Physics.Verlet
             _impulses.RemoveAll(x => x.IsActive == false);
         }
 
+        Vector3D viscosityForce;
         private void Verlet(ref GameTime dt, out Vector3D newPosition)
         {
+            if (EnvironmentViscosity < 1)
+            {
+                Vector3D currentlyAppliedForce = (_curPosition + _curPosition - _prevPosition + (_forcesAccum * dt.ElapsedGameTimeInS_HD * dt.ElapsedGameTimeInS_HD)) - _curPosition;
+                //Create a viscosity force against what's in place !
+
+                _curPosition += (_prevPosition - _curPosition) * EnvironmentViscosity;
+            }
+
             newPosition = _curPosition + _curPosition - _prevPosition + (_forcesAccum * dt.ElapsedGameTimeInS_HD * dt.ElapsedGameTimeInS_HD);
             _prevPosition = _curPosition;
             _curPosition = newPosition;
