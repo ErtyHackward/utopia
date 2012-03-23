@@ -5,6 +5,7 @@ using System.Text;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main.Interfaces;
+using Utopia.Shared.Entities.Events;
 
 namespace Utopia.Entities.Managers.Interfaces
 {
@@ -16,6 +17,9 @@ namespace Utopia.Entities.Managers.Interfaces
         IDynamicEntity GetEntityById(uint p);
 
         List<IVisualEntityContainer> DynamicEntities { get; set; }
+
+        event EventHandler<DynamicEntityEventArgs> EntityAdded;
+        event EventHandler<DynamicEntityEventArgs> EntityRemoved;
     }
 
 }

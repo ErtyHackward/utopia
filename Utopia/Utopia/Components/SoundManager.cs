@@ -18,6 +18,7 @@ using IrrVector3 = IrrKlang.Vector3D;
 using Vector3D = S33M3Resources.Structs.Vector3D;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Settings;
+using Utopia.Entities.Managers.Interfaces;
 
 namespace Utopia.Components
 {
@@ -28,7 +29,7 @@ namespace Utopia.Components
     public class SoundManager : GameComponent, IDebugInfo
     {
         private readonly CameraManager<ICameraFocused> _cameraManager;
-        private readonly DynamicEntityManager _dynamicEntityManager;
+        private IDynamicEntityManager _dynamicEntityManager;
         private readonly ISoundEngine _soundEngine;
         private SingleArrayChunkContainer _singleArray;
 
@@ -54,19 +55,22 @@ namespace Utopia.Components
             get { return _soundEngine; }
         }
 
-        public SoundManager(CameraManager<ICameraFocused> cameraManager, DynamicEntityManager dynamicEntityManager, IDynamicEntity player)
+        public SoundManager(CameraManager<ICameraFocused> cameraManager)
         {
-            if (cameraManager == null) throw new ArgumentNullException("cameraManager");
-            if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             _cameraManager = cameraManager;
-            _dynamicEntityManager = dynamicEntityManager;
-
-            _dynamicEntityManager.EntityAdded += DynamicEntityManagerEntityAdded;
-            _dynamicEntityManager.EntityRemoved += DynamicEntityManagerEntityRemoved;
 
             _soundEngine = new ISoundEngine();
 
+        }
+        public void LateInitialization(SingleArrayChunkContainer singleArray, IDynamicEntityManager dynamicEntityManager, IDynamicEntity player)
+        {
+            _singleArray = singleArray;
+
+            _dynamicEntityManager = dynamicEntityManager;
             _stepsTracker.Add(new KeyValuePair<IDynamicEntity, Vector3D>(player, player.Position));
+
+            _dynamicEntityManager.EntityAdded += DynamicEntityManagerEntityAdded;
+            _dynamicEntityManager.EntityRemoved += DynamicEntityManagerEntityRemoved;
         }
 
         void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
@@ -89,12 +93,6 @@ namespace Utopia.Components
             {
                 _stepsSounds.Add(blockId, new List<string> { sound });
             }
-        }
-
-        public void LateInitialization(SingleArrayChunkContainer singleArray)
-        {
-            if (singleArray == null) throw new ArgumentNullException("singleArray");
-            _singleArray = singleArray;
         }
 
         public void SetGuiButtonSound(string filePath)
@@ -252,6 +250,7 @@ namespace Utopia.Components
         /// <param name="range"></param>
         public void ListenCubes(Range3 range)
         {
+            if (_singleArray == null) return;
             // remove sounds that are far away from the sound collection that are out of current player range
             for (int i = _sharedSounds.Count - 1; i >= 0; i--)
             {

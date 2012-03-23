@@ -9,8 +9,8 @@ namespace Sandbox.Client.Components
 {
     public class SandboxSoundManager : SoundManager
     {
-        public SandboxSoundManager(CameraManager<ICameraFocused> cameraManager, DynamicEntityManager dynamicEntityManager, IDynamicEntity player)
-            : base(cameraManager, dynamicEntityManager, player)
+        public SandboxSoundManager(CameraManager<ICameraFocused> cameraManager)
+            : base(cameraManager)
         {
             SetGuiButtonSound("Sounds\\Interface\\button_press.wav");
 

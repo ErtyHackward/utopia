@@ -400,7 +400,18 @@ namespace Utopia.Entities.Managers
                 //Eyes under water (Used to change view Color)
                 if (_headCube.Id == CubeId.Water || _headCube.Id == CubeId.WaterSource)
                 {
-                    //TODO Take into account the Offseting in case of Offseted Water !
+                    int AboveHead = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Fastfloor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
+                    if(_cubesHolder.Cubes[AboveHead].Id == CubeId.Air)
+                    {
+                        //Check the offset of the water
+                        var Offset = CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y);
+                        if (Offset >= 1- GameSystemSettings.Current.Settings.CubesProfile[_headCube.Id].YBlockOffset)
+                        {
+                            IsHeadInsideWater = false;
+                            return;
+                        }
+                    }
+                    
                     IsHeadInsideWater = true;
                 }
                 else

@@ -298,7 +298,7 @@ namespace Sandbox.Client.States
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
-            soundManager.LateInitialization(singleArrayChunkContainer);
+            soundManager.LateInitialization(singleArrayChunkContainer, dynamicEntityManager, playerCharacter);
 
             AddComponent(cameraManager);
             AddComponent(_ioc.Get<ServerComponent>());
