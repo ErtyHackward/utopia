@@ -97,7 +97,7 @@ namespace Utopia.Entities.Renderer
 
             if (_player.EntityState.IsBlockPicked || _player.EntityState.IsEntityPicked)
             {
-                _pickedCube.Draw(_camManager.ActiveCamera);
+                _pickedCube.Draw(context, _camManager.ActiveCamera);
             }
         }
 

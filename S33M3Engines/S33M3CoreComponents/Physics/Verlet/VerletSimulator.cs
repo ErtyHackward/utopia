@@ -109,7 +109,7 @@ namespace S33M3CoreComponents.Physics.Verlet
         Vector3D viscosityForce;
         private void Verlet(ref GameTime dt, out Vector3D newPosition)
         {
-            if (EnvironmentViscosity < 1)
+            if (EnvironmentViscosity > 0)
             {
                 Vector3D currentlyAppliedForce = (_curPosition + _curPosition - _prevPosition + (_forcesAccum * dt.ElapsedGameTimeInS_HD * dt.ElapsedGameTimeInS_HD)) - _curPosition;
                 //Create a viscosity force against what's in place !
