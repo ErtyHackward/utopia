@@ -13,6 +13,7 @@ using S33M3Resources.Structs.Vertex;
 using S33M3Resources.VertexFormats;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Cameras.Interfaces;
+using SharpDX.Direct3D11;
 
 namespace Utopia.Resources.ModelComp
 {
@@ -89,21 +90,21 @@ namespace Utopia.Resources.ModelComp
         #endregion
 
         #region Public methods
-        //My points are already on world space !
-        public void Draw(ICameraFocused camera)
+        //My points are already in world space !
+        public void Draw(DeviceContext context, ICameraFocused camera)
         {
             Matrix WorldFocused = Matrix.Identity;
             WorldFocused = _worldFocusManager.CenterOnFocus(ref BB3dworld);
 
-            _wrappedEffect.Begin(_d3dEngine.ImmediateContext);
+            _wrappedEffect.Begin(context);
             _wrappedEffect.CBPerDraw.Values.World = Matrix.Transpose(WorldFocused);
             _wrappedEffect.CBPerDraw.IsDirty = true;
             _wrappedEffect.CBPerFrame.Values.View = Matrix.Transpose(camera.View_focused);
             _wrappedEffect.CBPerFrame.Values.Projection = Matrix.Transpose(camera.Projection3D);
             _wrappedEffect.CBPerFrame.IsDirty = true;
-            _wrappedEffect.Apply(_d3dEngine.ImmediateContext);
+            _wrappedEffect.Apply(context);
 
-            _vertexBuffer.SetToDevice(_d3dEngine.ImmediateContext,0);
+            _vertexBuffer.SetToDevice(context, 0);
 
             _d3dEngine.ImmediateContext.Draw(24, 0);
         }

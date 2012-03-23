@@ -45,6 +45,14 @@ namespace Utopia.Worlds.Chunks
 
                 RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
                 DrawSolidFaces(context);
+
+#if DEBUG
+                if (ShowDebugInfo)
+                {
+                    DrawDebug(context);
+                }
+#endif
+
                 return;
             }
 
@@ -76,6 +84,22 @@ namespace Utopia.Worlds.Chunks
         #endregion
 
         #region Private methods
+
+#if DEBUG
+        private void DrawDebug(DeviceContext context)
+        {
+            VisualChunk chunk;
+            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
+            {
+                chunk = SortedChunks[chunkIndice];
+                if (chunk.IsReady2Draw && !chunk.isFrustumCulled) // !! Display all Changed one, even if the changed failed the Frustum culling test
+                {
+                    chunk.DrawDebugBoundingBox(context);
+                }
+            }
+        }
+#endif
+
         private void DrawSolidFaces(DeviceContext context)
         {
             VisualChunk chunk;

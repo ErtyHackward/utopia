@@ -21,6 +21,10 @@ using S33M3DXEngine;
 using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
 using S33M3CoreComponents.WorldFocus;
+using S33M3Resources.Effects.Basics;
+using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Cameras;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -31,14 +35,17 @@ namespace Utopia.Worlds.Chunks
     {
         #region Private variables
         private VisualWorldParameters _visualWorldParameters;
+        private WorldFocusManager _worldFocusManager;
         private RangeI _cubeRange;
         private D3DEngine _d3dEngine;
 
         private object Lock_DrawChunksSolidFaces = new object();       //Multithread Locker
         private object Lock_DrawChunksSeeThrough1Faces = new object(); //Multithread Locker
         private object Lock_Draw = new object(); //Multithread Locker
+        private CameraManager<ICameraFocused> _cameraManager;
 
         private IEntityPickingManager _entityPickingManager;
+
         #endregion
 
         #region Public properties/Variable
@@ -128,9 +135,10 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
+        //Use to display bounding box around chunk in debug mode only (Quite slow and not optimized)
 #if DEBUG
-        private BoundingBox3D _chunkBoundingBoxDisplay;
-        public BoundingBox3D ChunkBoundingBoxDisplay { get { return _chunkBoundingBoxDisplay; } }
+        public BoundingBox3D ChunkBoundingBoxDisplay;
+        private HLSLVertexPositionColor _blockpickedUPEffect;
 #endif
 
         #endregion
@@ -161,12 +169,21 @@ namespace Utopia.Worlds.Chunks
                             VisualWorldParameters visualWorldParameter, 
                             ref RangeI cubeRange, 
                             SingleArrayChunkContainer singleArrayContainer,
-                            IEntityPickingManager entityPickingManager)
+                            IEntityPickingManager entityPickingManager,
+                            CameraManager<ICameraFocused> cameraManager)
             : base(new SingleArrayDataProvider(singleArrayContainer))
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 
             _d3dEngine = d3dEngine;
+
+
+#if DEBUG
+            _blockpickedUPEffect = new HLSLVertexPositionColor(_d3dEngine.Device);
+#endif
+
+            _cameraManager = cameraManager;
+            _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameter;
             VisualSpriteEntities = new List<VisualEntity>();
             CubeRange = cubeRange;
@@ -175,6 +192,7 @@ namespace Utopia.Worlds.Chunks
             IsReady2Draw = false;
             LightPropagateBorderOffset = new Vector2I(0, 0);
             Entities.CollectionDirty += Entities_CollectionDirty;
+
         }
         #region Public methods
         
@@ -350,6 +368,13 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
+#if DEBUG
+        public void DrawDebugBoundingBox(DeviceContext context)
+        {
+            ChunkBoundingBoxDisplay.Draw(context, _cameraManager.ActiveCamera);
+        }
+#endif
+
         public void RefreshVisualEntities()
         {
             //Create the Sprite Entities
@@ -403,29 +428,29 @@ namespace Utopia.Worlds.Chunks
             //Refresh the bounding Box to make it in world coord.
             ChunkWorldBoundingBox.Minimum = new Vector3(_cubeRange.Min.X, _cubeRange.Min.Y, _cubeRange.Min.Z);
             ChunkWorldBoundingBox.Maximum = new Vector3(_cubeRange.Max.X, _cubeRange.Max.Y, _cubeRange.Max.Z);
-
-#if DEBUG
-            //ChunkBoundingBoxDisplay.Update(ref ChunkWorldBoundingBox);
-#endif
         }
 
         private void RangeChanged() // Start it also if the World offset Change !!!
         {
-            //ChunkID = (((Int64)_cubeRange.Min.X) << 32) + _cubeRange.Min.Z;
-
             ChunkPositionBlockUnit = new Vector2I() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
 
             ChunkPosition = new Vector2I() { X = _cubeRange.Min.X / AbstractChunk.ChunkSize.X, Y = _cubeRange.Min.Z / AbstractChunk.ChunkSize.Z };
 
             ChunkID = ChunkPosition.GetID();
 
+            ChunkCenter = new Vector3D(_cubeRange.Min.X + (_cubeRange.Max.X - _cubeRange.Min.X) / 2.0,
+                           _cubeRange.Min.Y + (_cubeRange.Max.Y - _cubeRange.Min.Y) / 2.0,
+                           _cubeRange.Min.Z + (_cubeRange.Max.Z - _cubeRange.Min.Z) / 2.0);
+
+#if DEBUG
+            ChunkBoundingBoxDisplay = new BoundingBox3D(_d3dEngine, _worldFocusManager, new Vector3((float)(CubeRange.Max.X - CubeRange.Min.X), (float)(CubeRange.Max.Y - CubeRange.Min.Y), (float)(CubeRange.Max.Z - CubeRange.Min.Z)), _blockpickedUPEffect, Colors.Tomato);
+            ChunkBoundingBoxDisplay.Update(ChunkCenter.AsVector3(), Vector3.One, 0);
+#endif
+
             RefreshWorldMatrix();
 
-            ChunkCenter = new Vector3D(_cubeRange.Min.X + (_cubeRange.Max.X - _cubeRange.Min.X) / 2.0,
-                                       _cubeRange.Min.Y + (_cubeRange.Max.Y - _cubeRange.Min.Y) / 2.0,
-                                       _cubeRange.Min.Z + (_cubeRange.Max.Z - _cubeRange.Min.Z) / 2.0);
-
             VisualSpriteEntities.Clear();
+
         }
 
         #endregion
@@ -451,6 +476,10 @@ namespace Utopia.Worlds.Chunks
             if (StaticSpritesIB != null) StaticSpritesIB.Dispose();
             if (StaticSpritesVB != null) StaticSpritesVB.Dispose();
             Entities.CollectionDirty -= Entities_CollectionDirty;
+#if DEBUG
+            _blockpickedUPEffect.Dispose();
+            ChunkBoundingBoxDisplay.Dispose();
+#endif
 
         }
     }
