@@ -18,6 +18,8 @@ namespace Utopia
         /// </summary>
         private InputsManager _inputManager;
 
+        public event EventHandler MenuRequested;
+
         //Not Engine injected constructor
         public UtopiaRender(InputsManager inputManager, Size startingWindowsSize, string WindowsCaption, Size ResolutionSize = default(Size), bool withComObjectDisposeTracking = false)
             : base(startingWindowsSize, WindowsCaption, ResolutionSize, withComObjectDisposeTracking)
@@ -67,7 +69,14 @@ namespace Utopia
             //Make the game exit
             if (_inputManager.ActionsManager.isTriggered(Actions.EngineExit))
             {
-                this.Exit();
+                if (MenuRequested != null)
+                {
+                    MenuRequested(this, null);
+                }
+                else
+                {
+                    this.Exit();
+                }
             }
 
             //Switch full screen state

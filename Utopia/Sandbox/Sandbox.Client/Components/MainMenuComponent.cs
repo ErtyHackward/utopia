@@ -24,51 +24,42 @@ namespace Sandbox.Client.Components
 
         #region Events
         public event EventHandler ContinuePressed;
-
         private void OnContinuePressed()
         {
-            var handler = ContinuePressed;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (ContinuePressed != null) ContinuePressed(this, EventArgs.Empty);
         }
 
         public event EventHandler SinglePlayerPressed;
-
         private void OnSinglePlayerPressed()
         {
-            var handler = SinglePlayerPressed;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (SinglePlayerPressed != null) SinglePlayerPressed(this, EventArgs.Empty);
         }
 
         public event EventHandler MultiplayerPressed;
-
         private void OnMultiplayerPressed()
         {
-            var handler = MultiplayerPressed;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (MultiplayerPressed != null) MultiplayerPressed(this, EventArgs.Empty);
         }
 
         public event EventHandler EditorPressed;
 
         private void OnEditorPressed()
         {
-            var handler = EditorPressed;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (EditorPressed != null) EditorPressed(this, EventArgs.Empty);
         }
 
         public event EventHandler CreditsPressed;
 
         private void OnCreditsPressed()
         {
-            var handler = CreditsPressed;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (CreditsPressed != null) CreditsPressed(this, EventArgs.Empty);
         }
 
         public event EventHandler ExitPressed;
 
         private void OnExitPressed()
         {
-            var handler = ExitPressed;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (ExitPressed != null) ExitPressed(this, EventArgs.Empty);
         }
         #endregion
 
@@ -126,7 +117,7 @@ namespace Sandbox.Client.Components
             }
         }
 
-        protected override void OnEnabledChanged(object sender, EventArgs args)
+        protected override void OnUpdatableChanged(object sender, EventArgs args)
         {
             if (!IsInitialized) return;
 
@@ -134,15 +125,12 @@ namespace Sandbox.Client.Components
             {
                 _screen.Desktop.Children.Add(_buttonsGroup);
                 UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
-
-                //_screen.FocusedControl = _multiplayer;
-
             }
             else
             {
                 _screen.Desktop.Children.Remove(_buttonsGroup);
             }
-            base.OnEnabledChanged(sender, args);
+            base.OnUpdatableChanged(sender, args);
         }
 
 

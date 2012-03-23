@@ -41,7 +41,7 @@ namespace S33M3DXEngine.Main
                 if (_updatable != value)
                 {
                     _updatable = value;
-                    OnEnabledChanged(this, EventArgs.Empty);
+                    OnUpdatableChanged(this, EventArgs.Empty);
                 }
             }
         }
@@ -120,7 +120,7 @@ namespace S33M3DXEngine.Main
         {
         }
 
-        protected virtual void OnEnabledChanged(object sender, EventArgs args)
+        protected virtual void OnUpdatableChanged(object sender, EventArgs args)
         {
             if (UpdatableChanged != null)
                 UpdatableChanged(this, args);
