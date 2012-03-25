@@ -10,7 +10,7 @@ using S33M3CoreComponents.Sprites;
 using S33M3DXEngine.Effects.HLSLFramework;
 using SharpDX.Direct3D11;
 
-namespace S33M3_CoreComponents.Sprites
+namespace S33M3CoreComponents.Sprites
 {
     /// <summary>
     /// Class that will hold the collection of sprites sharings the same characteristics : They can be draw at the same time (1 draw call)
