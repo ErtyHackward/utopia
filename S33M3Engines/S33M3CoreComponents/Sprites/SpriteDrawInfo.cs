@@ -7,6 +7,8 @@ using S33M3Resources.Structs.Vertex;
 using SharpDX;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Sprites;
+using S33M3DXEngine.Effects.HLSLFramework;
+using SharpDX.Direct3D11;
 
 namespace S33M3_CoreComponents.Sprites
 {
@@ -20,14 +22,15 @@ namespace S33M3_CoreComponents.Sprites
 
         #region Public variables
         public readonly SpriteTexture Texture;
+        public readonly SamplerState TextureSampler;
         public readonly List<VertexSprite2> Vertices;
         public readonly List<ushort> Indices;
         #endregion
 
-        public SpriteDrawInfo(SpriteTexture texture)
+        public SpriteDrawInfo(SpriteTexture texture, SamplerState textureSampler)
         {
             Texture = texture;
-
+            TextureSampler = textureSampler;
             Vertices = new List<VertexSprite2>();
             Indices = new List<ushort>();
         }
@@ -151,6 +154,16 @@ namespace S33M3_CoreComponents.Sprites
             Indices.Add((ushort)(3 + indiceVertexOffset));
             Indices.Add((ushort)(0 + indiceVertexOffset));
             Indices.Add((ushort)(2 + indiceVertexOffset));
+        }
+
+        public override int GetHashCode()
+        {
+            return Texture.GetHashCode() ^ TextureSampler.GetHashCode();
+        }
+
+        public static int ComputeHashCode(SpriteTexture texture, SamplerState sampler)
+        {
+            return texture.GetHashCode() ^ sampler.GetHashCode();
         }
         #endregion
 

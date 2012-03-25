@@ -65,7 +65,7 @@ namespace S33M3Resources.Effects.Sprites
             ShaderResources.Add(SpriteTexture);
 
             //Create the Sampler interface ==================================================
-            SpriteSampler = new ShaderSampler("SpriteSampler");
+            SpriteSampler = new ShaderSampler("SpriteSampler") { IsStaticResource = false };
             ShaderSamplers.Add(SpriteSampler);
 
             //Load the shaders
