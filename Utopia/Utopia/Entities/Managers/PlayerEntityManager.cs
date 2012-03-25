@@ -85,6 +85,11 @@ namespace Utopia.Entities.Managers
 
         //Drawing component
         private IEntitiesRenderer _playerRenderer;
+
+        //Event related variables
+        private double _fallMaxHeight;
+
+        private TerraCubeWithPosition _groundCube;
         #endregion
 
         #region Public variables/properties
@@ -156,6 +161,8 @@ namespace Utopia.Entities.Managers
             set { _landscapeInitiazed = value; }
         }
 
+        public delegate void LandingGround(double fallHeight, TerraCubeWithPosition landedCube);
+        public event LandingGround OnLanding;
         #endregion
 
         public PlayerEntityManager(D3DEngine engine,
@@ -198,6 +205,16 @@ namespace Utopia.Entities.Managers
 
         public override void Dispose()
         {
+            //Clean Up event Delegates
+            if (OnLanding != null)
+            {
+                //Remove all Events associated to this Event (That haven't been unsubscribed !)
+                foreach (Delegate d in OnLanding.GetInvocationList())
+                {
+                    OnLanding -= (LandingGround)d;
+                }
+            }
+
             this.VisualEntity.Dispose();
         }
 
@@ -371,7 +388,16 @@ namespace Utopia.Entities.Managers
         }
         #endregion
 
-        #region UnderWaterTest
+        #region Actions after new position defined
+        /// <summary>
+        /// Serie of check that needs to be done when the new position is defined
+        /// </summary>
+        private void CheckAfterNewPosition()
+        {
+            CheckHeadUnderWater();      //Under water head test
+            CheckForEventRaising();
+        }
+
         private void CheckHeadUnderWater()
         {
             if (_cubesHolder.IndexSafe(MathHelper.Fastfloor(CameraWorldPosition.X), MathHelper.Fastfloor(CameraWorldPosition.Y), MathHelper.Fastfloor(CameraWorldPosition.Z), out _headCubeIndex))
@@ -401,17 +427,17 @@ namespace Utopia.Entities.Managers
                 if (_headCube.Id == CubeId.Water || _headCube.Id == CubeId.WaterSource)
                 {
                     int AboveHead = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Fastfloor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
-                    if(_cubesHolder.Cubes[AboveHead].Id == CubeId.Air)
+                    if (_cubesHolder.Cubes[AboveHead].Id == CubeId.Air)
                     {
                         //Check the offset of the water
                         var Offset = CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y);
-                        if (Offset >= 1- GameSystemSettings.Current.Settings.CubesProfile[_headCube.Id].YBlockOffset)
+                        if (Offset >= 1 - GameSystemSettings.Current.Settings.CubesProfile[_headCube.Id].YBlockOffset)
                         {
                             IsHeadInsideWater = false;
                             return;
                         }
                     }
-                    
+
                     IsHeadInsideWater = true;
                 }
                 else
@@ -419,6 +445,32 @@ namespace Utopia.Entities.Managers
                     IsHeadInsideWater = false;
                 }
             }
+        }
+
+        private void CheckForEventRaising()
+        {
+            //Landing on ground after falling event
+            if (_physicSimu.OnGround == false)
+            {
+                //New "trigger"
+                if (_worldPosition.Value.Y > _fallMaxHeight) _fallMaxHeight = _worldPosition.Value.Y;
+            }
+            else
+            {
+                if (_physicSimu.OnGround == true && _fallMaxHeight != int.MinValue)
+                {
+                    if (OnLanding != null) 
+                    {
+                        OnLanding(_fallMaxHeight - _worldPosition.Value.Y, _groundCube);
+                    }
+#if DEBUG
+                    logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Value.Y, CubeId.GetCubeTypeName(_groundCube.Cube.Id));
+#endif           
+                        _fallMaxHeight = int.MinValue;
+                }
+            }
+
+
         }
         #endregion
 
@@ -449,20 +501,20 @@ namespace Utopia.Entities.Managers
         /// <param name="timeSpent"></param>
         private void PhysicSimulation(ref GameTime timeSpent)
         {
-            TerraCubeWithPosition groundCube;
             Vector3I GroundDirection = new Vector3I(0, -1, 0);
             Vector3D newWorldPosition;
             float BlockOffset;
 
-            _cubesHolder.GetNextSolidBlockToPlayer(ref VisualEntity.WorldBBox, ref GroundDirection, out groundCube);
+            _cubesHolder.GetNextSolidBlockToPlayer(ref VisualEntity.WorldBBox, ref GroundDirection, out _groundCube);
             //Half cube below me ??
-            BlockOffset = GameSystemSettings.Current.Settings.CubesProfile[groundCube.Cube.Id].YBlockOffset;
-            _groundBelowEntity = groundCube.Position.Y + 1 - BlockOffset;
+            BlockOffset = GameSystemSettings.Current.Settings.CubesProfile[_groundCube.Cube.Id].YBlockOffset;
+            _groundBelowEntity = _groundCube.Position.Y + 1 - BlockOffset;
             PlayerOnOffsettedBlock = BlockOffset != 0;
 
             _physicSimu.Simulate(ref timeSpent, out newWorldPosition);
             _worldPosition.Value = newWorldPosition;
 
+            //After physic simulation, I'm still in the air ?
             if (_worldPosition.Value.Y > _groundBelowEntity)
             {
                 _physicSimu.OnGround = false;
@@ -784,9 +836,9 @@ namespace Utopia.Entities.Managers
 
             GetSelectedEntity();         //Player Block Picking handling
 
-            CheckHeadUnderWater();      //Under water head test
-
             RefreshEntityMovementAndRotation(ref timeSpend);   //Refresh player Movement + rotation
+
+            CheckAfterNewPosition();
 
             //Refresh the player Bounding box
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
