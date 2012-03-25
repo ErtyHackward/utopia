@@ -123,7 +123,7 @@ namespace Sandbox.Client
             //GUI =========================================================
             //Create a list of assembly where GUI components will be looked into.
             List<Assembly> componentsAssemblies = new List<Assembly>();
-            componentsAssemblies.Add(typeof(Utopia.GUI.LoginComponent).Assembly);
+            componentsAssemblies.Add(typeof(LoginComponent).Assembly);
             _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope().WithConstructorArgument("skinPath", @"GUI\Skins\Default\Default.skin.xml")
                                                                         .WithConstructorArgument("plugInComponentAssemblies", componentsAssemblies);        //Gui base class
             _iocContainer.Bind<MainScreen>().ToSelf().InSingletonScope();
