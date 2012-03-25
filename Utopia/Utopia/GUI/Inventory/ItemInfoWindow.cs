@@ -53,12 +53,14 @@ namespace Utopia.GUI.Inventory
 
             _nameLabel = new LabelControl
                              {
-                                 Bounds = new UniRectangle(80, 50, 100, 20)
+                                 Bounds = new UniRectangle(80, 50, 100, 20),
+                                 Autosizing = true
                              };
 
             _descriptionLabel = new LabelControl
                                     {
-                                        Bounds = new UniRectangle(10, 80, 180, 100)
+                                        Bounds = new UniRectangle(10, 80, 180, 100),
+                                        Autosizing = true
                                     };
 
             Children.Add(_descriptionLabel);
