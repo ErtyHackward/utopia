@@ -197,7 +197,7 @@ namespace Utopia.Components
                 // do we need to play the step sound?
                 //Trigger only if the difference between previous memorize position and current is > 2.0 meters
                 //Or if the previous position was in the air
-                if (distance >= 2.0f || prevCube.Id == CubeId.Air)
+                if (distance >= 1.5f || prevCube.Id == CubeId.Air)
                 {
                     TerraCube currentCube = _singleArray.GetCube(entity.Position);
                         
