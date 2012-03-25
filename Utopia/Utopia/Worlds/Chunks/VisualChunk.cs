@@ -22,7 +22,7 @@ using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
 using S33M3CoreComponents.WorldFocus;
 using S33M3Resources.Effects.Basics;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Cameras;
 

@@ -22,9 +22,9 @@ using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
 using S33M3CoreComponents.Meshes;
 using S33M3CoreComponents.Meshes.Factories;
-using S33M3_CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites;
 using S33M3Resources.Structs;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.Entities
 {

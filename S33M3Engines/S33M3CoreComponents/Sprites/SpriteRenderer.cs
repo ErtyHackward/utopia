@@ -1,6 +1,6 @@
-﻿using S33M3_CoreComponents.Sprites;
+﻿using S33M3CoreComponents.Sprites;
 using SharpDX;
-using S33M3_CoreComponents.Sprites.Interfaces;
+using S33M3CoreComponents.Sprites.Interfaces;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3Resources.Effects.Sprites;

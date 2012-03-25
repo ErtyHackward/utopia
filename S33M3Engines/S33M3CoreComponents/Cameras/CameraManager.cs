@@ -5,7 +5,7 @@ using System.Text;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras.Interfaces;
 using SharpDX.Direct3D11;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace S33M3CoreComponents.Cameras
 {
