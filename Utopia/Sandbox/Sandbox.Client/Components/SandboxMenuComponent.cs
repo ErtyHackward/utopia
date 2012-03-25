@@ -50,7 +50,6 @@ namespace Sandbox.Client.Components
             StGameName      = LoadTexture(engine, "Images\\version.png");
             StCubesPattern  = LoadTexture(engine, "Images\\cubes.png");
             StLinenPattern  = LoadTexture(engine, "Images\\black-linen.png");
-
         }
 
         protected SandboxMenuComponent(D3DEngine engine, MainScreen screen)
@@ -83,9 +82,6 @@ namespace Sandbox.Client.Components
 
         public override void EnableComponent()
         {
-            
-            
-            
             _screen.Desktop.Children.Add(_logo);
             _screen.Desktop.Children.Add(_version);
             _screen.Desktop.Children.Add(_shadow);
@@ -108,7 +104,7 @@ namespace Sandbox.Client.Components
 
             _cubes.Bounds = new UniRectangle(0, 0, viewport.Width, _headerHeight);
             _linen.Bounds = new UniRectangle(0, _headerHeight, viewport.Width, viewport.Height - _headerHeight);
-            _shadow.Bounds = new UniRectangle(0, _headerHeight - 200, viewport.Width, 287);
+            _shadow.Bounds = new UniRectangle(0, _headerHeight - 117, viewport.Width, 287);
             _logo.Bounds = new UniRectangle((viewport.Width - 562) / 2, _headerHeight - 44, 562, 113);
             _version.Bounds = new UniRectangle((viewport.Width - 562) / 2 + 360, _headerHeight + 49, 196, 31);
         }

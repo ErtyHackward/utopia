@@ -63,7 +63,10 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         void DrawElement(string frameName, ref RectangleF bounds);
 
         void DrawCustomTexture(SpriteTexture custom, ref RectangleF bounds, int textureArrayIndex = 0);
+
         void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds);
+
+        void DrawCustomTextureTiled(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0);
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
