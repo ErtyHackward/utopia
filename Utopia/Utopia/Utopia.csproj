@@ -165,7 +165,6 @@
     <Compile Include="GUI\Inventory\PlayerInventory.cs" />
     <Compile Include="GUI\Inventory\ToolBarUI.cs" />
     <Compile Include="GUI\Inventory\Vector2I.cs" />
-    <Compile Include="GUI\LoginComponent.cs" />
     <Compile Include="GUI\Map\MapComponent.cs" />
     <Compile Include="GUI\Map\MapControl.cs" />
     <Compile Include="GUI\Map\MapRenderer.cs" />

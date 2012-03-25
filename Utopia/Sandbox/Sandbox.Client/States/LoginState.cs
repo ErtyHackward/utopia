@@ -118,7 +118,7 @@ namespace Sandbox.Client.States
             }
 
 
-            // request our server for a authorization
+            // request our server for authorization
             _webApi.UserLoginAsync(login.Email, login.Password.GetSHA1Hash());
 
             

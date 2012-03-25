@@ -8,8 +8,8 @@
     <ProjectGuid>{D0C4DB7F-547E-4A40-A5CA-41391A310938}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>S33M3_CoreComponents</RootNamespace>
-    <AssemblyName>S33M3_CoreComponents</AssemblyName>
+    <RootNamespace>S33M3CoreComponents</RootNamespace>
+    <AssemblyName>S33M3CoreComponents</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -122,6 +122,7 @@
     <Compile Include="GUI\Nuclex\Controls\Desktop\Interfaces\IThumbLocator.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\ListControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\OptionControl.cs" />
+    <Compile Include="GUI\Nuclex\Controls\Desktop\ImageControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\SliderControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\StickyButtonControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\VerticalSliderControl.cs" />
@@ -174,6 +175,7 @@
     <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatListControlRenderer.cs" />
     <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatOptionControlRenderer.cs" />
     <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatPanelControlRenderer.cs" />
+    <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatImageControlRenderer.cs" />
     <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatProgressControlRenderer.cs" />
     <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatStickyButtonRenderer.cs" />
     <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatVerticalSliderControlRenderer.cs" />

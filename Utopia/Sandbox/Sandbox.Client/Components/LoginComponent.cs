@@ -1,19 +1,18 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SharpDX.Direct3D11;
-using S33M3DXEngine.Main;
-using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
-using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3DXEngine;
+using SharpDX.Direct3D11;
 
-namespace Utopia.GUI
+namespace Sandbox.Client.Components
 {
     /// <summary>
     /// Provides login gui
     /// </summary>
-    public class LoginComponent : GameComponent
+    public class LoginComponent : SandboxMenuComponent
     {
         WindowControl _loginWindow;
         private readonly D3DEngine _engine;
@@ -85,7 +84,7 @@ namespace Utopia.GUI
             if (handler != null) handler(this, EventArgs.Empty);
         }
         
-        public LoginComponent(D3DEngine engine, MainScreen screen)
+        public LoginComponent(D3DEngine engine, MainScreen screen) : base(engine, screen)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");
@@ -107,7 +106,7 @@ namespace Utopia.GUI
             
         }
 
-        void GameWindowKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        void GameWindowKeyPress(object sender, KeyPressEventArgs e)
         {
             if ((Keys)e.KeyChar == Keys.Return)
             {
@@ -191,35 +190,43 @@ namespace Utopia.GUI
 
             _loginWindow.Children.Add(_loginButton);
 
-            if (Updatable)
-            {
-                EnableComponent();
-            }
+            //if (Updatable)
+            //{
+            //    EnableComponent();
+            //}
             
         }
 
-        private void EnableComponent()
+        public override void EnableComponent()
         {
+            
             _screen.Desktop.Children.Add(_loginWindow);
             _screen.FocusedControl = !string.IsNullOrEmpty(Email) ? _passwordControl : _emailControl;
             CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
             _engine.GameWindow.KeyPress += GameWindowKeyPress;
+            base.EnableComponent();
+        }
+
+        public override void DisableComponent()
+        {
+            base.DisableComponent();
+            _screen.Desktop.Children.Remove(_loginWindow);
+            _engine.GameWindow.KeyPress -= GameWindowKeyPress;
         }
 
         protected override void OnUpdatableChanged(object sender, EventArgs args)
         {
-            if (!IsInitialized) return;
+            //if (!IsInitialized) return;
 
-            if (Updatable)
-            {
-                EnableComponent();
-            }
-            else
-            {
-                _screen.Desktop.Children.Remove(_loginWindow);
-                _engine.GameWindow.KeyPress -= GameWindowKeyPress;
-            }
-            base.OnUpdatableChanged(sender, args);
+            //if (Updatable)
+            //{
+            //    EnableComponent();
+            //}
+            //else
+            //{
+
+            //}
+            //base.OnUpdatableChanged(sender, args);
         }
 
     }

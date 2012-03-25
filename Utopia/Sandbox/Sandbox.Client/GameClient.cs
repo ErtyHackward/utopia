@@ -1,4 +1,4 @@
-﻿#define SINGLEPLAYERSTART
+﻿//#define SINGLEPLAYERSTART
 
 using System;
 using System.IO;
@@ -64,6 +64,8 @@ namespace Sandbox.Client
             _iocContainer.Rebind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
 
             SmartThread.SetOptimumNbrThread(0);
+
+            SandboxMenuComponent.LoadCommonImages(_iocContainer.Get<D3DEngine>());
 
             //filling stages
             var stateManager = _iocContainer.Get<GameStatesManager>();

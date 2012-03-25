@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using S33M3_CoreComponents.Sprites;
 using SharpDX;
 using S33M3_CoreComponents.Sprites.Interfaces;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3Resources.Effects.Sprites;
 using S33M3DXEngine.RenderStates;
-using S33M3CoreComponents.Sprites;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.Structs.Vertex;
-using S33M3_CoreComponents.Cameras.Interfaces;
 using Rectangle = System.Drawing.Rectangle;
 
-namespace S33M3_CoreComponents.Sprites
+namespace S33M3CoreComponents.Sprites
 {
     public class SpriteRenderer : Component, ISpriteRenderer
     {
@@ -140,6 +135,7 @@ namespace S33M3_CoreComponents.Sprites
         /// <param name="spriteTexture">The texture that will be used</param>
         /// <param name="destRect">The destination rectangle = drawing translation offset + scaling</param>
         /// <param name="color">Color Modifiers</param>
+        /// <param name="textureArrayIndex"> </param>
         public void Draw(SpriteTexture spriteTexture, ref Rectangle destRect, ref ByteColor color, int textureArrayIndex = 0)
         {
             Vector2 position = new Vector2(destRect.X, destRect.Y);
