@@ -305,7 +305,6 @@ namespace Utopia.Server
             }
         }
 
-
         /// <summary>
         /// Sends a message to client
         /// </summary>

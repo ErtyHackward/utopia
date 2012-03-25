@@ -22,7 +22,7 @@ namespace S33M3CoreComponents.Sprites
 
         #region Private variables
         private D3DEngine _d3DEngine;
-        private SamplerState _spriteSampler;
+        private SamplerState _spriteSamplerWrap, _spriteSamplerClamp;
         private HLSLSprites2 _effect;
         private int _rasterStateWithoutScissorId, _blendStateId, _depthStateWithDepthId, _depthStateWithoutDepthId, _rasterStateWithScissorId;
         RectangleF _descCarret = default(RectangleF);
@@ -118,6 +118,9 @@ namespace S33M3CoreComponents.Sprites
                 _effect.SpriteTexture.Value = spriteGroup.Texture.Texture;
                 _effect.CBPerDraw.Values.OrthoProjection = Matrix.Transpose(_d3DEngine.Projection2D);
                 _effect.CBPerDraw.IsDirty = true;
+
+                _effect.SpriteSampler.Value = _spriteSamplerClamp;
+
                 _effect.Apply(context);
 
                 _vb.SetToDevice(context, 0);
@@ -148,6 +151,11 @@ namespace S33M3CoreComponents.Sprites
             _spriteBuffer.AddSprite(spriteTexture, ref position, ref size, textureArrayIndex, ref color);
         }
 
+        public void DrawWithWrapping(SpriteTexture spriteTexture, ref Vector2 position, ref Vector2 size, ref ByteColor color, int textureArrayIndex = 0)
+        {
+            _spriteBuffer.AddWrappingSprite(spriteTexture, ref position, ref size, textureArrayIndex, ref color);
+        }
+       
         public void Draw(SpriteTexture spriteTexture, ref Rectangle destRect, ref Rectangle srcRect, ref ByteColor color, int textureArrayIndex = 0, bool sourceRectInTextCoord = true)
         {
             Vector2 position = new Vector2(destRect.Left, destRect.Top);
@@ -157,7 +165,6 @@ namespace S33M3CoreComponents.Sprites
 
             _spriteBuffer.AddSprite(spriteTexture, ref position, ref size, ref src, sourceRectInTextCoord, textureArrayIndex, ref color);
         }
-
 
         public void DrawText(SpriteFont spriteFont, string text, ref Vector2 position, ref ByteColor color, float maxWidth = -1, int withCarret = -1, TextFontPosition textFontPosition = TextFontPosition.RelativeToFontUp)
         {
@@ -275,17 +282,28 @@ namespace S33M3CoreComponents.Sprites
 
         private void Initialize()
         {
-            //Create the sampler.
-            _spriteSampler = ToDispose(new SamplerState(_d3DEngine.Device,
-                                                        new SamplerStateDescription
-                                                        {
-                                                            AddressU = TextureAddressMode.Clamp,
-                                                            AddressV = TextureAddressMode.Clamp,
-                                                            AddressW = TextureAddressMode.Clamp,
-                                                            Filter = Filter.MinLinearMagMipPoint,
-                                                            MaximumLod = float.MaxValue,
-                                                            MinimumLod = 0
-                                                        }));
+
+            _spriteSamplerWrap = ToDispose(new SamplerState(_d3DEngine.Device,
+                                            new SamplerStateDescription
+                                            {
+                                                AddressU = TextureAddressMode.Wrap,
+                                                AddressV = TextureAddressMode.Wrap,
+                                                AddressW = TextureAddressMode.Wrap,
+                                                Filter = Filter.MinLinearMagMipPoint,
+                                                MaximumLod = float.MaxValue,
+                                                MinimumLod = 0
+                                            }));
+
+            _spriteSamplerClamp = ToDispose(new SamplerState(_d3DEngine.Device,
+                            new SamplerStateDescription
+                            {
+                                AddressU = TextureAddressMode.Clamp,
+                                AddressV = TextureAddressMode.Clamp,
+                                AddressW = TextureAddressMode.Clamp,
+                                Filter = Filter.MinLinearMagMipPoint,
+                                MaximumLod = float.MaxValue,
+                                MinimumLod = 0
+                            }));
 
             _rasterStateWithoutScissorId = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription
             {
@@ -351,7 +369,7 @@ namespace S33M3CoreComponents.Sprites
 
             //Create the effect and set the default texture sampler
             _effect = ToDispose(new HLSLSprites2(_d3DEngine.Device));
-            _effect.SpriteSampler.Value = _spriteSampler;
+            _effect.SpriteSampler.Value = _spriteSamplerClamp;
 
             //Buffer creation
             _vb = ToDispose(new VertexBuffer<VertexSprite2>(_d3DEngine.Device, 16, VertexSprite2.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "SpriteRenderer2 VB", ResourceUsage.Dynamic, 20));

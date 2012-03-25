@@ -33,6 +33,27 @@ namespace S33M3_CoreComponents.Sprites
         }
 
         #region Public methods
+        public void AddWrappingSprite(ref Vector2 position, ref Vector2 size, Vector2 textureSize, int textureArrayIndex, ref ByteColor color, float depth)
+        {
+            ushort indiceVertexOffset = (ushort)Vertices.Count;
+
+            Vector2 wrappingSize = new Vector2(size.X / textureSize.X, size.Y / textureSize.Y);
+
+            //Create the vertices
+            Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y, depth), new Vector3(0.0f, 0.0f, textureArrayIndex), color));
+            Vertices.Add(new VertexSprite2(new Vector3(position.X + size.X, position.Y, depth), new Vector3(wrappingSize.X, 0.0f, textureArrayIndex), color));
+            Vertices.Add(new VertexSprite2(new Vector3(position.X + size.X, position.Y + size.Y, depth), new Vector3(wrappingSize.X, wrappingSize.Y, textureArrayIndex), color));
+            Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y + size.Y, depth), new Vector3(0.0f, wrappingSize.Y, textureArrayIndex), color));
+
+            //Create the indices
+            Indices.Add((ushort)(0 + indiceVertexOffset));
+            Indices.Add((ushort)(1 + indiceVertexOffset));
+            Indices.Add((ushort)(2 + indiceVertexOffset));
+            Indices.Add((ushort)(3 + indiceVertexOffset));
+            Indices.Add((ushort)(0 + indiceVertexOffset));
+            Indices.Add((ushort)(2 + indiceVertexOffset));
+        }
+
         public void AddSprite(ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, float depth)
         {
             ushort indiceVertexOffset = (ushort)Vertices.Count;
