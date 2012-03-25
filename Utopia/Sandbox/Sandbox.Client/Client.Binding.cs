@@ -53,7 +53,6 @@ using Utopia.Action;
 using System.Collections.Generic;
 using System.Reflection;
 using S33M3CoreComponents.Debug;
-using S33M3_CoreComponents.Sprites;
 using Utopia.Shared.Entities;
 using Sandbox.Shared;
 
@@ -123,7 +122,6 @@ namespace Sandbox.Client
             //GUI =========================================================
             //Create a list of assembly where GUI components will be looked into.
             List<Assembly> componentsAssemblies = new List<Assembly>();
-            componentsAssemblies.Add(typeof(LoginComponent).Assembly);
             _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope().WithConstructorArgument("skinPath", @"GUI\Skins\Default\Default.skin.xml")
                                                                         .WithConstructorArgument("plugInComponentAssemblies", componentsAssemblies);        //Gui base class
             _iocContainer.Bind<MainScreen>().ToSelf().InSingletonScope();

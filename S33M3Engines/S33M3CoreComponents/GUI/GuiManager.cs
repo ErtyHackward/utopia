@@ -21,7 +21,7 @@ using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
 using S33M3DXEngine.Debug.Interfaces;
 using System.Reflection;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace S33M3CoreComponents.GUI
 {

@@ -10,8 +10,8 @@ using S33M3CoreComponents.Sprites;
 using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
 using S33M3DXEngine.Debug.Interfaces;
-using S33M3_CoreComponents.Sprites;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace S33M3CoreComponents.Components.Debug
 {
