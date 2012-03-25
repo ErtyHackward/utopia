@@ -43,6 +43,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
     /// <summary>Draws traditional flat GUIs using 2D bitmaps</summary>
     public class FlatGuiVisualizer : IGuiVisualizer
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region struct ControlWithBounds
 
@@ -460,6 +461,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             }
             else
             { // No renderer found, output a warning
+                logger.Warn("Impossible to find a control renderer for the component type : {0}, are you sure its assembly has been registered ??", controlToRender.GetType());
             }
         }
 
