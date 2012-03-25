@@ -5,6 +5,8 @@ using System.Text;
 using S33M3CoreComponents.Sprites;
 using SharpDX;
 using S33M3Resources.Structs;
+using S33M3DXEngine.Effects.HLSLFramework;
+using SharpDX.Direct3D11;
 
 namespace S33M3_CoreComponents.Sprites
 {
@@ -40,58 +42,58 @@ namespace S33M3_CoreComponents.Sprites
             _spritesByTexture.Clear();
         }
 
-        public void AddSprite(SpriteTexture texture, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color)
+        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color)
         {
-            AddSprite(texture, ref position, ref size, textureArrayIndex, ref color, AutoDepth);
+            AddSprite(texture, sampler, ref position, ref size, textureArrayIndex, ref color, AutoDepth);
             if (_enableDepthSprite) AutoDepth -= 0.001f;
         }
 
-        public void AddSprite(SpriteTexture texture, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, float spriteDepth)
+        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, float spriteDepth)
         {
-            GetSpriteDrawInfo(texture).AddSprite(ref position, ref size, textureArrayIndex, ref color, spriteDepth);
+            GetSpriteDrawInfo(texture, sampler).AddSprite(ref position, ref size, textureArrayIndex, ref color, spriteDepth);
         }
 
-        public void AddWrappingSprite(SpriteTexture texture, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color)
+        public void AddWrappingSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color)
         {
-            GetSpriteDrawInfo(texture).AddWrappingSprite(ref position, ref size, new Vector2(texture.Width, texture.Height), textureArrayIndex, ref color, AutoDepth);
-            if (_enableDepthSprite) AutoDepth -= 0.001f;
-        }   
-
-        public void AddWrappingSprite(SpriteTexture texture, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, float spriteDepth)
-        {
-            GetSpriteDrawInfo(texture).AddWrappingSprite(ref position, ref size, new Vector2(texture.Width, texture.Height), textureArrayIndex, ref color, spriteDepth);
-        }        
-
-        public void AddSprite(SpriteTexture texture, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color)
-        {
-            AddSprite(texture, ref position, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, AutoDepth);
+            GetSpriteDrawInfo(texture, sampler).AddWrappingSprite(ref position, ref size, new Vector2(texture.Width, texture.Height), textureArrayIndex, ref color, AutoDepth);
             if (_enableDepthSprite) AutoDepth -= 0.001f;
         }
 
-        public void AddSprite(SpriteTexture texture, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, float spriteDepth)
+        public void AddWrappingSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, float spriteDepth)
         {
-            GetSpriteDrawInfo(texture).AddSprite(ref position, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, spriteDepth);
+            GetSpriteDrawInfo(texture, sampler).AddWrappingSprite(ref position, ref size, new Vector2(texture.Width, texture.Height), textureArrayIndex, ref color, spriteDepth);
         }
 
-        public void AddSprite(SpriteTexture texture, ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color)
+        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color)
         {
-            AddSprite(texture, ref position, ref size, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, AutoDepth);
+            AddSprite(texture, sampler, ref position, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, AutoDepth);
             if (_enableDepthSprite) AutoDepth -= 0.001f;
         }
 
-        public void AddSprite(SpriteTexture texture, ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, float spriteDepth)
+        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, float spriteDepth)
         {
-            GetSpriteDrawInfo(texture).AddSprite(ref position, ref size, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, spriteDepth);
+            GetSpriteDrawInfo(texture, sampler).AddSprite(ref position, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, spriteDepth);
         }
 
-        public SpriteDrawInfo GetSpriteDrawInfo(SpriteTexture texture)
+        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color)
+        {
+            AddSprite(texture, sampler, ref position, ref size, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, AutoDepth);
+            if (_enableDepthSprite) AutoDepth -= 0.001f;
+        }
+
+        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, float spriteDepth)
+        {
+            GetSpriteDrawInfo(texture, sampler).AddSprite(ref position, ref size, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, spriteDepth);
+        }
+
+        public SpriteDrawInfo GetSpriteDrawInfo(SpriteTexture texture, SamplerState sampler)
         {
             SpriteDrawInfo spriteDrawInfo;
-            int textureHashCode = texture.GetHashCode();
+            int textureHashCode = SpriteDrawInfo.ComputeHashCode(texture, sampler);
             if (_spritesByTexture.TryGetValue(textureHashCode, out spriteDrawInfo) == false)
             {
                 //The sprite group for this texture is not existing => Create it !
-                spriteDrawInfo = new SpriteDrawInfo(texture);
+                spriteDrawInfo = new SpriteDrawInfo(texture, sampler);
                 _spritesByTexture.Add(textureHashCode, spriteDrawInfo);
             }
 

@@ -30,6 +30,13 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             get { return _shadersImpacted; }
             set { _shadersImpacted = value; }
         }
+
+        public bool IsStaticResource
+        {
+            get { return _isStaticResource; }
+            set { _isStaticResource = value; }
+        }
+
         public int[] Slot
         {
             get { return _slot; }
@@ -58,8 +65,7 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             if (forceStaticResourcesOnly && _isStaticResource == false) return;
 
 #if DEBUG
-            if (_sampler == null) 
-                logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
+            if (_sampler == null) logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
 #endif
 
             if (_isDirty || forceStaticResourcesOnly)

@@ -10,6 +10,7 @@ using System.Drawing;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Rectangle = System.Drawing.Rectangle;
+using S33M3DXEngine.Effects.HLSLFramework;
 
 namespace S33M3CoreComponents.Sprites
 {
@@ -206,6 +207,7 @@ namespace S33M3CoreComponents.Sprites
             Height = texture.Description.Height;
 
             ScreenPosition = new Rectangle(screenPosition.X, screenPosition.Y, Width, Height);
+
         }
 
         public override void Dispose()

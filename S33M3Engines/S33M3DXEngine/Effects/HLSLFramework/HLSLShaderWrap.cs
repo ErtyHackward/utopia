@@ -313,6 +313,12 @@ namespace S33M3DXEngine.Effects.HLSLFramework
                 _cBuffers[i].Set2Device(context);
             }
 
+            //Set the samplers (forced)
+            for (int i = 0; i < _shaderSamplers.Length; i++)
+            {
+                _shaderSamplers[i].Set2Device(context, false);
+            }
+
             //Set the resources
             for (int i = 0; i < _shaderResources.Length; i++)
             {
