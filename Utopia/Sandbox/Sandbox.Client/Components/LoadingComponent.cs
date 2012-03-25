@@ -6,7 +6,7 @@ using S33M3DXEngine.Main;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3Resources.Structs;
-using S33M3_CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites;
 
 namespace Sandbox.Client.Components
 {

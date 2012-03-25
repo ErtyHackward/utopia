@@ -554,27 +554,35 @@ namespace Utopia.Entities.Managers
 
         private void FreeFirstPersonMove()
         {
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward, CatchExclusiveAction))
-                _worldPosition.Value += _lookAt * _moveDelta;
+            Vector3D moveVector = Vector3D.Zero;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward, CatchExclusiveAction))
-                _worldPosition.Value -= _lookAt * _moveDelta;
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
+                moveVector += _lookAt;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft, CatchExclusiveAction))
-                _worldPosition.Value -= _entityHeadXAxis * _moveDelta;
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
+                moveVector -= _lookAt;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight, CatchExclusiveAction))
-                _worldPosition.Value += _entityHeadXAxis * _moveDelta;
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
+                moveVector -= _entityHeadXAxis;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Down, CatchExclusiveAction))
-                _worldPosition.Value += Vector3D.Down * _moveDelta;
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
+                moveVector += _entityHeadXAxis;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Up, CatchExclusiveAction))
-                _worldPosition.Value += Vector3D.Up * _moveDelta;
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Down))
+                moveVector += Vector3D.Down;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Up))
+                moveVector += Vector3D.Up;
+
+            moveVector.Normalize();
+            _worldPosition.Value += moveVector * _moveDelta;
         }
 
         private void WalkingFirstPerson(ref GameTime timeSpent)
         {
+            Vector3D moveVector = Vector3D.Zero;
+            float moveModifier = 1;
+
             float jumpPower;
             _physicSimu.Freeze(true, false, true); //Trick to easy ground deplacement, it will nullify all accumulated forced being applied on the entity (Except the Y ones)
 
@@ -585,17 +593,25 @@ namespace Utopia.Entities.Managers
                 _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 7 + (2 * jumpPower), 0) });
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
-                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)) _physicSimu.PrevPosition += _entityZAxis * _moveDelta * 2f; //Running makes the entity go twice faster
-                else _physicSimu.PrevPosition += _entityZAxis * _moveDelta;
+             moveVector += _entityZAxis;
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
-                _physicSimu.PrevPosition -= _entityZAxis * _moveDelta;
+                moveVector -= _entityZAxis;
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
-                _physicSimu.PrevPosition += _entityXAxis * _moveDelta;
+                moveVector += _entityXAxis;
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
-                _physicSimu.PrevPosition -= _entityXAxis * _moveDelta;
+                moveVector -= _entityXAxis;
+
+            moveVector.Normalize();
+            //Run only if Move forward and run button pressed at the same time.
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) && (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)))
+            {
+                moveModifier = 2;
+            }
+            _physicSimu.PrevPosition += moveVector * _moveDelta * moveModifier;
+
         }
         #endregion
 

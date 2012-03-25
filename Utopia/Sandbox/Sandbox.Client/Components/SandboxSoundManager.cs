@@ -15,9 +15,9 @@ namespace Sandbox.Client.Components
             SetGuiButtonSound("Sounds\\Interface\\button_press.wav");
 
             AddStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass01.ogg");
-            AddStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass02.ogg");
-            AddStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass03.ogg");
-            AddStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass04.ogg");
+            //AddStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass02.ogg");
+            //AddStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass03.ogg");
+            //AddStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass04.ogg");
 
             AddStepSound(CubeId.Sand, "Sounds\\Footsteps\\footsteps_sand01.ogg");
             AddStepSound(CubeId.Sand, "Sounds\\Footsteps\\footsteps_sand02.ogg");

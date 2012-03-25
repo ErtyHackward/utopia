@@ -14,7 +14,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.Debug.Components;
 using S33M3CoreComponents.GUI;
 using SharpDX.Direct3D11;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace S33M3CoreComponents.Debug
 {

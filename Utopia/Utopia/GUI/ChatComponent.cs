@@ -17,8 +17,8 @@ using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.Inputs;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
-using S33M3_CoreComponents.Sprites;
-using S33M3_CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.GUI
 {

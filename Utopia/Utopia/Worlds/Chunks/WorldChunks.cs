@@ -397,7 +397,7 @@ namespace Utopia.Worlds.Chunks
             newPositionWithColliding.Y = newPosition2Evaluate.Y;
 
             //My Position raise  ==> If I were on the ground, I'm no more
-            if (previousPosition.Y < newPositionWithColliding.Y && _physicSimu.OnGround) _physicSimu.OnGround = false;
+            //if (previousPosition.Y < newPositionWithColliding.Y && _physicSimu.OnGround) _physicSimu.OnGround = false;
 
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
