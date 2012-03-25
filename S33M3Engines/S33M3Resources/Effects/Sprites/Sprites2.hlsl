@@ -52,7 +52,7 @@ PSInput SpriteVS(in VSInput input)
 float4 SpritePS(in PSInput input) : SV_Target
 {
     float4 texColor = SpriteTexture.Sample(SpriteSampler, input.TexCoord);    
-	clip(texColor.a < 0.1f ? -1:1 );
+	clip(texColor.a < 0.001f ? -1:1 );
     texColor = texColor * input.Color;    
     texColor.rgb *= texColor.a;
 	return texColor;

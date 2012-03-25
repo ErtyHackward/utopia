@@ -168,6 +168,19 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             spriteRenderer.Draw(customTex, ref destinationRegion, ref srcRegion, ref _defaultColor, textureArrayIndex, true);
         }
 
+        public void DrawCustomTextureTiled(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0)
+        {
+            Vector2 position;
+            position.X = bounds.X;
+            position.Y = bounds.Y;
+
+            Vector2 size;
+            size.X = bounds.Width;
+            size.Y = bounds.Height;
+
+            spriteRenderer.DrawWithWrapping(customTex, ref position, ref size, ref _defaultColor, textureArrayIndex);
+        }
+
         public void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds)
         {
 
