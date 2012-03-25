@@ -51,6 +51,17 @@ namespace S33M3_CoreComponents.Sprites
             GetSpriteDrawInfo(texture).AddSprite(ref position, ref size, textureArrayIndex, ref color, spriteDepth);
         }
 
+        public void AddWrappingSprite(SpriteTexture texture, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color)
+        {
+            GetSpriteDrawInfo(texture).AddWrappingSprite(ref position, ref size, new Vector2(texture.Width, texture.Height), textureArrayIndex, ref color, AutoDepth);
+            if (_enableDepthSprite) AutoDepth -= 0.001f;
+        }   
+
+        public void AddWrappingSprite(SpriteTexture texture, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, float spriteDepth)
+        {
+            GetSpriteDrawInfo(texture).AddWrappingSprite(ref position, ref size, new Vector2(texture.Width, texture.Height), textureArrayIndex, ref color, spriteDepth);
+        }        
+
         public void AddSprite(SpriteTexture texture, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color)
         {
             AddSprite(texture, ref position, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, AutoDepth);
