@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3CoreComponents.Sprites;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 
@@ -22,14 +23,33 @@ namespace Sandbox.Client.Components
         private InputControl _emailControl;
         private InputControl _passwordControl;
         private ButtonControl _loginButton;
-        
+        private ImageControl _authenticationLabel;
+
+        #region Images
+        private SpriteTexture _stEnter;
+        private SpriteTexture _stEnterHover;
+        private SpriteTexture _stEnterDown;
+
+        private SpriteTexture _stSign;
+        private SpriteTexture _stSignHover;
+
+        private SpriteTexture _stInputBg;
+        private SpriteTexture _stEmail;
+        private SpriteTexture _stPassword;
+
+        private SpriteTexture _stAutentification;
+        private SpriteTexture _stError;
+        private ButtonControl _regButton;
+
+        #endregion
+
         /// <summary>
         /// Gets or sets current displayed email
         /// </summary>
         public string Email
         {
             get { return _emailControl == null ? _email : _emailControl.Text; }
-            set { 
+            set {
                 _email = value;
                 if (_emailControl != null)
                     _emailControl.Text = _email;
@@ -90,7 +110,20 @@ namespace Sandbox.Client.Components
             if (screen == null) throw new ArgumentNullException("screen");
             _engine = engine;
             _screen = screen;
-            _engine.ViewPort_Updated += EngineViewportUpdated;
+
+            _stEnter = ToDispose(LoadTexture(engine, "Images\\Login\\enter.png"));
+            _stEnterHover = ToDispose(LoadTexture(engine, "Images\\Login\\enter_hover.png"));
+            _stEnterDown = ToDispose(LoadTexture(engine, "Images\\Login\\enter_press.png"));
+            
+            _stSign = ToDispose(LoadTexture(engine, "Images\\Login\\sign.png"));
+            _stSignHover = ToDispose(LoadTexture(engine, "Images\\Login\\sign_hover.png"));
+
+            _stInputBg = ToDispose(LoadTexture(engine, "Images\\Login\\login_input_bg.png"));
+            _stEmail = ToDispose(LoadTexture(engine, "Images\\Login\\email.png"));
+            _stPassword = ToDispose(LoadTexture(engine, "Images\\Login\\password.png"));
+
+            _stAutentification = ToDispose(LoadTexture(engine, "Images\\Login\\authentication.png"));
+            _stError = ToDispose(LoadTexture(engine, "Images\\Login\\error.png"));
 
             
 
@@ -102,8 +135,23 @@ namespace Sandbox.Client.Components
             _emailControl = null;
             _passwordControl = null;
             _loginButton = null;
-            _engine.ViewPort_Updated -= EngineViewportUpdated;
+        }
+
+        protected override void EngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer)
+        {
+            base.EngineViewPortUpdated(viewport, newBackBuffer);
+            Resize(viewport);
+        }
+
+        private void Resize(Viewport viewport)
+        {
+            _regButton.Bounds = new UniRectangle((viewport.Width - 562) / 2 + 408, _headerHeight + 72, 88, 83);
             
+
+            _authenticationLabel.Bounds = new UniRectangle((viewport.Width - 444) / 2+ 12, _headerHeight + 133, 126, 49);
+            _emailControl.Bounds = new UniRectangle((viewport.Width - 444) / 2, _headerHeight + 173, 444, 85);
+            _passwordControl.Bounds = new UniRectangle((viewport.Width - 444) / 2, _headerHeight + 253, 444, 85);
+            _loginButton.Bounds = new UniRectangle((viewport.Width - 444) / 2, _headerHeight + 333, 444, 85);
         }
 
         void GameWindowKeyPress(object sender, KeyPressEventArgs e)
@@ -118,99 +166,75 @@ namespace Sandbox.Client.Components
             }
         }
 
-        void EngineViewportUpdated(Viewport viewport, Texture2DDescription newBackBufferDescr)
-        {
-            // locate login window
-            CenterWindow(new Size((int)viewport.Width, (int)viewport.Height));
-        }
-
-        private void CenterWindow(Size screenSize)
-        {
-            _loginWindow.Bounds = new UniRectangle(
-                new UniVector((screenSize.Width - _loginWindow.Bounds.Size.X.Offset) / 2, (screenSize.Height - _loginWindow.Bounds.Size.Y.Offset) / 2), 
-                _loginWindow.Bounds.Size);
-        }
 
         public override void Initialize()
         {
             var dx = 20;
             var dy = 40;
 
-            _loginWindow = new WindowControl
-            {
-                Bounds = new UniRectangle(300, 200, 245, 170),
-                Title = "Login"
-            };
-
-            _loginWindow.Children.Add(new LabelControl
-            {
-                Bounds = new UniRectangle(dx, dy, 30, 20),
-                Text = "Email"
-            });
-
-            _loginWindow.Children.Add(new LabelControl
-            {
-                Bounds = new UniRectangle(dx, dy + 30, 30, 20),
-                Text = "Password"
-            });
+            _authenticationLabel = new ImageControl { Image = _stAutentification };
 
             _emailControl = new InputControl
             {
-                Bounds = new UniRectangle(dx + 60, dy, 140, 20),
                 Text = Email,
+                CustomBackground = _stInputBg
             };
-            _loginWindow.Children.Add(_emailControl);
-
+            
             _passwordControl = new InputControl
             {
                 Bounds = new UniRectangle(dx + 60, dy + 30, 140, 20),
                 Text = Password,
-                IsPassword = true
+                IsPassword = true,
+                CustomBackground = _stInputBg
             };
+            
+            _regButton = new ButtonControl
+                             {
+                                 CustomImage = _stSign,
+                                 CustomImageHover = _stSignHover,
+                                 CustomImageDown = _stSignHover
+                             };
 
-            _loginWindow.Children.Add(_passwordControl);
-
-            var regButton = new ButtonControl
-            {
-                Bounds = new UniRectangle(dx, dy + 90, 200, 20),
-                Text = "Register",
-            };
-
-            regButton.Pressed += delegate { OnRegister(); };
-
-            _loginWindow.Children.Add(regButton);
-
+            _regButton.Pressed += delegate { OnRegister(); };
+            
             _loginButton = new ButtonControl
             {
-                Bounds = new UniRectangle(dx, dy + 60, 200, 20),
-                Text = "Login"
+                CustomImage = _stEnter,
+                CustomImageHover = _stEnterHover,
+                CustomImageDown = _stEnterDown
             };
 
             _loginButton.Pressed += delegate { OnLogin(); };
 
-            _loginWindow.Children.Add(_loginButton);
-
-            //if (Updatable)
-            //{
-            //    EnableComponent();
-            //}
-            
         }
 
         public override void EnableComponent()
         {
-            
-            _screen.Desktop.Children.Add(_loginWindow);
+
+            _screen.Desktop.Children.Add(_regButton);
+            _screen.Desktop.Children.Add(_loginButton);
+            _screen.Desktop.Children.Add(_emailControl);
+            _screen.Desktop.Children.Add(_passwordControl);
+            _screen.Desktop.Children.Add(_authenticationLabel);
+
             _screen.FocusedControl = !string.IsNullOrEmpty(Email) ? _passwordControl : _emailControl;
-            CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
             _engine.GameWindow.KeyPress += GameWindowKeyPress;
+
+            Resize(_engine.ViewPort);
+
             base.EnableComponent();
         }
 
         public override void DisableComponent()
         {
             base.DisableComponent();
-            _screen.Desktop.Children.Remove(_loginWindow);
+
+            _screen.Desktop.Children.Remove(_regButton);
+            _screen.Desktop.Children.Remove(_loginButton);
+            _screen.Desktop.Children.Remove(_emailControl);
+            _screen.Desktop.Children.Remove(_passwordControl);
+            _screen.Desktop.Children.Remove(_authenticationLabel);
+
             _engine.GameWindow.KeyPress -= GameWindowKeyPress;
         }
 

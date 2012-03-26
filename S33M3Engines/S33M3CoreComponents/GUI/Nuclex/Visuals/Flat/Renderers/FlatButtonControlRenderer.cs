@@ -61,9 +61,28 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 }
             }
 
-            // Draw the button's frame
-            graphics.DrawElement(states[stateIndex],ref controlBounds);
-
+            if (stateIndex == 0 && control.CustomImageDisabled != null)
+            {
+                graphics.DrawCustomTexture(control.CustomImageDisabled, ref controlBounds);
+            }
+            else if (stateIndex == 1 && control.CustomImage != null)
+            {
+                graphics.DrawCustomTexture(control.CustomImage, ref controlBounds);
+            }
+            else if (stateIndex == 2 && control.CustomImageHover != null)
+            {
+                graphics.DrawCustomTexture(control.CustomImageHover, ref controlBounds);
+            }
+            else if (stateIndex == 3 && control.CustomImageDown != null)
+            {
+                graphics.DrawCustomTexture(control.CustomImageDown, ref controlBounds);
+            }
+            else
+            {
+                // Draw the button's frame
+                graphics.DrawElement(states[stateIndex], ref controlBounds);
+            }
+            
             // If there's text assigned to the button, draw it into the button
             if (!string.IsNullOrEmpty(control.Text))
             {

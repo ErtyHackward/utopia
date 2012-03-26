@@ -74,6 +74,17 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         /// <param name="text">Text that will be drawn</param>
         void DrawString(string frameName, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1);
 
+        /// <summary>
+        /// Draws text into the drawing buffer using font specified
+        /// </summary>
+        /// <param name="font"></param>
+        /// <param name="bounds"></param>
+        /// <param name="text"></param>
+        /// <param name="color"></param>
+        /// <param name="withMaxWidth"></param>
+        /// <param name="carretPosition"></param>
+        void DrawString(SpriteFont font, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1);
+
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
