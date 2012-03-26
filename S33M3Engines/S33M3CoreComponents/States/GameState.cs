@@ -24,6 +24,7 @@ namespace S33M3CoreComponents.States
         #region Public variables
 
         public bool IsActivationRequested { get; set; }
+        public bool WithPreservePreviousStates { get; set; }
 
         /// <summary>
         /// Name of the state

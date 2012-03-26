@@ -64,12 +64,13 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         {
             if (forceStaticResourcesOnly && _isStaticResource == false) return;
 
-#if DEBUG
-            if (_sampler == null) logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
-#endif
-
             if (_isDirty || forceStaticResourcesOnly)
             {
+#if DEBUG
+                if (_sampler == null)
+                    logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
+#endif
+
                 if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetSampler(_slot[ShaderIDs.VS], _sampler);
                 if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetSampler(_slot[ShaderIDs.GS], _sampler);
                 if ((_shadersImpacted & Shaders.PS) == Shaders.PS) context.PixelShader.SetSampler(_slot[ShaderIDs.PS], _sampler);

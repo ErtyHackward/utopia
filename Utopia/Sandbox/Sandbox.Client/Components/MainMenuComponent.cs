@@ -16,6 +16,7 @@ namespace Sandbox.Client.Components
         private ButtonControl _continueButton;
         private ButtonControl _singlePlayer;
         private ButtonControl _multiplayer;
+        private ButtonControl _settingsButton;
         private ButtonControl _editor;
         private ButtonControl _credits;
         private ButtonControl _exitButton;
@@ -35,6 +36,12 @@ namespace Sandbox.Client.Components
             if (SinglePlayerPressed != null) SinglePlayerPressed(this, EventArgs.Empty);
         }
 
+        public event EventHandler SettingsButtonPressed;
+        private void OnSettingsButtonPressed()
+        {
+            if (SettingsButtonPressed != null) SettingsButtonPressed(this, EventArgs.Empty);
+        }
+
         public event EventHandler MultiplayerPressed;
         private void OnMultiplayerPressed()
         {
@@ -42,7 +49,6 @@ namespace Sandbox.Client.Components
         }
 
         public event EventHandler EditorPressed;
-
         private void OnEditorPressed()
         {
             if (EditorPressed != null) EditorPressed(this, EventArgs.Empty);
@@ -56,7 +62,6 @@ namespace Sandbox.Client.Components
         }
 
         public event EventHandler ExitPressed;
-
         private void OnExitPressed()
         {
             if (ExitPressed != null) ExitPressed(this, EventArgs.Empty);
@@ -94,18 +99,22 @@ namespace Sandbox.Client.Components
             _multiplayer = CreateButton("Multiplayer", 60);
             _multiplayer.Pressed += delegate { OnMultiplayerPressed(); };
 
-            _editor = CreateButton("Editor", 90);
+            _settingsButton = CreateButton("Settings", 90);
+            _settingsButton.Pressed += delegate { OnSettingsButtonPressed(); };
+
+            _editor = CreateButton("Editor", 120);
             _editor.Pressed += delegate { OnEditorPressed(); };
 
-            _credits = CreateButton("Credits", 120);
+            _credits = CreateButton("Credits", 150);
             _credits.Pressed += delegate { OnCreditsPressed(); };
 
-            _exitButton = CreateButton("Exit", 150);
+            _exitButton = CreateButton("Exit", 180);
             _exitButton.Pressed += delegate { OnExitPressed(); };
 
             _buttonsGroup.Children.Add(_continueButton);
             _buttonsGroup.Children.Add(_singlePlayer);
             _buttonsGroup.Children.Add(_multiplayer);
+            _buttonsGroup.Children.Add(_settingsButton);
             _buttonsGroup.Children.Add(_editor);
             _buttonsGroup.Children.Add(_credits);
             _buttonsGroup.Children.Add(_exitButton);
@@ -132,7 +141,6 @@ namespace Sandbox.Client.Components
             }
             base.OnUpdatableChanged(sender, args);
         }
-
 
         private ButtonControl CreateButton(string text, int position)
         {

@@ -43,8 +43,14 @@ namespace Sandbox.Client.States
             menu.MultiplayerPressed += MenuMultiplayerPressed;
             menu.EditorPressed += MenuEditorPressed;
             menu.ExitPressed += MenuExitPressed;
+            menu.SettingsButtonPressed += menuSettingsButtonPressed;
 
             base.Initialize(context);
+        }
+
+        void menuSettingsButtonPressed(object sender, EventArgs e)
+        {
+            StatesManager.ActivateGameStateAsync("Settings");
         }
 
         void MenuEditorPressed(object sender, EventArgs e)
