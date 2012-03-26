@@ -48,6 +48,7 @@ namespace S33M3CoreComponents.Inputs
             KeyboardManager = ToDispose(new KeyboardManager(_engine));
 
             this.UpdateOrder = 0;
+            this.IsSystemComponent = true;
 
             this.EnableComponent();
         }

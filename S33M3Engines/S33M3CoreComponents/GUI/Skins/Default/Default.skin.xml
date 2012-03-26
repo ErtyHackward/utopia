@@ -67,6 +67,7 @@ that uses the theme, please give due credit to the original artist!
     <font name="defaultBold" contentPath="DefaultBold" fontName ="Lucida Console" fontSize ="10" fontStyle="Bold" />
     <font name="defaultItalic" contentPath="DefaultBold" fontName ="Lucida Console" fontSize ="10" fontStyle="Italic" />
     <font name="defaultUnderline" contentPath="DefaultUnderline" fontName ="Lucida Console" fontSize ="10" fontStyle="Underline" />
+    <font name="header" contentPath="DefaultHeader" fontName ="Lucida Console" fontSize ="17" fontStyle="Bold" />
     <font name="itemsFont" contentPath="ItemsFont" fontName ="Small Fonts" fontSize ="11.0" fontStyle="Bold" />
     <bitmap name="controls" contentPath="DefaultSheet" />
   </resources>
@@ -109,6 +110,10 @@ that uses the theme, please give due credit to the original artist!
 
     <frame name="labelUnderline">
       <text font="defaultUnderline" hplacement="left" vplacement="center" yoffset="0" color="#3F3F3F" />
+    </frame>
+
+    <frame name="labelHeader">
+      <text font="header" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
     
     

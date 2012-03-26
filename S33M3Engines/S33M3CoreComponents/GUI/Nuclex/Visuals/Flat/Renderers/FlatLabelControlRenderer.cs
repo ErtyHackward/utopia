@@ -44,23 +44,28 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
         public void Render(Controls.LabelControl control, IFlatGuiGraphics graphics)
         {
             string styleFrame;
-            switch (control.FontStyle)
+
+            if (control.IsHeaderFont) styleFrame = "labelHeader";
+            else
             {
-                case System.Drawing.FontStyle.Bold:
-                    styleFrame = "labelBold";
-                    break;
-                case System.Drawing.FontStyle.Italic:
-                    styleFrame = "labelItalic";
-                    break;
-                case System.Drawing.FontStyle.Regular:
-                    styleFrame = "label";
-                    break;
-                case System.Drawing.FontStyle.Underline:
-                    styleFrame = "labelUnderline";
-                    break;
-                default:
-                    styleFrame = "label";
-                    break;
+                switch (control.FontStyle)
+                {
+                    case System.Drawing.FontStyle.Bold:
+                        styleFrame = "labelBold";
+                        break;
+                    case System.Drawing.FontStyle.Italic:
+                        styleFrame = "labelItalic";
+                        break;
+                    case System.Drawing.FontStyle.Regular:
+                        styleFrame = "label";
+                        break;
+                    case System.Drawing.FontStyle.Underline:
+                        styleFrame = "labelUnderline";
+                        break;
+                    default:
+                        styleFrame = "label";
+                        break;
+                }
             }
 
             RectangleF absoluteBounds = control.GetAbsoluteBounds();

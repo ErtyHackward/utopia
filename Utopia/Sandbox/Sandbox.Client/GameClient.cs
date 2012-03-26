@@ -78,6 +78,7 @@ namespace Sandbox.Client
 
             stateManager.RegisterState(_iocContainer.Get<LoginState>());
             stateManager.RegisterState(_iocContainer.Get<CreditsState>());
+            stateManager.RegisterState(_iocContainer.Get<SettingsState>());
             stateManager.RegisterState(_iocContainer.Get<MainMenuState>());
             stateManager.RegisterState(_iocContainer.Get<LoadingGameState>());
             stateManager.RegisterState(_iocContainer.Get<GamePlayState>());
@@ -103,7 +104,7 @@ namespace Sandbox.Client
 
             //ClientSettings.Current.Settings.Login = vars.Login;
             //ClientSettings.Current.Save();
-            stateManager.ActivateGameStateAsync("LoadingGame");
+            stateManager.ActivateGameStateAsync("MainMenu");
 #else
             stateManager.ActivateGameStateAsync("Login");
 #endif
@@ -160,7 +161,9 @@ namespace Sandbox.Client
 
         private void game_MenuRequested(object sender, EventArgs e)
         {
-            _iocContainer.Get<GameStatesManager>().ActivateGameStateAsync(_iocContainer.Get<MainMenuState>());
+            InputsManager inputManager = _iocContainer.Get<InputsManager>();
+            inputManager.MouseManager.MouseCapture = false;
+            _iocContainer.Get<GameStatesManager>().ActivateGameStateAsync(_iocContainer.Get<MainMenuState>(), true);
         }
         #endregion
 

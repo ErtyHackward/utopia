@@ -48,20 +48,6 @@ namespace S33M3CoreComponents.States
         public GameState CurrentState
         {
             get { return _currentState; }
-            private set
-            {
-                //Not State switcher defined, do the activatino directly
-                if (SwitchComponent == null || value == _currentState)
-                {
-                    SwitchActiveGameState(value);
-                }
-                else
-                {
-                    _nextState = value;
-                    SwitchComponent.BeginSwitch();
-                    SwitchComponent.EnableComponent();
-                }
-            }
         }
 
         /// <summary>
@@ -156,6 +142,7 @@ namespace S33M3CoreComponents.States
 
             _inActivationProcess = false;
             _currentState.IsActivationRequested = false;
+            _currentState.WithPreservePreviousStates = false;
 
 #if DEBUG
             logger.Debug("State activated : {0}", newState.Name);
@@ -170,7 +157,7 @@ namespace S33M3CoreComponents.States
         /// <param name="current"></param>
         private void DisablePreviousEnableCurrent(GameState previous, GameState current)
         {
-            if (previous != null)
+            if (previous != null && current.WithPreservePreviousStates == false)
             {
                 // disable previous stuff that are not existing in the current gamecomponents
                 foreach (GameComponent gc in previous.GameComponents.Except(current.GameComponents))
@@ -185,6 +172,21 @@ namespace S33M3CoreComponents.States
             {
                 if (gc.IsSystemComponent) continue;
                 gc.EnableComponent();
+            }
+        }
+
+        private void SetCurrentState(GameState state)
+        {
+            //Not State switcher defined, do the activatino directly
+            if (SwitchComponent == null || state == _currentState)
+            {
+                SwitchActiveGameState(state);
+            }
+            else
+            {
+                _nextState = state;
+                SwitchComponent.BeginSwitch();
+                SwitchComponent.EnableComponent();
             }
         }
 
@@ -264,7 +266,7 @@ namespace S33M3CoreComponents.States
                     if (state.IsActivationRequested == true)
                     {
                         //Set the State;
-                        CurrentState = state;
+                        SetCurrentState(state);
                     }
 
                     //The init request has been processed, remove its result from result pending list.
@@ -290,17 +292,18 @@ namespace S33M3CoreComponents.States
         /// Changes current game state by its name
         /// </summary>
         /// <param name="name"></param>
-        public void ActivateGameStateAsync(string stateName)
+        public void ActivateGameStateAsync(string stateName, bool preservePreviousStates = false)
         {
-            ActivateGameStateAsync(GetByName(stateName));
+            ActivateGameStateAsync(GetByName(stateName), preservePreviousStates);
         }
 
-        public void ActivateGameStateAsync(GameState state)
+        public void ActivateGameStateAsync(GameState state, bool preservePreviousStates = false)
         {
             //_inActivationProcess filter that only one Activation can be requested at a time !
             //state.IsActivationRequested filter the case where the requested state is already on an Activation process (Cannot request it twice)
             if (_inActivationProcess == false || state.IsActivationRequested == false)
             {
+                state.WithPreservePreviousStates = preservePreviousStates;
                 _inActivationProcess = true;
                 state.IsActivationRequested = true;
 
@@ -311,7 +314,7 @@ namespace S33M3CoreComponents.States
                 //If ALL the components inside the states are already initiazed, switch directly the States
                 if (state.GameComponents.Count > 0 && state.IsInitialized)
                 {
-                    CurrentState = state;
+                    SetCurrentState(state);
                     return;
                 }
 

@@ -28,6 +28,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
     {
         public System.Drawing.FontStyle FontStyle { get; set; }
 
+        public bool IsHeaderFont { get; set; }
+
         public bool Autosizing { get; set; }
 
         public bool WithForcedColor { get; set; }
