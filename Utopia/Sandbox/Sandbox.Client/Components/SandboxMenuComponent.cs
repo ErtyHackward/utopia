@@ -19,6 +19,7 @@ namespace Sandbox.Client.Components
         public static SpriteTexture StGameName;
         public static SpriteTexture StCubesPattern;
         public static SpriteTexture StLinenPattern;
+        public static SpriteFont FontBebasNeue;
 
 
         private readonly D3DEngine _engine;
@@ -50,6 +51,9 @@ namespace Sandbox.Client.Components
             StGameName      = LoadTexture(engine, "Images\\version.png");
             StCubesPattern  = LoadTexture(engine, "Images\\cubes.png");
             StLinenPattern  = LoadTexture(engine, "Images\\black-linen.png");
+
+            FontBebasNeue = new SpriteFont();
+            FontBebasNeue.Initialize("Images\\BebasNeue.otf", 35, FontStyle.Regular, true, engine.Device);
         }
 
         protected SandboxMenuComponent(D3DEngine engine, MainScreen screen)
@@ -74,10 +78,9 @@ namespace Sandbox.Client.Components
             base.Dispose();
         }
 
-        private void EngineViewPortUpdated(SharpDX.Direct3D11.Viewport viewport, SharpDX.Direct3D11.Texture2DDescription newBackBuffer)
+        protected virtual void EngineViewPortUpdated(SharpDX.Direct3D11.Viewport viewport, SharpDX.Direct3D11.Texture2DDescription newBackBuffer)
         {
             Resize(viewport);
-            
         }
 
         public override void EnableComponent()
@@ -100,7 +103,10 @@ namespace Sandbox.Client.Components
 
         private void Resize(SharpDX.Direct3D11.Viewport viewport)
         {
-            _headerHeight = (int)(viewport.Height * 0.3f);
+            if (viewport.Height >= 620)
+                _headerHeight = (int)(viewport.Height * 0.3f);
+            else
+                _headerHeight = Math.Abs((int)viewport.Height - 434);
 
             _cubes.Bounds = new UniRectangle(0, 0, viewport.Width, _headerHeight);
             _linen.Bounds = new UniRectangle(0, _headerHeight, viewport.Width, viewport.Height - _headerHeight);

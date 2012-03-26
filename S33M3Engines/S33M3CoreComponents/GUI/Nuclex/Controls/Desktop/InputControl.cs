@@ -18,7 +18,9 @@ License along with this library
 */
 #endregion
 
-using System; using SharpDX;
+using System;
+using S33M3CoreComponents.Sprites;
+using SharpDX;
 using System.Collections.Generic;
 using System.Text;
 using S33M3CoreComponents.GUI.Nuclex.Input;
@@ -45,15 +47,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
     /// </remarks>
     public class InputControl : Control, IWritable
     {
-
-        public bool ColorSet { get; private set; }
         private Color4 _color;
-        public Color4 Color
-        {
-            get { return _color; }
-            set { _color = value; ColorSet = true; }
-        }
-
+        
         public override void Dispose()
         {
             if (EnterKeyPressed != null)
@@ -73,7 +68,37 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         /// </summary>
         public event EventHandler EnterKeyPressed;
 
+        public bool ColorSet { get; private set; }
+
+        public Color4 Color
+        {
+            get { return _color; }
+            set { _color = value; ColorSet = true; }
+        }
+
         public bool isMultiline { get; set; }
+
+        /// <summary>
+        /// Indicates if this a password
+        /// </summary>
+        public bool IsPassword { get; set; }
+
+        public bool IsNumeric { get; set; }
+
+        /// <summary>
+        /// Gets or sets an optional background image
+        /// </summary>
+        public SpriteTexture CustomBackground { get; set; }
+
+        /// <summary>
+        /// Gets or sets an image to be displayed when the control have no text and no focus
+        /// </summary>
+        public SpriteTexture CustomHintImage { get; set; }
+
+        /// <summary>
+        /// Gets or sets an optional custom font of the Input control
+        /// </summary>
+        public SpriteFont CustomFont { get; set; }
 
         /// <summary>Initializes a new text input control</summary>
         public InputControl()
@@ -131,12 +156,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
             }
         }
 
-        /// <summary>
-        /// Indicates if this a password
-        /// </summary>
-        public bool IsPassword { get; set; }
 
-        public bool IsNumeric { get; set; }
 
         /// <summary>Elapsed milliseconds since the user last moved the caret</summary>
         /// <remarks>

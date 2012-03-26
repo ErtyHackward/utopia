@@ -49,7 +49,20 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
             RectangleF controlBounds = control.GetAbsoluteBounds();
 
             // Draw the control's frame and background
-            graphics.DrawElement(Style,ref  controlBounds);
+            if (control.CustomBackground == null)
+            {
+                graphics.DrawElement(Style, ref  controlBounds);
+            }
+            else
+            {
+                graphics.DrawCustomTexture(control.CustomBackground, ref controlBounds);
+            }
+
+            if (string.IsNullOrEmpty(control.Text) && !control.HasFocus)
+            {
+
+                graphics.DrawCustomTexture(control.CustomHintImage, ref controlBounds);
+            }
 
             using (graphics.SetClipRegion(ref controlBounds))
             {
