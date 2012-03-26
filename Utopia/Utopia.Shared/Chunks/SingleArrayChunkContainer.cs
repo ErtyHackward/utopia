@@ -130,7 +130,7 @@ namespace Utopia.Shared.Chunks
         {
             if (isSafe)
             {
-                if (cubePosition.X < _visualWorldParam.WorldRange.Min.X || cubePosition.X >= _visualWorldParam.WorldRange.Max.X || cubePosition.Z < _visualWorldParam.WorldRange.Min.Z || cubePosition.Z >= _visualWorldParam.WorldRange.Max.Z || cubePosition.Y < 0 || cubePosition.Y >= _visualWorldParam.WorldRange.Max.Y)
+                if (cubePosition.X < _visualWorldParam.WorldRange.Position.X || cubePosition.X >= _visualWorldParam.WorldRange.Max.X || cubePosition.Z < _visualWorldParam.WorldRange.Position.Z || cubePosition.Z >= _visualWorldParam.WorldRange.Max.Z || cubePosition.Y < 0 || cubePosition.Y >= _visualWorldParam.WorldRange.Max.Y)
                 {
                     index = int.MaxValue;
                     return false;
@@ -178,7 +178,7 @@ namespace Utopia.Shared.Chunks
         {
             if (isSafe)
             {
-                if (X < _visualWorldParam.WorldRange.Min.X || X >= _visualWorldParam.WorldRange.Max.X || Z < _visualWorldParam.WorldRange.Min.Z || Z >= _visualWorldParam.WorldRange.Max.Z || Y < 0 || Y >= _visualWorldParam.WorldRange.Max.Y)
+                if (X < _visualWorldParam.WorldRange.Position.X || X >= _visualWorldParam.WorldRange.Max.X || Z < _visualWorldParam.WorldRange.Position.Z || Z >= _visualWorldParam.WorldRange.Max.Z || Y < 0 || Y >= _visualWorldParam.WorldRange.Max.Y)
                 {
                     index = int.MaxValue;
                     return false;

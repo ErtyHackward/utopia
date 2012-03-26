@@ -8,7 +8,7 @@ namespace Utopia.Shared.Structs
     /// <summary>
     /// Represents two component range
     /// </summary>
-    public struct Range2 : IEnumerable<Vector2I>
+    public struct Range2I : IEnumerable<Vector2I>
     {
         private Vector2I _position;
         private Vector2I _size;
@@ -18,7 +18,7 @@ namespace Utopia.Shared.Structs
         /// </summary>
         /// <param name="position">Range top left position</param>
         /// <param name="size">Range size</param>
-        public Range2(Vector2I position, Vector2I size)
+        public Range2I(Vector2I position, Vector2I size)
         {
             _position = position;
             _size = size;

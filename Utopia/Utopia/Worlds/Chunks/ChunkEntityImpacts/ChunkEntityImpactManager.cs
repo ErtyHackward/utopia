@@ -99,10 +99,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             Int64 mainChunkId;
 
             //Compute the Range impacted by the cube change
-            RangeI cubeRange = new RangeI()
+            Range3I cubeRange = new Range3I()
             {
-                Min = new Vector3I(cubeCoordinates.X - _lightManager.LightPropagateSteps, 0, cubeCoordinates.Z - _lightManager.LightPropagateSteps),
-                Max = new Vector3I(cubeCoordinates.X + _lightManager.LightPropagateSteps, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, cubeCoordinates.Z + _lightManager.LightPropagateSteps)
+                Position = new Vector3I(cubeCoordinates.X - _lightManager.LightPropagateSteps, 0, cubeCoordinates.Z - _lightManager.LightPropagateSteps),
+                //Max = new Vector3I(cubeCoordinates.X + _lightManager.LightPropagateSteps, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, cubeCoordinates.Z + _lightManager.LightPropagateSteps)
+                Size = new Vector3I(_lightManager.LightPropagateSteps * 2, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, _lightManager.LightPropagateSteps * 2)
             };
 
             //Refresh the Visual Entity if needed !
@@ -115,10 +116,12 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
             _lightManager.CreateLightSources(ref cubeRange);
 
-            cubeRange.Min.X--;
-            cubeRange.Min.Z--;
-            cubeRange.Max.X++;
-            cubeRange.Max.Z++;
+            cubeRange.Position.X--;
+            cubeRange.Position.Z--;
+            cubeRange.Size.X += 2;
+            cubeRange.Size.Z += 2;
+            //cubeRange.Max.X++;
+            //cubeRange.Max.Z++;
 
             _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
@@ -257,4 +260,5 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         #endregion
     }
 }
+
 

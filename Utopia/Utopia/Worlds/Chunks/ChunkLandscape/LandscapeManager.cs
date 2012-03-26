@@ -225,7 +225,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                         HashesCount = 1,
                         Md5Hashes = new Md5Hash[] { hash },
                         Positions = new Vector2I[] { chunk.ChunkPosition },
-                        Range = new Range2(chunk.ChunkPosition, Vector2I.One),
+                        Range = new Range2I(chunk.ChunkPosition, Vector2I.One),
                         Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
                     });
                 }
@@ -234,7 +234,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     //Chunk has never been modified. Request it by the chunkposition to the server
                     _server.ServerConnection.SendAsync(new GetChunksMessage
                     {
-                        Range = new Range2(chunk.ChunkPosition, Vector2I.One),
+                        Range = new Range2I(chunk.ChunkPosition, Vector2I.One),
                         Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
                     });
                 }

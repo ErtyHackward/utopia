@@ -28,7 +28,6 @@ namespace Utopia.Entities.Renderer
         private Vector3I _pickedUpCube;
         private VisualEntity _pickedEntity;
 
-        private BoundingBox _pickedCubeBox;
         private BoundingBox3D _pickedCube;
         private HLSLVertexPositionColor _blockpickedUPEffect;
 

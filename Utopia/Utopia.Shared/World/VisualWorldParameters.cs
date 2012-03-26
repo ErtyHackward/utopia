@@ -25,7 +25,7 @@ namespace Utopia.Shared.World
 
         public Vector2I VisibleChunkInWorld; 
 
-        public RangeI WorldRange;
+        public Range3I WorldRange;
         public Vector2I WrapEnd;
         public Vector3I WorldVisibleSize;
         public int WorldVisibleSizeXY;

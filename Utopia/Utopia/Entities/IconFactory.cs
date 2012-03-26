@@ -22,7 +22,6 @@ using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
 using S33M3CoreComponents.Meshes;
 using S33M3CoreComponents.Meshes.Factories;
-using S33M3CoreComponents.Sprites;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Cameras.Interfaces;
 

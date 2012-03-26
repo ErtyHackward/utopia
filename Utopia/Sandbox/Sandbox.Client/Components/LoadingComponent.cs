@@ -6,7 +6,6 @@ using S33M3DXEngine.Main;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3Resources.Structs;
-using S33M3CoreComponents.Sprites;
 
 namespace Sandbox.Client.Components
 {
@@ -18,7 +17,7 @@ namespace Sandbox.Client.Components
         private readonly D3DEngine _engine;
         SpriteRenderer _spriteRender;
         SpriteFont _font;
-        SpriteTexture _materia;
+        //SpriteTexture _materia;
         string _loadingText = "Loading...";
         DateTime _lastCheck;
         int _points;

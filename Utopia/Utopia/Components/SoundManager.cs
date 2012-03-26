@@ -34,7 +34,7 @@ namespace Utopia.Components
         private SingleArrayChunkContainer _singleArray;
 
         private Vector3I _lastPosition;
-        private Range3 _lastRange;
+        private Range3I _lastRange;
         private IrrVector3 _listenerPosition;
 
         private readonly SortedList<string, KeyValuePair<ISound, List<IrrVector3>>> _sharedSounds = new SortedList<string, KeyValuePair<ISound, List<IrrVector3>>>();
@@ -141,7 +141,7 @@ namespace Utopia.Components
                 sw.Restart();
                 _lastPosition = (Vector3I)_cameraManager.ActiveCamera.WorldPosition;
 
-                Range3 listenRange;
+                Range3I listenRange;
 
                 listenRange.Position = _lastPosition - new Vector3I(16,16,16);
 
@@ -248,7 +248,7 @@ namespace Utopia.Components
         /// Update cubes that emit sounds
         /// </summary>
         /// <param name="range"></param>
-        public void ListenCubes(Range3 range)
+        public void ListenCubes(Range3I range)
         {
             if (_singleArray == null) return;
             // remove sounds that are far away from the sound collection that are out of current player range

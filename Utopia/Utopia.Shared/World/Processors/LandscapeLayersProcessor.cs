@@ -76,11 +76,11 @@ namespace Utopia.Shared.World.Processors
         /// <summary>
         /// Starts generation process.
         /// </summary>
-        public void Generate(Range2 generationRange, GeneratedChunk[,] chunks)
+        public void Generate(Range2I generationRange, GeneratedChunk[,] chunks)
         {
             _totalChunks = generationRange.Count;
             _chunksDone = 0;
-            RangeI chunkWorldRange;
+            Range3I chunkWorldRange;
 
             generationRange.Foreach(pos =>
             {
@@ -89,7 +89,10 @@ namespace Utopia.Shared.World.Processors
 
                 //var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
 
-                chunkWorldRange = new RangeI() { Min = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z), Max = new Vector3I((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
+                chunkWorldRange = new Range3I() { Position = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z),
+                                                  Size = AbstractChunk.ChunkSize
+                                                };
+                                                  //Max = new Vector3I((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
 
                 TerraForming(chunk, ref chunkWorldRange, r);
 
@@ -98,7 +101,7 @@ namespace Utopia.Shared.World.Processors
             });
         }
 
-        private void TerraForming(GeneratedChunk chunk, ref RangeI workingRange, FastRandom randomizer)
+        private void TerraForming(GeneratedChunk chunk, ref Range3I workingRange, FastRandom randomizer)
         {
             byte cubeId;
             int index;
@@ -111,10 +114,10 @@ namespace Utopia.Shared.World.Processors
             byte[] Cubes = chunk.BlockData.GetBlocksBytes();
 
             //Parcourir le _landscape pour changer les textures de surfaces
-            for (int X = workingRange.Min.X; X < workingRange.Max.X; X++) //X
+            for (int X = workingRange.Position.X; X < workingRange.Max.X; X++) //X
             {
-                localX = X - workingRange.Min.X;
-                for (int Z = workingRange.Min.Z; Z < workingRange.Max.Z; Z++) //Z
+                localX = X - workingRange.Position.X;
+                for (int Z = workingRange.Position.Z; Z < workingRange.Max.Z; Z++) //Z
                 {
                     surfaceMud = _rnd.Next(1, 4);
                     inWaterMaxLevel = 0;
@@ -126,10 +129,10 @@ namespace Utopia.Shared.World.Processors
                     sandPlaced = false;
                     index = -1;
 
-                    localZ = Z - workingRange.Min.Z;
+                    localZ = Z - workingRange.Position.Z;
                     for (int Y = AbstractChunk.ChunkSize.Y - 1; Y >= 1; Y--) //Y
                     {
-                        localY = Y - workingRange.Min.Y;
+                        localY = Y - workingRange.Position.Y;
 
                         index = localX * AbstractChunk.ChunkSize.Y + localY + localZ * AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Y;
                         cubeId = Cubes[index];

@@ -12,7 +12,6 @@ using S33M3DXEngine;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Action;
-using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine.RenderStates;
 

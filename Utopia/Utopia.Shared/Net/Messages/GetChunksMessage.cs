@@ -12,7 +12,7 @@ namespace Utopia.Shared.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct GetChunksMessage : IBinaryMessage
     {
-        private Range2 _range;
+        private Range2I _range;
         /// <summary>
         /// Request mode
         /// </summary>
@@ -41,7 +41,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Gets or sets chunks range
         /// </summary>
-        public Range2 Range
+        public Range2I Range
         {
             get { return _range; }
             set { _range = value; }

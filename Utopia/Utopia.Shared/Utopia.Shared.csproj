@@ -240,15 +240,14 @@
     <Compile Include="Structs\Helpers\PackUtils.cs" />
     <Compile Include="Structs\Helpers\TraceHelper.cs" />
     <Compile Include="Structs\Line.cs" />
-    <Compile Include="Structs\Range3.cs" />
+    <Compile Include="Structs\Range3I.cs" />
     <Compile Include="Structs\UserRole.cs" />
     <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />
     <Compile Include="Structs\Located.cs" />
     <Compile Include="Structs\LoginData.cs" />
     <Compile Include="Structs\Md5Hash.cs" />
-    <Compile Include="Structs\RangeI.cs" />
-    <Compile Include="Structs\Range2.cs" />
+    <Compile Include="Structs\Range2I.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />

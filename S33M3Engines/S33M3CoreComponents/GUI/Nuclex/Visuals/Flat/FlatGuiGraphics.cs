@@ -34,7 +34,6 @@ using RasterizerState = SharpDX.Direct3D11.RasterizerState;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3DXEngine;
 using S33M3CoreComponents.Sprites;
-using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.Cameras.Interfaces;
 
 
