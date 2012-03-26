@@ -198,12 +198,21 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         /// <param name="text">Text that will be drawn</param>
         public void DrawString(string frameName, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1)
         {
-            if (string.IsNullOrWhiteSpace(text))
+            if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
                 return;
 
             var frame = lookupFrame(frameName);
-            Vector2 position = positionText(ref frame.Texts[0], bounds, text);
+            var position = positionText(ref frame.Texts[0], bounds, text);
             spriteRenderer.DrawText(frame.Texts[0].Font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
+        }
+
+        public void DrawString(SpriteFont font, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1)
+        {
+            if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
+                return;
+
+            var position = new Vector2(bounds.X, bounds.Y);
+            spriteRenderer.DrawText(font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
         }
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>

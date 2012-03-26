@@ -6,7 +6,6 @@ using S33M3DXEngine.Main;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3Resources.Structs;
-using S33M3CoreComponents.Sprites;
 
 namespace Sandbox.Client.Components
 {
@@ -18,11 +17,10 @@ namespace Sandbox.Client.Components
         private readonly D3DEngine _engine;
         SpriteRenderer _spriteRender;
         SpriteFont _font;
-        SpriteTexture _materia;
         string _loadingText = "Loading...";
         DateTime _lastCheck;
         int _points;
-        ByteColor color = Colors.White;
+        ByteColor _color = Colors.White;
 
         public LoadingComponent(D3DEngine engine)
         {
@@ -36,7 +34,6 @@ namespace Sandbox.Client.Components
             _font.Initialize("Lucida Console", 16f, FontStyle.Bold, true, _engine.Device);
             _spriteRender = ToDispose(new SpriteRenderer(_engine));
 
-            //_materia = new SpriteTexture(_engine.Device, "Images\\materia.png", new Vector2());
             _lastCheck = DateTime.Now;
         }
 
@@ -63,7 +60,7 @@ namespace Sandbox.Client.Components
             context.ClearRenderTargetView(_engine.RenderTarget, new Color4(0, 0, 0, 1));
 
             Vector2 position = new Vector2(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 100);
-            _spriteRender.DrawText(_font, _loadingText,ref position,ref color);
+            _spriteRender.DrawText(_font, _loadingText,ref position,ref _color);
             _spriteRender.End(context);
         }
     }
