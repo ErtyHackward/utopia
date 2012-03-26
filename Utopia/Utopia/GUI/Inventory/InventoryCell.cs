@@ -18,7 +18,7 @@ namespace Utopia.GUI.Inventory
         private readonly SlotContainer<ContainedSlot> _container;
         private readonly IconFactory _iconFactory;
         private ContainedSlot _slot;
-        private Shared.Entities.Dynamic.PlayerCharacter _player;
+        private Shared.Entities.Dynamic.PlayerCharacter _player = null;
 
         /// <summary>
         /// Gets current cell grid position

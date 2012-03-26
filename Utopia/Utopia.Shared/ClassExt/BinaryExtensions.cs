@@ -157,12 +157,12 @@ namespace System.IO
             writer.Write(vec.Y);
         }
 
-        public static Range2 ReadRange2(this BinaryReader reader)
+        public static Range2I ReadRange2(this BinaryReader reader)
         {
-            return new Range2(reader.ReadVector2I(), reader.ReadVector2I());
+            return new Range2I(reader.ReadVector2I(), reader.ReadVector2I());
         }
 
-        public static void Write(this BinaryWriter writer, Range2 range)
+        public static void Write(this BinaryWriter writer, Range2I range)
         {
             writer.Write(range.Position);
             writer.Write(range.Size);

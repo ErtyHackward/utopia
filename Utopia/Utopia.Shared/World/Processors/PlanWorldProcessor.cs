@@ -61,7 +61,7 @@ namespace Utopia.Shared.World.Processors
             WorldPlan.Generate();
         }
 
-        public void Generate(Range2 generationRange, GeneratedChunk[,] chunks)
+        public void Generate(Range2I generationRange, GeneratedChunk[,] chunks)
         {
             generationRange.Foreach(pos =>
                                         {

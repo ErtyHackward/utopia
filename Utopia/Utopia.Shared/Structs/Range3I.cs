@@ -8,7 +8,7 @@ namespace Utopia.Shared.Structs
     /// <summary>
     /// Represents a range in 3d space by position and size points of Vector3I type
     /// </summary>
-    public struct Range3 : IEnumerable<Vector3I>
+    public struct Range3I : IEnumerable<Vector3I>
     {
         /// <summary>
         /// Minimum point
@@ -43,7 +43,7 @@ namespace Utopia.Shared.Structs
         /// <param name="range"></param>
         /// <param name="exclude"></param>
         /// <returns></returns>
-        public static IEnumerable<Vector3I> AllExclude(Range3 range, Range3 exclude)
+        public static IEnumerable<Vector3I> AllExclude(Range3I range, Range3I exclude)
         {
             if (range == exclude) return null;
             return range.Where(pos => !exclude.Contains(pos));
@@ -54,7 +54,7 @@ namespace Utopia.Shared.Structs
         /// </summary>
         /// <param name="exclude"></param>
         /// <returns></returns>
-        public IEnumerable<Vector3I> AllExclude(Range3 exclude)
+        public IEnumerable<Vector3I> AllExclude(Range3I exclude)
         {
             return AllExclude(this, exclude);
         }
@@ -84,17 +84,17 @@ namespace Utopia.Shared.Structs
             return GetEnumerator();
         }
 
-        public static bool operator ==(Range3 one, Range3 two)
+        public static bool operator ==(Range3I one, Range3I two)
         {
             return one.Position == two.Position && one.Size == two.Size;
         }
 
-        public static bool operator !=(Range3 one, Range3 two)
+        public static bool operator !=(Range3I one, Range3I two)
         {
             return !(one == two);
         }
 
-        public bool Equals(Range3 other)
+        public bool Equals(Range3I other)
         {
             return other.Position.Equals(Position) && other.Size.Equals(Size);
         }
@@ -102,8 +102,8 @@ namespace Utopia.Shared.Structs
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            if (obj.GetType() != typeof(Range3)) return false;
-            return Equals((Range3)obj);
+            if (obj.GetType() != typeof(Range3I)) return false;
+            return Equals((Range3I)obj);
         }
 
         public override int GetHashCode()

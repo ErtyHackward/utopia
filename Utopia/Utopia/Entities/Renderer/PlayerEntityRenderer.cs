@@ -102,10 +102,11 @@ namespace Utopia.Entities.Renderer
         {
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _cubeTexture_View.Dispose();
             _entityEffect.Dispose();
+            base.Dispose();
         }
         #endregion
     }

@@ -14,7 +14,7 @@ namespace Utopia.Shared.World
     /// </summary>
     public class WorldGenerator : IDisposable
     {
-        private delegate GeneratedChunk[,] GenerateDelegate(Range2 range);
+        private delegate GeneratedChunk[,] GenerateDelegate(Range2I range);
 
         /// <summary>
         /// Gets or sets current world designer
@@ -61,13 +61,13 @@ namespace Utopia.Shared.World
         /// <param name="range">chunks to generate</param>
         /// <param name="callback">this callback will be called when world will be generated</param>
         /// <param name="state"></param>
-        public IAsyncResult GenerateAsync(Range2 range, AsyncCallback callback, object state)
+        public IAsyncResult GenerateAsync(Range2I range, AsyncCallback callback, object state)
         {
             var del = new GenerateDelegate(Generate);
             return del.BeginInvoke(range, callback, state);
         }
 
-        private GeneratedChunk[,] Generate(Range2 range)
+        private GeneratedChunk[,] Generate(Range2I range)
         {
             if (Stages.Count == 0)
                 throw new InvalidOperationException("Add at least one genereation process (stage) before starting");
@@ -97,7 +97,7 @@ namespace Utopia.Shared.World
         /// <returns></returns>
         public GeneratedChunk GetChunk(Vector2I position)
         {
-            var chunks = Generate(new Range2 { Position = position, Size = new Vector2I(1,1) });
+            var chunks = Generate(new Range2I { Position = position, Size = new Vector2I(1,1) });
 
             return chunks[0, 0];
         }

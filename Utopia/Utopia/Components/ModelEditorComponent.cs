@@ -72,7 +72,7 @@ namespace Utopia.Components
         private ViewParameters _frameViewData;
 
         private ViewParameters _currentViewData;
-        private Vector2 _accumulatedPosition;
+        //private Vector2 _accumulatedPosition;
 
         private Matrix _transform;
         private VisualVoxelModel _visualVoxelModel;

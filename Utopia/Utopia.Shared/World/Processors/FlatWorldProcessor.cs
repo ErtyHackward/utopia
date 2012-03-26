@@ -40,7 +40,7 @@ namespace Utopia.Shared.World.Processors
         /// <summary>
         /// Starts generation process.
         /// </summary>
-        public void Generate(Range2 generationRange, GeneratedChunk[,] chunks)
+        public void Generate(Range2I generationRange, GeneratedChunk[,] chunks)
         {
             _totalChunks = generationRange.Count;
             _chunksDone = 0;

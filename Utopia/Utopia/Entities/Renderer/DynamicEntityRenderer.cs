@@ -84,9 +84,9 @@ namespace Utopia.Entities.Renderer
                 _entityToRender = VisualEntities[i].VisualEntity;
 
                 //Draw only the entities that are in Client view range
-                if (_entityToRender.Position.X > _visualWorldParameters.WorldRange.Min.X &&
+                if (_entityToRender.Position.X > _visualWorldParameters.WorldRange.Position.X &&
                    _entityToRender.Position.X <= _visualWorldParameters.WorldRange.Max.X &&
-                   _entityToRender.Position.Z > _visualWorldParameters.WorldRange.Min.Z &&
+                   _entityToRender.Position.Z > _visualWorldParameters.WorldRange.Position.Z &&
                    _entityToRender.Position.Z <= _visualWorldParameters.WorldRange.Max.Z)
                 {
                     Matrix world = _worldFocusManager.CenterOnFocus(ref _entityToRender.World);

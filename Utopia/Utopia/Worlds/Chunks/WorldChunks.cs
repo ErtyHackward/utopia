@@ -277,7 +277,7 @@ namespace Utopia.Worlds.Chunks
         /// <returns>True if the chunk was found</returns>
         public bool GetSafeChunk(int X, int Z, out VisualChunk chunk)
         {
-            if (X < VisualWorldParameters.WorldRange.Min.X || X > VisualWorldParameters.WorldRange.Max.X || Z < VisualWorldParameters.WorldRange.Min.Z || Z > VisualWorldParameters.WorldRange.Max.Z)
+            if (X < VisualWorldParameters.WorldRange.Position.X || X > VisualWorldParameters.WorldRange.Max.X || Z < VisualWorldParameters.WorldRange.Position.Z || Z > VisualWorldParameters.WorldRange.Max.Z)
             {
                 chunk = null;
                 return false;
@@ -327,8 +327,8 @@ namespace Utopia.Worlds.Chunks
         /// <returns></returns>
         public bool isBorderChunk(Vector2I chunkPosition)
         {
-            if (chunkPosition.X == VisualWorldParameters.WorldRange.Min.X ||
-               chunkPosition.Y == VisualWorldParameters.WorldRange.Min.Z ||
+            if (chunkPosition.X == VisualWorldParameters.WorldRange.Position.X ||
+               chunkPosition.Y == VisualWorldParameters.WorldRange.Position.Z ||
                chunkPosition.X == VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
                chunkPosition.Y == VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
             {
@@ -431,17 +431,18 @@ namespace Utopia.Worlds.Chunks
         private void InitChunks()
         {
             //Defining the World Offset, to be used to reference the 2d circular array of dim defined in chunk
-            VisualWorldParameters.WorldRange = new RangeI()
+            VisualWorldParameters.WorldRange = new Range3I()
             {
-                Min = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X, 0, VisualWorldParameters.WorldChunkStartUpPosition.Y),
-                Max = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + VisualWorldParameters.WorldVisibleSize.X, VisualWorldParameters.WorldVisibleSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Y + VisualWorldParameters.WorldVisibleSize.Z)
+                Position = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X, 0, VisualWorldParameters.WorldChunkStartUpPosition.Y),
+                Size = VisualWorldParameters.WorldVisibleSize
+                //Max = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + VisualWorldParameters.WorldVisibleSize.X, VisualWorldParameters.WorldVisibleSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Y + VisualWorldParameters.WorldVisibleSize.Z)
             };
 
             //Create the chunks that will be used as "Rendering" array
             Chunks = new VisualChunk[VisualWorldParameters.VisibleChunkInWorld.X * VisualWorldParameters.VisibleChunkInWorld.Y];
             SortedChunks = new VisualChunk[VisualWorldParameters.VisibleChunkInWorld.X * VisualWorldParameters.VisibleChunkInWorld.Y];
 
-            RangeI cubeRange; //Used to define the blocks inside the chunks
+            Range3I cubeRange; //Used to define the blocks inside the chunks
             int arrayX, arrayZ;   //Chunk Array indexes
             VisualChunk chunk;
 
@@ -454,14 +455,15 @@ namespace Utopia.Worlds.Chunks
             {
                 for (int chunkZ = 0; chunkZ < VisualWorldParameters.VisibleChunkInWorld.Y; chunkZ++)
                 {
-                    cubeRange = new RangeI()
+                    cubeRange = new Range3I()
                     {
-                        Min = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, VisualWorldParameters.WorldChunkStartUpPosition.Y + (chunkZ * AbstractChunk.ChunkSize.Z)),
-                        Max = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + ((chunkX + 1) * AbstractChunk.ChunkSize.X), AbstractChunk.ChunkSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Y + ((chunkZ + 1) * AbstractChunk.ChunkSize.Z))
+                        Position = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, VisualWorldParameters.WorldChunkStartUpPosition.Y + (chunkZ * AbstractChunk.ChunkSize.Z)),
+                        Size = AbstractChunk.ChunkSize
+                        //Max = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + ((chunkX + 1) * AbstractChunk.ChunkSize.X), AbstractChunk.ChunkSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Y + ((chunkZ + 1) * AbstractChunk.ChunkSize.Z))
                     };
 
-                    arrayX = MathHelper.Mod(cubeRange.Min.X, VisualWorldParameters.WorldVisibleSize.X);
-                    arrayZ = MathHelper.Mod(cubeRange.Min.Z, VisualWorldParameters.WorldVisibleSize.Z);
+                    arrayX = MathHelper.Mod(cubeRange.Position.X, VisualWorldParameters.WorldVisibleSize.X);
+                    arrayZ = MathHelper.Mod(cubeRange.Position.Z, VisualWorldParameters.WorldVisibleSize.Z);
 
                     //Create the new VisualChunk
                     chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager);
@@ -486,7 +488,7 @@ namespace Utopia.Worlds.Chunks
             }
 
 
-            Range2 chunkRange = new Range2(
+            Range2I chunkRange = new Range2I(
                     new Vector2I(
                         VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X,
                         VisualWorldParameters.WorldChunkStartUpPosition.Y / AbstractChunk.ChunkSize.Z

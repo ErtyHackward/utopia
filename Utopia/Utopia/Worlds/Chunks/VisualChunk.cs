@@ -23,7 +23,6 @@ using S33M3DXEngine.Buffers;
 using S33M3CoreComponents.WorldFocus;
 using S33M3Resources.Effects.Basics;
 using S33M3CoreComponents.Cameras.Interfaces;
-using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Cameras;
 
 namespace Utopia.Worlds.Chunks
@@ -36,7 +35,7 @@ namespace Utopia.Worlds.Chunks
         #region Private variables
         private VisualWorldParameters _visualWorldParameters;
         private WorldFocusManager _worldFocusManager;
-        private RangeI _cubeRange;
+        private Range3I _cubeRange;
         private D3DEngine _d3dEngine;
 
         private object Lock_DrawChunksSolidFaces = new object();       //Multithread Locker
@@ -113,7 +112,7 @@ namespace Utopia.Worlds.Chunks
 
         public int StorageRequestTicket { get; set; }
 
-        public RangeI CubeRange
+        public Range3I CubeRange
         {
             get { return _cubeRange; }
             set
@@ -167,7 +166,7 @@ namespace Utopia.Worlds.Chunks
                             D3DEngine d3dEngine, 
                             WorldFocusManager worldFocusManager, 
                             VisualWorldParameters visualWorldParameter, 
-                            ref RangeI cubeRange, 
+                            ref Range3I cubeRange, 
                             SingleArrayChunkContainer singleArrayContainer,
                             IEntityPickingManager entityPickingManager,
                             CameraManager<ICameraFocused> cameraManager)
@@ -411,8 +410,8 @@ namespace Utopia.Worlds.Chunks
         /// <returns>True if the chunk is at border</returns>
         private bool isBorderChunk(int X, int Z)
         {
-            if (X == _visualWorldParameters.WorldRange.Min.X ||
-               Z == _visualWorldParameters.WorldRange.Min.Z ||
+            if (X == _visualWorldParameters.WorldRange.Position.X ||
+               Z == _visualWorldParameters.WorldRange.Position.Z ||
                X == _visualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
                Z == _visualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
             {
@@ -423,27 +422,27 @@ namespace Utopia.Worlds.Chunks
 
         private void RefreshWorldMatrix()
         {
-            Matrix.Translation(_cubeRange.Min.X, _cubeRange.Min.Y, _cubeRange.Min.Z, out World); //Create a matrix for world translation
+            Matrix.Translation(_cubeRange.Position.X, _cubeRange.Position.Y, _cubeRange.Position.Z, out World); //Create a matrix for world translation
 
             //Refresh the bounding Box to make it in world coord.
-            ChunkWorldBoundingBox.Minimum = new Vector3(_cubeRange.Min.X, _cubeRange.Min.Y, _cubeRange.Min.Z);
+            ChunkWorldBoundingBox.Minimum = new Vector3(_cubeRange.Position.X, _cubeRange.Position.Y, _cubeRange.Position.Z);
             ChunkWorldBoundingBox.Maximum = new Vector3(_cubeRange.Max.X, _cubeRange.Max.Y, _cubeRange.Max.Z);
         }
 
         private void RangeChanged() // Start it also if the World offset Change !!!
         {
-            ChunkPositionBlockUnit = new Vector2I() { X = _cubeRange.Min.X, Y = _cubeRange.Min.Z };
+            ChunkPositionBlockUnit = new Vector2I() { X = _cubeRange.Position.X, Y = _cubeRange.Position.Z };
 
-            ChunkPosition = new Vector2I() { X = _cubeRange.Min.X / AbstractChunk.ChunkSize.X, Y = _cubeRange.Min.Z / AbstractChunk.ChunkSize.Z };
+            ChunkPosition = new Vector2I() { X = _cubeRange.Position.X / AbstractChunk.ChunkSize.X, Y = _cubeRange.Position.Z / AbstractChunk.ChunkSize.Z };
 
             ChunkID = ChunkPosition.GetID();
 
-            ChunkCenter = new Vector3D(_cubeRange.Min.X + (_cubeRange.Max.X - _cubeRange.Min.X) / 2.0,
-                           _cubeRange.Min.Y + (_cubeRange.Max.Y - _cubeRange.Min.Y) / 2.0,
-                           _cubeRange.Min.Z + (_cubeRange.Max.Z - _cubeRange.Min.Z) / 2.0);
+            ChunkCenter = new Vector3D(_cubeRange.Position.X + (_cubeRange.Max.X - _cubeRange.Position.X) / 2.0,
+                           _cubeRange.Position.Y + (_cubeRange.Max.Y - _cubeRange.Position.Y) / 2.0,
+                           _cubeRange.Position.Z + (_cubeRange.Max.Z - _cubeRange.Position.Z) / 2.0);
 
 #if DEBUG
-            ChunkBoundingBoxDisplay = new BoundingBox3D(_d3dEngine, _worldFocusManager, new Vector3((float)(CubeRange.Max.X - CubeRange.Min.X), (float)(CubeRange.Max.Y - CubeRange.Min.Y), (float)(CubeRange.Max.Z - CubeRange.Min.Z)), _blockpickedUPEffect, Colors.Tomato);
+            ChunkBoundingBoxDisplay = new BoundingBox3D(_d3dEngine, _worldFocusManager, new Vector3((float)(CubeRange.Max.X - CubeRange.Position.X), (float)(CubeRange.Max.Y - CubeRange.Position.Y), (float)(CubeRange.Max.Z - CubeRange.Position.Z)), _blockpickedUPEffect, Colors.Tomato);
             ChunkBoundingBoxDisplay.Update(ChunkCenter.AsVector3(), Vector3.One, 0);
 #endif
 

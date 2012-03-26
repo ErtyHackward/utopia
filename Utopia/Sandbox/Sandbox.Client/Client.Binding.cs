@@ -53,7 +53,6 @@ using Utopia.Action;
 using System.Collections.Generic;
 using System.Reflection;
 using S33M3CoreComponents.Debug;
-using S33M3CoreComponents.Sprites;
 using Utopia.Shared.Entities;
 using Sandbox.Shared;
 

@@ -78,7 +78,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Create the landscape for the chunk
         private void CreateLightSources_threaded(VisualChunk chunk)
         {
-            RangeI cubeRange = chunk.CubeRange;
+            Range3I cubeRange = chunk.CubeRange;
 
             CreateLightSources(ref cubeRange);
 
@@ -86,21 +86,21 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             chunk.ThreadStatus = ThreadStatus.Idle;
         }
 
-        public void CreateLightSources(ref RangeI cubeRange)
+        public void CreateLightSources(ref Range3I cubeRange)
         {
             int index;
             bool blockLight = false;
             int maxSunLight;
             CubeProfile cubeprofile;
 
-            for (int X = cubeRange.Min.X; X < cubeRange.Max.X; X++)
+            for (int X = cubeRange.Position.X; X < cubeRange.Max.X; X++)
             {
-                for (int Z = cubeRange.Min.Z; Z < cubeRange.Max.Z; Z++)
+                for (int Z = cubeRange.Position.Z; Z < cubeRange.Max.Z; Z++)
                 {
                     blockLight = false;
                     maxSunLight = 255;
                     index = _cubesHolder.Index(X, cubeRange.Max.Y - 1, Z);
-                    for (int Y = cubeRange.Max.Y - 1; Y >= cubeRange.Min.Y; Y--)
+                    for (int Y = cubeRange.Max.Y - 1; Y >= cubeRange.Position.Y; Y--)
                     {
                         if (Y != cubeRange.Max.Y - 1) index -= _cubesHolder.MoveY;
 
@@ -141,12 +141,12 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         {
             bool borderAsLightSource = false;
             if (chunk.LightPropagateBorderOffset.X != 0 || chunk.LightPropagateBorderOffset.Y != 0) borderAsLightSource = true;
-            RangeI cubeRangeWithOffset = chunk.CubeRange;
-            if (chunk.LightPropagateBorderOffset.X > 0) cubeRangeWithOffset.Max.X += chunk.LightPropagateBorderOffset.X;
-            else cubeRangeWithOffset.Min.X += chunk.LightPropagateBorderOffset.X;
+            Range3I cubeRangeWithOffset = chunk.CubeRange;
+            if (chunk.LightPropagateBorderOffset.X > 0) cubeRangeWithOffset.Size.X += chunk.LightPropagateBorderOffset.X;
+            else cubeRangeWithOffset.Position.X += chunk.LightPropagateBorderOffset.X;
 
-            if (chunk.LightPropagateBorderOffset.Y > 0) cubeRangeWithOffset.Max.Z += chunk.LightPropagateBorderOffset.Y;
-            else cubeRangeWithOffset.Min.Z += chunk.LightPropagateBorderOffset.Y;
+            if (chunk.LightPropagateBorderOffset.Y > 0) cubeRangeWithOffset.Size.Z += chunk.LightPropagateBorderOffset.Y;
+            else cubeRangeWithOffset.Position.Z += chunk.LightPropagateBorderOffset.Y;
 
             PropagateLightSources(ref cubeRangeWithOffset, borderAsLightSource);
 
@@ -158,20 +158,20 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
 
         //Can only be done if surrounding chunks have their landscape initialized !
-        public void PropagateLightSources(ref RangeI cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false)
+        public void PropagateLightSources(ref Range3I cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false)
         {
             CubeProfile cubeprofile;
             bool borderchunk = false;
             int index;
             //Foreach Blocks in the Range
-            for (int X = cubeRange.Min.X; X < cubeRange.Max.X; X++)
+            for (int X = cubeRange.Position.X; X < cubeRange.Max.X; X++)
             {
-                for (int Z = cubeRange.Min.Z; Z < cubeRange.Max.Z; Z++)
+                for (int Z = cubeRange.Position.Z; Z < cubeRange.Max.Z; Z++)
                 {
                     index = _cubesHolder.Index(X, cubeRange.Max.Y - 1, Z);
-                    for (int Y = cubeRange.Max.Y - 1; Y >= cubeRange.Min.Y; Y--)
+                    for (int Y = cubeRange.Max.Y - 1; Y >= cubeRange.Position.Y; Y--)
                     {
-                        if (X == cubeRange.Min.X || X == cubeRange.Max.X - 1 || Z == cubeRange.Min.Z || Z == cubeRange.Max.Z - 1) borderchunk = true;
+                        if (X == cubeRange.Position.X || X == cubeRange.Max.X - 1 || Z == cubeRange.Position.Z || Z == cubeRange.Max.Z - 1) borderchunk = true;
                         else borderchunk = false;
 
                         if (Y != cubeRange.Max.Y - 1) index -= _cubesHolder.MoveY;
@@ -193,15 +193,15 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         }
 
         //Propagate the light inside the chunk entities
-        private void PropagateLightInsideStaticEntities(ref RangeI cubeRange)
+        private void PropagateLightInsideStaticEntities(ref Range3I cubeRange)
         {
             VisualChunk chunk;
             //Find all chunk from the Cube range !
             for (int i = 0; i < WorldChunk.Chunks.Length; i++)
             {
                 chunk = WorldChunk.Chunks[i];
-                if ((chunk.CubeRange.Max.X < cubeRange.Min.X) || (chunk.CubeRange.Min.X > cubeRange.Max.X))continue;
-                if ((chunk.CubeRange.Max.Y < cubeRange.Min.Y) || (chunk.CubeRange.Min.Y > cubeRange.Max.Y))continue;
+                if ((chunk.CubeRange.Max.X < cubeRange.Position.X) || (chunk.CubeRange.Position.X > cubeRange.Max.X)) continue;
+                if ((chunk.CubeRange.Max.Y < cubeRange.Position.Y) || (chunk.CubeRange.Position.Y > cubeRange.Max.Y)) continue;
                 PropagateLightInsideStaticEntities(chunk);
             }
         }
@@ -227,7 +227,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             {
                 if (LightValue <= 0) return; // No reason to propate "no light";
 
-                if (X < _visualWorldParameters.WorldRange.Min.X || X >= _visualWorldParameters.WorldRange.Max.X || Z < _visualWorldParameters.WorldRange.Min.Z || Z >= _visualWorldParameters.WorldRange.Max.Z || Y < 0 || Y >= _visualWorldParameters.WorldRange.Max.Y)
+                if (X < _visualWorldParameters.WorldRange.Position.X || X >= _visualWorldParameters.WorldRange.Max.X || Z < _visualWorldParameters.WorldRange.Position.Z || Z >= _visualWorldParameters.WorldRange.Max.Z || Y < 0 || Y >= _visualWorldParameters.WorldRange.Max.Y)
                 {
                     return;
                 }

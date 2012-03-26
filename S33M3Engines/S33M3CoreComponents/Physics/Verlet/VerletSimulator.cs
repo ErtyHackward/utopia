@@ -106,7 +106,6 @@ namespace S33M3CoreComponents.Physics.Verlet
             _impulses.RemoveAll(x => x.IsActive == false);
         }
 
-        Vector3D viscosityForce;
         private void Verlet(ref GameTime dt, out Vector3D newPosition)
         {
             if (EnvironmentViscosity > 0)

@@ -56,9 +56,9 @@ namespace Utopia.Shared.World.Processors
         }
 
         #region Public Methods
-        public void Generate(Structs.Range2 generationRange, Chunks.GeneratedChunk[,] chunks)
+        public void Generate(Structs.Range2I generationRange, Chunks.GeneratedChunk[,] chunks)
         {
-            RangeI chunkWorldRange;
+            Range3I chunkWorldRange;
             _totalChunks = generationRange.Count;
             _chunksDone = 0;
             generationRange.Foreach(pos =>
@@ -66,7 +66,12 @@ namespace Utopia.Shared.World.Processors
                 var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
                 var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
 
-                chunkWorldRange = new RangeI() { Min = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z), Max = new Vector3I((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
+                chunkWorldRange = new Range3I()
+                {
+                    Position = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z),
+                    Size = AbstractChunk.ChunkSize
+                };
+                    //Max = new Vector3I((pos.X * AbstractChunk.ChunkSize.X) + AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Y, (pos.Y * AbstractChunk.ChunkSize.Z) + AbstractChunk.ChunkSize.Z) };
 
                 GenerateLayoutFrom3DNoise(chunkBytes, ref chunkWorldRange);
 
@@ -111,7 +116,7 @@ namespace Utopia.Shared.World.Processors
         /// <param name="Cubes">Cube array result</param>
         /// <param name="TerraCubes">TerraCube array result</param>
         /// <param name="workingRange">The chunk working range</param>
-        private void GenerateLayoutFrom3DNoise(byte[] Cubes, ref RangeI workingRange)
+        private void GenerateLayoutFrom3DNoise(byte[] Cubes, ref Range3I workingRange)
         {
             double[] _baseTerranResult = null;
             double[] _landHeightResult = null;
@@ -125,8 +130,8 @@ namespace Utopia.Shared.World.Processors
             int ZSamplingCount = 4;
             int YSamplingCount = 16;
 
-            int XPointLerpedCount = (workingRange.Max.X - workingRange.Min.X) / XSamplingCount;
-            int ZPointLerpedCount = (workingRange.Max.X - workingRange.Min.X) / ZSamplingCount;
+            int XPointLerpedCount = (workingRange.Max.X - workingRange.Position.X) / XSamplingCount;
+            int ZPointLerpedCount = (workingRange.Max.X - workingRange.Position.X) / ZSamplingCount;
             int YPointLerpedCount = workingRange.Max.Y / YSamplingCount; //LandscapeBuilder.MaxYWorldGeneration / YSamplingCount;
 
             NoiseResult terranRange, landHeightRange, landNoiseRange, landRiverRange, landOceanRange;
@@ -140,25 +145,25 @@ namespace Utopia.Shared.World.Processors
 
             //Get all the noise at once inside an array ==> Aim here is to sample less points than the workingRange
             //Asking to sample 4 points you will need to pass one more to return 5 points to give the possibility to make a Lerp on the result
-            _baseTerran.GetNoise3DValueWithAccumulation(ref _baseTerranResult, workingRange.Min.X, workingRange.Max.X, XSamplingCount,
-                                                                    workingRange.Min.Y, workingRange.Max.Y, YSamplingCount,
-                                                                    workingRange.Min.Z, workingRange.Max.Z, ZSamplingCount,
+            _baseTerran.GetNoise3DValueWithAccumulation(ref _baseTerranResult, workingRange.Position.X, workingRange.Max.X, XSamplingCount,
+                                                                    workingRange.Position.Y, workingRange.Max.Y, YSamplingCount,
+                                                                    workingRange.Position.Z, workingRange.Max.Z, ZSamplingCount,
                                                                     12, 0.50, out terranRange);
 
-            _landHeight.GetNoise2DValueWithAccumulation(ref _landHeightResult, workingRange.Min.X, workingRange.Max.X, XSamplingCount,
-                                                             workingRange.Min.Z, workingRange.Max.Z, ZSamplingCount,
+            _landHeight.GetNoise2DValueWithAccumulation(ref _landHeightResult, workingRange.Position.X, workingRange.Max.X, XSamplingCount,
+                                                             workingRange.Position.Z, workingRange.Max.Z, ZSamplingCount,
                                                              10, 0.50, out landHeightRange);
 
-            _landNoise.GetNoise2DValueWithAccumulation(ref _landNoiseResult, workingRange.Min.X, workingRange.Max.X, XSamplingCount,
-                                                             workingRange.Min.Z, workingRange.Max.Z, ZSamplingCount,
+            _landNoise.GetNoise2DValueWithAccumulation(ref _landNoiseResult, workingRange.Position.X, workingRange.Max.X, XSamplingCount,
+                                                             workingRange.Position.Z, workingRange.Max.Z, ZSamplingCount,
                                                              16, 0.50, out landNoiseRange);
 
-            _landRiver.GetNoise2DValueWithAccumulation(ref _landRiverResult, workingRange.Min.X, workingRange.Max.X, XSamplingCount,
-                                                             workingRange.Min.Z, workingRange.Max.Z, ZSamplingCount,
+            _landRiver.GetNoise2DValueWithAccumulation(ref _landRiverResult, workingRange.Position.X, workingRange.Max.X, XSamplingCount,
+                                                             workingRange.Position.Z, workingRange.Max.Z, ZSamplingCount,
                                                              1, 0.25, out landRiverRange);
 
-            _landOcean.GetNoise2DValueWithAccumulation(ref _landOceanResult, workingRange.Min.X, workingRange.Max.X, XSamplingCount,
-                                                 workingRange.Min.Z, workingRange.Max.Z, ZSamplingCount,
+            _landOcean.GetNoise2DValueWithAccumulation(ref _landOceanResult, workingRange.Position.X, workingRange.Max.X, XSamplingCount,
+                                                 workingRange.Position.Z, workingRange.Max.Z, ZSamplingCount,
                                                  3, 0.5, out landOceanRange);
 
             //Loop through the result, and merge them !
@@ -269,7 +274,7 @@ namespace Utopia.Shared.World.Processors
         /// <param name="TerraCubes"></param>
         /// <param name="dataNoises"></param>
         private  void CreateLandscapeFromNoisesResult(int XSamplingCount, int ZSamplingCount, int YSamplingCount,
-                                                     ref RangeI workingRange, ref byte[] Cubes, ref double[] dataNoises)
+                                                     ref Range3I workingRange, ref byte[] Cubes, ref double[] dataNoises)
         {
             int XSamplingCount2 = XSamplingCount + 1;
             int ZSamplingCount2 = ZSamplingCount + 1;
