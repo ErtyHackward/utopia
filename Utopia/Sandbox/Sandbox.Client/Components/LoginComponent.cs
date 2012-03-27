@@ -199,7 +199,6 @@ namespace Sandbox.Client.Components
 
         public override void EnableComponent()
         {
-            
             _screen.Desktop.Children.Add(_loginWindow);
             _screen.FocusedControl = !string.IsNullOrEmpty(Email) ? _passwordControl : _emailControl;
             CenterWindow(new Size((int)_engine.ViewPort.Width, (int)_engine.ViewPort.Height));
