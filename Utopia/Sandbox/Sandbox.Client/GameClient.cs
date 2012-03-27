@@ -102,9 +102,8 @@ namespace Sandbox.Client
             vars.PasswordHash = "";
             vars.DisplayName = "s33m3";
 
-            //ClientSettings.Current.Settings.Login = vars.Login;
-            //ClientSettings.Current.Save();
-            stateManager.ActivateGameStateAsync("LoadingGame");
+            //stateManager.ActivateGameStateAsync("LoadingGame");
+            stateManager.ActivateGameStateAsync("MainMenu");
 #else
             stateManager.ActivateGameStateAsync("Login");
 #endif
