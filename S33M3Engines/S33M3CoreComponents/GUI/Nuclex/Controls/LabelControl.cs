@@ -22,6 +22,7 @@ using System;
 using S33M3CoreComponents.Sprites;
 using SharpDX;
 using System.Collections.Generic;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Controls
 {
@@ -34,18 +35,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
 
         public bool Autosizing { get; set; }
 
-        public bool WithForcedColor { get; set; }
-
         public SpriteFont CustomFont { get; set; }
-
-        //public Color4 Color { get; set; }
-        private Color4 _color;
-
-        public Color4 Color
-        {
-            get { return _color; }
-            set { _color = value; WithForcedColor = true; }
-        }
 
         /// <summary>Initializes a new label control with an empty string</summary>
         public LabelControl() : this(string.Empty) { }

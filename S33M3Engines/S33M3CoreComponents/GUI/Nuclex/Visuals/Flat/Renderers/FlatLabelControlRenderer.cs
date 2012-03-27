@@ -43,31 +43,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
         /// </param>
         public void Render(Controls.LabelControl control, IFlatGuiGraphics graphics)
         {
-            string styleFrame;
-
-            if (control.IsHeaderFont) styleFrame = "labelHeader";
-            else
-            {
-                switch (control.FontStyle)
-                {
-                    case System.Drawing.FontStyle.Bold:
-                        styleFrame = "labelBold";
-                        break;
-                    case System.Drawing.FontStyle.Italic:
-                        styleFrame = "labelItalic";
-                        break;
-                    case System.Drawing.FontStyle.Regular:
-                        styleFrame = "label";
-                        break;
-                    case System.Drawing.FontStyle.Underline:
-                        styleFrame = "labelUnderline";
-                        break;
-                    default:
-                        styleFrame = "label";
-                        break;
-                }
-            }
-
             var absoluteBounds = control.GetAbsoluteBounds();
 
             if (control.CustomFont != null)
@@ -77,7 +52,32 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
             }
             else
             {
-                if (control.WithForcedColor)
+                string styleFrame;
+
+                if (control.IsHeaderFont) styleFrame = "labelHeader";
+                else
+                {
+                    switch (control.FontStyle)
+                    {
+                        case System.Drawing.FontStyle.Bold:
+                            styleFrame = "labelBold";
+                            break;
+                        case System.Drawing.FontStyle.Italic:
+                            styleFrame = "labelItalic";
+                            break;
+                        case System.Drawing.FontStyle.Regular:
+                            styleFrame = "label";
+                            break;
+                        case System.Drawing.FontStyle.Underline:
+                            styleFrame = "labelUnderline";
+                            break;
+                        default:
+                            styleFrame = "label";
+                            break;
+                    }
+                }
+
+                if (control.ColorSet)
                 {
                     ByteColor color = control.Color;
                     graphics.DrawString(styleFrame, ref absoluteBounds, control.Text, ref color, control.Autosizing);
