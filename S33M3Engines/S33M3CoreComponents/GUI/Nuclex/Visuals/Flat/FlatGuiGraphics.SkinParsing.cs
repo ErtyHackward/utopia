@@ -32,13 +32,13 @@ using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.GUI.Nuclex.Support;
 using System.Drawing;
 using S33M3Resources.Structs;
+using System.Drawing.Text;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 {
 
     partial class FlatGuiGraphics
     {
-
         #region class RegionListBuilder
 
         /// <summary>Builds a region list from the regions in an frame XML node</summary>
@@ -413,7 +413,19 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
                 var fontStyle = (FontStyle)Enum.Parse(typeof(FontStyle), style);
 
                 var spriteFont = new SpriteFont();
-                spriteFont.Initialize(realFontName, fontSize, fontStyle, true, _d3dEngine.Device);
+                //External font file ? 
+                if (realFontName.Contains(".ttf"))
+                {
+                    using (var fontCollection = new PrivateFontCollection())
+                    {
+                        fontCollection.AddFontFile("Images\\BebasNeue.ttf");
+                        spriteFont.Initialize(fontCollection.Families[0], fontSize, fontStyle, true, _d3dEngine.Device);
+                    }
+                }
+                else
+                {
+                    spriteFont.Initialize(realFontName, fontSize, fontStyle, true, _d3dEngine.Device);
+                }
                 this.fonts.Add(fontName, spriteFont);
             }
 

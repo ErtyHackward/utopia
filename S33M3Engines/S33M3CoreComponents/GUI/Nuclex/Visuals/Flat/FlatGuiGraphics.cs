@@ -55,7 +55,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         #region struct Frame
 
         /// <summary>Frame that can be drawn by the GUI painter</summary>
-        private class Frame
+        public class Frame
         {
 
             /// <summary>Modes in which text can be horizontally aligned</summary>
@@ -241,6 +241,58 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 
         }
 
+        private Vector2 positionText(ref RectangleF bounds, 
+                                     string text,
+                                     SpriteFont Font,
+                                     FlatGuiGraphics.Frame.HorizontalTextAlignment HorizontalPlacement,
+                                     FlatGuiGraphics.Frame.VerticalTextAlignment VerticalPlacement)
+        {
+            Vector2 textSize = Font.MeasureString(text);
+            float x, y;
+
+            switch (HorizontalPlacement)
+            {
+                case Frame.HorizontalTextAlignment.Left:
+                    {
+                        x = bounds.Left;
+                        break;
+                    }
+                case Frame.HorizontalTextAlignment.Right:
+                    {
+                        x = bounds.Right - textSize.X;
+                        break;
+                    }
+                case Frame.HorizontalTextAlignment.Center:
+                default:
+                    {
+                        x = (bounds.Width - textSize.X) / 2.0f + bounds.Left;
+                        break;
+                    }
+            }
+
+            switch (VerticalPlacement)
+            {
+                case Frame.VerticalTextAlignment.Top:
+                    {
+                        y = bounds.Top;
+                        break;
+                    }
+                case Frame.VerticalTextAlignment.Bottom:
+                    {
+                        y = bounds.Bottom - Font.LineSpacing;
+                        break;
+                    }
+                case Frame.VerticalTextAlignment.Center:
+                default:
+                    {
+                        y = (bounds.Height - Font.CharHeight) / 2.0f + bounds.Top;
+                        break;
+                    }
+            }
+
+            return new Vector2(floor(x), floor(y));
+        }
+
         /// <summary>
         ///   Positions a string within a frame according to the positioning instructions
         ///   stored in the provided text anchor.
@@ -249,7 +301,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         /// <param name="bounds">Boundaries of the control the string is rendered in</param>
         /// <param name="text">String that will be positioned</param>
         /// <returns>The position of the string within the control</returns>
-        private Vector2 positionText(ref Frame.Text anchor, RectangleF bounds, string text)
+        private Vector2 positionText(ref Frame.Text anchor, ref RectangleF bounds, string text)
         {
             Vector2 textSize = anchor.Font.MeasureString(text);
             float x, y;

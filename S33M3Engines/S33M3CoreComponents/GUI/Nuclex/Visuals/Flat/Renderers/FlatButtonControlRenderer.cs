@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using SharpDX;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 {
@@ -101,7 +102,15 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
             // If there's text assigned to the button, draw it into the button
             if (!string.IsNullOrEmpty(control.Text))
             {
-                graphics.DrawString(states[stateIndex],ref controlBounds, control.Text, false);
+                if (control.ColorSet)
+                {
+                    ByteColor color = control.Color;
+                    graphics.DrawString(states[stateIndex], control.TextFontId, ref controlBounds, control.Text, ref color, false);
+                }
+                else
+                {
+                    graphics.DrawString(states[stateIndex], control.TextFontId, ref controlBounds, control.Text, false);
+                }
             }
         }
 

@@ -67,7 +67,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
             // If there's text assigned to the button, draw it into the button
             if (!string.IsNullOrEmpty(control.Text))
             {
-                graphics.DrawString(states[stateIndex],ref controlBounds, control.Text, false);
+                graphics.DrawString(states[stateIndex], 0, ref controlBounds, control.Text, false);
             }
         }
 

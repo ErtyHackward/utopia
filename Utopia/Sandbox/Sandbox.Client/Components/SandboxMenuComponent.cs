@@ -6,13 +6,14 @@ using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Sprites;
 using S33M3DXEngine;
 using S33M3DXEngine.Main;
+using S33M3Resources.Structs;
 
 namespace Sandbox.Client.Components
 {
     /// <summary>
     /// Base component for utopia menu (display logo and background)
     /// </summary>
-    public abstract class SandboxMenuComponent : GameComponent
+    public abstract class SandboxMenuComponent : DrawableGameComponent
     {
         // common resources
         public static SpriteTexture StShadow;
@@ -39,12 +40,9 @@ namespace Sandbox.Client.Components
         protected ImageControl _logo;
         protected ImageControl _version;
 
-
-
         public static SpriteTexture LoadTexture(D3DEngine engine, string filePath)
         {
-            return new SpriteTexture(engine.Device, (Bitmap)Image.FromFile(filePath),
-                                             new SharpDX.Vector2(), engine.B8G8R8A8_UNormSupport);
+            return new SpriteTexture(engine.Device, filePath, new Vector2I());
         }
 
         public static void LoadCommonImages(D3DEngine engine)
@@ -103,6 +101,7 @@ namespace Sandbox.Client.Components
             _screen.Desktop.Children.Add(_shadow);
             _screen.Desktop.Children.Add(_cubes);
             _screen.Desktop.Children.Add(_linen);
+            base.EnableComponent();
         }
 
         public override void DisableComponent()
@@ -112,6 +111,7 @@ namespace Sandbox.Client.Components
             _screen.Desktop.Children.Remove(_shadow);
             _screen.Desktop.Children.Remove(_logo);
             _screen.Desktop.Children.Remove(_version);
+            base.DisableComponent();
         }
 
         private void Resize(SharpDX.Direct3D11.Viewport viewport)

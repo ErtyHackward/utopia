@@ -86,3 +86,13 @@ float4 PS( PS_IN input ) : SV_Target
 	//// Calculate our ambient component
 	//float4 ambient = AmbientIntensity * AmbientColor;
 }
+
+
+//--------------------------------------------------------------------------------------
+// Pixel Shader
+//--------------------------------------------------------------------------------------
+float4 PS2D( PS_IN input ) : SV_Target
+{
+	// Sample our texture at the specified texture coordinates to get the texture color
+	return DiffuseTexture.Sample(SamplerDiffuse, input.UVW);
+}

@@ -123,8 +123,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 
                         graphics.DrawString(control.CustomFont, ref controlBounds, textToDraw, ref color, false, withCarret);
                     }
-                    else 
-                        graphics.DrawString(Style, ref controlBounds, textToDraw, ref color, false, withCarret);
+                    else
+                        graphics.DrawString(Style, 0, ref controlBounds, textToDraw, ref color, false, withCarret);
                 }
                 else
                 {
@@ -139,7 +139,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                     }
                     else
                     {
-                        graphics.DrawString(Style, ref controlBounds, textToDraw, false, withCarret);
+                        graphics.DrawString(Style, 0, ref controlBounds, textToDraw, false, withCarret);
                     }
                 }
 

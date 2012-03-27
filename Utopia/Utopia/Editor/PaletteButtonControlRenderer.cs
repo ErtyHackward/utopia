@@ -43,7 +43,7 @@ namespace Utopia.Editor
             // If there's text assigned to the button, draw it into the button
             if (!string.IsNullOrEmpty(control.Text))
             {
-                graphics.DrawString(states[stateIndex],ref controlBounds, control.Text, true);
+                graphics.DrawString(states[stateIndex], 0, ref controlBounds, control.Text, true);
             }
         }
 

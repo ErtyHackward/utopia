@@ -196,38 +196,41 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        public void DrawString(string frameName, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1)
+        public void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1)
         {
             if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
                 return;
 
             var frame = lookupFrame(frameName);
-            var position = positionText(ref frame.Texts[0], bounds, text);
-            spriteRenderer.DrawText(frame.Texts[0].Font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
-        }
-
-        public void DrawString(SpriteFont font, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1)
-        {
-            if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
-                return;
-
-            var position = new Vector2(bounds.X, bounds.Y);
-            spriteRenderer.DrawText(font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
+            var position = positionText(ref frame.Texts[frameFontId], ref bounds, text);
+            spriteRenderer.DrawText(frame.Texts[frameFontId].Font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
         }
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        public void DrawString(string frameName, ref RectangleF bounds, string text, bool withMaxWidth, int carretPosition = -1)
+        public void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, bool withMaxWidth, int carretPosition = -1)
         {
             if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
                 return;
 
             var frame = lookupFrame(frameName);
-            Vector2 position = positionText(ref frame.Texts[0], bounds, text);
-            ByteColor color = frame.Texts[0].Color;
-            spriteRenderer.DrawText(frame.Texts[0].Font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
+            Vector2 position = positionText(ref frame.Texts[frameFontId], ref bounds, text);
+            ByteColor color = frame.Texts[frameFontId].Color;
+            spriteRenderer.DrawText(frame.Texts[frameFontId].Font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
+        }
+
+
+        public void DrawString(SpriteFont font, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1,
+                                     FlatGuiGraphics.Frame.HorizontalTextAlignment HorizontalPlacement = Frame.HorizontalTextAlignment.Left,
+                                     FlatGuiGraphics.Frame.VerticalTextAlignment VerticalPlacement = Frame.VerticalTextAlignment.Top)
+        {
+            if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
+                return;
+
+            var position = positionText(ref bounds, text, font, HorizontalPlacement, VerticalPlacement);
+            spriteRenderer.DrawText(font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition);
         }
 
         /// <summary>Measures the extents of a string in the frame's area</summary>
@@ -266,7 +269,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 
             for (int index = 0; index < frame.Texts.Length; ++index)
             {
-                var textPosition = positionText(ref frame.Texts[index], bounds, text);
+                var textPosition = positionText(ref frame.Texts[index],ref bounds, text);
                 position.X -= textPosition.X;
                 position.Y -= textPosition.Y;
 

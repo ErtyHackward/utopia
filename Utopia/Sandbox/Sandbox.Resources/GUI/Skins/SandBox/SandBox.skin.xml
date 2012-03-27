@@ -69,6 +69,7 @@ that uses the theme, please give due credit to the original artist!
     <font name="defaultUnderline" contentPath="DefaultUnderline" fontName ="Lucida Console" fontSize ="10" fontStyle="Underline" />
     <font name="header" contentPath="DefaultHeader" fontName ="Lucida Console" fontSize ="17" fontStyle="Bold" />
     <font name="itemsFont" contentPath="ItemsFont" fontName ="Small Fonts" fontSize ="11.0" fontStyle="Bold" />
+    <font name="BebasFont" contentPath="Images\BebasNeue.ttf" fontName ="Small Fonts" fontSize ="18.0" fontStyle="Regular" />
     <bitmap name="controls" contentPath="SandBoxSheet" />
   </resources>
 
@@ -161,6 +162,7 @@ that uses the theme, please give due credit to the original artist!
       <region source="controls" hplacement="stretch" vplacement="bottom" x="5" y="58" w="11" h="3" />
       <region source="controls" hplacement="right" vplacement="bottom" x="16" y="58" w="3" h="3" />
       <text font="default" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
+      <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
 
     <!--
@@ -177,6 +179,7 @@ that uses the theme, please give due credit to the original artist!
       <region source="controls" hplacement="stretch" vplacement="bottom" x="5" y="72" w="11" h="3" />
       <region source="controls" hplacement="right" vplacement="bottom" x="16" y="72" w="3" h="3" />
       <text font="default" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
+      <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
 
     <!--
@@ -193,6 +196,7 @@ that uses the theme, please give due credit to the original artist!
       <region source="controls" hplacement="stretch" vplacement="bottom" x="5" y="100" w="11" h="3" />
       <region source="controls" hplacement="right" vplacement="bottom" x="16" y="100" w="3" h="3" />
       <text font="default" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
+      <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
 
     <!--
@@ -209,6 +213,7 @@ that uses the theme, please give due credit to the original artist!
       <region source="controls" hplacement="stretch" vplacement="bottom" x="5" y="87" w="11" h="2" />
       <region source="controls" hplacement="right" vplacement="bottom" x="16" y="87" w="3" h="2" />
       <text font="default" hplacement="center" vplacement="center" xoffset="1" yoffset="1" color="#3F3F3F" />
+      <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
 
     <!--

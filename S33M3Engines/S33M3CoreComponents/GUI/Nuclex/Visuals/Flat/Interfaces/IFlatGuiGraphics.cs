@@ -72,7 +72,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        void DrawString(string frameName, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1);
+        void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1);
 
         /// <summary>
         /// Draws text into the drawing buffer using font specified
@@ -83,13 +83,15 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         /// <param name="color"></param>
         /// <param name="withMaxWidth"></param>
         /// <param name="carretPosition"></param>
-        void DrawString(SpriteFont font, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1);
+        void DrawString(SpriteFont font, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1,
+                                     FlatGuiGraphics.Frame.HorizontalTextAlignment HorizontalPlacement = S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.FlatGuiGraphics.Frame.HorizontalTextAlignment.Left,
+                                     FlatGuiGraphics.Frame.VerticalTextAlignment VerticalPlacement = S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.FlatGuiGraphics.Frame.VerticalTextAlignment.Top);
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        void DrawString(string frameName, ref RectangleF bounds, string text, bool withMaxWidth, int carretPosition = -1);
+        void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, bool withMaxWidth, int carretPosition = -1);
 
         /// <summary>Measures the extents of a string in the frame's area</summary>
         /// <param name="frameName">Class of the element whose text will be measured</param>
