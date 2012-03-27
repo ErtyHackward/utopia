@@ -1,8 +1,9 @@
 using System;
 using System.Drawing;
+using S33M3CoreComponents.GUI.Nuclex;
+using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using SharpDX;
 using S33M3CoreComponents.Sprites;
-using S33M3DXEngine.Main;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3Resources.Structs;
@@ -12,58 +13,59 @@ namespace Sandbox.Client.Components
     /// <summary>
     /// Component to show something while game loading
     /// </summary>
-    public class LoadingComponent : DrawableGameComponent
+    public class LoadingComponent : SandboxMenuComponent
     {
         private readonly D3DEngine _engine;
-        SpriteRenderer _spriteRender;
-        SpriteFont _font;
-        //SpriteTexture _materia;
-        string _loadingText = "Loading...";
-        DateTime _lastCheck;
-        int _points;
-        ByteColor color = Colors.White;
+        private readonly MainScreen _screen;
+        private ImageControl _loadingLabel;
+        private SpriteTexture _stLoading;
 
-        public LoadingComponent(D3DEngine engine)
+        public LoadingComponent(D3DEngine engine, MainScreen screen) : base(engine, screen)
         {
             _engine = engine;
-            DrawOrders.UpdateIndex(0, int.MaxValue-100);
+            _screen = screen;
+
+            _stLoading = ToDispose(LoadTexture(engine, "Images\\loading.png"));
+
         }
 
-        public override void LoadContent(DeviceContext context)
+        public override void Initialize()
         {
-            _font = ToDispose(new SpriteFont());
-            _font.Initialize("Lucida Console", 16f, FontStyle.Bold, true, _engine.Device);
-            _spriteRender = ToDispose(new SpriteRenderer(_engine));
+            _loadingLabel = new ImageControl();
+            _loadingLabel.Image = _stLoading;
 
-            //_materia = new SpriteTexture(_engine.Device, "Images\\materia.png", new Vector2());
-            _lastCheck = DateTime.Now;
+            
         }
 
-        public override void Update(GameTime timeSpend)
+        private bool active = false;
+
+        public override void EnableComponent()
         {
-            if ((DateTime.Now - _lastCheck).TotalSeconds > 0.5)
-            {
-                if (_points++ > 3) _points = 0;
-                _loadingText = "Loading";
+            if (active) return;
 
-                for (int i = 0; i < _points; i++)
-                {
-                    _loadingText += ".";
-                }
-                _lastCheck = DateTime.Now;
-            }
-
-            base.Update(timeSpend);
+            active = true;
+            _screen.Desktop.Children.Add(_loadingLabel);
+            Resize(_engine.ViewPort);
+            base.EnableComponent();
         }
 
-        public override void Draw(DeviceContext context, int index)
+        public override void DisableComponent()
         {
-            _spriteRender.Begin(false);
-            context.ClearRenderTargetView(_engine.RenderTarget, new Color4(0, 0, 0, 1));
+            active = false;
+            _screen.Desktop.Children.Remove(_loadingLabel);
+            base.DisableComponent();
+        }
 
-            Vector2 position = new Vector2(_engine.ViewPort.Width - 200, _engine.ViewPort.Height - 100);
-            _spriteRender.DrawText(_font, _loadingText,ref position,ref color);
-            _spriteRender.End(context);
+        protected override void EngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer)
+        {
+            base.EngineViewPortUpdated(viewport, newBackBuffer);
+
+            Resize(viewport);
+        }
+
+        private void Resize(Viewport viewport)
+        {
+            _loadingLabel.Bounds = new UniRectangle((viewport.Width - 148) / 2 + 50, (viewport.Height - _headerHeight - 58) / 2 + _headerHeight, 148, 58);
         }
     }
 }
