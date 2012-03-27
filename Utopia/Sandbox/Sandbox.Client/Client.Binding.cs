@@ -55,6 +55,7 @@ using System.Reflection;
 using S33M3CoreComponents.Debug;
 using Utopia.Shared.Entities;
 using Sandbox.Shared;
+using S33M3Resources.Structs;
 
 namespace Sandbox.Client
 {
@@ -124,7 +125,7 @@ namespace Sandbox.Client
             List<Assembly> componentsAssemblies = new List<Assembly>();
             componentsAssemblies.Add(typeof(Sandbox.Client.Program).Assembly); //Add all components from Sanbox.Client Assembly
             componentsAssemblies.Add(typeof(Utopia.UtopiaRender).Assembly); //Check inside Utopia namespace assembly
-            _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope().WithConstructorArgument("skinPath", @"GUI\Skins\Default\Default.skin.xml")
+            _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope().WithConstructorArgument("skinPath", @"GUI\Skins\SandBox\SandBox.skin.xml")
                                                                         .WithConstructorArgument("plugInComponentAssemblies", componentsAssemblies);        //Gui base class
             _iocContainer.Bind<MainScreen>().ToSelf().InSingletonScope();
             //=============================================================
@@ -198,7 +199,7 @@ namespace Sandbox.Client
             //=============================================================
 
             //Debug Components ===========================================
-            _iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope().WithConstructorArgument("LeftPanelColor", new ByteColor(44,51,59));
             //=============================================================
 
         }
