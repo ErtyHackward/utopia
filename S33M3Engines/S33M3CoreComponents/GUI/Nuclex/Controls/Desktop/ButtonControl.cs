@@ -41,6 +41,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         /// <summary>Text that will be shown on the button</summary>
         public string Text;
 
+        public int TextFontId { get; set; }
+
         public override void Dispose()
         {
             if (Pressed != null)

@@ -37,7 +37,7 @@ namespace Utopia.GUI.NuclexUIPort.Visuals.Flat.Renderers
             // If there's text assigned to the button, draw it into the button
             if (!string.IsNullOrEmpty(control.Text))
             {
-                graphics.DrawString(States[stateIndex],ref controlBounds, control.Text, false);
+                graphics.DrawString(States[stateIndex], 0, ref controlBounds, control.Text, false);
             }
         }
 

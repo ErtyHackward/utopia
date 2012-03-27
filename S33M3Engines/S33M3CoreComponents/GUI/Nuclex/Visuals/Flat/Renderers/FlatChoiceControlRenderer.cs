@@ -81,7 +81,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 controlBounds.X += controlBounds.Height;
 
                 // Draw the text that was assigned to the choice control        
-                graphics.DrawString(states[stateIndex],ref controlBounds, control.Text, false);
+                graphics.DrawString(states[stateIndex], 0, ref controlBounds, control.Text, false);
 
             }
 

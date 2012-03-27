@@ -23,6 +23,7 @@ using S33M3CoreComponents.Sprites;
 using SharpDX;
 using System.Collections.Generic;
 using S33M3Resources.Structs;
+using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Controls
 {
@@ -36,6 +37,9 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         public bool Autosizing { get; set; }
 
         public SpriteFont CustomFont { get; set; }
+
+        public FlatGuiGraphics.Frame.HorizontalTextAlignment CustomHorizontalPlacement { get; set; }
+        public FlatGuiGraphics.Frame.VerticalTextAlignment CustomVerticalPlacement { get; set; }
 
         /// <summary>Initializes a new label control with an empty string</summary>
         public LabelControl() : this(string.Empty) { }

@@ -32,7 +32,14 @@ namespace Sandbox.Client.States
             AddComponent(settings);
             AddComponent(gui);
 
+            settings.BackPressed += settings_BackPressed;
+
             base.Initialize(context);
+        }
+
+        void settings_BackPressed(object sender, EventArgs e)
+        {
+            StatesManager.ActivateGameStateAsync("MainMenu");
         }
 
     }

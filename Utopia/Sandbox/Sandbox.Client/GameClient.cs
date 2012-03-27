@@ -48,7 +48,7 @@ namespace Sandbox.Client
             //Load Client config XML file
             LoadClientsSettings();
             //Bings all components
-            IocBinding("Utopia Sandbox mode", new System.Drawing.Size(854, 480));
+            IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 768));
 
             System.Net.ServicePointManager.Expect100Continue = false;
 
@@ -108,7 +108,7 @@ namespace Sandbox.Client
             stateManager.ActivateGameStateAsync("Login");
 #endif
 
-            game.MenuRequested += new EventHandler(game_MenuRequested);
+            //game.MenuRequested += new EventHandler(game_MenuRequested);
 
             game.Run(); //Start the Main render loop
 

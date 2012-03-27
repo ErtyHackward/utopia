@@ -90,7 +90,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                         graphics.DrawElement("list.selection",ref itemBounds);
                     }
 
-                    graphics.DrawString(Style,ref itemBounds, control.Items[item].ToString(), false);
+                    graphics.DrawString(Style, 0, ref itemBounds, control.Items[item].ToString(), false);
                     //graphics.DrawElement("button.normal", itemBounds);
                     itemBounds.Y += rowHeight;
                 }

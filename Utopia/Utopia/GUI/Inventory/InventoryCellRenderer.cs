@@ -45,7 +45,7 @@ namespace Utopia.GUI.Inventory
                 {
                     var displayName = control.Slot.Item.DisplayName;
 
-                    graphics.DrawString("button.normal", ref controlBounds, displayName, false);
+                    graphics.DrawString("button.normal", 0, ref controlBounds, displayName, false);
                 }
             }
             #endregion
@@ -65,8 +65,8 @@ namespace Utopia.GUI.Inventory
                                                   controlBounds.Y + controlBounds.Height - textSize.Height,
                                                   w,
                                                   h);
-                graphics.DrawString("slot.items.shadow",ref textPosition, itemsCount, false);
-                graphics.DrawString("slot.items", ref textPosition, itemsCount, false);
+                graphics.DrawString("slot.items.shadow", 0, ref textPosition, itemsCount, false);
+                graphics.DrawString("slot.items", 0, ref textPosition, itemsCount, false);
             }
 
             #endregion

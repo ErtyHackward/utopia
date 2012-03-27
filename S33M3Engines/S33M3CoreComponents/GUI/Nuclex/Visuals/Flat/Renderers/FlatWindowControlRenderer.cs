@@ -46,7 +46,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 
             if (control.Title != null)
             {
-                graphics.DrawString("window",ref controlBounds, control.Title, false);
+                graphics.DrawString("window", 0, ref controlBounds, control.Title, false);
             }
         }
 
