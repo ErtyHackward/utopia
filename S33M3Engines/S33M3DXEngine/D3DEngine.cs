@@ -9,6 +9,7 @@ using SharpDX.DXGI;
 using SharpDX.Windows;
 using Device = SharpDX.Direct3D11.Device;
 using Resource = SharpDX.Direct3D11.Resource;
+using System.Collections.Generic;
 
 namespace S33M3DXEngine
 {
@@ -129,6 +130,7 @@ namespace S33M3DXEngine
         #region Public Methods
         public void Initialize()
         {
+            List<ModeDescription> adapterModes = new List<ModeDescription>();
             _dx11factory = new Factory();
 
             using (Adapter adapter = _dx11factory.GetAdapter(0))
@@ -139,11 +141,22 @@ namespace S33M3DXEngine
                     foreach (var mode in output.GetDisplayModeList(Format.B8G8R8A8_UNorm, DisplayModeEnumerationFlags.Interlaced))
                     {
                         B8G8R8A8_UNormSupport = true;
+                        adapterModes.Add(mode);
                     }
 
+                    logger.Info("GPU found : {0}", adapter.Description.Description);
                     logger.Info("B8G8R8A8_UNormSupport compatibility = {0}", B8G8R8A8_UNormSupport);
+
+#if DEBUG
+                    foreach (var mode in adapterModes)
+                    {
+                        logger.Trace("[{1}:{2}], format : {0}, RefreshRate : {3}hz, Scaling : {4}, ScanlineMode : {5}", mode.Format, mode.Width, mode.Height, (float)mode.RefreshRate.Numerator / mode.RefreshRate.Denominator, mode.Scaling, mode.ScanlineOrdering);
+                    }
+#endif
                 }
             }
+
+
 
             RefreshResources();
 
@@ -231,9 +244,8 @@ namespace S33M3DXEngine
                     Usage = Usage.RenderTargetOutput,
                     OutputHandle = _renderForm.Handle,
                     IsWindowed = true,
-                    //    ModeDescription = new ModeDescription(_renderForm.ClientSize.Width, _renderForm.ClientSize.Height, new Rational(60, 1), Format.R8G8B8A8_UNorm),
-                    ModeDescription = RenderResolution == default(Size) ? new ModeDescription() { Format = Format.R8G8B8A8_UNorm }
-                                                                        : new ModeDescription() { Format = Format.R8G8B8A8_UNorm, Width = _renderForm.ClientSize.Width, Height = _renderForm.ClientSize.Height },
+                    ModeDescription = RenderResolution == default(Size) ? new ModeDescription() { Format = Format.R8G8B8A8_UNorm, Width = _renderForm.ClientSize.Width, Height = _renderForm.ClientSize.Height }
+                                                                        : new ModeDescription() { Format = Format.R8G8B8A8_UNorm, Width = RenderResolution.Width, Height = RenderResolution.Height },
                     SampleDescription = new SampleDescription(1, 0),
                     SwapEffect = SwapEffect.Discard
                 };
@@ -270,15 +282,18 @@ namespace S33M3DXEngine
             }
             else
             {
-                if (RenderResolution == default(Size))
+                if (RenderResolution == default(Size) || isFullScreen)
                 {
-                    _swapChain.ResizeBuffers(0, 0, 0, Format.R8G8B8A8_UNorm, (int)SwapChainFlags.None); //Automatically resize to the optimum resolution
+                    _swapChain.ResizeBuffers(1, _renderForm.ClientSize.Width, _renderForm.ClientSize.Height, Format.R8G8B8A8_UNorm, (int)SwapChainFlags.None);
                 }
                 else
                 {
-                    _swapChain.ResizeBuffers(0, RenderResolution.Width, RenderResolution.Height, Format.R8G8B8A8_UNorm, (int)SwapChainFlags.None);
+                    _swapChain.ResizeBuffers(1, RenderResolution.Width, RenderResolution.Height, Format.R8G8B8A8_UNorm, (int)SwapChainFlags.None);
                 }
+
             }
+
+            logger.Info("SwapChain is using the GPU in mode : [{1}px * {2}px], format : {0}, RefreshRate : {3}hz, Scaling : {4}, ScanlineMode : {5}", _swapChain.Description.ModeDescription.Format, _swapChain.Description.ModeDescription.Width, _swapChain.Description.ModeDescription.Height, (float)_swapChain.Description.ModeDescription.RefreshRate.Numerator / _swapChain.Description.ModeDescription.RefreshRate.Denominator, _swapChain.Description.ModeDescription.Scaling, _swapChain.Description.ModeDescription.ScanlineOrdering);
             // Get the created BackBuffer
             BackBufferTex = Resource.FromSwapChain<Texture2D>(_swapChain, 0);
 
@@ -361,14 +376,12 @@ namespace S33M3DXEngine
             }
         }
 
-
         private void WindowSizeChanged()
         {
             logger.Debug("Window size changed new size = Width : {0}px Height : {1}px", _renderForm.ClientSize.Width, _renderForm.ClientSize.Height);
 
             ReleaseBackBufferLinkedResources();
             RefreshResources();
-
         }
 
         private void RefreshResources()
