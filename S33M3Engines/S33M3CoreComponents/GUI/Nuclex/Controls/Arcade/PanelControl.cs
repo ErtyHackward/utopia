@@ -26,11 +26,5 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Arcade
     /// <summary>Panel that can host other controls, similar to a window</summary>
     public class PanelControl : Control
     {
-        public Color4 Color { get; set; }
-
-        public PanelControl()
-        {
-            Color = Colors.White;
-        }
     }
 }

@@ -10,6 +10,7 @@ using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Components.Debug;
 using S33M3CoreComponents.Debug.Components;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.Debug.GUI.Controls
 {
@@ -46,16 +47,16 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
         }
         #endregion
 
-        public DebugWindowControl(Game game, DisplayInfo displayInfo, FPSComponent fps)
+        public DebugWindowControl(Game game, DisplayInfo displayInfo, FPSComponent fps, ByteColor LeftPanelColor)
         {
             _fps = fps;
             _displayInfo = displayInfo;
             _game = game;
-            BuildWindow();
+            BuildWindow(ref LeftPanelColor);
         }
 
         #region Private methods
-        private void BuildWindow()
+        private void BuildWindow(ref ByteColor LeftPanelColor)
         {
             //Create the Close Button
             _debugWindow = new WindowControl();
@@ -67,7 +68,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             _debugWindow.Children.Add(_closeBt);
 
             //Create the Left Menu panel
-            PanelControl menu = ToDispose(new PanelControl() { Bounds = new UniRectangle(4, 24, 100, _debugWindow.Bounds.Size.Y - 28), Color = new Color4(0.16f, 0.44f, 0.64f, 1.0f) });
+            PanelControl menu = ToDispose(new PanelControl() { Bounds = new UniRectangle(4, 24, 100, _debugWindow.Bounds.Size.Y - 28), Color = LeftPanelColor });
                 LabelControl menu_title = ToDispose(new LabelControl() { Bounds = new UniRectangle(5, 0, menu.Bounds.Size.X, 30), Color = Colors.Yellow, Text = "Visualisation" });
                 menu.Children.Add(menu_title);
 

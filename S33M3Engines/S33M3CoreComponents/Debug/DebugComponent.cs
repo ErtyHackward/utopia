@@ -15,6 +15,7 @@ using S33M3CoreComponents.Debug.Components;
 using S33M3CoreComponents.GUI;
 using SharpDX.Direct3D11;
 using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.Debug
 {
@@ -32,6 +33,8 @@ namespace S33M3CoreComponents.Debug
         private ColumnChart _chart;
         private D3DEngine _engine;
 
+        ByteColor _leftPanelColor;
+
         private bool _wasMouseCaptured;
         private Game _game;
         #endregion
@@ -39,11 +42,12 @@ namespace S33M3CoreComponents.Debug
         #region Public variables
         #endregion
 
-        public DebugComponent(InputsManager inputManager, GuiManager guiManager, Game game, D3DEngine engine, bool withDisplayInfoActivated = false)
+        public DebugComponent(InputsManager inputManager, GuiManager guiManager, Game game, D3DEngine engine, ByteColor LeftPanelColor, bool withDisplayInfoActivated = false)
         {
             this.IsSystemComponent = true;
             _inputManager = inputManager;
             _engine = engine;
+            _leftPanelColor = LeftPanelColor;
             _guiManager = guiManager;
             _game = game;
             _displayInfo = ToDispose(new DisplayInfo(_engine, game));
@@ -93,7 +97,7 @@ namespace S33M3CoreComponents.Debug
                 Binding = new KeyWithModifier() { MainKey = System.Windows.Forms.Keys.F4 }
             });
 
-            _mainControl = ToDispose(new DebugWindowControl(_game, _displayInfo, _fps));
+            _mainControl = ToDispose(new DebugWindowControl(_game, _displayInfo, _fps, _leftPanelColor));
             //_mainControl.ControlClosed += HideControl;
             //_guiManager.Screen.Desktop.Children.Add(_mainControl.DebugWindow);
 
