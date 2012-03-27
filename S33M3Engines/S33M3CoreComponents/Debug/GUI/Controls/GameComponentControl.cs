@@ -36,19 +36,19 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             lblGameComp.Bounds = new UniRectangle(10.0f, _y, 110.0f, 18.0f);
 
             optUpdatable = new OptionControl();
-            optUpdatable.Bounds = new UniRectangle(150.0f, _y, 20.0f, 16.0f);
+            optUpdatable.Bounds = new UniRectangle(200.0f, _y, 20.0f, 16.0f);
             optUpdatable.Changed += optUpdatable_Changed;
 
             updateOrder = new InputControl();
-            updateOrder.Bounds = new UniRectangle(170.0f, y, 50.0f, 18.0f);
+            updateOrder.Bounds = new UniRectangle(220.0f, y, 50.0f, 18.0f);
             updateOrder.EnterKeyPressed += updateOrder_EnterKeyPressed;
 
             optDrawable = new OptionControl();
-            optDrawable.Bounds = new UniRectangle(240.0f, y, 20.0f, 16.0f);
+            optDrawable.Bounds = new UniRectangle(290.0f, y, 20.0f, 16.0f);
             optDrawable.Changed += optDrawable_Changed;
 
             drawOrder = new InputControl();
-            drawOrder.Bounds = new UniRectangle(260.0f, y, 50.0f, 18.0f);
+            drawOrder.Bounds = new UniRectangle(310.0f, y, 50.0f, 18.0f);
             drawOrder.EnterKeyPressed += drawOrder_EnterKeyPressed;
         }
 
@@ -203,7 +203,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
 
             ColumnTitles = ToDispose(new LabelControl());
             ColumnTitles.FontStyle = System.Drawing.FontStyle.Bold;
-            ColumnTitles.Bounds = new UniRectangle(150.0f, 5.0f, 90.0f, 18.0f);
+            ColumnTitles.Bounds = new UniRectangle(200.0f, 5.0f, 90.0f, 18.0f);
             ColumnTitles.Text = "Updating";
             ColumnTitles.Color = Colors.DarkBlue;
             ColumnTitles.WithForcedColor = true;
@@ -212,7 +212,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
 
             ColumnTitles = ToDispose(new LabelControl());
             ColumnTitles.FontStyle = System.Drawing.FontStyle.Bold;
-            ColumnTitles.Bounds = new UniRectangle(240.0f, 5.0f, 110.0f, 18.0f);
+            ColumnTitles.Bounds = new UniRectangle(290.0f, 5.0f, 110.0f, 18.0f);
             ColumnTitles.Text = "Drawing";
             ColumnTitles.Color = Colors.DarkBlue;
             ColumnTitles.WithForcedColor = true;

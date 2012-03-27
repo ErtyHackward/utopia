@@ -31,6 +31,11 @@ namespace S33M3DXEngine.Main
             set { _isInitialized = value; }
         }
 
+        public virtual bool isEnabled
+        {
+            get { return Updatable; }
+        }
+
         public bool CatchExclusiveActions { get; set; }
 
         public bool Updatable
