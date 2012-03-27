@@ -42,7 +42,11 @@ namespace Sandbox.Client.Components
         public override void Initialize()
         {
             InitializeComponent();
+        }
 
+        public override void LoadContent(DeviceContext context)
+        {
+            LoadContentComponent(context);
             RefreshComponentsVisibility();
         }
 
