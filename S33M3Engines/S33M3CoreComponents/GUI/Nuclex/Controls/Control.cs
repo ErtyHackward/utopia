@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using S33M3CoreComponents.GUI.Nuclex.Input;
 using System.Windows.Forms;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Controls
 {
@@ -48,6 +49,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
     /// </remarks>
     public partial class Control : Component
     {
+        private ByteColor _color = Colors.White;
+        public bool ColorSet { get; private set; }
+
+        public ByteColor Color
+        {
+            get { return _color; }
+            set { _color = value; ColorSet = true; }
+        }
 
         public override void Dispose()
         {

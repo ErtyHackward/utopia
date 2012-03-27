@@ -206,7 +206,6 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             ColumnTitles.Bounds = new UniRectangle(200.0f, 5.0f, 90.0f, 18.0f);
             ColumnTitles.Text = "Updating";
             ColumnTitles.Color = Colors.DarkBlue;
-            ColumnTitles.WithForcedColor = true;
             ColumnTitles.Clicked += ColumnTitlesUpdating_Clicked;
             Children.Add(ColumnTitles);
 
@@ -215,7 +214,6 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             ColumnTitles.Bounds = new UniRectangle(290.0f, 5.0f, 110.0f, 18.0f);
             ColumnTitles.Text = "Drawing";
             ColumnTitles.Color = Colors.DarkBlue;
-            ColumnTitles.WithForcedColor = true;
             ColumnTitles.Clicked += ColumnTitlesDrawing_Clicked;
             Children.Add(ColumnTitles);
 

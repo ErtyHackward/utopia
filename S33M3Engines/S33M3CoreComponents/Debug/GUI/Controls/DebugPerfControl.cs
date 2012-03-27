@@ -136,7 +136,6 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             ColumnTitles.Bounds = new UniRectangle(_displayResultsColumnPosi[(int)LabelResultColumn.AvgUpdt], y, 50.0f, 18.0f);
             ColumnTitles.Text = "Avg Updt";
             ColumnTitles.Color = Colors.DarkBlue;
-            ColumnTitles.WithForcedColor = true;
             ColumnTitles.Tag = LabelResultColumn.AvgUpdt;
             ColumnTitles.Clicked += ColumnTitles_Clicked;
             Children.Add(ColumnTitles);
@@ -146,7 +145,6 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             ColumnTitles.Bounds = new UniRectangle(_displayResultsColumnPosi[(int)LabelResultColumn.MaxUpdt], y, 50.0f, 18.0f);
             ColumnTitles.Text = "Max Updt";
             ColumnTitles.Color = Colors.DarkBlue;
-            ColumnTitles.WithForcedColor = true;
             ColumnTitles.Tag = LabelResultColumn.MaxUpdt;
             ColumnTitles.Clicked += ColumnTitles_Clicked;
             Children.Add(ColumnTitles);
@@ -156,7 +154,6 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             ColumnTitles.Bounds = new UniRectangle(_displayResultsColumnPosi[(int)LabelResultColumn.AvgDraw], y, 50.0f, 18.0f);
             ColumnTitles.Text = "Avg Draw";
             ColumnTitles.Color = Colors.DarkBlue;
-            ColumnTitles.WithForcedColor = true;
             ColumnTitles.Tag = LabelResultColumn.AvgDraw;
             ColumnTitles.Clicked += ColumnTitles_Clicked;
             Children.Add(ColumnTitles);
@@ -166,7 +163,6 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             ColumnTitles.Bounds = new UniRectangle(_displayResultsColumnPosi[(int)LabelResultColumn.MaxDraw], y, 50.0f, 18.0f);
             ColumnTitles.Text = "Max Draw";
             ColumnTitles.Color = Colors.DarkBlue;
-            ColumnTitles.WithForcedColor = true;
             ColumnTitles.Tag = LabelResultColumn.MaxDraw;
             ColumnTitles.Clicked += ColumnTitles_Clicked;
             Children.Add(ColumnTitles);

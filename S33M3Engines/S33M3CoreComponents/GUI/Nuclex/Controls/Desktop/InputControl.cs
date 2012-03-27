@@ -27,6 +27,7 @@ using S33M3CoreComponents.GUI.Nuclex.Input;
 using System.Windows.Forms;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Interfaces;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop.Interfaces;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
 {
@@ -47,7 +48,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
     /// </remarks>
     public class InputControl : Control, IWritable
     {
-        private Color4 _color;
         
         public override void Dispose()
         {
@@ -67,14 +67,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         /// Occurs when the Enter is used
         /// </summary>
         public event EventHandler EnterKeyPressed;
-
-        public bool ColorSet { get; private set; }
-
-        public Color4 Color
-        {
-            get { return _color; }
-            set { _color = value; ColorSet = true; }
-        }
 
         public bool isMultiline { get; set; }
 

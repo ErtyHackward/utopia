@@ -22,7 +22,7 @@ namespace Sandbox.Client.Components
 
         protected void InitializeComponent()
         {
-            _windowLabel = new LabelControl() { Text = "Settings", IsHeaderFont = true, Color = Colors.Green, WithForcedColor = true };
+            _windowLabel = new LabelControl() { Text = "Settings", IsHeaderFont = true, Color = Colors.Green };
             _leftMenuPanel = new PanelControl() { Color = Colors.WhiteSmoke };
             _cubesPatern = new ImageControl() { Image = SandboxMenuComponent.StCubesPattern };
             _linenPatern = new ImageControl() { Image = SandboxMenuComponent.StLinenPattern };
