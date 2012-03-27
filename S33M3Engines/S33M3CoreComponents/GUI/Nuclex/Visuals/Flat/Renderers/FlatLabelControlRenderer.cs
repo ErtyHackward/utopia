@@ -68,15 +68,24 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 }
             }
 
-            RectangleF absoluteBounds = control.GetAbsoluteBounds();
-            if (control.WithForcedColor)
+            var absoluteBounds = control.GetAbsoluteBounds();
+
+            if (control.CustomFont != null)
             {
                 ByteColor color = control.Color;
-                graphics.DrawString(styleFrame, ref absoluteBounds, control.Text, ref color, control.Autosizing);
+                graphics.DrawString(control.CustomFont, ref absoluteBounds, control.Text, ref color, control.Autosizing);
             }
             else
             {
-                graphics.DrawString(styleFrame, ref absoluteBounds, control.Text, control.Autosizing);
+                if (control.WithForcedColor)
+                {
+                    ByteColor color = control.Color;
+                    graphics.DrawString(styleFrame, ref absoluteBounds, control.Text, ref color, control.Autosizing);
+                }
+                else
+                {
+                    graphics.DrawString(styleFrame, ref absoluteBounds, control.Text, control.Autosizing);
+                }
             }
         }
 

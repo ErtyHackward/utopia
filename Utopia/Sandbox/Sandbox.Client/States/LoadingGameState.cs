@@ -93,6 +93,7 @@ namespace Sandbox.Client.States
 
             AddComponent(loading);
             AddComponent(_ioc.Get<ServerComponent>());
+            AddComponent(_ioc.Get<GuiManager>());
 
             base.Initialize(context);
         }

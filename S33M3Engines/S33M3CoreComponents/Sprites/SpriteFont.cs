@@ -43,14 +43,29 @@ namespace S33M3CoreComponents.Sprites
         #endregion
 
         #region Public Methods
+
+        public void Initialize(FontFamily family, float fontSize, FontStyle fontStyle, bool antiAliased, SharpDX.Direct3D11.Device device)
+        {
+            _size = fontSize;
+            _font = ToDispose(new Font(family, fontSize, fontStyle, GraphicsUnit.Pixel));
+            Initialize(antiAliased, device);
+        }
+
         public void Initialize(string fontName, float fontSize, FontStyle fontStyle, bool antiAliased, SharpDX.Direct3D11.Device device)
         {
             _size = fontSize;
+            _font = ToDispose(new Font(fontName, fontSize, fontStyle, GraphicsUnit.Pixel));
+            Initialize(antiAliased, device);
+        }
+
+        private void Initialize(bool antiAliased, SharpDX.Direct3D11.Device device)
+        {
+            
             TextRenderingHint hint = antiAliased ? TextRenderingHint.AntiAliasGridFit : TextRenderingHint.SystemDefault;
 
-            _font = ToDispose(new Font(fontName, fontSize, fontStyle, GraphicsUnit.Pixel));
 
-            int size = (int)(fontSize * NumChars * 2) + 1;
+
+            //int size = (int)(_size * NumChars * 2) + 1;
 
             Bitmap measuringBitmap = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
 
@@ -77,7 +92,7 @@ namespace S33M3CoreComponents.Sprites
             int texHeight = (int)(numRows * _charHeight) + 1;
 
             // Create a temporary Bitmap and Graphics for drawing the characters one by one
-            int tempSize = (int)(fontSize * 2);
+            int tempSize = (int)(_size * 2);
             Bitmap drawBitmap = new Bitmap(tempSize, tempSize, PixelFormat.Format32bppArgb);
             Graphics drawGraphics = Graphics.FromImage(drawBitmap);
             drawGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;

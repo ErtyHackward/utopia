@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Text;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Sprites;
@@ -19,7 +20,12 @@ namespace Sandbox.Client.Components
         public static SpriteTexture StGameName;
         public static SpriteTexture StCubesPattern;
         public static SpriteTexture StLinenPattern;
-        public static SpriteFont FontBebasNeue;
+
+        public static PrivateFontCollection FontCollection;
+
+        public static SpriteFont FontBebasNeue35;
+        public static SpriteFont FontBebasNeue25;
+
 
 
         private readonly D3DEngine _engine;
@@ -52,8 +58,14 @@ namespace Sandbox.Client.Components
             StCubesPattern  = LoadTexture(engine, "Images\\cubes.png");
             StLinenPattern  = LoadTexture(engine, "Images\\black-linen.png");
 
-            FontBebasNeue = new SpriteFont();
-            FontBebasNeue.Initialize("Images\\BebasNeue.otf", 35, FontStyle.Regular, true, engine.Device);
+            FontCollection = new PrivateFontCollection();
+            FontCollection.AddFontFile("Images\\BebasNeue.ttf");
+
+            FontBebasNeue35 = new SpriteFont();
+            FontBebasNeue35.Initialize(FontCollection.Families[0], 35, FontStyle.Regular, true, engine.Device);
+
+            FontBebasNeue25 = new SpriteFont();
+            FontBebasNeue25.Initialize(FontCollection.Families[0], 25, FontStyle.Regular, true, engine.Device);
         }
 
         protected SandboxMenuComponent(D3DEngine engine, MainScreen screen)
@@ -74,6 +86,7 @@ namespace Sandbox.Client.Components
 
         public override void Dispose()
         {
+            FontCollection.Dispose();
             _engine.ViewPort_Updated -= EngineViewPortUpdated;
             base.Dispose();
         }

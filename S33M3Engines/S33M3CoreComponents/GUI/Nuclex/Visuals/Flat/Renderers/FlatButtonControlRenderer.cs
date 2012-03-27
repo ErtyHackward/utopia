@@ -82,7 +82,22 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 // Draw the button's frame
                 graphics.DrawElement(states[stateIndex], ref controlBounds);
             }
-            
+
+            if (control.CusomImageLabel != null)
+            {
+                var imgRect = controlBounds;
+
+                imgRect.X += (imgRect.Width - control.CusomImageLabel.Width) / 2;
+                imgRect.Y += (imgRect.Height - control.CusomImageLabel.Height) / 2;
+                imgRect.Width = control.CusomImageLabel.Width;
+                imgRect.Height = control.CusomImageLabel.Height;
+
+                if (stateIndex == 3)
+                    imgRect.Y += 1;
+
+                graphics.DrawCustomTexture(control.CusomImageLabel, ref imgRect);
+            }
+
             // If there's text assigned to the button, draw it into the button
             if (!string.IsNullOrEmpty(control.Text))
             {

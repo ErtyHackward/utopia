@@ -29,6 +29,7 @@ namespace Sandbox.Client.Components
         private SpriteTexture _stEnter;
         private SpriteTexture _stEnterHover;
         private SpriteTexture _stEnterDown;
+        private SpriteTexture _stEnterDisabled;
 
         private SpriteTexture _stSign;
         private SpriteTexture _stSignHover;
@@ -114,7 +115,8 @@ namespace Sandbox.Client.Components
             _stEnter = ToDispose(LoadTexture(engine, "Images\\Login\\enter.png"));
             _stEnterHover = ToDispose(LoadTexture(engine, "Images\\Login\\enter_hover.png"));
             _stEnterDown = ToDispose(LoadTexture(engine, "Images\\Login\\enter_press.png"));
-            
+            _stEnterDisabled = ToDispose(LoadTexture(engine, "Images\\Login\\enter_disabled.png"));
+
             _stSign = ToDispose(LoadTexture(engine, "Images\\Login\\sign.png"));
             _stSignHover = ToDispose(LoadTexture(engine, "Images\\Login\\sign_hover.png"));
 
@@ -177,15 +179,18 @@ namespace Sandbox.Client.Components
             _emailControl = new InputControl
             {
                 Text = Email,
-                CustomBackground = _stInputBg
+                CustomBackground = _stInputBg,
+                CustomFont = FontBebasNeue35,
+                Color = SharpDX.Colors.White
             };
             
             _passwordControl = new InputControl
             {
-                Bounds = new UniRectangle(dx + 60, dy + 30, 140, 20),
                 Text = Password,
                 IsPassword = true,
-                CustomBackground = _stInputBg
+                CustomBackground = _stInputBg,
+                CustomFont = FontBebasNeue35,
+                Color = SharpDX.Colors.White
             };
             
             _regButton = new ButtonControl
@@ -201,7 +206,8 @@ namespace Sandbox.Client.Components
             {
                 CustomImage = _stEnter,
                 CustomImageHover = _stEnterHover,
-                CustomImageDown = _stEnterDown
+                CustomImageDown = _stEnterDown,
+                CustomImageDisabled = _stEnterDisabled
             };
 
             _loginButton.Pressed += delegate { OnLogin(); };

@@ -58,7 +58,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 graphics.DrawCustomTexture(control.CustomBackground, ref controlBounds);
             }
 
-            if (string.IsNullOrEmpty(control.Text) && !control.HasFocus)
+            if (control.CustomHintImage != null && string.IsNullOrEmpty(control.Text) && !control.HasFocus)
             {
 
                 graphics.DrawCustomTexture(control.CustomHintImage, ref controlBounds);
@@ -114,11 +114,33 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 if (control.ColorSet)
                 {
                     ByteColor color = control.Color;
-                    graphics.DrawString(Style, ref controlBounds, textToDraw, ref color, false, withCarret);
+
+                    if (control.CustomFont != null)
+                    {
+                        var move = (controlBounds.Height - control.CustomFont.CharHeight) / 2;
+                        controlBounds.X += move;
+                        controlBounds.Y += move;
+
+                        graphics.DrawString(control.CustomFont, ref controlBounds, textToDraw, ref color, false, withCarret);
+                    }
+                    else 
+                        graphics.DrawString(Style, ref controlBounds, textToDraw, ref color, false, withCarret);
                 }
                 else
                 {
-                    graphics.DrawString(Style, ref controlBounds, textToDraw, false, withCarret);
+                    if (control.CustomFont != null)
+                    {
+                        ByteColor color = control.Color;
+                        var move = (controlBounds.Height - control.CustomFont.CharHeight) / 2;
+                        controlBounds.X += move;
+                        controlBounds.Y += move;
+
+                        graphics.DrawString(control.CustomFont, ref controlBounds, textToDraw, ref color, false, withCarret);
+                    }
+                    else
+                    {
+                        graphics.DrawString(Style, ref controlBounds, textToDraw, false, withCarret);
+                    }
                 }
 
             }
