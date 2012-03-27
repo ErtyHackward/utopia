@@ -170,7 +170,7 @@ namespace S33M3CoreComponents.States
             // Enable current stuff, except the system Component
             foreach (GameComponent gc in current.GameComponents)
             {
-                if (gc.IsSystemComponent) continue;
+                if (gc.IsSystemComponent || gc.isEnabled == true) continue;
                 gc.EnableComponent();
             }
         }
