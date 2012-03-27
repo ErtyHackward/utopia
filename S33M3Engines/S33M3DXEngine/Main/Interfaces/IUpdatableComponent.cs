@@ -10,6 +10,7 @@ namespace S33M3DXEngine.Main.Interfaces
         event EventHandler<EventArgs> UpdateOrderChanged;
         event EventHandler<EventArgs> UpdatableChanged;
         bool Updatable { get; set; }
+        bool isEnabled { get; }
         int UpdateOrder { get; set; }
     }
 }

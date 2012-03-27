@@ -35,6 +35,14 @@ namespace S33M3DXEngine.Main
             }
         }
 
+        public override bool isEnabled
+        {
+            get
+            {
+                return base.isEnabled && Visible;
+            }
+        }
+
         #endregion
 
         public override void EnableComponent()
