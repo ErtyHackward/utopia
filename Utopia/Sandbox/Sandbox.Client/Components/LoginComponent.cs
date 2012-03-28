@@ -213,6 +213,7 @@ namespace Sandbox.Client.Components
 
             _loginButton.Pressed += delegate { OnLogin(); };
 
+            base.Initialize();
         }
 
         public override void EnableComponent()
