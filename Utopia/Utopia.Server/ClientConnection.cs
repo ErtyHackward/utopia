@@ -293,6 +293,7 @@ namespace Utopia.Server
                         return;
                     }
                 }
+                if (this.ConnectionStatus != Shared.Net.Connections.ConnectionStatus.Connected) return;
                 Writer.Flush();
                 // allow next thread to start
                 _sendThreadActive = false;

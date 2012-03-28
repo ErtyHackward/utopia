@@ -86,7 +86,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="EffectsPacks\Default\Entities\LoadingCube.hlsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="GUI\Skins\SandBox\SandBox.skin.xml">
       <SubType>Designer</SubType>

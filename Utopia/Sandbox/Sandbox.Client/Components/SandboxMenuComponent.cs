@@ -45,7 +45,7 @@ namespace Sandbox.Client.Components
         public static SpriteFont FontBebasNeue35;
         public static SpriteFont FontBebasNeue25;
         protected static PrivateFontCollection fontCollection;
-        public static bool WithTexturedCubes = true;
+        public static bool WithTexturedCubes = false;
         protected static CubeProfile _staticCube1Profile, _staticCube2Profile, _staticCube3Profile, _staticCube4Profile;
 
 
