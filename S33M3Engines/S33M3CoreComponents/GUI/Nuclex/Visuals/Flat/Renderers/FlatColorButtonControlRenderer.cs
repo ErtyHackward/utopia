@@ -3,6 +3,7 @@ using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using SharpDX;
+using S33M3Resources.Structs;
 
 namespace Utopia.GUI.NuclexUIPort.Visuals.Flat.Renderers
 {
@@ -42,7 +43,8 @@ namespace Utopia.GUI.NuclexUIPort.Visuals.Flat.Renderers
             colorBounds.Width -= 6;
             colorBounds.Height -= 6;
 
-            graphics.DrawElement(States[4],ref colorBounds, ref control.Color);
+            ByteColor color = control.Color;
+            graphics.DrawElement(States[4], ref colorBounds, ref color);
         }
 
         /// <summary>Names of the states the button control can be in</summary>

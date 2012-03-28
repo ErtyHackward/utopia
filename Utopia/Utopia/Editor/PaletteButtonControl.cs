@@ -17,7 +17,6 @@ namespace Utopia.Editor
             Color = Colors.White;
         }
 
-        public ByteColor Color { get; set; }
         public SpriteTexture Texture { get; set; }
     }
 }

@@ -172,9 +172,6 @@ namespace Sandbox.Client.Components.GUI
 
         public override void Initialize()
         {
-            var dx = 20;
-            var dy = 40;
-
             _authenticationLabel = new ImageControl { Image = _stAutentification };
 
             _emailControl = new InputControl
