@@ -48,7 +48,6 @@ namespace Sandbox.Client.Components.GUI
         public static SpriteFont FontBebasNeue17;
         protected static PrivateFontCollection fontCollection;
         public static bool WithTexturedCubes = false;
-        protected static CubeProfile _staticCube1Profile, _staticCube2Profile, _staticCube3Profile, _staticCube4Profile;
 
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
@@ -64,13 +63,11 @@ namespace Sandbox.Client.Components.GUI
         //Resources used to display the Static cubes in the menu
         protected VertexBuffer<VertexMesh> _staticBlockVB;
         protected IndexBuffer<ushort> _staticBlockIB;
-        protected HLSLIcons _cubeShader;
+        protected HLSLLoadingCube _cubeShader;
         protected Mesh _meshBluePrint;
         protected Matrix _view;
         private Matrix _worldC1, _worldC2, _worldC3, _worldC4;
-        protected ShaderResourceView _cubeTexture;
-        protected Dictionary<int, int> MaterialChangeMapping;
-        private Mesh _staticCube1Mesh, _staticCube2Mesh, _staticCube3Mesh, _staticCube4Mesh;
+        private Matrix _worldC1shadow, _worldC2shadow, _worldC3shadow, _worldC4shadow;
 
         public static SpriteTexture LoadTexture(D3DEngine engine, string filePath)
         {
@@ -135,149 +132,82 @@ namespace Sandbox.Client.Components.GUI
 
             PixelShaderEntry psEntry = WithTexturedCubes ? PixelShaderEntry.PSTexturedCube : PixelShaderEntry.PSWhiteCube;
 
-            _cubeShader = ToDispose(new HLSLIcons(_engine.Device,
+            _cubeShader = ToDispose(new HLSLLoadingCube(_engine.Device,
                        ClientSettings.EffectPack + @"Entities/LoadingCube.hlsl",
-                       VertexMesh.VertexDeclaration,
-                       new S33M3DXEngine.Effects.HLSLFramework.EntryPoints() { VertexShader_EntryPoint = "VS", PixelShader_EntryPoint = psEntry.ToString() }));
+                       VertexMesh.VertexDeclaration));
 
-            Random rnd = new Random();
 
-            if (_staticCube1Profile == null)
-            {
-                _staticCube1Profile = GameSystemSettings.Current.Settings.CubesProfile[rnd.Next(GameSystemSettings.Current.Settings.CubesProfile.Length)];
-                while (_staticCube1Profile.IsEmissiveColorLightSource == true)
-                {
-                    _staticCube1Profile = GameSystemSettings.Current.Settings.CubesProfile[rnd.Next(GameSystemSettings.Current.Settings.CubesProfile.Length)];
-                }
-
-                _staticCube2Profile = GameSystemSettings.Current.Settings.CubesProfile[rnd.Next(GameSystemSettings.Current.Settings.CubesProfile.Length)];
-                while (_staticCube2Profile.IsEmissiveColorLightSource == true || _staticCube2Profile.Id == _staticCube1Profile.Id)
-                {
-                    _staticCube2Profile = GameSystemSettings.Current.Settings.CubesProfile[rnd.Next(GameSystemSettings.Current.Settings.CubesProfile.Length)];
-                }
-
-                _staticCube3Profile = GameSystemSettings.Current.Settings.CubesProfile[rnd.Next(GameSystemSettings.Current.Settings.CubesProfile.Length)];
-                while (_staticCube3Profile.IsEmissiveColorLightSource == true || _staticCube3Profile.Id == _staticCube1Profile.Id || _staticCube3Profile.Id == _staticCube2Profile.Id)
-                {
-                    _staticCube3Profile = GameSystemSettings.Current.Settings.CubesProfile[rnd.Next(GameSystemSettings.Current.Settings.CubesProfile.Length)];
-                }
-
-                _staticCube4Profile = GameSystemSettings.Current.Settings.CubesProfile[rnd.Next(GameSystemSettings.Current.Settings.CubesProfile.Length)];
-                while (_staticCube4Profile.IsEmissiveColorLightSource == true || _staticCube4Profile.Id == _staticCube1Profile.Id || _staticCube4Profile.Id == _staticCube2Profile.Id || _staticCube4Profile.Id == _staticCube3Profile.Id)
-                {
-                    _staticCube4Profile = GameSystemSettings.Current.Settings.CubesProfile[rnd.Next(GameSystemSettings.Current.Settings.CubesProfile.Length)];
-                }
-            }
-
-            MaterialChangeMapping = new Dictionary<int, int>();
-            MaterialChangeMapping.Add(0, 0); //Change the Back Texture Id
-            MaterialChangeMapping.Add(1, 0); //Change the Front Texture Id
-            MaterialChangeMapping.Add(2, 0); //Change the Bottom Texture Id
-            MaterialChangeMapping.Add(3, 0); //Change the Top Texture Id
-            MaterialChangeMapping.Add(4, 0); //Change the Left Texture Id
-            MaterialChangeMapping.Add(5, 0); //Change the Right Texture Id
-
-            MaterialChangeMapping[0] = _staticCube1Profile.Tex_Back; //Change the Back Texture Id
-            MaterialChangeMapping[1] = _staticCube1Profile.Tex_Front; //Change the Front Texture Id
-            MaterialChangeMapping[2] = _staticCube1Profile.Tex_Bottom; //Change the Bottom Texture Id
-            MaterialChangeMapping[3] = _staticCube1Profile.Tex_Top; //Change the Top Texture Id
-            MaterialChangeMapping[4] = _staticCube1Profile.Tex_Left; //Change the Left Texture Id
-            MaterialChangeMapping[5] = _staticCube1Profile.Tex_Right; //Change the Right Texture Id
-            _staticCube1Mesh = _meshBluePrint.Clone(MaterialChangeMapping);
-
-            MaterialChangeMapping[0] = _staticCube2Profile.Tex_Back; //Change the Back Texture Id
-            MaterialChangeMapping[1] = _staticCube2Profile.Tex_Front; //Change the Front Texture Id
-            MaterialChangeMapping[2] = _staticCube2Profile.Tex_Bottom; //Change the Bottom Texture Id
-            MaterialChangeMapping[3] = _staticCube2Profile.Tex_Top; //Change the Top Texture Id
-            MaterialChangeMapping[4] = _staticCube2Profile.Tex_Left; //Change the Left Texture Id
-            MaterialChangeMapping[5] = _staticCube2Profile.Tex_Right; //Change the Right Texture Id
-            _staticCube2Mesh = _meshBluePrint.Clone(MaterialChangeMapping);
-
-            MaterialChangeMapping[0] = _staticCube3Profile.Tex_Back; //Change the Back Texture Id
-            MaterialChangeMapping[1] = _staticCube3Profile.Tex_Front; //Change the Front Texture Id
-            MaterialChangeMapping[2] = _staticCube3Profile.Tex_Bottom; //Change the Bottom Texture Id
-            MaterialChangeMapping[3] = _staticCube3Profile.Tex_Top; //Change the Top Texture Id
-            MaterialChangeMapping[4] = _staticCube3Profile.Tex_Left; //Change the Left Texture Id
-            MaterialChangeMapping[5] = _staticCube3Profile.Tex_Right; //Change the Right Texture Id
-            _staticCube3Mesh = _meshBluePrint.Clone(MaterialChangeMapping);
-
-            MaterialChangeMapping[0] = _staticCube4Profile.Tex_Back; //Change the Back Texture Id
-            MaterialChangeMapping[1] = _staticCube4Profile.Tex_Front; //Change the Front Texture Id
-            MaterialChangeMapping[2] = _staticCube4Profile.Tex_Bottom; //Change the Bottom Texture Id
-            MaterialChangeMapping[3] = _staticCube4Profile.Tex_Top; //Change the Top Texture Id
-            MaterialChangeMapping[4] = _staticCube4Profile.Tex_Left; //Change the Left Texture Id
-            MaterialChangeMapping[5] = _staticCube4Profile.Tex_Right; //Change the Right Texture Id
-            _staticCube4Mesh = _meshBluePrint.Clone(MaterialChangeMapping);
         }
 
         public override void LoadContent(DeviceContext context)
         {
-            ArrayTexture.CreateTexture2DFromFiles(_engine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture);
-            ToDispose(_cubeTexture);
-
             _view = Matrix.LookAtLH(new Vector3(0, 0, -1.9f), Vector3.Zero, Vector3.UnitY);
 
-            _cubeShader.DiffuseTexture.Value = _cubeTexture;
+            _staticBlockVB.SetData(context, _meshBluePrint.Vertices);
+            _staticBlockIB.SetData(context, _meshBluePrint.Indices);
         }
 
         public override void Draw(DeviceContext context, int index)
         {
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
 
-            _cubeShader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
-
             _cubeShader.Begin(context);
-            _cubeShader.CBPerFrame.Values.DiffuseLightDirection = new Vector3(-0.8f, -0.9f, 1.5f);
             _cubeShader.CBPerFrame.Values.View = Matrix.Transpose(_view);
             _cubeShader.CBPerFrame.Values.Projection = Matrix.Transpose(_engine.Projection2D);
             _cubeShader.CBPerFrame.IsDirty = true;
 
-            //Cube 1 ==============
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC1);
-            _cubeShader.CBPerDraw.IsDirty = true;
-
-            _cubeShader.Apply(context);
-            //Set the buffer to the device
-            _staticBlockVB.SetData(context, _staticCube1Mesh.Vertices);
-            _staticBlockIB.SetData(context, _staticCube1Mesh.Indices);
             _staticBlockVB.SetToDevice(context, 0);
             _staticBlockIB.SetToDevice(context, 0);
+
+            //Cube 1 ==============
+            _cubeShader.CBPerDraw.Values.Color = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
+            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC1shadow);
+            _cubeShader.CBPerDraw.IsDirty = true;
+            _cubeShader.Apply(context);
             context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
 
+            _cubeShader.CBPerDraw.Values.Color = Colors.White;
+            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC1);
+            _cubeShader.CBPerDraw.IsDirty = true;
+            _cubeShader.Apply(context);
+            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
             //Cube 2 ==============
+            _cubeShader.CBPerDraw.Values.Color = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
+            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC2shadow);
+            _cubeShader.CBPerDraw.IsDirty = true;
+            _cubeShader.Apply(context);
+            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+
+            _cubeShader.CBPerDraw.Values.Color = Colors.White;
             _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC2);
             _cubeShader.CBPerDraw.IsDirty = true;
-
             _cubeShader.Apply(context);
-            //Set the buffer to the device
-            _staticBlockVB.SetData(context, _staticCube2Mesh.Vertices);
-            _staticBlockIB.SetData(context, _staticCube2Mesh.Indices);
-            _staticBlockVB.SetToDevice(context, 0);
-            _staticBlockIB.SetToDevice(context, 0);
             context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
 
             //Cube 3 ==============
+            _cubeShader.CBPerDraw.Values.Color = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
+            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC3shadow);
+            _cubeShader.CBPerDraw.IsDirty = true;
+            _cubeShader.Apply(context);
+            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+
+            _cubeShader.CBPerDraw.Values.Color = Colors.White;
             _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC3);
             _cubeShader.CBPerDraw.IsDirty = true;
-
             _cubeShader.Apply(context);
-            //Set the buffer to the device
-            _staticBlockVB.SetData(context, _staticCube3Mesh.Vertices);
-            _staticBlockIB.SetData(context, _staticCube3Mesh.Indices);
-            _staticBlockVB.SetToDevice(context, 0);
-            _staticBlockIB.SetToDevice(context, 0);
             context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
 
             //Cube 4 ==============
+            _cubeShader.CBPerDraw.Values.Color = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
+            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC4shadow);
+            _cubeShader.CBPerDraw.IsDirty = true;
+            _cubeShader.Apply(context);
+            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+
+            _cubeShader.CBPerDraw.Values.Color = Colors.White;
             _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC4);
             _cubeShader.CBPerDraw.IsDirty = true;
-
             _cubeShader.Apply(context);
-            //Set the buffer to the device
-            _staticBlockVB.SetData(context, _staticCube4Mesh.Vertices);
-            _staticBlockIB.SetData(context, _staticCube4Mesh.Indices);
-            _staticBlockVB.SetToDevice(context, 0);
-            _staticBlockIB.SetToDevice(context, 0);
             context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
         }
 
@@ -331,20 +261,36 @@ namespace Sandbox.Client.Components.GUI
             _worldC1 *= Matrix.Scaling(_headerHeight * 0.4f);
             _worldC1 *= Matrix.Translation((_engine.ViewPort.Width) * 0.23f, (_headerHeight) / 2, 0);
 
+            _worldC1shadow = Matrix.RotationY(MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi * 6 / 5);
+            _worldC1shadow *= Matrix.Scaling(_headerHeight * 0.43f);
+            _worldC1shadow *= Matrix.Translation((_engine.ViewPort.Width) * 0.23f, (_headerHeight) / 2, 0);
+
             //Static Cube 2 Screen position
             _worldC2 = Matrix.RotationY(MathHelper.PiOver2 * 0.125f) * Matrix.RotationX(-MathHelper.PiOver2 * 6 * 1.2f) * Matrix.RotationZ(MathHelper.Pi * 1.23f);
             _worldC2 *= Matrix.Scaling(60);
             _worldC2 *= Matrix.Translation(60 + 15, (_headerHeight), 0);
+
+            _worldC2shadow = Matrix.RotationY(MathHelper.PiOver2 * 0.125f) * Matrix.RotationX(-MathHelper.PiOver2 * 6 * 1.2f) * Matrix.RotationZ(MathHelper.Pi * 1.23f);
+            _worldC2shadow *= Matrix.Scaling(65f);
+            _worldC2shadow *= Matrix.Translation(60 + 15, (_headerHeight), 0);
 
             //Static Cube 3 Screen position
             _worldC3 = Matrix.RotationY(MathHelper.PiOver2 * 0.6f) * Matrix.RotationX(-MathHelper.PiOver2 * 1.9f) * Matrix.RotationZ(MathHelper.Pi * 1.3f);
             _worldC3 *= Matrix.Scaling(30);
             _worldC3 *= Matrix.Translation(30 + 15, (_engine.ViewPort.Height - _headerHeight) / 4 + _headerHeight, 0);
 
+            _worldC3shadow = Matrix.RotationY(MathHelper.PiOver2 * 0.6f) * Matrix.RotationX(-MathHelper.PiOver2 * 1.9f) * Matrix.RotationZ(MathHelper.Pi * 1.3f);
+            _worldC3shadow *= Matrix.Scaling(35f);
+            _worldC3shadow *= Matrix.Translation(30 + 15, (_engine.ViewPort.Height - _headerHeight) / 4 + _headerHeight, 0);
+
             //Static Cube 4 Screen position
             _worldC4 = Matrix.RotationY(MathHelper.PiOver2 * 0.9f) * Matrix.RotationX(-MathHelper.PiOver2 * 1.6f) * Matrix.RotationZ(MathHelper.Pi * 1.9f);
             _worldC4 *= Matrix.Scaling(40);
             _worldC4 *= Matrix.Translation((_engine.ViewPort.Width) / 7, 15, 0);
+
+            _worldC4shadow = Matrix.RotationY(MathHelper.PiOver2 * 0.9f) * Matrix.RotationX(-MathHelper.PiOver2 * 1.6f) * Matrix.RotationZ(MathHelper.Pi * 1.9f);
+            _worldC4shadow *= Matrix.Scaling(45f);
+            _worldC4shadow *= Matrix.Translation((_engine.ViewPort.Width) / 7, 15, 0);
         }
     }
 }

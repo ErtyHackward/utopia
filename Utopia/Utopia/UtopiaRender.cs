@@ -91,7 +91,6 @@ namespace Utopia
             {
                 _inputManager.MouseManager.MouseCapture = !_inputManager.MouseManager.MouseCapture;
             }
-
         }
 
         public override void Dispose()
