@@ -48,7 +48,7 @@ namespace Sandbox.Client.Components
 
             _stLoading = ToDispose(LoadTexture(engine, "Images\\loading.png"));
 
-            this.DrawOrders.UpdateIndex(0, int.MaxValue);
+            this.DrawOrders.UpdateIndex(0, int.MaxValue-1);
         }
 
         public override void Initialize()
@@ -69,7 +69,7 @@ namespace Sandbox.Client.Components
             _rotatingBlockIB = ToDispose(new IndexBuffer<ushort>(_engine.Device, _meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB"));
 
             _shader = ToDispose(new HLSLIcons(_engine.Device,
-                                   ClientSettings.EffectPack + @"Entities/Icons.hlsl",
+                                   ClientSettings.EffectPack + @"Entities/White.hlsl",
                                    VertexMesh.VertexDeclaration,
                                    new S33M3DXEngine.Effects.HLSLFramework.EntryPoints() { VertexShader_EntryPoint = "VS", PixelShader_EntryPoint="PS2D" }));
 
@@ -144,7 +144,7 @@ namespace Sandbox.Client.Components
 
         private void Resize(Viewport viewport)
         {
-            _loadingLabel.Bounds = new UniRectangle((viewport.Width - 148) / 2 + 50, (viewport.Height - _headerHeight - 58) / 2 + _headerHeight, 148, 58);
+            _loadingLabel.Bounds = new UniRectangle((viewport.Width - 168) / 2 + 70, (viewport.Height - _headerHeight - 58) / 2 + _headerHeight, 148, 58);
         }
 
         FTSValue<float> YRotation = new FTSValue<float>();
@@ -177,7 +177,7 @@ namespace Sandbox.Client.Components
                 _world *= Matrix.Scaling(70);
             }
 
-            _world = _world * Matrix.Translation(_engine.ViewPort.Width / 2, _engine.ViewPort.Height / 2, 0);
+            _world = _world * Matrix.Translation((_engine.ViewPort.Width - 168) / 2, (_engine.ViewPort.Height - _headerHeight) / 2 + _headerHeight, 0);
 
             base.Interpolation(interpolationHd, interpolationLd, elapsedTime);
         }
