@@ -99,22 +99,27 @@ that uses the theme, please give due credit to the original artist!
     -->
     <frame name="label">
       <text font="default" hplacement="left" vplacement="center" yoffset="0" color="#3F3F3F" />
+      <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
 
     <frame name="labelBold">
       <text font="defaultBold" hplacement="left" vplacement="center" yoffset="0" color="#3F3F3F" />
+      <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
 
     <frame name="labelItalic">
       <text font="defaultItalic" hplacement="left" vplacement="center" yoffset="0" color="#3F3F3F" />
+      <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
 
     <frame name="labelUnderline">
       <text font="defaultUnderline" hplacement="left" vplacement="center" yoffset="0" color="#3F3F3F" />
+      <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
 
     <frame name="labelHeader">
       <text font="header" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
+      <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
     
     

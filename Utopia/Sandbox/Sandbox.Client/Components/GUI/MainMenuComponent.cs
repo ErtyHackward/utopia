@@ -7,7 +7,7 @@ using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 
-namespace Sandbox.Client.Components
+namespace Sandbox.Client.Components.GUI
 {
     public class MainMenuComponent : SandboxMenuComponent
     {

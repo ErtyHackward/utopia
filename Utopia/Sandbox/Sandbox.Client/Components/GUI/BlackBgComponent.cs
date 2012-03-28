@@ -3,7 +3,7 @@ using SharpDX.Direct3D11;
 using S33M3DXEngine.Main;
 using S33M3DXEngine;
 
-namespace Sandbox.Client.Components
+namespace Sandbox.Client.Components.GUI
 {
     /// <summary>
     /// Makes black background

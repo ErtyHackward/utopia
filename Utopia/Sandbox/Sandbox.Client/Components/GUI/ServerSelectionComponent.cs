@@ -5,7 +5,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 
-namespace Sandbox.Client.Components
+namespace Sandbox.Client.Components.GUI
 {
     public class ServerSelectionComponent : GameComponent
     {

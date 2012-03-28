@@ -166,13 +166,13 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         /// <param name="character">Character that has been entered</param>
         protected virtual void OnCharacterEntered(char character)
         {
-
             // For some reason, Windows translates Backspace to a character :)
+            if (IsNumeric && char.IsNumber(character) == false && character != '.') return;
+
             if (character != '\b')
             {
                 updateLastCaretMovementTicks();
 
-                // There's no single-character overload on the XBox 360...
                 singleCharArray[0] = character;
                 this.text.Insert(this.caretPosition, singleCharArray);
                 ++this.caretPosition;
@@ -280,9 +280,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
                     {
                         return false;
                     }
-
             }
-
             return true;
         }
 

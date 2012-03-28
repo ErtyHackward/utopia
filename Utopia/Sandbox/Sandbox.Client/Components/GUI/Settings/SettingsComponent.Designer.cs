@@ -13,19 +13,20 @@ using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.Textures;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat;
 
-namespace Sandbox.Client.Components
+namespace Sandbox.Client.Components.GUI.Settings
 {
     partial class SettingsComponent
     {
         //Components
         protected LabelControl _windowLabel;
+        protected Control _settingsForm;
         protected PanelControl _leftMenuPanel;
         protected ImageControl _cubesPatern;
         protected ImageControl _linenPatern;
         protected ImageControl _shadow;
 
         protected SpriteTexture _transparentBackGroundTexture;
-        protected ImageControl _backGround;
+        protected ImageControl _backPanel;
 
         protected SpriteTexture _stMenuButton;
         protected SpriteTexture _stMenuHover;
@@ -36,6 +37,9 @@ namespace Sandbox.Client.Components
         protected ButtonControl _btCoreEngine;
         protected ButtonControl _btKeyBinding;
         protected ButtonControl _btBack;
+
+        //Various Panels
+        protected GraphicSettingsPanel _graphSettingsPanel;
 
         protected void InitializeComponent()
         {
@@ -52,6 +56,8 @@ namespace Sandbox.Client.Components
             _cubesPatern = new ImageControl() { Image = SandboxMenuComponent.StCubesPattern };
             _linenPatern = new ImageControl() { Image = SandboxMenuComponent.StLinenPattern };
             _shadow = new ImageControl() { Image = SandboxMenuComponent.StShadow };
+
+            _settingsForm = new Control();
 
             _btGraphic = new ButtonControl
             {
@@ -118,6 +124,8 @@ namespace Sandbox.Client.Components
             _leftMenuPanel.Children.Add(_shadow);
             _leftMenuPanel.Children.Add(_cubesPatern);
             _leftMenuPanel.Children.Add(_linenPatern);
+
+            _settingsForm.Children.Add(_leftMenuPanel);
         }
 
         /// <summary>
@@ -127,9 +135,9 @@ namespace Sandbox.Client.Components
         protected void LoadContentComponent(DeviceContext context)
         {
             _transparentBackGroundTexture = ToDispose(new SpriteTexture(1,1, TextureCreator.GenerateColoredTexture(_engine.Device, context, new ByteColor(255,255,255, 127)), new Vector2(0,0)));
-            _backGround = ToDispose(new ImageControl() { Image = _transparentBackGroundTexture });
+            _backPanel = ToDispose(new ImageControl() { Image = _transparentBackGroundTexture });
 
-            _leftMenuPanel.Children.Add(_backGround);
+            _settingsForm.Children.Add(_backPanel);
 
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
         }
@@ -141,13 +149,15 @@ namespace Sandbox.Client.Components
             {
                 int _headerHeight = (int)(viewport.Height * 0.1f);
 
+                _settingsForm.Bounds = new UniRectangle(0, 0, _engine.ViewPort.Width, _engine.ViewPort.Height);
+
                 _leftMenuPanel.Bounds = new UniRectangle(0, 0, _engine.ViewPort.Width / 4, _engine.ViewPort.Height);
 
                 _windowLabel.Bounds = new UniRectangle(0, 0, _leftMenuPanel.Bounds.Size.X.Offset, _headerHeight);
                 _cubesPatern.Bounds = new UniRectangle(0, 0, _leftMenuPanel.Bounds.Size.X.Offset, _headerHeight);
                 _linenPatern.Bounds = new UniRectangle(0, _headerHeight, _leftMenuPanel.Bounds.Size.X, viewport.Height - _headerHeight);
                 _shadow.Bounds = new UniRectangle(0, _headerHeight - 117, _leftMenuPanel.Bounds.Size.X, 287);
-                _backGround.Bounds = new UniRectangle(_leftMenuPanel.Bounds.Size.X.Offset, 0, _engine.ViewPort.Width * 3 / 4, _engine.ViewPort.Height);
+                _backPanel.Bounds = new UniRectangle(_leftMenuPanel.Bounds.Size.X.Offset, 0, _engine.ViewPort.Width * 3 / 4, _engine.ViewPort.Height);
 
                 int btPlacementY = _headerHeight;
 
@@ -161,6 +171,8 @@ namespace Sandbox.Client.Components
                 _btKeyBinding.Bounds = new UniRectangle(5, btPlacementY, _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
 
                 _btBack.Bounds = new UniRectangle(5, new UniScalar(1, -60), _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
+
+                if(_graphSettingsPanel != null) _graphSettingsPanel.Resize();
             }
         }
 
@@ -172,30 +184,39 @@ namespace Sandbox.Client.Components
 
         private void btGraphicPressed()
         {
+            if (_graphSettingsPanel == null) _graphSettingsPanel = new GraphicSettingsPanel(_backPanel) { Bounds = new UniRectangle(0,0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
+            if (_backPanel.Children.Contains(_graphSettingsPanel) == false)
+            {
+                _backPanel.Children.Clear();
+                _backPanel.Children.Add(_graphSettingsPanel);
+            }
         }
 
         private void btSoundPressed()
         {
+            _backPanel.Children.Clear();
         }
 
         private void btCoreEnginePressed()
         {
+            _backPanel.Children.Clear();
         }
 
         private void btKeyBindingPressed()
         {
+            _backPanel.Children.Clear();
         }
 
         private void RefreshComponentsVisibility()
         {
             if (Updatable)
             {
-                _screen.Desktop.Children.Add(_leftMenuPanel);
+                _screen.Desktop.Children.Add(_settingsForm);
                 UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
             }
             else
             {
-                _screen.Desktop.Children.Remove(_leftMenuPanel);
+                _screen.Desktop.Children.Remove(_settingsForm);
             }
         }
     }

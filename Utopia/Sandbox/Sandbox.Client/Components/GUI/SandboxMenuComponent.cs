@@ -22,7 +22,7 @@ using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
 using Utopia.GameDXStates;
 
-namespace Sandbox.Client.Components
+namespace Sandbox.Client.Components.GUI
 {
     /// <summary>
     /// Base component for utopia menu (display logo and background)
@@ -41,13 +41,14 @@ namespace Sandbox.Client.Components
         public static SpriteTexture StGameName;
         public static SpriteTexture StCubesPattern;
         public static SpriteTexture StLinenPattern;
+        public static SpriteTexture StInputBackground;
 
         public static SpriteFont FontBebasNeue35;
         public static SpriteFont FontBebasNeue25;
+        public static SpriteFont FontBebasNeue17;
         protected static PrivateFontCollection fontCollection;
         public static bool WithTexturedCubes = false;
         protected static CubeProfile _staticCube1Profile, _staticCube2Profile, _staticCube3Profile, _staticCube4Profile;
-
 
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
@@ -86,6 +87,7 @@ namespace Sandbox.Client.Components
             StGameName      = LoadTexture(engine, "Images\\version.png");
             StCubesPattern  = LoadTexture(engine, "Images\\cubes.png");
             StLinenPattern  = LoadTexture(engine, "Images\\black-linen.png");
+            StInputBackground = LoadTexture(engine, "Images\\Login\\login_input_bg.png");
 
             fontCollection = new PrivateFontCollection();
             fontCollection.AddFontFile("Images\\BebasNeue.ttf");
@@ -95,6 +97,9 @@ namespace Sandbox.Client.Components
 
             FontBebasNeue25 = new SpriteFont();
             FontBebasNeue25.Initialize(fontCollection.Families[0], 25, FontStyle.Regular, true, engine.Device);
+
+            FontBebasNeue17 = new SpriteFont();
+            FontBebasNeue17.Initialize(fontCollection.Families[0], 16, FontStyle.Regular, true, engine.Device);
         }
 
         protected SandboxMenuComponent(D3DEngine engine, MainScreen screen)

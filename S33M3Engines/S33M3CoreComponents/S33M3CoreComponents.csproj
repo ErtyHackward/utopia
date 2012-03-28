@@ -240,6 +240,7 @@
     <Compile Include="Textures\RenderedTexture2D.cs" />
     <Compile Include="Textures\TextureCreator.cs" />
     <Compile Include="Timers\TimerManager.cs" />
+    <Compile Include="Tools\DataTypes.cs" />
     <Compile Include="Unsafe\APIStructs.cs" />
     <Compile Include="Unsafe\SafeNativeMethods.cs" />
     <Compile Include="Unsafe\UnsafeNativeMethods.cs" />

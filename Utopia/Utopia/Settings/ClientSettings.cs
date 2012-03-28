@@ -54,7 +54,7 @@ namespace Utopia.Settings
     [Serializable]
     public class GameParameters
     {
-        public string NickName { get; set; }
+        public SettingsValue<string> NickName { get; set; }
     }
 
     /// <summary>
@@ -63,10 +63,26 @@ namespace Utopia.Settings
     [Serializable]
     public class GraphicalParameters
     {
-        public int WorldSize { get; set; }
-        public int CloudsQuality { get; set; }
-        public int AllocatedThreadsModifier { get; set; }
-        public int LightPropagateSteps { get; set; }
+        public SettingsValue<int> WorldSize { get; set; }
+        public SettingsValue<int> CloudsQuality { get; set; }
+        public SettingsValue<int> LightPropagateSteps { get; set; }
+    }
+
+    /// <summary>
+    /// Graphical parameters section
+    /// </summary>
+    [Serializable]
+    public class EngineParameters
+    {
+        public SettingsValue<int> AllocatedThreadsModifier { get; set; }
+    }
+
+    /// <summary>
+    /// Graphical parameters section
+    /// </summary>
+    [Serializable]
+    public class SoundParameters
+    {
     }
 
     /// <summary>
@@ -161,9 +177,24 @@ namespace Utopia.Settings
         public string Login { get; set; }
 
         /// <summary>
+        /// Compute the first time the engine is started
+        /// </summary>
+        public int DefaultAllocatedThreads { get; set; }
+
+        /// <summary>
         /// Game parameters config section
         /// </summary>
         public GameParameters GameParameters { get; set; }
+
+        /// <summary>
+        /// Game parameters config section
+        /// </summary>
+        public SoundParameters SoundParameters { get; set; }
+
+        /// <summary>
+        /// Game parameters config section
+        /// </summary>
+        public EngineParameters EngineParameters { get; set; }
 
         /// <summary>
         /// World parameters config section
@@ -191,14 +222,20 @@ namespace Utopia.Settings
                 {
                     GameParameters = new GameParameters
                     {
-                        NickName = "Utopia Guest"
+                        NickName = new SettingsValue<string>() { Value = "Utopia Guest", Name = "NickName", Info = "You nick name in the world" }
+                    },
+                    EngineParameters = new EngineParameters()
+                    {
+                        AllocatedThreadsModifier = new SettingsValue<int>() { Value = 0, Name = "Allocate more threads", Info = "Allocate more threads to speed up all rendering routine" }
+                    },
+                    SoundParameters = new SoundParameters()
+                    {
                     },
                     GraphicalParameters = new GraphicalParameters
                     {
-                        WorldSize = 32,
-                        CloudsQuality = 1,
-                        AllocatedThreadsModifier = 0,
-                        LightPropagateSteps = 8
+                        WorldSize = new SettingsValue<int>() { Value = 32, Name = "World Size", Info = "World size in chunk unit between [10 and 32]" },
+                        CloudsQuality = new SettingsValue<int>() { Value = 1, Name = "Cloud Style", Info = "0 = Flat, 1 = 3D" },
+                        LightPropagateSteps = new SettingsValue<int>() { Value = 8, Name = "Light propagation", Info = "Maximum size of light propagation in block unit" }
                     },
                     KeyboardMapping = new KeyboardMapping
                     {

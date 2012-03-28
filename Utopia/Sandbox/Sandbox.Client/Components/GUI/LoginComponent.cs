@@ -8,7 +8,7 @@ using S33M3CoreComponents.Sprites;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 
-namespace Sandbox.Client.Components
+namespace Sandbox.Client.Components.GUI
 {
     /// <summary>
     /// Provides login gui

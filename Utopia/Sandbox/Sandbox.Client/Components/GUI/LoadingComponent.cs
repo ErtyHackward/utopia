@@ -20,7 +20,7 @@ using Utopia.Shared.Settings;
 using S33M3DXEngine.Textures;
 using System.Collections.Generic;
 
-namespace Sandbox.Client.Components
+namespace Sandbox.Client.Components.GUI
 {
     /// <summary>
     /// Component to show something while game loading

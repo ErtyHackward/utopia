@@ -11,6 +11,7 @@ using Utopia.Shared.ClassExt;
 using S33M3CoreComponents.States;
 using Utopia.GUI;
 using S33M3CoreComponents.GUI;
+using Sandbox.Client.Components.GUI;
 
 namespace Sandbox.Client.States
 {
