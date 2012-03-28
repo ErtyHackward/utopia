@@ -1,4 +1,4 @@
-﻿//#define SINGLEPLAYERSTART
+﻿#define SINGLEPLAYERSTART
 
 using System;
 using System.IO;
@@ -27,6 +27,7 @@ using Ninject.Parameters;
 using SharpDX;
 using S33M3DXEngine;
 using Sandbox.Client.Components;
+using Sandbox.Client.Components.GUI;
 
 namespace Sandbox.Client
 {
@@ -147,9 +148,9 @@ namespace Sandbox.Client
                 needSave = true;
             }
 
-            if (ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps == 0)
+            if (ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps.Value == 0)
             {
-                ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps = 8;
+                ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps = new SettingsValue<int>() { Value = 8, Name = "Light propagation", Info = "Maximum size of light propagation in block unit" };
                 needSave = true;
             }
 

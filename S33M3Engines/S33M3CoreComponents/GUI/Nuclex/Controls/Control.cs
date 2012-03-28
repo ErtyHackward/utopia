@@ -52,6 +52,13 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         private ByteColor _color = Colors.White;
         public bool ColorSet { get; private set; }
 
+        private bool _canBeRendered = true;
+        public bool CanBeRendered
+        {
+            get { return _canBeRendered; }
+            set { _canBeRendered = value; }
+        }
+
         public ByteColor Color
         {
             get { return _color; }

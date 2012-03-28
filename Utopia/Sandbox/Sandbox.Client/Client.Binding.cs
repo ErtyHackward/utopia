@@ -56,6 +56,7 @@ using S33M3CoreComponents.Debug;
 using Utopia.Shared.Entities;
 using Sandbox.Shared;
 using S33M3Resources.Structs;
+using Sandbox.Client.Components.GUI;
 
 namespace Sandbox.Client
 {

@@ -3,6 +3,7 @@ using Sandbox.Client.Components;
 using Utopia;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.States;
+using Sandbox.Client.Components.GUI;
 
 namespace Sandbox.Client.States
 {

@@ -461,7 +461,12 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             }
             else
             { // No renderer found, output a warning
-                logger.Warn("Impossible to find a control renderer for the component type : {0}, are you sure its assembly has been registered ??", controlToRender.GetType());
+#if DEBUG
+                if (controlToRender.CanBeRendered == true)
+                {
+                    logger.Warn("Impossible to find a control renderer for the component type : {0}, are you sure its assembly has been registered ??", controlToRender.GetType());
+                }
+#endif
             }
         }
 

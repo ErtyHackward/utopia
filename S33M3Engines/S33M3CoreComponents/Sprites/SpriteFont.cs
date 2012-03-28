@@ -60,12 +60,8 @@ namespace S33M3CoreComponents.Sprites
 
         private void Initialize(bool antiAliased, SharpDX.Direct3D11.Device device)
         {
-            
             TextRenderingHint hint = antiAliased ? TextRenderingHint.AntiAliasGridFit : TextRenderingHint.SystemDefault;
 
-
-
-            //int size = (int)(_size * NumChars * 2) + 1;
 
             Bitmap measuringBitmap = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
 

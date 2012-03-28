@@ -11,7 +11,7 @@ using SharpDX.Direct3D11;
 using SharpDX;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Arcade;
 
-namespace Sandbox.Client.Components
+namespace Sandbox.Client.Components.GUI.Settings
 {
     public partial class SettingsComponent : GameComponent
     {

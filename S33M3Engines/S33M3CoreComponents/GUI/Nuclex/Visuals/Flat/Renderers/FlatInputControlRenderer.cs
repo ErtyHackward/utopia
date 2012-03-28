@@ -34,6 +34,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
     public class FlatInputControlRenderer : IFlatControlRenderer<Controls.Desktop.InputControl>, IOpeningLocator
     {
 
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         /// <summary>Style from the skin this renderer uses</summary>
         private const string Style = "input.normal";
 
@@ -120,6 +122,13 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                         var move = (controlBounds.Height - control.CustomFont.CharHeight) / 2;
                         controlBounds.X += move;
                         controlBounds.Y += move;
+
+#if DEBUG
+                        if (move <= 2)
+                        {
+                            logger.Warn("Input component height ({0}) too small for the font size ({1})!", controlBounds.Height, control.CustomFont.CharHeight);
+                        }
+#endif
 
                         graphics.DrawString(control.CustomFont, ref controlBounds, textToDraw, ref color, false, withCarret);
                     }

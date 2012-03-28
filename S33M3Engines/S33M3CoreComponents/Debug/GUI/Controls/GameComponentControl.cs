@@ -13,7 +13,6 @@ using S33M3DXEngine.Main.Interfaces;
 
 namespace S33M3CoreComponents.Debug.GUI.Controls
 {
-
     public class GameComponentControlRow
     {
         public LabelControl lblGameComp;
