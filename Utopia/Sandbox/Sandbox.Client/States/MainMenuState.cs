@@ -5,6 +5,7 @@ using Sandbox.Client.Components;
 using Utopia;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
+using Ninject.Parameters;
 
 namespace Sandbox.Client.States
 {

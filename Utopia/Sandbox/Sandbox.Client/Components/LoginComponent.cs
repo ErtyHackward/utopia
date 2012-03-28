@@ -104,8 +104,9 @@ namespace Sandbox.Client.Components
             var handler = Register;
             if (handler != null) handler(this, EventArgs.Empty);
         }
-        
-        public LoginComponent(D3DEngine engine, MainScreen screen) : base(engine, screen)
+
+        public LoginComponent(D3DEngine engine, MainScreen screen)
+            : base(engine, screen)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");

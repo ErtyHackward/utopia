@@ -87,7 +87,8 @@ namespace Sandbox.Client.Components
         }
         #endregion
 
-        public MainMenuComponent(D3DEngine engine, MainScreen screen, RuntimeVariables runtime) : base (engine, screen)
+        public MainMenuComponent(D3DEngine engine, MainScreen screen, RuntimeVariables runtime)
+            : base(engine, screen)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");
@@ -119,6 +120,8 @@ namespace Sandbox.Client.Components
 
         public override void Initialize()
         {
+            base.Initialize();
+
             _buttonsGroup = new Control();
 
             const int buttonWidth = 212;

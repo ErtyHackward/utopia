@@ -78,8 +78,8 @@ namespace Utopia.Entities
 
         public override void Dispose()
         {
-            _iconsTextureArray.Dispose();
-            _iconTextureArray.Dispose();
+            if(_iconsTextureArray != null) _iconsTextureArray.Dispose();
+            if (_iconTextureArray != null) _iconTextureArray.Dispose();
             base.Dispose();
         }
 
