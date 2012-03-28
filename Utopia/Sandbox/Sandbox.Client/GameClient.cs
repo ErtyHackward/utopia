@@ -116,7 +116,6 @@ namespace Sandbox.Client
 
             game.Dispose();
 
-
             GC.Collect();
             GC.WaitForPendingFinalizers();
 

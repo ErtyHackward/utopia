@@ -1,4 +1,4 @@
-//--------------------------------------------------------------------------------------
+﻿//--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
 cbuffer PerDraw
@@ -14,7 +14,7 @@ cbuffer PerFrame
 }
 
 static const float4 DiffuseColor = {1.0f, 1.0f, 1.0f, 1.0f };
-static const float4 AmbientColor = {0.2f, 0.2f, 0.2f, 1.0f };
+static const float4 AmbientColor = {0.4f, 0.4f, 0.4f, 1.0f };
 
 //--------------------------------------------------------------------------------------
 // Texture Samplers
@@ -51,21 +51,18 @@ PS_IN VS( VS_IN input )
 	output.Pos = mul( output.Pos, View );
 	output.Pos = mul( output.Pos, Projection );
 	output.UVW = input.UVW;
-	output.Normal = input.Normal;
+	output.Normal = mul( input.Normal, World ); 
 	return output;
 }
 
-//--------------------------------------------------------------------------------------
-// Pixel Shader
-//--------------------------------------------------------------------------------------
-float4 PS( PS_IN input ) : SV_Target
+float4 PSTexturedCube( PS_IN input ) : SV_Target
 {
 	// Sample our texture at the specified texture coordinates to get the texture color
 	float4 texColor = DiffuseTexture.Sample(SamplerDiffuse, input.UVW);
 
 	float3 lightdir = normalize( DiffuseLightDirection );
 	float3 norm = normalize( input.Normal );
-	float4 diffuse = dot( lightdir, input.Normal ) * DiffuseColor;
+	float4 diffuse = dot( lightdir, norm ) * DiffuseColor;
 
 	float4 color = texColor * ( diffuse + AmbientColor );
 	color.a = texColor.a;
@@ -85,4 +82,12 @@ float4 PS( PS_IN input ) : SV_Target
 	//float4 diffuse = dot( lightdir, input.Normal ) * DiffuseIntensity * DiffuseColor;
 	//// Calculate our ambient component
 	//float4 ambient = AmbientIntensity * AmbientColor;
+}
+
+//--------------------------------------------------------------------------------------
+// Pixel Shader
+//--------------------------------------------------------------------------------------
+float4 PSWhiteCube( PS_IN input ) : SV_Target
+{
+	return float4(1,1,1,1);
 }

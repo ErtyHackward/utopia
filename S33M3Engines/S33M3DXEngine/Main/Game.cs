@@ -94,6 +94,8 @@ namespace S33M3DXEngine.Main
         {
             Engine = ToDispose(new D3DEngine(startingWindowsSize, WindowsCaption, ResolutionSize));
 
+            Engine.GameWindow.FormClosing += GameWindow_FormClosing;
+
             _visibleDrawable = new List<DrawableComponentHolder>();
             _enabledUpdatable = new List<IUpdatableComponent>();
             _gameComponents = ToDispose(new GameComponentCollection());
@@ -105,11 +107,16 @@ namespace S33M3DXEngine.Main
         public Game(D3DEngine engine, bool withDebugObjectTracking = false)
         {
             Engine = engine;
+            Engine.GameWindow.FormClosing += GameWindow_FormClosing;
             _visibleDrawable = new List<DrawableComponentHolder>();
             _enabledUpdatable = new List<IUpdatableComponent>();
             _gameComponents = ToDispose(new GameComponentCollection());
 
             gameInitialize(withDebugObjectTracking);
+        }
+
+        protected virtual void GameWindow_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
+        {
         }
 
         private void gameInitialize(bool withDebugObjectTracking = false)
@@ -143,7 +150,8 @@ namespace S33M3DXEngine.Main
             //The Pump !
             RenderLoop.Run(Engine.GameWindow, () =>
             {
-                if (_isFormClosed) return;
+                if (_isFormClosed) 
+                    return;
 
 #if DEBUG
                 //In case, if too much time has passed, Skip the update for this time period
@@ -169,6 +177,8 @@ namespace S33M3DXEngine.Main
                 Draw();
             });
 
+            this.Exit(false);
+
         }
 
         private void ResetTimers()
@@ -180,13 +190,15 @@ namespace S33M3DXEngine.Main
         //Close Window to stop the Window Pump !
         //HACK [DebuggerStepThrough on EXIT] To avoid breaking inside while debugging => Remove it to give the possibility for the debugger to stop inside this function
         [DebuggerStepThrough()]
-        public void Exit()
+        public void Exit(bool forced)
         {
             try
             {
-                Threading.SmartThread.ThreadPool.Shutdown(false, 0);
-                Thread.Sleep(100);
-                Threading.SmartThread.ThreadPool.Shutdown(true, 0);
+                Threading.SmartThread.ThreadPool.Shutdown(forced, 0);
+                logger.Info("Engine shutDown requested, active background threads are being forced to close : {0}", Threading.SmartThread.ThreadPool.ActiveThreads);
+                while (Threading.SmartThread.ThreadPool.ActiveThreads > 0) { }
+                logger.Info("Engine shutDown requested,  all background thread are closed");
+
             }
             catch (Exception)
             {

@@ -34,55 +34,37 @@ namespace Sandbox.Client.Components
 
         private VertexBuffer<VertexMesh> _rotatingBlockVB;
         private IndexBuffer<ushort> _rotatingBlockIB;
-        private HLSLIcons _shader;
-        private Mesh _meshBluePrint;
-        private Matrix _view;
+        private Mesh _rotatingCubeMesh;
         private Matrix _world;
-        private CubeProfile _profile;
-        private ShaderResourceView _cubeTexture;
+        private CubeProfile _rotatingCubeProfile;
 
-        public LoadingComponent(D3DEngine engine, MainScreen screen) : base(engine, screen)
+        public LoadingComponent(D3DEngine engine, MainScreen screen)
+            : base(engine, screen)
         {
             _engine = engine;
             _screen = screen;
 
             _stLoading = ToDispose(LoadTexture(engine, "Images\\loading.png"));
 
-            this.DrawOrders.UpdateIndex(0, int.MaxValue-1);
         }
 
         public override void Initialize()
         {
+            base.Initialize();
+
             _loadingLabel = new ImageControl();
             _loadingLabel.Image = _stLoading;
-
-            //Create the Block mesh
-            IMeshFactory meshfactory = new MilkShape3DMeshFactory();
-
-            meshfactory.LoadMesh(@"\Meshes\block.txt", out _meshBluePrint, 0);
-            //Create Vertex/Index Buffer to store the loaded mesh.
+           
+            //Create Vertex/Index Buffer to store the rotating Cube
             _rotatingBlockVB = ToDispose(new VertexBuffer<VertexMesh>(_engine.Device,
                                                                        _meshBluePrint.Vertices.Length,
                                                                        VertexMesh.VertexDeclaration,
                                                                        SharpDX.Direct3D.PrimitiveTopology.TriangleList,
-                                                                       "Block VB"));
-            _rotatingBlockIB = ToDispose(new IndexBuffer<ushort>(_engine.Device, _meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB"));
-
-            _shader = ToDispose(new HLSLIcons(_engine.Device,
-                                   ClientSettings.EffectPack + @"Entities/White.hlsl",
-                                   VertexMesh.VertexDeclaration,
-                                   new S33M3DXEngine.Effects.HLSLFramework.EntryPoints() { VertexShader_EntryPoint = "VS", PixelShader_EntryPoint="PS2D" }));
+                                                                       "rotatingBlockVB"));
+            _rotatingBlockIB = ToDispose(new IndexBuffer<ushort>(_engine.Device, _meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "rotatingBlockIB"));
 
             Random rnd = new Random();
-            _profile = GameSystemSettings.Current.Settings.CubesProfile[rnd.Next(GameSystemSettings.Current.Settings.CubesProfile.Length)];
-
-            Dictionary<int, int> MaterialChangeMapping = new Dictionary<int, int>();
-            MaterialChangeMapping.Add(0, 0); //Change the Back Texture Id
-            MaterialChangeMapping.Add(1, 0); //Change the Front Texture Id
-            MaterialChangeMapping.Add(2, 0); //Change the Bottom Texture Id
-            MaterialChangeMapping.Add(3, 0); //Change the Top Texture Id
-            MaterialChangeMapping.Add(4, 0); //Change the Left Texture Id
-            MaterialChangeMapping.Add(5, 0); //Change the Right Texture Id
+            _rotatingCubeProfile = GameSystemSettings.Current.Settings.CubesProfile[rnd.Next(GameSystemSettings.Current.Settings.CubesProfile.Length)];
 
             //Here the key parameter is the ID name given to the texture inside the file model.
             //In our case the model loaded has these Materials/texture Ids :
@@ -93,33 +75,26 @@ namespace Sandbox.Client.Components
             // 4 = Left
             // 5 = Right
             //The value attached to it is simply the TextureID from the texture array to use.
-            MaterialChangeMapping[0] = _profile.Tex_Back; //Change the Back Texture Id
-            MaterialChangeMapping[1] = _profile.Tex_Front; //Change the Front Texture Id
-            MaterialChangeMapping[2] = _profile.Tex_Bottom; //Change the Bottom Texture Id
-            MaterialChangeMapping[3] = _profile.Tex_Top; //Change the Top Texture Id
-            MaterialChangeMapping[4] = _profile.Tex_Left; //Change the Left Texture Id
-            MaterialChangeMapping[5] = _profile.Tex_Right; //Change the Right Texture Id
+            MaterialChangeMapping[0] = _rotatingCubeProfile.Tex_Back; //Change the Back Texture Id
+            MaterialChangeMapping[1] = _rotatingCubeProfile.Tex_Front; //Change the Front Texture Id
+            MaterialChangeMapping[2] = _rotatingCubeProfile.Tex_Bottom; //Change the Bottom Texture Id
+            MaterialChangeMapping[3] = _rotatingCubeProfile.Tex_Top; //Change the Top Texture Id
+            MaterialChangeMapping[4] = _rotatingCubeProfile.Tex_Left; //Change the Left Texture Id
+            MaterialChangeMapping[5] = _rotatingCubeProfile.Tex_Right; //Change the Right Texture Id
 
-            _meshBluePrint.ChangeMaterialMapping(MaterialChangeMapping);
+            _rotatingCubeMesh = _meshBluePrint.Clone(MaterialChangeMapping);
         }
 
         public override void LoadContent(DeviceContext context)
         {
+            base.LoadContent(context);
+
             //Set data inside VBuffer & IBuffer
-            _rotatingBlockVB.SetData(context, _meshBluePrint.Vertices);
-            _rotatingBlockIB.SetData(context, _meshBluePrint.Indices);
-
-            ArrayTexture.CreateTexture2DFromFiles(_engine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture);
-            ToDispose(_cubeTexture);
-
-            _shader.DiffuseTexture.Value = _cubeTexture;
-
-            _view = Matrix.LookAtLH(new Vector3(0, 0, -1.9f), Vector3.Zero, Vector3.UnitY);
+            _rotatingBlockVB.SetData(context, _rotatingCubeMesh.Vertices);
+            _rotatingBlockIB.SetData(context, _rotatingCubeMesh.Indices);
 
             YRotation.Value = MathHelper.PiOver4;
             XRotation.Value = MathHelper.Pi / 5.0f;
-
-            base.LoadContent(context);
         }
 
         public override void EnableComponent()
@@ -167,16 +142,7 @@ namespace Sandbox.Client.Components
             //Compute projection + View matrix
 
             _world = Matrix.RotationY(YRotation.ValueInterp) * Matrix.RotationX(XRotation.ValueInterp);
-
-            if (_profile.YBlockOffset > 0)
-            {
-                _world *= Matrix.Scaling(1, 1.0f - _profile.YBlockOffset, 1);
-            }
-            else
-            {
-                _world *= Matrix.Scaling(70);
-            }
-
+            _world *= Matrix.Scaling(70);
             _world = _world * Matrix.Translation((_engine.ViewPort.Width - 168) / 2, (_engine.ViewPort.Height - _headerHeight) / 2 + _headerHeight, 0);
 
             base.Interpolation(interpolationHd, interpolationLd, elapsedTime);
@@ -184,27 +150,25 @@ namespace Sandbox.Client.Components
 
         public override void Draw(DeviceContext context, int index)
         {
+            base.Draw(context, index);
 
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
+            _cubeShader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
 
-            _shader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
+            _cubeShader.Begin(context);
+            _cubeShader.CBPerFrame.Values.DiffuseLightDirection = new Vector3(-0.8f, -0.9f, 1.5f);
+            _cubeShader.CBPerFrame.Values.View = Matrix.Transpose(_view);
+            _cubeShader.CBPerFrame.Values.Projection = Matrix.Transpose(_engine.Projection2D);
+            _cubeShader.CBPerFrame.IsDirty = true;
 
-            _shader.Begin(context);
-            _shader.CBPerFrame.Values.DiffuseLightDirection = new Vector3(-0.8f, -0.9f, 1.5f);
-            _shader.CBPerFrame.Values.View = Matrix.Transpose(_view);
-            _shader.CBPerFrame.Values.Projection = Matrix.Transpose(_engine.Projection2D);
-            _shader.CBPerFrame.IsDirty = true;
+            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_world);
+            _cubeShader.CBPerDraw.IsDirty = true;
 
-            _shader.CBPerDraw.Values.World = Matrix.Transpose(_world);
-            _shader.CBPerDraw.IsDirty = true;
-
-            _shader.Apply(context);
+            _cubeShader.Apply(context);
             //Set the buffer to the device
             _rotatingBlockVB.SetToDevice(context, 0);
             _rotatingBlockIB.SetToDevice(context, 0);
             context.DrawIndexed(_rotatingBlockIB.IndicesCount, 0, 0);
 
-            base.Draw(context, index);
         }
 
     }
