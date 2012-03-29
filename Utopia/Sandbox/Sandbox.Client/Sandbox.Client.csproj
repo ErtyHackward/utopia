@@ -49,6 +49,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Utopia.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ninject">
       <HintPath>..\..\..\Library\Ninject.dll</HintPath>
@@ -238,27 +241,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\brush.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\forest.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\mapbg.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\tropicForest.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wavePattern.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wavePattern1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wavePattern2.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
@@ -279,6 +261,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Utopia.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
