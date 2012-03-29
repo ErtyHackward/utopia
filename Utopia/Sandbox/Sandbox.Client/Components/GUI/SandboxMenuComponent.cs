@@ -63,8 +63,7 @@ namespace Sandbox.Client.Components.GUI
         protected HLSLLoadingCube _cubeShader;
         protected Mesh _meshBluePrint;
         protected Matrix _view;
-        private Matrix _worldC1, _worldC2, _worldC3, _worldC4;
-        private Matrix _worldC1shadow, _worldC2shadow, _worldC3shadow, _worldC4shadow;
+
 
         public static SpriteTexture LoadTexture(D3DEngine engine, string filePath)
         {
