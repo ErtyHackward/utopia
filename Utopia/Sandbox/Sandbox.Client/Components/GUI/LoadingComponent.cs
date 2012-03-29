@@ -35,6 +35,7 @@ namespace Sandbox.Client.Components.GUI
         private VertexBuffer<VertexMesh> _rotatingBlockVB;
         private IndexBuffer<ushort> _rotatingBlockIB;
         private RotationCube _loadingCube;
+        private HLSLLoadingCube _cubeShader;
 
         public LoadingComponent(D3DEngine engine, MainScreen screen)
             : base(engine, screen)
@@ -52,7 +53,13 @@ namespace Sandbox.Client.Components.GUI
 
             _loadingLabel = new ImageControl();
             _loadingLabel.Image = _stLoading;
-           
+
+            _cubeShader = ToDispose(new HLSLLoadingCube(_engine.Device,
+                            ClientSettings.EffectPack + @"Entities/LoadingCube.hlsl",
+                            VertexMesh.VertexDeclaration,
+                            new S33M3DXEngine.Effects.HLSLFramework.EntryPoints() { VertexShader_EntryPoint = "VS", PixelShader_EntryPoint = "PSColoredCubeWithLight" }
+                            ));
+
             //Create Vertex/Index Buffer to store the rotating Cube
             _rotatingBlockVB = ToDispose(new VertexBuffer<VertexMesh>(_engine.Device,
                                                                        _meshBluePrint.Vertices.Length,
@@ -66,7 +73,6 @@ namespace Sandbox.Client.Components.GUI
                 Scale = 70,
                 ScreenPosition = new Vector3((_engine.ViewPort.Width - 168) / 2, (_engine.ViewPort.Height - _headerHeight) / 2 + _headerHeight, 0),
                 SpinningRotation = new Vector3(0.05f, 0.1f, 0.0f),
-                CubeShadowColor = new Color4(0.5f, 0.5f, 0.5f, 0.5f)
             };
         }
 
@@ -133,13 +139,8 @@ namespace Sandbox.Client.Components.GUI
             _cubeShader.Begin(context);
             _cubeShader.CBPerFrame.Values.View = Matrix.Transpose(_view);
             _cubeShader.CBPerFrame.Values.Projection = Matrix.Transpose(_engine.Projection2D);
+            _cubeShader.CBPerFrame.Values.DiffuseLightDirection = new Vector3(0.8f, 0.9f, 0.9f);
             _cubeShader.CBPerFrame.IsDirty = true;
-
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_loadingCube.WorldShadow);
-            _cubeShader.CBPerDraw.Values.Color = _loadingCube.CubeShadowColor;
-            _cubeShader.CBPerDraw.IsDirty = true;
-            _cubeShader.Apply(context);
-            context.DrawIndexed(_rotatingBlockIB.IndicesCount, 0, 0);
 
             _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_loadingCube.World);
             _cubeShader.CBPerDraw.Values.Color = _loadingCube.CubeColor;

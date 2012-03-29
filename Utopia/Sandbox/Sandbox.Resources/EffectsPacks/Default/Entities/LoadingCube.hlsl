@@ -11,7 +11,11 @@ cbuffer PerFrame
 {
 	matrix View;
 	matrix Projection;
+	float3 DiffuseLightDirection;
 }
+
+static const float4 DiffuseColor = {1.0f, 1.0f, 1.0f, 1.0f };
+static const float4 AmbientColor = {0.1f, 0.1f, 0.1f, 1.0f };
 
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
@@ -50,4 +54,22 @@ PS_IN VS( VS_IN input )
 float4 PSColoredCube( PS_IN input ) : SV_Target
 {
 	return Color;
+}
+
+//--------------------------------------------------------------------------------------
+// Pixel Shader
+//--------------------------------------------------------------------------------------
+float4 PSColoredCubeWithLight( PS_IN input ) : SV_Target
+{
+	// Sample our texture at the specified texture coordinates to get the texture color
+	float4 texColor = Color;
+
+	float3 lightdir = normalize( DiffuseLightDirection );
+	float3 norm = normalize( input.Normal );
+	float4 diffuse = dot( lightdir, norm ) * DiffuseColor;
+
+	float4 color = texColor * ( diffuse + AmbientColor );
+	color.a = texColor.a;
+
+	return color;
 }

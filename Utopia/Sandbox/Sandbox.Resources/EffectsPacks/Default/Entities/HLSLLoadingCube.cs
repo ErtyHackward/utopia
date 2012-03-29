@@ -33,13 +33,15 @@ namespace UtopiaContent.Effects.Entities
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
 
-        [StructLayout(LayoutKind.Explicit, Size = 128)]
+        [StructLayout(LayoutKind.Explicit, Size = 144)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
             public Matrix View;
             [FieldOffset(64)]
             public Matrix Projection;
+            [FieldOffset(128)]
+            public Vector3 DiffuseLightDirection;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
         #endregion

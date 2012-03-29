@@ -60,7 +60,7 @@ namespace Sandbox.Client.Components.GUI
 
         protected VertexBuffer<VertexMesh> _staticBlockVB;
         protected IndexBuffer<ushort> _staticBlockIB;
-        protected HLSLLoadingCube _cubeShader;
+        private HLSLLoadingCube _cubeShader;
         protected Mesh _meshBluePrint;
         protected Matrix _view;
 
