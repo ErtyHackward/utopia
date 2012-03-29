@@ -29,11 +29,6 @@ namespace Sandbox.Client.Components.GUI
     /// </summary>
     public abstract class SandboxMenuComponent : DrawableGameComponent
     {
-        private enum PixelShaderEntry
-        {
-            PSWhiteCube,
-            PSTexturedCube
-        }
 
         // common resources
         public static SpriteTexture StShadow;
@@ -61,6 +56,8 @@ namespace Sandbox.Client.Components.GUI
         protected ImageControl _version;
 
         //Resources used to display the Static cubes in the menu
+        private List<RotationCube> _rotatingCubes = new List<RotationCube>();
+
         protected VertexBuffer<VertexMesh> _staticBlockVB;
         protected IndexBuffer<ushort> _staticBlockIB;
         protected HLSLLoadingCube _cubeShader;
@@ -111,10 +108,8 @@ namespace Sandbox.Client.Components.GUI
             _logo = new ImageControl { Image = StLogo };
             _version = new ImageControl { Image = StGameName };
 
-            Resize(_engine.ViewPort);
 
             this.DrawOrders.UpdateIndex(0, int.MaxValue - 1);
-
         }
 
         public override void Initialize()
@@ -130,13 +125,45 @@ namespace Sandbox.Client.Components.GUI
                                                            "rotatingBlockVB"));
             _staticBlockIB = ToDispose(new IndexBuffer<ushort>(_engine.Device, _meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "rotatingBlockIB"));
 
-            PixelShaderEntry psEntry = WithTexturedCubes ? PixelShaderEntry.PSTexturedCube : PixelShaderEntry.PSWhiteCube;
-
             _cubeShader = ToDispose(new HLSLLoadingCube(_engine.Device,
-                       ClientSettings.EffectPack + @"Entities/LoadingCube.hlsl",
-                       VertexMesh.VertexDeclaration));
+                                        ClientSettings.EffectPack + @"Entities/LoadingCube.hlsl",
+                                        VertexMesh.VertexDeclaration));
 
+            RotationCube cube;
+            //Create Cubes 1
+            cube = new RotationCube()
+            {
+                ID = 0,
+                Rotation  = new Vector3(-MathHelper.Pi * 6 / 5, MathHelper.PiOver4, 0),
+                SpinningRotation = new Vector3(0.01f,0.02f,0.0001f)
+            };
+            _rotatingCubes.Add(cube);
 
+            cube = new RotationCube()
+            {
+                ID = 1,
+                Rotation = new Vector3(-MathHelper.PiOver2 * 6 * 1.2f, MathHelper.PiOver2 * 0.125f, MathHelper.Pi * 1.23f),
+                SpinningRotation = new Vector3(0.01f, 0.01f, 0.001f)
+            };
+            _rotatingCubes.Add(cube);
+
+            cube = new RotationCube()
+            {
+                ID = 2,
+                Rotation = new Vector3(-MathHelper.PiOver2 * 1.9f, MathHelper.PiOver2 * 0.6f, MathHelper.Pi * 1.3f),
+                SpinningRotation = new Vector3(0.001f, 0.05f, 0.002f)
+            };
+            _rotatingCubes.Add(cube);
+
+            cube = new RotationCube()
+            {
+                ID = 3,
+                Rotation = new Vector3(-MathHelper.PiOver2 * 1.6f, MathHelper.PiOver2 * 0.9f, MathHelper.Pi * 1.9f),
+                SpinningRotation = new Vector3(0.001f, 0.0004f, 0.03f)
+            };
+            _rotatingCubes.Add(cube);
+
+            Resize(_engine.ViewPort);
         }
 
         public override void LoadContent(DeviceContext context)
@@ -145,6 +172,23 @@ namespace Sandbox.Client.Components.GUI
 
             _staticBlockVB.SetData(context, _meshBluePrint.Vertices);
             _staticBlockIB.SetData(context, _meshBluePrint.Indices);
+        }
+
+
+        public override void Update(GameTime timeSpent)
+        {
+            foreach (RotationCube cube in _rotatingCubes)
+            {
+                cube.Update();
+            }
+        }
+
+        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        {
+            foreach (RotationCube cube in _rotatingCubes)
+            {
+                cube.Interpolation(interpolationLd);
+            }
         }
 
         public override void Draw(DeviceContext context, int index)
@@ -159,56 +203,21 @@ namespace Sandbox.Client.Components.GUI
             _staticBlockVB.SetToDevice(context, 0);
             _staticBlockIB.SetToDevice(context, 0);
 
-            //Cube 1 ==============
-            _cubeShader.CBPerDraw.Values.Color = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC1shadow);
-            _cubeShader.CBPerDraw.IsDirty = true;
-            _cubeShader.Apply(context);
-            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
-
-            _cubeShader.CBPerDraw.Values.Color = Colors.White;
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC1);
-            _cubeShader.CBPerDraw.IsDirty = true;
-            _cubeShader.Apply(context);
-            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
-            //Cube 2 ==============
-            _cubeShader.CBPerDraw.Values.Color = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC2shadow);
-            _cubeShader.CBPerDraw.IsDirty = true;
-            _cubeShader.Apply(context);
-            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
-
-            _cubeShader.CBPerDraw.Values.Color = Colors.White;
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC2);
-            _cubeShader.CBPerDraw.IsDirty = true;
-            _cubeShader.Apply(context);
-            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
-
-            //Cube 3 ==============
-            _cubeShader.CBPerDraw.Values.Color = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC3shadow);
-            _cubeShader.CBPerDraw.IsDirty = true;
-            _cubeShader.Apply(context);
-            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
-
-            _cubeShader.CBPerDraw.Values.Color = Colors.White;
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC3);
-            _cubeShader.CBPerDraw.IsDirty = true;
-            _cubeShader.Apply(context);
-            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
-
-            //Cube 4 ==============
-            _cubeShader.CBPerDraw.Values.Color = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC4shadow);
-            _cubeShader.CBPerDraw.IsDirty = true;
-            _cubeShader.Apply(context);
-            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
-
-            _cubeShader.CBPerDraw.Values.Color = Colors.White;
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldC4);
-            _cubeShader.CBPerDraw.IsDirty = true;
-            _cubeShader.Apply(context);
-            context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+            foreach (RotationCube cube in _rotatingCubes)
+            {
+                //Draw Shadow Cube
+                _cubeShader.CBPerDraw.Values.Color = cube.CubeShadowColor;
+                _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(cube.WorldShadow);
+                _cubeShader.CBPerDraw.IsDirty = true;
+                _cubeShader.Apply(context);
+                context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+                //Draw Cube
+                _cubeShader.CBPerDraw.Values.Color = cube.CubeColor;
+                _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(cube.World);
+                _cubeShader.CBPerDraw.IsDirty = true;
+                _cubeShader.Apply(context);
+                context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+            }
         }
 
         public override void Dispose()
@@ -256,41 +265,82 @@ namespace Sandbox.Client.Components.GUI
             _logo.Bounds = new UniRectangle((viewport.Width - 562) / 2, _headerHeight - 44, 562, 113);
             _version.Bounds = new UniRectangle((viewport.Width - 562) / 2 + 360, _headerHeight + 49, 196, 31);
 
-            //Static Cube 1 Screen position
-            _worldC1 = Matrix.RotationY(MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi * 6 / 5);
-            _worldC1 *= Matrix.Scaling(_headerHeight * 0.4f);
-            _worldC1 *= Matrix.Translation((_engine.ViewPort.Width) * 0.23f, (_headerHeight) / 2, 0);
+            foreach (RotationCube cube in _rotatingCubes)
+            {
+                switch (cube.ID)
+                {
+                    case 0:
+                        cube.Scale = _headerHeight * 0.4f;
+                        cube.ScreenPosition = new Vector3((_engine.ViewPort.Width) * 0.23f, (_headerHeight) / 2, 0);
+                        break;
+                    case 1:
+                        cube.Scale = 60;
+                        cube.ScreenPosition = new Vector3(cube.Scale + 15, (_headerHeight), 0);
+                        break;
+                    case 2:
+                        cube.Scale = 30;
+                        cube.ScreenPosition = new Vector3(cube.Scale + 15, (_engine.ViewPort.Height - _headerHeight) / 4 + _headerHeight, 0);
+                        break;
+                    case 3:
+                        cube.Scale = 40;
+                        cube.ScreenPosition = new Vector3((_engine.ViewPort.Width) / 7, 15, 0);
+                        break;
+                }
+            }
+        }
 
-            _worldC1shadow = Matrix.RotationY(MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi * 6 / 5);
-            _worldC1shadow *= Matrix.Scaling(_headerHeight * 0.43f);
-            _worldC1shadow *= Matrix.Translation((_engine.ViewPort.Width) * 0.23f, (_headerHeight) / 2, 0);
+        public class RotationCube
+        {
+            public int ID;
+            private FTSValue<Vector3> _rotation = new FTSValue<Vector3>();
+            public Vector3 Rotation
+            {
+                set
+                {
+                    _rotation.Value = value;
+                }
+            }
+            public float Scale;
+            public Vector3 ScreenPosition;
+            public Vector3 SpinningRotation;
 
-            //Static Cube 2 Screen position
-            _worldC2 = Matrix.RotationY(MathHelper.PiOver2 * 0.125f) * Matrix.RotationX(-MathHelper.PiOver2 * 6 * 1.2f) * Matrix.RotationZ(MathHelper.Pi * 1.23f);
-            _worldC2 *= Matrix.Scaling(60);
-            _worldC2 *= Matrix.Translation(60 + 15, (_headerHeight), 0);
+            public Color4 CubeColor = Colors.White;
+            public Color4 CubeShadowColor = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
 
-            _worldC2shadow = Matrix.RotationY(MathHelper.PiOver2 * 0.125f) * Matrix.RotationX(-MathHelper.PiOver2 * 6 * 1.2f) * Matrix.RotationZ(MathHelper.Pi * 1.23f);
-            _worldC2shadow *= Matrix.Scaling(65f);
-            _worldC2shadow *= Matrix.Translation(60 + 15, (_headerHeight), 0);
+            public Matrix World
+            {
+                get 
+                {
+                    Matrix w = Matrix.RotationY(_rotation.ValueInterp.Y) * Matrix.RotationX(_rotation.ValueInterp.X) * Matrix.RotationZ(_rotation.ValueInterp.Z);
+                    w *= Matrix.Scaling(Scale);
+                    w *= Matrix.Translation(ScreenPosition);
+                    return w;
+                }
+            }
 
-            //Static Cube 3 Screen position
-            _worldC3 = Matrix.RotationY(MathHelper.PiOver2 * 0.6f) * Matrix.RotationX(-MathHelper.PiOver2 * 1.9f) * Matrix.RotationZ(MathHelper.Pi * 1.3f);
-            _worldC3 *= Matrix.Scaling(30);
-            _worldC3 *= Matrix.Translation(30 + 15, (_engine.ViewPort.Height - _headerHeight) / 4 + _headerHeight, 0);
+            public Matrix WorldShadow
+            {
+                get
+                {
+                    Matrix w = Matrix.RotationY(_rotation.ValueInterp.Y) * Matrix.RotationX(_rotation.ValueInterp.X) * Matrix.RotationZ(_rotation.ValueInterp.Z);
+                    w *= Matrix.Scaling(Scale * 1.10f);
+                    w *= Matrix.Translation(ScreenPosition);
+                    return w;
+                }
+            }
 
-            _worldC3shadow = Matrix.RotationY(MathHelper.PiOver2 * 0.6f) * Matrix.RotationX(-MathHelper.PiOver2 * 1.9f) * Matrix.RotationZ(MathHelper.Pi * 1.3f);
-            _worldC3shadow *= Matrix.Scaling(35f);
-            _worldC3shadow *= Matrix.Translation(30 + 15, (_engine.ViewPort.Height - _headerHeight) / 4 + _headerHeight, 0);
+            public void Update()
+            {
+                _rotation.BackUpValue();
 
-            //Static Cube 4 Screen position
-            _worldC4 = Matrix.RotationY(MathHelper.PiOver2 * 0.9f) * Matrix.RotationX(-MathHelper.PiOver2 * 1.6f) * Matrix.RotationZ(MathHelper.Pi * 1.9f);
-            _worldC4 *= Matrix.Scaling(40);
-            _worldC4 *= Matrix.Translation((_engine.ViewPort.Width) / 7, 15, 0);
+                _rotation.Value += SpinningRotation;
+            }
 
-            _worldC4shadow = Matrix.RotationY(MathHelper.PiOver2 * 0.9f) * Matrix.RotationX(-MathHelper.PiOver2 * 1.6f) * Matrix.RotationZ(MathHelper.Pi * 1.9f);
-            _worldC4shadow *= Matrix.Scaling(45f);
-            _worldC4shadow *= Matrix.Translation((_engine.ViewPort.Width) / 7, 15, 0);
+            public void Interpolation(float interpValue)
+            {
+                Vector3.Lerp(ref _rotation.ValuePrev, ref _rotation.Value, interpValue, out _rotation.ValueInterp);
+            }
+
         }
     }
 }
