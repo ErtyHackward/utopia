@@ -60,52 +60,10 @@ namespace Sandbox.Client.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap brush {
+        internal static System.Drawing.Icon Utopia {
             get {
-                object obj = ResourceManager.GetObject("brush", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap forest {
-            get {
-                object obj = ResourceManager.GetObject("forest", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap mapbg {
-            get {
-                object obj = ResourceManager.GetObject("mapbg", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap tropicForest {
-            get {
-                object obj = ResourceManager.GetObject("tropicForest", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap wavePattern {
-            get {
-                object obj = ResourceManager.GetObject("wavePattern", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap wavePattern1 {
-            get {
-                object obj = ResourceManager.GetObject("wavePattern1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap wavePattern2 {
-            get {
-                object obj = ResourceManager.GetObject("wavePattern2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("Utopia", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         

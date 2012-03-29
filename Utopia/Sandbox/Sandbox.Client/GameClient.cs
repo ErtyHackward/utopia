@@ -51,6 +51,8 @@ namespace Sandbox.Client
             //Bings all components
             IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 640));
 
+            _d3dEngine.GameWindow.Icon = Sandbox.Client.Properties.Resources.Utopia;
+
             System.Net.ServicePointManager.Expect100Continue = false;
 
             var vars = _iocContainer.Get<RuntimeVariables>();
