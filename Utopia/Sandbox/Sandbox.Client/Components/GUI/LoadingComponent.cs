@@ -34,7 +34,7 @@ namespace Sandbox.Client.Components.GUI
 
         private VertexBuffer<VertexMesh> _rotatingBlockVB;
         private IndexBuffer<ushort> _rotatingBlockIB;
-        private Matrix _world, _worldShadow;
+        private RotationCube _loadingCube;
 
         public LoadingComponent(D3DEngine engine, MainScreen screen)
             : base(engine, screen)
@@ -60,6 +60,14 @@ namespace Sandbox.Client.Components.GUI
                                                                        SharpDX.Direct3D.PrimitiveTopology.TriangleList,
                                                                        "rotatingBlockVB"));
             _rotatingBlockIB = ToDispose(new IndexBuffer<ushort>(_engine.Device, _meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "rotatingBlockIB"));
+
+            _loadingCube = new RotationCube()
+            {
+                Scale = 70,
+                ScreenPosition = new Vector3((_engine.ViewPort.Width - 168) / 2, (_engine.ViewPort.Height - _headerHeight) / 2 + _headerHeight, 0),
+                SpinningRotation = new Vector3(0.05f, 0.1f, 0.0f),
+                CubeShadowColor = new Color4(0.5f, 0.5f, 0.5f, 0.5f)
+            };
         }
 
         public override void LoadContent(DeviceContext context)
@@ -103,29 +111,14 @@ namespace Sandbox.Client.Components.GUI
         FTSValue<float> XRotation = new FTSValue<float>();
         public override void Update(S33M3DXEngine.Main.GameTime timeSpent)
         {
-            YRotation.BackUpValue();
-            XRotation.BackUpValue();
-
-            YRotation.Value += 0.1f;
-            XRotation.Value += 0.05f;
+            _loadingCube.Update();
 
             base.Update(timeSpent);
         }
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
-            YRotation.ValueInterp = MathHelper.Lerp(YRotation.ValuePrev, YRotation.Value, interpolationLd);
-            XRotation.ValueInterp = MathHelper.Lerp(XRotation.ValuePrev, XRotation.Value, interpolationLd);
-            //Compute projection + View matrix
-
-            _world = Matrix.RotationY(YRotation.ValueInterp) * Matrix.RotationX(XRotation.ValueInterp);
-            _world *= Matrix.Scaling(70);
-            _world *= Matrix.Translation((_engine.ViewPort.Width - 168) / 2, (_engine.ViewPort.Height - _headerHeight) / 2 + _headerHeight, 0);
-
-            _worldShadow = Matrix.RotationY(YRotation.ValueInterp) * Matrix.RotationX(XRotation.ValueInterp);
-            _worldShadow *= Matrix.Scaling(80);
-            _worldShadow *= Matrix.Translation((_engine.ViewPort.Width - 168) / 2, (_engine.ViewPort.Height - _headerHeight) / 2 + _headerHeight, 0);
-            
+            _loadingCube.Interpolation(interpolationLd);
 
             base.Interpolation(interpolationHd, interpolationLd, elapsedTime);
         }
@@ -142,18 +135,17 @@ namespace Sandbox.Client.Components.GUI
             _cubeShader.CBPerFrame.Values.Projection = Matrix.Transpose(_engine.Projection2D);
             _cubeShader.CBPerFrame.IsDirty = true;
 
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_world);
-            _cubeShader.CBPerDraw.Values.Color = Colors.White;
+            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_loadingCube.WorldShadow);
+            _cubeShader.CBPerDraw.Values.Color = _loadingCube.CubeShadowColor;
             _cubeShader.CBPerDraw.IsDirty = true;
             _cubeShader.Apply(context);
             context.DrawIndexed(_rotatingBlockIB.IndicesCount, 0, 0);
 
-            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_worldShadow);
-            _cubeShader.CBPerDraw.Values.Color = new Color4(0.5f, 0.5f, 0.5f, 0.1f);
+            _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(_loadingCube.World);
+            _cubeShader.CBPerDraw.Values.Color = _loadingCube.CubeColor;
             _cubeShader.CBPerDraw.IsDirty = true;
             _cubeShader.Apply(context);
             context.DrawIndexed(_rotatingBlockIB.IndicesCount, 0, 0);
-
         }
 
     }
