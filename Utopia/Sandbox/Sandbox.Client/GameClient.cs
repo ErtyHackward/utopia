@@ -66,8 +66,6 @@ namespace Sandbox.Client
             _iocContainer.Bind<Game>().ToConstant(game);
             _iocContainer.Rebind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
 
-            SmartThread.SetOptimumNbrThread(0);
-
             SandboxMenuComponent.LoadCommonImages(_iocContainer.Get<D3DEngine>());
 
             //filling stages
@@ -146,8 +144,28 @@ namespace Sandbox.Client
             //If file was not present create a new one with the Qwerty Default mapping !
             if (ClientSettings.Current.Settings.KeyboardMapping == null)
             {
-                ClientSettings.Current.Settings = ClientConfig.DefaultQwerty;
+                var keyboardType = System.Globalization.CultureInfo.CurrentCulture.KeyboardLayoutId;
+
+                if (keyboardType == 2060 || keyboardType == 1036)
+                {
+                    ClientSettings.Current.Settings = ClientConfig.DefaultAzerty;
+                }
+                else
+                {
+                    ClientSettings.Current.Settings = ClientConfig.DefaultQwerty;
+                }
                 needSave = true;
+            }
+
+            //Set Default Threads - initializing the thread Engine component
+            if (ClientSettings.Current.Settings.DefaultAllocatedThreads == 0)
+            {
+                ClientSettings.Current.Settings.DefaultAllocatedThreads = SmartThread.SetOptimumNbrThread(0);
+                needSave = true;
+            }
+            else
+            {
+                SmartThread.SetOptimumNbrThread(ClientSettings.Current.Settings.DefaultAllocatedThreads + ClientSettings.Current.Settings.EngineParameters.AllocatedThreadsModifier, true);
             }
 
             return needSave;
