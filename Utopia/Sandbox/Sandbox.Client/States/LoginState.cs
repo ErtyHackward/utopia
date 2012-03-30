@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using Ninject;
-using Sandbox.Client.Components;
 using Sandbox.Shared.Web;
 using Sandbox.Shared.Web.Responces;
-using Utopia;
 using Utopia.Components;
 using Utopia.Settings;
 using Utopia.Shared.ClassExt;
 using S33M3CoreComponents.States;
-using Utopia.GUI;
 using S33M3CoreComponents.GUI;
 using Sandbox.Client.Components.GUI;
 
@@ -59,18 +56,17 @@ namespace Sandbox.Client.States
         void WebApiLoginCompleted(object sender, WebEventArgs<LoginResponce> e)
         {
             var login = _iocContainer.Get<LoginComponent>();
-            var gui = _iocContainer.Get<GuiManager>();
 
             if (e.Exception != null)
             {
-                gui.MessageBox("Error: "+e.Exception.Message);
+                login.ShowErrorText(e.Exception.Message);
                 login.Locked = false;
                 return;
             }
 
             if (!e.Responce.Logged)
             {
-                gui.MessageBox("Wrong login/password combination, try again or register.");
+                login.ShowErrorText("Wrong login/password combination");
                 login.Locked = false;
                 return;
             }
@@ -107,22 +103,19 @@ namespace Sandbox.Client.States
         void LoginLogin(object sender, EventArgs e)
         {
             var login = _iocContainer.Get<LoginComponent>();
-
-            login.Locked = true;
-
+            
             if (string.IsNullOrWhiteSpace(login.Email) || string.IsNullOrWhiteSpace(login.Password))
             {
-                var gui = _iocContainer.Get<GuiManager>();
-
-                gui.MessageBox("Please fill the form before press a login button", "Error", null, delegate { login.Locked = false; });
+                login.ShowErrorText("Please, fill the form first");
                 return;
             }
 
+            login.ShowErrorText("");
+
+            login.Locked = true;
 
             // request our server for authorization
             _webApi.UserLoginAsync(login.Email, login.Password.GetSHA1Hash());
-
-            
         }
     }
 }
