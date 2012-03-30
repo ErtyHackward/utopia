@@ -47,7 +47,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                 CustomFont = SandboxMenuComponent.FontBebasNeue25
             };
 
-            Parameters = new List<ParamRow>(Settings2Components.CreateComponentsRows(ClientSettings.Current.Settings.GraphicalParameters));
+            Parameters = new List<ParamRow>(Settings2Components.CreateComponentsRows(ClientSettings.Current.Settings.GraphicalParameters));            
         }
 
         private void BindComponents()
@@ -56,7 +56,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             foreach (ParamRow row in Parameters)
             {
                 this.Children.Add(row.ParamName);
-                this.Children.Add(row.InputingComp);
+                this.Children.Add(ToDispose(row.InputingComp));
             }
         }
 
