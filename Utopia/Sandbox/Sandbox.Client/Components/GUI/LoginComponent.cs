@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
@@ -15,7 +14,6 @@ namespace Sandbox.Client.Components.GUI
     /// </summary>
     public class LoginComponent : SandboxMenuComponent
     {
-        WindowControl _loginWindow;
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
         private string _email;
@@ -24,6 +22,9 @@ namespace Sandbox.Client.Components.GUI
         private InputControl _passwordControl;
         private ButtonControl _loginButton;
         private ImageControl _authenticationLabel;
+        private ImageControl _errorImage;
+        private LabelControl _errorText;
+        private ButtonControl _regButton;
 
         #region Images
         private SpriteTexture _stEnter;
@@ -40,8 +41,6 @@ namespace Sandbox.Client.Components.GUI
 
         private SpriteTexture _stAutentification;
         private SpriteTexture _stError;
-        private ButtonControl _regButton;
-
         #endregion
 
         /// <summary>
@@ -113,31 +112,20 @@ namespace Sandbox.Client.Components.GUI
             _engine = engine;
             _screen = screen;
 
-            _stEnter = ToDispose(LoadTexture(engine, "Images\\Login\\enter.png"));
-            _stEnterHover = ToDispose(LoadTexture(engine, "Images\\Login\\enter_hover.png"));
-            _stEnterDown = ToDispose(LoadTexture(engine, "Images\\Login\\enter_press.png"));
-            _stEnterDisabled = ToDispose(LoadTexture(engine, "Images\\Login\\enter_disabled.png"));
+            _stEnter            = ToDispose(LoadTexture(engine, "Images\\Login\\enter.png"));
+            _stEnterHover       = ToDispose(LoadTexture(engine, "Images\\Login\\enter_hover.png"));
+            _stEnterDown        = ToDispose(LoadTexture(engine, "Images\\Login\\enter_press.png"));
+            _stEnterDisabled    = ToDispose(LoadTexture(engine, "Images\\Login\\enter_disabled.png"));
 
-            _stSign = ToDispose(LoadTexture(engine, "Images\\Login\\sign.png"));
-            _stSignHover = ToDispose(LoadTexture(engine, "Images\\Login\\sign_hover.png"));
+            _stSign             = ToDispose(LoadTexture(engine, "Images\\Login\\sign.png"));
+            _stSignHover        = ToDispose(LoadTexture(engine, "Images\\Login\\sign_hover.png"));
 
-            _stInputBg = ToDispose(LoadTexture(engine, "Images\\Login\\login_input_bg.png"));
-            _stEmail = ToDispose(LoadTexture(engine, "Images\\Login\\email.png"));
-            _stPassword = ToDispose(LoadTexture(engine, "Images\\Login\\password.png"));
+            _stInputBg          = ToDispose(LoadTexture(engine, "Images\\Login\\login_input_bg.png"));
+            _stEmail            = ToDispose(LoadTexture(engine, "Images\\Login\\email.png"));
+            _stPassword         = ToDispose(LoadTexture(engine, "Images\\Login\\password.png"));
 
-            _stAutentification = ToDispose(LoadTexture(engine, "Images\\Login\\authentication.png"));
-            _stError = ToDispose(LoadTexture(engine, "Images\\Login\\error.png"));
-
-            
-
-        }
-
-        public override void Dispose()
-        {
-            _loginWindow = null;
-            _emailControl = null;
-            _passwordControl = null;
-            _loginButton = null;
+            _stAutentification  = ToDispose(LoadTexture(engine, "Images\\Login\\authentication.png"));
+            _stError            = ToDispose(LoadTexture(engine, "Images\\Login\\error.png"));
         }
 
         protected override void EngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer)
@@ -149,12 +137,16 @@ namespace Sandbox.Client.Components.GUI
         private void Resize(Viewport viewport)
         {
             _regButton.Bounds = new UniRectangle((viewport.Width - 562) / 2 + 408, _headerHeight + 72, 88, 83);
-            
-
             _authenticationLabel.Bounds = new UniRectangle((viewport.Width - 444) / 2+ 12, _headerHeight + 133, 126, 49);
             _emailControl.Bounds = new UniRectangle((viewport.Width - 444) / 2, _headerHeight + 173, 444, 85);
             _passwordControl.Bounds = new UniRectangle((viewport.Width - 444) / 2, _headerHeight + 253, 444, 85);
             _loginButton.Bounds = new UniRectangle((viewport.Width - 444) / 2, _headerHeight + 333, 444, 85);
+            _errorImage.Bounds = new UniRectangle((viewport.Width - 444) / 2 - 290, _headerHeight + 323, 285, 110);
+
+            _errorText.Bounds = _errorImage.Bounds;
+            _errorText.Bounds.Location.X += 64;
+            _errorText.Bounds.Location.Y += 26;
+            _errorText.Bounds.Size.X -= 75;
         }
 
         void GameWindowKeyPress(object sender, KeyPressEventArgs e)
@@ -169,6 +161,28 @@ namespace Sandbox.Client.Components.GUI
             }
         }
 
+        public void ShowErrorText(string error)
+        {
+            _errorText.Text = error;
+
+            if (string.IsNullOrEmpty(_errorText.Text))
+            {
+                if (_screen.Desktop.Children.Contains(_errorText))
+                {
+                    _screen.Desktop.Children.Remove(_errorText);
+                    _screen.Desktop.Children.Remove(_errorImage);
+                }
+            }
+            else
+            {
+                if (!_screen.Desktop.Children.Contains(_errorText))
+                {
+                    _screen.Desktop.Children.Insert(0, _errorImage);
+                    _screen.Desktop.Children.Insert(0,_errorText);
+                    
+                }
+            }
+        }
 
         public override void Initialize()
         {
@@ -179,7 +193,8 @@ namespace Sandbox.Client.Components.GUI
                 Text = Email,
                 CustomBackground = _stInputBg,
                 CustomFont = FontBebasNeue35,
-                Color = SharpDX.Colors.White
+                Color = SharpDX.Colors.White,
+                CustomHintImage = _stEmail
             };
             
             _passwordControl = new InputControl
@@ -188,7 +203,8 @@ namespace Sandbox.Client.Components.GUI
                 IsPassword = true,
                 CustomBackground = _stInputBg,
                 CustomFont = FontBebasNeue35,
-                Color = SharpDX.Colors.White
+                Color = SharpDX.Colors.White,
+                CustomHintImage = _stPassword
             };
             
             _regButton = new ButtonControl
@@ -209,6 +225,18 @@ namespace Sandbox.Client.Components.GUI
             };
 
             _loginButton.Pressed += delegate { OnLogin(); };
+            
+            _errorImage = new ImageControl 
+            { 
+                Image = _stError 
+            };
+
+            _errorText = new LabelControl 
+            { 
+                CustomFont = FontBebasNeue25,
+                Color = SharpDX.Colors.White,
+                Autosizing = true
+            };
 
             base.Initialize();
         }
@@ -240,23 +268,13 @@ namespace Sandbox.Client.Components.GUI
             _screen.Desktop.Children.Remove(_passwordControl);
             _screen.Desktop.Children.Remove(_authenticationLabel);
 
+            if (_screen.Desktop.Children.Contains(_errorText))
+            {
+                _screen.Desktop.Children.Remove(_errorText);
+                _screen.Desktop.Children.Remove(_errorImage);
+            }
+
             _engine.GameWindow.KeyPress -= GameWindowKeyPress;
         }
-
-        protected override void OnUpdatableChanged(object sender, EventArgs args)
-        {
-            //if (!IsInitialized) return;
-
-            //if (Updatable)
-            //{
-            //    EnableComponent();
-            //}
-            //else
-            //{
-
-            //}
-            //base.OnUpdatableChanged(sender, args);
-        }
-
     }
 }

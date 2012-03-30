@@ -62,8 +62,17 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 
             if (control.CustomHintImage != null && string.IsNullOrEmpty(control.Text) && !control.HasFocus)
             {
+                var bounds = controlBounds;
 
-                graphics.DrawCustomTexture(control.CustomHintImage, ref controlBounds);
+                bounds.Width = control.CustomHintImage.Width;
+                bounds.Height = control.CustomHintImage.Height;
+
+                var dx = (controlBounds.Height - bounds.Height) / 2;
+
+                bounds.X += dx;
+                bounds.Y += dx;
+
+                graphics.DrawCustomTexture(control.CustomHintImage, ref bounds);
             }
 
             using (graphics.SetClipRegion(ref controlBounds))

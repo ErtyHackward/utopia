@@ -24,6 +24,7 @@ using S33M3CoreComponents.Meshes;
 using S33M3CoreComponents.Meshes.Factories;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Cameras.Interfaces;
+using Resource = SharpDX.Direct3D11.Resource;
 
 namespace Utopia.Entities
 {
@@ -57,7 +58,7 @@ namespace Utopia.Entities
             ShaderResourceView cubeTextureView;
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out cubeTextureView);
             icons = Create3DBlockIcons(context, cubeTextureView);
-
+            
             _nbrCubeIcon = icons.Count;
 
             Texture2D[] spriteTextures;
@@ -132,7 +133,7 @@ namespace Utopia.Entities
         {
             //Create the Icon texture Array
             ArrayTexture.CreateTexture2D(_d3DEngine.Device, context, textureArray.ToArray(), FilterFlags.Linear, "Icon's ArrayTexture", out _iconsTextureArray);
-
+            
             // indexes into array corresponds textures with modifier +1 (Air)
             _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());
         }
