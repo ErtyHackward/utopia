@@ -1,4 +1,4 @@
-﻿//#define SINGLEPLAYERSTART
+﻿#define SINGLEPLAYERSTART
 
 using System;
 using System.IO;
@@ -147,12 +147,6 @@ namespace Sandbox.Client
             if (ClientSettings.Current.Settings.KeyboardMapping == null)
             {
                 ClientSettings.Current.Settings = ClientConfig.DefaultQwerty;
-                needSave = true;
-            }
-
-            if (ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps.Value == 0)
-            {
-                ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps = new SettingsValue<int>() { Value = 8, Name = "Light propagation", Info = "Maximum size of light propagation in block unit" };
                 needSave = true;
             }
 

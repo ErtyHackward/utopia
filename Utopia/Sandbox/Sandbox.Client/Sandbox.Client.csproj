@@ -104,6 +104,7 @@
       <DependentUpon>GraphicSettingsPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\GUI\Settings\ParamRow.cs" />
+    <Compile Include="Components\GUI\Settings\Settings2Components.cs" />
     <Compile Include="Components\GUI\Settings\SettingsComponent.cs" />
     <Compile Include="Components\GUI\SandboxMenuComponent.cs" />
     <Compile Include="Components\SandboxSoundManager.cs" />
