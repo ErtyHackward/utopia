@@ -43,7 +43,7 @@ namespace S33M3DXEngine.Threading
             if (_totThread == 0) SetOptimumNbrThread(0, false);
         }
 
-        public static void SetOptimumNbrThread(int ThreadAllocatedModifier, bool forced = false)
+        public static int SetOptimumNbrThread(int ThreadAllocatedModifier, bool forced = false)
         {
             if (forced == false)
             {
@@ -67,6 +67,8 @@ namespace S33M3DXEngine.Threading
             ThreadPool = new SmartThreadPool(_stpInfo);
 
             ThreadingActif = true;
+
+            return _totThread;
         }
     }
 }

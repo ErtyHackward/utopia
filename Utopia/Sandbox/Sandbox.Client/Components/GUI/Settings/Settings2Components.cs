@@ -29,7 +29,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                         yield return AddInputComponent(attrib.ParamName, value, DataTypes.GetTypeFamilly(value.GetType()) == DataTypes.typeFamilly.IntegerNumber);
                         break;
                     case ParamInputMethod.Slider:
-                        yield return AddInputComponent(attrib.ParamName, value, DataTypes.GetTypeFamilly(value.GetType()) == DataTypes.typeFamilly.IntegerNumber);
+                        yield return AddSliderComponent(attrib.ParamName, value, attrib);
                         break;
                     case ParamInputMethod.List:
                         yield return AddInputComponent(attrib.ParamName, value, DataTypes.GetTypeFamilly(value.GetType()) == DataTypes.typeFamilly.IntegerNumber);
@@ -52,6 +52,20 @@ namespace Sandbox.Client.Components.GUI.Settings
                 Color = SharpDX.Colors.White
             };
             return new ParamRow() { ParamName = label, InputingComp = input };
+        }
+
+        private static ParamRow AddSliderComponent(string ParameterName, object value, ParameterAttribute attrib)
+        {
+            LabelControl label = new LabelControl() { Text = ParameterName, CustomFont = SandboxMenuComponent.FontBebasNeue17 };
+            LabelControl labelInfo = new LabelControl() { Text = "???", CustomFont = SandboxMenuComponent.FontBebasNeue17, Suffix = attrib.InfoSuffix };
+
+            labelInfo.Tag = attrib;
+            HorizontalSliderControl input = new HorizontalSliderControl()
+            {
+                ThumbSize = 1 / (float)(attrib.MaxSliderValue - attrib.MinSliderValue)
+            };
+            input.Tag = value;
+            return new ParamRow() { ParamName = label, InputingComp = input, LabelInfo = labelInfo };
         }
 
         private static IEnumerable<PropertyInfo> GetParameters(object param)

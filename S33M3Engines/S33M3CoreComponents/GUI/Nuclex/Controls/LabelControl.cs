@@ -30,6 +30,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
     /// <summary>Control that draws a block of text</summary>
     public class LabelControl : Control
     {
+        public string Suffix { get; set; }
+
         public System.Drawing.FontStyle FontStyle { get; set; }
 
         public bool IsHeaderFont { get; set; }

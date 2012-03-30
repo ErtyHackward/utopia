@@ -27,6 +27,7 @@ namespace Utopia.Settings
     {
         public string ParamName { get; private set; }
         public string Info { get; private set; }
+        public string InfoSuffix { get; private set; }
         public ParamInputMethod InputMethod { get; private set; }
         public int? MinSliderValue { get; private set; }
         public int? MaxSliderValue { get; private set; }
@@ -34,11 +35,13 @@ namespace Utopia.Settings
 
         public ParameterAttribute(string paramName,
                                   string info,
+                                  string infoSuffix,
                                   ParamInputMethod inputMethod,     
                                   params string[] listValues)
         {
             ParamName = paramName;
             Info = info;
+            InfoSuffix = infoSuffix;
             InputMethod = inputMethod;
             MinSliderValue = null;
             MaxSliderValue = null;
@@ -47,6 +50,7 @@ namespace Utopia.Settings
 
         public ParameterAttribute(string paramName,
                                   string info,
+                                  string infoSuffix,
                                   ParamInputMethod inputMethod,
                                   int minSliderValue,
                                   int maxSliderValue,
@@ -54,6 +58,7 @@ namespace Utopia.Settings
         {
             ParamName = paramName;
             Info = info;
+            InfoSuffix = infoSuffix;
             InputMethod = inputMethod;
             MinSliderValue = minSliderValue;
             MaxSliderValue = maxSliderValue;
@@ -65,43 +70,9 @@ namespace Utopia.Settings
     /// Game parameters section
     /// </summary>
     [Serializable]
-    public class ServersList
-    {
-        [XmlElement("Servers")]
-        public List<ServerSetting> Servers = new List<ServerSetting>();
-    }
-
-    [Serializable]
-    public class ServerSetting
-    {
-        public string IPAddress { get; set; }
-        public string ServerName { get; set; }
-        public string DefaultUser { get; set; }
-        public string TexturePack { get; set; }
-        public string EffectPack { get; set; }
-
-        public override string ToString()
-        {
-            return ServerName + " [" + IPAddress + "]";
-        }
-
-        public ServerSetting()
-        {
-            TexturePack = "Default";
-            EffectPack = "Default";
-        }
-
-        public string ID { get { return ServerName + IPAddress + DefaultUser; } }
-
-    }
-
-    /// <summary>
-    /// Game parameters section
-    /// </summary>
-    [Serializable]
     public class GameParameters
     {
-        [ParameterAttribute("Nick Name", "You nick name in the world", ParamInputMethod.InputBox)]
+        [ParameterAttribute("Nick Name", "You nick name in the world", null, ParamInputMethod.InputBox)]
         public string NickName { get; set; }
     }
 
@@ -111,11 +82,11 @@ namespace Utopia.Settings
     [Serializable]
     public class GraphicalParameters
     {
-        [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 32]", ParamInputMethod.Slider, 10, 32)]
+        [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 32]", " chunk(s)" , ParamInputMethod.Slider, 10, 32)]
         public int WorldSize { get; set; }
-        [ParameterAttribute("Cloud's type", "Cloud visualisation type", ParamInputMethod.List, "None", "2D", "3D")]
+        [ParameterAttribute("Cloud's type", "Cloud visualisation type", null, ParamInputMethod.List, "None", "2D", "3D")]
         public string CloudsQuality { get; set; }
-        [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", ParamInputMethod.Slider, 8, 16)]
+        [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", " block(s)" ,ParamInputMethod.Slider, 4, 12)]
         public int LightPropagateSteps { get; set; }
     }
 
@@ -125,7 +96,7 @@ namespace Utopia.Settings
     [Serializable]
     public class EngineParameters
     {
-        [ParameterAttribute("Allocate more threads", "Allocate more threads to speed up all rendering routine", ParamInputMethod.Slider, 0, 4)]
+        [ParameterAttribute("Allocate more threads", "Allocate more threads to speed up all rendering routine", " thread(s)", ParamInputMethod.Slider, 0, 4)]
         public int AllocatedThreadsModifier { get; set; }
     }
 
@@ -259,11 +230,6 @@ namespace Utopia.Settings
         public KeyboardMapping KeyboardMapping { get; set; }
 
         /// <summary>
-        /// Server Lists
-        /// </summary>
-        public ServersList ServersList { get; set; }
-
-        /// <summary>
         /// Gets default configuration for qwerty keyboard type
         /// </summary>
         public static ClientConfig DefaultQwerty
@@ -315,8 +281,7 @@ namespace Utopia.Settings
                         Throw = new KeyWithModifier { MainKey = Keys.Back, Modifier = Keys.None, Info = "Throw" },
                         Inventory = new KeyWithModifier { MainKey = Keys.I, Modifier = Keys.None, Info = "Inventory" },
                         Map = new KeyWithModifier { MainKey = Keys.M, Modifier = Keys.None, Info = "Open/close the map" }
-                    },
-                    ServersList = new ServersList()
+                    }
                 };
             }
         }

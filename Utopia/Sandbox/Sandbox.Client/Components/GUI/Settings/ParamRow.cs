@@ -10,5 +10,6 @@ namespace Sandbox.Client.Components.GUI.Settings
     {
         public LabelControl ParamName;
         public Control InputingComp;
+        public LabelControl LabelInfo;
     }
 }

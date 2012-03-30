@@ -48,7 +48,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
             if (control.CustomFont != null)
             {
                 ByteColor color = control.Color;
-                graphics.DrawString(control.CustomFont, ref absoluteBounds, control.Text, ref color, control.Autosizing, -1, control.CustomHorizontalPlacement, control.CustomVerticalPlacement);
+                graphics.DrawString(control.CustomFont, ref absoluteBounds, control.Suffix == null ? control.Text : control.Text + control.Suffix, ref color, control.Autosizing, -1, control.CustomHorizontalPlacement, control.CustomVerticalPlacement);
             }
             else
             {
@@ -80,11 +80,11 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 if (control.ColorSet)
                 {
                     ByteColor color = control.Color;
-                    graphics.DrawString(styleFrame, 0, ref absoluteBounds, control.Text, ref color, control.Autosizing);
+                    graphics.DrawString(styleFrame, 0, ref absoluteBounds, control.Suffix == null ? control.Text : control.Text + control.Suffix, ref color, control.Autosizing);
                 }
                 else
                 {
-                    graphics.DrawString(styleFrame, 0, ref absoluteBounds, control.Text, control.Autosizing);
+                    graphics.DrawString(styleFrame, 0, ref absoluteBounds, control.Suffix == null ? control.Text : control.Text + control.Suffix, control.Autosizing);
                 }
             }
         }
