@@ -14,6 +14,53 @@ namespace Utopia.Settings
         public static string EffectPack = "EffectsPacks\\Default\\";
     }
 
+    public enum ParamInputMethod
+    {
+        InputBox,
+        CheckBox,
+        Slider,
+        List
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParameterAttribute : Attribute
+    {
+        public string ParamName { get; private set; }
+        public string Info { get; private set; }
+        public ParamInputMethod InputMethod { get; private set; }
+        public int? MinSliderValue { get; private set; }
+        public int? MaxSliderValue { get; private set; }
+        public List<string> ListValues { get; set; }
+
+        public ParameterAttribute(string paramName,
+                                  string info,
+                                  ParamInputMethod inputMethod,     
+                                  params string[] listValues)
+        {
+            ParamName = paramName;
+            Info = info;
+            InputMethod = inputMethod;
+            MinSliderValue = null;
+            MaxSliderValue = null;
+            ListValues = new List<string>(listValues);
+        }
+
+        public ParameterAttribute(string paramName,
+                                  string info,
+                                  ParamInputMethod inputMethod,
+                                  int minSliderValue,
+                                  int maxSliderValue,
+                                  params string[] listValues)
+        {
+            ParamName = paramName;
+            Info = info;
+            InputMethod = inputMethod;
+            MinSliderValue = minSliderValue;
+            MaxSliderValue = maxSliderValue;
+            ListValues = new List<string>(listValues);
+        }
+    }
+
     /// <summary>
     /// Game parameters section
     /// </summary>
@@ -54,7 +101,8 @@ namespace Utopia.Settings
     [Serializable]
     public class GameParameters
     {
-        public SettingsValue<string> NickName { get; set; }
+        [ParameterAttribute("Nick Name", "You nick name in the world", ParamInputMethod.InputBox)]
+        public string NickName { get; set; }
     }
 
     /// <summary>
@@ -63,9 +111,12 @@ namespace Utopia.Settings
     [Serializable]
     public class GraphicalParameters
     {
-        public SettingsValue<int> WorldSize { get; set; }
-        public SettingsValue<int> CloudsQuality { get; set; }
-        public SettingsValue<int> LightPropagateSteps { get; set; }
+        [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 32]", ParamInputMethod.Slider, 10, 32)]
+        public int WorldSize { get; set; }
+        [ParameterAttribute("Cloud's type", "Cloud visualisation type", ParamInputMethod.List, "None", "2D", "3D")]
+        public string CloudsQuality { get; set; }
+        [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", ParamInputMethod.Slider, 8, 16)]
+        public int LightPropagateSteps { get; set; }
     }
 
     /// <summary>
@@ -74,7 +125,8 @@ namespace Utopia.Settings
     [Serializable]
     public class EngineParameters
     {
-        public SettingsValue<int> AllocatedThreadsModifier { get; set; }
+        [ParameterAttribute("Allocate more threads", "Allocate more threads to speed up all rendering routine", ParamInputMethod.Slider, 0, 4)]
+        public int AllocatedThreadsModifier { get; set; }
     }
 
     /// <summary>
@@ -222,20 +274,20 @@ namespace Utopia.Settings
                 {
                     GameParameters = new GameParameters
                     {
-                        NickName = new SettingsValue<string>() { Value = "Utopia Guest", Name = "NickName", Info = "You nick name in the world" }
+                        NickName = "Utopia Guest" 
                     },
                     EngineParameters = new EngineParameters()
                     {
-                        AllocatedThreadsModifier = new SettingsValue<int>() { Value = 0, Name = "Allocate more threads", Info = "Allocate more threads to speed up all rendering routine" }
+                        AllocatedThreadsModifier = 0
                     },
                     SoundParameters = new SoundParameters()
                     {
                     },
                     GraphicalParameters = new GraphicalParameters
                     {
-                        WorldSize = new SettingsValue<int>() { Value = 32, Name = "World Size", Info = "World size in chunk unit between [10 and 32]" },
-                        CloudsQuality = new SettingsValue<int>() { Value = 1, Name = "Cloud Style", Info = "0 = Flat, 1 = 3D" },
-                        LightPropagateSteps = new SettingsValue<int>() { Value = 8, Name = "Light propagation", Info = "Maximum size of light propagation in block unit" }
+                        WorldSize = 32,
+                        CloudsQuality = "2D",
+                        LightPropagateSteps = 8
                     },
                     KeyboardMapping = new KeyboardMapping
                     {

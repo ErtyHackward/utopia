@@ -249,7 +249,7 @@ namespace Sandbox.Client.States
             var serverComponent = _ioc.Get<ServerComponent>();
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
             var wordParameters = _ioc.Get<WorldParameters>();
-            var visualWorldParameters = _ioc.Get<VisualWorldParameters>(new ConstructorArgument("visibleChunkInWorld", new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize.Value, ClientSettings.Current.Settings.GraphicalParameters.WorldSize.Value)));
+            var visualWorldParameters = _ioc.Get<VisualWorldParameters>(new ConstructorArgument("visibleChunkInWorld", new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize, ClientSettings.Current.Settings.GraphicalParameters.WorldSize)));
             var firstPersonCamera = _ioc.Get<ICamera>();
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
             var timerManager = _ioc.Get<TimerManager>();
