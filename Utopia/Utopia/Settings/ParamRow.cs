@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 
-namespace Sandbox.Client.Components.GUI.Settings
+namespace Utopia.Settings
 {
     public class ParamRow
     {
+        public ParamInputMethod ParamInputMethod;
         public LabelControl ParamName;
         public Control InputingComp;
         public LabelControl LabelInfo;

@@ -47,7 +47,12 @@ namespace Sandbox.Client.Components.GUI.Settings
                 CustomFont = SandboxMenuComponent.FontBebasNeue25
             };
 
-            Parameters = new List<ParamRow>(Settings2Components.CreateComponentsRows(ClientSettings.Current.Settings.GraphicalParameters));            
+            Parameters = new List<ParamRow>(Settings2Components.CreateComponentsRows(ClientSettings.Current.Settings.GraphicalParameters, 
+                                                                                     SandboxMenuComponent.FontBebasNeue17, 
+                                                                                     SandboxMenuComponent.StInputBackground,
+                                                                                     SandboxMenuComponent.StButtonBackground,
+                                                                                     SandboxMenuComponent.StButtonBackgroundDown,
+                                                                                     SandboxMenuComponent.StButtonBackgroundHover));            
         }
 
         private void BindComponents()
@@ -58,15 +63,53 @@ namespace Sandbox.Client.Components.GUI.Settings
                 this.Children.Add(ToDispose(row.ParamName));
                 this.Children.Add(ToDispose(row.InputingComp));
                 if (row.LabelInfo != null) this.Children.Add(ToDispose(row.LabelInfo));
-                if (row.InputingComp is SliderControl)
+                switch (row.ParamInputMethod)
                 {
-                    int valueThumb = (int)row.InputingComp.Tag;
-                    row.InputingComp.Tag = row;
-                    ((SliderControl)row.InputingComp).Moved += SliderControl_Moved;
-                    SliderTextResfresh((SliderControl)row.InputingComp);
-                    SetSliderThumb((SliderControl)row.InputingComp, valueThumb);
+                    case ParamInputMethod.InputBox:
+                        break;
+                    case ParamInputMethod.CheckBox:
+                        break;
+                    case ParamInputMethod.Slider:
+                        int valueThumb = (int)row.InputingComp.Tag;
+                        row.InputingComp.Tag = row;
+                        ((SliderControl)row.InputingComp).Moved += SliderControl_Moved;
+                        SliderTextResfresh((SliderControl)row.InputingComp);
+                        SetSliderThumb((SliderControl)row.InputingComp, valueThumb);
+                        break;
+                    case ParamInputMethod.ButtonList:
+                        ((ButtonControl)row.InputingComp).Pressed += new EventHandler(ButtonList_Pressed);
+                        break;
+                    default:
+                        break;
                 }
             }
+        }
+
+        private void SaveChange()
+        {
+            foreach (ParamRow row in Parameters)
+            {
+                FieldInfo field = (FieldInfo)row.ParamName.Tag;
+            }
+        }
+
+        void ButtonList_Pressed(object sender, EventArgs e)
+        {
+            ButtonControl bt = (ButtonControl)sender;
+            List<string> values = (List<string>)bt.Tag;
+            string newValue = values[0];
+            try
+            {
+                int currentIndex = values.FindIndex(x => x == bt.Text);
+                currentIndex = currentIndex == values.Count - 1 ? 0 : currentIndex + 1;
+                newValue = values[currentIndex];
+
+                SaveChange();
+            }
+            catch (Exception)
+            {
+            }
+            bt.Text = newValue;
         }
 
         private void SliderControl_Moved(object sender, EventArgs e)
@@ -101,14 +144,23 @@ namespace Sandbox.Client.Components.GUI.Settings
             foreach (ParamRow row in Parameters)
             {
                 row.ParamName.Bounds = new UniRectangle(BorderMargin, lineHeight, 1 , 0);
-                if (row.InputingComp is HorizontalSliderControl)
+                switch (row.ParamInputMethod)
                 {
-                    row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 5, 150, 25);
+                    case ParamInputMethod.InputBox:
+                        row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 5, 50, 25);
+                        break;
+                    case ParamInputMethod.CheckBox:
+                        break;
+                    case ParamInputMethod.Slider:
+                        row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 5, 150, 25);
+                        break;
+                    case ParamInputMethod.ButtonList:
+                        row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 7, 150, 30);
+                        break;
+                    default:
+                        break;
                 }
-                else if (row.InputingComp is InputControl)
-                {
-                    row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 5, 50, 25);
-                }
+
                 if (row.LabelInfo != null) row.LabelInfo.Bounds = new UniRectangle(row.InputingComp.Bounds.Location.X + row.InputingComp.Bounds.Size.X + 10, lineHeight, 1, 0);
                 lineHeight += 30;
             }

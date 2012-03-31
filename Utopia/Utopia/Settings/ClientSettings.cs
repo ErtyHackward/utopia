@@ -19,7 +19,7 @@ namespace Utopia.Settings
         InputBox,
         CheckBox,
         Slider,
-        List
+        ButtonList
     }
 
     [AttributeUsage(AttributeTargets.Property)]
@@ -84,7 +84,7 @@ namespace Utopia.Settings
     {
         [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 32]", " chunk(s)" , ParamInputMethod.Slider, 10, 32)]
         public int WorldSize { get; set; }
-        [ParameterAttribute("Cloud's type", "Cloud visualisation type", null, ParamInputMethod.List, "None", "2D", "3D")]
+        [ParameterAttribute("Cloud's type", "Cloud visualisation type", null, ParamInputMethod.ButtonList, "None", "2D", "3D")]
         public string CloudsQuality { get; set; }
         [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", " block(s)" ,ParamInputMethod.Slider, 4, 12)]
         public int LightPropagateSteps { get; set; }
