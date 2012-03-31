@@ -37,6 +37,9 @@ namespace Sandbox.Client.Components.GUI
         public static SpriteTexture StCubesPattern;
         public static SpriteTexture StLinenPattern;
         public static SpriteTexture StInputBackground;
+        public static SpriteTexture StButtonBackground;
+        public static SpriteTexture StButtonBackgroundDown;
+        public static SpriteTexture StButtonBackgroundHover;
 
         public static SpriteFont FontBebasNeue35;
         public static SpriteFont FontBebasNeue25;
@@ -81,6 +84,9 @@ namespace Sandbox.Client.Components.GUI
             StCubesPattern  = LoadTexture(engine, "Images\\cubes.png");
             StLinenPattern  = LoadTexture(engine, "Images\\black-linen.png");
             StInputBackground = LoadTexture(engine, "Images\\Login\\login_input_bg.png");
+            StButtonBackground = LoadTexture(engine, @"Images\MainMenu\menu_button.png");
+            StButtonBackgroundDown = LoadTexture(engine, @"Images\MainMenu\menu_button_hover.png");
+            StButtonBackgroundHover = LoadTexture(engine, @"Images\MainMenu\menu_button_down.png");
 
             fontCollection = new PrivateFontCollection();
             fontCollection.AddFontFile("Images\\BebasNeue.ttf");
