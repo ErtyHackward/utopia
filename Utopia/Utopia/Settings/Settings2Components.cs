@@ -25,16 +25,16 @@ namespace Utopia.Settings
                 switch (attrib.InputMethod)
                 {
                     case ParamInputMethod.InputBox:
-                        yield return AddInputComponent(attrib.ParamName, value, DataTypes.GetTypeFamilly(value.GetType()) == DataTypes.typeFamilly.IntegerNumber, customFont, customInputBackgroundTexture);
+                        yield return AddInputComponent(attrib.ParamName, value, data.Name, DataTypes.GetTypeFamilly(value.GetType()) == DataTypes.typeFamilly.IntegerNumber, customFont, customInputBackgroundTexture);
                         break;
                     case ParamInputMethod.CheckBox:
-                        yield return AddInputComponent(attrib.ParamName, value, DataTypes.GetTypeFamilly(value.GetType()) == DataTypes.typeFamilly.IntegerNumber, customFont, customInputBackgroundTexture);
+                        yield return AddInputComponent(attrib.ParamName, value, data.Name, DataTypes.GetTypeFamilly(value.GetType()) == DataTypes.typeFamilly.IntegerNumber, customFont, customInputBackgroundTexture);
                         break;
                     case ParamInputMethod.Slider:
-                        yield return AddSliderComponent(attrib.ParamName, value, attrib, customFont);
+                        yield return AddSliderComponent(attrib.ParamName, value, data.Name, attrib, customFont);
                         break;
                     case ParamInputMethod.ButtonList:
-                        yield return AddListComponent(attrib.ParamName, value, attrib, customFont, customButton, customButtonDown, customButtonHover);
+                        yield return AddListComponent(attrib.ParamName, value, data.Name, attrib, customFont, customButton, customButtonDown, customButtonHover);
                         break;
                     default:
                         break;
@@ -42,7 +42,7 @@ namespace Utopia.Settings
             }
         }
 
-        private static ParamRow AddInputComponent(string ParameterName, object value, bool isNumeric, SpriteFont customFont, SpriteTexture customInputBackgroundTexture)
+        private static ParamRow AddInputComponent(string ParameterName, object value, string fieldName, bool isNumeric, SpriteFont customFont, SpriteTexture customInputBackgroundTexture)
         {
             LabelControl label = new LabelControl() { Text = ParameterName, CustomFont = customFont };
             InputControl input = new InputControl()
@@ -53,10 +53,12 @@ namespace Utopia.Settings
                 CustomFont = customFont,
                 Color = SharpDX.Colors.White
             };
-            return new ParamRow() { ParamName = label, InputingComp = input, ParamInputMethod = ParamInputMethod.InputBox };
+            ParamRow row = new ParamRow() { LabelName = label, InputingComp = input, ParamInputMethod = ParamInputMethod.InputBox, FieldData = new ParamValue() { Value = value, Name = fieldName } };
+            input.Tag2 = row;
+            return row;
         }
 
-        private static ParamRow AddListComponent(string ParameterName, object value, ParameterAttribute attrib, SpriteFont customFont, SpriteTexture customButton, SpriteTexture customButtonDown, SpriteTexture customButtonHover)
+        private static ParamRow AddListComponent(string ParameterName, object value, string fieldName, ParameterAttribute attrib, SpriteFont customFont, SpriteTexture customButton, SpriteTexture customButtonDown, SpriteTexture customButtonHover)
         {
             LabelControl label = new LabelControl() { Text = ParameterName, CustomFont = customFont };
             ButtonControl buttonList = new ButtonControl()
@@ -69,21 +71,28 @@ namespace Utopia.Settings
                 Color = new ByteColor(200, 200, 200, 255)
             };
             buttonList.Tag = attrib.ListValues;
-            return new ParamRow() { ParamName = label, InputingComp = buttonList, ParamInputMethod = ParamInputMethod.ButtonList };
+            ParamRow row = new ParamRow() { LabelName = label, InputingComp = buttonList, ParamInputMethod = ParamInputMethod.ButtonList, FieldData = new ParamValue() { Value = value, Name = fieldName } };
+            buttonList.Tag2 = row;
+            return row;
         }
 
-        private static ParamRow AddSliderComponent(string ParameterName, object value, ParameterAttribute attrib, SpriteFont customFont)
+        private static ParamRow AddSliderComponent(string ParameterName, object value, string fieldName, ParameterAttribute attrib, SpriteFont customFont)
         {
             LabelControl label = new LabelControl() { Text = ParameterName, CustomFont = customFont };
             LabelControl labelInfo = new LabelControl() { Text = "???", CustomFont = customFont, Suffix = attrib.InfoSuffix };
 
-            labelInfo.Tag = attrib;
             HorizontalSliderControl input = new HorizontalSliderControl()
             {
-                ThumbSize = 1 / (float)(attrib.MaxSliderValue - attrib.MinSliderValue)
+                ThumbSize = 1 / (float)(attrib.MaxSliderValue - attrib.MinSliderValue),
+                ThumbSmoothMovement = false
             };
-            input.Tag = value;
-            return new ParamRow() { ParamName = label, InputingComp = input, LabelInfo = labelInfo, ParamInputMethod = ParamInputMethod.Slider };
+            input.ThumbMinValue = (int)attrib.MinSliderValue;
+            input.ThumbMaxValue = (int)attrib.MaxSliderValue;
+            input.Value = (int)value;
+            input.Tag = labelInfo;
+            ParamRow row = new ParamRow() { LabelName = label, InputingComp = input, LabelInfo = labelInfo, ParamInputMethod = ParamInputMethod.Slider, FieldData = new ParamValue() { Value = value, Name = fieldName } };
+            input.Tag2 = row;
+            return row;
         }
 
         private static IEnumerable<PropertyInfo> GetParameters(object param)

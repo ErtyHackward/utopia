@@ -99,12 +99,16 @@
     <Compile Include="Components\GUI\LoadingComponent.cs" />
     <Compile Include="Components\GUI\LoginComponent.cs" />
     <Compile Include="Components\GUI\MainMenuComponent.cs" />
+    <Compile Include="Components\GUI\Settings\CoreEngineSettingsPanel.cs" />
     <Compile Include="Components\GUI\Settings\GraphicSettingsPanel.cs" />
-    <Compile Include="Components\GUI\Settings\GraphicSettingsPanel.Designer.cs">
-      <DependentUpon>GraphicSettingsPanel.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Components\GUI\Settings\KeyBindingSettingsPanel.cs" />
     <Compile Include="Components\GUI\Settings\SettingsComponent.cs" />
     <Compile Include="Components\GUI\SandboxMenuComponent.cs" />
+    <Compile Include="Components\GUI\Settings\SettingsPanel.cs" />
+    <Compile Include="Components\GUI\Settings\SettingsPanel.Designer.cs">
+      <DependentUpon>SettingsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\GUI\Settings\SoundSettingsPanel.cs" />
     <Compile Include="Components\SandboxSoundManager.cs" />
     <Compile Include="Components\GUI\ServerSelectionComponent.cs" />
     <Compile Include="Components\GUI\Settings\SettingsComponent.Designer.cs">
