@@ -49,6 +49,22 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
             base.Dispose();
         }
 
+        public int ThumbMinValue { get; set; }
+        public int ThumbMaxValue { get; set; }
+        public bool ThumbSmoothMovement { get; set; }
+        private int _value;
+
+        public int Value
+        {
+            get { return _value; }
+            set { _value = value; SetSliderThumb(value); }
+        }
+
+        public virtual void SetSliderThumb(int value)
+        {
+            ThumbPosition = (float)(value - ThumbMinValue) / (float)(ThumbMaxValue - ThumbMinValue);
+        }
+
         /// <summary>Triggered when the slider has been moved</summary>
         public event EventHandler Moved;
 
@@ -138,6 +154,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
             if (Moved != null)
             {
                 Moved(this, EventArgs.Empty);
+            }
+            if (ThumbSmoothMovement)
+            {
+                _value = ((int)S33M3CoreComponents.Maths.MathHelper.Lerp(ThumbMinValue, ThumbMaxValue, ThumbPosition));
+            }
+            else
+            {
+                Value = ((int)S33M3CoreComponents.Maths.MathHelper.Lerp(ThumbMinValue, ThumbMaxValue, ThumbPosition));
             }
         }
 

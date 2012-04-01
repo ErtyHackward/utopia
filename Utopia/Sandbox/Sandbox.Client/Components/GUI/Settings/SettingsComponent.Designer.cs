@@ -12,6 +12,7 @@ using S33M3Resources.Structs;
 using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.Textures;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat;
+using Utopia.Settings;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {
@@ -40,6 +41,9 @@ namespace Sandbox.Client.Components.GUI.Settings
 
         //Various Panels
         protected GraphicSettingsPanel _graphSettingsPanel;
+        protected CoreEngineSettingsPanel _coreEngineSetingsPanel;
+        protected SoundSettingsPanel _soundSettingsPanel;
+        protected KeyBindingSettingsPanel _keyBindingSettingsPanel;
 
         protected void InitializeComponent()
         {
@@ -87,7 +91,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                 CustomImageDown = _stMenuDown,
                 CustomImageHover = _stMenuHover,
                 TextFontId = 1,
-                Text = "System Engine",
+                Text = "Core Engine",
                 Color = new ByteColor(200, 200, 200, 255)
             };
             _btCoreEngine.Pressed += delegate { btCoreEnginePressed(); };
@@ -172,7 +176,8 @@ namespace Sandbox.Client.Components.GUI.Settings
 
                 _btBack.Bounds = new UniRectangle(5, new UniScalar(1, -60), _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
 
-                if(_graphSettingsPanel != null) _graphSettingsPanel.Resize();
+                if (_graphSettingsPanel != null) _graphSettingsPanel.Resize();
+                if (_coreEngineSetingsPanel != null) _coreEngineSetingsPanel.Resize();
             }
         }
 
@@ -184,7 +189,7 @@ namespace Sandbox.Client.Components.GUI.Settings
 
         private void btGraphicPressed()
         {
-            if (_graphSettingsPanel == null) _graphSettingsPanel = new GraphicSettingsPanel(_backPanel) { Bounds = new UniRectangle(0,0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
+            if (_graphSettingsPanel == null) _graphSettingsPanel = new GraphicSettingsPanel(this, ClientSettings.Current.Settings.GraphicalParameters) { Bounds = new UniRectangle(0,0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
             if (_backPanel.Children.Contains(_graphSettingsPanel) == false)
             {
                 _backPanel.Children.Clear();
@@ -194,16 +199,32 @@ namespace Sandbox.Client.Components.GUI.Settings
 
         private void btSoundPressed()
         {
-            _backPanel.Children.Clear();
+            if (_soundSettingsPanel == null) _soundSettingsPanel = new SoundSettingsPanel(this, ClientSettings.Current.Settings.SoundParameters) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
+            if (_backPanel.Children.Contains(_soundSettingsPanel) == false)
+            {
+                _backPanel.Children.Clear();
+                _backPanel.Children.Add(_soundSettingsPanel);
+            }
         }
 
         private void btCoreEnginePressed()
         {
-            _backPanel.Children.Clear();
+            if (_coreEngineSetingsPanel == null) _coreEngineSetingsPanel = new CoreEngineSettingsPanel(this, ClientSettings.Current.Settings.EngineParameters) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
+            if (_backPanel.Children.Contains(_coreEngineSetingsPanel) == false)
+            {
+                _backPanel.Children.Clear();
+                _backPanel.Children.Add(_coreEngineSetingsPanel);
+            }
         }
 
         private void btKeyBindingPressed()
         {
+            //if (_keyBindingSettingsPanel == null) _keyBindingSettingsPanel = new KeyBindingSettingsPanel(this, ClientSettings.Current.Settings.KeyboardMapping) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
+            //if (_backPanel.Children.Contains(_keyBindingSettingsPanel) == false)
+            //{
+            //    _backPanel.Children.Clear();
+            //    _backPanel.Children.Add(_keyBindingSettingsPanel);
+            //}
             _backPanel.Children.Clear();
         }
 

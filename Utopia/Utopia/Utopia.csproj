@@ -171,6 +171,7 @@
     <Compile Include="GameDXStates\DXStates.cs" />
     <Compile Include="Network\ServerComponent.cs" />
     <Compile Include="Settings\ParamRow.cs" />
+    <Compile Include="Settings\ParamValue.cs" />
     <Compile Include="Settings\Settings2Components.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

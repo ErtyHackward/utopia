@@ -9,7 +9,8 @@ namespace Utopia.Settings
     public class ParamRow
     {
         public ParamInputMethod ParamInputMethod;
-        public LabelControl ParamName;
+        public ParamValue FieldData;
+        public LabelControl LabelName;
         public Control InputingComp;
         public LabelControl LabelInfo;
     }
