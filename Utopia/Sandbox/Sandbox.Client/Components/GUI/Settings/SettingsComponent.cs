@@ -70,68 +70,76 @@ namespace Sandbox.Client.Components.GUI.Settings
             Type reflectedType;
             PropertyInfo[] pi;
             //Saving Graphical Parameters ========================================================
-            if (_graphSettingsPanel != null) Parameters = this._graphSettingsPanel.Parameters;
-
-            //Saving the Graphical changes
-            Parameter = ClientSettings.Current.Settings.GraphicalParameters;
-            reflectedType = Parameter.GetType();
-            pi = reflectedType.GetProperties();
-            foreach (ParamRow row in Parameters)
+            if (_graphSettingsPanel != null)
             {
-                var piTmp = pi.First(x => x.Name == row.FieldData.Name);
-                if (row.FieldData.Value.GetType() != piTmp.PropertyType)
+                Parameters = this._graphSettingsPanel.Parameters;
+
+                //Saving the Graphical changes
+                Parameter = ClientSettings.Current.Settings.GraphicalParameters;
+                reflectedType = Parameter.GetType();
+                pi = reflectedType.GetProperties();
+                foreach (ParamRow row in Parameters)
                 {
-                    var castedValue = piTmp.PropertyType.InvokeMember("Parse", BindingFlags.InvokeMethod, null, piTmp.PropertyType, new object[] { row.FieldData.Value });
-                    piTmp.SetValue(Parameter, castedValue, null);
-                }
-                else
-                {
-                    piTmp.SetValue(Parameter, row.FieldData.Value, null);
+                    var piTmp = pi.First(x => x.Name == row.FieldData.Name);
+                    if (row.FieldData.Value.GetType() != piTmp.PropertyType)
+                    {
+                        var castedValue = piTmp.PropertyType.InvokeMember("Parse", BindingFlags.InvokeMethod, null, piTmp.PropertyType, new object[] { row.FieldData.Value });
+                        piTmp.SetValue(Parameter, castedValue, null);
+                    }
+                    else
+                    {
+                        piTmp.SetValue(Parameter, row.FieldData.Value, null);
+                    }
                 }
             }
 
             //Saving Core Engine Parameters ========================================================
-            if (_coreEngineSetingsPanel != null) Parameters = this._coreEngineSetingsPanel.Parameters;
-
-            //Saving the Graphical changes
-            Parameter = ClientSettings.Current.Settings.EngineParameters;
-            reflectedType = ClientSettings.Current.Settings.EngineParameters.GetType();
-            pi = reflectedType.GetProperties();
-            foreach (ParamRow row in Parameters)
+            if (_coreEngineSetingsPanel != null)
             {
-                var piTmp = pi.First(x => x.Name == row.FieldData.Name);
-                if (row.FieldData.Value.GetType() != piTmp.PropertyType)
+                Parameters = this._coreEngineSetingsPanel.Parameters;
+
+                //Saving the Graphical changes
+                Parameter = ClientSettings.Current.Settings.EngineParameters;
+                reflectedType = ClientSettings.Current.Settings.EngineParameters.GetType();
+                pi = reflectedType.GetProperties();
+                foreach (ParamRow row in Parameters)
                 {
-                    var castedValue = piTmp.PropertyType.InvokeMember("Parse", BindingFlags.InvokeMethod, null, piTmp.PropertyType, new object[] { row.FieldData.Value });
-                    piTmp.SetValue(Parameter, castedValue, null);
-                }
-                else
-                {
-                    piTmp.SetValue(Parameter, row.FieldData.Value, null);
+                    var piTmp = pi.First(x => x.Name == row.FieldData.Name);
+                    if (row.FieldData.Value.GetType() != piTmp.PropertyType)
+                    {
+                        var castedValue = piTmp.PropertyType.InvokeMember("Parse", BindingFlags.InvokeMethod, null, piTmp.PropertyType, new object[] { row.FieldData.Value });
+                        piTmp.SetValue(Parameter, castedValue, null);
+                    }
+                    else
+                    {
+                        piTmp.SetValue(Parameter, row.FieldData.Value, null);
+                    }
                 }
             }
 
             //Saving Sound Engine Parameters ========================================================
-            if (_soundSettingsPanel != null) Parameters = this._soundSettingsPanel.Parameters;
-
-            //Saving the Graphical changes
-            Parameter = ClientSettings.Current.Settings.SoundParameters;
-            reflectedType = ClientSettings.Current.Settings.EngineParameters.GetType();
-            pi = reflectedType.GetProperties();
-            foreach (ParamRow row in Parameters)
+            if (_soundSettingsPanel != null)
             {
-                var piTmp = pi.First(x => x.Name == row.FieldData.Name);
-                if (row.FieldData.Value.GetType() != piTmp.PropertyType)
+                Parameters = this._soundSettingsPanel.Parameters;
+
+                //Saving the Graphical changes
+                Parameter = ClientSettings.Current.Settings.SoundParameters;
+                reflectedType = ClientSettings.Current.Settings.SoundParameters.GetType();
+                pi = reflectedType.GetProperties();
+                foreach (ParamRow row in Parameters)
                 {
-                    var castedValue = piTmp.PropertyType.InvokeMember("Parse", BindingFlags.InvokeMethod, null, piTmp.PropertyType, new object[] { row.FieldData.Value });
-                    piTmp.SetValue(Parameter, castedValue, null);
-                }
-                else
-                {
-                    piTmp.SetValue(Parameter, row.FieldData.Value, null);
+                    var piTmp = pi.First(x => x.Name == row.FieldData.Name);
+                    if (row.FieldData.Value.GetType() != piTmp.PropertyType)
+                    {
+                        var castedValue = piTmp.PropertyType.InvokeMember("Parse", BindingFlags.InvokeMethod, null, piTmp.PropertyType, new object[] { row.FieldData.Value });
+                        piTmp.SetValue(Parameter, castedValue, null);
+                    }
+                    else
+                    {
+                        piTmp.SetValue(Parameter, row.FieldData.Value, null);
+                    }
                 }
             }
-
             ClientSettings.Current.Save();
         }
 
