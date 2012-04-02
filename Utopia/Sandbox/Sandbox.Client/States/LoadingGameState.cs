@@ -266,10 +266,9 @@ namespace Sandbox.Client.States
             var stars = _ioc.Get<IDrawableComponent>("Stars");
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
-            var clouds = _ioc.Get<IDrawableComponent>("Clouds_flat");
+            var clouds = _ioc.Get<IDrawableComponent>("Clouds");
             var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
             var solidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("SolidCubeMeshFactory");
-
             var liquidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("LiquidCubeMeshFactory");
             var singleArrayChunkContainer = _ioc.Get<SingleArrayChunkContainer>();
             var landscapeManager = _ioc.Get<ILandscapeManager>();

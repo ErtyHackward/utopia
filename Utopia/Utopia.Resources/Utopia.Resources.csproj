@@ -75,6 +75,7 @@
     <Compile Include="Effects\Terran\HLSLLiquid.cs" />
     <Compile Include="Effects\Terran\HLSLTerran.cs" />
     <Compile Include="Effects\Weather\HLSLClouds2D.cs" />
+    <Compile Include="Effects\Weather\HLSLClouds3D.cs" />
     <Compile Include="ModelComp\BoundingBox3D.cs" />
     <Compile Include="ModelComp\Interfaces.cs" />
     <Compile Include="ModelComp\Line3d.cs" />

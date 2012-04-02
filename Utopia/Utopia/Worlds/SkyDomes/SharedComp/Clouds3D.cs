@@ -24,6 +24,7 @@ using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
+using UtopiaContent.Effects.Weather;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -51,7 +52,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private VertexPosition3Color[] _vertices;
         private int _nbrIndices, _nbrVertices;
         private int _maxNbrIndices, _maxNbrVertices;
-        private HLSLVertexPositionColor _effect;
+        private HLSLClouds3D _effect;
         private FTSValue<Vector2> _cloud_MapOffset;
         private ByteColor _topFace, _side1Face, _side2Face, _bottomFace;
 
@@ -87,7 +88,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
             _noise = new SimplexNoise(new Random());
             _noise.SetParameters(0.075, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
-            _effect = new HLSLVertexPositionColor(_d3dEngine.Device);
+            _effect = new HLSLClouds3D(_d3dEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds3D.hlsl");
 
             _maxNbrIndices = 15000;
             _maxNbrVertices = 10000;
