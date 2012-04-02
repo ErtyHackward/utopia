@@ -31,15 +31,9 @@ namespace UtopiaContent.Effects.Weather
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
 
-        [StructLayout(LayoutKind.Explicit, Size = 128)]
-        public struct CBPerFrame_Struct
-        {
-            [FieldOffset(0)]
-            public Matrix View;
-            [FieldOffset(64)]
-            public Matrix Projection;
-        }
-        public CBuffer<CBPerFrame_Struct> CBPerFrame;
+        public ShaderResource SolidBackBuffer;
+        public ShaderSampler SamplerBackBuffer;
+
         #endregion
 
         #region Define Shaders EntryPoints Names
@@ -51,16 +45,19 @@ namespace UtopiaContent.Effects.Weather
         };
         #endregion
 
-        public HLSLClouds3D(Device device, string effectPath)
-            : base(device, effectPath, VertexPosition3Color.VertexDeclaration)
+        public HLSLClouds3D(Device device, string effectPath, params iCBuffer[] externalCBuffers)
+            : base(device, effectPath, VertexPosition3Color.VertexDeclaration, externalCBuffers)
         {
-
             //Create Constant Buffers interfaces
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));
             CBuffers.Add(CBPerDraw);
 
-            CBPerFrame = ToDispose(new CBuffer<CBPerFrame_Struct>(device, "PerFrame"));
-            CBuffers.Add(CBPerFrame);
+            //Create the resource interfaces ==================================================
+            SamplerBackBuffer = new ShaderSampler("SamplerBackBuffer");
+            ShaderSamplers.Add(SamplerBackBuffer);
+
+            SolidBackBuffer = new ShaderResource("SolidBackBuffer", false);
+            ShaderResources.Add(SolidBackBuffer);
 
             //Load the shaders only after the CBuffer have been defined
             base.LoadShaders(_shadersEntryPoint);

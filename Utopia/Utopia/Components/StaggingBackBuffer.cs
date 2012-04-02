@@ -41,6 +41,7 @@ namespace Utopia.Components
             if (_solidBackBuffer != null) _solidBackBuffer.Dispose();
             if (_solidStaggingBackBuffer != null) _solidStaggingBackBuffer.Dispose();
             _engine.ViewPort_Updated -= engine_ViewPort_Updated;
+
             base.Dispose();
         }
 

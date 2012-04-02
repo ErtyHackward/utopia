@@ -25,6 +25,8 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
 using UtopiaContent.Effects.Weather;
+using Utopia.Effects.Shared;
+using Utopia.Components;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -61,12 +63,14 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private int _cloudMapSize;
         private int _cloudMapSizeSquare;
         private bool[] _cloudMap;
+        private SharedFrameCB _sharedCB;
+        private StaggingBackBuffer _solidBackBuffer;
         #endregion
 
         #region Public properties
         #endregion
 
-        public Clouds3D(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager, IWeather weather, VisualWorldParameters worldParam, WorldFocusManager worldFocusManager, IClock worldclock)
+        public Clouds3D(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager, IWeather weather, VisualWorldParameters worldParam, WorldFocusManager worldFocusManager, IClock worldclock, StaggingBackBuffer solidBackBuffer)
         {
             _d3dEngine = d3dEngine;
             _worldParam = worldParam;
@@ -74,6 +78,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _camManager = camManager;
             _worldclock = worldclock;
             _worldFocusManager = worldFocusManager;
+            _solidBackBuffer = solidBackBuffer;
             _cloud_MapOffset = new FTSValue<Vector2>();
             _cloudMap_size = (int)(worldParam.WorldVisibleSize.X / _cloud_size * 4);
 
@@ -83,12 +88,18 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _cloudMap = new bool[_cloudMapSizeSquare];
         }
 
+        public void LateInitialization(SharedFrameCB sharedCB)
+        {
+            _sharedCB = sharedCB;
+        }
+
         #region Public methods
         public override void Initialize()
         {
             _noise = new SimplexNoise(new Random());
             _noise.SetParameters(0.075, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
-            _effect = new HLSLClouds3D(_d3dEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds3D.hlsl");
+            _effect = new HLSLClouds3D(_d3dEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds3D.hlsl", _sharedCB.CBPerFrame);
+            _effect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
 
             _maxNbrIndices = 15000;
             _maxNbrVertices = 10000;
@@ -271,12 +282,10 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             if (_cloudVB == null) _cloudVB = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, _nbrVertices, VertexPosition3Color.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB", ResourceUsage.Dynamic, 10);
             _cloudVB.SetData(_d3dEngine.ImmediateContext , _vertices, 0, _nbrVertices, true);
 
-            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
 
             _effect.Begin(_d3dEngine.ImmediateContext);
-            _effect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View_focused);
-            _effect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
-            _effect.CBPerFrame.IsDirty = true;
+            _effect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
 
             Matrix world = Matrix.Identity;
 

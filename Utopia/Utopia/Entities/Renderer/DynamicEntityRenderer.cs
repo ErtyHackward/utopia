@@ -31,7 +31,6 @@ namespace Utopia.Entities.Renderer
         private CameraManager<ICameraFocused> _camManager;
         private WorldFocusManager _worldFocusManager;
         private ShaderResourceView _cubeTexture_View;
-        private ISkyDome _skydome;
         private VisualWorldParameters _visualWorldParameters;
         private VisualVoxelEntity _entityToRender;
         #endregion
@@ -45,12 +44,10 @@ namespace Utopia.Entities.Renderer
         public DynamicEntityRenderer(D3DEngine d3DEngine,
                                     CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
-                                    ISkyDome skydome,
                                     VisualWorldParameters visualWorldParameters)
         {
             _d3DEngine = d3DEngine;
             _camManager = camManager;
-            _skydome = skydome;
             _visualWorldParameters = visualWorldParameters;
             _worldFocusManager = worldFocusManager;
         }

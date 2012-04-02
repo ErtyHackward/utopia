@@ -140,6 +140,9 @@ namespace Utopia.Worlds.Chunks
 
             _liquidEffect.Begin(context);
 
+            _liquidEffect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
+            _liquidEffect.SolidBackBuffer.IsDirty = true;
+
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
@@ -153,13 +156,6 @@ namespace Utopia.Worlds.Chunks
                         _liquidEffect.CBPerDraw.Values.Opaque = chunk.Opaque;
                         _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _liquidEffect.CBPerDraw.IsDirty = true;
-
-                        _liquidEffect.CBPerDrawGroup.Values.BackBufferSize = _solidBackBuffer.SolidStaggingBackBufferSize;
-                        _liquidEffect.CBPerDrawGroup.IsDirty = true;
-
-                        _liquidEffect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
-                        _liquidEffect.SolidBackBuffer.IsDirty = true;
-
                         _liquidEffect.Apply(context);
                         chunk.DrawLiquidFaces(context);
                     }

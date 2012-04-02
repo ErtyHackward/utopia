@@ -146,9 +146,7 @@
     <Compile Include="GUI\Forms\CustControls\SinglePlayer.Designer.cs">
       <DependentUpon>SinglePlayer.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\Forms\WelcomeScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="GUI\Forms\WelcomeScreen.cs" />
     <Compile Include="GUI\Forms\WelcomeScreen.Designer.cs">
       <DependentUpon>WelcomeScreen.cs</DependentUpon>
     </Compile>
