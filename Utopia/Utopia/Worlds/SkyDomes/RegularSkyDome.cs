@@ -52,7 +52,7 @@ namespace Utopia.Worlds.SkyDomes
         private ShaderResourceView _skyTex_View, _moonTex_View, _glowTex_View;
         private HLSLPlanetSkyDome _skyDomeEffect;
         private HLSLVertexPositionTexture _posiTextureEffect;
-
+        private int cloudDrawIndex;
         #endregion
 
         #region Public properties/Variables
@@ -73,6 +73,7 @@ namespace Utopia.Worlds.SkyDomes
             _clouds = clouds;
 
             this.DrawOrders.UpdateIndex(0, 998);
+            cloudDrawIndex = this.DrawOrders.AddIndex(1000, "Clouds");
         }
 
         #region Public Methods
@@ -145,10 +146,16 @@ namespace Utopia.Worlds.SkyDomes
 
         public override void Draw(DeviceContext context, int index)
         {
-            DrawingDome(context);
-            DrawingMoon(context);
-            _skyStars.Draw(context, index);
-            _clouds.Draw(context, index);
+            if (index == cloudDrawIndex)
+            {
+                _clouds.Draw(context, index);
+            }
+            else
+            {
+                DrawingDome(context);
+                DrawingMoon(context);
+                _skyStars.Draw(context, index);
+            }
         }
         #endregion
 
