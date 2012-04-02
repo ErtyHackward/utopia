@@ -35,14 +35,6 @@ namespace Utopia.Resources.Effects.Terran
             public float Opaque;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
-
-        [StructLayout(LayoutKind.Explicit, Size = 16)]
-        public struct CBPerDrawGroup_Struct
-        {
-            [FieldOffset(0)]
-            public Vector2 BackBufferSize;
-        }
-        public CBuffer<CBPerDrawGroup_Struct> CBPerDrawGroup;
         #endregion
 
         #region Resources
@@ -71,9 +63,6 @@ namespace Utopia.Resources.Effects.Terran
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));
             CBuffers.Add(CBPerDraw);
-
-            CBPerDrawGroup = ToDispose(new CBuffer<CBPerDrawGroup_Struct>(device, "PerDrawGroup"));
-            CBuffers.Add(CBPerDrawGroup);
 
             if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());
 

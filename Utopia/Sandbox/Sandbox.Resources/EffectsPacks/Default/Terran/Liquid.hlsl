@@ -9,16 +9,12 @@ cbuffer PerDraw
 	float Opaque;
 };
 
-cbuffer PerDrawGroup
-{
-	float2 BackBufferSize;
-};
-
 cbuffer PerFrame
 {
 	matrix ViewProjection;
 	float3 SunColor;			  // Diffuse lighting color
 	float fogdist;
+	float2 BackBufferSize;
 };
 
 static const float foglength = 20;

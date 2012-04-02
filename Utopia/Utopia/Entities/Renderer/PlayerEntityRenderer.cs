@@ -43,7 +43,6 @@ namespace Utopia.Entities.Renderer
         public PlayerEntityRenderer(D3DEngine d3DEngine,
                                     CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
-                                    ISkyDome skydome,
                                     VisualWorldParameters visualWorldParameters)
         {
             _d3DEngine = d3DEngine;

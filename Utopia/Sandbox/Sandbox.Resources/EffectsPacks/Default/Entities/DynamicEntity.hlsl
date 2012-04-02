@@ -13,6 +13,7 @@ cbuffer PerFrame
 	matrix ViewProjection;
 	float3 SunColor;			  // Diffuse lighting color
 	float fogdist;
+	float2 BackBufferSize;
 };
 
 static const float foglength = 45;

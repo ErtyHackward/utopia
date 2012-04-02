@@ -15,6 +15,7 @@ using S33M3CoreComponents.Cameras;
 using S33M3DXEngine.Effects.HLSLFramework;
 using S33M3CoreComponents.Cameras.Interfaces;
 using SharpDX.Direct3D11;
+using Utopia.Components;
 
 namespace Utopia.Effects.Shared
 {
@@ -23,7 +24,7 @@ namespace Utopia.Effects.Shared
     /// </summary>
     public class SharedFrameCB: DrawableGameComponent
     {
-        [StructLayout(LayoutKind.Explicit, Size = 80)]
+        [StructLayout(LayoutKind.Explicit, Size = 96)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
@@ -32,6 +33,8 @@ namespace Utopia.Effects.Shared
             public Vector3 SunColor;        //12 (3 float)
             [FieldOffset(76)]
             public float fogdist;           //4 (float)
+            [FieldOffset(80)]
+            public Vector2 BackBufferSize;
         }
 
         private D3DEngine _engine;
@@ -39,6 +42,7 @@ namespace Utopia.Effects.Shared
         private ISkyDome _skydome;
         private VisualWorldParameters _visualWorldParam;
         private PlayerEntityManager _playerManager;
+        private StaggingBackBuffer _backBuffer;
 
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
@@ -48,7 +52,8 @@ namespace Utopia.Effects.Shared
                              VisualWorldParameters visualWorldParam,
                              PlayerEntityManager playerManager,
                              [Named("PlayerEntityRenderer")] IEntitiesRenderer playerEntityRenderer,
-                             [Named("DefaultEntityRenderer")] IEntitiesRenderer dynamicEntityRenderer)
+                             [Named("DefaultEntityRenderer")] IEntitiesRenderer dynamicEntityRenderer,
+                             StaggingBackBuffer backBuffer)
             
         {
             _engine = engine;
@@ -56,6 +61,7 @@ namespace Utopia.Effects.Shared
             _skydome = skydome;
             _visualWorldParam = visualWorldParam;
             _playerManager = playerManager;
+            _backBuffer = backBuffer;
 
             //Self Injecting to avoid Cyclical problem
             playerEntityRenderer.SharedFrameCB = this;
@@ -66,12 +72,18 @@ namespace Utopia.Effects.Shared
             CBPerFrame = new CBuffer<CBPerFrame_Struct>(_engine.Device, "PerFrame");
         }
 
+        void _backBuffer_BackBufferResized(object sender, EventArgs e)
+        {
+
+        }
+
         public override void Draw(DeviceContext context, int index)
         {
             CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D_focused);
             if (_playerManager.IsHeadInsideWater) CBPerFrame.Values.SunColor = new Vector3(_skydome.SunColor.X / 3, _skydome.SunColor.Y / 3, _skydome.SunColor.Z);
             else CBPerFrame.Values.SunColor = _skydome.SunColor;
             CBPerFrame.Values.fogdist = ((_visualWorldParam.WorldVisibleSize.X) / 2) - 48;
+            CBPerFrame.Values.BackBufferSize = _backBuffer.SolidStaggingBackBufferSize;
             CBPerFrame.IsDirty = false;
 
             CBPerFrame.Update(context); //Send updated data to Graphical Card

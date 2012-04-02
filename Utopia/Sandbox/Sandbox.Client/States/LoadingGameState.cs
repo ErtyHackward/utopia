@@ -299,6 +299,8 @@ namespace Sandbox.Client.States
 
             //Late Inject PlayerCharacter into VisualWorldParameters
             soundManager.LateInitialization(singleArrayChunkContainer, dynamicEntityManager, playerCharacter);
+            Utopia.Worlds.SkyDomes.SharedComp.Clouds3D c = clouds as Utopia.Worlds.SkyDomes.SharedComp.Clouds3D;
+            if (c != null) c.LateInitialization(sharedFrameCB);
 
             AddComponent(cameraManager);
             AddComponent(_ioc.Get<ServerComponent>());
