@@ -61,7 +61,7 @@ namespace Utopia.Worlds.SkyDomes
         /// <summary>
         /// Regular Skydome loading
         /// </summary>
-        public RegularSkyDome(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager, WorldFocusManager worldFocusManager, IClock clock, IWeather weather, [Named("Stars")] IDrawableComponent skyStars, [Named("Clouds_flat")] IDrawableComponent clouds)
+        public RegularSkyDome(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager, WorldFocusManager worldFocusManager, IClock clock, IWeather weather, [Named("Stars")] IDrawableComponent skyStars, [Named("Clouds")] IDrawableComponent clouds)
             : base(d3dEngine, clock, weather)
         {
             this.IsDefferedLoadContent = true;

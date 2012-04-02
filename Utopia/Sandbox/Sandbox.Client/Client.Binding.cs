@@ -57,6 +57,7 @@ using Utopia.Shared.Entities;
 using Sandbox.Shared;
 using S33M3Resources.Structs;
 using Sandbox.Client.Components.GUI;
+using Utopia.Settings;
 
 namespace Sandbox.Client
 {
@@ -64,7 +65,6 @@ namespace Sandbox.Client
     {
         public void EarlyBinding(IKernel iocContainer)
         {
-            
         }
 
         public void IocBinding(string WindowsCaption, Size windowStartingSize, Size resolutionSize = default(Size))
@@ -147,8 +147,17 @@ namespace Sandbox.Client
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
             _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
             _iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
-            _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds_flat");
-            _iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds_3D");
+            switch (ClientSettings.Current.Settings.GraphicalParameters.CloudsQuality)
+            {
+                case "2D":
+                    _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");
+                    break;
+                case "3D":
+                    _iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds");
+                    break;
+                default:
+                    break;
+            }
             //_iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
