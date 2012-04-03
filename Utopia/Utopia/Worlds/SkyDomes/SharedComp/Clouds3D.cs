@@ -108,10 +108,10 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _nbrIndices = 0;
             _nbrVertices = 0;
 
-            _topFace = new Color4(_brightness * 240, _brightness * 240, _brightness * 255, 200);
-            _side1Face = new Color4(_brightness * 230, _brightness * 230, _brightness * 255, 200);
-            _side2Face = new Color4(_brightness * 220, _brightness * 220, _brightness * 245, 200);
-            _bottomFace = new Color4(_brightness * 205, _brightness * 205, _brightness * 230, 200);
+            _topFace = new ByteColor((byte)_brightness * 240, (byte)_brightness * 240, (byte)_brightness * 255, (byte)200);
+            _side1Face = new ByteColor((byte)_brightness * 230, (byte)_brightness * 230, (byte)_brightness * 255, (byte)200);
+            _side2Face = new ByteColor((byte)_brightness * 220, (byte)_brightness * 220, (byte)_brightness * 245, (byte)200);
+            _bottomFace = new ByteColor((byte)_brightness * 205, (byte)_brightness * 205, (byte)_brightness * 230, (byte)200);
 
             _faces = new VertexPosition3Color[4];
 
