@@ -304,7 +304,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         /// </param>
         internal bool ProcessKeyPress(Keys keyCode, bool repetition)
         {
-
             // If there's an activated control (one being held down by the mouse or having
             // accepted a previous key press), this control will get the key press delivered,
             // whether it wants to or not. We don't want to track for each key which control

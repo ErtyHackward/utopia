@@ -219,13 +219,12 @@ namespace Sandbox.Client.Components.GUI.Settings
 
         private void btKeyBindingPressed()
         {
-            //if (_keyBindingSettingsPanel == null) _keyBindingSettingsPanel = new KeyBindingSettingsPanel(this, ClientSettings.Current.Settings.KeyboardMapping) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
-            //if (_backPanel.Children.Contains(_keyBindingSettingsPanel) == false)
-            //{
-            //    _backPanel.Children.Clear();
-            //    _backPanel.Children.Add(_keyBindingSettingsPanel);
-            //}
-            _backPanel.Children.Clear();
+            if (_keyBindingSettingsPanel == null) _keyBindingSettingsPanel = new KeyBindingSettingsPanel(this, _engine, new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset));
+            if (_backPanel.Children.Contains(_keyBindingSettingsPanel) == false)
+            {
+                _backPanel.Children.Clear();
+                _backPanel.Children.Add(_keyBindingSettingsPanel);
+            }
         }
 
         private void RefreshComponentsVisibility()

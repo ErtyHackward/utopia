@@ -102,6 +102,9 @@
     <Compile Include="Components\GUI\Settings\CoreEngineSettingsPanel.cs" />
     <Compile Include="Components\GUI\Settings\GraphicSettingsPanel.cs" />
     <Compile Include="Components\GUI\Settings\KeyBindingSettingsPanel.cs" />
+    <Compile Include="Components\GUI\Settings\KeyBindingSettingsPanel.Designer.cs">
+      <DependentUpon>KeyBindingSettingsPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\GUI\Settings\SettingsComponent.cs" />
     <Compile Include="Components\GUI\SandboxMenuComponent.cs" />
     <Compile Include="Components\GUI\Settings\SettingsPanel.cs" />

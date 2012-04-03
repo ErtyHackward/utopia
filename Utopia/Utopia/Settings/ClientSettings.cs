@@ -112,7 +112,7 @@ namespace Utopia.Settings
     /// Keyboard mapping move section
     /// </summary>
     [Serializable]
-    public class MoveParameters
+    public class MoveBindingKeys
     {
         public KeyWithModifier Forward;
         public KeyWithModifier Backward;
@@ -132,59 +132,50 @@ namespace Utopia.Settings
     }
 
     /// <summary>
+    /// Keyboard mapping move section
+    /// </summary>
+    [Serializable]
+    public class SystemBindingKeys
+    {
+        public KeyWithModifier FullScreen;
+        public KeyWithModifier LockMouseCursor;
+        public KeyWithModifier DebugInfo;
+        public KeyWithModifier VSync;
+    }
+
+    /// <summary>
+    /// Keyboard mapping move section
+    /// </summary>
+    [Serializable]
+    public class GameBindingKeys
+    {
+        public KeyWithModifier Chat;
+        public KeyWithModifier Use;
+        public KeyWithModifier Throw;
+        public KeyWithModifier Inventory;
+        public KeyWithModifier Map;
+    }
+
+    /// <summary>
     /// Keyboard mapping section
     /// </summary>
     [Serializable]
     public class KeyboardMapping
     {
         /// <summary>
-        /// Move section
+        /// Move Binding section
         /// </summary>
-        public MoveParameters Move { get; set; }
-
-        public KeyWithModifier FullScreen;
-        public KeyWithModifier LockMouseCursor;
+        public MoveBindingKeys Move { get; set; }
 
         /// <summary>
-        /// Enter graphical debug mode
+        /// Move Binding section
         /// </summary>
-        public KeyWithModifier DebugMode;
+        public GameBindingKeys Game { get; set; }
 
         /// <summary>
-        /// Diplay technical informations
+        /// Move Binding section
         /// </summary>
-        public KeyWithModifier DebugInfo;
-        public KeyWithModifier VSync;
-        public KeyWithModifier Console;
-        /// <summary>
-        /// Open/close game chat
-        /// </summary>
-        public KeyWithModifier Chat;
-
-        /// <summary>
-        /// Stop/start World Clock
-        /// </summary>
-        public KeyWithModifier FreezeTime;
-
-        /// <summary>
-        /// use picked entity
-        /// </summary>
-        public KeyWithModifier Use;
-
-        /// <summary>
-        /// Throw equipped tool(s)
-        /// </summary>
-        public KeyWithModifier Throw;
-        
-        /// <summary>
-        /// Open/close inventory
-        /// </summary>
-        public KeyWithModifier Inventory;
-
-        /// <summary>
-        /// Open/close the map
-        /// </summary>
-        public KeyWithModifier Map;
+        public SystemBindingKeys System { get; set; }
     }
 
     /// <summary>
@@ -257,7 +248,7 @@ namespace Utopia.Settings
                     },
                     KeyboardMapping = new KeyboardMapping
                     {
-                        Move = new MoveParameters
+                        Move = new MoveBindingKeys
                         {
                             Up = Keys.Z,
                             Down = Keys.X,
@@ -269,18 +260,19 @@ namespace Utopia.Settings
                             Run = Keys.LShiftKey,
                             Mode = Keys.F
                         },
-                        Console = Keys.Oemtilde,
-                        VSync = new KeyWithModifier { MainKey = Keys.F8, Modifier = Keys.RControlKey, Info = "Enable/Disable VSync" },
-                        LockMouseCursor = new KeyWithModifier { MainKey = Keys.Tab, Modifier = Keys.None, Info = "Locking/Unlocking mouse cursor" },
-                        FullScreen = new KeyWithModifier { MainKey = Keys.F11, Modifier = Keys.None, Info = "Fullscreen switcher" },
-                        DebugMode = new KeyWithModifier { MainKey = Keys.F2, Modifier = Keys.None, Info = "Enter graphical debug mode" },
-                        DebugInfo = new KeyWithModifier { MainKey = Keys.F3, Modifier = Keys.None, Info = "Diplay technical informations" },
-                        FreezeTime = new KeyWithModifier { MainKey = Keys.F10, Modifier = Keys.None, Info = "Stop World Clock" },
-                        Chat = new KeyWithModifier { MainKey = Keys.Enter, Modifier = Keys.None, Info = "Open/Close the chat" },
-                        Use = new KeyWithModifier { MainKey = Keys.E, Modifier = Keys.None, Info = "Use" },
-                        Throw = new KeyWithModifier { MainKey = Keys.Back, Modifier = Keys.None, Info = "Throw" },
-                        Inventory = new KeyWithModifier { MainKey = Keys.I, Modifier = Keys.None, Info = "Inventory" },
-                        Map = new KeyWithModifier { MainKey = Keys.M, Modifier = Keys.None, Info = "Open/close the map" }
+                        Game = new GameBindingKeys(){
+                            Chat = new KeyWithModifier { MainKey = Keys.Enter, Modifier = Keys.None, Info = "Open/Close the chat" },
+                            Use = new KeyWithModifier { MainKey = Keys.E, Modifier = Keys.None, Info = "Use" },
+                            Throw = new KeyWithModifier { MainKey = Keys.Back, Modifier = Keys.None, Info = "Throw" },
+                            Inventory = new KeyWithModifier { MainKey = Keys.I, Modifier = Keys.None, Info = "Inventory" },
+                            Map = new KeyWithModifier { MainKey = Keys.M, Modifier = Keys.None, Info = "Open/close the map" }
+                        },
+                        System = new SystemBindingKeys() {
+                            VSync = new KeyWithModifier { MainKey = Keys.F8, Modifier = Keys.RControlKey, Info = "Enable/Disable VSync" },
+                            LockMouseCursor = new KeyWithModifier { MainKey = Keys.Tab, Modifier = Keys.None, Info = "Locking/Unlocking mouse cursor" },
+                            FullScreen = new KeyWithModifier { MainKey = Keys.F11, Modifier = Keys.None, Info = "Fullscreen switcher" },
+                            DebugInfo = new KeyWithModifier { MainKey = Keys.F3, Modifier = Keys.None, Info = "Diplay technical informations" },
+                        }
                     }
                 };
             }
@@ -295,7 +287,6 @@ namespace Utopia.Settings
             {
                 var config = DefaultQwerty;
 
-                config.KeyboardMapping.Console = Keys.F4;
                 config.KeyboardMapping.Move.Up = Keys.X;
                 config.KeyboardMapping.Move.Down = Keys.W;
                 config.KeyboardMapping.Move.Forward = Keys.Z;
