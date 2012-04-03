@@ -105,14 +105,14 @@ namespace Sandbox.Client
             {
                 ActionId = UtopiaActions.EngineFullScreen,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.FullScreen
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.System.FullScreen
             });
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
             {
                 ActionId = UtopiaActions.MouseCapture,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.LockMouseCursor
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.System.LockMouseCursor
             });
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
@@ -179,7 +179,7 @@ namespace Sandbox.Client
             {
                 ActionId = UtopiaActions.EngineVSync,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.VSync
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.System.VSync
             });
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
@@ -193,7 +193,7 @@ namespace Sandbox.Client
             {
                 ActionId = UtopiaActions.Toggle_Chat,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Chat
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Chat 
             });
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
@@ -207,28 +207,28 @@ namespace Sandbox.Client
             {
                 ActionId = UtopiaActions.EntityUse,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Use
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Use
             });
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
                 ActionId = UtopiaActions.EntityThrow,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Throw
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Throw
             });
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
                 ActionId = UtopiaActions.OpenInventory,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Inventory
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Inventory
             });
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
                 ActionId = UtopiaActions.OpenMap,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Map
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Map
             });
 
             
