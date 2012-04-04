@@ -29,6 +29,15 @@ namespace Sandbox.Client.Components.GUI.Settings
                 };
 
                 input = new InputControl() { Text = key.Modifier == System.Windows.Forms.Keys.None ? key.MainKey.ToString() : key.MainKey.ToString() + " + " + key.Modifier.ToString() };
+                input.Clicked += new EventHandler(input_Clicked);
+            }
+
+            void input_Clicked(object sender, EventArgs e)
+            {
+                if (input.HasFocus)
+                {
+                    Console.WriteLine(input.Text + "Clicked");
+                }
             }
         }
 
