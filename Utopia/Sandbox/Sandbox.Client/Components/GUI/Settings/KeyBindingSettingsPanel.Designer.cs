@@ -17,27 +17,19 @@ namespace Sandbox.Client.Components.GUI.Settings
         public class KeyBindComponent
         {
             public LabelControl Name;
-            public InputControl input;
+            public InputKeyCatchControl input;
+            public KeyWithModifier Key;
 
             public KeyBindComponent(string name, KeyWithModifier key)
             {
+                Key = key;
                 Name = new LabelControl()
                 {
                     Text = name,
                     Color = new ByteColor(255, 255, 255),
                     FontStyle = System.Drawing.FontStyle.Bold
                 };
-
-                input = new InputControl() { Text = key.Modifier == System.Windows.Forms.Keys.None ? key.MainKey.ToString() : key.MainKey.ToString() + " + " + key.Modifier.ToString() };
-                input.Clicked += new EventHandler(input_Clicked);
-            }
-
-            void input_Clicked(object sender, EventArgs e)
-            {
-                if (input.HasFocus)
-                {
-                    Console.WriteLine(input.Text + "Clicked");
-                }
+                input = new InputKeyCatchControl() { Text = key.Modifier == System.Windows.Forms.Keys.None ? key.MainKey.ToString() : key.MainKey.ToString() + " + " + key.Modifier.ToString() };
             }
         }
 
@@ -45,11 +37,28 @@ namespace Sandbox.Client.Components.GUI.Settings
         private LabelControl _panelLabel;
         private LabelControl _moveSection, _gameSection, _systemSection;
         private List<KeyBindComponent> _moveKeys = new List<KeyBindComponent>();
-        private List<KeyBindComponent> _gameKeys= new List<KeyBindComponent>();
+        private List<KeyBindComponent> _gameKeys = new List<KeyBindComponent>();
         private List<KeyBindComponent> _systemKeys = new List<KeyBindComponent>();
         #endregion
 
         #region Public Variables
+        public List<KeyBindComponent> SystemKeys
+        {
+            get { return _systemKeys; }
+            set { _systemKeys = value; }
+        }
+
+        public List<KeyBindComponent> GameKeys
+        {
+            get { return _gameKeys; }
+            set { _gameKeys = value; }
+        }
+
+        public List<KeyBindComponent> MoveKeys
+        {
+            get { return _moveKeys; }
+            set { _moveKeys = value; }
+        }
         #endregion
 
         #region Public Methods
@@ -95,9 +104,12 @@ namespace Sandbox.Client.Components.GUI.Settings
             pi = reflectedType.GetFields();
             foreach (FieldInfo field in pi)
             {
-                _moveKeys.Add(new KeyBindComponent(field.Name,(KeyWithModifier) field.GetValue(ClientSettings.Current.Settings.KeyboardMapping.Move)));
+                KeyBindComponent binding = new KeyBindComponent(field.Name,(KeyWithModifier) field.GetValue(ClientSettings.Current.Settings.KeyboardMapping.Move));
+                binding.input.KeyChanged += input_KeyChanged;
+                _moveKeys.Add(binding);
             }
         }
+
 
         private void CreateGameSection()
         {
@@ -116,7 +128,9 @@ namespace Sandbox.Client.Components.GUI.Settings
             pi = reflectedType.GetFields();
             foreach (FieldInfo field in pi)
             {
-                _gameKeys.Add(new KeyBindComponent(field.Name, (KeyWithModifier)field.GetValue(ClientSettings.Current.Settings.KeyboardMapping.Game)));
+                KeyBindComponent binding = new KeyBindComponent(field.Name, (KeyWithModifier)field.GetValue(ClientSettings.Current.Settings.KeyboardMapping.Game));
+                binding.input.KeyChanged += input_KeyChanged;
+                _gameKeys.Add(binding);
             }
         }
 
@@ -137,8 +151,15 @@ namespace Sandbox.Client.Components.GUI.Settings
             pi = reflectedType.GetFields();
             foreach (FieldInfo field in pi)
             {
-                _systemKeys.Add(new KeyBindComponent(field.Name, (KeyWithModifier)field.GetValue(ClientSettings.Current.Settings.KeyboardMapping.System)));
+                KeyBindComponent binding = new KeyBindComponent(field.Name, (KeyWithModifier)field.GetValue(ClientSettings.Current.Settings.KeyboardMapping.System));
+                binding.input.KeyChanged += input_KeyChanged;
+                _systemKeys.Add(binding);
             }
+        }
+
+        private void input_KeyChanged(object sender, EventArgs e)
+        {
+            _parent.SaveChange();
         }
 
         private void BindComponents()

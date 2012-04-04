@@ -12,6 +12,8 @@ using SharpDX;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Arcade;
 using System.Reflection;
 using Utopia.Settings;
+using S33M3CoreComponents.Inputs.KeyboardHandler;
+using System.Windows.Forms;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {
@@ -140,6 +142,73 @@ namespace Sandbox.Client.Components.GUI.Settings
                     }
                 }
             }
+
+            //Saving Key binding Parameters ========================================================
+            if (_keyBindingSettingsPanel != null)
+            {
+                string[] bindings;
+                KeyWithModifier kwm;
+                FieldInfo[] fi;
+
+                //For each move key binded
+                reflectedType = ClientSettings.Current.Settings.KeyboardMapping.Move.GetType();
+                fi = reflectedType.GetFields();
+                foreach (KeyBindingSettingsPanel.KeyBindComponent keyBinding in _keyBindingSettingsPanel.MoveKeys)
+                {
+                    bindings = keyBinding.input.Text.Split(new string[] { " + " }, StringSplitOptions.RemoveEmptyEntries);
+                    kwm = new KeyWithModifier();
+                    if (bindings[0] == "Not Set") bindings[0] = keyBinding.Key.MainKey.ToString();
+                    kwm.MainKey = (Keys)Enum.Parse(typeof(Keys), bindings[0]);
+                    kwm.Info = keyBinding.Key.Info;
+                    if (bindings.Length > 1)
+                    {
+                        kwm.Modifier = (Keys)Enum.Parse(typeof(Keys), bindings[1]);
+                    }
+                    fi.First(x => x.Name == keyBinding.Name.Text).SetValue(ClientSettings.Current.Settings.KeyboardMapping.Move, kwm);
+                }
+
+                //For each Game key binded
+                reflectedType = ClientSettings.Current.Settings.KeyboardMapping.Game.GetType();
+                fi = reflectedType.GetFields();
+                foreach (KeyBindingSettingsPanel.KeyBindComponent keyBinding in _keyBindingSettingsPanel.GameKeys)
+                {
+                    bindings = keyBinding.input.Text.Split(new string[] { " + " }, StringSplitOptions.RemoveEmptyEntries);
+                    kwm = new KeyWithModifier();
+                    if (bindings[0] == "Not Set") bindings[0] = keyBinding.Key.MainKey.ToString();
+                    kwm.MainKey = (Keys)Enum.Parse(typeof(Keys), bindings[0]);
+                    kwm.Info = keyBinding.Key.Info;
+                    if (bindings.Length > 1)
+                    {
+                        kwm.Modifier = (Keys)Enum.Parse(typeof(Keys), bindings[1]);
+                    }
+                    fi.First(x => x.Name == keyBinding.Name.Text).SetValue(ClientSettings.Current.Settings.KeyboardMapping.Game, kwm);
+                }
+
+                //For each System key binded
+                reflectedType = ClientSettings.Current.Settings.KeyboardMapping.System.GetType();
+                fi = reflectedType.GetFields();
+                foreach (KeyBindingSettingsPanel.KeyBindComponent keyBinding in _keyBindingSettingsPanel.SystemKeys)
+                {
+                    bindings = keyBinding.input.Text.Split(new string[] { " + " }, StringSplitOptions.RemoveEmptyEntries);
+                    kwm = new KeyWithModifier();
+                    if (bindings[0] == "Not Set") bindings[0] = keyBinding.Key.MainKey.ToString();
+                    kwm.MainKey = (Keys)Enum.Parse(typeof(Keys), bindings[0]);
+                    kwm.Info = keyBinding.Key.Info;
+                    if (bindings.Length > 1)
+                    {
+                        kwm.Modifier = (Keys)Enum.Parse(typeof(Keys), bindings[1]);
+                    }
+                    fi.First(x => x.Name == keyBinding.Name.Text).SetValue(ClientSettings.Current.Settings.KeyboardMapping.System, kwm);
+                }
+
+                
+            }
+
+
+
+
+
+
             ClientSettings.Current.Save();
         }
 

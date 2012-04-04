@@ -198,11 +198,37 @@ namespace S33M3CoreComponents.GUI.Nuclex
         }
     }
 
+    /// <summary>Will propagate the pressed key to the a control that is activated and if it implement the IKeyPressLookUp interface</summary>
+    /// At the difference from InjectKeyPress, this won't filter special keys, but let all pass
+    /// <param name="keyCode">Code of the key that was pressed</param>
+    public void InjectKeyPressLookUp(System.Windows.Forms.Keys keyCode)
+    {
+        if (this.activatedControl != null)
+        {
+            IKeyPressLookUp ctrl = this.activatedControl as IKeyPressLookUp;
+            if (ctrl != null)
+            {
+                ctrl.ProcessPressKeyLookUp(keyCode);
+            }
+        }
+        else
+        {
+            // No control is activated, try the focused control before searching
+            // the entire tree for a responder.
+            IKeyPressLookUp focusedControl = this.focusedControl.Target as IKeyPressLookUp;
+            if (focusedControl != null)
+            {
+                focusedControl.ProcessPressKeyLookUp(keyCode);
+            }
+        }
+    }
+
     /// <summary>Called when a key on the keyboard has been pressed down</summary>
     /// <param name="keyCode">Code of the key that was pressed</param>
     public void InjectKeyPress(System.Windows.Forms.Keys keyCode)
     {
         bool repetition = this.heldKeys.Get((int)keyCode);
+        if (this.activatedControl is IKeyPressLookUp) return;
 
         // If a control is activated, it will receive any input notifications
         if (this.activatedControl != null)
@@ -219,6 +245,7 @@ namespace S33M3CoreComponents.GUI.Nuclex
         // No control is activated, try the focused control before searching
         // the entire tree for a responder.
         Control focusedControl = this.focusedControl.Target;
+        if (focusedControl is IKeyPressLookUp) return;
         if (focusedControl != null)
         {
             if (focusedControl.ProcessKeyPress(keyCode, false))
