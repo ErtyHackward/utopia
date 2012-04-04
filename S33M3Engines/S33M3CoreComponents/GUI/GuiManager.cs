@@ -166,6 +166,8 @@ namespace S33M3CoreComponents.GUI
                     _screen.InjectKeyPress(Keys.Down);
                     break;
             }
+
+            _screen.InjectKeyPressLookUp(e.KeyData);
         }
 
         void GameWindowKeyPress(object sender, KeyPressEventArgs e)

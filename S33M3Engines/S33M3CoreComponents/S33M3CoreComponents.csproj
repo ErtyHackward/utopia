@@ -113,6 +113,7 @@
     <Compile Include="GUI\Nuclex\Controls\Desktop\ChoiceControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\CloseWindowButtonControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\ColorButtonControl.cs" />
+    <Compile Include="GUI\Nuclex\Controls\Desktop\InputKeyCatchControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\DialogControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\DraggableControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\HorizontalSliderControl.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="GUI\Nuclex\Controls\Desktop\VerticalSliderControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Desktop\WindowControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\Interfaces\IFocusable.cs" />
+    <Compile Include="GUI\Nuclex\Controls\Interfaces\IKeyPressLookUp.cs" />
     <Compile Include="GUI\Nuclex\Controls\Interfaces\IWritable.cs" />
     <Compile Include="GUI\Nuclex\Controls\LabelControl.cs" />
     <Compile Include="GUI\Nuclex\Controls\ParentingControlCollection.cs" />
@@ -165,6 +167,7 @@
     <Compile Include="GUI\Nuclex\Visuals\Flat\Interfaces\IFlatControlRenderer.cs" />
     <Compile Include="GUI\Nuclex\Visuals\Flat\Interfaces\IFlatGuiGraphics.cs" />
     <Compile Include="GUI\Nuclex\Visuals\Flat\OpeningLocator.cs" />
+    <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatInputKeyCatchControlRenderer.cs" />
     <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatCloseWindowButtonControlRenderer.cs" />
     <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatButtonControlRenderer.cs" />
     <Compile Include="GUI\Nuclex\Visuals\Flat\Renderers\FlatChoiceControlRenderer.cs" />
