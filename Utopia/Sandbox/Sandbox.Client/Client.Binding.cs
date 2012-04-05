@@ -58,6 +58,7 @@ using Sandbox.Shared;
 using S33M3Resources.Structs;
 using Sandbox.Client.Components.GUI;
 using Utopia.Settings;
+using Sandbox.Client.Components.GUI.Settings;
 
 namespace Sandbox.Client
 {
@@ -108,6 +109,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<LoadingGameState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<GamePlayState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ServerSelectionComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<SettingsComponent>().ToSelf().InSingletonScope();
             
             //Network Related =============================================
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)

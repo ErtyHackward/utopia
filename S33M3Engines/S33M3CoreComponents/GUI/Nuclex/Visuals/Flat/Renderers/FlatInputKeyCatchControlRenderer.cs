@@ -25,8 +25,6 @@ using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop.Interfaces;
 using S33M3Resources.Structs;
 
-
-
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 {
 
@@ -53,7 +51,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
             // Draw the control's frame and background
             if (control.CustomBackground == null)
             {
-                graphics.DrawElement(Style, ref  controlBounds);
+                if (control.HasFocus)
+                {
+                    graphics.DrawElement(Style, ref  controlBounds, ref control.HasFocusBackColor);
+                }
+                else
+                {
+                    graphics.DrawElement(Style, ref  controlBounds);
+                }
             }
             else
             {
