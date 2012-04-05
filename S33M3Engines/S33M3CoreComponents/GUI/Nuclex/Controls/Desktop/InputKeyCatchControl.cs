@@ -56,6 +56,9 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         /// </summary>
         public SpriteTexture CustomBackground { get; set; }
 
+
+        public ByteColor HasFocusBackColor = new ByteColor(205, 92, 92);
+
         /// <summary>
         /// Gets or sets an image to be displayed when the control have no text and no focus
         /// </summary>
@@ -84,10 +87,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
                 this.text.Clear();
                 this.text.Append(value);
                 this.Color = new ByteColor(0, 0, 0);
-                if (value != "Not Set")
-                {
-                    if (KeyChanged != null) KeyChanged(this, null);
-                }
+                if (KeyChanged != null) KeyChanged(this, null);
             }
         }
 
@@ -109,14 +109,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         {
             this.mouseX = x;
             this.mouseY = y;
-        }
-
-        /// <summary>Called when a mouse button has been pressed down</summary>
-        /// <param name="button">Index of the button that has been pressed</param>
-        protected override void OnMousePressed(S33M3CoreComponents.GUI.Nuclex.Input.MouseButtons button)
-        {
-            this.Text = "Not Set";
-            this.Color = new ByteColor(255, 0, 0);
         }
 
         protected override void OnMouseLeft()

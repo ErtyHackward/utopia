@@ -79,7 +79,6 @@ namespace S33M3CoreComponents.GUI
             UpdateOrder = _inputManager.UpdateOrder + 1;
 
             //Register Action Manager for mouse click handling.
-
             _inputManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
                 ActionId = Actions.LeftMousePressed,

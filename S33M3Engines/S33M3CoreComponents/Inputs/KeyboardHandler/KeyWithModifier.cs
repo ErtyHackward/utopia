@@ -25,5 +25,20 @@ namespace S33M3CoreComponents.Inputs.KeyboardHandler
             kwm.Info = string.Empty;
             return kwm;
         }
+
+        public override bool Equals(object obj)
+        {
+            return (((KeyWithModifier)obj).MainKey == this.MainKey && ((KeyWithModifier)obj).Modifier == this.Modifier);
+        }
+
+        public static bool operator ==(KeyWithModifier a, KeyWithModifier b)
+        {
+            return (a.MainKey == b.MainKey && a.Modifier == b.Modifier);
+        }
+
+        public static bool operator !=(KeyWithModifier a, KeyWithModifier b)
+        {
+            return !(a == b);
+        }
     }
 }

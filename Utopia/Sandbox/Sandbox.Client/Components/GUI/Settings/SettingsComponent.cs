@@ -19,6 +19,8 @@ namespace Sandbox.Client.Components.GUI.Settings
 {
     public partial class SettingsComponent : GameComponent
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private variables
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
@@ -26,6 +28,7 @@ namespace Sandbox.Client.Components.GUI.Settings
         #endregion
 
         #region Public properties/methods
+        public event EventHandler KeyBindingChanged;
         #endregion
 
         public SettingsComponent(D3DEngine engine, MainScreen screen)
@@ -38,6 +41,24 @@ namespace Sandbox.Client.Components.GUI.Settings
 
         public override void Dispose()
         {
+            if (BackPressed != null)
+            {
+                //Remove all Events associated to this control (That haven't been unsubscribed !)
+                foreach (Delegate d in BackPressed.GetInvocationList())
+                {
+                    BackPressed -= (EventHandler)d;
+                }
+            }
+
+            if (KeyBindingChanged != null)
+            {
+                //Remove all Events associated to this control (That haven't been unsubscribed !)
+                foreach (Delegate d in KeyBindingChanged.GetInvocationList())
+                {
+                    KeyBindingChanged -= (EventHandler)d;
+                }
+            }
+
             _engine.ViewPort_Updated -= UpdateLayout;
             base.Dispose();
         }
@@ -146,6 +167,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             //Saving Key binding Parameters ========================================================
             if (_keyBindingSettingsPanel != null)
             {
+                bool isBindingChanged = false;
                 string[] bindings;
                 KeyWithModifier kwm;
                 FieldInfo[] fi;
@@ -157,14 +179,20 @@ namespace Sandbox.Client.Components.GUI.Settings
                 {
                     bindings = keyBinding.input.Text.Split(new string[] { " + " }, StringSplitOptions.RemoveEmptyEntries);
                     kwm = new KeyWithModifier();
-                    if (bindings[0] == "Not Set") bindings[0] = keyBinding.Key.MainKey.ToString();
                     kwm.MainKey = (Keys)Enum.Parse(typeof(Keys), bindings[0]);
                     kwm.Info = keyBinding.Key.Info;
                     if (bindings.Length > 1)
                     {
                         kwm.Modifier = (Keys)Enum.Parse(typeof(Keys), bindings[1]);
                     }
-                    fi.First(x => x.Name == keyBinding.Name.Text).SetValue(ClientSettings.Current.Settings.KeyboardMapping.Move, kwm);
+
+                    FieldInfo field = fi.First(x => x.Name == keyBinding.Name.Text);
+                    KeyWithModifier oldVvalue = (KeyWithModifier)field.GetValue(ClientSettings.Current.Settings.KeyboardMapping.Move);
+                    if (oldVvalue != kwm)
+                    {
+                        field.SetValue(ClientSettings.Current.Settings.KeyboardMapping.Move, kwm);
+                        isBindingChanged = true;
+                    }
                 }
 
                 //For each Game key binded
@@ -174,14 +202,20 @@ namespace Sandbox.Client.Components.GUI.Settings
                 {
                     bindings = keyBinding.input.Text.Split(new string[] { " + " }, StringSplitOptions.RemoveEmptyEntries);
                     kwm = new KeyWithModifier();
-                    if (bindings[0] == "Not Set") bindings[0] = keyBinding.Key.MainKey.ToString();
                     kwm.MainKey = (Keys)Enum.Parse(typeof(Keys), bindings[0]);
                     kwm.Info = keyBinding.Key.Info;
                     if (bindings.Length > 1)
                     {
                         kwm.Modifier = (Keys)Enum.Parse(typeof(Keys), bindings[1]);
                     }
-                    fi.First(x => x.Name == keyBinding.Name.Text).SetValue(ClientSettings.Current.Settings.KeyboardMapping.Game, kwm);
+
+                    FieldInfo field = fi.First(x => x.Name == keyBinding.Name.Text);
+                    KeyWithModifier oldVvalue = (KeyWithModifier)field.GetValue(ClientSettings.Current.Settings.KeyboardMapping.Game);
+                    if (oldVvalue != kwm)
+                    {
+                        field.SetValue(ClientSettings.Current.Settings.KeyboardMapping.Game, kwm);
+                        isBindingChanged = true;
+                    }
                 }
 
                 //For each System key binded
@@ -191,23 +225,33 @@ namespace Sandbox.Client.Components.GUI.Settings
                 {
                     bindings = keyBinding.input.Text.Split(new string[] { " + " }, StringSplitOptions.RemoveEmptyEntries);
                     kwm = new KeyWithModifier();
-                    if (bindings[0] == "Not Set") bindings[0] = keyBinding.Key.MainKey.ToString();
                     kwm.MainKey = (Keys)Enum.Parse(typeof(Keys), bindings[0]);
                     kwm.Info = keyBinding.Key.Info;
                     if (bindings.Length > 1)
                     {
                         kwm.Modifier = (Keys)Enum.Parse(typeof(Keys), bindings[1]);
                     }
-                    fi.First(x => x.Name == keyBinding.Name.Text).SetValue(ClientSettings.Current.Settings.KeyboardMapping.System, kwm);
+
+                    FieldInfo field = fi.First(x => x.Name == keyBinding.Name.Text);
+                    KeyWithModifier oldVvalue = (KeyWithModifier)field.GetValue(ClientSettings.Current.Settings.KeyboardMapping.System);
+                    if (oldVvalue != kwm)
+                    {
+                        field.SetValue(ClientSettings.Current.Settings.KeyboardMapping.System, kwm);
+                        isBindingChanged = true;
+                    }
                 }
 
+                //Raised the KeyBinding Event if a key has been changed
+                if (isBindingChanged)
+                {
+                    if (KeyBindingChanged != null)
+                    {
+                        KeyBindingChanged(this, null);
+                        logger.Info("Keyboard binding Saved, KeyBindingChanged event raised");
+                    }
+                }
                 
             }
-
-
-
-
-
 
             ClientSettings.Current.Save();
         }

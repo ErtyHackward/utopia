@@ -140,8 +140,14 @@ namespace S33M3CoreComponents.Inputs.Actions
         /// <param name="action">The action</param>
         /// <param name="inputActivationMode">The input mode that will be needed to make this action fired</param>
         /// <param name="bindingKey">The keybard binding</param>
-        public void AddActions(KeyboardTriggeredAction keyboardAction)
+        public void AddActions(KeyboardTriggeredAction keyboardAction, bool rebind = false)
         {
+            if (rebind)
+            {
+                //Remove the previously added Action
+                int nbr = _keyboardActions.RemoveAll(x => x.ActionId == keyboardAction.ActionId && x.TriggerType == keyboardAction.TriggerType);
+                logger.Warn("Rebinded KeyboardBinding remove more than one action : {0}", nbr);
+            }
             _keyboardActions.Add(keyboardAction);
         }
 
@@ -151,8 +157,14 @@ namespace S33M3CoreComponents.Inputs.Actions
         /// <param name="action">The action</param>
         /// <param name="inputActivationMode">The input mode that will be needed to make this action fired</param>
         /// <param name="bindingKey">The keybard binding</param>
-        public void AddActions(MouseTriggeredAction mouseAction)
+        public void AddActions(MouseTriggeredAction mouseAction, bool rebind = false)
         {
+            if (rebind)
+            {
+                //Remove the previously added Action
+                int nbr = _mouseActions.RemoveAll(x => x.ActionId == mouseAction.ActionId && x.TriggerType == mouseAction.TriggerType);
+                logger.Warn("Rebinded MouseBinding remove more than one action : {0}", nbr);
+            }
             _mouseActions.Add(mouseAction);
         }
 

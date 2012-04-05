@@ -28,6 +28,7 @@ using SharpDX;
 using S33M3DXEngine;
 using Sandbox.Client.Components;
 using Sandbox.Client.Components.GUI;
+using Sandbox.Client.Components.GUI.Settings;
 
 namespace Sandbox.Client
 {
@@ -62,6 +63,12 @@ namespace Sandbox.Client
             NetworkMessageFactory.Instance.EntityFactory = _iocContainer.Get<EntityFactory>();
 
             var game = CreateNewGameEngine(_iocContainer); // Create the Rendering
+
+            var settings = _iocContainer.Get<SettingsComponent>();
+            settings.KeyBindingChanged += (sender, e) =>
+            {
+                this.BindActions(_iocContainer.Get<InputsManager>(), true);
+            };
 
             _iocContainer.Bind<Game>().ToConstant(game);
             _iocContainer.Rebind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
