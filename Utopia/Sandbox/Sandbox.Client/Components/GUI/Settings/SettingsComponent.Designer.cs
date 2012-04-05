@@ -19,7 +19,7 @@ namespace Sandbox.Client.Components.GUI.Settings
     partial class SettingsComponent
     {
         //Components
-        protected LabelControl _windowLabel;
+        protected LabelControl _windowLabel, _settingsStateLabel;
         protected Control _settingsForm;
         protected PanelControl _leftMenuPanel;
         protected ImageControl _cubesPatern;
@@ -56,6 +56,10 @@ namespace Sandbox.Client.Components.GUI.Settings
                                                 CustomFont = SandboxMenuComponent.FontBebasNeue35,
                                                 CustomHorizontalPlacement = FlatGuiGraphics.Frame.HorizontalTextAlignment.Center,
                                                 CustomVerticalPlacement = FlatGuiGraphics.Frame.VerticalTextAlignment.Center};
+
+            _settingsStateLabel = new LabelControl() { Text = "Restart needed to apply new setting(s)",
+                                                        Color = Colors.Red};
+
             _leftMenuPanel = new PanelControl() { Color = Colors.WhiteSmoke };
             _cubesPatern = new ImageControl() { Image = SandboxMenuComponent.StCubesPattern };
             _linenPatern = new ImageControl() { Image = SandboxMenuComponent.StLinenPattern };
@@ -125,6 +129,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             _leftMenuPanel.Children.Add(_btSound);
             _leftMenuPanel.Children.Add(_btGraphic);
             _leftMenuPanel.Children.Add(_windowLabel);
+            _leftMenuPanel.Children.Add(_settingsStateLabel);
             _leftMenuPanel.Children.Add(_shadow);
             _leftMenuPanel.Children.Add(_cubesPatern);
             _leftMenuPanel.Children.Add(_linenPatern);
@@ -175,6 +180,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                 _btKeyBinding.Bounds = new UniRectangle(5, btPlacementY, _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
 
                 _btBack.Bounds = new UniRectangle(5, new UniScalar(1, -60), _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
+                _settingsStateLabel.Bounds = new UniRectangle(10, new UniScalar(1f, -75.0f), 0, 0);
 
                 if (_graphSettingsPanel != null) _graphSettingsPanel.Resize();
                 if (_coreEngineSetingsPanel != null) _coreEngineSetingsPanel.Resize();

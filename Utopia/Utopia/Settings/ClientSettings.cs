@@ -32,13 +32,16 @@ namespace Utopia.Settings
         public int? MinSliderValue { get; private set; }
         public int? MaxSliderValue { get; private set; }
         public List<string> ListValues { get; set; }
+        public bool NeedRestartAfterChange { get; set; }
 
         public ParameterAttribute(string paramName,
                                   string info,
                                   string infoSuffix,
-                                  ParamInputMethod inputMethod,     
+                                  ParamInputMethod inputMethod,
+                                  bool needRestartAfterChange,
                                   params string[] listValues)
         {
+            NeedRestartAfterChange = needRestartAfterChange;
             ParamName = paramName;
             Info = info;
             InfoSuffix = infoSuffix;
@@ -54,8 +57,10 @@ namespace Utopia.Settings
                                   ParamInputMethod inputMethod,
                                   int minSliderValue,
                                   int maxSliderValue,
+                                  bool needRestartAfterChange,
                                   params string[] listValues)
         {
+            NeedRestartAfterChange = needRestartAfterChange;
             ParamName = paramName;
             Info = info;
             InfoSuffix = infoSuffix;
@@ -72,7 +77,7 @@ namespace Utopia.Settings
     [Serializable]
     public class GameParameters
     {
-        [ParameterAttribute("Nick Name", "You nick name in the world", null, ParamInputMethod.InputBox)]
+        [ParameterAttribute("Nick Name", "You nick name in the world", null, ParamInputMethod.InputBox, true)]
         public string NickName { get; set; }
     }
 
@@ -82,11 +87,11 @@ namespace Utopia.Settings
     [Serializable]
     public class GraphicalParameters
     {
-        [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 32]", " chunk(s)" , ParamInputMethod.Slider, 10, 32)]
+        [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 32]", " chunk(s)", ParamInputMethod.Slider, 10, 32, true)]
         public int WorldSize { get; set; }
-        [ParameterAttribute("Cloud's type", "Cloud visualisation type", null, ParamInputMethod.ButtonList, "None", "2D", "3D")]
+        [ParameterAttribute("Cloud's type", "Cloud visualisation type", null, ParamInputMethod.ButtonList, false, "None", "2D", "3D")]
         public string CloudsQuality { get; set; }
-        [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", " block(s)" ,ParamInputMethod.Slider, 4, 12)]
+        [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", " block(s)", ParamInputMethod.Slider, 4, 12, true)]
         public int LightPropagateSteps { get; set; }
     }
 
@@ -96,7 +101,7 @@ namespace Utopia.Settings
     [Serializable]
     public class EngineParameters
     {
-        [ParameterAttribute("Allocate more threads", "Allocate more threads to speed up all rendering routine", " thread(s)", ParamInputMethod.Slider, 0, 4)]
+        [ParameterAttribute("Allocate more threads", "Allocate more threads to speed up all rendering routine", " thread(s)", ParamInputMethod.Slider, 0, 4, false)]
         public int AllocatedThreadsModifier { get; set; }
     }
 
