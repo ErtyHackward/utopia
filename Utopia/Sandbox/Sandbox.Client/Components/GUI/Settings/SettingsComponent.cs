@@ -14,6 +14,7 @@ using System.Reflection;
 using Utopia.Settings;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
 using System.Windows.Forms;
+using S33M3DXEngine.Threading;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {
@@ -24,7 +25,6 @@ namespace Sandbox.Client.Components.GUI.Settings
         #region Private variables
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
-
         #endregion
 
         #region Public properties/methods
@@ -92,7 +92,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             object Parameter;
             Type reflectedType;
             PropertyInfo[] pi;
-            bool restartNeeded = false;
+            bool _restartNeeded = false;
             //Saving Graphical Parameters ========================================================
             if (_graphSettingsPanel != null)
             {
@@ -107,21 +107,23 @@ namespace Sandbox.Client.Components.GUI.Settings
                     var piTmp = pi.First(x => x.Name == row.FieldData.Name);
                     var previousValue = piTmp.GetValue(Parameter, null);
 
+                    ParameterAttribute attrib = (ParameterAttribute)piTmp.GetCustomAttributes(typeof(ParameterAttribute), true)[0];
+
                     if (row.FieldData.Value.GetType() != piTmp.PropertyType)
                     {
                         var castedValue = piTmp.PropertyType.InvokeMember("Parse", BindingFlags.InvokeMethod, null, piTmp.PropertyType, new object[] { row.FieldData.Value });
-                        if (previousValue != castedValue)
+                        if (previousValue.ToString()  != castedValue.ToString())
                         {
-                            ParameterAttribute attrib = (ParameterAttribute)piTmp.GetCustomAttributes(typeof(ParameterAttribute), true)[0];
-                            if (attrib.NeedRestartAfterChange) restartNeeded = true;
+                            if (attrib.NeedRestartAfterChange) _restartNeeded = true;
                             piTmp.SetValue(Parameter, castedValue, null);
                         }
                     }
                     else
                     {
-                        if (previousValue != row.FieldData.Value)
+                        if (previousValue.ToString() != row.FieldData.Value.ToString())
                         {
                             piTmp.SetValue(Parameter, row.FieldData.Value, null);
+                            if (attrib.NeedRestartAfterChange) _restartNeeded = true;
                         }
                     }
                 }
@@ -145,20 +147,28 @@ namespace Sandbox.Client.Components.GUI.Settings
                     if (row.FieldData.Value.GetType() != piTmp.PropertyType)
                     {
                         var castedValue = piTmp.PropertyType.InvokeMember("Parse", BindingFlags.InvokeMethod, null, piTmp.PropertyType, new object[] { row.FieldData.Value });
-                        if (previousValue != castedValue)
+                        if (previousValue.ToString() != castedValue.ToString())
                         {
-                            attrib = (ParameterAttribute)piTmp.GetCustomAttributes(typeof(ParameterAttribute), true)[0];
-                            if (attrib.NeedRestartAfterChange) restartNeeded = true;
+                            if (attrib.NeedRestartAfterChange) _restartNeeded = true;
                             piTmp.SetValue(Parameter, castedValue, null);
                         }
                     }
                     else
                     {
-                        if (previousValue != row.FieldData.Value)
+                        if (previousValue.ToString() != row.FieldData.Value.ToString())
                         {
-                            attrib = (ParameterAttribute)piTmp.GetCustomAttributes(typeof(ParameterAttribute), true)[0];
-                            if (attrib.NeedRestartAfterChange) restartNeeded = true;
+                            if (attrib.NeedRestartAfterChange) _restartNeeded = true;
                             piTmp.SetValue(Parameter, row.FieldData.Value, null);
+
+                            switch (row.FieldData.Name)
+                            {
+                                case "AllocatedThreadsModifier":
+                                    ChangeAllocatedThreads((int)row.FieldData.Value);
+                                    break;
+                                default:
+                                    break;
+                            }
+
                         }
                     }
                 }
@@ -178,24 +188,22 @@ namespace Sandbox.Client.Components.GUI.Settings
                     var piTmp = pi.First(x => x.Name == row.FieldData.Name);
                     var previousValue = piTmp.GetValue(Parameter, null);
 
+                    ParameterAttribute attrib = (ParameterAttribute)piTmp.GetCustomAttributes(typeof(ParameterAttribute), true)[0];
 
                     if (row.FieldData.Value.GetType() != piTmp.PropertyType)
                     {
                         var castedValue = piTmp.PropertyType.InvokeMember("Parse", BindingFlags.InvokeMethod, null, piTmp.PropertyType, new object[] { row.FieldData.Value });
-                        if (previousValue != castedValue)
+                        if (previousValue.ToString() != castedValue.ToString())
                         {
-                            ParameterAttribute attrib = (ParameterAttribute)piTmp.GetCustomAttributes(typeof(ParameterAttribute), true)[0];
-                            if (attrib.NeedRestartAfterChange) restartNeeded = true;
+                            if (attrib.NeedRestartAfterChange) _restartNeeded = true;
+                            piTmp.SetValue(Parameter, castedValue, null);
                         }
-                        
-                        piTmp.SetValue(Parameter, castedValue, null);
                     }
                     else
                     {
-                        if (previousValue != row.FieldData.Value)
+                        if (previousValue.ToString() != row.FieldData.Value.ToString())
                         {
-                            ParameterAttribute attrib = (ParameterAttribute)piTmp.GetCustomAttributes(typeof(ParameterAttribute), true)[0];
-                            if (attrib.NeedRestartAfterChange) restartNeeded = true;
+                            if (attrib.NeedRestartAfterChange) _restartNeeded = true;
                             piTmp.SetValue(Parameter, row.FieldData.Value, null);
                         }
                     }
@@ -288,10 +296,19 @@ namespace Sandbox.Client.Components.GUI.Settings
                         logger.Info("Keyboard binding Saved, KeyBindingChanged event raised");
                     }
                 }
-                
+            }
+
+            if (_restartNeeded)
+            {
+                _settingsStateLabel.IsVisible = true;
             }
 
             ClientSettings.Current.Save();
+        }
+
+        private void ChangeAllocatedThreads(int newValue)
+        {
+            SmartThread.SetOptimumNbrThread(ClientSettings.Current.Settings.DefaultAllocatedThreads + newValue, true);
         }
 
         //ButtonList Event management ==========================================

@@ -63,6 +63,7 @@ namespace S33M3DXEngine.Threading
 
             if (_totThread < 1) _totThread = 1;
 
+            if (ThreadPool != null) ThreadPool.Dispose();
             STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };
             ThreadPool = new SmartThreadPool(_stpInfo);
 

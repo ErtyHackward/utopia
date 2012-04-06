@@ -29,7 +29,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 {
 
     /// <summary>Renders text input controls in a traditional flat style</summary>
-    public class FlatInputKeyCatchControlRenderer : IFlatControlRenderer<Controls.Desktop.InputKeyCatchControl>, IOpeningLocator
+    public class FlatInputKeyCatchControlRenderer : IFlatControlRenderer<Controls.Desktop.InputKeyCatchControl>
     {
 
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -157,31 +157,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 
             // Let the control know that we can provide it with additional informations
             // about how its text is being rendered
-            control.OpeningLocator = this;
             this.graphics = graphics;
         }
-
-        /// <summary>
-        ///   Calculates which opening between two letters is closest to a position
-        /// </summary>
-        /// <param name="bounds">
-        ///   Boundaries of the control, should be in absolute coordinates
-        /// </param>
-        /// <param name="text">Text in which the opening will be looked for</param>
-        /// <param name="position">
-        ///   Position to which the closest opening will be found,
-        ///   should be in absolute coordinates
-        /// </param>
-        /// <returns>The index of the opening closest to the provided position</returns>
-        public int GetClosestOpening(ref RectangleF bounds, string text,ref Vector2 position)
-        {
-            return this.graphics.GetClosestOpening("input.normal",ref bounds, text,ref position);
-        }
-
-        // exTODO: Find a better solution than remembering the graphics interface here
-        //   Otherwise the renderer could try to renderer when no frame is being drawn.
-        //   Also, the renderer makes the assumption that all drawing happens through
-        //   one graphics interface only.
 
         /// <summary>Graphics interface we used for the last draw call</summary>
         private IFlatGuiGraphics graphics;

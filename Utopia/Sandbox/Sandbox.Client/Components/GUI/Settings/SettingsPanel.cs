@@ -20,7 +20,7 @@ namespace Sandbox.Client.Components.GUI.Settings
         {
             _panelName = panelName;
             _parent = parent;
-            this.CanBeRendered = false;
+            this.IsVisible = false;
             //initialize the graphical component of the pannel
             InitializeComponent(SettingParameters);
         }
