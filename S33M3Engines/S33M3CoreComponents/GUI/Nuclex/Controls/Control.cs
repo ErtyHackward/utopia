@@ -53,7 +53,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         public bool ColorSet { get; private set; }
 
         private bool _canBeRendered = true;
-        public bool CanBeRendered
+        public bool IsVisible
         {
             get { return _canBeRendered; }
             set { _canBeRendered = value; }

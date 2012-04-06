@@ -58,7 +58,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                                                 CustomVerticalPlacement = FlatGuiGraphics.Frame.VerticalTextAlignment.Center};
 
             _settingsStateLabel = new LabelControl() { Text = "Restart needed to apply new setting(s)",
-                                                        Color = Colors.Red};
+                                                        Color = Colors.Red, IsVisible = false};
 
             _leftMenuPanel = new PanelControl() { Color = Colors.WhiteSmoke };
             _cubesPatern = new ImageControl() { Image = SandboxMenuComponent.StCubesPattern };
@@ -181,7 +181,6 @@ namespace Sandbox.Client.Components.GUI.Settings
 
                 _btBack.Bounds = new UniRectangle(5, new UniScalar(1, -60), _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
                 _settingsStateLabel.Bounds = new UniRectangle(10, new UniScalar(1f, -75.0f), 0, 0);
-
                 if (_graphSettingsPanel != null) _graphSettingsPanel.Resize();
                 if (_coreEngineSetingsPanel != null) _coreEngineSetingsPanel.Resize();
             }

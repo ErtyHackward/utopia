@@ -430,7 +430,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             // Such instances can be used to construct invisible containers, and are most
             // prominently embodied in the 'desktop' control that hosts the whole GUI.
             if (
-              (controlType == typeof(Controls.Control)) ||
+              (controlToRender.IsVisible == false) ||           //Control is invisible !
+              (controlType == typeof(Controls.Control)) ||      
               (controlType == typeof(Controls.DesktopControl))
             )
             {
@@ -462,7 +463,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             else
             { // No renderer found, output a warning
 #if DEBUG
-                if (controlToRender.CanBeRendered == true)
+                if (controlToRender.IsVisible == true)
                 {
                     logger.Warn("Impossible to find a control renderer for the component type : {0}, are you sure its assembly has been registered ??", controlToRender.GetType());
                 }
