@@ -291,7 +291,8 @@ namespace Utopia.GUI.Inventory
                     _itemMessageTranslator.Enabled = false;
                     //Has this is A gui component, its own windows will automatically by protected for events going "through" it,
                     //But in this case, I need to prevent ALL event to be sent while this component is activated
-                    _inputManager.ActionsManager.IsMouseExclusiveMode = false; 
+                    _inputManager.ActionsManager.IsMouseExclusiveMode = false;
+                    _guiManager.ForceExclusiveMode--;
                     _inputManager.MouseManager.MouseCapture = true;
                     IsActive = false;
                 }
@@ -301,6 +302,7 @@ namespace Utopia.GUI.Inventory
                     _guiManager.Screen.Desktop.Children.Add(_inventoryUi);
                     _itemMessageTranslator.Enabled = true;
                     _inputManager.ActionsManager.IsMouseExclusiveMode = true;
+                    _guiManager.ForceExclusiveMode++;
                     _inputManager.MouseManager.MouseCapture = false;
                     IsActive = true;
                 }

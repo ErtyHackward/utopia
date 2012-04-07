@@ -35,6 +35,8 @@ namespace S33M3CoreComponents.GUI
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        public int ForceExclusiveMode { get; set; }
+
         /// <summary>Draws the GUI</summary>
         private IGuiVisualizer _guiVisualizer;
         //The assembly that will contains the "user" made components, it will be looked by reflection to find the components
@@ -277,32 +279,32 @@ namespace S33M3CoreComponents.GUI
 
         private void InjectMouseInput()
         {
-            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMousePressed, CatchExclusiveActions))
+            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMousePressed, CatchExclusiveActions || (ForceExclusiveMode > 0)))
             {
                 _screen.InjectMousePress(MouseButtons.Left);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMouseRelease, CatchExclusiveActions))
+            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMouseRelease, CatchExclusiveActions || (ForceExclusiveMode > 0)))
             {
                 _screen.InjectMouseRelease(MouseButtons.Left);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.RightMousePressed, CatchExclusiveActions))
+            if (_inputManager.ActionsManager.isTriggered(Actions.RightMousePressed, CatchExclusiveActions || (ForceExclusiveMode > 0)))
             {
                 _screen.InjectMousePress(MouseButtons.Right);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.RightMouseRelease, CatchExclusiveActions))
+            if (_inputManager.ActionsManager.isTriggered(Actions.RightMouseRelease, CatchExclusiveActions || (ForceExclusiveMode > 0)))
             {
                 _screen.InjectMouseRelease(MouseButtons.Right);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward, CatchExclusiveActions))
+            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward, CatchExclusiveActions || (ForceExclusiveMode > 0)))
             {
                 _screen.InjectMouseWheel(1);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward, CatchExclusiveActions))
+            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward, CatchExclusiveActions || (ForceExclusiveMode > 0)))
             {
                 _screen.InjectMouseWheel(-1);
             }
