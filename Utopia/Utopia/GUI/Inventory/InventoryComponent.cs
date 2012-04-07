@@ -290,7 +290,7 @@ namespace Utopia.GUI.Inventory
                     _guiManager.Screen.Desktop.Children.Remove(_inventoryUi);
                     _itemMessageTranslator.Enabled = false;
                     _playerManager.HandleToolsUse = true;
-                    _guiManager.Updatable = false;
+                    //_guiManager.Updatable = false;
                     _inputManager.MouseManager.MouseCapture = true;
                     IsActive = false;
                 }
@@ -300,7 +300,7 @@ namespace Utopia.GUI.Inventory
                     _guiManager.Screen.Desktop.Children.Add(_inventoryUi);
                     _itemMessageTranslator.Enabled = true;
                     _playerManager.HandleToolsUse = false;
-                    _guiManager.Updatable = true;
+                    //_guiManager.Updatable = true;
                     _inputManager.MouseManager.MouseCapture = false;
                     IsActive = true;
                 }
