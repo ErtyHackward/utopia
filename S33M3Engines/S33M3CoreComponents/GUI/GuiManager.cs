@@ -33,6 +33,8 @@ namespace S33M3CoreComponents.GUI
     /// </summary>
     public class GuiManager : DrawableGameComponent, IDebugInfo
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         /// <summary>Draws the GUI</summary>
         private IGuiVisualizer _guiVisualizer;
         //The assembly that will contains the "user" made components, it will be looked by reflection to find the components
@@ -97,6 +99,13 @@ namespace S33M3CoreComponents.GUI
             {
                 ActionId = Actions.RightMousePressed,
                 TriggerType = MouseTriggerMode.ButtonPressed,
+                Binding = MouseButton.RightButton
+            });
+
+            _inputManager.ActionsManager.AddActions(new MouseTriggeredAction()
+            {
+                ActionId = Actions.RightMouseRelease,
+                TriggerType = MouseTriggerMode.ButtonReleased,
                 Binding = MouseButton.RightButton
             });
 
@@ -183,19 +192,19 @@ namespace S33M3CoreComponents.GUI
         public override void Update(GameTime timeSpend)
         {
             //Check for Mouse Overing states on the gui
-            //if (_screen.IsMouseOverGui == true && this.CatchExclusiveActions == false)
-            //{
-            //    this.CatchExclusiveActions = true;                
-            //    _inputManager.ActionsManager.IsMouseExclusiveMode = true;
-            //}
-            //else
-            //{
-            //    if (_screen.IsMouseOverGui == false && this.CatchExclusiveActions == true)
-            //    {
-            //        this.CatchExclusiveActions = false;
-            //        _inputManager.ActionsManager.IsMouseExclusiveMode = false;
-            //    }
-            //}
+            if (_screen.IsMouseOverGui == true && this.CatchExclusiveActions == false)
+            {
+                this.CatchExclusiveActions = true;
+                _inputManager.ActionsManager.IsMouseExclusiveMode = true;
+            }
+            else
+            {
+                if (_screen.IsMouseOverGui == false && this.CatchExclusiveActions == true)
+                {
+                    this.CatchExclusiveActions = false;
+                    _inputManager.ActionsManager.IsMouseExclusiveMode = false;
+                }
+            }
 
             DialogClosed = false;
             InjectMouseInput();

@@ -80,9 +80,6 @@ namespace S33M3CoreComponents.Debug
         private void ReleaseExclusiveMode()
         {
             this.CatchExclusiveActions = false;
-            _guiManager.CatchExclusiveActions = false;
-            _guiManager.Updatable = false;
-            _inputManager.ActionsManager.IsMouseExclusiveMode = false;
             _inputManager.MouseManager.MouseCapture = _wasMouseCaptured;
         }
         #endregion
@@ -132,10 +129,7 @@ namespace S33M3CoreComponents.Debug
                 {
                     //Show the GUI, and start the action exclusive mode
                     ShowControl(this, null);
-                    this.CatchExclusiveActions = true;
-                    _guiManager.CatchExclusiveActions = true;
-                    _guiManager.Updatable = true;
-                    _inputManager.ActionsManager.IsMouseExclusiveMode = true;
+                    this.CatchExclusiveActions = true; //The gui will automaticaly set the actionmanager in Exclusive mode
                     _wasMouseCaptured = _inputManager.MouseManager.MouseCapture;
                     _inputManager.MouseManager.MouseCapture = false;
                 }
