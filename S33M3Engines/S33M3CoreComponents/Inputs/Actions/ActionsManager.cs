@@ -318,6 +318,7 @@ namespace S33M3CoreComponents.Inputs.Actions
             //Check if an action needs to be triggered
             for (int i = 0; i < _mouseActions.Count; i++)
             {
+
                 _mouseAction = _mouseActions[i];
 
                 //has this mouse action the need to be applied only in "Mouse Capture" mode ?
