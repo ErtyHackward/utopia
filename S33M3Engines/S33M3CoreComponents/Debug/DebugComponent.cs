@@ -81,6 +81,7 @@ namespace S33M3CoreComponents.Debug
         {
             this.CatchExclusiveActions = false;
             _guiManager.CatchExclusiveActions = false;
+            _guiManager.Updatable = false;
             _inputManager.ActionsManager.IsMouseExclusiveMode = false;
             _inputManager.MouseManager.MouseCapture = _wasMouseCaptured;
         }
@@ -98,8 +99,6 @@ namespace S33M3CoreComponents.Debug
             });
 
             _mainControl = ToDispose(new DebugWindowControl(_game, _displayInfo, _fps, _leftPanelColor));
-            //_mainControl.ControlClosed += HideControl;
-            //_guiManager.Screen.Desktop.Children.Add(_mainControl.DebugWindow);
 
             _chart = ToDispose(new ColumnChart(_engine, new SharpDX.Rectangle((int)_mainControl.DebugWindow.Bounds.Left.Offset,
                                                                     (int)_engine.ViewPort.Height - (int)_mainControl.DebugWindow.Bounds.Bottom.Offset,
@@ -128,7 +127,6 @@ namespace S33M3CoreComponents.Debug
                 if (_guiManager.Screen.Desktop.Children.Contains(_mainControl.DebugWindow))
                 {
                     HideControl(this, null);
-                    ReleaseExclusiveMode();
                 }
                 else
                 {
@@ -136,6 +134,7 @@ namespace S33M3CoreComponents.Debug
                     ShowControl(this, null);
                     this.CatchExclusiveActions = true;
                     _guiManager.CatchExclusiveActions = true;
+                    _guiManager.Updatable = true;
                     _inputManager.ActionsManager.IsMouseExclusiveMode = true;
                     _wasMouseCaptured = _inputManager.MouseManager.MouseCapture;
                     _inputManager.MouseManager.MouseCapture = false;
