@@ -86,11 +86,15 @@ namespace Sandbox.Client.States
             AddComponent(staggingBackBuffer);
             AddComponent(soundManager);
 
+            
+
             base.Initialize(context);
         }
 
         public override void OnEnabled(GameState previousState)
         {
+            var guiManager = _ioc.Get<GuiManager>();
+            guiManager.Updatable = false;
             base.OnEnabled(previousState);
         }
     }
