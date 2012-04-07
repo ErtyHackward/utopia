@@ -152,8 +152,6 @@ namespace Utopia.Entities.Managers
         public IWorldChunks WorldChunks { get; set; }
         public bool MousepickDisabled { get; set; }
 
-        public bool HandleToolsUse { get; set; }
-
         private bool _landscapeInitiazed;
         public bool LandscapeInitiazed
         {
@@ -199,7 +197,6 @@ namespace Utopia.Entities.Managers
             _playerRenderer.VisualEntity = this;
 
             HasMouseFocus = Updatable;
-            HandleToolsUse = true;
             UpdateOrder = 0;
         }
 
@@ -240,7 +237,7 @@ namespace Utopia.Entities.Managers
             
             if (!HasMouseFocus) return; //the editor(s) can acquire the mouseFocus
 
-            if (HandleToolsUse && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Left, CatchExclusiveAction))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Left, CatchExclusiveAction))
             {
                 if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool!=null)
                 {
@@ -259,7 +256,7 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (HandleToolsUse && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
             {
                 if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool != null)
                 {
