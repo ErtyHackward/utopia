@@ -88,7 +88,7 @@ namespace S33M3CoreComponents.Inputs.Actions
                 else _isMouseExclusiveModeCpt--;
                 _isMouseExclusiveMode = _isMouseExclusiveModeCpt > 0;
 #if DEBUG
-                logger.Info("Action Manager MouseExclusive Mode change to {0} ; Cpt : {1}", _isMouseExclusiveMode, _isMouseExclusiveModeCpt);
+                logger.Trace("Action Manager MouseExclusive Mode change to {0} ; Cpt : {1}", _isMouseExclusiveMode, _isMouseExclusiveModeCpt);
 #endif
             }
         }

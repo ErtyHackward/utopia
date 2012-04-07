@@ -35,7 +35,21 @@ namespace S33M3CoreComponents.GUI
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public int ForceExclusiveMode { get; set; }
+        private int _forceExclusiveModeCpt;
+        private bool _forceExclusiveMode;
+
+        public bool ForceExclusiveMode
+        {
+            get { return _forceExclusiveMode; }
+            set
+            {
+                _forceExclusiveMode = value;
+                if (value) _forceExclusiveModeCpt++;
+                else _forceExclusiveModeCpt--;
+                _forceExclusiveMode = _forceExclusiveModeCpt > 0;
+            }
+        }
+
 
         /// <summary>Draws the GUI</summary>
         private IGuiVisualizer _guiVisualizer;
@@ -279,32 +293,32 @@ namespace S33M3CoreComponents.GUI
 
         private void InjectMouseInput()
         {
-            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMousePressed, CatchExclusiveActions || (ForceExclusiveMode > 0)))
+            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMousePressed, CatchExclusiveActions || _forceExclusiveMode))
             {
                 _screen.InjectMousePress(MouseButtons.Left);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMouseRelease, CatchExclusiveActions || (ForceExclusiveMode > 0)))
+            if (_inputManager.ActionsManager.isTriggered(Actions.LeftMouseRelease, CatchExclusiveActions || _forceExclusiveMode))
             {
                 _screen.InjectMouseRelease(MouseButtons.Left);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.RightMousePressed, CatchExclusiveActions || (ForceExclusiveMode > 0)))
+            if (_inputManager.ActionsManager.isTriggered(Actions.RightMousePressed, CatchExclusiveActions || _forceExclusiveMode))
             {
                 _screen.InjectMousePress(MouseButtons.Right);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.RightMouseRelease, CatchExclusiveActions || (ForceExclusiveMode > 0)))
+            if (_inputManager.ActionsManager.isTriggered(Actions.RightMouseRelease, CatchExclusiveActions || _forceExclusiveMode))
             {
                 _screen.InjectMouseRelease(MouseButtons.Right);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward, CatchExclusiveActions || (ForceExclusiveMode > 0)))
+            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward, CatchExclusiveActions || _forceExclusiveMode))
             {
                 _screen.InjectMouseWheel(1);
             }
 
-            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward, CatchExclusiveActions || (ForceExclusiveMode > 0)))
+            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward, CatchExclusiveActions || _forceExclusiveMode))
             {
                 _screen.InjectMouseWheel(-1);
             }
