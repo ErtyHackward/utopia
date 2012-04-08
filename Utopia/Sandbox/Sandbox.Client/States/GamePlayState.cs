@@ -1,4 +1,5 @@
 ﻿using Ninject;
+using S33M3DXEngine;
 using Sandbox.Client.Components;
 using Utopia;
 using Utopia.Effects.Shared;
@@ -86,9 +87,20 @@ namespace Sandbox.Client.States
             AddComponent(staggingBackBuffer);
             AddComponent(soundManager);
 
+            chat.MessageOut += ChatMessageOut;
             
 
             base.Initialize(context);
+        }
+
+        void ChatMessageOut(object sender, ChatMessageEventArgs e)
+        {
+            if (e.Message == "/reloadtex")
+            {
+                e.DoNotSend = true;
+                var worldChunks = _ioc.Get<IWorldChunks>();
+                worldChunks.InitDrawComponents(_ioc.Get<D3DEngine>().ImmediateContext);
+            }
         }
 
         public override void OnEnabled(GameState previousState)

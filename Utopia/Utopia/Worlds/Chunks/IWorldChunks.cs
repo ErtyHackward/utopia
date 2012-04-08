@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SharpDX.Direct3D11;
 using Utopia.Worlds.Chunks;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
@@ -99,5 +100,7 @@ namespace Utopia.Worlds.Chunks
         void isCollidingWithTerrain(VerletSimulator _physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
 
         bool IsInitialLoadCompleted { get; set;}
+
+        void InitDrawComponents(DeviceContext context);
     }
 }

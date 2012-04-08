@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Network;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
-using Utopia.Shared.Structs;
 using System.Diagnostics;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Sprites;
 using S33M3Resources.Structs;
 using S33M3DXEngine;
-using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.Inputs;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
-using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.GUI
 {
@@ -35,36 +31,39 @@ namespace Utopia.GUI
         private long _hideChatInTick;
         private long _lastUpdateTime;
         private ByteColor _fontColor = new ByteColor((byte)Colors.White.Red * 255, (byte)Colors.White.Green * 255, (byte)Colors.White.Blue * 255, (byte)128);
-        private D3DEngine _d3dEngine;
+        private readonly D3DEngine _d3dEngine;
         private readonly InputsManager _imanager;
         private readonly ServerComponent _server;
         private readonly Queue<string> _messages = new Queue<string>();
-        private float windowHeight;
-
-        public int ChatLineLimit { get; set; }
-
+        private float _windowHeight;
         private bool _activated;
 
+        /// <summary>
+        /// Occurs when the chat message is ready to be sent to the server, allows to supress this operation
+        /// </summary>
+        public event EventHandler<ChatMessageEventArgs> MessageOut;
+
+        protected void OnMessageOut(ChatMessageEventArgs e)
+        {
+            var handler = MessageOut;
+            if (handler != null) handler(this, e);
+        }
+
+        public int ChatLineLimit { get; set; }
+        
         public bool Activated
         {
             get { return _activated; }
             private set
             {
                 _activated = value;
-                if (value)
-                {
-                    _imanager.ActionsManager.IsFullExclusiveMode = true;
-                }
-                else
-                {
-                    _imanager.ActionsManager.IsFullExclusiveMode = false;
-                }
+                _imanager.ActionsManager.IsFullExclusiveMode = value;
             }
         }
 
         public ChatComponent(D3DEngine engine, InputsManager imanager, ServerComponent server)
         {
-            this.IsDefferedLoadContent = true;
+            IsDefferedLoadContent = true;
 
             _d3dEngine = engine;
             _imanager = imanager;
@@ -119,7 +118,7 @@ namespace Utopia.GUI
 
         private void LocateChat(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
-            windowHeight = viewport.Height;
+            _windowHeight = viewport.Height;
         }
 
         public override void Initialize()
@@ -156,7 +155,7 @@ namespace Utopia.GUI
             }
 
 
-            if (Activated == true && _imanager.ActionsManager.isTriggered(UtopiaActions.Exit_Chat, CatchExclusiveActions))
+            if (Activated && _imanager.ActionsManager.isTriggered(UtopiaActions.Exit_Chat, CatchExclusiveActions))
             {
                 Activated = false;
                 _textInput.Clear();
@@ -181,24 +180,31 @@ namespace Utopia.GUI
                     //Send message to server !
                     Activated = false;
                     CatchExclusiveActions = false;
-                    string Input = _textInput.GetText();
-                    if (!string.IsNullOrWhiteSpace(Input))
+                    var input = _textInput.GetText();
+                    if (!string.IsNullOrWhiteSpace(input))
                     {
-                        var msg = new ChatMessage { DisplayName = _server.DisplayName, Message = Input };
-                        if (Input.StartsWith("/me ", StringComparison.CurrentCultureIgnoreCase))
+                        var ea = new ChatMessageEventArgs { Message = input };
+
+                        OnMessageOut(ea);
+
+                        if (!ea.DoNotSend)
                         {
-                            msg.Action = true;
-                            msg.Message = Input.Remove(0, 4);
+                            var msg = new ChatMessage { DisplayName = _server.DisplayName, Message = input };
+                            if (input.StartsWith("/me ", StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                msg.Action = true;
+                                msg.Message = input.Remove(0, 4);
+                            }
+                            _server.ServerConnection.SendAsync(msg);
                         }
-                        _server.ServerConnection.SendAsync(msg);
                     }
                     _textInput.isListening = false;
+                    _textInput.Clear();
+                    _refreshDisplay = true;
                 }
             }
-
             
             _textInput.Refresh();
-
         }
 
         public override void Draw(DeviceContext context, int index)
@@ -209,8 +215,7 @@ namespace Utopia.GUI
                 return;
             }
 
-            int _showCaret = -1;
-            string Input = string.Empty;
+            var showCaret = -1;
             var builder = new StringBuilder();
 
             foreach (var message in _messages)
@@ -219,21 +224,36 @@ namespace Utopia.GUI
             }
             if (Activated)
             {
-                if (_textInput.GetText(out Input, out _showCaret))
+                string input;
+                if (_textInput.GetText(out input, out showCaret))
                 {
                     _lastUpdateTime = Stopwatch.GetTimestamp();
                     _refreshDisplay = true;
                 }
 
-                if(_showCaret != -1) _showCaret += builder.Length + 2;
-                builder.Append(string.Format("{0} {1}", ">", Input));
+                if(showCaret != -1) showCaret += builder.Length + 2;
+                builder.Append(string.Format("{0} {1}", ">", input));
             }
 
             _spriteRender.Begin(false);
-            _textPosition = new Vector2(5, windowHeight - (100 + _messages.Count * _font.CharHeight));
-            _spriteRender.DrawText(_font, builder.ToString(), ref _textPosition, ref _fontColor, -1, _showCaret);
+            _textPosition = new Vector2(5, _windowHeight - (100 + _messages.Count * _font.CharHeight));
+            _spriteRender.DrawText(_font, builder.ToString(), ref _textPosition, ref _fontColor, -1, showCaret);
             _spriteRender.End(context);
             _refreshDisplay = false;
         }
+    }
+
+    public class ChatMessageEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Allows to prevent this message to be sent to the server
+        /// </summary>
+        public bool DoNotSend { get; set; }
+
+        /// <summary>
+        /// Gets the message
+        /// </summary>
+        public string Message { get; set; }
+
     }
 }
