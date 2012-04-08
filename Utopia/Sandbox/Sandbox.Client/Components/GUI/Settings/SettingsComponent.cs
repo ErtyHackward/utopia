@@ -316,6 +316,13 @@ namespace Sandbox.Client.Components.GUI.Settings
         {
             ButtonControl bt = (ButtonControl)sender;
             List<string> values = (List<string>)bt.Tag;
+
+            //Dynamic collection value ???
+            if (values.Count == 1 && values[0].Contains("CLIST_"))
+            {
+                values = ClientSettings.DynamicLists[values[0]];
+            }
+
             ((ParamRow)bt.Tag2).FieldData.Value = values[0];
             try
             {
