@@ -208,6 +208,8 @@ namespace Utopia.Worlds.Storage
         public override void Dispose()
         {
             IsRunning = false;
+            //Wait thread the exit
+            while (_storageThread.ThreadState == ThreadState.Running) { }
             _landscapeInsertCmd.Dispose();
             _landscapeGetCmd.Dispose();
             _landscapeGetHash.Dispose();
