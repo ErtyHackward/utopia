@@ -264,5 +264,11 @@ namespace Utopia.Server.Managers
                 }
             }
         }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+        }
+ 
     }
 }
