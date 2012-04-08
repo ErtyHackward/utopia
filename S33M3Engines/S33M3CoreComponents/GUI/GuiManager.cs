@@ -200,7 +200,7 @@ namespace S33M3CoreComponents.GUI
                 _screen.InjectCharacter(e.KeyChar);
         }
 
-        public override void Initialize()
+        public override void LoadContent(DeviceContext context)
         {
             _guiVisualizer = ToDispose(FlatGuiVisualizer.FromFile(_d3DEngine, _skinPath, _plugInComponentAssemblies));
         }
