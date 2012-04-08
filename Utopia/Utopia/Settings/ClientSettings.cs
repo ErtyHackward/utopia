@@ -4,14 +4,51 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
+using System.IO;
 
 namespace Utopia.Settings
 {
     public class ClientSettings
     {
         public static XmlSettingsManager<ClientConfig> Current;
-        public static string TexturePack = "TexturesPacks\\Default\\";
-        public static string EffectPack = "EffectsPacks\\Default\\";
+        public static string TexturePack
+        {
+            get { return @"TexturesPacks\" + Current.Settings.GraphicalParameters.TexturePack + @"\";}
+        }
+
+        public static string EffectPack
+        {
+            get { return @"EffectsPacks\" + Current.Settings.EngineParameters.EffectPack + @"\"; }
+        }
+
+        public static Dictionary<string, List<string>> DynamicLists = new Dictionary<string,List<string>>();
+
+        static ClientSettings()
+        {
+            //Create the Dynamic list of values
+
+            //List of textures Packs
+            DynamicLists.Add("CLIST_TexturePacks", new List<string>(GetAllTexturePacks()));
+            DynamicLists.Add("CLIST_EffectPacks", new List<string>(GetAllEffectPacks()));
+        }
+
+        private static IEnumerable<string> GetAllTexturePacks()
+        {
+            foreach (var path in Directory.GetDirectories(Application.StartupPath + @"\TexturesPacks\"))
+            {
+                DirectoryInfo di = new DirectoryInfo(path);
+                yield return di.Name;
+            }
+        }
+
+        private static IEnumerable<string> GetAllEffectPacks()
+        {
+            foreach (var path in Directory.GetDirectories(Application.StartupPath + @"\EffectsPacks\"))
+            {
+                DirectoryInfo di = new DirectoryInfo(path);
+                yield return di.Name;
+            }
+        }
     }
 
     public enum ParamInputMethod
@@ -93,6 +130,8 @@ namespace Utopia.Settings
         public string CloudsQuality { get; set; }
         [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", " block(s)", ParamInputMethod.Slider, 4, 12, true)]
         public int LightPropagateSteps { get; set; }
+        [ParameterAttribute("Textures pack", "Textures used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_TexturePacks")]
+        public string TexturePack { get; set; }
     }
 
     /// <summary>
@@ -103,6 +142,8 @@ namespace Utopia.Settings
     {
         [ParameterAttribute("Allocate more threads", "Allocate more threads to speed up all rendering routine", " thread(s)", ParamInputMethod.Slider, 0, 4, false)]
         public int AllocatedThreadsModifier { get; set; }
+        [ParameterAttribute("Effects pack", "Effects used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_EffectPacks")]
+        public string EffectPack { get; set; }
     }
 
     /// <summary>
@@ -240,7 +281,8 @@ namespace Utopia.Settings
                     },
                     EngineParameters = new EngineParameters()
                     {
-                        AllocatedThreadsModifier = 0
+                        AllocatedThreadsModifier = 0,
+                        EffectPack = "Default"
                     },
                     SoundParameters = new SoundParameters()
                     {
@@ -249,7 +291,8 @@ namespace Utopia.Settings
                     {
                         WorldSize = 32,
                         CloudsQuality = "2D",
-                        LightPropagateSteps = 8
+                        LightPropagateSteps = 8,
+                        TexturePack = "Default"
                     },
                     KeyboardMapping = new KeyboardMapping
                     {

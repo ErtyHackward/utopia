@@ -280,12 +280,6 @@
     <Content Include="TexturesPacks\Default\Gui\Pointer.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\Default\pickaxe-icon.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\ring-icon.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="TexturesPacks\Default\SkyDome\moon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -424,22 +418,40 @@
     <Content Include="TexturesPacks\HD\Editor\ct02.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\HD\pickaxe-icon.png">
+    <Content Include="TexturesPacks\HD\Sprites\0000_0_Grass1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\HD\ring-icon.png">
+    <Content Include="TexturesPacks\HD\Sprites\0000_1_Grass1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\HD\Sprites\sp10.png">
+    <Content Include="TexturesPacks\HD\Sprites\0000_2_Grass1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\HD\Sprites\sp20.png">
+    <Content Include="TexturesPacks\HD\Sprites\0000_3_Grass1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\HD\Sprites\sp30.png">
+    <Content Include="TexturesPacks\HD\Sprites\0000_4_Grass1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\HD\Sprites\sp40.png">
+    <Content Include="TexturesPacks\HD\Sprites\0001_0_Mush1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\HD\Sprites\0002_0_Mush2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\HD\Sprites\0003_0_Flower1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\HD\Sprites\0004_0_Flower2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\HD\Sprites\0005_0_GoldCoin1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\HD\Sprites\0006_0_Carver1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\HD\Sprites\0007_0_Cactus.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TexturesPacks\HD\Terran\ct00.png">
@@ -547,21 +559,6 @@
     <Content Include="TexturesPacks\HD\Terran\ct01.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="TexturesPacks\HD\Sprites\sp04.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\HD\Sprites\sp03.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\HD\Sprites\sp02.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\HD\Sprites\sp01.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\HD\Sprites\sp00.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="TexturesPacks\HD\SkyDome\Sunset.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
