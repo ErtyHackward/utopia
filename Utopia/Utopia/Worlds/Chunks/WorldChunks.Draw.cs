@@ -207,43 +207,65 @@ namespace Utopia.Worlds.Chunks
         /// <param name="context"></param>
         public void InitDrawComponents(DeviceContext context)
         {
-            if (_terra_View != null)
-                _terra_View.Dispose();
-            
+            if (this.IsInitialized) UnloadDrawComponents();
+
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _terra_View);
 
-            if (_terraEffect == null)
-            {
-                _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
-                _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
-            }
-
+            _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _terraEffect.TerraTexture.Value = _terra_View;
-            _terraEffect.TerraTexture.IsDirty = true;
+            _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
 
-            if (_liquidEffect == null)
-            {
-                _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
-                _liquidEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
-                _liquidEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
-            }
-
+            _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _liquidEffect.TerraTexture.Value = _terra_View;
-            _liquidEffect.TerraTexture.IsDirty = true;
-
-            if (_spriteTexture_View != null)
-                _spriteTexture_View.Dispose();
+            _liquidEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
+            _liquidEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
 
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
-
-            if (_staticSpriteEffect == null)
-            {
-                _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack+@"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration,_sharedFrameCB.CBPerFrame);
-                _staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
-            }
+            _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            _staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
             _staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
-            _staticSpriteEffect.DiffuseTexture.IsDirty = true;
 
+            //    _terra_View.Dispose();
+            
+            //ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _terra_View);
+
+            //if (_terraEffect == null)
+            //{
+            //    _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            //    _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
+            //}
+
+            //_terraEffect.TerraTexture.Value = _terra_View;
+            //_terraEffect.TerraTexture.IsDirty = true;
+
+            //if (_liquidEffect == null)
+            //{
+            //    _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            //    _liquidEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
+            //    _liquidEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
+            //}
+
+            //_liquidEffect.TerraTexture.Value = _terra_View;
+            //_liquidEffect.TerraTexture.IsDirty = true;
+
+            //if (_spriteTexture_View != null)
+            //    _spriteTexture_View.Dispose();
+
+            //ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
+
+            //if (_staticSpriteEffect == null)
+            //{
+            //    _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack+@"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration,_sharedFrameCB.CBPerFrame);
+            //    _staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
+            //}
+            //_staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
+            //_staticSpriteEffect.DiffuseTexture.IsDirty = true;
+
+        }
+
+        private void UnloadDrawComponents()
+        {
+            DisposeDrawComponents();
         }
 
         private void DisposeDrawComponents()
