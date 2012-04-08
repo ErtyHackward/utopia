@@ -135,6 +135,11 @@ namespace Sandbox.Client
         {
             ClientSettings.Current = new XmlSettingsManager<ClientConfig>("UtopiaClient.config", SettingsStorage.ApplicationData);
             ClientSettings.Current.Load();
+
+            if (string.IsNullOrEmpty(ClientSettings.Current.Settings.EngineParameters.EffectPack))
+                ClientSettings.Current.Settings.EngineParameters.EffectPack = "Default";
+            if (string.IsNullOrEmpty(ClientSettings.Current.Settings.GraphicalParameters.TexturePack))
+                ClientSettings.Current.Settings.GraphicalParameters.TexturePack = "HD";
             
             if (ValidateSettings()) 
                 ClientSettings.Current.Save();
