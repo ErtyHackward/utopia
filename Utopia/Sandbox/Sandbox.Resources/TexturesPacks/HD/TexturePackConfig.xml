@@ -1,0 +1,12 @@
+﻿<TexturePackConfig>
+  <PackageName>HD</PackageName>
+  <!-- Linear or Point -->
+  <TexMipCreationFiltering>Point</TexMipCreationFiltering>
+  <!-- One of predefined engine filtering :
+    MinLinearMagPointMipLinear
+    MinMagMipPoint
+    MinMagMipLinear
+    MinMagPointMipLinear
+    -->
+  <SamplingFilter>MinMagPointMipLinear</SamplingFilter>
+</TexturePackConfig>

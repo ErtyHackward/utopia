@@ -14,7 +14,6 @@ using S33M3DXEngine.Buffers;
 using UtopiaContent.Effects.Entities;
 using Utopia.Settings;
 using S33M3DXEngine.RenderStates;
-using Utopia.GameDXStates;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Settings;
 using S33M3DXEngine.Textures;

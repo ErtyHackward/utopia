@@ -19,6 +19,7 @@ using S33M3Resources.VertexFormats;
 using SharpDX.Direct3D11;
 using S33M3Resources.Structs;
 using S33M3DXEngine.RenderStates;
+using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Entities.Renderer
 {
@@ -92,7 +93,7 @@ namespace Utopia.Entities.Renderer
         public override void Draw(DeviceContext context, int index)
         {
             //Applying Correct Render States
-            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
             if (_player.EntityState.IsBlockPicked || _player.EntityState.IsEntityPicked)
             {

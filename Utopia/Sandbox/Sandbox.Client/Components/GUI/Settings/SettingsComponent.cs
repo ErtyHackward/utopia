@@ -15,6 +15,8 @@ using Utopia.Settings;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
 using System.Windows.Forms;
 using S33M3DXEngine.Threading;
+using Utopia.Shared.Settings;
+using Utopia.Shared.Config;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {
@@ -25,16 +27,18 @@ namespace Sandbox.Client.Components.GUI.Settings
         #region Private variables
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
+        private readonly Game _game;
         #endregion
 
         #region Public properties/methods
         public event EventHandler KeyBindingChanged;
         #endregion
 
-        public SettingsComponent(D3DEngine engine, MainScreen screen)
+        public SettingsComponent(Game game, D3DEngine engine, MainScreen screen)
         {
             _engine = engine;
             _screen = screen;
+            _game = game;
 
             _engine.ViewPort_Updated += UpdateLayout;
         }
@@ -124,6 +128,20 @@ namespace Sandbox.Client.Components.GUI.Settings
                         {
                             piTmp.SetValue(Parameter, row.FieldData.Value, null);
                             if (attrib.NeedRestartAfterChange) _restartNeeded = true;
+                        }
+
+                        switch (row.FieldData.Name)
+                        {
+                            case "TexturePack":
+                                    //Refresh TexturePackConfig value
+                                    TexturePackConfig.Current = new XmlSettingsManager<TexturePackSetting>(@"TexturePackConfig.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"TexturesPacks\" + ClientSettings.Current.Settings.GraphicalParameters.TexturePack + @"\" };
+                                    TexturePackConfig.Current.Load();
+                                break;
+                            case "VSync":
+                                ChangeVSync((bool)row.FieldData.Value);
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -311,6 +329,11 @@ namespace Sandbox.Client.Components.GUI.Settings
             SmartThread.SetOptimumNbrThread(ClientSettings.Current.Settings.DefaultAllocatedThreads + newValue, true);
         }
 
+        private void ChangeVSync(bool vsyncValue)
+        {
+            _game.VSync = vsyncValue;
+        }
+
         //ButtonList Event management ==========================================
         public void ButtonList_Pressed(object sender, EventArgs e)
         {
@@ -337,6 +360,13 @@ namespace Sandbox.Client.Components.GUI.Settings
             bt.Text = ((ParamRow)bt.Tag2).FieldData.Value.ToString();
         }
         //==================================================================
+
+        //CheckBox Event management ==========================================
+        public void SettingsPanel_Changed(object sender, EventArgs e)
+        {
+            SaveChange();
+        }
+        //CheckBox Event management ==========================================
 
         //Slider Event management ==========================================
         public void SliderControl_Moved(object sender, EventArgs e)

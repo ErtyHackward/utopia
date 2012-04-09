@@ -20,6 +20,7 @@ using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Textures;
 using S33M3DXEngine.Main;
 using S33M3DXEngine.RenderStates;
+using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Entities.Renderer
 {
@@ -64,7 +65,7 @@ namespace Utopia.Entities.Renderer
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
 
             _entityEffect.TerraTexture.Value = ToDispose(_cubeTexture_View);
-            _entityEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
+            _entityEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
         }
         #endregion
 
@@ -73,7 +74,7 @@ namespace Utopia.Entities.Renderer
         {
             if (VisualEntities.Count == 0) return;
             //Applying Correct Render States
-            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
             _entityEffect.Begin(context);
 
             for (int i = 0; i < VisualEntities.Count; i++)

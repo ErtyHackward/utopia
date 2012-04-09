@@ -168,7 +168,6 @@
     <Compile Include="Network\EntityMessageTranslator.cs" />
     <Compile Include="Network\ItemMessageTranslator.cs" />
     <Compile Include="Settings\ClientSettings.cs" />
-    <Compile Include="GameDXStates\DXStates.cs" />
     <Compile Include="Network\ServerComponent.cs" />
     <Compile Include="Settings\ParamRow.cs" />
     <Compile Include="Settings\ParamValue.cs" />

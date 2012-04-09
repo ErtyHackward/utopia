@@ -24,6 +24,7 @@ using Utopia.GUI.Inventory;
 using Utopia.GUI.Map;
 using S33M3CoreComponents.Debug;
 using Utopia.Components;
+using Utopia.Shared.Settings;
 
 namespace Sandbox.Client.States
 {
@@ -99,6 +100,10 @@ namespace Sandbox.Client.States
             {
                 e.DoNotSend = true;
                 var worldChunks = _ioc.Get<IWorldChunks>();
+
+                //Refresh the texture pack values
+                TexturePackConfig.Current.Load();
+
                 worldChunks.InitDrawComponents(_ioc.Get<D3DEngine>().ImmediateContext);
             }
         }

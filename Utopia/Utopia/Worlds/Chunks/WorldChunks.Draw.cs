@@ -12,6 +12,8 @@ using S33M3DXEngine.RenderStates;
 using S33M3DXEngine.Textures;
 using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Maths;
+using Utopia.Shared.GameDXStates;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -43,7 +45,7 @@ namespace Utopia.Worlds.Chunks
             {
                 _chunkDrawByFrame = 0;
 
-                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 DrawSolidFaces(context);
 
 #if DEBUG
@@ -62,12 +64,12 @@ namespace Utopia.Worlds.Chunks
                 if (!_playerManager.IsHeadInsideWater)
                 {
                     //Head not inside Water => Draw water front Faces
-                    RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                    RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 }
                 else
                 {
                     //Head inside Water block, draw back faces only
-                    RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.CullFront, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                    RenderStatesRepo.ApplyStates(DXStates.Rasters.CullFront, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 }
                 DefaultDrawLiquid(context);
                 return;
@@ -75,7 +77,7 @@ namespace Utopia.Worlds.Chunks
 
             if (index == ENTITIES_DRAW)
             {
-                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.CullNone, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 DrawStaticEntities(context);
                 return;
             }
@@ -207,60 +209,27 @@ namespace Utopia.Worlds.Chunks
         /// <param name="context"></param>
         public void InitDrawComponents(DeviceContext context)
         {
-            if (this.IsInitialized) UnloadDrawComponents();
+            if (this.IsInitialized)
+            {
+                UnloadDrawComponents();
+            }
 
-            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Linear, "ArrayTexture_WorldChunk", out _terra_View);
+            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", TexturePackConfig.Current.Settings.enuSamplingFilter, "ArrayTexture_WorldChunk", out _terra_View);
 
             _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _terraEffect.TerraTexture.Value = _terra_View;
-            _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+            _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(TexturePackConfig.Current.Settings.enuTexMipCreationFilteringId);
 
             _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _liquidEffect.TerraTexture.Value = _terra_View;
-            _liquidEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
-            _liquidEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
+            _liquidEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
+            _liquidEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipPoint);
 
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
             _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration, _sharedFrameCB.CBPerFrame);
-            _staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
+            _staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
             _staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
-
-            //    _terra_View.Dispose();
-            
-            //ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _terra_View);
-
-            //if (_terraEffect == null)
-            //{
-            //    _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
-            //    _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
-            //}
-
-            //_terraEffect.TerraTexture.Value = _terra_View;
-            //_terraEffect.TerraTexture.IsDirty = true;
-
-            //if (_liquidEffect == null)
-            //{
-            //    _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
-            //    _liquidEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
-            //    _liquidEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
-            //}
-
-            //_liquidEffect.TerraTexture.Value = _terra_View;
-            //_liquidEffect.TerraTexture.IsDirty = true;
-
-            //if (_spriteTexture_View != null)
-            //    _spriteTexture_View.Dispose();
-
-            //ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
-
-            //if (_staticSpriteEffect == null)
-            //{
-            //    _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack+@"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration,_sharedFrameCB.CBPerFrame);
-            //    _staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
-            //}
-            //_staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
-            //_staticSpriteEffect.DiffuseTexture.IsDirty = true;
-
+           
         }
 
         private void UnloadDrawComponents()

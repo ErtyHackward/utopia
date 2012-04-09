@@ -23,6 +23,7 @@ using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using System.Windows.Forms;
 using S33M3CoreComponents.Inputs;
 using S33M3DXEngine.RenderStates;
+using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Components
 {
@@ -1556,7 +1557,7 @@ namespace Utopia.Components
         {
             var size = Vector3.Subtract(max, min);
             //RenderStatesRepo.ApplyStates(_renderRasterId, _blendStateId, _depthStateWithDepthId);
-            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
 
             //Set Effect variables
             _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
@@ -1575,7 +1576,7 @@ namespace Utopia.Components
 
         private void DrawCrosshair(Vector3 position, float size, bool turnAxis)
         {
-            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
 
             var transform = Matrix.Scaling(size) * Matrix.Translation(position) * _transform;
 
@@ -1603,7 +1604,7 @@ namespace Utopia.Components
             // draw the model
             if (_visualVoxelModel != null)
             {
-                RenderStatesRepo.ApplyRaster(GameDXStates.DXStates.Rasters.Default);
+                RenderStatesRepo.ApplyRaster(DXStates.Rasters.Default);
 
                 _voxelEffect.Begin(context);
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
@@ -1625,7 +1626,7 @@ namespace Utopia.Components
 
                 //DrawBox(state.BoundingBox);
 
-                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 
 
                 var model = _visualVoxelModel.VoxelModel;
@@ -1801,7 +1802,7 @@ namespace Utopia.Components
         {
             if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
             {
-                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
 
                 #region Grid
                 var frame = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex];
@@ -1818,7 +1819,7 @@ namespace Utopia.Components
                 var model = _visualVoxelModel.VoxelModel;
                 var visualParts = _visualVoxelModel.VisualVoxelParts;
 
-                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 if (model.ColorMapping != null)
                 {
                     _voxelEffect.CBPerFrame.Values.ColorMapping = model.ColorMapping.BlockColors;

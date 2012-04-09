@@ -6,7 +6,7 @@ using SharpDX.Direct3D11;
 using S33M3DXEngine;
 using S33M3DXEngine.RenderStates;
 
-namespace Utopia.GameDXStates
+namespace Utopia.Shared.GameDXStates
 {
     public static class DXStates
     {
@@ -169,7 +169,6 @@ namespace Utopia.GameDXStates
             }
                                  );
         }
-
 
         public static class Samplers
         {

@@ -71,6 +71,7 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Config\TexturePackConfig.xml" />
     <Content Include="EffectsPacks\Default\Entities\ColorLine.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -262,9 +263,9 @@
     <Content Include="Sounds\Interface\button_press.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\Default\charactersheet.png">
+    <None Include="TexturesPacks\Default\charactersheet.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="TexturesPacks\Default\Editor\ct00.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -403,12 +404,15 @@
     <Content Include="TexturesPacks\Default\Terran\ct24.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="TexturesPacks\Default\TexturePackConfig.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="TexturesPacks\Default\Weather\clouds.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\FullHD\charactersheet.png">
+    <None Include="TexturesPacks\FullHD\charactersheet.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="TexturesPacks\FullHD\Editor\ct00.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -556,12 +560,15 @@
     <Content Include="TexturesPacks\FullHD\Terran\ct24.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="TexturesPacks\FullHD\TexturePackConfig.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="TexturesPacks\FullHD\Weather\clouds.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\HD\charactersheet.png">
+    <None Include="TexturesPacks\HD\charactersheet.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="TexturesPacks\HD\Editor\ct00.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -622,6 +629,9 @@
     <Content Include="TexturesPacks\HD\Terran\ct24.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="TexturesPacks\HD\TexturePackConfig.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="TexturesPacks\HD\Weather\clouds.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

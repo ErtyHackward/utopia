@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using S33M3DXEngine.Textures;
 using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
-using Utopia.GameDXStates;
+using Utopia.Shared.GameDXStates;
 
 namespace Sandbox.Client.Components.GUI
 {

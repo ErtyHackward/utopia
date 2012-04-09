@@ -23,6 +23,7 @@ using S33M3DXEngine.Main;
 using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
 using S33M3CoreComponents.Cameras.Interfaces;
+using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Worlds.SkyDomes
 {
@@ -100,9 +101,9 @@ namespace Utopia.Worlds.SkyDomes
             _glowTex_View = ShaderResourceView.FromFile(_d3dEngine.Device, ClientSettings.TexturePack + @"SkyDome\moonglow.png");
 
             _skyDomeEffect.TerraTexture.Value = _skyTex_View;
-            _skyDomeEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UWrapVClamp_MinMagMipLinear);
+            _skyDomeEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UWrapVClamp_MinMagMipLinear);
 
-            _posiTextureEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+            _posiTextureEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
 
             base.Initialize();
         }
@@ -329,7 +330,7 @@ namespace Utopia.Worlds.SkyDomes
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
             //Set States.
-            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
 
             _skyDomeEffect.Begin(context);
             _skyDomeEffect.CBPerDraw.Values.ViewProj = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
@@ -371,7 +372,7 @@ namespace Utopia.Worlds.SkyDomes
         {
             float alpha = (float)Math.Abs(Math.Sin(_clock.ClockTime.Time + (float)Math.PI / 2.0f));
             //Set States.
-            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled);
 
             Matrix World = Matrix.Scaling(2f, 2f, 2f) * Matrix.RotationX(_clock.ClockTime.Time + (float)Math.PI / 2.0f) *
                             Matrix.RotationY(-_fPhi + (float)Math.PI / 2.0f) *

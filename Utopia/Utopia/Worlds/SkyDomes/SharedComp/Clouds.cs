@@ -19,6 +19,7 @@ using S33M3Resources.Structs;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine.RenderStates;
+using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -114,7 +115,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _cloudEffect2D = new HLSLClouds2D(_d3dEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds2D.hlsl", VertexCubeCloud.VertexDeclaration);
 
             _cloudEffect2D.CloudTexture.Value = _cloudMap;
-            _cloudEffect2D.cloudSampler.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
+            _cloudEffect2D.cloudSampler.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipPoint);
 
             VertexCubeCloud[] _vb = new VertexCubeCloud[4 * _nbrLayer];
             ushort[] _ib = new ushort[6 * _nbrLayer];
@@ -184,7 +185,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _cloudEffect2D.CBPerDraw.IsDirty = true;
             _cloudEffect2D.Apply(_d3dEngine.ImmediateContext);
 
-            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.CullNone, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.CullNone, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
 
             if (_cloudVB2D != null)
             {
