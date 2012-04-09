@@ -14,12 +14,14 @@ namespace Sandbox.Client
 {
     public partial class GameClient
     {
-        public UtopiaRender CreateNewGameEngine(IKernel iocContainer)
+        public UtopiaRender CreateNewGameEngine(IKernel iocContainer, bool VSync)
         {
             GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"Config\" };
             GameSystemSettings.Current.Load();
 
             var utopiaRenderer = new UtopiaRender(iocContainer.Get<D3DEngine>(), iocContainer.Get<InputsManager>(), false);
+
+            utopiaRenderer.VSync = VSync;
             
             BindActions(iocContainer.Get<InputsManager>(), false);    //Bind the various actions
 

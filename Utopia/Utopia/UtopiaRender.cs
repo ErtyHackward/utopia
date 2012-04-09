@@ -1,6 +1,5 @@
 ﻿using System;
 using SharpDX.Direct3D11;
-using Utopia.GameDXStates;
 using Utopia.Settings;
 using Utopia.Shared.Settings;
 using S33M3DXEngine.Main;
@@ -8,6 +7,7 @@ using S33M3CoreComponents.Inputs.Actions;
 using S33M3DXEngine;
 using System.Drawing;
 using S33M3CoreComponents.Inputs;
+using Utopia.Shared.GameDXStates;
 
 namespace Utopia
 {
@@ -43,6 +43,10 @@ namespace Utopia
             _inputManager.EnableComponent();
 
             DXStates.CreateStates(Engine);
+
+            //Init the TexturePack State value, after the Sampling states have been initialized
+            TexturePackConfig.Current.Settings.ParseSamplingFilter(TexturePackConfig.Current.Settings.SamplingFilter);
+
             base.Initialize();
         }
 

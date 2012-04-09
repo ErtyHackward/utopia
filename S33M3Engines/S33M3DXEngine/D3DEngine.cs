@@ -37,7 +37,7 @@ namespace S33M3DXEngine
         private RenderTargetView _renderTarget;
         private DepthStencilView _depthStencil;
         private Viewport _viewPort;
-        private Factory _dx11factory;
+        private Factory1 _dx11factory;
 #if DEBUG
         public static readonly ShaderFlags ShaderFlags = ShaderFlags.Debug | ShaderFlags.SkipOptimization;
 #else
@@ -131,9 +131,9 @@ namespace S33M3DXEngine
         public void Initialize()
         {
             List<ModeDescription> adapterModes = new List<ModeDescription>();
-            _dx11factory = new Factory();
+            _dx11factory = new Factory1();
 
-            using (Adapter adapter = _dx11factory.GetAdapter(0))
+            using (Adapter1 adapter = _dx11factory.GetAdapter1(0))
             {
                 using (Output output = adapter.GetOutput(0))
                 {

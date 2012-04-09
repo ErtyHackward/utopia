@@ -27,6 +27,7 @@ using S33M3DXEngine.RenderStates;
 using UtopiaContent.Effects.Weather;
 using Utopia.Effects.Shared;
 using Utopia.Components;
+using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -99,7 +100,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _noise = new SimplexNoise(new Random());
             _noise.SetParameters(0.075, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
             _effect = new HLSLClouds3D(_d3dEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds3D.hlsl", _sharedCB.CBPerFrame);
-            _effect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipPoint);
+            _effect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipPoint);
 
             _maxNbrIndices = 15000;
             _maxNbrVertices = 10000;
@@ -282,7 +283,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             if (_cloudVB == null) _cloudVB = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, _nbrVertices, VertexPosition3Color.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB", ResourceUsage.Dynamic, 10);
             _cloudVB.SetData(_d3dEngine.ImmediateContext , _vertices, 0, _nbrVertices, true);
 
-            RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Disabled, GameDXStates.DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
             _effect.Begin(_d3dEngine.ImmediateContext);
             _effect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;

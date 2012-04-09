@@ -2,7 +2,6 @@
 
 using System;
 using System.IO;
-using Sandbox.Client.GUI.Forms;
 using Sandbox.Client.States;
 using Sandbox.Shared;
 using Utopia;
@@ -29,6 +28,7 @@ using S33M3DXEngine;
 using Sandbox.Client.Components;
 using Sandbox.Client.Components.GUI;
 using Sandbox.Client.Components.GUI.Settings;
+using Utopia.Shared.Settings;
 
 namespace Sandbox.Client
 {
@@ -44,8 +44,8 @@ namespace Sandbox.Client
         #region Public Methods
         public void Run()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
             
             //Load Client config XML file
             LoadClientsSettings();
@@ -62,7 +62,8 @@ namespace Sandbox.Client
 
             NetworkMessageFactory.Instance.EntityFactory = _iocContainer.Get<EntityFactory>();
 
-            var game = CreateNewGameEngine(_iocContainer); // Create the Rendering
+            var game = CreateNewGameEngine(_iocContainer, ClientSettings.Current.Settings.GraphicalParameters.VSync); // Create the Rendering
+            _iocContainer.Bind<Game>().ToConstant(game);
 
             var settings = _iocContainer.Get<SettingsComponent>();
             settings.KeyBindingChanged += (sender, e) =>
@@ -70,7 +71,6 @@ namespace Sandbox.Client
                 this.BindActions(_iocContainer.Get<InputsManager>(), true);
             };
 
-            _iocContainer.Bind<Game>().ToConstant(game);
             _iocContainer.Rebind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
 
             SandboxMenuComponent.LoadCommonImages(_iocContainer.Get<D3DEngine>());
@@ -135,9 +135,13 @@ namespace Sandbox.Client
         {
             ClientSettings.Current = new XmlSettingsManager<ClientConfig>("UtopiaClient.config", SettingsStorage.ApplicationData);
             ClientSettings.Current.Load();
-            
+
             if (ValidateSettings()) 
                 ClientSettings.Current.Save();
+
+            //Load the Actif texture pack config
+            TexturePackConfig.Current = new XmlSettingsManager<TexturePackSetting>(@"TexturePackConfig.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"TexturesPacks\" + ClientSettings.Current.Settings.GraphicalParameters.TexturePack + @"\" };
+            TexturePackConfig.Current.Load();
         }
 
         /// <summary>
@@ -178,7 +182,7 @@ namespace Sandbox.Client
             if (string.IsNullOrEmpty(ClientSettings.Current.Settings.EngineParameters.EffectPack))
                 ClientSettings.Current.Settings.EngineParameters.EffectPack = "Default";
             if (string.IsNullOrEmpty(ClientSettings.Current.Settings.GraphicalParameters.TexturePack))
-                ClientSettings.Current.Settings.GraphicalParameters.TexturePack = "HD";
+                ClientSettings.Current.Settings.GraphicalParameters.TexturePack = "Default";
 
             return needSave;
         }

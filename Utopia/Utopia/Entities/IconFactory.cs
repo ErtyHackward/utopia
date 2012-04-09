@@ -25,6 +25,7 @@ using S33M3CoreComponents.Meshes.Factories;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Cameras.Interfaces;
 using Resource = SharpDX.Direct3D11.Resource;
+using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Entities
 {
@@ -242,10 +243,10 @@ namespace Utopia.Entities
                 //Begin Drawing
                 texture.Begin();
 
-                RenderStatesRepo.ApplyStates(GameDXStates.DXStates.Rasters.Default, GameDXStates.DXStates.Blenders.Enabled, GameDXStates.DXStates.DepthStencils.DepthDisabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
 
                 //Set sampler
-                shader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(GameDXStates.DXStates.Samplers.UVWrap_MinMagMipLinear);
+                shader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
 
                 shader.Begin(context);
 

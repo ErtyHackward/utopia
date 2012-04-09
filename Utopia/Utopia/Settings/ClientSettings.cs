@@ -132,6 +132,8 @@ namespace Utopia.Settings
         public int LightPropagateSteps { get; set; }
         [ParameterAttribute("Textures pack", "Textures used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_TexturePacks")]
         public string TexturePack { get; set; }
+        [ParameterAttribute("VSync enabled", "Vertical refresh synchronization", null, ParamInputMethod.CheckBox, false)]
+        public bool VSync { get; set; }
     }
 
     /// <summary>
@@ -292,7 +294,8 @@ namespace Utopia.Settings
                         WorldSize = 32,
                         CloudsQuality = "2D",
                         LightPropagateSteps = 8,
-                        TexturePack = "Default"
+                        TexturePack = "Default",
+                        VSync = true
                     },
                     KeyboardMapping = new KeyboardMapping
                     {

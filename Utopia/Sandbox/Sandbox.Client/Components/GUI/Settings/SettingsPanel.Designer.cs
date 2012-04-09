@@ -64,6 +64,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                     case ParamInputMethod.InputBox:
                         break;
                     case ParamInputMethod.CheckBox:
+                        ((OptionControl)row.InputingComp).Changed += this._parent.SettingsPanel_Changed;
                         break;
                     case ParamInputMethod.Slider:
                         ((SliderControl)row.InputingComp).Moved += this._parent.SliderControl_Moved;
@@ -77,6 +78,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                 }
             }
         }
+
 
         public void Resize()
         {
@@ -96,6 +98,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                         row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 5, 50, 25);
                         break;
                     case ParamInputMethod.CheckBox:
+                        row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 5, 50, 25);
                         break;
                     case ParamInputMethod.Slider:
                         row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 5, 150, 25);

@@ -28,7 +28,7 @@ namespace Utopia.Settings
                         yield return AddInputComponent(attrib.ParamName, value, data.Name, DataTypes.GetTypeFamilly(value.GetType()) == DataTypes.typeFamilly.IntegerNumber, customFont, customInputBackgroundTexture);
                         break;
                     case ParamInputMethod.CheckBox:
-                        yield return AddInputComponent(attrib.ParamName, value, data.Name, DataTypes.GetTypeFamilly(value.GetType()) == DataTypes.typeFamilly.IntegerNumber, customFont, customInputBackgroundTexture);
+                        yield return AddCheckBoxComponent(attrib.ParamName, (bool)value, data.Name, DataTypes.GetTypeFamilly(value.GetType()) == DataTypes.typeFamilly.IntegerNumber, customFont, customInputBackgroundTexture);
                         break;
                     case ParamInputMethod.Slider:
                         yield return AddSliderComponent(attrib.ParamName, value, data.Name, attrib, customFont);
@@ -40,6 +40,18 @@ namespace Utopia.Settings
                         break;
                 }
             }
+        }
+
+        private static ParamRow AddCheckBoxComponent(string ParameterName, bool value, string fieldName, bool isNumeric, SpriteFont customFont, SpriteTexture customInputBackgroundTexture)
+        {
+            LabelControl label = new LabelControl() { Text = ParameterName, CustomFont = customFont };
+            OptionControl input = new OptionControl()
+            {
+                Selected = value
+            };
+            ParamRow row = new ParamRow() { LabelName = label, InputingComp = input, ParamInputMethod = ParamInputMethod.CheckBox, FieldData = new ParamValue() { Value = value, Name = fieldName } };
+            input.Tag2 = row;
+            return row;
         }
 
         private static ParamRow AddInputComponent(string ParameterName, object value, string fieldName, bool isNumeric, SpriteFont customFont, SpriteTexture customInputBackgroundTexture)

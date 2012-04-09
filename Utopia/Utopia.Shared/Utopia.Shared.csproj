@@ -172,6 +172,7 @@
     <Compile Include="Entities\Models\VoxelModelPart.cs" />
     <Compile Include="Enums\CubeFaces.cs" />
     <Compile Include="Enums\enuCubeFamilly.cs" />
+    <Compile Include="GameDXStates\DXStates.cs" />
     <Compile Include="Interfaces\IAbstractChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
     <Compile Include="Chunks\SingleArrayChunkContainer.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Settings\CubeProfile.cs" />
     <Compile Include="Settings\EntityProfile.cs" />
     <Compile Include="Settings\GameSystemSettings.cs" />
+    <Compile Include="Settings\TexturePackConfig.cs" />
     <Compile Include="SQLiteStorage.cs" />
     <Compile Include="ClassExt\BinaryExtensions.cs" />
     <Compile Include="Structs\DynamicUpdateState.cs" />
