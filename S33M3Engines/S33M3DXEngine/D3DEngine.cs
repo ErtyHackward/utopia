@@ -21,8 +21,9 @@ namespace S33M3DXEngine
         #region Static Variables
         public static IntPtr WindowHandle;
         public static List<SampleDescription> MSAAList = new List<SampleDescription>();
+        public static string MainAdapter;
 
-        public SampleDescription CurrentMSAASampling = new SampleDescription(8, 32);
+        public SampleDescription CurrentMSAASampling = new SampleDescription(1, 0);
         //Trick to avoid VertexBuffer PrimitiveTopology change when not needed
         //CANNOT be use in a multithreaded buffer approch !
         public static bool SingleThreadRenderingOptimization = true;
@@ -148,7 +149,17 @@ namespace S33M3DXEngine
                         adapterModes.Add(mode);
                     }
 
-                    logger.Info("GPU found : {0}", adapter.Description.Description);
+                    MainAdapter = adapter.Description.Description;
+                    logger.Info("GPU found : {0}", MainAdapter);
+
+                    int DedicatedGPU = adapter.Description.DedicatedVideoMemory / (1024 * 1024);
+                    if (DedicatedGPU < 0) DedicatedGPU = 0;
+                    int DedicatedSystem = adapter.Description.DedicatedSystemMemory / (1024 * 1024);
+                    if (DedicatedSystem < 0) DedicatedSystem = 0;
+                    int SharedSystem = adapter.Description.SharedSystemMemory / (1024 * 1024);
+                    if (SharedSystem < 0) SharedSystem = 0;
+
+                    logger.Info("GPU Memory : Dedicated from GPU : {0}MB, Shared : {1}MB, Dedicated from System : {2}MB. Total : {3}MB", DedicatedGPU, DedicatedSystem, SharedSystem, DedicatedGPU + DedicatedSystem + SharedSystem);
                     logger.Info("B8G8R8A8_UNormSupport compatibility = {0}", B8G8R8A8_UNormSupport);
 #if DEBUG
                     foreach (var mode in adapterModes)
@@ -315,7 +326,29 @@ namespace S33M3DXEngine
                 int Quality = Device.CheckMultisampleQualityLevels(format, SamplingCount);
                 if (Quality > 0)
                 {
-                    MSAAList.Add(new SampleDescription() { Count = SamplingCount, Quality = (Quality - 1) });
+                    //Add Base Quality
+                    MSAAList.Add(new SampleDescription() { Count = SamplingCount, Quality = 0 });
+
+                    if (MainAdapter.ToUpper().Contains("NVIDIA"))
+                    {
+                        //Add CSAA 8x
+                        if (Quality >= 9)
+                        {
+                            MSAAList.Add(new SampleDescription() { Count = SamplingCount, Quality = 8 });
+                        }
+
+                        //Add CSAA 16x
+                        if (Quality >= 17)
+                        {
+                            MSAAList.Add(new SampleDescription() { Count = SamplingCount, Quality = 16 });
+                        }
+
+                        //Add CSAA 32x
+                        if (Quality >= 33)
+                        {
+                            MSAAList.Add(new SampleDescription() { Count = SamplingCount, Quality = 32 });
+                        }
+                    }
                 }
             }
 
