@@ -189,7 +189,7 @@ namespace Sandbox.Client
             if (string.IsNullOrEmpty(ClientSettings.Current.Settings.GraphicalParameters.TexturePack))
                 ClientSettings.Current.Settings.GraphicalParameters.TexturePack = "Default";
 
-            if (ClientSettings.Current.Settings.GraphicalParameters.MSAA.SampleDescription.Count == 0)
+            if (ClientSettings.Current.Settings.GraphicalParameters.MSAA == null || ClientSettings.Current.Settings.GraphicalParameters.MSAA.SampleDescription.Count == 0)
             {
                 ClientSettings.Current.Settings.GraphicalParameters.MSAA = new SampleDescriptionSetting() { SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0) };
                 needSave = true;
