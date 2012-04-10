@@ -135,7 +135,7 @@ namespace Utopia.Settings
         public string TexturePack { get; set; }
         [ParameterAttribute("VSync enabled", "Vertical refresh synchronization", null, ParamInputMethod.CheckBox, false)]
         public bool VSync { get; set; }
-        [ParameterAttribute("MSAA Multisampling", "MSAA", null, ParamInputMethod.ButtonList, true, "CLIST_MSAA")]
+        [ParameterAttribute("Multisampling", "MSAA", null, ParamInputMethod.ButtonList, true, "CLIST_MSAA")]
         public SampleDescriptionSetting MSAA { get; set; }
     }
 
