@@ -338,18 +338,18 @@ namespace Sandbox.Client.Components.GUI.Settings
         public void ButtonList_Pressed(object sender, EventArgs e)
         {
             ButtonControl bt = (ButtonControl)sender;
-            List<string> values = (List<string>)bt.Tag;
+            List<object> values = (List<object>)bt.Tag;
 
             //Dynamic collection value ???
-            if (values.Count == 1 && values[0].Contains("CLIST_"))
+            if (values.Count == 1 && (values[0]).ToString().Contains("CLIST_"))
             {
-                values = ClientSettings.DynamicLists[values[0]];
+                values = ClientSettings.DynamicLists[values[0].ToString()];
             }
 
             ((ParamRow)bt.Tag2).FieldData.Value = values[0];
             try
             {
-                int currentIndex = values.FindIndex(x => x == bt.Text);
+                int currentIndex = values.FindIndex(x => x.ToString() == bt.Text);
                 currentIndex = currentIndex == values.Count - 1 ? 0 : currentIndex + 1;
                 ((ParamRow)bt.Tag2).FieldData.Value = values[currentIndex];
                 SaveChange();

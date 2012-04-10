@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using System.Collections.Generic;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
 using System.IO;
+using SharpDX.DXGI;
 
 namespace Utopia.Settings
 {
@@ -21,15 +22,15 @@ namespace Utopia.Settings
             get { return @"EffectsPacks\" + Current.Settings.EngineParameters.EffectPack + @"\"; }
         }
 
-        public static Dictionary<string, List<string>> DynamicLists = new Dictionary<string,List<string>>();
+        public static Dictionary<string, List<object>> DynamicLists = new Dictionary<string,List<object>>();
 
         static ClientSettings()
         {
             //Create the Dynamic list of values
 
             //List of textures Packs
-            DynamicLists.Add("CLIST_TexturePacks", new List<string>(GetAllTexturePacks()));
-            DynamicLists.Add("CLIST_EffectPacks", new List<string>(GetAllEffectPacks()));
+            DynamicLists.Add("CLIST_TexturePacks", new List<object>(GetAllTexturePacks()));
+            DynamicLists.Add("CLIST_EffectPacks", new List<object>(GetAllEffectPacks()));
         }
 
         private static IEnumerable<string> GetAllTexturePacks()
@@ -68,7 +69,7 @@ namespace Utopia.Settings
         public ParamInputMethod InputMethod { get; private set; }
         public int? MinSliderValue { get; private set; }
         public int? MaxSliderValue { get; private set; }
-        public List<string> ListValues { get; set; }
+        public List<object> ListValues { get; set; }
         public bool NeedRestartAfterChange { get; set; }
 
         public ParameterAttribute(string paramName,
@@ -85,7 +86,7 @@ namespace Utopia.Settings
             InputMethod = inputMethod;
             MinSliderValue = null;
             MaxSliderValue = null;
-            ListValues = new List<string>(listValues);
+            ListValues = new List<object>(listValues);
         }
 
         public ParameterAttribute(string paramName,
@@ -104,7 +105,7 @@ namespace Utopia.Settings
             InputMethod = inputMethod;
             MinSliderValue = minSliderValue;
             MaxSliderValue = maxSliderValue;
-            ListValues = new List<string>(listValues);
+            ListValues = new List<object>(listValues);
         }
     }
 
@@ -134,6 +135,8 @@ namespace Utopia.Settings
         public string TexturePack { get; set; }
         [ParameterAttribute("VSync enabled", "Vertical refresh synchronization", null, ParamInputMethod.CheckBox, false)]
         public bool VSync { get; set; }
+        [ParameterAttribute("MSAA Multisampling", "MSAA", null, ParamInputMethod.ButtonList, true, "CLIST_MSAA")]
+        public SampleDescriptionSetting MSAA { get; set; }
     }
 
     /// <summary>
@@ -144,7 +147,7 @@ namespace Utopia.Settings
     {
         [ParameterAttribute("Allocate more threads", "Allocate more threads to speed up all rendering routine", " thread(s)", ParamInputMethod.Slider, 0, 4, false)]
         public int AllocatedThreadsModifier { get; set; }
-        [ParameterAttribute("Effects pack", "Effects used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_EffectPacks")]
+        [ParameterAttribute("Effects pack", "Effects used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_MSAA")]
         public string EffectPack { get; set; }
     }
 
@@ -279,7 +282,7 @@ namespace Utopia.Settings
                 {
                     GameParameters = new GameParameters
                     {
-                        NickName = "Utopia Guest" 
+                        NickName = "Utopia Guest"
                     },
                     EngineParameters = new EngineParameters()
                     {
@@ -295,7 +298,8 @@ namespace Utopia.Settings
                         CloudsQuality = "2D",
                         LightPropagateSteps = 8,
                         TexturePack = "Default",
-                        VSync = true
+                        VSync = true,
+                        MSAA = new SampleDescriptionSetting() { SampleDescription = new SampleDescription(1, 0) }
                     },
                     KeyboardMapping = new KeyboardMapping
                     {
@@ -311,14 +315,16 @@ namespace Utopia.Settings
                             Run = Keys.LShiftKey,
                             Mode = Keys.F
                         },
-                        Game = new GameBindingKeys(){
+                        Game = new GameBindingKeys()
+                        {
                             Chat = new KeyWithModifier { MainKey = Keys.Enter, Modifier = Keys.None, Info = "Open/Close the chat" },
                             Use = new KeyWithModifier { MainKey = Keys.E, Modifier = Keys.None, Info = "Use" },
                             Throw = new KeyWithModifier { MainKey = Keys.Back, Modifier = Keys.None, Info = "Throw" },
                             Inventory = new KeyWithModifier { MainKey = Keys.I, Modifier = Keys.None, Info = "Inventory" },
                             Map = new KeyWithModifier { MainKey = Keys.M, Modifier = Keys.None, Info = "Open/close the map" }
                         },
-                        System = new SystemBindingKeys() {
+                        System = new SystemBindingKeys()
+                        {
                             VSync = new KeyWithModifier { MainKey = Keys.F8, Modifier = Keys.RControlKey, Info = "Enable/Disable VSync" },
                             LockMouseCursor = new KeyWithModifier { MainKey = Keys.Tab, Modifier = Keys.None, Info = "Locking/Unlocking mouse cursor" },
                             FullScreen = new KeyWithModifier { MainKey = Keys.F11, Modifier = Keys.None, Info = "Fullscreen switcher" },

@@ -35,7 +35,7 @@ namespace Utopia.Shared.GameDXStates
         private static void CreateRasterStatesCollection()
         {
             //Rasters.Default
-            Rasters.Default = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Solid });
+            Rasters.Default = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Solid, IsMultisampleEnabled = true });
 
             //Rasters.CullNone
             Rasters.CullNone = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.None, FillMode = FillMode.Solid });

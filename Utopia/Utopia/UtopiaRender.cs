@@ -8,6 +8,7 @@ using S33M3DXEngine;
 using System.Drawing;
 using S33M3CoreComponents.Inputs;
 using Utopia.Shared.GameDXStates;
+using SharpDX.DXGI;
 
 namespace Utopia
 {
@@ -21,8 +22,8 @@ namespace Utopia
         public event EventHandler MenuRequested;
 
         //Not Engine injected constructor
-        public UtopiaRender(InputsManager inputManager, Size startingWindowsSize, string WindowsCaption, Size ResolutionSize = default(Size), bool withComObjectDisposeTracking = false)
-            : base(startingWindowsSize, WindowsCaption, ResolutionSize, withComObjectDisposeTracking)
+        public UtopiaRender(InputsManager inputManager, Size startingWindowsSize, string WindowsCaption, SampleDescription sampleDescription, Size ResolutionSize = default(Size), bool withComObjectDisposeTracking = false)
+            : base(startingWindowsSize, WindowsCaption,sampleDescription,  ResolutionSize, withComObjectDisposeTracking)
         {
             _inputManager = inputManager;
 

@@ -29,6 +29,8 @@ using Sandbox.Client.Components;
 using Sandbox.Client.Components.GUI;
 using Sandbox.Client.Components.GUI.Settings;
 using Utopia.Shared.Settings;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Sandbox.Client
 {
@@ -44,13 +46,16 @@ namespace Sandbox.Client
         #region Public Methods
         public void Run()
         {
-            //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            
             //Load Client config XML file
             LoadClientsSettings();
+
             //Bings all components
             IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 640));
+
+            //Insert the Engine MSAA mode list in the ClientSettings
+            List<object> sampleCollection = new List<object>();
+            foreach (var item in D3DEngine.MSAAList) sampleCollection.Add(new SampleDescriptionSetting() { SampleDescription = item });
+            ClientSettings.DynamicLists.Add("CLIST_MSAA", sampleCollection);
 
             _d3dEngine.GameWindow.Icon = Sandbox.Client.Properties.Resources.Utopia;
 

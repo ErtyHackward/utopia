@@ -20,6 +20,9 @@ namespace S33M3DXEngine
 
         #region Static Variables
         public static IntPtr WindowHandle;
+        public static List<SampleDescription> MSAAList = new List<SampleDescription>();
+
+        public SampleDescription CurrentMSAASampling = new SampleDescription(8, 32);
         //Trick to avoid VertexBuffer PrimitiveTopology change when not needed
         //CANNOT be use in a multithreaded buffer approch !
         public static bool SingleThreadRenderingOptimization = true;
@@ -97,7 +100,7 @@ namespace S33M3DXEngine
         /// <param name="startingSize">Windows starting size</param>
         /// <param name="windowCaption">Window Caption</param>
         /// <param name="RenderResolution">if not passed or equal to 0;0 then the resolution will be the one from the Windows Size</param>
-        public D3DEngine(Size startingSize, string windowCaption, Size renderResolution = default(Size))
+        public D3DEngine(Size startingSize, string windowCaption, SampleDescription samplingMode, Size renderResolution = default(Size))
         {
 
             //Create the MainRendering Form
@@ -111,6 +114,7 @@ namespace S33M3DXEngine
             _renderForm.KeyUp += new System.Windows.Forms.KeyEventHandler(_renderForm_KeyUp);
 
             this.RenderResolution = renderResolution;
+            this.CurrentMSAASampling = samplingMode;
 
             Initialize();
 
@@ -146,7 +150,6 @@ namespace S33M3DXEngine
 
                     logger.Info("GPU found : {0}", adapter.Description.Description);
                     logger.Info("B8G8R8A8_UNormSupport compatibility = {0}", B8G8R8A8_UNormSupport);
-
 #if DEBUG
                     foreach (var mode in adapterModes)
                     {
@@ -159,6 +162,8 @@ namespace S33M3DXEngine
 
 
             RefreshResources();
+
+            GetMSAAQualities(Format.B8G8R8A8_UNorm);
 
             //Remove the some built-in fonctionnality of DXGI
             _dx11factory.MakeWindowAssociation(_renderForm.Handle, WindowAssociationFlags.IgnoreAll | WindowAssociationFlags.IgnoreAltEnter);
@@ -246,7 +251,7 @@ namespace S33M3DXEngine
                     IsWindowed = true,
                     ModeDescription = RenderResolution == default(Size) ? new ModeDescription() { Format = Format.R8G8B8A8_UNorm, Width = _renderForm.ClientSize.Width, Height = _renderForm.ClientSize.Height }
                                                                         : new ModeDescription() { Format = Format.R8G8B8A8_UNorm, Width = RenderResolution.Width, Height = RenderResolution.Height },
-                    SampleDescription = new SampleDescription(1, 0),
+                    SampleDescription = CurrentMSAASampling,
                     SwapEffect = SwapEffect.Discard
                 };
 
@@ -303,10 +308,35 @@ namespace S33M3DXEngine
 #endif
         }
 
+        private void GetMSAAQualities(Format format)
+        {
+            for (int SamplingCount = 0; SamplingCount <= SharpDX.Direct3D11.Device.MultisampleCountMaximum; SamplingCount++)
+            {
+                int Quality = Device.CheckMultisampleQualityLevels(format, SamplingCount);
+                if (Quality > 0)
+                {
+                    MSAAList.Add(new SampleDescription() { Count = SamplingCount, Quality = (Quality - 1) });
+                }
+            }
+
+#if DEBUG
+            foreach (var mode in MSAAList)
+            {
+                logger.Trace("Compatible Device MSAA : {0}x", mode.Count);
+            }
+#endif
+        }
+
         private void CreateRenderTarget()
         {
+            //Create the Depth Stencil View + View
+            RenderTargetViewDescription renderTargetViewDescription = new RenderTargetViewDescription()
+            {
+                Format = BackBufferTex.Description.Format,
+                Dimension = CurrentMSAASampling.Quality == 0 ? RenderTargetViewDimension.Texture2D : RenderTargetViewDimension.Texture2DMultisampled
+            };
             //Create RenderTargetView 
-            _renderTarget = new RenderTargetView(Device, BackBufferTex);
+            _renderTarget = new RenderTargetView(Device, BackBufferTex, renderTargetViewDescription);
         }
 
         private void CreateDepthStencil()
@@ -319,7 +349,7 @@ namespace S33M3DXEngine
                 MipLevels = 1,
                 ArraySize = 1,
                 Format = Format.D32_Float,
-                SampleDescription = new SampleDescription() { Count = 1, Quality = 0 },
+                SampleDescription = CurrentMSAASampling,
                 Usage = ResourceUsage.Default,
                 BindFlags = BindFlags.DepthStencil,
                 CpuAccessFlags = CpuAccessFlags.None,
@@ -336,7 +366,7 @@ namespace S33M3DXEngine
             DepthStencilViewDescription DepthStencilViewDescr = new DepthStencilViewDescription()
             {
                 Format = DepthStencilDescr.Format,
-                Dimension = DepthStencilViewDimension.Texture2D,
+                Dimension = CurrentMSAASampling.Quality==0 ? DepthStencilViewDimension.Texture2D : DepthStencilViewDimension.Texture2DMultisampled,
                 Texture2D = new DepthStencilViewDescription.Texture2DResource() { MipSlice = 0 }
             };
             //Create the Depth Stencil view
