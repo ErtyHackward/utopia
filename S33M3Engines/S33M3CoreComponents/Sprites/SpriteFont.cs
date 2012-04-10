@@ -30,6 +30,7 @@ namespace S33M3CoreComponents.Sprites
         public int TextureHeight { get { return _texHeight; } }
         public float SpaceWidth { get { return _spaceWidth; } }
         public float CharHeight { get { return _charHeight; } }
+        public float HeightInPoints { get; set; }
         #endregion
 
         #region Private Variables
@@ -71,6 +72,7 @@ namespace S33M3CoreComponents.Sprites
             _fontGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             _fontGraphics.TextRenderingHint = hint;
 
+            HeightInPoints = _font.SizeInPoints;
             _charHeight = _font.Height;// * 1.1f;
 
             char[] allChars = new char[NumChars + 1];

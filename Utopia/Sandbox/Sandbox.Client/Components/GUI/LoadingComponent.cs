@@ -1,23 +1,16 @@
 using System;
 using System.Drawing;
 using S33M3CoreComponents.GUI.Nuclex;
-using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
 using SharpDX;
-using S33M3CoreComponents.Sprites;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3Resources.Structs;
-using S33M3CoreComponents.Meshes.Factories;
-using S33M3CoreComponents.Meshes;
 using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
 using UtopiaContent.Effects.Entities;
 using Utopia.Settings;
-using S33M3DXEngine.RenderStates;
 using S33M3CoreComponents.Maths;
-using Utopia.Shared.Settings;
-using S33M3DXEngine.Textures;
-using System.Collections.Generic;
 
 namespace Sandbox.Client.Components.GUI
 {
@@ -28,31 +21,44 @@ namespace Sandbox.Client.Components.GUI
     {
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
-        private ImageControl _loadingLabel;
-        private SpriteTexture _stLoading;
+        private LabelControl _loadingLabel;
+        private LabelControl _pleaseWaitLabel;
+        
 
         private VertexBuffer<VertexMesh> _rotatingBlockVB;
         private IndexBuffer<ushort> _rotatingBlockIB;
         private RotationCube _loadingCube;
         private HLSLLoadingCube _cubeShader;
 
+        private DateTime _dotsUpdate;
+        private int _dots;
+
         public LoadingComponent(D3DEngine engine, MainScreen screen)
             : base(engine, screen)
         {
             _engine = engine;
             _screen = screen;
-
-            _stLoading = ToDispose(LoadTexture(engine, "Images\\loading.png"));
-
+            
         }
 
         public override void Initialize()
         {
             base.Initialize();
 
-            _loadingLabel = new ImageControl();
-            _loadingLabel.Image = _stLoading;
-
+            _loadingLabel = new LabelControl 
+            {
+                Text = "LOADING...",
+                Color = Colors.White,
+                CustomFont = FontBebasNeue50
+            };
+            
+            _pleaseWaitLabel = new LabelControl 
+            {
+                Text = "PLEASE WAIT",
+                Color = new Color4(Color.FromArgb(198, 0, 75).ToArgb()),
+                CustomFont = FontBebasNeue25
+            };
+            
             _cubeShader = ToDispose(new HLSLLoadingCube(_engine.Device,
                             ClientSettings.EffectPack + @"Entities/LoadingCube.hlsl",
                             VertexMesh.VertexDeclaration,
@@ -67,7 +73,7 @@ namespace Sandbox.Client.Components.GUI
                                                                        "rotatingBlockVB"));
             _rotatingBlockIB = ToDispose(new IndexBuffer<ushort>(_engine.Device, _meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "rotatingBlockIB"));
 
-            _loadingCube = new RotationCube()
+            _loadingCube = new RotationCube
             {
                 Scale = 70,
                 ScreenPosition = new Vector3((_engine.ViewPort.Width - 168) / 2, (_engine.ViewPort.Height - _headerHeight) / 2 + _headerHeight, 0),
@@ -89,7 +95,9 @@ namespace Sandbox.Client.Components.GUI
 
         public override void EnableComponent()
         {
+            _dotsUpdate = DateTime.Now;
             _screen.Desktop.Children.Add(_loadingLabel);
+            _screen.Desktop.Children.Add(_pleaseWaitLabel);
             Resize(_engine.ViewPort);
             base.EnableComponent();
         }
@@ -97,6 +105,7 @@ namespace Sandbox.Client.Components.GUI
         public override void DisableComponent()
         {
             _screen.Desktop.Children.Remove(_loadingLabel);
+            _screen.Desktop.Children.Remove(_pleaseWaitLabel);
             base.DisableComponent();
         }
 
@@ -109,7 +118,9 @@ namespace Sandbox.Client.Components.GUI
 
         private void Resize(Viewport viewport)
         {
-            _loadingLabel.Bounds = new UniRectangle((viewport.Width - 168) / 2 + 70, (viewport.Height - _headerHeight - 58) / 2 + _headerHeight, 148, 58);
+            _loadingLabel.Bounds        = new UniRectangle((viewport.Width - 168) / 2 + 70, (viewport.Height - _headerHeight - 58) / 2 + _headerHeight - 10, 148, 58);
+            _pleaseWaitLabel.Bounds     = new UniRectangle((viewport.Width - 168) / 2 + 70, (viewport.Height - _headerHeight - 58) / 2 + _headerHeight + 40, 148, 58);
+            _loadingCube.ScreenPosition = new Vector3((_engine.ViewPort.Width - 168) / 2, (_engine.ViewPort.Height - _headerHeight) / 2 + _headerHeight, 0);
         }
 
         FTSValue<float> YRotation = new FTSValue<float>();
@@ -118,6 +129,14 @@ namespace Sandbox.Client.Components.GUI
         {
             _loadingCube.Update();
 
+            if ((DateTime.Now - _dotsUpdate).TotalSeconds > 0.5f)
+            {
+                if (_dots++ == 3) _dots = 0;
+
+                _loadingLabel.Text = "LOADING" + new string('.', _dots);
+                _dotsUpdate = DateTime.Now;
+            }
+            
             base.Update(timeSpent);
         }
 

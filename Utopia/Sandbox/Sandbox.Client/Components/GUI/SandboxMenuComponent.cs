@@ -8,7 +8,6 @@ using S33M3DXEngine;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using SharpDX;
-using Utopia.Shared.Settings;
 using SharpDX.Direct3D11;
 using UtopiaContent.Effects.Entities;
 using S33M3CoreComponents.Meshes;
@@ -17,7 +16,6 @@ using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Meshes.Factories;
 using Utopia.Settings;
 using System.Collections.Generic;
-using S33M3DXEngine.Textures;
 using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
@@ -41,9 +39,11 @@ namespace Sandbox.Client.Components.GUI
         public static SpriteTexture StButtonBackgroundDown;
         public static SpriteTexture StButtonBackgroundHover;
 
+        public static SpriteFont FontBebasNeue50;
         public static SpriteFont FontBebasNeue35;
         public static SpriteFont FontBebasNeue25;
         public static SpriteFont FontBebasNeue17;
+
         protected static PrivateFontCollection fontCollection;
         public static bool WithTexturedCubes = false;
 
@@ -78,18 +78,21 @@ namespace Sandbox.Client.Components.GUI
             if (StShadow != null)
                 throw new InvalidOperationException("Common images already loaded");
 
-            StShadow        = LoadTexture(engine, "Images\\shadow.png");
-            StLogo          = LoadTexture(engine, "Images\\logo.png");
-            StGameName      = LoadTexture(engine, "Images\\version.png");
-            StCubesPattern  = LoadTexture(engine, "Images\\cubes.png");
-            StLinenPattern  = LoadTexture(engine, "Images\\black-linen.png");
-            StInputBackground = LoadTexture(engine, "Images\\Login\\login_input_bg.png");
-            StButtonBackground = LoadTexture(engine, @"Images\MainMenu\menu_button.png");
-            StButtonBackgroundDown = LoadTexture(engine, @"Images\MainMenu\menu_button_hover.png");
+            StShadow                = LoadTexture(engine, @"Images\shadow.png");
+            StLogo                  = LoadTexture(engine, @"Images\logo.png");
+            StGameName              = LoadTexture(engine, @"Images\version.png");
+            StCubesPattern          = LoadTexture(engine, @"Images\cubes.png");
+            StLinenPattern          = LoadTexture(engine, @"Images\black-linen.png");
+            StInputBackground       = LoadTexture(engine, @"Images\Login\login_input_bg.png");
+            StButtonBackground      = LoadTexture(engine, @"Images\MainMenu\menu_button.png");
+            StButtonBackgroundDown  = LoadTexture(engine, @"Images\MainMenu\menu_button_hover.png");
             StButtonBackgroundHover = LoadTexture(engine, @"Images\MainMenu\menu_button_down.png");
 
             fontCollection = new PrivateFontCollection();
             fontCollection.AddFontFile("Images\\BebasNeue.ttf");
+
+            FontBebasNeue50 = new SpriteFont();
+            FontBebasNeue50.Initialize(fontCollection.Families[0], 50, FontStyle.Regular, true, engine.Device);
 
             FontBebasNeue35 = new SpriteFont();
             FontBebasNeue35.Initialize(fontCollection.Families[0], 35, FontStyle.Regular, true, engine.Device);
@@ -114,7 +117,7 @@ namespace Sandbox.Client.Components.GUI
             _version = new ImageControl { Image = StGameName };
 
 
-            this.DrawOrders.UpdateIndex(0, int.MaxValue - 1);
+            DrawOrders.UpdateIndex(0, int.MaxValue - 1);
         }
 
         public override void Initialize()
@@ -136,7 +139,7 @@ namespace Sandbox.Client.Components.GUI
 
             RotationCube cube;
             //Create Cubes 1
-            cube = new RotationCube()
+            cube = new RotationCube
             {
                 ID = 0,
                 Rotation  = new Vector3(-MathHelper.Pi * 6 / 5, MathHelper.PiOver4, 0),
@@ -144,7 +147,7 @@ namespace Sandbox.Client.Components.GUI
             };
             _rotatingCubes.Add(cube);
 
-            cube = new RotationCube()
+            cube = new RotationCube
             {
                 ID = 1,
                 Rotation = new Vector3(-MathHelper.PiOver2 * 6 * 1.2f, MathHelper.PiOver2 * 0.125f, MathHelper.Pi * 1.23f),
@@ -152,7 +155,7 @@ namespace Sandbox.Client.Components.GUI
             };
             _rotatingCubes.Add(cube);
 
-            cube = new RotationCube()
+            cube = new RotationCube
             {
                 ID = 2,
                 Rotation = new Vector3(-MathHelper.PiOver2 * 1.9f, MathHelper.PiOver2 * 0.6f, MathHelper.Pi * 1.3f),
@@ -160,7 +163,7 @@ namespace Sandbox.Client.Components.GUI
             };
             _rotatingCubes.Add(cube);
 
-            cube = new RotationCube()
+            cube = new RotationCube
             {
                 ID = 3,
                 Rotation = new Vector3(-MathHelper.PiOver2 * 1.6f, MathHelper.PiOver2 * 0.9f, MathHelper.Pi * 1.9f),
@@ -232,7 +235,7 @@ namespace Sandbox.Client.Components.GUI
             base.Dispose();
         }
 
-        protected virtual void EngineViewPortUpdated(SharpDX.Direct3D11.Viewport viewport, SharpDX.Direct3D11.Texture2DDescription newBackBuffer)
+        protected virtual void EngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer)
         {
             Resize(viewport);
         }
