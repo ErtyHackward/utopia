@@ -333,7 +333,7 @@ namespace S33M3DXEngine
             RenderTargetViewDescription renderTargetViewDescription = new RenderTargetViewDescription()
             {
                 Format = BackBufferTex.Description.Format,
-                Dimension = CurrentMSAASampling.Quality == 0 ? RenderTargetViewDimension.Texture2D : RenderTargetViewDimension.Texture2DMultisampled
+                Dimension = CurrentMSAASampling.Count <= 1 ? RenderTargetViewDimension.Texture2D : RenderTargetViewDimension.Texture2DMultisampled
             };
             //Create RenderTargetView 
             _renderTarget = new RenderTargetView(Device, BackBufferTex, renderTargetViewDescription);
@@ -366,7 +366,7 @@ namespace S33M3DXEngine
             DepthStencilViewDescription DepthStencilViewDescr = new DepthStencilViewDescription()
             {
                 Format = DepthStencilDescr.Format,
-                Dimension = CurrentMSAASampling.Quality==0 ? DepthStencilViewDimension.Texture2D : DepthStencilViewDimension.Texture2DMultisampled,
+                Dimension = CurrentMSAASampling.Count <= 1 ? DepthStencilViewDimension.Texture2D : DepthStencilViewDimension.Texture2DMultisampled,
                 Texture2D = new DepthStencilViewDescription.Texture2DResource() { MipSlice = 0 }
             };
             //Create the Depth Stencil view
