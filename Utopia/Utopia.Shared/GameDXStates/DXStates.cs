@@ -15,7 +15,7 @@ namespace Utopia.Shared.GameDXStates
             //Init the Repository Objects
             RenderStatesRepo.Initialize(engine);
 
-            CreateRasterStatesCollection();
+            CreateRasterStatesCollection(engine);
             CreateBlendStatesCollection();
             CreateDepthStencilCollection();
             CreateSamplerStatesCollection();
@@ -32,22 +32,22 @@ namespace Utopia.Shared.GameDXStates
             public static int Sprite;
         }
 
-        private static void CreateRasterStatesCollection()
+        private static void CreateRasterStatesCollection(D3DEngine engine)
         {
             //Rasters.Default
-            Rasters.Default = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Solid, IsMultisampleEnabled = true });
+            Rasters.Default = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Solid, IsMultisampleEnabled = engine.CurrentMSAASampling.Count == 1 ? false : true });
 
             //Rasters.CullNone
-            Rasters.CullNone = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.None, FillMode = FillMode.Solid });
+            Rasters.CullNone = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.None, FillMode = FillMode.Solid, IsMultisampleEnabled = engine.CurrentMSAASampling.Count == 1 ? false : true });
 
             //Rasters.CullFront
-            Rasters.CullFront = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Front, FillMode = FillMode.Solid });
+            Rasters.CullFront = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Front, FillMode = FillMode.Solid, IsMultisampleEnabled = engine.CurrentMSAASampling.Count == 1 ? false : true });
 
             //Rasters.Wired
-            Rasters.Wired = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Wireframe });
+            Rasters.Wired = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Wireframe, IsMultisampleEnabled = engine.CurrentMSAASampling.Count == 1 ? false : true });
 
             //Rasters.Sprite
-            Rasters.Sprite = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Wireframe });
+            Rasters.Sprite = RenderStatesRepo.AddRasterStates(new RasterizerStateDescription() { CullMode = CullMode.Back, FillMode = FillMode.Wireframe, IsMultisampleEnabled = engine.CurrentMSAASampling.Count == 1 ? false : true });
         }
 
         public static void Dispose()

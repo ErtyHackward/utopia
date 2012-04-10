@@ -53,8 +53,15 @@ namespace Sandbox.Client
             IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 640));
 
             //Insert the Engine MSAA mode list in the ClientSettings
+            List<SampleDescriptionSetting> sortedCollection = new List<SampleDescriptionSetting>();
             List<object> sampleCollection = new List<object>();
-            foreach (var item in D3DEngine.MSAAList) sampleCollection.Add(new SampleDescriptionSetting() { SampleDescription = item });
+            foreach (var item in D3DEngine.MSAAList)
+            {
+                sortedCollection.Add(new SampleDescriptionSetting() { SampleDescription = item });
+            }
+
+            sampleCollection.AddRange(sortedCollection.OrderBy(x => x.QualityWeight));
+
             ClientSettings.DynamicLists.Add("CLIST_MSAA", sampleCollection);
 
             _d3dEngine.GameWindow.Icon = Sandbox.Client.Properties.Resources.Utopia;
