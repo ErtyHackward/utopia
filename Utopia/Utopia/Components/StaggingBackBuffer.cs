@@ -78,7 +78,7 @@ namespace Utopia.Components
                 MipLevels = 1,
                 ArraySize = 1,
                 Format = Format.R8G8B8A8_UNorm,
-                SampleDescription = new SampleDescription() { Count = 1, Quality = 0 },
+                SampleDescription = _engine.CurrentMSAASampling,
                 Usage = ResourceUsage.Default,
                 BindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget,
                 CpuAccessFlags = CpuAccessFlags.None,
@@ -87,6 +87,7 @@ namespace Utopia.Components
 
             SolidStaggingBackBufferSize = new Vector2(StaggingBackBufferDescr.Width, StaggingBackBufferDescr.Height);
             _solidBackBuffer = new Texture2D(_engine.Device, StaggingBackBufferDescr);
+
             _solidStaggingBackBuffer = new ShaderResourceView(_engine.Device, _solidBackBuffer);
         }
         #endregion

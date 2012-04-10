@@ -76,7 +76,7 @@ namespace Sandbox.Client
             _iocContainer = new StandardKernel();
             _iocContainer.Bind<IKernel>().ToConstant(_iocContainer).InSingletonScope();
 
-            _d3dEngine = new D3DEngine(windowStartingSize, WindowsCaption, resolutionSize);
+            _d3dEngine = new D3DEngine(windowStartingSize, WindowsCaption, ClientSettings.Current.Settings.GraphicalParameters.MSAA.SampleDescription, resolutionSize);
             _iocContainer.Bind<D3DEngine>().ToConstant(_d3dEngine).InSingletonScope();
 
             //DirectX layer & Helper ===================================

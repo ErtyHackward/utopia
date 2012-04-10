@@ -90,9 +90,9 @@ namespace S33M3DXEngine.Main
         #endregion
 
         //Constructed Engine
-        public Game(Size startingWindowsSize, string WindowsCaption, Size ResolutionSize = default(Size), bool withDebugObjectTracking = false)
+        public Game(Size startingWindowsSize, string WindowsCaption, SampleDescription sampleDescription, Size ResolutionSize = default(Size), bool withDebugObjectTracking = false)
         {
-            Engine = ToDispose(new D3DEngine(startingWindowsSize, WindowsCaption, ResolutionSize));
+            Engine = ToDispose(new D3DEngine(startingWindowsSize, WindowsCaption, sampleDescription, ResolutionSize));
 
             Engine.GameWindow.FormClosing += GameWindow_FormClosing;
 
