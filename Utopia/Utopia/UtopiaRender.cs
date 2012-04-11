@@ -9,6 +9,7 @@ using System.Drawing;
 using S33M3CoreComponents.Inputs;
 using Utopia.Shared.GameDXStates;
 using SharpDX.DXGI;
+using S33M3CoreComponents.States;
 
 namespace Utopia
 {
@@ -19,6 +20,7 @@ namespace Utopia
         /// </summary>
         private InputsManager _inputManager;
 
+        public GameStatesManager _gameStateManager;
         public event EventHandler MenuRequested;
 
         //Not Engine injected constructor
@@ -94,7 +96,10 @@ namespace Utopia
             //Mouse capture mode
             if (_inputManager.ActionsManager.isTriggered(Actions.MouseCapture))
             {
-                _inputManager.MouseManager.MouseCapture = !_inputManager.MouseManager.MouseCapture;
+                if (_gameStateManager != null && _gameStateManager.CurrentState.AllowMouseCaptureChange)
+                {
+                    _inputManager.MouseManager.MouseCapture = !_inputManager.MouseManager.MouseCapture;
+                }
             }
         }
 
