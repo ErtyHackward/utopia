@@ -22,6 +22,7 @@ namespace S33M3CoreComponents.Sprites
         static int TexWidth = 2048;
 
         #region Public Variables
+        public FontStyle FontStyle;
         public SpriteTexture SpriteTexture;
         public RectangleF[] CharDescriptors = new RectangleF[255];
         //public CharDesc& GetCharDescriptor(WCHAR character) const;
@@ -31,6 +32,7 @@ namespace S33M3CoreComponents.Sprites
         public float SpaceWidth { get { return _spaceWidth; } }
         public float CharHeight { get { return _charHeight; } }
         public float HeightInPoints { get; set; }
+        public float HeightInPixel { get; set; }
         #endregion
 
         #region Private Variables
@@ -48,6 +50,7 @@ namespace S33M3CoreComponents.Sprites
         public void Initialize(FontFamily family, float fontSize, FontStyle fontStyle, bool antiAliased, SharpDX.Direct3D11.Device device)
         {
             _size = fontSize;
+            this.FontStyle = fontStyle;
             _font = ToDispose(new Font(family, fontSize, fontStyle, GraphicsUnit.Pixel));
             Initialize(antiAliased, device);
         }
@@ -55,6 +58,7 @@ namespace S33M3CoreComponents.Sprites
         public void Initialize(string fontName, float fontSize, FontStyle fontStyle, bool antiAliased, SharpDX.Direct3D11.Device device)
         {
             _size = fontSize;
+            this.FontStyle = fontStyle;
             _font = ToDispose(new Font(fontName, fontSize, fontStyle, GraphicsUnit.Pixel));
             Initialize(antiAliased, device);
         }
@@ -74,6 +78,14 @@ namespace S33M3CoreComponents.Sprites
 
             HeightInPoints = _font.SizeInPoints;
             _charHeight = _font.Height;// * 1.1f;
+
+            var ascent = _font.FontFamily.GetCellAscent(FontStyle.Regular);
+            var descent = _font.FontFamily.GetCellDescent(FontStyle.Regular);
+
+            var ascentPixel = _font.Size * ascent / _font.FontFamily.GetEmHeight(FontStyle);
+            var descentPixel = _font.Size * descent / _font.FontFamily.GetEmHeight(FontStyle);
+
+            HeightInPixel = ascentPixel + descentPixel;
 
             char[] allChars = new char[NumChars + 1];
             for (int i = 0; i < NumChars; ++i)
