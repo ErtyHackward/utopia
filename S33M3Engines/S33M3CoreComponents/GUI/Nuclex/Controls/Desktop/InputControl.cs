@@ -173,6 +173,10 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
             // For some reason, Windows translates Backspace to a character :)
             if (IsNumeric && char.IsNumber(character) == false && character != '.') return;
 
+            //Remove the Tab as valid character
+            if (character == '\t') return;
+
+
             if (character != '\b')
             {
                 updateLastCaretMovementTicks();

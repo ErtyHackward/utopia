@@ -98,7 +98,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             }
 
 
-
             // If the mouse is over another control, pass on the mouse press.
             if (this.activatedControl != this)
             {
@@ -384,7 +383,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
 
             // Any key release should have an associated key press, otherwise, someone
             // delivered notifications to us we should not have received.
-            if (this.heldKeyCount > 0)
+            if (this.heldKeyCount <= 0)
             {
                 logger.Warn("ProcessKeyRelease() called more often then ProcessKeyPress()");
                 return;
