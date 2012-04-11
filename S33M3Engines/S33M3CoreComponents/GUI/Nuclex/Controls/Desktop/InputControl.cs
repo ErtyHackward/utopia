@@ -77,6 +77,10 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
 
         public bool IsNumeric { get; set; }
 
+        public Vector2 TextOffset { get; set; }
+
+        public Vector2 CustomHintImageOffset { get; set; }
+
         /// <summary>
         /// Gets or sets an optional background image
         /// </summary>

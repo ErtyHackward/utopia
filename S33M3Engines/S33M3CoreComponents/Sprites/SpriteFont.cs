@@ -79,11 +79,14 @@ namespace S33M3CoreComponents.Sprites
             HeightInPoints = _font.SizeInPoints;
             _charHeight = _font.Height;// * 1.1f;
 
-            var ascent = _font.FontFamily.GetCellAscent(FontStyle.Regular);
-            var descent = _font.FontFamily.GetCellDescent(FontStyle.Regular);
+            var ascent = _font.FontFamily.GetCellAscent(FontStyle);
+            var descent = _font.FontFamily.GetCellDescent(FontStyle);
+            var spacing = _font.FontFamily.GetLineSpacing(FontStyle);
 
             var ascentPixel = _font.Size * ascent / _font.FontFamily.GetEmHeight(FontStyle);
             var descentPixel = _font.Size * descent / _font.FontFamily.GetEmHeight(FontStyle);
+            var spacingPixel = _font.Size * spacing / _font.FontFamily.GetEmHeight(FontStyle);
+            
 
             HeightInPixel = ascentPixel + descentPixel;
 
@@ -101,8 +104,9 @@ namespace S33M3CoreComponents.Sprites
             int numRows = (int)(sizeRect.Width / TexWidth) + 1;
             int texHeight = (int)(numRows * _charHeight) + 1;
 
+
             // Create a temporary Bitmap and Graphics for drawing the characters one by one
-            int tempSize = (int)(_size * 2);
+            int tempSize = (int)(_size);
             Bitmap drawBitmap = new Bitmap(tempSize, tempSize, PixelFormat.Format32bppArgb);
             Graphics drawGraphics = Graphics.FromImage(drawBitmap);
             drawGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
@@ -130,6 +134,7 @@ namespace S33M3CoreComponents.Sprites
                 // Draw the character
                 drawGraphics.Clear(Color.FromArgb(0, 255, 255, 255));
                 drawGraphics.DrawString(new string(charString[0], 1), _font, brush, new PointF(0, 0));
+                
                 // Figure out the amount of blank space before the character
                 int minX = 0;
                 for (int x = 0; x < tempSize; ++x)

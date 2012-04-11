@@ -67,10 +67,10 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 bounds.Width = control.CustomHintImage.Width;
                 bounds.Height = control.CustomHintImage.Height;
 
-                var dx = (controlBounds.Height - bounds.Height) / 2;
+                //var dx = (controlBounds.Height - bounds.Height) / 2;
 
-                bounds.X += dx;
-                bounds.Y += dx;
+                bounds.X += control.CustomHintImageOffset.X;
+                bounds.Y += control.CustomHintImageOffset.Y;
 
                 graphics.DrawCustomTexture(control.CustomHintImage, ref bounds);
             }
@@ -129,8 +129,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                     if (control.CustomFont != null)
                     {
                         var move = (controlBounds.Height - control.CustomFont.CharHeight) / 2;
-                        controlBounds.X += move;
-                        controlBounds.Y += move;
+                        controlBounds.X += control.TextOffset.X;
+                        controlBounds.Y += control.TextOffset.Y;
 
 #if DEBUG
                         if (move <= 2)
@@ -149,9 +149,9 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                     if (control.CustomFont != null)
                     {
                         ByteColor color = control.Color;
-                        var move = (controlBounds.Height - control.CustomFont.CharHeight) / 2;
-                        controlBounds.X += move;
-                        controlBounds.Y += move;
+                        //var move = (controlBounds.Height - control.CustomFont.CharHeight) / 2;
+                        controlBounds.X += control.TextOffset.X;
+                        controlBounds.Y += control.TextOffset.Y;
 
                         graphics.DrawString(control.CustomFont, ref controlBounds, textToDraw, ref color, false, withCarret);
                     }
