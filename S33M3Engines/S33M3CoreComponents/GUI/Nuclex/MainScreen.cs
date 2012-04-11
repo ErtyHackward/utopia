@@ -307,7 +307,7 @@ namespace S33M3CoreComponents.GUI.Nuclex
         // input devices.
         if (!anyKeysOrButtonsPressed)
         {
-            this.activatedControl = null;
+           this.activatedControl = null;
         }
     }
 
