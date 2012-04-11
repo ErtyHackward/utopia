@@ -67,10 +67,18 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 bounds.Width = control.CustomHintImage.Width;
                 bounds.Height = control.CustomHintImage.Height;
 
-                //var dx = (controlBounds.Height - bounds.Height) / 2;
+                if (!control.CustomHintImageOffset.HasValue)
+                {
+                    var dx = (controlBounds.Height - bounds.Height) / 2;
 
-                bounds.X += control.CustomHintImageOffset.X;
-                bounds.Y += control.CustomHintImageOffset.Y;
+                    bounds.X += dx;
+                    bounds.Y += dx;
+                }
+                else
+                {
+                    bounds.X += control.CustomHintImageOffset.Value.X;
+                    bounds.Y += control.CustomHintImageOffset.Value.Y;
+                }
 
                 graphics.DrawCustomTexture(control.CustomHintImage, ref bounds);
             }
@@ -128,16 +136,19 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 
                     if (control.CustomFont != null)
                     {
-                        var move = (controlBounds.Height - control.CustomFont.CharHeight) / 2;
-                        controlBounds.X += control.TextOffset.X;
-                        controlBounds.Y += control.TextOffset.Y;
-
-#if DEBUG
-                        if (move <= 2)
+                        if (!control.TextOffset.HasValue)
                         {
-                            logger.Warn("Input component height ({0}) too small for the font size ({1})!", controlBounds.Height, control.CustomFont.CharHeight);
+                            var dx = (controlBounds.Height - control.CustomFont.HeightInPoints) / 2;
+                            var dy = (controlBounds.Height - control.CustomFont.CharHeight) / 2;
+
+                            controlBounds.X += dx;
+                            controlBounds.Y += dy;
                         }
-#endif
+                        else
+                        {
+                            controlBounds.X += control.TextOffset.Value.X;
+                            controlBounds.Y += control.TextOffset.Value.Y;
+                        }
 
                         graphics.DrawString(control.CustomFont, ref controlBounds, textToDraw, ref color, false, withCarret);
                     }
@@ -149,9 +160,19 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                     if (control.CustomFont != null)
                     {
                         ByteColor color = control.Color;
-                        //var move = (controlBounds.Height - control.CustomFont.CharHeight) / 2;
-                        controlBounds.X += control.TextOffset.X;
-                        controlBounds.Y += control.TextOffset.Y;
+                        if (!control.TextOffset.HasValue)
+                        {
+                            var dx = (controlBounds.Height - control.CustomFont.HeightInPoints) / 2;
+                            var dy = (controlBounds.Height - control.CustomFont.CharHeight) / 2;
+
+                            controlBounds.X += dx;
+                            controlBounds.Y += dy;
+                        }
+                        else
+                        {
+                            controlBounds.X += control.TextOffset.Value.X;
+                            controlBounds.Y += control.TextOffset.Value.Y;
+                        }
 
                         graphics.DrawString(control.CustomFont, ref controlBounds, textToDraw, ref color, false, withCarret);
                     }
