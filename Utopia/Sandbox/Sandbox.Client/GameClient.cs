@@ -1,4 +1,4 @@
-﻿//#define SINGLEPLAYERSTART
+﻿#define SINGLEPLAYERSTART
 
 using System;
 using System.IO;
@@ -114,7 +114,7 @@ namespace Sandbox.Client
             game.GameComponents.Add(debugComponents);
             //Add the StateManager to the main loop
             game.GameComponents.Add(stateManager);
-
+            
 #if SINGLEPLAYERSTART
             // first state will be the login state
             vars.SinglePlayer = true;
@@ -129,7 +129,7 @@ namespace Sandbox.Client
 #endif
 
             //game.MenuRequested += new EventHandler(game_MenuRequested);
-
+            game._gameStateManager = stateManager;
             game.Run(); //Start the Main render loop
 
             _iocContainer.Dispose();

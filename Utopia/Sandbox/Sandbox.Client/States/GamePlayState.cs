@@ -41,6 +41,7 @@ namespace Sandbox.Client.States
             :base(stateManager)
         {
             _ioc = ioc;
+            AllowMouseCaptureChange = true;
         }
 
         public override void Initialize(DeviceContext context)

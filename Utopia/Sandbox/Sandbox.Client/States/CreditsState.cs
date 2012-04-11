@@ -23,7 +23,7 @@ namespace Sandbox.Client.States
             :base(stateManager)
         {
             _iocContainer = iocContainer;
-
+            AllowMouseCaptureChange = false;
         }
 
         public override void Initialize(SharpDX.Direct3D11.DeviceContext context)

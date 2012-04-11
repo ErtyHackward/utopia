@@ -19,12 +19,19 @@ namespace S33M3CoreComponents.States
     public abstract class GameState
     {
         #region Private variables
+        private bool _allowMouseCaptureChange = false;
         #endregion
 
         #region Public variables
 
         public bool IsActivationRequested { get; set; }
         public bool WithPreservePreviousStates { get; set; }
+        public bool AllowMouseCaptureChange
+        {
+            get { return _allowMouseCaptureChange; }
+            set { _allowMouseCaptureChange = value; }
+        }
+
 
         /// <summary>
         /// Name of the state
