@@ -106,7 +106,7 @@ namespace S33M3CoreComponents.Sprites
 
 
             // Create a temporary Bitmap and Graphics for drawing the characters one by one
-            int tempSize = (int)(_size);
+            int tempSize = (int)(_size * 2);
             Bitmap drawBitmap = new Bitmap(tempSize, tempSize, PixelFormat.Format32bppArgb);
             Graphics drawGraphics = Graphics.FromImage(drawBitmap);
             drawGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
