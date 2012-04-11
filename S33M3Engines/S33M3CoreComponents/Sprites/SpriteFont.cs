@@ -242,7 +242,8 @@ namespace S33M3CoreComponents.Sprites
 
         public Vector2 MeasureString(StringBuilder stringBuilder)
         {
-            return (MeasureString(stringBuilder.ToString()));
+            string str = stringBuilder.ToString();
+            return (MeasureString(str));
         }
 
         public Vector2 MeasureString3(string text)
@@ -276,7 +277,7 @@ namespace S33M3CoreComponents.Sprites
 
             textWidth += length; // spacing between characters
 
-            var test = MeasureString3(text);
+            //var test = MeasureString3(text);
 
             return new Vector2(textWidth, textHeight);
         }

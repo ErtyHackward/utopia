@@ -83,6 +83,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 graphics.DrawCustomTexture(control.CustomHintImage, ref bounds);
             }
 
+            //Clip the region
             using (graphics.SetClipRegion(ref controlBounds))
             {
 
@@ -97,15 +98,24 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 // focus and the caret is being shown.
                 if (control.HasFocus)
                 {
-
+                    float offSetSize = 0;
                     // Find out where the cursor is from the left end of the text
-                    RectangleF stringSize = graphics.MeasureString(Style,ref controlBounds, text.Substring(0, control.CaretPosition));
+                    RectangleF stringSize;
+                    if (control.CustomFont == null)
+                    {
+                        stringSize = graphics.MeasureString(Style, ref controlBounds, text.Substring(0, control.CaretPosition));
+                    }
+                    else
+                    {
+                        stringSize = graphics.MeasureString(control.CustomFont, ref controlBounds, text.Substring(0, control.CaretPosition));
+                        offSetSize = control.CustomFont.Size;
+                    }
 
                     // exTODO: Renderer should query the size of the control's frame
                     //   Otherwise text will be visible over the frame, which might look bad
                     //   if a skin uses a frame wider than 2 pixels or in a different color
                     //   than the text.
-                    while (stringSize.Width + left > controlBounds.Width)
+                    while ((stringSize.Width + offSetSize) + left > controlBounds.Width)
                     {
                         left -= controlBounds.Width / 10.0f;
                     }
