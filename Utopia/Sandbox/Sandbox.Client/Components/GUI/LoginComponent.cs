@@ -247,7 +247,6 @@ namespace Sandbox.Client.Components.GUI
 
         public override void EnableComponent()
         {
-
             _screen.Desktop.Children.Add(_regButton);
             _screen.Desktop.Children.Add(_loginButton);
             _screen.Desktop.Children.Add(_emailControl);

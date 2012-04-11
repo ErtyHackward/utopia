@@ -18,7 +18,6 @@ namespace Sandbox.Client.Components.GUI.Settings
 {
     partial class SettingsComponent
     {
-        protected InputControl _testInput;
         //Components
         protected LabelControl _windowLabel, _settingsStateLabel;
         protected Control _settingsForm;
@@ -123,10 +122,6 @@ namespace Sandbox.Client.Components.GUI.Settings
             };
             _btBack.Pressed += delegate { btBackPressed(); };
 
-            _testInput = new InputControl() { Text = "TEST" };
-
-            _leftMenuPanel.Children.Add(_testInput);
-
             //Add components to the left Panel
             _leftMenuPanel.Children.Add(_btBack);
             _leftMenuPanel.Children.Add(_btKeyBinding);
@@ -185,9 +180,6 @@ namespace Sandbox.Client.Components.GUI.Settings
                 _btCoreEngine.Bounds = new UniRectangle(5, btPlacementY, _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
                 btPlacementY += 50;
                 _btKeyBinding.Bounds = new UniRectangle(5, btPlacementY, _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
-
-                btPlacementY += 50;
-                _testInput.Bounds = new UniRectangle(5, btPlacementY, 60, 20);
 
                 _btBack.Bounds = new UniRectangle(5, new UniScalar(1, -60), _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
                 _settingsStateLabel.Bounds = new UniRectangle(10, new UniScalar(1f, -75.0f), 0, 0);

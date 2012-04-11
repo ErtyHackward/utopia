@@ -243,8 +243,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         public RectangleF MeasureString(string frameName, ref RectangleF bounds, string text)
         {
             var frame = lookupFrame(frameName);
+            if (frame.Texts.Length <= 0) return RectangleF.Empty;
 
-            var size = frame.Texts.Length > 0 ? frame.Texts[0].Font.MeasureString(text) : Vector2.Zero;
+            return MeasureString(frame.Texts[0].Font, ref bounds, text);
+        }
+
+        public RectangleF MeasureString(SpriteFont spriteFont, ref RectangleF bounds, string text)
+        {
+            var size = spriteFont.MeasureString(text);
 
             return new RectangleF(0.0f, 0.0f, size.X, size.Y);
         }

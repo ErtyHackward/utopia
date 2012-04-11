@@ -101,6 +101,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         ///   The size and extents of the specified string within the frame
         /// </returns>
         RectangleF MeasureString(string frameName, ref RectangleF bounds, string text);
+        RectangleF MeasureString(SpriteFont spriteFont, ref RectangleF bounds, string text);
 
         /// <summary>
         ///   Locates the closest gap between two letters to the provided position
