@@ -194,7 +194,9 @@ namespace Sandbox.Client.Components.GUI
                 CustomBackground = _stInputBg,
                 CustomFont = FontBebasNeue35,
                 Color = SharpDX.Colors.White,
-                CustomHintImage = _stEmail
+                CustomHintImage = _stEmail,
+                TextOffset = new SharpDX.Vector2(25,22),
+                CustomHintImageOffset = new SharpDX.Vector2(25, 30)
             };
             
             _passwordControl = new InputControl
@@ -204,7 +206,9 @@ namespace Sandbox.Client.Components.GUI
                 CustomBackground = _stInputBg,
                 CustomFont = FontBebasNeue35,
                 Color = SharpDX.Colors.White,
-                CustomHintImage = _stPassword
+                CustomHintImage = _stPassword,
+                TextOffset = new SharpDX.Vector2(25,22),
+                CustomHintImageOffset = new SharpDX.Vector2(25, 30)
             };
             
             _regButton = new ButtonControl
