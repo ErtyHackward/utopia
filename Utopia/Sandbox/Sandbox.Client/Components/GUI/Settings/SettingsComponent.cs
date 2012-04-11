@@ -364,6 +364,8 @@ namespace Sandbox.Client.Components.GUI.Settings
         //CheckBox Event management ==========================================
         public void SettingsPanel_Changed(object sender, EventArgs e)
         {
+            OptionControl checkbox = (OptionControl)sender;
+            ((ParamRow)checkbox.Tag2).FieldData.Value = checkbox.Selected;
             SaveChange();
         }
         //CheckBox Event management ==========================================
