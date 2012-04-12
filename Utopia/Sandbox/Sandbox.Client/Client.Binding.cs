@@ -160,6 +160,7 @@ namespace Sandbox.Client
                 default:
                     break;
             }
+
             //_iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
@@ -179,16 +180,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InSingletonScope();   //Chunk Mesh + Entities creation
             _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();             //Chunk Management (Update/Draw)
             _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
-            
-            //_iocContainer.Bind<WorldGenerator>().ToSelf().InSingletonScope();                    //World Generator Class
-            //_iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope();
-            //_iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().Named("ErtyHackwardPlanWorldProcessor");
-
             _iocContainer.Bind<IGameStateToolManager>().To<GameStateToolManager>().InSingletonScope();
-
-            //iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope().Named("s33m3World");
-            //iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
-            //iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
             //=============================================================
 
             //Entities related stuff ====================================================

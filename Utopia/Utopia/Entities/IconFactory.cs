@@ -80,9 +80,23 @@ namespace Utopia.Entities
 
         public override void Dispose()
         {
-            if(_iconsTextureArray != null) _iconsTextureArray.Dispose();
+            if (_iconsTextureArray != null) _iconsTextureArray.Dispose();
             if (_iconTextureArray != null) _iconTextureArray.Dispose();
+
             base.Dispose();
+        }
+
+        //Too costy to recreate, better keep it
+        public override void UnloadContent()
+        {
+            //this.DisableComponent(); //Disable to component
+
+            //if (_iconsTextureArray != null) _iconsTextureArray.Dispose();
+            //if (_iconTextureArray != null) _iconTextureArray.Dispose();
+
+            //_nbrCubeIcon = 0;
+
+            //this.IsInitialized = false;
         }
 
         #region Public methods

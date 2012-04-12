@@ -775,7 +775,6 @@ namespace Utopia.Entities.Managers
         }
         #endregion
         #endregion
-
         #endregion
 
         #region Public Methods
@@ -823,6 +822,13 @@ namespace Utopia.Entities.Managers
         public override void LoadContent(DeviceContext context)
         {
             _playerRenderer.LoadContent(context);
+        }
+
+        public override void UnloadContent()
+        {
+            this.DisableComponent();
+            _playerRenderer.UnloadContent();
+            this.IsInitialized = false;
         }
 
         public override void Update( GameTime timeSpend)

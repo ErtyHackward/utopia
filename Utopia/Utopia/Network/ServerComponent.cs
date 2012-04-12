@@ -37,8 +37,8 @@ namespace Utopia.Network
         {
             if(ea.ServerConnection != null)
                 ea.ServerConnection.MessageGameInformation += ServerConnection_MessageGameInformation;
-            if (ea.PrevoiusConnection != null)
-                ea.PrevoiusConnection.MessageGameInformation -= ServerConnection_MessageGameInformation;
+            if (ea.PreviousConnection != null)
+                ea.PreviousConnection.MessageGameInformation -= ServerConnection_MessageGameInformation;
 
             var handler = ConnectionInitialized;
             if (handler != null) handler(this, ea);
@@ -63,7 +63,7 @@ namespace Utopia.Network
             var prev = ServerConnection;
 
             ServerConnection = new ServerConnection(address);
-            OnConnectionInitialized(new ServerComponentConnectionInitializeEventArgs { ServerConnection = ServerConnection, PrevoiusConnection = prev });
+            OnConnectionInitialized(new ServerComponentConnectionInitializeEventArgs { ServerConnection = ServerConnection, PreviousConnection = prev });
             return true;
         }
 
@@ -123,7 +123,7 @@ namespace Utopia.Network
 
     public class ServerComponentConnectionInitializeEventArgs : EventArgs
     {
-        public ServerConnection PrevoiusConnection { get; set; }
+        public ServerConnection PreviousConnection { get; set; }
         public ServerConnection ServerConnection { get; set; }
 
     }

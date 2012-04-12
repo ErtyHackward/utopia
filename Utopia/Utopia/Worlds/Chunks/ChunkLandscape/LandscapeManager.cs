@@ -51,7 +51,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             _receivedServerChunks = new Dictionary<long, ChunkDataMessage>(1024);
             _server.ServerConnection.MessageChunkData += ServerConnection_MessageChunkData;
             
-
             //Add a new Timer trigger
             _timer = timerManager.AddTimer(0, 10000);
             _timer.OnTimerRaised += _timer_OnTimerRaised;

@@ -47,8 +47,8 @@ namespace Utopia.Worlds.GameClocks
 
         void _server_ConnectionInitialized(object sender, ServerComponentConnectionInitializeEventArgs e)
         {
-            if (e.PrevoiusConnection != null)
-                e.PrevoiusConnection.MessageDateTime -= ServerConnection_MessageDateTime;
+            if (e.PreviousConnection != null)
+                e.PreviousConnection.MessageDateTime -= ServerConnection_MessageDateTime;
 
             if(e.ServerConnection != null)
                 e.ServerConnection.MessageDateTime += ServerConnection_MessageDateTime;
