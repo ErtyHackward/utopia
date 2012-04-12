@@ -148,7 +148,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         }
 
         public new object Tag { get; set; }
-        public new object Tag2 { get; set; }
+        public object Tag2 { get; set; }
 
         /// <summary>Name that can be used to uniquely identify the control</summary>
         /// <remarks>
