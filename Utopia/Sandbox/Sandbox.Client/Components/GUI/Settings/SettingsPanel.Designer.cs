@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
-using Utopia.Settings;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.GUI.Nuclex;
+using Utopia.Shared.Settings;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {

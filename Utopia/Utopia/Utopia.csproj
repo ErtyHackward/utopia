@@ -167,12 +167,7 @@
     <Compile Include="GUI\Map\MapRenderer.cs" />
     <Compile Include="Network\EntityMessageTranslator.cs" />
     <Compile Include="Network\ItemMessageTranslator.cs" />
-    <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="Network\ServerComponent.cs" />
-    <Compile Include="Settings\ParamRow.cs" />
-    <Compile Include="Settings\ParamValue.cs" />
-    <Compile Include="Settings\SampleDescriptionSetting.cs" />
-    <Compile Include="Settings\Settings2Components.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Worlds\Chunks\ChunkEntityImpacts\ChunkEntityImpactManager.cs" />
@@ -297,14 +292,8 @@
       <UserProperties BuildVersion_UseGlobalSettings="True" />
     </VisualStudio>
   </ProjectExtensions>
-  <Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile;ResolveKeySource" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
-    <!-- Delete the file because I can't figure out how to force the SGen task. -->
-    <Delete Files="$(TargetDir)$(TargetName).XmlSerializers.dll" ContinueOnError="true" />
-    <SGen BuildAssemblyName="$(TargetFileName)" BuildAssemblyPath="$(OutputPath)" References="@(ReferencePath)" ShouldGenerateSerializer="true" UseProxyTypes="false" KeyContainer="$(KeyContainerName)" KeyFile="$(KeyOriginatorFile)" DelaySign="$(DelaySign)" ToolPath="$(SGenToolPath)" Platform="MSIL">
-      <Output TaskParameter="SerializationAssembly" ItemName="SerializationAssembly" />
-    </SGen>
-  </Target>
   <PropertyGroup>
-    <PostBuildEvent>"$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\sgen" /a:Utopia.dll /t:Utopia.Settings.ClientConfig /force /compiler:/platform:x86</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

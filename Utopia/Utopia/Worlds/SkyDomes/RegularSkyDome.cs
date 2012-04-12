@@ -10,7 +10,6 @@ using Utopia.Worlds.SkyDomes.SharedComp;
 using Utopia.Worlds.Weather;
 using Utopia.Shared.World;
 using Ninject;
-using Utopia.Settings;
 using Utopia.Resources.Effects.Skydome;
 using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Cameras;
@@ -24,6 +23,7 @@ using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
 using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.Shared.GameDXStates;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.SkyDomes
 {

@@ -35,11 +35,12 @@ namespace Sandbox.Server
         static void IocBind(WorldParameters param)
         {
 
-            var settingsManager = new XmlSettingsManager<ServerSettings>("utopiaServer.config");
+            var settingsManager = new XmlSettingsManager<ServerSettings>(@"Server\server.config");
             settingsManager.Load();
 
             if (string.IsNullOrEmpty(settingsManager.Settings.DatabasePath))
-                settingsManager.Settings.DatabasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia\\world.db");
+                settingsManager.Settings.DatabasePath = Path.Combine(GameSystemSettings.GetFilePath("", SettingsStorage.ApplicationData), "Server", "MultiPlayer", param.Seed.ToString(), "ServerWorld.db");
+            
 
             var sqLiteStorageManager = new SQLiteStorageManager(settingsManager.Settings.DatabasePath, null);
 
@@ -70,7 +71,7 @@ namespace Sandbox.Server
 
             _iocContainer = new StandardKernel(new NinjectSettings());
 
-            GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"Config\" };
+            GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath, @"Config\");
             GameSystemSettings.Current.Load();
 
             System.Net.ServicePointManager.Expect100Continue = false;

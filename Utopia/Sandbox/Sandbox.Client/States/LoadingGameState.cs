@@ -17,7 +17,6 @@ using Utopia.GUI;
 using Utopia.Network;
 using Utopia.Server;
 using Utopia.Server.Managers;
-using Utopia.Settings;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Config;
@@ -60,6 +59,7 @@ using S33M3CoreComponents.Debug;
 using Utopia.Components;
 using Utopia.Shared.Interfaces;
 using Sandbox.Client.Components.GUI;
+using Utopia.Shared.Settings;
 
 namespace Sandbox.Client.States
 {
@@ -118,11 +118,14 @@ namespace Sandbox.Client.States
 
             if (_vars.SinglePlayer)
             {
+                int seed = 12695361;
+
                 #region Initialize the local server first single player game
                 if (_server == null)
                 {
+
                     _serverFactory = new SandboxEntityFactory(null);
-                    var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Utopia\\local.db");
+                    var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", seed.ToString(), "ServerWorld.db");
                     var sqliteStorage = _ioc.Get<SQLiteStorageManager>(new[] { new ConstructorArgument("filePath", dbPath), new ConstructorArgument("factory", _serverFactory) });
 
                     sqliteStorage.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
@@ -132,7 +135,7 @@ namespace Sandbox.Client.States
                     // create a server generator
                     var wp = _ioc.Get<WorldParameters>();
                     wp.SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2;
-                    wp.Seed = 12695362;
+                    wp.Seed = seed;
 
                     IWorldProcessor processor1 = new s33m3WorldProcessor(wp);
                     IWorldProcessor processor2 = new LandscapeLayersProcessor(wp, _serverFactory);
@@ -155,7 +158,7 @@ namespace Sandbox.Client.States
                 {
                     _serverComponent.BindingServer("127.0.0.1");
                     _serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
-                    _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Singleplayer", "world.db");
+                    _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, "Client", "Singleplayer", seed.ToString(), "ClientWorldCache.db");
                 }
             }
             else
@@ -165,7 +168,7 @@ namespace Sandbox.Client.States
                 {
                     _serverComponent.BindingServer(_vars.CurrentServerAddress);
                     _serverComponent.ConnectToServer(_vars.Login, _vars.DisplayName, _vars.PasswordHash);
-                    _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Multiplayer", _vars.CurrentServerAddress.Replace(':', '_'), "world.db");
+                    _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Client", "Multiplayer", _vars.CurrentServerAddress.Replace(':', '_'), "ClientWorldCache.db");
                 }
             }
         }

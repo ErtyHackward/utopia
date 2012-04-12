@@ -7,7 +7,6 @@ using Utopia.Shared.Structs;
 using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.Entities.Renderer.Interfaces;
-using Utopia.Settings;
 using Utopia.Resources.ModelComp;
 using S33M3DXEngine.Main;
 using S33M3DXEngine;

@@ -5,7 +5,6 @@ using System.Text;
 using SharpDX.Direct3D11;
 using SharpDX;
 using Utopia.Shared.Chunks;
-using Utopia.Settings;
 using Utopia.Resources.Effects.Terran;
 using Utopia.Resources.Effects.Entities;
 using S33M3DXEngine.RenderStates;

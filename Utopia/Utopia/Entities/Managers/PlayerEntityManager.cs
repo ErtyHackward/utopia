@@ -16,7 +16,6 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
 using Ninject;
-using Utopia.Settings;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Cubes;
 using Utopia.Shared.Settings;

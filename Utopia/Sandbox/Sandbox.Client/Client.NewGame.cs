@@ -1,6 +1,5 @@
 ﻿using Utopia;
 using Ninject;
-using Utopia.Settings;
 using Utopia.Action;
 using Utopia.Shared.Config;
 using System.Windows.Forms;
@@ -16,7 +15,7 @@ namespace Sandbox.Client
     {
         public UtopiaRender CreateNewGameEngine(IKernel iocContainer, bool VSync)
         {
-            GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"Config\" };
+            GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath, @"Config\");
             GameSystemSettings.Current.Load();
 
             var utopiaRenderer = new UtopiaRender(iocContainer.Get<D3DEngine>(), iocContainer.Get<InputsManager>(), false);

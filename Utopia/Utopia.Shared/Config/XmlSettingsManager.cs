@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.Config
 {
@@ -14,26 +15,7 @@ namespace Utopia.Shared.Config
     public class XmlSettingsManager<T> where T : IConfigClass, new()
     {
         private readonly XmlSerializer _xmlSerializer;
-
-        /// <summary>
-        /// Gets or sets custom folder path (use with Storage = CustomPath)
-        /// </summary>
-        public string CustomSettingsFolderPath { get; set; }
-
-        private string _applicationDataSubFolder;
-
-        /// <summary>
-        /// Gets or sets subfolder used with ApplicationData or CommonApplicationData storage locations
-        /// </summary>
-        public string ApplicationDataSubFolder
-        {
-            get
-            {
-                return _applicationDataSubFolder ??
-                       (_applicationDataSubFolder = (Attribute.GetCustomAttribute(Assembly.GetEntryAssembly(), typeof(AssemblyProductAttribute)) as AssemblyProductAttribute).Product);
-            }
-            set { _applicationDataSubFolder = value; }
-        }
+        private string _customSettingsFolderPath;
 
         /// <summary>
         /// Gets or sets settings file name
@@ -50,31 +32,11 @@ namespace Utopia.Shared.Config
         /// </summary>
         public T Settings { get; set; }
 
-        private string GetFilePath(SettingsStorage storage, bool createDirectory = true)
-        {
-            string folder;
-            switch (storage)
-            {
-                //case SettingsStorage.LocalFolder: folder = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath; break;
-                case SettingsStorage.LocalFolder: folder = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath); break;
-                case SettingsStorage.CustomPath: folder = CustomSettingsFolderPath; break;
-                case SettingsStorage.ApplicationData: folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),ApplicationDataSubFolder); break;
-                case SettingsStorage.CommonApplicationData: folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), ApplicationDataSubFolder); break;
-                default: folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                    break;
-            }
 
-            if(createDirectory && !Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-
-            return Path.Combine(folder, FileName);
-        }
-
-        public XmlSettingsManager(string fileName) : this(fileName, SettingsStorage.ApplicationData, "")
+        public XmlSettingsManager(string fileName) : this(fileName, SettingsStorage.ApplicationData)
         {
             
         }
-
 
         /// <summary>
         /// Creates new instance of XmlSettings manager
@@ -82,11 +44,11 @@ namespace Utopia.Shared.Config
         /// <param name="fileName">Settings file name without path</param>
         /// <param name="storage">Storage place</param>
         /// <param name="customFolder"></param>
-        public XmlSettingsManager(string fileName, SettingsStorage storage = SettingsStorage.ApplicationData, string customFolder = "")
+        public XmlSettingsManager(string fileName, SettingsStorage storage = SettingsStorage.ApplicationData, string CustomSettingsFolderPath = null)
         {
             FileName = fileName;
             Storage = storage;
-            CustomSettingsFolderPath = customFolder;
+            _customSettingsFolderPath = CustomSettingsFolderPath;
 
             _xmlSerializer = new XmlSerializer(typeof(T));
         }
@@ -96,7 +58,7 @@ namespace Utopia.Shared.Config
         /// </summary>
         public void Save()
         {
-            using (var fileStream = File.Open(GetFilePath(Storage), FileMode.Create))
+            using (var fileStream = File.Open(GameSystemSettings.GetFilePath(FileName, Storage, true, _customSettingsFolderPath != null ? _customSettingsFolderPath : null), FileMode.Create))
                 _xmlSerializer.Serialize(fileStream, Settings);
         }
 
@@ -108,7 +70,7 @@ namespace Utopia.Shared.Config
             string path = string.Empty;
             try
             {
-                path = GetFilePath(Storage);
+                path = GameSystemSettings.GetFilePath(FileName, Storage, true, _customSettingsFolderPath != null ? _customSettingsFolderPath:null);
 
                 if (File.Exists(path))
                 {
@@ -155,32 +117,9 @@ namespace Utopia.Shared.Config
         /// <returns>Returns true is file exists otherwise return false</returns>
         public bool SettingsExists(SettingsStorage storage)
         {
-            return File.Exists(GetFilePath(storage, false));
+            return File.Exists(GameSystemSettings.GetFilePath(FileName, storage, false, _customSettingsFolderPath != null ? _customSettingsFolderPath : null));
         }
 
-    }
-
-    /// <summary>
-    /// Enumerates all possible storage states
-    /// </summary>
-    public enum SettingsStorage
-    {
-        /// <summary>
-        /// Path where executing assembly located
-        /// </summary>
-        LocalFolder,
-        /// <summary>
-        /// Custom path
-        /// </summary>
-        CustomPath,
-        /// <summary>
-        /// User specific location
-        /// </summary>
-        ApplicationData,
-        /// <summary>
-        /// Computer specific location
-        /// </summary>
-        CommonApplicationData
     }
 
 }

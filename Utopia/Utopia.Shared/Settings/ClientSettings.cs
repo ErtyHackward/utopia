@@ -7,7 +7,7 @@ using S33M3CoreComponents.Inputs.KeyboardHandler;
 using System.IO;
 using SharpDX.DXGI;
 
-namespace Utopia.Settings
+namespace Utopia.Shared.Settings
 {
     public class ClientSettings
     {

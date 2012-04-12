@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 
-namespace Utopia.Settings
+namespace Utopia.Shared.Settings
 {
     public class ParamRow
     {

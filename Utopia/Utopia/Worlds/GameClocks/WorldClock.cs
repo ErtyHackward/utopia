@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Settings;
 using Utopia.Network;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;

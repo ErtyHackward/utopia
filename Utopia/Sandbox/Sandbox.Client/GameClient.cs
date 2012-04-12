@@ -10,7 +10,6 @@ using Utopia.Entities;
 using Utopia.Network;
 using Ninject;
 using System.Windows.Forms;
-using Utopia.Settings;
 using Utopia.Shared.Config;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
@@ -70,7 +69,7 @@ namespace Sandbox.Client
 
             var vars = _iocContainer.Get<RuntimeVariables>();
 
-            vars.ApplicationDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Utopia.Sandbox");
+            vars.ApplicationDataPath = GameSystemSettings.GetFilePath("", SettingsStorage.ApplicationData);//  Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Utopia.Sandbox");
 
             NetworkMessageFactory.Instance.EntityFactory = _iocContainer.Get<EntityFactory>();
 
@@ -145,14 +144,14 @@ namespace Sandbox.Client
         #region Private methods
         private void LoadClientsSettings()
         {
-            ClientSettings.Current = new XmlSettingsManager<ClientConfig>("UtopiaClient.config", SettingsStorage.ApplicationData);
+            ClientSettings.Current = new XmlSettingsManager<ClientConfig>(@"Client\client.config", SettingsStorage.ApplicationData, null);
             ClientSettings.Current.Load();
 
             if (ValidateSettings()) 
                 ClientSettings.Current.Save();
 
             //Load the Actif texture pack config
-            TexturePackConfig.Current = new XmlSettingsManager<TexturePackSetting>(@"TexturePackConfig.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"TexturesPacks\" + ClientSettings.Current.Settings.GraphicalParameters.TexturePack + @"\" };
+            TexturePackConfig.Current = new XmlSettingsManager<TexturePackSetting>(@"TexturePackConfig.xml", SettingsStorage.CustomPath, @"TexturesPacks\" + ClientSettings.Current.Settings.GraphicalParameters.TexturePack + @"\");
             TexturePackConfig.Current.Load();
         }
 

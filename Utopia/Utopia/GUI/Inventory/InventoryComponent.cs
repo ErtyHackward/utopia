@@ -5,7 +5,6 @@ using SharpDX;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Network;
-using Utopia.Settings;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
@@ -19,6 +18,7 @@ using SharpDX.Direct3D11;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.GUI;
+using Utopia.Shared.Settings;
 
 namespace Utopia.GUI.Inventory
 {

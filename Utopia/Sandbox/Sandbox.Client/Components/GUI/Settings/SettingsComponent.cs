@@ -11,7 +11,6 @@ using SharpDX.Direct3D11;
 using SharpDX;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Arcade;
 using System.Reflection;
-using Utopia.Settings;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
 using System.Windows.Forms;
 using S33M3DXEngine.Threading;
@@ -134,7 +133,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                         {
                             case "TexturePack":
                                     //Refresh TexturePackConfig value
-                                    TexturePackConfig.Current = new XmlSettingsManager<TexturePackSetting>(@"TexturePackConfig.xml", SettingsStorage.CustomPath) { CustomSettingsFolderPath = @"TexturesPacks\" + ClientSettings.Current.Settings.GraphicalParameters.TexturePack + @"\" };
+                                TexturePackConfig.Current = new XmlSettingsManager<TexturePackSetting>(@"TexturePackConfig.xml", SettingsStorage.CustomPath, @"TexturesPacks\" + ClientSettings.Current.Settings.GraphicalParameters.TexturePack + @"\");
                                     TexturePackConfig.Current.Load();
                                 break;
                             case "VSync":
