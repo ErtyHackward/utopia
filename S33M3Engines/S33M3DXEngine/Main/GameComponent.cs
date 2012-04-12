@@ -117,6 +117,10 @@ namespace S33M3DXEngine.Main
         {
         }
 
+        public virtual void UnloadContent()
+        {
+        }
+
         public virtual void Update(GameTime timeSpent)
         {
         }

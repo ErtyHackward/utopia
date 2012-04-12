@@ -114,7 +114,6 @@ namespace S33M3CoreComponents.States
             //Activate this component
             this.EnableComponent();
         }
-
         #region Private methods
 
         //End of activation process where the new state is pushed for rendering
@@ -358,6 +357,39 @@ namespace S33M3CoreComponents.States
 
             _gameStates.Add(state);
             state.StatesManager = this;
+        }
+
+        /// <summary>
+        /// Will at first, disable all components from the state.
+        /// Will call the Unload Methods to all registered components of the passed in state
+        /// All the component will also see their IsInitialized flag set back to False
+        /// After this each component should be in the same state as before the call to Initialize() and LoadContent()
+        /// </summary>
+        /// <param name="state">The State</param>
+        public void FlushStateComponents(GameState state)
+        {
+            foreach (var comp in state.GameComponents)
+            {
+                comp.DisableComponent();
+                comp.UnloadContent();
+                comp.IsInitialized = false;
+            }
+        }
+
+        /// <summary>
+        /// Will at first, disable all components from the state.
+        /// Will call the Unload Methods to all registered components of the passed in state
+        /// All the component will also see their IsInitialized flag set back to False
+        /// After this each component should be in the same state as before the call to Initialize() and LoadContent()
+        /// </summary>
+        /// <param name="state">The State Name</param>
+        public void FlushComponentsContent(string stateName)
+        {
+            if (stateName == null) throw new ArgumentNullException("stateName");
+            var state = _gameStates.Find(gs => gs.Name == stateName);
+            if (state == null)
+                throw new InvalidOperationException("No such state");
+            FlushStateComponents(state);
         }
         #endregion
     }

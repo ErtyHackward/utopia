@@ -73,8 +73,11 @@ namespace S33M3CoreComponents.States
         /// <param name="gc"></param>
         protected void AddComponent(GameComponent gc)
         {
-            //All comp. are always Updatable
-            GameComponents.Add(gc);
+            //Add a component only if not already added
+            if (GameComponents.Contains(gc) == false)
+            {
+                GameComponents.Add(gc);
+            }
         }
 
         protected void AddComponent(IGameComponent igc)

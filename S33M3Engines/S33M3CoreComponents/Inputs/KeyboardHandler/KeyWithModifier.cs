@@ -40,5 +40,10 @@ namespace S33M3CoreComponents.Inputs.KeyboardHandler
         {
             return !(a == b);
         }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
