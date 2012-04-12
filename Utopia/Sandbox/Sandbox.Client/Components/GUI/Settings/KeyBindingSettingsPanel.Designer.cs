@@ -8,7 +8,7 @@ using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
 using System.Reflection;
-using Utopia.Settings;
+using Utopia.Shared.Settings;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {

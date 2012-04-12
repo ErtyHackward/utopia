@@ -14,7 +14,7 @@ namespace Utopia.Shared.Settings
         public static XmlSettingsManager<TexturePackSetting> Current;
     }
 
-    //Class that will old all settings attached to the game.
+    //Class that will hold all settings attached to the game.
     [XmlRoot("TexturePackConfig")]
     [Serializable]
     public class TexturePackSetting : IConfigClass

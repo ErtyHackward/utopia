@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using SharpDX;
 using SharpDX.Direct3D11;
-using Utopia.Settings;
 using Utopia.Worlds.Weather;
 using Utopia.Shared.World;
 using SharpDX.Direct3D;
@@ -20,6 +19,7 @@ using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {

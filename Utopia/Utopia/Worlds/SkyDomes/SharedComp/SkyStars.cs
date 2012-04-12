@@ -6,7 +6,6 @@ using Utopia.Worlds.GameClocks;
 using SharpDX;
 using SharpDX.Direct3D;
 using Utopia.Shared.Structs;
-using Utopia.Settings;
 using Utopia.Resources.Effects.Skydome;
 using S33M3Resources.VertexFormats;
 using S33M3DXEngine.Buffers;
@@ -19,6 +18,7 @@ using S33M3DXEngine.RenderStates;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.GameDXStates;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {

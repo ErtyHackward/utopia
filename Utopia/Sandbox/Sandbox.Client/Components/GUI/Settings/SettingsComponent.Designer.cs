@@ -12,7 +12,7 @@ using S33M3Resources.Structs;
 using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.Textures;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat;
-using Utopia.Settings;
+using Utopia.Shared.Settings;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {

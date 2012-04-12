@@ -4,11 +4,11 @@ using Ninject;
 using Sandbox.Shared.Web;
 using Sandbox.Shared.Web.Responces;
 using Utopia.Components;
-using Utopia.Settings;
 using Utopia.Shared.ClassExt;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
 using Sandbox.Client.Components.GUI;
+using Utopia.Shared.Settings;
 
 namespace Sandbox.Client.States
 {

@@ -7,7 +7,6 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Worlds.Weather;
 using Utopia.Shared.Chunks;
-using Utopia.Settings;
 using SharpDX.Direct3D11;
 using SharpDX.Direct3D;
 using Utopia.Worlds.GameClocks;
@@ -28,6 +27,7 @@ using UtopiaContent.Effects.Weather;
 using Utopia.Effects.Shared;
 using Utopia.Components;
 using Utopia.Shared.GameDXStates;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {

@@ -5,7 +5,7 @@ using System.Text;
 using SharpDX.DXGI;
 using System.Xml.Serialization;
 
-namespace Utopia.Settings
+namespace Utopia.Shared.Settings
 {
     public class SampleDescriptionSetting
     {

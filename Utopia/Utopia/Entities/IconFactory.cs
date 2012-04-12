@@ -1,7 +1,6 @@
 ﻿using System;
 using SharpDX;
 using SharpDX.Direct3D11;
-using Utopia.Settings;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;

@@ -9,7 +9,6 @@ using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
 using Utopia.Entities.Renderer.Interfaces;
-using Utopia.Settings;
 using Utopia.Resources.Effects.Terran;
 using Utopia.Effects.Shared;
 using S33M3DXEngine;
@@ -21,6 +20,7 @@ using S33M3DXEngine.Textures;
 using S33M3DXEngine.Main;
 using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Entities.Renderer
 {

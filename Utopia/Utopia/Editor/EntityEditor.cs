@@ -16,7 +16,6 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Worlds.Cubes;
-using Utopia.Settings;
 using Utopia.Resources.Effects.Terran;
 using Utopia.Effects.Shared;
 

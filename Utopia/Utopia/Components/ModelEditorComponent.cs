@@ -4,7 +4,6 @@ using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
-using Utopia.Settings;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
 using UtopiaContent.Effects.Entities;
@@ -24,6 +23,7 @@ using System.Windows.Forms;
 using S33M3CoreComponents.Inputs;
 using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Components
 {

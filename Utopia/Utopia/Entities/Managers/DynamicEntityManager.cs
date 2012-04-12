@@ -33,7 +33,6 @@ namespace Utopia.Entities.Managers
         {
             _dynamicEntityRenderer = dynamicEntityRenderer;
             _voxelModelManager = voxelModelManager;
-            _dynamicEntityRenderer.VisualEntities = DynamicEntities;
         }
 
         public override void Dispose()
@@ -45,6 +44,7 @@ namespace Utopia.Entities.Managers
         public override void Initialize()
         {
             DynamicEntities = new List<IVisualEntityContainer>();
+            _dynamicEntityRenderer.VisualEntities = DynamicEntities;
             _dynamicEntityRenderer.Initialize();
         }
 

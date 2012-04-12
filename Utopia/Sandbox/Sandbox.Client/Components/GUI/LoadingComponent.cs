@@ -9,8 +9,8 @@ using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
 using UtopiaContent.Effects.Entities;
-using Utopia.Settings;
 using S33M3CoreComponents.Maths;
+using Utopia.Shared.Settings;
 
 namespace Sandbox.Client.Components.GUI
 {

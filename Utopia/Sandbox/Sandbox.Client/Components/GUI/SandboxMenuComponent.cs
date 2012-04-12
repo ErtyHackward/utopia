@@ -14,11 +14,11 @@ using S33M3CoreComponents.Meshes;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Meshes.Factories;
-using Utopia.Settings;
 using System.Collections.Generic;
 using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
+using Utopia.Shared.Settings;
 
 namespace Sandbox.Client.Components.GUI
 {

@@ -1,6 +1,5 @@
 ﻿using System;
 using SharpDX.Direct3D11;
-using Utopia.Settings;
 using Utopia.Shared.Settings;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Inputs.Actions;

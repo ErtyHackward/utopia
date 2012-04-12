@@ -4,7 +4,6 @@ using Utopia.Shared.Chunks;
 using Amib.Threading;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
-using Utopia.Settings;
 using Utopia.Entities;
 using Utopia.Shared.Settings;
 using S33M3DXEngine.Threading;

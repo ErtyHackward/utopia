@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Utopia.Settings
+namespace Utopia.Shared.Settings
 {
     public class ParamValue
     {

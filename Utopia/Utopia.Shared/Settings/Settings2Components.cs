@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
-using Utopia.Settings;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Tools;
 using S33M3CoreComponents.Sprites;
 using S33M3Resources.Structs;
 
-namespace Utopia.Settings
+namespace Utopia.Shared.Settings
 {
     public static class Settings2Components
     {
