@@ -174,19 +174,21 @@ namespace Utopia.Worlds.Chunks
             lightingManager.WorldChunk = this;
             _playerManager.WorldChunks = this;
 
-            //Subscribe to chunk modifications
-            _cubesHolder.BlockDataChanged += ChunkCubes_BlockDataChanged;
-            IsInitialLoadCompleted = false;
-
             DrawOrders.UpdateIndex(SOLID_DRAW, 11, "SOLID_DRAW");
             TRANSPARENT_DRAW = DrawOrders.AddIndex(1050, "TRANSPARENT_DRAW");
             ENTITIES_DRAW = DrawOrders.AddIndex(900, "ENTITIES_DRAW");
+
+            //Subscribe to chunk modifications
+            _cubesHolder.BlockDataChanged += ChunkCubes_BlockDataChanged;
         }
 
         #region Public methods
 
         public override void Initialize()
         {
+            IsInitialLoadCompleted = false;
+            _readyToDrawCount = 0;
+
             InitChunks();
             InitWrappingVariables();
         }
@@ -209,6 +211,22 @@ namespace Utopia.Worlds.Chunks
             }
 
             DisposeDrawComponents();
+        }
+
+        public override void UnloadContent()
+        {
+            this.DisableComponent();
+
+            foreach (var chunk in Chunks)
+            {
+                if (chunk != null)
+                {
+                    chunk.ReadyToDraw -= ChunkReadyToDraw;
+                    chunk.Dispose();
+                }
+            }
+
+            this.IsInitialized = false;
         }
 
         /// <summary>
@@ -435,7 +453,6 @@ namespace Utopia.Worlds.Chunks
             {
                 Position = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X, 0, VisualWorldParameters.WorldChunkStartUpPosition.Y),
                 Size = VisualWorldParameters.WorldVisibleSize
-                //Max = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + VisualWorldParameters.WorldVisibleSize.X, VisualWorldParameters.WorldVisibleSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Y + VisualWorldParameters.WorldVisibleSize.Z)
             };
 
             //Create the chunks that will be used as "Rendering" array

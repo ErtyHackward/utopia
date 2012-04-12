@@ -25,30 +25,14 @@ namespace Utopia.Entities.Managers
 
         #region Public variables/properties
         public List<IVisualEntityContainer> DynamicEntities { get; set; }
-        #endregion
-
         public event EventHandler<DynamicEntityEventArgs> EntityAdded;
-
-        private void OnEntityAdded(DynamicEntityEventArgs e)
-        {
-            var handler = EntityAdded;
-            if (handler != null) handler(this, e);
-        }
-
         public event EventHandler<DynamicEntityEventArgs> EntityRemoved;
-
-        private void OnEntityRemoved(DynamicEntityEventArgs e)
-        {
-            var handler = EntityRemoved;
-            if (handler != null) handler(this, e);
-        }
+        #endregion
 
         public DynamicEntityManager([Named("DefaultEntityRenderer")] IEntitiesRenderer dynamicEntityRenderer, VoxelModelManager voxelModelManager)
         {
-            DynamicEntities = new List<IVisualEntityContainer>();
             _dynamicEntityRenderer = dynamicEntityRenderer;
             _voxelModelManager = voxelModelManager;
-
             _dynamicEntityRenderer.VisualEntities = DynamicEntities;
         }
 
@@ -58,17 +42,9 @@ namespace Utopia.Entities.Managers
             base.Dispose();
         }
 
-        #region Private Methods
-        private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
-        {
-            return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
-        }
-
-        #endregion
-
-        #region Public Methods
         public override void Initialize()
         {
+            DynamicEntities = new List<IVisualEntityContainer>();
             _dynamicEntityRenderer.Initialize();
         }
 
@@ -77,6 +53,34 @@ namespace Utopia.Entities.Managers
             _dynamicEntityRenderer.LoadContent(context);
         }
 
+        public override void UnloadContent()
+        {
+            this.DisableComponent();
+            _dynamicEntityRenderer.UnloadContent();
+            foreach (var item in _dynamicEntitiesDico.Values) item.Dispose();
+            _dynamicEntitiesDico.Clear();
+            this.IsInitialized = false;
+        }
+
+        #region Private Methods
+        private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
+        {
+            return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
+        }
+
+        private void OnEntityAdded(DynamicEntityEventArgs e)
+        {
+            if (EntityAdded != null) EntityAdded(this, e);
+        }
+
+        private void OnEntityRemoved(DynamicEntityEventArgs e)
+        {
+            if (EntityRemoved != null) EntityRemoved(this, e);
+        }
+
+        #endregion
+
+        #region Public Methods
         public override void Update(GameTime timeSpent)
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
@@ -146,18 +150,15 @@ namespace Utopia.Entities.Managers
             return null;
         }
 
-        
-        #endregion
-
         public IEnumerator<VisualVoxelEntity> EnumerateVisualEntities()
         {
             foreach (var visualEntityContainer in DynamicEntities)
             {
-                yield return visualEntityContainer.VisualEntity;    
+                yield return visualEntityContainer.VisualEntity;
             }
-            
-        }
 
+        }
+        #endregion
 
     }
 }

@@ -60,6 +60,10 @@ namespace S33M3CoreComponents.Cameras
         {
         }
 
+        public override void UnloadContent()
+        {
+        }
+
         public override void Update(GameTime timeSpend)
         {
             ActiveCamera.Update(timeSpend);

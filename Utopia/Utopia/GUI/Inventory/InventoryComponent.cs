@@ -78,7 +78,37 @@ namespace Utopia.GUI.Inventory
             _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);
         }
 
-        void DesktopClicked(object sender, EventArgs e)
+
+        public override void Dispose()
+        {
+            _hud.SlotClicked -= HudSlotClicked;
+            _inventoryUi.InventorySlotClicked -= InventoryUiSlotClicked;
+            _guiManager.Screen.Desktop.Clicked -= DesktopClicked;
+            _backgroundTex.Dispose();
+        }
+
+        public override void LoadContent(DeviceContext context)
+        {
+            _backgroundTex = new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"charactersheet.png", Vector2I.Zero);
+
+            _infoWindow = new ItemInfoWindow(_iconFactory, _inputManager);
+
+            _inventoryUi = new PlayerInventory(_backgroundTex, _playerManager.Player, _iconFactory, new Point(180, 120), _inputManager);
+            _inventoryUi.InventorySlotClicked += InventoryUiSlotClicked;
+            _inventoryUi.EquipmentSlotClicked += InventoryUiSlotClicked;
+            _inventoryUi.CellMouseEnter += InventoryUiCellMouseEnter;
+            _inventoryUi.CellMouseLeave += InventoryUiCellMouseLeave;
+            _toolBar.SlotClicked += ToolBarSlotClicked;
+
+            _dragControl = new InventoryCell(null, _iconFactory, new Vector2I(), _inputManager)
+            {
+                Bounds = new UniRectangle(-100, -100, InventoryWindow.CellSize, InventoryWindow.CellSize),
+                DrawCellBackground = false,
+                IsClickTransparent = true
+            };
+        }
+
+        private void DesktopClicked(object sender, EventArgs e)
         {
             if (IsActive && _dragControl.Slot != null)
             {
@@ -88,7 +118,7 @@ namespace Utopia.GUI.Inventory
             }
         }
 
-        void HudSlotClicked(object sender, SlotClickedEventArgs e)
+        private void HudSlotClicked(object sender, SlotClickedEventArgs e)
         {
             var enabled = _itemMessageTranslator.Enabled;
 
@@ -127,28 +157,7 @@ namespace Utopia.GUI.Inventory
             }
         }
 
-        public override void LoadContent(DeviceContext context)
-        {
-            _backgroundTex = new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"charactersheet.png", Vector2I.Zero);
-
-            _infoWindow = new ItemInfoWindow(_iconFactory, _inputManager);
-
-            _inventoryUi = new PlayerInventory(_backgroundTex, _playerManager.Player, _iconFactory, new Point(180, 120), _inputManager);
-            _inventoryUi.InventorySlotClicked += InventoryUiSlotClicked;
-            _inventoryUi.EquipmentSlotClicked += InventoryUiSlotClicked;
-            _inventoryUi.CellMouseEnter += InventoryUiCellMouseEnter;
-            _inventoryUi.CellMouseLeave += InventoryUiCellMouseLeave;
-            _toolBar.SlotClicked += ToolBarSlotClicked;
-
-            _dragControl = new InventoryCell(null, _iconFactory, new Vector2I(), _inputManager)
-            {
-                Bounds = new UniRectangle(-100, -100, InventoryWindow.CellSize, InventoryWindow.CellSize),
-                DrawCellBackground = false,
-                IsClickTransparent = true
-            };
-        }
-
-        void ToolBarSlotClicked(object sender, InventoryWindowCellMouseEventArgs e)
+        private void ToolBarSlotClicked(object sender, InventoryWindowCellMouseEventArgs e)
         {
             if (_dragControl.Slot == null)
                 return;
@@ -169,12 +178,12 @@ namespace Utopia.GUI.Inventory
 
         }
 
-        void InventoryUiCellMouseLeave(object sender, InventoryWindowCellMouseEventArgs e)
+        private void InventoryUiCellMouseLeave(object sender, InventoryWindowCellMouseEventArgs e)
         {
             _infoWindow.ActiveItem = null;
         }
 
-        void InventoryUiCellMouseEnter(object sender, InventoryWindowCellMouseEventArgs e)
+        private void InventoryUiCellMouseEnter(object sender, InventoryWindowCellMouseEventArgs e)
         {
             if (e.Cell.Slot == null)
                 return;
@@ -182,8 +191,7 @@ namespace Utopia.GUI.Inventory
             _infoWindow.ActiveItem = e.Cell.Slot.Item;
         }
 
-
-        void InventoryUiSlotClicked(object sender, InventoryWindowEventArgs e)
+        private void InventoryUiSlotClicked(object sender, InventoryWindowEventArgs e)
         {
             var keyboard = _inputManager.KeyboardManager.CurKeyboardState;
             if (_dragControl.Slot == null)
@@ -309,12 +317,5 @@ namespace Utopia.GUI.Inventory
             }
         }
 
-        public override void Dispose()
-        {
-            _hud.SlotClicked -= HudSlotClicked;
-            _inventoryUi.InventorySlotClicked -= InventoryUiSlotClicked;
-            _guiManager.Screen.Desktop.Clicked -= DesktopClicked;
-            _backgroundTex.Dispose();
-        }
     }
 }

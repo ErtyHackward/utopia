@@ -54,7 +54,6 @@ namespace Utopia.Entities.Renderer
         #region Private Methods
         public void Initialize()
         {
-
         }
 
         public void LoadContent(DeviceContext context)
@@ -64,6 +63,11 @@ namespace Utopia.Entities.Renderer
 
             _entityEffect.TerraTexture.Value = _cubeTexture_View;
             _entityEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
+        }
+
+        public void UnloadContent()
+        {
+
         }
 
         #endregion

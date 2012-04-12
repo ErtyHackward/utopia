@@ -36,8 +36,8 @@ namespace Utopia.Worlds.Weather
 
         void _server_ConnectionInitialized(object sender, ServerComponentConnectionInitializeEventArgs e)
         {
-            if (e.PrevoiusConnection != null)
-                e.PrevoiusConnection.MessageWeather -= ServerConnection_MessageWeather;
+            if (e.PreviousConnection != null)
+                e.PreviousConnection.MessageWeather -= ServerConnection_MessageWeather;
 
             if (e.ServerConnection != null)
                 e.ServerConnection.MessageWeather += ServerConnection_MessageWeather;

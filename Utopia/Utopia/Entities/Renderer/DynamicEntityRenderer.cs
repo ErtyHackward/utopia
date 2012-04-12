@@ -67,6 +67,11 @@ namespace Utopia.Entities.Renderer
             _entityEffect.TerraTexture.Value = ToDispose(_cubeTexture_View);
             _entityEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
         }
+
+        public void UnloadContent()
+        {
+
+        }
         #endregion
 
         #region Public Methods

@@ -90,20 +90,18 @@ namespace Utopia.GUI
             base.Dispose();
         }
 
-        void ServerConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
+        public override void Initialize()
         {
-            //Cut the received message by line feed
-            foreach (var msgText in e.Message.Message.Split('\n'))
-            {
-                if (e.Message.Action)
-                {
-                    AddMessage(string.Format("* {0} {1}", e.Message.DisplayName, msgText));
-                }
-                else AddMessage(string.Format("<{0}> {1}", e.Message.DisplayName, msgText));
-            }
-
-            _lastUpdateTime = Stopwatch.GetTimestamp();
+            _textInput = new TextInput(_imanager.KeyboardManager);
         }
+
+        public override void LoadContent(DeviceContext context)
+        {
+            _font = ToDispose(new SpriteFont());
+            _font.Initialize("Lucida Console", 12f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
+            _spriteRender = ToDispose(new SpriteRenderer(_d3dEngine));
+        }
+
 
         public void AddMessage(string message)
         {
@@ -121,16 +119,19 @@ namespace Utopia.GUI
             _windowHeight = viewport.Height;
         }
 
-        public override void Initialize()
+        private void ServerConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
         {
-            _textInput = new TextInput(_imanager.KeyboardManager);
-        }
+            //Cut the received message by line feed
+            foreach (var msgText in e.Message.Message.Split('\n'))
+            {
+                if (e.Message.Action)
+                {
+                    AddMessage(string.Format("* {0} {1}", e.Message.DisplayName, msgText));
+                }
+                else AddMessage(string.Format("<{0}> {1}", e.Message.DisplayName, msgText));
+            }
 
-        public override void LoadContent(DeviceContext context)
-        {
-            _font = ToDispose( new SpriteFont());
-            _font.Initialize("Lucida Console", 12f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
-            _spriteRender = ToDispose(new SpriteRenderer(_d3dEngine));
+            _lastUpdateTime = Stopwatch.GetTimestamp();
         }
 
         private void SetFontAlphaColor(byte color)

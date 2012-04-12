@@ -50,8 +50,8 @@ namespace Utopia.Entities.Voxel
 
         void ServerConnectionInitialized(object sender, ServerComponentConnectionInitializeEventArgs e)
         {
-            if(e.PrevoiusConnection != null)
-                e.PrevoiusConnection.MessageVoxelModelData -= ServerConnectionMessageVoxelModelData;
+            if(e.PreviousConnection != null)
+                e.PreviousConnection.MessageVoxelModelData -= ServerConnectionMessageVoxelModelData;
             if(e.ServerConnection != null)
                 e.ServerConnection.MessageVoxelModelData += ServerConnectionMessageVoxelModelData;
         }
