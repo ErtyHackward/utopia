@@ -130,8 +130,8 @@ namespace Utopia.Network
 
         public ServerComponent()
         {
+            this.MessageGameInformation += ServerComponent_MessageGameInformation;
         }
-
 
         public override void Dispose()
         {
@@ -142,11 +142,12 @@ namespace Utopia.Network
                 ServerConnection.Disconnect();
             }
 
+            this.MessageGameInformation += ServerComponent_MessageGameInformation;
+
             if (ServerConnection != null) ServerConnection.Dispose();
 
             base.Dispose();
         }
-
 
         #region Public Methods
         public bool BindingServer(string address)
@@ -198,7 +199,7 @@ namespace Utopia.Network
         #endregion
 
         #region Events Handling
-        private void ServerConnection_MessageGameInformation(object sender, ProtocolMessageEventArgs<GameInformationMessage> e)
+        private void ServerComponent_MessageGameInformation(object sender, ProtocolMessageEventArgs<GameInformationMessage> e)
         {
             GameInformations = e.Message;
         }
