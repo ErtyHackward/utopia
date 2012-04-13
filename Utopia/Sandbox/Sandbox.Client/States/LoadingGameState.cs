@@ -113,7 +113,7 @@ namespace Sandbox.Client.States
             if (_serverComponent == null)
             {
                 _serverComponent = _ioc.Get<ServerComponent>();
-                _serverComponent.ConnectionInitialized += ServerComponentConnectionInitialized;
+                _serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
             }
 
             if (_vars.SinglePlayer)
@@ -205,24 +205,14 @@ namespace Sandbox.Client.States
             e.PlayerEntity = dEntity;
         }
 
-        void ServerComponentConnectionInitialized(object sender, ServerComponentConnectionInitializeEventArgs e)
-        {
-            if (e.ServerConnection != null)
-            {
-                e.ServerConnection.MessageEntityIn += ServerConnectionMessageEntityIn;
-                
-            }
-        }
-
         void ServerConnectionMessageEntityIn(object sender, Utopia.Shared.Net.Connections.ProtocolMessageEventArgs<Utopia.Shared.Net.Messages.EntityInMessage> e)
         {
             var player = (PlayerCharacter)e.Message.Entity;
 
-
             _ioc.Rebind<PlayerCharacter>().ToConstant(player).InSingletonScope(); //Register the current Player.
             _ioc.Rebind<IDynamicEntity>().ToConstant(player).InSingletonScope().Named("Player"); //Register the current Player.
 
-            _serverComponent.ServerConnection.MessageEntityIn -= ServerConnectionMessageEntityIn;
+            _serverComponent.MessageEntityIn -= ServerConnectionMessageEntityIn;
             _serverComponent.Player = player;
 
             GameplayComponentsCreation();

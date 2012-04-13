@@ -58,7 +58,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _lightManager = lightManager;
             _worldChunks = worldChunks;
             _chunkStorageManager = chunkStorageManager;
-            _server.ServerConnection.MessageBlockChange += ServerConnection_MessageBlockChange;
+            _server.MessageBlockChange += ServerConnection_MessageBlockChange;
             _cubesHolder = cubesHolder;
             _initialized = true;
         }
@@ -67,7 +67,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         {
             if (_initialized)
             {
-                _server.ServerConnection.MessageBlockChange -= ServerConnection_MessageBlockChange;
+                _server.MessageBlockChange -= ServerConnection_MessageBlockChange;
             }
         }
 

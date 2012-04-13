@@ -16,7 +16,7 @@ namespace Utopia.Network
     public class ItemMessageTranslator : IDisposable
     {
         private readonly PlayerCharacter _playerEntity;
-        private readonly ServerConnection _connection;
+        private readonly ServerComponent _server;
         private Entity _lockedEntity;
         private ContainedSlot _tempSlot;
         private bool _pendingOperation;
@@ -66,9 +66,9 @@ namespace Utopia.Network
             _playerEntity.Equipment.ItemTaken += InventoryItemTaken;
             _playerEntity.Equipment.ItemExchanged += InventoryItemExchanged;
 
-            _connection = server.ServerConnection;
+            _server = server;
 
-            _connection.MessageEntityLockResult += ConnectionMessageEntityLockResult;
+            _server.MessageEntityLockResult += ConnectionMessageEntityLockResult;
 
             Enabled = true;
         }
@@ -91,7 +91,7 @@ namespace Utopia.Network
             _playerEntity.Equipment.ItemTaken -= InventoryItemTaken;
             _playerEntity.Equipment.ItemExchanged -= InventoryItemExchanged;
 
-            _connection.MessageEntityLockResult -= ConnectionMessageEntityLockResult;
+            _server.MessageEntityLockResult -= ConnectionMessageEntityLockResult;
         }
 
         void InventoryItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
@@ -128,7 +128,7 @@ namespace Utopia.Network
             if (srcLink.IsEmpty)
                 msg.ItemEntityId = _tempSlot.Item.StaticId;
 
-            _connection.SendAsync(msg);
+            _server.ServerConnection.SendAsync(msg);
 
             _tempSlot.Item = e.Exchanged.Item;
             _tempSlot.ItemsCount = e.Exchanged.ItemsCount;
@@ -166,7 +166,7 @@ namespace Utopia.Network
 
         public void SetToolBar(int slot, uint entityId)
         {
-            _connection.SendAsync(new ItemTransferMessage { SourceContainerSlot = new Vector2I(-2, slot),  ItemEntityId = entityId });
+            _server.ServerConnection.SendAsync(new ItemTransferMessage { SourceContainerSlot = new Vector2I(-2, slot), ItemEntityId = entityId });
         }
 
         // handling player inventory requests
@@ -211,7 +211,7 @@ namespace Utopia.Network
             if (srcLink.IsEmpty)
                 msg.ItemEntityId = _tempSlot.Item.StaticId;
 
-            _connection.SendAsync(msg);
+            _server.ServerConnection.SendAsync(msg);
 
             if (e.Slot.ItemsCount == _tempSlot.ItemsCount)
             {
@@ -239,7 +239,7 @@ namespace Utopia.Network
                 srcPosition.X = -1;
             }
 
-            _connection.SendAsync(new ItemTransferMessage
+            _server.ServerConnection.SendAsync(new ItemTransferMessage
             {
                 SourceContainerEntityLink = _sourceContainer == _playerEntity.Inventory ? _playerEntity.GetLink() : _lockedEntity.GetLink(),
                 SourceContainerSlot = srcPosition,
@@ -282,7 +282,7 @@ namespace Utopia.Network
             if (_lockedEntity != null)
                 throw new InvalidOperationException("Some entity was already locked or requested to be locked. Unable to lock more than one entities at once");
             _lockedEntity = entity;
-            _connection.SendAsync(new EntityLockMessage { EntityLink = entity.GetLink(), Lock = true });
+            _server.ServerConnection.SendAsync(new EntityLockMessage { EntityLink = entity.GetLink(), Lock = true });
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace Utopia.Network
         {
             if (_lockedEntity == null)
                 throw new InvalidOperationException("Unable to release the lock because no entity was locked");
-            _connection.SendAsync(new EntityLockMessage { EntityLink = _lockedEntity.GetLink(), Lock = false });
+            _server.ServerConnection.SendAsync(new EntityLockMessage { EntityLink = _lockedEntity.GetLink(), Lock = false });
         }
     }
 }

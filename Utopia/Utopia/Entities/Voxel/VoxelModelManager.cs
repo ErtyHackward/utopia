@@ -42,18 +42,13 @@ namespace Utopia.Entities.Voxel
             _server = server;
             _voxelMeshFactory = voxelMeshFactory;
 
-            _server.ConnectionInitialized += ServerConnectionInitialized;
-
-            if(_server.ServerConnection != null)
-                _server.ServerConnection.MessageVoxelModelData += ServerConnectionMessageVoxelModelData;
+            _server.MessageVoxelModelData += ServerConnectionMessageVoxelModelData;
         }
 
-        void ServerConnectionInitialized(object sender, ServerComponentConnectionInitializeEventArgs e)
+        public override void Dispose()
         {
-            if(e.PreviousConnection != null)
-                e.PreviousConnection.MessageVoxelModelData -= ServerConnectionMessageVoxelModelData;
-            if(e.ServerConnection != null)
-                e.ServerConnection.MessageVoxelModelData += ServerConnectionMessageVoxelModelData;
+            _server.MessageVoxelModelData -= ServerConnectionMessageVoxelModelData;
+            base.Dispose();
         }
 
         void ServerConnectionMessageVoxelModelData(object sender, ProtocolMessageEventArgs<VoxelModelDataMessage> e)

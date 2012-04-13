@@ -69,7 +69,7 @@ namespace Utopia.GUI
             _imanager = imanager;
             _server = server;
 
-            _server.ServerConnection.MessageChat += ServerConnectionMessageChat;
+            _server.MessageChat += ServerConnectionMessageChat;
 
             ChatLineLimit = 30;
             //For 5 seconds =
@@ -85,7 +85,7 @@ namespace Utopia.GUI
 
         public override void Dispose()
         {
-            _server.ServerConnection.MessageChat -= ServerConnectionMessageChat;
+            _server.MessageChat -= ServerConnectionMessageChat;
             _d3dEngine.ViewPort_Updated -= LocateChat;
             base.Dispose();
         }
