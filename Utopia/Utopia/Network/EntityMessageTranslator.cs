@@ -16,7 +16,7 @@ namespace Utopia.Network
     /// </summary>
     public class EntityMessageTranslator : IDisposable
     {
-        private readonly ServerConnection _connection;
+        private readonly ServerComponent _server;
         private readonly IDynamicEntityManager _dynamicEntityManager;
         private readonly IWorldChunks _chunkManager;
         private IDynamicEntity _playerEntity;
@@ -56,16 +56,15 @@ namespace Utopia.Network
         /// <param name="playerEntity"></param>
         /// <param name="dynamicEntityManager"></param>
         /// <param name="chunkManager"></param>
-        public EntityMessageTranslator(ServerComponent connection, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager, IWorldChunks chunkManager)
+        public EntityMessageTranslator(ServerComponent server, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager, IWorldChunks chunkManager)
         {
-            if (connection == null) throw new ArgumentNullException("connection");
-            _connection = connection.ServerConnection;
+            _server = server;
 
             //Handle Entity received Message from Server
-            _connection.MessageEntityIn += ConnectionMessageEntityIn;
-            _connection.MessageEntityOut += ConnectionMessageEntityOut;
-            _connection.MessagePosition += ConnectionMessagePosition;
-            _connection.MessageDirection += ConnectionMessageDirection;
+            _server.MessageEntityIn += ConnectionMessageEntityIn;
+            _server.MessageEntityOut += ConnectionMessageEntityOut;
+            _server.MessagePosition += ConnectionMessagePosition;
+            _server.MessageDirection += ConnectionMessageDirection;
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             _dynamicEntityManager = dynamicEntityManager;
@@ -79,10 +78,10 @@ namespace Utopia.Network
 
         public void Dispose()
         {
-            _connection.MessageEntityIn -= ConnectionMessageEntityIn;
-            _connection.MessageEntityOut -= ConnectionMessageEntityOut;
-            _connection.MessagePosition -= ConnectionMessagePosition;
-            _connection.MessageDirection -= ConnectionMessageDirection;
+            _server.MessageEntityIn -= ConnectionMessageEntityIn;
+            _server.MessageEntityOut -= ConnectionMessageEntityOut;
+            _server.MessagePosition -= ConnectionMessagePosition;
+            _server.MessageDirection -= ConnectionMessageDirection;
         }
 
         void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
@@ -134,7 +133,7 @@ namespace Utopia.Network
 
         private void PlayerEntityUse(object sender, EntityUseEventArgs e)
         {
-            _connection.SendAsync(new EntityUseMessage 
+            _server.ServerConnection.SendAsync(new EntityUseMessage 
             { 
                 IsEntityPicked = e.IsEntityPicked,
                 IsBlockPicked = e.IsBlockPicked,
@@ -149,7 +148,7 @@ namespace Utopia.Network
 
         private void PlayerEntityViewChanged(object sender, EntityViewEventArgs e)
         {
-            _connection.SendAsync(new EntityDirectionMessage 
+            _server.ServerConnection.SendAsync(new EntityDirectionMessage 
             { 
                 Rotation = e.Entity.HeadRotation, 
                 EntityId = e.Entity.DynamicId
@@ -158,7 +157,7 @@ namespace Utopia.Network
 
         private void PlayerEntityPositionChanged(object sender, EntityMoveEventArgs e)
         {
-            _connection.SendAsync(new EntityPositionMessage
+            _server.ServerConnection.SendAsync(new EntityPositionMessage
             {
                 Position = e.Entity.Position,
                 EntityId = e.Entity.DynamicId

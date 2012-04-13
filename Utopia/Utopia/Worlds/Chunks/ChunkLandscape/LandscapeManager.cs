@@ -49,7 +49,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
             _server = server;
             _receivedServerChunks = new Dictionary<long, ChunkDataMessage>(1024);
-            _server.ServerConnection.MessageChunkData += ServerConnection_MessageChunkData;
+            _server.MessageChunkData += ServerConnection_MessageChunkData;
             
             //Add a new Timer trigger
             _timer = timerManager.AddTimer(0, 10000);
@@ -61,7 +61,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         public void Dispose()
         {
             _timer.OnTimerRaised -= _timer_OnTimerRaised;
-            _server.ServerConnection.MessageChunkData -= ServerConnection_MessageChunkData;
+            _server.MessageChunkData -= ServerConnection_MessageChunkData;
         }
 
         #region Public methods

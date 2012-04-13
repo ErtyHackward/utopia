@@ -27,25 +27,12 @@ namespace Utopia.Worlds.Weather
             Wind = new Wind(false);
             _clock = clock;
             _server = server;
-
-            _server.ConnectionInitialized += _server_ConnectionInitialized;
-
-            if(_server.ServerConnection != null)
-                _server.ServerConnection.MessageWeather += ServerConnection_MessageWeather;
-        }
-
-        void _server_ConnectionInitialized(object sender, ServerComponentConnectionInitializeEventArgs e)
-        {
-            if (e.PreviousConnection != null)
-                e.PreviousConnection.MessageWeather -= ServerConnection_MessageWeather;
-
-            if (e.ServerConnection != null)
-                e.ServerConnection.MessageWeather += ServerConnection_MessageWeather;
+            _server.MessageWeather += ServerConnection_MessageWeather;
         }
 
         public override void Dispose()
         {
-            _server.ServerConnection.MessageWeather -= ServerConnection_MessageWeather;
+            _server.MessageWeather -= ServerConnection_MessageWeather;
             Wind.Dispose();
         }
 

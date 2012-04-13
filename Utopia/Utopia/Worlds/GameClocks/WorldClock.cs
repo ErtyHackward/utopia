@@ -38,19 +38,13 @@ namespace Utopia.Worlds.GameClocks
             _input = input;
             AssignTimeAndFactor(server.TimeFactor, server.WorldDateTime);
 
-            _server.ConnectionInitialized += _server_ConnectionInitialized;
-
-            if(_server.ServerConnection != null)
-                _server.ServerConnection.MessageDateTime += ServerConnection_MessageDateTime;
+            _server.MessageDateTime += ServerConnection_MessageDateTime;
         }
 
-        void _server_ConnectionInitialized(object sender, ServerComponentConnectionInitializeEventArgs e)
+        public override void Dispose()
         {
-            if (e.PreviousConnection != null)
-                e.PreviousConnection.MessageDateTime -= ServerConnection_MessageDateTime;
-
-            if(e.ServerConnection != null)
-                e.ServerConnection.MessageDateTime += ServerConnection_MessageDateTime;
+            _server.MessageDateTime -= ServerConnection_MessageDateTime;
+            base.Dispose();
         }
 
         #region Public methods
@@ -58,12 +52,6 @@ namespace Utopia.Worlds.GameClocks
         {
             _frozenTime = false;
             base.Initialize();
-        }
-
-        public override void Dispose()
-        {
-            _server.ServerConnection.MessageDateTime -= ServerConnection_MessageDateTime;
-            base.Dispose();
         }
 
         public override void Update(GameTime timeSpend)
