@@ -35,7 +35,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
     /// </remarks>
     public abstract class SliderControl : Control
     {
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (Moved != null)
             {
@@ -45,8 +45,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
                     Moved -= (EventHandler)d;
                 }
             }
-
-            base.Dispose();
         }
 
         public int ThumbMinValue { get; set; }

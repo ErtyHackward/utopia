@@ -99,13 +99,12 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _cloudMap.Dispose();
             _cloudEffect2D.Dispose();
             _cloudIB.Dispose();
             _cloudVB2D.Dispose();
-
         }
         #endregion
 

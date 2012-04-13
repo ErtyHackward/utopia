@@ -48,11 +48,10 @@ namespace S33M3CoreComponents.Components.Debug
             }
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _game.GameComponents.ComponentAdded -= GameComponents_ComponentAdded;
             _game.GameComponents.ComponentRemoved -= GameComponents_ComponentRemoved;
-            base.Dispose();
         }
 
         void GameComponents_ComponentRemoved(object sender, GameComponentCollectionEventArgs e)

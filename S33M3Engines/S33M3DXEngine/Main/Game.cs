@@ -462,10 +462,13 @@ namespace S33M3DXEngine.Main
         #endregion
 
         #region IDisposable Members
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             GameComponentCleaning();
-            base.Dispose();
+        }
+
+        public override void AfterDispose()
+        {
 #if DEBUG
             if (Configuration.EnableObjectTracking)
             {
@@ -473,8 +476,7 @@ namespace S33M3DXEngine.Main
                 logger.Info("SharpDX Object Tracking result : {0}", string.IsNullOrEmpty(info) ? "Nothing, all directX COM components have been disposed" : info);
             }
 #endif
-        }
-
+        } 
         #endregion
     }
 }

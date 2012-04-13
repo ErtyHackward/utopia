@@ -104,6 +104,24 @@ namespace Sandbox.Client.Components.GUI
             FontBebasNeue17.Initialize(fontCollection.Families[0], 16, FontStyle.Regular, true, engine.Device);
         }
 
+        public static void DisposeCommonImage()
+        {
+            StShadow.Dispose();
+            StLogo.Dispose();
+            StGameName.Dispose();
+            StCubesPattern.Dispose();
+            StLinenPattern.Dispose();
+            StInputBackground.Dispose();
+            StButtonBackground.Dispose();
+            StButtonBackgroundDown.Dispose();
+            StButtonBackgroundHover.Dispose();
+
+            FontBebasNeue50.Dispose();
+            FontBebasNeue35.Dispose();
+            FontBebasNeue25.Dispose();
+            FontBebasNeue17.Dispose();
+        }
+
         protected SandboxMenuComponent(D3DEngine engine, MainScreen screen)
         {
             _engine = engine;
@@ -182,7 +200,6 @@ namespace Sandbox.Client.Components.GUI
             _staticBlockIB.SetData(context, _meshBluePrint.Indices);
         }
 
-
         public override void Update(GameTime timeSpent)
         {
             foreach (RotationCube cube in _rotatingCubes)
@@ -228,11 +245,10 @@ namespace Sandbox.Client.Components.GUI
             }
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             fontCollection.Dispose();
             _engine.ViewPort_Updated -= EngineViewPortUpdated;
-            base.Dispose();
         }
 
         protected virtual void EngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer)

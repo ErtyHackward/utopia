@@ -140,12 +140,11 @@ namespace S33M3CoreComponents.GUI
             });
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _d3DEngine.GameWindow.KeyPress -= GameWindowKeyPress;
             _d3DEngine.GameWindow.KeyDown -= GameWindowKeyDown;
             _d3DEngine.GameWindow.KeyUp -= GameWindowKeyUp;
-            base.Dispose();
         }
 
         public override void LoadContent(DeviceContext context)

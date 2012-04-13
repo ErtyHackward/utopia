@@ -207,14 +207,12 @@ namespace S33M3CoreComponents.Sprites
             Height = texture.Description.Height;
 
             ScreenPosition = new Rectangle(screenPosition.X, screenPosition.Y, Width, Height);
-
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             Texture.Dispose();
             if (_d3dEngine != null) _d3dEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
-            base.Dispose();
         }
     }
 }

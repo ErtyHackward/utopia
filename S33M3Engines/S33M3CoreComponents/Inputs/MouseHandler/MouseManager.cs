@@ -84,12 +84,11 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
             Mouse.SetMouseMessageHooker = engine.GameWindow.Handle;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _engine.ViewPort_Updated -= _engine_ViewPort_Updated;
             _engine.GameWindow.LostFocus -= GameWindow_LostFocus;
             _engine.GameWindow.Closed -= _renderForm_Closed;
-            base.Dispose();
         }
 
         #region Private Methods

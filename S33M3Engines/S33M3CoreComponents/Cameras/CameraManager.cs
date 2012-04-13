@@ -37,7 +37,7 @@ namespace S33M3CoreComponents.Cameras
             ActiveCamera = camera;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (ActiveCamera_Changed != null)
             {
@@ -47,7 +47,6 @@ namespace S33M3CoreComponents.Cameras
                     ActiveCamera_Changed -= (CameraChange)d;
                 }
             }
-            base.Dispose();
         }
 
         #region Public methods

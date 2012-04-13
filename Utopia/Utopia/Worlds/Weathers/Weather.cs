@@ -30,7 +30,7 @@ namespace Utopia.Worlds.Weather
             _server.MessageWeather += ServerConnection_MessageWeather;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _server.MessageWeather -= ServerConnection_MessageWeather;
             Wind.Dispose();

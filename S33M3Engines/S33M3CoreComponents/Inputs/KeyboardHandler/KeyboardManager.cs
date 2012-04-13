@@ -47,10 +47,9 @@ namespace S33M3CoreComponents.Inputs.KeyboardHandler
             }
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             IsRunning = false;
-            base.Dispose();
         }
 
         #region Private methods

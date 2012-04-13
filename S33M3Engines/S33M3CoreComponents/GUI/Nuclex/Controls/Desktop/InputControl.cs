@@ -48,8 +48,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
     /// </remarks>
     public class InputControl : Control, IWritable
     {
-        
-        public override void Dispose()
+
+        public override void BeforeDispose()
         {
             if (EnterKeyPressed != null)
             {
@@ -59,8 +59,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
                     EnterKeyPressed -= (EventHandler)d;
                 }
             }
-
-            base.Dispose();
         }
 
         /// <summary>

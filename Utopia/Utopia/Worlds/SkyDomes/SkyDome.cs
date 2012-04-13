@@ -55,10 +55,6 @@ namespace Utopia.Worlds.SkyDomes
             _lightDirection.ValueInterp.Normalize();
         }
 
-        public override void Dispose()
-        {
-        }
-
         #endregion
 
         #region Private Methods

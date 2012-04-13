@@ -77,7 +77,7 @@ namespace S33M3DXEngine.Main
             IsDefferedLoadContent = false;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (UpdateOrderChanged != null)
             {
@@ -96,7 +96,6 @@ namespace S33M3DXEngine.Main
                     UpdatableChanged -= (EventHandler<EventArgs>)d;
                 }
             }
-            base.Dispose();
         }
 
         public virtual void EnableComponent()

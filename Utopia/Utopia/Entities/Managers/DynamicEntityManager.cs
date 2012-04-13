@@ -35,10 +35,9 @@ namespace Utopia.Entities.Managers
             _voxelModelManager = voxelModelManager;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             foreach (var item in _dynamicEntitiesDico.Values) item.Dispose();
-            base.Dispose();
         }
 
         public override void Initialize()

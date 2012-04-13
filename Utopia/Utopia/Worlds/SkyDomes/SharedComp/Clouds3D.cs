@@ -305,7 +305,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _d3dEngine.ImmediateContext.DrawIndexed(_cloudIB.IndicesCount, 0, 0);
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (_effect != null) _effect.Dispose();
             if (_cloudIB != null) _cloudIB.Dispose();

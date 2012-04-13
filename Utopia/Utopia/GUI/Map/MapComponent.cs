@@ -96,11 +96,6 @@ namespace Utopia.GUI.Map
                     _screen.Desktop.Children.Add(_mapWindow);
             }
         }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-        }
     }
 
 }

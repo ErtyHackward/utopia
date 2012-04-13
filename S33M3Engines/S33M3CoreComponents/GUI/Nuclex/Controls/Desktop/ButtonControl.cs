@@ -43,7 +43,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
 
         public int TextFontId { get; set; }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (Pressed != null)
             {
@@ -53,8 +53,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
                     Pressed -= (EventHandler)d;
                 }
             }
-
-            base.Dispose();
         }
 
         /// <summary>

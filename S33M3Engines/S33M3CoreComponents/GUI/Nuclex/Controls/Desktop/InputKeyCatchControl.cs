@@ -35,7 +35,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
 
     public class InputKeyCatchControl : Control, IKeyPressLookUp, IFocusable
     {
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (KeyChanged != null)
             {
@@ -45,8 +45,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
                     KeyChanged -= (EventHandler)d;
                 }
             }
-
-            base.Dispose();
         }
 
         public event EventHandler KeyChanged;

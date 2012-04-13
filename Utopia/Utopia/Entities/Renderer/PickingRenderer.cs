@@ -58,11 +58,10 @@ namespace Utopia.Entities.Renderer
             this.DrawOrders.UpdateIndex(0, 1001);
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (_blockpickedUPEffect != null) _blockpickedUPEffect.Dispose();
             if (_pickedCube != null) _pickedCube.Dispose();
-            base.Dispose();
         }
 
         #region private methods

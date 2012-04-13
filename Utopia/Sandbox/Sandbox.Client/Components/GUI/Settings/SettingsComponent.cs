@@ -42,7 +42,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             _engine.ViewPort_Updated += UpdateLayout;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (BackPressed != null)
             {
@@ -63,7 +63,6 @@ namespace Sandbox.Client.Components.GUI.Settings
             }
 
             _engine.ViewPort_Updated -= UpdateLayout;
-            base.Dispose();
         }
 
         #region Public methods

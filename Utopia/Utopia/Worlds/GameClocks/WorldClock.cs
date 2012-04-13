@@ -41,10 +41,9 @@ namespace Utopia.Worlds.GameClocks
             _server.MessageDateTime += ServerConnection_MessageDateTime;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _server.MessageDateTime -= ServerConnection_MessageDateTime;
-            base.Dispose();
         }
 
         #region Public methods

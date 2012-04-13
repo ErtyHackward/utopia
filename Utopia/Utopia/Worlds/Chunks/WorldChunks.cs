@@ -199,7 +199,7 @@ namespace Utopia.Worlds.Chunks
             InitDrawComponents(context);
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             foreach (var chunk in Chunks)
             {
@@ -209,8 +209,6 @@ namespace Utopia.Worlds.Chunks
                     chunk.Dispose();
                 }
             }
-
-            DisposeDrawComponents();
         }
 
         public override void UnloadContent()

@@ -45,10 +45,9 @@ namespace Utopia.Entities.Voxel
             _server.MessageVoxelModelData += ServerConnectionMessageVoxelModelData;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _server.MessageVoxelModelData -= ServerConnectionMessageVoxelModelData;
-            base.Dispose();
         }
 
         void ServerConnectionMessageVoxelModelData(object sender, ProtocolMessageEventArgs<VoxelModelDataMessage> e)

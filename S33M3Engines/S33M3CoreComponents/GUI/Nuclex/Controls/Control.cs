@@ -65,7 +65,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             set { _color = value; ColorSet = true; }
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (Clicked != null)
             {
@@ -75,8 +75,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
                     Clicked -= (EventHandler)d;
                 }
             }
-
-            base.Dispose();
         }
 
         /// <summary>

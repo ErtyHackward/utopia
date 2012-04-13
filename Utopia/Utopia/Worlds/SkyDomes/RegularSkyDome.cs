@@ -114,7 +114,7 @@ namespace Utopia.Worlds.SkyDomes
             _clouds.LoadContent(context);
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _posiTextureEffect.Dispose();
             _skyDomeEffect.Dispose();
@@ -128,8 +128,6 @@ namespace Utopia.Worlds.SkyDomes
             _skyTex_View.Dispose();
             _moonTex_View.Dispose();
             _glowTex_View.Dispose();
-
-            base.Dispose();
         }
 
         public override void Update(GameTime timeSpend)
