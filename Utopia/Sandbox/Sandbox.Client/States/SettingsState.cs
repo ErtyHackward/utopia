@@ -41,7 +41,7 @@ namespace Sandbox.Client.States
 
         void settings_BackPressed(object sender, EventArgs e)
         {
-            StatesManager.ActivateGameStateAsync("MainMenu");
+            StatesManager.ActivateGameStateAsync(this.PreviousGameState);
         }
 
     }

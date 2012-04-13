@@ -53,7 +53,9 @@ namespace Sandbox.Client.States
 
         void menuSettingsButtonPressed(object sender, EventArgs e)
         {
-            StatesManager.ActivateGameStateAsync("Settings");
+            var state = StatesManager.GetByName("Settings");
+            state.
+            StatesManager.ActivateGameStateAsync(state);
         }
 
         void MenuEditorPressed(object sender, EventArgs e)

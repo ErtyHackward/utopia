@@ -32,6 +32,10 @@ namespace S33M3CoreComponents.States
             set { _allowMouseCaptureChange = value; }
         }
 
+        /// <summary>
+        /// Contains the GameState from wich this one has been activated
+        /// </summary>
+        public GameState PreviousGameState { get; set; }
 
         /// <summary>
         /// Name of the state

@@ -209,6 +209,9 @@ namespace Utopia.Worlds.Chunks
                     chunk.Dispose();
                 }
             }
+
+            DisposeDrawComponents();
+
         }
 
         public override void UnloadContent()
