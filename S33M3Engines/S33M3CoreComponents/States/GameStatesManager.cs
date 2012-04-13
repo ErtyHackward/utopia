@@ -125,6 +125,7 @@ namespace S33M3CoreComponents.States
             //send the current to previous state, and set the new state to current
             GameState prev = _currentState;
             _currentState = newState;
+            _currentState.PreviousGameState = prev;
 
             //Do a check to be sure that the new state is ready to be used (All components initialized)
             if (_currentState != null && _currentState.IsInitialized == false)
