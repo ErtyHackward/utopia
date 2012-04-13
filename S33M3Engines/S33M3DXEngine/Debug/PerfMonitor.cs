@@ -25,10 +25,9 @@ namespace S33M3DXEngine.Debug
             this.UpdatableChanged += PerfMonitor_UpdatableChanged;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             this.UpdatableChanged -= PerfMonitor_UpdatableChanged;
- 	        base.Dispose();
         }
 
         #region Private methods

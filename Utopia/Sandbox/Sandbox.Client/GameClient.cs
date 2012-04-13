@@ -133,7 +133,10 @@ namespace Sandbox.Client
 
             _iocContainer.Dispose();
 
+            SandboxMenuComponent.DisposeCommonImage();
+
             game.Dispose();
+
 
             GC.Collect();
             GC.WaitForPendingFinalizers();

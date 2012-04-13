@@ -1917,7 +1917,7 @@ namespace Utopia.Components
             }
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (_boxVertexBuffer != null) _boxVertexBuffer.Dispose();
             if (_boxIndexBuffer != null) _boxIndexBuffer.Dispose();
@@ -1936,7 +1936,6 @@ namespace Utopia.Components
                 _yGridVertextBuffer = null;
                 _zGridVertextBuffer = null;
             }
-            base.Dispose();
         }
         
     }

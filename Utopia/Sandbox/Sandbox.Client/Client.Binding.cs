@@ -106,6 +106,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<LoginState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<CreditsState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<MainMenuState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<MainMenuComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoadingGameState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<GamePlayState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ServerSelectionComponent>().ToSelf().InSingletonScope();

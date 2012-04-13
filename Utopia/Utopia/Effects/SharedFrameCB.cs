@@ -89,7 +89,7 @@ namespace Utopia.Effects.Shared
             CBPerFrame.Update(context); //Send updated data to Graphical Card
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             CBPerFrame.Dispose();
         }

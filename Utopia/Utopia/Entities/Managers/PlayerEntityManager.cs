@@ -199,7 +199,7 @@ namespace Utopia.Entities.Managers
             UpdateOrder = 0;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             //Clean Up event Delegates
             if (OnLanding != null)
@@ -211,7 +211,6 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            this.VisualEntity.Dispose();
         }
 
         #region Private Methods

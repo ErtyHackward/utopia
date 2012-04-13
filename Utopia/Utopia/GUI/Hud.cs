@@ -101,13 +101,12 @@ namespace Utopia.GUI
             ToolbarUi.Resized();
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _spriteRender.Dispose();
             _crosshair.Dispose();
             _font.Dispose();
             _d3DEngine.ViewPort_Updated -= D3DEngineViewPortUpdated;
-            base.Dispose();
         }
 
         private int _lastSlot = 9;//TODO dynamic / configurable amount of toolbar slots

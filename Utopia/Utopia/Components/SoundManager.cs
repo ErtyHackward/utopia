@@ -59,7 +59,7 @@ namespace Utopia.Components
         {
             _cameraManager = cameraManager;
 
-            _soundEngine = new ISoundEngine();
+            _soundEngine = ToDispose(new ISoundEngine());
 
         }
         public void LateInitialization(SingleArrayChunkContainer singleArray, IDynamicEntityManager dynamicEntityManager, IDynamicEntity player)
@@ -108,10 +108,8 @@ namespace Utopia.Components
             _soundEngine.Play2D(_buttonPressSound);
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
-            _soundEngine.Dispose();
-
             if (_buttonPressSound != null)
             {
                 _buttonPressSound = null;

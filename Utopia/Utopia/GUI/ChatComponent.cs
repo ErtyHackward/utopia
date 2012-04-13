@@ -83,11 +83,10 @@ namespace Utopia.GUI
             DrawOrders.UpdateIndex(0, 10001);
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _server.MessageChat -= ServerConnectionMessageChat;
-            _d3dEngine.ViewPort_Updated -= LocateChat;
-            base.Dispose();
+            _d3dEngine.ViewPort_Updated -= LocateChat;            
         }
 
         public override void Initialize()

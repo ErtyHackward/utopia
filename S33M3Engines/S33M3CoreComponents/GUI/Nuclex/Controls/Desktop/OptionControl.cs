@@ -27,7 +27,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
     /// <summary>Control displaying an option the user can toggle on and off</summary>
     public class OptionControl : PressableControl
     {
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (Changed != null)
             {
@@ -37,8 +37,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
                     Changed -= (EventHandler)d;
                 }
             }
-
-            base.Dispose();
         }
 
         /// <summary>Will be triggered when the choice is changed</summary>

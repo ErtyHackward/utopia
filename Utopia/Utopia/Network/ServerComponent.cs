@@ -133,7 +133,7 @@ namespace Utopia.Network
             this.MessageGameInformation += ServerComponent_MessageGameInformation;
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (ServerConnection != null &&
                ServerConnection.ConnectionStatus != ConnectionStatus.Disconnected &&
@@ -145,8 +145,6 @@ namespace Utopia.Network
             this.MessageGameInformation += ServerComponent_MessageGameInformation;
 
             if (ServerConnection != null) ServerConnection.Dispose();
-
-            base.Dispose();
         }
 
         #region Public Methods

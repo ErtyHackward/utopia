@@ -146,7 +146,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
 
         #endregion
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (SelectionChanged != null)
             {
@@ -156,8 +156,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
                     SelectionChanged -= (EventHandler)d;
                 }
             }
-
-            base.Dispose();
         }
 
         /// <summary>Triggered when the selected items in list have changed</summary>

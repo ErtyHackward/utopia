@@ -69,7 +69,7 @@ namespace S33M3DXEngine.Main
             _drawOrder = new DrawOrders(this);
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (DrawOrderChanged != null)
             {
@@ -88,8 +88,6 @@ namespace S33M3DXEngine.Main
                     VisibleChanged -= (EventHandler<EventArgs>)d;
                 }
             }
-
-            base.Dispose();
         }
 
         public virtual void OnDrawOrderChanged(object sender, EventArgs args)

@@ -113,7 +113,7 @@ namespace Sandbox.Client.Components.GUI
             _stMainMenuLabel        = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu.png"));
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _engine.ViewPort_Updated -= UpdateLayout;
         }

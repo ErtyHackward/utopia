@@ -79,7 +79,7 @@ namespace Utopia.GUI.Inventory
         }
 
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _hud.SlotClicked -= HudSlotClicked;
             _inventoryUi.InventorySlotClicked -= InventoryUiSlotClicked;

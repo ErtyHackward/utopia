@@ -36,13 +36,11 @@ namespace Utopia.Components
             this.DrawOrders.UpdateIndex(0, 999, "SolidBackBuffer"); //This should be call After all SOLID object have been draw on screen.
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (_solidBackBuffer != null) _solidBackBuffer.Dispose();
             if (_solidStaggingBackBuffer != null) _solidStaggingBackBuffer.Dispose();
             _engine.ViewPort_Updated -= engine_ViewPort_Updated;
-
-            base.Dispose();
         }
 
         #region Public Methods

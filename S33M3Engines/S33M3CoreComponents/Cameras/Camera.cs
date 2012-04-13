@@ -171,7 +171,7 @@ namespace S33M3CoreComponents.Cameras
         {
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _d3dEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
 
@@ -183,8 +183,6 @@ namespace S33M3CoreComponents.Cameras
                     CameraUpdateOrderChanged -= (CameraUpdateOrder)d;
                 }
             }
-
-            base.Dispose();
         }
 
         #region IDebugInfo Members

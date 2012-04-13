@@ -172,11 +172,10 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             RefreshDataGrid();
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _game.GameComponents.ComponentAdded -= GameComponents_Changed;
             _game.GameComponents.ComponentRemoved -= GameComponents_Changed;
-            base.Dispose();
         }
 
         #region Private methods

@@ -61,7 +61,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _skyStarVB.SetData(context, vertices);
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             _effectStars.Dispose();
             _skyStarVB.Dispose();

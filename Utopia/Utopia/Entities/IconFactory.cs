@@ -77,12 +77,10 @@ namespace Utopia.Entities
             foreach (Texture2D tex in spriteTextures) tex.Dispose();
         }
 
-        public override void Dispose()
+        public override void BeforeDispose()
         {
             if (_iconsTextureArray != null) _iconsTextureArray.Dispose();
             if (_iconTextureArray != null) _iconTextureArray.Dispose();
-
-            base.Dispose();
         }
 
         //Too costy to recreate, better keep it

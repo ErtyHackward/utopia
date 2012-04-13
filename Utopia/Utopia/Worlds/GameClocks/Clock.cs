@@ -115,10 +115,6 @@ namespace Utopia.Worlds.GameClocks
         }
 
         //Dispose resources
-        public override void Dispose()
-        {
-        }
-
         public override void Update(GameTime timeSpend)
         {
         }
