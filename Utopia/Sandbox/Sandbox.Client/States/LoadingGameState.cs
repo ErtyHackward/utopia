@@ -71,6 +71,7 @@ namespace Sandbox.Client.States
         private readonly IKernel _ioc;
         private RuntimeVariables _vars;
         private Server _server;
+        private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
         private SandboxEntityFactory _serverFactory;
         private ServerComponent _serverComponent;
         private SharpDX.Direct3D11.DeviceContext _context;
@@ -145,11 +146,17 @@ namespace Sandbox.Client.States
 
         private void InitSinglePlayerServer(int seed)
         {
+            if (_server != null)
+            {
+                _server.Dispose();
+            }
+            if (_serverSqliteStorageSinglePlayer != null) _serverSqliteStorageSinglePlayer.Dispose();
+
             _serverFactory = new SandboxEntityFactory(null);
             var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", seed.ToString(), "ServerWorld.db");
-            var sqliteStorage = new SQLiteStorageManager(dbPath, _serverFactory);
 
-            sqliteStorage.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
+            _serverSqliteStorageSinglePlayer = new SQLiteStorageManager(dbPath, _serverFactory);
+            _serverSqliteStorageSinglePlayer.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
 
             var settings = new XmlSettingsManager<ServerSettings>(@"Server\localServer.config");
             settings.Load();
@@ -164,8 +171,7 @@ namespace Sandbox.Client.States
             var worldGenerator = new WorldGenerator(wp, processor1, processor2);
             //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
             //var worldGenerator = new WorldGenerator(wp, planProcessor);
-
-            _server = new Server(settings, worldGenerator, sqliteStorage, sqliteStorage, sqliteStorage, _serverFactory);
+            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _server.ConnectionManager.LocalMode = true;
             _server.ConnectionManager.Listen();
