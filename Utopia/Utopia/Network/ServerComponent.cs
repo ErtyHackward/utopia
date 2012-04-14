@@ -142,7 +142,7 @@ namespace Utopia.Network
                 ServerConnection.Disconnect();
             }
 
-            this.MessageGameInformation += ServerComponent_MessageGameInformation;
+            this.MessageGameInformation -= ServerComponent_MessageGameInformation;
 
             if (ServerConnection != null) ServerConnection.Dispose();
         }
@@ -150,7 +150,6 @@ namespace Utopia.Network
         #region Public Methods
         public bool BindingServer(string address)
         {
-            if (Address == address) return false;
             if (ServerConnection != null && ServerConnection.ConnectionStatus == ConnectionStatus.Connected) ServerConnection.Disconnect();
 
             Address = address;

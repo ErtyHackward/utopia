@@ -125,7 +125,6 @@ namespace S33M3CoreComponents.States
             //send the current to previous state, and set the new state to current
             GameState prev = _currentState;
             _currentState = newState;
-            _currentState.PreviousGameState = prev;
 
             //Do a check to be sure that the new state is ready to be used (All components initialized)
             if (_currentState != null && _currentState.IsInitialized == false)
@@ -285,6 +284,7 @@ namespace S33M3CoreComponents.States
 #if DEBUG
             logger.Debug("State Initialization requested (by Prepare) : {0}", state.Name);
 #endif
+            state.PreviousGameState = _currentState;
              AsyncStateInitResults.Add(GameStatesManagerThreadPoolGrp.QueueWorkItem(new Amib.Threading.Func<GameState, GameState>(InitializeComponentsAsync), state));
         }
 
@@ -307,6 +307,8 @@ namespace S33M3CoreComponents.States
                 _inActivationProcess = true;
                 state.IsActivationRequested = true;
 
+                state.PreviousGameState = _currentState;
+
 #if DEBUG
                 logger.Debug("State requested for activation : {0}", state.Name);
 #endif
@@ -319,13 +321,13 @@ namespace S33M3CoreComponents.States
                 }
 
 #if DEBUG
-                logger.Debug("State Initialization requested : {0}", state.Name);
+                logger.Debug("State Initialization requested in Async Mode : {0}", state.Name);
 #endif
                 AsyncStateInitResults.Add(GameStatesManagerThreadPoolGrp.QueueWorkItem(new Amib.Threading.Func<GameState, GameState>(InitializeComponentsAsync), state));
             }
             else
             {
-                logger.Warn("{0} state requested to be activated while another activation requested is in initialization state, the request is dropped", state.Name);
+                logger.Warn("State : '{0}' requested to be activated while another activation requested is in initialization state, the request is dropped", state.Name);
             }
         }
 
@@ -369,8 +371,11 @@ namespace S33M3CoreComponents.States
         /// <param name="state">The State</param>
         public void FlushStateComponents(GameState state)
         {
-            foreach (var comp in state.GameComponents)
+            foreach (var comp in state.GameComponents.Where(x => x.IsSystemComponent == false))
             {
+#if DEBUG
+                logger.Debug("Components {0} flushed", comp.Name);
+#endif
                 comp.DisableComponent();
                 comp.UnloadContent();
                 comp.IsInitialized = false;
@@ -381,10 +386,9 @@ namespace S33M3CoreComponents.States
         /// Will at first, disable all components from the state.
         /// Will call the Unload Methods to all registered components of the passed in state
         /// All the component will also see their IsInitialized flag set back to False
-        /// After this each component should be in the same state as before the call to Initialize() and LoadContent()
         /// </summary>
         /// <param name="state">The State Name</param>
-        public void FlushComponentsContent(string stateName)
+        public void FlushStateComponents(string stateName)
         {
             if (stateName == null) throw new ArgumentNullException("stateName");
             var state = _gameStates.Find(gs => gs.Name == stateName);

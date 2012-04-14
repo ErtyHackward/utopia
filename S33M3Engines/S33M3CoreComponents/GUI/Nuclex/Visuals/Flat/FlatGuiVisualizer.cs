@@ -30,6 +30,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.GUI.Nuclex.Support;
 using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
 
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
@@ -396,12 +397,17 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
                     // be taken off the stack last, ensuring it's rendered on top of all others.
                     for (int index = 0; index < currentControl.Children.Count; ++index)
                     {
-                        this.controlStack.Push(
-                          ControlWithBounds.FromControl(currentControl.Children[index], currentBounds)
-                        );
+                        Control control2Render = currentControl.Children[index];
+                        if (control2Render.IsVisible)
+                        {
+                            this.controlStack.Push(ControlWithBounds.FromControl(control2Render, currentBounds));
+                        }
                     }
 
-                    renderControl(currentControl);
+                    if (currentControl.IsRendable)
+                    {
+                        renderControl(currentControl);
+                    }
                 }
             }
             finally
@@ -430,7 +436,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             // Such instances can be used to construct invisible containers, and are most
             // prominently embodied in the 'desktop' control that hosts the whole GUI.
             if (
-              (controlToRender.IsVisible == false) ||           //Control is invisible !
               (controlType == typeof(Controls.Control)) ||      
               (controlType == typeof(Controls.DesktopControl))
             )

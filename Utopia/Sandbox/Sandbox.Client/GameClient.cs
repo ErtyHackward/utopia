@@ -105,6 +105,13 @@ namespace Sandbox.Client
             stateManager.RegisterState(_iocContainer.Get<EditorState>());
 
             //Add system components that will be share with all possible states !
+            var guiManager = _iocContainer.Get<GuiManager>();
+            guiManager.Initialize();
+            guiManager.LoadContent(_d3dEngine.ImmediateContext);
+            guiManager.IsInitialized = true;
+            guiManager.EnableComponent();
+            game.GameComponents.Add(guiManager);
+
             InputsManager inputManager = _iocContainer.Get<InputsManager>();
             inputManager.MouseManager.IsRunning = true;
             game.GameComponents.Add(inputManager);
@@ -127,7 +134,7 @@ namespace Sandbox.Client
             stateManager.ActivateGameStateAsync("Login");
 #endif
 
-            //game.MenuRequested += new EventHandler(game_MenuRequested);
+            game.MenuRequested += game_MenuRequested;
             game._gameStateManager = stateManager;
             game.Run(); //Start the Main render loop
 
@@ -210,9 +217,14 @@ namespace Sandbox.Client
 
         private void game_MenuRequested(object sender, EventArgs e)
         {
-            InputsManager inputManager = _iocContainer.Get<InputsManager>();
-            inputManager.MouseManager.MouseCapture = false;
-            _iocContainer.Get<GameStatesManager>().ActivateGameStateAsync(_iocContainer.Get<MainMenuState>(), true);
+            //Only if GamePlayState is activate
+            if (_iocContainer.Get<GameStatesManager>().CurrentState is GamePlayState)
+            {
+                InputsManager inputManager = _iocContainer.Get<InputsManager>();
+                inputManager.MouseManager.MouseCapture = false;
+
+                _iocContainer.Get<GameStatesManager>().ActivateGameStateAsync(_iocContainer.Get<InGameMenuState>(), true);
+            }
         }
         #endregion
 

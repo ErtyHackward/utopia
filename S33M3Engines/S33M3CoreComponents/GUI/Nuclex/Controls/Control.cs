@@ -52,11 +52,24 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         private ByteColor _color = Colors.White;
         public bool ColorSet { get; private set; }
 
-        private bool _canBeRendered = true;
+        private bool _isRendable = true;
+        /// <summary>
+        /// Will prevent the control the be rendered, but its children will be evaluated
+        /// </summary>
+        public bool IsRendable
+        {
+            get { return _isRendable; }
+            set { _isRendable = value; }
+        }
+
+        private bool _isVisible = true;
+        /// <summary>
+        /// Will prevent a control to be rendered, the children won't be rendered too (even if visible !!!)
+        /// </summary>
         public bool IsVisible
         {
-            get { return _canBeRendered; }
-            set { _canBeRendered = value; }
+            get { return _isVisible; }
+            set { _isVisible = value; }
         }
 
         public ByteColor Color

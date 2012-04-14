@@ -73,6 +73,7 @@ namespace Sandbox.Client.States
         private Server _server;
         private SandboxEntityFactory _serverFactory;
         private ServerComponent _serverComponent;
+        private SharpDX.Direct3D11.DeviceContext _context;
 
         public override string Name
         {
@@ -89,8 +90,11 @@ namespace Sandbox.Client.States
         //Add Loading screen animation, and ServerComponent
         public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
+            if (this.PreviousGameState != this) this.GameComponents.Clear();
+
             var loading = _ioc.Get<LoadingComponent>();
             _vars = _ioc.Get<RuntimeVariables>();
+            _context = context;
 
             AddComponent(loading);
             AddComponent(_ioc.Get<ServerComponent>());
@@ -109,12 +113,7 @@ namespace Sandbox.Client.States
 
         private void GameplayInitializeAsync()
         {
-            //The first time itz goes here, the server component will be null
-            if (_serverComponent == null)
-            {
-                _serverComponent = _ioc.Get<ServerComponent>();
-                _serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
-            }
+            _serverComponent = _ioc.Get<ServerComponent>();
 
             if (_vars.SinglePlayer)
             {
@@ -156,6 +155,7 @@ namespace Sandbox.Client.States
                 if (_serverComponent.ServerConnection == null || 
                     _serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
                 {
+                    _serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
                     _serverComponent.BindingServer("127.0.0.1");
                     _serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
                     _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, "Client", "Singleplayer", seed.ToString(), "ClientWorldCache.db");
@@ -166,6 +166,7 @@ namespace Sandbox.Client.States
                 if (_serverComponent.ServerConnection == null || 
                     _serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
                 {
+                    _serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
                     _serverComponent.BindingServer(_vars.CurrentServerAddress);
                     _serverComponent.ConnectToServer(_vars.Login, _vars.DisplayName, _vars.PasswordHash);
                     _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Client", "Multiplayer", _vars.CurrentServerAddress.Replace(':', '_'), "ClientWorldCache.db");
@@ -227,7 +228,7 @@ namespace Sandbox.Client.States
                 SeaLevel = _ioc.Get<ServerComponent>().GameInformations.WaterLevel
             };
 
-            _ioc.Bind<WorldParameters>().ToConstant(clientSideworldParam).InSingletonScope();  
+            _ioc.Rebind<WorldParameters>().ToConstant(clientSideworldParam).InSingletonScope();  
 
             // client world generator
             //var clientGeneratpr = new WorldGenerator(clientSideworldParam, new PlanWorldProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client")));
@@ -236,7 +237,7 @@ namespace Sandbox.Client.States
             IWorldProcessor processor1 = new s33m3WorldProcessor(clientSideworldParam);
             IWorldProcessor processor2 = new LandscapeLayersProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
             var worldGenerator = new WorldGenerator(clientSideworldParam, processor1, processor2);
-            _ioc.Bind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
+            _ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 
             // be careful with initialization order
             var serverComponent = _ioc.Get<ServerComponent>();
@@ -326,6 +327,7 @@ namespace Sandbox.Client.States
 
         void worldChunks_LoadComplete(object sender, EventArgs e)
         {
+            _ioc.Get<IWorldChunks>().LoadComplete -= worldChunks_LoadComplete;
             StatesManager.ActivateGameStateAsync("Gameplay");
         }
 

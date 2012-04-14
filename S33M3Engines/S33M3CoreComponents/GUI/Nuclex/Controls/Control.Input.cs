@@ -218,12 +218,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
                 if (children[index].IsClickTransparent)
                     continue;
                 RectangleF childBounds = this.children[index].Bounds.ToOffset(size.X, size.Y);
-
                 // Is the mouse over this child?
                 if (childBounds.Contains(x, y))
                 {
                     switchMouseOverControl(this.children[index]);
-
+                    if (index != 2)
+                    {
+                        //Console.Write(index);
+                    }
                     // Hand over the mouse movement data to the child control the mouse is
                     // hovering over. If this is the mouse-press control, do nothing because
                     // we already delivered the movement notification out of order.

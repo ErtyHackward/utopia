@@ -95,6 +95,7 @@
     <Compile Include="Client.Binding.cs" />
     <Compile Include="Client.NewGame.cs" />
     <Compile Include="Components\GUI\BlackBgComponent.cs" />
+    <Compile Include="Components\GUI\InGameMenuComponent.cs" />
     <Compile Include="Components\GUI\CreditsComponent.cs" />
     <Compile Include="Components\GUI\LoadingComponent.cs" />
     <Compile Include="Components\GUI\LoginComponent.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeVariables.cs" />
+    <Compile Include="States\InGameMenuState.cs" />
     <Compile Include="States\CreditsState.cs" />
     <Compile Include="States\EditorState.cs" />
     <Compile Include="States\GamePlayState.cs" />

@@ -41,6 +41,12 @@ namespace Sandbox.Client.States
             AddComponent(gui);
             AddComponent(menu);
 
+            base.Initialize(context);
+        }
+
+        public override void OnEnabled(GameState previousState)
+        {
+            var menu = _iocContainer.Get<MainMenuComponent>();
             menu.CreditsPressed += MenuCreditsPressed;
             menu.SinglePlayerPressed += MenuSinglePlayerPressed;
             menu.MultiplayerPressed += MenuMultiplayerPressed;
@@ -48,7 +54,19 @@ namespace Sandbox.Client.States
             menu.ExitPressed += MenuExitPressed;
             menu.SettingsButtonPressed += menuSettingsButtonPressed;
 
-            base.Initialize(context);
+            StatesManager.PrepareStateAsync("LoadingGame");
+            base.OnEnabled(previousState);
+        }
+
+        public override void OnDisabled(GameState nextState)
+        {
+            var menu = _iocContainer.Get<MainMenuComponent>();
+            menu.CreditsPressed -= MenuCreditsPressed;
+            menu.SinglePlayerPressed -= MenuSinglePlayerPressed;
+            menu.MultiplayerPressed -= MenuMultiplayerPressed;
+            menu.EditorPressed -= MenuEditorPressed;
+            menu.ExitPressed -= MenuExitPressed;
+            menu.SettingsButtonPressed -= menuSettingsButtonPressed;
         }
 
         void menuSettingsButtonPressed(object sender, EventArgs e)
@@ -78,12 +96,6 @@ namespace Sandbox.Client.States
         {
             _vars.SinglePlayer = true;
             StatesManager.ActivateGameStateAsync("LoadingGame");
-        }
-
-        public override void OnEnabled(GameState previousState)
-        {
-            StatesManager.PrepareStateAsync("LoadingGame");
-            base.OnEnabled(previousState);
         }
         
         void MenuCreditsPressed(object sender, EventArgs e)

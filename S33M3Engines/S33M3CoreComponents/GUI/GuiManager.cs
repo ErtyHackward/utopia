@@ -96,6 +96,8 @@ namespace S33M3CoreComponents.GUI
             DrawOrders.UpdateIndex(0, 10001);
             UpdateOrder = _inputManager.UpdateOrder + 1;
 
+            this.IsSystemComponent = true;
+
             //Register Action Manager for mouse click handling.
             _inputManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
@@ -154,13 +156,6 @@ namespace S33M3CoreComponents.GUI
 
         public override void UnloadContent()
         {
-            this.DisableComponent();
-
-            RemoveDispose(_guiVisualizer);
-
-            _guiVisualizer.Dispose();
-
-            this.IsInitialized = false;
         }
 
         private void GameWindowKeyUp(object sender, KeyEventArgs e)
