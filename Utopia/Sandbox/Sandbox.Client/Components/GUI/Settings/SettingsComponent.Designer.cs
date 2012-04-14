@@ -145,7 +145,7 @@ namespace Sandbox.Client.Components.GUI.Settings
         protected void LoadContentComponent(DeviceContext context)
         {
             _transparentBackGroundTexture = ToDispose(new SpriteTexture(1,1, TextureCreator.GenerateColoredTexture(_engine.Device, context, new ByteColor(255,255,255, 127)), new Vector2(0,0)));
-            _backPanel = ToDispose(new ImageControl() { Image = _transparentBackGroundTexture });
+            _backPanel = ToDispose(new ImageControl() { Image = _transparentBackGroundTexture, Name = "BackPanel" });
 
             _settingsForm.Children.Add(_backPanel);
 

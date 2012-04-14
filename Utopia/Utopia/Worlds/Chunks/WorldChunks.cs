@@ -227,6 +227,7 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
+            this.IsInitialLoadCompleted = false;
             this.IsInitialized = false;
         }
 

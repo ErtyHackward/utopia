@@ -50,6 +50,16 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             }
         }
 
+        public void ShowAll()
+        {
+            foreach (var comp in Children) { comp.IsVisible = true; }
+        }
+
+        public void HideAll()
+        {
+            foreach (var comp in Children) { comp.IsVisible = false; }
+        }
+
         /// <summary>Whether the GUI holds ownership of the input devices</summary>
         public bool IsInputCaptured
         {

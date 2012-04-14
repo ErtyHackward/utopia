@@ -111,8 +111,8 @@ namespace Sandbox.Client.States
 
         public override void OnEnabled(GameState previousState)
         {
-            //var guiManager = _ioc.Get<GuiManager>();
-            //guiManager.Updatable = false;
+            var guiManager = _ioc.Get<GuiManager>();
+            guiManager.Screen.ShowAll();
             base.OnEnabled(previousState);
         }
     }

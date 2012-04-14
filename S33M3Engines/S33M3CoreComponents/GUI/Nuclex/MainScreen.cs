@@ -439,6 +439,16 @@ namespace S33M3CoreComponents.GUI.Nuclex
         get { return this.desktopControl.IsMouseOverGui; }
     }
 
+    public void ShowAll()
+    {
+        this.desktopControl.ShowAll();
+    }
+
+    public void HideAll()
+    {
+        this.desktopControl.HideAll();
+    }
+
     /// <summary>Child control that currently has the input focus</summary>
     public Control FocusedControl
     {

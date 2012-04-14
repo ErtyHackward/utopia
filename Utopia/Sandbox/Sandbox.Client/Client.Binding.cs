@@ -80,7 +80,6 @@ namespace Sandbox.Client
             _iocContainer.Bind<D3DEngine>().ToConstant(_d3dEngine).InSingletonScope();
 
             //DirectX layer & Helper ===================================
-            //_iocContainer.Bind<D3DEngine>().ToSelf().InSingletonScope().WithConstructorArgument("startingSize", windowStartingSize).WithConstructorArgument("windowCaption", WindowsCaption).WithConstructorArgument("renderResolution", resolutionSize);         //DirectX Engine
             _iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope(); //Focus
             //==========================================================
 
@@ -104,14 +103,31 @@ namespace Sandbox.Client
             // Game states ================================================
             _iocContainer.Bind<RuntimeVariables>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
+
             _iocContainer.Bind<CreditsState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<CreditsComponent>().ToSelf().InSingletonScope();
+
             _iocContainer.Bind<MainMenuState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<MainMenuComponent>().ToSelf().InSingletonScope();
+
             _iocContainer.Bind<LoadingGameState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
+
             _iocContainer.Bind<GamePlayState>().ToSelf().InSingletonScope();
+
             _iocContainer.Bind<ServerSelectionComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<SelectServerGameState>().ToSelf().InSingletonScope();
+
             _iocContainer.Bind<SettingsComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<SettingsState>().ToSelf().InSingletonScope();
+
+            _iocContainer.Bind<InGameMenuComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<InGameMenuState>().ToSelf().InSingletonScope();
+
+            _iocContainer.Bind<FadeSwitchComponent>().ToSelf().InSingletonScope();
             
+
             //Network Related =============================================
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
             _iocContainer.Bind<EntityFactory>().ToConstant(new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>())).InSingletonScope().Named("Client");
@@ -143,10 +159,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
             _iocContainer.Bind<InventoryComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
-            //_iocContainer.Bind<MapComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
-            //_iocContainer.Bind<EntityEditor>().ToSelf().InSingletonScope();
-            //_iocContainer.Bind<CarvingEditor>().ToSelf().InSingletonScope();            
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
             _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
             _iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
@@ -162,10 +175,7 @@ namespace Sandbox.Client
                     break;
             }
 
-            //_iocContainer.Bind<BepuPhysicsComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<LoadingComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<FadeSwitchComponent>().ToSelf().InSingletonScope();
+           
             _iocContainer.Bind<VoxelModelManager>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<BlackBgComponent>().ToSelf().InSingletonScope();
