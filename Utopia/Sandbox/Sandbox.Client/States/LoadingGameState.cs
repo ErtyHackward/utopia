@@ -106,7 +106,7 @@ namespace Sandbox.Client.States
         //The state is enabled, start loading other components in background while the Loading is shown
         public override void OnEnabled(GameState previousState)
         {
-            SmartThread.ThreadPool.QueueWorkItem(GameplayInitializeAsync);
+            if (this.PreviousGameState != this) SmartThread.ThreadPool.QueueWorkItem(GameplayInitializeAsync);
 
             base.OnEnabled(previousState);
         }
@@ -119,38 +119,7 @@ namespace Sandbox.Client.States
             {
                 int seed = 12695361;
 
-                #region Initialize the local server first single player game
-                if (_server == null)
-                {
-
-                    _serverFactory = new SandboxEntityFactory(null);
-                    var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", seed.ToString(), "ServerWorld.db");
-                    var sqliteStorage = _ioc.Get<SQLiteStorageManager>(new[] { new ConstructorArgument("filePath", dbPath), new ConstructorArgument("factory", _serverFactory) });
-
-                    sqliteStorage.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
-
-                    var settings = _ioc.Get<XmlSettingsManager<ServerSettings>>();
-
-                    // create a server generator
-                    var wp = _ioc.Get<WorldParameters>();
-                    wp.SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2;
-                    wp.Seed = seed;
-
-                    IWorldProcessor processor1 = new s33m3WorldProcessor(wp);
-                    IWorldProcessor processor2 = new LandscapeLayersProcessor(wp, _serverFactory);
-                    var worldGenerator = new WorldGenerator(wp, processor1, processor2);
-                    //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
-                    //var worldGenerator = new WorldGenerator(wp, planProcessor);
-
-                    _server = new Server(settings, worldGenerator, sqliteStorage, sqliteStorage, sqliteStorage, _serverFactory);
-                    _serverFactory.LandscapeManager = _server.LandscapeManager;
-                    _server.ConnectionManager.LocalMode = true;
-                    _server.ConnectionManager.Listen();
-                    _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
-                    _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
-                    _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
-                }
-                #endregion
+                InitSinglePlayerServer(seed);
 
                 if (_serverComponent.ServerConnection == null || 
                     _serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
@@ -172,6 +141,38 @@ namespace Sandbox.Client.States
                     _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Client", "Multiplayer", _vars.CurrentServerAddress.Replace(':', '_'), "ClientWorldCache.db");
                 }
             }
+        }
+
+        private void InitSinglePlayerServer(int seed)
+        {
+            _serverFactory = new SandboxEntityFactory(null);
+            var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", seed.ToString(), "ServerWorld.db");
+            var sqliteStorage = new SQLiteStorageManager(dbPath, _serverFactory);
+
+            sqliteStorage.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
+
+            var settings = new XmlSettingsManager<ServerSettings>(@"Server\localServer.config");
+            settings.Load();
+            settings.Save();
+            // create a server generator
+            var wp = _ioc.Get<WorldParameters>();
+            wp.SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2;
+            wp.Seed = seed;
+
+            IWorldProcessor processor1 = new s33m3WorldProcessor(wp);
+            IWorldProcessor processor2 = new LandscapeLayersProcessor(wp, _serverFactory);
+            var worldGenerator = new WorldGenerator(wp, processor1, processor2);
+            //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
+            //var worldGenerator = new WorldGenerator(wp, planProcessor);
+
+            _server = new Server(settings, worldGenerator, sqliteStorage, sqliteStorage, sqliteStorage, _serverFactory);
+            _serverFactory.LandscapeManager = _server.LandscapeManager;
+            _server.ConnectionManager.LocalMode = true;
+            _server.ConnectionManager.Listen();
+            _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
+            _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
+            _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
+
         }
 
         void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
