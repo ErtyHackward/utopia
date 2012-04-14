@@ -1,43 +1,45 @@
 ﻿using System;
 using System.ComponentModel;
 using Utopia.Shared.Config;
+using System.Xml.Serialization;
 
 namespace Utopia.Server
 {
     /// <summary>
     /// Server specific settings
     /// </summary>
+    [XmlRoot("ServerSettings")]
     [Serializable]
     public class ServerSettings : IConfigClass
     {
         /// <summary>
         /// Interval between cleanup operation executions. All chunks older than ChunkLiveTimeMinutes parameter will be unloaded
         /// </summary>
-        [DefaultValue(60000)]
+        //[DefaultValue(60000)]
         public int CleanUpInterval { get; set; }
 
         /// <summary>
         /// Interval between save operation executions. All modified chunks will be saved into database. 
         /// </summary>
-        [DefaultValue(30000)]
+        //[DefaultValue(30000)]
         public int SaveInterval { get; set; }
 
         /// <summary>
         /// Defines maximum allowed chunk view range
         /// </summary>
-        [DefaultValue(20)]
+        //[DefaultValue(20)]
         public int MaxViewRangeChunks { get; set; }
 
         /// <summary>
         /// Defines how long server will store unused chunks
         /// </summary>
-        [DefaultValue(60)]
+        //[DefaultValue(60)]
         public int ChunkLiveTimeMinutes { get; set; }
 
         /// <summary>
         /// Port to listen on
         /// </summary>
-        [DefaultValue(4815)]
+        //[DefaultValue(4815)]
         public int ServerPort { get; set; }
 
         /// <summary>
@@ -48,8 +50,18 @@ namespace Utopia.Server
         /// <summary>
         /// Server global name
         /// </summary>
-        [DefaultValue("unnamed server")]
+        //[DefaultValue("unnamed server")]
         public string ServerName { get; set; }
+
+        public ServerSettings()
+        {
+            CleanUpInterval = 60000;
+            SaveInterval = 30000;
+            MaxViewRangeChunks = 20;
+            ChunkLiveTimeMinutes = 60;
+            ServerPort = 4815;
+            ServerName = "unnamed server";
+        }
 
         public void Initialize()
         {

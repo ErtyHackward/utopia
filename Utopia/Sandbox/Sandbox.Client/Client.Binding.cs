@@ -208,11 +208,6 @@ namespace Sandbox.Client
             _iocContainer.Bind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope();
             //=============================================================
 
-            // Server components ==========================================
-            _iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToSelf().InSingletonScope().WithConstructorArgument("fileName", "localServer.config");
-            _iocContainer.Bind<SQLiteStorageManager>().ToSelf().InSingletonScope();
-            //=============================================================
-
             //Debug Components ===========================================
             _iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope().WithConstructorArgument("LeftPanelColor", new ByteColor(44,51,59));
             //=============================================================
