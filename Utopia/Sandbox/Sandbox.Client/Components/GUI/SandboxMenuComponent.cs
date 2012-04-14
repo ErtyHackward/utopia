@@ -66,6 +66,7 @@ namespace Sandbox.Client.Components.GUI
         private HLSLLoadingCube _cubeShader;
         protected Mesh _meshBluePrint;
         protected Matrix _view;
+        protected int _borderOffset = 0;
 
 
         public static SpriteTexture LoadTexture(D3DEngine engine, string filePath)
@@ -283,8 +284,8 @@ namespace Sandbox.Client.Components.GUI
             else
                 _headerHeight = Math.Abs((int)viewport.Height - 434);
 
-            _cubes.Bounds = new UniRectangle(0, 0, viewport.Width, _headerHeight);
-            _linen.Bounds = new UniRectangle(0, _headerHeight, viewport.Width, viewport.Height - _headerHeight);
+            _cubes.Bounds = new UniRectangle(0 + _borderOffset, 0 + _borderOffset, viewport.Width - (_borderOffset * 2), _headerHeight);
+            _linen.Bounds = new UniRectangle(0 + _borderOffset, _headerHeight, viewport.Width - (_borderOffset * 2), (viewport.Height - _headerHeight) - (_borderOffset * 2));
             _shadow.Bounds = new UniRectangle(0, _headerHeight - 117, viewport.Width, 287);
             _logo.Bounds = new UniRectangle((viewport.Width - 562) / 2, _headerHeight - 44, 562, 113);
             _version.Bounds = new UniRectangle((viewport.Width - 562) / 2 + 360, _headerHeight + 49, 196, 31);

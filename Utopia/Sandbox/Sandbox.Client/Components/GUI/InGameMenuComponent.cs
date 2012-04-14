@@ -69,6 +69,8 @@ namespace Sandbox.Client.Components.GUI
             _stLabelCredits         = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_credits.png"));
             _stLabelExit            = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_exit.png"));
             _stLabelSettings        = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_settings.png"));
+
+            this._borderOffset = 10;
         }
 
         public override void BeforeDispose()

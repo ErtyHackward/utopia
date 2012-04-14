@@ -86,6 +86,11 @@ namespace Utopia.Shared
 
         public virtual void Dispose()
         {
+            if (_connection != null && _connection.State != ConnectionState.Closed)
+            {
+                _connection.Close();
+            }
+
             if (_connection != null)
                 _connection.Dispose();
         }

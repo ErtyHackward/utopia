@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace Utopia.Shared.Net.Connections
 {
@@ -77,6 +78,7 @@ namespace Utopia.Shared.Net.Connections
             catch (System.Net.Sockets.SocketException) { }
         }
 
+        [DebuggerStepThrough]
         private void OnStartConnection(IAsyncResult ar)
         {
             try
