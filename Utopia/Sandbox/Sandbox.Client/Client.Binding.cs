@@ -74,7 +74,7 @@ namespace Sandbox.Client
                 throw new InvalidOperationException();
 
             _iocContainer = new StandardKernel();
-            _iocContainer.Bind<IKernel>().ToConstant(_iocContainer).InSingletonScope();
+            //No need to bind IKernel, its already done in Ninject V3
 
             _d3dEngine = new D3DEngine(windowStartingSize, WindowsCaption, ClientSettings.Current.Settings.GraphicalParameters.MSAA.SampleDescription, resolutionSize);
             _iocContainer.Bind<D3DEngine>().ToConstant(_d3dEngine).InSingletonScope();
@@ -200,8 +200,6 @@ namespace Sandbox.Client
             _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();         //Dynamic Entity manager
             _iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();                             //The player manager
             //Register the Player Against IDynamicEntity and PlayerCharacter
-            _iocContainer.Bind<PlayerCharacter>().ToConstant(null).InSingletonScope(); //Register the current Player.
-            _iocContainer.Bind<IDynamicEntity>().ToConstant(null).InSingletonScope().Named("Player"); //Register the current Player.
             _iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");    //Rendering Player
             _iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");  //Rendering Dynamic Entities
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();  //Voxel Factory
