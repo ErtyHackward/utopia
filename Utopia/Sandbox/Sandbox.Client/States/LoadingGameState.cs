@@ -75,6 +75,7 @@ namespace Sandbox.Client.States
         private SandboxEntityFactory _serverFactory;
         private ServerComponent _serverComponent;
         private SharpDX.Direct3D11.DeviceContext _context;
+        private IChunkStorageManager _chunkStorageManager;
 
         public override string Name
         {
@@ -268,7 +269,16 @@ namespace Sandbox.Client.States
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
             var clouds = _ioc.Get<IDrawableComponent>("Clouds");
-            var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
+
+            if (_chunkStorageManager != null)
+            {
+                _chunkStorageManager.Reset(_vars.LocalDataBasePath, false);
+            }
+            else
+            {
+                _chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
+            }
+
             var solidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("SolidCubeMeshFactory");
             var liquidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("LiquidCubeMeshFactory");
             var singleArrayChunkContainer = _ioc.Get<SingleArrayChunkContainer>();
@@ -296,7 +306,7 @@ namespace Sandbox.Client.States
             playerEntityManager.HasMouseFocus = true;
             firstPersonCamera.CameraPlugin = playerEntityManager;
             worldFocusManager.WorldFocus = (IWorldFocus)firstPersonCamera;
-            chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
+            chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, _chunkStorageManager, lightingManager);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
             soundManager.LateInitialization(singleArrayChunkContainer, dynamicEntityManager, playerCharacter);

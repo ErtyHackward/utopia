@@ -11,7 +11,7 @@ namespace Utopia.Worlds.Storage
     public class SQLiteWorldStorageManager : SQLiteStorage, IChunkStorageManager
     {
         #region Private variables
-        private readonly Thread _storageThread;
+        private Thread _storageThread;
         private readonly static int _nbrTicket = 2000;
         private Queue<int> _requestTickets;
         private ConcurrentQueue<CubeRequest> _dataRequestQueue;
@@ -46,6 +46,22 @@ namespace Utopia.Worlds.Storage
             _storageThread.Start();
         }
 
+        public void Reset(string fileName, bool forceNew = false)
+        {
+            IsRunning = false;
+            CloseConnection();
+            CreateDBConnection(fileName, forceNew);
+
+            _landscapeInsertCmd.Dispose();
+            _landscapeGetCmd.Dispose();
+            _landscapeGetHash.Dispose();
+
+            ChunkStorageManagerInit();
+
+            IsRunning = true;
+            _storageThread = new Thread(StorageMainLoop); //Start the main loop
+            _storageThread.Start();
+        }
 
         protected override string CreateDataBase()
         {
