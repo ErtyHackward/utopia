@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 
 namespace Utopia.Worlds.Storage
 {
-    public interface IChunkStorageManager
+    public interface IChunkStorageManager : IDisposable
     {
         //Async data request
         int RequestDataTicket_async(long chunkID); // You request your data with this interface, you receive a Ticket
@@ -20,5 +20,7 @@ namespace Utopia.Worlds.Storage
 
         //Contains the list of all chunks inside the DB, this remove the needs to query/wait the database to get the MD5 hash
         ConcurrentDictionary<long, Md5Hash> ChunkHashes { get; }
+
+        void Reset(string fileName, bool forceNew = false);
     }
 }

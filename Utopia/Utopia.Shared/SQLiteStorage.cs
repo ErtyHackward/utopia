@@ -12,9 +12,9 @@ namespace Utopia.Shared
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly SQLiteConnection _connection;
-        private readonly string _path;
-        private readonly object _syncRoot = new object();
+        private SQLiteConnection _connection;
+        private string _path;
+        private object _syncRoot = new object();
 
         /// <summary>
         /// Gets database path
@@ -47,6 +47,11 @@ namespace Utopia.Shared
         /// <param name="wipeDatabase"></param>
         protected SQLiteStorage(string fileName, bool wipeDatabase = false)
         {
+            CreateDBConnection(fileName, wipeDatabase);
+        }
+
+        protected void CreateDBConnection(string fileName, bool wipeDatabase = false)
+        {
             _path = fileName;
 
             var createDb = false;
@@ -71,11 +76,12 @@ namespace Utopia.Shared
             }
             else createDb = true;
 
-            var csb = new SQLiteConnectionStringBuilder {
-                SyncMode = SynchronizationModes.Normal, 
+            var csb = new SQLiteConnectionStringBuilder
+            {
+                SyncMode = SynchronizationModes.Normal,
                 DataSource = _path
             };
-            
+
             _connection = new SQLiteConnection(csb + @";COMPRESS=TRUE");
             _connection.Open();
 
@@ -85,6 +91,11 @@ namespace Utopia.Shared
         }
 
         public virtual void Dispose()
+        {
+            CloseConnection();
+        }
+
+        protected void CloseConnection()
         {
             if (_connection != null && _connection.State != ConnectionState.Closed)
             {
