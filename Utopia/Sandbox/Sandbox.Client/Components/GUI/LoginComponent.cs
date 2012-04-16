@@ -104,28 +104,28 @@ namespace Sandbox.Client.Components.GUI
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
-        public LoginComponent(D3DEngine engine, MainScreen screen)
-            : base(engine, screen)
+        public LoginComponent(D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources)
+            : base(engine, screen, commonResources)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");
             _engine = engine;
             _screen = screen;
 
-            _stEnter            = ToDispose(LoadTexture(engine, "Images\\Login\\enter.png"));
-            _stEnterHover       = ToDispose(LoadTexture(engine, "Images\\Login\\enter_hover.png"));
-            _stEnterDown        = ToDispose(LoadTexture(engine, "Images\\Login\\enter_press.png"));
-            _stEnterDisabled    = ToDispose(LoadTexture(engine, "Images\\Login\\enter_disabled.png"));
+            _stEnter            = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\enter.png"));
+            _stEnterHover       = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\enter_hover.png"));
+            _stEnterDown        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\enter_press.png"));
+            _stEnterDisabled    = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\enter_disabled.png"));
 
-            _stSign             = ToDispose(LoadTexture(engine, "Images\\Login\\sign.png"));
-            _stSignHover        = ToDispose(LoadTexture(engine, "Images\\Login\\sign_hover.png"));
+            _stSign             = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\sign.png"));
+            _stSignHover        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\sign_hover.png"));
 
-            _stInputBg          = ToDispose(LoadTexture(engine, "Images\\Login\\login_input_bg.png"));
-            _stEmail            = ToDispose(LoadTexture(engine, "Images\\Login\\email.png"));
-            _stPassword         = ToDispose(LoadTexture(engine, "Images\\Login\\password.png"));
+            _stInputBg          = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\login_input_bg.png"));
+            _stEmail            = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\email.png"));
+            _stPassword         = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\password.png"));
 
-            _stAutentification  = ToDispose(LoadTexture(engine, "Images\\Login\\authentication.png"));
-            _stError            = ToDispose(LoadTexture(engine, "Images\\Login\\error.png"));
+            _stAutentification  = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\authentication.png"));
+            _stError            = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\error.png"));
         }
 
         protected override void EngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer)
@@ -192,7 +192,7 @@ namespace Sandbox.Client.Components.GUI
             {
                 Text = Email,
                 CustomBackground = _stInputBg,
-                CustomFont = FontBebasNeue35,
+                CustomFont = _commonResources.FontBebasNeue35,
                 Color = SharpDX.Colors.White,
                 CustomHintImage = _stEmail,
                 TextOffset = new SharpDX.Vector2(25,22),
@@ -204,7 +204,7 @@ namespace Sandbox.Client.Components.GUI
                 Text = Password,
                 IsPassword = true,
                 CustomBackground = _stInputBg,
-                CustomFont = FontBebasNeue35,
+                CustomFont = _commonResources.FontBebasNeue35,
                 Color = SharpDX.Colors.White,
                 CustomHintImage = _stPassword,
                 TextOffset = new SharpDX.Vector2(25,22),
@@ -236,8 +236,8 @@ namespace Sandbox.Client.Components.GUI
             };
 
             _errorText = new LabelControl 
-            { 
-                CustomFont = FontBebasNeue25,
+            {
+                CustomFont = _commonResources.FontBebasNeue25,
                 Color = SharpDX.Colors.White,
                 Autosizing = true
             };

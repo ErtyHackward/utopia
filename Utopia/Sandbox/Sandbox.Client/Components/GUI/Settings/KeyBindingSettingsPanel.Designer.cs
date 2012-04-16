@@ -78,7 +78,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             {
                 Text = _panelName,
                 Color = new ByteColor(255,255,255),
-                CustomFont = SandboxMenuComponent.FontBebasNeue25
+                CustomFont = _parent.CommonResources.FontBebasNeue25
             };
 
             //Create the Game Component section
@@ -93,7 +93,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             {
                 Text = "Move Bindings",
                 Color = new ByteColor(146, 205, 67),
-                CustomFont = SandboxMenuComponent.FontBebasNeue17
+                CustomFont = _parent.CommonResources.FontBebasNeue17
             };
 
             //Create a line per graphical components
@@ -117,7 +117,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             {
                 Text = "Game Bindings",
                 Color = new ByteColor(146, 205, 67),
-                CustomFont = SandboxMenuComponent.FontBebasNeue17
+                CustomFont = _parent.CommonResources.FontBebasNeue17
             };
 
             //Create a line per graphical components
@@ -140,7 +140,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             {
                 Text = "System Bindings",
                 Color = new ByteColor(146, 205, 67),
-                CustomFont = SandboxMenuComponent.FontBebasNeue17
+                CustomFont = _parent.CommonResources.FontBebasNeue17
             };
 
             //Create a line per graphical components

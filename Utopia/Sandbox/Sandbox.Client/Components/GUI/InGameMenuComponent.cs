@@ -50,8 +50,8 @@ namespace Sandbox.Client.Components.GUI
         }
         #endregion
 
-        public InGameMenuComponent(D3DEngine engine, MainScreen screen, RuntimeVariables runtime)
-            : base(engine, screen)
+        public InGameMenuComponent(D3DEngine engine, MainScreen screen, RuntimeVariables runtime, SandboxCommonResources commonResources)
+            : base(engine, screen, commonResources)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");
@@ -61,14 +61,14 @@ namespace Sandbox.Client.Components.GUI
 
             _engine.ViewPort_Updated += UpdateLayout;
 
-            _stMenuButton   = ToDispose(LoadTexture(engine, "Images\\MainMenu\\menu_button.png"));
-            _stMenuHover    = ToDispose(LoadTexture(engine, "Images\\MainMenu\\menu_button_hover.png"));
-            _stMenuDown     = ToDispose(LoadTexture(engine, "Images\\MainMenu\\menu_button_down.png"));
+            _stMenuButton   = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button.png"));
+            _stMenuHover    = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button_hover.png"));
+            _stMenuDown     = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button_down.png"));
 
-            _stLabelContinue        = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_continue.png"));
-            _stLabelCredits         = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_credits.png"));
-            _stLabelExit            = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_exit.png"));
-            _stLabelSettings        = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_settings.png"));
+            _stLabelContinue        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_continue.png"));
+            _stLabelCredits         = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_credits.png"));
+            _stLabelExit            = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_exit.png"));
+            _stLabelSettings        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_settings.png"));
 
             this._borderOffset = 10;
         }

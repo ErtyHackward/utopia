@@ -52,8 +52,8 @@ namespace Sandbox.Client.Components.GUI.Settings
             _stMenuDown = ToDispose(new SpriteTexture(_engine.Device, @"Images\MainMenu\menu_button_down.png", new Vector2I()));
 
             _windowLabel = new LabelControl() { Text = "Settings", 
-                                                Color = new ByteColor(198,0,75), 
-                                                CustomFont = SandboxMenuComponent.FontBebasNeue35,
+                                                Color = new ByteColor(198,0,75),
+                                                CustomFont = CommonResources.FontBebasNeue35,
                                                 CustomHorizontalPlacement = FlatGuiGraphics.Frame.HorizontalTextAlignment.Center,
                                                 CustomVerticalPlacement = FlatGuiGraphics.Frame.VerticalTextAlignment.Center};
 
@@ -61,9 +61,9 @@ namespace Sandbox.Client.Components.GUI.Settings
                                                         Color = Colors.Red, IsVisible = false};
 
             _leftMenuPanel = new PanelControl() { Color = Colors.WhiteSmoke };
-            _cubesPatern = new ImageControl() { Image = SandboxMenuComponent.StCubesPattern };
-            _linenPatern = new ImageControl() { Image = SandboxMenuComponent.StLinenPattern };
-            _shadow = new ImageControl() { Image = SandboxMenuComponent.StShadow };
+            _cubesPatern = new ImageControl() { Image = CommonResources.StCubesPattern };
+            _linenPatern = new ImageControl() { Image = CommonResources.StLinenPattern };
+            _shadow = new ImageControl() { Image = CommonResources.StShadow };
 
             _settingsForm = new Control();
 

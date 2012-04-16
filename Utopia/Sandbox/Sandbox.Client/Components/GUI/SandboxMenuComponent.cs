@@ -27,28 +27,9 @@ namespace Sandbox.Client.Components.GUI
     /// </summary>
     public abstract class SandboxMenuComponent : DrawableGameComponent
     {
-
-        // common resources
-        public static SpriteTexture StShadow;
-        public static SpriteTexture StLogo;
-        public static SpriteTexture StGameName;
-        public static SpriteTexture StCubesPattern;
-        public static SpriteTexture StLinenPattern;
-        public static SpriteTexture StInputBackground;
-        public static SpriteTexture StButtonBackground;
-        public static SpriteTexture StButtonBackgroundDown;
-        public static SpriteTexture StButtonBackgroundHover;
-
-        public static SpriteFont FontBebasNeue50;
-        public static SpriteFont FontBebasNeue35;
-        public static SpriteFont FontBebasNeue25;
-        public static SpriteFont FontBebasNeue17;
-
-        protected static PrivateFontCollection fontCollection;
-        public static bool WithTexturedCubes = false;
-
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
+        protected readonly SandboxCommonResources _commonResources;
 
         protected int _headerHeight;
 
@@ -67,73 +48,19 @@ namespace Sandbox.Client.Components.GUI
         protected Mesh _meshBluePrint;
         protected Matrix _view;
         protected int _borderOffset = 0;
-
-
-        public static SpriteTexture LoadTexture(D3DEngine engine, string filePath)
-        {
-            return new SpriteTexture(engine.Device, filePath, new Vector2I());
-        }
-
-        public static void LoadCommonImages(D3DEngine engine)
-        {
-            if (StShadow != null)
-                throw new InvalidOperationException("Common images already loaded");
-
-            StShadow                = LoadTexture(engine, @"Images\shadow.png");
-            StLogo                  = LoadTexture(engine, @"Images\logo.png");
-            StGameName              = LoadTexture(engine, @"Images\version.png");
-            StCubesPattern          = LoadTexture(engine, @"Images\cubes.png");
-            StLinenPattern          = LoadTexture(engine, @"Images\black-linen.png");
-            StInputBackground       = LoadTexture(engine, @"Images\Login\login_input_bg.png");
-            StButtonBackground      = LoadTexture(engine, @"Images\MainMenu\menu_button.png");
-            StButtonBackgroundDown  = LoadTexture(engine, @"Images\MainMenu\menu_button_hover.png");
-            StButtonBackgroundHover = LoadTexture(engine, @"Images\MainMenu\menu_button_down.png");
-
-            fontCollection = new PrivateFontCollection();
-            fontCollection.AddFontFile("Images\\BebasNeue.ttf");
-
-            FontBebasNeue50 = new SpriteFont();
-            FontBebasNeue50.Initialize(fontCollection.Families[0], 50, FontStyle.Regular, true, engine.Device);
-
-            FontBebasNeue35 = new SpriteFont();
-            FontBebasNeue35.Initialize(fontCollection.Families[0], 35, FontStyle.Regular, true, engine.Device);
-
-            FontBebasNeue25 = new SpriteFont();
-            FontBebasNeue25.Initialize(fontCollection.Families[0], 25, FontStyle.Regular, true, engine.Device);
-
-            FontBebasNeue17 = new SpriteFont();
-            FontBebasNeue17.Initialize(fontCollection.Families[0], 16, FontStyle.Regular, true, engine.Device);
-        }
-
-        public static void DisposeCommonImage()
-        {
-            StShadow.Dispose();
-            StLogo.Dispose();
-            StGameName.Dispose();
-            StCubesPattern.Dispose();
-            StLinenPattern.Dispose();
-            StInputBackground.Dispose();
-            StButtonBackground.Dispose();
-            StButtonBackgroundDown.Dispose();
-            StButtonBackgroundHover.Dispose();
-
-            FontBebasNeue50.Dispose();
-            FontBebasNeue35.Dispose();
-            FontBebasNeue25.Dispose();
-            FontBebasNeue17.Dispose();
-        }
-
-        protected SandboxMenuComponent(D3DEngine engine, MainScreen screen)
+        
+        protected SandboxMenuComponent(D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources)
         {
             _engine = engine;
             _screen = screen;
+            _commonResources = commonResources;
             _engine.ViewPort_Updated += EngineViewPortUpdated;
 
-            _linen = new ImageControl { Image = StLinenPattern };
-            _cubes = new ImageControl { Image = StCubesPattern };
-            _shadow = new ImageControl { Image = StShadow };
-            _logo = new ImageControl { Image = StLogo };
-            _version = new ImageControl { Image = StGameName };
+            _linen = new ImageControl { Image = _commonResources.StLinenPattern };
+            _cubes = new ImageControl { Image = _commonResources.StCubesPattern };
+            _shadow = new ImageControl { Image = _commonResources.StShadow };
+            _logo = new ImageControl { Image = _commonResources.StLogo };
+            _version = new ImageControl { Image = _commonResources.StGameName };
 
 
             DrawOrders.UpdateIndex(0, int.MaxValue - 1);
@@ -248,7 +175,6 @@ namespace Sandbox.Client.Components.GUI
 
         public override void BeforeDispose()
         {
-            fontCollection.Dispose();
             _engine.ViewPort_Updated -= EngineViewPortUpdated;
         }
 

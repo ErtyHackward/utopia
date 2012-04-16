@@ -100,6 +100,8 @@
     <Compile Include="Components\GUI\LoadingComponent.cs" />
     <Compile Include="Components\GUI\LoginComponent.cs" />
     <Compile Include="Components\GUI\MainMenuComponent.cs" />
+    <Compile Include="Components\GUI\PlayerInventory.cs" />
+    <Compile Include="Components\GUI\SandboxCommonResources.cs" />
     <Compile Include="Components\GUI\Settings\CoreEngineSettingsPanel.cs" />
     <Compile Include="Components\GUI\Settings\GraphicSettingsPanel.cs" />
     <Compile Include="Components\GUI\Settings\KeyBindingSettingsPanel.cs" />
