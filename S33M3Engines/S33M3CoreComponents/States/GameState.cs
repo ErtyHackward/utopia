@@ -59,9 +59,11 @@ namespace S33M3CoreComponents.States
         {
             get
             {
-                return GameComponents.All(c => c.IsInitialized && c.IsDisposed == false);
+                return GameComponents.All(c => c.IsInitialized) && IsDirty == false;
             }
         }
+
+        public bool IsDirty { get; set; }
         #endregion
 
         public GameState(GameStatesManager StatesManager)
@@ -129,6 +131,8 @@ namespace S33M3CoreComponents.States
                     gc.IsInitialized = true;
                 }
             }
+
+            IsDirty = false;
         }
 
         /// <summary>

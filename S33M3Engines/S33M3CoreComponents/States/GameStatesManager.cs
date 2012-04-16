@@ -94,7 +94,10 @@ namespace S33M3CoreComponents.States
             foreach (var state in _gameStates)
             {
                 //Remvoe all components that have been disposed from the States
-                state.GameComponents.RemoveAll(x => x.IsDisposed);
+                if (state.GameComponents.RemoveAll(x => x.IsDisposed) > 0)
+                {
+                    state.IsDirty = true;
+                }
             }
         }
 
