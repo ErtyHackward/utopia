@@ -87,6 +87,17 @@ namespace S33M3CoreComponents.States
         {
         }
 
+        //Will search trhough all registered States, and remove the Disposed components inside them
+        //To give the possibility to release not used resources
+        public void GameStatesCleanUp()
+        {
+            foreach (var state in _gameStates)
+            {
+                //Remvoe all components that have been disposed from the States
+                state.GameComponents.RemoveAll(x => x.IsDisposed);
+            }
+        }
+
         public GameStatesManager(D3DEngine engine, Game game, ISwitchComponent switchComponent, int allocatedThreadPool = 3)
         {
             if (game == null)

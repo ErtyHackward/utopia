@@ -210,6 +210,9 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
+            Chunks = null;
+            SortedChunks = null;
+
             DisposeDrawComponents();
 
         }

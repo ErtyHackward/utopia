@@ -78,6 +78,13 @@ namespace Utopia.Network
 
         public void Dispose()
         {
+            if (_playerEntity != null)
+            {
+                _playerEntity.PositionChanged -= PlayerEntityPositionChanged;
+                _playerEntity.ViewChanged -= PlayerEntityViewChanged;
+                _playerEntity.Use -= PlayerEntityUse;
+            }
+
             _server.MessageEntityIn -= ConnectionMessageEntityIn;
             _server.MessageEntityOut -= ConnectionMessageEntityOut;
             _server.MessagePosition -= ConnectionMessagePosition;

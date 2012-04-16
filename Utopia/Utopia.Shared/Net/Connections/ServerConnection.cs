@@ -113,6 +113,7 @@ namespace Utopia.Shared.Net.Connections
             while (_isrunning)
             {
                 _needSend.WaitOne();
+                if (!_isrunning) return;
                 try
                 {
                     lock (_sendSynObject)
@@ -137,9 +138,7 @@ namespace Utopia.Shared.Net.Connections
                     SetConnectionStatus(new ConnectionStatusEventArgs { Status = ConnectionStatus.Disconnected, Exception = ex });
                 }
             }
-// ReSharper disable FunctionNeverReturns
         }
-// ReSharper restore FunctionNeverReturns
 
         /// <summary>
         /// Enqueues message to be sent in other thread. Lagless way to send something
@@ -207,6 +206,7 @@ namespace Utopia.Shared.Net.Connections
             if (disposing)
             {
                 _isrunning = false;
+                _needSend.Set();
                 _needSend.Dispose();
                 if(Writer != null)
                     Writer.Dispose();
