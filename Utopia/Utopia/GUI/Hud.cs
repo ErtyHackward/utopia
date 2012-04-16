@@ -103,6 +103,7 @@ namespace Utopia.GUI
 
         public override void BeforeDispose()
         {
+            _toolbarUi.Dispose();
             _spriteRender.Dispose();
             _crosshair.Dispose();
             _font.Dispose();

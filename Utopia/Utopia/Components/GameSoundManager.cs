@@ -26,7 +26,7 @@ namespace Utopia.Components
     /// Wrapper around irrKlang library to provide sound playback
     /// Used to play all sound media
     /// </summary>
-    public class SoundManager : GameComponent, IDebugInfo
+    public class GameSoundManager : GameComponent, IDebugInfo
     {
         private readonly CameraManager<ICameraFocused> _cameraManager;
         private IDynamicEntityManager _dynamicEntityManager;
@@ -39,7 +39,6 @@ namespace Utopia.Components
 
         private readonly SortedList<string, KeyValuePair<ISound, List<IrrVector3>>> _sharedSounds = new SortedList<string, KeyValuePair<ISound, List<IrrVector3>>>();
         
-        private string _buttonPressSound;
         private string _debugInfo;
         private long _listenCubesTime;
 
@@ -55,15 +54,14 @@ namespace Utopia.Components
             get { return _soundEngine; }
         }
 
-        public SoundManager(CameraManager<ICameraFocused> cameraManager)
+        public GameSoundManager(ISoundEngine soundEngine, 
+                                CameraManager<ICameraFocused> cameraManager, 
+                                SingleArrayChunkContainer singleArray, 
+                                IDynamicEntityManager dynamicEntityManager, 
+                                IDynamicEntity player)
         {
             _cameraManager = cameraManager;
-
-            _soundEngine = ToDispose(new ISoundEngine());
-
-        }
-        public void LateInitialization(SingleArrayChunkContainer singleArray, IDynamicEntityManager dynamicEntityManager, IDynamicEntity player)
-        {
+            _soundEngine = soundEngine;
             _singleArray = singleArray;
 
             _dynamicEntityManager = dynamicEntityManager;
@@ -95,26 +93,8 @@ namespace Utopia.Components
             }
         }
 
-        public void SetGuiButtonSound(string filePath)
-        {
-            if (_buttonPressSound == null)
-                ButtonControl.PressedSome += PressableControlPressedSome;
-
-            _buttonPressSound = filePath;
-        }
-
-        private void PressableControlPressedSome(object sender, EventArgs e)
-        {
-            _soundEngine.Play2D(_buttonPressSound);
-        }
-
         public override void BeforeDispose()
         {
-            if (_buttonPressSound != null)
-            {
-                _buttonPressSound = null;
-                ButtonControl.PressedSome -= PressableControlPressedSome;
-            }
         }
 
         public override void Update(GameTime timeSpent)

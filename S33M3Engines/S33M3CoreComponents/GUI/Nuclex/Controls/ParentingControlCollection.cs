@@ -108,9 +108,10 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             // that this operation usually only happens once, there's no point in adding
             // the overhead of managing a synchronized look-up dictionary here.
             for (int index = 0; index < base.Count; ++index)
+            {
                 if (base[index].Name == name)
                     return true;
-
+            }
             // If we reach this point, no control is using the specified name.
             return false;
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace S33M3DXEngine.Main.Interfaces
 {
-    public interface IUpdatableComponent : IGameComponent, IUpdatable, IDisposable
+    public interface IUpdatableComponent : IGameComponent, IUpdatable
     {
         event EventHandler<EventArgs> UpdateOrderChanged;
         event EventHandler<EventArgs> UpdatableChanged;

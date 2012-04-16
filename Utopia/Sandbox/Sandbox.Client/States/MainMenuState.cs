@@ -7,6 +7,7 @@ using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
 using Ninject.Parameters;
 using Sandbox.Client.Components.GUI;
+using Utopia.Components;
 
 namespace Sandbox.Client.States
 {
@@ -35,6 +36,7 @@ namespace Sandbox.Client.States
             var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
             var menu = _iocContainer.Get<MainMenuComponent>();
+            var sound = _iocContainer.Get<GeneralSoundManager>();
             _vars = _iocContainer.Get<RuntimeVariables>();
 
             AddComponent(bg);

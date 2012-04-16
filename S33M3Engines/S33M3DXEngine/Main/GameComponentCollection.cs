@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using S33M3DXEngine.Main.Interfaces;
+using SharpDX;
 
 namespace S33M3DXEngine.Main
 {
@@ -30,6 +31,23 @@ namespace S33M3DXEngine.Main
     {
         public event EventHandler<GameComponentCollectionEventArgs> ComponentAdded;
         public event EventHandler<GameComponentCollectionEventArgs> ComponentRemoved;
+
+        //Will remove, all components that have been disposed
+        public void CleanUp()
+        {
+            var component2BRemoved = this.Where(x => x.IsDisposed);
+            List<int> indexList = new List<int>();
+            foreach (var fc in component2BRemoved)
+            {
+                indexList.Add(base.IndexOf(fc));
+                OnComponentRemoved(new GameComponentCollectionEventArgs(fc));
+            }
+
+            foreach (int i in indexList.OrderByDescending(x => x))
+            {
+                base.RemoveAt(i);
+            }
+        }
 
         public void Dispose()
         {

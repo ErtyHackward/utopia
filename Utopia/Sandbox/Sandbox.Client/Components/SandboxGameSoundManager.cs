@@ -4,15 +4,21 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.Entities.Managers;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Interfaces;
+using IrrKlang;
+using Utopia.Shared.Chunks;
+using Utopia.Entities.Managers.Interfaces;
 
 namespace Sandbox.Client.Components
 {
-    public class SandboxSoundManager : SoundManager
+    public class SandboxGameSoundManager : GameSoundManager
     {
-        public SandboxSoundManager(CameraManager<ICameraFocused> cameraManager)
-            : base(cameraManager)
+        public SandboxGameSoundManager( ISoundEngine soundEngine,
+                                    CameraManager<ICameraFocused> cameraManager,
+                                    SingleArrayChunkContainer singleArray,
+                                    IDynamicEntityManager dynamicEntityManager,
+                                    IDynamicEntity player)
+            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player)
         {
-            SetGuiButtonSound("Sounds\\Interface\\button_press.wav");
 
             AddStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass01.ogg");
             //AddStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass02.ogg");

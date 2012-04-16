@@ -80,6 +80,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
 
         public override void BeforeDispose()
         {
+            if (this.parent != null) this.RemoveFromParent();
+
             if (Clicked != null)
             {
                 //Remove all Events associated to this control (That haven't been unsubscribed !)

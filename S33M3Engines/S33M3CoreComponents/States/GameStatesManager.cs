@@ -119,9 +119,6 @@ namespace S33M3CoreComponents.States
         //End of activation process where the new state is pushed for rendering
         private void SwitchActiveGameState(GameState newState)
         {
-            //Raise the GameState.OnDisabled event from the Currently running GameState
-            if (_currentState != null) _currentState.OnDisabled(newState); //Disable the currently running GameState
-
             //send the current to previous state, and set the new state to current
             GameState prev = _currentState;
             _currentState = newState;
@@ -136,8 +133,14 @@ namespace S33M3CoreComponents.States
             //Deactivate the "previous" state's component, and enable the new one !
             DisablePreviousEnableCurrent(prev, _currentState);
 
+            //Raise the GameState.OnDisabled event from the Currently running GameState
+            if (prev != null) prev.OnDisabled(newState); //Disable the currently running GameState
+
             //Raise the GameState.OnEnabled event from the Newly running GameState
             if (_currentState != null) _currentState.OnEnabled(prev);
+
+            //In case some Disabled components have been disposed, start a Main Rendering Collection cleanup.
+            _game.GameComponents.CleanUp();
 
             _inActivationProcess = false;
             _currentState.IsActivationRequested = false;

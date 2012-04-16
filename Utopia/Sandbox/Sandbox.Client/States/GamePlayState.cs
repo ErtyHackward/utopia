@@ -25,11 +25,15 @@ using Utopia.GUI.Map;
 using S33M3CoreComponents.Debug;
 using Utopia.Components;
 using Utopia.Shared.Settings;
+using System.Linq;
+using Sandbox.Client.Components.GUI;
 
 namespace Sandbox.Client.States
 {
     public class GamePlayState : GameState
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly IKernel _ioc;
 
         public override string Name
@@ -54,7 +58,6 @@ namespace Sandbox.Client.States
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
             var chat = _ioc.Get<ChatComponent>();
-            //var map = _ioc.Get<MapComponent>();
             var hud = _ioc.Get<Hud>();
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
@@ -63,11 +66,14 @@ namespace Sandbox.Client.States
             var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
-            var soundManager = _ioc.Get<SoundManager>();
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>();
+            var soundManager = _ioc.Get<GameSoundManager>();
+            var serverComponent = _ioc.Get<ServerComponent>();
+            var bg = _ioc.Get<BlackBgComponent>();
 
+            AddComponent(bg);
             AddComponent(cameraManager);
-            AddComponent(_ioc.Get<ServerComponent>());
+            AddComponent(serverComponent);
             AddComponent(inputsManager);
             AddComponent(iconFactory);
             AddComponent(timerManager);
@@ -78,19 +84,36 @@ namespace Sandbox.Client.States
             AddComponent(pickingRenderer);
             AddComponent(inventory);
             AddComponent(chat);
-            //AddComponent(map);
-            //AddComponent(entityEditor);
-            //AddComponent(carvingEditor);
             AddComponent(skyDome);
             AddComponent(gameClock);
             AddComponent(weather);
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
-            AddComponent(staggingBackBuffer);
             AddComponent(soundManager);
+            AddComponent(staggingBackBuffer);
+
+#if DEBUG
+            //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
+            foreach (var gc in _ioc.Get<LoadingGameState>().GameComponents.Except(GameComponents))
+            {
+                if (gc.GetType() != typeof(Sandbox.Client.Components.GUI.LoadingComponent))
+                {
+                    logger.Warn("Missing GamePlayState component, present inside LoadingGameState : {0}", gc.GetType().ToString());
+                }
+            }
+
+            //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
+            foreach (var gc in GameComponents.Except(_ioc.Get<LoadingGameState>().GameComponents))
+            {
+                if (gc.GetType() != typeof(Sandbox.Client.Components.GUI.LoadingComponent))
+                {
+                    logger.Warn("Missing LoadingGameState component, present inside GamePlayState : {0}", gc.GetType().ToString());
+                }
+            }
+
+#endif
 
             chat.MessageOut += ChatMessageOut;
-            
 
             base.Initialize(context);
         }
