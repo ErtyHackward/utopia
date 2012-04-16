@@ -42,7 +42,12 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
         )
         {
             RectangleF controlBounds = control.GetAbsoluteBounds();
-            graphics.DrawElement("window",ref controlBounds);
+            if (control.CustomWindowImage == null)
+                graphics.DrawElement("window", ref controlBounds);
+            else
+            {
+                graphics.DrawCustomTexture(control.CustomWindowImage, ref controlBounds);
+            }
 
             if (control.Title != null)
             {

@@ -145,7 +145,7 @@ namespace Sandbox.Client
 
             _iocContainer.Dispose();
 
-            commonResources.DisposeCommonImage();
+            commonResources.Dispose();
 
             game.Dispose();
 

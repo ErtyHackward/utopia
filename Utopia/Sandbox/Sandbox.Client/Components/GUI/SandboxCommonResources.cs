@@ -9,7 +9,7 @@ namespace Sandbox.Client.Components.GUI
     /// <summary>
     /// Stores sandbox specific common resources
     /// </summary>
-    public class SandboxCommonResources
+    public class SandboxCommonResources : IDisposable
     {
         public SpriteTexture StShadow;
         public SpriteTexture StLogo;
@@ -25,6 +25,12 @@ namespace Sandbox.Client.Components.GUI
         public SpriteFont FontBebasNeue35;
         public SpriteFont FontBebasNeue25;
         public SpriteFont FontBebasNeue17;
+
+        public SpriteTexture StInventoryEquipmentSlot;
+        public SpriteTexture StInventoryEquipmentSlotHover;
+        public SpriteTexture StInventoryInfo;
+        public SpriteTexture StInventorySlot;
+        public SpriteTexture StInventorySlotHover;
 
         public PrivateFontCollection FontCollection;
 
@@ -64,22 +70,43 @@ namespace Sandbox.Client.Components.GUI
             FontBebasNeue17.Initialize(FontCollection.Families[0], 16, FontStyle.Regular, true, engine.Device);
         }
 
-        public void DisposeCommonImage()
+        public void LoadInventoryImages(D3DEngine engine)
         {
-            StShadow.Dispose();
-            StLogo.Dispose();
-            StGameName.Dispose();
-            StCubesPattern.Dispose();
-            StLinenPattern.Dispose();
-            StInputBackground.Dispose();
-            StButtonBackground.Dispose();
-            StButtonBackgroundDown.Dispose();
-            StButtonBackgroundHover.Dispose();
+            StInventoryEquipmentSlot        = LoadTexture(engine, @"Images\Inventory\equipment_slot.png");
+            StInventoryEquipmentSlotHover   = LoadTexture(engine, @"Images\Inventory\equipment_slot_hover.png");
+            StInventoryInfo                 = LoadTexture(engine, @"Images\Inventory\inventory_info.png");
+            StInventorySlot                 = LoadTexture(engine, @"Images\Inventory\inventory_slot.png");
+            StInventorySlotHover            = LoadTexture(engine, @"Images\Inventory\inventory_slot_active.png");
+        }
 
-            FontBebasNeue50.Dispose();
-            FontBebasNeue35.Dispose();
-            FontBebasNeue25.Dispose();
-            FontBebasNeue17.Dispose();
+        public void Dispose()
+        {
+            if (StShadow != null)
+            {
+                StShadow.Dispose();
+                StLogo.Dispose();
+                StGameName.Dispose();
+                StCubesPattern.Dispose();
+                StLinenPattern.Dispose();
+                StInputBackground.Dispose();
+                StButtonBackground.Dispose();
+                StButtonBackgroundDown.Dispose();
+                StButtonBackgroundHover.Dispose();
+
+                FontBebasNeue50.Dispose();
+                FontBebasNeue35.Dispose();
+                FontBebasNeue25.Dispose();
+                FontBebasNeue17.Dispose();
+            }
+
+            if (StInventoryEquipmentSlot != null)
+            {
+                StInventoryEquipmentSlot.Dispose();
+                StInventoryEquipmentSlotHover.Dispose();
+                StInventoryInfo.Dispose();
+                StInventorySlot.Dispose();
+                StInventorySlotHover.Dispose();
+            }
         }
     }
 }
