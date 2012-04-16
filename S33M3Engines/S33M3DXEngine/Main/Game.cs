@@ -363,6 +363,8 @@ namespace S33M3DXEngine.Main
 
                 if (u.Updatable)
                     _enabledUpdatable.Remove(u);
+
+                _currentlyUpdatingComponents.Clear(); //Need to clear the currently Updating collection, that will need to be refreshed.
             }
         }
 

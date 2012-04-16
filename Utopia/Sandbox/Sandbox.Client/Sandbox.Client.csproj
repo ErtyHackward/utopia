@@ -53,6 +53,10 @@
     <ApplicationIcon>Resources\Utopia.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="irrKlang.NET4, Version=1.0.3861.18767, Culture=neutral, PublicKeyToken=a854741bd80517c7, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Library\irrKlang.NET4.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\..\..\Library\Ninject.dll</HintPath>
     </Reference>
@@ -113,16 +117,18 @@
       <DependentUpon>SettingsPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\GUI\Settings\SoundSettingsPanel.cs" />
-    <Compile Include="Components\SandboxSoundManager.cs" />
+    <Compile Include="Components\SandboxGameSoundManager.cs" />
     <Compile Include="Components\GUI\ServerSelectionComponent.cs" />
     <Compile Include="Components\GUI\Settings\SettingsComponent.Designer.cs">
       <DependentUpon>SettingsComponent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\SandboxGeneralSoundManager.cs.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="GameStateToolManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeVariables.cs" />
+    <Compile Include="States\GameScope.cs" />
     <Compile Include="States\InGameMenuState.cs" />
     <Compile Include="States\CreditsState.cs" />
     <Compile Include="States\EditorState.cs" />

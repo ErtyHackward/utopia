@@ -8,6 +8,7 @@ using S33M3CoreComponents.GUI;
 using Ninject.Parameters;
 using Sandbox.Client.Components.GUI;
 using Utopia.Network;
+using Utopia.Components;
 
 namespace Sandbox.Client.States
 {
@@ -36,6 +37,8 @@ namespace Sandbox.Client.States
             var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
             var menu = _iocContainer.Get<InGameMenuComponent>();
+            var sound = _iocContainer.Get<GeneralSoundManager>();
+
             _vars = _iocContainer.Get<RuntimeVariables>();
 
             AddComponent(bg);
@@ -59,17 +62,23 @@ namespace Sandbox.Client.States
             StatesManager.ActivateGameStateAsync("Settings");
         }
 
+        private bool _isGameExited = false;
         void MenuExitPressed(object sender, EventArgs e)
         {
-            var server = _iocContainer.Get<ServerComponent>();
-            server.ServerConnection.Dispose();
-            server.ServerConnection = null;
-
-            StatesManager.FlushStateComponents("Gameplay");
-
+            _isGameExited = true;
             this.WithPreservePreviousStates = false;
-
             StatesManager.ActivateGameStateAsync("MainMenu");
+        }
+
+        public override void OnDisabled(GameState nextState)
+        {
+            if (_isGameExited)
+            {
+                //Dispose all components related to the Game
+                GameScope.CurrentGameScope.Dispose();
+                GameScope.CurrentGameScope = new Scope() { ScopeName = "New Game scope" };
+                _isGameExited = false;
+            }
         }
 
     }

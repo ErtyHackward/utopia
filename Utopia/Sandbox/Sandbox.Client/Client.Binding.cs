@@ -74,30 +74,13 @@ namespace Sandbox.Client
                 throw new InvalidOperationException();
 
             _iocContainer = new StandardKernel();
-            //No need to bind IKernel, its already done in Ninject V3
 
+            // =============================================================================================================================================================
+            // Application LifeTime Binding configuration = Singleton Scope ================================================================================================
+            // =============================================================================================================================================================
             _d3dEngine = new D3DEngine(windowStartingSize, WindowsCaption, ClientSettings.Current.Settings.GraphicalParameters.MSAA.SampleDescription, resolutionSize);
             _iocContainer.Bind<D3DEngine>().ToConstant(_d3dEngine).InSingletonScope();
-
-            //DirectX layer & Helper ===================================
-            _iocContainer.Bind<WorldFocusManager>().ToSelf().InSingletonScope(); //Focus
-            //==========================================================
-
-            //Parameters ===============================================
-            //iocContainer.Bind<WorldParameters>().ToConstant(worldParam).InSingletonScope();
-            _iocContainer.Bind<VisualWorldParameters>().ToSelf().InSingletonScope();
-
-
-            //System Objects Management ================================
             _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope().WithConstructorArgument("allocatedThreadPool", 3); //Application shared states
-            _iocContainer.Bind<ICameraFocused>().To<FirstPersonCameraWithFocus>().InSingletonScope().WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
-            //Force ICamera to use the same singleton as ICameraFocused !
-            _iocContainer.Bind<ICamera>().ToMethod(x => x.Kernel.Get<ICameraFocused>()).InSingletonScope();
-
-            _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InSingletonScope();     //Camera manager
-            _iocContainer.Bind<TimerManager>().ToSelf().InSingletonScope();      //Ingame based Timer class
-            _iocContainer.Bind<SharedFrameCB>().ToSelf().InSingletonScope();      //Ingame based Timer class
-            _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InSingletonScope();
             _iocContainer.Bind<SpriteRenderer>().ToSelf().InSingletonScope();
 
             // Game states ================================================
@@ -126,13 +109,8 @@ namespace Sandbox.Client
             _iocContainer.Bind<InGameMenuState>().ToSelf().InSingletonScope();
 
             _iocContainer.Bind<FadeSwitchComponent>().ToSelf().InSingletonScope();
-            
 
             //Network Related =============================================
-            _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InSingletonScope(); //Impact on player action (From server events)
-            _iocContainer.Bind<EntityFactory>().ToConstant(new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>())).InSingletonScope().Named("Client");
-            _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ClientWebApi>().ToSelf().InSingletonScope();
             //=============================================================
 
@@ -154,61 +132,90 @@ namespace Sandbox.Client
             _iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();       //Icon Factory
             //=============================================================
 
+            _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<BlackBgComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<GeneralSoundManager>().To<SandboxGeneralSoundManager>().InSingletonScope();
+
+            //Debug Components ===========================================
+            _iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope().WithConstructorArgument("LeftPanelColor", new ByteColor(44, 51, 59));
+            //=============================================================
+
+
+            // =============================================================================================================================================================
+            // Game related LifeTime Binding configuration = "Current Game Scope" ==========================================================================================
+            // =============================================================================================================================================================
+
+            //DirectX layer & Helper ===================================
+            _iocContainer.Bind<WorldFocusManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            //==========================================================
+            //Parameters ===============================================
+            _iocContainer.Bind<VisualWorldParameters>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+
+            _iocContainer.Bind<ICameraFocused>().To<FirstPersonCameraWithFocus>().InScope(x => GameScope.CurrentGameScope).WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
+            //Force ICamera to use the same singleton as ICameraFocused !
+            _iocContainer.Bind<ICamera>().ToMethod(x => x.Kernel.Get<ICameraFocused>()).InScope(x => GameScope.CurrentGameScope);
+
+            _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InScope(x => GameScope.CurrentGameScope);//Camera manager
+            _iocContainer.Bind<TimerManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);      //Ingame based Timer class
+            _iocContainer.Bind<SharedFrameCB>().ToSelf().InScope(x => GameScope.CurrentGameScope);     //Ingame based Timer class
+            _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+
+            //Network Related =============================================
+            _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InScope(x => GameScope.CurrentGameScope); //Impact on player action (From server events)
+            _iocContainer.Bind<EntityFactory>().ToConstant(new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>())).InScope(x => GameScope.CurrentGameScope).Named("Client");
+            _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            //=============================================================
+
             //Game Componenents =========================================
-            _iocContainer.Bind<ServerComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
-            _iocContainer.Bind<InventoryComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InSingletonScope().Named("Stars");
-            _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InSingletonScope();
-            _iocContainer.Bind<IWeather>().To<Weather>().InSingletonScope();
+            _iocContainer.Bind<ServerComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<IClock>().To<WorldClock>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<InventoryComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<ChatComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<Hud>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InScope(x => GameScope.CurrentGameScope).Named("Stars");
+            _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<IWeather>().To<Weather>().InScope(x => GameScope.CurrentGameScope);
             switch (ClientSettings.Current.Settings.GraphicalParameters.CloudsQuality)
             {
                 case "2D":
-                    _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InSingletonScope().Named("Clouds");
+                    _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InScope(x => GameScope.CurrentGameScope).Named("Clouds");
                     break;
                 case "3D":
-                    _iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InSingletonScope().Named("Clouds");
+                    _iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InScope(x => GameScope.CurrentGameScope).Named("Clouds");
                     break;
                 default:
                     break;
             }
 
-           
-            _iocContainer.Bind<VoxelModelManager>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<BlackBgComponent>().ToSelf().InSingletonScope();
-            _iocContainer.Bind<SoundManager>().To<SandboxSoundManager>().InSingletonScope();
+
+            _iocContainer.Bind<VoxelModelManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
             //Landscape Creation/Acces/Management ====================================
-            _iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InSingletonScope();
-            _iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InSingletonScope().Named("SolidCubeMeshFactory");
-            _iocContainer.Bind<ICubeMeshFactory>().To<LiquidCubeMeshFactory>().InSingletonScope().Named("LiquidCubeMeshFactory");
-            _iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InSingletonScope();         //The client  "Big" Array
-            _iocContainer.Bind<ILandscapeManager>().To<LandscapeManager>().InSingletonScope();   //Interface betwee the big array and landscape processors
-            _iocContainer.Bind<ILightingManager>().To<LightingManager>().InSingletonScope();     //Landscape lightings
-            _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InSingletonScope();   //Chunk Mesh + Entities creation
-            _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InSingletonScope();             //Chunk Management (Update/Draw)
-            _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InSingletonScope();    //Chunk "Wrapping" inside the big Array
-            _iocContainer.Bind<IGameStateToolManager>().To<GameStateToolManager>().InSingletonScope();
+            _iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InScope(x => GameScope.CurrentGameScope).Named("SolidCubeMeshFactory");
+            _iocContainer.Bind<ICubeMeshFactory>().To<LiquidCubeMeshFactory>().InScope(x => GameScope.CurrentGameScope).Named("LiquidCubeMeshFactory");
+            _iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InScope(x => GameScope.CurrentGameScope);         //The client  "Big" Array
+            _iocContainer.Bind<ILandscapeManager>().To<LandscapeManager>().InScope(x => GameScope.CurrentGameScope);   //Interface betwee the big array and landscape processors
+            _iocContainer.Bind<ILightingManager>().To<LightingManager>().InScope(x => GameScope.CurrentGameScope);     //Landscape lightings
+            _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InScope(x => GameScope.CurrentGameScope);   //Chunk Mesh + Entities creation
+            _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope);             //Chunk Management (Update/Draw)
+            _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InScope(x => GameScope.CurrentGameScope);    //Chunk "Wrapping" inside the big Array
+            _iocContainer.Bind<IGameStateToolManager>().To<GameStateToolManager>().InScope(x => GameScope.CurrentGameScope);
             //=============================================================
 
             //Entities related stuff ====================================================
-            _iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InSingletonScope();         // Use to display the picking cursor on block
-            _iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InSingletonScope();   //Entites picking and collision handling vs player
-            _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InSingletonScope();         //Dynamic Entity manager
-            _iocContainer.Bind<PlayerEntityManager>().ToSelf().InSingletonScope();                             //The player manager
+            _iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InScope(x => GameScope.CurrentGameScope);         // Use to display the picking cursor on block
+            _iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InScope(x => GameScope.CurrentGameScope);   //Entites picking and collision handling vs player
+            _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
+            _iocContainer.Bind<PlayerEntityManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);                             //The player manager
             //Register the Player Against IDynamicEntity and PlayerCharacter
-            _iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InSingletonScope().Named("PlayerEntityRenderer");    //Rendering Player
-            _iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InSingletonScope().Named("DefaultEntityRenderer");  //Rendering Dynamic Entities
-            _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InSingletonScope();  //Voxel Factory
-            _iocContainer.Bind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope();
+            _iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InScope(x => GameScope.CurrentGameScope).Named("PlayerEntityRenderer");    //Rendering Player
+            _iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InScope(x => GameScope.CurrentGameScope).Named("DefaultEntityRenderer");  //Rendering Dynamic Entities
+            _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);  //Voxel Factory
+            _iocContainer.Bind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InScope(x => GameScope.CurrentGameScope);
             //=============================================================
-
-            //Debug Components ===========================================
-            _iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope().WithConstructorArgument("LeftPanelColor", new ByteColor(44,51,59));
-            //=============================================================
+            _iocContainer.Bind<GameSoundManager>().To<SandboxGameSoundManager>().InScope(x => GameScope.CurrentGameScope);
 
         }
     }

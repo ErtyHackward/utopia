@@ -75,7 +75,6 @@ namespace Sandbox.Client.States
         private SandboxEntityFactory _serverFactory;
         private ServerComponent _serverComponent;
         private SharpDX.Direct3D11.DeviceContext _context;
-        private IChunkStorageManager _chunkStorageManager;
 
         public override string Name
         {
@@ -98,7 +97,7 @@ namespace Sandbox.Client.States
             _vars = _ioc.Get<RuntimeVariables>();
             _context = context;
 
-            AddComponent(loading);
+            AddComponent(loading); //Will "Mask" the Components being loaded.
             AddComponent(_ioc.Get<ServerComponent>());
             AddComponent(_ioc.Get<GuiManager>());
 
@@ -261,24 +260,12 @@ namespace Sandbox.Client.States
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
             var chat = _ioc.Get<ChatComponent>();
-            //var map = _ioc.Get<MapComponent>();
             var hud = _ioc.Get<Hud>();
-            //var entityEditor = _ioc.Get<EntityEditor>();
-            //var carvingEditor = _ioc.Get<CarvingEditor>();
             var stars = _ioc.Get<IDrawableComponent>("Stars");
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
             var clouds = _ioc.Get<IDrawableComponent>("Clouds");
-
-            if (_chunkStorageManager != null)
-            {
-                _chunkStorageManager.Reset(_vars.LocalDataBasePath, false);
-            }
-            else
-            {
-                _chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
-            }
-
+            var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
             var solidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("SolidCubeMeshFactory");
             var liquidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("LiquidCubeMeshFactory");
             var singleArrayChunkContainer = _ioc.Get<SingleArrayChunkContainer>();
@@ -287,7 +274,6 @@ namespace Sandbox.Client.States
             var chunkMeshManager = _ioc.Get<IChunkMeshManager>();
             var worldChunks = _ioc.Get<IWorldChunks>();
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
-            //var worldProcessorConfig = _ioc.Get<IWorldProcessorConfig>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
@@ -300,21 +286,23 @@ namespace Sandbox.Client.States
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
-            var soundManager = _ioc.Get<SoundManager>();          
+            var soundManager = _ioc.Get<GameSoundManager>();
+            var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>();
+            var bg = _ioc.Get<BlackBgComponent>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
             firstPersonCamera.CameraPlugin = playerEntityManager;
             worldFocusManager.WorldFocus = (IWorldFocus)firstPersonCamera;
-            chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, _chunkStorageManager, lightingManager);
+            chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
-            soundManager.LateInitialization(singleArrayChunkContainer, dynamicEntityManager, playerCharacter);
             Utopia.Worlds.SkyDomes.SharedComp.Clouds3D c = clouds as Utopia.Worlds.SkyDomes.SharedComp.Clouds3D;
             if (c != null) c.LateInitialization(sharedFrameCB);
 
+            AddComponent(bg);
             AddComponent(cameraManager);
-            AddComponent(_ioc.Get<ServerComponent>());
+            AddComponent(serverComponent);
             AddComponent(inputsManager);
             AddComponent(iconFactory);
             AddComponent(timerManager);
@@ -325,15 +313,15 @@ namespace Sandbox.Client.States
             AddComponent(pickingRenderer);
             AddComponent(inventory);
             AddComponent(chat);
-            //AddComponent(map);
-            //AddComponent(entityEditor);
-            //AddComponent(carvingEditor);
             AddComponent(skyDome);
             AddComponent(gameClock);
             AddComponent(weather);
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
+            AddComponent(soundManager);
+            AddComponent(staggingBackBuffer);
 
+            //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           
 
             worldChunks.LoadComplete += worldChunks_LoadComplete;

@@ -37,7 +37,7 @@ namespace Sandbox.Client.States
             var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
             var login = _iocContainer.Get<LoginComponent>();
-            var sound = _iocContainer.Get<SoundManager>();
+            var sound = _iocContainer.Get<GeneralSoundManager>();
             _webApi = _iocContainer.Get<ClientWebApi>();
 
             login.Email = ClientSettings.Current.Settings.Login;

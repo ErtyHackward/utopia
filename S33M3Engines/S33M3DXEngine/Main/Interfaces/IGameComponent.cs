@@ -6,12 +6,13 @@ using SharpDX.Direct3D11;
 
 namespace S33M3DXEngine.Main.Interfaces
 {
-    public interface IGameComponent
+    public interface IGameComponent : IDisposable
     {
         string Name { get; }
         bool IsSystemComponent { get; }
         bool IsDefferedLoadContent { get; }
         bool CatchExclusiveActions { get; set; }
+        bool IsDisposed { get; }
         void EnableComponent();
         void DisableComponent();
         void Initialize();

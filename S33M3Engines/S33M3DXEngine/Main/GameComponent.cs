@@ -64,6 +64,14 @@ namespace S33M3DXEngine.Main
             }
         }
 
+        public new bool IsDisposed
+        {
+            get
+            {
+                return base.IsDisposed;
+            }
+        }
+
         #endregion
 
         public GameComponent()

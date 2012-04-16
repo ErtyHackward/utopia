@@ -109,12 +109,13 @@
     <Compile Include="Action\Actions.cs" />
     <Compile Include="Components\EditorMode.cs" />
     <Compile Include="Components\FadeSwitchComponent.cs" />
+    <Compile Include="Components\GeneralSoundManager.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />
     <Compile Include="Components\BepuPhysicsComponent.cs" />
     <Compile Include="Components\ModelEditorComponent.Designer.cs">
       <DependentUpon>ModelEditorComponent.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\SoundManager.cs" />
+    <Compile Include="Components\GameSoundManager.cs" />
     <Compile Include="Components\StaggingBackBuffer.cs" />
     <Compile Include="Components\ViewParameters.cs" />
     <Compile Include="Editor\CarvingEditor.cs" />
