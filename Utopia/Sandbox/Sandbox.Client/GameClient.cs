@@ -71,8 +71,6 @@ namespace Sandbox.Client
 
             vars.ApplicationDataPath = GameSystemSettings.GetFilePath("", SettingsStorage.ApplicationData);//  Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Utopia.Sandbox");
 
-            NetworkMessageFactory.Instance.EntityFactory = _iocContainer.Get<EntityFactory>();
-
             var commonResources = new SandboxCommonResources();
             commonResources.LoadFontAndMenuImages(_iocContainer.Get<D3DEngine>());
             _iocContainer.Bind<SandboxCommonResources>().ToConstant(commonResources).InSingletonScope();
