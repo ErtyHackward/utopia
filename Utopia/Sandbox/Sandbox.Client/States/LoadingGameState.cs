@@ -260,6 +260,8 @@ namespace Sandbox.Client.States
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
+            inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
+
             var chat = _ioc.Get<ChatComponent>();
             //var map = _ioc.Get<MapComponent>();
             var hud = _ioc.Get<Hud>();

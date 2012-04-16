@@ -157,6 +157,7 @@ namespace Sandbox.Client
             //Game Componenents =========================================
             _iocContainer.Bind<ServerComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<IClock>().To<WorldClock>().InSingletonScope();
+            _iocContainer.Bind<PlayerInventory>().ToSelf().InSingletonScope();
             _iocContainer.Bind<InventoryComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ChatComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<Hud>().ToSelf().InSingletonScope();
