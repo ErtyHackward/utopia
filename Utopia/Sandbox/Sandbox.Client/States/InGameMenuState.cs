@@ -74,9 +74,10 @@ namespace Sandbox.Client.States
         {
             if (_isGameExited)
             {
-                //Dispose all components related to the Game
+                //Dispose all components related to the Game scope
                 GameScope.CurrentGameScope.Dispose();
-                GameScope.CurrentGameScope = new Scope() { ScopeName = "New Game scope" };
+                //Create a new Scope
+                GameScope.CreateNewScope();
                 _isGameExited = false;
             }
         }

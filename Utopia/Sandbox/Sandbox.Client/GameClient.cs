@@ -87,10 +87,9 @@ namespace Sandbox.Client
             _iocContainer.Rebind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
 
 
-
-
             //filling stages
             var stateManager = _iocContainer.Get<GameStatesManager>();
+            GameScope.StateManager = stateManager;
 
             var fade = _iocContainer.Get<FadeSwitchComponent>();
 

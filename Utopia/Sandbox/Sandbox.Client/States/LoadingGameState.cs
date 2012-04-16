@@ -73,7 +73,6 @@ namespace Sandbox.Client.States
         private Server _server;
         private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
         private SandboxEntityFactory _serverFactory;
-        private ServerComponent _serverComponent;
         private SharpDX.Direct3D11.DeviceContext _context;
 
         public override string Name
@@ -114,7 +113,7 @@ namespace Sandbox.Client.States
 
         private void GameplayInitializeAsync()
         {
-            _serverComponent = _ioc.Get<ServerComponent>();
+            ServerComponent serverComponent = _ioc.Get<ServerComponent>();
 
             if (_vars.SinglePlayer)
             {
@@ -122,23 +121,23 @@ namespace Sandbox.Client.States
 
                 InitSinglePlayerServer(seed);
 
-                if (_serverComponent.ServerConnection == null || 
-                    _serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
+                if (serverComponent.ServerConnection == null ||
+                    serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
                 {
-                    _serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
-                    _serverComponent.BindingServer("127.0.0.1");
-                    _serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
+                    serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
+                    serverComponent.BindingServer("127.0.0.1");
+                    serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
                     _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, "Client", "Singleplayer", seed.ToString(), "ClientWorldCache.db");
                 }
             }
             else
             {
-                if (_serverComponent.ServerConnection == null || 
-                    _serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
+                if (serverComponent.ServerConnection == null ||
+                    serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
                 {
-                    _serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
-                    _serverComponent.BindingServer(_vars.CurrentServerAddress);
-                    _serverComponent.ConnectToServer(_vars.Login, _vars.DisplayName, _vars.PasswordHash);
+                    serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
+                    serverComponent.BindingServer(_vars.CurrentServerAddress);
+                    serverComponent.ConnectToServer(_vars.Login, _vars.DisplayName, _vars.PasswordHash);
                     _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Client", "Multiplayer", _vars.CurrentServerAddress.Replace(':', '_'), "ClientWorldCache.db");
                 }
             }
@@ -215,13 +214,15 @@ namespace Sandbox.Client.States
 
         void ServerConnectionMessageEntityIn(object sender, Utopia.Shared.Net.Connections.ProtocolMessageEventArgs<Utopia.Shared.Net.Messages.EntityInMessage> e)
         {
+            ServerComponent serverComponent = _ioc.Get<ServerComponent>();
+
             var player = (PlayerCharacter)e.Message.Entity;
 
-            _ioc.Rebind<PlayerCharacter>().ToConstant(player).InSingletonScope(); //Register the current Player.
-            _ioc.Rebind<IDynamicEntity>().ToConstant(player).InSingletonScope().Named("Player"); //Register the current Player.
+            _ioc.Rebind<PlayerCharacter>().ToConstant(player).InScope(x => GameScope.CurrentGameScope); //Register the current Player.
+            _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player"); //Register the current Player.
 
-            _serverComponent.MessageEntityIn -= ServerConnectionMessageEntityIn;
-            _serverComponent.Player = player;
+            serverComponent.MessageEntityIn -= ServerConnectionMessageEntityIn;
+            serverComponent.Player = player;
 
             GameplayComponentsCreation();
         }
