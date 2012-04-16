@@ -160,7 +160,7 @@
     <Compile Include="GUI\Inventory\InventoryComponent.cs" />
     <Compile Include="GUI\Inventory\InventoryWindow.cs" />
     <Compile Include="GUI\Inventory\ItemInfoWindow.cs" />
-    <Compile Include="GUI\Inventory\PlayerInventory.cs" />
+    <Compile Include="GUI\Inventory\CharacterInventory.cs" />
     <Compile Include="GUI\Inventory\ToolBarUI.cs" />
     <Compile Include="GUI\Inventory\Vector2I.cs" />
     <Compile Include="GUI\Map\MapComponent.cs" />

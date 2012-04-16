@@ -33,12 +33,11 @@ namespace Sandbox.Client.Components.GUI
         private DateTime _dotsUpdate;
         private int _dots;
 
-        public LoadingComponent(D3DEngine engine, MainScreen screen)
-            : base(engine, screen)
+        public LoadingComponent(D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources)
+            : base(engine, screen, commonResources)
         {
             _engine = engine;
             _screen = screen;
-            
         }
 
         public override void Initialize()
@@ -49,14 +48,14 @@ namespace Sandbox.Client.Components.GUI
             {
                 Text = "LOADING...",
                 Color = Colors.White,
-                CustomFont = FontBebasNeue50
+                CustomFont = _commonResources.FontBebasNeue50
             };
             
             _pleaseWaitLabel = new LabelControl 
             {
                 Text = "PLEASE WAIT",
                 Color = new Color4(Color.FromArgb(198, 0, 75).ToArgb()),
-                CustomFont = FontBebasNeue25
+                CustomFont = _commonResources.FontBebasNeue25
             };
             
             _cubeShader = ToDispose(new HLSLLoadingCube(_engine.Device,

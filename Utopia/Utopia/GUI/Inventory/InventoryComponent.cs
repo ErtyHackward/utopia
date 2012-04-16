@@ -1,33 +1,26 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SharpDX;
+using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Network;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Structs;
 using S33M3DXEngine.Main;
-using S33M3DXEngine;
-using S33M3CoreComponents.Inputs.Actions;
-using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
-using Utopia.Action;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.GUI;
-using Utopia.Shared.Settings;
 
 namespace Utopia.GUI.Inventory
 {
     /// <summary>
-    /// Provides gameplay inventory functionality
+    /// Provides gameplay inventory functionality, allows to perform transfers between containers and provides toolbar shortcuts functionality
     /// </summary>
     public class InventoryComponent : GameComponent
     {
-        private readonly D3DEngine _engine;
         private readonly InputsManager _inputManager;
         private readonly GuiManager _guiManager;
         private readonly PlayerEntityManager _playerManager;
@@ -35,9 +28,8 @@ namespace Utopia.GUI.Inventory
         private readonly ItemMessageTranslator _itemMessageTranslator;
         private readonly Hud _hud;
         private readonly ToolBarUi _toolBar;
+        private CharacterInventory _playerInventoryWindow;
 
-        private PlayerInventory _inventoryUi;
-        private SpriteTexture _backgroundTex;
         private InventoryCell _dragControl;
         private Point _dragOffset;
         private ItemInfoWindow _infoWindow;
@@ -49,8 +41,28 @@ namespace Utopia.GUI.Inventory
         /// </summary>
         public bool IsActive { get; private set; }
 
+        /// <summary>
+        /// Gets or sets current player inventory window that will popup when user press inventory key
+        /// </summary>
+        public CharacterInventory PlayerInventoryWindow
+        {
+            get { return _playerInventoryWindow; }
+            set {
+                if (_playerInventoryWindow == value)
+                    return;
+                if (_playerInventoryWindow != null)
+                {
+                    UnregisterInventoryWindow(_playerInventoryWindow);
+                }
+                _playerInventoryWindow = value;
+                if (_playerInventoryWindow != null)
+                {
+                    RegisterInventoryWindow(_playerInventoryWindow);
+                }
+            }
+        }
+
         public InventoryComponent(
-            D3DEngine engine, 
             InputsManager inputManager, 
             GuiManager guiManager, 
             PlayerEntityManager playerManager, 
@@ -59,9 +71,8 @@ namespace Utopia.GUI.Inventory
             Hud hud)
         {
 
-            this.IsDefferedLoadContent = true;
+            IsDefferedLoadContent = true;
 
-            _engine = engine;
             _inputManager = inputManager;
             _guiManager = guiManager;
             _playerManager = playerManager;
@@ -77,27 +88,53 @@ namespace Utopia.GUI.Inventory
 
             _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);
         }
-
-
+        
         public override void BeforeDispose()
         {
             _hud.SlotClicked -= HudSlotClicked;
-            _inventoryUi.InventorySlotClicked -= InventoryUiSlotClicked;
             _guiManager.Screen.Desktop.Clicked -= DesktopClicked;
-            _backgroundTex.Dispose();
+        }
+
+        /// <summary>
+        /// Allows the inventory window to perform inventory transfers (chest - player inventory, chest - chest etc)
+        /// </summary>
+        /// <param name="window"></param>
+        public void RegisterInventoryWindow(InventoryWindow window)
+        {
+            // listen character window events
+            if (window is CharacterInventory)
+            {
+                var charInventory = window as CharacterInventory;
+                charInventory.EquipmentSlotClicked += InventoryUiSlotClicked;
+            }
+
+            // listen standart inventory events
+            window.InventorySlotClicked += InventoryUiSlotClicked;
+            window.CellMouseEnter += InventoryUiCellMouseEnter;
+            window.CellMouseLeave += InventoryUiCellMouseLeave;
+        }
+
+        /// <summary>
+        /// Removes all event handlers from the window, use this method when the windows is removed or hidden
+        /// </summary>
+        /// <param name="window"></param>
+        public void UnregisterInventoryWindow(InventoryWindow window)
+        {
+            // remove all event handlers
+            if (window is CharacterInventory)
+            {
+                var charInventory = window as CharacterInventory;
+                charInventory.EquipmentSlotClicked -= InventoryUiSlotClicked;
+            }
+
+            window.InventorySlotClicked -= InventoryUiSlotClicked;
+            window.CellMouseEnter -= InventoryUiCellMouseEnter;
+            window.CellMouseLeave -= InventoryUiCellMouseLeave;
         }
 
         public override void LoadContent(DeviceContext context)
         {
-            _backgroundTex = new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"charactersheet.png", Vector2I.Zero);
-
             _infoWindow = new ItemInfoWindow(_iconFactory, _inputManager);
-
-            _inventoryUi = new PlayerInventory(_backgroundTex, _playerManager.Player, _iconFactory, new Point(180, 120), _inputManager);
-            _inventoryUi.InventorySlotClicked += InventoryUiSlotClicked;
-            _inventoryUi.EquipmentSlotClicked += InventoryUiSlotClicked;
-            _inventoryUi.CellMouseEnter += InventoryUiCellMouseEnter;
-            _inventoryUi.CellMouseLeave += InventoryUiCellMouseLeave;
             _toolBar.SlotClicked += ToolBarSlotClicked;
 
             _dragControl = new InventoryCell(null, _iconFactory, new Vector2I(), _inputManager)
@@ -164,7 +201,10 @@ namespace Utopia.GUI.Inventory
             if (_dragControl.Slot.Item is ITool)
             {
                 _playerManager.Player.Toolbar[e.Cell.InventoryPosition.Y] = _dragControl.Slot.Item.StaticId;
-                _toolBar.SetSlot(e.Cell.InventoryPosition.Y, new ContainedSlot { Item = _dragControl.Slot.Item, GridPosition = e.Cell.InventoryPosition });
+                _toolBar.SetSlot(e.Cell.InventoryPosition.Y, new ContainedSlot {
+                    Item = _dragControl.Slot.Item,
+                    GridPosition = e.Cell.InventoryPosition
+                });
 
                 _itemMessageTranslator.SetToolBar(e.Cell.InventoryPosition.Y, _dragControl.Slot.Item.StaticId);
 
@@ -172,10 +212,8 @@ namespace Utopia.GUI.Inventory
 
                 _guiManager.Screen.Desktop.Children.Remove(_dragControl);
                 _dragControl.Slot = null;
-
                 _sourceContainer = null;
             }
-
         }
 
         private void InventoryUiCellMouseLeave(object sender, InventoryWindowCellMouseEventArgs e)
@@ -290,12 +328,12 @@ namespace Utopia.GUI.Inventory
                 _dragControl.Bounds.Location = new UniVector(new UniScalar(mouseState.X - _dragOffset.X), new UniScalar(mouseState.Y - _dragOffset.Y));
             }
 
-            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.OpenInventory))
+            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.OpenInventory) && _playerInventoryWindow != null)
             {
-                if (_guiManager.Screen.Desktop.Children.Contains(_inventoryUi))
+                if (_guiManager.Screen.Desktop.Children.Contains(_playerInventoryWindow))
                 {
                     _guiManager.Screen.Desktop.Children.Remove(_infoWindow);
-                    _guiManager.Screen.Desktop.Children.Remove(_inventoryUi);
+                    _guiManager.Screen.Desktop.Children.Remove(_playerInventoryWindow);
                     _itemMessageTranslator.Enabled = false;
                     //Has this is A gui component, its own windows will automatically by protected for events going "through" it,
                     //But in this case, I need to prevent ALL event to be sent while this component is activated
@@ -307,7 +345,7 @@ namespace Utopia.GUI.Inventory
                 else
                 {
                     _guiManager.Screen.Desktop.Children.Add(_infoWindow);
-                    _guiManager.Screen.Desktop.Children.Add(_inventoryUi);
+                    _guiManager.Screen.Desktop.Children.Add(_playerInventoryWindow);
                     _itemMessageTranslator.Enabled = true;
                     _inputManager.ActionsManager.IsMouseExclusiveMode = true;
                     _guiManager.ForceExclusiveMode = true;
