@@ -55,6 +55,11 @@ namespace S33M3CoreComponents.Sprites
             ScreenPosition = new Rectangle((int)(viewport.Width / 2) - (Width / 2), (int)(viewport.Height / 2) - (Height / 2), Width, Height);
         }
 
+        public SpriteTexture(Device device, string texturePath) : this(device, texturePath, Vector2I.Zero)
+        {
+
+        }
+
         public SpriteTexture(Device device, string texturePath, Vector2I screenPosition)
         {
             Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath);

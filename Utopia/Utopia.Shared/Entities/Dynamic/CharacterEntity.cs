@@ -4,7 +4,7 @@ using Utopia.Shared.Entities.Inventory;
 namespace Utopia.Shared.Entities.Dynamic
 {
     /// <summary>
-    /// Provides character base properties
+    /// Provides character base properties. Character entity has an equipment and inventory
     /// </summary>
     public abstract class CharacterEntity : DynamicEntity
     {
