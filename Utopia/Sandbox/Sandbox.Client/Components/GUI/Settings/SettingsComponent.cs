@@ -30,13 +30,15 @@ namespace Sandbox.Client.Components.GUI.Settings
         #endregion
 
         #region Public properties/methods
+        public readonly SandboxCommonResources CommonResources;
         public event EventHandler KeyBindingChanged;
         #endregion
 
-        public SettingsComponent(Game game, D3DEngine engine, MainScreen screen)
+        public SettingsComponent(Game game, D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources)
         {
             _engine = engine;
             _screen = screen;
+            CommonResources = commonResources;
             _game = game;
 
             _engine.ViewPort_Updated += UpdateLayout;

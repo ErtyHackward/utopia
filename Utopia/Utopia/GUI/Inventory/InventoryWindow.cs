@@ -2,7 +2,6 @@
 using System.Drawing;
 using Utopia.Entities;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Structs;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3Resources.Structs;
@@ -12,7 +11,7 @@ using S33M3CoreComponents.Inputs;
 namespace Utopia.GUI.Inventory
 {
     /// <summary>
-    /// Represents common window for inventory containers
+    /// Represents common window for inventory containers that have a grid of items (chests)
     /// </summary>
     public class InventoryWindow : WindowControl
     {

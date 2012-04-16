@@ -14,15 +14,15 @@ namespace Sandbox.Client.Components.GUI.Settings
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+
         #region Private Variables
         protected LabelControl _panelLabel;
-
         public List<ParamRow> Parameters;
         #endregion
 
         #region Public Variables
         #endregion
-
+        
         private void InitializeComponent(object SettingParameters)
         {
             CreateComponents(SettingParameters);
@@ -40,15 +40,15 @@ namespace Sandbox.Client.Components.GUI.Settings
             {
                 Text = _panelName,
                 Color = new ByteColor(255, 255, 255),
-                CustomFont = SandboxMenuComponent.FontBebasNeue25
+                CustomFont = _parent.CommonResources.FontBebasNeue25
             };
 
             Parameters = new List<ParamRow>(Settings2Components.CreateComponentsRows(SettingParameters,
-                                                                                     SandboxMenuComponent.FontBebasNeue17,
-                                                                                     SandboxMenuComponent.StInputBackground,
-                                                                                     SandboxMenuComponent.StButtonBackground,
-                                                                                     SandboxMenuComponent.StButtonBackgroundDown,
-                                                                                     SandboxMenuComponent.StButtonBackgroundHover));
+                                                                                     _parent.CommonResources.FontBebasNeue17,
+                                                                                     _parent.CommonResources.StInputBackground,
+                                                                                     _parent.CommonResources.StButtonBackground,
+                                                                                     _parent.CommonResources.StButtonBackgroundDown,
+                                                                                     _parent.CommonResources.StButtonBackgroundHover));
         }
 
         private void BindComponents()

@@ -87,8 +87,8 @@ namespace Sandbox.Client.Components.GUI
         }
         #endregion
 
-        public MainMenuComponent(D3DEngine engine, MainScreen screen, RuntimeVariables runtime)
-            : base(engine, screen)
+        public MainMenuComponent(D3DEngine engine, MainScreen screen, RuntimeVariables runtime, SandboxCommonResources commonResources)
+            : base(engine, screen, commonResources)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");
@@ -98,19 +98,19 @@ namespace Sandbox.Client.Components.GUI
 
             _engine.ViewPort_Updated += UpdateLayout;
 
-            _stMenuButton   = ToDispose(LoadTexture(engine, "Images\\MainMenu\\menu_button.png"));
-            _stMenuHover    = ToDispose(LoadTexture(engine, "Images\\MainMenu\\menu_button_hover.png"));
-            _stMenuDown     = ToDispose(LoadTexture(engine, "Images\\MainMenu\\menu_button_down.png"));
+            _stMenuButton   = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button.png"));
+            _stMenuHover    = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button_hover.png"));
+            _stMenuDown     = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button_down.png"));
 
-            _stLabelContinue        = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_continue.png"));
-            _stLabelCredits         = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_credits.png"));
-            _stLabelExit            = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_exit.png"));
-            _stLabelLogOut          = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_logout.png"));
-            _stLabelMultiplayer     = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_multiplayer.png"));
-            _stLabelSingleplayer    = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_singleplayer.png"));
-            _stLabelSettings        = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_settings.png"));
-            _stLabelEditor          = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu_label_editor.png"));
-            _stMainMenuLabel        = ToDispose(LoadTexture(engine, "Images\\MainMenu\\main_menu.png"));
+            _stLabelContinue        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_continue.png"));
+            _stLabelCredits         = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_credits.png"));
+            _stLabelExit            = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_exit.png"));
+            _stLabelLogOut          = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_logout.png"));
+            _stLabelMultiplayer     = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_multiplayer.png"));
+            _stLabelSingleplayer    = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_singleplayer.png"));
+            _stLabelSettings        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_settings.png"));
+            _stLabelEditor          = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_editor.png"));
+            _stMainMenuLabel        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu.png"));
         }
 
         public override void BeforeDispose()
@@ -212,12 +212,12 @@ namespace Sandbox.Client.Components.GUI
             _helloLabel = new LabelControl { 
                 Text = "HELLO",
                 Color = new SharpDX.Color4(Color.FromArgb(198,0,75).ToArgb()),
-                CustomFont = FontBebasNeue25
+                CustomFont = _commonResources.FontBebasNeue25
             };
             
             _nicknameLabel = new LabelControl {
                 Color = SharpDX.Colors.White,
-                CustomFont = FontBebasNeue25
+                CustomFont = _commonResources.FontBebasNeue25
             };
 
             _mainMenuLabel = new ImageControl { Image = _stMainMenuLabel };

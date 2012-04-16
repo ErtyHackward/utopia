@@ -73,6 +73,10 @@ namespace Sandbox.Client
 
             NetworkMessageFactory.Instance.EntityFactory = _iocContainer.Get<EntityFactory>();
 
+            var commonResources = new SandboxCommonResources();
+            commonResources.LoadFontAndMenuImages(_iocContainer.Get<D3DEngine>());
+            _iocContainer.Bind<SandboxCommonResources>().ToConstant(commonResources).InSingletonScope();
+
             var game = CreateNewGameEngine(_iocContainer, ClientSettings.Current.Settings.GraphicalParameters.VSync); // Create the Rendering
             _iocContainer.Bind<Game>().ToConstant(game);
 
@@ -84,7 +88,8 @@ namespace Sandbox.Client
 
             _iocContainer.Rebind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
 
-            SandboxMenuComponent.LoadCommonImages(_iocContainer.Get<D3DEngine>());
+
+
 
             //filling stages
             var stateManager = _iocContainer.Get<GameStatesManager>();
@@ -140,7 +145,7 @@ namespace Sandbox.Client
 
             _iocContainer.Dispose();
 
-            SandboxMenuComponent.DisposeCommonImage();
+            commonResources.Dispose();
 
             game.Dispose();
 
