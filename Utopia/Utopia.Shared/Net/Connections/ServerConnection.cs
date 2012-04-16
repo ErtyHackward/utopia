@@ -22,6 +22,7 @@ namespace Utopia.Shared.Net.Connections
 
         // async block
         private bool _isrunning = true;
+        private readonly NetworkMessageFactory _networkMessageFactory;
         private readonly AutoResetEvent _needSend = new AutoResetEvent(false);
         private readonly Queue<IBinaryMessage> _messages = new Queue<IBinaryMessage>();
 // ReSharper disable NotAccessedField.Local
@@ -69,10 +70,11 @@ namespace Utopia.Shared.Net.Connections
         /// </summary>
         /// <param name="address"></param>
         /// <param name="port"></param>
-        public ServerConnection(string address, int port) : base(address, port)
+        public ServerConnection(string address, int port, NetworkMessageFactory networkMessageFactory) : base(address, port)
         {
             //Set default server connection timeout
             ConnectionTimeOut = 5000; //5 secondes by default
+            _networkMessageFactory = networkMessageFactory;
 
             StartSendThread();
         }
@@ -81,9 +83,10 @@ namespace Utopia.Shared.Net.Connections
         /// Creates new instance of ServerConnection using address string
         /// </summary>
         /// <param name="address"></param>
-        public ServerConnection(string address)
+        public ServerConnection(string address, NetworkMessageFactory networkMessageFactory)
         {
             ConnectionTimeOut = 5000; //5 secondes by default
+            _networkMessageFactory = networkMessageFactory;
 
             StartSendThread();
             remoteAddress = ParseAddress(address);
@@ -267,7 +270,7 @@ namespace Utopia.Shared.Net.Connections
                             
                             // using Factory here makes additional box\unbox operation to pass strucutre by interface
                             // need to profile in real conditions
-                            var message = NetworkMessageFactory.Instance.ReadMessage(idByte, reader);
+                            var message = _networkMessageFactory.ReadMessage(idByte, reader);
 
                             _concurrentQueue.Enqueue(message);
                         }

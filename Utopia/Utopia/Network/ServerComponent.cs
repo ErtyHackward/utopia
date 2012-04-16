@@ -17,6 +17,7 @@ namespace Utopia.Network
     {
 
         #region Private variables
+        private readonly NetworkMessageFactory _networkMessageFactory;
         #endregion
 
         #region Public variables/Properties
@@ -128,8 +129,9 @@ namespace Utopia.Network
         public event EventHandler<ProtocolMessageEventArgs<VoxelModelDataMessage>> MessageVoxelModelData;
         #endregion
 
-        public ServerComponent()
+        public ServerComponent(NetworkMessageFactory networkMessageFactory)
         {
+            _networkMessageFactory = networkMessageFactory;
             this.MessageGameInformation += ServerComponent_MessageGameInformation;
         }
 
@@ -155,7 +157,7 @@ namespace Utopia.Network
             Address = address;
 
             if(ServerConnection != null) ServerConnection.Dispose();
-            ServerConnection = new ServerConnection(address);
+            ServerConnection = new ServerConnection(address, _networkMessageFactory);
             return true;
         }
 

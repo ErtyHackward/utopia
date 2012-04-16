@@ -59,6 +59,7 @@ using S33M3Resources.Structs;
 using Sandbox.Client.Components.GUI;
 using Sandbox.Client.Components.GUI.Settings;
 using Utopia.Shared.Settings;
+using Utopia.Shared.Net.Messages;
 
 namespace Sandbox.Client
 {
@@ -161,8 +162,16 @@ namespace Sandbox.Client
             _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
             //Network Related =============================================
+            _iocContainer.Bind<NetworkMessageFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InScope(x => GameScope.CurrentGameScope); //Impact on player action (From server events)
-            _iocContainer.Bind<EntityFactory>().ToConstant(new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>())).InScope(x => GameScope.CurrentGameScope).Named("Client");
+            _iocContainer.Bind<ILandscapeManager2D>().ToMethod(x => x.Kernel.Get<IChunkEntityImpactManager>()).InScope(x => GameScope.CurrentGameScope);
+
+            _iocContainer.Bind<SandboxEntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+
+            _iocContainer.Bind<EntityFactory>().To<SandboxEntityFactory>().InScope(x => GameScope.CurrentGameScope).Named("Client");
+
+            //_iocContainer.Bind<EntityFactory>().ToConstant(new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>())).InScope(x => GameScope.CurrentGameScope).Named("Client");
+
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //=============================================================

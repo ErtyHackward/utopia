@@ -10,18 +10,12 @@ namespace Utopia.Shared.Net.Messages
     /// </summary>
     public class NetworkMessageFactory
     {
-        static NetworkMessageFactory()
-        {
-            Instance = new NetworkMessageFactory();
-        }
-
-        /// <summary>
-        /// Gets factory instance
-        /// </summary>
-        public static NetworkMessageFactory Instance { get; private set; }
-
-
         public EntityFactory EntityFactory { get; set; }
+
+        public NetworkMessageFactory(EntityFactory entityFactory)
+        {
+            EntityFactory = entityFactory;
+        }
 
         /// <summary>
         /// Creates network message
