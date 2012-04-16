@@ -18,6 +18,8 @@ namespace Sandbox.Client.States
         public void Dispose()
         {
             if (Disposed != null) Disposed(this, null);
+
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
         }
 
         public event EventHandler Disposed;
