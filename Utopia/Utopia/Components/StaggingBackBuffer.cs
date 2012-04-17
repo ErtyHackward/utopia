@@ -7,6 +7,7 @@ using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX;
+using SharpDX.Direct3D;
 
 namespace Utopia.Components
 {
@@ -80,7 +81,7 @@ namespace Utopia.Components
                 Usage = ResourceUsage.Default,
                 BindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget,
                 CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None,
+                OptionFlags = ResourceOptionFlags.None                
             };
 
             SolidStaggingBackBufferSize = new Vector2(StaggingBackBufferDescr.Width, StaggingBackBufferDescr.Height);
