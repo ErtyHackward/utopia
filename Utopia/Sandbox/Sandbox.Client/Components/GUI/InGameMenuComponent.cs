@@ -6,6 +6,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.Inputs;
 
 namespace Sandbox.Client.Components.GUI
 {
@@ -14,6 +15,7 @@ namespace Sandbox.Client.Components.GUI
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
         private readonly RuntimeVariables _runtime;
+        private readonly InputsManager _inputmnger;
 
         private SpriteTexture _stMenuButton;
         private SpriteTexture _stMenuHover;
@@ -50,7 +52,7 @@ namespace Sandbox.Client.Components.GUI
         }
         #endregion
 
-        public InGameMenuComponent(D3DEngine engine, MainScreen screen, RuntimeVariables runtime, SandboxCommonResources commonResources)
+        public InGameMenuComponent(D3DEngine engine, MainScreen screen, RuntimeVariables runtime, SandboxCommonResources commonResources, InputsManager inputmnger)
             : base(engine, screen, commonResources)
         {
             if (engine == null) throw new ArgumentNullException("engine");
@@ -58,6 +60,7 @@ namespace Sandbox.Client.Components.GUI
             _engine = engine;
             _screen = screen;
             _runtime = runtime;
+            _inputmnger = inputmnger;
 
             _engine.ViewPort_Updated += UpdateLayout;
 
@@ -136,6 +139,7 @@ namespace Sandbox.Client.Components.GUI
 
         public override void EnableComponent()
         {
+            //Hide all currently existing components
             _screen.HideAll();
 
             _screen.Desktop.Children.Add(_buttonsGroup);
