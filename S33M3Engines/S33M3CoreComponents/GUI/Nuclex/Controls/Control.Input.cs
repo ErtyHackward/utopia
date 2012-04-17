@@ -215,7 +215,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             for (int index = 0; index < this.children.Count; ++index)
             {
 
-                if (children[index].IsClickTransparent)
+                if (children[index].IsClickTransparent || children[index].IsVisible == false)
                     continue;
                 RectangleF childBounds = this.children[index].Bounds.ToOffset(size.X, size.Y);
                 // Is the mouse over this child?
@@ -348,6 +348,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             for (int index = 0; index < this.children.Count; ++index)
             {
                 Control child = this.children[index];
+
+                if (child.IsVisible == false) continue;
 
                 // We only process one child that has the affectsOrdering field set. This
                 // ensures that key presses will not be delivered to windows sitting behind
