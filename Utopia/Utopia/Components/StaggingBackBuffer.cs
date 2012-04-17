@@ -52,7 +52,14 @@ namespace Utopia.Components
 
         public override void Draw(SharpDX.Direct3D11.DeviceContext context, int index)
         {
-            context.CopyResource(_engine.BackBufferTex, _solidBackBuffer);
+            if (_engine.CurrentMSAASampling.Count <= 1)
+            {
+                context.CopyResource(_engine.BackBufferTex, _solidBackBuffer);
+            }
+            else
+            {
+                context.ResolveSubresource(_engine.BackBufferTex, 0, _solidBackBuffer, 0, Format.R8G8B8A8_UNorm);
+            }
         }
         #endregion
 
@@ -77,7 +84,7 @@ namespace Utopia.Components
                 MipLevels = 1,
                 ArraySize = 1,
                 Format = Format.R8G8B8A8_UNorm,
-                SampleDescription = _engine.CurrentMSAASampling,
+                SampleDescription = new SampleDescription(1,0),
                 Usage = ResourceUsage.Default,
                 BindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget,
                 CpuAccessFlags = CpuAccessFlags.None,
