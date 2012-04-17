@@ -25,7 +25,6 @@ namespace Sandbox.Client.Components.GUI.Settings
         {
             _engine = engine;
             _engine.ViewPort_Updated += engine_ViewPort_Updated;
-            this.IsVisible = false;
             _panelName = "Key Bindings";
             _parent = parent;
             this.Bounds = bound;
