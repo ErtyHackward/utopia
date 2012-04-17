@@ -60,6 +60,7 @@ using Sandbox.Client.Components.GUI;
 using Sandbox.Client.Components.GUI.Settings;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Net.Messages;
+using Sandbox.Client.Components.GUI.SinglePlayer;
 
 namespace Sandbox.Client
 {
@@ -108,6 +109,9 @@ namespace Sandbox.Client
 
             _iocContainer.Bind<InGameMenuComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<InGameMenuState>().ToSelf().InSingletonScope();
+
+            _iocContainer.Bind<SinglePlayerComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<SinglePlayerMenuState>().ToSelf().InSingletonScope();
 
             _iocContainer.Bind<FadeSwitchComponent>().ToSelf().InSingletonScope();
 

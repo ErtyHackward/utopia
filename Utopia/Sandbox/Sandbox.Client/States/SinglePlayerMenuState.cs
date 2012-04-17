@@ -6,6 +6,7 @@ using S33M3CoreComponents.States;
 using Ninject;
 using S33M3CoreComponents.GUI;
 using Sandbox.Client.Components.GUI;
+using Sandbox.Client.Components.GUI.SinglePlayer;
 
 namespace Sandbox.Client.States
 {
