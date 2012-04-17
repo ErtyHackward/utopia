@@ -71,7 +71,8 @@ namespace S33M3DXEngine
         /// </summary>
         public Size RenderResolution { get; set; }
 
-        public bool B8G8R8A8_UNormSupport { get; set; }
+        public bool IsB8G8R8A8_UNormSupport { get; set; }
+        public bool IsMultiSamplingSupport { get; set; }
 
         public DeviceContext ImmediateContext;
 
@@ -142,15 +143,25 @@ namespace S33M3DXEngine
             {
                 using (Output output = adapter.GetOutput(0))
                 {
-                    B8G8R8A8_UNormSupport = false;
+                    IsB8G8R8A8_UNormSupport = false;
                     foreach (var mode in output.GetDisplayModeList(Format.B8G8R8A8_UNorm, DisplayModeEnumerationFlags.Interlaced))
                     {
-                        B8G8R8A8_UNormSupport = true;
+                        IsB8G8R8A8_UNormSupport = true;
                         adapterModes.Add(mode);
                     }
 
                     MainAdapter = adapter.Description.Description;
                     logger.Info("GPU found : {0}", MainAdapter);
+                    //GetResource Level            
+                    FeatureLevel maxSupportLevel = Device.GetSupportedFeatureLevel(adapter);
+                    logger.Info("Maximum supported DirectX11 level = {0}", maxSupportLevel.ToString());
+                    if ((int)maxSupportLevel < (int)FeatureLevel.Level_10_1)
+                    {
+                        IsMultiSamplingSupport = false;
+                        logger.Info("MultiSampling won't be supported, it needs DX11 feature level 10.1 at minimum");
+                        this.CurrentMSAASampling = new SampleDescription(1, 0); //Apply a default MSAASampling
+                    }
+                    else IsMultiSamplingSupport = true;
 
                     int DedicatedGPU = adapter.Description.DedicatedVideoMemory / (1024 * 1024);
                     if (DedicatedGPU < 0) DedicatedGPU = 0;
@@ -160,17 +171,18 @@ namespace S33M3DXEngine
                     if (SharedSystem < 0) SharedSystem = 0;
 
                     logger.Info("GPU Memory : Dedicated from GPU : {0}MB, Shared : {1}MB, Dedicated from System : {2}MB. Total : {3}MB", DedicatedGPU, DedicatedSystem, SharedSystem, DedicatedGPU + DedicatedSystem + SharedSystem);
-                    logger.Info("B8G8R8A8_UNormSupport compatibility = {0}", B8G8R8A8_UNormSupport);
+                    logger.Info("B8G8R8A8_UNormSupport compatibility = {0}", IsB8G8R8A8_UNormSupport);
+
+
 #if DEBUG
                     foreach (var mode in adapterModes)
                     {
                         logger.Trace("[{1}:{2}], format : {0}, RefreshRate : {3}hz, Scaling : {4}, ScanlineMode : {5}", mode.Format, mode.Width, mode.Height, (float)mode.RefreshRate.Numerator / mode.RefreshRate.Denominator, mode.Scaling, mode.ScanlineOrdering);
                     }
+
 #endif
                 }
             }
-
-
 
             RefreshResources();
 

@@ -73,8 +73,8 @@ namespace Utopia.GUI.Map
             _mapControl = new MapControl
             {
                 MarkerPosition = new Point(),
-                PlayerMarker = ToDispose(new SpriteTexture(_engine.Device, playerMarker, new SharpDX.Vector2(), _engine.B8G8R8A8_UNormSupport)),
-                MapTexture = ToDispose(new SpriteTexture(_engine.Device, _mapImage, new SharpDX.Vector2(), _engine.B8G8R8A8_UNormSupport)),
+                PlayerMarker = ToDispose(new SpriteTexture(_engine.Device, playerMarker, new SharpDX.Vector2(), _engine.IsB8G8R8A8_UNormSupport)),
+                MapTexture = ToDispose(new SpriteTexture(_engine.Device, _mapImage, new SharpDX.Vector2(), _engine.IsB8G8R8A8_UNormSupport)),
                 Bounds = innerBounds
             };
 
