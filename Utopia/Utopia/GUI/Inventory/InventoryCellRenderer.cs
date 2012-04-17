@@ -15,11 +15,55 @@ namespace Utopia.GUI.Inventory
             {
                 if (control.MouseHovering || control.IsCellSelected)
                 {
-                    graphics.DrawElement("button.highlighted",ref controlBounds);
+                    if (control.CustomBackgroundHover != null)
+                    {
+                        if (control.CustomBackgroundAutosize)
+                        {
+                            graphics.DrawCustomTexture(control.CustomBackgroundHover, ref controlBounds);
+                        }
+                        else
+                        {
+                            var dx = (controlBounds.Width - control.CustomBackgroundHover.Width) / 2;
+                            var dy = (controlBounds.Height - control.CustomBackgroundHover.Height) / 2;
+
+                            var bgBounds = controlBounds;
+
+                            bgBounds.X += dx;
+                            bgBounds.Y += dy;
+                            bgBounds.Width = control.CustomBackgroundHover.Width;
+                            bgBounds.Height = control.CustomBackgroundHover.Height;
+
+                            graphics.DrawCustomTexture(control.CustomBackgroundHover, ref bgBounds);
+                        }
+                    }
+                    else
+                        graphics.DrawElement("button.highlighted",ref controlBounds);
                 }
                 else
                 {
-                    graphics.DrawElement("button.normal",ref controlBounds);
+
+                    if (control.CustomBackground != null)
+                    {
+                        if (control.CustomBackgroundAutosize)
+                        {
+                            graphics.DrawCustomTexture(control.CustomBackground, ref controlBounds);
+                        }
+                        else
+                        {
+                            var dx = (controlBounds.Width - control.CustomBackground.Width) / 2;
+                            var dy = (controlBounds.Height - control.CustomBackground.Height) / 2;
+
+                            var bgBounds = controlBounds;
+
+                            bgBounds.X += dx;
+                            bgBounds.Y += dy;
+                            bgBounds.Width = control.CustomBackground.Width;
+                            bgBounds.Height = control.CustomBackground.Height;
+
+                            graphics.DrawCustomTexture(control.CustomBackground, ref bgBounds);
+                        }
+                    }
+                    else graphics.DrawElement("button.normal",ref controlBounds);
                 }
             }
             #endregion

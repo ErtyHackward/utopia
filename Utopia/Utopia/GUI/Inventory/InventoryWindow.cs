@@ -17,7 +17,10 @@ namespace Utopia.GUI.Inventory
     {
         protected readonly InputsManager _inputManager;
         private readonly SlotContainer<ContainedSlot> _container;
-        private InventoryCell[,] _uiGrid;
+        /// <summary>
+        /// Array of inventory cells controls
+        /// </summary>
+        protected InventoryCell[,] UiGrid;
         private readonly IconFactory _iconFactory;
         private readonly Point _windowStartPosition;
         protected readonly Point GridOffset;
@@ -66,7 +69,6 @@ namespace Utopia.GUI.Inventory
             _container = container;
             _iconFactory = iconFactory;
             _windowStartPosition = windowStartPosition;
-            Title = "Inventory";
 
             var width = _container.GridSize.X * CellSize + GridOffset.X + 4;     
             var height = _container.GridSize.Y * CellSize + GridOffset.Y + 22 + 4; // 22 = bottom line, 4 - bottom side
@@ -86,7 +88,7 @@ namespace Utopia.GUI.Inventory
         {
             var container = _container;
 
-            _uiGrid = new InventoryCell[container.GridSize.X, container.GridSize.Y];
+            UiGrid = new InventoryCell[container.GridSize.X, container.GridSize.Y];
 
             for (var x = 0; x < container.GridSize.X; x++)
             {
@@ -103,7 +105,7 @@ namespace Utopia.GUI.Inventory
                     control.MouseLeave += ControlMouseLeave;
                     Children.Add(control);
 
-                    _uiGrid[x, y] = control;
+                    UiGrid[x, y] = control;
                 }
             }
         }

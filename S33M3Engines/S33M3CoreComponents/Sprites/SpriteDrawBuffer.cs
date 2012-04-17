@@ -105,9 +105,5 @@ namespace S33M3CoreComponents.Sprites
             return _spritesByTexture.Values;
         }
         #endregion
-
-        #region Private method
-        #endregion
-
     }
 }
