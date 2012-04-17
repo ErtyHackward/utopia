@@ -19,42 +19,22 @@ using Utopia.Shared.Config;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {
-    public partial class SettingsComponent : GameComponent
+    public partial class SettingsComponent : MenuTemplate1Component
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
         #region Private variables
-        private readonly D3DEngine _engine;
-        private readonly MainScreen _screen;
-        private readonly Game _game;
         #endregion
 
         #region Public properties/methods
-        public readonly SandboxCommonResources CommonResources;
         public event EventHandler KeyBindingChanged;
         #endregion
 
         public SettingsComponent(Game game, D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources)
+            :base(game, engine, screen, commonResources)
         {
-            _engine = engine;
-            _screen = screen;
-            CommonResources = commonResources;
-            _game = game;
-
-            _engine.ViewPort_Updated += UpdateLayout;
         }
 
         public override void BeforeDispose()
         {
-            if (BackPressed != null)
-            {
-                //Remove all Events associated to this control (That haven't been unsubscribed !)
-                foreach (Delegate d in BackPressed.GetInvocationList())
-                {
-                    BackPressed -= (EventHandler)d;
-                }
-            }
-
             if (KeyBindingChanged != null)
             {
                 //Remove all Events associated to this control (That haven't been unsubscribed !)
@@ -64,29 +44,16 @@ namespace Sandbox.Client.Components.GUI.Settings
                 }
             }
 
-            _engine.ViewPort_Updated -= UpdateLayout;
+            base.BeforeDispose();
         }
 
         #region Public methods
-        public override void Initialize()
-        {
-            InitializeComponent();
-        }
-
         public override void LoadContent(DeviceContext context)
         {
             LoadContentComponent(context);
-            RefreshComponentsVisibility();
+            base.LoadContent(context);
         }
 
-        protected override void OnUpdatableChanged(object sender, EventArgs args)
-        {
-            if (!IsInitialized) return;
-
-            RefreshComponentsVisibility();
-
-            base.OnUpdatableChanged(sender, args);
-        }
         #endregion
 
         #region Private methods

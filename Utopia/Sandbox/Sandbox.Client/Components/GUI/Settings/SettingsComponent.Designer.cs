@@ -19,25 +19,14 @@ namespace Sandbox.Client.Components.GUI.Settings
     partial class SettingsComponent
     {
         //Components
-        protected LabelControl _windowLabel, _settingsStateLabel;
-        protected Control _settingsForm;
-        protected PanelControl _leftMenuPanel;
-        protected ImageControl _cubesPatern;
-        protected ImageControl _linenPatern;
-        protected ImageControl _shadow;
+        protected LabelControl _settingsStateLabel;
 
         protected SpriteTexture _transparentBackGroundTexture;
-        protected ImageControl _backPanel;
-
-        protected SpriteTexture _stMenuButton;
-        protected SpriteTexture _stMenuHover;
-        protected SpriteTexture _stMenuDown;
 
         protected ButtonControl _btGraphic;
         protected ButtonControl _btSound;
         protected ButtonControl _btCoreEngine;
         protected ButtonControl _btKeyBinding;
-        protected ButtonControl _btBack;
 
         //Various Panels
         protected GraphicSettingsPanel _graphSettingsPanel;
@@ -45,27 +34,12 @@ namespace Sandbox.Client.Components.GUI.Settings
         protected SoundSettingsPanel _soundSettingsPanel;
         protected KeyBindingSettingsPanel _keyBindingSettingsPanel;
 
-        protected void InitializeComponent()
+        protected override void InitializeComponent()
         {
-            _stMenuButton = ToDispose(new SpriteTexture(_engine.Device, @"Images\MainMenu\menu_button.png", new Vector2I()));
-            _stMenuHover = ToDispose(new SpriteTexture(_engine.Device, @"Images\MainMenu\menu_button_hover.png", new Vector2I()));
-            _stMenuDown = ToDispose(new SpriteTexture(_engine.Device, @"Images\MainMenu\menu_button_down.png", new Vector2I()));
-
-            _windowLabel = new LabelControl() { Text = "Settings", 
-                                                Color = new ByteColor(198,0,75),
-                                                CustomFont = CommonResources.FontBebasNeue35,
-                                                CustomHorizontalPlacement = FlatGuiGraphics.Frame.HorizontalTextAlignment.Center,
-                                                CustomVerticalPlacement = FlatGuiGraphics.Frame.VerticalTextAlignment.Center};
+            base.InitializeComponent();
 
             _settingsStateLabel = new LabelControl() { Text = "Restart needed to apply new setting(s)",
                                                         Color = Colors.Red, IsVisible = false};
-
-            _leftMenuPanel = new PanelControl() { Color = Colors.WhiteSmoke };
-            _cubesPatern = new ImageControl() { Image = CommonResources.StCubesPattern };
-            _linenPatern = new ImageControl() { Image = CommonResources.StLinenPattern };
-            _shadow = new ImageControl() { Image = CommonResources.StShadow };
-
-            _settingsForm = new Control();
 
             _btGraphic = new ButtonControl
             {
@@ -111,18 +85,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             };
             _btKeyBinding.Pressed += delegate { btKeyBindingPressed(); };
 
-            _btBack = new ButtonControl
-            {
-                CustomImage = _stMenuButton,
-                CustomImageDown = _stMenuDown,
-                CustomImageHover = _stMenuHover,
-                TextFontId = 1,
-                Text = "Back",
-                Color = new ByteColor(200, 200, 200, 255)
-            };
-            _btBack.Pressed += delegate { btBackPressed(); };
-
-            //Add components to the left Panel
+            //Add components to the left Panel, including the Derived class Components
             _leftMenuPanel.Children.Add(_btBack);
             _leftMenuPanel.Children.Add(_btKeyBinding);
             _leftMenuPanel.Children.Add(_btCoreEngine);
@@ -134,8 +97,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             _leftMenuPanel.Children.Add(_cubesPatern);
             _leftMenuPanel.Children.Add(_linenPatern);
 
-
-            _settingsForm.Children.Add(_leftMenuPanel);
+            _form.Children.Add(_leftMenuPanel);
         }
 
         /// <summary>
@@ -145,31 +107,27 @@ namespace Sandbox.Client.Components.GUI.Settings
         protected void LoadContentComponent(DeviceContext context)
         {
             _transparentBackGroundTexture = ToDispose(new SpriteTexture(1,1, TextureCreator.GenerateColoredTexture(_engine.Device, context, new ByteColor(100,100,100, 200), true), new Vector2(0,0)));
+            if (_backPanel != null)
+            {
+                _backPanel.Dispose();
+                RemoveDispose(_backPanel);
+            }
             _backPanel = ToDispose(new ImageControl() { Image = _transparentBackGroundTexture, Name = "BackPanel" });
 
-            _settingsForm.Children.Add(_backPanel);
+            _form.Children.Add(_backPanel);
 
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
         }
 
         //Resize, place the components depending of the viewport size
-        private void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        protected override void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
+            base.UpdateLayout(viewport, newBackBufferDescr);
+
             if (Updatable)
             {
 
                 int _headerHeight = (int)(viewport.Height * 0.1f);
-
-                _settingsForm.Bounds = new UniRectangle(0, 0, _engine.ViewPort.Width, _engine.ViewPort.Height);
-
-                _leftMenuPanel.Bounds = new UniRectangle(0, 0, _engine.ViewPort.Width / 4, _engine.ViewPort.Height);
-
-                _windowLabel.Bounds = new UniRectangle(0, 0, _leftMenuPanel.Bounds.Size.X.Offset, _headerHeight);
-                _cubesPatern.Bounds = new UniRectangle(0, 0, _leftMenuPanel.Bounds.Size.X.Offset, _headerHeight);
-                _linenPatern.Bounds = new UniRectangle(0, _headerHeight, _leftMenuPanel.Bounds.Size.X, viewport.Height - _headerHeight);
-                _shadow.Bounds = new UniRectangle(0, _headerHeight - 117, _leftMenuPanel.Bounds.Size.X, 287);
-                _backPanel.Bounds = new UniRectangle(_leftMenuPanel.Bounds.Size.X.Offset, 0, _engine.ViewPort.Width * 3 / 4, _engine.ViewPort.Height);
-
                 int btPlacementY = _headerHeight;
 
                 btPlacementY += 20;
@@ -186,12 +144,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                 if (_graphSettingsPanel != null) _graphSettingsPanel.Resize();
                 if (_coreEngineSetingsPanel != null) _coreEngineSetingsPanel.Resize();
             }
-        }
 
-        public event EventHandler BackPressed;
-        private void btBackPressed()
-        {
-            if (BackPressed != null) BackPressed(this, EventArgs.Empty);
         }
 
         private void btGraphicPressed()
@@ -231,19 +184,6 @@ namespace Sandbox.Client.Components.GUI.Settings
             {
                 _backPanel.Children.Clear();
                 _backPanel.Children.Add(_keyBindingSettingsPanel);
-            }
-        }
-
-        private void RefreshComponentsVisibility()
-        {
-            if (Updatable)
-            {
-                _screen.Desktop.Children.Add(_settingsForm);
-                UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
-            }
-            else
-            {
-                _screen.Desktop.Children.Remove(_settingsForm);
             }
         }
     }
