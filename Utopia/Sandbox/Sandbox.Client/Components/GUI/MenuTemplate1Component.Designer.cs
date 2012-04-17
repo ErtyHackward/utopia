@@ -45,7 +45,7 @@ namespace Sandbox.Client.Components.GUI
             if (BackPressed != null) BackPressed(this, EventArgs.Empty);
         }
 
-        protected virtual void InitializeComponent()
+        private void InitializeComponentInternal()
         {
             _stMenuButton = ToDispose(new SpriteTexture(_engine.Device, @"Images\MainMenu\menu_button.png", new Vector2I()));
             _stMenuHover = ToDispose(new SpriteTexture(_engine.Device, @"Images\MainMenu\menu_button_hover.png", new Vector2I()));
@@ -55,7 +55,7 @@ namespace Sandbox.Client.Components.GUI
 
             _windowLabel = new LabelControl()
             {
-                Text = "Settings",
+                Text = "??????",
                 Color = new ByteColor(198, 0, 75),
                 CustomFont = CommonResources.FontBebasNeue35,
                 CustomHorizontalPlacement = FlatGuiGraphics.Frame.HorizontalTextAlignment.Center,
@@ -78,6 +78,12 @@ namespace Sandbox.Client.Components.GUI
                 Color = new ByteColor(200, 200, 200, 255)
             };
             _btBack.Pressed += delegate { btBackPressed(); };
+
+            InitializeComponent();
+        }
+
+        protected virtual void InitializeComponent()
+        {
         }
 
         private void RefreshComponentsVisibility()
@@ -85,7 +91,7 @@ namespace Sandbox.Client.Components.GUI
             if (Updatable)
             {
                 _screen.Desktop.Children.Add(_form);
-                UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
+                UpdateLayoutInternal(_engine.ViewPort, _engine.BackBufferTex.Description);
             }
             else
             {
@@ -94,7 +100,7 @@ namespace Sandbox.Client.Components.GUI
         }
 
         //Resize, place the components depending of the viewport size
-        protected virtual void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        private void UpdateLayoutInternal(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             if (Updatable)
             {
@@ -108,10 +114,15 @@ namespace Sandbox.Client.Components.GUI
                 _linenPatern.Bounds = new UniRectangle(0, _headerHeight, _leftMenuPanel.Bounds.Size.X, viewport.Height - _headerHeight);
                 _shadow.Bounds = new UniRectangle(0, _headerHeight - 117, _leftMenuPanel.Bounds.Size.X, 287);
                 _backPanel.Bounds = new UniRectangle(_leftMenuPanel.Bounds.Size.X.Offset, 0, _engine.ViewPort.Width * 3 / 4, _engine.ViewPort.Height);
-
-
-
+                _btBack.Bounds = new UniRectangle(5, new UniScalar(1, -60), _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
             }
+
+            UpdateLayout(viewport, newBackBufferDescr);
+        }
+
+        protected virtual void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        {
+
         }
 
         #endregion

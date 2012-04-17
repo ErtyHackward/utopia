@@ -59,8 +59,8 @@ namespace S33M3CoreComponents.Debug
 
             _displayInfo.AddComponants(_fps);
 
-            this.DrawOrders.UpdateIndex(0, 10000);
-            this.DrawOrders.AddIndex(_guiManager.DrawOrders.DrawOrdersCollection[0].Order + 1, "Chart");
+            this.DrawOrders.UpdateIndex(0, int.MaxValue);
+            this.DrawOrders.AddIndex(_guiManager.DrawOrders.DrawOrdersCollection[0].Order + 2, "Chart");
         }
 
         #region Private Methods

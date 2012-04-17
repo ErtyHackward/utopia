@@ -105,6 +105,7 @@ namespace Sandbox.Client
             stateManager.RegisterState(_iocContainer.Get<GamePlayState>());
             stateManager.RegisterState(_iocContainer.Get<SelectServerGameState>());
             stateManager.RegisterState(_iocContainer.Get<EditorState>());
+            stateManager.RegisterState(_iocContainer.Get<SinglePlayerMenuState>());
 
             //Add system components that will be share with all possible states !
             var guiManager = _iocContainer.Get<GuiManager>();
