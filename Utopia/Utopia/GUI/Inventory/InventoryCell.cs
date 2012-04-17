@@ -1,4 +1,5 @@
 ﻿using System;
+using S33M3CoreComponents.Sprites;
 using Utopia.Entities;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
@@ -51,6 +52,21 @@ namespace Utopia.GUI.Inventory
         /// Whether the cell is drawn selected
         /// </summary>
         public bool IsCellSelected { get; set; }
+
+        /// <summary>
+        /// Allows to customize the apperance of the cell
+        /// </summary>
+        public SpriteTexture CustomBackground { get; set; }
+
+        /// <summary>
+        /// Allows to customize the apperance of the cell
+        /// </summary>
+        public SpriteTexture CustomBackgroundHover { get; set; }
+
+        /// <summary>
+        /// Set to true if you want to fit the custom background to the cell size
+        /// </summary>
+        public bool CustomBackgroundAutosize { get; set; }
 
         /// <summary>
         /// Gets icon factory used by cell to draw items icons

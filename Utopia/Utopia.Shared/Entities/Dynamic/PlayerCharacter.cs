@@ -1,10 +1,6 @@
 using System.Collections.Generic;
-using System.Linq;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -13,8 +9,6 @@ namespace Utopia.Shared.Entities.Dynamic
     /// </summary>
     public sealed class PlayerCharacter : SpecialCharacterEntity
     {
-        #region Private variables
-        #endregion
 
         #region Public variables/properties
 

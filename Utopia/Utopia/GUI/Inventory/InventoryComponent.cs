@@ -332,7 +332,7 @@ namespace Utopia.GUI.Inventory
             {
                 if (_guiManager.Screen.Desktop.Children.Contains(_playerInventoryWindow))
                 {
-                    _guiManager.Screen.Desktop.Children.Remove(_infoWindow);
+                    //_guiManager.Screen.Desktop.Children.Remove(_infoWindow);
                     _guiManager.Screen.Desktop.Children.Remove(_playerInventoryWindow);
                     _itemMessageTranslator.Enabled = false;
                     //Has this is A gui component, its own windows will automatically by protected for events going "through" it,
@@ -344,7 +344,7 @@ namespace Utopia.GUI.Inventory
                 }
                 else
                 {
-                    _guiManager.Screen.Desktop.Children.Add(_infoWindow);
+                    //_guiManager.Screen.Desktop.Children.Add(_infoWindow);
                     _guiManager.Screen.Desktop.Children.Add(_playerInventoryWindow);
                     _itemMessageTranslator.Enabled = true;
                     _inputManager.ActionsManager.IsMouseExclusiveMode = true;

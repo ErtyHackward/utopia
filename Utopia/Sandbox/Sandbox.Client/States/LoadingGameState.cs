@@ -247,6 +247,9 @@ namespace Sandbox.Client.States
             var worldGenerator = new WorldGenerator(clientSideworldParam, processor1, processor2);
             _ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 
+            var commonResources = _ioc.Get<SandboxCommonResources>();
+            commonResources.LoadInventoryImages(_ioc.Get<D3DEngine>());
+
             // be careful with initialization order
             var serverComponent = _ioc.Get<ServerComponent>();
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
@@ -302,6 +305,8 @@ namespace Sandbox.Client.States
             //Late Inject PlayerCharacter into VisualWorldParameters
             Utopia.Worlds.SkyDomes.SharedComp.Clouds3D c = clouds as Utopia.Worlds.SkyDomes.SharedComp.Clouds3D;
             if (c != null) c.LateInitialization(sharedFrameCB);
+
+            
 
             AddComponent(bg);
             AddComponent(cameraManager);
