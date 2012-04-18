@@ -129,8 +129,6 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
         {
             if (_currentWorldParameter.WorldName != null)
             {
-                //Go back to SavedPanel
-                btSavedGame();
                 OnStartingGameRequested();
             }
         }
