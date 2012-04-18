@@ -97,7 +97,8 @@ namespace Sandbox.Client.States
         void MenuSinglePlayerPressed(object sender, EventArgs e)
         {
             _vars.SinglePlayer = true;
-            StatesManager.ActivateGameStateAsync("LoadingGame");
+            //StatesManager.ActivateGameStateAsync("LoadingGame");
+            StatesManager.ActivateGameStateAsync("SinglePlayerMenu");
         }
         
         void MenuCreditsPressed(object sender, EventArgs e)

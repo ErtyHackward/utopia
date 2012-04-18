@@ -30,7 +30,7 @@ namespace Sandbox.Client.Components.GUI
             CommonResources = commonResources;
             _game = game;
 
-            _engine.ViewPort_Updated += UpdateLayout;
+            _engine.ViewPort_Updated += UpdateLayoutInternal;
         }
 
         public override void BeforeDispose()
@@ -44,7 +44,7 @@ namespace Sandbox.Client.Components.GUI
                 }
             }
 
-            _engine.ViewPort_Updated -= UpdateLayout;
+            _engine.ViewPort_Updated -= UpdateLayoutInternal;
         }
 
         #region Private methods
@@ -53,7 +53,7 @@ namespace Sandbox.Client.Components.GUI
         #region Public methods
         public override void Initialize()
         {
-            InitializeComponent();
+            InitializeComponentInternal();
         }
 
         public override void LoadContent(DeviceContext context)

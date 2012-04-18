@@ -72,7 +72,6 @@ namespace S33M3DXEngine
         public Size RenderResolution { get; set; }
 
         public bool IsB8G8R8A8_UNormSupport { get; set; }
-        public bool IsMultiSamplingSupport { get; set; }
 
         public DeviceContext ImmediateContext;
 
@@ -104,7 +103,6 @@ namespace S33M3DXEngine
         /// <param name="RenderResolution">if not passed or equal to 0;0 then the resolution will be the one from the Windows Size</param>
         public D3DEngine(Size startingSize, string windowCaption, SampleDescription samplingMode, Size renderResolution = default(Size))
         {
-
             //Create the MainRendering Form
             _renderForm = new RenderForm()
             {
@@ -155,13 +153,6 @@ namespace S33M3DXEngine
                     //GetResource Level            
                     FeatureLevel maxSupportLevel = Device.GetSupportedFeatureLevel(adapter);
                     logger.Info("Maximum supported DirectX11 level = {0}", maxSupportLevel.ToString());
-                    if ((int)maxSupportLevel < (int)FeatureLevel.Level_10_1)
-                    {
-                        IsMultiSamplingSupport = false;
-                        logger.Info("MultiSampling won't be supported, it needs DX11 feature level 10.1 at minimum");
-                        this.CurrentMSAASampling = new SampleDescription(1, 0); //Apply a default MSAASampling
-                    }
-                    else IsMultiSamplingSupport = true;
 
                     int DedicatedGPU = adapter.Description.DedicatedVideoMemory / (1024 * 1024);
                     if (DedicatedGPU < 0) DedicatedGPU = 0;
@@ -173,13 +164,11 @@ namespace S33M3DXEngine
                     logger.Info("GPU Memory : Dedicated from GPU : {0}MB, Shared : {1}MB, Dedicated from System : {2}MB. Total : {3}MB", DedicatedGPU, DedicatedSystem, SharedSystem, DedicatedGPU + DedicatedSystem + SharedSystem);
                     logger.Info("B8G8R8A8_UNormSupport compatibility = {0}", IsB8G8R8A8_UNormSupport);
 
-
 #if DEBUG
                     foreach (var mode in adapterModes)
                     {
                         logger.Trace("[{1}:{2}], format : {0}, RefreshRate : {3}hz, Scaling : {4}, ScanlineMode : {5}", mode.Format, mode.Width, mode.Height, (float)mode.RefreshRate.Numerator / mode.RefreshRate.Denominator, mode.Scaling, mode.ScanlineOrdering);
                     }
-
 #endif
                 }
             }

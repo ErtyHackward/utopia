@@ -36,12 +36,10 @@ namespace Sandbox.Client.Components.GUI.Settings
 
         protected override void InitializeComponent()
         {
-            base.InitializeComponent();
-
             _settingsStateLabel = new LabelControl() { Text = "Restart needed to apply new setting(s)",
                                                         Color = Colors.Red, IsVisible = false};
 
-            _btGraphic = new ButtonControl
+            _btGraphic = ToDispose(new ButtonControl
             {
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
@@ -49,10 +47,10 @@ namespace Sandbox.Client.Components.GUI.Settings
                 TextFontId = 1,
                 Text = "Graphic",
                 Color = new ByteColor(200,200,200,255)
-            };
+            });
             _btGraphic.Pressed += delegate { btGraphicPressed(); };
 
-            _btSound = new ButtonControl
+            _btSound = ToDispose(new ButtonControl
             {
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
@@ -60,10 +58,10 @@ namespace Sandbox.Client.Components.GUI.Settings
                 TextFontId = 1,
                 Text = "Sound",
                 Color = new ByteColor(200, 200, 200, 255)
-            };
+            });
             _btSound.Pressed += delegate { btSoundPressed(); };
 
-            _btCoreEngine = new ButtonControl
+            _btCoreEngine = ToDispose(new ButtonControl
             {
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
@@ -71,10 +69,10 @@ namespace Sandbox.Client.Components.GUI.Settings
                 TextFontId = 1,
                 Text = "Core Engine",
                 Color = new ByteColor(200, 200, 200, 255)
-            };
+            });
             _btCoreEngine.Pressed += delegate { btCoreEnginePressed(); };
 
-            _btKeyBinding = new ButtonControl
+            _btKeyBinding = ToDispose(new ButtonControl
             {
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
@@ -82,8 +80,10 @@ namespace Sandbox.Client.Components.GUI.Settings
                 TextFontId = 1,
                 Text = "Key Binding",
                 Color = new ByteColor(200, 200, 200, 255)
-            };
+            });
             _btKeyBinding.Pressed += delegate { btKeyBindingPressed(); };
+
+            _windowLabel.Text = "Settings";
 
             //Add components to the left Panel, including the Derived class Components
             _leftMenuPanel.Children.Add(_btBack);
@@ -117,6 +117,8 @@ namespace Sandbox.Client.Components.GUI.Settings
             _form.Children.Add(_backPanel);
 
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
+
+            btGraphicPressed();
         }
 
         //Resize, place the components depending of the viewport size
@@ -139,7 +141,6 @@ namespace Sandbox.Client.Components.GUI.Settings
                 btPlacementY += 50;
                 _btKeyBinding.Bounds = new UniRectangle(5, btPlacementY, _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
 
-                _btBack.Bounds = new UniRectangle(5, new UniScalar(1, -60), _leftMenuPanel.Bounds.Size.X.Offset - 10, 50);
                 _settingsStateLabel.Bounds = new UniRectangle(10, new UniScalar(1f, -75.0f), 0, 0);
                 if (_graphSettingsPanel != null) _graphSettingsPanel.Resize();
                 if (_coreEngineSetingsPanel != null) _coreEngineSetingsPanel.Resize();
