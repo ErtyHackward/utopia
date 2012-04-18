@@ -22,7 +22,7 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         private Vector3I _chunkSize;
 
-        private int _worldSeed;
+        private string _worldSeed;
         private int _waterLevel;
         private GenerationParameters _planGenerationParameters;
 
@@ -52,7 +52,7 @@ namespace Utopia.Shared.Net.Messages
             set { _chunkSize = value; }
         }
 
-        public int WorldSeed
+        public string WorldSeed
         {
             get { return _worldSeed; }
             set { _worldSeed = value; }
@@ -80,12 +80,11 @@ namespace Utopia.Shared.Net.Messages
             gi._maxViewRange = reader.ReadInt32();
 
             gi._chunkSize = reader.ReadVector3I();
-            gi._worldSeed = reader.ReadInt32();
+            gi._worldSeed = reader.ReadString();
             gi._waterLevel = reader.ReadInt32();
             var plan = new GenerationParameters();
             plan.Load(reader);
             gi._planGenerationParameters = plan;
-            
 
             return gi;
         }

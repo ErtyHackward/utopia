@@ -8,6 +8,8 @@ using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using Utopia.Shared.World;
+using System.Data.SQLite;
 
 namespace Utopia.Server.Managers
 {
@@ -17,6 +19,7 @@ namespace Utopia.Server.Managers
     public class SQLiteStorageManager : SQLiteStorage, IUsersStorage, IChunksStorage, IEntityStorage, IVoxelModelStorage
     {
         private readonly EntityFactory _factory;
+        private SQLiteCommand _worldParametersInsertCmd;
 
         /// <summary>
         /// Returns database creation query 
@@ -30,8 +33,29 @@ namespace Utopia.Server.Managers
             dbCreate.Append(@"CREATE TABLE [users] ([id] integer PRIMARY KEY AUTOINCREMENT NOT NULL, [login] varchar(120) NOT NULL, [password] char(32) NOT NULL, [role] integer NOT NULL, [lastlogin] datetime NULL, [state] blob NULL); CREATE UNIQUE INDEX IDX_USERS_LOGIN on users (login);");
             dbCreate.Append(@"CREATE TABLE [entities] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
             dbCreate.Append(@"CREATE TABLE [models] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
-            
+            dbCreate.Append(@"CREATE TABLE [WorldParameters] ([WorldName] varchar(120) PRIMARY KEY NOT NULL, [SeedName] varchar(120) NOT NULL, [SeaLevel] integer NOT NULL);");
             return dbCreate.ToString();
+        }
+
+        private void CreateQueryTemplates()
+        {
+            string SqlStatment;
+            //Upsert a specific chunk
+            SqlStatment = "INSERT OR REPLACE INTO WorldParameters ([WorldName], [SeedName], [SeaLevel]) VALUES (@WorldName, @SeedName, @SeaLevel)";
+            _worldParametersInsertCmd = new SQLiteCommand(SqlStatment, Connection);
+            _worldParametersInsertCmd.Parameters.Add("@WorldName", System.Data.DbType.String);
+            _worldParametersInsertCmd.Parameters.Add("@SeedName", System.Data.DbType.String);
+            _worldParametersInsertCmd.Parameters.Add("@SeaLevel", System.Data.DbType.Int32);
+        }
+
+        private void InsertWorldParametersData(WorldParameters worldParam)
+        {
+            _worldParametersInsertCmd.Parameters[0].Value = worldParam.WorldName;
+            _worldParametersInsertCmd.Parameters[1].Value = worldParam.SeedName;
+            _worldParametersInsertCmd.Parameters[2].Value = worldParam.SeaLevel;
+
+            //Launch the insert
+            _worldParametersInsertCmd.ExecuteNonQuery();
         }
 
         /// <summary>
@@ -80,8 +104,16 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="factory"></param>
-        public SQLiteStorageManager(string filePath, EntityFactory factory) : base(filePath)
+        public SQLiteStorageManager(string filePath, EntityFactory factory, WorldParameters worldParam)
+            : base(filePath)
         {
+            CreateQueryTemplates();
+
+            if (_isDataBaseCreated)
+            {
+                InsertWorldParametersData(worldParam);
+            }
+
             _factory = factory;
         }
 
@@ -267,6 +299,7 @@ namespace Utopia.Server.Managers
 
         public override void Dispose()
         {
+            _worldParametersInsertCmd.Dispose();
             base.Dispose();
         }
  

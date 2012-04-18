@@ -98,7 +98,6 @@ namespace Sandbox.Client.States
         {
             _vars.SinglePlayer = true;
             //StatesManager.ActivateGameStateAsync("LoadingGame");
-
             StatesManager.ActivateGameStateAsync("SinglePlayerMenu");
         }
         

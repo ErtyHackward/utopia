@@ -40,9 +40,9 @@ namespace Sandbox.Server
 
             if (string.IsNullOrEmpty(settingsManager.Settings.DatabasePath))
                 settingsManager.Settings.DatabasePath = Path.Combine(GameSystemSettings.GetFilePath("", SettingsStorage.ApplicationData), "Server", "MultiPlayer", param.Seed.ToString(), "ServerWorld.db");
-            
 
-            var sqLiteStorageManager = new SQLiteStorageManager(settingsManager.Settings.DatabasePath, null);
+
+            var sqLiteStorageManager = new SQLiteStorageManager(settingsManager.Settings.DatabasePath, null, param);
 
             _iocContainer.Bind<WorldParameters>().ToConstant(param).InSingletonScope();
             _iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToConstant(settingsManager).InSingletonScope();
@@ -82,7 +82,7 @@ namespace Sandbox.Server
 
             IocBind(new WorldParameters()
             {
-                Seed = 12695362,
+                SeedName = "New World",
                 SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2
             }
             );

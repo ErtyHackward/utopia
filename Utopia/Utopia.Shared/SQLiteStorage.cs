@@ -15,6 +15,7 @@ namespace Utopia.Shared
         private SQLiteConnection _connection;
         private string _path;
         private object _syncRoot = new object();
+        protected bool _isDataBaseCreated;
 
         /// <summary>
         /// Gets database path
@@ -47,10 +48,16 @@ namespace Utopia.Shared
         /// <param name="wipeDatabase"></param>
         protected SQLiteStorage(string fileName, bool wipeDatabase = false)
         {
-            CreateDBConnection(fileName, wipeDatabase);
+            _isDataBaseCreated = CreateDBConnection(fileName, wipeDatabase);
         }
 
-        protected void CreateDBConnection(string fileName, bool wipeDatabase = false)
+        /// <summary>
+        /// Create the DB connection, will create the databse if not existing
+        /// </summary>
+        /// <param name="fileName">the Database Path</param>
+        /// <param name="wipeDatabase">Boolean forcing a fresh DB creation, even if the file is existing</param>
+        /// <returns>Return true if New Database has been created</returns>
+        protected bool CreateDBConnection(string fileName, bool wipeDatabase = false)
         {
             _path = fileName;
 
@@ -88,6 +95,8 @@ namespace Utopia.Shared
             Execute("PRAGMA LOCKING_MODE=EXCLUSIVE;PRAGMA JOURNAL_MODE=WAL;");
 
             if (createDb) CreateDataBaseInternal();
+
+            return createDb;
         }
 
         public virtual void Dispose()
@@ -97,13 +106,16 @@ namespace Utopia.Shared
 
         protected void CloseConnection()
         {
-            if (_connection != null && _connection.State != ConnectionState.Closed)
+            lock (_syncRoot)
             {
-                _connection.Close();
-            }
+                if (_connection != null && _connection.State != ConnectionState.Closed)
+                {
+                    _connection.Close();
+                }
 
-            if (_connection != null)
-                _connection.Dispose();
+                if (_connection != null)
+                    _connection.Dispose();
+            }
         }
 
         /// <summary>
