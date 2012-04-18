@@ -238,6 +238,7 @@
     <Compile Include="Settings\CubeProfile.cs" />
     <Compile Include="Settings\EntityProfile.cs" />
     <Compile Include="Settings\GameSystemSettings.cs" />
+    <Compile Include="Settings\LocalWorlds.cs" />
     <Compile Include="Settings\ParamRow.cs" />
     <Compile Include="Settings\ParamValue.cs" />
     <Compile Include="Settings\SampleDescriptionSetting.cs" />
@@ -336,6 +337,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
-  
 </Project>

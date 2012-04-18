@@ -13,6 +13,7 @@ namespace Sandbox.Client.States
     public class SinglePlayerMenuState : GameState
     {
         private readonly IKernel _iocContainer;
+        private RuntimeVariables _vars;
 
         public override string Name
         {
@@ -30,13 +31,21 @@ namespace Sandbox.Client.States
         {
             var gui = _iocContainer.Get<GuiManager>();
             var singlePlayer = _iocContainer.Get<SinglePlayerComponent>();
+            _vars = _iocContainer.Get<RuntimeVariables>();
 
             AddComponent(singlePlayer);
             AddComponent(gui);
 
             singlePlayer.BackPressed += settings_BackPressed;
+            singlePlayer.StartingGameRequested += singlePlayer_StartingGameRequested;
 
             base.Initialize(context);
+        }
+
+        void singlePlayer_StartingGameRequested(object sender, EventArgs e)
+        {
+            _vars.SinglePlayer = true;
+            StatesManager.ActivateGameStateAsync("LoadingGame");
         }
 
         void settings_BackPressed(object sender, EventArgs e)

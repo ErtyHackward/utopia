@@ -117,6 +117,8 @@ namespace Sandbox.Client.Components.GUI.Settings
             _form.Children.Add(_backPanel);
 
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
+
+            btGraphicPressed();
         }
 
         //Resize, place the components depending of the viewport size

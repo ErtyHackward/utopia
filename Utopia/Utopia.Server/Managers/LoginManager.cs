@@ -165,10 +165,11 @@ namespace Utopia.Server.Managers
                 {
                     ChunkSize = AbstractChunk.ChunkSize,
                     MaxViewRange = 32,
-                    WorldSeed = _server.LandscapeManager.WorldGenerator.WorldParameters.Seed,
+                    WorldSeed = _server.LandscapeManager.WorldGenerator.WorldParameters.SeedName,
                     WaterLevel = _server.LandscapeManager.WorldGenerator.WorldParameters.SeaLevel,
                     PlanGenerationParameters = GenerationParameters
                 };
+
                 connection.SendAsync(gameInfo);
                 connection.SendAsync(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity, Link = playerEntity.DynamicEntity.GetLink() });
                 connection.SendAsync(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });

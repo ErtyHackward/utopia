@@ -526,7 +526,7 @@ that uses the theme, please give due credit to the original artist!
       <region source="controls" hplacement="left" vplacement="bottom" x="92" y="23" w="1" h="1" />
       <region source="controls" hplacement="stretch" vplacement="bottom" x="93" y="23" w="62" h="1" />
       <region source="controls" hplacement="right" vplacement="bottom" x="155" y="23" w="1" h="1" />
-        <text font="default" color="#3F3F3F" hplacement="left" vplacement="top" xoffset="4" yoffset="2" />
+      <text font="itemsFont" color="#3F3F3F" hplacement="left" vplacement="top" xoffset="4" yoffset="2" />
     </frame>
 
     <!--

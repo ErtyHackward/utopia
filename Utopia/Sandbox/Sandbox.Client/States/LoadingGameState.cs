@@ -71,7 +71,6 @@ namespace Sandbox.Client.States
         private readonly IKernel _ioc;
         private RuntimeVariables _vars;
         private Server _server;
-        private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
         private SandboxEntityFactory _serverFactory;
         private SharpDX.Direct3D11.DeviceContext _context;
 
@@ -117,9 +116,17 @@ namespace Sandbox.Client.States
 
             if (_vars.SinglePlayer)
             {
-                int seed = 12695361;
+                var wp = _ioc.Get<WorldParameters>();
 
-                InitSinglePlayerServer(seed);
+                //wp not initialized ==> We are in "SandBox" mode, load from the "Utopia SandBox" Default WorldParameters
+                if (wp.SeedName == null)
+                {
+                    wp.WorldName = "SandBox World";
+                    wp.SeedName = "Utopia SandBox";
+                    wp.SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2;
+                }
+
+                InitSinglePlayerServer(wp);
 
                 if (serverComponent.ServerConnection == null ||
                     serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
@@ -127,7 +134,7 @@ namespace Sandbox.Client.States
                     serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
                     serverComponent.BindingServer("127.0.0.1");
                     serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
-                    _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, "Client", "Singleplayer", seed.ToString(), "ClientWorldCache.db");
+                    _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, "Client", "Singleplayer", wp.WorldName, "ClientWorldCache.db");
                 }
             }
             else
@@ -143,34 +150,32 @@ namespace Sandbox.Client.States
             }
         }
 
-        private void InitSinglePlayerServer(int seed)
+        private void InitSinglePlayerServer(WorldParameters worldParam)
         {
             if (_server != null)
             {
                 _server.Dispose();
             }
-            if (_serverSqliteStorageSinglePlayer != null) _serverSqliteStorageSinglePlayer.Dispose();
 
             _serverFactory = new SandboxEntityFactory(null);
-            var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", seed.ToString(), "ServerWorld.db");
+            var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
 
-            _serverSqliteStorageSinglePlayer = new SQLiteStorageManager(dbPath, _serverFactory);
-            _serverSqliteStorageSinglePlayer.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
+            SQLiteStorageManager serverSqliteStorageSinglePlayer = _ioc.Get<SQLiteStorageManager>(new ConstructorArgument("filePath", dbPath),
+                                                                                                  new ConstructorArgument("factory", _serverFactory),
+                                                                                                  new ConstructorArgument("worldParam", worldParam));
+
+            serverSqliteStorageSinglePlayer.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
 
             var settings = new XmlSettingsManager<ServerSettings>(@"Server\localServer.config");
             settings.Load();
             settings.Save();
-            // create a server generator
-            var wp = _ioc.Get<WorldParameters>();
-            wp.SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2;
-            wp.Seed = seed;
 
-            IWorldProcessor processor1 = new s33m3WorldProcessor(wp);
-            IWorldProcessor processor2 = new LandscapeLayersProcessor(wp, _serverFactory);
-            var worldGenerator = new WorldGenerator(wp, processor1, processor2);
+            IWorldProcessor processor1 = new s33m3WorldProcessor(worldParam);
+            IWorldProcessor processor2 = new LandscapeLayersProcessor(worldParam, _serverFactory);
+            var worldGenerator = new WorldGenerator(worldParam, processor1, processor2);
             //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
             //var worldGenerator = new WorldGenerator(wp, planProcessor);
-            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory);
+            _server = new Server(settings, worldGenerator, serverSqliteStorageSinglePlayer, serverSqliteStorageSinglePlayer, serverSqliteStorageSinglePlayer, _serverFactory);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _server.ConnectionManager.LocalMode = true;
             _server.ConnectionManager.Listen();
@@ -230,17 +235,10 @@ namespace Sandbox.Client.States
         private void GameplayComponentsCreation()
         {
             //_ioc.Get<ServerComponent>().GameInformations was set by the MessageGameInformation received by the server
-            WorldParameters clientSideworldParam = new WorldParameters
-            {
-                Seed = _ioc.Get<ServerComponent>().GameInformations.WorldSeed,
-                SeaLevel = _ioc.Get<ServerComponent>().GameInformations.WaterLevel
-            };
+            WorldParameters clientSideworldParam = _ioc.Get<WorldParameters>();
 
-            _ioc.Rebind<WorldParameters>().ToConstant(clientSideworldParam).InSingletonScope();  
-
-            // client world generator
-            //var clientGeneratpr = new WorldGenerator(clientSideworldParam, new PlanWorldProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client")));
-            //_ioc.Bind<WorldGenerator>().ToConstant(clientGeneratpr).InSingletonScope();
+            clientSideworldParam.SeedName = _ioc.Get<ServerComponent>().GameInformations.WorldSeed;
+            clientSideworldParam.SeaLevel = _ioc.Get<ServerComponent>().GameInformations.WaterLevel;
 
             IWorldProcessor processor1 = new s33m3WorldProcessor(clientSideworldParam);
             IWorldProcessor processor2 = new LandscapeLayersProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
@@ -305,8 +303,6 @@ namespace Sandbox.Client.States
             //Late Inject PlayerCharacter into VisualWorldParameters
             Utopia.Worlds.SkyDomes.SharedComp.Clouds3D c = clouds as Utopia.Worlds.SkyDomes.SharedComp.Clouds3D;
             if (c != null) c.LateInitialization(sharedFrameCB);
-
-            
 
             AddComponent(bg);
             AddComponent(cameraManager);

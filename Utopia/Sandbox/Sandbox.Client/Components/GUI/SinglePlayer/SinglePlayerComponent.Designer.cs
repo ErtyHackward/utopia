@@ -67,6 +67,9 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             _form.Children.Add(_leftMenuPanel);
 
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
+
+            //Pre select Saved Game Panel
+            btSavedGame();
         }
 
         protected override void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
@@ -90,7 +93,11 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
 
         private void btNewPressed()
         {
-            if (_newGamePanel == null) _newGamePanel = new NewGamePanel(CommonResources) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
+            if (_newGamePanel == null)
+            {
+                _newGamePanel = new NewGamePanel(CommonResources, _currentWorldParameter, _vars) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
+                _newGamePanel.BtCreate.Pressed += _btCreate_Pressed;
+            }
             if (_backPanel.Children.Contains(_newGamePanel) == false)
             {
                 _backPanel.Children.Clear();
@@ -100,12 +107,36 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
 
         private void btSavedGame()
         {
-            if (_savedGamePanel == null) _savedGamePanel = new SavedGamePanel(CommonResources) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
+            if (_savedGamePanel == null)
+            {
+                _savedGamePanel = new SavedGamePanel(CommonResources, _currentWorldParameter, _vars) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
+                _savedGamePanel.BtLoad.Pressed += _btLoad_Pressed;
+            }
             if (_backPanel.Children.Contains(_savedGamePanel) == false)
             {
                 _backPanel.Children.Clear();
+                _savedGamePanel.RefreshWorldList();
                 _backPanel.Children.Add(_savedGamePanel);
             }
+        }
+
+        void _btLoad_Pressed(object sender, EventArgs e)
+        {
+            OnStartingGameRequested();
+        }
+
+        void _btCreate_Pressed(object sender, EventArgs e)
+        {
+            if (_currentWorldParameter.WorldName != null)
+            {
+                OnStartingGameRequested();
+            }
+        }
+
+        public override void BeforeDispose()
+        {
+            _savedGamePanel.BtLoad.Pressed -= _btLoad_Pressed;
+            _newGamePanel.BtCreate.Pressed -= _btCreate_Pressed;
         }
         #endregion
     }
