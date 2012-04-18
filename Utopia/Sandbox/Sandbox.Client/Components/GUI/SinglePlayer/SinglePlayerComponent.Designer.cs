@@ -95,7 +95,7 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
         {
             if (_newGamePanel == null)
             {
-                _newGamePanel = new NewGamePanel(CommonResources, _currentWorldParameter, _vars) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
+                _newGamePanel = new NewGamePanel(CommonResources, _currentWorldParameter, _vars, _guiManager) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
                 _newGamePanel.BtCreate.Pressed += _btCreate_Pressed;
             }
             if (_backPanel.Children.Contains(_newGamePanel) == false)
@@ -129,14 +129,16 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
         {
             if (_currentWorldParameter.WorldName != null)
             {
+                //Go back to SavedPanel
+                btSavedGame();
                 OnStartingGameRequested();
             }
         }
 
         public override void BeforeDispose()
         {
-            _savedGamePanel.BtLoad.Pressed -= _btLoad_Pressed;
-            _newGamePanel.BtCreate.Pressed -= _btCreate_Pressed;
+            if(_savedGamePanel != null) _savedGamePanel.BtLoad.Pressed -= _btLoad_Pressed;
+            if(_newGamePanel != null) _newGamePanel.BtCreate.Pressed -= _btCreate_Pressed;
         }
         #endregion
     }

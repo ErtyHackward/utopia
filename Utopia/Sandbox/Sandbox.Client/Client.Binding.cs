@@ -178,7 +178,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //Local Server in case of Single Player
-            _iocContainer.Bind<SQLiteStorageManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            //_iocContainer.Bind<SQLiteStorageManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //=============================================================
 
             //Game Componenents =========================================

@@ -150,6 +150,11 @@ namespace Utopia.Network
         }
 
         #region Public Methods
+        public void Disconnect()
+        {
+            if (ServerConnection != null && ServerConnection.ConnectionStatus == ConnectionStatus.Connected) ServerConnection.Disconnect();
+        }
+
         public bool BindingServer(string address)
         {
             if (ServerConnection != null && ServerConnection.ConnectionStatus == ConnectionStatus.Connected) ServerConnection.Disconnect();

@@ -28,8 +28,7 @@ namespace Utopia.Shared.Net.Connections
             if (e.Status != ConnectionStatus)
             {
                 _connectionStatus = e.Status;
-                if (ConnectionStatusChanged != null)
-                    ConnectionStatusChanged(this, e);
+                if (ConnectionStatusChanged != null)  ConnectionStatusChanged(this, e);
             }
         }
 

@@ -9,6 +9,7 @@ using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using SharpDX;
 using System.IO;
 using System.Diagnostics;
+using Utopia.Shared.Settings;
 
 namespace Sandbox.Client.Components.GUI.SinglePlayer
 {
@@ -121,14 +122,28 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
                     //Will fall in error if not right correct file name
                     var result = Path.GetFullPath(@"c:\" + _inputWorldName.Text);
 
-                    //Assign to currentWorldParameters the news parameters
-                    _currentWorldParameter.WorldName = _inputWorldName.Text;
-                    _currentWorldParameter.SeedName = _inputSeedName.Text;
-                    _currentWorldParameter.SeaLevel = _inputOceanLevel.Value;
+                    //Check if this world is not existing
+                    if (Directory.Exists(Path.Combine(LocalWorlds.GetSinglePlayerServerRootPath(_vars.ApplicationDataPath), _inputWorldName.Text)) == false)
+                    {
+                        //Assign to currentWorldParameters the news parameters
+                        _currentWorldParameter.WorldName = _inputWorldName.Text;
+                        _currentWorldParameter.SeedName = _inputSeedName.Text;
+                        _currentWorldParameter.SeaLevel = _inputOceanLevel.Value;
+
+                        //Reset field values
+                        _inputWorldName.Text = string.Empty;
+                        _inputSeedName.Text = string.Empty;
+                        _inputOceanLevel.Value = 64;
+                    }
                 }
                 catch (Exception)
                 {
                 }
+            }
+
+            if (_currentWorldParameter.WorldName == null)
+            {
+                _guiManager.MessageBox("World parameter(s) incorrect", "Error");
             }
 
         }
