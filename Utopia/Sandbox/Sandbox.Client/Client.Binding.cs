@@ -60,6 +60,7 @@ using Sandbox.Client.Components.GUI;
 using Sandbox.Client.Components.GUI.Settings;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Net.Messages;
+using Sandbox.Client.Components.GUI.SinglePlayer;
 
 namespace Sandbox.Client
 {
@@ -83,6 +84,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<D3DEngine>().ToConstant(_d3dEngine).InSingletonScope();
             _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope().WithConstructorArgument("allocatedThreadPool", 3); //Application shared states
             _iocContainer.Bind<SpriteRenderer>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<WorldParameters>().ToSelf().InSingletonScope();
 
             // Game states ================================================
             _iocContainer.Bind<RuntimeVariables>().ToSelf().InSingletonScope();
@@ -108,6 +110,9 @@ namespace Sandbox.Client
 
             _iocContainer.Bind<InGameMenuComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<InGameMenuState>().ToSelf().InSingletonScope();
+
+            _iocContainer.Bind<SinglePlayerComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<SinglePlayerMenuState>().ToSelf().InSingletonScope();
 
             _iocContainer.Bind<FadeSwitchComponent>().ToSelf().InSingletonScope();
 
@@ -170,10 +175,10 @@ namespace Sandbox.Client
 
             _iocContainer.Bind<EntityFactory>().To<SandboxEntityFactory>().InScope(x => GameScope.CurrentGameScope).Named("Client");
 
-            //_iocContainer.Bind<EntityFactory>().ToConstant(new SandboxEntityFactory(_iocContainer.Get<IChunkEntityImpactManager>())).InScope(x => GameScope.CurrentGameScope).Named("Client");
-
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            //Local Server in case of Single Player
+            _iocContainer.Bind<SQLiteStorageManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //=============================================================
 
             //Game Componenents =========================================

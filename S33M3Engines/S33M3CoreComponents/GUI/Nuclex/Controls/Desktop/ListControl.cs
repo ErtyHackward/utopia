@@ -144,6 +144,18 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
             get { return SelectedItems.Count == 1 ? Items[SelectedItems[0]] : null; }
         }
 
+        public int SelectItem
+        {
+            set
+            {
+                SelectedItems.Clear();
+                if (value > -1)
+                {
+                    SelectedItems.Add(value);
+                }
+            }
+        }
+
         #endregion
 
         public override void BeforeDispose()

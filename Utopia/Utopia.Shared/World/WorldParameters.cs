@@ -16,15 +16,37 @@ namespace Utopia.Shared.World
         /// <summary>
         /// Base seed to use in random initializers
         /// </summary>
-        public int Seed { get; set; }
+        /// 
+        public int Seed
+        {
+            get
+            {
+                return SeedName.GetHashCode();
+            }
+        }
+
+        public string SeedName { get; set; }
 
         /// <summary>
         /// Sea height Level (blocks)
         /// </summary>
         public int SeaLevel { get; set; }
 
+        /// <summary>
+        /// The World Name
+        /// </summary>
+        public string WorldName { get; set; }
+
+
         public WorldParameters()
         {
+        }
+
+        public void Clear()
+        {
+            WorldName = null;
+            SeaLevel = -1;
+            SeedName = null;
         }
     }
 }

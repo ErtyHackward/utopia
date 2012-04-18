@@ -35,6 +35,7 @@ namespace Utopia.Shared.Settings
     public class GameSystemSettings
     {
         public static XmlSettingsManager<GameSystemSetting> Current;
+        public static List<LocalWorlds.LocalWorldsParam> LocalWorldsParams;
 
         private static string _applicationDataSubFolder;
         /// <summary>

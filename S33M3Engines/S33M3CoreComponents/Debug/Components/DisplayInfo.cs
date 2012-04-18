@@ -29,7 +29,7 @@ namespace S33M3CoreComponents.Components.Debug
             get { return _components; }
         }
 
-        private ByteColor _fontColor = new ByteColor(Color.Yellow.R, Color.Yellow.G, Color.Yellow.B, (byte)255);
+        private ByteColor _fontColor = new ByteColor(Color.Red.R, Color.Red.G, Color.Red.B, (byte)255);
         private D3DEngine _d3dEngine;
 
         public DisplayInfo(D3DEngine d3dEngine, Game game)

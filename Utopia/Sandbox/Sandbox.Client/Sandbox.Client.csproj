@@ -123,8 +123,16 @@
       <DependentUpon>SettingsPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\GUI\Settings\SoundSettingsPanel.cs" />
-    <Compile Include="Components\GUI\SinglePlayerComponent.cs" />
-    <Compile Include="Components\GUI\SinglePlayerComponent.Designer.cs">
+    <Compile Include="Components\GUI\SinglePlayer\NewGamePanel.cs" />
+    <Compile Include="Components\GUI\SinglePlayer\NewGamePanel.Designer.cs">
+      <DependentUpon>NewGamePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\GUI\SinglePlayer\SavedGamePanel.cs" />
+    <Compile Include="Components\GUI\SinglePlayer\SavedGamePanel.Designer.cs">
+      <DependentUpon>SavedGamePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\GUI\SinglePlayer\SinglePlayerComponent.cs" />
+    <Compile Include="Components\GUI\SinglePlayer\SinglePlayerComponent.Designer.cs">
       <DependentUpon>SinglePlayerComponent.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\SandboxGameSoundManager.cs" />
