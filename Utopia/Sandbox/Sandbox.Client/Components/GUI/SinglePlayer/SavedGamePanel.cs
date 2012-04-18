@@ -41,10 +41,10 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             try
             {
                 //Try to delete the Server directory
-                Directory.Delete(info.ServerRootPath.FullName, true);
+                Directory.Delete(info.WorldServerRootPath.FullName, true);
 
                 //Try to delete the Client directory
-                Directory.Delete(info.ClientRootPath.FullName, true);
+                Directory.Delete(info.WorldClientRootPath.FullName, true);
 
                 //Recreate the list of all existing Worlds, as one has been deleted
                 GameSystemSettings.LocalWorldsParams = LocalWorlds.GetAllSinglePlayerWorldsParams(_vars.ApplicationDataPath);

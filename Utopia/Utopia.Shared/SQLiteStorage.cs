@@ -12,6 +12,7 @@ namespace Utopia.Shared
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private bool _isDisposed = false;
         private SQLiteConnection _connection;
         private string _path;
         private object _syncRoot = new object();
@@ -108,13 +109,16 @@ namespace Utopia.Shared
         {
             lock (_syncRoot)
             {
+                _isDisposed = true;
                 if (_connection != null && _connection.State != ConnectionState.Closed)
                 {
                     _connection.Close();
                 }
 
                 if (_connection != null)
+                {
                     _connection.Dispose();
+                }
             }
         }
 
@@ -181,9 +185,9 @@ namespace Utopia.Shared
         {
             lock (_syncRoot)
             {
-                using (var cmd = _connection.CreateCommand())
+                if (_connection.State == ConnectionState.Open && _isDisposed == false)
                 {
-                    if (cmd.Connection.State == ConnectionState.Open)
+                    using (var cmd = _connection.CreateCommand())
                     {
                         cmd.CommandText = query;
                         var param = cmd.CreateParameter();
@@ -193,12 +197,13 @@ namespace Utopia.Shared
                         param.Value = blob;
                         cmd.Parameters.Add(param);
                         return cmd.ExecuteNonQuery();
+
                     }
-                    else
-                    {
-                        logger.Warn("Trying to insert Blob Data while the connection status is not open : {0}", cmd.Connection.State);
-                        return 0;
-                    }
+                }
+                else
+                {
+                    logger.Warn("Trying to insert Blob Data while the connection status is not open or disposed : {0}", Connection.State);
+                    return 0;
                 }
             }
         }

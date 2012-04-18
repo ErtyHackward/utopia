@@ -73,6 +73,7 @@ namespace Sandbox.Client.States
         private Server _server;
         private SandboxEntityFactory _serverFactory;
         private SharpDX.Direct3D11.DeviceContext _context;
+        private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
 
         public override string Name
         {
@@ -160,11 +161,8 @@ namespace Sandbox.Client.States
             _serverFactory = new SandboxEntityFactory(null);
             var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
 
-            SQLiteStorageManager serverSqliteStorageSinglePlayer = _ioc.Get<SQLiteStorageManager>(new ConstructorArgument("filePath", dbPath),
-                                                                                                  new ConstructorArgument("factory", _serverFactory),
-                                                                                                  new ConstructorArgument("worldParam", worldParam));
-
-            serverSqliteStorageSinglePlayer.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
+            _serverSqliteStorageSinglePlayer = new SQLiteStorageManager(dbPath,_serverFactory, worldParam);
+            _serverSqliteStorageSinglePlayer.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
 
             var settings = new XmlSettingsManager<ServerSettings>(@"Server\localServer.config");
             settings.Load();
@@ -175,14 +173,23 @@ namespace Sandbox.Client.States
             var worldGenerator = new WorldGenerator(worldParam, processor1, processor2);
             //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
             //var worldGenerator = new WorldGenerator(wp, planProcessor);
-            _server = new Server(settings, worldGenerator, serverSqliteStorageSinglePlayer, serverSqliteStorageSinglePlayer, serverSqliteStorageSinglePlayer, _serverFactory);
+            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _server.ConnectionManager.LocalMode = true;
             _server.ConnectionManager.Listen();
+            _server.ConnectionManager.ConnectionRemoved += ConnectionManager_ConnectionRemoved;
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
             _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
             _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
 
+        }
+
+        //The event will only be called when the client is removed from the local Single Player server
+        //I need to dispose manually the SQLlite connection to the database server, in order to remove the lock
+        void ConnectionManager_ConnectionRemoved(object sender, ConnectionEventArgs e)
+        {
+            _server.ConnectionManager.ConnectionRemoved -= ConnectionManager_ConnectionRemoved;
+            _serverSqliteStorageSinglePlayer.Dispose();
         }
 
         void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)

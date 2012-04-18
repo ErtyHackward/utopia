@@ -14,8 +14,8 @@ namespace Utopia.Shared.Settings
         {
             public WorldParameters WorldParameters;
             public DateTime LastAccess;
-            public DirectoryInfo ServerRootPath;
-            public DirectoryInfo ClientRootPath;
+            public DirectoryInfo WorldServerRootPath;
+            public DirectoryInfo WorldClientRootPath;
 
             public override string ToString()
             {
@@ -25,12 +25,21 @@ namespace Utopia.Shared.Settings
 
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        public static string GetSinglePlayerServerRootPath(string applicationRootPath)
+        {
+            return applicationRootPath + @"\Server\SinglePlayer";
+        }
+
+        public static string GetSinglePlayerClientRootPath(string applicationRootPath)
+        {
+            return applicationRootPath + @"\Client\SinglePlayer";
+        }
 
         public static List<LocalWorldsParam> GetAllSinglePlayerWorldsParams(string applicationRootPath)
         {
             List<LocalWorldsParam> WorldsParameters = new List<LocalWorldsParam>();
             //Create the server, singleplayer root path
-            string sglPlayerRootPath = applicationRootPath + @"\Server\SinglePlayer";
+            string sglPlayerRootPath = GetSinglePlayerServerRootPath(applicationRootPath);
 
             if (Directory.Exists(sglPlayerRootPath))
             {
@@ -42,8 +51,8 @@ namespace Utopia.Shared.Settings
                         //Load and extract information from database
                         LocalWorldsParam param = new LocalWorldsParam();
                         param.WorldParameters = ExtractInformationData(ServerDataBasePath, out param.LastAccess);
-                        param.ServerRootPath = new DirectoryInfo(directory);
-                        param.ClientRootPath = new DirectoryInfo(applicationRootPath + @"\Client\SinglePlayer\" + param.ServerRootPath.Name);
+                        param.WorldServerRootPath = new DirectoryInfo(directory);
+                        param.WorldClientRootPath = new DirectoryInfo(GetSinglePlayerClientRootPath(applicationRootPath)+ @"\" + param.WorldServerRootPath.Name);
                         WorldsParameters.Add(param);
                     }
                 }

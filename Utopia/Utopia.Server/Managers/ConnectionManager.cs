@@ -41,8 +41,7 @@ namespace Utopia.Server.Managers
         protected void OnConnectionRemoved(ConnectionEventArgs e)
         {
             e.Connection.MessagePing -= ConnectionMessagePing;
-            var handler = ConnectionRemoved;
-            if (handler != null) handler(this, e);
+            if (ConnectionRemoved != null) ConnectionRemoved(this, e);
         }
 
         /// <summary>
