@@ -16,21 +16,28 @@ using System.Windows.Forms;
 using S33M3DXEngine.Threading;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Config;
+using Ninject;
+using S33M3DXEngine.Main.Interfaces;
+using Utopia.Worlds.SkyDomes.SharedComp;
+using Sandbox.Client.States;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {
     public partial class SettingsComponent : MenuTemplate1Component
     {
         #region Private variables
+        private IKernel _iocContainer;
         #endregion
 
         #region Public properties/methods
         public event EventHandler KeyBindingChanged;
+        public bool isGameRunning { get; set; }
         #endregion
 
-        public SettingsComponent(Game game, D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources)
+        public SettingsComponent(Game game, D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources, IKernel iocContainer)
             :base(game, engine, screen, commonResources)
         {
+            _iocContainer = iocContainer;
         }
 
         public override void BeforeDispose()
@@ -106,6 +113,9 @@ namespace Sandbox.Client.Components.GUI.Settings
                                 break;
                             case "VSync":
                                 ChangeVSync((bool)row.FieldData.Value);
+                                break;
+                            case "CloudsQuality":
+                                ChangeCloudType((string)row.FieldData.Value);
                                 break;
                             default:
                                 break;
@@ -299,6 +309,19 @@ namespace Sandbox.Client.Components.GUI.Settings
         private void ChangeVSync(bool vsyncValue)
         {
             _game.VSync = vsyncValue;
+        }
+
+        private void ChangeCloudType(string NewCloudType)
+        {
+            if (isGameRunning)
+            {
+                if (NewCloudType != "None") NewCloudType = "Cloud" + NewCloudType;
+                Clouds.CloudType cloudType = (Clouds.CloudType)Enum.Parse(typeof(Clouds.CloudType), NewCloudType);
+                {
+                    var cloud = (Clouds)_iocContainer.Get<IDrawableComponent>("Clouds");
+                    cloud.CloudsType = cloudType;
+                }
+            }
         }
 
         //ButtonList Event management ==========================================

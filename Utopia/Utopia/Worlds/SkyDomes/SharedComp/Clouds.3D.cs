@@ -2,45 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SharpDX;
-using Utopia.Shared.Structs;
-using Utopia.Shared.World;
-using Utopia.Worlds.Weather;
-using Utopia.Shared.Chunks;
-using SharpDX.Direct3D11;
-using SharpDX.Direct3D;
-using Utopia.Worlds.GameClocks;
-using S33M3Resources.Effects.Basics;
 using S33M3DXEngine.Buffers;
 using S33M3CoreComponents.Maths.Noises;
-using S33M3Resources.Structs.Vertex;
-using S33M3Resources.Structs;
 using S33M3Resources.VertexFormats;
-using S33M3DXEngine;
-using S33M3CoreComponents.WorldFocus;
-using S33M3DXEngine.Main;
-using S33M3CoreComponents.Cameras;
-using S33M3CoreComponents.Cameras.Interfaces;
-using S33M3CoreComponents.Maths;
-using S33M3DXEngine.RenderStates;
+using S33M3Resources.Structs;
+using SharpDX;
 using UtopiaContent.Effects.Weather;
 using Utopia.Effects.Shared;
 using Utopia.Components;
-using Utopia.Shared.GameDXStates;
+using S33M3DXEngine.RenderStates;
 using Utopia.Shared.Settings;
+using Utopia.Shared.GameDXStates;
+using SharpDX.Direct3D11;
+using S33M3CoreComponents.Maths;
+using S33M3DXEngine.Main;
+using SharpDX.Direct3D;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
-    public class Clouds3D : DrawableGameComponent
+    //3D Clouds stuff
+    public partial class Clouds
     {
-        #region Private Variables
-        private D3DEngine _d3dEngine;
-        private VisualWorldParameters _worldParam;
-        private IWeather _weather;
-        private CameraManager<ICameraFocused> _camManager;
-        private WorldFocusManager _worldFocusManager;
-        private IClock _worldclock;
-
+        #region Private variables
+        //3D Clouds specialized Variables
         private int _cloudMap_size;
         private float _cloud_size = 40;
         private float _cloud_Height = 5;
@@ -49,7 +33,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         private SimplexNoise _noise;
 
-        private IndexBuffer<ushort> _cloudIB;
+        private IndexBuffer<ushort> _cloudIB3D;
         private VertexBuffer<VertexPosition3Color> _cloudVB;
         private ushort[] _indices;
         private VertexPosition3Color[] _vertices;
@@ -63,40 +47,31 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         private int _cloudMapSize;
         private int _cloudMapSizeSquare;
-        private bool[] _cloudMap;
+        private bool[] _cloudMap3D;
         private SharedFrameCB _sharedCB;
-        private StaggingBackBuffer _solidBackBuffer;
         #endregion
 
-        #region Public properties
+        #region Public properties/variables
         #endregion
 
-        public Clouds3D(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager, IWeather weather, VisualWorldParameters worldParam, WorldFocusManager worldFocusManager, IClock worldclock, StaggingBackBuffer solidBackBuffer)
-        {
-            _d3dEngine = d3dEngine;
-            _worldParam = worldParam;
-            _weather = weather;
-            _camManager = camManager;
-            _worldclock = worldclock;
-            _worldFocusManager = worldFocusManager;
-            _solidBackBuffer = solidBackBuffer;
-            _cloud_MapOffset = new FTSValue<Vector2>();
-            _cloudMap_size = (int)(worldParam.WorldVisibleSize.X / _cloud_size * 4);
-
-            //Create a virtual Cloud map of 1024 * 1024 size !
-            _cloudMapSize = 1024;
-            _cloudMapSizeSquare = _cloudMapSize * _cloudMapSize;
-            _cloudMap = new bool[_cloudMapSizeSquare];
-        }
-
+        #region Public methods
         public void LateInitialization(SharedFrameCB sharedCB)
         {
             _sharedCB = sharedCB;
         }
+        #endregion
 
-        #region Public methods
-        public override void Initialize()
+        #region private methods
+        private void Initialize3D()
         {
+            _cloud_MapOffset = new FTSValue<Vector2>();
+            _cloudMap_size = (int)(_worldParam.WorldVisibleSize.X / _cloud_size * 4);
+
+            //Create a virtual Cloud map of 1024 * 1024 size !
+            _cloudMapSize = 1024;
+            _cloudMapSizeSquare = _cloudMapSize * _cloudMapSize;
+            _cloudMap3D = new bool[_cloudMapSizeSquare];
+
             _noise = new SimplexNoise(new Random());
             _noise.SetParameters(0.075, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
             _effect = new HLSLClouds3D(_d3dEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds3D.hlsl", _sharedCB.CBPerFrame);
@@ -119,23 +94,40 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             CreateCloudMap();
         }
 
-        public override void Update( GameTime timeSpend)
+        private void CreateCloudMap()
+        {
+            int arrayIndex;
+            for (int x = 0; x < _cloudMapSize; x++)
+            {
+                for (int z = 0; z < _cloudMapSize; z++)
+                {
+                    //Get Array index
+                    arrayIndex = x + (z * _cloudMapSize);
+                    var noiseResult = _noise.GetNoise2DValue(x, z, 2, 0.9);
+                    float noiseValue = MathHelper.FullLerp(0, 1, noiseResult);
+                    if (noiseValue > 0.3)
+                        _cloudMap3D[arrayIndex] = false;
+                    else
+                        _cloudMap3D[arrayIndex] = true;
+                }
+            }
+        }
+
+        private void Update3D(GameTime timeSpend)
         {
             _cloud_MapOffset.BackUpValue();
 
             _cloud_MapOffset.Value.X += timeSpend.ElapsedGameTimeInS_LD * _weather.Wind.WindFlow.X * 7;
             _cloud_MapOffset.Value.Y += timeSpend.ElapsedGameTimeInS_LD * _weather.Wind.WindFlow.Z * 7;
-            //_weather.Wind.WindFlow.X
         }
 
-        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
+        private void Interpolation3D(double interpolation_hd, float interpolation_ld, long timePassed)
         {
             Vector2.Lerp(ref _cloud_MapOffset.ValuePrev, ref _cloud_MapOffset.Value, interpolation_ld, out _cloud_MapOffset.ValueInterp);
         }
 
-        public override void Draw(DeviceContext context, int index)
+        private void Draw3D(DeviceContext context, int index)
         {
-
             Vector2 m_camera_pos = new Vector2((float)_camManager.ActiveCamera.WorldPosition.X, (float)_camManager.ActiveCamera.WorldPosition.Z); //Position de la caméra en X et Z, sans la composante Y
 
             Vector2 CloudsMapOffset = _cloud_MapOffset.ValueInterp - m_camera_pos;                      //Speed * Time = Distance
@@ -177,7 +169,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
                     _cloudMapXIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize);
                     _cloudMapZIndex = MathHelper.Mod(p_in_noise_i.Y, _cloudMapSize);
-                    if (!_cloudMap[_cloudMapXIndex + (_cloudMapZIndex*_cloudMapSize)]) continue;
+                    if (!_cloudMap3D[_cloudMapXIndex + (_cloudMapZIndex * _cloudMapSize)]) continue;
                     //var noiseResult = _noise.GetNoise2DValue(p_in_noise_i.X, p_in_noise_i.Z, 2, 0.9);
                     //float noiseValue = MathHelper.FullLerp(0, 1, noiseResult);
 
@@ -201,7 +193,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                                 break;
                             case 1: // back
                                 neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Y - 1, _cloudMapSize)) * _cloudMapSize);
-                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
+                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap3D[neightBCloudIndex]) continue;
 
                                 _faces[0].Position.X = -rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = -rz; _faces[0].Color = _side1Face;
                                 _faces[1].Position.X = rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = -rz; _faces[1].Color = _side1Face;
@@ -210,7 +202,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                                 break;
                             case 2: //right
                                 neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X + 1, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Y, _cloudMapSize)) * _cloudMapSize);
-                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
+                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap3D[neightBCloudIndex]) continue;
                                 _faces[0].Position.X = rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = -rz; _faces[0].Color = _side2Face;
                                 _faces[1].Position.X = rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = rz; _faces[1].Color = _side2Face;
                                 _faces[2].Position.X = rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = rz; _faces[2].Color = _side2Face;
@@ -218,7 +210,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                                 break;
                             case 3: // front
                                 neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Y + 1, _cloudMapSize)) * _cloudMapSize);
-                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
+                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap3D[neightBCloudIndex]) continue;
                                 _faces[0].Position.X = rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = rz; _faces[0].Color = _side1Face;
                                 _faces[1].Position.X = -rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = rz; _faces[1].Color = _side1Face;
                                 _faces[2].Position.X = -rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = rz; _faces[2].Color = _side1Face;
@@ -226,7 +218,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                                 break;
                             case 4: // left
                                 neightBCloudIndex = MathHelper.Mod(p_in_noise_i.X - 1, _cloudMapSize) + ((MathHelper.Mod(p_in_noise_i.Y, _cloudMapSize)) * _cloudMapSize);
-                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap[neightBCloudIndex]) continue;
+                                if (neightBCloudIndex < 0 || neightBCloudIndex >= _cloudMapSizeSquare || _cloudMap3D[neightBCloudIndex]) continue;
                                 _faces[0].Position.X = -rx; _faces[0].Position.Y = ry; _faces[0].Position.Z = rz; _faces[0].Color = _side2Face;
                                 _faces[1].Position.X = -rx; _faces[1].Position.Y = ry; _faces[1].Position.Z = -rz; _faces[1].Color = _side2Face;
                                 _faces[2].Position.X = -rx; _faces[2].Position.Y = -ry; _faces[2].Position.Z = -rz; _faces[2].Color = _side2Face;
@@ -277,11 +269,11 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             if (_nbrIndices == 0) return;
             //Create/Update the Buffer
-            if (_cloudIB == null) _cloudIB = new IndexBuffer<ushort>(_d3dEngine.Device, _nbrIndices, SharpDX.DXGI.Format.R16_UInt, "_cloudIB" ,10, ResourceUsage.Dynamic);
-            _cloudIB.SetData(_d3dEngine.ImmediateContext, _indices, 0, _nbrIndices, true);
+            if (_cloudIB3D == null) _cloudIB3D = new IndexBuffer<ushort>(_d3dEngine.Device, _nbrIndices, SharpDX.DXGI.Format.R16_UInt, "_cloudIB", 10, ResourceUsage.Dynamic);
+            _cloudIB3D.SetData(_d3dEngine.ImmediateContext, _indices, 0, _nbrIndices, true);
 
             if (_cloudVB == null) _cloudVB = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, _nbrVertices, VertexPosition3Color.VertexDeclaration, PrimitiveTopology.TriangleList, "_cloudVB", ResourceUsage.Dynamic, 10);
-            _cloudVB.SetData(_d3dEngine.ImmediateContext , _vertices, 0, _nbrVertices, true);
+            _cloudVB.SetData(_d3dEngine.ImmediateContext, _vertices, 0, _nbrVertices, true);
 
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
@@ -298,41 +290,19 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _effect.Apply(_d3dEngine.ImmediateContext);
 
             //Set the buffer to the graphical card
-            _cloudIB.SetToDevice(_d3dEngine.ImmediateContext, 0);
+            _cloudIB3D.SetToDevice(_d3dEngine.ImmediateContext, 0);
             _cloudVB.SetToDevice(_d3dEngine.ImmediateContext, 0);
 
             //Draw
-            _d3dEngine.ImmediateContext.DrawIndexed(_cloudIB.IndicesCount, 0, 0);
+            _d3dEngine.ImmediateContext.DrawIndexed(_cloudIB3D.IndicesCount, 0, 0);
         }
 
-        public override void BeforeDispose()
+        private void BeforeDispose3D()
         {
             if (_effect != null) _effect.Dispose();
-            if (_cloudIB != null) _cloudIB.Dispose();
+            if (_cloudIB3D != null) _cloudIB3D.Dispose();
             if (_cloudVB != null) _cloudVB.Dispose();
-        }
-        #endregion
-
-        #region private methods
-        private void CreateCloudMap()
-        {
-            int arrayIndex;
-            for (int x = 0; x < _cloudMapSize; x++)
-            {
-                for (int z = 0; z < _cloudMapSize; z++)
-                {
-                    //Get Array index
-                    arrayIndex = x + (z * _cloudMapSize);
-                    var noiseResult = _noise.GetNoise2DValue(x, z, 2, 0.9);
-                    float noiseValue = MathHelper.FullLerp(0, 1, noiseResult);
-                    if (noiseValue > 0.3) 
-                        _cloudMap[arrayIndex] = false;
-                    else 
-                        _cloudMap[arrayIndex] = true;
-                }
-            }
         }
         #endregion
     }
 }
-

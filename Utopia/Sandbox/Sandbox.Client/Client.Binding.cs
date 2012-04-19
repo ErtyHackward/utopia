@@ -66,10 +66,6 @@ namespace Sandbox.Client
 {
     public partial class GameClient
     {
-        public void EarlyBinding(IKernel iocContainer)
-        {
-        }
-
         public void IocBinding(string WindowsCaption, Size windowStartingSize, Size resolutionSize = default(Size))
         {
             if (_iocContainer != null || _d3dEngine != null)
@@ -197,19 +193,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InScope(x => GameScope.CurrentGameScope).Named("Stars");
             _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IWeather>().To<Weather>().InScope(x => GameScope.CurrentGameScope);
-            switch (ClientSettings.Current.Settings.GraphicalParameters.CloudsQuality)
-            {
-                case "2D":
-                    _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InScope(x => GameScope.CurrentGameScope).Named("Clouds");
-                    break;
-                case "3D":
-                    _iocContainer.Bind<IDrawableComponent>().To<Clouds3D>().InScope(x => GameScope.CurrentGameScope).Named("Clouds");
-                    break;
-                default:
-                    break;
-            }
-
-
+            _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InScope(x => GameScope.CurrentGameScope).Named("Clouds");
             _iocContainer.Bind<VoxelModelManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
             //Landscape Creation/Acces/Management ====================================
