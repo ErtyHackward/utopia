@@ -1,10 +1,13 @@
-﻿using System;
+﻿#define SINGLEPLAYERSTART
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3CoreComponents.States;
 using Ninject;
 using Utopia.Components;
+using System.IO;
 
 namespace Sandbox.Client.States
 {
@@ -37,7 +40,15 @@ namespace Sandbox.Client.States
         public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
             var startUpComponent = _iocContainer.Get<StartUpComponent>();
-            startUpComponent.SetSlideShows(null, 10);
+
+            //Get the list of Slides
+            List<FileInfo> slides = new List<FileInfo>();
+            foreach (var slide in Directory.GetFiles(@"Images\StartUpSlides\", "StartUpSlide*.*"))
+            {
+                slides.Add(new FileInfo(slide));
+            }
+            
+            startUpComponent.SetSlideShows(slides.ToArray(), 2000);
 
             startUpComponent.SlideShowFinished += startUpComponent_SlideShowFinished;
 
@@ -73,10 +84,27 @@ namespace Sandbox.Client.States
         {
             if (_systemComponentInitialized && _slideShowFinished)
             {
+                StatesManager.DeactivateSwitchComponent = true;
                 if (StatesManager.ActivateGameState("SystemComponents", true))
                 {
                     StatesManager.ForceCurrentState(this);
+
+                    StatesManager.DeactivateSwitchComponent = false;
+
+#if SINGLEPLAYERSTART
+                    // first state will be the login state
+                    var vars = _iocContainer.Get<RuntimeVariables>();
+                    vars.SinglePlayer = true;
+                    vars.Login = "test";
+                    vars.PasswordHash = "";
+                    vars.DisplayName = "s33m3";
+
+                    //stateManager.ActivateGameStateAsync("LoadingGame");
+                    StatesManager.ActivateGameStateAsync("MainMenu");
+#else
                     StatesManager.ActivateGameStateAsync("Login");
+#endif
+
                 }
                 else
                 {

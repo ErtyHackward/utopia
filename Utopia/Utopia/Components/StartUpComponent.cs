@@ -4,6 +4,12 @@ using System.Linq;
 using System.Text;
 using S33M3DXEngine.Main;
 using System.IO;
+using S33M3CoreComponents.Sprites;
+using S33M3DXEngine;
+using SharpDX.Direct3D11;
+using System.Drawing;
+using S33M3Resources.Structs;
+using SharpDX;
 
 namespace Utopia.Components
 {
@@ -13,6 +19,14 @@ namespace Utopia.Components
         private FileInfo[] _imagesSlideShowPath;
         private int _slideShowDelayInMS;
         private bool _slidShowFinished;
+        private List<SpriteTexture> _slides = new List<SpriteTexture>();
+        private int _renderedSlideId = 0;
+        private int _maxSlideId = 0;
+        private D3DEngine _engine;
+        private SpriteRenderer _spriteRenderer;
+        private System.Drawing.Rectangle _slideDimension;
+        private ByteColor _color = Colors.White;
+        private DateTime _slideSwitch = DateTime.Now;
         #endregion
 
         #region Public variables/Properties
@@ -21,18 +35,28 @@ namespace Utopia.Components
         #region Event
         public event EventHandler SlideShowFinished;
         #endregion
-        public StartUpComponent()
+        public StartUpComponent(D3DEngine engine)
         {
+            _engine = engine;
+            _engine.ViewPort_Updated += _engine_ViewPort_Updated;
+            ResizeSlideDim(_engine.ViewPort);
         }
 
-        public void SetSlideShows(FileInfo[] imagesSlideShowPath, int slideShowDelayInMS)
+        public override void BeforeDispose()
         {
-            _imagesSlideShowPath = imagesSlideShowPath;
-            _slideShowDelayInMS = slideShowDelayInMS;
+            _engine.ViewPort_Updated -= _engine_ViewPort_Updated;
         }
+ 
         #region Public methods
         public override void Initialize()
         {
+            _spriteRenderer = ToDispose(new SpriteRenderer(_engine));
+
+            //Create the Slides textures
+            foreach (var slidePath in _imagesSlideShowPath)
+            {
+                _slides.Add(ToDispose(new SpriteTexture(_engine.Device, slidePath.FullName)));
+            }
         }
 
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
@@ -41,22 +65,54 @@ namespace Utopia.Components
 
         public override void Update(GameTime timeSpent)
         {
-            if (_slidShowFinished == false)
-            {
-                if (SlideShowFinished != null) SlideShowFinished(this, null);
-            }
         }
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
+            if (_slidShowFinished == true) return;
+
+            // swap carret display
+            if ((DateTime.Now - _slideSwitch).TotalMilliseconds > _slideShowDelayInMS)
+            {
+                _slideSwitch = DateTime.Now;
+                _renderedSlideId++;
+                if (_renderedSlideId > _maxSlideId)
+                {
+                    if (SlideShowFinished != null) SlideShowFinished(this, null);
+                    _slidShowFinished = true;
+                    _renderedSlideId = _maxSlideId;
+                }
+            }
         }
 
         public override void Draw(SharpDX.Direct3D11.DeviceContext context, int index)
         {
+            _spriteRenderer.Begin(false);
+
+            _spriteRenderer.Draw(_slides[_renderedSlideId], ref _slideDimension, ref _color);
+
+            _spriteRenderer.End(context);
+        }
+
+        public void SetSlideShows(FileInfo[] imagesSlideShowPath, int slideShowDelayInMS)
+        {
+            _imagesSlideShowPath = imagesSlideShowPath;
+            _slideShowDelayInMS = slideShowDelayInMS;
+
+            _maxSlideId = _imagesSlideShowPath.Count() - 1;
         }
         #endregion
 
         #region Private methods
+        private void _engine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBuffer)
+        {
+            ResizeSlideDim(viewport);
+        }
+
+        private void ResizeSlideDim(Viewport viewport)
+        {
+            _slideDimension = new System.Drawing.Rectangle(0, 0, (int)viewport.Width, (int)viewport.Height);
+        }
         #endregion
     }
 }
