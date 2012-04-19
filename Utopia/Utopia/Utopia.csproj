@@ -181,7 +181,10 @@
     <Compile Include="Worlds\Chunks\ChunkLighting\LightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
-    <Compile Include="Worlds\SkyDomes\SharedComp\Clouds3D.cs" />
+    <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.2D.cs" />
+    <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.3D.cs" />
+    <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.cs" />
+    <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.None.cs" />
     <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
     <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
     <Compile Include="Worlds\Storage\IChunkStorageManager.cs" />
@@ -202,7 +205,6 @@
     <Compile Include="Worlds\Liquid\enuFloodDirection.cs" />
     <Compile Include="Worlds\SkyDomes\ISkyDome.cs" />
     <Compile Include="Worlds\SkyDomes\RegularSkyDome.cs" />
-    <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.cs" />
     <Compile Include="Worlds\SkyDomes\SkyDome.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\SkyStars.cs" />

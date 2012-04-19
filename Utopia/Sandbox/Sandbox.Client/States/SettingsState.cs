@@ -39,6 +39,12 @@ namespace Sandbox.Client.States
             base.Initialize(context);
         }
 
+        public override void OnEnabled(GameState previousState)
+        {
+            var settings = _iocContainer.Get<SettingsComponent>();
+            settings.isGameRunning = this.PreviousGameState == StatesManager.GetByName("InGameMenu");
+        }
+
         void settings_BackPressed(object sender, EventArgs e)
         {
             StatesManager.ActivateGameStateAsync(this.PreviousGameState);

@@ -60,6 +60,7 @@ using Utopia.Components;
 using Utopia.Shared.Interfaces;
 using Sandbox.Client.Components.GUI;
 using Utopia.Shared.Settings;
+using Utopia.Worlds.SkyDomes.SharedComp;
 
 namespace Sandbox.Client.States
 {
@@ -273,9 +274,14 @@ namespace Sandbox.Client.States
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
             var stars = _ioc.Get<IDrawableComponent>("Stars");
+            string cloudType = ClientSettings.Current.Settings.GraphicalParameters.CloudsQuality;
+            if (cloudType != "None") cloudType = "Cloud" + cloudType;
+            Clouds.CloudType ctype = (Clouds.CloudType)Enum.Parse(typeof(Clouds.CloudType), cloudType);
+            var clouds = _ioc.Get<IDrawableComponent>("Clouds", new ConstructorArgument("cloudType", ctype));
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
-            var clouds = _ioc.Get<IDrawableComponent>("Clouds");
+
+
             var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
             var solidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("SolidCubeMeshFactory");
             var liquidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("LiquidCubeMeshFactory");
@@ -308,7 +314,7 @@ namespace Sandbox.Client.States
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
-            Utopia.Worlds.SkyDomes.SharedComp.Clouds3D c = clouds as Utopia.Worlds.SkyDomes.SharedComp.Clouds3D;
+            Utopia.Worlds.SkyDomes.SharedComp.Clouds c = clouds as Utopia.Worlds.SkyDomes.SharedComp.Clouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
 
             AddComponent(bg);
