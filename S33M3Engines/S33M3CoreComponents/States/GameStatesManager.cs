@@ -51,6 +51,15 @@ namespace S33M3CoreComponents.States
         }
 
         /// <summary>
+        /// Don't use this unless, you know what you are doing
+        /// </summary>
+        /// <param name="currentState"></param>
+        public void ForceCurrentState(GameState currentState)
+        {
+            _currentState = currentState;
+        }
+
+        /// <summary>
         /// Gets or sets a component used when current state changes, maybe null
         /// </summary>
         public ISwitchComponent SwitchComponent
@@ -186,7 +195,8 @@ namespace S33M3CoreComponents.States
             // Enable current stuff, except the system Component
             foreach (GameComponent gc in current.GameComponents)
             {
-                if (gc.IsSystemComponent || gc.isEnabled == true) continue;
+                //if (gc.IsSystemComponent || gc.isEnabled == true) continue;
+                if (gc.isEnabled == true) continue;
                 gc.EnableComponent();
             }
         }
@@ -277,7 +287,7 @@ namespace S33M3CoreComponents.States
 #if DEBUG
                     logger.Debug("State Initialization finished : {0}", state.Name);
 #endif
-
+                    state.RaisedInitializedEvent();
                     //The states is initialized, was it an initialization requested from an activation ?
                     if (state.IsActivationRequested == true)
                     {
@@ -346,6 +356,50 @@ namespace S33M3CoreComponents.States
             {
                 logger.Warn("State : '{0}' requested to be activated while another activation requested is in initialization state, the request is dropped", state.Name);
             }
+        }
+
+        /// <summary>
+        /// Changes current game state by its name
+        /// </summary>
+        /// <param name="name"></param>
+        public bool ActivateGameState(string stateName, bool preservePreviousStates = false)
+        {
+            return ActivateGameState(GetByName(stateName), preservePreviousStates);
+        }
+
+        public bool ActivateGameState(GameState state, bool preservePreviousStates = false)
+        {
+            //_inActivationProcess filter that only one Activation can be requested at a time !
+            //state.IsActivationRequested filter the case where the requested state is already on an Activation process (Cannot request it twice)
+            if (_inActivationProcess == false || state.IsActivationRequested == false)
+            {
+                state.WithPreservePreviousStates = preservePreviousStates;
+                _inActivationProcess = true;
+                state.IsActivationRequested = true;
+
+#if DEBUG
+                logger.Debug("State requested for activation in Sync mode : {0}", state.Name);
+#endif
+
+                //If ALL the components inside the states are already initiazed, switch directly the States
+                if (state.GameComponents.Count > 0 && state.IsInitialized)
+                {
+                    state.PreviousGameState = _currentState;
+
+                    SetCurrentState(state);
+                    return true;
+                }
+
+                logger.Warn("State : '{0}' requested to be activated but its state is not initialized, the request is dropped", state.Name);
+
+            }
+            else
+            {
+                logger.Warn("State : '{0}' requested to be activated while another activation requested is in initialization state, the request is dropped", state.Name);
+            }
+
+            return false;
+
         }
 
         public GameState GetByName(string stateName)

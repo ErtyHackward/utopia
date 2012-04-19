@@ -117,6 +117,7 @@
     </Compile>
     <Compile Include="Components\GameSoundManager.cs" />
     <Compile Include="Components\StaggingBackBuffer.cs" />
+    <Compile Include="Components\StartUpComponent.cs" />
     <Compile Include="Components\ViewParameters.cs" />
     <Compile Include="Editor\CarvingEditor.cs" />
     <Compile Include="Editor\EditorTool.cs" />

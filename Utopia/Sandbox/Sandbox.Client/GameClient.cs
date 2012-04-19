@@ -1,4 +1,4 @@
-﻿#define SINGLEPLAYERSTART
+﻿//#define SINGLEPLAYERSTART
 
 using System;
 using System.IO;
@@ -51,53 +51,28 @@ namespace Sandbox.Client
             //Bings all components
             IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 640));
 
-            //Insert the Engine MSAA mode list in the ClientSettings, it needs the Engine created object
-            List<SampleDescriptionSetting> sortedCollection = new List<SampleDescriptionSetting>();
-            List<object> sampleCollection = new List<object>();
-            foreach (var item in D3DEngine.MSAAList)
-            {
-                sortedCollection.Add(new SampleDescriptionSetting() { SampleDescription = item });
-            }
-            sampleCollection.AddRange(sortedCollection.OrderBy(x => x.QualityWeight));
-            ClientSettings.DynamicLists.Add("CLIST_MSAA", sampleCollection);
-
+            //Set Windows Icon
             _d3dEngine.GameWindow.Icon = Sandbox.Client.Properties.Resources.Utopia;
 
             System.Net.ServicePointManager.Expect100Continue = false;
 
-            var vars = _iocContainer.Get<RuntimeVariables>();
-
-            vars.ApplicationDataPath = GameSystemSettings.GetFilePath("", SettingsStorage.ApplicationData);
-
-            //Load the various Single Player World present
-            //GameSystemSettings.LocalWorldsParams = LocalWorlds.GetAllSinglePlayerWorldsParams(vars.ApplicationDataPath);
-
-            var commonResources = new SandboxCommonResources();
-            commonResources.LoadFontAndMenuImages(_iocContainer.Get<D3DEngine>());
-            _iocContainer.Bind<SandboxCommonResources>().ToConstant(commonResources).InSingletonScope();
-
-            var game = CreateNewGameEngine(_iocContainer, ClientSettings.Current.Settings.GraphicalParameters.VSync); // Create the Rendering
+            // Create the Rendering Main LOOP
+            var game = CreateNewGameEngine(_iocContainer, ClientSettings.Current.Settings.GraphicalParameters.VSync); 
             _iocContainer.Bind<Game>().ToConstant(game);
 
+            //Everytime a Key binding is change, we need to refresh the Bindings from InputManagers
             var settings = _iocContainer.Get<SettingsComponent>();
             settings.KeyBindingChanged += (sender, e) =>
             {
                 this.BindActions(_iocContainer.Get<InputsManager>(), true);
             };
 
-            _iocContainer.Rebind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
-
-
             //filling stages
             var stateManager = _iocContainer.Get<GameStatesManager>();
             GameScope.StateManager = stateManager;
 
             var fade = _iocContainer.Get<FadeSwitchComponent>();
-
             fade.Color = new SharpDX.Color4(0,0,0,1);
-
-            stateManager.SwitchComponent = fade;
-
             stateManager.RegisterState(_iocContainer.Get<LoginState>());
             stateManager.RegisterState(_iocContainer.Get<CreditsState>());
             stateManager.RegisterState(_iocContainer.Get<SettingsState>());
@@ -107,24 +82,12 @@ namespace Sandbox.Client
             stateManager.RegisterState(_iocContainer.Get<SelectServerGameState>());
             stateManager.RegisterState(_iocContainer.Get<EditorState>());
             stateManager.RegisterState(_iocContainer.Get<SinglePlayerMenuState>());
+            stateManager.RegisterState(_iocContainer.Get<StartUpState>());
+            stateManager.RegisterState(_iocContainer.Get<SystemComponentsState>());
 
-            //Add system components that will be share with all possible states !
-            var guiManager = _iocContainer.Get<GuiManager>();
-            guiManager.Initialize();
-            guiManager.LoadContent(_d3dEngine.ImmediateContext);
-            guiManager.IsInitialized = true;
-            guiManager.EnableComponent();
-            game.GameComponents.Add(guiManager);
-
-            InputsManager inputManager = _iocContainer.Get<InputsManager>();
-            inputManager.MouseManager.IsRunning = true;
-            game.GameComponents.Add(inputManager);
-            var debugComponents = _iocContainer.Get<DebugComponent>(new ConstructorArgument("withDisplayInfoActivated", true));
-            debugComponents.EnableComponent();
-            game.GameComponents.Add(debugComponents);
-            //Add the StateManager to the main loop
+            stateManager.SwitchComponent = fade;
             game.GameComponents.Add(stateManager);
-            
+
 #if SINGLEPLAYERSTART
             // first state will be the login state
             vars.SinglePlayer = true;
@@ -135,23 +98,20 @@ namespace Sandbox.Client
             //stateManager.ActivateGameStateAsync("LoadingGame");
             stateManager.ActivateGameStateAsync("MainMenu");
 #else
-            stateManager.ActivateGameStateAsync("Login");
+            //stateManager.ActivateGameStateAsync("Login");
+            stateManager.ActivateGameStateAsync("StartUp");
 #endif
 
             game.MenuRequested += game_MenuRequested;
-            game._gameStateManager = stateManager;
+            game.GameStateManager = stateManager;
             game.Run(); //Start the Main render loop
 
             _iocContainer.Dispose();
 
-            commonResources.Dispose();
-
             game.Dispose();
-
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
-
         }
         #endregion
 

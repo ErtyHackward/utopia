@@ -85,11 +85,17 @@ namespace Sandbox.Client
             _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope().WithConstructorArgument("allocatedThreadPool", 3); //Application shared states
             _iocContainer.Bind<SpriteRenderer>().ToSelf().InSingletonScope();
             _iocContainer.Bind<WorldParameters>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<SandboxCommonResources>().ToSelf().InSingletonScope();
 
             // Game states ================================================
             _iocContainer.Bind<RuntimeVariables>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
+
+            _iocContainer.Bind<SystemComponentsState>().ToSelf().InSingletonScope();
+
+            _iocContainer.Bind<StartUpState>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<StartUpComponent>().ToSelf().InSingletonScope();
 
             _iocContainer.Bind<CreditsState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<CreditsComponent>().ToSelf().InSingletonScope();
@@ -228,7 +234,6 @@ namespace Sandbox.Client
             _iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InScope(x => GameScope.CurrentGameScope).Named("PlayerEntityRenderer");    //Rendering Player
             _iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InScope(x => GameScope.CurrentGameScope).Named("DefaultEntityRenderer");  //Rendering Dynamic Entities
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);  //Voxel Factory
-            _iocContainer.Bind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InScope(x => GameScope.CurrentGameScope);
             //=============================================================
             _iocContainer.Bind<GameSoundManager>().To<SandboxGameSoundManager>().InScope(x => GameScope.CurrentGameScope);
 

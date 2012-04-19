@@ -156,7 +156,9 @@
     <Compile Include="States\MainMenuState.cs" />
     <Compile Include="States\SelectServerGameState.cs" />
     <Compile Include="States\SettingsState.cs" />
+    <Compile Include="States\SystemComponentsState.cs" />
     <Compile Include="States\SinglePlayerMenuState.cs" />
+    <Compile Include="States\StartUpState.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
