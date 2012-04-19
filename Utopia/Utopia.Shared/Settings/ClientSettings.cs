@@ -147,7 +147,7 @@ namespace Utopia.Shared.Settings
     {
         [ParameterAttribute("Allocate more threads", "Allocate more threads to speed up all rendering routine", " thread(s)", ParamInputMethod.Slider, 0, 4, false)]
         public int AllocatedThreadsModifier { get; set; }
-        [ParameterAttribute("Effects pack", "Effects used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_MSAA")]
+        [ParameterAttribute("Effects pack", "Effects used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_EffectPacks")]
         public string EffectPack { get; set; }
     }
 
