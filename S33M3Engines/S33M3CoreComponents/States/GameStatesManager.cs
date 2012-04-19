@@ -59,6 +59,8 @@ namespace S33M3CoreComponents.States
             _currentState = currentState;
         }
 
+        public bool DeactivateSwitchComponent { get; set; }
+
         /// <summary>
         /// Gets or sets a component used when current state changes, maybe null
         /// </summary>
@@ -204,7 +206,7 @@ namespace S33M3CoreComponents.States
         private void SetCurrentState(GameState state)
         {
             //Not State switcher defined, do the activatino directly
-            if (SwitchComponent == null || state == _currentState)
+            if (SwitchComponent == null || state == _currentState || DeactivateSwitchComponent == true)
             {
                 SwitchActiveGameState(state);
             }

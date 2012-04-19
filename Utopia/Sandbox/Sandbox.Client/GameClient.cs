@@ -1,6 +1,4 @@
-﻿//#define SINGLEPLAYERSTART
-
-using System;
+﻿using System;
 using System.IO;
 using Sandbox.Client.States;
 using Sandbox.Shared;
@@ -88,19 +86,7 @@ namespace Sandbox.Client
             stateManager.SwitchComponent = fade;
             game.GameComponents.Add(stateManager);
 
-#if SINGLEPLAYERSTART
-            // first state will be the login state
-            vars.SinglePlayer = true;
-            vars.Login = "test";
-            vars.PasswordHash = "";
-            vars.DisplayName = "s33m3";
-
-            //stateManager.ActivateGameStateAsync("LoadingGame");
-            stateManager.ActivateGameStateAsync("MainMenu");
-#else
-            //stateManager.ActivateGameStateAsync("Login");
             stateManager.ActivateGameStateAsync("StartUp");
-#endif
 
             game.MenuRequested += game_MenuRequested;
             game.GameStateManager = stateManager;
