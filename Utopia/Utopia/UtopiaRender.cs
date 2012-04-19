@@ -19,7 +19,7 @@ namespace Utopia
         /// </summary>
         private InputsManager _inputManager;
 
-        public GameStatesManager _gameStateManager;
+        public GameStatesManager GameStateManager;
         public event EventHandler MenuRequested;
 
         //Not Engine injected constructor
@@ -95,7 +95,7 @@ namespace Utopia
             //Mouse capture mode
             if (_inputManager.ActionsManager.isTriggered(Actions.MouseCapture))
             {
-                if (_gameStateManager != null && _gameStateManager.CurrentState.AllowMouseCaptureChange)
+                if (GameStateManager != null && GameStateManager.CurrentState.AllowMouseCaptureChange)
                 {
                     _inputManager.MouseManager.MouseCapture = !_inputManager.MouseManager.MouseCapture;
                 }

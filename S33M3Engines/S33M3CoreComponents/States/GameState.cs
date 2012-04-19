@@ -64,6 +64,8 @@ namespace S33M3CoreComponents.States
         }
 
         public bool IsDirty { get; set; }
+
+        public event EventHandler StateInitialized;
         #endregion
 
         public GameState(GameStatesManager StatesManager)
@@ -141,6 +143,11 @@ namespace S33M3CoreComponents.States
         /// <param name="previousState">Previous game state or null</param>
         public virtual void OnEnabled(GameState previousState)
         {
+        }
+
+        public void RaisedInitializedEvent()
+        {
+            if (StateInitialized != null) StateInitialized(this, null); 
         }
 
         /// <summary>

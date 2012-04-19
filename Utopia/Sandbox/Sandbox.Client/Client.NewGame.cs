@@ -27,7 +27,7 @@ namespace Sandbox.Client
             return utopiaRenderer;
         }
 
-        private void BindActions(InputsManager inputsManager, bool rebindSettingsBasedAction)
+        public void BindActions(InputsManager inputsManager, bool rebindSettingsBasedAction)
         {
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
             {
