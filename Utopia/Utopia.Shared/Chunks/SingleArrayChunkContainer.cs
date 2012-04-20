@@ -498,7 +498,7 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
-        public bool IsSolidToPlayer(ref BoundingBox bb, bool withCubeOffSetAccount, out TerraCubeWithPosition collidingcube)
+        public bool IsSolidToPlayer(ref BoundingBox bb, bool withCubeOffSetAccount,out TerraCubeWithPosition collidingcube)
         {
             int index;
             CubeProfile profile;

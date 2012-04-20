@@ -89,6 +89,7 @@ namespace Utopia.Entities.Managers
         private double _fallMaxHeight;
 
         private TerraCubeWithPosition _groundCube;
+        
         #endregion
 
         #region Public variables/properties
@@ -141,7 +142,7 @@ namespace Utopia.Entities.Managers
 
         public bool HasMouseFocus { get; set; }
 
-        public bool PlayerOnOffsettedBlock { get; set; }
+        public float PlayerOnOffsettedBlock { get; set; }
         public double GroundBelowEntity
         {
             get { return _groundBelowEntity; }
@@ -160,6 +161,8 @@ namespace Utopia.Entities.Managers
 
         public delegate void LandingGround(double fallHeight, TerraCubeWithPosition landedCube);
         public event LandingGround OnLanding;
+
+        public float OffsetBlockHitted { get; set; }
         #endregion
 
         public PlayerEntityManager(D3DEngine engine,
@@ -504,7 +507,7 @@ namespace Utopia.Entities.Managers
             //Half cube below me ??
             BlockOffset = GameSystemSettings.Current.Settings.CubesProfile[_groundCube.Cube.Id].YBlockOffset;
             _groundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
-            PlayerOnOffsettedBlock = BlockOffset != 0;
+            PlayerOnOffsettedBlock = (float)BlockOffset;//BlockOffset != 0;
 
             _physicSimu.Simulate(ref timeSpent, out newWorldPosition);
             _worldPosition.Value = newWorldPosition;
@@ -635,6 +638,15 @@ namespace Utopia.Entities.Managers
 
             //Move 2 time slower if not touching ground
             if (!_physicSimu.OnGround) _moveDelta /= 2f;
+
+            //Do a small "Jump" of hitted a offset wall
+            if (OffsetBlockHitted > 0 && _physicSimu.OnGround)
+            {
+                //Force of 8 for 0.5 offset
+                //Force of 2 for 0.1 offset
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, OffsetBlockHitted * 20, 0) });
+                OffsetBlockHitted = 0;
+            }
 
             if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
                 _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 7 + (2 * jumpPower), 0) });

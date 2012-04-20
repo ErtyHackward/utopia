@@ -37,6 +37,7 @@ namespace Utopia.Shared.Cubes
         public const byte Leaves = 28;
         public const byte Glass = 29;
         public const byte HalfWoodPlank = 30;
+        public const byte QuickStep = 31;
 
         // note: when adding new block modify 2 methods below
 
@@ -83,6 +84,7 @@ namespace Utopia.Shared.Cubes
                 case 28: return "Leaves";
                 case 29: return "Glass";
                 case 30: return "HalfWoodPlank";
+                case 31: return "QuickStep";
                 case 255: return "Error";
                 default: return "Unknown";
             }
@@ -134,6 +136,7 @@ namespace Utopia.Shared.Cubes
             yield return Leaves;
             yield return Glass;
             yield return HalfWoodPlank;
+            yield return QuickStep;
         }
     }
 }
