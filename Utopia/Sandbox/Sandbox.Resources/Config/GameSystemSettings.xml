@@ -633,6 +633,6 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <YBlockOffset>0.5</YBlockOffset>
+    <YBlockOffset>0.9</YBlockOffset>
   </Cube>
 </GameSystemSettings>
