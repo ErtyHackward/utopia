@@ -383,6 +383,14 @@ namespace Utopia.Worlds.Chunks
             if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
                 newPositionWithColliding.X = previousPosition.X;
+                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
+                {
+                    float offsetValue = Math.Abs((float)((1 - _playerManager.PlayerOnOffsettedBlock) - (1 - _collidingCube.CubeProfile.YBlockOffset)));
+                    if (offsetValue <= 0.5)
+                    {
+                        _playerManager.OffsetBlockHitted = offsetValue;
+                    }
+                }
             }
 
             //Z Testing =========================================================
@@ -393,6 +401,14 @@ namespace Utopia.Worlds.Chunks
             if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
                 newPositionWithColliding.Z = previousPosition.Z;
+                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
+                {
+                    float offsetValue = Math.Abs((float)((1 - _playerManager.PlayerOnOffsettedBlock) - (1 - _collidingCube.CubeProfile.YBlockOffset)));
+                    if (offsetValue <= 0.5)
+                    {
+                        _playerManager.OffsetBlockHitted = offsetValue;
+                    }
+                }
             }
 
             //Y Testing ======================================================
@@ -423,6 +439,7 @@ namespace Utopia.Worlds.Chunks
                         }
                     }
 
+                    _playerManager.OffsetBlockHitted = 0;
                     _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
                 }
 
