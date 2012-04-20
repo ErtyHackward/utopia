@@ -268,7 +268,7 @@ namespace Utopia.Entities
 
                 if (profile.YBlockOffset > 0)
                 {
-                    WorldScale = Matrix.Scaling(1, 1.0f - profile.YBlockOffset, 1);
+                    WorldScale = Matrix.Scaling(1, (float)(1.0f - profile.YBlockOffset), 1);
                 }
                 else
                 {

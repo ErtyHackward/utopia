@@ -39,7 +39,7 @@ namespace Utopia.Entities.Renderer
 
         private Vector3 _cubeScaling = new Vector3(1.005f, 1.005f, 1.005f);
 
-        private float _cubeYOffset;
+        private double _cubeYOffset;
         #endregion
 
         #region Public Variable
@@ -69,7 +69,7 @@ namespace Utopia.Entities.Renderer
         {
             if (fromCube)
             {
-                _pickedCube.Update(new Vector3(_pickedUpCube.X + 0.5f, _pickedUpCube.Y + ((1.0f - _cubeYOffset) / 2), _pickedUpCube.Z + 0.5f), _cubeScaling, _cubeYOffset);
+                _pickedCube.Update(new Vector3(_pickedUpCube.X + 0.5f, (float)(_pickedUpCube.Y + ((1.0f - _cubeYOffset) / 2)), (float)(_pickedUpCube.Z + 0.5f)), _cubeScaling, (float)_cubeYOffset);
             }
             else
             {
@@ -99,7 +99,7 @@ namespace Utopia.Entities.Renderer
             }
         }
 
-        public void SetPickedBlock(ref Vector3I pickedUpCube, float cubeYOffset)
+        public void SetPickedBlock(ref Vector3I pickedUpCube, double cubeYOffset)
         {
             _pickedUpCube = pickedUpCube;
             _cubeYOffset = cubeYOffset;
