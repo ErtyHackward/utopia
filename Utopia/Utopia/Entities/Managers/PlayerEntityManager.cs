@@ -71,7 +71,7 @@ namespace Utopia.Entities.Managers
         private VerletSimulator _physicSimu;
         private double _accumPitchDegrees;
         private double _gravityInfluence;
-        private float _groundBelowEntity;
+        private double _groundBelowEntity;
         private double _rotationDelta;
         private double _moveDelta;
         private Matrix _headRotation;
@@ -142,7 +142,7 @@ namespace Utopia.Entities.Managers
         public bool HasMouseFocus { get; set; }
 
         public bool PlayerOnOffsettedBlock { get; set; }
-        public float GroundBelowEntity
+        public double GroundBelowEntity
         {
             get { return _groundBelowEntity; }
             set { _groundBelowEntity = value; }
@@ -498,12 +498,12 @@ namespace Utopia.Entities.Managers
         {
             Vector3I GroundDirection = new Vector3I(0, -1, 0);
             Vector3D newWorldPosition;
-            float BlockOffset;
+            double BlockOffset;
 
             _cubesHolder.GetNextSolidBlockToPlayer(ref VisualEntity.WorldBBox, ref GroundDirection, out _groundCube);
             //Half cube below me ??
             BlockOffset = GameSystemSettings.Current.Settings.CubesProfile[_groundCube.Cube.Id].YBlockOffset;
-            _groundBelowEntity = _groundCube.Position.Y + 1 - BlockOffset;
+            _groundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
             PlayerOnOffsettedBlock = BlockOffset != 0;
 
             _physicSimu.Simulate(ref timeSpent, out newWorldPosition);

@@ -29,7 +29,7 @@ namespace Utopia.Shared.Settings
         public byte EmissiveColorR { get { return EmissiveColor.R; } set { EmissiveColor.R = value; } }
         public byte EmissiveColorG { get { return EmissiveColor.G; } set { EmissiveColor.G = value; } }
         public byte EmissiveColorB { get { return EmissiveColor.B; } set { EmissiveColor.B = value; } }
-        public float YBlockOffset;
+        public double YBlockOffset;
 
         public enuCubeFamilly CubeFamilly { get; set; }
 

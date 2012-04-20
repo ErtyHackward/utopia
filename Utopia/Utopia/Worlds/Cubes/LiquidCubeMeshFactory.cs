@@ -64,7 +64,7 @@ namespace Utopia.Worlds.Cubes
 
             int cubeFaceType = (int)cubeFace;
 
-            Vector4 vertexInfo2 = new Vector4(cubeProfile.YBlockOffset, 0, 0, 0);
+            Vector4 vertexInfo2 = new Vector4((float)cubeProfile.YBlockOffset, 0, 0, 0);
             Vector4B vertexInfo1 = new Vector4B((byte)cubeFace,
                                                       (byte)0,          //Is "UP" vertex
                                                       (byte)0,

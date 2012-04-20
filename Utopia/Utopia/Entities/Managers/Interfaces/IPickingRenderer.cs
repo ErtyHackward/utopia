@@ -11,7 +11,7 @@ namespace Utopia.Entities.Renderer.Interfaces
 {
     public interface IPickingRenderer : IDrawableComponent
     {
-        void SetPickedBlock(ref Vector3I pickedUpCube, float cubeYOffset);
+        void SetPickedBlock(ref Vector3I pickedUpCube, double cubeYOffset);
         void SetPickedEntity(VisualEntity pickedEntity);
     }
 }

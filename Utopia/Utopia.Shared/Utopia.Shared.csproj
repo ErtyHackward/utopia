@@ -254,7 +254,6 @@
     <Compile Include="Structs\Line.cs" />
     <Compile Include="Structs\Range3I.cs" />
     <Compile Include="Structs\UserRole.cs" />
-    <Compile Include="Structs\Landscape\CubeProfile.cs" />
     <Compile Include="Structs\Landscape\TerraCube.cs" />
     <Compile Include="Structs\Located.cs" />
     <Compile Include="Structs\LoginData.cs" />

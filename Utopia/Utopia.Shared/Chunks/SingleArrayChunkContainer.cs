@@ -523,12 +523,13 @@ namespace Utopia.Shared.Chunks
                             {
                                 collidingcube.Cube = Cubes[index];
                                 collidingcube.Position = new Vector3I(x, y, z);
+                                collidingcube.CubeProfile = profile;
 
                                 //Block with Offset case
                                 if (withCubeOffSetAccount && profile.YBlockOffset > 0.0f)
                                 {
                                     //If my "Feet" are below the height of the offseted cube, then colliding true
-                                    if (bb.Minimum.Y < y)
+                                    if (bb.Minimum.Y < (y + (1-profile.YBlockOffset)))
                                     {
                                         return true;
                                     }
@@ -557,6 +558,7 @@ namespace Utopia.Shared.Chunks
         public void GetNextSolidBlockToPlayer(ref Vector3 FromPosition, ref Vector3I Direction, out TerraCubeWithPosition cubeWithPosition)
         {
             int index = 0;
+            cubeWithPosition = new TerraCubeWithPosition();
             cubeWithPosition.Cube = new TerraCube(CubeId.Air);
 
             int X = MathHelper.Fastfloor(FromPosition.X);
