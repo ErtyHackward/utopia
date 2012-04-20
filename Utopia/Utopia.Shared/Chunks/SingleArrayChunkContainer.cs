@@ -13,6 +13,7 @@ using Utopia.Shared.Cubes;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Maths;
+using S33M3_Resources.Structs;
 
 namespace Utopia.Shared.Chunks
 {
@@ -514,7 +515,7 @@ namespace Utopia.Shared.Chunks
             {
                 for (int z = Zmin; z <= Zmax; z++)
                 {
-                    for (int y = Ymin; y <= Ymax; y++)
+                    for (int y = Ymax; y >= Ymin; y--)
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
@@ -529,7 +530,12 @@ namespace Utopia.Shared.Chunks
                                 if (withCubeOffSetAccount && profile.YBlockOffset > 0.0f)
                                 {
                                     //If my "Feet" are below the height of the offseted cube, then colliding true
-                                    if (bb.Minimum.Y < (y + (1-profile.YBlockOffset)))
+                                    FloatAsInt FeetLevel = bb.Minimum.Y;
+                                    FloatAsInt OffsetedCubeLevel = 1;// profile.YBlockOffset;
+                                    OffsetedCubeLevel -= profile.YBlockOffset;
+                                    
+                                    //if (bb.Minimum.Y < (y + (1-profile.YBlockOffset)))
+                                    if(FeetLevel < (y + OffsetedCubeLevel))
                                     {
                                         return true;
                                     }

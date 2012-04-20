@@ -87,6 +87,7 @@
     <Compile Include="Effects\Sprites\HLSLSprites2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs\ByteColor.cs" />
+    <Compile Include="Structs\FloatAsInt.cs" />
     <Compile Include="Structs\NetworkValue.cs" />
     <Compile Include="Structs\Vector4B.cs" />
     <Compile Include="Structs\FTSValue.cs" />
