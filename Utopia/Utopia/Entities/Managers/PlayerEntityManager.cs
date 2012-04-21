@@ -89,6 +89,7 @@ namespace Utopia.Entities.Managers
         private double _fallMaxHeight;
 
         private TerraCubeWithPosition _groundCube;
+        private CubeProfile _groundCubeProgile;
         
         #endregion
 
@@ -487,7 +488,7 @@ namespace Utopia.Entities.Managers
                 case EntityDisplacementModes.Walking:
                     if (_physicSimu.OnGround)
                     {
-                        _physicSimu.EnvironmentViscosity = 0.25f;
+                        _physicSimu.EnvironmentViscosity = _groundCubeProgile.EnvironmentViscosity; //0.25f;
                     }
                     else
                     {
@@ -512,7 +513,8 @@ namespace Utopia.Entities.Managers
 
             _cubesHolder.GetNextSolidBlockToPlayer(ref VisualEntity.WorldBBox, ref GroundDirection, out _groundCube);
             //Half cube below me ??
-            BlockOffset = GameSystemSettings.Current.Settings.CubesProfile[_groundCube.Cube.Id].YBlockOffset;
+            _groundCubeProgile = GameSystemSettings.Current.Settings.CubesProfile[_groundCube.Cube.Id];
+            BlockOffset = _groundCubeProgile.YBlockOffset;
             _groundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
             PlayerOnOffsettedBlock = (float)BlockOffset;//BlockOffset != 0;
 
