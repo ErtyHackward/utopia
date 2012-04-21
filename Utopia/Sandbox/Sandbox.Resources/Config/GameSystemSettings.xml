@@ -376,7 +376,7 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <EnvironmentViscosity>0.3</EnvironmentViscosity>
   </Cube>
   <Cube>
     <Name>Gravel</Name>
