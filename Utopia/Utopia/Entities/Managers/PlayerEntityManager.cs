@@ -485,7 +485,14 @@ namespace Utopia.Entities.Managers
                     PhysicSimulation(ref timeSpent);
                     break;
                 case EntityDisplacementModes.Walking:
-                    _physicSimu.EnvironmentViscosity = 0f;
+                    if (_physicSimu.OnGround)
+                    {
+                        _physicSimu.EnvironmentViscosity = 0.25f;
+                    }
+                    else
+                    {
+                        _physicSimu.EnvironmentViscosity = 0f;
+                    }
                     PhysicSimulation(ref timeSpent);
                     break;
                 default:
@@ -575,7 +582,14 @@ namespace Utopia.Entities.Managers
                     FreeFirstPersonMove();
                     break;
                 case EntityDisplacementModes.Walking:
-                    WalkingFirstPerson(ref timeSpent);
+                    if (_physicSimu.OnGround)
+                    {
+                        WalkingFirstPersonOnGround(ref timeSpent);
+                    }
+                    else
+                    {
+                        WalkingFirstPersonNotOnGround(ref timeSpent);
+                    }
                     break;
                 default:
                     break;
@@ -628,7 +642,54 @@ namespace Utopia.Entities.Managers
             _worldPosition.Value += moveVector * _moveDelta;
         }
 
-        private void WalkingFirstPerson(ref GameTime timeSpent)
+        private void WalkingFirstPersonOnGround(ref GameTime timeSpent)
+        {
+            Vector3D moveVector = Vector3D.Zero;
+            float moveModifier = 1;
+
+            float jumpPower;
+            //_physicSimu.Freeze(true, false, true); //Trick to easy ground deplacement, it will nullify all accumulated forced being applied on the entity (Except the Y ones)
+
+            //Move 2 time slower if not touching ground
+            if (!_physicSimu.OnGround) _moveDelta /= 2f;
+
+            //Do a small "Jump" of hitted a offset wall
+            if (OffsetBlockHitted > 0 && _physicSimu.OnGround)
+            {
+                //Force of 8 for 0.5 offset
+                //Force of 2 for 0.1 offset
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, OffsetBlockHitted), 0) });
+                OffsetBlockHitted = 0;
+            }
+
+            if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 7 + (2 * jumpPower), 0) });
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
+                moveVector -= _entityZAxis;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
+                moveVector += _entityZAxis;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
+                moveVector -= _entityXAxis;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
+                moveVector += _entityXAxis;
+
+            moveVector.Normalize();
+            //Run only if Move forward and run button pressed at the same time.
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) && (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)))
+            {
+                moveModifier = 1.5f;
+            }
+
+            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = moveVector * 2 * moveModifier });
+            //_physicSimu.PrevPosition += moveVector * _moveDelta * moveModifier;
+
+        }
+
+        private void WalkingFirstPersonNotOnGround(ref GameTime timeSpent)
         {
             Vector3D moveVector = Vector3D.Zero;
             float moveModifier = 1;
