@@ -36,6 +36,13 @@ namespace Sandbox.Client
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Forward
             }, rebindSettingsBasedAction);
 
+            inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
+            {
+                ActionId = UtopiaActions.EndMove_Forward,
+                TriggerType = KeyboardTriggerMode.KeyReleased,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Forward
+            }, rebindSettingsBasedAction);
+
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
                 ActionId = UtopiaActions.Move_Forward,
@@ -52,6 +59,13 @@ namespace Sandbox.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
             {
+                ActionId = UtopiaActions.EndMove_Backward,
+                TriggerType = KeyboardTriggerMode.KeyReleased,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Backward
+            }, rebindSettingsBasedAction);
+
+            inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
+            {
                 ActionId = UtopiaActions.Move_StrafeLeft,
                 TriggerType = KeyboardTriggerMode.KeyDown,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeLeft
@@ -59,8 +73,22 @@ namespace Sandbox.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
             {
+                ActionId = UtopiaActions.EndMove_StrafeLeft,
+                TriggerType = KeyboardTriggerMode.KeyReleased,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeLeft
+            }, rebindSettingsBasedAction);
+
+            inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
+            {
                 ActionId = UtopiaActions.Move_StrafeRight,
                 TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeRight
+            }, rebindSettingsBasedAction);
+
+            inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
+            {
+                ActionId = UtopiaActions.EndMove_StrafeRight,
+                TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeRight
             }, rebindSettingsBasedAction);
 

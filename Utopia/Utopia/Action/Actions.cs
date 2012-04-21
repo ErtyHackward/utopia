@@ -31,5 +31,9 @@ namespace Utopia.Action
         public const int EntityThrow                        =41;
         public const int OpenInventory                      =42;
         public const int OpenMap                            =43;
+        public const int EndMove_Forward                    =44;
+        public const int EndMove_Backward                   =45;
+        public const int EndMove_StrafeLeft                 =46;
+        public const int EndMove_StrafeRight                =47;
     }
 }

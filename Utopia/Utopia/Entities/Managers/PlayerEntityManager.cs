@@ -81,6 +81,7 @@ namespace Utopia.Entities.Managers
         private IPickingRenderer _pickingRenderer;
         private IEntityPickingManager _entityPickingManager;
         private readonly IGameStateToolManager _gameStateToolManager;
+        private bool _stopMovedAction = false;
 
         //Drawing component
         private IEntitiesRenderer _playerRenderer;
@@ -476,23 +477,36 @@ namespace Utopia.Entities.Managers
         #region Physic simulation for Collision detection
         private void PhysicOnEntity(EntityDisplacementModes mode, ref GameTime timeSpent)
         {
+            if (_stopMovedAction && _groundCubeProgile.SlidingValue == 0)
+            {
+                _stopMovedAction = false;
+            }
+
             switch (mode)
             {
                 case EntityDisplacementModes.Flying:
-                    _physicSimu.EnvironmentViscosity = 0f;
+                    _physicSimu.Friction = 0f;
                     break;
                 case EntityDisplacementModes.Swiming:
-                    _physicSimu.EnvironmentViscosity = 0.3f;
+                    _physicSimu.Friction = 0.3f;
                     PhysicSimulation(ref timeSpent);
                     break;
                 case EntityDisplacementModes.Walking:
                     if (_physicSimu.OnGround)
                     {
-                        _physicSimu.EnvironmentViscosity = _groundCubeProgile.EnvironmentViscosity; //0.25f;
+                        if (_stopMovedAction == false)
+                        {
+                            _physicSimu.Friction = _groundCubeProgile.Friction; //0.25f;
+                        }
+                        else
+                        {
+                            //I did stop to move, but I'm on a sliding block => Will slide a little before ending movement
+                            _physicSimu.Friction = _groundCubeProgile.SlidingValue;
+                        }
                     }
                     else
                     {
-                        _physicSimu.EnvironmentViscosity = 0f;
+                        _physicSimu.Friction = 0f;
                     }
                     PhysicSimulation(ref timeSpent);
                     break;
@@ -650,34 +664,45 @@ namespace Utopia.Entities.Managers
             float moveModifier = 1;
 
             float jumpPower;
-            //_physicSimu.Freeze(true, false, true); //Trick to easy ground deplacement, it will nullify all accumulated forced being applied on the entity (Except the Y ones)
 
-            //Move 2 time slower if not touching ground
-            if (!_physicSimu.OnGround) _moveDelta /= 2f;
-
-            //Do a small "Jump" of hitted a offset wall
-            if (OffsetBlockHitted > 0 && _physicSimu.OnGround)
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_Forward) ||
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_Backward) ||
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_StrafeLeft) ||
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_StrafeRight))
             {
-                //Force of 8 for 0.5 offset
-                //Force of 2 for 0.1 offset
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, OffsetBlockHitted), 0) });
-                OffsetBlockHitted = 0;
+                _stopMovedAction = true;
             }
+            else
+            {
 
-            if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 7 + (2 * jumpPower), 0) });
+                //Move 2 time slower if not touching ground
+                if (!_physicSimu.OnGround) _moveDelta /= 2f;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
-                moveVector -= _entityZAxis;
+                //Do a small "Jump" of hitted a offset wall
+                if (OffsetBlockHitted > 0 && _physicSimu.OnGround)
+                {
+                    //Force of 8 for 0.5 offset
+                    //Force of 2 for 0.1 offset
+                    _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, OffsetBlockHitted), 0) });
+                    OffsetBlockHitted = 0;
+                }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
-                moveVector += _entityZAxis;
+                if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
+                    _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 7 + (2 * jumpPower), 0) });
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
-                moveVector -= _entityXAxis;
+                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
+                    moveVector -= _entityZAxis;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
-                moveVector += _entityXAxis;
+
+                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
+                    moveVector += _entityZAxis;
+
+                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
+                    moveVector -= _entityXAxis;
+
+                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
+                    moveVector += _entityXAxis;
+            }
 
             moveVector.Normalize();
             //Run only if Move forward and run button pressed at the same time.
@@ -686,8 +711,8 @@ namespace Utopia.Entities.Managers
                 moveModifier = 1.5f;
             }
 
+            if (moveVector != Vector3D.Zero) _stopMovedAction = false;
             _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = moveVector * 2 * moveModifier });
-            //_physicSimu.PrevPosition += moveVector * _moveDelta * moveModifier;
 
         }
 

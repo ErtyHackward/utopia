@@ -515,7 +515,8 @@ namespace Utopia.Shared.Chunks
             {
                 for (int z = Zmin; z <= Zmax; z++)
                 {
-                    for (int y = Ymax; y >= Ymin; y--)
+                    //for (int y = Ymax; y >= Ymin; y--)
+                    for (int y = Ymin; y <= Ymax; y++)
                     {
                         if (IndexSafe(x, y, z, out index))
                         {

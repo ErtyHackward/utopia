@@ -57,7 +57,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Stone</Name>
@@ -76,7 +77,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Dirt</Name>
@@ -95,7 +97,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Grass</Name>
@@ -114,7 +117,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>WoodPlank</Name>
@@ -133,7 +137,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Water</Name>
@@ -155,7 +160,8 @@
     <CubeFamilly>Liquid</CubeFamilly>
     <LiquidType>FreshWater</LiquidType>
     <YBlockOffset>0.1</YBlockOffset>
-    <EnvironmentViscosity>0.3</EnvironmentViscosity>
+    <Friction>0.3</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>LightRed</Name>
@@ -179,7 +185,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>LightGreen</Name>
@@ -203,7 +210,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>LightBlue</Name>
@@ -227,7 +235,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>LightYellow</Name>
@@ -251,7 +260,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>LightViolet</Name>
@@ -275,7 +285,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>LightWhite</Name>
@@ -299,7 +310,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Stone2</Name>
@@ -318,7 +330,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>true</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Stone3</Name>
@@ -337,7 +350,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Rock</Name>
@@ -357,7 +371,8 @@
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
     <YBlockOffset>0.5</YBlockOffset>
-    <EnvironmentViscosity>0.05</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0.05</SlidingValue>
   </Cube>
   <Cube>
     <Name>Sand</Name>
@@ -376,7 +391,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.3</EnvironmentViscosity>
+    <Friction>0.3</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Gravel</Name>
@@ -395,7 +411,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Trunk</Name>
@@ -414,7 +431,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Minerai1</Name>
@@ -433,7 +451,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Minerai2</Name>
@@ -452,7 +471,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Minerai3</Name>
@@ -471,7 +491,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Minerai4</Name>
@@ -490,7 +511,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Minerai5</Name>
@@ -509,7 +531,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Stone4</Name>
@@ -528,7 +551,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Minerai6</Name>
@@ -547,7 +571,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Brick</Name>
@@ -566,7 +591,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>WaterSource</Name>
@@ -588,7 +614,8 @@
     <CubeFamilly>Liquid</CubeFamilly>
     <LiquidType>Ocean</LiquidType>
     <YBlockOffset>0.1</YBlockOffset>
-    <EnvironmentViscosity>0.3</EnvironmentViscosity>
+    <Friction>0.3</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Player</Name>
@@ -607,7 +634,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
    <Name>Leaves</Name>
@@ -626,7 +654,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>Glass</Name>
@@ -645,7 +674,8 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
     <Name>HalfWoodPlank</Name>
@@ -665,7 +695,8 @@
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
     <YBlockOffset>0.9</YBlockOffset>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
     <Cube>
     <Name>QuickStep</Name>
@@ -685,6 +716,7 @@
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
     <YBlockOffset>0.9</YBlockOffset>
-    <EnvironmentViscosity>0.25</EnvironmentViscosity>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
 </GameSystemSettings>
