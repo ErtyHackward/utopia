@@ -385,7 +385,7 @@ namespace Utopia.Worlds.Chunks
                 newPositionWithColliding.X = previousPosition.X;
                 if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
                 {
-                    float offsetValue = Math.Abs((float)((1 - _playerManager.PlayerOnOffsettedBlock) - (1 - _collidingCube.CubeProfile.YBlockOffset)));
+                    float offsetValue = Math.Abs((float)((_playerManager.PlayerOnOffsettedBlock) - (1 - _collidingCube.CubeProfile.YBlockOffset)));
                     if (offsetValue <= 0.5)
                     {
                         _playerManager.OffsetBlockHitted = offsetValue;
@@ -403,7 +403,7 @@ namespace Utopia.Worlds.Chunks
                 newPositionWithColliding.Z = previousPosition.Z;
                 if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
                 {
-                    float offsetValue = Math.Abs((float)((1 - _playerManager.PlayerOnOffsettedBlock) - (1 - _collidingCube.CubeProfile.YBlockOffset)));
+                    float offsetValue = Math.Abs((float)((_playerManager.PlayerOnOffsettedBlock) - (1 - _collidingCube.CubeProfile.YBlockOffset)));
                     if (offsetValue <= 0.5)
                     {
                         _playerManager.OffsetBlockHitted = offsetValue;
