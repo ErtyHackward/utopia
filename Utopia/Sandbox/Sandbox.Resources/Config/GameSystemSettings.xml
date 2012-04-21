@@ -335,13 +335,14 @@
     <Tex_Left>8</Tex_Left>
     <Tex_Right>8</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
-    <IsSeeThrough>false</IsSeeThrough>
+    <IsSeeThrough>true</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
+    <YBlockOffset>0.5</YBlockOffset>
   </Cube>
   <Cube>
     <Name>Sand</Name>
@@ -540,7 +541,6 @@
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <YBlockOffset>0.5</YBlockOffset>
   </Cube>
   <Cube>
     <Name>WaterSource</Name>

@@ -644,7 +644,7 @@ namespace Utopia.Entities.Managers
             {
                 //Force of 8 for 0.5 offset
                 //Force of 2 for 0.1 offset
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, OffsetBlockHitted * 20, 0) });
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, OffsetBlockHitted), 0) });
                 OffsetBlockHitted = 0;
             }
 
