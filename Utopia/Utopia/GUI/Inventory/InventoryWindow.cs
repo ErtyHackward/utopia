@@ -122,30 +122,20 @@ namespace Utopia.GUI.Inventory
 
         void ControlMouseDown(object sender, MouseDownEventArgs e)
         {
+
+            var control = (InventoryCell)sender;
             var state = _inputManager.MouseManager.Mouse.GetState();
 
-            var bounds = GetAbsoluteBounds();
-
-            // detect the slot was clicked
-            var slotPosition = new Vector2I(
-                (state.X - (int)bounds.X - GridOffset.X) / CellSize,
-                (state.Y - (int)bounds.Y - GridOffset.Y) / CellSize
-                );
-
-            if (slotPosition.X < 0 || slotPosition.X >= _container.GridSize.X || slotPosition.Y < 0 || slotPosition.Y >= _container.GridSize.Y)
-            {
-                // out of bounds (put to world)
-                return;
-            }
+            var bounds = control.GetAbsoluteBounds();
 
             // slot offset
             var offset = new Point(
-                (state.X - (int)bounds.X - GridOffset.X) % CellSize,
-                (state.Y - (int)bounds.Y - GridOffset.Y) % CellSize
+                (int)bounds.X - state.X,
+                (int)bounds.Y - state.Y 
                 );
 
             // tell everyone that user click some slot
-            OnSlotClicked(new InventoryWindowEventArgs { SlotPosition = slotPosition, MouseState = state, Container = _container, Offset = offset });
+            OnSlotClicked(new InventoryWindowEventArgs { SlotPosition = control.InventoryPosition, MouseState = state, Container = _container, Offset = offset });
         }
     }
 
