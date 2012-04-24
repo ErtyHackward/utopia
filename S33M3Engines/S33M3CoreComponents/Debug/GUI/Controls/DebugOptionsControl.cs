@@ -20,7 +20,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
         #region Private variables
         private Game _game;
         private DisplayInfo _displayinfo;
-        private FPSComponent _fps;
+        private GeneralDebugComponent _fps;
 
         private const float Step = 20f;
         #endregion
@@ -32,7 +32,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
                                    UniRectangle bounds, 
                                    Game game, 
                                    DisplayInfo displayinfo, 
-                                   FPSComponent fps)
+                                   GeneralDebugComponent fps)
         {
             this.Bounds = bounds;
             parent.Children.Add(this);

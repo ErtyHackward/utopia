@@ -98,7 +98,7 @@
     <Compile Include="Cameras\Interfaces\ICameraManager.cs" />
     <Compile Include="Cameras\Interfaces\ICameraPlugin.cs" />
     <Compile Include="Debug\Components\ColumnChart.cs" />
-    <Compile Include="Debug\Components\FPSComponent.cs" />
+    <Compile Include="Debug\Components\GeneralDebugComponent.cs" />
     <Compile Include="Debug\GUI\Controls\DebugOptionsControl.cs" />
     <Compile Include="Debug\GUI\Controls\DebugPerfControl.cs" />
     <Compile Include="Debug\GUI\Controls\DebugWindowControl.cs" />

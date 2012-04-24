@@ -29,7 +29,7 @@ namespace S33M3CoreComponents.Debug
         private readonly InputsManager _inputManager;
         private readonly GuiManager _guiManager;
         private DisplayInfo _displayInfo;
-        private FPSComponent _fps;
+        private GeneralDebugComponent _fps;
         private ColumnChart _chart;
         private D3DEngine _engine;
 
@@ -53,7 +53,7 @@ namespace S33M3CoreComponents.Debug
             _displayInfo = ToDispose(new DisplayInfo(_engine, game));
             _displayInfo.EnableComponent();
 
-            _fps = ToDispose(new FPSComponent());
+            _fps = ToDispose(new GeneralDebugComponent());
             if (withDisplayInfoActivated) _fps.EnableComponent();
             _fps.ShowDebugInfo = true;
 

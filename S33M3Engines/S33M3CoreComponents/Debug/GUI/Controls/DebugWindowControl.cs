@@ -27,7 +27,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
 
 
 
-        private FPSComponent _fps;
+        private GeneralDebugComponent _fps;
 
         private Game _game;
         #endregion
@@ -47,7 +47,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
         }
         #endregion
 
-        public DebugWindowControl(Game game, DisplayInfo displayInfo, FPSComponent fps, ByteColor LeftPanelColor)
+        public DebugWindowControl(Game game, DisplayInfo displayInfo, GeneralDebugComponent fps, ByteColor LeftPanelColor)
         {
             _fps = fps;
             _displayInfo = displayInfo;
