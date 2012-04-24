@@ -14,7 +14,8 @@ namespace S33M3CoreComponents.Debug.Components
     {
         #region Private Variables
         private PerformanceCounter _cpuCounter;
-        private PerformanceCounter _ramCounter; 
+        private PerformanceCounter _ramCounter;
+        private Process _proc;
         private float _fps;
         private float _Updts;
 
@@ -51,6 +52,7 @@ namespace S33M3CoreComponents.Debug.Components
 
         public override void Initialize()
         {
+            _proc = Process.GetCurrentProcess();
             _cpuCounter = ToDispose(new PerformanceCounter());
             _cpuCounter.CategoryName = "Processor";
             _cpuCounter.CounterName = "% Processor Time";
@@ -93,7 +95,7 @@ namespace S33M3CoreComponents.Debug.Components
         /// <returns></returns>
         private string getAvailableRAM()
         {
-            return _ramCounter.NextValue() + "Mb";
+            return _ramCounter.NextValue() + "MB";
         } 
 
         #region IDebugInfo Members
@@ -102,7 +104,7 @@ namespace S33M3CoreComponents.Debug.Components
 
         public string GetDebugInfo()
         {
-            return string.Concat("FPS : ", _fps.ToString("000"), " Active background threads : ", SmartThread.ThreadPool.InUseThreads, " Free Ram : ", getAvailableRAM());
+            return string.Concat("FPS : ", _fps.ToString("000"), " Active background threads : ", SmartThread.ThreadPool.InUseThreads, " Used Ram : ", _proc.PrivateMemorySize64 / (1024 * 1024), "MB Free Ram : ", getAvailableRAM());
         }
         #endregion
 
