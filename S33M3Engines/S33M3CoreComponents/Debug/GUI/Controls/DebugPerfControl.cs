@@ -121,6 +121,8 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             _vsc.Bounds = new UniRectangle(this.Bounds.Size.X - 20, y + 25, 15.0f, 150.0f);
             _vsc.LayoutFlags = ControlLayoutFlags.WholeRow;
             _vsc.Moved += new EventHandler(_vsc_Moved);
+            _vsc.ThumbSmoothMovement = true;
+            _vsc.ThumbMinValue = 0;
             Children.Add(_vsc);
 
             y += 15;
@@ -213,7 +215,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
 
         void _vsc_Moved(object sender, EventArgs e)
         {
-            _listOffset = (int)Math.Min(S33M3CoreComponents.Maths.MathHelper.Lerp(0, _totalItems, _vsc.ThumbPosition), _totalItems - _displayedResults.GetLength(1));
+            _listOffset = (int)S33M3CoreComponents.Maths.MathHelper.FullLerp(0, _totalItems - _displayedResults.GetLength(1), 0, _totalItems, _vsc.Value);
         }
 
         #endregion
@@ -345,6 +347,8 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             }
 
             _totalItems += compList.Count;
+
+            _vsc.ThumbMaxValue = _totalItems;
 
             foreach (var data in compList)
             {
