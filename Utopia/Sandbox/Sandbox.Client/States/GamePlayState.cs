@@ -69,9 +69,7 @@ namespace Sandbox.Client.States
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>();
             var soundManager = _ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
-            var bg = _ioc.Get<BlackBgComponent>();
 
-            AddComponent(bg);
             AddComponent(cameraManager);
             AddComponent(serverComponent);
             AddComponent(inputsManager);

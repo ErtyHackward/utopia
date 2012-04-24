@@ -51,9 +51,9 @@ namespace S33M3DXEngine.Main
         private readonly List<DrawableComponentHolder> _visibleDrawable;
         private readonly List<IUpdatableComponent> _enabledUpdatable;
         //this is for having the possibility to remove components at runtime, while iterating on the list
-        //exemple : enabling the editor disables the normal Hud. without the _currentlyxxx collections you get invalid operation modify list while iterating 
+        //exemple : enabling the editor disables the normal Hud. without the _currentlyxxx collections you get invalid operation modify list while iterating
+        private bool isCurrentlyUpdatingComponentsDirty;
         private readonly List<IUpdatableComponent> _currentlyUpdatingComponents = new List<IUpdatableComponent>();
-        //private readonly List<IDrawableComponent> _currentlyDrawingComponents = new List<IDrawableComponent>();
 
         public bool VSync
         {
@@ -249,6 +249,12 @@ namespace S33M3DXEngine.Main
 
             for (int i = 0; i < _currentlyUpdatingComponents.Count; i++)
             {
+                if (isCurrentlyUpdatingComponentsDirty)
+                {
+                    isCurrentlyUpdatingComponentsDirty = false;
+                    break;
+                }
+
                 if (ComponentsPerfMonitor.Updatable)
                 {
                     ComponentsPerfMonitor.StartMesure(_currentlyUpdatingComponents[i], "Update");
@@ -364,7 +370,7 @@ namespace S33M3DXEngine.Main
                 if (u.Updatable)
                     _enabledUpdatable.Remove(u);
 
-                _currentlyUpdatingComponents.Clear(); //Need to clear the currently Updating collection, that will need to be refreshed.
+                isCurrentlyUpdatingComponentsDirty = true; //Need to clear the currently Updating collection, that will need to be refreshed.
             }
         }
 
