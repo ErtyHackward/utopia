@@ -6,13 +6,15 @@ using S33M3DXEngine.Main;
 using S33M3DXEngine.Threading;
 using S33M3DXEngine.Debug.Interfaces;
 using SharpDX.Direct3D11;
+using System.Diagnostics;
 
 namespace S33M3CoreComponents.Debug.Components
 {
-    public class FPSComponent : DrawableGameComponent, IDebugInfo
+    public class GeneralDebugComponent : DrawableGameComponent, IDebugInfo
     {
         #region Private Variables
-
+        private PerformanceCounter _cpuCounter;
+        private PerformanceCounter _ramCounter; 
         private float _fps;
         private float _Updts;
 
@@ -42,8 +44,18 @@ namespace S33M3CoreComponents.Debug.Components
 
         #endregion
 
-        public FPSComponent()
+        public GeneralDebugComponent()
         {
+
+        }
+
+        public override void Initialize()
+        {
+            _cpuCounter = ToDispose(new PerformanceCounter());
+            _cpuCounter.CategoryName = "Processor";
+            _cpuCounter.CounterName = "% Processor Time";
+            _cpuCounter.InstanceName = "_Total";
+            _ramCounter = ToDispose(new PerformanceCounter("Memory", "Available MBytes")); 
         }
 
         public override void Draw(DeviceContext context, int index)
@@ -64,13 +76,33 @@ namespace S33M3CoreComponents.Debug.Components
             }
         }
 
+        /// <summary>
+        /// Call this method every time you need to know 
+        /// the current cpu usage. 
+        /// </summary>
+        /// <returns></returns>
+        private string getCurrentCpuUsage()
+        {
+            return _cpuCounter.NextValue().ToString("000") + "%";
+        }
+
+        /// <summary>
+        /// Call this method every time you need to get 
+        /// the amount of the available RAM in Mb 
+        /// </summary>
+        /// <returns></returns>
+        private string getAvailableRAM()
+        {
+            return _ramCounter.NextValue() + "Mb";
+        } 
+
         #region IDebugInfo Members
 
         public bool ShowDebugInfo { get; set; }
 
         public string GetDebugInfo()
         {
-            return string.Concat("FPS : ", _fps.ToString("000"), " Active background threads : ", SmartThread.ThreadPool.InUseThreads);
+            return string.Concat("FPS : ", _fps.ToString("000"), " Active background threads : ", SmartThread.ThreadPool.InUseThreads, " Free Ram : ", getAvailableRAM());
         }
         #endregion
 
