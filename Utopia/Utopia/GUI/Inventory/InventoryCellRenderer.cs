@@ -19,7 +19,7 @@ namespace Utopia.GUI.Inventory
                     {
                         if (control.CustomBackgroundAutosize)
                         {
-                            graphics.DrawCustomTexture(control.CustomBackgroundHover, ref controlBounds);
+                            graphics.DrawCustomTexture(control.CustomBackgroundHover, ref controlBounds, 0, control.DrawGroupId);
                         }
                         else
                         {
@@ -33,7 +33,7 @@ namespace Utopia.GUI.Inventory
                             bgBounds.Width = control.CustomBackgroundHover.Width;
                             bgBounds.Height = control.CustomBackgroundHover.Height;
 
-                            graphics.DrawCustomTexture(control.CustomBackgroundHover, ref bgBounds);
+                            graphics.DrawCustomTexture(control.CustomBackgroundHover, ref bgBounds, 0, control.DrawGroupId);
                         }
                     }
                     else
@@ -46,7 +46,7 @@ namespace Utopia.GUI.Inventory
                     {
                         if (control.CustomBackgroundAutosize)
                         {
-                            graphics.DrawCustomTexture(control.CustomBackground, ref controlBounds);
+                            graphics.DrawCustomTexture(control.CustomBackground, ref controlBounds, 0, control.DrawGroupId);
                         }
                         else
                         {
@@ -60,10 +60,10 @@ namespace Utopia.GUI.Inventory
                             bgBounds.Width = control.CustomBackground.Width;
                             bgBounds.Height = control.CustomBackground.Height;
 
-                            graphics.DrawCustomTexture(control.CustomBackground, ref bgBounds);
+                            graphics.DrawCustomTexture(control.CustomBackground, ref bgBounds, 0, control.DrawGroupId);
                         }
                     }
-                    else graphics.DrawElement("button.normal",ref controlBounds);
+                    else graphics.DrawElement("button.normal",ref controlBounds, control.DrawGroupId);
                 }
             }
             #endregion
@@ -83,13 +83,13 @@ namespace Utopia.GUI.Inventory
                         controlBounds.Width - innerBorder * 2, 
                         controlBounds.Height - innerBorder * 2
                         );
-                    graphics.DrawCustomTexture(tex, ref texBounds, textureArrayIndex);
+                    graphics.DrawCustomTexture(tex, ref texBounds, textureArrayIndex, control.DrawGroupId);
                 }
                 else
                 {
                     var displayName = control.Slot.Item.DisplayName;
 
-                    graphics.DrawString("button.normal", 0, ref controlBounds, displayName, false);
+                    graphics.DrawString("button.normal", 0, ref controlBounds, displayName, false, -1, control.DrawGroupId);
                 }
             }
             #endregion
@@ -109,8 +109,8 @@ namespace Utopia.GUI.Inventory
                                                   controlBounds.Y + controlBounds.Height - textSize.Height,
                                                   w,
                                                   h);
-                graphics.DrawString("slot.items.shadow", 0, ref textPosition, itemsCount, false);
-                graphics.DrawString("slot.items", 0, ref textPosition, itemsCount, false);
+                graphics.DrawString("slot.items.shadow", 0, ref textPosition, itemsCount, false, -1, control.DrawGroupId);
+                graphics.DrawString("slot.items", 0, ref textPosition, itemsCount, false, -1, control.DrawGroupId);
             }
 
             #endregion

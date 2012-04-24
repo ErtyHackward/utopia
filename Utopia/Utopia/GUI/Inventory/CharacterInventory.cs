@@ -61,6 +61,7 @@ namespace Utopia.GUI.Inventory
         {
             var bodyCell = new InventoryCell(_character.Equipment, _iconFactory, new Vector2I(0, (int) inventorySlot),
                                              _inputManager);
+            bodyCell.DrawGroupId = this.DrawGroupId;
             bodyCell.Name = inventorySlot.ToString();
             bodyCell.Bounds = new UniRectangle(x, y, size, size);
             bodyCell.MouseDown += BodyCellMouseDown;

@@ -60,19 +60,19 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         ///     GUI elements are the basic building blocks of a GUI: 
         ///   </para>
         /// </remarks>
-        void DrawElement(string frameName, ref RectangleF bounds);
+        void DrawElement(string frameName, ref RectangleF bounds, int groupId = 0);
 
-        void DrawCustomTexture(SpriteTexture custom, ref RectangleF bounds, int textureArrayIndex = 0);
+        void DrawCustomTexture(SpriteTexture custom, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0);
 
-        void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds);
+        void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds, int groupId = 0);
 
-        void DrawCustomTextureTiled(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0);
+        void DrawCustomTextureTiled(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0);
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1);
+        void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1, int groupId = 0);
 
         /// <summary>
         /// Draws text into the drawing buffer using font specified
@@ -85,13 +85,13 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         /// <param name="carretPosition"></param>
         void DrawString(SpriteFont font, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1,
                                      FlatGuiGraphics.Frame.HorizontalTextAlignment HorizontalPlacement = S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.FlatGuiGraphics.Frame.HorizontalTextAlignment.Left,
-                                     FlatGuiGraphics.Frame.VerticalTextAlignment VerticalPlacement = S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.FlatGuiGraphics.Frame.VerticalTextAlignment.Top);
+                                     FlatGuiGraphics.Frame.VerticalTextAlignment VerticalPlacement = S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.FlatGuiGraphics.Frame.VerticalTextAlignment.Top, int groupId = 0);
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, bool withMaxWidth, int carretPosition = -1);
+        void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, bool withMaxWidth, int carretPosition = -1, int groupId = 0);
 
         /// <summary>Measures the extents of a string in the frame's area</summary>
         /// <param name="frameName">Class of the element whose text will be measured</param>
@@ -113,6 +113,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         /// <returns>The index of the gap the position is closest to</returns>
         int GetClosestOpening(string frameName, ref RectangleF bounds, string text, ref Vector2 position);
 
-        void DrawElement(string frameName, ref RectangleF controlBounds, ref ByteColor color);
+        void DrawElement(string frameName, ref RectangleF controlBounds, ref ByteColor color, int groupId = 0);
     }
 }

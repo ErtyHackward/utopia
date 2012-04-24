@@ -161,9 +161,9 @@ namespace S33M3CoreComponents.Sprites
             return Texture.GetHashCode() ^ TextureSampler.GetHashCode();
         }
 
-        public static int ComputeHashCode(SpriteTexture texture, SamplerState sampler)
+        public static int ComputeHashCode(SpriteTexture texture, SamplerState sampler, int groupId)
         {
-            return texture.GetHashCode() ^ sampler.GetHashCode();
+            return texture.GetHashCode() ^ sampler.GetHashCode() ^ groupId.GetHashCode();
         }
         #endregion
 

@@ -139,34 +139,34 @@ namespace S33M3CoreComponents.Sprites
         /// <param name="destRect">The destination rectangle = drawing translation offset + scaling</param>
         /// <param name="color">Color Modifiers</param>
         /// <param name="textureArrayIndex"> </param>
-        public void Draw(SpriteTexture spriteTexture, ref Rectangle destRect, ref ByteColor color, int textureArrayIndex = 0)
+        public void Draw(SpriteTexture spriteTexture, ref Rectangle destRect, ref ByteColor color, int textureArrayIndex = 0, int drawGroupId = 0)
         {
             Vector2 position = new Vector2(destRect.X, destRect.Y);
             Vector2 size = new Vector2(destRect.Width, destRect.Height);
-            Draw(spriteTexture, ref position, ref size, ref color, textureArrayIndex);
+            Draw(spriteTexture, ref position, ref size, ref color, textureArrayIndex, drawGroupId);
         }
 
-        public void Draw(SpriteTexture spriteTexture, ref Vector2 position, ref Vector2 size, ref ByteColor color, int textureArrayIndex = 0)
+        public void Draw(SpriteTexture spriteTexture, ref Vector2 position, ref Vector2 size, ref ByteColor color, int textureArrayIndex = 0, int drawGroupId = 0)
         {
-            _spriteBuffer.AddSprite(spriteTexture, _spriteSamplerClamp, ref position, ref size, textureArrayIndex, ref color);
+            _spriteBuffer.AddSprite(spriteTexture, _spriteSamplerClamp, ref position, ref size, textureArrayIndex, ref color, drawGroupId);
         }
 
-        public void DrawWithWrapping(SpriteTexture spriteTexture, ref Vector2 position, ref Vector2 size, ref ByteColor color, int textureArrayIndex = 0)
+        public void DrawWithWrapping(SpriteTexture spriteTexture, ref Vector2 position, ref Vector2 size, ref ByteColor color, int textureArrayIndex = 0, int drawGroupId = 0)
         {
-            _spriteBuffer.AddWrappingSprite(spriteTexture, _spriteSamplerWrap, ref position, ref size, textureArrayIndex, ref color);
+            _spriteBuffer.AddWrappingSprite(spriteTexture, _spriteSamplerWrap, ref position, ref size, textureArrayIndex, ref color, drawGroupId);
         }
 
-        public void Draw(SpriteTexture spriteTexture, ref Rectangle destRect, ref Rectangle srcRect, ref ByteColor color, int textureArrayIndex = 0, bool sourceRectInTextCoord = true)
+        public void Draw(SpriteTexture spriteTexture, ref Rectangle destRect, ref Rectangle srcRect, ref ByteColor color, int textureArrayIndex = 0, bool sourceRectInTextCoord = true, int drawGroupId = 0)
         {
             Vector2 position = new Vector2(destRect.Left, destRect.Top);
             Vector2 size = new Vector2(destRect.Width, destRect.Height);
 
             var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Left + srcRect.Width, srcRect.Top + srcRect.Height);
 
-            _spriteBuffer.AddSprite(spriteTexture, _spriteSamplerClamp, ref position, ref size, ref src, sourceRectInTextCoord, textureArrayIndex, ref color);
+            _spriteBuffer.AddSprite(spriteTexture, _spriteSamplerClamp, ref position, ref size, ref src, sourceRectInTextCoord, textureArrayIndex, ref color, drawGroupId);
         }
 
-        public void DrawText(SpriteFont spriteFont, string text, ref Vector2 position, ref ByteColor color, float maxWidth = -1, int withCarret = -1, TextFontPosition textFontPosition = TextFontPosition.RelativeToFontUp)
+        public void DrawText(SpriteFont spriteFont, string text, ref Vector2 position, ref ByteColor color, float maxWidth = -1, int withCarret = -1, TextFontPosition textFontPosition = TextFontPosition.RelativeToFontUp, int drawGroupId = 0)
         {
             SpriteFont.WordInfo[] infos;
             Vector2 textPosition = position;
@@ -185,7 +185,7 @@ namespace S33M3CoreComponents.Sprites
             int numCharsToDraw = length;
 
             //Get the SpriteDrawInfo group for this Font
-            SpriteDrawInfo spritesDrawFont = _spriteBuffer.GetSpriteDrawInfo(spriteFont.SpriteTexture, _spriteSamplerClamp);
+            SpriteDrawInfo spritesDrawFont = _spriteBuffer.GetSpriteDrawInfo(spriteFont.SpriteTexture, _spriteSamplerClamp, drawGroupId);
 
             //If Carret at starup position
             if (withCarret == -1)
