@@ -16,6 +16,8 @@ namespace S33M3CoreComponents.Sprites
 {
     public class SpriteFont : Component
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         static char StartChar = '!';
         static char EndChar = (char)255;
         static int NumChars = EndChar - StartChar;
@@ -262,6 +264,11 @@ namespace S33M3CoreComponents.Sprites
             for (int i = 0; i < length; ++i)
             {
                 char character = text[i];
+                if (character >= 255)
+                {
+                    logger.Error("Character not supported by SpriteFont : {0}", character);
+                    continue;
+                }
                 if (character == ' ')
                     textWidth += this.SpaceWidth;
                 else if (character == '\n')
