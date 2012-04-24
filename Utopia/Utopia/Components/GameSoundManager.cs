@@ -52,6 +52,8 @@ namespace Utopia.Components
         // collection of sounds of steps
         private readonly Dictionary<byte, List<string>> _stepsSounds = new Dictionary<byte, List<string>>();
 
+        private readonly List<KeyValuePair<int, string>> _ambientSounds = new List<KeyValuePair<int, string>>();
+
         /// <summary>
         /// Gets irrKlang sound engine object
         /// </summary>
@@ -87,16 +89,55 @@ namespace Utopia.Components
             _stepsTracker.Add(new Track { Entity = e.Entity, Position = e.Entity.Position });
         }
 
-        public void AddStepSound(byte blockId, string sound)
+        /// <summary>
+        /// Setup a step sound for a cube type
+        /// </summary>
+        /// <param name="cubeId"></param>
+        /// <param name="sound"></param>
+        public void RegisterStepSound(byte cubeId, string sound)
         {
-            if (_stepsSounds.ContainsKey(blockId))
+            if (_stepsSounds.ContainsKey(cubeId))
             {
-                _stepsSounds[blockId].Add(sound);
+                _stepsSounds[cubeId].Add(sound);
             }
             else
             {
-                _stepsSounds.Add(blockId, new List<string> { sound });
+                _stepsSounds.Add(cubeId, new List<string> { sound });
             }
+        }
+
+        /// <summary>
+        /// Setup an ambient sound for a cube type. Dont add many sounds, it hurts the perfomance.
+        /// </summary>
+        /// <param name="cubeId"></param>
+        /// <param name="sound"></param>
+        public void RegisterCubeAmbientSound(byte cubeId, string sound)
+        {
+            var index = _ambientSounds.FindIndex(p => p.Key == cubeId);
+            if (index != -1)
+                throw new InvalidOperationException("Only one ambient sound is allowed per cube type");
+
+            _ambientSounds.Add(new KeyValuePair<int, string>(cubeId, sound));
+        }
+
+        public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
+        {
+            // load all sounds
+
+            foreach (var pair in _ambientSounds)
+            {
+                _soundEngine.AddSoundSourceFromFile(pair.Value, StreamMode.AutoDetect, true);
+            }
+
+            foreach (var pair in _stepsSounds)
+            {
+                foreach (var path in pair.Value)
+                {
+                    _soundEngine.AddSoundSourceFromFile(path, StreamMode.AutoDetect, true);
+                }
+            }
+            
+            base.LoadContent(context);
         }
 
         public override void BeforeDispose()
@@ -242,7 +283,8 @@ namespace Utopia.Components
         /// <param name="range"></param>
         public void ListenCubes(Range3I range)
         {
-            if (_singleArray == null) return;
+            if (_singleArray == null || _ambientSounds.Count == 0) return;
+
             // remove sounds that are far away from the sound collection that are out of current player range
             for (int i = _sharedSounds.Count - 1; i >= 0; i--)
             {
@@ -268,21 +310,24 @@ namespace Utopia.Components
             // add new sounds
             foreach (var position in range.AllExclude(_lastRange))
             {
-                //Get the block index, checking for World limit on the Y side
+                // Get the block index, checking for World limit on the Y side
                 if (_singleArray.IndexSafe(position.X, position.Y, position.Z, out cubeIndex))
                 {
-                    if (_singleArray.Cubes[cubeIndex].Id == CubeId.Water)
+                    var index = _ambientSounds.FindIndex(p => p.Key == _singleArray.Cubes[cubeIndex].Id);
+                    if (index != -1)
                     {
+                        var soundPath = _ambientSounds[index].Value;
+                        // put the ambient sound right in the center of a cube
                         var soundPosition = new IrrVector3(position.X + 0.5f, position.Y + 0.5f, position.Z + 0.5f);
 
-                        //Add the 3d position of a sound instance in the collection
-                        if (_sharedSounds.ContainsKey("Sounds\\Ambiance\\water_stream.ogg"))
-                            _sharedSounds["Sounds\\Ambiance\\water_stream.ogg"].Value.Add(soundPosition);
+                        // Add the 3d position of a sound instance in the collection
+                        if (_sharedSounds.ContainsKey(soundPath))
+                            _sharedSounds[soundPath].Value.Add(soundPosition);
                         else
                         {
-                            //Add new sound type collection
-                            var sound = _soundEngine.Play3D("Sounds\\Ambiance\\water_stream.ogg", soundPosition, true, false, StreamMode.AutoDetect);
-                            _sharedSounds.Add("Sounds\\Ambiance\\water_stream.ogg", new KeyValuePair<ISound, List<IrrVector3>>(sound, new List<IrrVector3> { soundPosition }));
+                            // Add new sound type collection
+                            var sound = _soundEngine.Play3D(soundPath, soundPosition, true, false, StreamMode.AutoDetect);
+                            _sharedSounds.Add(soundPath, new KeyValuePair<ISound, List<IrrVector3>>(sound, new List<IrrVector3> { soundPosition }));
                         }
                     }
                 }
@@ -292,7 +337,7 @@ namespace Utopia.Components
         }
 
         /// <summary>
-        /// Select the closest sound position
+        /// Select the closest ambient sound position
         /// </summary>
         public void PlayClosestSound()
         {
