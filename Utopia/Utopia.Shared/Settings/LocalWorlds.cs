@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Data.SQLite;
 using Utopia.Shared.World;
+using System.Globalization;
 
 namespace Utopia.Shared.Settings
 {
@@ -19,7 +20,7 @@ namespace Utopia.Shared.Settings
 
             public override string ToString()
             {
-                return "\"" + WorldParameters.WorldName + "\" last acceded on " + LastAccess.ToLongDateString() + " " + LastAccess.ToLongTimeString();
+                return "\"" + WorldParameters.WorldName + "\" last acceded on " + LastAccess.ToString("yyyy/MM/dd HH:mm:ss", new CultureInfo("en"));
             }
         }
 
