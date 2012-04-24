@@ -363,14 +363,13 @@
     <Tex_Left>8</Tex_Left>
     <Tex_Right>8</Tex_Right>
     <IsBlockingLight>true</IsBlockingLight>
-    <IsSeeThrough>true</IsSeeThrough>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
     <IsFlooding>false</IsFlooding>
     <IsFloodPropagation>false</IsFloodPropagation>
     <CubeFamilly>Solid</CubeFamilly>
-    <YBlockOffset>0.5</YBlockOffset>
     <Friction>0.25</Friction>
     <SlidingValue>0.05</SlidingValue>
   </Cube>
