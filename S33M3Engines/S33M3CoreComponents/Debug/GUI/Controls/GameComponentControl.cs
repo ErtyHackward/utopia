@@ -219,6 +219,8 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             _vsc.Bounds = new UniRectangle(this.Bounds.Size.X - 20, 30.0f, 15.0f, this.Bounds.Size.Y - 35);
             _vsc.LayoutFlags = ControlLayoutFlags.WholeRow;
             _vsc.Moved += new EventHandler(_vsc_Moved);
+            _vsc.ThumbSmoothMovement = true;
+            _vsc.ThumbMinValue = 0;
             Children.Add(_vsc);
 
             float y = 25f;
@@ -273,14 +275,12 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
 
         private void _vsc_Moved(object sender, EventArgs e)
         {
-            _listOffset = (int)Math.Min(S33M3CoreComponents.Maths.MathHelper.Lerp(0, _totalItems, _vsc.ThumbPosition), _totalItems - _nbrRowsToShow);
-
+            _listOffset = (int)S33M3CoreComponents.Maths.MathHelper.FullLerp(0, _totalItems - _nbrRowsToShow, 0, _totalItems, _vsc.Value);
             RefreshDataGrid();
         }
 
         private void RefreshDataGrid()
         {
-            _totalItems = _game.GameComponents.Count;
             int rowid = 0;
 
             List<GameCompHolder> GameCompHolders = new List<GameCompHolder>();
@@ -330,6 +330,10 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
                 }
             }
 
+            _totalItems = GameCompHolders.Count;
+            _vsc.ThumbMaxValue = _totalItems;
+
+
             if (_sortDescending)
             {
                 GameCompHolders = GameCompHolders.OrderByDescending(x => x.OrderId).ToList();
@@ -348,7 +352,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
                 }
             }
 
-            for (rowid++; rowid < _nbrRowsToShow; rowid++)
+            for (; rowid < _nbrRowsToShow; rowid++)
             {
                 Rows[rowid].DetachAll();
             }
