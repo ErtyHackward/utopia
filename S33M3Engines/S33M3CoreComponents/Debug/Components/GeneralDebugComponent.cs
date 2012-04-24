@@ -7,6 +7,8 @@ using S33M3DXEngine.Threading;
 using S33M3DXEngine.Debug.Interfaces;
 using SharpDX.Direct3D11;
 using System.Diagnostics;
+using S33M3CoreComponents.Inputs;
+using S33M3CoreComponents.Inputs.Actions;
 
 namespace S33M3CoreComponents.Debug.Components
 {
@@ -18,6 +20,7 @@ namespace S33M3CoreComponents.Debug.Components
         private Process _proc;
         private float _fps;
         private float _Updts;
+        private InputsManager _inputsManager;
 
         private float _updateInterval = 1.0f;
 
@@ -25,6 +28,7 @@ namespace S33M3CoreComponents.Debug.Components
         private float _framecountFPS = 0;
         private DateTime _prevRealTimeFPS = DateTime.Now;
         private DateTime _prevRealTimeUpdts = DateTime.Now;
+        private string _usedRam, _freeRam;
         #endregion
 
         #region Public Methods
@@ -45,19 +49,27 @@ namespace S33M3CoreComponents.Debug.Components
 
         #endregion
 
-        public GeneralDebugComponent()
+        public GeneralDebugComponent(InputsManager inputsManager)
         {
-
+            _inputsManager = inputsManager;
         }
 
         public override void Initialize()
         {
-            _proc = Process.GetCurrentProcess();
             _cpuCounter = ToDispose(new PerformanceCounter());
             _cpuCounter.CategoryName = "Processor";
             _cpuCounter.CounterName = "% Processor Time";
             _cpuCounter.InstanceName = "_Total";
             _ramCounter = ToDispose(new PerformanceCounter("Memory", "Available MBytes")); 
+        }
+
+        public override void Update(GameTime timeSpent)
+        {
+            if (_inputsManager.MouseManager.CurMouseState.middleButton == Inputs.MouseHandler.ButtonState.Pressed)
+            {
+                _usedRam = ((int)_proc.PrivateMemorySize64 / (1024 * 1024)).ToString();
+                _freeRam = getAvailableRAM();
+            }
         }
 
         public override void Draw(DeviceContext context, int index)
@@ -104,7 +116,8 @@ namespace S33M3CoreComponents.Debug.Components
 
         public string GetDebugInfo()
         {
-            return string.Concat("FPS : ", _fps.ToString("000"), " Active background threads : ", SmartThread.ThreadPool.InUseThreads, " Used Ram : ", _proc.PrivateMemorySize64 / (1024 * 1024), "MB Free Ram : ", getAvailableRAM());
+            _proc = Process.GetCurrentProcess();
+            return string.Concat("FPS : ", _fps.ToString("000"), " Active background threads : ", SmartThread.ThreadPool.InUseThreads, " Used Ram : ", _usedRam, "MB Free Ram : ", _freeRam);
         }
         #endregion
 
