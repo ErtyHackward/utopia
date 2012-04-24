@@ -305,7 +305,6 @@ namespace Sandbox.Client.States
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
             var soundManager = _ioc.Get<GameSoundManager>();
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>();
-            var bg = _ioc.Get<BlackBgComponent>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
@@ -317,7 +316,6 @@ namespace Sandbox.Client.States
             Utopia.Worlds.SkyDomes.SharedComp.Clouds c = clouds as Utopia.Worlds.SkyDomes.SharedComp.Clouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
 
-            AddComponent(bg);
             AddComponent(cameraManager);
             AddComponent(serverComponent);
             AddComponent(inputsManager);
