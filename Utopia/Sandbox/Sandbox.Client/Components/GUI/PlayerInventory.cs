@@ -20,6 +20,13 @@ namespace Sandbox.Client.Components.GUI
         private SpriteTexture _stInventoryCloseButtonHover;
         private SpriteTexture _stInventoryCloseButtonDown;
         private SpriteTexture _stInventoryCloseButtonLabel;
+        public override int DrawGroupId
+        {
+            get
+            {
+                return 1;
+            }
+        }
 
         public PlayerInventory(D3DEngine engine, PlayerCharacter character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) : 
             base(character, iconFactory, new Point(100,20), new Point(340,120), inputManager)

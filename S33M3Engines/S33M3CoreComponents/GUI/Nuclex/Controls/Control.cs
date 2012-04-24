@@ -52,6 +52,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         private ByteColor _color = Colors.White;
         public bool ColorSet { get; private set; }
 
+        public virtual int DrawGroupId { get; set; }
+
         private bool _isRendable = true;
         /// <summary>
         /// Will prevent the control the be rendered, but its children will be evaluated

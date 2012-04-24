@@ -89,7 +89,7 @@ namespace Utopia.GUI.Inventory
             var container = _container;
 
             UiGrid = new InventoryCell[container.GridSize.X, container.GridSize.Y];
-
+            
             for (var x = 0; x < container.GridSize.X; x++)
             {
                 for (var y = 0; y < container.GridSize.Y; y++)
@@ -99,7 +99,7 @@ namespace Utopia.GUI.Inventory
                                           Bounds = new UniRectangle(offset.X + x * CellSize, offset.Y + y * CellSize, CellSize, CellSize),
                                           Name = "Cell" + x + "," + y,
                                       };
-
+                    control.DrawGroupId = this.DrawGroupId;
                     control.MouseDown += ControlMouseDown;
                     control.MouseEnter += ControlMouseEnter;
                     control.MouseLeave += ControlMouseLeave;
