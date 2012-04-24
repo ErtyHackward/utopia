@@ -22,7 +22,7 @@ namespace Sandbox.Client.Components.GUI
         private SpriteTexture _stInventoryCloseButtonLabel;
 
         public PlayerInventory(D3DEngine engine, PlayerCharacter character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) : 
-            base(character, iconFactory, new Point(100,100), new Point(340,120), inputManager)
+            base(character, iconFactory, new Point(100,20), new Point(340,120), inputManager)
         {
             _commonResources = commonResources;
             _stInventoryWindow              = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_window.png");
@@ -39,7 +39,7 @@ namespace Sandbox.Client.Components.GUI
 
         private void PrepareCells()
         {
-            var cellSize = new Vector2I(64,64);
+            var cellSize = new Vector2I(60,60);
 
             for (var x = 0; x < UiGrid.GetLength(0); x++)
             {
