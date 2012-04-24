@@ -53,7 +53,7 @@ namespace S33M3CoreComponents.Debug
             _displayInfo = ToDispose(new DisplayInfo(_engine, game));
             _displayInfo.EnableComponent();
 
-            _fps = ToDispose(new GeneralDebugComponent());
+            _fps = ToDispose(new GeneralDebugComponent(inputManager));
             if (withDisplayInfoActivated) _fps.EnableComponent();
             _fps.ShowDebugInfo = true;
 
