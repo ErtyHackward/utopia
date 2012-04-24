@@ -9,7 +9,7 @@ namespace Sandbox.Shared.Web
 {
     public abstract class UtopiaWebApiBase : IDisposable
     {
-        protected const string ServerUrl = "http://api.cubiquest.com"; // "http://localhost:20753"
+        protected const string ServerUrl = "http://api.utopiarealms.com"; // "http://localhost:20753"
 
         protected WebEventArgs<T> ParseResult<T>(IAsyncResult result)
         {

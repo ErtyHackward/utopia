@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using IrrKlang;
-using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3DXEngine.Debug.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3Resources.Structs;
-using Utopia.Entities.Managers;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
-using Utopia.Worlds.Chunks.ChunkLandscape;
 using IrrVector3 = IrrKlang.Vector3D;
 using Vector3D = S33M3Resources.Structs.Vector3D;
 using Utopia.Shared.Structs.Landscape;
@@ -28,6 +25,14 @@ namespace Utopia.Components
     /// </summary>
     public class GameSoundManager : GameComponent, IDebugInfo
     {
+        private struct Track
+        {
+            public IDynamicEntity Entity;
+            public Vector3D Position;
+            public byte LastSound;
+        }
+
+
         private readonly CameraManager<ICameraFocused> _cameraManager;
         private IDynamicEntityManager _dynamicEntityManager;
         private readonly ISoundEngine _soundEngine;
@@ -42,9 +47,10 @@ namespace Utopia.Components
         private string _debugInfo;
         private long _listenCubesTime;
 
-        private readonly List<KeyValuePair<IDynamicEntity, Vector3D>> _stepsTracker = new List<KeyValuePair<IDynamicEntity, Vector3D>>();
+        // collection of remembered positions of entities to detect the moment of playing next step sound
+        private readonly List<Track> _stepsTracker = new List<Track>();
+        // collection of sounds of steps
         private readonly Dictionary<byte, List<string>> _stepsSounds = new Dictionary<byte, List<string>>();
-
 
         /// <summary>
         /// Gets irrKlang sound engine object
@@ -65,7 +71,7 @@ namespace Utopia.Components
             _singleArray = singleArray;
 
             _dynamicEntityManager = dynamicEntityManager;
-            _stepsTracker.Add(new KeyValuePair<IDynamicEntity, Vector3D>(player, player.Position));
+            _stepsTracker.Add(new Track { Entity = player, Position = player.Position });
 
             _dynamicEntityManager.EntityAdded += DynamicEntityManagerEntityAdded;
             _dynamicEntityManager.EntityRemoved += DynamicEntityManagerEntityRemoved;
@@ -73,12 +79,12 @@ namespace Utopia.Components
 
         void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
         {
-            _stepsTracker.RemoveAt(_stepsTracker.FindIndex(p => p.Key == e.Entity));
+            _stepsTracker.RemoveAt(_stepsTracker.FindIndex(p => p.Entity == e.Entity));
         }
 
         void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
         {
-            _stepsTracker.Add(new KeyValuePair<IDynamicEntity, Vector3D>(e.Entity, e.Entity.Position));
+            _stepsTracker.Add(new Track { Entity = e.Entity, Position = e.Entity.Position });
         }
 
         public void AddStepSound(byte blockId, string sound)
@@ -144,7 +150,7 @@ namespace Utopia.Components
             for (int i = 0; i < _stepsTracker.Count; i++)
             {
                 var pair = _stepsTracker[i];
-                IDynamicEntity entity = pair.Key;
+                IDynamicEntity entity = pair.Entity;
 
                 // first let's detect if the entity is in air
 
@@ -156,21 +162,21 @@ namespace Utopia.Components
                 // no need to play step if the entity is in air or not in walking displacement mode
                 if (cubeUnderFeet.Id == CubeId.Error || 
                     cubeUnderFeet.Id == CubeId.Air || 
-                    _stepsTracker[i].Key.DisplacementMode !=  Shared.Entities.EntityDisplacementModes.Walking)
+                    _stepsTracker[i].Entity.DisplacementMode !=  Shared.Entities.EntityDisplacementModes.Walking)
                 {
-                    var item = new KeyValuePair<IDynamicEntity, Vector3D>(_stepsTracker[i].Key, entity.Position); //Save the position of the entity
+                    var item = new Track { Entity = _stepsTracker[i].Entity, Position = entity.Position }; //Save the position of the entity
                     _stepsTracker[i] = item;
                     continue;
                 }
 
                 // possible that entity just landed after the jump, so we need to check if the entity was in the air last time to play the landing sound
-                Vector3D prevUnderTheFeets = pair.Value; //Containing the previous DynamicEntity Position
+                Vector3D prevUnderTheFeets = pair.Position; //Containing the previous DynamicEntity Position
                 prevUnderTheFeets.Y -= 0.01f;
 
                 TerraCube prevCube = _singleArray.GetCube(prevUnderTheFeets);
 
                 //Compute the distance between the previous and current position, set to
-                double distance = Vector3D.Distance(pair.Value, entity.Position);
+                double distance = Vector3D.Distance(pair.Position, entity.Position);
 
                 // do we need to play the step sound?
                 //Trigger only if the difference between previous memorize position and current is > 2.0 meters
@@ -178,7 +184,9 @@ namespace Utopia.Components
                 if (distance >= 1.5f || prevCube.Id == CubeId.Air)
                 {
                     TerraCube currentCube = _singleArray.GetCube(entity.Position);
-                        
+
+                    var soundIndex = pair.LastSound;
+
                     //If walking on the ground, but with Feets and legs inside water block
                     if (currentCube.Id == CubeId.Water && cubeUnderFeet.Id != CubeId.Water)
                     {
@@ -187,6 +195,7 @@ namespace Utopia.Components
                         if (headCube.Id == CubeId.Air)
                         {
                             List<string> sounds;
+                            // play a water sound
                             if (_stepsSounds.TryGetValue(currentCube.Id, out sounds))
                             {
                                 _soundEngine.Play3D(sounds[0], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
@@ -209,13 +218,18 @@ namespace Utopia.Components
                             List<string> sounds;
                             if (_stepsSounds.TryGetValue(cubeUnderFeet.Id, out sounds))
                             {
-                                _soundEngine.Play3D(sounds[rnd.Next(0, sounds.Count)], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                                var prevSound = soundIndex;
+                                // choose another sound to avoid playing the same sound one after another
+                                while (sounds.Count > 1 && prevSound == soundIndex)
+                                    soundIndex = (byte)rnd.Next(0, sounds.Count);
+
+                                _soundEngine.Play3D(sounds[soundIndex], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
                             }
                         }
                     }
                     
                     //Save the Entity last position.
-                    var item = new KeyValuePair<IDynamicEntity, Vector3D>(_stepsTracker[i].Key, entity.Position);
+                    var item = new Track { Entity = _stepsTracker[i].Entity, Position = entity.Position, LastSound = soundIndex };
                     _stepsTracker[i] = item;
                 }
             }

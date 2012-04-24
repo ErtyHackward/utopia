@@ -155,9 +155,9 @@ namespace UtopiaApi.Controllers
                 loginRepo.Register(regModel.Email, regModel.DisplayName, regModel.Password, confirmToken);
 
                 var client = new SmtpClient("smtpout.europe.secureserver.net");
-                client.Credentials = new NetworkCredential("support@cubiquest.com", "vm6rFaqz");
+                client.Credentials = new NetworkCredential("support@utopiarealms.com", "vm6rFaqz");
 
-                var mail = new MailMessage("support@cubiquest.com", regModel.Email);
+                var mail = new MailMessage("support@utopiarealms.com", regModel.Email);
 
                 mail.Subject = "Registration on cubiquest";
                 mail.Body = string.Format("Hello,\r\nYou or someone else want to register this email on cubiquest. If you want to register, please follow next url, or just ignore this message.\r\n{0}\r\n\r\nRegards,\r\nUtopia team.", "http://api.cubiquest.com/Confirm?token="+confirmToken);
@@ -188,7 +188,7 @@ namespace UtopiaApi.Controllers
 
         public ActionResult Index()
         {
-            return Redirect("http://cubiquest.com");
+            return Redirect("http://utopiarealms.com");
         }
 
     }
