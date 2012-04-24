@@ -12,12 +12,15 @@ using S33M3CoreComponents.Inputs;
 
 namespace Utopia.GUI.Inventory
 {
+    /// <summary>
+    /// Represents a toolbar control
+    /// </summary>
     public class ToolBarUi : ContainerControl
     {
         private readonly PlayerCharacter _player;
         const int ButtonSize = 46;
 
-        private readonly List<InventoryCell> _buttons;
+        protected readonly List<InventoryCell> _toolbarSlots;
 
         /// <summary>
         /// Occurs when some slot get clicked
@@ -38,7 +41,7 @@ namespace Utopia.GUI.Inventory
             Name = "Toolbar";
 
             int nbrButton = 10;
-            _buttons = new List<InventoryCell>(nbrButton);
+            _toolbarSlots = new List<InventoryCell>(nbrButton);
 
             float fromX = ((bounds.Right.Offset - bounds.Left.Offset) - (ButtonSize * (nbrButton))) / 2;
 
@@ -55,7 +58,7 @@ namespace Utopia.GUI.Inventory
                 if (_player.Toolbar[x] != 0)
                     btn.Slot = new ContainedSlot { Item = _player.FindToolById(_player.Toolbar[x]) };
 
-                _buttons.Add(btn);
+                _toolbarSlots.Add(btn);
 
                 Children.Add(btn);
             }
@@ -70,14 +73,14 @@ namespace Utopia.GUI.Inventory
 
         public void SetSlot(int i, ContainedSlot slot)
         {
-            _buttons[i].Slot = slot;
+            _toolbarSlots[i].Slot = slot;
         }
 
         public void Resized()
         {
-            float fromX = ((Bounds.Right.Offset - Bounds.Left.Offset) - (ButtonSize * _buttons.Count)) / 2;
+            float fromX = ((Bounds.Right.Offset - Bounds.Left.Offset) - (ButtonSize * _toolbarSlots.Count)) / 2;
             int btNbr = 0;
-            foreach (var bt in _buttons)
+            foreach (var bt in _toolbarSlots)
             {
                 bt.Bounds = new UniRectangle(fromX + (btNbr * ButtonSize), 0, ButtonSize, ButtonSize);
 
@@ -90,14 +93,14 @@ namespace Utopia.GUI.Inventory
             if (_player.Equipment.LeftTool == null)
                 return;
 
-            for (int i = 0; i < _buttons.Count; i++)
+            for (int i = 0; i < _toolbarSlots.Count; i++)
             {
                 if (_player.Toolbar[i] != 0)
                 {
-                    _buttons[i].IsCellSelected = _player.Equipment.LeftTool.StaticId == _player.Toolbar[i];
+                    _toolbarSlots[i].IsCellSelected = _player.Equipment.LeftTool.StaticId == _player.Toolbar[i];
                 }
                 else
-                    _buttons[i].IsCellSelected = false;
+                    _toolbarSlots[i].IsCellSelected = false;
             }
         }
 
