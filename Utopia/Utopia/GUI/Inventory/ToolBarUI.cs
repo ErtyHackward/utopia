@@ -33,24 +33,23 @@ namespace Utopia.GUI.Inventory
             if (handler != null) handler(this, e);
         }
 
-        public ToolBarUi(UniRectangle bounds, PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager)
+        public ToolBarUi(PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager)
         {
             _player = player;
  
-            Bounds = bounds;
             Name = "Toolbar";
 
             int nbrButton = 10;
             _toolbarSlots = new List<InventoryCell>(nbrButton);
 
-            float fromX = ((bounds.Right.Offset - bounds.Left.Offset) - (ButtonSize * (nbrButton))) / 2;
+            //float fromX = ((bounds.Right.Offset - bounds.Left.Offset) - (ButtonSize * (nbrButton))) / 2;
 
             for (int x = 0; x < nbrButton; x++)
             {
 
                 var btn = new InventoryCell(null, iconFactory, new Vector2I(0, x), inputManager)
                               {
-                                  Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize)
+                                  //Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize)
                               };
                 btn.MouseDown += BtnMouseDown;
 

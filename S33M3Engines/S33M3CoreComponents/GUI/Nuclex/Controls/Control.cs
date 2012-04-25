@@ -451,6 +451,38 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             _layoutManager.LayoutControls(this);
         }
 
+        /// <summary>
+        /// Automatically locates the control relatively to the parent
+        /// </summary>
+        /// <param name="ds"></param>
+        public void Locate(ControlDock ds)
+        {
+            if (ds.HasFlag(ControlDock.HorisontalLeft))
+            {
+                Bounds.Location.X = parent.Bounds.Location.X.Offset;
+            }
+            if (ds.HasFlag(ControlDock.HorisontalCenter))
+            {
+                Bounds.Location.X = parent.Bounds.Location.X.Offset + (parent.Bounds.Size.X.Offset - Bounds.Size.X.Offset) / 2;
+            }
+            if (ds.HasFlag(ControlDock.HorisontalRight))
+            {
+                Bounds.Location.X = parent.Bounds.Location.X.Offset + (parent.Bounds.Size.X.Offset - Bounds.Size.X.Offset);
+            }
+            if (ds.HasFlag(ControlDock.VerticalTop))
+            {
+                Bounds.Location.Y = parent.Bounds.Location.Y.Offset;
+            }
+            if (ds.HasFlag(ControlDock.VerticalCenter))
+            {
+                Bounds.Location.Y = parent.Bounds.Location.Y.Offset + (parent.Bounds.Size.Y.Offset - Bounds.Size.Y.Offset) / 2;
+            }
+            if (ds.HasFlag(ControlDock.VerticalBottom))
+            {
+                Bounds.Location.Y = parent.Bounds.Location.Y.Offset + (parent.Bounds.Size.Y.Offset - Bounds.Size.Y.Offset);
+            }
+        }
+
         private static ControlLayout _layoutManager = new ControlLayout();
 
         /// <summary>Location and extents of the control</summary>
@@ -488,6 +520,18 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         /// </summary>
         public Vector2 MinimumSize = new Vector2(20, 10);
 
+    }
+
+    [Flags]
+    public enum ControlDock
+    {
+        None = 0x0,
+        VerticalTop = 0x1,
+        VerticalBottom = 0x2,
+        VerticalCenter = 0x4,
+        HorisontalLeft = 0x8,
+        HorisontalRight = 0x10,
+        HorisontalCenter = 0x20
     }
 
     [Flags]
