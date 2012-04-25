@@ -1,18 +1,14 @@
 ﻿using System;
+using S33M3Resources.Structs;
 using SharpDX;
-using Utopia.Entities;
 using Utopia.GUI.Inventory;
 using SharpDX.Direct3D11;
-using Utopia.Shared.Entities.Dynamic;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3DXEngine;
 using S33M3CoreComponents.Inputs;
-using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Action;
-using S33M3CoreComponents.Cameras.Interfaces;
-using S33M3DXEngine.RenderStates;
 using Utopia.Shared.Settings;
 
 namespace Utopia.GUI
@@ -34,9 +30,7 @@ namespace Utopia.GUI
         /// _toolbarUI is a fixed part of the hud
         /// </summary>
         private ToolBarUi _toolbarUi;
-
-        private readonly PlayerCharacter _player;
-        private readonly IconFactory _iconFactory;
+        
         private readonly InputsManager _inputManager;
 
         public event EventHandler<SlotClickedEventArgs> SlotClicked;
@@ -47,18 +41,17 @@ namespace Utopia.GUI
             if (handler != null) handler(this, e);
         }
 
-        public Hud(MainScreen screen, D3DEngine d3DEngine, PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager)
+        public Hud(MainScreen screen, D3DEngine d3DEngine, ToolBarUi toolbar, InputsManager inputManager)
         {
-            this.IsDefferedLoadContent = true;
+            IsDefferedLoadContent = true;
 
             _screen = screen;
-            _iconFactory = iconFactory;
             _inputManager = inputManager;
-            _player = player;
+            
             _d3DEngine = d3DEngine;
             DrawOrders.UpdateIndex(0, 10000);
             _d3DEngine.ViewPort_Updated += D3DEngineViewPortUpdated;
-            ToolbarUi = new ToolBarUi(new UniRectangle(0.0f, _d3DEngine.ViewPort.Height - 46, _d3DEngine.ViewPort.Width, 80.0f), _player, _iconFactory, _inputManager);
+            ToolbarUi = toolbar;
 
             _inputManager.KeyboardManager.IsRunning = true;
         }
@@ -89,16 +82,19 @@ namespace Utopia.GUI
             _font = new SpriteFont();
             _font.Initialize("Lucida Console", 10f, System.Drawing.FontStyle.Regular, true, _d3DEngine.Device);
 
-            if(Updatable)
+            if (Updatable)
+            {
                 _screen.Desktop.Children.Add(ToolbarUi);
+                ToolbarUi.Locate(S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.HorisontalCenter | S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.VerticalBottom);
+            }
             //the guimanager will draw the GUI screen, not the Hud !
         }
 
         //Refresh Sprite Centering when the viewPort size change !
         private void D3DEngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
-            ToolbarUi.Bounds = new UniRectangle(0.0f, viewport.Height - 46, viewport.Width, 80.0f);
-            ToolbarUi.Resized();
+            var screenSize = new Vector2I((int)_d3DEngine.ViewPort.Width, (int)_d3DEngine.ViewPort.Height);
+            ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X.Offset) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
         }
 
         public override void BeforeDispose()
@@ -161,21 +157,21 @@ namespace Utopia.GUI
 
         }
 
-        protected override void OnUpdatableChanged(object sender, EventArgs args)
+        public override void EnableComponent()
         {
-            base.OnUpdatableChanged(sender, args);
+            if (!_screen.Desktop.Children.Contains(ToolbarUi))
+                _screen.Desktop.Children.Add(ToolbarUi);
 
-            if (!IsInitialized) return;
+            var screenSize = new Vector2I((int)_d3DEngine.ViewPort.Width, (int)_d3DEngine.ViewPort.Height);
 
-            if (Updatable)
-            {
-                if (!_screen.Desktop.Children.Contains(ToolbarUi))
-                    _screen.Desktop.Children.Add(ToolbarUi);
-            }
-            else
-            {
-                _screen.Desktop.Children.Remove(ToolbarUi);
-            }
+            ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X.Offset) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
+            base.EnableComponent();
+        }
+
+        public override void DisableComponent()
+        {
+            _screen.Desktop.Children.Remove(ToolbarUi);
+            base.DisableComponent();
         }
     }
 
