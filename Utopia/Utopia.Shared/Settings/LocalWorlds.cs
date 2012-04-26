@@ -38,7 +38,7 @@ namespace Utopia.Shared.Settings
 
         public static List<LocalWorldsParam> GetAllSinglePlayerWorldsParams(string applicationRootPath)
         {
-            List<LocalWorldsParam> WorldsParameters = new List<LocalWorldsParam>();
+            List<LocalWorldsParam> worldsParameters = new List<LocalWorldsParam>();
             //Create the server, singleplayer root path
             string sglPlayerRootPath = GetSinglePlayerServerRootPath(applicationRootPath);
 
@@ -46,20 +46,20 @@ namespace Utopia.Shared.Settings
             {
                 foreach (var directory in Directory.GetDirectories(sglPlayerRootPath))
                 {
-                    string ServerDataBasePath = directory + @"\ServerWorld.db";
-                    if (File.Exists(ServerDataBasePath))
+                    var serverDataBasePath = directory + @"\ServerWorld.db";
+                    if (File.Exists(serverDataBasePath))
                     {
                         //Load and extract information from database
                         LocalWorldsParam param = new LocalWorldsParam();
-                        param.WorldParameters = ExtractInformationData(ServerDataBasePath, out param.LastAccess);
+                        param.WorldParameters = ExtractInformationData(serverDataBasePath, out param.LastAccess);
                         param.WorldServerRootPath = new DirectoryInfo(directory);
                         param.WorldClientRootPath = new DirectoryInfo(GetSinglePlayerClientRootPath(applicationRootPath)+ @"\" + param.WorldServerRootPath.Name);
-                        WorldsParameters.Add(param);
+                        worldsParameters.Add(param);
                     }
                 }
             }
 
-            return WorldsParameters;
+            return worldsParameters;
         }
 
         private static WorldParameters ExtractInformationData(string DBPath, out DateTime fileTimeStamp)
@@ -85,15 +85,17 @@ namespace Utopia.Shared.Settings
                 using (var cmd = connection.CreateCommand())
                 {
                     cmd.CommandText = "SELECT * FROM WorldParameters";
-                    var dataReader = cmd.ExecuteReader();
-                    dataReader.Read();
-
-                    worldParameters = new WorldParameters()
+                    using (var dataReader = cmd.ExecuteReader())
                     {
-                        WorldName = dataReader.GetString(0),
-                        SeedName = dataReader.GetString(1),
-                        SeaLevel = dataReader.GetInt32(2)
-                    };
+                        dataReader.Read();
+
+                        worldParameters = new WorldParameters()
+                                              {
+                                                  WorldName = dataReader.GetString(0),
+                                                  SeedName = dataReader.GetString(1),
+                                                  SeaLevel = dataReader.GetInt32(2)
+                                              };
+                    }
                 }
 
                 connection.Close();

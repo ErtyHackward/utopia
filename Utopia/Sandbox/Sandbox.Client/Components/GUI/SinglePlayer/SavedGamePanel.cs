@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3DXEngine.Threading;
 using Utopia.Shared.World;
 using Utopia.Shared.Settings;
 using System.IO;
@@ -19,8 +17,7 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
         private RuntimeVariables _vars;
         #endregion
 
-        #region Public variable/properties
-        #endregion
+        public bool NeedShowResults { get; set; }
 
         public SavedGamePanel(SandboxCommonResources commonResources, WorldParameters currentWorldParameter, RuntimeVariables vars)
         {
@@ -49,7 +46,7 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
                 //Recreate the list of all existing Worlds, as one has been deleted
                 GameSystemSettings.LocalWorldsParams = LocalWorlds.GetAllSinglePlayerWorldsParams(_vars.ApplicationDataPath);
 
-                RefreshWorldList();
+                RefreshWorldListAsync();
                 _currentWorldParameter.Clear();
             }
             catch (Exception e)
@@ -59,14 +56,19 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             }
         }
 
-        public void RefreshWorldList()
+        private void RefreshWorldList()
         {
             GameSystemSettings.LocalWorldsParams = LocalWorlds.GetAllSinglePlayerWorldsParams(_vars.ApplicationDataPath);
+            NeedShowResults = true;
+        }
+
+        public void ShowResults()
+        {
             //Refresh the items in the list box
             //Insert the various single world present on the computer
             _savedGameList.Items.Clear();
             _savedGameList.SelectItem = -1;
-            foreach (LocalWorlds.LocalWorldsParam worldp in GameSystemSettings.LocalWorldsParams)
+            foreach (var worldp in GameSystemSettings.LocalWorldsParams)
             {
                 _savedGameList.Items.Add(worldp);
             }
@@ -75,6 +77,16 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             {
                 _savedGameList.SelectItem = 0;
             }
+            NeedShowResults = false;
+        }
+
+        public void RefreshWorldListAsync()
+        {
+            _savedGameList.Items.Clear();
+            _savedGameList.SelectItem = -1;
+            _savedGameList.Items.Add("Loading...");
+            NeedShowResults = false;
+            SmartThread.ThreadPool.QueueWorkItem(RefreshWorldList);
         }
         #endregion
     }
