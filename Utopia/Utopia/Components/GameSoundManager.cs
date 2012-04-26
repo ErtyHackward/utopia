@@ -54,6 +54,8 @@ namespace Utopia.Components
 
         private readonly List<KeyValuePair<int, string>> _ambientSounds = new List<KeyValuePair<int, string>>();
 
+        private readonly List<string> _preLoad = new List<string>();
+
         /// <summary>
         /// Gets irrKlang sound engine object
         /// </summary>
@@ -120,6 +122,11 @@ namespace Utopia.Components
             _ambientSounds.Add(new KeyValuePair<int, string>(cubeId, sound));
         }
 
+        public void PreLoadSound(string path)
+        {
+            _preLoad.Add(path);
+        }
+
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
             // load all sounds
@@ -135,6 +142,11 @@ namespace Utopia.Components
                 {
                     _soundEngine.AddSoundSourceFromFile(path, StreamMode.AutoDetect, true);
                 }
+            }
+
+            foreach (var path in _preLoad)
+            {
+                _soundEngine.AddSoundSourceFromFile(path, StreamMode.AutoDetect, true);
             }
             
             base.LoadContent(context);
