@@ -156,6 +156,8 @@ namespace Sandbox.Client.States
         {
             var guiManager = _ioc.Get<GuiManager>();
             guiManager.Screen.ShowAll();
+            var fadeComponent = _ioc.Get<FadeComponent>();
+            fadeComponent.Visible = false;
             base.OnEnabled(previousState);
         }
     }
