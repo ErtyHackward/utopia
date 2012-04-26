@@ -221,6 +221,7 @@ namespace Sandbox.Client
             //=============================================================
             _iocContainer.Bind<GameSoundManager>().To<SandboxGameSoundManager>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ToolBarUi>().To<SandboxToolBar>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<FadeComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
         }
     }

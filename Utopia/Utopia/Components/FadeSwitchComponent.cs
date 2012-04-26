@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using S33M3CoreComponents.States;
+using S33M3CoreComponents.States.Interfaces;
 using S33M3DXEngine;
 using S33M3DXEngine.Buffers;
+using S33M3DXEngine.Main;
 using S33M3Resources.Effects.Basics;
 using SharpDX;
 using S33M3Resources.Structs.Vertex;
@@ -15,7 +13,7 @@ using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Components
 {
-    public class FadeSwitchComponent : SwitchComponent
+    public class FadeSwitchComponent : DrawableGameComponent, ISwitchComponent
     {
         #region Private variables
         private readonly D3DEngine _engine;
@@ -47,28 +45,36 @@ namespace Utopia.Components
         }
         #endregion
 
+        /// <summary>
+        /// Occurs when screen is completely opaque. It is a time to change active components
+        /// </summary>
+        public event EventHandler SwitchMoment;
+
+        protected void OnSwitchMoment()
+        {
+            var handler = SwitchMoment;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Occurs when effect is completed and can be removed
+        /// </summary>
+        public event EventHandler EffectComplete;
+
+        protected void OnEffectComplete()
+        {
+            var handler = EffectComplete;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         public FadeSwitchComponent(D3DEngine engine)
         {
-            this.IsDefferedLoadContent = true;
+            IsDefferedLoadContent = true;
 
             _engine = engine;
 
             DrawOrders.UpdateIndex(0, int.MaxValue); //Must ne draw the last
         }
-
-        #region Private methods
-        public override event EventHandler SwitchMoment;
-        private void OnSwitchMoment()
-        {
-            if (SwitchMoment != null) SwitchMoment(this, EventArgs.Empty);
-        }
-
-        public override event EventHandler EffectComplete;
-        private void OnEffectComplete()
-        {
-            if (EffectComplete != null) EffectComplete(this, EventArgs.Empty);
-        }
-        #endregion
 
         #region Public methods
         public override void Initialize()
@@ -82,7 +88,7 @@ namespace Utopia.Components
             _iBuffer = ToDispose(new IndexBuffer<short>(_engine.Device, 6, SharpDX.DXGI.Format.R16_UInt, "Fade_iBuffer"));
         }
 
-        public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
+        public override void LoadContent(DeviceContext context)
         {
             //Load data into the VB  => NOT Thread safe, MUST be done in the loadcontent
             VertexPosition2[] vertices = { 
@@ -142,13 +148,13 @@ namespace Utopia.Components
             context.DrawIndexed(6, 0, 0);
         }
 
-        public override void BeginSwitch()
+        public void BeginSwitch()
         {
             _color.Alpha = 0;
             _targetAlpha = 1;
         }
 
-        public override void FinishSwitch()
+        public void FinishSwitch()
         {
             _color.Alpha = 1;
             _targetAlpha = 0;
