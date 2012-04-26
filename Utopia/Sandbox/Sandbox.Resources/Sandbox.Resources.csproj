@@ -257,6 +257,8 @@
     <Content Include="Sounds\Ambiance\water_stream.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Sounds\Blocks\take.wav" />
+    <Content Include="Sounds\Blocks\put.wav" />
     <Content Include="Sounds\Footsteps\footsteps_dirt01.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -831,6 +833,7 @@
       <Name>S33M3Resources</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
