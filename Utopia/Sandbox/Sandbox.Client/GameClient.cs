@@ -171,9 +171,6 @@ namespace Sandbox.Client
             //Only if GamePlayState is activate
             if (_iocContainer.Get<GameStatesManager>().CurrentState is GamePlayState)
             {
-                InputsManager inputManager = _iocContainer.Get<InputsManager>();
-                inputManager.MouseManager.MouseCapture = false;
-
                 _iocContainer.Get<GameStatesManager>().ActivateGameStateAsync(_iocContainer.Get<InGameMenuState>(), true);
             }
         }
