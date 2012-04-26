@@ -21,12 +21,6 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
         protected NewGamePanel _newGamePanel;
         #endregion
 
-        #region Public properties/Variables
-        #endregion
-
-        #region Public methods
-        #endregion
-
         #region Private methods
         protected override void InitializeComponent()
         {
@@ -115,7 +109,7 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             if (_backPanel.Children.Contains(_savedGamePanel) == false)
             {
                 _backPanel.Children.Clear();
-                _savedGamePanel.RefreshWorldList();
+                _savedGamePanel.RefreshWorldListAsync();
                 _backPanel.Children.Add(_savedGamePanel);
             }
         }

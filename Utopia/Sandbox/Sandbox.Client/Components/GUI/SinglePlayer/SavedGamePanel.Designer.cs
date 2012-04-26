@@ -25,7 +25,6 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
         #region Public methods
         private void InitializeComponent()
         {
-            GameSystemSettings.LocalWorldsParams = LocalWorlds.GetAllSinglePlayerWorldsParams(_vars.ApplicationDataPath);
             CreateComponents();
             Resize();
             BindComponents();
@@ -62,10 +61,14 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             _savedGameList.IsClickTransparent = false;
             _savedGameList.SelectionMode = ListSelectionMode.Single;
             _savedGameList.SelectionChanged += _savedGameList_SelectionChanged;
-            //Insert the various single world present on the computer
-            foreach (LocalWorlds.LocalWorldsParam worldp in GameSystemSettings.LocalWorldsParams)
+
+            if (GameSystemSettings.LocalWorldsParams != null)
             {
-                _savedGameList.Items.Add(worldp);
+                //Insert the various single world present on the computer
+                foreach (LocalWorlds.LocalWorldsParam worldp in GameSystemSettings.LocalWorldsParams)
+                {
+                    _savedGameList.Items.Add(worldp);
+                }
             }
 
             if (_savedGameList.Items.Count > 0)
@@ -97,7 +100,7 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
 
         void _savedGameList_SelectionChanged(object sender, EventArgs e)
         {
-            if (_savedGameList.SelectedItems.Count == 1)
+            if (_savedGameList.SelectedItems.Count == 1 && _savedGameList.SelectedItem is LocalWorlds.LocalWorldsParam)
             {
                 BtLoad.Enabled = true;
                 _btDelete.Enabled = true;

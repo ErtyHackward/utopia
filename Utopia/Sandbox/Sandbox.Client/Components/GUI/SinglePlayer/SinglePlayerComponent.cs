@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using S33M3DXEngine.Main;
 using S33M3DXEngine;
-using SharpDX.Direct3D11;
 using S33M3CoreComponents.GUI.Nuclex;
 using Utopia.Shared.World;
 using S33M3CoreComponents.GUI;
@@ -39,10 +35,13 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             _currentWorldParameter = currentWorldParameter;
         }
 
-        #region Public methods
-        #endregion
+        public override void Update(GameTime timeSpent)
+        {
+            if (_savedGamePanel.NeedShowResults)
+                _savedGamePanel.ShowResults();
 
-        #region Private methods
-        #endregion
+            base.Update(timeSpent);
+        }
+
     }
 }
