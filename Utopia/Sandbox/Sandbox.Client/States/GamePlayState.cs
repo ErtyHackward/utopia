@@ -23,6 +23,7 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.GUI.Inventory;
 using Utopia.Components;
 using Utopia.Shared.Settings;
+using System.Linq;
 
 namespace Sandbox.Client.States
 {

@@ -272,6 +272,7 @@ namespace Utopia.Components
                             if (_stepsSounds.TryGetValue(cubeUnderFeet.Id, out sounds))
                             {
                                 var prevSound = soundIndex;
+                                soundIndex = 0;
                                 // choose another sound to avoid playing the same sound one after another
                                 while (sounds.Count > 1 && prevSound == soundIndex)
                                     soundIndex = (byte)rnd.Next(0, sounds.Count);
