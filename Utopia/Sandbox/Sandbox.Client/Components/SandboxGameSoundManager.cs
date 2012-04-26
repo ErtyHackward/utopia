@@ -1,7 +1,7 @@
-﻿using Utopia.Components;
+﻿using S33M3Resources.Structs;
+using Utopia.Components;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
-using Utopia.Entities.Managers;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Interfaces;
 using IrrKlang;
@@ -45,6 +45,21 @@ namespace Sandbox.Client.Components
             // ambiance
             RegisterCubeAmbientSound(CubeId.Water, "Sounds\\Ambiance\\water_stream.ogg");
 
+            PreLoadSound("Sounds\\Blocks\\put.wav");
+            PreLoadSound("Sounds\\Blocks\\take.wav");
+
+        }
+
+        public void PlayBlockPut(Vector3I blockPos)
+        {
+            var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
+            sound.MaxDistance = 16;
+        }
+
+        public void PlayBlockTake(Vector3I blockPos)
+        {
+            var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
+            sound.MaxDistance = 16;
         }
     }
 }

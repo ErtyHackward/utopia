@@ -1,5 +1,6 @@
 ﻿using Ninject;
 using S33M3DXEngine;
+using Sandbox.Client.Components;
 using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
@@ -8,6 +9,7 @@ using Utopia.Entities.Renderer.Interfaces;
 using Utopia.GUI;
 using Utopia.Network;
 using Utopia.Worlds.Chunks;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Worlds.Weather;
@@ -65,8 +67,10 @@ namespace Sandbox.Client.States
             var soundManager = _ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
             var fadeComponent = _ioc.Get<FadeComponent>();
-
             fadeComponent.Visible = false;
+
+            var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
+            chunkEntityImpactManager.BlockReplaced += ChunkEntityImpactManagerBlockReplaced;
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -113,6 +117,16 @@ namespace Sandbox.Client.States
             chat.MessageOut += ChatMessageOut;
 
             base.Initialize(context);
+        }
+        
+        void ChunkEntityImpactManagerBlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
+        {
+            var soundManager = _ioc.Get<SandboxGameSoundManager>();
+
+            if (e.NewBlockType == 0)
+                soundManager.PlayBlockTake(e.Position);
+            else
+                soundManager.PlayBlockPut(e.Position);
         }
 
         void InventorySwitchInventory(object sender, System.EventArgs e)

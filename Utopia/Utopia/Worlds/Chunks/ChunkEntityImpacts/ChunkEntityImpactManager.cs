@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Net.Connections;
@@ -10,7 +7,6 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Chunks.ChunkLighting;
-using Utopia.Worlds.Cubes;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
@@ -41,6 +37,17 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             set { _worldChunks = value; }
         }
         #endregion
+
+        /// <summary>
+        /// Occurs when a single block at the landscape is changed
+        /// </summary>
+        public event EventHandler<LandscapeBlockReplacedEventArgs> BlockReplaced;
+
+        private void OnBlockReplaced(LandscapeBlockReplacedEventArgs e)
+        {
+            var handler = BlockReplaced;
+            if (handler != null) handler(this, e);
+        }
 
         public ChunkEntityImpactManager()
         {
@@ -229,6 +236,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
             CheckImpact(ref cubeCoordinates, replacementCubeId);
 
+            OnBlockReplaced(new LandscapeBlockReplacedEventArgs { Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube.Id });
+
             //Save the modified Chunk in local buffer DB
             //Is it Worth ????
             VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
@@ -258,6 +267,13 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return GetCursor(new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
         }
         #endregion
+    }
+
+    public class LandscapeBlockReplacedEventArgs : EventArgs
+    {
+        public Vector3I Position { get; set; }
+        public byte NewBlockType { get; set; }
+        public byte PreviousBlock { get; set; }
     }
 }
 
