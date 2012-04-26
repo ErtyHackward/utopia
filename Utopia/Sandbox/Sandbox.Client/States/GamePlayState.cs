@@ -57,6 +57,7 @@ namespace Sandbox.Client.States
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
+            inventory.SwitchInventory += InventorySwitchInventory;
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
             var skyDome = _ioc.Get<ISkyDome>();
@@ -69,6 +70,9 @@ namespace Sandbox.Client.States
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>();
             var soundManager = _ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
+            var fadeComponent = _ioc.Get<FadeComponent>();
+
+            fadeComponent.Visible = false;
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -89,6 +93,7 @@ namespace Sandbox.Client.States
             AddComponent(sharedFrameCB);
             AddComponent(soundManager);
             AddComponent(staggingBackBuffer);
+            AddComponent(fadeComponent);
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
@@ -114,6 +119,23 @@ namespace Sandbox.Client.States
             chat.MessageOut += ChatMessageOut;
 
             base.Initialize(context);
+        }
+
+        void InventorySwitchInventory(object sender, System.EventArgs e)
+        {
+            var inventory = _ioc.Get<InventoryComponent>();
+            var fadeComponent = _ioc.Get<FadeComponent>();
+            fadeComponent.Color = new SharpDX.Color4(0, 0, 0, 0.85f);
+            if (inventory.IsActive)
+            {
+                fadeComponent.Visible = false;
+                inventory.HideInventory();
+            }
+            else
+            {
+                fadeComponent.Visible = true;
+                inventory.ShowInventory();
+            }
         }
 
         void ChatMessageOut(object sender, ChatMessageEventArgs e)

@@ -62,6 +62,18 @@ namespace Utopia.GUI.Inventory
             }
         }
 
+        /// <summary>
+        /// Occurs when user is requesting inventory or want to close it
+        /// </summary>
+        public event EventHandler SwitchInventory;
+
+        private void OnSwitchInventory()
+        {
+            var handler = SwitchInventory;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+
         public InventoryComponent(
             InputsManager inputManager, 
             GuiManager guiManager, 
@@ -321,38 +333,37 @@ namespace Utopia.GUI.Inventory
 
         public override void Update(GameTime timeSpend)
         {
-
-            //if (_dragControl.Slot != null)
-            {
-                var mouseState = _inputManager.MouseManager.CurMouseState;
-                _dragControl.Bounds.Location = new UniVector(new UniScalar(mouseState.X - _dragOffset.X), new UniScalar(mouseState.Y - _dragOffset.Y));
-            }
-
+            var mouseState = _inputManager.MouseManager.CurMouseState;
+            _dragControl.Bounds.Location = new UniVector(new UniScalar(mouseState.X - _dragOffset.X), new UniScalar(mouseState.Y - _dragOffset.Y));
+            
             if (_inputManager.ActionsManager.isTriggered(UtopiaActions.OpenInventory) && _playerInventoryWindow != null)
             {
-                if (_guiManager.Screen.Desktop.Children.Contains(_playerInventoryWindow))
-                {
-                    //_guiManager.Screen.Desktop.Children.Remove(_infoWindow);
-                    _guiManager.Screen.Desktop.Children.Remove(_playerInventoryWindow);
-                    _itemMessageTranslator.Enabled = false;
-                    //Has this is A gui component, its own windows will automatically by protected for events going "through" it,
-                    //But in this case, I need to prevent ALL event to be sent while this component is activated
-                    _inputManager.ActionsManager.IsMouseExclusiveMode = false;
-                    _guiManager.ForceExclusiveMode = false;
-                    _inputManager.MouseManager.MouseCapture = true;
-                    IsActive = false;
-                }
-                else
-                {
-                    //_guiManager.Screen.Desktop.Children.Add(_infoWindow);
-                    _guiManager.Screen.Desktop.Children.Add(_playerInventoryWindow);
-                    _itemMessageTranslator.Enabled = true;
-                    _inputManager.ActionsManager.IsMouseExclusiveMode = true;
-                    _guiManager.ForceExclusiveMode = true;
-                    _inputManager.MouseManager.MouseCapture = false;
-                    IsActive = true;
-                }
+                OnSwitchInventory();
             }
+        }
+
+        public void ShowInventory()
+        {
+            //_guiManager.Screen.Desktop.Children.Add(_infoWindow);
+            _guiManager.Screen.Desktop.Children.Add(_playerInventoryWindow);
+            _itemMessageTranslator.Enabled = true;
+            _inputManager.ActionsManager.IsMouseExclusiveMode = true;
+            _guiManager.ForceExclusiveMode = true;
+            _inputManager.MouseManager.MouseCapture = false;
+            IsActive = true;
+        }
+
+        public void HideInventory()
+        {
+            //_guiManager.Screen.Desktop.Children.Remove(_infoWindow);
+            _guiManager.Screen.Desktop.Children.Remove(_playerInventoryWindow);
+            _itemMessageTranslator.Enabled = false;
+            //Has this is A gui component, its own windows will automatically by protected for events going "through" it,
+            //But in this case, I need to prevent ALL event to be sent while this component is activated
+            _inputManager.ActionsManager.IsMouseExclusiveMode = false;
+            _guiManager.ForceExclusiveMode = false;
+            _inputManager.MouseManager.MouseCapture = true;
+            IsActive = false;
         }
 
     }
