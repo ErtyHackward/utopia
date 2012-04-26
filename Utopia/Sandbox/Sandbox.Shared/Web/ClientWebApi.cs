@@ -67,7 +67,7 @@ namespace Sandbox.Shared.Web
         private void CheckToken()
         {
             if (string.IsNullOrEmpty(Token))
-                throw new InvalidOperationException("Unable to send a logoff request because login procedure was not completed");
+                throw new InvalidOperationException("Token check operation failed because login procedure was not completed");
         }
 
         private void LoginCompleteCallback(IAsyncResult result)

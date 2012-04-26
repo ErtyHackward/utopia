@@ -1,7 +1,5 @@
 ﻿using Ninject;
 using S33M3DXEngine;
-using Sandbox.Client.Components;
-using Utopia;
 using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
@@ -21,12 +19,8 @@ using S33M3CoreComponents.GUI;
 using SharpDX.Direct3D11;
 using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.GUI.Inventory;
-using Utopia.GUI.Map;
-using S33M3CoreComponents.Debug;
 using Utopia.Components;
 using Utopia.Shared.Settings;
-using System.Linq;
-using Sandbox.Client.Components.GUI;
 
 namespace Sandbox.Client.States
 {
@@ -157,7 +151,9 @@ namespace Sandbox.Client.States
             var guiManager = _ioc.Get<GuiManager>();
             guiManager.Screen.ShowAll();
             var fadeComponent = _ioc.Get<FadeComponent>();
-            fadeComponent.Visible = false;
+            var inventory = _ioc.Get<InventoryComponent>();
+            fadeComponent.Visible = inventory.IsActive;
+
             base.OnEnabled(previousState);
         }
     }

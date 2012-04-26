@@ -1,5 +1,6 @@
 ﻿using System;
 using Ninject;
+using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
 using Sandbox.Client.Components.GUI;
@@ -14,6 +15,9 @@ namespace Sandbox.Client.States
     {
         private readonly IKernel _iocContainer;
         private bool _isGameExited;
+
+        // do we need to capture mouse on continue?
+        private bool _captureMouse;
 
         public override string Name
         {
@@ -48,6 +52,9 @@ namespace Sandbox.Client.States
 
         void MenuContinuePressed(object sender, EventArgs e)
         {
+            var inputManager = _iocContainer.Get<InputsManager>();
+            inputManager.MouseManager.MouseCapture = _captureMouse;
+
             StatesManager.ActivateGameStateAsync("Gameplay");
         }
 
@@ -61,6 +68,15 @@ namespace Sandbox.Client.States
             _isGameExited = true;
             WithPreservePreviousStates = false;
             StatesManager.ActivateGameStateAsync("MainMenu");
+        }
+
+        public override void OnEnabled(GameState previousState)
+        {
+            var inputManager = _iocContainer.Get<InputsManager>();
+            _captureMouse = inputManager.MouseManager.MouseCapture;
+            inputManager.MouseManager.MouseCapture = false;
+
+            base.OnEnabled(previousState);
         }
 
         public override void OnDisabled(GameState nextState)
