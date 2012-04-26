@@ -1,36 +1,30 @@
 ﻿using System;
-using System.Drawing;
 using S33M3CoreComponents.Sprites;
+using S33M3DXEngine.Main;
 using SharpDX.Direct3D11;
 using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
-using S33M3CoreComponents.GUI.Nuclex.Controls;
-using S33M3CoreComponents.Inputs;
+using Utopia.GUI.Inventory;
 
 namespace Sandbox.Client.Components.GUI
 {
-    public class InGameMenuComponent : SandboxMenuComponent
+    public class InGameMenuComponent : DrawableGameComponent
     {
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
-        private readonly RuntimeVariables _runtime;
-        private readonly InputsManager _inputmnger;
-
-        private SpriteTexture _stMenuButton;
-        private SpriteTexture _stMenuHover;
-        private SpriteTexture _stMenuDown;
-
-        private SpriteTexture _stLabelContinue;
-        private SpriteTexture _stLabelCredits;
-        private SpriteTexture _stLabelExit;
-        private SpriteTexture _stLabelSettings;
+        private readonly SandboxCommonResources _commonResources;
+        
+        private readonly SpriteTexture _stLabelContinue;
+        private readonly SpriteTexture _stLabelExit;
+        private readonly SpriteTexture _stLabelSettings;
+        private readonly SpriteTexture _stMenuBg;
 
         private ButtonControl _continueButton;
         private ButtonControl _settingsButton;
         private ButtonControl _exitButton;
 
-        private Control _buttonsGroup;
+        private ContainerControl _buttonsGroup;
 
         #region Events
         public event EventHandler ContinuePressed;
@@ -52,28 +46,21 @@ namespace Sandbox.Client.Components.GUI
         }
         #endregion
 
-        public InGameMenuComponent(D3DEngine engine, MainScreen screen, RuntimeVariables runtime, SandboxCommonResources commonResources, InputsManager inputmnger)
-            : base(engine, screen, commonResources)
+        public InGameMenuComponent(D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (screen == null) throw new ArgumentNullException("screen");
+
             _engine = engine;
             _screen = screen;
-            _runtime = runtime;
-            _inputmnger = inputmnger;
-
+            _commonResources = commonResources;
+            
             _engine.ViewPort_Updated += UpdateLayout;
 
-            _stMenuButton   = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button.png"));
-            _stMenuHover    = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button_hover.png"));
-            _stMenuDown     = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button_down.png"));
-
+            _stMenuBg               = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\gameplay_menu.png"));
             _stLabelContinue        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_continue.png"));
-            _stLabelCredits         = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_credits.png"));
-            _stLabelExit            = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_exit.png"));
             _stLabelSettings        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_settings.png"));
-
-            this._borderOffset = 10;
+            _stLabelExit            = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_exit.png"));
         }
 
         public override void BeforeDispose()
@@ -85,26 +72,25 @@ namespace Sandbox.Client.Components.GUI
         {
             base.Initialize();
 
-            _buttonsGroup = new Control();
+            _buttonsGroup = new ContainerControl { Bounds = new UniRectangle(0, 0, 417, 355), background = _stMenuBg };
 
             const int buttonWidth = 212;
             const int buttomHeight = 40;
             
             _continueButton = new ButtonControl{ 
-                CustomImage = _stMenuButton, 
-                CustomImageDown = _stMenuDown, 
-                CustomImageHover = _stMenuHover,
+                CustomImage = _commonResources.StButtonBackground, 
+                CustomImageDown = _commonResources.StButtonBackgroundDown, 
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
                 CusomImageLabel = _stLabelContinue,
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
             };
-            //_continueButton.Enabled = false;
             _continueButton.Pressed += delegate { OnContinuePressed(); };
 
             _settingsButton = new ButtonControl
             {
-                CustomImage = _stMenuButton,
-                CustomImageDown = _stMenuDown,
-                CustomImageHover = _stMenuHover,
+                CustomImage = _commonResources.StButtonBackground,
+                CustomImageDown = _commonResources.StButtonBackgroundDown,
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
                 CusomImageLabel = _stLabelSettings,
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
 
@@ -113,9 +99,9 @@ namespace Sandbox.Client.Components.GUI
 
             _exitButton = new ButtonControl
             {
-                CustomImage = _stMenuButton,
-                CustomImageDown = _stMenuDown,
-                CustomImageHover = _stMenuHover,
+                CustomImage = _commonResources.StButtonBackground,
+                CustomImageDown = _commonResources.StButtonBackgroundDown,
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
                 CusomImageLabel = _stLabelExit,
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
             };
@@ -124,17 +110,12 @@ namespace Sandbox.Client.Components.GUI
             _buttonsGroup.Children.Add(_continueButton);
             _buttonsGroup.Children.Add(_settingsButton);
             _buttonsGroup.Children.Add(_exitButton);
+            _buttonsGroup.LeftTopMargin = new SharpDX.Vector2(105, 141);
             _buttonsGroup.ControlsSpacing = new SharpDX.Vector2(0, 0);
 
             _buttonsGroup.UpdateLayout();
 
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
-            
-            if (Updatable)
-            {
-                //_screen.Desktop.Children.Add(_buttonsGroup);
-                //_screen.FocusedControl = _multiplayer;
-            }
         }
 
         public override void EnableComponent()
@@ -155,7 +136,7 @@ namespace Sandbox.Client.Components.GUI
 
         private void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
-            _buttonsGroup.Bounds  = new UniRectangle((_engine.ViewPort.Width - 212) / 2, _headerHeight + 137, 212, 400);
+            _buttonsGroup.Bounds.Location = new UniVector((_engine.ViewPort.Width - _buttonsGroup.Bounds.Size.X.Offset) / 2, (_engine.ViewPort.Height - _buttonsGroup.Bounds.Size.Y.Offset) / 2);
         }
     }
 }

@@ -51,8 +51,8 @@ namespace Sandbox.Client.Components.GUI
             StLinenPattern =            LoadTexture(engine, @"Images\black-linen.png");
             StInputBackground =         LoadTexture(engine, @"Images\Login\login_input_bg.png");
             StButtonBackground =        LoadTexture(engine, @"Images\MainMenu\menu_button.png");
-            StButtonBackgroundDown =    LoadTexture(engine, @"Images\MainMenu\menu_button_hover.png");
-            StButtonBackgroundHover =   LoadTexture(engine, @"Images\MainMenu\menu_button_down.png");
+            StButtonBackgroundDown =    LoadTexture(engine, @"Images\MainMenu\menu_button_down.png");
+            StButtonBackgroundHover =   LoadTexture(engine, @"Images\MainMenu\menu_button_hover.png");
 
             FontCollection = new PrivateFontCollection();
             FontCollection.AddFontFile("Images\\BebasNeue.ttf");

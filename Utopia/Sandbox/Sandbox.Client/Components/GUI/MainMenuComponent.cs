@@ -15,10 +15,6 @@ namespace Sandbox.Client.Components.GUI
         private readonly MainScreen _screen;
         private readonly RuntimeVariables _runtime;
 
-        private SpriteTexture _stMenuButton;
-        private SpriteTexture _stMenuHover;
-        private SpriteTexture _stMenuDown;
-
         private SpriteTexture _stLabelContinue;
         private SpriteTexture _stLabelCredits;
         private SpriteTexture _stLabelExit;
@@ -97,10 +93,7 @@ namespace Sandbox.Client.Components.GUI
             _runtime = runtime;
 
             _engine.ViewPort_Updated += UpdateLayout;
-
-            _stMenuButton   = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button.png"));
-            _stMenuHover    = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button_hover.png"));
-            _stMenuDown     = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\menu_button_down.png"));
+            
 
             _stLabelContinue        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_continue.png"));
             _stLabelCredits         = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_credits.png"));
@@ -128,20 +121,19 @@ namespace Sandbox.Client.Components.GUI
             const int buttomHeight = 40;
             
             _continueButton = new ButtonControl{ 
-                CustomImage = _stMenuButton, 
-                CustomImageDown = _stMenuDown, 
-                CustomImageHover = _stMenuHover,
+                CustomImage = _commonResources.StButtonBackground, 
+                CustomImageDown = _commonResources.StButtonBackgroundDown, 
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
                 CusomImageLabel = _stLabelContinue,
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
             };
-            //_continueButton.Enabled = false;
             _continueButton.Pressed += delegate { OnContinuePressed(); };
 
             _singlePlayer = new ButtonControl
             {
-                CustomImage = _stMenuButton,
-                CustomImageDown = _stMenuDown,
-                CustomImageHover = _stMenuHover,
+                CustomImage = _commonResources.StButtonBackground,
+                CustomImageDown = _commonResources.StButtonBackgroundDown,
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
                 CusomImageLabel = _stLabelSingleplayer,
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
             };
@@ -149,9 +141,9 @@ namespace Sandbox.Client.Components.GUI
 
             _multiplayer = new ButtonControl
             {
-                CustomImage = _stMenuButton,
-                CustomImageDown = _stMenuDown,
-                CustomImageHover = _stMenuHover,
+                CustomImage = _commonResources.StButtonBackground,
+                CustomImageDown = _commonResources.StButtonBackgroundDown,
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
                 CusomImageLabel = _stLabelMultiplayer,
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
             };
@@ -159,9 +151,9 @@ namespace Sandbox.Client.Components.GUI
 
             _settingsButton = new ButtonControl
             {
-                CustomImage = _stMenuButton,
-                CustomImageDown = _stMenuDown,
-                CustomImageHover = _stMenuHover,
+                CustomImage = _commonResources.StButtonBackground,
+                CustomImageDown = _commonResources.StButtonBackgroundDown,
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
                 CusomImageLabel = _stLabelSettings,
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
 
@@ -170,9 +162,9 @@ namespace Sandbox.Client.Components.GUI
 
             _editor = new ButtonControl
             {
-                CustomImage = _stMenuButton,
-                CustomImageDown = _stMenuDown,
-                CustomImageHover = _stMenuHover,
+                CustomImage = _commonResources.StButtonBackground,
+                CustomImageDown = _commonResources.StButtonBackgroundDown,
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
                 CusomImageLabel = _stLabelEditor,
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
             };
@@ -180,9 +172,9 @@ namespace Sandbox.Client.Components.GUI
 
             _credits = new ButtonControl
             {
-                CustomImage = _stMenuButton,
-                CustomImageDown = _stMenuDown,
-                CustomImageHover = _stMenuHover,
+                CustomImage = _commonResources.StButtonBackground,
+                CustomImageDown = _commonResources.StButtonBackgroundDown,
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
                 CusomImageLabel = _stLabelCredits,
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
             };
@@ -190,9 +182,9 @@ namespace Sandbox.Client.Components.GUI
 
             _exitButton = new ButtonControl
             {
-                CustomImage = _stMenuButton,
-                CustomImageDown = _stMenuDown,
-                CustomImageHover = _stMenuHover,
+                CustomImage = _commonResources.StButtonBackground,
+                CustomImageDown = _commonResources.StButtonBackgroundDown,
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
                 CusomImageLabel = _stLabelExit,
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
             };
@@ -223,12 +215,6 @@ namespace Sandbox.Client.Components.GUI
             _mainMenuLabel = new ImageControl { Image = _stMainMenuLabel };
 
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
-            
-            if (Updatable)
-            {
-                //_screen.Desktop.Children.Add(_buttonsGroup);
-                //_screen.FocusedControl = _multiplayer;
-            }
         }
 
         public override void EnableComponent()
