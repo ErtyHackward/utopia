@@ -73,6 +73,11 @@ namespace Utopia
 
         private void InputHandling()
         {
+            if (_inputManager.ActionsManager.isTriggered(Actions.EngineVSync))
+            {
+                this.VSync = !this.VSync;
+            }
+
             //Make the game exit
             if (_inputManager.ActionsManager.isTriggered(Actions.EngineExit))
             {

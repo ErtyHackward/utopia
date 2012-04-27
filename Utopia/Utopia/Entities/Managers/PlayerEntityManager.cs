@@ -945,6 +945,7 @@ namespace Utopia.Entities.Managers
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
         }
 
+
         public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
             //TODO FIXME NAsty bug here, not a number float arithmetic exception sometimes - surely a server side fix to do !

@@ -381,6 +381,7 @@ namespace Utopia.Worlds.Chunks
             //If my new X position, make me placed "inside" a block, then invalid the new position
             if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
+                newPositionWithColliding.X = previousPosition.X;
                 if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
                 {
                     float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
@@ -391,14 +392,14 @@ namespace Utopia.Worlds.Chunks
                     }
                 }
 
-                if (previousPosition.X < newPosition2Evaluate.X)
-                {
-                    newPositionWithColliding.X = ((int)newPosition2Evaluate.X) + 1 - localEntityBoundingBox.Maximum.X - 0.01;
-                }
-                else
-                {
-                    newPositionWithColliding.X = ((int)newPosition2Evaluate.X) + localEntityBoundingBox.Maximum.X;
-                }
+                //if (previousPosition.X < newPosition2Evaluate.X)
+                //{
+                //    newPositionWithColliding.X = ((int)newPosition2Evaluate.X) + 1 - localEntityBoundingBox.Maximum.X - 0.01;
+                //}
+                //else
+                //{
+                //    newPositionWithColliding.X = ((int)newPosition2Evaluate.X) + localEntityBoundingBox.Maximum.X;
+                //}
             }
 
             //Z Testing =========================================================
@@ -408,7 +409,7 @@ namespace Utopia.Worlds.Chunks
             //If my new Z position, make me placed "inside" a block, then invalid the new position
             if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
-                //newPositionWithColliding.Z = previousPosition.Z;
+                newPositionWithColliding.Z = previousPosition.Z;
                 if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
                 {
                     float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
@@ -419,14 +420,14 @@ namespace Utopia.Worlds.Chunks
                     }
                 }
 
-                if (previousPosition.Z < newPosition2Evaluate.Z)
-                {
-                    newPositionWithColliding.Z = ((int)newPosition2Evaluate.Z) + 1 - localEntityBoundingBox.Maximum.Z - 0.01;
-                }
-                else
-                {
-                    newPositionWithColliding.Z = ((int)newPosition2Evaluate.Z) + localEntityBoundingBox.Maximum.Z;
-                }
+                //if (previousPosition.Z < newPosition2Evaluate.Z)
+                //{
+                //    newPositionWithColliding.Z = ((int)newPosition2Evaluate.Z) + 1 - localEntityBoundingBox.Maximum.Z - 0.01;
+                //}
+                //else
+                //{
+                //    newPositionWithColliding.Z = ((int)newPosition2Evaluate.Z) + localEntityBoundingBox.Maximum.Z;
+                //}
             }
 
             //Y Testing ======================================================
