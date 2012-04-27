@@ -42,7 +42,7 @@ namespace S33M3CoreComponents.Cameras
         protected Matrix _viewProjection3D;
         protected Matrix _worldViewMatrix;
 
-        protected BoundingFrustum _frustum;
+        protected SimpleBoundingFrustum _frustum;
 
         private ICameraPlugin _cameraPlugin;
 
@@ -56,7 +56,7 @@ namespace S33M3CoreComponents.Cameras
 
         public CameraType CameraType { get; set; }
 
-        public BoundingFrustum Frustum
+        public SimpleBoundingFrustum Frustum
         {
             get { return _frustum; }
         }
@@ -204,7 +204,9 @@ namespace S33M3CoreComponents.Cameras
 
             Matrix.PerspectiveFovLH((float)Math.PI / 3, aspectRatio, NearPlane, FarPlane, out _projection3D);
 
-            if (_frustum == null) _frustum = new BoundingFrustum(Matrix.Identity);
+            var matrix = Matrix.Identity;
+
+            if (_frustum == null) _frustum = new SimpleBoundingFrustum(ref matrix);
         }
 
         protected virtual void newCameraPluginDriver()

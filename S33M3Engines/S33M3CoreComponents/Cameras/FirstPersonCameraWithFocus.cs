@@ -86,7 +86,7 @@ namespace S33M3CoreComponents.Cameras
             _viewProjection3D_focused = _view_focused * _projection3D;
             _viewProjection3D = Matrix.Translation(_worldPosition.AsVector3() * -1) * MRotation * _projection3D;
 
-            _frustum = new BoundingFrustum(_viewProjection3D);
+            _frustum = new SimpleBoundingFrustum(ref _viewProjection3D);
 
             //Refresh the lookat camera vector
             _lookAt = MQuaternion.GetLookAtFromQuaternion(inverseRotation);
