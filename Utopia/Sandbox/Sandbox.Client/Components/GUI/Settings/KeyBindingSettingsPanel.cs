@@ -28,6 +28,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             _panelName = "Key Bindings";
             _parent = parent;
             this.Bounds = bound;
+            this.IsRendable = false;
             
             InitializeComponent();
         }
