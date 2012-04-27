@@ -147,11 +147,18 @@ namespace S33M3DXEngine.Main
 
             ResetTimers();
 
+            FixedTimeStepLoop();
+            //FixedTimeStepLoopWithPrediction();
+
+            this.Exit(false);
+        }
+
+        private void FixedTimeStepLoop()
+        {
             //The Pump !
             RenderLoop.Run(Engine.GameWindow, () =>
             {
-                if (_isFormClosed) 
-                    return;
+                if (_isFormClosed) return;
 
 #if DEBUG
                 //In case, if too much time has passed, Skip the update for this time period
@@ -176,8 +183,41 @@ namespace S33M3DXEngine.Main
                 Interpolation(_interpolation_hd, _interpolation_ld, _gameTime.GetElapsedTime());
                 Draw();
             });
+        }
 
-            this.Exit(false);
+        private void FixedTimeStepLoopWithPrediction()
+        {
+            //Wait for a VSync signal
+            Present();
+
+            long num = 0;
+            long last_swap = Stopwatch.GetTimestamp();
+            long start = Stopwatch.GetTimestamp();
+            long next_swap_time = start;
+            long swap_time;
+
+            //The Pump !
+            RenderLoop.Run(Engine.GameWindow, () =>
+            {
+                if (_isFormClosed) return;
+
+                while (num * _gameTime.GameUpdateDelta < (next_swap_time - start) && _isFormClosed == false)
+                {
+                    Update(_gameTime);
+                    num += 1;
+                }
+
+                _interpolation_hd = (next_swap_time - start) / _gameTime.GameUpdateDelta - (num - 1);
+                _interpolation_ld = (float)_interpolation_hd;
+                Interpolation(_interpolation_hd, _interpolation_ld, _gameTime.GetElapsedTime());
+                Draw();
+
+                swap_time = Stopwatch.GetTimestamp() - last_swap;
+                if (swap_time < _gameTime.GameUpdateDelta / 2) swap_time = _gameTime.GameUpdateDelta;
+                last_swap = Stopwatch.GetTimestamp();
+                next_swap_time = Stopwatch.GetTimestamp() + swap_time;
+
+            });
 
         }
 
