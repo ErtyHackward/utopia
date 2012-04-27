@@ -215,6 +215,7 @@
     <Compile Include="Maths\MMatrix.cs" />
     <Compile Include="Maths\MQuaternion.cs" />
     <Compile Include="Maths\MVector3.cs" />
+    <Compile Include="Maths\SimpleBoundingFrustum.cs" />
     <Compile Include="Maths\VectorsCst.cs" />
     <Compile Include="Maths\Noises\NoiseMath.cs" />
     <Compile Include="Maths\Noises\SimplexNoise.cs" />
