@@ -73,7 +73,7 @@ namespace Utopia.Worlds.Chunks
                 chunk = SortedChunks[chunkIndice];
 
                 //Testing Frust
-                chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
+                //chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
 
                 if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
 

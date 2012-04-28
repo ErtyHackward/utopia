@@ -108,6 +108,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             int cubeIndexZ = baseCubeIndex;
             int cubeIndex = baseCubeIndex;
 
+            var worldRangeMaxX = _visualWorldParameters.WorldRange.Max.X;
+            var worldRangeMaxY = _visualWorldParameters.WorldRange.Max.Y;
+            var worldRangeMaxZ = _visualWorldParameters.WorldRange.Max.Z;
+
             for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
             {
                 XWorld = (x + chunk.CubeRange.Position.X);
@@ -128,7 +132,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         cubeIndex = cubeIndexZ;
                     }
 
-                    for (int y = 0; y < chunk.CubeRange.Max.Y; y++)
+                    for (int y = 0; y < chunk.CubeRange.Size.Y; y++)
                     {
 
                         //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
@@ -167,7 +171,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1);
                                 break;
                             case CubeFaces.Front:
-                                if (ZWorld + 1 >= _visualWorldParameters.WorldRange.Max.Z) continue;
+                                if (ZWorld + 1 >= worldRangeMaxZ) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1);
                                 break;
                             case CubeFaces.Bottom:
@@ -176,7 +180,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 
                                 break;
                             case CubeFaces.Top:
-                                if (YWorld + 1 >= _visualWorldParameters.WorldRange.Max.Y) continue;
+                                if (YWorld + 1 >= worldRangeMaxY) continue;
                                 neightborCubeIndex = cubeIndex + _cubesHolder.MoveY;
                                 
                                 break;
@@ -186,7 +190,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 
                                 break;
                             case CubeFaces.Right:
-                                if (XWorld + 1 >= _visualWorldParameters.WorldRange.Max.X) continue;
+                                if (XWorld + 1 >= worldRangeMaxX) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1);
                                 break;
                             default:
