@@ -186,6 +186,7 @@
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.3D.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.None.cs" />
+    <Compile Include="Worlds\SkyDomes\SharedComp\FastClouds.cs" />
     <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
     <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
     <Compile Include="Worlds\Storage\IChunkStorageManager.cs" />
