@@ -37,11 +37,21 @@ namespace Utopia.Worlds.Chunks
 
         #region Public methods
 
+        private void ChunkVisibilityTest()
+        {
+            foreach (var chunk in SortedChunks)
+            {
+                chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
+            }
+        }
+
         public override void Draw(DeviceContext context, int index)
         {
             
             if (index == SOLID_DRAW)
             {
+                ChunkVisibilityTest();
+
                 _chunkDrawByFrame = 0;
 
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
