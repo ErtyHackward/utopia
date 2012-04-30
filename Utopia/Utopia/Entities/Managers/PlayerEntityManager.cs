@@ -929,8 +929,12 @@ namespace Utopia.Entities.Managers
             this.IsInitialized = false;
         }
 
+        //string[] test = new string[100];
+        //int i;
+        //long from, to;
         public override void Update( GameTime timeSpend)
         {
+            //from = System.Diagnostics.Stopwatch.GetTimestamp();
             if (_landscapeInitiazed == false) return;
 
             inputHandler();             //Input handling
@@ -943,6 +947,10 @@ namespace Utopia.Entities.Managers
 
             //Refresh the player Bounding box
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
+
+            //to = System.Diagnostics.Stopwatch.GetTimestamp() - from;
+            //test[i] = to.ToString();
+            //i++; if (i >= test.Length) i = 0;
         }
 
 
