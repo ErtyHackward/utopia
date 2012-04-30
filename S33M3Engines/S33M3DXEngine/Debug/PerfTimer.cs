@@ -7,9 +7,23 @@ using S33M3DXEngine.Main.Interfaces;
 
 namespace S33M3DXEngine.Debug
 {
+    public class CompDeltaPerfResult
+    {
+        public string Name;
+        public long DeltaValue;
+        public double PourcVariation;
+        public long LastValue;
+        public long PrevValue;
+        public double DeltaSum;
+        public double WeightedResult
+        {
+            get { return (PourcVariation * DeltaValue) / DeltaSum; }
+        }
+    }
+
     public class PerfTimerResult
     {
-        public static int Echantillon = 60;
+        public static int Echantillon = 100;
 
         public string Name;
         public string Suffix;
@@ -36,6 +50,26 @@ namespace S33M3DXEngine.Debug
             }
         }
 
+        public long GetLastValue
+        {
+            get { return Deltas[PreviousDeltaIndex]; }
+        }
+
+        public long GetPrevValue
+        {
+            get { return Deltas[Previous2DeltaIndex]; }
+        }
+
+        public double Delta
+        {
+            get { return Deltas.Max() - Deltas.Min(); }
+        }
+
+        public double DeltaAgainstAvg
+        {
+            get { return (Delta * 100.0) / (Deltas.Sum() / PerfTimerResult.Echantillon); }
+        }
+
         public void ResetMinMax()
         {
             MaxValue = long.MinValue;
@@ -44,6 +78,8 @@ namespace S33M3DXEngine.Debug
 
         public long[] Deltas = new long[PerfTimerResult.Echantillon];
         public short DeltaIndex = 0;
+        public short PreviousDeltaIndex = 0;
+        public short Previous2DeltaIndex = 0;
 
         public double AvgInMS
         {
@@ -58,6 +94,112 @@ namespace S33M3DXEngine.Debug
     public class PerfTimer
     {
         public Dictionary<string, PerfTimerResult> PerfTimerResults = new Dictionary<string, PerfTimerResult>();
+
+        public long GetLastUpdateTime
+        {
+            get
+            {
+                long val = 0;
+                foreach (var result in PerfTimerResults.Values.Where(x => x.PerfSamplingName.Contains("Update")))
+                {
+                    val += result.GetLastValue;
+                }
+                return val;
+            }
+        }
+
+        public long GetPrevUpdateTime
+        {
+            get
+            {
+                long val = 0;
+                foreach (var result in PerfTimerResults.Values.Where(x => x.PerfSamplingName.Contains("Update")))
+                {
+                    val += result.GetPrevValue;
+                }
+                return val;
+            }
+        }
+
+        public long GetLastDrawTime
+        {
+            get
+            {
+                long val = 0;
+                foreach (var result in PerfTimerResults.Values.Where(x => x.PerfSamplingName.Contains("Draw")).Where(y => y.Name.Contains("GPU Rendering") == false))
+                {
+                    val += result.GetLastValue;
+                }
+                return val;
+            }
+        }
+
+        public long GetPrevDrawTime
+        {
+            get
+            {
+                long val = 0;
+                foreach (var result in PerfTimerResults.Values.Where(x => x.PerfSamplingName.Contains("Draw")).Where(y => y.Name.Contains("GPU Rendering") == false))
+                {
+                    val += result.GetPrevValue;
+                }
+                return val;
+            }
+        }
+
+        public long GetLastPresentTime
+        {
+            get
+            {
+                long val = 0;
+                foreach (var result in PerfTimerResults.Values.Where(x => x.Name.Contains("GPU Rendering")))
+                {
+                    val += result.GetLastValue;
+                }
+                return val;
+            }
+        }
+
+        public long GetPrevPresentTime
+        {
+            get
+            {
+                long val = 0;
+                foreach (var result in PerfTimerResults.Values.Where(x => x.Name.Contains("GPU Rendering")))
+                {
+                    val += result.GetPrevValue;
+                }
+                return val;
+            }
+        }
+
+        public IEnumerable<CompDeltaPerfResult> GetComponentByDeltaPerf(int topXValues)
+        {
+            List<CompDeltaPerfResult> result = new List<CompDeltaPerfResult>();
+            //Compute the Delta time from prev to last duraction of each components
+            foreach (var comp in PerfTimerResults.Values)
+            {
+                result.Add(new CompDeltaPerfResult()
+                {
+                    Name = comp.Name + " " + comp.Suffix,
+                    DeltaValue = comp.GetLastValue - comp.Previous2DeltaIndex, //will be > if last value take more time than previous                    
+                    PourcVariation = comp.GetLastValue != 0 ? (double)((comp.GetLastValue - comp.GetPrevValue) / (double)comp.GetLastValue) : 1,
+                    LastValue = comp.GetLastValue,
+                    PrevValue = comp.GetPrevValue
+                });
+            }
+
+            double SumDeltaValue = result.Sum(x => x.DeltaValue);
+
+            foreach (var comp in result) { comp.DeltaSum = SumDeltaValue; }
+
+            foreach (var comp in result.OrderByDescending(x => x.WeightedResult))
+            {
+                yield return comp;
+                topXValues--;
+                if (topXValues < 0) break;
+            }
+        }
 
         PerfTimerResult p;
 
@@ -101,6 +243,8 @@ namespace S33M3DXEngine.Debug
             deltaTime = Stopwatch.GetTimestamp() - p.BeginValue;
 
             p.Deltas[p.DeltaIndex] = deltaTime;
+            p.Previous2DeltaIndex = p.PreviousDeltaIndex;
+            p.PreviousDeltaIndex = p.DeltaIndex; 
             p.DeltaIndex++;
             if (p.DeltaIndex >= PerfTimerResult.Echantillon) p.DeltaIndex = 0;
             if (p.MaxValue < deltaTime) p.MaxValue = deltaTime;

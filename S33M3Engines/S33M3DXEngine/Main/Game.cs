@@ -172,6 +172,18 @@ namespace S33M3DXEngine.Main
                 _updateWithoutrenderingCount = 0;
                 while (Stopwatch.GetTimestamp() > _nextGameUpdateTime && _updateWithoutrenderingCount < _maxRenderFrameSkip && _isFormClosed == false)
                 {
+                    if (_updateWithoutrenderingCount == 1 && ComponentsPerfMonitor.Updatable)
+                    {
+                        logger.Debug("Frame skipped because too late for : {0}, Updt maximum Delta {1}", Stopwatch.GetTimestamp() - _nextGameUpdateTime, _gameTime.GameUpdateDelta);
+                        logger.Debug("Last     Update time {0}, Draw time {1}, Present wait for {2}", ComponentsPerfMonitor.PerfTimer.GetLastUpdateTime, ComponentsPerfMonitor.PerfTimer.GetLastDrawTime, ComponentsPerfMonitor.PerfTimer.GetLastPresentTime);
+                        logger.Debug("Previous Update time {0}, Draw time {1}, Present wait for {2}", ComponentsPerfMonitor.PerfTimer.GetPrevUpdateTime, ComponentsPerfMonitor.PerfTimer.GetPrevDrawTime, ComponentsPerfMonitor.PerfTimer.GetPrevPresentTime);
+
+                        foreach (var result in ComponentsPerfMonitor.PerfTimer.GetComponentByDeltaPerf(5))
+                        {
+                            logger.Debug("Perf problem could caused by {0}, Last duration {1}, previous duration {2}", result.Name, result.LastValue, result.PrevValue);
+                        }
+                    }
+
                     Update(_gameTime);
 
                     _nextGameUpdateTime += _gameTime.GameUpdateDelta;
@@ -181,6 +193,7 @@ namespace S33M3DXEngine.Main
                 _interpolation_hd = (double)(Stopwatch.GetTimestamp() + _gameTime.GameUpdateDelta - _nextGameUpdateTime) / _gameTime.GameUpdateDelta;
                 _interpolation_ld = (float)_interpolation_hd;
                 Interpolation(_interpolation_hd, _interpolation_ld, _gameTime.GetElapsedTime());
+
                 Draw();
             });
         }
@@ -337,11 +350,6 @@ namespace S33M3DXEngine.Main
                     drawComponent.DrawableComponent.Draw(Engine.ImmediateContext, drawComponent.DrawOrder.DrawID);
                 }
             }
-
-            //Send the result to the screen
-
-            //Engine.RefreshBackBufferAsTexture();
-
             Present();
         }
 

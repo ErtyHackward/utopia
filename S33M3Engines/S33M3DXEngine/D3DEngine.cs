@@ -477,7 +477,6 @@ namespace S33M3DXEngine
                 }
             }
 
-
             //Dispo State repo
             RenderStatesRepo.Dispose();
 
