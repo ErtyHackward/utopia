@@ -10,10 +10,11 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
+using S33M3CoreComponents.States;
 
 namespace Utopia.Components
 {
-    public class FadeSwitchComponent : DrawableGameComponent, ISwitchComponent
+    public class FadeSwitchComponent : SwitchComponent
     {
         #region Private variables
         private readonly D3DEngine _engine;
@@ -48,7 +49,7 @@ namespace Utopia.Components
         /// <summary>
         /// Occurs when screen is completely opaque. It is a time to change active components
         /// </summary>
-        public event EventHandler SwitchMoment;
+        public override event EventHandler SwitchMoment;
 
         protected void OnSwitchMoment()
         {
@@ -59,7 +60,7 @@ namespace Utopia.Components
         /// <summary>
         /// Occurs when effect is completed and can be removed
         /// </summary>
-        public event EventHandler EffectComplete;
+        public override event EventHandler EffectComplete;
 
         protected void OnEffectComplete()
         {
@@ -148,13 +149,13 @@ namespace Utopia.Components
             context.DrawIndexed(6, 0, 0);
         }
 
-        public void BeginSwitch()
+        public override void BeginSwitch()
         {
             _color.Alpha = 0;
             _targetAlpha = 1;
         }
 
-        public void FinishSwitch()
+        public override void FinishSwitch()
         {
             _color.Alpha = 1;
             _targetAlpha = 0;

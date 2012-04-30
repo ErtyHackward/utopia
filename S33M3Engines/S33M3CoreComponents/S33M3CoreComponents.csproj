@@ -253,6 +253,7 @@
     <Compile Include="States\GameState.cs" />
     <Compile Include="States\GameStatesManager.cs" />
     <Compile Include="States\Interfaces\ISwitchComponent.cs" />
+    <Compile Include="States\SwitchComponent.cs" />
     <Compile Include="Textures\ArrayTexture.cs" />
     <Compile Include="Textures\ArrayTextureHelper.cs" />
     <Compile Include="Textures\DrawableTex2D.cs" />
