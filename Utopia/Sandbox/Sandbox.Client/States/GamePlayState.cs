@@ -30,6 +30,7 @@ namespace Sandbox.Client.States
     public class GamePlayState : GameState
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private SandboxGameSoundManager _sandboxGameSoundManager;
 
         private readonly IKernel _ioc;
 
@@ -65,7 +66,7 @@ namespace Sandbox.Client.States
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>();
-            var soundManager = _ioc.Get<GameSoundManager>();
+            _sandboxGameSoundManager = (SandboxGameSoundManager)_ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
@@ -90,7 +91,7 @@ namespace Sandbox.Client.States
             AddComponent(weather);
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
-            AddComponent(soundManager);
+            AddComponent(_sandboxGameSoundManager);
             AddComponent(staggingBackBuffer);
             AddComponent(fadeComponent);
 
@@ -122,12 +123,10 @@ namespace Sandbox.Client.States
         
         void ChunkEntityImpactManagerBlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
         {
-            var soundManager = _ioc.Get<SandboxGameSoundManager>();
-
             if (e.NewBlockType == 0)
-                soundManager.PlayBlockTake(e.Position);
+                _sandboxGameSoundManager.PlayBlockTake(e.Position);
             else
-                soundManager.PlayBlockPut(e.Position);
+                _sandboxGameSoundManager.PlayBlockPut(e.Position);
         }
 
         void InventorySwitchInventory(object sender, System.EventArgs e)

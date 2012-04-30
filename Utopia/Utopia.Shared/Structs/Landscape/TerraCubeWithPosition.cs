@@ -19,5 +19,12 @@ namespace Utopia.Shared.Structs
             Position = pos;
             Cube = cube;
         }
+
+        public TerraCubeWithPosition(Vector3I pos, byte cubeId)
+        {
+            CubeProfile = GameSystemSettings.Current.Settings.CubesProfile[cubeId];
+            Position = pos;
+            Cube = new TerraCube(cubeId);
+        }
     }
 }
