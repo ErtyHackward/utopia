@@ -25,12 +25,13 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         private ByteColor _topFace, _side1Face, _side2Face, _bottomFace;
         private InstancedVertexBuffer<VertexPosition3Color, VertexPosition2> _instancedBuffer;
-        private HLSLClouds3D _effect;
+        private HLSLFastClouds _effect;
         private StaggingBackBuffer _solidBackBuffer;
 
         private SimplexNoise _noise;
         private SharedFrameCB _sharedCB;
         private float _brightness = 0.9f;
+        private Vector2 _offset;
 
         private int _cloudBlocksCount;
 
@@ -46,12 +47,32 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _solidBackBuffer = solidBackBuffer;
         }
 
+        private void FormClouds()
+        {
+            var clouds = new List<VertexPosition2>();
+
+            const int cloudGridSize = 64;
+
+            for (int x = 0; x < cloudGridSize; x++)
+            {
+                for (int y = 0; y < cloudGridSize; y++)
+                {
+                    if (_noise.GetNoise2DValue(_offset.X, _offset.Y, 2, 0.25f).Value > 0.3f)
+                    {
+                        clouds.Add(new VertexPosition2(new Vector2(x * CloudBlockSize, y * CloudBlockSize)));
+                    }
+                }
+            }
+
+            _instancedBuffer.SetInstancedData(_d3DEngine.Device.ImmediateContext, clouds.ToArray());
+        }
+
         public override void Initialize()
         {
             _noise = new SimplexNoise(new Random());
             _noise.SetParameters(0.075, SimplexNoise.InflectionMode.NoInflections, SimplexNoise.ResultScale.ZeroToOne);
 
-            _effect = ToDispose(new HLSLClouds3D(_d3DEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds3D.hlsl", _sharedCB.CBPerFrame));
+            _effect = ToDispose(new HLSLFastClouds(_d3DEngine.Device, ClientSettings.EffectPack + @"Weather\FastClouds.hlsl", _sharedCB.CBPerFrame));
             _effect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipPoint);
 
             _instancedBuffer = ToDispose(new InstancedVertexBuffer<VertexPosition3Color, VertexPosition2>(_d3DEngine.Device, VertexPosition2.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList));

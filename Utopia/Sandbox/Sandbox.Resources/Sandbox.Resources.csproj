@@ -82,7 +82,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="EffectsPacks\Default\Weather\Clouds3D.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EffectsPacks\Default\Weather\FastClouds.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="GUI\skin.xsd">
       <SubType>Designer</SubType>
@@ -711,7 +714,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="EffectsPacks\Default\Weather\Clouds2D.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="TexturesPacks\HD\Terran\ct20.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
