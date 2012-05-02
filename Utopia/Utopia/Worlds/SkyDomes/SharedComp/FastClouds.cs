@@ -23,6 +23,8 @@ using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Worlds.GameClocks;
 using UtopiaContent.Effects.Weather;
+using S33M3DXEngine.Threading;
+using Amib.Threading;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -84,6 +86,10 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private Vector2 _smallOffset;
         private Vector2 _cameraPrevious;
 
+        private List<VertexPosition2Cloud> _clouds;
+        private bool _newCloudGenerated;
+        private IWorkItemResult _threadState;
+
         private int _cloudBlocksCount;
 
         /// <summary>
@@ -109,7 +115,9 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         private void FormClouds()
         {
-            var clouds = new List<VertexPosition2Cloud>();
+
+            // move the big grid
+            _offset -= new Vector2((int)(_smallOffset.X / CloudBlockSize), (int)(_smallOffset.Y / CloudBlockSize));
 
             for (var x = 0; x < CloudGridSize; x++)
             {
@@ -117,13 +125,11 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                 {
                     if (_noise.GetNoise2DValue(_offset.X + x, _offset.Y + y, 2, 0.25f).Value < 0.5f)
                     {
-                        clouds.Add(new VertexPosition2Cloud(new Vector2(x * CloudBlockSize, y * CloudBlockSize)));
+                        _clouds.Add(new VertexPosition2Cloud(new Vector2(x * CloudBlockSize, y * CloudBlockSize)));
                     }
                 }
             }
-
-            _instancedBuffer.SetInstancedData(_d3DEngine.Device.ImmediateContext, clouds.ToArray());
-            _cloudBlocksCount = clouds.Count;
+            _newCloudGenerated = true;
         }
 
         public override void Initialize()
@@ -137,6 +143,9 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _instancedBuffer = ToDispose(new InstancedVertexBuffer<VertexPosition3Color, VertexPosition2Cloud>(_d3DEngine.Device, VertexPosition2Cloud.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList));
 
             _indexBuffer = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, 36, Format.R16_UInt, "_cloudIB", 10, ResourceUsage.Dynamic));
+
+            _clouds = new List<VertexPosition2Cloud>();
+            _newCloudGenerated = false;
         }
 
         public override void LoadContent(DeviceContext context)
@@ -209,19 +218,27 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
             _brightness = _worldclock.ClockTime.SmartTimeInterpolation(0.2f);
 
-            if (Math.Abs(_smallOffset.X) > CloudBlockSize || Math.Abs(_smallOffset.Y) > CloudBlockSize)
+            if ((Math.Abs(_smallOffset.X) > CloudBlockSize || Math.Abs(_smallOffset.Y) > CloudBlockSize)
+                && (_threadState == null || _threadState.IsCompleted)
+                && _newCloudGenerated == false
+                )
             {
-                // move the big grid
-                _offset -= new Vector2((int)(_smallOffset.X / CloudBlockSize), (int)(_smallOffset.Y / CloudBlockSize));
+                // rebuild the grid in thread
+                _threadState = SmartThread.ThreadPool.QueueWorkItem(FormClouds);
+            }
 
+            if (_newCloudGenerated)
+            {
                 if (Math.Abs((int)(_smallOffset.X / CloudBlockSize)) > 0)
                     _smallOffset.X = _smallOffset.X % CloudBlockSize;
 
                 if (Math.Abs((int)(_smallOffset.Y / CloudBlockSize)) > 0)
                     _smallOffset.Y = _smallOffset.Y % CloudBlockSize;
 
-                // rebuild the grid
-                FormClouds();
+                _instancedBuffer.SetInstancedData(_d3DEngine.Device.ImmediateContext, _clouds.ToArray());
+                _cloudBlocksCount = _clouds.Count;
+                _clouds.Clear();
+                _newCloudGenerated = false;
             }
 
         }

@@ -18,12 +18,7 @@ cbuffer PerFrame
 static const float foglength = 20;
 
 Texture2D SolidBackBuffer;
-SamplerState SamplerBackBuffer
-{
-	Filter = MIN_MAG_MIP_POINT;
-	AddressU = CLAMP ; 
-	AddressV = CLAMP ;
-};
+SamplerState SamplerBackBuffer;
 
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
