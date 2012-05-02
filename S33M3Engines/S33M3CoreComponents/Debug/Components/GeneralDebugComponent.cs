@@ -14,6 +14,8 @@ namespace S33M3CoreComponents.Debug.Components
 {
     public class GeneralDebugComponent : DrawableGameComponent, IDebugInfo
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private Variables
         private PerformanceCounter _cpuCounter;
         private PerformanceCounter _ramCounter;
@@ -60,7 +62,14 @@ namespace S33M3CoreComponents.Debug.Components
             _cpuCounter.CategoryName = "Processor";
             _cpuCounter.CounterName = "% Processor Time";
             _cpuCounter.InstanceName = "_Total";
-            _ramCounter = ToDispose(new PerformanceCounter("Memory", "Available MBytes")); 
+            try
+            {
+                _ramCounter = ToDispose(new PerformanceCounter("Memory", "Available MBytes"));
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.Error(ex.Message);
+            }
         }
 
         public override void Update(GameTime timeSpent)
@@ -107,7 +116,7 @@ namespace S33M3CoreComponents.Debug.Components
         /// <returns></returns>
         private string getAvailableRAM()
         {
-            return _ramCounter.NextValue() + "MB";
+            return _ramCounter != null ? _ramCounter.NextValue() + "MB" : "ERROR MB";
         } 
 
         #region IDebugInfo Members

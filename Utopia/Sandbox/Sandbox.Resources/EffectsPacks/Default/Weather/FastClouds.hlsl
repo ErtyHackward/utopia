@@ -4,6 +4,7 @@
 cbuffer PerDraw
 {
 	matrix World;
+	float Brightness;
 }
 
 cbuffer PerFrame
@@ -28,6 +29,7 @@ struct VS_IN
 {
 	float3 Pos : POSITION;
 	float4 Col : COLOR;
+	float2 Offset : POSITION1;
 };
 
 //Pixel shader Input
@@ -44,10 +46,22 @@ PS_IN VS( VS_IN input )
 {
 	PS_IN output;
 	
+	float4x4 offsetMatrix =   
+	{  
+		{1,0,0,0},  
+		{0,1,0,0},  
+		{0,0,1,0},  
+		{0,0,0,1}  
+	}; 
+
+	offsetMatrix._41 = input.Offset.x;
+	offsetMatrix._43 = input.Offset.y;
+
 	output.Pos = float4(input.Pos.xyz, 1);
 	output.Pos = mul( output.Pos, World );
+	output.Pos = mul( output.Pos, offsetMatrix );
 	output.Pos = mul( output.Pos, ViewProjection );
-	output.Col = input.Col;
+	output.Col = float4(input.Col.rgb * Brightness, input.Col.a);
 	
 	return output;
 }

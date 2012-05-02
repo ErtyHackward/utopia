@@ -313,8 +313,9 @@ namespace Sandbox.Client.States
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
-            Utopia.Worlds.SkyDomes.SharedComp.Clouds c = clouds as Utopia.Worlds.SkyDomes.SharedComp.Clouds;
+            var c = clouds as FastClouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
+            
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
