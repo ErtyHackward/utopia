@@ -318,8 +318,11 @@ namespace Sandbox.Client.Components.GUI.Settings
                 if (NewCloudType != "None") NewCloudType = "Cloud" + NewCloudType;
                 Clouds.CloudType cloudType = (Clouds.CloudType)Enum.Parse(typeof(Clouds.CloudType), NewCloudType);
                 {
-                    var cloud = (Clouds)_iocContainer.Get<IDrawableComponent>("Clouds");
-                    cloud.CloudsType = cloudType;
+                    var cloud = _iocContainer.Get<IDrawableComponent>("Clouds") as Clouds;
+                    if (cloud != null)
+                    {
+                        cloud.CloudsType = cloudType;
+                    }
                 }
             }
         }
