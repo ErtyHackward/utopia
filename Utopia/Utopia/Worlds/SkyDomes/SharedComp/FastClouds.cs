@@ -111,8 +111,6 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
             var clouds = new List<VertexPosition2Cloud>();
 
-
-
             for (var x = 0; x < CloudGridSize; x++)
             {
                 for (var y = 0; y < CloudGridSize; y++)
@@ -211,14 +209,6 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
             _brightness = _worldclock.ClockTime.SmartTimeInterpolation(0.2f);
 
-            _smallOffset += WindVector * timeSpent.ElapsedGameTimeInS_LD;
-
-            var cameraCurrent = new Vector2((float)_cameraManager.ActiveCamera.WorldPosition.X, (float)_cameraManager.ActiveCamera.WorldPosition.Z); 
-
-            _smallOffset += _cameraPrevious - cameraCurrent;
-
-            _cameraPrevious = cameraCurrent;
-
             if (Math.Abs(_smallOffset.X) > CloudBlockSize || Math.Abs(_smallOffset.Y) > CloudBlockSize)
             {
                 // move the big grid
@@ -238,8 +228,12 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
-            //_smallOffset.X += (float)elapsedTime / 1000 * WindVector.X;
-            //_smallOffset.Y += (float)elapsedTime / 1000 * WindVector.Y;
+            var cameraCurrent = new Vector2((float)_cameraManager.ActiveCamera.WorldPosition.X, (float)_cameraManager.ActiveCamera.WorldPosition.Z);
+            _smallOffset += _cameraPrevious - cameraCurrent;
+            _cameraPrevious = cameraCurrent;
+
+            _smallOffset.X += (float)elapsedTime / 1000 * WindVector.X;
+            _smallOffset.Y += (float)elapsedTime / 1000 * WindVector.Y;
         }
 
         public override void Draw(DeviceContext context, int index)

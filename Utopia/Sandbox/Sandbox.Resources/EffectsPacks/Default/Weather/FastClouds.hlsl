@@ -15,6 +15,8 @@ cbuffer PerFrame
 	float2 BackBufferSize;
 };
 
+static const float foglength = 20;
+
 Texture2D SolidBackBuffer;
 SamplerState SamplerBackBuffer
 {
@@ -36,6 +38,7 @@ struct VS_IN
 struct PS_IN
 {
 	float4 Pos : SV_POSITION;
+	float fogPower : VARIOUS0;
 	float4 Col : COLOR;
 };
 
@@ -63,6 +66,8 @@ PS_IN VS( VS_IN input )
 	output.Pos = mul( output.Pos, ViewProjection );
 	output.Col = float4(input.Col.rgb * Brightness, input.Col.a);
 	
+	output.fogPower = clamp(((length(output.Pos.xyz) - 900) / foglength), 0, 1);
+
 	return output;
 }
 
@@ -73,6 +78,9 @@ float4 PS( PS_IN input ) : SV_Target
 {
     float2 backBufferSampling = {input.Pos.x / BackBufferSize.x , input.Pos.y / BackBufferSize.y};
     float4 backBufferColor = SolidBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+
+	input.Col.a = lerp(input.Col.a, 0, input.fogPower);
+
 	//Manual Blending with SolidBackBuffer color received
 	float4 color = {(input.Col.rgb * input.Col.a) + (backBufferColor.rgb * (1 - input.Col.a)), input.Col.a};
 	return color;
