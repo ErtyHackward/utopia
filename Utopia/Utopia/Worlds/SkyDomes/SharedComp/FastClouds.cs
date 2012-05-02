@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Maths.Noises;
 using S33M3CoreComponents.WorldFocus;
 using S33M3DXEngine;
@@ -62,8 +64,9 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         }
 
         private readonly D3DEngine _d3DEngine;
-        private const float CloudHeight = 3f;
+        private const float CloudHeight = 5f;
         private const float CloudBlockSize = 40f;
+        private const float CloudGridSize = 64;
 
         private ByteColor _topFace, _side1Face, _side2Face, _bottomFace;
         private InstancedVertexBuffer<VertexPosition3Color, VertexPosition2Cloud> _instancedBuffer;
@@ -72,11 +75,14 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private readonly StaggingBackBuffer _solidBackBuffer;
         private readonly IClock _worldclock;
         private readonly WorldFocusManager _worldFocusManager;
+        private readonly CameraManager<ICameraFocused> _cameraManager;
 
         private SimplexNoise _noise;
         private SharedFrameCB _sharedCB;
         private float _brightness = 0.9f;
         private Vector2 _offset;
+        private Vector2 _smallOffset;
+        private Vector2 _cameraPrevious;
 
         private int _cloudBlocksCount;
 
@@ -85,13 +91,15 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         /// </summary>
         public Vector2 WindVector { get; set; }
 
-        public FastClouds(D3DEngine engine, StaggingBackBuffer solidBackBuffer, IClock worldclock, WorldFocusManager worldFocusManager)
+        public FastClouds(D3DEngine engine, StaggingBackBuffer solidBackBuffer, IClock worldclock, WorldFocusManager worldFocusManager, CameraManager<ICameraFocused> cameraManager)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             _d3DEngine = engine;
             _solidBackBuffer = solidBackBuffer;
             _worldclock = worldclock;
             _worldFocusManager = worldFocusManager;
+            _cameraManager = cameraManager;
+            WindVector = new Vector2(2, 1);
         }
 
         public void LateInitialization(SharedFrameCB sharedCB)
@@ -103,13 +111,13 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
             var clouds = new List<VertexPosition2Cloud>();
 
-            const int cloudGridSize = 64;
 
-            for (var x = 0; x < cloudGridSize; x++)
+
+            for (var x = 0; x < CloudGridSize; x++)
             {
-                for (var y = 0; y < cloudGridSize; y++)
+                for (var y = 0; y < CloudGridSize; y++)
                 {
-                    if (_noise.GetNoise2DValue(_offset.X + x, _offset.Y + y, 2, 0.25f).Value > 0.3f)
+                    if (_noise.GetNoise2DValue(_offset.X + x, _offset.Y + y, 2, 0.25f).Value < 0.5f)
                     {
                         clouds.Add(new VertexPosition2Cloud(new Vector2(x * CloudBlockSize, y * CloudBlockSize)));
                     }
@@ -194,12 +202,44 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _indexBuffer.SetData(_d3DEngine.Device.ImmediateContext, indices.ToArray());
 
+            _cameraPrevious = new Vector2((float)_cameraManager.ActiveCamera.WorldPosition.X, (float)_cameraManager.ActiveCamera.WorldPosition.Z);
+
             FormClouds();
         }
 
         public override void Update(GameTime timeSpent)
         {
             _brightness = _worldclock.ClockTime.SmartTimeInterpolation(0.2f);
+
+            _smallOffset += WindVector * timeSpent.ElapsedGameTimeInS_LD;
+
+            var cameraCurrent = new Vector2((float)_cameraManager.ActiveCamera.WorldPosition.X, (float)_cameraManager.ActiveCamera.WorldPosition.Z); 
+
+            _smallOffset += _cameraPrevious - cameraCurrent;
+
+            _cameraPrevious = cameraCurrent;
+
+            if (Math.Abs(_smallOffset.X) > CloudBlockSize || Math.Abs(_smallOffset.Y) > CloudBlockSize)
+            {
+                // move the big grid
+                _offset -= new Vector2((int)(_smallOffset.X / CloudBlockSize), (int)(_smallOffset.Y / CloudBlockSize));
+
+                if (Math.Abs((int)(_smallOffset.X / CloudBlockSize)) > 0)
+                    _smallOffset.X = _smallOffset.X % CloudBlockSize;
+
+                if (Math.Abs((int)(_smallOffset.Y / CloudBlockSize)) > 0)
+                    _smallOffset.Y = _smallOffset.Y % CloudBlockSize;
+
+                // rebuild the grid
+                FormClouds();
+            }
+
+        }
+
+        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        {
+            //_smallOffset.X += (float)elapsedTime / 1000 * WindVector.X;
+            //_smallOffset.Y += (float)elapsedTime / 1000 * WindVector.Y;
         }
 
         public override void Draw(DeviceContext context, int index)
@@ -208,9 +248,11 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _effect.Begin(_d3DEngine.ImmediateContext);
             _effect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
 
-            var world = Matrix.Identity * Matrix.Translation(-32 * 40, 140, -32 * 40);
+            var world = Matrix.Identity * Matrix.Translation(-(CloudGridSize / 2 * CloudBlockSize) + _smallOffset.X + (float)_cameraManager.ActiveCamera.WorldPosition.X, 140, -(CloudGridSize / 2 * CloudBlockSize) + _smallOffset.Y + (float)_cameraManager.ActiveCamera.WorldPosition.Z);
             
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref world, ref world);
+
+            
 
             _effect.CBPerDraw.Values.World = Matrix.Transpose(world);
             _effect.CBPerDraw.Values.Brightness = _brightness;
@@ -218,9 +260,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _effect.Apply(_d3DEngine.ImmediateContext);
 
-            //Set the buffer to the graphical card
+            //Set the buffers to the graphical card
             _instancedBuffer.SetToDevice(_d3DEngine.Device.ImmediateContext, 0);
-
             _indexBuffer.SetToDevice(_d3DEngine.Device.ImmediateContext, 0);
 
             _d3DEngine.ImmediateContext.DrawIndexedInstanced(36, _cloudBlocksCount, 0, 0, 0);
