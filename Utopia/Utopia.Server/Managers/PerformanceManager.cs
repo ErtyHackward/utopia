@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Server.Managers
 {
@@ -54,7 +55,14 @@ namespace Utopia.Server.Managers
             _dateStart = DateTime.Now;
 
             _cpuCounter = new PerformanceCounter { CategoryName = "Processor", CounterName = "% Processor Time", InstanceName = "_Total" };
-            _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+            try
+            {
+                _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+            }
+            catch (InvalidOperationException e)
+            {
+                TraceHelper.Write("Exception {0}", e.Message);
+            }
 
             areaManager.BeforeUpdate += AreaManagerBeforeUpdate;
             areaManager.AfterUpdate += AreaManagerAfterUpdate;

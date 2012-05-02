@@ -193,7 +193,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InScope(x => GameScope.CurrentGameScope).Named("Stars");
             _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IWeather>().To<Weather>().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InScope(x => GameScope.CurrentGameScope).Named("Clouds");
+            _iocContainer.Bind<IDrawableComponent>().To<FastClouds>().InScope(x => GameScope.CurrentGameScope).Named("Clouds");
             _iocContainer.Bind<VoxelModelManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
             //Landscape Creation/Acces/Management ====================================

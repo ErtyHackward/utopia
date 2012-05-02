@@ -1,5 +1,6 @@
 ﻿using S33M3DXEngine.Effects.HLSLFramework;
 using System.Runtime.InteropServices;
+using S33M3DXEngine.VertexFormat;
 using SharpDX;
 using SharpDX.Direct3D11;
 using S33M3Resources.VertexFormats;
@@ -19,7 +20,7 @@ namespace UtopiaContent.Effects.Weather
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 68)]
+        [StructLayout(LayoutKind.Explicit, Size = 80)]
         public struct CBPerDrawStruct
         {
             [FieldOffset(0)]
@@ -43,8 +44,8 @@ namespace UtopiaContent.Effects.Weather
         };
         #endregion
 
-        public HLSLFastClouds(Device device, string effectPath, params iCBuffer[] externalCBuffers)
-            : base(device, effectPath, VertexPosition3Color.VertexDeclaration, externalCBuffers)
+        public HLSLFastClouds(Device device, string effectPath, VertexDeclaration vertexDeclaration, params iCBuffer[] externalCBuffers)
+            : base(device, effectPath, vertexDeclaration, externalCBuffers)
         {
             //Create Constant Buffers interfaces
             CBPerDraw = ToDispose(new CBuffer<CBPerDrawStruct>(device, "PerDraw"));
