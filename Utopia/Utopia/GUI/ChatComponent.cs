@@ -116,6 +116,7 @@ namespace Utopia.GUI
         private void LocateChat(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
             _windowHeight = viewport.Height;
+            _refreshDisplay = true;
         }
 
         private void ServerConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
