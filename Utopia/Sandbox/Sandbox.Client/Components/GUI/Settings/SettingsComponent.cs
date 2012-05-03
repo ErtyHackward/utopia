@@ -114,9 +114,6 @@ namespace Sandbox.Client.Components.GUI.Settings
                             case "VSync":
                                 ChangeVSync((bool)row.FieldData.Value);
                                 break;
-                            case "CloudsQuality":
-                                ChangeCloudType((string)row.FieldData.Value);
-                                break;
                             default:
                                 break;
                         }
@@ -309,22 +306,6 @@ namespace Sandbox.Client.Components.GUI.Settings
         private void ChangeVSync(bool vsyncValue)
         {
             _game.VSync = vsyncValue;
-        }
-
-        private void ChangeCloudType(string NewCloudType)
-        {
-            if (isGameRunning)
-            {
-                if (NewCloudType != "None") NewCloudType = "Cloud" + NewCloudType;
-                Clouds.CloudType cloudType = (Clouds.CloudType)Enum.Parse(typeof(Clouds.CloudType), NewCloudType);
-                {
-                    var cloud = _iocContainer.Get<IDrawableComponent>("Clouds") as Clouds;
-                    if (cloud != null)
-                    {
-                        cloud.CloudsType = cloudType;
-                    }
-                }
-            }
         }
 
         //ButtonList Event management ==========================================
