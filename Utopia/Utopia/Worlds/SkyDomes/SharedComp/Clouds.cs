@@ -21,6 +21,7 @@ using Utopia.Effects.Shared;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Worlds.GameClocks;
+using Utopia.Worlds.Weather;
 using UtopiaContent.Effects.Weather;
 using S33M3DXEngine.Threading;
 using Amib.Threading;
@@ -77,6 +78,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private readonly IClock _worldclock;
         private readonly WorldFocusManager _worldFocusManager;
         private readonly CameraManager<ICameraFocused> _cameraManager;
+        private readonly IWeather _weather;
 
         private SimplexNoise _noise;
         private SharedFrameCB _sharedCB;
@@ -91,12 +93,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         private int _cloudBlocksCount;
 
-        /// <summary>
-        /// Gets or sets wind speed and direction
-        /// </summary>
-        public Vector2 WindVector { get; set; }
-
-        public Clouds(D3DEngine engine, StaggingBackBuffer solidBackBuffer, IClock worldclock, WorldFocusManager worldFocusManager, CameraManager<ICameraFocused> cameraManager)
+        public Clouds(D3DEngine engine, StaggingBackBuffer solidBackBuffer, IClock worldclock, WorldFocusManager worldFocusManager, CameraManager<ICameraFocused> cameraManager, IWeather weather)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             _d3DEngine = engine;
@@ -104,7 +101,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _worldclock = worldclock;
             _worldFocusManager = worldFocusManager;
             _cameraManager = cameraManager;
-            WindVector = new Vector2(2, 1);
+            _weather = weather;
         }
 
         public void LateInitialization(SharedFrameCB sharedCB)
@@ -248,8 +245,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _smallOffset += _cameraPrevious - cameraCurrent;
             _cameraPrevious = cameraCurrent;
 
-            _smallOffset.X += (float)elapsedTime / 1000 * WindVector.X;
-            _smallOffset.Y += (float)elapsedTime / 1000 * WindVector.Y;
+            _smallOffset.X += (float)elapsedTime / 1000 * _weather.Wind.WindFlow.X;
+            _smallOffset.Y += (float)elapsedTime / 1000 * _weather.Wind.WindFlow.Z;
         }
 
         public override void Draw(DeviceContext context, int index)
