@@ -127,8 +127,6 @@ namespace Utopia.Shared.Settings
     {
         [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 32]", " chunk(s)", ParamInputMethod.Slider, 10, 32, true)]
         public int WorldSize { get; set; }
-        [ParameterAttribute("Cloud's type", "Cloud visualisation type", null, ParamInputMethod.ButtonList, false, "None", "2D", "3D")]
-        public string CloudsQuality { get; set; }
         [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", " block(s)", ParamInputMethod.Slider, 4, 12, true)]
         public int LightPropagateSteps { get; set; }
         [ParameterAttribute("Textures pack", "Textures used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_TexturePacks")]
@@ -295,7 +293,6 @@ namespace Utopia.Shared.Settings
                     GraphicalParameters = new GraphicalParameters
                     {
                         WorldSize = 32,
-                        CloudsQuality = "2D",
                         LightPropagateSteps = 8,
                         TexturePack = "Default",
                         VSync = true,

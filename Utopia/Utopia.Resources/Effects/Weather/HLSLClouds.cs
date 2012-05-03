@@ -7,7 +7,7 @@ using S33M3Resources.VertexFormats;
 
 namespace UtopiaContent.Effects.Weather
 {
-    public class HLSLFastClouds : HLSLShaderWrap
+    public class HLSLClouds : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
 
@@ -44,7 +44,7 @@ namespace UtopiaContent.Effects.Weather
         };
         #endregion
 
-        public HLSLFastClouds(Device device, string effectPath, VertexDeclaration vertexDeclaration, params iCBuffer[] externalCBuffers)
+        public HLSLClouds(Device device, string effectPath, VertexDeclaration vertexDeclaration, params iCBuffer[] externalCBuffers)
             : base(device, effectPath, vertexDeclaration, externalCBuffers)
         {
             //Create Constant Buffers interfaces

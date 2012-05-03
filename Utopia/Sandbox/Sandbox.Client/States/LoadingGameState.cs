@@ -274,10 +274,7 @@ namespace Sandbox.Client.States
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
             var stars = _ioc.Get<IDrawableComponent>("Stars");
-            string cloudType = ClientSettings.Current.Settings.GraphicalParameters.CloudsQuality;
-            if (cloudType != "None") cloudType = "Cloud" + cloudType;
-            Clouds.CloudType ctype = (Clouds.CloudType)Enum.Parse(typeof(Clouds.CloudType), cloudType);
-            var clouds = _ioc.Get<IDrawableComponent>("Clouds", new ConstructorArgument("cloudType", ctype));
+            var clouds = _ioc.Get<IDrawableComponent>("Clouds");
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
 
@@ -313,7 +310,7 @@ namespace Sandbox.Client.States
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
-            var c = clouds as FastClouds;
+            var c = clouds as Clouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
             
 
