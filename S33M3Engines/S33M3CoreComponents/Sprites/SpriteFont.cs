@@ -11,6 +11,7 @@ using SharpDX.DXGI;
 using Rectangle = System.Drawing.Rectangle;
 using RectangleF = System.Drawing.RectangleF;
 using SharpDX.Direct3D;
+using S33M3CoreComponents.Config;
 
 namespace S33M3CoreComponents.Sprites
 {
@@ -19,14 +20,14 @@ namespace S33M3CoreComponents.Sprites
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         static char StartChar = '!';
-        static char EndChar = (char)255;
+        static char EndChar = (char)65535;
         static int NumChars = EndChar - StartChar;
-        static int TexWidth = 2048;
+        static int TexWidth = 512;
 
         #region Public Variables
         public FontStyle FontStyle;
         public SpriteTexture SpriteTexture;
-        public RectangleF[] CharDescriptors = new RectangleF[255];
+        public RectangleF[] CharDescriptors = new RectangleF[65535];
         //public CharDesc& GetCharDescriptor(WCHAR character) const;
         public float Size { get { return _size; } }
         public int TextureWidth { get { return TexWidth; } }
@@ -46,6 +47,17 @@ namespace S33M3CoreComponents.Sprites
         protected Font _font;
         protected Graphics _fontGraphics;
         #endregion
+
+        public SpriteFont()
+        {
+            //Load the Unicode range if still not done
+            if (LanguageUnicodeRanges.Current == null)
+            {
+                LanguageUnicodeRanges.Current = new XmlSettingsManager<LanguageUnicodeRanges>(@"Languages.xml", SettingsStorage.CustomPath, @"Config\");
+                LanguageUnicodeRanges.Current.Load();
+            }
+        }
+
 
         #region Public Methods
 
@@ -69,7 +81,6 @@ namespace S33M3CoreComponents.Sprites
         {
             TextRenderingHint hint = antiAliased ? TextRenderingHint.AntiAliasGridFit : TextRenderingHint.SystemDefault;
 
-
             Bitmap measuringBitmap = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
 
             _fontGraphics = ToDispose(Graphics.FromImage(measuringBitmap));
@@ -92,19 +103,31 @@ namespace S33M3CoreComponents.Sprites
 
             HeightInPixel = ascentPixel + descentPixel;
 
-            char[] allChars = new char[NumChars + 1];
-            for (int i = 0; i < NumChars; ++i)
+            //Get the Qt of characters (= 128 first ascii + custom selected range)
+            int unicodeCharToBuffer = 128 + LanguageUnicodeRanges.Current.Settings.Languages[1].GetUnicodesKeys().Count;
+
+            char[] allChars = new char[unicodeCharToBuffer + 1];
+            //Create the first 128
+            int nbrChar;
+            for (nbrChar = 0; nbrChar < 128; ++nbrChar)
             {
-                allChars[i] = (char)(i + StartChar);
+                allChars[nbrChar] = (char)(nbrChar + StartChar);
             }
-            allChars[NumChars] = (char)0;
+
+            foreach (int unicodeIndex in LanguageUnicodeRanges.Current.Settings.Languages[1].GetUnicodesKeys())
+            {
+                allChars[nbrChar] = (char)(unicodeIndex);
+                nbrChar++;
+            }
+
+            allChars[unicodeCharToBuffer] = (char)0;
 
             string allCharsString = new string(allChars);
 
-            SizeF sizeRect = _fontGraphics.MeasureString(allCharsString, _font, NumChars);
+            SizeF sizeRect = _fontGraphics.MeasureString(allCharsString, _font, unicodeCharToBuffer);
 
-            int numRows = (int)(sizeRect.Width / TexWidth) + 1;
-            int texHeight = (int)(numRows * _charHeight) + 1;
+            //int numRows = (int)(sizeRect.Width / TexWidth) + 1;
+            int texHeight = (int)(sizeRect.Height + (sizeRect.Height * 0.1)); //(int)(numRows * _charHeight) + 1;
 
 
             // Create a temporary Bitmap and Graphics for drawing the characters one by one
@@ -129,9 +152,9 @@ namespace S33M3CoreComponents.Sprites
             charString[1] = (char)0;
             int currentX = 0;
             int currentY = 0;
-            for (int i = 0; i < NumChars; ++i)
+            for (int i = 0; i < unicodeCharToBuffer; ++i)
             {
-                charString[0] = (char)(i + StartChar);
+                charString[0] = allCharsString[i];
 
                 // Draw the character
                 drawGraphics.Clear(Color.FromArgb(0, 255, 255, 255));
@@ -181,10 +204,10 @@ namespace S33M3CoreComponents.Sprites
                 }
 
                 // Fill out the structure describing the character position
-                CharDescriptors[i + StartChar].X = (float)(currentX);
-                CharDescriptors[i + StartChar].Y = (float)(currentY);
-                CharDescriptors[i + StartChar].Width = (float)(charWidth);
-                CharDescriptors[i + StartChar].Height = (float)(_charHeight);
+                CharDescriptors[allCharsString[i]].X = (float)(currentX);
+                CharDescriptors[allCharsString[i]].Y = (float)(currentY);
+                CharDescriptors[allCharsString[i]].Width = (float)(charWidth);
+                CharDescriptors[allCharsString[i]].Height = (float)(_charHeight);
 
                 // Copy the character over 
                 int height = (int)(_charHeight + 1);
@@ -221,6 +244,12 @@ namespace S33M3CoreComponents.Sprites
             Texture2D texture = new Texture2D(device, texDesc, data);
 
             textBitmap.UnlockBits(bmData);
+
+            if (_font.Name != "Bebas Neue")
+            {
+                textBitmap.Save(@"e:\test.bmp");
+            }
+
 
             ShaderResourceViewDescription srDesc = new ShaderResourceViewDescription();
             srDesc.Format = Format.R8G8B8A8_UNorm;

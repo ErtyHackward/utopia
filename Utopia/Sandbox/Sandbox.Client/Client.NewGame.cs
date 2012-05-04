@@ -1,13 +1,14 @@
 ﻿using Utopia;
 using Ninject;
 using Utopia.Action;
-using Utopia.Shared.Config;
 using System.Windows.Forms;
 using Utopia.Shared.Settings;
 using S33M3DXEngine;
 using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
 using S33M3CoreComponents.Inputs;
+using S33M3CoreComponents.Config;
+using S33M3CoreComponents.Sprites;
 
 namespace Sandbox.Client
 {

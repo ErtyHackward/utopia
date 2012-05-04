@@ -95,7 +95,6 @@
     <Compile Include="Chunks\LandscapeManager.cs" />
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\Vector3DExtensions.cs" />
-    <Compile Include="Config\IConfigClass.cs" />
     <Compile Include="Entities\Models\ColorMapping.cs" />
     <Compile Include="Entities\Concrete\Collectible\Cactus.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower1.cs" />
@@ -184,7 +183,6 @@
     <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
-    <Compile Include="Config\XmlSettingsManager.cs" />
     <Compile Include="Interfaces\IBinaryStorable.cs" />
     <Compile Include="Interfaces\IChunkLayout2D.cs" />
     <Compile Include="Interfaces\IChunksStorage.cs" />
@@ -236,7 +234,6 @@
     <Compile Include="Roleplay\CharacterSurvivalAttributes.cs" />
     <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="Settings\CubeProfile.cs" />
-    <Compile Include="Settings\EntityProfile.cs" />
     <Compile Include="Settings\GameSystemSettings.cs" />
     <Compile Include="Settings\LocalWorlds.cs" />
     <Compile Include="Settings\ParamRow.cs" />
@@ -323,6 +320,9 @@
       <Project>{52E1F2EF-4462-4CC3-A783-2D3A352A2602}</Project>
       <Name>S33M3Resources</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Config\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

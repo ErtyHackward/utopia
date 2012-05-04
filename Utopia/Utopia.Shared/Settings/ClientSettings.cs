@@ -1,11 +1,11 @@
 ﻿using System;
-using Utopia.Shared.Config;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
 using System.IO;
 using SharpDX.DXGI;
+using S33M3CoreComponents.Config;
 
 namespace Utopia.Shared.Settings
 {

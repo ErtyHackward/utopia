@@ -2,10 +2,10 @@
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Server.Utils;
-using Utopia.Shared.Config;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
+using S33M3CoreComponents.Config;
 
 namespace Utopia.Server
 {

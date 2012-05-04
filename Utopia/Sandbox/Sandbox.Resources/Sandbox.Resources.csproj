@@ -71,7 +71,6 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Config\TexturePackConfig.xml" />
     <Content Include="EffectsPacks\Default\Entities\ColorLine.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

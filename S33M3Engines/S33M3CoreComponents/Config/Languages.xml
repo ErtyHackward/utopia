@@ -1,0 +1,16 @@
+﻿<LanguageUnicodeRanges>
+  <Language>
+    <Name>Latin</Name>
+    <UnicodeRange>
+      <From>160</From>
+      <To>255</To>
+    </UnicodeRange>
+  </Language>
+  <Language>
+    <Name>Cyrilic</Name>
+    <UnicodeRange>
+      <From>1040</From>
+      <To>1103</To>
+    </UnicodeRange>
+  </Language>
+</LanguageUnicodeRanges>
