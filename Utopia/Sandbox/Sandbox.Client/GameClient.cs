@@ -8,7 +8,6 @@ using Utopia.Entities;
 using Utopia.Network;
 using Ninject;
 using System.Windows.Forms;
-using Utopia.Shared.Config;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Messages;
@@ -28,6 +27,7 @@ using Sandbox.Client.Components.GUI.Settings;
 using Utopia.Shared.Settings;
 using System.Linq;
 using System.Collections.Generic;
+using S33M3CoreComponents.Config;
 
 namespace Sandbox.Client
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
-using Utopia.Shared.Config;
 using System.Xml.Serialization;
+using S33M3CoreComponents.Config;
 
 namespace Utopia.Server
 {

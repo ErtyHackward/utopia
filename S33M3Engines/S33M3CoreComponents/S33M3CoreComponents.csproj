@@ -97,6 +97,8 @@
     <Compile Include="Cameras\Interfaces\ICameraFocused.cs" />
     <Compile Include="Cameras\Interfaces\ICameraManager.cs" />
     <Compile Include="Cameras\Interfaces\ICameraPlugin.cs" />
+    <Compile Include="Config\IConfigClass.cs" />
+    <Compile Include="Config\XmlSettingsManager.cs" />
     <Compile Include="Debug\Components\ColumnChart.cs" />
     <Compile Include="Debug\Components\GeneralDebugComponent.cs" />
     <Compile Include="Debug\GUI\Controls\DebugOptionsControl.cs" />
@@ -245,6 +247,7 @@
     <Compile Include="Physics\Verlet\VerletSimulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sprites\Interfaces\ISpriteRenderer.cs" />
+    <Compile Include="Sprites\LanguageUnicodeRanges.cs" />
     <Compile Include="Sprites\SpriteDrawBuffer.cs" />
     <Compile Include="Sprites\SpriteDrawInfo.cs" />
     <Compile Include="Sprites\SpriteFont.cs" />
@@ -301,6 +304,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\Languages.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="GUI\Skins\Default\Default.skin.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

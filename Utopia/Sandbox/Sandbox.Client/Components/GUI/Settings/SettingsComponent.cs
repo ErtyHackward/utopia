@@ -15,11 +15,11 @@ using S33M3CoreComponents.Inputs.KeyboardHandler;
 using System.Windows.Forms;
 using S33M3DXEngine.Threading;
 using Utopia.Shared.Settings;
-using Utopia.Shared.Config;
 using Ninject;
 using S33M3DXEngine.Main.Interfaces;
 using Utopia.Worlds.SkyDomes.SharedComp;
 using Sandbox.Client.States;
+using S33M3CoreComponents.Config;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {

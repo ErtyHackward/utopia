@@ -19,7 +19,6 @@ using Utopia.Server;
 using Utopia.Server.Managers;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.ClassExt;
-using Utopia.Shared.Config;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
@@ -61,6 +60,7 @@ using Utopia.Shared.Interfaces;
 using Sandbox.Client.Components.GUI;
 using Utopia.Shared.Settings;
 using Utopia.Worlds.SkyDomes.SharedComp;
+using S33M3CoreComponents.Config;
 
 namespace Sandbox.Client.States
 {

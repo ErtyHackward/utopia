@@ -14,6 +14,7 @@ using Utopia.Shared.Settings;
 using Utopia.Shared.Interfaces;
 using Utopia.Entities;
 using System.IO;
+using S33M3CoreComponents.Config;
 
 namespace Sandbox.Client.States
 {
@@ -53,7 +54,7 @@ namespace Sandbox.Client.States
 
             //Init RuntimeVariables
             var vars = _iocContainer.Get<RuntimeVariables>();
-            vars.ApplicationDataPath = GameSystemSettings.GetFilePath("", SettingsStorage.ApplicationData);
+            vars.ApplicationDataPath = XmlSettingsManager.GetFilePath("", SettingsStorage.ApplicationData);
 
             //"Late Binding" of IVoxelModelStorage, must be done after vars is initialized
             _iocContainer.Bind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));

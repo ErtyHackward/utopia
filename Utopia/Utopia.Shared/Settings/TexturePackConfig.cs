@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Shared.Config;
 using System.Xml.Serialization;
 using SharpDX.Direct3D11;
 using Utopia.Shared.GameDXStates;
+using S33M3CoreComponents.Config;
 
 namespace Utopia.Shared.Settings
 {

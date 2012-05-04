@@ -9,7 +9,6 @@ using Sandbox.Shared.Web;
 using Utopia.Server;
 using Utopia.Server.Managers;
 using Utopia.Server.Sample;
-using Utopia.Shared.Config;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs.Helpers;
@@ -17,6 +16,7 @@ using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.WorldConfigs;
 using Utopia.Shared.Settings;
+using S33M3CoreComponents.Config;
 
 namespace Sandbox.Server
 {
@@ -39,7 +39,7 @@ namespace Sandbox.Server
             settingsManager.Load();
 
             if (string.IsNullOrEmpty(settingsManager.Settings.DatabasePath))
-                settingsManager.Settings.DatabasePath = Path.Combine(GameSystemSettings.GetFilePath("", SettingsStorage.ApplicationData), "Server", "MultiPlayer", param.Seed.ToString(), "ServerWorld.db");
+                settingsManager.Settings.DatabasePath = Path.Combine(XmlSettingsManager.GetFilePath("", SettingsStorage.ApplicationData), "Server", "MultiPlayer", param.Seed.ToString(), "ServerWorld.db");
 
 
             var sqLiteStorageManager = new SQLiteStorageManager(settingsManager.Settings.DatabasePath, null, param);

@@ -9,7 +9,6 @@ using Utopia.Components;
 using Utopia.Entities.Voxel;
 using Utopia.Server;
 using Utopia.Server.Managers;
-using Utopia.Shared.Config;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Worlds.GameClocks;
