@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace S33M3CoreComponents.Noises
+namespace S33M3CoreComponents.Noise.Generator
 {
-    public enum enuDimUsage
+    public interface ISeedable
     {
-        Noise2D,
-        Noise3D
+        int Seed { get; set;}
     }
 }

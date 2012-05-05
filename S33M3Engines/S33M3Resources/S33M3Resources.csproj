@@ -93,6 +93,7 @@
     <Compile Include="Structs\Interpolations\InterpVector3.cs" />
     <Compile Include="Structs\NetworkValue.cs" />
     <Compile Include="Structs\Range.cs" />
+    <Compile Include="Structs\RangeD.cs" />
     <Compile Include="Structs\Vector4B.cs" />
     <Compile Include="Structs\FTSValue.cs" />
     <Compile Include="Structs\HalfVector2.cs" />

@@ -220,6 +220,14 @@ namespace S33M3Resources.Structs
             get { return new Vector3I(1, 1, 1); }
         }
 
+        /// <summary>
+        /// Gets Vector3I with values x = 1, y = 1, z = 1
+        /// </summary>
+        public static Vector3I Zero
+        {
+            get { return new Vector3I(0, 0, 0); }
+        }
+
         public bool IsZero()
         {
             return X == 0 && Y == 0 && Z == 0;

@@ -245,12 +245,6 @@ namespace S33M3CoreComponents.Sprites
 
             textBitmap.UnlockBits(bmData);
 
-            if (_font.Name != "Bebas Neue")
-            {
-                textBitmap.Save(@"e:\test.bmp");
-            }
-
-
             ShaderResourceViewDescription srDesc = new ShaderResourceViewDescription();
             srDesc.Format = Format.R8G8B8A8_UNorm;
             //srDesc.Dimension = ShaderResourceViewDimension.Texture2D;

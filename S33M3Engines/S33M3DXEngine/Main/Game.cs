@@ -193,7 +193,6 @@ namespace S33M3DXEngine.Main
                 _interpolation_hd = (double)(Stopwatch.GetTimestamp() + _gameTime.GameUpdateDelta - _nextGameUpdateTime) / _gameTime.GameUpdateDelta;
                 _interpolation_ld = (float)_interpolation_hd;
                 Interpolation(_interpolation_hd, _interpolation_ld, _gameTime.GetElapsedTime());
-                _gameTime.ResetElapsedTimeCounter();
                 Draw();
             });
         }

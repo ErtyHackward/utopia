@@ -165,6 +165,18 @@ namespace S33M3CoreComponents.Maths
         }
 
         /// <summary>
+        /// Maps a value onto a cubic S-curve.
+        /// a should range from 0.0 to 1.0.
+        /// The derivitive of a cubic S-curve is zero at a = 0.0 and a = 1.0
+        /// </summary>
+        /// <param name="a">The value to map onto a cubic S-curve</param>
+        /// <returns>The mapped value</returns>
+        public static double SCurve3(double a)
+        {
+            return (a * a * (3.0 - 2.0 * a));
+        }
+
+        /// <summary>
         /// Maps a value onto a quintic S-curve.
         /// a should range from 0.0 to 1.0.
         /// The first derivitive of a quintic S-curve is zero at a = 0.0 and a = 1.0
@@ -182,6 +194,32 @@ namespace S33M3CoreComponents.Maths
             double a5 = a4 * a;
             return (6.0 * a5) - (15.0 * a4) + (10.0 * a3);
             */
+        }
+
+        /// <summary>
+        /// Maps a value onto a quintic S-curve.
+        /// a should range from 0.0 to 1.0.
+        /// The first derivitive of a quintic S-curve is zero at a = 0.0 and a = 1.0
+        /// The second derivitive of a quintic S-curve is zero at a = 0.0 and a = 1.0
+        /// </summary>
+        /// <param name="a">The value to map onto a quintic S-curve</param>
+        /// <returns>The mapped value</returns>
+        public static double SCurve5(double a)
+        {
+            return a * a * a * (a * (a * 6.0 - 15.0) + 10.0);
+
+            /* original libnoise code
+            double a3 = a * a * a;
+            double a4 = a3 * a;
+            double a5 = a4 * a;
+            return (6.0 * a5) - (15.0 * a4) + (10.0 * a3);
+            */
+        }
+
+        public static double FullLerp(double MinTargetValue, double MaxTargetValue, double MinAmount, double MaxAmount, double amount, bool withClamp = false)
+        {
+            double result = MinTargetValue + (float)((MaxTargetValue - MinTargetValue) / (MaxAmount - MinAmount) * (amount - MinAmount));
+            return withClamp ? MathHelper.Clamp(result, MinTargetValue, MaxTargetValue) : result;
         }
 
         public static float FullLerp(float MinTargetValue, float MaxTargetValue, double MinAmount, double MaxAmount, double amount, bool withClamp = false)
@@ -277,6 +315,21 @@ namespace S33M3CoreComponents.Maths
         }
 
         public static float Dot(int[] g, ref float x, ref float y)
+        {
+            return g[0] * x + g[1] * y;
+        }
+
+        public static double Dot(int[] g, double x, double y, double z, double w)
+        {
+            return g[0] * x + g[1] * y + g[2] * z + g[3] * w;
+        }
+
+        public static double Dot(int[] g, double x, double y, double z)
+        {
+            return g[0] * x + g[1] * y + g[2] * z;
+        }
+
+        public static double Dot(int[] g, double x, double y)
         {
             return g[0] * x + g[1] * y;
         }
