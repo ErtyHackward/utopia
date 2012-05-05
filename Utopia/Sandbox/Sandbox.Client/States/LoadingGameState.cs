@@ -61,6 +61,7 @@ using Sandbox.Client.Components.GUI;
 using Utopia.Shared.Settings;
 using Utopia.Worlds.SkyDomes.SharedComp;
 using S33M3CoreComponents.Config;
+using Utopia.Shared.World.Processors.Utopia;
 
 namespace Sandbox.Client.States
 {
@@ -169,9 +170,16 @@ namespace Sandbox.Client.States
             settings.Load();
             settings.Save();
 
-            IWorldProcessor processor1 = new s33m3WorldProcessor(worldParam);
-            IWorldProcessor processor2 = new LandscapeLayersProcessor(worldParam, _serverFactory);
-            var worldGenerator = new WorldGenerator(worldParam, processor1, processor2);
+            //Utopia New Landscape Test
+            var utopiaProcessor = new UtopiaProcessor(worldParam);
+            var worldGenerator = new WorldGenerator(worldParam, utopiaProcessor);
+
+            //Old s33m3 landscape
+            //IWorldProcessor processor1 = new s33m3WorldProcessor(worldParam);
+            //IWorldProcessor processor2 = new LandscapeLayersProcessor(worldParam, _serverFactory);
+            //var worldGenerator = new WorldGenerator(worldParam, processor1, processor2);
+
+            //Vlad Generator
             //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
             //var worldGenerator = new WorldGenerator(wp, planProcessor);
             _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory);
@@ -248,9 +256,14 @@ namespace Sandbox.Client.States
             clientSideworldParam.SeedName = _ioc.Get<ServerComponent>().GameInformations.WorldSeed;
             clientSideworldParam.SeaLevel = _ioc.Get<ServerComponent>().GameInformations.WaterLevel;
 
-            IWorldProcessor processor1 = new s33m3WorldProcessor(clientSideworldParam);
-            IWorldProcessor processor2 = new LandscapeLayersProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
-            var worldGenerator = new WorldGenerator(clientSideworldParam, processor1, processor2);
+
+            //IWorldProcessor processor1 = new s33m3WorldProcessor(clientSideworldParam);
+            //IWorldProcessor processor2 = new LandscapeLayersProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
+            //var worldGenerator = new WorldGenerator(clientSideworldParam, processor1, processor2);
+            //_ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
+
+            IWorldProcessor processor = new UtopiaProcessor(clientSideworldParam);
+            var worldGenerator = new WorldGenerator(clientSideworldParam, processor);
             _ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 
             var commonResources = _ioc.Get<SandboxCommonResources>();
