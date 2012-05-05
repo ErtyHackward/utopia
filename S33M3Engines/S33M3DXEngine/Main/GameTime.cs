@@ -39,7 +39,9 @@ namespace S33M3DXEngine.Main
         /// <returns></returns>
         public long GetElapsedTime()
         {
-            return (Stopwatch.GetTimestamp() - _lastUpdate) / _frequencyInMiliSec;
+            long elapsedTime = (Stopwatch.GetTimestamp() - _lastUpdate) / _frequencyInMiliSec;
+            ResetElapsedTimeCounter();
+            return elapsedTime;
         }
 
         public void ResetElapsedTimeCounter()
