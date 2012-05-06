@@ -72,7 +72,7 @@ namespace Samples.GameComp
         public override void LoadContent(DeviceContext Context = null)
         {
             //Genereate the 3D Landscape.
-            double[] result = NoiseSampler.NoiseSampling(_noise, new Vector3I(NoiseSizeResultX / 4, NoiseSizeResultY / 4, NoiseSizeResultZ / 4),
+            double[] result = NoiseSampler.NoiseSampling(_noise, new Vector3I(NoiseSizeResultX , NoiseSizeResultY , NoiseSizeResultZ ),
                                                             0.0, 0.42, NoiseSizeResultX,
                                                             0.0, 0.42, NoiseSizeResultY,
                                                             0.0, 0.42, NoiseSizeResultZ);
@@ -98,6 +98,9 @@ namespace Samples.GameComp
         {
             ChunkCube = new bool[NoiseSizeResultX, NoiseSizeResultY, NoiseSizeResultZ];
 
+            double MinNoise = double.MaxValue;
+            double MaxNoise = double.MinValue;
+
             int indexId = 0;
             for (int x = 0; x < NoiseSizeResultX; x++)
             {
@@ -105,8 +108,12 @@ namespace Samples.GameComp
                 {
                     for (int y = 0; y < NoiseSizeResultY; y++)
                     {
-                        //ThressHold Met, it is a cube
-                        if (result[indexId] > SolidCubeThreshold)
+                        double val = result[indexId];
+
+                        if (val < MinNoise) MinNoise = val;
+                        if (val > MaxNoise) MaxNoise = val;
+
+                        if (val > SolidCubeThreshold)
                         {
                             ChunkCube[x, y, z] = true;
                         }
@@ -114,6 +121,9 @@ namespace Samples.GameComp
                     }
                 }
             }
+
+            Console.WriteLine("Min Value : " + MinNoise.ToString() + " Max Value : " + MaxNoise.ToString());
+
             CreateCubeMeshes();
         }
 

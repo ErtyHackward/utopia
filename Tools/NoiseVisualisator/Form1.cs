@@ -57,7 +57,7 @@ namespace NoiseVisualisator
         }
 
         Random _rnd;
-        private INoise NoiseComposition()
+        private INoise NoiseComposition(bool is2DRenderRequest)
         {
             _rnd = new Random("test".GetHashCode());
 
@@ -75,12 +75,22 @@ namespace NoiseVisualisator
             //INoise highland_lowland_select = new Select(lowLandNoise, highland_mountain_select, terrain_type_cache, 0.45, 0.15);
 
             //INoise ground_solid = new Select(0, 1, lowLandNoise, 0.5);
-            return CreateLandFormFct();
+
+            return CreateLandFormFct(is2DRenderRequest);
         }
 
-        private INoise CreateLandFormFct()
+        private INoise CreateLandFormFct(bool is2DRenderRequest)
         {
-            INoise ground_gradient = new Gradient(0, 0, 1, 0);
+            INoise ground_gradient;
+            if (is2DRenderRequest)
+            {
+                ground_gradient = new Gradient(0, 0, 1, 0);
+            }
+            else
+            {
+                ground_gradient = new Gradient(0, 0, 0.42, 0);
+            }
+
             INoise ground_gradient_cache = new Cache(ground_gradient);
 
             ILandform plain = new Plain(_rnd.Next(), ground_gradient_cache);
@@ -136,14 +146,14 @@ namespace NoiseVisualisator
         private void btStart_Click(object sender, EventArgs e)
         {
             OffsetX = 0;
-            GameRender render = new GameRender(new System.Drawing.Size(1024, 768), "3D Noise visualisator !", NoiseComposition());
+            GameRender render = new GameRender(new System.Drawing.Size(1024, 768), "3D Noise visualisator !", NoiseComposition(false));
             render.Run();
             render.Dispose();
         }
 
         private void bt2DRender_Click(object sender, EventArgs e)
         {
-            INoise noise = NoiseComposition();
+            INoise noise = NoiseComposition(true);
             if (withThresHold.Checked)
             {
                 noise = new Select(0, 1, noise, 0.5); //Apply the same
@@ -171,6 +181,8 @@ namespace NoiseVisualisator
 
             lblGenerationTime.Text = ((Stopwatch.GetTimestamp() - from) / (double)Stopwatch.Frequency * 1000.0).ToString();
 
+            double MinNoise = double.MaxValue;
+            double MaxNoise = double.MinValue;
 
             int i = 0;
             for (int x = 0; x < w; x++)
@@ -182,6 +194,9 @@ namespace NoiseVisualisator
 
                     var val = noiseData[i];
 
+                    if (val < MinNoise) MinNoise = val;
+                    if (val > MaxNoise) MaxNoise = val;
+
                     var col = MathHelper.FullLerp(0, 255, outPutRange.Min, outPutRange.Max, val, true);
 
                     bmp.SetPixel(x, h - y - 1, Color.FromArgb((byte)col, (byte)col, (byte)col));
@@ -189,6 +204,9 @@ namespace NoiseVisualisator
                     i++;
                 }
             }
+
+            Console.WriteLine("Min Value : " + MinNoise.ToString() + " Max Value : " + MaxNoise.ToString());
+
             pictureBox1.Image = bmp;
         }
 
