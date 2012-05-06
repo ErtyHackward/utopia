@@ -271,6 +271,8 @@
     <Compile Include="World\PlanGenerator\VectorExtensions.cs" />
     <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
     <Compile Include="World\Processors\PlanWorldProcessor.cs" />
+    <Compile Include="World\Processors\Utopia\LandformFct\ILandform.cs" />
+    <Compile Include="World\Processors\Utopia\LandformFct\Plains\Plain.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
     <Compile Include="World\WorldConfigs\ErtyHackwardWorldConfig.cs" />
