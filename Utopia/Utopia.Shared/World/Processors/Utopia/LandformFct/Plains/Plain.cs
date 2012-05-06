@@ -34,7 +34,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct.Plains
             //Rescale + offset the output result
             INoise lowland_scale = new ScaleOffset(lowland_shape_fractal, 0.2, 0.25);
             //Remove Y value from impacting the result (Fixed to 0) = removing one dimension to the generator noise
-            INoise lowland_y_scale = new ScaleDomain(lowland_scale, 1, 0);
+            INoise lowland_y_scale = new ScaleDomain(lowland_scale, 1, 0, 1);
             //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
             INoise lowland_terrain = new Turbulence(_ground_gradient, 0, lowland_y_scale);
 

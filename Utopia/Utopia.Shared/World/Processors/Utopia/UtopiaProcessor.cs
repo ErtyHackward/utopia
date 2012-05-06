@@ -96,6 +96,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                                                             chunkWorldRange.Position.X / 320.0, (chunkWorldRange.Position.X / 320.0) + 0.05, AbstractChunk.ChunkSize.X,
                                                             chunkWorldRange.Position.Y / 2560.0, (chunkWorldRange.Position.Y / 2560.0) + 0.4, AbstractChunk.ChunkSize.Y,
                                                             chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z);
+
             //Create the chunk Block byte from noiseResult
 
             int noiseValueIndex = 0;
@@ -119,7 +120,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         private INoise CreateLandFormFct()
         {
-            INoise ground_gradient = new Gradient(0, 0, 1, 0);
+            INoise ground_gradient = new Gradient(0, 0, 0.45, 0);
             INoise ground_gradient_cache = new Cache(ground_gradient);
 
             ILandform plain = new Plain(_rnd.Next(), ground_gradient_cache);
