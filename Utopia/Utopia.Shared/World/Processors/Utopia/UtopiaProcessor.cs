@@ -15,6 +15,8 @@ using S33M3CoreComponents.Noise.NoiseResultCombiner;
 using S33M3CoreComponents.Noise.ResultModifier;
 using S33M3CoreComponents.Noise.DomainModifier;
 using S33M3CoreComponents.Noise.Various;
+using Utopia.Shared.World.Processors.Utopia.LandformFct.Plains;
+using Utopia.Shared.World.Processors.Utopia.LandformFct;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -80,16 +82,9 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             _rnd = new Random(_worldParameters.Seed);
 
-            INoise ground_gradient = new Gradient(0, 0, 8, 0);
-            INoise ground_gradient_cache = new Cache(ground_gradient);
-            INoise lowLandNoise = CreateLowLandNoise(ground_gradient_cache);
+            CreateLandFormFct();
 
-            INoise test = new FractalFbm(new Simplex(_rnd.Next()), 6, 4, enuBaseNoiseRange.ZeroToOne);
-
-            noise = new Select(0, 1, lowLandNoise, 0.5);
-
-            noise = test;
-
+            noise = CreateLandFormFct();
         }
 
         private void GenerateLandscape(byte[] ChunkCubes, ref Range3I chunkWorldRange)
@@ -120,22 +115,20 @@ namespace Utopia.Shared.World.Processors.Utopia
                     }
                 }
             }
-
         }
 
-        private INoise CreateLowLandNoise(INoise ground_gradient)
+        private INoise CreateLandFormFct()
         {
-            //Create the Lowland base fractal with range from 0 to 1 values
-            INoise lowland_shape_fractal = new FractalFbm(new Perlin(1234), 2, 1, enuBaseNoiseRange.ZeroToOne);
-            //Rescale + offset the output result
-            INoise lowland_scale = new ScaleOffset(lowland_shape_fractal, 0.2, 0.25);
-            //Remove Y value from impacting the result (Fixed to 0) = removing one dimension to the generator noise
-            INoise lowland_y_scale = new ScaleDomain(lowland_scale, 1, 0);
-            //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
-            INoise lowland_terrain = new Turbulence(ground_gradient, 0, lowland_y_scale);
+            INoise ground_gradient = new Gradient(0, 0, 1, 0);
+            INoise ground_gradient_cache = new Cache(ground_gradient);
 
-            return lowland_terrain;
+            ILandform plain = new Plain(_rnd.Next(), ground_gradient_cache);
+
+            INoise landFormFct = plain.GetLandFormFct();
+
+            return landFormFct;
         }
+
         #endregion
     }
 }
