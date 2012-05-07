@@ -81,9 +81,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             _rnd = new Random(_worldParameters.Seed);
 
-            CreateLandFormFct();
-
-            noise = CreateLandFormFct();
+            noise = CreateLandFormFct(new Gradient(0, 0, 0.45, 0));
         }
 
         private void GenerateLandscape(byte[] ChunkCubes, ref Range3I chunkWorldRange)
@@ -91,7 +89,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Create of a test Noise
 
             //Create value from Noise Fct sampling
-            double[] noiseValue = NoiseSampler.NoiseSampling(noise, new Vector3I(AbstractChunk.ChunkSize.X / 4, AbstractChunk.ChunkSize.Y / 8, AbstractChunk.ChunkSize.Z / 4),
+            double[] noiseValue = NoiseSampler.NoiseSampling(noise, new Vector3I(AbstractChunk.ChunkSize.X /4 , AbstractChunk.ChunkSize.Y /8 , AbstractChunk.ChunkSize.Z /4 ),
                                                             chunkWorldRange.Position.X / 320.0, (chunkWorldRange.Position.X / 320.0) + 0.05, AbstractChunk.ChunkSize.X,
                                                             chunkWorldRange.Position.Y / 2560.0, (chunkWorldRange.Position.Y / 2560.0) + 0.4, AbstractChunk.ChunkSize.Y,
                                                             chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z);
@@ -99,6 +97,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Create the chunk Block byte from noiseResult
 
             int noiseValueIndex = 0;
+            byte cube;
             for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
             {
                 for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
@@ -107,9 +106,20 @@ namespace Utopia.Shared.World.Processors.Utopia
                     {
                         double value = noiseValue[noiseValueIndex];
 
+                        cube = CubeId.Air;
                         if (value > 0.5)
                         {
-                            ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y] = CubeId.Stone;
+                            cube = CubeId.Stone;
+                        }
+
+                        if ( Y <= _worldParameters.SeaLevel && cube == CubeId.Air)
+                        {
+                            cube = CubeId.WaterSource;
+                        }
+
+                        if(cube != CubeId.Air)
+                        {
+                            ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y] = cube;
                         }
                         noiseValueIndex++;
                     }
@@ -117,15 +127,12 @@ namespace Utopia.Shared.World.Processors.Utopia
             }
         }
 
-        private INoise CreateLandFormFct()
+        public INoise CreateLandFormFct(Gradient ground_gradient)
         {
-            Gradient ground_gradient = new Gradient(0, 0, 0.45, 0);
-            Cache<Gradient> ground_gradient_cache = new Cache<Gradient>(ground_gradient);
-
             //Get Basic landscape forms
-            ITerrainGenerator plain = new Plain(_rnd.Next(), ground_gradient_cache);
-            ITerrainGenerator midland = new Midland(_rnd.Next(), ground_gradient_cache);
-            ITerrainGenerator montain = new Montain(_rnd.Next(), ground_gradient_cache);
+            ITerrainGenerator plain = new Plain(_rnd.Next(), ground_gradient);
+            ITerrainGenerator midland = new Midland(_rnd.Next(), ground_gradient);
+            ITerrainGenerator montain = new Montain(_rnd.Next(), ground_gradient);
             ITerrainGenerator terrainType = new TerrainType(_rnd.Next());
 
             INoise plainFct = plain.GetLandFormFct();
@@ -138,11 +145,10 @@ namespace Utopia.Shared.World.Processors.Utopia
             //0.0 => 0.3 Montains
             //0.3 => 0.6 MidLand
             //0.6 => 1 Plain
-            INoise mountain_midland_select = new Select(montainFct, midlandFct, terrainTypeFct, 0.30, 0.15);
-            INoise midland_plain_select = new Select(mountain_midland_select, plainFct, terrainTypeFct, 0.50, 0.10);
+            INoise mountain_midland_select = new Select(montainFct, midlandFct, terrainTypeFct, 0.30, 0.05);
+            INoise midland_plain_select = new Select(mountain_midland_select, plainFct, terrainTypeFct, 0.55, 0.15);
 
             return midland_plain_select;
-
         }
 
         #endregion

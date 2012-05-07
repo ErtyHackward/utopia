@@ -49,9 +49,9 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //This way no matter the the Gradient Range, the values impacting it will be rescaled.
 
             //Create the Lowland base fractal with range from 0 to 1 values
-            INoise plain_shape_fractal = new FractalFbm(new Simplex(_seed), 2, 3, enuBaseNoiseRange.ZeroToOne);
+            INoise plain_shape_fractal = new FractalFbm(new Simplex(_seed), 3, 1.5, enuBaseNoiseRange.ZeroToOne);
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
-            INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.20 * _groundGradientTyped.AdjustY, 0.05 * _groundGradientTyped.AdjustY); 
+            INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.30 * _groundGradientTyped.AdjustY, -0.15 * _groundGradientTyped.AdjustY); 
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
             INoise plain_y_scale = new ScaleDomain(plain_scale, 1.0, 0, 1.0);
 
