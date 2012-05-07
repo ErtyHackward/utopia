@@ -95,62 +95,27 @@ namespace NoiseVisualisator
 
             //Get Basic landscape forms
             ITerrainGenerator plain = new Plain(_rnd.Next(), ground_gradient_cache);
+            ITerrainGenerator midland = new Midland(_rnd.Next(), ground_gradient_cache);
             ITerrainGenerator montain = new Montain(_rnd.Next(), ground_gradient_cache);
+
+            //Will be used as map for blending terrain type
             ITerrainGenerator terrainType = new TerrainType(_rnd.Next());
 
             INoise plainFct = plain.GetLandFormFct();
+            INoise midlandFct = midland.GetLandFormFct();
             INoise montainFct = montain.GetLandFormFct();
             INoise terrainTypeFct = terrainType.GetLandFormFct();
 
-            Console.WriteLine(NoiseAnalyse.Analyse((INoise2)terrainTypeFct, 1000000));
+            //Console.WriteLine(NoiseAnalyse.Analyse((INoise2)terrainTypeFct, 1000000));
 
-            INoise plain_mountain_select = new Select(plainFct, montainFct, terrainTypeFct, 0.5, 0.05);
+            //0.0 => 0.3 Montains
+            //0.3 => 0.6 MidLand
+            //0.6 => 1 Plain
+            INoise mountain_midland_select = new Select(montainFct, midlandFct, terrainTypeFct, 0.45, 0.15);
+            INoise midland_plain_select = new Select(mountain_midland_select, plainFct, terrainTypeFct, 0.65, 0.10);
 
-            return plain_mountain_select;
+            return midland_plain_select;
         }
-
-        private INoise CreateLowLandNoise(INoise ground_gradient)
-        {
-            //Create the Lowland base fractal with range from 0 to 1 values
-            INoise lowland_shape_fractal = new FractalFbm(new Perlin(1234), 2, 1, enuBaseNoiseRange.ZeroToOne);
-            //Rescale + offset the output result
-            INoise lowland_scale = new ScaleOffset(lowland_shape_fractal, 0.2, 0.25);
-            //Remove Y value from impacting the result (Fixed to 0) = removing one dimension to the generator noise
-            INoise lowland_y_scale = new ScaleDomain(lowland_scale, 1, 0);
-            //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
-            INoise lowland_terrain = new Turbulence(ground_gradient, 0, lowland_y_scale);
-
-            return lowland_terrain;
-        }
-
-        private INoise CreateHighLandNoise(INoise ground_gradient)
-        {
-            //Create the Lowland base fractal with range from 0 to 1 values
-            INoise Highland_shape_fractal = new FractalRidgedMulti(new Perlin(15905), 2, 1, enuBaseNoiseRange.ZeroToOne);
-            //Rescale + offset the output result
-            INoise Highland_scale = new ScaleOffset(Highland_shape_fractal, 0.25, 0);
-            //Remove Y value from impacting the result (Fixed to 0) = removing one dimension to the generator noise
-            INoise Highland_y_scale = new ScaleDomain(Highland_scale, 1, 0);
-            //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
-            INoise Highland_terrain = new Turbulence(ground_gradient, 0, Highland_y_scale);
-
-            return Highland_terrain;
-        }
-
-        private INoise CreateMontainNoise(INoise ground_gradient)
-        {
-            //Create the Lowland base fractal with range from 0 to 1 values
-            INoise Montain_shape_fractal = new FractalBillow(new Perlin(5620), 4, 1, enuBaseNoiseRange.ZeroToOne);
-            //Rescale + offset the output result
-            INoise Montain_scale = new ScaleOffset(Montain_shape_fractal, 0.75, 0.0);
-            //Remove Y value from impacting the result (Fixed to 0) = removing one dimension to the generator noise
-            INoise Montain_y_scale = new ScaleDomain(Montain_scale, 1, 0.1);
-            //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
-            INoise Montain_terrain = new Turbulence(ground_gradient, 0, Montain_y_scale);
-
-            return Montain_terrain;
-        }
-
 
         private void btStart_Click(object sender, EventArgs e)
         {

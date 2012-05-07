@@ -274,7 +274,7 @@
     <Compile Include="World\Processors\Utopia\ITerrainGenerator.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\Montains\Montain.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\Plains\Plain.cs" />
-    <Compile Include="World\Processors\Utopia\LandformFct\Plateaus\Plateau.cs" />
+    <Compile Include="World\Processors\Utopia\LandformFct\Midlands\Midland.cs" />
     <Compile Include="World\Processors\Utopia\TerrainType.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />

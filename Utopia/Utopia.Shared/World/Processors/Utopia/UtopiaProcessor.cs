@@ -124,18 +124,24 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             //Get Basic landscape forms
             ITerrainGenerator plain = new Plain(_rnd.Next(), ground_gradient_cache);
+            ITerrainGenerator midland = new Midland(_rnd.Next(), ground_gradient_cache);
             ITerrainGenerator montain = new Montain(_rnd.Next(), ground_gradient_cache);
             ITerrainGenerator terrainType = new TerrainType(_rnd.Next());
 
             INoise plainFct = plain.GetLandFormFct();
+            INoise midlandFct = midland.GetLandFormFct();
             INoise montainFct = montain.GetLandFormFct();
             INoise terrainTypeFct = terrainType.GetLandFormFct();
 
             //Console.WriteLine(NoiseAnalyse.Analyse((INoise2) terrainTypeFct, 1000000));
 
-            INoise plain_mountain_select = new Select(plainFct, montainFct, terrainTypeFct, 0.5, 0.05);
+            //0.0 => 0.3 Montains
+            //0.3 => 0.6 MidLand
+            //0.6 => 1 Plain
+            INoise mountain_midland_select = new Select(montainFct, midlandFct, terrainTypeFct, 0.30, 0.15);
+            INoise midland_plain_select = new Select(mountain_midland_select, plainFct, terrainTypeFct, 0.50, 0.10);
 
-            return plain_mountain_select;
+            return midland_plain_select;
 
         }
 
