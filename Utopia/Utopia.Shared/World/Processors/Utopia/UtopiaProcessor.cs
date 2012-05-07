@@ -69,6 +69,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 };
 
                 GenerateLandscape(chunkBytes, ref chunkWorldRange);
+                TerraForming(chunkBytes);
 
                 chunk.BlockData.SetBlockBytes(chunkBytes);
             });
@@ -112,7 +113,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                             cube = CubeId.Stone;
                         }
 
-                        if ( Y <= _worldParameters.SeaLevel && cube == CubeId.Air)
+                        if ( Y == _worldParameters.SeaLevel && cube == CubeId.Air)
                         {
                             cube = CubeId.WaterSource;
                         }
@@ -124,6 +125,85 @@ namespace Utopia.Shared.World.Processors.Utopia
                         noiseValueIndex++;
                     }
                 }
+            }
+        }
+
+        private void TerraForming(byte[] ChunkCubes)
+        {
+            int surfaceMud, surfaceMudLayer;
+            int inWaterMaxLevel = 0;
+
+            int index = 0;
+            for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
+            {
+                for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
+                {
+                    surfaceMud = 4;
+                    inWaterMaxLevel = 0;
+                    surfaceMudLayer = 0;
+
+                    for (int Y = AbstractChunk.ChunkSize.Y - 1; Y >= 1; Y--) //Y
+                    {
+                        index = ((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y;
+                        byte cubeId = ChunkCubes[index];
+
+
+                        if (surfaceMudLayer > 0 && cubeId == CubeId.Air) surfaceMudLayer = 0;
+
+                        //Be sure that the lowest Y level is "Solid"
+                        if (Y == 0)
+                        {
+                            ChunkCubes[index] = CubeId.Rock;
+                            continue;
+                        }
+
+
+                        if (cubeId == CubeId.Stone)
+                        {
+                            //Under water soil
+                            if (Y < _worldParameters.SeaLevel && inWaterMaxLevel != 0)
+                            {
+                                if (cubeId == CubeId.Stone)
+                                {
+                                    ChunkCubes[index] = CubeId.Dirt;
+
+                                }
+                                break;
+                            }
+
+                            inWaterMaxLevel = 0;
+
+                            if (surfaceMud > surfaceMudLayer)
+                            {
+                                if (surfaceMudLayer == 0)
+                                {
+                                    ChunkCubes[index] = CubeId.Grass;
+                                }
+                                else
+                                {
+                                    ChunkCubes[index] = CubeId.Dirt;
+                                }
+                                surfaceMudLayer++;
+                            }
+
+                        }
+                        else
+                        {
+                            if (cubeId == CubeId.WaterSource)
+                            {
+                                inWaterMaxLevel = Y;
+                            }
+                            else
+                            {
+                                if (inWaterMaxLevel > 0 && cubeId == CubeId.Air)
+                                {
+                                    ChunkCubes[index] = CubeId.WaterSource;
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
         }
 
