@@ -33,17 +33,17 @@ namespace Utopia.Worlds.Chunks
                 SortChunks();
             }
 
-            //// make chunks appear slowly and not hurt the eyes
-            //for (int i = _transparentChunks.Count - 1; i >= 0; i--)
-            //{
-            //    var transparentChunk = _transparentChunks[i];
-            //    transparentChunk.Opaque += 2f * timeSpend.ElapsedGameTimeInS_LD;
-            //    if (transparentChunk.Opaque >= 1)
-            //    {
-            //        transparentChunk.Opaque = 1;
-            //        _transparentChunks.RemoveAt(i);
-            //    }
-            //}
+            // make chunks appear slowly and not hurt the eyes
+            for (int i = _transparentChunks.Count - 1; i >= 0; i--)
+            {
+                var transparentChunk = _transparentChunks[i];
+                transparentChunk.Opaque += 2f * timeSpend.ElapsedGameTimeInS_LD;
+                if (transparentChunk.Opaque >= 1)
+                {
+                    transparentChunk.Opaque = 1;
+                    _transparentChunks.RemoveAt(i);
+                }
+            }
         }
 
         #endregion
@@ -71,9 +71,6 @@ namespace Utopia.Worlds.Chunks
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
-
-                //Testing Frust
-                //chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
 
                 if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
 
