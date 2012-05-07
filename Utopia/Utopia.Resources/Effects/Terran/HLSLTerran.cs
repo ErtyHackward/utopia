@@ -46,6 +46,7 @@ namespace Utopia.Resources.Effects.Terran
 
         #region Resources
         public ShaderResource TerraTexture;
+        public ShaderResource SolidBackBuffer;
         #endregion
 
         #region Sampler
@@ -74,6 +75,9 @@ namespace Utopia.Resources.Effects.Terran
             //Create the resource interfaces ==================================================
             TerraTexture = new ShaderResource("TerraTexture");
             ShaderResources.Add(TerraTexture);
+
+            SolidBackBuffer = new ShaderResource("SolidBackBuffer", false);
+            ShaderResources.Add(SolidBackBuffer);
 
             //Create the Sampler interface ==================================================
             SamplerDiffuse = new ShaderSampler("SamplerDiffuse");

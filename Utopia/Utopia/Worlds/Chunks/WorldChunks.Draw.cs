@@ -118,6 +118,9 @@ namespace Utopia.Worlds.Chunks
 
             _terraEffect.Begin(context);
 
+            _terraEffect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
+            _terraEffect.SolidBackBuffer.IsDirty = true;
+
             //Foreach faces type
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
