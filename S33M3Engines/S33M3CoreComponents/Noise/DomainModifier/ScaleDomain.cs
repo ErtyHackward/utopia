@@ -45,12 +45,12 @@ namespace S33M3CoreComponents.Noise.DomainModifier
 
         public double Get(double x, double y, double z)
         {
-            return _source.Get(x * _xScale.Get(x, y), y * _yScale.Get(x, y), z * _zScale.Get(x, y, z));
+            return _source.Get(x * _xScale.Get(x, y, z), y * _yScale.Get(x, y, z), z * _zScale.Get(x, y, z));
         }
 
         public double Get(double x, double y, double z, double w)
         {
-            return _source.Get(x * _xScale.Get(x, y), y * _yScale.Get(x, y), z * _zScale.Get(x, y, z), w * _wScale.Get(x, y, z, w));
+            return _source.Get(x * _xScale.Get(x, y, z, w), y * _yScale.Get(x, y, z, w), z * _zScale.Get(x, y, z, w), w * _wScale.Get(x, y, z, w));
         }
         #endregion
 

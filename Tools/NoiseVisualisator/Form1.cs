@@ -81,7 +81,7 @@ namespace NoiseVisualisator
 
         private INoise CreateLandFormFct(bool is2DRenderRequest)
         {
-            INoise ground_gradient;
+            Gradient ground_gradient;
             if (is2DRenderRequest)
             {
                 ground_gradient = new Gradient(0, 0, 1, 0);
@@ -91,7 +91,7 @@ namespace NoiseVisualisator
                 ground_gradient = new Gradient(0, 0, 0.42, 0);
             }
 
-            INoise ground_gradient_cache = new Cache(ground_gradient);
+            Cache<Gradient> ground_gradient_cache = new Cache<Gradient>(ground_gradient);
 
             ILandform plain = new Plain(_rnd.Next(), ground_gradient_cache);
 
