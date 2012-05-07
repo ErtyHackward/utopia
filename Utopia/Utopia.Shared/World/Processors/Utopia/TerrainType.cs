@@ -29,11 +29,9 @@ namespace Utopia.Shared.World.Processors.Utopia
         public INoise GetLandFormFct()
         {
             INoise terraintypeFractal = new FractalFbm(new Simplex(_seed), 3, 1, enuBaseNoiseRange.ZeroToOne);
-            INoise terraintypeFractal_y_scale = new ScaleDomain(terraintypeFractal, 1.0, 0, 1.0);
+            INoise terraintypeFractal_y_scale = new ScaleDomain(terraintypeFractal, 1.0, 0.0, 1.0);
 
-            INoise terrainTypeCache = new Cache<INoise>(terraintypeFractal_y_scale);
-
-            return terrainTypeCache;
+            return terraintypeFractal_y_scale;
         }
         #endregion
 

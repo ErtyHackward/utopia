@@ -59,28 +59,8 @@ namespace NoiseVisualisator
         Random _rnd;
         private INoise NoiseComposition(bool is2DRenderRequest)
         {
-            _rnd = new Random("test".GetHashCode());
+            UtopiaProcessor processor = new UtopiaProcessor(new Utopia.Shared.World.WorldParameters() { SeedName = "test", SeaLevel =64, WorldName = "test" });
 
-            //INoise ground_gradient = new Gradient(0, 0, 1, 0);
-            //INoise ground_gradient_cache = new Cache(ground_gradient);
-
-            //INoise lowLandNoise = CreateLowLandNoise(ground_gradient_cache);
-            //INoise HighLandNoise = CreateHighLandNoise(ground_gradient_cache);
-            //INoise MontainNoise = CreateMontainNoise(ground_gradient_cache);
-
-            //INoise terrain_type_fractal = new FractalFbm(new Perlin(5632), 3, 0.5, enuBaseNoiseRange.ZeroToOne);
-            //INoise terrain_type_cache = new Cache(terrain_type_fractal);
-
-            //INoise highland_mountain_select = new Select(HighLandNoise, MontainNoise, terrain_type_cache, 0.75, 0.15);
-            //INoise highland_lowland_select = new Select(lowLandNoise, highland_mountain_select, terrain_type_cache, 0.45, 0.15);
-
-            //INoise ground_solid = new Select(0, 1, lowLandNoise, 0.5);
-
-            return CreateLandFormFct(is2DRenderRequest);
-        }
-
-        private INoise CreateLandFormFct(bool is2DRenderRequest)
-        {
             Gradient ground_gradient;
             if (is2DRenderRequest)
             {
@@ -91,30 +71,7 @@ namespace NoiseVisualisator
                 ground_gradient = new Gradient(0, 0, 0.42, 0);
             }
 
-            Cache<Gradient> ground_gradient_cache = new Cache<Gradient>(ground_gradient);
-
-            //Get Basic landscape forms
-            ITerrainGenerator plain = new Plain(_rnd.Next(), ground_gradient_cache);
-            ITerrainGenerator midland = new Midland(_rnd.Next(), ground_gradient_cache);
-            ITerrainGenerator montain = new Montain(_rnd.Next(), ground_gradient_cache);
-
-            //Will be used as map for blending terrain type
-            ITerrainGenerator terrainType = new TerrainType(_rnd.Next());
-
-            INoise plainFct = plain.GetLandFormFct();
-            INoise midlandFct = midland.GetLandFormFct();
-            INoise montainFct = montain.GetLandFormFct();
-            INoise terrainTypeFct = terrainType.GetLandFormFct();
-
-            //Console.WriteLine(NoiseAnalyse.Analyse((INoise2)terrainTypeFct, 1000000));
-
-            //0.0 => 0.3 Montains
-            //0.3 => 0.6 MidLand
-            //0.6 => 1 Plain
-            INoise mountain_midland_select = new Select(montainFct, midlandFct, terrainTypeFct, 0.45, 0.15);
-            INoise midland_plain_select = new Select(mountain_midland_select, plainFct, terrainTypeFct, 0.65, 0.10);
-
-            return midland_plain_select;
+            return processor.CreateLandFormFct(ground_gradient);
         }
 
         private void btStart_Click(object sender, EventArgs e)
@@ -128,10 +85,6 @@ namespace NoiseVisualisator
         private void bt2DRender_Click(object sender, EventArgs e)
         {
             INoise noise = NoiseComposition(true);
-            if (withThresHold.Checked)
-            {
-                noise = new Select(0, 1, noise, 0.5); //Apply the same
-            }
             InitNoise(noise, new Range(0, 1));
         }
 
@@ -149,14 +102,12 @@ namespace NoiseVisualisator
 
             long from = Stopwatch.GetTimestamp();
 
-            double[] noiseData = NoiseSampler.NoiseSampling(workingNoise, new Vector2I(w,h),
+            double[] noiseData = NoiseSampler.NoiseSampling(workingNoise, new Vector2I(w / 4,h / 4),
                                                             0 + OffsetX, 3 + OffsetX, w,
                                                             0, 1, h);
 
             lblGenerationTime.Text = ((Stopwatch.GetTimestamp() - from) / (double)Stopwatch.Frequency * 1000.0).ToString();
 
-            double MinNoise = double.MaxValue;
-            double MaxNoise = double.MinValue;
 
             int i = 0;
             for (int x = 0; x < w; x++)
@@ -167,9 +118,10 @@ namespace NoiseVisualisator
                     yl = MathHelper.FullLerp(0, 1, 0, h, y);
 
                     var val = noiseData[i];
-
-                    if (val < MinNoise) MinNoise = val;
-                    if (val > MaxNoise) MaxNoise = val;
+                    if (withThresHold.Checked)
+                    {
+                        if (val > 0.5) val = 1.0; else val = 0.0;
+                    }
 
                     var col = MathHelper.FullLerp(0, 255, outPutRange.Min, outPutRange.Max, val, true);
 
@@ -178,8 +130,6 @@ namespace NoiseVisualisator
                     i++;
                 }
             }
-
-            Console.WriteLine("Min Value : " + MinNoise.ToString() + " Max Value : " + MaxNoise.ToString());
 
             pictureBox1.Image = bmp;
         }
