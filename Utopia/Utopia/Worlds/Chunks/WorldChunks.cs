@@ -174,7 +174,7 @@ namespace Utopia.Worlds.Chunks
             lightingManager.WorldChunk = this;
             _playerManager.WorldChunks = this;
 
-            DrawOrders.UpdateIndex(SOLID_DRAW, 11, "SOLID_DRAW");
+            DrawOrders.UpdateIndex(SOLID_DRAW, 1010, "SOLID_DRAW");
             TRANSPARENT_DRAW = DrawOrders.AddIndex(1050, "TRANSPARENT_DRAW");
             ENTITIES_DRAW = DrawOrders.AddIndex(900, "ENTITIES_DRAW");
 
@@ -579,7 +579,7 @@ namespace Utopia.Worlds.Chunks
             var chunk = (VisualChunk)sender;
             chunk.Opaque = 0f;
 
-            //_transparentChunks.Add(chunk);
+            _transparentChunks.Add(chunk);
 
             if (IsInitialLoadCompleted) return;
 
