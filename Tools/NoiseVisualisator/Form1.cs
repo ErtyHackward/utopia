@@ -20,8 +20,8 @@ using S33M3CoreComponents.Noise.Fractal;
 using S33M3CoreComponents.Noise.Various;
 using S33M3CoreComponents.Noise.Sampler;
 using S33M3Resources.Structs;
-using Utopia.Shared.World.Processors.Utopia.LandformFct.Plains;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
+using Utopia.Shared.World.Processors.Utopia;
 
 namespace NoiseVisualisator
 {
@@ -93,11 +93,20 @@ namespace NoiseVisualisator
 
             Cache<Gradient> ground_gradient_cache = new Cache<Gradient>(ground_gradient);
 
-            ILandform plain = new Plain(_rnd.Next(), ground_gradient_cache);
+            //Get Basic landscape forms
+            ITerrainGenerator plain = new Plain(_rnd.Next(), ground_gradient_cache);
+            ITerrainGenerator montain = new Montain(_rnd.Next(), ground_gradient_cache);
+            ITerrainGenerator terrainType = new TerrainType(_rnd.Next());
 
-            INoise landFormFct = plain.GetLandFormFct();
+            INoise plainFct = plain.GetLandFormFct();
+            INoise montainFct = montain.GetLandFormFct();
+            INoise terrainTypeFct = terrainType.GetLandFormFct();
 
-            return landFormFct;
+            Console.WriteLine(NoiseAnalyse.Analyse((INoise2)terrainTypeFct, 1000000));
+
+            INoise plain_mountain_select = new Select(plainFct, montainFct, terrainTypeFct, 0.5, 0.05);
+
+            return plain_mountain_select;
         }
 
         private INoise CreateLowLandNoise(INoise ground_gradient)
@@ -176,7 +185,7 @@ namespace NoiseVisualisator
             long from = Stopwatch.GetTimestamp();
 
             double[] noiseData = NoiseSampler.NoiseSampling(workingNoise, new Vector2I(w,h),
-                                                            0, 3, w, 
+                                                            0 + OffsetX, 3 + OffsetX, w,
                                                             0, 1, h);
 
             lblGenerationTime.Text = ((Stopwatch.GetTimestamp() - from) / (double)Stopwatch.Frequency * 1000.0).ToString();
