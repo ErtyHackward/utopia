@@ -12,9 +12,14 @@ namespace S33M3CoreComponents.Noise.Generator
         private double m_gx2, m_gy2, m_gz2, m_gw2;
         private double m_x, m_y, m_z, m_w;
         private double m_vlen;
+        private double _adjustX, _adjustY, _adjustZ, _adjustW;
         #endregion
 
         #region Public variables/properties
+        public double AdjustX { get { return _adjustX; } }
+        public double AdjustY { get { return _adjustY; } }
+        public double AdjustZ { get { return _adjustZ; } }
+        public double AdjustW { get { return _adjustW; } }
         #endregion
 
         /// <summary>
@@ -83,6 +88,11 @@ namespace S33M3CoreComponents.Noise.Generator
             m_y = y2 - y1;
             m_z = z2 - z1;
             m_w = w2 - w1;
+
+            _adjustX = Math.Abs(m_x);
+            _adjustY = Math.Abs(m_y);
+            _adjustZ = Math.Abs(m_z);
+            _adjustW = Math.Abs(m_w);
 
             m_vlen = (m_x * m_x + m_y * m_y + m_z * m_z + m_w * m_w);
         }

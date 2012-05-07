@@ -5,7 +5,7 @@ using System.Text;
 
 namespace S33M3CoreComponents.Noise.Various
 {
-    public class Cache : INoise
+    public class Cache<T> : INoise where T : INoise
     {
         private class NoiseCache
         {
@@ -15,22 +15,19 @@ namespace S33M3CoreComponents.Noise.Various
         }
 
         #region Private Variables
-        private NoiseParam _source;
+        private INoise _source;
+        private T _sourceTyped;
         private NoiseCache _c2, _c3, _c4;
         #endregion
 
         #region Public Properties
+        public T Source { get { return _sourceTyped; } }
         #endregion
 
-        public Cache(INoise source)
+        public Cache(T source)
         {
-            _source = new NoiseParam(source);
-            InitCache();
-        }
-
-        public Cache(double source)
-        {
-            _source = new NoiseParam(source);
+            _source = source;
+            _sourceTyped = source;
             InitCache();
         }
 

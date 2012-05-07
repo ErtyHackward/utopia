@@ -120,8 +120,8 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         private INoise CreateLandFormFct()
         {
-            INoise ground_gradient = new Gradient(0, 0, 0.45, 0);
-            INoise ground_gradient_cache = new Cache(ground_gradient);
+            Gradient ground_gradient = new Gradient(0, 0, 0.45, 0);
+            Cache<Gradient> ground_gradient_cache = new Cache<Gradient>(ground_gradient);
 
             ILandform plain = new Plain(_rnd.Next(), ground_gradient_cache);
 

@@ -254,6 +254,7 @@
     <Compile Include="Noise\Generator\Simplex.cs" />
     <Compile Include="Noise\INoise.cs" />
     <Compile Include="Noise\Various\Cache.cs" />
+    <Compile Include="Noise\Various\NoiseAnalyse.cs" />
     <Compile Include="Physics\Euler\EulerSimulator.cs" />
     <Compile Include="Physics\Impulse.cs" />
     <Compile Include="Physics\SimulatorCst.cs" />
