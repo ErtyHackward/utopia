@@ -11,7 +11,7 @@ using S33M3CoreComponents.Noise.Various;
 
 namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 {
-    public class Plain : ITerrainGenerator
+    public class Plateau : ITerrainGenerator
     {
         #region Private Variables
         private INoise _groundGradient;
@@ -22,17 +22,17 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
         #region Public Properties
         #endregion
 
-        public Plain(int seed, Gradient groundGradient)
-            :this (seed, groundGradient, groundGradient)
+        public Plateau(int seed, Gradient groundGradient)
+            : this(seed, groundGradient, groundGradient)
         {
         }
 
-        public Plain(int seed, Cache<Gradient> groundGradient)
-            :this(seed, groundGradient, groundGradient.Source)
+        public Plateau(int seed, Cache<Gradient> groundGradient)
+            : this(seed, groundGradient, groundGradient.Source)
         {
         }
 
-        private Plain(int seed, INoise groundGradient, Gradient groundGradientTyped)
+        private Plateau(int seed, INoise groundGradient, Gradient groundGradientTyped)
         {
             _groundGradient = groundGradient;
             _groundGradientTyped = groundGradientTyped;
@@ -41,7 +41,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 
         #region Public Methods
         public INoise GetLandFormFct()
-        {       
+        {
             //REM
             //The various parameters value here are scaled for a gradient being feed by 0 to 1 input value.
             //When this gradient is configured to recevied other value range then some parameters needs to be rescaled
@@ -51,7 +51,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //Create the Lowland base fractal with range from 0 to 1 values
             INoise plain_shape_fractal = new FractalFbm(new Simplex(_seed), 2, 2, enuBaseNoiseRange.ZeroToOne);
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
-            INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.2 * _groundGradientTyped.AdjustY, -0.1 * _groundGradientTyped.AdjustY); 
+            INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.2 * _groundGradientTyped.AdjustY, -0.1 * _groundGradientTyped.AdjustY);
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
             INoise plain_y_scale = new ScaleDomain(plain_scale, 1.0, 0, 1.0);
 

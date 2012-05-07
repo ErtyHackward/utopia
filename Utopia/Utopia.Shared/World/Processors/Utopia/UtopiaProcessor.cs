@@ -15,7 +15,6 @@ using S33M3CoreComponents.Noise.NoiseResultCombiner;
 using S33M3CoreComponents.Noise.ResultModifier;
 using S33M3CoreComponents.Noise.DomainModifier;
 using S33M3CoreComponents.Noise.Various;
-using Utopia.Shared.World.Processors.Utopia.LandformFct.Plains;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
 
 namespace Utopia.Shared.World.Processors.Utopia
@@ -123,11 +122,21 @@ namespace Utopia.Shared.World.Processors.Utopia
             Gradient ground_gradient = new Gradient(0, 0, 0.45, 0);
             Cache<Gradient> ground_gradient_cache = new Cache<Gradient>(ground_gradient);
 
-            ILandform plain = new Plain(_rnd.Next(), ground_gradient_cache);
+            //Get Basic landscape forms
+            ITerrainGenerator plain = new Plain(_rnd.Next(), ground_gradient_cache);
+            ITerrainGenerator montain = new Montain(_rnd.Next(), ground_gradient_cache);
+            ITerrainGenerator terrainType = new TerrainType(_rnd.Next());
 
-            INoise landFormFct = plain.GetLandFormFct();
+            INoise plainFct = plain.GetLandFormFct();
+            INoise montainFct = montain.GetLandFormFct();
+            INoise terrainTypeFct = terrainType.GetLandFormFct();
 
-            return landFormFct;
+            //Console.WriteLine(NoiseAnalyse.Analyse((INoise2) terrainTypeFct, 1000000));
+
+            INoise plain_mountain_select = new Select(plainFct, montainFct, terrainTypeFct, 0.5, 0.05);
+
+            return plain_mountain_select;
+
         }
 
         #endregion
