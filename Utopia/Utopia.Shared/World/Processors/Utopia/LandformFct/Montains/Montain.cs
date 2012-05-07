@@ -53,7 +53,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
             INoise montain_scale = new ScaleOffset(montain_shape_fractal, 0.5 * _groundGradientTyped.AdjustY, -0.35 * _groundGradientTyped.AdjustY); 
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
-            INoise montain_y_scale = new ScaleDomain(montain_scale, 1.0, 0.2, 1.0);
+            INoise montain_y_scale = new ScaleDomain(montain_scale, 1.0, 0.0, 1.0);
 
             //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
             INoise montain_terrain = new Turbulence(_groundGradient, 0, montain_y_scale);

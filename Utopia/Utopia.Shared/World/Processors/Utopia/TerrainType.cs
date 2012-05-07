@@ -7,6 +7,7 @@ using S33M3CoreComponents.Noise.Fractal;
 using Ninject.Activation.Caching;
 using S33M3CoreComponents.Noise.Generator;
 using S33M3CoreComponents.Noise.Various;
+using S33M3CoreComponents.Noise.DomainModifier;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -27,8 +28,10 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Public Methods
         public INoise GetLandFormFct()
         {
-            INoise terraintypeFractal = new FractalFbm(new Simplex(_seed), 3, 0.5, enuBaseNoiseRange.ZeroToOne);
-            INoise terrainTypeCache = new Cache<INoise>(terraintypeFractal);
+            INoise terraintypeFractal = new FractalFbm(new Simplex(_seed), 3, 1, enuBaseNoiseRange.ZeroToOne);
+            INoise terraintypeFractal_y_scale = new ScaleDomain(terraintypeFractal, 1.0, 0, 1.0);
+
+            INoise terrainTypeCache = new Cache<INoise>(terraintypeFractal_y_scale);
 
             return terrainTypeCache;
         }

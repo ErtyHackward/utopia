@@ -11,7 +11,7 @@ using S33M3CoreComponents.Noise.Various;
 
 namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 {
-    public class Plateau : ITerrainGenerator
+    public class Midland : ITerrainGenerator
     {
         #region Private Variables
         private INoise _groundGradient;
@@ -22,17 +22,17 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
         #region Public Properties
         #endregion
 
-        public Plateau(int seed, Gradient groundGradient)
+        public Midland(int seed, Gradient groundGradient)
             : this(seed, groundGradient, groundGradient)
         {
         }
 
-        public Plateau(int seed, Cache<Gradient> groundGradient)
+        public Midland(int seed, Cache<Gradient> groundGradient)
             : this(seed, groundGradient, groundGradient.Source)
         {
         }
 
-        private Plateau(int seed, INoise groundGradient, Gradient groundGradientTyped)
+        private Midland(int seed, INoise groundGradient, Gradient groundGradientTyped)
         {
             _groundGradient = groundGradient;
             _groundGradientTyped = groundGradientTyped;
@@ -49,9 +49,9 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //This way no matter the the Gradient Range, the values impacting it will be rescaled.
 
             //Create the Lowland base fractal with range from 0 to 1 values
-            INoise plain_shape_fractal = new FractalFbm(new Simplex(_seed), 2, 2, enuBaseNoiseRange.ZeroToOne);
+            INoise plain_shape_fractal = new FractalRidgedMulti(new Simplex(_seed), 3, 2, enuBaseNoiseRange.ZeroToOne);
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
-            INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.2 * _groundGradientTyped.AdjustY, -0.1 * _groundGradientTyped.AdjustY);
+            INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.15 * _groundGradientTyped.AdjustY, 0 * _groundGradientTyped.AdjustY);
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
             INoise plain_y_scale = new ScaleDomain(plain_scale, 1.0, 0, 1.0);
 
