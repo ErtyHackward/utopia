@@ -317,18 +317,16 @@ namespace Utopia.Shared.World.Processors
 
                                 for (int X = 0; X < XPointLerpedCount; X++)
                                 {
-
-                                    cube = CubeId.Air;
-
+                                    int nY = (SampledpointY * YPointLerpedCount) + Y;
                                     //Don't put block at Higest level Y ==> Will be air !
-                                    if ((SampledpointY * YPointLerpedCount) + Y == AbstractChunk.ChunkSize.Y - 1) continue;
+                                    if (nY == AbstractChunk.ChunkSize.Y - 1) continue;
 
-                                    if (Noise3 > 0 || (SampledpointY * YPointLerpedCount) + Y == 0)
+                                    if (Noise3 > 0 || Y == 0)
                                     {
                                         cube = CubeId.Stone;
                                     }
 
-                                    if ((SampledpointY * YPointLerpedCount) + Y == _worldParameters.SeaLevel && cube == CubeId.Air)
+                                    if (Y == _worldParameters.SeaLevel && cube == CubeId.Air)
                                     {
                                         cube = CubeId.WaterSource;
                                     }
@@ -338,15 +336,10 @@ namespace Utopia.Shared.World.Processors
                                         if (Cubes != null)
                                         {
                                             int nX = (SampledpointX * XPointLerpedCount) + X;
-                                            int nY = (SampledpointY * YPointLerpedCount) + Y;
                                             int nZ = (SampledpointZ * ZPointLerpedCount) + Z;
                                             Cubes[nX * AbstractChunk.ChunkSize.Y + nY + nZ * AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Y] = cube;
                                         }
                                     }
-                                    //else
-                                    //{
-                                    //    Console.WriteLine("");
-                                    //}
 
                                     Noise3 += DeltaX;
                                 }
@@ -363,7 +356,6 @@ namespace Utopia.Shared.World.Processors
                 }
             }
         }
-
     }
         #endregion
 }
