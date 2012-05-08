@@ -24,8 +24,6 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Private Variables
         private WorldParameters _worldParameters;
         private Random _rnd;
-        private INoise _mainLandscape;
-        private INoise _underground;
         #endregion
 
         #region Public Properties
@@ -48,7 +46,6 @@ namespace Utopia.Shared.World.Processors.Utopia
         public UtopiaProcessor(WorldParameters worldParameters)
         {
             _worldParameters = worldParameters;
-            Initialize();
         }
 
         public void Dispose()
@@ -80,25 +77,28 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         #region Private Methods
 
-        private void Initialize()
+        private void CreateNoises(out INoise mainLandscape, out INoise underground)
         {
             _rnd = new Random(_worldParameters.Seed);
 
-            _mainLandscape = CreateLandFormFct(new Gradient(0, 0, 0.45, 0));
-            Cache<INoise> landscapeCaching = new Cache<INoise>(_mainLandscape);
-            _underground = CreateUnderGroundFct(landscapeCaching);
+            mainLandscape = CreateLandFormFct(new Gradient(0, 0, 0.45, 0));
+            Cache<INoise> mainLandscapeCaching = new Cache<INoise>(mainLandscape);
+            underground = CreateUnderGroundFct(mainLandscapeCaching);
         }
 
         private void GenerateLandscape(byte[] ChunkCubes, ref Range3I chunkWorldRange)
         {
-            //Create of a test Noise
+            //Create the test Noise, A new object must be created each time
+            //Because of the caching in a multithreaded situation (The caching system cannot be shared between 2 threads)
+            INoise mainLandscape, underground;
+            CreateNoises(out mainLandscape, out underground);
 
             //Create value from Noise Fct sampling
             double[,] noiseLandscape = NoiseSampler.NoiseSampling(new Vector3I(AbstractChunk.ChunkSize.X /4 , AbstractChunk.ChunkSize.Y /8 , AbstractChunk.ChunkSize.Z /4 ),
                                                             chunkWorldRange.Position.X / 320.0, (chunkWorldRange.Position.X / 320.0) + 0.05, AbstractChunk.ChunkSize.X,
                                                             chunkWorldRange.Position.Y / 2560.0, (chunkWorldRange.Position.Y / 2560.0) + 0.4, AbstractChunk.ChunkSize.Y,
                                                             chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z,
-                                                            _mainLandscape); // , _underground);
+                                                            mainLandscape); // , _underground);
 
             //Create the chunk Block byte from noiseResult
 
@@ -254,13 +254,8 @@ namespace Utopia.Shared.World.Processors.Utopia
             //0.0 => 0.3 Montains
             //0.3 => 0.6 MidLand
             //0.6 => 1 Plain
-            INoise mountain_midland_select = new Select(montainBaseFct, midLandFinal, terrainTypeFct, 0.45, 0.05);
-            INoise midland_plain_select = new Select(mountain_midland_select, plainFinal, terrainTypeFct, 0.65, 0.10);
-
-            //INoise landScapeCache = new Cache<INoise>(midland_plain_select);
-
-            //UnderGround Tunnels and Caves
-            //INoise undergroundFct = new UnderGround(_rnd.Next(), landScapeCache).GetLandFormFct();
+            INoise mountain_midland_select = new Select(montainBaseFct, midLandFinal, terrainTypeFct, 0.40, 0.05);
+            INoise midland_plain_select = new Select(mountain_midland_select, plainFinal, terrainTypeFct, 0.55, 0.15);
 
             INoise result = new Select(0, 1, midland_plain_select, 0.5);
 

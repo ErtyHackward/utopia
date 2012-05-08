@@ -60,7 +60,9 @@ namespace NoiseVisualisator
         private INoise NoiseComposition(bool is2DRenderRequest)
         {
 
+            long from = Stopwatch.GetTimestamp();
             UtopiaProcessor processor = new UtopiaProcessor(new Utopia.Shared.World.WorldParameters() { SeedName = "test", SeaLevel =64, WorldName = "test" });
+            label4.Text = ((Stopwatch.GetTimestamp() - from) / (double)Stopwatch.Frequency * 1000.0).ToString();
 
             Gradient ground_gradient;
             if (is2DRenderRequest)

@@ -87,8 +87,9 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 #endif
 
             //Bufferize the Data here
-            if(_receivedServerChunks.ContainsKey(e.Message.Position.GetID())) _receivedServerChunks.Remove(e.Message.Position.GetID());
-            _receivedServerChunks.Add(e.Message.Position.GetID(), e.Message);
+            Int64 chunkId = VisualChunk.ComputeChunkId(e.Message.Position.X, e.Message.Position.Y);
+            if (_receivedServerChunks.ContainsKey(chunkId)) _receivedServerChunks.Remove(chunkId);
+            _receivedServerChunks.Add(chunkId, e.Message);
         }
 
         //Perform Maintenance task every 10 seconds
