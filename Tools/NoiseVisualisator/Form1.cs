@@ -72,6 +72,9 @@ namespace NoiseVisualisator
                 ground_gradient = new Gradient(0, 0, 0.42, 0);
             }
 
+            UnderGround test = new UnderGround(123456, ground_gradient);
+            return test.GetLandFormFct();
+
             return processor.CreateLandFormFct(ground_gradient);
         }
 
