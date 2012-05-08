@@ -51,7 +51,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 
             //Create the Lowland base fractal with range from 0 to 1 values
             INoise montain_shape_fractal = new FractalFbm(new Simplex(_seed), 4, 3.5, enuBaseNoiseRange.ZeroToOne);
-            INoise montain_shape_Ajusted = new ScaleOffset(montain_shape_fractal, 0.85, -0.02);
+            INoise montain_shape_Ajusted = new ScaleOffset(montain_shape_fractal, 0.9, -0.02);
 
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
             //Enforce gradient to have a solid underground
