@@ -35,6 +35,7 @@ namespace Samples.GameComp
         private bool[, ,] ChunkCube;
         private SharedFrameCB _sharedCB;
         private ICamera _camera;
+        private double _solidCubeThreshold;
 
         public enum CubeFaces : byte
         {
@@ -46,12 +47,13 @@ namespace Samples.GameComp
             Right = 5
         }
 
-        public NoiseRender(D3DEngine engine, INoise3 noise, SharedFrameCB sharedCB, ICamera camera)
+        public NoiseRender(D3DEngine engine, INoise3 noise, SharedFrameCB sharedCB, ICamera camera, double ThresHold)
         {
             _sharedCB = sharedCB;
             _engine = engine;
             _noise = noise;
             _camera = camera;
+            _solidCubeThreshold = ThresHold;
         }
 
         public override void Initialize()
@@ -68,14 +70,14 @@ namespace Samples.GameComp
         int NoiseSizeResultX = 128;
         int NoiseSizeResultY = 128;
         int NoiseSizeResultZ = 128;
-        double SolidCubeThreshold = 0.5;
         public override void LoadContent(DeviceContext Context = null)
         {
             //Genereate the 3D Landscape.
-            double[] result = NoiseSampler.NoiseSampling(_noise, new Vector3I(NoiseSizeResultX , NoiseSizeResultY , NoiseSizeResultZ ),
+            double[,] result = NoiseSampler.NoiseSampling(new Vector3I(NoiseSizeResultX , NoiseSizeResultY , NoiseSizeResultZ ),
                                                             0.0, 0.42, NoiseSizeResultX,
                                                             0.0, 0.42, NoiseSizeResultY,
-                                                            0.0, 0.42, NoiseSizeResultZ);
+                                                            0.0, 0.42, NoiseSizeResultZ, 
+                                                            _noise);
 
             GenerateChunkMeshFromNoise(result);
 
@@ -94,7 +96,7 @@ namespace Samples.GameComp
             }
         }
 
-        private void GenerateChunkMeshFromNoise(double[] result)
+        private void GenerateChunkMeshFromNoise(double[,] result)
         {
             ChunkCube = new bool[NoiseSizeResultX, NoiseSizeResultY, NoiseSizeResultZ];
 
@@ -108,12 +110,12 @@ namespace Samples.GameComp
                 {
                     for (int y = 0; y < NoiseSizeResultY; y++)
                     {
-                        double val = result[indexId];
+                        double val = result[indexId, 0];
 
                         if (val < MinNoise) MinNoise = val;
                         if (val > MaxNoise) MaxNoise = val;
 
-                        if (val > SolidCubeThreshold)
+                        if (val > _solidCubeThreshold)
                         {
                             ChunkCube[x, y, z] = true;
                         }

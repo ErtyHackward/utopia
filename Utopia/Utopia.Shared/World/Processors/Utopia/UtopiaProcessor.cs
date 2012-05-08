@@ -24,6 +24,8 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Private Variables
         private WorldParameters _worldParameters;
         private Random _rnd;
+        private INoise _mainLandscape;
+        private INoise _underground;
         #endregion
 
         #region Public Properties
@@ -69,7 +71,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 };
 
                 GenerateLandscape(chunkBytes, ref chunkWorldRange);
-                TerraForming(chunkBytes);
+                TerraForming(chunkBytes, ref chunkWorldRange);
 
                 chunk.BlockData.SetBlockBytes(chunkBytes);
             });
@@ -77,12 +79,14 @@ namespace Utopia.Shared.World.Processors.Utopia
         #endregion
 
         #region Private Methods
-        INoise noise;
+
         private void Initialize()
         {
             _rnd = new Random(_worldParameters.Seed);
 
-            noise = CreateLandFormFct(new Gradient(0, 0, 0.45, 0));
+            _mainLandscape = CreateLandFormFct(new Gradient(0, 0, 0.45, 0));
+            Cache<INoise> landscapeCaching = new Cache<INoise>(_mainLandscape);
+            _underground = CreateUnderGroundFct(landscapeCaching);
         }
 
         private void GenerateLandscape(byte[] ChunkCubes, ref Range3I chunkWorldRange)
@@ -90,10 +94,11 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Create of a test Noise
 
             //Create value from Noise Fct sampling
-            double[] noiseValue = NoiseSampler.NoiseSampling(noise, new Vector3I(AbstractChunk.ChunkSize.X /4 , AbstractChunk.ChunkSize.Y /8 , AbstractChunk.ChunkSize.Z /4 ),
+            double[,] noiseLandscape = NoiseSampler.NoiseSampling(new Vector3I(AbstractChunk.ChunkSize.X /4 , AbstractChunk.ChunkSize.Y /8 , AbstractChunk.ChunkSize.Z /4 ),
                                                             chunkWorldRange.Position.X / 320.0, (chunkWorldRange.Position.X / 320.0) + 0.05, AbstractChunk.ChunkSize.X,
                                                             chunkWorldRange.Position.Y / 2560.0, (chunkWorldRange.Position.Y / 2560.0) + 0.4, AbstractChunk.ChunkSize.Y,
-                                                            chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z);
+                                                            chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z,
+                                                            _mainLandscape); // , _underground);
 
             //Create the chunk Block byte from noiseResult
 
@@ -105,12 +110,24 @@ namespace Utopia.Shared.World.Processors.Utopia
                 {
                     for (int Y = 0; Y < AbstractChunk.ChunkSize.Y; Y++)
                     {
-                        double value = noiseValue[noiseValueIndex];
+                        double value = noiseLandscape[noiseValueIndex, 0]; //Get landScape value
+                        //double underground = noiseLandscape[noiseValueIndex, 1];
+                        //value *= underground;
 
                         cube = CubeId.Air;
                         if (value > 0.5)
                         {
                             cube = CubeId.Stone;
+                        }
+
+                        if (Y == 0)
+                        {
+                            cube = CubeId.Rock;
+                        }
+
+                        if (Y == AbstractChunk.ChunkSize.Y - 1)
+                        {
+                            cube = CubeId.Air;
                         }
 
                         if ( Y == _worldParameters.SeaLevel && cube == CubeId.Air)
@@ -128,7 +145,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             }
         }
 
-        private void TerraForming(byte[] ChunkCubes)
+        private void TerraForming(byte[] ChunkCubes, ref Range3I chunkWorldRange)
         {
             int surfaceMud, surfaceMudLayer;
             int inWaterMaxLevel = 0;
@@ -142,28 +159,12 @@ namespace Utopia.Shared.World.Processors.Utopia
                     inWaterMaxLevel = 0;
                     surfaceMudLayer = 0;
 
-                    for (int Y = AbstractChunk.ChunkSize.Y - 1; Y >= 1; Y--) //Y
+                    for (int Y = AbstractChunk.ChunkSize.Y - 1; Y >= 0; Y--) //Y
                     {
                         index = ((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y;
                         byte cubeId = ChunkCubes[index];
 
-
                         if (surfaceMudLayer > 0 && cubeId == CubeId.Air) surfaceMudLayer = 0;
-
-                        //Be sure that the lowest Y level is "Solid"
-                        if (Y == 0)
-                        {
-                            ChunkCubes[index] = CubeId.Rock;
-                            continue;
-                        }
-
-                        //Be sure that the Highest Y level is Air
-                        if (Y == 128)
-                        {
-                            ChunkCubes[index] = CubeId.Air;
-                            continue;
-                        }
-
 
                         if (cubeId == CubeId.Stone)
                         {
@@ -256,7 +257,22 @@ namespace Utopia.Shared.World.Processors.Utopia
             INoise mountain_midland_select = new Select(montainBaseFct, midLandFinal, terrainTypeFct, 0.45, 0.05);
             INoise midland_plain_select = new Select(mountain_midland_select, plainFinal, terrainTypeFct, 0.65, 0.10);
 
+            //INoise landScapeCache = new Cache<INoise>(midland_plain_select);
+
+            //UnderGround Tunnels and Caves
+            //INoise undergroundFct = new UnderGround(_rnd.Next(), landScapeCache).GetLandFormFct();
+
+            INoise result = new Select(0, 1, midland_plain_select, 0.5);
+
             return midland_plain_select;
+        }
+
+        public INoise CreateUnderGroundFct(INoise landScape)
+        {
+            //UnderGround Tunnels and Caves
+            INoise undergroundFct = new UnderGround(_rnd.Next(), landScape).GetLandFormFct();
+
+            return undergroundFct;
         }
 
         #endregion
