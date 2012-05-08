@@ -8,6 +8,7 @@ using S33M3CoreComponents.Noise.Various;
 using S33M3CoreComponents.Noise.Fractal;
 using S33M3CoreComponents.Noise.ResultModifier;
 using S33M3CoreComponents.Noise.DomainModifier;
+using S33M3CoreComponents.Noise.ResultCombiner;
 
 namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 {
@@ -41,7 +42,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 
         #region Public Methods
         public INoise GetLandFormFct()
-        {       
+        {
             //REM
             //The various parameters value here are scaled for a gradient being feed by 0 to 1 input value.
             //When this gradient is configured to recevied other value range then some parameters needs to be rescaled
@@ -49,16 +50,17 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //This way no matter the the Gradient Range, the values impacting it will be rescaled.
 
             //Create the Lowland base fractal with range from 0 to 1 values
-            INoise montain_shape_fractal = new FractalBillow(new Simplex(_seed), 4, 1, enuBaseNoiseRange.ZeroToOne);
+            INoise plain_shape_fractal = new FractalFbm(new Simplex(_seed), 4, 3.5, enuBaseNoiseRange.ZeroToOne);
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
-            INoise montain_scale = new ScaleOffset(montain_shape_fractal, 0.6 * _groundGradientTyped.AdjustY, -0.30 * _groundGradientTyped.AdjustY); 
-            //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
-            INoise montain_y_scale = new ScaleDomain(montain_scale, 1.0, 0.0, 1.0);
+            INoise adjustedGradient = new ScaleOffset(_groundGradient, 1.2, 0);
 
-            //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
-            INoise montain_terrain = new Turbulence(_groundGradient, 0, montain_y_scale);
+            Combiner noiseCombiner = new Combiner(Combiner.CombinerType.Add);
+            noiseCombiner.Noises.Add(plain_shape_fractal);
+            noiseCombiner.Noises.Add(adjustedGradient);
 
-            return montain_terrain;
+            INoise rescaledCombinedNoise = new ScaleOffset(noiseCombiner, 0.5, 0);
+
+            return rescaledCombinedNoise;
         }
         #endregion
 
