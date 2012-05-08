@@ -43,6 +43,8 @@
             this.backward = new System.Windows.Forms.Button();
             this.withThresHold = new System.Windows.Forms.CheckBox();
             this.thresholdValue = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -129,7 +131,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(284, 34);
+            this.label3.Location = new System.Drawing.Point(283, 54);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(140, 13);
             this.label3.TabIndex = 16;
@@ -138,7 +140,7 @@
             // lblGenerationTime
             // 
             this.lblGenerationTime.AutoSize = true;
-            this.lblGenerationTime.Location = new System.Drawing.Point(430, 34);
+            this.lblGenerationTime.Location = new System.Drawing.Point(429, 54);
             this.lblGenerationTime.Name = "lblGenerationTime";
             this.lblGenerationTime.Size = new System.Drawing.Size(13, 13);
             this.lblGenerationTime.TabIndex = 17;
@@ -184,11 +186,31 @@
             this.thresholdValue.TabIndex = 21;
             this.thresholdValue.Text = "0,5";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(430, 34);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(13, 13);
+            this.label4.TabIndex = 23;
+            this.label4.Text = "0";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(284, 34);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(144, 13);
+            this.label5.TabIndex = 22;
+            this.label5.Text = "Noise Initialisation time (ms) : ";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(996, 513);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.thresholdValue);
             this.Controls.Add(this.withThresHold);
             this.Controls.Add(this.backward);
@@ -229,5 +251,7 @@
         private System.Windows.Forms.Button backward;
         private System.Windows.Forms.CheckBox withThresHold;
         private System.Windows.Forms.TextBox thresholdValue;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
     }
 }

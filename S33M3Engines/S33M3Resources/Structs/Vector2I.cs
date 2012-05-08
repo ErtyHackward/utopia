@@ -87,15 +87,15 @@ namespace S33M3Resources.Structs
             return string.Format("X = {0},Y = {1}", X, Y);
         }
 
-        /// <summary>
-        /// Compute a the ID with Block Unit
-        /// </summary>
-        /// <returns></returns>
-        public long GetID()
-        {
-            //return (((Int64)(X * Utopia.Shared.Chunks.AbstractChunk.ChunkSize.X) << 32) + (Y * Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Z));
-            return X + Y * 4294967296;
-        }
+        ///// <summary>
+        ///// Compute a the ID with Block Unit
+        ///// </summary>
+        ///// <returns></returns>
+        //public long GetID()
+        //{
+        //    return (((Int64)(X * Utopia.Shared.Chunks.AbstractChunk.ChunkSize.X) << 32) + (Y * Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Z));
+        //    //return X + Y * 4294967296;
+        //}
 
         public static implicit operator Vector2(Vector2I pos)
         {

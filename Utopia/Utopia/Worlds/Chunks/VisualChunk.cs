@@ -93,6 +93,11 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
+        public static Int64 ComputeChunkId(int PosiX, int PosiY)
+        {
+            return (((Int64)(PosiX * Utopia.Shared.Chunks.AbstractChunk.ChunkSize.X) << 32) + (PosiY * Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Z));
+        }
+
         /// <summary>
         /// Gets or sets the value of chunk opaque. Allows to create slowly appearing effect
         /// </summary>
@@ -435,7 +440,7 @@ namespace Utopia.Worlds.Chunks
 
             ChunkPosition = new Vector2I() { X = _cubeRange.Position.X / AbstractChunk.ChunkSize.X, Y = _cubeRange.Position.Z / AbstractChunk.ChunkSize.Z };
 
-            ChunkID = ChunkPosition.GetID();
+            ChunkID = VisualChunk.ComputeChunkId(ChunkPosition.X, ChunkPosition.Y);
 
             ChunkCenter = new Vector3D(_cubeRange.Position.X + (_cubeRange.Max.X - _cubeRange.Position.X) / 2.0,
                            _cubeRange.Position.Y + (_cubeRange.Max.Y - _cubeRange.Position.Y) / 2.0,

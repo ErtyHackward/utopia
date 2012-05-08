@@ -50,15 +50,19 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //This way no matter the the Gradient Range, the values impacting it will be rescaled.
 
             //Create the Lowland base fractal with range from 0 to 1 values
-            INoise plain_shape_fractal = new FractalFbm(new Simplex(_seed), 4, 3.5, enuBaseNoiseRange.ZeroToOne);
+            INoise montain_shape_fractal = new FractalFbm(new Simplex(_seed), 4, 3.5, enuBaseNoiseRange.ZeroToOne);
+            INoise montain_shape_Ajusted = new ScaleOffset(montain_shape_fractal, 0.85, -0.02);
+
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
-            INoise adjustedGradient = new ScaleOffset(_groundGradient, 1.2, 0);
+            //Enforce gradient to have a solid underground
+            INoise _groundGradientAjusted = new Bias(_groundGradient, 0.55);
+            INoise adjustedGradient = new ScaleOffset(_groundGradientAjusted, 1.4, 0);
 
             Combiner noiseCombiner = new Combiner(Combiner.CombinerType.Add);
-            noiseCombiner.Noises.Add(plain_shape_fractal);
+            noiseCombiner.Noises.Add(montain_shape_Ajusted);
             noiseCombiner.Noises.Add(adjustedGradient);
 
-            INoise rescaledCombinedNoise = new ScaleOffset(noiseCombiner, 0.5, 0);
+            INoise rescaledCombinedNoise = new ScaleOffset(noiseCombiner, 0.45, 0);
 
             return rescaledCombinedNoise;
         }
