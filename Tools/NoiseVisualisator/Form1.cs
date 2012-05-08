@@ -59,6 +59,7 @@ namespace NoiseVisualisator
         Random _rnd;
         private INoise NoiseComposition(bool is2DRenderRequest)
         {
+
             UtopiaProcessor processor = new UtopiaProcessor(new Utopia.Shared.World.WorldParameters() { SeedName = "test", SeaLevel =64, WorldName = "test" });
 
             Gradient ground_gradient;

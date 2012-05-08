@@ -157,6 +157,13 @@ namespace Utopia.Shared.World.Processors.Utopia
                             continue;
                         }
 
+                        //Be sure that the Highest Y level is Air
+                        if (Y == 128)
+                        {
+                            ChunkCubes[index] = CubeId.Air;
+                            continue;
+                        }
+
 
                         if (cubeId == CubeId.Stone)
                         {
@@ -210,23 +217,44 @@ namespace Utopia.Shared.World.Processors.Utopia
         public INoise CreateLandFormFct(Gradient ground_gradient)
         {
             //Get Basic landscape forms
-            ITerrainGenerator plain = new Plain(_rnd.Next(), ground_gradient);
-            ITerrainGenerator midland = new Midland(_rnd.Next(), ground_gradient);
-            ITerrainGenerator montain = new Montain(_rnd.Next(), ground_gradient);
+            ITerrainGenerator plainBase = new Plain(_rnd.Next(), ground_gradient);
+            ITerrainGenerator midlandBase = new Midland(_rnd.Next(), ground_gradient);
+            ITerrainGenerator montainBase = new Montain(_rnd.Next(), ground_gradient);
+
+            //Anomalies landscape forms
+            ITerrainGenerator plateau = new Plateau(_rnd.Next(), ground_gradient); //Plain anomaly
+
+            //Terrain Type controler
             ITerrainGenerator terrainType = new TerrainType(_rnd.Next());
 
-            INoise plainFct = plain.GetLandFormFct();
-            INoise midlandFct = midland.GetLandFormFct();
-            INoise montainFct = montain.GetLandFormFct();
-            INoise terrainTypeFct = terrainType.GetLandFormFct();
+            //Anomalies Controler
+            ITerrainGenerator anomaliesZone = new AnomaliesZones(_rnd.Next());
+            ITerrainGenerator anomaliesType = new AnomaliesType(_rnd.Next());
 
-            //Console.WriteLine(NoiseAnalyse.Analyse((INoise2) terrainTypeFct, 1000000));
+            
+            INoise plainBaseFct = plainBase.GetLandFormFct();
+            INoise midlandBaseFct = midlandBase.GetLandFormFct();
+            INoise montainBaseFct = montainBase.GetLandFormFct();
+
+            INoise plateauFct = plateau.GetLandFormFct();
+
+            INoise terrainTypeFct = terrainType.GetLandFormFct();
+            
+            INoise anomaliesZoneFct = anomaliesZone.GetLandFormFct();
+            INoise anomaliesTypeFct = anomaliesType.GetLandFormFct();
+
+            //Plain landscape generation fct with anomalies
+            INoise plainWithAnomalies = plateauFct; 
+            INoise plainFinal = new Select(plainBaseFct, plainWithAnomalies, anomaliesZoneFct, 0.55, 0.0);
+
+            //midland landscape generation fct with anomalies
+            INoise midLandFinal = midlandBaseFct;
 
             //0.0 => 0.3 Montains
             //0.3 => 0.6 MidLand
             //0.6 => 1 Plain
-            INoise mountain_midland_select = new Select(montainFct, midlandFct, terrainTypeFct, 0.30, 0.05);
-            INoise midland_plain_select = new Select(mountain_midland_select, plainFct, terrainTypeFct, 0.55, 0.15);
+            INoise mountain_midland_select = new Select(montainBaseFct, midLandFinal, terrainTypeFct, 0.45, 0.05);
+            INoise midland_plain_select = new Select(mountain_midland_select, plainFinal, terrainTypeFct, 0.65, 0.10);
 
             return midland_plain_select;
         }
