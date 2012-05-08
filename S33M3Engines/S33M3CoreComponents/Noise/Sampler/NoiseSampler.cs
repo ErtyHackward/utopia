@@ -26,10 +26,11 @@ namespace S33M3CoreComponents.Noise.Sampler
         /// <param name="ToZ">High Z sampling Range</param>
         /// <param name="StepsCountZ">Nbr of step sampled at equal distance from FromZ to ToZ</param>
         /// <returns>Signle dimension array with the noise result</returns>
-        public static double[] NoiseSampling(INoise3 noiseFct, Vector3I NoiseSampledSteps,
+        public static double[,] NoiseSampling(Vector3I NoiseSampledSteps,
                                             double FromX, double ToX, int StepsCountX,
                                             double FromY, double ToY, int StepsCountY,
-                                            double FromZ, double ToZ, int StepsCountZ)
+                                            double FromZ, double ToZ, int StepsCountZ,
+                                            params INoise3[] noiseFcts)
         {
             bool needInterpolation = false;
 
@@ -55,7 +56,8 @@ namespace S33M3CoreComponents.Noise.Sampler
                 sampledStepCountZ++;// +1 If in Lerping Mode
             }
 
-            double[] result = new double[(sampledStepCountX) * (sampledStepCountY) * (sampledStepCountZ)];
+            int NbrNoisesToParse = noiseFcts.Length;
+            double[,] result = new double[(sampledStepCountX) * (sampledStepCountY) * (sampledStepCountZ), NbrNoisesToParse];
 
             double samplingStepDeltaX = (ToX - FromX) / (sampledStepCountX - 1);
             double samplingStepDeltaY = (ToY - FromY) / (sampledStepCountY - 1);
@@ -74,7 +76,11 @@ namespace S33M3CoreComponents.Noise.Sampler
                     valY = FromY;
                     for (int Y = 0; Y < sampledStepCountY; Y++)
                     {
-                        result[generatedNoise] = noiseFct.Get(valX, valY, valZ);
+                        for (int noiseId = 0; noiseId < NbrNoisesToParse; noiseId++)
+                        {
+                            result[generatedNoise, noiseId] = noiseFcts[noiseId].Get(valX, valY, valZ);
+                        }
+
                         generatedNoise++;
                         valY += samplingStepDeltaY;
                     }
@@ -92,12 +98,14 @@ namespace S33M3CoreComponents.Noise.Sampler
         }
 
 
-        private static double[] InterpolateResult(double[] dataNoises,
+        private static double[,] InterpolateResult(double[,] dataNoises,
                                                   Vector3I NoiseSampledSteps,
                                                   Vector3I StepsCount)
         {
+            int nbrNoises = dataNoises.GetLength(1);
+
             //Create a new array with expended size
-            double[] result = new double[StepsCount.X * StepsCount.Y * StepsCount.Z];
+            double[,] result = new double[StepsCount.X * StepsCount.Y * StepsCount.Z, nbrNoises];
 
             int dataNoisesXSize = NoiseSampledSteps.X + 1;
             int dataNoisesYSize = NoiseSampledSteps.Y + 1;
@@ -110,55 +118,60 @@ namespace S33M3CoreComponents.Noise.Sampler
             //Loop against the generated noise values
             int noiseGeneratedResultIndex = 0;
 
-            for (int SampledpointX = 0; SampledpointX < NoiseSampledSteps.X; SampledpointX++)
+            for (int noiseId = 0; noiseId < nbrNoises; noiseId++)
             {
-                for (int SampledpointZ = 0; SampledpointZ < NoiseSampledSteps.Z; SampledpointZ++)
+
+                for (int SampledpointX = 0; SampledpointX < NoiseSampledSteps.X; SampledpointX++)
                 {
-                    for (int SampledpointY = 0; SampledpointY < NoiseSampledSteps.Y; SampledpointY++)
+                    for (int SampledpointZ = 0; SampledpointZ < NoiseSampledSteps.Z; SampledpointZ++)
                     {
-                        double NoiseX0Z0Y0 = dataNoises[((SampledpointX + 0) * dataNoisesZSize + (SampledpointZ + 0)) * dataNoisesYSize + (SampledpointY + 0)];
-                        double NoiseX0Z1Y0 = dataNoises[((SampledpointX + 0) * dataNoisesZSize + (SampledpointZ + 1)) * dataNoisesYSize + (SampledpointY + 0)];
-                        double NoiseX1Z0Y0 = dataNoises[((SampledpointX + 1) * dataNoisesZSize + (SampledpointZ + 0)) * dataNoisesYSize + (SampledpointY + 0)];
-                        double NoiseX1Z1Y0 = dataNoises[((SampledpointX + 1) * dataNoisesZSize + (SampledpointZ + 1)) * dataNoisesYSize + (SampledpointY + 0)];
-
-                        double DeltaX0Z0 = (dataNoises[((SampledpointX + 0) * dataNoisesZSize + (SampledpointZ + 0)) * dataNoisesYSize + (SampledpointY + 1)] - NoiseX0Z0Y0) / YPointLerpedCount; // 128 / 16 = 8 points need to be lerped 4 times !
-                        double DeltaX0Z1 = (dataNoises[((SampledpointX + 0) * dataNoisesZSize + (SampledpointZ + 1)) * dataNoisesYSize + (SampledpointY + 1)] - NoiseX0Z1Y0) / YPointLerpedCount; // 128 / 16 = 8 points need to be lerped 4 times !
-                        double DeltaX1Z0 = (dataNoises[((SampledpointX + 1) * dataNoisesZSize + (SampledpointZ + 0)) * dataNoisesYSize + (SampledpointY + 1)] - NoiseX1Z0Y0) / YPointLerpedCount; // 128 / 16 = 8 points need to be lerped 4 times !
-                        double DeltaX1Z1 = (dataNoises[((SampledpointX + 1) * dataNoisesZSize + (SampledpointZ + 1)) * dataNoisesYSize + (SampledpointY + 1)] - NoiseX1Z1Y0) / YPointLerpedCount; // 128 / 16 = 8 points need to be lerped 4 times !
-
-                        for (int Y = 0; Y < YPointLerpedCount; Y++)
+                        for (int SampledpointY = 0; SampledpointY < NoiseSampledSteps.Y; SampledpointY++)
                         {
-                            double NoiseZ0 = NoiseX0Z0Y0;
-                            double NoiseZ1 = NoiseX1Z0Y0;
-                            double DeltaZ0 = (NoiseX0Z1Y0 - NoiseX0Z0Y0) / ZPointLerpedCount; // Chunk X length = 16 / 4 = 4 points needs to be lerped Twice!
-                            double DeltaZ1 = (NoiseX1Z1Y0 - NoiseX1Z0Y0) / ZPointLerpedCount;
-                            int nY = (SampledpointY * YPointLerpedCount) + Y;
+                            double NoiseX0Z0Y0 = dataNoises[((SampledpointX + 0) * dataNoisesZSize + (SampledpointZ + 0)) * dataNoisesYSize + (SampledpointY + 0), noiseId];
+                            double NoiseX0Z1Y0 = dataNoises[((SampledpointX + 0) * dataNoisesZSize + (SampledpointZ + 1)) * dataNoisesYSize + (SampledpointY + 0), noiseId];
+                            double NoiseX1Z0Y0 = dataNoises[((SampledpointX + 1) * dataNoisesZSize + (SampledpointZ + 0)) * dataNoisesYSize + (SampledpointY + 0), noiseId];
+                            double NoiseX1Z1Y0 = dataNoises[((SampledpointX + 1) * dataNoisesZSize + (SampledpointZ + 1)) * dataNoisesYSize + (SampledpointY + 0), noiseId];
 
-                            for (int Z = 0; Z < ZPointLerpedCount; Z++)
+                            double DeltaX0Z0 = (dataNoises[((SampledpointX + 0) * dataNoisesZSize + (SampledpointZ + 0)) * dataNoisesYSize + (SampledpointY + 1), noiseId] - NoiseX0Z0Y0) / YPointLerpedCount; // 128 / 16 = 8 points need to be lerped 4 times !
+                            double DeltaX0Z1 = (dataNoises[((SampledpointX + 0) * dataNoisesZSize + (SampledpointZ + 1)) * dataNoisesYSize + (SampledpointY + 1), noiseId] - NoiseX0Z1Y0) / YPointLerpedCount; // 128 / 16 = 8 points need to be lerped 4 times !
+                            double DeltaX1Z0 = (dataNoises[((SampledpointX + 1) * dataNoisesZSize + (SampledpointZ + 0)) * dataNoisesYSize + (SampledpointY + 1), noiseId] - NoiseX1Z0Y0) / YPointLerpedCount; // 128 / 16 = 8 points need to be lerped 4 times !
+                            double DeltaX1Z1 = (dataNoises[((SampledpointX + 1) * dataNoisesZSize + (SampledpointZ + 1)) * dataNoisesYSize + (SampledpointY + 1), noiseId] - NoiseX1Z1Y0) / YPointLerpedCount; // 128 / 16 = 8 points need to be lerped 4 times !
+
+                            for (int Y = 0; Y < YPointLerpedCount; Y++)
                             {
-                                double Noise3 = NoiseZ0;
-                                double DeltaX = (NoiseZ1 - NoiseZ0) / XPointLerpedCount; // Chunk Z length = 16 / 4 = 4 points needs to be lerped Once!
-                                int nZ = (SampledpointZ * ZPointLerpedCount) + Z;
-                                for (int X = 0; X < XPointLerpedCount; X++)
+                                double NoiseZ0 = NoiseX0Z0Y0;
+                                double NoiseZ1 = NoiseX1Z0Y0;
+                                double DeltaZ0 = (NoiseX0Z1Y0 - NoiseX0Z0Y0) / ZPointLerpedCount; // Chunk X length = 16 / 4 = 4 points needs to be lerped Twice!
+                                double DeltaZ1 = (NoiseX1Z1Y0 - NoiseX1Z0Y0) / ZPointLerpedCount;
+                                int nY = (SampledpointY * YPointLerpedCount) + Y;
+
+                                for (int Z = 0; Z < ZPointLerpedCount; Z++)
                                 {
-                                    int nX = (SampledpointX * XPointLerpedCount) + X;
-                                    result[nX * StepsCount.Z * StepsCount.Y + nZ * StepsCount.Y + nY] = Noise3;
+                                    double Noise3 = NoiseZ0;
+                                    double DeltaX = (NoiseZ1 - NoiseZ0) / XPointLerpedCount; // Chunk Z length = 16 / 4 = 4 points needs to be lerped Once!
+                                    int nZ = (SampledpointZ * ZPointLerpedCount) + Z;
+                                    for (int X = 0; X < XPointLerpedCount; X++)
+                                    {
+                                        int nX = (SampledpointX * XPointLerpedCount) + X;
+                                        result[nX * StepsCount.Z * StepsCount.Y + nZ * StepsCount.Y + nY, noiseId] = Noise3;
 
-                                    noiseGeneratedResultIndex++;
+                                        noiseGeneratedResultIndex++;
 
-                                    Noise3 += DeltaX;
+                                        Noise3 += DeltaX;
+                                    }
+                                    NoiseZ0 += DeltaZ0;
+                                    NoiseZ1 += DeltaZ1;
                                 }
-                                NoiseZ0 += DeltaZ0;
-                                NoiseZ1 += DeltaZ1;
+                                NoiseX0Z0Y0 += DeltaX0Z0;
+                                NoiseX0Z1Y0 += DeltaX0Z1;
+                                NoiseX1Z0Y0 += DeltaX1Z0;
+                                NoiseX1Z1Y0 += DeltaX1Z1;
                             }
-                            NoiseX0Z0Y0 += DeltaX0Z0;
-                            NoiseX0Z1Y0 += DeltaX0Z1;
-                            NoiseX1Z0Y0 += DeltaX1Z0;
-                            NoiseX1Z1Y0 += DeltaX1Z1;
                         }
                     }
                 }
             }
+
             return result;
         }
 
@@ -177,9 +190,10 @@ namespace S33M3CoreComponents.Noise.Sampler
         /// <param name="ToY">High Y sampling Range</param>
         /// <param name="StepsCountY">Nbr of step sampled at equal distance from FromY to ToY</param>
         /// <returns>Signle dimension array with the noise result</returns>
-        public static double[] NoiseSampling(INoise2 noiseFct, Vector2I NoiseSampledSteps,
+        public static double[,] NoiseSampling(Vector2I NoiseSampledSteps,
                                             double FromX, double ToX, int StepsCountX,
-                                            double FromY, double ToY, int StepsCountY)
+                                            double FromY, double ToY, int StepsCountY,
+                                            params INoise2[] noiseFcts)
         {
             bool needInterpolation = false;
 
@@ -201,7 +215,8 @@ namespace S33M3CoreComponents.Noise.Sampler
                 sampledStepCountY++;// +1 If in Lerping Mode
             }
 
-            double[] result = new double[(StepsCountX) * (StepsCountY)];
+            int NbrNoisesToParse = noiseFcts.Length;
+            double[,] result = new double[(StepsCountX) * (StepsCountY), NbrNoisesToParse];
 
             double samplingStepDeltaX = (ToX - FromX) / (sampledStepCountX - 1);
             double samplingStepDeltaY = (ToY - FromY) / (sampledStepCountY - 1);
@@ -215,7 +230,10 @@ namespace S33M3CoreComponents.Noise.Sampler
                 valY = FromY;
                 for (int Y = 0; Y < sampledStepCountY; Y++)
                 {
-                    result[generatedNoise] = noiseFct.Get(valX, valY);
+                    for (int noiseId = 0; noiseId < NbrNoisesToParse; noiseId++)
+                    {
+                        result[generatedNoise, noiseId] = noiseFcts[noiseId].Get(valX, valY);
+                    }
                     generatedNoise++;
                     valY += samplingStepDeltaY;
                 }
@@ -231,12 +249,14 @@ namespace S33M3CoreComponents.Noise.Sampler
         }
 
 
-        private static double[] InterpolateResult(double[] dataNoises,
+        private static double[,] InterpolateResult(double[,] dataNoises,
                                                   Vector2I NoiseSampledSteps,
                                                   Vector2I StepsCount)
         {
+            int nbrNoises = dataNoises.GetLength(1);
+
             //Create a new array with expended size
-            double[] result = new double[StepsCount.X * StepsCount.Y];
+            double[,] result = new double[StepsCount.X * StepsCount.Y, nbrNoises];
 
             int dataNoisesXSize = NoiseSampledSteps.X + 1;
             int dataNoisesYSize = NoiseSampledSteps.Y + 1;
@@ -244,37 +264,41 @@ namespace S33M3CoreComponents.Noise.Sampler
             int XPointLerpedCount = StepsCount.X / NoiseSampledSteps.X;
             int YPointLerpedCount = StepsCount.Y / NoiseSampledSteps.Y;
 
-            for (int SampledpointX = 0; SampledpointX < NoiseSampledSteps.X; SampledpointX++)
+            for (int noiseId = 0; noiseId < nbrNoises; noiseId++)
             {
-                for (int SampledpointY = 0; SampledpointY < NoiseSampledSteps.Y; SampledpointY++)
+                for (int SampledpointX = 0; SampledpointX < NoiseSampledSteps.X; SampledpointX++)
                 {
-                    double NoiseZ0 = dataNoises[(SampledpointX + 0) * dataNoisesYSize + SampledpointY];
-                    double NoiseZ1 = dataNoises[(SampledpointX + 1) * dataNoisesYSize + SampledpointY];
-
-                    double DeltaZ0 = (dataNoises[(SampledpointX + 0) * dataNoisesYSize + (SampledpointY + 1)] - NoiseZ0) / YPointLerpedCount;
-                    double DeltaZ1 = (dataNoises[(SampledpointX + 1) * dataNoisesYSize + (SampledpointY + 1)] - NoiseZ1) / YPointLerpedCount;
-
-                    for (int Y = 0; Y < YPointLerpedCount; Y++)
+                    for (int SampledpointY = 0; SampledpointY < NoiseSampledSteps.Y; SampledpointY++)
                     {
-                        double Noise = NoiseZ0;
-                        double DeltaX = (NoiseZ1 - NoiseZ0) / XPointLerpedCount; // Chunk Z length = 16 / 4 = 4 points needs to be lerped Once!
+                        double NoiseZ0 = dataNoises[(SampledpointX + 0) * dataNoisesYSize + SampledpointY, noiseId];
+                        double NoiseZ1 = dataNoises[(SampledpointX + 1) * dataNoisesYSize + SampledpointY, noiseId];
 
-                        int nY = (SampledpointY * YPointLerpedCount) + Y;
+                        double DeltaZ0 = (dataNoises[(SampledpointX + 0) * dataNoisesYSize + (SampledpointY + 1), noiseId] - NoiseZ0) / YPointLerpedCount;
+                        double DeltaZ1 = (dataNoises[(SampledpointX + 1) * dataNoisesYSize + (SampledpointY + 1), noiseId] - NoiseZ1) / YPointLerpedCount;
 
-                        for (int X = 0; X < XPointLerpedCount; X++)
+                        for (int Y = 0; Y < YPointLerpedCount; Y++)
                         {
-                            int nX = (SampledpointX * XPointLerpedCount) + X;
+                            double Noise = NoiseZ0;
+                            double DeltaX = (NoiseZ1 - NoiseZ0) / XPointLerpedCount; // Chunk Z length = 16 / 4 = 4 points needs to be lerped Once!
 
-                            result[nX * StepsCount.Y + nY] = Noise;
+                            int nY = (SampledpointY * YPointLerpedCount) + Y;
 
-                            Noise += DeltaX;
+                            for (int X = 0; X < XPointLerpedCount; X++)
+                            {
+                                int nX = (SampledpointX * XPointLerpedCount) + X;
+
+                                result[nX * StepsCount.Y + nY, noiseId] = Noise;
+
+                                Noise += DeltaX;
+                            }
+
+                            NoiseZ0 += DeltaZ0;
+                            NoiseZ1 += DeltaZ1;
                         }
-
-                        NoiseZ0 += DeltaZ0;
-                        NoiseZ1 += DeltaZ1;
                     }
                 }
             }
+
             return result;
         }
     }

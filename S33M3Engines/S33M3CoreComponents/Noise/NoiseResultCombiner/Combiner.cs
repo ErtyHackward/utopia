@@ -131,7 +131,7 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
         #region Multiply
         private double MultiplyGet(double x, double y)
         {
-            double result = 0.0;
+            double result = 1.0;
             for (int i = 0; i < _noises.Count; i++)
             {
                 result *= _noises[i].Get(x, y);
@@ -141,7 +141,7 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
 
         private double MultiplyGet(double x, double y, double z)
         {
-            double result = 0.0;
+            double result = 1.0;
             for (int i = 0; i < _noises.Count; i++)
             {
                 result *= _noises[i].Get(x, y, z);
@@ -151,7 +151,7 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
 
         private double MultiplyGet(double x, double y, double z, double w)
         {
-            double result = 0.0;
+            double result = 1.0;
             for (int i = 0; i < _noises.Count; i++)
             {
                 result *= _noises[i].Get(x, y, z, w);

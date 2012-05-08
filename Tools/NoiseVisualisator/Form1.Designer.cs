@@ -42,6 +42,7 @@
             this.forward = new System.Windows.Forms.Button();
             this.backward = new System.Windows.Forms.Button();
             this.withThresHold = new System.Windows.Forms.CheckBox();
+            this.thresholdValue = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -170,16 +171,25 @@
             this.withThresHold.CheckState = System.Windows.Forms.CheckState.Checked;
             this.withThresHold.Location = new System.Drawing.Point(287, 12);
             this.withThresHold.Name = "withThresHold";
-            this.withThresHold.Size = new System.Drawing.Size(156, 17);
+            this.withThresHold.Size = new System.Drawing.Size(144, 17);
             this.withThresHold.TabIndex = 20;
-            this.withThresHold.Text = "2D withThresHoldValue 0.5";
+            this.withThresHold.Text = "2D withThresHoldValue :";
             this.withThresHold.UseVisualStyleBackColor = true;
+            // 
+            // thresholdValue
+            // 
+            this.thresholdValue.Location = new System.Drawing.Point(433, 12);
+            this.thresholdValue.Name = "thresholdValue";
+            this.thresholdValue.Size = new System.Drawing.Size(100, 20);
+            this.thresholdValue.TabIndex = 21;
+            this.thresholdValue.Text = "0,5";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(996, 513);
+            this.Controls.Add(this.thresholdValue);
             this.Controls.Add(this.withThresHold);
             this.Controls.Add(this.backward);
             this.Controls.Add(this.forward);
@@ -218,5 +228,6 @@
         private System.Windows.Forms.Button forward;
         private System.Windows.Forms.Button backward;
         private System.Windows.Forms.CheckBox withThresHold;
+        private System.Windows.Forms.TextBox thresholdValue;
     }
 }

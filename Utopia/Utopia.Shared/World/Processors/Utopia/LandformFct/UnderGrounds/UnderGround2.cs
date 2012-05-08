@@ -13,7 +13,7 @@ using S33M3CoreComponents.Noise.ResultCombiner;
 
 namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 {
-    public class UnderGround : ITerrainGenerator
+    public class UnderGround2 : ITerrainGenerator
     {
         #region Private Variables
         private INoise _groundGradient;
@@ -24,17 +24,17 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
         #region Public Properties
         #endregion
 
-        public UnderGround(int seed, INoise groundGradient)
-            : this(seed, groundGradient, null)
+        public UnderGround2(int seed, Gradient groundGradient)
+            : this(seed, groundGradient, groundGradient)
         {
         }
 
-        public UnderGround(int seed, Cache<Gradient> groundGradient)
+        public UnderGround2(int seed, Cache<Gradient> groundGradient)
             : this(seed, groundGradient, groundGradient.Source)
         {
         }
 
-        private UnderGround(int seed, INoise groundGradient, Gradient groundGradientTyped)
+        private UnderGround2(int seed, INoise groundGradient, Gradient groundGradientTyped)
         {
             _groundGradient = groundGradient;
             _groundGradientTyped = groundGradientTyped;
@@ -51,32 +51,27 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //This way no matter the the Gradient Range, the values impacting it will be rescaled.
 
             //Create the Lowland base fractal with range from 0 to 1 values
-            INoise underground_fractal1 = new FractalRidgedMulti(new Simplex(_seed), 1, 2);
-            INoise underground_fractal2 = new FractalRidgedMulti(new Simplex(_seed + 12395), 1, 2);
+            INoise shape1_fractal = new FractalRidgedMulti(new Perlin(_seed), 1, 2);
 
-            INoise inverted_fractal1 = new Invert(underground_fractal1);
-            INoise inverted_fractal2 = new Invert(underground_fractal2);
+            INoise shape1_base = new Select(0, 1, shape1_fractal, 0.7, 0.0);
 
-            Combiner fractal = new Combiner(Combiner.CombinerType.Multiply);
-            fractal.Noises.Add(inverted_fractal1);
-            fractal.Noises.Add(inverted_fractal2);
+            INoise shape2_fractal = new FractalRidgedMulti(new Perlin(_seed + 12345), 1, 2);
 
-            INoise gradientBias = new Bias(_groundGradient, 0.25);
+            INoise shape2_base = new Select(0, 1, shape2_fractal, 0.7, 0.0);
 
-            Combiner underground_Attenuated = new Combiner(Combiner.CombinerType.Multiply);
-            underground_Attenuated.Noises.Add(fractal);
-            underground_Attenuated.Noises.Add(gradientBias);
+            Combiner ShapeMult = new Combiner(Combiner.CombinerType.Multiply);
+            ShapeMult.Noises.Add(shape1_base);
+            ShapeMult.Noises.Add(shape2_base);
 
-            INoise underground_select = new Select(0, 1, underground_Attenuated, -0.4);
+            INoise turbX_fractal = new FractalFbm(new Perlin(_seed + 1), 3, 3);
+            INoise turbY_fractal = new FractalFbm(new Perlin(_seed + 2), 3, 3);
+            INoise turbZ_fractal = new FractalFbm(new Perlin(_seed + 3), 3, 3);
 
-            INoise fract_perturb = new FractalFbm(new Simplex(_seed + 12), 6, 3);
+            INoise CaveTurb = new Turbulence(ShapeMult, turbX_fractal, turbY_fractal, turbZ_fractal);
 
-            INoise scaled_perturb = new ScaleOffset(fract_perturb, 0.2, 0);
+            INoise invertedCave = new ScaleOffset(CaveTurb, -1, 1);
 
-            INoise perturbed_fractal = new Turbulence(underground_select, scaled_perturb, 0);
-
-
-            return perturbed_fractal;
+            return invertedCave;
         }
         #endregion
 
