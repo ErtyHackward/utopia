@@ -11,7 +11,7 @@ using S33M3CoreComponents.Noise.DomainModifier;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
-    public class AnomaliesType : ITerrainGenerator
+    public class SubTypeZones : ITerrainGenerator
     {
         #region Private Variables
         private int _seed;
@@ -20,7 +20,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Public Properties
         #endregion
 
-        public AnomaliesType(int seed)
+        public SubTypeZones(int seed)
         {
             _seed = seed;
         }
@@ -28,10 +28,10 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Public Methods
         public INoise GetLandFormFct()
         {
-            INoise AnomaliesTypeFractal = new FractalFbm(new Simplex(_seed), 3, 2, enuBaseNoiseRange.ZeroToOne);
-            INoise AnomaliesTypeFractal_y_scale = new ScaleDomain(AnomaliesTypeFractal, 1.0, 0.0, 1.0);
+            INoise AnomaliesZonesFractal = new FractalFbm(new Perlin(_seed), 3, 2.5, enuBaseNoiseRange.ZeroToOne);
+            INoise AnomaliesZonesFractal_y_scale = new ScaleDomain(AnomaliesZonesFractal, 1.0, 0.0, 1.0);
 
-            return AnomaliesTypeFractal_y_scale;
+            return AnomaliesZonesFractal_y_scale;
         }
         #endregion
 

@@ -28,7 +28,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Public Methods
         public INoise GetLandFormFct()
         {
-            INoise terraintypeFractal = new FractalFbm(new Simplex(_seed), 3, 1, enuBaseNoiseRange.ZeroToOne);
+            INoise terraintypeFractal = new FractalHybridMulti(new Perlin(_seed), 2, 1.5, enuBaseNoiseRange.ZeroToOne);
             INoise terraintypeFractal_y_scale = new ScaleDomain(terraintypeFractal, 1.0, 0.0, 1.0);
 
             return terraintypeFractal_y_scale;

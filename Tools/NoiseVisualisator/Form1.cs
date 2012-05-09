@@ -74,7 +74,7 @@ namespace NoiseVisualisator
                 ground_gradient = new Gradient(0, 0, 0.42, 0);
             }
 
-            UnderGround2 test = new UnderGround2(123456, ground_gradient);
+            var test = new TerrainType(123456);
 
             return test.GetLandFormFct();
 

@@ -8,11 +8,10 @@ using S33M3CoreComponents.Noise.Generator;
 using S33M3CoreComponents.Noise.ResultModifier;
 using S33M3CoreComponents.Noise.DomainModifier;
 using S33M3CoreComponents.Noise.Various;
-using S33M3CoreComponents.Noise.ResultCombiner;
 
 namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 {
-    public class Plateau : ITerrainGenerator
+    public class Flat : ITerrainGenerator
     {
         #region Private Variables
         private INoise _groundGradient;
@@ -23,17 +22,17 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
         #region Public Properties
         #endregion
 
-        public Plateau(int seed, Gradient groundGradient)
+        public Flat(int seed, Gradient groundGradient)
             : this(seed, groundGradient, groundGradient)
         {
         }
 
-        public Plateau(int seed, Cache<Gradient> groundGradient)
+        public Flat(int seed, Cache<Gradient> groundGradient)
             : this(seed, groundGradient, groundGradient.Source)
         {
         }
 
-        private Plateau(int seed, INoise groundGradient, Gradient groundGradientTyped)
+        private Flat(int seed, INoise groundGradient, Gradient groundGradientTyped)
         {
             _groundGradient = groundGradient;
             _groundGradientTyped = groundGradientTyped;
@@ -50,19 +49,16 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //This way no matter the the Gradient Range, the values impacting it will be rescaled.
 
             //Create the Lowland base fractal with range from 0 to 1 values
-            INoise plain_shape_fractal = new FractalFbm(new Simplex(_seed), 6, 1, enuBaseNoiseRange.ZeroToOne);
+            INoise desert_shape_fractal = new FractalFbm(new Simplex(_seed), 5, 0.8, enuBaseNoiseRange.ZeroToOne);
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
-            INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.20 * _groundGradientTyped.AdjustY, -0.2 * _groundGradientTyped.AdjustY);
+            INoise desert_scale = new ScaleOffset(desert_shape_fractal, 0.10 * _groundGradientTyped.AdjustY, -0.03 * _groundGradientTyped.AdjustY);
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
-            INoise plain_y_scale = new ScaleDomain(plain_scale, 1.0, 3.0, 1.0);
-
-            INoise _groundChaotic = new FractalFbm(new Simplex(_seed), 5, 2);
-            INoise _gradiantChaotic = new Blend(_groundGradient, _groundChaotic, -0.65);
+            INoise desert_y_scale = new ScaleDomain(desert_scale, 1.0, 0, 1.0);
 
             //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
-            INoise plain_terrain = new Turbulence(_gradiantChaotic, 0, plain_y_scale);
+            INoise desert_terrain = new Turbulence(_groundGradient, 0, desert_y_scale);
 
-            return plain_terrain;
+            return desert_terrain;
         }
         #endregion
 
