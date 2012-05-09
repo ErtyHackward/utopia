@@ -51,15 +51,15 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //Create the Lowland base fractal with range from 0 to 1 values
             INoise plain_shape_fractal = new FractalFbm(new Simplex(_seed), 3, 1.5, enuBaseNoiseRange.ZeroToOne);
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
-            INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.25 * _groundGradientTyped.AdjustY, -0.02 * _groundGradientTyped.AdjustY); 
+            INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.25 * _groundGradientTyped.AdjustY, -0.05 * _groundGradientTyped.AdjustY); 
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
             
             //Force the Fractal to be used as 2D Noise, I don't need to 3th dimension
             INoise plain_y_scale = new NoiseAccess(plain_scale, NoiseAccess.enuDimUsage.Noise2D);
 
             //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
-            //INoise _groundGradient_biased = new Bias(_groundGradient, 0.55);
-            INoise plain_terrain = new Turbulence(_groundGradient, 0, plain_y_scale);
+            INoise _groundGradient_biased = new Bias(_groundGradient, 0.55);
+            INoise plain_terrain = new Turbulence(_groundGradient_biased, 0, plain_y_scale);
 
             return plain_terrain;
         }

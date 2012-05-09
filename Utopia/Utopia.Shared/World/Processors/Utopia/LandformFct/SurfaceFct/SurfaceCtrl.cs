@@ -9,9 +9,9 @@ using S33M3CoreComponents.Noise.Generator;
 using S33M3CoreComponents.Noise.Various;
 using S33M3CoreComponents.Noise.DomainModifier;
 
-namespace Utopia.Shared.World.Processors.Utopia
+namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 {
-    public class TerrainType : ITerrainGenerator
+    public class SurfaceCtrl : ITerrainGenerator
     {
         #region Private Variables
         private int _seed;
@@ -20,7 +20,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Public Properties
         #endregion
 
-        public TerrainType(int seed)
+        public SurfaceCtrl(int seed)
         {
             _seed = seed;
         }
@@ -28,10 +28,10 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Public Methods
         public INoise GetLandFormFct()
         {
-            INoise terraintypeFractal = new FractalHybridMulti(new Perlin(_seed), 2, 1.5, enuBaseNoiseRange.ZeroToOne);
-            INoise terraintypeFractal_y_scale = new ScaleDomain(terraintypeFractal, 1.0, 0.0, 1.0);
+            INoise SurfaceBiomeFractal = new FractalHybridMulti(new Perlin(_seed), 2, 1.5, enuBaseNoiseRange.ZeroToOne);
+            INoise SurfaceBiomeFractal_y_scale = new NoiseAccess(SurfaceBiomeFractal, NoiseAccess.enuDimUsage.Noise2D);
 
-            return terraintypeFractal_y_scale;
+            return SurfaceBiomeFractal_y_scale;
         }
         #endregion
 
