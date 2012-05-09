@@ -98,7 +98,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                                                             chunkWorldRange.Position.X / 320.0, (chunkWorldRange.Position.X / 320.0) + 0.05, AbstractChunk.ChunkSize.X,
                                                             chunkWorldRange.Position.Y / 2560.0, (chunkWorldRange.Position.Y / 2560.0) + 0.4, AbstractChunk.ChunkSize.Y,
                                                             chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z,
-                                                            mainLandscape); // , _underground);
+                                                            mainLandscape, 
+                                                            underground);
 
             //Create the chunk Block byte from noiseResult
 
@@ -110,9 +111,15 @@ namespace Utopia.Shared.World.Processors.Utopia
                 {
                     for (int Y = 0; Y < AbstractChunk.ChunkSize.Y; Y++)
                     {
-                        double value = noiseLandscape[noiseValueIndex, 0]; //Get landScape value
-                        //double underground = noiseLandscape[noiseValueIndex, 1];
-                        //value *= underground;
+                        double value = noiseLandscape[noiseValueIndex, 0];              //Get landScape value
+                        double valueUnderground = noiseLandscape[noiseValueIndex, 1];   //Get underground value
+                        
+                        //Create underground "Mask"
+                        //0 => Will create a Hole in the landscape = Create a underground cave
+                        //1 => Will leave the landscape as is.
+                        valueUnderground = valueUnderground > 0.5 ? 0.0 : 1.0;
+
+                        value *= valueUnderground;
 
                         cube = CubeId.Air;
                         if (value > 0.5)
