@@ -83,7 +83,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private void ServerConnection_MessageChunkData(object sender, ProtocolMessageEventArgs<ChunkDataMessage> e)
         {
 #if DEBUG
-            logger.Trace("Chunk received from server id : {0}; Position : {1}", e.Message.Position.GetID(), e.Message.Position);
+            //logger.Trace("Chunk received from server id : {0}; Position : {1}", e.Message.Position.GetID(), e.Message.Position);
 #endif
 
             //Bufferize the Data here

@@ -182,6 +182,8 @@ namespace Sandbox.Client.States
             //Vlad Generator
             //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
             //var worldGenerator = new WorldGenerator(wp, planProcessor);
+            settings.Settings.ChunksCountLimit = 1024 * 3; // better use viewRange * viewRange * 3
+
             _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _server.ConnectionManager.LocalMode = true;
