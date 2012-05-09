@@ -13,13 +13,13 @@ namespace Utopia.Server
     public class ServerSettings : IConfigClass
     {
         /// <summary>
-        /// Interval between cleanup operation executions. All chunks older than ChunkLiveTimeMinutes parameter will be unloaded
+        /// Interval between cleanup operation executions (milliseconds). All chunks older than ChunkLiveTimeMinutes parameter will be unloaded
         /// </summary>
         //[DefaultValue(60000)]
         public int CleanUpInterval { get; set; }
 
         /// <summary>
-        /// Interval between save operation executions. All modified chunks will be saved into database. 
+        /// Interval between save operation executions (milliseconds). All modified chunks will be saved into database. 
         /// </summary>
         //[DefaultValue(30000)]
         public int SaveInterval { get; set; }
@@ -31,10 +31,15 @@ namespace Utopia.Server
         public int MaxViewRangeChunks { get; set; }
 
         /// <summary>
-        /// Defines how long server will store unused chunks
+        /// Defines how long server will store unused chunks (minutes)
         /// </summary>
         //[DefaultValue(60)]
         public int ChunkLiveTimeMinutes { get; set; }
+
+        /// <summary>
+        /// Get maximum amount of chunks that can be stored in memory
+        /// </summary>
+        public int ChunksCountLimit { get; set; }
 
         /// <summary>
         /// Port to listen on
@@ -59,6 +64,7 @@ namespace Utopia.Server
             SaveInterval = 30000;
             MaxViewRangeChunks = 20;
             ChunkLiveTimeMinutes = 60;
+            ChunksCountLimit = 32768; // 16*16*128*32768 = 1Gb of memory 
             ServerPort = 4815;
             ServerName = "unnamed server";
         }

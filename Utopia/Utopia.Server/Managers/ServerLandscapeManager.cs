@@ -99,6 +99,8 @@ namespace Utopia.Server.Managers
 
         public int SaveInterval { get; set; }
 
+        public int ChunkCountLimit { get; set; }
+
         public WorldGenerator WorldGenerator
         {
             get { return _generator; }
@@ -121,11 +123,12 @@ namespace Utopia.Server.Managers
         /// </summary>
         public int ChunksSaved { get; set; }
 
-        public ServerLandscapeManager(Server server, IChunksStorage chunksStorage, WorldGenerator generator, EntityFactory factory, int chunkLiveTimeMinutes, int cleanUpInterval, int saveInterval)
+        public ServerLandscapeManager(Server server, IChunksStorage chunksStorage, WorldGenerator generator, EntityFactory factory, int chunkLiveTimeMinutes, int cleanUpInterval, int saveInterval, int chunksLimit)
         {
             ChunkLiveTimeMinutes = chunkLiveTimeMinutes;
             CleanUpInterval = cleanUpInterval;
             SaveInterval = saveInterval;
+            ChunkCountLimit = chunksLimit;
             EntityFactory = factory;
 
             if (chunksStorage == null) throw new ArgumentNullException("chunksStorage");
@@ -217,6 +220,24 @@ namespace Utopia.Server.Managers
             }
         }
 
+        
+        private void TrimChunks()
+        {
+            if (_chunks.Count <= ChunkCountLimit)
+                return;
+
+            lock (_chunks)
+            {
+                var list = new List<ServerChunk>(_chunks.Values);
+
+                list.Sort((c1, c2) => c1.LastAccess.CompareTo(c2.LastAccess));
+
+                for (var i = list.Count; i > ChunkCountLimit; i--)
+                {
+                    RemoveChunk(list[i]);
+                }
+            }
+        }
 
         // this functions executes in other thread
         private void CleanUp(object o)
@@ -274,6 +295,12 @@ namespace Utopia.Server.Managers
 
                         _chunks.Add(position, chunk);
                         OnChunkLoaded(new LandscapeManagerChunkEventArgs { Chunk = chunk });
+
+                        if (_chunks.Count > ChunkCountLimit)
+                        {
+                            // remove excess chunks
+                            new ThreadStart(TrimChunks).BeginInvoke(null, null);
+                        }
                     }
                     else chunk = _chunks[position];
                 }
@@ -292,10 +319,15 @@ namespace Utopia.Server.Managers
 
                 foreach (var chunk in chunksToRemove)
                 {
-                    _chunks.Remove(chunk.Position);
-                    OnChunkUnloaded(new LandscapeManagerChunkEventArgs { Chunk = chunk });
+                    RemoveChunk(chunk);
                 }
             }
+        }
+
+        private void RemoveChunk(ServerChunk chunk)
+        {
+            _chunks.Remove(chunk.Position);
+            OnChunkUnloaded(new LandscapeManagerChunkEventArgs { Chunk = chunk });
         }
 
         public void SaveChunks()
