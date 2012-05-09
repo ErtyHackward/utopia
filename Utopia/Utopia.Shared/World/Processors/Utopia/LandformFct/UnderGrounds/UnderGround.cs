@@ -49,8 +49,11 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             Combiner ShapeMult = new Combiner(Combiner.CombinerType.Add);
             ShapeMult.Noises.Add(shape1_base);
             ShapeMult.Noises.Add(shape2_base);
-            INoise rescaledShapeMult = new ScaleOffset(ShapeMult, 0.6, 0);
-            INoise clamping_base = new Select(0, rescaledShapeMult, ShapeMult, 0.14, 0.0);
+
+            INoise CacheShapeMult = new Cache<INoise>(ShapeMult);
+
+            INoise rescaledShapeMult = new ScaleOffset(CacheShapeMult, 0.6, 0);
+            INoise clamping_base = new Select(0, rescaledShapeMult, CacheShapeMult, 0.14, 0.0);
 
             INoise turbX_fractal = new FractalFbm(new Perlin(_seed + 1), 3, 3);
             INoise turbY_fractal = new FractalFbm(new Perlin(_seed + 2), 3, 3);

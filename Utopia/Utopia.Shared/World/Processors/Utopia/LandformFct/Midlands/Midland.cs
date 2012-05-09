@@ -49,17 +49,19 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //This way no matter the the Gradient Range, the values impacting it will be rescaled.
 
             //Create the Lowland base fractal with range from 0 to 1 values
-            INoise plain_shape_fractal = new FractalRidgedMulti(new Simplex(_seed), 4, 2, enuBaseNoiseRange.ZeroToOne);
+            INoise midLand_shape_fractal = new FractalRidgedMulti(new Simplex(_seed), 4, 2, enuBaseNoiseRange.ZeroToOne);
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
-            INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.2 * _groundGradientTyped.AdjustY, 0 * _groundGradientTyped.AdjustY);
+            INoise midLand_scale = new ScaleOffset(midLand_shape_fractal, 0.2 * _groundGradientTyped.AdjustY, 0 * _groundGradientTyped.AdjustY);
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
-            INoise plain_y_scale = new ScaleDomain(plain_scale, 1.0, 0, 1.0);
+
+            //Force the Fractal to be used as 2D Noise, I don't need to 3th dimension
+            INoise midLand_y_scale = new NoiseAccess(midLand_scale, NoiseAccess.enuDimUsage.Noise2D);
 
             //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
             INoise _groundGradient_biased = new Bias(_groundGradient, 0.60);
-            INoise plain_terrain = new Turbulence(_groundGradient_biased, 0, plain_y_scale);
+            INoise midLand_terrain = new Turbulence(_groundGradient_biased, 0, midLand_y_scale);
 
-            return plain_terrain;
+            return midLand_terrain;
         }
         #endregion
 

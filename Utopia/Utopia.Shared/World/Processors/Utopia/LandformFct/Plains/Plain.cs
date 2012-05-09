@@ -53,7 +53,9 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
             INoise plain_scale = new ScaleOffset(plain_shape_fractal, 0.25 * _groundGradientTyped.AdjustY, -0.02 * _groundGradientTyped.AdjustY); 
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
-            INoise plain_y_scale = new ScaleDomain(plain_scale, 1.0, 0, 1.0);
+            
+            //Force the Fractal to be used as 2D Noise, I don't need to 3th dimension
+            INoise plain_y_scale = new NoiseAccess(plain_scale, NoiseAccess.enuDimUsage.Noise2D);
 
             //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
             //INoise _groundGradient_biased = new Bias(_groundGradient, 0.55);
