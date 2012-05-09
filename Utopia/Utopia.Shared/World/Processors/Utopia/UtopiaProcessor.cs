@@ -46,6 +46,8 @@ namespace Utopia.Shared.World.Processors.Utopia
         public UtopiaProcessor(WorldParameters worldParameters)
         {
             _worldParameters = worldParameters;
+
+            _rnd = new Random(_worldParameters.Seed);
         }
 
         public void Dispose()
@@ -78,9 +80,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Private Methods
 
         private void CreateNoises(out INoise mainLandscape, out INoise underground)
-        {
-            _rnd = new Random(_worldParameters.Seed);
-
+        {           
             mainLandscape = CreateLandFormFct(new Gradient(0, 0, 0.45, 0));
             Cache<INoise> mainLandscapeCaching = new Cache<INoise>(mainLandscape);
             underground = CreateUnderGroundFct(mainLandscapeCaching);
@@ -217,55 +217,44 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         public INoise CreateLandFormFct(Gradient ground_gradient)
         {
+            //Create various landcreation Algo. ===================================================================
             //Get Basic landscape forms
-            ITerrainGenerator plainBase = new Plain(_rnd.Next(), ground_gradient);
-            ITerrainGenerator midlandBase = new Midland(_rnd.Next(), ground_gradient);
-            ITerrainGenerator montainBase = new Montain(_rnd.Next(), ground_gradient);
+            INoise plainBaseFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
+            INoise midlandBaseFct = new Midland(_worldParameters.Seed + 08092007, ground_gradient).GetLandFormFct();
+            INoise montainBaseFct = new Montain(_worldParameters.Seed + 28051979, ground_gradient).GetLandFormFct();
+            INoise OceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
 
-            //Anomalies landscape forms
-            ITerrainGenerator plateau = new Plateau(_rnd.Next(), ground_gradient); //Plain anomaly
+            //Plain Subtype forms
+            INoise hillFct = new Hill(_worldParameters.Seed + 1, ground_gradient).GetLandFormFct();
+            INoise flatFct = new Flat(_worldParameters.Seed + 96, ground_gradient).GetLandFormFct();
 
             //Terrain Type controler
-            ITerrainGenerator terrainType = new TerrainType(_rnd.Next());
+            INoise terrainTypeFct = new TerrainType(_worldParameters.Seed + 123).GetLandFormFct();
 
             //Anomalies Controler
-            ITerrainGenerator anomaliesZone = new AnomaliesZones(_rnd.Next());
-            ITerrainGenerator anomaliesType = new AnomaliesType(_rnd.Next());
-
+            INoise subTypeZoneFct = new SubTypeZones(_worldParameters.Seed + 96).GetLandFormFct();
+            INoise SubTypeFct = new SubType(_worldParameters.Seed + 100).GetLandFormFct();
             
-            INoise plainBaseFct = plainBase.GetLandFormFct();
-            INoise midlandBaseFct = midlandBase.GetLandFormFct();
-            INoise montainBaseFct = montainBase.GetLandFormFct();
+            //=====================================================================================================
+            //Plain landscape generation fct with SubType
+            //Assign Anomalies to the Plains
+            INoise plainSubType = new Select(hillFct, flatFct, SubTypeFct, 0.75, 0.1);
+            INoise plainFinal = new Select(plainBaseFct, plainSubType, subTypeZoneFct, 0.55, 0.1);
 
-            INoise plateauFct = plateau.GetLandFormFct();
 
-            INoise terrainTypeFct = terrainType.GetLandFormFct();
-            
-            INoise anomaliesZoneFct = anomaliesZone.GetLandFormFct();
-            INoise anomaliesTypeFct = anomaliesType.GetLandFormFct();
+            //Blend together the various Landforms
+            INoise mountain_midland_select = new Select(montainBaseFct, midlandBaseFct, terrainTypeFct, 0.40, 0.05);
+            INoise midland_plain_select = new Select(mountain_midland_select, plainFinal, terrainTypeFct, 0.50, 0.05);
+            INoise plain_Ocean_select = new Select(midland_plain_select, OceanBaseFct, terrainTypeFct, 0.90, 0.15);
 
-            //Plain landscape generation fct with anomalies
-            INoise plainWithAnomalies = plateauFct; 
-            INoise plainFinal = new Select(plainBaseFct, plainWithAnomalies, anomaliesZoneFct, 0.55, 0.0);
 
-            //midland landscape generation fct with anomalies
-            INoise midLandFinal = midlandBaseFct;
-
-            //0.0 => 0.3 Montains
-            //0.3 => 0.6 MidLand
-            //0.6 => 1 Plain
-            INoise mountain_midland_select = new Select(montainBaseFct, midLandFinal, terrainTypeFct, 0.40, 0.05);
-            INoise midland_plain_select = new Select(mountain_midland_select, plainFinal, terrainTypeFct, 0.55, 0.15);
-
-            INoise result = new Select(0, 1, midland_plain_select, 0.5);
-
-            return midland_plain_select;
+            return plain_Ocean_select;
         }
 
         public INoise CreateUnderGroundFct(INoise landScape)
         {
             //UnderGround Tunnels and Caves
-            INoise undergroundFct = new UnderGround(_rnd.Next(), landScape).GetLandFormFct();
+            INoise undergroundFct = new UnderGround(_worldParameters.Seed + 999, landScape).GetLandFormFct();
 
             return undergroundFct;
         }
