@@ -8,12 +8,12 @@ using S33M3CoreComponents.Noise.Generator;
 using S33M3CoreComponents.Noise.ResultModifier;
 using S33M3CoreComponents.Noise.DomainModifier;
 using S33M3CoreComponents.Noise.Various;
-using S33M3CoreComponents.Noise.NoiseResultCombiner;
 using S33M3CoreComponents.Noise.ResultCombiner;
+using S33M3CoreComponents.Noise.NoiseResultCombiner;
 
 namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 {
-    public class UnderGround2 : ITerrainGenerator
+    public class Hill : ITerrainGenerator
     {
         #region Private Variables
         private INoise _groundGradient;
@@ -24,17 +24,17 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
         #region Public Properties
         #endregion
 
-        public UnderGround2(int seed, Gradient groundGradient)
+        public Hill(int seed, Gradient groundGradient)
             : this(seed, groundGradient, groundGradient)
         {
         }
 
-        public UnderGround2(int seed, Cache<Gradient> groundGradient)
+        public Hill(int seed, Cache<Gradient> groundGradient)
             : this(seed, groundGradient, groundGradient.Source)
         {
         }
 
-        private UnderGround2(int seed, INoise groundGradient, Gradient groundGradientTyped)
+        private Hill(int seed, INoise groundGradient, Gradient groundGradientTyped)
         {
             _groundGradient = groundGradient;
             _groundGradientTyped = groundGradientTyped;
@@ -51,27 +51,19 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //This way no matter the the Gradient Range, the values impacting it will be rescaled.
 
             //Create the Lowland base fractal with range from 0 to 1 values
-            INoise shape1_fractal = new FractalRidgedMulti(new Perlin(_seed), 1, 2);
+            INoise plateau_shape_fractal = new FractalFbm(new Simplex(_seed), 3, 3, enuBaseNoiseRange.ZeroToOne);
+            //Rescale + offset the output result ==> Wil modify the Scope of output range value
+            INoise plateau_scale = new ScaleOffset(plateau_shape_fractal, 0.25 * _groundGradientTyped.AdjustY, -0.05 * _groundGradientTyped.AdjustY);
+            //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
+            
+            //Force the Fractal to be used as 2D Noise, I don't need to 3th dimension
+            INoise plateau_y_scale = new NoiseAccess(plateau_scale, NoiseAccess.enuDimUsage.Noise2D);
 
-            INoise shape1_base = new Select(0, 1, shape1_fractal, 0.7, 0.0);
+            //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 
+            INoise _groundGradient_biased = new Bias(_groundGradient, 0.58);
+            INoise plateau_terrain = new Turbulence(_groundGradient_biased, 0, plateau_y_scale);
 
-            INoise shape2_fractal = new FractalRidgedMulti(new Perlin(_seed + 12345), 1, 2);
-
-            INoise shape2_base = new Select(0, 1, shape2_fractal, 0.7, 0.0);
-
-            Combiner ShapeMult = new Combiner(Combiner.CombinerType.Multiply);
-            ShapeMult.Noises.Add(shape1_base);
-            ShapeMult.Noises.Add(shape2_base);
-
-            INoise turbX_fractal = new FractalFbm(new Perlin(_seed + 1), 3, 3);
-            INoise turbY_fractal = new FractalFbm(new Perlin(_seed + 2), 3, 3);
-            INoise turbZ_fractal = new FractalFbm(new Perlin(_seed + 3), 3, 3);
-
-            INoise CaveTurb = new Turbulence(ShapeMult, turbX_fractal, turbY_fractal, turbZ_fractal);
-
-            INoise invertedCave = new ScaleOffset(CaveTurb, -1, 1);
-
-            return invertedCave;
+            return plateau_terrain;
         }
         #endregion
 

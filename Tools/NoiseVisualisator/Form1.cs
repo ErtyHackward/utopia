@@ -74,7 +74,7 @@ namespace NoiseVisualisator
                 ground_gradient = new Gradient(0, 0, 0.42, 0);
             }
 
-            var test = new UnderGround(123456, ground_gradient);
+            var test = new River(123456, ground_gradient);
 
             return test.GetLandFormFct();
 

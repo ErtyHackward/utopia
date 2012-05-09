@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using S33M3CoreComponents.Noise;
+using S33M3CoreComponents.Noise.Generator;
+using S33M3CoreComponents.Noise.NoiseResultCombiner;
+using S33M3CoreComponents.Noise.Sampler;
+using S33M3CoreComponents.Noise.Various;
+using S33M3Resources.Structs;
+using Utopia.Shared.Chunks;
+using Utopia.Shared.Cubes;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
-using Utopia.Shared.Chunks;
-using S33M3Resources.Structs;
-using S33M3CoreComponents.Noise.Generator;
-using S33M3CoreComponents.Noise.Fractal;
-using S33M3CoreComponents.Noise;
-using S33M3CoreComponents.Noise.Sampler;
-using Utopia.Shared.Cubes;
-using S33M3CoreComponents.Noise.NoiseResultCombiner;
-using S33M3CoreComponents.Noise.ResultModifier;
-using S33M3CoreComponents.Noise.DomainModifier;
-using S33M3CoreComponents.Noise.Various;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
 
 namespace Utopia.Shared.World.Processors.Utopia
@@ -102,7 +96,6 @@ namespace Utopia.Shared.World.Processors.Utopia
                                                             underground);
 
             //Create the chunk Block byte from noiseResult
-
             int noiseValueIndex = 0;
             byte cube;
             for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
@@ -113,7 +106,6 @@ namespace Utopia.Shared.World.Processors.Utopia
                     {
                         double value = noiseLandscape[noiseValueIndex, 0];              //Get landScape value
                         double valueUnderground = noiseLandscape[noiseValueIndex, 1];   //Get underground value
-                        
                         //Create underground "Mask"
                         //0 => Will create a Hole in the landscape = Create a underground cave
                         //1 => Will leave the landscape as is.
@@ -218,44 +210,48 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                     }
                 }
-
             }
         }
 
         public INoise CreateLandFormFct(Gradient ground_gradient)
         {
             //Create various landcreation Algo. ===================================================================
-            //Get Basic landscape forms
-            INoise plainBaseFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
-            INoise midlandBaseFct = new Midland(_worldParameters.Seed + 08092007, ground_gradient).GetLandFormFct();
-            INoise montainBaseFct = new Montain(_worldParameters.Seed + 28051979, ground_gradient).GetLandFormFct();
-            INoise OceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
+            //Montains forms
+            INoise montainFct = new Montain(_worldParameters.Seed + 28051979, ground_gradient).GetLandFormFct();
 
-            //Plain Subtype forms
+            //MidLand forms
+            INoise midlandFct = new Midland(_worldParameters.Seed + 08092007, ground_gradient).GetLandFormFct();
+
+            //Plains forms
             INoise hillFct = new Hill(_worldParameters.Seed + 1, ground_gradient).GetLandFormFct();
+            INoise plainFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
             INoise flatFct = new Flat(_worldParameters.Seed + 96, ground_gradient).GetLandFormFct();
+            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96).GetLandFormFct();         //Noise That will merge the plains type together
 
-            //Terrain Type controler
-            INoise terrainTypeFct = new TerrainType(_worldParameters.Seed + 123).GetLandFormFct();
+            //Oceans forms
+            INoise oceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
 
-            //Anomalies Controler
-            INoise subTypeZoneFct = new SubTypeZones(_worldParameters.Seed + 96).GetLandFormFct();
-            INoise SubTypeFct = new SubType(_worldParameters.Seed + 100).GetLandFormFct();
+            //Surface main controler
+            INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123).GetLandFormFct();
+
+            //World Controler (Used to separate Water Fct from Surface Fct)
+            INoise worldCtrl = new WorldCtrl(_worldParameters.Seed + 1233).GetLandFormFct();
             
             //=====================================================================================================
-            //Plain landscape generation fct with SubType
-            //Assign Anomalies to the Plains
-            INoise plainSubType = new Select(hillFct, flatFct, SubTypeFct, 0.75, 0.1);
-            INoise plainFinal = new Select(plainBaseFct, plainSubType, subTypeZoneFct, 0.55, 0.1);
+            //Plains Noise selecting based on plainsCtrl controler
+            INoise flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, 0.25, 0.1);         //Merge flat with Plain
+            INoise mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, 0.60, 0.1);   //Merge Plain with hill
+
+            //=====================================================================================================
+            //Surface Noise selecting based on surfaceCtrl controler
+            INoise Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, 0.40, 0.10);         //Merge Plains with Midland
+            INoise midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, 0.55, 0.05); //Merge MidLand with Montain
 
 
-            //Blend together the various Landforms
-            INoise mountain_midland_select = new Select(montainBaseFct, midlandBaseFct, terrainTypeFct, 0.40, 0.05);
-            INoise midland_plain_select = new Select(mountain_midland_select, plainFinal, terrainTypeFct, 0.50, 0.05);
-            INoise plain_Ocean_select = new Select(midland_plain_select, OceanBaseFct, terrainTypeFct, 0.90, 0.15);
+            //Merge the Water landForm with the surface landForm
+            INoise world_select = new Select(midland_montain_select, oceanBaseFct, worldCtrl, 0.45, 0.20);         //Merge Plains with Midland
 
-
-            return plain_Ocean_select;
+            return world_select;
         }
 
         public INoise CreateUnderGroundFct(INoise landScape)
@@ -265,7 +261,6 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             return undergroundFct;
         }
-
         #endregion
     }
 }
