@@ -73,7 +73,7 @@ namespace Samples.GameComp
         public override void LoadContent(DeviceContext Context = null)
         {
             //Genereate the 3D Landscape.
-            double[,] result = NoiseSampler.NoiseSampling(new Vector3I(NoiseSizeResultX , NoiseSizeResultY , NoiseSizeResultZ ),
+            double[,] result = NoiseSampler.NoiseSampling(new Vector3I(NoiseSizeResultX / 4, NoiseSizeResultY / 8, NoiseSizeResultZ / 4),
                                                             0.0, 0.42, NoiseSizeResultX,
                                                             0.0, 0.42, NoiseSizeResultY,
                                                             0.0, 0.42, NoiseSizeResultZ, 

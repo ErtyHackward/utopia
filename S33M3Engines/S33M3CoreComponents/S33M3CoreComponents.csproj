@@ -246,6 +246,7 @@
     <Compile Include="Noise\ResultModifier\Clamp.cs" />
     <Compile Include="Noise\ResultModifier\Gain.cs" />
     <Compile Include="Noise\ResultModifier\Invert.cs" />
+    <Compile Include="Noise\ResultModifier\Lerp.cs" />
     <Compile Include="Noise\ResultModifier\Pow.cs" />
     <Compile Include="Noise\ResultModifier\ScaleOffset.cs" />
     <Compile Include="Noise\Sampler\NoiseSampler.cs" />
