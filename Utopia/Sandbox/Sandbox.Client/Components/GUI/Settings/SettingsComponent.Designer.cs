@@ -110,7 +110,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             if (_backPanel != null)
             {
                 _backPanel.Dispose();
-                RemoveDispose(_backPanel);
+                RemoveToDispose(_backPanel);
             }
             _backPanel = ToDispose(new ImageControl() { Image = _transparentBackGroundTexture, Name = "BackPanel" });
 
