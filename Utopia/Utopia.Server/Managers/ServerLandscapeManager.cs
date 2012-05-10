@@ -230,9 +230,9 @@ namespace Utopia.Server.Managers
             {
                 var list = new List<ServerChunk>(_chunks.Values);
 
-                list.Sort((c1, c2) => c1.LastAccess.CompareTo(c2.LastAccess));
+                list.Sort((c1, c2) => c2.LastAccess.CompareTo(c1.LastAccess));
 
-                for (var i = list.Count; i > ChunkCountLimit; i--)
+                for (var i = list.Count-1; i > ChunkCountLimit; i--)
                 {
                     RemoveChunk(list[i]);
                 }
