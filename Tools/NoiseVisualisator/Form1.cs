@@ -32,30 +32,6 @@ namespace NoiseVisualisator
             InitializeComponent();
         }
 
-        private int Octave
-        {
-            get
-            {
-                return int.Parse(txtOctave.Text); 
-            }
-        }
-
-        private double Freq
-        {
-            get
-            {
-                return double.Parse(txtfreq.Text);
-            }
-        }
-
-        private int Seed
-        {
-            get
-            {
-                return int.Parse(txtSeed.Text);
-            }
-        }
-
         Random _rnd;
         private INoise NoiseComposition(bool is2DRenderRequest)
         {
@@ -74,7 +50,7 @@ namespace NoiseVisualisator
                 ground_gradient = new Gradient(0, 0, 0.42, 0);
             }
 
-            var test = new River(123456, ground_gradient);
+            var test = new UncommonCubeDistri(123456, ground_gradient); //, ground_gradient);
 
             return test.GetLandFormFct();
 
@@ -84,7 +60,10 @@ namespace NoiseVisualisator
         private void btStart_Click(object sender, EventArgs e)
         {
             OffsetX = 0;
-            GameRender render = new GameRender(new System.Drawing.Size(1024, 768), "3D Noise visualisator !", NoiseComposition(false), double.Parse(thresholdValue.Text));
+
+            double thresholdFrom = double.Parse(thresholdValue.Text.Replace('.', ','));
+            double thresholdTo = double.Parse(txtBelow.Text.Replace('.', ','));
+            GameRender render = new GameRender(new System.Drawing.Size(1024, 768), "3D Noise visualisator !", NoiseComposition(false), thresholdFrom, thresholdTo, withBelow.CheckState == CheckState.Checked);
             render.Run();
             render.Dispose();
         }
@@ -112,15 +91,15 @@ namespace NoiseVisualisator
             double[,] noiseData = NoiseSampler.NoiseSampling(new Vector2I(w ,h ),
                                                             0 + OffsetX, 3 + OffsetX, w,
                                                             0, 1, h, workingNoise);
-
             lblGenerationTime.Text = ((Stopwatch.GetTimestamp() - from) / (double)Stopwatch.Frequency * 1000.0).ToString();
-
 
             double min = double.MaxValue;
             double max = double.MinValue;
 
             int i = 0;
-            double threshold = double.Parse(thresholdValue.Text);
+            double thresholdFrom = double.Parse(thresholdValue.Text.Replace('.', ','));
+            double thresholdTo = double.Parse(txtBelow.Text.Replace('.', ','));
+
             for (int x = 0; x < w; x++)
             {
                 for (int y = 0; y < h; y++)
@@ -135,7 +114,14 @@ namespace NoiseVisualisator
 
                     if (withThresHold.Checked)
                     {
-                        if (val > threshold) val = 1.0; else val = 0.0;
+                        if (withBelow.CheckState == CheckState.Checked)
+                        {
+                            if (val > thresholdFrom && val < thresholdTo) val = 1.0; else val = 0.0;
+                        }
+                        else
+                        {
+                            if (val > thresholdFrom) val = 1.0; else val = 0.0;
+                        }
                     }
 
                     var col = MathHelper.FullLerp(0, 255, outPutRange.Min, outPutRange.Max, val, true);

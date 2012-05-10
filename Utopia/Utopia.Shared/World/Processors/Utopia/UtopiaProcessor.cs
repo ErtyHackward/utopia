@@ -73,19 +73,19 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         #region Private Methods
 
-        private void CreateNoises(out INoise mainLandscape, out INoise underground)
+        private void CreateNoises(out INoise mainLandscape, out INoise underground, out INoise uncommonCubeDistri, out INoise rareCubeDistri)
         {           
-            mainLandscape = CreateLandFormFct(new Gradient(0, 0, 0.45, 0));
-            Cache<INoise> mainLandscapeCaching = new Cache<INoise>(mainLandscape);
-            underground = CreateUnderGroundFct(mainLandscapeCaching);
+            mainLandscape = new Cache<INoise>(CreateLandFormFct(new Gradient(0, 0, 0.45, 0)));
+            underground = new UnderGround(_worldParameters.Seed + 999, mainLandscape).GetLandFormFct();
+            uncommonCubeDistri = new UncommonCubeDistri(_worldParameters.Seed - 6, mainLandscape).GetLandFormFct();
+            rareCubeDistri = new RareCubeDistri(_worldParameters.Seed - 63, mainLandscape).GetLandFormFct();
         }
 
         private void GenerateLandscape(byte[] ChunkCubes, ref Range3I chunkWorldRange)
         {
             //Create the test Noise, A new object must be created each time
-            //Because of the caching in a multithreaded situation (The caching system cannot be shared between 2 threads)
-            INoise mainLandscape, underground;
-            CreateNoises(out mainLandscape, out underground);
+            INoise mainLandscape, underground, uncommonCubeDistri, rareCubeDistri;
+            CreateNoises(out mainLandscape, out underground, out uncommonCubeDistri, out rareCubeDistri);
 
             //Create value from Noise Fct sampling
             double[,] noiseLandscape = NoiseSampler.NoiseSampling(new Vector3I(AbstractChunk.ChunkSize.X /4 , AbstractChunk.ChunkSize.Y /8 , AbstractChunk.ChunkSize.Z /4 ),
@@ -93,7 +93,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                                                             chunkWorldRange.Position.Y / 2560.0, (chunkWorldRange.Position.Y / 2560.0) + 0.4, AbstractChunk.ChunkSize.Y,
                                                             chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z,
                                                             mainLandscape, 
-                                                            underground);
+                                                            underground,
+                                                            uncommonCubeDistri,
+                                                            rareCubeDistri);
 
             //Create the chunk Block byte from noiseResult
             int noiseValueIndex = 0;
@@ -109,16 +111,34 @@ namespace Utopia.Shared.World.Processors.Utopia
                         //Create underground "Mask"
                         //0 => Will create a Hole in the landscape = Create a underground cave
                         //1 => Will leave the landscape as is.
-                        valueUnderground = valueUnderground > 0.5 ? 0.0 : 1.0;
+                        valueUnderground = valueUnderground > 0.6 ? 0.0 : 1.0;
 
                         value *= valueUnderground;
 
                         cube = CubeId.Air;
                         if (value > 0.5)
                         {
-                            cube = CubeId.Stone;
+                            //This is a "Hard surface", check if its belong to a specific Cube type other then Stone
+                            double uncoCubeValue = noiseLandscape[noiseValueIndex, 2];
+                            if (uncoCubeValue >= 0.6)
+                            {
+                                cube = UncommonCubeDistri.GetCube(uncoCubeValue, 0.6, 0.85);
+                            }
+                            else
+                            {
+                                double rareCubeValue = noiseLandscape[noiseValueIndex, 3];
+                                if (rareCubeValue >= 0.6)
+                                {
+                                    cube = RareCubeDistri.GetCube(rareCubeValue, 0.6, 0.75);
+                                }
+                                else
+                                {
+                                    cube = CubeId.Stone;
+                                }
+                            }
                         }
 
+                        //BedRock
                         if (Y == 0)
                         {
                             cube = CubeId.Rock;
@@ -252,14 +272,6 @@ namespace Utopia.Shared.World.Processors.Utopia
             INoise world_select = new Select(midland_montain_select, oceanBaseFct, worldCtrl, 0.45, 0.20);         //Merge Plains with Midland
 
             return world_select;
-        }
-
-        public INoise CreateUnderGroundFct(INoise landScape)
-        {
-            //UnderGround Tunnels and Caves
-            INoise undergroundFct = new UnderGround(_worldParameters.Seed + 999, landScape).GetLandFormFct();
-
-            return undergroundFct;
         }
         #endregion
     }

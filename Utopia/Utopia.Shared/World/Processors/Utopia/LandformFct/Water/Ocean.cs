@@ -55,7 +55,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
 
             //Force the Fractal to be used as 2D Noise, I don't need to 3th dimension
-            INoise ocean_y_scale = new NoiseAccess(ocean_scale, NoiseAccess.enuDimUsage.Noise2D);
+            INoise ocean_y_scale = new NoiseAccess(ocean_scale, NoiseAccess.enuDimUsage.Noise2D, true);
 
 
             //Offset the ground_gradient ( = create turbulance) to the Y scale of the gradient. input value 

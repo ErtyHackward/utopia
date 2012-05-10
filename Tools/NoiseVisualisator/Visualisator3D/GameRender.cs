@@ -30,13 +30,17 @@ namespace Samples
         private GameComponent _cameraMnger;
         private GameComponent _myCameraEntity;
         private ICamera _camera;
-        private double _threshold;
+        private double _thresholdFrom;
+        private double _thresholdTo;
+        private bool _withBelow;
 
-        public GameRender(Size startingWindowsSize, string WindowsCaption, INoise3 noise, double threshold, Size ResolutionSize = default(Size))
+        public GameRender(Size startingWindowsSize, string WindowsCaption, INoise3 noise, double thresholdFrom, double thresholdTo, bool withBelow, Size ResolutionSize = default(Size))
             : base(startingWindowsSize, WindowsCaption, new SharpDX.DXGI.SampleDescription(1, 0), ResolutionSize)
         {
             _noise = noise;
-            _threshold = threshold;
+            _thresholdFrom = thresholdFrom;
+            _thresholdTo = thresholdTo;
+            _withBelow = withBelow;
         }
 
         public override void Initialize()
@@ -64,7 +68,7 @@ namespace Samples
             _sharedFrameComp.EnableComponent();
 
             //Register Here all components here
-            _gameComp = ToDispose(new NoiseRender(Engine, _noise, _sharedFrameComp as SharedFrameCB, _camera, _threshold));
+            _gameComp = ToDispose(new NoiseRender(Engine, _noise, _sharedFrameComp as SharedFrameCB, _camera, _thresholdFrom, _thresholdTo, _withBelow));
             _gameComp.EnableComponent();
 
             this.GameComponents.Add(_inputManager);
