@@ -24,6 +24,7 @@ using S33M3CoreComponents.WorldFocus;
 using S33M3Resources.Effects.Basics;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -95,7 +96,10 @@ namespace Utopia.Worlds.Chunks
 
         public static Int64 ComputeChunkId(int PosiX, int PosiY)
         {
-            return (((Int64)(PosiX * Utopia.Shared.Chunks.AbstractChunk.ChunkSize.X) << 32) + (PosiY * Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Z));
+            MathHelper.IntsToLong hashLong = new MathHelper.IntsToLong();
+            hashLong.LeftInt32 = PosiX;
+            hashLong.RightInt32 = PosiY;
+            return hashLong.LongValue;
         }
 
         /// <summary>

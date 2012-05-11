@@ -3,11 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SharpDX;
+using System.Runtime.InteropServices;
 
 namespace S33M3CoreComponents.Maths
 {
     public static class MathHelper
     {
+        //using System.Runtime.InteropServices;
+        [StructLayout(LayoutKind.Explicit)]
+        public struct IntsToLong
+        {
+            [FieldOffset(0)]
+            public long LongValue;
+            [FieldOffset(0)]
+            public int LeftInt32;
+            [FieldOffset(4)]
+            public int RightInt32;
+        }
+
         // Fields
         public const float E = 2.718282f;
         public const float Log10E = 0.4342945f;
