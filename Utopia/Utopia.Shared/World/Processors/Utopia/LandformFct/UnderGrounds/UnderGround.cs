@@ -17,15 +17,17 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
     {
         #region Private Variables
         private INoise _mainLandscape;
+        private INoise _islandCtrl;
         private int _seed;
         #endregion
 
         #region Public Properties
         #endregion
 
-        public UnderGround(int seed, INoise mainLandscape)
+        public UnderGround(int seed, INoise mainLandscape, INoise islandCtrl)
         {
             _seed = seed;
+            _islandCtrl = islandCtrl;
             _mainLandscape = mainLandscape;
         }
 
@@ -66,7 +68,10 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             underground_Attenuated.Noises.Add(CaveTurb);
             underground_Attenuated.Noises.Add(_mainLandscape);
 
-            return underground_Attenuated;
+            //Merge the Water landForm with the surface landForm
+            INoise world_select = new Select(0.0, underground_Attenuated, _islandCtrl, 0.01, 0.20);         //Merge Plains with Midland
+
+            return world_select;
         }
         #endregion
 

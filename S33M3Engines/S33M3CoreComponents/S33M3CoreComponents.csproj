@@ -233,6 +233,7 @@
     <Compile Include="Noise\Fractal\enuBaseFractalRange.cs" />
     <Compile Include="Noise\Generator\ISeedable.cs" />
     <Compile Include="Noise\Generator\Perlin.cs" />
+    <Compile Include="Noise\Generator\Sphere.cs" />
     <Compile Include="Noise\Generator\White.cs" />
     <Compile Include="Noise\NoiseResultCombiner\Blend.cs" />
     <Compile Include="Noise\NoiseResultCombiner\Combiner.cs" />

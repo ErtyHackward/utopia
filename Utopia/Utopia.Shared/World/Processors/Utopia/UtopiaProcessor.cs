@@ -73,19 +73,60 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         #region Private Methods
 
-        private void CreateNoises(out INoise mainLandscape, out INoise underground, out INoise uncommonCubeDistri, out INoise rareCubeDistri)
+        private void CreateNoises(out INoise mainLandscape, out INoise underground) //, out INoise uncommonCubeDistri, out INoise rareCubeDistri)
         {           
-            mainLandscape = new Cache<INoise>(CreateLandFormFct(new Gradient(0, 0, 0.45, 0)));
-            underground = new UnderGround(_worldParameters.Seed + 999, mainLandscape).GetLandFormFct();
-            uncommonCubeDistri = new UncommonCubeDistri(_worldParameters.Seed - 6, mainLandscape).GetLandFormFct();
-            rareCubeDistri = new RareCubeDistri(_worldParameters.Seed - 63, mainLandscape).GetLandFormFct();
+            INoise terrainDelimiter = new Cache<INoise>(new IslandCtrl(_worldParameters.Seed + 1233).GetLandFormFct());
+            mainLandscape = new Cache<INoise>(CreateLandFormFct(new Gradient(0, 0, 0.45, 0), terrainDelimiter));
+            underground = new UnderGround(_worldParameters.Seed + 999, mainLandscape, terrainDelimiter).GetLandFormFct();
+            //uncommonCubeDistri = new UncommonCubeDistri(_worldParameters.Seed - 6, mainLandscape).GetLandFormFct();
+            //rareCubeDistri = new RareCubeDistri(_worldParameters.Seed - 63, mainLandscape).GetLandFormFct();
+        }
+
+        public INoise CreateLandFormFct(Gradient ground_gradient, INoise islandCtrl)
+        {
+            //Create various landcreation Algo. ===================================================================
+            //Montains forms
+            INoise montainFct = new Montain(_worldParameters.Seed + 28051979, ground_gradient).GetLandFormFct();
+
+            //MidLand forms
+            INoise midlandFct = new Midland(_worldParameters.Seed + 08092007, ground_gradient).GetLandFormFct();
+
+            //Plains forms
+            INoise hillFct = new Hill(_worldParameters.Seed + 1, ground_gradient).GetLandFormFct();
+            INoise plainFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
+            INoise flatFct = new Flat(_worldParameters.Seed + 96, ground_gradient).GetLandFormFct();
+            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96).GetLandFormFct();         //Noise That will merge the plains type together
+
+            //Oceans forms
+            INoise oceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
+
+            //Surface main controler
+            INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123).GetLandFormFct();
+
+            //World Controler (Used to separate Water Fct from Surface Fct)
+
+            //=====================================================================================================
+            //Plains Noise selecting based on plainsCtrl controler
+            INoise flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, 0.25, 0.1);         //Merge flat with Plain
+            INoise mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, 0.60, 0.1);   //Merge Plain with hill
+
+            //=====================================================================================================
+            //Surface Noise selecting based on surfaceCtrl controler
+            INoise Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, 0.40, 0.10);         //Merge Plains with Midland
+            INoise midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, 0.55, 0.05); //Merge MidLand with Montain
+
+
+            //Merge the Water landForm with the surface landForm
+            INoise world_select = new Select(oceanBaseFct, midland_montain_select, islandCtrl, 0.01, 0.20);         //Merge Plains with Midland
+
+            return world_select;
         }
 
         private void GenerateLandscape(byte[] ChunkCubes, ref Range3I chunkWorldRange)
         {
             //Create the test Noise, A new object must be created each time
-            INoise mainLandscape, underground, uncommonCubeDistri, rareCubeDistri;
-            CreateNoises(out mainLandscape, out underground, out uncommonCubeDistri, out rareCubeDistri);
+            INoise mainLandscape, underground;
+            CreateNoises(out mainLandscape, out underground);
 
             //Create value from Noise Fct sampling
             double[,] noiseLandscape = NoiseSampler.NoiseSampling(new Vector3I(AbstractChunk.ChunkSize.X /4 , AbstractChunk.ChunkSize.Y /8 , AbstractChunk.ChunkSize.Z /4 ),
@@ -93,9 +134,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                                                             chunkWorldRange.Position.Y / 2560.0, (chunkWorldRange.Position.Y / 2560.0) + 0.4, AbstractChunk.ChunkSize.Y,
                                                             chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z,
                                                             mainLandscape, 
-                                                            underground,
-                                                            uncommonCubeDistri,
-                                                            rareCubeDistri);
+                                                            underground);
 
             //Create the chunk Block byte from noiseResult
             int noiseValueIndex = 0;
@@ -118,24 +157,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         cube = CubeId.Air;
                         if (value > 0.5)
                         {
-                            //This is a "Hard surface", check if its belong to a specific Cube type other then Stone
-                            double uncoCubeValue = noiseLandscape[noiseValueIndex, 2];
-                            if (uncoCubeValue >= 0.6)
-                            {
-                                cube = UncommonCubeDistri.GetCube(uncoCubeValue, 0.6, 0.85);
-                            }
-                            else
-                            {
-                                double rareCubeValue = noiseLandscape[noiseValueIndex, 3];
-                                if (rareCubeValue >= 0.6)
-                                {
-                                    cube = RareCubeDistri.GetCube(rareCubeValue, 0.6, 0.75);
-                                }
-                                else
-                                {
-                                    cube = CubeId.Stone;
-                                }
-                            }
+                            cube = CubeId.Stone;
                         }
 
                         //BedRock
@@ -231,47 +253,6 @@ namespace Utopia.Shared.World.Processors.Utopia
                     }
                 }
             }
-        }
-
-        public INoise CreateLandFormFct(Gradient ground_gradient)
-        {
-            //Create various landcreation Algo. ===================================================================
-            //Montains forms
-            INoise montainFct = new Montain(_worldParameters.Seed + 28051979, ground_gradient).GetLandFormFct();
-
-            //MidLand forms
-            INoise midlandFct = new Midland(_worldParameters.Seed + 08092007, ground_gradient).GetLandFormFct();
-
-            //Plains forms
-            INoise hillFct = new Hill(_worldParameters.Seed + 1, ground_gradient).GetLandFormFct();
-            INoise plainFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
-            INoise flatFct = new Flat(_worldParameters.Seed + 96, ground_gradient).GetLandFormFct();
-            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96).GetLandFormFct();         //Noise That will merge the plains type together
-
-            //Oceans forms
-            INoise oceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
-
-            //Surface main controler
-            INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123).GetLandFormFct();
-
-            //World Controler (Used to separate Water Fct from Surface Fct)
-            INoise worldCtrl = new WorldCtrl(_worldParameters.Seed + 1233).GetLandFormFct();
-            
-            //=====================================================================================================
-            //Plains Noise selecting based on plainsCtrl controler
-            INoise flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, 0.25, 0.1);         //Merge flat with Plain
-            INoise mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, 0.60, 0.1);   //Merge Plain with hill
-
-            //=====================================================================================================
-            //Surface Noise selecting based on surfaceCtrl controler
-            INoise Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, 0.40, 0.10);         //Merge Plains with Midland
-            INoise midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, 0.55, 0.05); //Merge MidLand with Montain
-
-
-            //Merge the Water landForm with the surface landForm
-            INoise world_select = new Select(midland_montain_select, oceanBaseFct, worldCtrl, 0.45, 0.20);         //Merge Plains with Midland
-
-            return world_select;
         }
         #endregion
     }
