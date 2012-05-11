@@ -69,7 +69,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             underground_Attenuated.Noises.Add(_mainLandscape);
 
             //Merge the Water landForm with the surface landForm
-            INoise world_select = new Select(0.0, underground_Attenuated, _islandCtrl, 0.01, 0.20);         //Merge Plains with Midland
+            INoise world_select = new Select(0.0, underground_Attenuated, _islandCtrl, 0.01, 0.0);         //Merge Plains with Midland
 
             return world_select;
         }
