@@ -35,7 +35,9 @@ namespace Samples.GameComp
         private bool[, ,] ChunkCube;
         private SharedFrameCB _sharedCB;
         private ICamera _camera;
-        private double _solidCubeThreshold;
+        private double _thresholdFrom;
+        private double _thresholdTo;
+        private bool _withBelow;
 
         public enum CubeFaces : byte
         {
@@ -47,13 +49,15 @@ namespace Samples.GameComp
             Right = 5
         }
 
-        public NoiseRender(D3DEngine engine, INoise3 noise, SharedFrameCB sharedCB, ICamera camera, double ThresHold)
+        public NoiseRender(D3DEngine engine, INoise3 noise, SharedFrameCB sharedCB, ICamera camera, double thresholdFrom, double thresholdTo, bool withBelow)
         {
             _sharedCB = sharedCB;
             _engine = engine;
             _noise = noise;
             _camera = camera;
-            _solidCubeThreshold = ThresHold;
+            _thresholdFrom = thresholdFrom;
+            _thresholdTo = thresholdTo;
+            _withBelow = withBelow;
         }
 
         public override void Initialize()
@@ -78,7 +82,6 @@ namespace Samples.GameComp
                                                             0.0, 0.42, NoiseSizeResultY,
                                                             0.0, 0.42, NoiseSizeResultZ, 
                                                             _noise);
-
             GenerateChunkMeshFromNoise(result);
 
             if (_indices.Count > 0)
@@ -115,9 +118,19 @@ namespace Samples.GameComp
                         if (val < MinNoise) MinNoise = val;
                         if (val > MaxNoise) MaxNoise = val;
 
-                        if (val > _solidCubeThreshold)
+                        if (_withBelow)
                         {
-                            ChunkCube[x, y, z] = true;
+                            if (val > _thresholdFrom && val < _thresholdTo)
+                            {
+                                ChunkCube[x, y, z] = true;
+                            }
+                        }
+                        else
+                        {
+                            if (val > _thresholdFrom)
+                            {
+                                ChunkCube[x, y, z] = true;
+                            }
                         }
                         indexId ++;
                     }

@@ -29,7 +29,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
         public INoise GetLandFormFct()
         {
             INoise AnomaliesZonesFractal = new FractalFbm(new Perlin(_seed), 3, 2.5, enuBaseNoiseRange.ZeroToOne);
-            INoise AnomaliesZonesFractal_y_scale = new NoiseAccess(AnomaliesZonesFractal, NoiseAccess.enuDimUsage.Noise2D);
+            INoise AnomaliesZonesFractal_y_scale = new NoiseAccess(AnomaliesZonesFractal, NoiseAccess.enuDimUsage.Noise2D, true);
 
             return AnomaliesZonesFractal_y_scale;
         }

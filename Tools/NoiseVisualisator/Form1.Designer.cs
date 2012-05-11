@@ -30,13 +30,7 @@
         {
             this.btStart = new System.Windows.Forms.Button();
             this.bt2DRender = new System.Windows.Forms.Button();
-            this.txtOctave = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtfreq = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.txtSeed = new System.Windows.Forms.TextBox();
-            this.txtlabel = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.lblGenerationTime = new System.Windows.Forms.Label();
             this.forward = new System.Windows.Forms.Button();
@@ -45,7 +39,13 @@
             this.thresholdValue = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtBelow = new System.Windows.Forms.TextBox();
+            this.withBelow = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btStart
@@ -68,70 +68,19 @@
             this.bt2DRender.UseVisualStyleBackColor = true;
             this.bt2DRender.Click += new System.EventHandler(this.bt2DRender_Click);
             // 
-            // txtOctave
-            // 
-            this.txtOctave.Location = new System.Drawing.Point(101, 65);
-            this.txtOctave.Name = "txtOctave";
-            this.txtOctave.Size = new System.Drawing.Size(100, 20);
-            this.txtOctave.TabIndex = 3;
-            this.txtOctave.Text = "6";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 65);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(42, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Octave";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 91);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(25, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "freq";
-            // 
-            // txtfreq
-            // 
-            this.txtfreq.Location = new System.Drawing.Point(101, 91);
-            this.txtfreq.Name = "txtfreq";
-            this.txtfreq.Size = new System.Drawing.Size(100, 20);
-            this.txtfreq.TabIndex = 5;
-            this.txtfreq.Text = "2";
-            // 
             // pictureBox1
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(48, 179);
+            this.pictureBox1.Location = new System.Drawing.Point(50, 116);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(900, 300);
             this.pictureBox1.TabIndex = 13;
             this.pictureBox1.TabStop = false;
             // 
-            // txtSeed
-            // 
-            this.txtSeed.Location = new System.Drawing.Point(101, 117);
-            this.txtSeed.Name = "txtSeed";
-            this.txtSeed.Size = new System.Drawing.Size(100, 20);
-            this.txtSeed.TabIndex = 14;
-            this.txtSeed.Text = "123456";
-            // 
-            // txtlabel
-            // 
-            this.txtlabel.AutoSize = true;
-            this.txtlabel.Location = new System.Drawing.Point(12, 117);
-            this.txtlabel.Name = "txtlabel";
-            this.txtlabel.Size = new System.Drawing.Size(32, 13);
-            this.txtlabel.TabIndex = 15;
-            this.txtlabel.Text = "Seed";
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(283, 54);
+            this.label3.Location = new System.Drawing.Point(12, 79);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(140, 13);
             this.label3.TabIndex = 16;
@@ -140,7 +89,7 @@
             // lblGenerationTime
             // 
             this.lblGenerationTime.AutoSize = true;
-            this.lblGenerationTime.Location = new System.Drawing.Point(429, 54);
+            this.lblGenerationTime.Location = new System.Drawing.Point(158, 79);
             this.lblGenerationTime.Name = "lblGenerationTime";
             this.lblGenerationTime.Size = new System.Drawing.Size(13, 13);
             this.lblGenerationTime.TabIndex = 17;
@@ -148,7 +97,7 @@
             // 
             // forward
             // 
-            this.forward.Location = new System.Drawing.Point(953, 179);
+            this.forward.Location = new System.Drawing.Point(955, 116);
             this.forward.Name = "forward";
             this.forward.Size = new System.Drawing.Size(31, 300);
             this.forward.TabIndex = 18;
@@ -158,7 +107,7 @@
             // 
             // backward
             // 
-            this.backward.Location = new System.Drawing.Point(6, 179);
+            this.backward.Location = new System.Drawing.Point(8, 116);
             this.backward.Name = "backward";
             this.backward.Size = new System.Drawing.Size(31, 300);
             this.backward.TabIndex = 19;
@@ -171,16 +120,16 @@
             this.withThresHold.AutoSize = true;
             this.withThresHold.Checked = true;
             this.withThresHold.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.withThresHold.Location = new System.Drawing.Point(287, 12);
+            this.withThresHold.Location = new System.Drawing.Point(6, 22);
             this.withThresHold.Name = "withThresHold";
-            this.withThresHold.Size = new System.Drawing.Size(144, 17);
+            this.withThresHold.Size = new System.Drawing.Size(170, 17);
             this.withThresHold.TabIndex = 20;
-            this.withThresHold.Text = "2D withThresHoldValue :";
+            this.withThresHold.Text = "Use ThresHoldValue (Solid if) :";
             this.withThresHold.UseVisualStyleBackColor = true;
             // 
             // thresholdValue
             // 
-            this.thresholdValue.Location = new System.Drawing.Point(433, 12);
+            this.thresholdValue.Location = new System.Drawing.Point(76, 40);
             this.thresholdValue.Name = "thresholdValue";
             this.thresholdValue.Size = new System.Drawing.Size(100, 20);
             this.thresholdValue.TabIndex = 21;
@@ -189,7 +138,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(430, 34);
+            this.label4.Location = new System.Drawing.Point(159, 59);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(13, 13);
             this.label4.TabIndex = 23;
@@ -198,37 +147,83 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(284, 34);
+            this.label5.Location = new System.Drawing.Point(13, 59);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(144, 13);
             this.label5.TabIndex = 22;
             this.label5.Text = "Noise Initialisation time (ms) : ";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.withBelow);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.txtBelow);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.withThresHold);
+            this.groupBox1.Controls.Add(this.thresholdValue);
+            this.groupBox1.Location = new System.Drawing.Point(275, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(288, 98);
+            this.groupBox1.TabIndex = 24;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Threshold";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(26, 42);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(44, 13);
+            this.label1.TabIndex = 22;
+            this.label1.Text = "Above :";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(26, 67);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(42, 13);
+            this.label2.TabIndex = 24;
+            this.label2.Text = "Below :";
+            // 
+            // txtBelow
+            // 
+            this.txtBelow.Location = new System.Drawing.Point(76, 65);
+            this.txtBelow.Name = "txtBelow";
+            this.txtBelow.Size = new System.Drawing.Size(100, 20);
+            this.txtBelow.TabIndex = 23;
+            this.txtBelow.Text = "0,6";
+            // 
+            // withBelow
+            // 
+            this.withBelow.AutoSize = true;
+            this.withBelow.Location = new System.Drawing.Point(182, 66);
+            this.withBelow.Name = "withBelow";
+            this.withBelow.Size = new System.Drawing.Size(77, 17);
+            this.withBelow.TabIndex = 25;
+            this.withBelow.Text = "WithBelow";
+            this.withBelow.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(996, 513);
+            this.ClientSize = new System.Drawing.Size(996, 430);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.thresholdValue);
-            this.Controls.Add(this.withThresHold);
             this.Controls.Add(this.backward);
             this.Controls.Add(this.forward);
             this.Controls.Add(this.lblGenerationTime);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.txtlabel);
-            this.Controls.Add(this.txtSeed);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.txtfreq);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtOctave);
             this.Controls.Add(this.bt2DRender);
             this.Controls.Add(this.btStart);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -238,13 +233,7 @@
 
         private System.Windows.Forms.Button btStart;
         private System.Windows.Forms.Button bt2DRender;
-        private System.Windows.Forms.TextBox txtOctave;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtfreq;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TextBox txtSeed;
-        private System.Windows.Forms.Label txtlabel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblGenerationTime;
         private System.Windows.Forms.Button forward;
@@ -253,5 +242,10 @@
         private System.Windows.Forms.TextBox thresholdValue;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtBelow;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox withBelow;
     }
 }

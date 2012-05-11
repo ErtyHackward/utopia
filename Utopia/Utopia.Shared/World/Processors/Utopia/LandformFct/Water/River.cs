@@ -44,7 +44,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
 
             //Force the Fractal to be used as 2D Noise, I don't need to 3th dimension
-            INoise river_y_scale = new NoiseAccess(river_shape_fractal, NoiseAccess.enuDimUsage.Noise2D);
+            INoise river_y_scale = new NoiseAccess(river_shape_fractal, NoiseAccess.enuDimUsage.Noise2D, true);
 
             INoise turb = new ScaleOffset(river_y_scale, 0.03, 0);
             INoise river_selected = new Select(0, turb, river_y_scale, 0.7);  //Last param define the width of the river

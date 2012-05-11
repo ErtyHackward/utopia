@@ -6,9 +6,16 @@ using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.Noise.Sampler
 {
+
+    /// <summary>
+    /// Tool that will help Noise values
+    /// </summary>
+    /// <typeparam name="T">Will be restricted to double (noise value untouch), byte and uint will perform a double cast to integer, bool will use threshold passed as arg.
+    /// </typeparam>
     public static class NoiseSampler
     {
 
+        #region 3D Sampling
         /// <summary>
         /// Will present the result of the noise inside a single Array[]
         /// The 3dimension are present inside this array in this order : X, Z and then Y
@@ -97,6 +104,97 @@ namespace S33M3CoreComponents.Noise.Sampler
             return result;
         }
 
+        public static bool[,] NoiseSamplingBool(
+                                    Vector3I NoiseSampledSteps, 
+                                    double FromX, double ToX, int StepsCountX,
+                                    double FromY, double ToY, int StepsCountY,
+                                    double FromZ, double ToZ, int StepsCountZ,                                    
+                                    double[] threshold,
+                                    params INoise3[] noiseFcts)
+        {
+            double[,] result = NoiseSampling(NoiseSampledSteps,
+                                             FromX, ToX, StepsCountX,
+                                             FromY, ToY, StepsCountY,
+                                             FromZ, ToZ, StepsCountZ,
+                                             noiseFcts);
+
+            //Transform the double array to bit array
+            int nbrNoiseFct = result.GetLength(1);
+            int nbrSampledPoints = result.GetLength(0);
+
+            bool[,] resultAsBool = new bool[nbrSampledPoints, nbrNoiseFct];
+
+            for (int noiseFctId = 0; noiseFctId < nbrNoiseFct; noiseFctId++)
+            {
+                for (int sampledPointId = 0; sampledPointId < nbrSampledPoints; sampledPointId++)
+                {
+                    resultAsBool[sampledPointId, noiseFctId] = result[sampledPointId, noiseFctId] > threshold[noiseFctId];
+                }
+            }
+
+            return resultAsBool;
+        }
+
+        public static byte[,] NoiseSamplingByte(
+                                    Vector3I NoiseSampledSteps,
+                                    double FromX, double ToX, int StepsCountX,
+                                    double FromY, double ToY, int StepsCountY,
+                                    double FromZ, double ToZ, int StepsCountZ,
+                                    params INoise3[] noiseFcts)
+        {
+            double[,] result = NoiseSampling(NoiseSampledSteps,
+                                             FromX, ToX, StepsCountX,
+                                             FromY, ToY, StepsCountY,
+                                             FromZ, ToZ, StepsCountZ,
+                                             noiseFcts);
+
+            //Transform the double array to bit array
+            int nbrNoiseFct = result.GetLength(1);
+            int nbrSampledPoints = result.GetLength(0);
+
+            byte[,] resultAsBool = new byte[nbrSampledPoints, nbrNoiseFct];
+
+            for (int noiseFctId = 0; noiseFctId < nbrNoiseFct; noiseFctId++)
+            {
+                for (int sampledPointId = 0; sampledPointId < nbrSampledPoints; sampledPointId++)
+                {
+                    resultAsBool[sampledPointId, noiseFctId] = Convert.ToByte(result[sampledPointId, noiseFctId]);
+                }
+            }
+
+            return resultAsBool;
+        }
+
+        public static int[,] NoiseSamplingInt(
+                            Vector3I NoiseSampledSteps,
+                            double FromX, double ToX, int StepsCountX,
+                            double FromY, double ToY, int StepsCountY,
+                            double FromZ, double ToZ, int StepsCountZ,
+                            params INoise3[] noiseFcts)
+        {
+            double[,] result = NoiseSampling(NoiseSampledSteps,
+                                             FromX, ToX, StepsCountX,
+                                             FromY, ToY, StepsCountY,
+                                             FromZ, ToZ, StepsCountZ,
+                                             noiseFcts);
+
+            //Transform the double array to bit array
+            int nbrNoiseFct = result.GetLength(1);
+            int nbrSampledPoints = result.GetLength(0);
+
+            int[,] resultAsBool = new int[nbrSampledPoints, nbrNoiseFct];
+
+            for (int noiseFctId = 0; noiseFctId < nbrNoiseFct; noiseFctId++)
+            {
+                for (int sampledPointId = 0; sampledPointId < nbrSampledPoints; sampledPointId++)
+                {
+                    resultAsBool[sampledPointId, noiseFctId] = Convert.ToInt32(result[sampledPointId, noiseFctId]);
+                }
+            }
+
+            return resultAsBool;
+        }
+
 
         private static double[,] InterpolateResult(double[,] dataNoises,
                                                   Vector3I NoiseSampledSteps,
@@ -147,17 +245,17 @@ namespace S33M3CoreComponents.Noise.Sampler
 
                                 for (int Z = 0; Z < ZPointLerpedCount; Z++)
                                 {
-                                    double Noise3 = NoiseZ0;
+                                    double NoiseFinalValue = NoiseZ0;
                                     double DeltaX = (NoiseZ1 - NoiseZ0) / XPointLerpedCount; // Chunk Z length = 16 / 4 = 4 points needs to be lerped Once!
                                     int nZ = (SampledpointZ * ZPointLerpedCount) + Z;
                                     for (int X = 0; X < XPointLerpedCount; X++)
                                     {
                                         int nX = (SampledpointX * XPointLerpedCount) + X;
-                                        result[nX * StepsCount.Z * StepsCount.Y + nZ * StepsCount.Y + nY, noiseId] = Noise3;
+                                        result[nX * StepsCount.Z * StepsCount.Y + nZ * StepsCount.Y + nY, noiseId] = NoiseFinalValue;
 
                                         noiseGeneratedResultIndex++;
 
-                                        Noise3 += DeltaX;
+                                        NoiseFinalValue += DeltaX;
                                     }
                                     NoiseZ0 += DeltaZ0;
                                     NoiseZ1 += DeltaZ1;
@@ -175,6 +273,9 @@ namespace S33M3CoreComponents.Noise.Sampler
             return result;
         }
 
+        #endregion
+
+        #region 2d Sampling
 
         /// <summary>
         /// Will present the result of the noise inside a single Array[]
@@ -248,6 +349,88 @@ namespace S33M3CoreComponents.Noise.Sampler
             return result;
         }
 
+        public static bool[,] NoiseSamplingBool(
+                            Vector2I NoiseSampledSteps,
+                            double FromX, double ToX, int StepsCountX,
+                            double FromY, double ToY, int StepsCountY,
+                            double[] threshold,
+                            params INoise2[] noiseFcts)
+        {
+            double[,] result = NoiseSampling(NoiseSampledSteps,
+                                             FromX, ToX, StepsCountX,
+                                             FromY, ToY, StepsCountY,
+                                             noiseFcts);
+
+            //Transform the double array to bit array
+            int nbrNoiseFct = result.GetLength(1);
+            int nbrSampledPoints = result.GetLength(0);
+
+            bool[,] resultAsBool = new bool[nbrSampledPoints, nbrNoiseFct];
+
+            for (int noiseFctId = 0; noiseFctId < nbrNoiseFct; noiseFctId++)
+            {
+                for (int sampledPointId = 0; sampledPointId < nbrSampledPoints; sampledPointId++)
+                {
+                    resultAsBool[sampledPointId, noiseFctId] = result[sampledPointId, noiseFctId] > threshold[noiseFctId];
+                }
+            }
+
+            return resultAsBool;
+        }
+
+        public static byte[,] NoiseSamplingByte(
+                    Vector2I NoiseSampledSteps,
+                    double FromX, double ToX, int StepsCountX,
+                    double FromY, double ToY, int StepsCountY,
+                    params INoise2[] noiseFcts)
+        {
+            double[,] result = NoiseSampling(NoiseSampledSteps,
+                                             FromX, ToX, StepsCountX,
+                                             FromY, ToY, StepsCountY,
+                                             noiseFcts);
+
+            //Transform the double array to bit array
+            int nbrNoiseFct = result.GetLength(1);
+            int nbrSampledPoints = result.GetLength(0);
+
+            byte[,] resultAsByte = new byte[nbrSampledPoints, nbrNoiseFct];
+
+            for (int noiseFctId = 0; noiseFctId < nbrNoiseFct; noiseFctId++)
+            {
+                for (int sampledPointId = 0; sampledPointId < nbrSampledPoints; sampledPointId++)
+                {
+                    resultAsByte[sampledPointId, noiseFctId] = Convert.ToByte(result[sampledPointId, noiseFctId]);
+                }
+            }
+            return resultAsByte;
+        }
+
+        public static int[,] NoiseSamplingInt(
+                    Vector2I NoiseSampledSteps,
+                    double FromX, double ToX, int StepsCountX,
+                    double FromY, double ToY, int StepsCountY,
+                    params INoise2[] noiseFcts)
+        {
+            double[,] result = NoiseSampling(NoiseSampledSteps,
+                                             FromX, ToX, StepsCountX,
+                                             FromY, ToY, StepsCountY,
+                                             noiseFcts);
+
+            //Transform the double array to bit array
+            int nbrNoiseFct = result.GetLength(1);
+            int nbrSampledPoints = result.GetLength(0);
+
+            int[,] resultAsByte = new int[nbrSampledPoints, nbrNoiseFct];
+
+            for (int noiseFctId = 0; noiseFctId < nbrNoiseFct; noiseFctId++)
+            {
+                for (int sampledPointId = 0; sampledPointId < nbrSampledPoints; sampledPointId++)
+                {
+                    resultAsByte[sampledPointId, noiseFctId] = Convert.ToInt32(result[sampledPointId, noiseFctId]);
+                }
+            }
+            return resultAsByte;
+        }
 
         private static double[,] InterpolateResult(double[,] dataNoises,
                                                   Vector2I NoiseSampledSteps,
@@ -278,7 +461,7 @@ namespace S33M3CoreComponents.Noise.Sampler
 
                         for (int Y = 0; Y < YPointLerpedCount; Y++)
                         {
-                            double Noise = NoiseZ0;
+                            double NoiseFinalValue = NoiseZ0;
                             double DeltaX = (NoiseZ1 - NoiseZ0) / XPointLerpedCount; // Chunk Z length = 16 / 4 = 4 points needs to be lerped Once!
 
                             int nY = (SampledpointY * YPointLerpedCount) + Y;
@@ -287,9 +470,9 @@ namespace S33M3CoreComponents.Noise.Sampler
                             {
                                 int nX = (SampledpointX * XPointLerpedCount) + X;
 
-                                result[nX * StepsCount.Y + nY, noiseId] = Noise;
+                                result[nX * StepsCount.Y + nY, noiseId] = NoiseFinalValue;
 
-                                Noise += DeltaX;
+                                NoiseFinalValue += DeltaX;
                             }
 
                             NoiseZ0 += DeltaZ0;
@@ -300,6 +483,8 @@ namespace S33M3CoreComponents.Noise.Sampler
             }
 
             return result;
+
         }
+        #endregion
     }
 }
