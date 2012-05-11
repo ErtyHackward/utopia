@@ -11,10 +11,11 @@ using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Rectangle = System.Drawing.Rectangle;
 using S33M3DXEngine.Effects.HLSLFramework;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Sprites
 {
-    public class SpriteTexture : Component
+    public class SpriteTexture : BaseComponent
     {
         private D3DEngine _d3dEngine;
         public ShaderResourceView Texture;

@@ -4,6 +4,36 @@
         <name>SharpDX.D3DCompiler</name>
     </assembly>
     <members>
+        <member name="T:SharpDX.D3DCompiler.AssemblyDoc">
+            <summary>
+            The <see cref="A:SharpDX.D3DCompiler"/> assembly is a managed Direct3D Compiler API.
+            </summary>
+            <msdn-id>dd607340</msdn-id>
+            <unmanaged>D3DCompiler</unmanaged>	
+            <unmanaged-short>D3DCompiler</unmanaged-short>	
+        </member>
+        <member name="T:SharpDX.D3DCompiler.CompilationResult">
+            <summary>
+            Shader compilation results.
+            </summary>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.CompilationResult.#ctor(SharpDX.D3DCompiler.ShaderBytecode,SharpDX.Result,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.CompilationResult"/> class.
+            </summary>
+            <param name="bytecode">The bytecode.</param>
+            <param name="resultCode">The result code.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.CompilationResult.op_Implicit(SharpDX.D3DCompiler.CompilationResult)~SharpDX.D3DCompiler.ShaderBytecode">
+            <summary>
+            Performs an implicit conversion from <see cref="T:SharpDX.D3DCompiler.CompilationResult"/> to <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/>.
+            </summary>
+            <param name="input">The input.</param>
+            <returns>
+            The result of the conversion.
+            </returns>
+        </member>
         <member name="T:SharpDX.D3DCompiler.D3D">
             <summary>
             Warming, the following code is manually copied from generated code from Direct3D10 compiler.
@@ -225,803 +255,6 @@
             <msdn-id>dd607328</msdn-id>	
             <unmanaged>HRESULT D3DGetDebugInfo([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[Out] ID3D10Blob** ppDebugInfo)</unmanaged>	
             <unmanaged-short>D3DGetDebugInfo</unmanaged-short>	
-        </member>
-        <member name="T:SharpDX.D3DCompiler.ShaderReflection">
-            <summary>	
-            A shader-reflection interface accesses shader information.	
-            </summary>	
-            <remarks>	
-            An <see cref="T:SharpDX.D3DCompiler.ShaderReflection"/> interface can be retrieved for a shader by using  <see cref="M:SharpDX.D3DCompiler.D3D.Reflect(System.IntPtr,SharpDX.PointerSize,System.Guid,System.IntPtr@)"/>.  The following code illustrates retrieving a <see cref="T:SharpDX.D3DCompiler.ShaderReflection"/> from a shader.<code>	
-             pd3dDevice-&gt;CreatePixelShader( pPixelShaderBuffer-&gt;GetBufferPointer(), pPixelShaderBuffer-&gt;GetBufferSize(), g_pPSClassLinkage, &amp;g_pPixelShader ); <see cref="T:SharpDX.D3DCompiler.ShaderReflection"/>* pReflector = <c>null</c>; 	
-            <see cref="M:SharpDX.D3DCompiler.D3D.Reflect(System.IntPtr,SharpDX.PointerSize,System.Guid,System.IntPtr@)"/>( pPixelShaderBuffer-&gt;GetBufferPointer(), pPixelShaderBuffer-&gt;GetBufferSize(),  IID_ID3D11ShaderReflection, (void**) &amp;pReflector); 	
-            </code>	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection']/*"/>	
-            <msdn-id>ff476590</msdn-id>	
-            <unmanaged>ID3D11ShaderReflection</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.#ctor(SharpDX.D3DCompiler.ShaderBytecode)">
-            <summary>
-              Initializes a new instance of the <see cref = "T:SharpDX.D3DCompiler.ShaderReflection" /> class from a <see cref = "T:SharpDX.D3DCompiler.ShaderBytecode" />.
-            </summary>
-            <param name = "shaderBytecode"></param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.#ctor(System.IntPtr)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderReflection"/> class.
-            </summary>
-            <param name="nativePtr">The native pointer.</param>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.op_Explicit(System.IntPtr)~SharpDX.D3DCompiler.ShaderReflection">
-            <summary>
-            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.D3DCompiler.ShaderReflection"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
-            </summary>
-            <param name="nativePointer">The native pointer.</param>
-            <returns>
-            The result of the conversion.
-            </returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetDescription(SharpDX.D3DCompiler.ShaderDescription@)">
-            <summary>	
-            Get a shader description.	
-            </summary>	
-            <param name="descRef"><para>A reference to a shader description. See <see cref="T:SharpDX.D3DCompiler.ShaderDescription"/>.</para></param>	
-            <returns>Returns one of the following Direct3D 11 Return Codes.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetDesc']/*"/>	
-            <msdn-id>ff476615</msdn-id>	
-            <unmanaged>HRESULT ID3D11ShaderReflection::GetDesc([Out] D3D11_SHADER_DESC* pDesc)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetDesc</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetConstantBuffer(System.Int32)">
-            <summary>	
-            Get a constant buffer by index.	
-            </summary>	
-            <param name="index"><para>Zero-based index.</para></param>	
-            <returns>A reference to a constant buffer (see <see cref="T:SharpDX.D3DCompiler.ConstantBuffer"/> Interface).</returns>	
-            <remarks>	
-            A constant buffer supplies either scalar constants or texture constants to a shader. A shader can use one or more constant buffers. For best performance, separate constants into buffers based on the frequency they are updated.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetConstantBufferByIndex']/*"/>	
-            <msdn-id>ff476612</msdn-id>	
-            <unmanaged>ID3D11ShaderReflectionConstantBuffer* ID3D11ShaderReflection::GetConstantBufferByIndex([In] unsigned int Index)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetConstantBufferByIndex</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetConstantBuffer(System.String)">
-            <summary>	
-            Get a constant buffer by name.	
-            </summary>	
-            <param name="name"><para>The constant-buffer name.</para></param>	
-            <returns>A reference to a constant buffer (see <see cref="T:SharpDX.D3DCompiler.ConstantBuffer"/> Interface).</returns>	
-            <remarks>	
-            A constant buffer supplies either scalar constants or texture constants to a shader. A shader can use one or more constant buffers. For best performance, separate constants into buffers based on the frequency they are updated.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetConstantBufferByName']/*"/>	
-            <msdn-id>ff476613</msdn-id>	
-            <unmanaged>ID3D11ShaderReflectionConstantBuffer* ID3D11ShaderReflection::GetConstantBufferByName([In] const char* Name)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetConstantBufferByName</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetResourceBindingDescription(System.Int32)">
-            <summary>	
-            Get a description of how a resource is bound to a shader.	
-            </summary>	
-            <param name="resourceIndex"><para>A zero-based resource index.</para></param>	
-            <returns><para>A reference to an input-binding description. See <see cref="T:SharpDX.D3DCompiler.InputBindingDescription"/>.</para></returns>	
-            <remarks>	
-            A shader consists of executable code (the compiled HLSL functions) and a set of resources that supply the shader with input data. GetResourceBindingDesc gets information about how one resource in the set is bound as an input to the shader. The  ResourceIndex parameter specifies the index for the resource.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetResourceBindingDesc']/*"/>	
-            <msdn-id>ff476624</msdn-id>	
-            <unmanaged>HRESULT ID3D11ShaderReflection::GetResourceBindingDesc([In] unsigned int ResourceIndex,[Out] D3D11_SHADER_INPUT_BIND_DESC* pDesc)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetResourceBindingDesc</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetInputParameterDescription(System.Int32)">
-            <summary>	
-            Get an input-parameter description for a shader.	
-            </summary>	
-            <param name="parameterIndex"><para>A zero-based parameter index.</para></param>	
-            <returns><para>A reference to a shader-input-signature description. See <see cref="T:SharpDX.D3DCompiler.ShaderParameterDescription"/>.</para></returns>	
-            <remarks>	
-            An input-parameter description is also called a shader signature. The shader signature contains information about the input parameters such as the order or parameters, their data type, and a parameter semantic.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetInputParameterDesc']/*"/>	
-            <msdn-id>ff476617</msdn-id>	
-            <unmanaged>HRESULT ID3D11ShaderReflection::GetInputParameterDesc([In] unsigned int ParameterIndex,[Out] D3D11_SIGNATURE_PARAMETER_DESC* pDesc)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetInputParameterDesc</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetOutputParameterDescription(System.Int32)">
-            <summary>	
-            Get an output-parameter description for a shader.	
-            </summary>	
-            <param name="parameterIndex"><para>A zero-based parameter index.</para></param>	
-            <returns><para>A reference to a shader-output-parameter description. See <see cref="T:SharpDX.D3DCompiler.ShaderParameterDescription"/>.</para></returns>	
-            <remarks>	
-            An output-parameter description is also called a shader signature. The shader signature contains information about the output parameters such as the order or parameters, their data type, and a parameter semantic.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetOutputParameterDesc']/*"/>	
-            <msdn-id>ff476622</msdn-id>	
-            <unmanaged>HRESULT ID3D11ShaderReflection::GetOutputParameterDesc([In] unsigned int ParameterIndex,[Out] D3D11_SIGNATURE_PARAMETER_DESC* pDesc)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetOutputParameterDesc</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetPatchConstantParameterDescription(System.Int32)">
-            <summary>	
-            Get a patch-constant parameter description for a shader.	
-            </summary>	
-            <param name="parameterIndex"><para>A zero-based parameter index.</para></param>	
-            <returns><para>A reference to a shader-input-signature description. See <see cref="T:SharpDX.D3DCompiler.ShaderParameterDescription"/>.</para></returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetPatchConstantParameterDesc']/*"/>	
-            <msdn-id>ff476623</msdn-id>	
-            <unmanaged>HRESULT ID3D11ShaderReflection::GetPatchConstantParameterDesc([In] unsigned int ParameterIndex,[Out] D3D11_SIGNATURE_PARAMETER_DESC* pDesc)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetPatchConstantParameterDesc</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetVariable(System.String)">
-            <summary>	
-            Gets a variable by name.	
-            </summary>	
-            <param name="name"><para>A reference to a string containing the variable name.</para></param>	
-            <returns>Returns a <see cref="T:SharpDX.D3DCompiler.ShaderReflectionVariable"/> Interface interface.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetVariableByName']/*"/>	
-            <msdn-id>ff476626</msdn-id>	
-            <unmanaged>ID3D11ShaderReflectionVariable* ID3D11ShaderReflection::GetVariableByName([In] const char* Name)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetVariableByName</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetResourceBindingDescription(System.String)">
-            <summary>	
-            Get a description of how a resource is bound to a shader.	
-            </summary>	
-            <param name="name"><para>The constant-buffer name of the resource.</para></param>	
-            <returns><para>A reference to an input-binding description. See <see cref="T:SharpDX.D3DCompiler.InputBindingDescription"/>.</para></returns>	
-            <remarks>	
-            A shader consists of executable code (the compiled HLSL functions) and a set of resources that supply the shader with input data. GetResourceBindingDescByName gets information about how one resource in the set is bound as an input to the shader. The  Name parameter specifies the name of the resource.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetResourceBindingDescByName']/*"/>	
-            <msdn-id>ff476625</msdn-id>	
-            <unmanaged>HRESULT ID3D11ShaderReflection::GetResourceBindingDescByName([In] const char* Name,[Out] D3D11_SHADER_INPUT_BIND_DESC* pDesc)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetResourceBindingDescByName</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetMoveInstructionCount">
-            <summary>	
-            Gets the number of Mov instructions.	
-            </summary>	
-            <returns>Returns the number of Mov instructions.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMovInstructionCount']/*"/>	
-            <msdn-id>ff476620</msdn-id>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetMovInstructionCount()</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetMovInstructionCount</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetConditionalMoveInstructionCount">
-            <summary>	
-            Gets the number of Movc instructions.	
-            </summary>	
-            <returns>Returns the number of Movc instructions.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMovcInstructionCount']/*"/>	
-            <msdn-id>ff476619</msdn-id>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetMovcInstructionCount()</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetMovcInstructionCount</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetConversionInstructionCount">
-            <summary>	
-            Gets the number of conversion instructions.	
-            </summary>	
-            <returns>Returns the number of conversion instructions.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetConversionInstructionCount']/*"/>	
-            <msdn-id>ff476614</msdn-id>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetConversionInstructionCount()</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetConversionInstructionCount</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetBitwiseInstructionCount">
-            <summary>	
-            Gets the number of bitwise instructions.	
-            </summary>	
-            <returns>The number of bitwise instructions.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetBitwiseInstructionCount']/*"/>	
-            <msdn-id>ff476611</msdn-id>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetBitwiseInstructionCount()</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetBitwiseInstructionCount</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetGeometryShaderSInputPrimitive">
-            <summary>	
-            Gets the geometry-shader input-primitive description.	
-            </summary>	
-            <returns>The input-primitive description, see D3D10_PRIMITIVE_TOPOLOGY.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetGSInputPrimitive']/*"/>	
-            <msdn-id>ff476616</msdn-id>	
-            <unmanaged>D3D_PRIMITIVE ID3D11ShaderReflection::GetGSInputPrimitive()</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetGSInputPrimitive</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.IsSampleFrequencyShader_">
-            <summary>	
-            Indicates whether a shader is a sample frequency shader.	
-            </summary>	
-            <returns>Returns true if the shader is a sample frequency shader; otherwise returns false.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::IsSampleFrequencyShader']/*"/>	
-            <msdn-id>ff476627</msdn-id>	
-            <unmanaged>BOOL ID3D11ShaderReflection::IsSampleFrequencyShader()</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::IsSampleFrequencyShader</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetInterfaceSlotCount">
-            <summary>	
-            Gets the number of interface slots in a shader.	
-            </summary>	
-            <returns>The number of interface slots in the shader.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetNumInterfaceSlots']/*"/>	
-            <msdn-id>ff476621</msdn-id>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetNumInterfaceSlots()</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetNumInterfaceSlots</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetMinFeatureLevel(SharpDX.Direct3D.FeatureLevel@)">
-            <summary>	
-            Gets the minimum feature level.	
-            </summary>	
-            <param name="levelRef"><para>A reference to one of the enumerated values in <see cref="T:SharpDX.Direct3D.FeatureLevel"/>, which represents the minimum feature level.</para></param>	
-            <returns>Returns one of the following Direct3D 11 Return Codes.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMinFeatureLevel']/*"/>	
-            <msdn-id>ff476618</msdn-id>	
-            <unmanaged>HRESULT ID3D11ShaderReflection::GetMinFeatureLevel([Out] D3D_FEATURE_LEVEL* pLevel)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetMinFeatureLevel</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetThreadGroupSize(System.Int32@,System.Int32@,System.Int32@)">
-            <summary>	
-            Retrieves the sizes, in thread groups, of the X, Y, and Z dimensions of the shader's thread-group grid.	
-            </summary>	
-            <param name="sizeXRef"><para>A reference to the size, in thread groups, of the x-dimension of the thread-group grid. The maximum size is 65535.</para></param>	
-            <param name="sizeYRef"><para>A reference to the size, in thread groups, of the y-dimension of the thread-group grid. The maximum size is 65535.</para></param>	
-            <param name="sizeZRef"><para>A reference to the size, in thread groups, of the z-dimension of the thread-group grid. The maximum size is 65535.</para></param>	
-            <returns>Returns one of the following Direct3D 11 Return Codes.</returns>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetThreadGroupSize']/*"/>	
-            <msdn-id>ff728742</msdn-id>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetThreadGroupSize([Out, Optional] unsigned int* pSizeX,[Out, Optional] unsigned int* pSizeY,[Out, Optional] unsigned int* pSizeZ)</unmanaged>	
-            <unmanaged-short>ID3D11ShaderReflection::GetThreadGroupSize</unmanaged-short>	
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderReflection.Description">
-            <summary>	
-            Get a shader description.	
-            </summary>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetDesc']/*"/>	
-            <msdn-id>ff476615</msdn-id>	
-            <unmanaged>GetDesc</unmanaged>	
-            <unmanaged-short>GetDesc</unmanaged-short>	
-            <unmanaged>HRESULT ID3D11ShaderReflection::GetDesc([Out] D3D11_SHADER_DESC* pDesc)</unmanaged>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderReflection.MoveInstructionCount">
-            <summary>	
-            Gets the number of Mov instructions.	
-            </summary>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMovInstructionCount']/*"/>	
-            <msdn-id>ff476620</msdn-id>	
-            <unmanaged>GetMovInstructionCount</unmanaged>	
-            <unmanaged-short>GetMovInstructionCount</unmanaged-short>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetMovInstructionCount()</unmanaged>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderReflection.ConditionalMoveInstructionCount">
-            <summary>	
-            Gets the number of Movc instructions.	
-            </summary>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMovcInstructionCount']/*"/>	
-            <msdn-id>ff476619</msdn-id>	
-            <unmanaged>GetMovcInstructionCount</unmanaged>	
-            <unmanaged-short>GetMovcInstructionCount</unmanaged-short>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetMovcInstructionCount()</unmanaged>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderReflection.ConversionInstructionCount">
-            <summary>	
-            Gets the number of conversion instructions.	
-            </summary>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetConversionInstructionCount']/*"/>	
-            <msdn-id>ff476614</msdn-id>	
-            <unmanaged>GetConversionInstructionCount</unmanaged>	
-            <unmanaged-short>GetConversionInstructionCount</unmanaged-short>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetConversionInstructionCount()</unmanaged>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderReflection.BitwiseInstructionCount">
-            <summary>	
-            Gets the number of bitwise instructions.	
-            </summary>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetBitwiseInstructionCount']/*"/>	
-            <msdn-id>ff476611</msdn-id>	
-            <unmanaged>GetBitwiseInstructionCount</unmanaged>	
-            <unmanaged-short>GetBitwiseInstructionCount</unmanaged-short>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetBitwiseInstructionCount()</unmanaged>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderReflection.GeometryShaderSInputPrimitive">
-            <summary>	
-            Gets the geometry-shader input-primitive description.	
-            </summary>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetGSInputPrimitive']/*"/>	
-            <msdn-id>ff476616</msdn-id>	
-            <unmanaged>GetGSInputPrimitive</unmanaged>	
-            <unmanaged-short>GetGSInputPrimitive</unmanaged-short>	
-            <unmanaged>D3D_PRIMITIVE ID3D11ShaderReflection::GetGSInputPrimitive()</unmanaged>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderReflection.IsSampleFrequencyShader">
-            <summary>	
-            Indicates whether a shader is a sample frequency shader.	
-            </summary>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::IsSampleFrequencyShader']/*"/>	
-            <msdn-id>ff476627</msdn-id>	
-            <unmanaged>IsSampleFrequencyShader</unmanaged>	
-            <unmanaged-short>IsSampleFrequencyShader</unmanaged-short>	
-            <unmanaged>BOOL ID3D11ShaderReflection::IsSampleFrequencyShader()</unmanaged>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderReflection.InterfaceSlotCount">
-            <summary>	
-            Gets the number of interface slots in a shader.	
-            </summary>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetNumInterfaceSlots']/*"/>	
-            <msdn-id>ff476621</msdn-id>	
-            <unmanaged>GetNumInterfaceSlots</unmanaged>	
-            <unmanaged-short>GetNumInterfaceSlots</unmanaged-short>	
-            <unmanaged>unsigned int ID3D11ShaderReflection::GetNumInterfaceSlots()</unmanaged>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderReflection.MinFeatureLevel">
-            <summary>	
-            Gets the minimum feature level.	
-            </summary>	
-            <remarks>	
-            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMinFeatureLevel']/*"/>	
-            <msdn-id>ff476618</msdn-id>	
-            <unmanaged>GetMinFeatureLevel</unmanaged>	
-            <unmanaged-short>GetMinFeatureLevel</unmanaged-short>	
-            <unmanaged>HRESULT ID3D11ShaderReflection::GetMinFeatureLevel([Out] D3D_FEATURE_LEVEL* pLevel)</unmanaged>
-        </member>
-        <member name="T:SharpDX.D3DCompiler.ShaderBytecode">
-            <summary>
-              Represents the compiled bytecode of a shader or effect.
-            </summary>
-            <unmanaged>Blob</unmanaged>
-        </member>
-        <member name="F:SharpDX.D3DCompiler.ShaderBytecode.Effect10">
-            <summary>
-            Use this ShaderFlags constant in order to compile an effect with old D3D10CompileEffectFromMemory.
-            </summary>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.#ctor(SharpDX.DataStream)">
-            <summary>
-              Initializes a new instance of the <see cref = "T:SharpDX.D3DCompiler.ShaderBytecode" /> class.
-            </summary>
-            <param name = "data">A <see cref = "T:SharpDX.DataStream" /> containing the compiled bytecode.</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.#ctor(System.IO.Stream)">
-            <summary>
-              Initializes a new instance of the <see cref = "T:SharpDX.D3DCompiler.ShaderBytecode" /> class.
-            </summary>
-            <param name = "data">A <see cref = "T:System.IO.Stream" /> containing the compiled bytecode.</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.#ctor(System.Byte[])">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/> class.
-            </summary>
-            <param name="buffer">The buffer.</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.#ctor(System.IntPtr,System.Int32)">
-            <summary>
-              Initializes a new instance of the <see cref = "T:SharpDX.D3DCompiler.ShaderBytecode" /> class.
-            </summary>
-            <param name = "buffer">a pointer to a compiler bytecode</param>
-            <param name = "sizeInBytes">size of the bytecode</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.#ctor(SharpDX.Direct3D.Blob)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/> class.
-            </summary>
-            <param name="blob">The BLOB.</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,System.String)">
-            <summary>
-            Compiles the provided shader or effect source.
-            </summary>
-            <param name="shaderSource">A string containing the source of the shader or effect to compile.</param>
-            <param name="profile">The shader target or set of shader features to compile against.</param>
-            <param name="shaderFlags">Shader compilation options.</param>
-            <param name="effectFlags">Effect compilation options.</param>
-            <param name="sourceFileName">Name of the source file.</param>
-            <returns>
-            The compiled shader bytecode, or <c>null</c> if the method fails.
-            </returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.Byte[],System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,System.String)">
-            <summary>
-            Compiles the provided shader or effect source.
-            </summary>
-            <param name="shaderSource">An array of bytes containing the raw source of the shader or effect to compile.</param>
-            <param name="profile">The shader target or set of shader features to compile against.</param>
-            <param name="shaderFlags">Shader compilation options.</param>
-            <param name="effectFlags">Effect compilation options.</param>
-            <param name="sourceFileName">Name of the source file.</param>
-            <returns>
-            The compiled shader bytecode, or <c>null</c> if the method fails.
-            </returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.String,System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,System.String)">
-            <summary>
-            Compiles the provided shader or effect source.
-            </summary>
-            <param name="shaderSource">A string containing the source of the shader or effect to compile.</param>
-            <param name="entryPoint">The name of the shader entry-point function, or <c>null</c> for an effect file.</param>
-            <param name="profile">The shader target or set of shader features to compile against.</param>
-            <param name="shaderFlags">Shader compilation options.</param>
-            <param name="effectFlags">Effect compilation options.</param>
-            <param name="sourceFileName">Name of the source file.</param>
-            <returns>
-            The compiled shader bytecode, or <c>null</c> if the method fails.
-            </returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.Byte[],System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,System.String)">
-            <summary>
-              Compiles the provided shader or effect source.
-            </summary>
-            <param name = "shaderSource">An array of bytes containing the raw source of the shader or effect to compile.</param>
-            <param name = "entryPoint">The name of the shader entry-point function, or <c>null</c> for an effect file.</param>
-            <param name = "profile">The shader target or set of shader features to compile against.</param>
-            <param name = "shaderFlags">Shader compilation options.</param>
-            <param name = "effectFlags">Effect compilation options.</param>
-            <returns>The compiled shader bytecode, or <c>null</c> if the method fails.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String)">
-            <summary>
-            Compiles the provided shader or effect source.
-            </summary>
-            <param name="shaderSource">A string containing the source of the shader or effect to compile.</param>
-            <param name="profile">The shader target or set of shader features to compile against.</param>
-            <param name="shaderFlags">Shader compilation options.</param>
-            <param name="effectFlags">Effect compilation options.</param>
-            <param name="defines">A set of macros to define during compilation.</param>
-            <param name="include">An interface for handling include files.</param>
-            <param name="compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if compilation succeeded.</param>
-            <param name="sourceFileName">Name of the source file.</param>
-            <returns>
-            The compiled shader bytecode, or <c>null</c> if the method fails.
-            </returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.Byte[],System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String)">
-            <summary>
-            Compiles the provided shader or effect source.
-            </summary>
-            <param name="shaderSource">An array of bytes containing the raw source of the shader or effect to compile.</param>
-            <param name="profile">The shader target or set of shader features to compile against.</param>
-            <param name="shaderFlags">Shader compilation options.</param>
-            <param name="effectFlags">Effect compilation options.</param>
-            <param name="defines">A set of macros to define during compilation.</param>
-            <param name="include">An interface for handling include files.</param>
-            <param name="sourceFileName">Name of the source file.</param>
-            <returns>
-            The compiled shader bytecode, or <c>null</c> if the method fails.
-            </returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.String,System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String)">
-            <summary>
-            Compiles the provided shader or effect source.
-            </summary>
-            <param name="shaderSource">A string containing the source of the shader or effect to compile.</param>
-            <param name="entryPoint">The name of the shader entry-point function, or <c>null</c> for an effect file.</param>
-            <param name="profile">The shader target or set of shader features to compile against.</param>
-            <param name="shaderFlags">Shader compilation options.</param>
-            <param name="effectFlags">Effect compilation options.</param>
-            <param name="defines">A set of macros to define during compilation.</param>
-            <param name="include">An interface for handling include files.</param>
-            <param name="compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if compilation succeeded.</param>
-            <param name="sourceFileName">Name of the source file.</param>
-            <returns>
-            The compiled shader bytecode, or <c>null</c> if the method fails.
-            </returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.CompileFromFile(System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include)">
-            <summary>
-              Compiles a shader or effect from a file on disk.
-            </summary>
-            <param name = "fileName">The name of the source file to compile.</param>
-            <param name = "profile">The shader target or set of shader features to compile against.</param>
-            <param name = "shaderFlags">Shader compilation options.</param>
-            <param name = "effectFlags">Effect compilation options.</param>
-            <param name = "defines">A set of macros to define during compilation.</param>
-            <param name = "include">An interface for handling include files.</param>
-            <param name = "compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if compilation succeeded.</param>
-            <returns>The compiled shader bytecode, or <c>null</c> if the method fails.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.CompileFromFile(System.String,System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include)">
-            <summary>
-            Compiles a shader or effect from a file on disk.
-            </summary>
-            <param name="fileName">The name of the source file to compile.</param>
-            <param name="entryPoint">The name of the shader entry-point function, or <c>null</c> for an effect file.</param>
-            <param name="profile">The shader target or set of shader features to compile against.</param>
-            <param name="shaderFlags">Shader compilation options.</param>
-            <param name="effectFlags">Effect compilation options.</param>
-            <param name="defines">A set of macros to define during compilation.</param>
-            <param name="include">An interface for handling include files.</param>
-            <returns>
-            The compiled shader bytecode, or <c>null</c> if the method fails.
-            </returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.Byte[],System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String)">
-            <summary>
-            Compiles the provided shader or effect source.
-            </summary>
-            <param name="shaderSource">An array of bytes containing the raw source of the shader or effect to compile.</param>
-            <param name="entryPoint">The name of the shader entry-point function, or <c>null</c> for an effect file.</param>
-            <param name="profile">The shader target or set of shader features to compile against.</param>
-            <param name="shaderFlags">Shader compilation options.</param>
-            <param name="effectFlags">Effect compilation options.</param>
-            <param name="defines">A set of macros to define during compilation.</param>
-            <param name="include">An interface for handling include files.</param>
-            <param name="sourceFileName">Name of the source file used for reporting errors. Default is "unknown"</param>
-            <returns>
-            The compiled shader bytecode, or <c>null</c> if the method fails.
-            </returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Save(System.String)">
-            <summary>
-            Saves to the specified file name.
-            </summary>
-            <param name="fileName">Name of the file.</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compress(SharpDX.D3DCompiler.ShaderBytecode[])">
-            <summary>	
-            Compresses a set of shaders into a more compact form. 	
-            </summary>	
-            <param name="shaderBytecodes">An array of <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/> structures that describe the set of shaders to compress. </param>
-            <returns>A compressed <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/>. </returns>
-            <unmanaged>HRESULT D3DCompressShaders([In] int uNumShaders,[In, Buffer] D3D_SHADER_DATA* pShaderData,[In] int uFlags,[Out] ID3DBlob** ppCompressedData)</unmanaged>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Decompress">
-            <summary>	
-            Decompresses all shaders from a compressed set.	
-            </summary>	
-            <returns>Returns an array of decompresss shader bytecode.</returns>	
-            <unmanaged>HRESULT D3DDecompressShaders([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[In] unsigned int uNumShaders,[In] unsigned int uStartIndex,[In, Buffer, Optional] unsigned int* pIndices,[In] unsigned int uFlags,[Out, Buffer] ID3D10Blob** ppShaders,[Out, Optional] unsigned int* pTotalShaders)</unmanaged>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Decompress(System.Int32,System.Int32)">
-            <summary>	
-            Decompresses one or more shaders from a compressed set.	
-            </summary>	
-            <param name="numShaders"><para>The number of shaders to decompress.</para></param>	
-            <param name="startIndex"><para>The index of the first shader to decompress.</para></param>	
-            <returns>Returns an array of decompresss shader bytecode.</returns>	
-            <unmanaged>HRESULT D3DDecompressShaders([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[In] unsigned int uNumShaders,[In] unsigned int uStartIndex,[In, Buffer, Optional] unsigned int* pIndices,[In] unsigned int uFlags,[Out, Buffer] ID3D10Blob** ppShaders,[Out, Optional] unsigned int* pTotalShaders)</unmanaged>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Decompress(System.Int32[])">
-            <summary>	
-            Decompresses one or more shaders from a compressed set.	
-            </summary>	
-            <param name="indices"><para>An array of indexes that represent the shaders to decompress.</para></param>	
-            <returns>Returns an array of decompresss shader bytecode.</returns>	
-            <unmanaged>HRESULT D3DDecompressShaders([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[In] unsigned int uNumShaders,[In] unsigned int uStartIndex,[In, Buffer, Optional] unsigned int* pIndices,[In] unsigned int uFlags,[Out, Buffer] ID3D10Blob** ppShaders,[Out, Optional] unsigned int* pTotalShaders)</unmanaged>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Disassemble">
-            <summary>
-              Disassembles compiled HLSL code back into textual source.
-            </summary>
-            <returns>The textual source of the shader or effect.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Disassemble(SharpDX.D3DCompiler.DisassemblyFlags)">
-            <summary>
-              Disassembles compiled HLSL code back into textual source.
-            </summary>
-            <param name = "flags">Flags affecting the output of the disassembly.</param>
-            <returns>The textual source of the shader or effect.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Disassemble(SharpDX.D3DCompiler.DisassemblyFlags,System.String)">
-            <summary>
-              Disassembles compiled HLSL code back into textual source.
-            </summary>
-            <param name = "flags">Flags affecting the output of the disassembly.</param>
-            <param name = "comments">Commenting information to embed in the disassembly.</param>
-            <returns>The textual source of the shader or effect.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.GetPart(SharpDX.D3DCompiler.ShaderBytecodePart)">
-            <summary>	
-            Retrieves a specific part from a compilation result.	
-            </summary>	
-            <remarks>	
-            D3DGetBlobPart retrieves the part of a blob (arbitrary length data buffer) that contains the type of data that the  Part parameter specifies. 	
-            </remarks>	
-            <param name="part">A <see cref="T:SharpDX.D3DCompiler.ShaderBytecodePart"/>-typed value that specifies the part of the buffer to retrieve. </param>
-            <returns>Returns the extracted part. </returns>
-            <unmanaged>HRESULT D3DGetBlobPart([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[In] D3D_BLOB_PART Part,[In] int Flags,[Out] ID3DBlob** ppPart)</unmanaged>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Load(System.IO.Stream)">
-            <summary>
-            Loads from the specified stream.
-            </summary>
-            <param name="stream">The stream.</param>
-            <returns>A shader bytecode</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Save(System.IO.Stream)">
-            <summary>
-            Saves this bycode to the specified stream.
-            </summary>
-            <param name="stream">The stream.</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.FromPointer(System.IntPtr)">
-            <summary>
-            Froms the pointer.
-            </summary>
-            <param name="pointer">The pointer.</param>
-            <returns></returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Preprocess(System.String,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include)">
-            <summary>
-              Preprocesses the provided shader or effect source.
-            </summary>
-            <param name = "shaderSource">A string containing the source of the shader or effect to preprocess.</param>
-            <param name = "defines">A set of macros to define during preprocessing.</param>
-            <param name = "include">An interface for handling include files.</param>
-            <returns>The preprocessed shader source.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Preprocess(System.Byte[],SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include)">
-            <summary>
-              Preprocesses the provided shader or effect source.
-            </summary>
-            <param name = "shaderSource">An array of bytes containing the raw source of the shader or effect to preprocess.</param>
-            <param name = "defines">A set of macros to define during preprocessing.</param>
-            <param name = "include">An interface for handling include files.</param>
-            <returns>The preprocessed shader source.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Preprocess(System.Byte[],SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String@)">
-            <summary>
-              Preprocesses the provided shader or effect source.
-            </summary>
-            <param name = "shaderSource">An array of bytes containing the raw source of the shader or effect to preprocess.</param>
-            <param name = "defines">A set of macros to define during preprocessing.</param>
-            <param name = "include">An interface for handling include files.</param>
-            <param name = "compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if preprocessing succeeded.</param>
-            <returns>The preprocessed shader source.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Preprocess(System.IntPtr,System.Int32,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String@)">
-            <summary>
-              Preprocesses the provided shader or effect source.
-            </summary>
-            <param name = "shaderSource">An array of bytes containing the raw source of the shader or effect to preprocess.</param>
-            <param name = "defines">A set of macros to define during preprocessing.</param>
-            <param name = "include">An interface for handling include files.</param>
-            <param name = "compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if preprocessing succeeded.</param>
-            <returns>The preprocessed shader source.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Preprocess(System.String,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String@)">
-            <summary>
-              Preprocesses the provided shader or effect source.
-            </summary>
-            <param name = "shaderSource">A string containing the source of the shader or effect to preprocess.</param>
-            <param name = "defines">A set of macros to define during preprocessing.</param>
-            <param name = "include">An interface for handling include files.</param>
-            <param name = "compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if preprocessing succeeded.</param>
-            <returns>The preprocessed shader source.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.PreprocessFromFile(System.String)">
-            <summary>
-              Preprocesses a shader or effect from a file on disk.
-            </summary>
-            <param name = "fileName">The name of the source file to compile.</param>
-            <returns>The preprocessed shader source.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.PreprocessFromFile(System.String,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include)">
-            <summary>
-              Preprocesses a shader or effect from a file on disk.
-            </summary>
-            <param name = "fileName">The name of the source file to compile.</param>
-            <param name = "defines">A set of macros to define during preprocessing.</param>
-            <param name = "include">An interface for handling include files.</param>
-            <returns>The preprocessed shader source.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.PreprocessFromFile(System.String,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String@)">
-            <summary>
-              Preprocesses a shader or effect from a file on disk.
-            </summary>
-            <param name = "fileName">The name of the source file to compile.</param>
-            <param name = "defines">A set of macros to define during preprocessing.</param>
-            <param name = "include">An interface for handling include files.</param>
-            <param name = "compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if preprocessing succeeded.</param>
-            <returns>The preprocessed shader source.</returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Strip(SharpDX.D3DCompiler.StripFlags)">
-            <summary>
-              Strips extraneous information from a compiled shader or effect.
-            </summary>
-            <param name = "flags">Options specifying what to remove from the shader.</param>
-            <returns>A string containing any errors that may have occurred.</returns>
-            <unmanaged>HRESULT D3DStripShader([In, Buffer] const void* pShaderBytecode,[In] SIZE_T BytecodeLength,[In] D3DCOMPILER_STRIP_FLAGS uStripFlags,[Out] ID3D10Blob** ppStrippedBlob)</unmanaged>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.FromStream(System.IO.Stream)">
-            <summary>
-              Read a compiled shader bytecode from a Stream and return a ShaderBytecode
-            </summary>
-            <param name = "stream"></param>
-            <returns></returns>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.FromFile(System.String)">
-            <summary>
-              Read a compiled shader bytecode from a Stream and return a ShaderBytecode
-            </summary>
-            <param name = "fileName"></param>
-            <returns></returns>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderBytecode.BufferPointer">
-            <summary>
-            Gets the buffer pointer.
-            </summary>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderBytecode.BufferSize">
-            <summary>
-            Gets or sets the size of the buffer.
-            </summary>
-            <value>
-            The size of the buffer.
-            </value>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderBytecode.IsCompressed">
-            <summary>
-            Gets this instance is composed of compressed shaders.
-            </summary>
-            <value>
-                <c>true</c> if this instance is compressed; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderBytecode.Data">
-            <summary>
-              Gets the raw data of the compiled bytecode.
-            </summary>
         </member>
         <member name="T:SharpDX.D3DCompiler.ConstantBufferFlags">
             <summary>	
@@ -3278,56 +2511,6 @@
             <unmanaged>D3D_TESSELLATOR_PARTITIONING_FRACTIONAL_EVEN</unmanaged>	
             <unmanaged-short>D3D_TESSELLATOR_PARTITIONING_FRACTIONAL_EVEN</unmanaged-short>	
         </member>
-        <member name="T:SharpDX.D3DCompiler.AssemblyDoc">
-            <summary>
-            The <see cref="A:SharpDX.D3DCompiler"/> assembly is a managed Direct3D Compiler API.
-            </summary>
-            <msdn-id>dd607340</msdn-id>
-            <unmanaged>D3DCompiler</unmanaged>	
-            <unmanaged-short>D3DCompiler</unmanaged-short>	
-        </member>
-        <member name="T:SharpDX.D3DCompiler.IncludeShadow">
-            <summary>
-            Shadow callback for <see cref="T:SharpDX.D3DCompiler.Include"/>.
-            </summary>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.IncludeShadow.ToIntPtr(SharpDX.D3DCompiler.Include)">
-            <summary>
-            Return a pointer to the unamanged version of this callback.
-            </summary>
-            <param name="callback">The callback.</param>
-            <returns>A pointer to a shadow c++ callback</returns>
-        </member>
-        <member name="T:SharpDX.D3DCompiler.IncludeShadow.IncludeVtbl">
-            <summary>
-            Internal Include Callback
-            </summary>
-        </member>
-        <member name="T:SharpDX.D3DCompiler.IncludeShadow.IncludeVtbl.OpenDelegate">
-            <summary>	
-            A user-implemented method for opening and reading the contents of a shader #include file.	
-            </summary>
-            <param name="thisPtr">This pointer</param>
-            <param name="includeType">A <see cref="T:SharpDX.D3DCompiler.IncludeType"/>-typed value that indicates the location of the #include file. </param>
-            <param name="fileNameRef">Name of the #include file.</param>
-            <param name="pParentData">Pointer to the container that includes the #include file.</param>
-            <param name="dataRef">Pointer to the buffer that Open returns that contains the include directives. This pointer remains valid until <see cref="M:SharpDX.D3DCompiler.Include.Close(System.IO.Stream)"/> is called.</param>
-            <param name="bytesRef">Pointer to the number of bytes that Open returns in ppData.</param>
-            <returns>The user-implemented method should return S_OK. If Open fails when reading the #include file, the application programming interface (API) that caused Open to be called fails. This failure can occur in one of the following situations:The high-level shader language (HLSL) shader fails one of the D3D10CompileShader*** functions.The effect fails one of the D3D10CreateEffect*** functions.</returns>
-            <unmanaged>HRESULT Open([None] D3D_INCLUDE_TYPE IncludeType,[None] const char* pFileName,[None] LPCVOID pParentData,[None] LPCVOID* ppData,[None] UINT* pBytes)</unmanaged>
-        </member>
-        <member name="T:SharpDX.D3DCompiler.IncludeShadow.IncludeVtbl.CloseDelegate">
-            <summary>	
-            A user-implemented method for closing a shader #include file.	
-            </summary>	
-            <remarks>	
-            If <see cref="M:SharpDX.D3DCompiler.Include.Open(SharpDX.D3DCompiler.IncludeType,System.String,System.IO.Stream)"/> was successful, Close is guaranteed to be called before the API using the <see cref="T:SharpDX.D3DCompiler.Include"/> interface returns.	
-            </remarks>
-            <param name="thisPtr">This pointer</param>
-            <param name="pData">Pointer to the buffer that contains the include directives. This is the pointer that was returned by the corresponding <see cref="M:SharpDX.D3DCompiler.Include.Open(SharpDX.D3DCompiler.IncludeType,System.String,System.IO.Stream)"/> call.</param>
-            <returns>The user-implemented Close method should return S_OK. If Close fails when it closes the #include file, the application programming interface (API) that caused Close to be called fails. This failure can occur in one of the following situations:The high-level shader language (HLSL) shader fails one of the D3D10CompileShader*** functions.The effect fails one of the D3D10CreateEffect*** functions.</returns>
-            <unmanaged>HRESULT Close([None] LPCVOID pData)</unmanaged>
-        </member>
         <member name="T:SharpDX.D3DCompiler.ConstantBuffer">
             <summary>	
             This shader-reflection interface provides access to a constant buffer.	
@@ -3441,6 +2624,406 @@
             </remarks>	
             <param name="stream">This is a reference that was returned by the corresponding <see cref="M:SharpDX.D3DCompiler.Include.Open(SharpDX.D3DCompiler.IncludeType,System.String,System.IO.Stream)"/> call.</param>
             <unmanaged>HRESULT Close([None] LPCVOID pData)</unmanaged>
+        </member>
+        <member name="T:SharpDX.D3DCompiler.ShaderReflection">
+            <summary>	
+            A shader-reflection interface accesses shader information.	
+            </summary>	
+            <remarks>	
+            An <see cref="T:SharpDX.D3DCompiler.ShaderReflection"/> interface can be retrieved for a shader by using  <see cref="M:SharpDX.D3DCompiler.D3D.Reflect(System.IntPtr,SharpDX.PointerSize,System.Guid,System.IntPtr@)"/>.  The following code illustrates retrieving a <see cref="T:SharpDX.D3DCompiler.ShaderReflection"/> from a shader.<code>	
+             pd3dDevice-&gt;CreatePixelShader( pPixelShaderBuffer-&gt;GetBufferPointer(), pPixelShaderBuffer-&gt;GetBufferSize(), g_pPSClassLinkage, &amp;g_pPixelShader ); <see cref="T:SharpDX.D3DCompiler.ShaderReflection"/>* pReflector = <c>null</c>; 	
+            <see cref="M:SharpDX.D3DCompiler.D3D.Reflect(System.IntPtr,SharpDX.PointerSize,System.Guid,System.IntPtr@)"/>( pPixelShaderBuffer-&gt;GetBufferPointer(), pPixelShaderBuffer-&gt;GetBufferSize(),  IID_ID3D11ShaderReflection, (void**) &amp;pReflector); 	
+            </code>	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection']/*"/>	
+            <msdn-id>ff476590</msdn-id>	
+            <unmanaged>ID3D11ShaderReflection</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.#ctor(System.IntPtr)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderReflection"/> class.
+            </summary>
+            <param name="nativePtr">The native pointer.</param>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.op_Explicit(System.IntPtr)~SharpDX.D3DCompiler.ShaderReflection">
+            <summary>
+            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.D3DCompiler.ShaderReflection"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
+            </summary>
+            <param name="nativePointer">The native pointer.</param>
+            <returns>
+            The result of the conversion.
+            </returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetDescription(SharpDX.D3DCompiler.ShaderDescription@)">
+            <summary>	
+            Get a shader description.	
+            </summary>	
+            <param name="descRef"><para>A reference to a shader description. See <see cref="T:SharpDX.D3DCompiler.ShaderDescription"/>.</para></param>	
+            <returns>Returns one of the following Direct3D 11 Return Codes.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetDesc']/*"/>	
+            <msdn-id>ff476615</msdn-id>	
+            <unmanaged>HRESULT ID3D11ShaderReflection::GetDesc([Out] D3D11_SHADER_DESC* pDesc)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetDesc</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetConstantBuffer(System.Int32)">
+            <summary>	
+            Get a constant buffer by index.	
+            </summary>	
+            <param name="index"><para>Zero-based index.</para></param>	
+            <returns>A reference to a constant buffer (see <see cref="T:SharpDX.D3DCompiler.ConstantBuffer"/> Interface).</returns>	
+            <remarks>	
+            A constant buffer supplies either scalar constants or texture constants to a shader. A shader can use one or more constant buffers. For best performance, separate constants into buffers based on the frequency they are updated.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetConstantBufferByIndex']/*"/>	
+            <msdn-id>ff476612</msdn-id>	
+            <unmanaged>ID3D11ShaderReflectionConstantBuffer* ID3D11ShaderReflection::GetConstantBufferByIndex([In] unsigned int Index)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetConstantBufferByIndex</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetConstantBuffer(System.String)">
+            <summary>	
+            Get a constant buffer by name.	
+            </summary>	
+            <param name="name"><para>The constant-buffer name.</para></param>	
+            <returns>A reference to a constant buffer (see <see cref="T:SharpDX.D3DCompiler.ConstantBuffer"/> Interface).</returns>	
+            <remarks>	
+            A constant buffer supplies either scalar constants or texture constants to a shader. A shader can use one or more constant buffers. For best performance, separate constants into buffers based on the frequency they are updated.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetConstantBufferByName']/*"/>	
+            <msdn-id>ff476613</msdn-id>	
+            <unmanaged>ID3D11ShaderReflectionConstantBuffer* ID3D11ShaderReflection::GetConstantBufferByName([In] const char* Name)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetConstantBufferByName</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetResourceBindingDescription(System.Int32)">
+            <summary>	
+            Get a description of how a resource is bound to a shader.	
+            </summary>	
+            <param name="resourceIndex"><para>A zero-based resource index.</para></param>	
+            <returns><para>A reference to an input-binding description. See <see cref="T:SharpDX.D3DCompiler.InputBindingDescription"/>.</para></returns>	
+            <remarks>	
+            A shader consists of executable code (the compiled HLSL functions) and a set of resources that supply the shader with input data. GetResourceBindingDesc gets information about how one resource in the set is bound as an input to the shader. The  ResourceIndex parameter specifies the index for the resource.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetResourceBindingDesc']/*"/>	
+            <msdn-id>ff476624</msdn-id>	
+            <unmanaged>HRESULT ID3D11ShaderReflection::GetResourceBindingDesc([In] unsigned int ResourceIndex,[Out] D3D11_SHADER_INPUT_BIND_DESC* pDesc)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetResourceBindingDesc</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetInputParameterDescription(System.Int32)">
+            <summary>	
+            Get an input-parameter description for a shader.	
+            </summary>	
+            <param name="parameterIndex"><para>A zero-based parameter index.</para></param>	
+            <returns><para>A reference to a shader-input-signature description. See <see cref="T:SharpDX.D3DCompiler.ShaderParameterDescription"/>.</para></returns>	
+            <remarks>	
+            An input-parameter description is also called a shader signature. The shader signature contains information about the input parameters such as the order or parameters, their data type, and a parameter semantic.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetInputParameterDesc']/*"/>	
+            <msdn-id>ff476617</msdn-id>	
+            <unmanaged>HRESULT ID3D11ShaderReflection::GetInputParameterDesc([In] unsigned int ParameterIndex,[Out] D3D11_SIGNATURE_PARAMETER_DESC* pDesc)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetInputParameterDesc</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetOutputParameterDescription(System.Int32)">
+            <summary>	
+            Get an output-parameter description for a shader.	
+            </summary>	
+            <param name="parameterIndex"><para>A zero-based parameter index.</para></param>	
+            <returns><para>A reference to a shader-output-parameter description. See <see cref="T:SharpDX.D3DCompiler.ShaderParameterDescription"/>.</para></returns>	
+            <remarks>	
+            An output-parameter description is also called a shader signature. The shader signature contains information about the output parameters such as the order or parameters, their data type, and a parameter semantic.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetOutputParameterDesc']/*"/>	
+            <msdn-id>ff476622</msdn-id>	
+            <unmanaged>HRESULT ID3D11ShaderReflection::GetOutputParameterDesc([In] unsigned int ParameterIndex,[Out] D3D11_SIGNATURE_PARAMETER_DESC* pDesc)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetOutputParameterDesc</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetPatchConstantParameterDescription(System.Int32)">
+            <summary>	
+            Get a patch-constant parameter description for a shader.	
+            </summary>	
+            <param name="parameterIndex"><para>A zero-based parameter index.</para></param>	
+            <returns><para>A reference to a shader-input-signature description. See <see cref="T:SharpDX.D3DCompiler.ShaderParameterDescription"/>.</para></returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetPatchConstantParameterDesc']/*"/>	
+            <msdn-id>ff476623</msdn-id>	
+            <unmanaged>HRESULT ID3D11ShaderReflection::GetPatchConstantParameterDesc([In] unsigned int ParameterIndex,[Out] D3D11_SIGNATURE_PARAMETER_DESC* pDesc)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetPatchConstantParameterDesc</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetVariable(System.String)">
+            <summary>	
+            Gets a variable by name.	
+            </summary>	
+            <param name="name"><para>A reference to a string containing the variable name.</para></param>	
+            <returns>Returns a <see cref="T:SharpDX.D3DCompiler.ShaderReflectionVariable"/> Interface interface.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetVariableByName']/*"/>	
+            <msdn-id>ff476626</msdn-id>	
+            <unmanaged>ID3D11ShaderReflectionVariable* ID3D11ShaderReflection::GetVariableByName([In] const char* Name)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetVariableByName</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetResourceBindingDescription(System.String)">
+            <summary>	
+            Get a description of how a resource is bound to a shader.	
+            </summary>	
+            <param name="name"><para>The constant-buffer name of the resource.</para></param>	
+            <returns><para>A reference to an input-binding description. See <see cref="T:SharpDX.D3DCompiler.InputBindingDescription"/>.</para></returns>	
+            <remarks>	
+            A shader consists of executable code (the compiled HLSL functions) and a set of resources that supply the shader with input data. GetResourceBindingDescByName gets information about how one resource in the set is bound as an input to the shader. The  Name parameter specifies the name of the resource.This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetResourceBindingDescByName']/*"/>	
+            <msdn-id>ff476625</msdn-id>	
+            <unmanaged>HRESULT ID3D11ShaderReflection::GetResourceBindingDescByName([In] const char* Name,[Out] D3D11_SHADER_INPUT_BIND_DESC* pDesc)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetResourceBindingDescByName</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetMoveInstructionCount">
+            <summary>	
+            Gets the number of Mov instructions.	
+            </summary>	
+            <returns>Returns the number of Mov instructions.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMovInstructionCount']/*"/>	
+            <msdn-id>ff476620</msdn-id>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetMovInstructionCount()</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetMovInstructionCount</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetConditionalMoveInstructionCount">
+            <summary>	
+            Gets the number of Movc instructions.	
+            </summary>	
+            <returns>Returns the number of Movc instructions.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMovcInstructionCount']/*"/>	
+            <msdn-id>ff476619</msdn-id>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetMovcInstructionCount()</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetMovcInstructionCount</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetConversionInstructionCount">
+            <summary>	
+            Gets the number of conversion instructions.	
+            </summary>	
+            <returns>Returns the number of conversion instructions.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetConversionInstructionCount']/*"/>	
+            <msdn-id>ff476614</msdn-id>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetConversionInstructionCount()</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetConversionInstructionCount</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetBitwiseInstructionCount">
+            <summary>	
+            Gets the number of bitwise instructions.	
+            </summary>	
+            <returns>The number of bitwise instructions.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetBitwiseInstructionCount']/*"/>	
+            <msdn-id>ff476611</msdn-id>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetBitwiseInstructionCount()</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetBitwiseInstructionCount</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetGeometryShaderSInputPrimitive">
+            <summary>	
+            Gets the geometry-shader input-primitive description.	
+            </summary>	
+            <returns>The input-primitive description, see D3D10_PRIMITIVE_TOPOLOGY.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetGSInputPrimitive']/*"/>	
+            <msdn-id>ff476616</msdn-id>	
+            <unmanaged>D3D_PRIMITIVE ID3D11ShaderReflection::GetGSInputPrimitive()</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetGSInputPrimitive</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.IsSampleFrequencyShader_">
+            <summary>	
+            Indicates whether a shader is a sample frequency shader.	
+            </summary>	
+            <returns>Returns true if the shader is a sample frequency shader; otherwise returns false.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::IsSampleFrequencyShader']/*"/>	
+            <msdn-id>ff476627</msdn-id>	
+            <unmanaged>BOOL ID3D11ShaderReflection::IsSampleFrequencyShader()</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::IsSampleFrequencyShader</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetInterfaceSlotCount">
+            <summary>	
+            Gets the number of interface slots in a shader.	
+            </summary>	
+            <returns>The number of interface slots in the shader.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetNumInterfaceSlots']/*"/>	
+            <msdn-id>ff476621</msdn-id>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetNumInterfaceSlots()</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetNumInterfaceSlots</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetMinFeatureLevel(SharpDX.Direct3D.FeatureLevel@)">
+            <summary>	
+            Gets the minimum feature level.	
+            </summary>	
+            <param name="levelRef"><para>A reference to one of the enumerated values in <see cref="T:SharpDX.Direct3D.FeatureLevel"/>, which represents the minimum feature level.</para></param>	
+            <returns>Returns one of the following Direct3D 11 Return Codes.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMinFeatureLevel']/*"/>	
+            <msdn-id>ff476618</msdn-id>	
+            <unmanaged>HRESULT ID3D11ShaderReflection::GetMinFeatureLevel([Out] D3D_FEATURE_LEVEL* pLevel)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetMinFeatureLevel</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.GetThreadGroupSize(System.Int32@,System.Int32@,System.Int32@)">
+            <summary>	
+            Retrieves the sizes, in thread groups, of the X, Y, and Z dimensions of the shader's thread-group grid.	
+            </summary>	
+            <param name="sizeXRef"><para>A reference to the size, in thread groups, of the x-dimension of the thread-group grid. The maximum size is 65535.</para></param>	
+            <param name="sizeYRef"><para>A reference to the size, in thread groups, of the y-dimension of the thread-group grid. The maximum size is 65535.</para></param>	
+            <param name="sizeZRef"><para>A reference to the size, in thread groups, of the z-dimension of the thread-group grid. The maximum size is 65535.</para></param>	
+            <returns>Returns one of the following Direct3D 11 Return Codes.</returns>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetThreadGroupSize']/*"/>	
+            <msdn-id>ff728742</msdn-id>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetThreadGroupSize([Out, Optional] unsigned int* pSizeX,[Out, Optional] unsigned int* pSizeY,[Out, Optional] unsigned int* pSizeZ)</unmanaged>	
+            <unmanaged-short>ID3D11ShaderReflection::GetThreadGroupSize</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderReflection.#ctor(SharpDX.D3DCompiler.ShaderBytecode)">
+            <summary>
+              Initializes a new instance of the <see cref = "T:SharpDX.D3DCompiler.ShaderReflection" /> class from a <see cref = "T:SharpDX.D3DCompiler.ShaderBytecode" />.
+            </summary>
+            <param name = "shaderBytecode"></param>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderReflection.Description">
+            <summary>	
+            Get a shader description.	
+            </summary>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetDesc']/*"/>	
+            <msdn-id>ff476615</msdn-id>	
+            <unmanaged>GetDesc</unmanaged>	
+            <unmanaged-short>GetDesc</unmanaged-short>	
+            <unmanaged>HRESULT ID3D11ShaderReflection::GetDesc([Out] D3D11_SHADER_DESC* pDesc)</unmanaged>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderReflection.MoveInstructionCount">
+            <summary>	
+            Gets the number of Mov instructions.	
+            </summary>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMovInstructionCount']/*"/>	
+            <msdn-id>ff476620</msdn-id>	
+            <unmanaged>GetMovInstructionCount</unmanaged>	
+            <unmanaged-short>GetMovInstructionCount</unmanaged-short>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetMovInstructionCount()</unmanaged>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderReflection.ConditionalMoveInstructionCount">
+            <summary>	
+            Gets the number of Movc instructions.	
+            </summary>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMovcInstructionCount']/*"/>	
+            <msdn-id>ff476619</msdn-id>	
+            <unmanaged>GetMovcInstructionCount</unmanaged>	
+            <unmanaged-short>GetMovcInstructionCount</unmanaged-short>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetMovcInstructionCount()</unmanaged>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderReflection.ConversionInstructionCount">
+            <summary>	
+            Gets the number of conversion instructions.	
+            </summary>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetConversionInstructionCount']/*"/>	
+            <msdn-id>ff476614</msdn-id>	
+            <unmanaged>GetConversionInstructionCount</unmanaged>	
+            <unmanaged-short>GetConversionInstructionCount</unmanaged-short>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetConversionInstructionCount()</unmanaged>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderReflection.BitwiseInstructionCount">
+            <summary>	
+            Gets the number of bitwise instructions.	
+            </summary>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetBitwiseInstructionCount']/*"/>	
+            <msdn-id>ff476611</msdn-id>	
+            <unmanaged>GetBitwiseInstructionCount</unmanaged>	
+            <unmanaged-short>GetBitwiseInstructionCount</unmanaged-short>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetBitwiseInstructionCount()</unmanaged>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderReflection.GeometryShaderSInputPrimitive">
+            <summary>	
+            Gets the geometry-shader input-primitive description.	
+            </summary>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetGSInputPrimitive']/*"/>	
+            <msdn-id>ff476616</msdn-id>	
+            <unmanaged>GetGSInputPrimitive</unmanaged>	
+            <unmanaged-short>GetGSInputPrimitive</unmanaged-short>	
+            <unmanaged>D3D_PRIMITIVE ID3D11ShaderReflection::GetGSInputPrimitive()</unmanaged>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderReflection.IsSampleFrequencyShader">
+            <summary>	
+            Indicates whether a shader is a sample frequency shader.	
+            </summary>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::IsSampleFrequencyShader']/*"/>	
+            <msdn-id>ff476627</msdn-id>	
+            <unmanaged>IsSampleFrequencyShader</unmanaged>	
+            <unmanaged-short>IsSampleFrequencyShader</unmanaged-short>	
+            <unmanaged>BOOL ID3D11ShaderReflection::IsSampleFrequencyShader()</unmanaged>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderReflection.InterfaceSlotCount">
+            <summary>	
+            Gets the number of interface slots in a shader.	
+            </summary>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetNumInterfaceSlots']/*"/>	
+            <msdn-id>ff476621</msdn-id>	
+            <unmanaged>GetNumInterfaceSlots</unmanaged>	
+            <unmanaged-short>GetNumInterfaceSlots</unmanaged-short>	
+            <unmanaged>unsigned int ID3D11ShaderReflection::GetNumInterfaceSlots()</unmanaged>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderReflection.MinFeatureLevel">
+            <summary>	
+            Gets the minimum feature level.	
+            </summary>	
+            <remarks>	
+            This method's interface is hosted in the out-of-box DLL D3DCompiler_xx.dll.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='ID3D11ShaderReflection::GetMinFeatureLevel']/*"/>	
+            <msdn-id>ff476618</msdn-id>	
+            <unmanaged>GetMinFeatureLevel</unmanaged>	
+            <unmanaged-short>GetMinFeatureLevel</unmanaged-short>	
+            <unmanaged>HRESULT ID3D11ShaderReflection::GetMinFeatureLevel([Out] D3D_FEATURE_LEVEL* pLevel)</unmanaged>
         </member>
         <member name="T:SharpDX.D3DCompiler.ShaderReflectionType">
             <summary>	
@@ -3804,85 +3387,55 @@
             <unmanaged-short>GetBuffer</unmanaged-short>	
             <unmanaged>ID3D11ShaderReflectionConstantBuffer* ID3D11ShaderReflectionVariable::GetBuffer()</unmanaged>
         </member>
-        <member name="T:SharpDX.D3DCompiler.ShaderSignature">
+        <member name="T:SharpDX.D3DCompiler.IncludeShadow">
             <summary>
-              Represents a shader signature.
+            Shadow callback for <see cref="T:SharpDX.D3DCompiler.Include"/>.
             </summary>
         </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderSignature.#ctor(System.IntPtr,System.Int32)">
+        <member name="M:SharpDX.D3DCompiler.IncludeShadow.ToIntPtr(SharpDX.D3DCompiler.Include)">
             <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderSignature"/> class.
+            Return a pointer to the unamanged version of this callback.
             </summary>
-            <param name="ptr">A pointer to a shader signature bytecode.</param>
-            <param name="size">The size.</param>
+            <param name="callback">The callback.</param>
+            <returns>A pointer to a shadow c++ callback</returns>
         </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderSignature.#ctor(SharpDX.Direct3D.Blob)">
+        <member name="T:SharpDX.D3DCompiler.IncludeShadow.IncludeVtbl">
             <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderSignature"/> class.
-            </summary>
-            <param name="blob">The BLOB.</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderSignature.#ctor(SharpDX.DataStream)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderSignature"/> class.
-            </summary>
-            <param name="data">The data.</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderSignature.#ctor(System.Byte[],System.Boolean)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderSignature"/> class.
-            </summary>
-            <param name="data">The data.</param>
-            <param name="makeACopy">if set to <c>true</c> [make A copy] else the buffer is pinned.</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderSignature.GetInputOutputSignature(SharpDX.D3DCompiler.ShaderBytecode)">
-            <summary>
-              Extracts the input and output signatures from a compiled shader or effect.
-            </summary>
-            <param name = "shaderBytecode">The bytecode of the compiled shader or effect.</param>
-            <returns>The input and output signatures of the shader or effect.</returns>
-            <msdn-id>dd607329</msdn-id>	
-            <unmanaged>HRESULT D3DGetInputAndOutputSignatureBlob([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[Out] ID3D10Blob** ppSignatureBlob)</unmanaged>	
-            <unmanaged-short>D3DGetInputAndOutputSignatureBlob</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderSignature.GetInputSignature(SharpDX.D3DCompiler.ShaderBytecode)">
-            <summary>
-              Extracts the input signature from a compiled shader or effect.
-            </summary>
-            <param name = "shaderBytecode">The bytecode of the compiled shader or effect.</param>
-            <returns>The input signature of the shader or effect.</returns>
-            <msdn-id>dd607330</msdn-id>	
-            <unmanaged>HRESULT D3DGetInputSignatureBlob([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[Out] ID3D10Blob** ppSignatureBlob)</unmanaged>	
-            <unmanaged-short>D3DGetInputSignatureBlob</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.D3DCompiler.ShaderSignature.GetOutputSignature(SharpDX.D3DCompiler.ShaderBytecode)">
-            <summary>
-              Extracts the output signature from a compiled shader or effect.
-            </summary>
-            <param name = "shaderBytecode">The bytecode of the compiled shader or effect.</param>
-            <returns>The output signature of the shader or effect.</returns>
-            <unmanaged>HRESULT D3DGetOutputSignatureBlob([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[Out] ID3D10Blob** ppSignatureBlob)</unmanaged>
-            <msdn-id>dd607331</msdn-id>	
-            <unmanaged>HRESULT D3DGetOutputSignatureBlob([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[Out] ID3D10Blob** ppSignatureBlob)</unmanaged>	
-            <unmanaged-short>D3DGetOutputSignatureBlob</unmanaged-short>	
-        </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderSignature.BufferPointer">
-            <summary>
-            Gets the buffer pointer.
+            Internal Include Callback
             </summary>
         </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderSignature.BufferSize">
-            <summary>
-            Gets the size of the buffer.
+        <member name="T:SharpDX.D3DCompiler.IncludeShadow.IncludeVtbl.OpenDelegate">
+            <summary>	
+            A user-implemented method for opening and reading the contents of a shader #include file.	
             </summary>
-            <value>
-            The size of the buffer.
-            </value>
+            <param name="thisPtr">This pointer</param>
+            <param name="includeType">A <see cref="T:SharpDX.D3DCompiler.IncludeType"/>-typed value that indicates the location of the #include file. </param>
+            <param name="fileNameRef">Name of the #include file.</param>
+            <param name="pParentData">Pointer to the container that includes the #include file.</param>
+            <param name="dataRef">Pointer to the buffer that Open returns that contains the include directives. This pointer remains valid until <see cref="M:SharpDX.D3DCompiler.Include.Close(System.IO.Stream)"/> is called.</param>
+            <param name="bytesRef">Pointer to the number of bytes that Open returns in ppData.</param>
+            <returns>The user-implemented method should return S_OK. If Open fails when reading the #include file, the application programming interface (API) that caused Open to be called fails. This failure can occur in one of the following situations:The high-level shader language (HLSL) shader fails one of the D3D10CompileShader*** functions.The effect fails one of the D3D10CreateEffect*** functions.</returns>
+            <unmanaged>HRESULT Open([None] D3D_INCLUDE_TYPE IncludeType,[None] const char* pFileName,[None] LPCVOID pParentData,[None] LPCVOID* ppData,[None] UINT* pBytes)</unmanaged>
         </member>
-        <member name="P:SharpDX.D3DCompiler.ShaderSignature.Data">
+        <member name="T:SharpDX.D3DCompiler.IncludeShadow.IncludeVtbl.CloseDelegate">
+            <summary>	
+            A user-implemented method for closing a shader #include file.	
+            </summary>	
+            <remarks>	
+            If <see cref="M:SharpDX.D3DCompiler.Include.Open(SharpDX.D3DCompiler.IncludeType,System.String,System.IO.Stream)"/> was successful, Close is guaranteed to be called before the API using the <see cref="T:SharpDX.D3DCompiler.Include"/> interface returns.	
+            </remarks>
+            <param name="thisPtr">This pointer</param>
+            <param name="pData">Pointer to the buffer that contains the include directives. This is the pointer that was returned by the corresponding <see cref="M:SharpDX.D3DCompiler.Include.Open(SharpDX.D3DCompiler.IncludeType,System.String,System.IO.Stream)"/> call.</param>
+            <returns>The user-implemented Close method should return S_OK. If Close fails when it closes the #include file, the application programming interface (API) that caused Close to be called fails. This failure can occur in one of the following situations:The high-level shader language (HLSL) shader fails one of the D3D10CompileShader*** functions.The effect fails one of the D3D10CreateEffect*** functions.</returns>
+            <unmanaged>HRESULT Close([None] LPCVOID pData)</unmanaged>
+        </member>
+        <member name="T:SharpDX.D3DCompiler.NamespaceDoc">
             <summary>
-              Gets the raw data of the shader signature.
+            The <see cref="N:SharpDX.D3DCompiler"/> namespace provides managed Direct3D Compiler API.
             </summary>
+            <msdn-id>dd607340</msdn-id>
+            <unmanaged>D3DCompiler</unmanaged>	
+            <unmanaged-short>D3DCompiler</unmanaged-short>	
         </member>
         <member name="T:SharpDX.D3DCompiler.RegisterComponentMaskFlags">
             <summary>	
@@ -3925,36 +3478,6 @@
             None.	
             </summary>	
             <unmanaged>None</unmanaged>
-        </member>
-        <member name="T:SharpDX.D3DCompiler.NamespaceDoc">
-            <summary>
-            The <see cref="N:SharpDX.D3DCompiler"/> namespace provides managed Direct3D Compiler API.
-            </summary>
-            <msdn-id>dd607340</msdn-id>
-            <unmanaged>D3DCompiler</unmanaged>	
-            <unmanaged-short>D3DCompiler</unmanaged-short>	
-        </member>
-        <member name="T:SharpDX.D3DCompiler.CompilationResult">
-            <summary>
-            Shader compilation results.
-            </summary>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.CompilationResult.#ctor(SharpDX.D3DCompiler.ShaderBytecode,SharpDX.Result,System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.CompilationResult"/> class.
-            </summary>
-            <param name="bytecode">The bytecode.</param>
-            <param name="resultCode">The result code.</param>
-            <param name="message">The message.</param>
-        </member>
-        <member name="M:SharpDX.D3DCompiler.CompilationResult.op_Implicit(SharpDX.D3DCompiler.CompilationResult)~SharpDX.D3DCompiler.ShaderBytecode">
-            <summary>
-            Performs an implicit conversion from <see cref="T:SharpDX.D3DCompiler.CompilationResult"/> to <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/>.
-            </summary>
-            <param name="input">The input.</param>
-            <returns>
-            The result of the conversion.
-            </returns>
         </member>
         <member name="T:SharpDX.D3DCompiler.ConstantBufferDescription">
             <summary>	
@@ -4736,6 +4259,483 @@
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='D3D11_SHADER_VARIABLE_DESC::SamplerSize']/*"/>	
             <unmanaged>unsigned int SamplerSize</unmanaged>	
             <unmanaged-short>unsigned int SamplerSize</unmanaged-short>	
+        </member>
+        <member name="T:SharpDX.D3DCompiler.ShaderBytecode">
+            <summary>
+              Represents the compiled bytecode of a shader or effect.
+            </summary>
+            <unmanaged>Blob</unmanaged>
+        </member>
+        <member name="F:SharpDX.D3DCompiler.ShaderBytecode.Effect10">
+            <summary>
+            Use this ShaderFlags constant in order to compile an effect with old D3D10CompileEffectFromMemory.
+            </summary>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.#ctor(SharpDX.DataStream)">
+            <summary>
+              Initializes a new instance of the <see cref = "T:SharpDX.D3DCompiler.ShaderBytecode" /> class.
+            </summary>
+            <param name = "data">A <see cref = "T:SharpDX.DataStream" /> containing the compiled bytecode.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.#ctor(System.IO.Stream)">
+            <summary>
+              Initializes a new instance of the <see cref = "T:SharpDX.D3DCompiler.ShaderBytecode" /> class.
+            </summary>
+            <param name = "data">A <see cref = "T:System.IO.Stream" /> containing the compiled bytecode.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.#ctor(System.Byte[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/> class.
+            </summary>
+            <param name="buffer">The buffer.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.#ctor(System.IntPtr,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref = "T:SharpDX.D3DCompiler.ShaderBytecode" /> class.
+            </summary>
+            <param name = "buffer">a pointer to a compiler bytecode</param>
+            <param name = "sizeInBytes">size of the bytecode</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.#ctor(SharpDX.Direct3D.Blob)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/> class.
+            </summary>
+            <param name="blob">The BLOB.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,System.String)">
+            <summary>
+            Compiles the provided shader or effect source.
+            </summary>
+            <param name="shaderSource">A string containing the source of the shader or effect to compile.</param>
+            <param name="profile">The shader target or set of shader features to compile against.</param>
+            <param name="shaderFlags">Shader compilation options.</param>
+            <param name="effectFlags">Effect compilation options.</param>
+            <param name="sourceFileName">Name of the source file.</param>
+            <returns>
+            The compiled shader bytecode, or <c>null</c> if the method fails.
+            </returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.Byte[],System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,System.String)">
+            <summary>
+            Compiles the provided shader or effect source.
+            </summary>
+            <param name="shaderSource">An array of bytes containing the raw source of the shader or effect to compile.</param>
+            <param name="profile">The shader target or set of shader features to compile against.</param>
+            <param name="shaderFlags">Shader compilation options.</param>
+            <param name="effectFlags">Effect compilation options.</param>
+            <param name="sourceFileName">Name of the source file.</param>
+            <returns>
+            The compiled shader bytecode, or <c>null</c> if the method fails.
+            </returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.String,System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,System.String)">
+            <summary>
+            Compiles the provided shader or effect source.
+            </summary>
+            <param name="shaderSource">A string containing the source of the shader or effect to compile.</param>
+            <param name="entryPoint">The name of the shader entry-point function, or <c>null</c> for an effect file.</param>
+            <param name="profile">The shader target or set of shader features to compile against.</param>
+            <param name="shaderFlags">Shader compilation options.</param>
+            <param name="effectFlags">Effect compilation options.</param>
+            <param name="sourceFileName">Name of the source file.</param>
+            <returns>
+            The compiled shader bytecode, or <c>null</c> if the method fails.
+            </returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.Byte[],System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,System.String)">
+            <summary>
+              Compiles the provided shader or effect source.
+            </summary>
+            <param name = "shaderSource">An array of bytes containing the raw source of the shader or effect to compile.</param>
+            <param name = "entryPoint">The name of the shader entry-point function, or <c>null</c> for an effect file.</param>
+            <param name = "profile">The shader target or set of shader features to compile against.</param>
+            <param name = "shaderFlags">Shader compilation options.</param>
+            <param name = "effectFlags">Effect compilation options.</param>
+            <returns>The compiled shader bytecode, or <c>null</c> if the method fails.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String)">
+            <summary>
+            Compiles the provided shader or effect source.
+            </summary>
+            <param name="shaderSource">A string containing the source of the shader or effect to compile.</param>
+            <param name="profile">The shader target or set of shader features to compile against.</param>
+            <param name="shaderFlags">Shader compilation options.</param>
+            <param name="effectFlags">Effect compilation options.</param>
+            <param name="defines">A set of macros to define during compilation.</param>
+            <param name="include">An interface for handling include files.</param>
+            <param name="compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if compilation succeeded.</param>
+            <param name="sourceFileName">Name of the source file.</param>
+            <returns>
+            The compiled shader bytecode, or <c>null</c> if the method fails.
+            </returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.Byte[],System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String)">
+            <summary>
+            Compiles the provided shader or effect source.
+            </summary>
+            <param name="shaderSource">An array of bytes containing the raw source of the shader or effect to compile.</param>
+            <param name="profile">The shader target or set of shader features to compile against.</param>
+            <param name="shaderFlags">Shader compilation options.</param>
+            <param name="effectFlags">Effect compilation options.</param>
+            <param name="defines">A set of macros to define during compilation.</param>
+            <param name="include">An interface for handling include files.</param>
+            <param name="sourceFileName">Name of the source file.</param>
+            <returns>
+            The compiled shader bytecode, or <c>null</c> if the method fails.
+            </returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.String,System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String)">
+            <summary>
+            Compiles the provided shader or effect source.
+            </summary>
+            <param name="shaderSource">A string containing the source of the shader or effect to compile.</param>
+            <param name="entryPoint">The name of the shader entry-point function, or <c>null</c> for an effect file.</param>
+            <param name="profile">The shader target or set of shader features to compile against.</param>
+            <param name="shaderFlags">Shader compilation options.</param>
+            <param name="effectFlags">Effect compilation options.</param>
+            <param name="defines">A set of macros to define during compilation.</param>
+            <param name="include">An interface for handling include files.</param>
+            <param name="compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if compilation succeeded.</param>
+            <param name="sourceFileName">Name of the source file.</param>
+            <returns>
+            The compiled shader bytecode, or <c>null</c> if the method fails.
+            </returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.CompileFromFile(System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include)">
+            <summary>
+              Compiles a shader or effect from a file on disk.
+            </summary>
+            <param name = "fileName">The name of the source file to compile.</param>
+            <param name = "profile">The shader target or set of shader features to compile against.</param>
+            <param name = "shaderFlags">Shader compilation options.</param>
+            <param name = "effectFlags">Effect compilation options.</param>
+            <param name = "defines">A set of macros to define during compilation.</param>
+            <param name = "include">An interface for handling include files.</param>
+            <param name = "compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if compilation succeeded.</param>
+            <returns>The compiled shader bytecode, or <c>null</c> if the method fails.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.CompileFromFile(System.String,System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include)">
+            <summary>
+            Compiles a shader or effect from a file on disk.
+            </summary>
+            <param name="fileName">The name of the source file to compile.</param>
+            <param name="entryPoint">The name of the shader entry-point function, or <c>null</c> for an effect file.</param>
+            <param name="profile">The shader target or set of shader features to compile against.</param>
+            <param name="shaderFlags">Shader compilation options.</param>
+            <param name="effectFlags">Effect compilation options.</param>
+            <param name="defines">A set of macros to define during compilation.</param>
+            <param name="include">An interface for handling include files.</param>
+            <returns>
+            The compiled shader bytecode, or <c>null</c> if the method fails.
+            </returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compile(System.Byte[],System.String,System.String,SharpDX.D3DCompiler.ShaderFlags,SharpDX.D3DCompiler.EffectFlags,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String)">
+            <summary>
+            Compiles the provided shader or effect source.
+            </summary>
+            <param name="shaderSource">An array of bytes containing the raw source of the shader or effect to compile.</param>
+            <param name="entryPoint">The name of the shader entry-point function, or <c>null</c> for an effect file.</param>
+            <param name="profile">The shader target or set of shader features to compile against.</param>
+            <param name="shaderFlags">Shader compilation options.</param>
+            <param name="effectFlags">Effect compilation options.</param>
+            <param name="defines">A set of macros to define during compilation.</param>
+            <param name="include">An interface for handling include files.</param>
+            <param name="sourceFileName">Name of the source file used for reporting errors. Default is "unknown"</param>
+            <returns>
+            The compiled shader bytecode, or <c>null</c> if the method fails.
+            </returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Save(System.String)">
+            <summary>
+            Saves to the specified file name.
+            </summary>
+            <param name="fileName">Name of the file.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Compress(SharpDX.D3DCompiler.ShaderBytecode[])">
+            <summary>	
+            Compresses a set of shaders into a more compact form. 	
+            </summary>	
+            <param name="shaderBytecodes">An array of <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/> structures that describe the set of shaders to compress. </param>
+            <returns>A compressed <see cref="T:SharpDX.D3DCompiler.ShaderBytecode"/>. </returns>
+            <unmanaged>HRESULT D3DCompressShaders([In] int uNumShaders,[In, Buffer] D3D_SHADER_DATA* pShaderData,[In] int uFlags,[Out] ID3DBlob** ppCompressedData)</unmanaged>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Decompress">
+            <summary>	
+            Decompresses all shaders from a compressed set.	
+            </summary>	
+            <returns>Returns an array of decompresss shader bytecode.</returns>	
+            <unmanaged>HRESULT D3DDecompressShaders([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[In] unsigned int uNumShaders,[In] unsigned int uStartIndex,[In, Buffer, Optional] unsigned int* pIndices,[In] unsigned int uFlags,[Out, Buffer] ID3D10Blob** ppShaders,[Out, Optional] unsigned int* pTotalShaders)</unmanaged>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Decompress(System.Int32,System.Int32)">
+            <summary>	
+            Decompresses one or more shaders from a compressed set.	
+            </summary>	
+            <param name="numShaders"><para>The number of shaders to decompress.</para></param>	
+            <param name="startIndex"><para>The index of the first shader to decompress.</para></param>	
+            <returns>Returns an array of decompresss shader bytecode.</returns>	
+            <unmanaged>HRESULT D3DDecompressShaders([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[In] unsigned int uNumShaders,[In] unsigned int uStartIndex,[In, Buffer, Optional] unsigned int* pIndices,[In] unsigned int uFlags,[Out, Buffer] ID3D10Blob** ppShaders,[Out, Optional] unsigned int* pTotalShaders)</unmanaged>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Decompress(System.Int32[])">
+            <summary>	
+            Decompresses one or more shaders from a compressed set.	
+            </summary>	
+            <param name="indices"><para>An array of indexes that represent the shaders to decompress.</para></param>	
+            <returns>Returns an array of decompresss shader bytecode.</returns>	
+            <unmanaged>HRESULT D3DDecompressShaders([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[In] unsigned int uNumShaders,[In] unsigned int uStartIndex,[In, Buffer, Optional] unsigned int* pIndices,[In] unsigned int uFlags,[Out, Buffer] ID3D10Blob** ppShaders,[Out, Optional] unsigned int* pTotalShaders)</unmanaged>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Disassemble">
+            <summary>
+              Disassembles compiled HLSL code back into textual source.
+            </summary>
+            <returns>The textual source of the shader or effect.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Disassemble(SharpDX.D3DCompiler.DisassemblyFlags)">
+            <summary>
+              Disassembles compiled HLSL code back into textual source.
+            </summary>
+            <param name = "flags">Flags affecting the output of the disassembly.</param>
+            <returns>The textual source of the shader or effect.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Disassemble(SharpDX.D3DCompiler.DisassemblyFlags,System.String)">
+            <summary>
+              Disassembles compiled HLSL code back into textual source.
+            </summary>
+            <param name = "flags">Flags affecting the output of the disassembly.</param>
+            <param name = "comments">Commenting information to embed in the disassembly.</param>
+            <returns>The textual source of the shader or effect.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.GetPart(SharpDX.D3DCompiler.ShaderBytecodePart)">
+            <summary>	
+            Retrieves a specific part from a compilation result.	
+            </summary>	
+            <remarks>	
+            D3DGetBlobPart retrieves the part of a blob (arbitrary length data buffer) that contains the type of data that the  Part parameter specifies. 	
+            </remarks>	
+            <param name="part">A <see cref="T:SharpDX.D3DCompiler.ShaderBytecodePart"/>-typed value that specifies the part of the buffer to retrieve. </param>
+            <returns>Returns the extracted part. </returns>
+            <unmanaged>HRESULT D3DGetBlobPart([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[In] D3D_BLOB_PART Part,[In] int Flags,[Out] ID3DBlob** ppPart)</unmanaged>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Load(System.IO.Stream)">
+            <summary>
+            Loads from the specified stream.
+            </summary>
+            <param name="stream">The stream.</param>
+            <returns>A shader bytecode</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Save(System.IO.Stream)">
+            <summary>
+            Saves this bycode to the specified stream.
+            </summary>
+            <param name="stream">The stream.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.FromPointer(System.IntPtr)">
+            <summary>
+            Froms the pointer.
+            </summary>
+            <param name="pointer">The pointer.</param>
+            <returns></returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Preprocess(System.String,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include)">
+            <summary>
+              Preprocesses the provided shader or effect source.
+            </summary>
+            <param name = "shaderSource">A string containing the source of the shader or effect to preprocess.</param>
+            <param name = "defines">A set of macros to define during preprocessing.</param>
+            <param name = "include">An interface for handling include files.</param>
+            <returns>The preprocessed shader source.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Preprocess(System.Byte[],SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include)">
+            <summary>
+              Preprocesses the provided shader or effect source.
+            </summary>
+            <param name = "shaderSource">An array of bytes containing the raw source of the shader or effect to preprocess.</param>
+            <param name = "defines">A set of macros to define during preprocessing.</param>
+            <param name = "include">An interface for handling include files.</param>
+            <returns>The preprocessed shader source.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Preprocess(System.Byte[],SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String@)">
+            <summary>
+              Preprocesses the provided shader or effect source.
+            </summary>
+            <param name = "shaderSource">An array of bytes containing the raw source of the shader or effect to preprocess.</param>
+            <param name = "defines">A set of macros to define during preprocessing.</param>
+            <param name = "include">An interface for handling include files.</param>
+            <param name = "compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if preprocessing succeeded.</param>
+            <returns>The preprocessed shader source.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Preprocess(System.IntPtr,System.Int32,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String@)">
+            <summary>
+              Preprocesses the provided shader or effect source.
+            </summary>
+            <param name = "shaderSource">An array of bytes containing the raw source of the shader or effect to preprocess.</param>
+            <param name = "defines">A set of macros to define during preprocessing.</param>
+            <param name = "include">An interface for handling include files.</param>
+            <param name = "compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if preprocessing succeeded.</param>
+            <returns>The preprocessed shader source.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Preprocess(System.String,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String@)">
+            <summary>
+              Preprocesses the provided shader or effect source.
+            </summary>
+            <param name = "shaderSource">A string containing the source of the shader or effect to preprocess.</param>
+            <param name = "defines">A set of macros to define during preprocessing.</param>
+            <param name = "include">An interface for handling include files.</param>
+            <param name = "compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if preprocessing succeeded.</param>
+            <returns>The preprocessed shader source.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.PreprocessFromFile(System.String)">
+            <summary>
+              Preprocesses a shader or effect from a file on disk.
+            </summary>
+            <param name = "fileName">The name of the source file to compile.</param>
+            <returns>The preprocessed shader source.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.PreprocessFromFile(System.String,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include)">
+            <summary>
+              Preprocesses a shader or effect from a file on disk.
+            </summary>
+            <param name = "fileName">The name of the source file to compile.</param>
+            <param name = "defines">A set of macros to define during preprocessing.</param>
+            <param name = "include">An interface for handling include files.</param>
+            <returns>The preprocessed shader source.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.PreprocessFromFile(System.String,SharpDX.Direct3D.ShaderMacro[],SharpDX.D3DCompiler.Include,System.String@)">
+            <summary>
+              Preprocesses a shader or effect from a file on disk.
+            </summary>
+            <param name = "fileName">The name of the source file to compile.</param>
+            <param name = "defines">A set of macros to define during preprocessing.</param>
+            <param name = "include">An interface for handling include files.</param>
+            <param name = "compilationErrors">When the method completes, contains a string of compilation errors, or an empty string if preprocessing succeeded.</param>
+            <returns>The preprocessed shader source.</returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.Strip(SharpDX.D3DCompiler.StripFlags)">
+            <summary>
+              Strips extraneous information from a compiled shader or effect.
+            </summary>
+            <param name = "flags">Options specifying what to remove from the shader.</param>
+            <returns>A string containing any errors that may have occurred.</returns>
+            <unmanaged>HRESULT D3DStripShader([In, Buffer] const void* pShaderBytecode,[In] SIZE_T BytecodeLength,[In] D3DCOMPILER_STRIP_FLAGS uStripFlags,[Out] ID3D10Blob** ppStrippedBlob)</unmanaged>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.FromStream(System.IO.Stream)">
+            <summary>
+              Read a compiled shader bytecode from a Stream and return a ShaderBytecode
+            </summary>
+            <param name = "stream"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderBytecode.FromFile(System.String)">
+            <summary>
+              Read a compiled shader bytecode from a Stream and return a ShaderBytecode
+            </summary>
+            <param name = "fileName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderBytecode.BufferPointer">
+            <summary>
+            Gets the buffer pointer.
+            </summary>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderBytecode.BufferSize">
+            <summary>
+            Gets or sets the size of the buffer.
+            </summary>
+            <value>
+            The size of the buffer.
+            </value>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderBytecode.IsCompressed">
+            <summary>
+            Gets this instance is composed of compressed shaders.
+            </summary>
+            <value>
+                <c>true</c> if this instance is compressed; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderBytecode.Data">
+            <summary>
+              Gets the raw data of the compiled bytecode.
+            </summary>
+        </member>
+        <member name="T:SharpDX.D3DCompiler.ShaderSignature">
+            <summary>
+              Represents a shader signature.
+            </summary>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderSignature.#ctor(System.IntPtr,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderSignature"/> class.
+            </summary>
+            <param name="ptr">A pointer to a shader signature bytecode.</param>
+            <param name="size">The size.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderSignature.#ctor(SharpDX.Direct3D.Blob)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderSignature"/> class.
+            </summary>
+            <param name="blob">The BLOB.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderSignature.#ctor(SharpDX.DataStream)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderSignature"/> class.
+            </summary>
+            <param name="data">The data.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderSignature.#ctor(System.Byte[],System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.D3DCompiler.ShaderSignature"/> class.
+            </summary>
+            <param name="data">The data.</param>
+            <param name="makeACopy">if set to <c>true</c> [make A copy] else the buffer is pinned.</param>
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderSignature.GetInputOutputSignature(SharpDX.D3DCompiler.ShaderBytecode)">
+            <summary>
+              Extracts the input and output signatures from a compiled shader or effect.
+            </summary>
+            <param name = "shaderBytecode">The bytecode of the compiled shader or effect.</param>
+            <returns>The input and output signatures of the shader or effect.</returns>
+            <msdn-id>dd607329</msdn-id>	
+            <unmanaged>HRESULT D3DGetInputAndOutputSignatureBlob([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[Out] ID3D10Blob** ppSignatureBlob)</unmanaged>	
+            <unmanaged-short>D3DGetInputAndOutputSignatureBlob</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderSignature.GetInputSignature(SharpDX.D3DCompiler.ShaderBytecode)">
+            <summary>
+              Extracts the input signature from a compiled shader or effect.
+            </summary>
+            <param name = "shaderBytecode">The bytecode of the compiled shader or effect.</param>
+            <returns>The input signature of the shader or effect.</returns>
+            <msdn-id>dd607330</msdn-id>	
+            <unmanaged>HRESULT D3DGetInputSignatureBlob([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[Out] ID3D10Blob** ppSignatureBlob)</unmanaged>	
+            <unmanaged-short>D3DGetInputSignatureBlob</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.D3DCompiler.ShaderSignature.GetOutputSignature(SharpDX.D3DCompiler.ShaderBytecode)">
+            <summary>
+              Extracts the output signature from a compiled shader or effect.
+            </summary>
+            <param name = "shaderBytecode">The bytecode of the compiled shader or effect.</param>
+            <returns>The output signature of the shader or effect.</returns>
+            <unmanaged>HRESULT D3DGetOutputSignatureBlob([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[Out] ID3D10Blob** ppSignatureBlob)</unmanaged>
+            <msdn-id>dd607331</msdn-id>	
+            <unmanaged>HRESULT D3DGetOutputSignatureBlob([In, Buffer] const void* pSrcData,[In] SIZE_T SrcDataSize,[Out] ID3D10Blob** ppSignatureBlob)</unmanaged>	
+            <unmanaged-short>D3DGetOutputSignatureBlob</unmanaged-short>	
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderSignature.BufferPointer">
+            <summary>
+            Gets the buffer pointer.
+            </summary>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderSignature.BufferSize">
+            <summary>
+            Gets the size of the buffer.
+            </summary>
+            <value>
+            The size of the buffer.
+            </value>
+        </member>
+        <member name="P:SharpDX.D3DCompiler.ShaderSignature.Data">
+            <summary>
+              Gets the raw data of the shader signature.
+            </summary>
         </member>
     </members>
 </doc>

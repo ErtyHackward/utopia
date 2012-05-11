@@ -14,10 +14,11 @@ using S33M3DXEngine.Buffers;
 using SharpDX.Direct3D11;
 using System.Drawing;
 using S33M3DXEngine.Debug;
+using S33M3_DXEngine.Main;
 
 namespace S33M3DXEngine.Main
 {
-    public class Game : Component
+    public class Game : BaseComponent
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 

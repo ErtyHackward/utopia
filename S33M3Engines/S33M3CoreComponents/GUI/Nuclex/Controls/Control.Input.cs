@@ -25,11 +25,12 @@ using System.Diagnostics;
 using S33M3CoreComponents.GUI.Nuclex.Input;
 using System.Windows.Forms;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Interfaces;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Controls
 {
 
-    partial class Control : Component
+    partial class Control : BaseComponent
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 

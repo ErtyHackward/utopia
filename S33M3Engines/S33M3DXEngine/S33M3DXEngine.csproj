@@ -98,6 +98,7 @@
     <Compile Include="Effects\HLSLFramework\HLSLShaderWrap.cs" />
     <Compile Include="Effects\HLSLFramework\ShaderResource.cs" />
     <Compile Include="Effects\HLSLFramework\ShaderSampler.cs" />
+    <Compile Include="Main\BaseComponent.cs" />
     <Compile Include="Main\DrawableComponent.cs" />
     <Compile Include="Main\DrawableComponentHolder.cs" />
     <Compile Include="Main\DrawOrders.cs" />

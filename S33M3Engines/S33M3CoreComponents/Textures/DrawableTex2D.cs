@@ -6,11 +6,12 @@ using SharpDX;
 using SharpDX.DXGI;
 using SharpDX.Direct3D11;
 using SharpDX.Direct3D;
+using S33M3_DXEngine.Main;
 
 namespace S33M3DXEngine.Textures
 {
     //Texture where we can render into !
-    public class DrawableTex2D : Component
+    public class DrawableTex2D : BaseComponent
     {
         #region Private Variable
         private int _width;

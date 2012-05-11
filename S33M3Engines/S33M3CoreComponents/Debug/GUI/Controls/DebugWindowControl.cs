@@ -11,10 +11,11 @@ using S33M3DXEngine.Main;
 using S33M3CoreComponents.Components.Debug;
 using S33M3CoreComponents.Debug.Components;
 using S33M3Resources.Structs;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Debug.GUI.Controls
 {
-    public class DebugWindowControl : Component
+    public class DebugWindowControl : BaseComponent
     {
         #region Private variables
         private WindowControl _debugWindow;

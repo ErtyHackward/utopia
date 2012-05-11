@@ -8,6 +8,7 @@ using S33M3DXEngine;
 using SharpDX;
 using S33M3CoreComponents.Sprites;
 using S33M3Resources.Structs;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Textures
 {
@@ -15,7 +16,7 @@ namespace S33M3CoreComponents.Textures
     /// Render to Texture2D class.
     /// It handle the needed operation to collection the Draw calls into its internal texture.
     /// </summary>
-    public class RenderedTexture2D : Component
+    public class RenderedTexture2D : BaseComponent
     {
         #region Private variables
         private Texture2DDescription _textureDesc;
