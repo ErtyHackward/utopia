@@ -271,6 +271,8 @@
     <Compile Include="World\PlanGenerator\VectorExtensions.cs" />
     <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
     <Compile Include="World\Processors\PlanWorldProcessor.cs" />
+    <Compile Include="World\Processors\Utopia\CubesFct\RareCubeDistri.cs" />
+    <Compile Include="World\Processors\Utopia\CubesFct\UncommonCubeDistri.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\SurfaceFct\Plains\PlainCtrl.cs" />
     <Compile Include="World\Processors\Utopia\ITerrainGenerator.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\SurfaceFct\Plains\Flat.cs" />
@@ -334,9 +336,7 @@
       <Name>S33M3Resources</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Config\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

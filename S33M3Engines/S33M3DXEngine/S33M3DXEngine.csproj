@@ -62,10 +62,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\SharpDX2\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Diagnostics, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\SharpDX2\SharpDX.Diagnostics.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX.Direct3D11, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Library\SharpDX2\SharpDX.Direct3D11.dll</HintPath>

@@ -27,8 +27,13 @@ namespace S33M3CoreComponents.Noise.Various
         #region Public Properties
         #endregion
 
-        public NoiseAccess(INoise source, enuDimUsage noiseDimUsage)
+        public NoiseAccess(INoise source, enuDimUsage noiseDimUsage, bool withCaching = false)
         {
+            if (withCaching)
+            {
+                source = new Cache<INoise>(source);
+            }
+
             switch (noiseDimUsage)
             {
                 case enuDimUsage.Noise2D:
@@ -79,9 +84,9 @@ namespace S33M3CoreComponents.Noise.Various
         {
             switch (_noiseDimUsage)
             {
+                case enuDimUsage.Noise2D:
+                    return _noise2D.Get(x, y);
                 case enuDimUsage.Noise3D:
-                    return _noise2D.Get(x, z);
-                case enuDimUsage.Noise4D:
                     return _noise3D.Get(x, y, z);
                 default:
                     return _noise4D.Get(x, y, z, w);
