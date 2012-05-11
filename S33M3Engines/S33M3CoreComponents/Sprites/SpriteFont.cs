@@ -12,10 +12,11 @@ using Rectangle = System.Drawing.Rectangle;
 using RectangleF = System.Drawing.RectangleF;
 using SharpDX.Direct3D;
 using S33M3CoreComponents.Config;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Sprites
 {
-    public class SpriteFont : Component
+    public class SpriteFont : BaseComponent
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 

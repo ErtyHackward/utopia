@@ -4,224 +4,162 @@
         <name>SharpDX.XACT3</name>
     </assembly>
     <members>
-        <member name="T:SharpDX.XACT3.GuiNotification">
+        <member name="T:SharpDX.XACT3.AssemblyDoc">
             <summary>
-            Gui notification parameters.
+            The <see cref="A:SharpDX.XACT3"/> assembly provides managed XACT3 API.
             </summary>
-            <unmanaged>XACT_NOTIFICATION_GUI</unmanaged>
+            <msdn-id>hh405049</msdn-id>
+            <unmanaged>XACT3</unmanaged>	
+            <unmanaged-short>XACT3</unmanaged-short>	
         </member>
-        <member name="T:SharpDX.XACT3.Notification">
+        <member name="T:SharpDX.XACT3.AudioEngineSettings">
             <summary>
-            Generic notification event.
+            Settings for the <see cref="T:SharpDX.XACT3.AudioEngine"/>.
+            </summary>
+            <summary>	
+            Runtime parameters for initialization of the XACT engine.	
+            </summary>	
+            <!-- Failed to insert some or all of included XML --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>XACT_RUNTIME_PARAMETERS</unmanaged>	
+            <unmanaged-short>XACT_RUNTIME_PARAMETERS</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.DefaultLookAhead">
+            <summary>
+            Default value for <see cref="F:SharpDX.XACT3.AudioEngineSettings.LookAheadTime"/> property (250ms).
             </summary>
         </member>
-        <member name="P:SharpDX.XACT3.Notification.Type">
+        <member name="M:SharpDX.XACT3.AudioEngineSettings.#ctor">
             <summary>
-            Gets or sets the type.
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngineSettings"/> class.
             </summary>
-            <value>
-            The type.
-            </value>
         </member>
-        <member name="P:SharpDX.XACT3.Notification.TimeStamp">
-            <summary>	
-            Timestamp of notification, in milliseconds.
-            </summary>	
-            <unmanaged>int timeStamp</unmanaged>	
-        </member>
-        <member name="T:SharpDX.XACT3.Wave">
-            <summary>	
-            Sets the volume value for each output of a wave.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave']/*"/>	
-            <msdn-id>ee418438</msdn-id>	
-            <unmanaged>IXACT3Wave</unmanaged>	
-            <unmanaged-short>IXACT3Wave</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.OnNotificationDelegate(SharpDX.XACT3.Notification)">
+        <member name="M:SharpDX.XACT3.AudioEngineSettings.#ctor(System.IO.Stream)">
             <summary>
-            Called when an internal notification occured.
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngineSettings"/> struct.
             </summary>
-            <param name="notification">The notification.</param>
+            <param name="settings">The settings.</param>
         </member>
-        <member name="M:SharpDX.XACT3.Wave.RegisterNotification(SharpDX.XACT3.NotificationType)">
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.LookAheadTime">
+            <summary>	
+            Interactive audio and branch event look-ahead time, in milliseconds. This specifies how far ahead the XACT engine will look  ahead when determining when to transition to another sound. XACT_ENGINE_LOOKAHEAD_DEFAULT is a good default value to use for this member.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::lookAheadTime']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>unsigned int lookAheadTime</unmanaged>	
+            <unmanaged-short>unsigned int lookAheadTime</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.GlobalSettingsBufferPointer">
+            <summary>	
+            Buffer containing the global file data. This file is generated when you build an XACT project file. It contains category, variable,  and RPC information. Xbox 360  <para>Memory for this member must be allocated using XMemAlloc when specifying the XACT_FLAG_ENGINE_CREATE_MANAGEDATA flag.</para>	
+              Windows  <para>Memory for this member must be allocated using CoTaskMemAlloc when specifying the XACT_FLAG_ENGINE_CREATE_MANAGEDATA flag.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::pGlobalSettingsBuffer']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>void* pGlobalSettingsBuffer</unmanaged>	
+            <unmanaged-short>void pGlobalSettingsBuffer</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.GlobalSettingsBufferSize">
+            <summary>	
+            Size of the data buffer associated with pGlobalSettingsBuffer.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::globalSettingsBufferSize']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>unsigned int globalSettingsBufferSize</unmanaged>	
+            <unmanaged-short>unsigned int globalSettingsBufferSize</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.GlobalSettingsFlags">
+            <summary>	
+            Flag values indicating how global file data should be handled by XACT. This member can be zero or the value shown in the  following table. ValueDescriptionXACT_FLAG_ENGINE_CREATE_MANAGEDATA <para>Indicates that XACT should free the buffer pointed to by pGlobalSettingsBuffer when initialization is complete.</para>	
+             Note XACT will not attempt to free the memory if the buffer allocation fails. ?	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::globalSettingsFlags']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>unsigned int globalSettingsFlags</unmanaged>	
+            <unmanaged-short>unsigned int globalSettingsFlags</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.GlobalSettingsAllocAttributes">
+            <summary>	
+            Flag values that indicate the attributes of the memory buffer pointed to by pGlobalSettingsBuffer. Xbox 360  <para>This member is needed only if XACT_FLAG_ENGINE_CREATE_MANAGEDATA is specified in globalSettingsFlags, so that XMemFree can receive the correct values  when XACT frees the buffer. Otherwise, globalSettingsAllocAttributes is ignored.</para>	
+             <para>These flags should match the XALLOC_ATTRIBUTES values that  were specified to XMemAlloc when the memory buffer pointed  to by pGlobalSettingsBuffer was allocated.</para>	
+              Windows  <para>This parameter has no relevance and is ignored.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::globalSettingsAllocAttributes']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>unsigned int globalSettingsAllocAttributes</unmanaged>	
+            <unmanaged-short>unsigned int globalSettingsAllocAttributes</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.FileIOCallbacks">
+            <summary>	
+            File I/O callbacks.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::fileIOCallbacks']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>XACT_FILEIO_CALLBACKS fileIOCallbacks</unmanaged>	
+            <unmanaged-short>XACT_FILEIO_CALLBACKS fileIOCallbacks</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.FnNotificationCallback">
+            <summary>	
+            Callback that receives notifications.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::fnNotificationCallback']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>__function__stdcall* fnNotificationCallback</unmanaged>	
+            <unmanaged-short>__function__stdcall fnNotificationCallback</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.RendererId">
+            <summary>	
+            Pointer to the ID for the audio renderer the engine should connect to. Xbox 360  <para>This parameter is undefined.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::pRendererID']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>wchar_t* pRendererID</unmanaged>	
+            <unmanaged-short>wchar_t pRendererID</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.XAudio2Pointer">
+            <summary>	
+            Pointer to the <see cref="T:SharpDX.XAudio2.XAudio2"/> interface used by the engine. If this member is <c>null</c>, the XACT engine will create the XAudio2 object.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::pXAudio2']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>IXAudio2* pXAudio2</unmanaged>	
+            <unmanaged-short>IXAudio2 pXAudio2</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngineSettings.MasteringVoicePointer">
+            <summary>	
+            Pointer to the <see cref="T:SharpDX.XAudio2.MasteringVoice"/> interface, representing the mastering voice that  should be used by the XACT engine. If pXAudio2 is <c>null</c>, this member must also be <c>null</c>.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::pMasteringVoice']/*"/>	
+            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
+            <unmanaged>IXAudio2MasteringVoice* pMasteringVoice</unmanaged>	
+            <unmanaged-short>IXAudio2MasteringVoice pMasteringVoice</unmanaged-short>	
+        </member>
+        <member name="P:SharpDX.XACT3.AudioEngineSettings.Settings">
             <summary>
-            Registers this instance to notify for a type of notification.
-            </summary>
-            <param name="notificationType">Type of the notification.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.UnregisterNotification(SharpDX.XACT3.NotificationType)">
-            <summary>
-            Unregisters this instance to notify for a type of notification.
-            </summary>
-            <param name="notificationType">Type of the notification.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.#ctor(System.IntPtr)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.Wave"/> class.
-            </summary>
-            <param name="nativePtr">The native pointer.</param>	
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.op_Explicit(System.IntPtr)~SharpDX.XACT3.Wave">
-            <summary>
-            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.XACT3.Wave"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
-            </summary>
-            <param name="nativePointer">The native pointer.</param>
-            <returns>
-            The result of the conversion.
-            </returns>
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.Destroy">
-            <summary>	
-            No documentation.	
-            </summary>	
-            <returns>No documentation.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::Destroy']/*"/>	
-            <unmanaged>HRESULT IXACT3Wave::Destroy()</unmanaged>	
-            <unmanaged-short>IXACT3Wave::Destroy</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.Play">
-            <summary>	
-            No documentation.	
-            </summary>	
-            <returns>No documentation.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::Play']/*"/>	
-            <unmanaged>HRESULT IXACT3Wave::Play()</unmanaged>	
-            <unmanaged-short>IXACT3Wave::Play</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.Stop(SharpDX.XACT3.StopFlags)">
-            <summary>	
-            Stops the wave.	
-            </summary>	
-            <param name="flags">Flags that affect how the wave is stopped: ValueDescriptionXACT_FLAG_STOP_RELEASEPlays the wave to completion, then stops. For looping waves, this flag plays the current iteration to completion, then stops (ignoring any subsequent iterations). In either case, any release or tail is played. To stop the wave immediately, use the XACT_FLAG_STOP_IMMEDIATE flag.?XACT_FLAG_STOP_IMMEDIATEStops the playback immediately.?</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::Stop']/*"/>	
-            <msdn-id>microsoft.directx_sdk.ixact3wave.ixact3wave.stop</msdn-id>	
-            <unmanaged>HRESULT IXACT3Wave::Stop([In] XACT_STOP_FLAGS dwFlags)</unmanaged>	
-            <unmanaged-short>IXACT3Wave::Stop</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.Pause(System.Boolean)">
-            <summary>	
-            No documentation.	
-            </summary>	
-            <param name="pause">No documentation.</param>	
-            <returns>No documentation.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::Pause']/*"/>	
-            <unmanaged>HRESULT IXACT3Wave::Pause([In] BOOL fPause)</unmanaged>	
-            <unmanaged-short>IXACT3Wave::Pause</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.GetState(SharpDX.XACT3.WaveState@)">
-            <summary>	
-            Returns the state of the wave object.	
-            </summary>	
-            <param name="stateRef">Pointer to a DWORD that receives the current wave state. ValueDescriptionXACT_STATE_CREATEDCreated, but nothing else.?XACT_STATE_PREPARINGIn the middle of preparing.?XACT_STATE_PREPAREDPrepared, but not yet played.?XACT_STATE_PLAYINGPlaying, but can be paused.?XACT_STATE_STOPPINGStopping.?XACT_STATE_STOPPEDStopped.?XACT_STATE_PAUSEDPaused. Can be combined with some of the other state flags.?XACT_STATE_INUSEObject is in use. Used by wave banks and sound banks.?XACT_STATE_PREPAREFAILEDObject preparation failed.?</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. If unsuccessful, an error code is returned.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::GetState']/*"/>	
-            <msdn-id>ee418435</msdn-id>	
-            <unmanaged>HRESULT IXACT3Wave::GetState([Out] XACT_WAVE_STATE* pdwState)</unmanaged>	
-            <unmanaged-short>IXACT3Wave::GetState</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.SetPitch(System.Int16)">
-            <summary>	
-            Sets the pitch of a wave.	
-            </summary>	
-            <param name="pitch">value that is used to set the pitch for playback of this wave.</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::SetPitch']/*"/>	
-            <msdn-id>ee418439</msdn-id>	
-            <unmanaged>HRESULT IXACT3Wave::SetPitch([In] short pitch)</unmanaged>	
-            <unmanaged-short>IXACT3Wave::SetPitch</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.SetVolume(System.Single)">
-            <summary>	
-            Sets the volume of a wave.	
-            </summary>	
-            <param name="volume">value that is used to set the volume for playback of this wave.</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::SetVolume']/*"/>	
-            <msdn-id>ee418440</msdn-id>	
-            <unmanaged>HRESULT IXACT3Wave::SetVolume([In] float volume)</unmanaged>	
-            <unmanaged-short>IXACT3Wave::SetVolume</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.SetMatrixCoefficients(System.Int32,System.Int32,System.Single[])">
-            <summary>	
-            Sets the volume value for each output of a wave.	
-            </summary>	
-            <param name="srcChannelCount">Number of source channels.</param>	
-            <param name="dstChannelCount">Number of destination channels.</param>	
-            <param name="matrixCoefficientsRef">Matrix coefficient table. This is an array that represents the volume level of each source channel that is present in each destination channel. The source channels are represented by the column index of the table. The destination channels are represented by the row index of the table. The table must have at least uSrcChannelCount?uDstChannelCount elements.</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::SetMatrixCoefficients']/*"/>	
-            <msdn-id>ee418438</msdn-id>	
-            <unmanaged>HRESULT IXACT3Wave::SetMatrixCoefficients([In] unsigned int uSrcChannelCount,[In] unsigned int uDstChannelCount,[In, Buffer] float* pMatrixCoefficients)</unmanaged>	
-            <unmanaged-short>IXACT3Wave::SetMatrixCoefficients</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.Wave.GetProperties(SharpDX.XACT3.WaveInstanceProperties@)">
-            <summary>	
-            Retrieves the properties of the wave object.	
-            </summary>	
-            <param name="propertiesRef">Pointer to an <see cref="T:SharpDX.XACT3.WaveInstanceProperties"/> structure that is returned.</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::GetProperties']/*"/>	
-            <msdn-id>microsoft.directx_sdk.ixact3wave.ixact3wave.getproperties</msdn-id>	
-            <unmanaged>HRESULT IXACT3Wave::GetProperties([Out] XACT_WAVE_INSTANCE_PROPERTIES* pProperties)</unmanaged>	
-            <unmanaged-short>IXACT3Wave::GetProperties</unmanaged-short>	
-        </member>
-        <member name="P:SharpDX.XACT3.Wave.AudioEngine">
-            <summary>
-            Gets or sets the audio engine.
+            Gets or sets the settings file.
             </summary>
             <value>
-            The audio engine.
+            The settings file.
             </value>
         </member>
-        <member name="E:SharpDX.XACT3.Wave.OnNotification">
+        <member name="P:SharpDX.XACT3.AudioEngineSettings.XAudio2">
             <summary>
-            Occurs when a Wave event occurs.
+            Gets or sets the XAudio2 engine to use with XACT3 engine.
             </summary>
+            <value>
+            The XAudio2 engine.
+            </value>
+        </member>
+        <member name="P:SharpDX.XACT3.AudioEngineSettings.MasteringVoice">
+            <summary>
+            Gets or sets the MasteringVoice to use with XACT3 engine.
+            </summary>
+            <value>
+            The MasteringVoice.
+            </value>
             <remarks>
-            Use <see cref="M:SharpDX.XACT3.Wave.RegisterNotification(SharpDX.XACT3.NotificationType)"/> to register types.
+            <see cref="P:SharpDX.XACT3.AudioEngineSettings.XAudio2"/> field must also be set to a valid XAudio2 instance.
             </remarks>
-        </member>
-        <member name="P:SharpDX.XACT3.Wave.State">
-            <summary>	
-            Returns the state of the wave object.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::GetState']/*"/>	
-            <msdn-id>ee418435</msdn-id>	
-            <unmanaged>GetState</unmanaged>	
-            <unmanaged-short>GetState</unmanaged-short>	
-            <unmanaged>HRESULT IXACT3Wave::GetState([Out] XACT_WAVE_STATE* pdwState)</unmanaged>
-        </member>
-        <member name="P:SharpDX.XACT3.Wave.Pitch">
-            <summary>	
-            Sets the pitch of a wave.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::SetPitch']/*"/>	
-            <msdn-id>ee418439</msdn-id>	
-            <unmanaged>SetPitch</unmanaged>	
-            <unmanaged-short>SetPitch</unmanaged-short>	
-            <unmanaged>HRESULT IXACT3Wave::SetPitch([In] short pitch)</unmanaged>
-        </member>
-        <member name="P:SharpDX.XACT3.Wave.Volume">
-            <summary>	
-            Sets the volume of a wave.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::SetVolume']/*"/>	
-            <msdn-id>ee418440</msdn-id>	
-            <unmanaged>SetVolume</unmanaged>	
-            <unmanaged-short>SetVolume</unmanaged-short>	
-            <unmanaged>HRESULT IXACT3Wave::SetVolume([In] float volume)</unmanaged>
-        </member>
-        <member name="P:SharpDX.XACT3.Wave.Properties">
-            <summary>	
-            Retrieves the properties of the wave object.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::GetProperties']/*"/>	
-            <msdn-id>microsoft.directx_sdk.ixact3wave.ixact3wave.getproperties</msdn-id>	
-            <unmanaged>GetProperties</unmanaged>	
-            <unmanaged-short>GetProperties</unmanaged-short>	
-            <unmanaged>HRESULT IXACT3Wave::GetProperties([Out] XACT_WAVE_INSTANCE_PROPERTIES* pProperties)</unmanaged>
         </member>
         <member name="T:SharpDX.XACT3.Cue">
             <summary>	
@@ -425,162 +363,36 @@
             <unmanaged-short>GetProperties</unmanaged-short>	
             <unmanaged>HRESULT IXACT3Cue::GetProperties([Out] XACT_CUE_INSTANCE_PROPERTIES** ppProperties)</unmanaged>
         </member>
-        <member name="T:SharpDX.XACT3.AudioEngineSettings">
+        <member name="T:SharpDX.XACT3.GuiNotification">
             <summary>
-            Settings for the <see cref="T:SharpDX.XACT3.AudioEngine"/>.
+            Gui notification parameters.
             </summary>
-            <summary>	
-            Runtime parameters for initialization of the XACT engine.	
-            </summary>	
-            <!-- Failed to insert some or all of included XML --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>XACT_RUNTIME_PARAMETERS</unmanaged>	
-            <unmanaged-short>XACT_RUNTIME_PARAMETERS</unmanaged-short>	
+            <unmanaged>XACT_NOTIFICATION_GUI</unmanaged>
         </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.DefaultLookAhead">
+        <member name="T:SharpDX.XACT3.Notification">
             <summary>
-            Default value for <see cref="F:SharpDX.XACT3.AudioEngineSettings.LookAheadTime"/> property (250ms).
+            Generic notification event.
             </summary>
         </member>
-        <member name="M:SharpDX.XACT3.AudioEngineSettings.#ctor">
+        <member name="P:SharpDX.XACT3.Notification.Type">
             <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngineSettings"/> class.
-            </summary>
-        </member>
-        <member name="M:SharpDX.XACT3.AudioEngineSettings.#ctor(System.IO.Stream)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngineSettings"/> struct.
-            </summary>
-            <param name="settings">The settings.</param>
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.LookAheadTime">
-            <summary>	
-            Interactive audio and branch event look-ahead time, in milliseconds. This specifies how far ahead the XACT engine will look  ahead when determining when to transition to another sound. XACT_ENGINE_LOOKAHEAD_DEFAULT is a good default value to use for this member.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::lookAheadTime']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>unsigned int lookAheadTime</unmanaged>	
-            <unmanaged-short>unsigned int lookAheadTime</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.GlobalSettingsBufferPointer">
-            <summary>	
-            Buffer containing the global file data. This file is generated when you build an XACT project file. It contains category, variable,  and RPC information. Xbox 360  <para>Memory for this member must be allocated using XMemAlloc when specifying the XACT_FLAG_ENGINE_CREATE_MANAGEDATA flag.</para>	
-              Windows  <para>Memory for this member must be allocated using CoTaskMemAlloc when specifying the XACT_FLAG_ENGINE_CREATE_MANAGEDATA flag.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::pGlobalSettingsBuffer']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>void* pGlobalSettingsBuffer</unmanaged>	
-            <unmanaged-short>void pGlobalSettingsBuffer</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.GlobalSettingsBufferSize">
-            <summary>	
-            Size of the data buffer associated with pGlobalSettingsBuffer.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::globalSettingsBufferSize']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>unsigned int globalSettingsBufferSize</unmanaged>	
-            <unmanaged-short>unsigned int globalSettingsBufferSize</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.GlobalSettingsFlags">
-            <summary>	
-            Flag values indicating how global file data should be handled by XACT. This member can be zero or the value shown in the  following table. ValueDescriptionXACT_FLAG_ENGINE_CREATE_MANAGEDATA <para>Indicates that XACT should free the buffer pointed to by pGlobalSettingsBuffer when initialization is complete.</para>	
-             Note XACT will not attempt to free the memory if the buffer allocation fails. ?	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::globalSettingsFlags']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>unsigned int globalSettingsFlags</unmanaged>	
-            <unmanaged-short>unsigned int globalSettingsFlags</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.GlobalSettingsAllocAttributes">
-            <summary>	
-            Flag values that indicate the attributes of the memory buffer pointed to by pGlobalSettingsBuffer. Xbox 360  <para>This member is needed only if XACT_FLAG_ENGINE_CREATE_MANAGEDATA is specified in globalSettingsFlags, so that XMemFree can receive the correct values  when XACT frees the buffer. Otherwise, globalSettingsAllocAttributes is ignored.</para>	
-             <para>These flags should match the XALLOC_ATTRIBUTES values that  were specified to XMemAlloc when the memory buffer pointed  to by pGlobalSettingsBuffer was allocated.</para>	
-              Windows  <para>This parameter has no relevance and is ignored.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::globalSettingsAllocAttributes']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>unsigned int globalSettingsAllocAttributes</unmanaged>	
-            <unmanaged-short>unsigned int globalSettingsAllocAttributes</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.FileIOCallbacks">
-            <summary>	
-            File I/O callbacks.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::fileIOCallbacks']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>XACT_FILEIO_CALLBACKS fileIOCallbacks</unmanaged>	
-            <unmanaged-short>XACT_FILEIO_CALLBACKS fileIOCallbacks</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.FnNotificationCallback">
-            <summary>	
-            Callback that receives notifications.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::fnNotificationCallback']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>__function__stdcall* fnNotificationCallback</unmanaged>	
-            <unmanaged-short>__function__stdcall fnNotificationCallback</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.RendererId">
-            <summary>	
-            Pointer to the ID for the audio renderer the engine should connect to. Xbox 360  <para>This parameter is undefined.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::pRendererID']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>wchar_t* pRendererID</unmanaged>	
-            <unmanaged-short>wchar_t pRendererID</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.XAudio2Pointer">
-            <summary>	
-            Pointer to the <see cref="T:SharpDX.XAudio2.XAudio2"/> interface used by the engine. If this member is <c>null</c>, the XACT engine will create the XAudio2 object.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::pXAudio2']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>IXAudio2* pXAudio2</unmanaged>	
-            <unmanaged-short>IXAudio2 pXAudio2</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngineSettings.MasteringVoicePointer">
-            <summary>	
-            Pointer to the <see cref="T:SharpDX.XAudio2.MasteringVoice"/> interface, representing the mastering voice that  should be used by the XACT engine. If pXAudio2 is <c>null</c>, this member must also be <c>null</c>.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='XACT_RUNTIME_PARAMETERS::pMasteringVoice']/*"/>	
-            <msdn-id>microsoft.directx_sdk.struct.xact_runtime_parameters</msdn-id>	
-            <unmanaged>IXAudio2MasteringVoice* pMasteringVoice</unmanaged>	
-            <unmanaged-short>IXAudio2MasteringVoice pMasteringVoice</unmanaged-short>	
-        </member>
-        <member name="P:SharpDX.XACT3.AudioEngineSettings.Settings">
-            <summary>
-            Gets or sets the settings file.
+            Gets or sets the type.
             </summary>
             <value>
-            The settings file.
+            The type.
             </value>
         </member>
-        <member name="P:SharpDX.XACT3.AudioEngineSettings.XAudio2">
-            <summary>
-            Gets or sets the XAudio2 engine to use with XACT3 engine.
-            </summary>
-            <value>
-            The XAudio2 engine.
-            </value>
+        <member name="P:SharpDX.XACT3.Notification.TimeStamp">
+            <summary>	
+            Timestamp of notification, in milliseconds.
+            </summary>	
+            <unmanaged>int timeStamp</unmanaged>	
         </member>
-        <member name="P:SharpDX.XACT3.AudioEngineSettings.MasteringVoice">
+        <member name="T:SharpDX.XACT3.CueNotification">
             <summary>
-            Gets or sets the MasteringVoice to use with XACT3 engine.
+            Cue notification parameters.
             </summary>
-            <value>
-            The MasteringVoice.
-            </value>
-            <remarks>
-            <see cref="P:SharpDX.XACT3.AudioEngineSettings.XAudio2"/> field must also be set to a valid XAudio2 instance.
-            </remarks>
-        </member>
-        <member name="T:SharpDX.XACT3.AssemblyDoc">
-            <summary>
-            The <see cref="A:SharpDX.XACT3"/> assembly provides managed XACT3 API.
-            </summary>
-            <msdn-id>hh405049</msdn-id>
-            <unmanaged>XACT3</unmanaged>	
-            <unmanaged-short>XACT3</unmanaged-short>	
+            <unmanaged>XACT_NOTIFICATION_CUE</unmanaged>	
         </member>
         <member name="T:SharpDX.XACT3.AudioEngine">
             <summary>	
@@ -590,6 +402,70 @@
             <msdn-id>microsoft.directx_sdk.ixact3engine.ixact3engine</msdn-id>	
             <unmanaged>IXACT3Engine</unmanaged>	
             <unmanaged-short>IXACT3Engine</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.AudioEngine.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngine"/> class.
+            </summary>
+        </member>
+        <member name="M:SharpDX.XACT3.AudioEngine.#ctor(System.IO.Stream)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngine"/> class.
+            </summary>
+            <param name="settingsFile">The settings file.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.AudioEngine.#ctor(SharpDX.XACT3.CreationFlags,System.IO.Stream)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngine"/> class.
+            </summary>
+            <param name="creationFlags">The creation flags.</param>
+            <param name="settingsFile"></param>
+        </member>
+        <member name="M:SharpDX.XACT3.AudioEngine.#ctor(SharpDX.XACT3.CreationFlags,SharpDX.XACT3.AudioEngineSettings)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngine"/> class.
+            </summary>
+            <param name="creationFlags">The creation flags.</param>
+            <param name="settings">Settings for this audio engine</param>
+        </member>
+        <member name="M:SharpDX.XACT3.AudioEngine.PreInitialize(SharpDX.XACT3.AudioEngineSettings)">
+            <summary>
+            Initializes this instance from a settings file and a renderer index.
+            </summary>
+            <unmanaged>IXACT3Engine::Initialize</unmanaged>
+        </member>
+        <member name="M:SharpDX.XACT3.AudioEngine.OnNotificationDelegate(SharpDX.XACT3.Notification)">
+            <summary>
+            Called when an internal notification occured.
+            </summary>
+            <param name="notification">The notification.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.AudioEngine.RegisterNotification(SharpDX.XACT3.NotificationType)">
+            <summary>
+            Registers this instance to notify for a type of notification.
+            </summary>
+            <param name="notificationType">Type of the notification.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.AudioEngine.UnregisterNotification(SharpDX.XACT3.NotificationType)">
+            <summary>
+            Unregisters this instance to notify for a type of notification.
+            </summary>
+            <param name="notificationType">Type of the notification.</param>
+        </member>
+        <member name="F:SharpDX.XACT3.AudioEngine.AllowedNotifications">
+            <summary>
+            Internal dictionary to verify allowed notifications.
+            </summary>
+        </member>
+        <member name="M:SharpDX.XACT3.AudioEngine.VerifyRegister(SharpDX.XACT3.NotificationType,System.Type,SharpDX.XACT3.ManagedNotificationCallback)">
+            <summary>
+            Verifies a notification registration for a particular type.
+            </summary>
+            <param name="notificationType">Type of the notification.</param>
+            <param name="type">The type.</param>
+            <param name="notificationCallback">The notification callback.</param>
+            <exception cref="T:System.InvalidOperationException">If this registration is invalid</exception>
+            <returns></returns>
         </member>
         <member name="M:SharpDX.XACT3.AudioEngine.#ctor(System.IntPtr)">
             <summary>
@@ -876,69 +752,13 @@
             <unmanaged>HRESULT IXACT3Engine::GetGlobalVariable([In] unsigned short nIndex,[Out] float* nValue)</unmanaged>	
             <unmanaged-short>IXACT3Engine::GetGlobalVariable</unmanaged-short>	
         </member>
-        <member name="M:SharpDX.XACT3.AudioEngine.#ctor">
+        <member name="E:SharpDX.XACT3.AudioEngine.OnNotification">
             <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngine"/> class.
+            Occurs when a AudioEngine event occurs.
             </summary>
-        </member>
-        <member name="M:SharpDX.XACT3.AudioEngine.#ctor(System.IO.Stream)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngine"/> class.
-            </summary>
-            <param name="settingsFile">The settings file.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.AudioEngine.#ctor(SharpDX.XACT3.CreationFlags,System.IO.Stream)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngine"/> class.
-            </summary>
-            <param name="creationFlags">The creation flags.</param>
-            <param name="settingsFile"></param>
-        </member>
-        <member name="M:SharpDX.XACT3.AudioEngine.#ctor(SharpDX.XACT3.CreationFlags,SharpDX.XACT3.AudioEngineSettings)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.AudioEngine"/> class.
-            </summary>
-            <param name="creationFlags">The creation flags.</param>
-            <param name="settings">Settings for this audio engine</param>
-        </member>
-        <member name="M:SharpDX.XACT3.AudioEngine.PreInitialize(SharpDX.XACT3.AudioEngineSettings)">
-            <summary>
-            Initializes this instance from a settings file and a renderer index.
-            </summary>
-            <unmanaged>IXACT3Engine::Initialize</unmanaged>
-        </member>
-        <member name="M:SharpDX.XACT3.AudioEngine.OnNotificationDelegate(SharpDX.XACT3.Notification)">
-            <summary>
-            Called when an internal notification occured.
-            </summary>
-            <param name="notification">The notification.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.AudioEngine.RegisterNotification(SharpDX.XACT3.NotificationType)">
-            <summary>
-            Registers this instance to notify for a type of notification.
-            </summary>
-            <param name="notificationType">Type of the notification.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.AudioEngine.UnregisterNotification(SharpDX.XACT3.NotificationType)">
-            <summary>
-            Unregisters this instance to notify for a type of notification.
-            </summary>
-            <param name="notificationType">Type of the notification.</param>
-        </member>
-        <member name="F:SharpDX.XACT3.AudioEngine.AllowedNotifications">
-            <summary>
-            Internal dictionary to verify allowed notifications.
-            </summary>
-        </member>
-        <member name="M:SharpDX.XACT3.AudioEngine.VerifyRegister(SharpDX.XACT3.NotificationType,System.Type,SharpDX.XACT3.ManagedNotificationCallback)">
-            <summary>
-            Verifies a notification registration for a particular type.
-            </summary>
-            <param name="notificationType">Type of the notification.</param>
-            <param name="type">The type.</param>
-            <param name="notificationCallback">The notification callback.</param>
-            <exception cref="T:System.InvalidOperationException">If this registration is invalid</exception>
-            <returns></returns>
+            <remarks>
+            Use <see cref="M:SharpDX.XACT3.AudioEngine.RegisterNotification(SharpDX.XACT3.NotificationType)"/> to register types.
+            </remarks>
         </member>
         <member name="P:SharpDX.XACT3.AudioEngine.RendererCount">
             <summary>	
@@ -958,407 +778,11 @@
             <unmanaged-short>GetFinalMixFormat</unmanaged-short>	
             <unmanaged>HRESULT IXACT3Engine::GetFinalMixFormat([Out] WAVEFORMATEXTENSIBLE* pFinalMixFormat)</unmanaged>
         </member>
-        <member name="E:SharpDX.XACT3.AudioEngine.OnNotification">
-            <summary>
-            Occurs when a AudioEngine event occurs.
-            </summary>
-            <remarks>
-            Use <see cref="M:SharpDX.XACT3.AudioEngine.RegisterNotification(SharpDX.XACT3.RawNotificationDescription@)"/> to register types.
-            </remarks>
-        </member>
         <member name="T:SharpDX.XACT3.AudioEngine.NotificationCallbackDelegate">
             <summary>
             Internal unmanaged delegate
             </summary>
             <param name="notification">The notification.</param>
-        </member>
-        <member name="T:SharpDX.XACT3.SoundBank">
-            <summary>	
-            Plays a cue. Optionally, returns an instance handle to the cue object for further control.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank']/*"/>	
-            <msdn-id>ee418422</msdn-id>	
-            <unmanaged>IXACT3SoundBank</unmanaged>	
-            <unmanaged-short>IXACT3SoundBank</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.#ctor(System.IntPtr)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.SoundBank"/> class.
-            </summary>
-            <param name="nativePtr">The native pointer.</param>	
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.op_Explicit(System.IntPtr)~SharpDX.XACT3.SoundBank">
-            <summary>
-            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.XACT3.SoundBank"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
-            </summary>
-            <param name="nativePointer">The native pointer.</param>
-            <returns>
-            The result of the conversion.
-            </returns>
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.GetCueIndex(System.String)">
-            <summary>	
-            Retrieves a sound cue index based on a string that represents the friendly name of the cue.	
-            </summary>	
-            <param name="friendlyName">[in]  <c>null</c>-terminated string that represents the friendly name of a cue in the sound bank. Note This string is case sensitive.</param>	
-            <returns><para>Returns the cue index that is associated with szFriendlyName. If the cue index is not found, XACTINDEX_INVALID is returned.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::GetCueIndex']/*"/>	
-            <msdn-id>microsoft.directx_sdk.ixact3soundbank.ixact3soundbank.getcueindex</msdn-id>	
-            <unmanaged>unsigned short IXACT3SoundBank::GetCueIndex([In] const char* szFriendlyName)</unmanaged>	
-            <unmanaged-short>IXACT3SoundBank::GetCueIndex</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.GetCueCount(System.Int16@)">
-            <summary>	
-            Retrieves the number of cues in the sound bank.	
-            </summary>	
-            <param name="numCuesRef">Pointer to an XACTINDEX that returns the number of cues.</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. If unsuccessful, an error code is returned.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::GetNumCues']/*"/>	
-            <msdn-id>ee418420</msdn-id>	
-            <unmanaged>HRESULT IXACT3SoundBank::GetNumCues([Out] unsigned short* pnNumCues)</unmanaged>	
-            <unmanaged-short>IXACT3SoundBank::GetNumCues</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.GetCueProperties(System.Int16)">
-            <summary>	
-            Retrieves the properties of a cue.	
-            </summary>	
-            <param name="cueIndex">Index of the cue to query.</param>	
-            <returns>Pointer to an <see cref="T:SharpDX.XACT3.CueProperties"/> structure that receives the cue properties.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::GetCueProperties']/*"/>	
-            <msdn-id>ee418419</msdn-id>	
-            <unmanaged>HRESULT IXACT3SoundBank::GetCueProperties([In] unsigned short nCueIndex,[Out] XACT_CUE_PROPERTIES* pProperties)</unmanaged>	
-            <unmanaged-short>IXACT3SoundBank::GetCueProperties</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.Prepare(System.Int16,System.Int32,System.Int32)">
-            <summary>	
-            Prepares a cue instance for playback.	
-            </summary>	
-            <param name="cueIndex">[in]  Value that indicates the index of the cue to be prepared.</param>	
-            <param name="flags">[in]  Unused. Should be 0.</param>	
-            <param name="timeOffset">[in]  Time offset into the cue to start from, in milliseconds.</param>	
-            <returns>[out]  Pointer to the <see cref="T:SharpDX.XACT3.Cue"/> object that is returned.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::Prepare']/*"/>	
-            <msdn-id>ee418423</msdn-id>	
-            <unmanaged>HRESULT IXACT3SoundBank::Prepare([In] unsigned short nCueIndex,[In] unsigned int dwFlags,[In] int timeOffset,[Out] IXACT3Cue** ppCue)</unmanaged>	
-            <unmanaged-short>IXACT3SoundBank::Prepare</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.Play(System.Int16,System.Int32,System.Int32)">
-            <summary>	
-            Plays a cue. Optionally, returns an instance handle to the cue object for further control.	
-            </summary>	
-            <param name="cueIndex">[in]  Value that indicates the index of the cue to be played.</param>	
-            <param name="flags">[in]  Flags to pass to <see cref="M:SharpDX.XACT3.SoundBank.Prepare(System.Int16,System.Int32,System.Int32)"/> for cue playback.</param>	
-            <param name="timeOffset">[in]  Time offset into the cue to start from, in milliseconds.</param>	
-            <returns>[out, optional]  Pointer to the <see cref="T:SharpDX.XACT3.Cue"/> object that is returned. If <c>null</c> is specified, no cue instance object is returned.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::Play']/*"/>	
-            <msdn-id>microsoft.directx_sdk.ixact3soundbank.ixact3soundbank.play</msdn-id>	
-            <unmanaged>HRESULT IXACT3SoundBank::Play([In] unsigned short nCueIndex,[In] unsigned int dwFlags,[In] int timeOffset,[Out, Optional] IXACT3Cue** ppCue)</unmanaged>	
-            <unmanaged-short>IXACT3SoundBank::Play</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.Stop(System.Int16,SharpDX.XACT3.StopFlags)">
-            <summary>	
-            Stops a cue.	
-            </summary>	
-            <param name="cueIndex">[in]  Index of the cue to be stopped. Note All instances of the cue that are specified by nCueIndex are stopped.</param>	
-            <param name="flags">[in]  Flags affecting how the cue will be stopped. By default, the sound completes the release phase that the content has set up. ValueDescriptionXACT_FLAG_SOUNDBANK_STOP_IMMEDIATECue stops immediately. It ignores any release phase or transition that is specified in the content.?</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::Stop']/*"/>	
-            <msdn-id>ee418424</msdn-id>	
-            <unmanaged>HRESULT IXACT3SoundBank::Stop([In] unsigned short nCueIndex,[In] XACT_STOP_FLAGS dwFlags)</unmanaged>	
-            <unmanaged-short>IXACT3SoundBank::Stop</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.Destroy">
-            <summary>	
-            Destroys the sound bank.	
-            </summary>	
-            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful, an error code otherwise.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::Destroy']/*"/>	
-            <msdn-id>ee418417</msdn-id>	
-            <unmanaged>HRESULT IXACT3SoundBank::Destroy()</unmanaged>	
-            <unmanaged-short>IXACT3SoundBank::Destroy</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.GetState(System.Int32@)">
-            <summary>	
-            Retrieves the current state of the sound bank.	
-            </summary>	
-            <param name="stateRef">[out]  Flags that indicate the state of the sound bank. The flags are as follows: ValueDescriptionXACT_SOUNDBANKSTATE_INUSEIndicates that the sound bank is referenced by at least one valid cue instance or other client. For example, the game itself might reference the sound bank.?</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::GetState']/*"/>	
-            <msdn-id>ee418421</msdn-id>	
-            <unmanaged>HRESULT IXACT3SoundBank::GetState([Out] unsigned int* pdwState)</unmanaged>	
-            <unmanaged-short>IXACT3SoundBank::GetState</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.#ctor(SharpDX.XACT3.AudioEngine,System.IO.Stream)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.SoundBank"/> class from a soundbank stream.
-            </summary>
-            <param name="audioEngine">The engine.</param>
-            <param name="stream">The soundbank stream stream.</param>
-            <unmanaged>HRESULT IXACT3Engine::CreateSoundBank([In] const void* pvBuffer,[In] unsigned int dwSize,[In] unsigned int dwFlags,[In] unsigned int dwAllocAttributes,[Out, Fast] IXACT3SoundBank** ppSoundBank)</unmanaged>
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.OnNotificationDelegate(SharpDX.XACT3.Notification)">
-            <summary>
-            Called when an internal notification occured.
-            </summary>
-            <param name="notification">The notification.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.RegisterNotification(SharpDX.XACT3.NotificationType)">
-            <summary>
-            Registers this instance to notify for a type of notification.
-            </summary>
-            <param name="notificationType">Type of the notification.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.SoundBank.UnregisterNotification(SharpDX.XACT3.NotificationType)">
-            <summary>
-            Unregisters this instance to notify for a type of notification.
-            </summary>
-            <param name="notificationType">Type of the notification.</param>
-        </member>
-        <member name="P:SharpDX.XACT3.SoundBank.CueCount">
-            <summary>	
-            Retrieves the number of cues in the sound bank.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::GetNumCues']/*"/>	
-            <msdn-id>ee418420</msdn-id>	
-            <unmanaged>GetNumCues</unmanaged>	
-            <unmanaged-short>GetNumCues</unmanaged-short>	
-            <unmanaged>HRESULT IXACT3SoundBank::GetNumCues([Out] unsigned short* pnNumCues)</unmanaged>
-        </member>
-        <member name="P:SharpDX.XACT3.SoundBank.AudioEngine">
-            <summary>
-            Gets or sets the audio engine.
-            </summary>
-            <value>
-            The audio engine.
-            </value>
-        </member>
-        <member name="E:SharpDX.XACT3.SoundBank.OnNotification">
-            <summary>
-            Occurs when a Soundbank event occurs.
-            </summary>
-            <remarks>
-            Use <see cref="M:SharpDX.XACT3.SoundBank.RegisterNotification(SharpDX.XACT3.NotificationType)"/> to register types.
-            </remarks>
-        </member>
-        <member name="P:SharpDX.XACT3.SoundBank.IsInUse">
-            <summary>
-            Gets a value indicating whether this instance is referenced by at least one valid cue instance or other client. For example, the game itself might reference the sound bank. 
-            </summary>
-            <value>
-              <c>true</c> if this instance is in use; otherwise, <c>false</c>.
-            </value>
-        </member>
-        <member name="T:SharpDX.XACT3.WaveBank">
-            <summary>	
-            This section contains information about the methods used with the <see cref="T:SharpDX.XACT3.WaveBank"/> interface.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank']/*"/>	
-            <msdn-id>microsoft.directx_sdk.ixact3wavebank.ixact3wavebank</msdn-id>	
-            <unmanaged>IXACT3WaveBank</unmanaged>	
-            <unmanaged-short>IXACT3WaveBank</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.#ctor(System.IntPtr)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.WaveBank"/> class.
-            </summary>
-            <param name="nativePtr">The native pointer.</param>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.op_Explicit(System.IntPtr)~SharpDX.XACT3.WaveBank">
-            <summary>
-            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.XACT3.WaveBank"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
-            </summary>
-            <param name="nativePointer">The native pointer.</param>
-            <returns>
-            The result of the conversion.
-            </returns>
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.Destroy">
-            <summary>	
-            Destroys the wave bank.	
-            </summary>	
-            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful, an error code otherwise.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Destroy']/*"/>	
-            <msdn-id>ee418425</msdn-id>	
-            <unmanaged>HRESULT IXACT3WaveBank::Destroy()</unmanaged>	
-            <unmanaged-short>IXACT3WaveBank::Destroy</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.GetWaveCount(System.Int16@)">
-            <summary>	
-            Returns the number of wave entries in the wave bank.	
-            </summary>	
-            <param name="numWavesRef">Pointer to an XACTINDEX that returns the number of waves in the wave bank.</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetNumWaves']/*"/>	
-            <msdn-id>ee418426</msdn-id>	
-            <unmanaged>HRESULT IXACT3WaveBank::GetNumWaves([Out] unsigned short* pnNumWaves)</unmanaged>	
-            <unmanaged-short>IXACT3WaveBank::GetNumWaves</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.GetWaveIndex(System.String)">
-            <summary>	
-            Returns the wave index for the friendly name of a wave in a wave bank.	
-            </summary>	
-            <param name="friendlyName">Friendly name for the wave within the wave bank.</param>	
-            <returns><para>Wave index for the friendly name of a wave within a wave bank.</para> <para>If the wave bank does not contain the friendly name, or if an entry does not exist for the name that is passed in, the method returns XACTINDEX_INVALID.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetWaveIndex']/*"/>	
-            <msdn-id>ee418428</msdn-id>	
-            <unmanaged>unsigned short IXACT3WaveBank::GetWaveIndex([In] const char* szFriendlyName)</unmanaged>	
-            <unmanaged-short>IXACT3WaveBank::GetWaveIndex</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.GetWaveProperties(System.Int16,SharpDX.XACT3.WaveProperties@)">
-            <summary>	
-            Gets the properties of a specific wave in a wave bank.	
-            </summary>	
-            <param name="waveIndex">Index of the wave for which to get properties.</param>	
-            <param name="wavePropertiesRef">Pointer to an <see cref="T:SharpDX.XACT3.WaveProperties"/> structure that is returned.</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetWaveProperties']/*"/>	
-            <msdn-id>ee418429</msdn-id>	
-            <unmanaged>HRESULT IXACT3WaveBank::GetWaveProperties([In] unsigned short nWaveIndex,[Out] XACT_WAVE_PROPERTIES* pWaveProperties)</unmanaged>	
-            <unmanaged-short>IXACT3WaveBank::GetWaveProperties</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.Prepare_(System.Int16,SharpDX.XACT3.ContentPreparationFlags,System.Int32,System.Byte)">
-            <summary>	
-            No documentation.	
-            </summary>	
-            <param name="waveIndex">No documentation.</param>	
-            <param name="flags">No documentation.</param>	
-            <param name="playOffset">No documentation.</param>	
-            <param name="loopCount">No documentation.</param>	
-            <returns>No documentation.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Prepare']/*"/>	
-            <unmanaged>HRESULT IXACT3WaveBank::Prepare([In] unsigned short nWaveIndex,[In] XACT_CONTENT_PREPARATION_FLAGS dwFlags,[In] unsigned int dwPlayOffset,[In] unsigned char nLoopCount,[Out] IXACT3Wave** ppWave)</unmanaged>	
-            <unmanaged-short>IXACT3WaveBank::Prepare</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.Play_(System.Int16,SharpDX.XACT3.ContentPreparationFlags,System.Int32,System.Byte)">
-            <summary>	
-            Starts the playback for a wave that is indicated by the wave index.	
-            </summary>	
-            <param name="waveIndex">Index of the wave.</param>	
-            <param name="flags">Flags that affect wave preparation: ValueDescriptionXACT_FLAG_BACKGROUND_MUSICMarks the waves as background music.Xbox 360 This flag is supported only on the Xbox 360 platform.?XACT_FLAG_UNITS_MSIndicates that the units that are passed in are measured in milliseconds.?XACT_FLAG_UNITS_SAMPLESIndicates that the units that are passed in are in samples.?</param>	
-            <param name="playOffset">Play offset to use as the start of the wave. The offset can be described in milliseconds or in samples. The dwFlags argument determines the offset units.</param>	
-            <param name="loopCount">Number of loops for playback.</param>	
-            <returns>Pointer to an <see cref="T:SharpDX.XACT3.Wave"/> object that is returned.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Play']/*"/>	
-            <msdn-id>ee418430</msdn-id>	
-            <unmanaged>HRESULT IXACT3WaveBank::Play([In] unsigned short nWaveIndex,[In] XACT_CONTENT_PREPARATION_FLAGS dwFlags,[In] unsigned int dwPlayOffset,[In] unsigned char nLoopCount,[Out] IXACT3Wave** ppWave)</unmanaged>	
-            <unmanaged-short>IXACT3WaveBank::Play</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.Stop(System.Int16,SharpDX.XACT3.StopFlags)">
-            <summary>	
-            No documentation.	
-            </summary>	
-            <param name="waveIndex">No documentation.</param>	
-            <param name="flags">No documentation.</param>	
-            <returns>No documentation.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Stop']/*"/>	
-            <unmanaged>HRESULT IXACT3WaveBank::Stop([In] unsigned short nWaveIndex,[In] XACT_STOP_FLAGS dwFlags)</unmanaged>	
-            <unmanaged-short>IXACT3WaveBank::Stop</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.GetState(System.Int32@)">
-            <summary>	
-            Retrieves the current state of the wave bank.	
-            </summary>	
-            <param name="stateRef">[out]  Flags that indicate the state of the wave bank. The flags are as follows: ValueDescriptionXACT_WAVEBANKSTATE_INUSEIndicates that the wave bank is referenced by at least one valid cue instance or other client. For example, the game itself might reference the wave bank.?XACT_WAVEBANKSTATE_PREPAREDIndicates that the wave is prepared for use by a cue instance.?</param>	
-            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetState']/*"/>	
-            <msdn-id>ee418427</msdn-id>	
-            <unmanaged>HRESULT IXACT3WaveBank::GetState([Out] unsigned int* pdwState)</unmanaged>	
-            <unmanaged-short>IXACT3WaveBank::GetState</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.#ctor(SharpDX.XACT3.AudioEngine,System.IO.Stream)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.WaveBank"/> class from a wave bank stream.
-            </summary>
-            <param name="audioEngine">The engine.</param>
-            <param name="stream">The wave bank stream.</param>
-            <unmanaged>HRESULT IXACT3Engine::CreateInMemoryWaveBank([In] const void* pvBuffer,[In] unsigned int dwSize,[In] unsigned int dwFlags,[In] unsigned int dwAllocAttributes,[Out, Fast] IXACT3WaveBank** ppWaveBank)</unmanaged>
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.#ctor(SharpDX.XACT3.AudioEngine,System.String,System.Int32,System.Int16)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.XACT3.WaveBank"/> class from a file for async reading.
-            </summary>
-            <param name="audioEngine">The engine.</param>
-            <param name="fileName">Name of the file to load the wavebank from.</param>
-            <param name="offset">The offset into the stream.</param>
-            <param name="packetSize">Packet size used to load the stream.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.OnNotificationDelegate(SharpDX.XACT3.Notification)">
-            <summary>
-            Called when an internal notification occured.
-            </summary>
-            <param name="notification">The notification.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.RegisterNotification(SharpDX.XACT3.NotificationType)">
-            <summary>
-            Registers this instance to notify for a type of notification.
-            </summary>
-            <param name="notificationType">Type of the notification.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.UnregisterNotification(SharpDX.XACT3.NotificationType)">
-            <summary>
-            Unregisters this instance to notify for a type of notification.
-            </summary>
-            <param name="notificationType">Type of the notification.</param>
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.Prepare(System.Int16,SharpDX.XACT3.ContentPreparationFlags,System.Int32,System.Byte)">
-            <summary>	
-            No documentation.	
-            </summary>	
-            <param name="waveIndex">No documentation.</param>	
-            <param name="flags">No documentation.</param>	
-            <param name="playOffset">No documentation.</param>	
-            <param name="loopCount">No documentation.</param>	
-            <returns>No documentation.</returns>	
-            <!-- Failed to insert some or all of included XML --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Prepare']/*"/>	
-            <unmanaged>HRESULT IXACT3WaveBank::Prepare([In] unsigned short nWaveIndex,[In] XACT_CONTENT_PREPARATION_FLAGS dwFlags,[In] unsigned int dwPlayOffset,[In] unsigned char nLoopCount,[Out] IXACT3Wave** ppWave)</unmanaged>	
-        </member>
-        <member name="M:SharpDX.XACT3.WaveBank.Play(System.Int16,SharpDX.XACT3.ContentPreparationFlags,System.Int32,System.Byte)">
-            <summary>	
-            No documentation.	
-            </summary>	
-            <param name="waveIndex">No documentation.</param>	
-            <param name="flags">No documentation.</param>	
-            <param name="playOffset">No documentation.</param>	
-            <param name="loopCount">No documentation.</param>	
-            <returns>No documentation.</returns>	
-            <!-- Failed to insert some or all of included XML --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Play']/*"/>	
-            <unmanaged>HRESULT IXACT3WaveBank::Play([In] unsigned short nWaveIndex,[In] XACT_CONTENT_PREPARATION_FLAGS dwFlags,[In] unsigned int dwPlayOffset,[In] unsigned char nLoopCount,[Out] IXACT3Wave** ppWave)</unmanaged>	
-        </member>
-        <member name="P:SharpDX.XACT3.WaveBank.WaveCount">
-            <summary>	
-            Returns the number of wave entries in the wave bank.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetNumWaves']/*"/>	
-            <msdn-id>ee418426</msdn-id>	
-            <unmanaged>GetNumWaves</unmanaged>	
-            <unmanaged-short>GetNumWaves</unmanaged-short>	
-            <unmanaged>HRESULT IXACT3WaveBank::GetNumWaves([Out] unsigned short* pnNumWaves)</unmanaged>
-        </member>
-        <member name="P:SharpDX.XACT3.WaveBank.State">
-            <summary>	
-            Retrieves the current state of the wave bank.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetState']/*"/>	
-            <msdn-id>ee418427</msdn-id>	
-            <unmanaged>GetState</unmanaged>	
-            <unmanaged-short>GetState</unmanaged-short>	
-            <unmanaged>HRESULT IXACT3WaveBank::GetState([Out] unsigned int* pdwState)</unmanaged>
-        </member>
-        <member name="P:SharpDX.XACT3.WaveBank.AudioEngine">
-            <summary>
-            Gets or sets the audio engine.
-            </summary>
-            <value>
-            The audio engine.
-            </value>
-        </member>
-        <member name="E:SharpDX.XACT3.WaveBank.OnNotification">
-            <summary>
-            Occurs when a WaveBank event occurs.
-            </summary>
-            <remarks>
-            Use <see cref="M:SharpDX.XACT3.WaveBank.RegisterNotification(SharpDX.XACT3.NotificationType)"/> to register types.
-            </remarks>
         </member>
         <member name="T:SharpDX.XACT3.ContentPreparationFlags">
             <summary>	
@@ -1833,31 +1257,593 @@
             <unmanaged>MACRO_XACT_STATE_PREPAREFAILED</unmanaged>	
             <unmanaged-short>MACRO_XACT_STATE_PREPAREFAILED</unmanaged-short>	
         </member>
-        <member name="T:SharpDX.XACT3.SoundBankNotification">
-            <summary>
-            SoundBank notification parameters.
-            </summary>
-            <unmanaged>XACT_NOTIFICATION_SOUNDBANK</unmanaged>	
+        <member name="T:SharpDX.XACT3.XACT3">
+            <summary>	
+            Functions	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='SharpDX.XACT3.XACT3']/*"/>	
         </member>
-        <member name="T:SharpDX.XACT3.VariableNotification">
-            <summary>
-            Variable notification parameters.
-            </summary>
-            <unmanaged>XACT_NOTIFICATION_VARIABLE</unmanaged>
+        <member name="T:SharpDX.XACT3.SoundBank">
+            <summary>	
+            Plays a cue. Optionally, returns an instance handle to the cue object for further control.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank']/*"/>	
+            <msdn-id>ee418422</msdn-id>	
+            <unmanaged>IXACT3SoundBank</unmanaged>	
+            <unmanaged-short>IXACT3SoundBank</unmanaged-short>	
         </member>
-        <member name="T:SharpDX.XACT3.CueNotification">
+        <member name="M:SharpDX.XACT3.SoundBank.#ctor(System.IntPtr)">
             <summary>
-            Cue notification parameters.
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.SoundBank"/> class.
             </summary>
-            <unmanaged>XACT_NOTIFICATION_CUE</unmanaged>	
+            <param name="nativePtr">The native pointer.</param>	
         </member>
-        <member name="T:SharpDX.XACT3.NamespaceDoc">
+        <member name="M:SharpDX.XACT3.SoundBank.op_Explicit(System.IntPtr)~SharpDX.XACT3.SoundBank">
             <summary>
-            The <see cref="N:SharpDX.XACT3"/> namespace provides a managed XACT3 API.
+            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.XACT3.SoundBank"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
             </summary>
-            <msdn-id>hh405049</msdn-id>
-            <unmanaged>XACT3</unmanaged>	
-            <unmanaged-short>XACT3</unmanaged-short>	
+            <param name="nativePointer">The native pointer.</param>
+            <returns>
+            The result of the conversion.
+            </returns>
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.GetCueIndex(System.String)">
+            <summary>	
+            Retrieves a sound cue index based on a string that represents the friendly name of the cue.	
+            </summary>	
+            <param name="friendlyName">[in]  <c>null</c>-terminated string that represents the friendly name of a cue in the sound bank. Note This string is case sensitive.</param>	
+            <returns><para>Returns the cue index that is associated with szFriendlyName. If the cue index is not found, XACTINDEX_INVALID is returned.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::GetCueIndex']/*"/>	
+            <msdn-id>microsoft.directx_sdk.ixact3soundbank.ixact3soundbank.getcueindex</msdn-id>	
+            <unmanaged>unsigned short IXACT3SoundBank::GetCueIndex([In] const char* szFriendlyName)</unmanaged>	
+            <unmanaged-short>IXACT3SoundBank::GetCueIndex</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.GetCueCount(System.Int16@)">
+            <summary>	
+            Retrieves the number of cues in the sound bank.	
+            </summary>	
+            <param name="numCuesRef">Pointer to an XACTINDEX that returns the number of cues.</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. If unsuccessful, an error code is returned.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::GetNumCues']/*"/>	
+            <msdn-id>ee418420</msdn-id>	
+            <unmanaged>HRESULT IXACT3SoundBank::GetNumCues([Out] unsigned short* pnNumCues)</unmanaged>	
+            <unmanaged-short>IXACT3SoundBank::GetNumCues</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.GetCueProperties(System.Int16)">
+            <summary>	
+            Retrieves the properties of a cue.	
+            </summary>	
+            <param name="cueIndex">Index of the cue to query.</param>	
+            <returns>Pointer to an <see cref="T:SharpDX.XACT3.CueProperties"/> structure that receives the cue properties.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::GetCueProperties']/*"/>	
+            <msdn-id>ee418419</msdn-id>	
+            <unmanaged>HRESULT IXACT3SoundBank::GetCueProperties([In] unsigned short nCueIndex,[Out] XACT_CUE_PROPERTIES* pProperties)</unmanaged>	
+            <unmanaged-short>IXACT3SoundBank::GetCueProperties</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.Prepare(System.Int16,System.Int32,System.Int32)">
+            <summary>	
+            Prepares a cue instance for playback.	
+            </summary>	
+            <param name="cueIndex">[in]  Value that indicates the index of the cue to be prepared.</param>	
+            <param name="flags">[in]  Unused. Should be 0.</param>	
+            <param name="timeOffset">[in]  Time offset into the cue to start from, in milliseconds.</param>	
+            <returns>[out]  Pointer to the <see cref="T:SharpDX.XACT3.Cue"/> object that is returned.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::Prepare']/*"/>	
+            <msdn-id>ee418423</msdn-id>	
+            <unmanaged>HRESULT IXACT3SoundBank::Prepare([In] unsigned short nCueIndex,[In] unsigned int dwFlags,[In] int timeOffset,[Out] IXACT3Cue** ppCue)</unmanaged>	
+            <unmanaged-short>IXACT3SoundBank::Prepare</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.Play(System.Int16,System.Int32,System.Int32)">
+            <summary>	
+            Plays a cue. Optionally, returns an instance handle to the cue object for further control.	
+            </summary>	
+            <param name="cueIndex">[in]  Value that indicates the index of the cue to be played.</param>	
+            <param name="flags">[in]  Flags to pass to <see cref="M:SharpDX.XACT3.SoundBank.Prepare(System.Int16,System.Int32,System.Int32)"/> for cue playback.</param>	
+            <param name="timeOffset">[in]  Time offset into the cue to start from, in milliseconds.</param>	
+            <returns>[out, optional]  Pointer to the <see cref="T:SharpDX.XACT3.Cue"/> object that is returned. If <c>null</c> is specified, no cue instance object is returned.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::Play']/*"/>	
+            <msdn-id>microsoft.directx_sdk.ixact3soundbank.ixact3soundbank.play</msdn-id>	
+            <unmanaged>HRESULT IXACT3SoundBank::Play([In] unsigned short nCueIndex,[In] unsigned int dwFlags,[In] int timeOffset,[Out, Optional] IXACT3Cue** ppCue)</unmanaged>	
+            <unmanaged-short>IXACT3SoundBank::Play</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.Stop(System.Int16,SharpDX.XACT3.StopFlags)">
+            <summary>	
+            Stops a cue.	
+            </summary>	
+            <param name="cueIndex">[in]  Index of the cue to be stopped. Note All instances of the cue that are specified by nCueIndex are stopped.</param>	
+            <param name="flags">[in]  Flags affecting how the cue will be stopped. By default, the sound completes the release phase that the content has set up. ValueDescriptionXACT_FLAG_SOUNDBANK_STOP_IMMEDIATECue stops immediately. It ignores any release phase or transition that is specified in the content.?</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::Stop']/*"/>	
+            <msdn-id>ee418424</msdn-id>	
+            <unmanaged>HRESULT IXACT3SoundBank::Stop([In] unsigned short nCueIndex,[In] XACT_STOP_FLAGS dwFlags)</unmanaged>	
+            <unmanaged-short>IXACT3SoundBank::Stop</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.Destroy">
+            <summary>	
+            Destroys the sound bank.	
+            </summary>	
+            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful, an error code otherwise.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::Destroy']/*"/>	
+            <msdn-id>ee418417</msdn-id>	
+            <unmanaged>HRESULT IXACT3SoundBank::Destroy()</unmanaged>	
+            <unmanaged-short>IXACT3SoundBank::Destroy</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.GetState(System.Int32@)">
+            <summary>	
+            Retrieves the current state of the sound bank.	
+            </summary>	
+            <param name="stateRef">[out]  Flags that indicate the state of the sound bank. The flags are as follows: ValueDescriptionXACT_SOUNDBANKSTATE_INUSEIndicates that the sound bank is referenced by at least one valid cue instance or other client. For example, the game itself might reference the sound bank.?</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::GetState']/*"/>	
+            <msdn-id>ee418421</msdn-id>	
+            <unmanaged>HRESULT IXACT3SoundBank::GetState([Out] unsigned int* pdwState)</unmanaged>	
+            <unmanaged-short>IXACT3SoundBank::GetState</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.#ctor(SharpDX.XACT3.AudioEngine,System.IO.Stream)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.SoundBank"/> class from a soundbank stream.
+            </summary>
+            <param name="audioEngine">The engine.</param>
+            <param name="stream">The soundbank stream stream.</param>
+            <unmanaged>HRESULT IXACT3Engine::CreateSoundBank([In] const void* pvBuffer,[In] unsigned int dwSize,[In] unsigned int dwFlags,[In] unsigned int dwAllocAttributes,[Out, Fast] IXACT3SoundBank** ppSoundBank)</unmanaged>
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.OnNotificationDelegate(SharpDX.XACT3.Notification)">
+            <summary>
+            Called when an internal notification occured.
+            </summary>
+            <param name="notification">The notification.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.RegisterNotification(SharpDX.XACT3.NotificationType)">
+            <summary>
+            Registers this instance to notify for a type of notification.
+            </summary>
+            <param name="notificationType">Type of the notification.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.SoundBank.UnregisterNotification(SharpDX.XACT3.NotificationType)">
+            <summary>
+            Unregisters this instance to notify for a type of notification.
+            </summary>
+            <param name="notificationType">Type of the notification.</param>
+        </member>
+        <member name="P:SharpDX.XACT3.SoundBank.CueCount">
+            <summary>	
+            Retrieves the number of cues in the sound bank.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3SoundBank::GetNumCues']/*"/>	
+            <msdn-id>ee418420</msdn-id>	
+            <unmanaged>GetNumCues</unmanaged>	
+            <unmanaged-short>GetNumCues</unmanaged-short>	
+            <unmanaged>HRESULT IXACT3SoundBank::GetNumCues([Out] unsigned short* pnNumCues)</unmanaged>
+        </member>
+        <member name="P:SharpDX.XACT3.SoundBank.AudioEngine">
+            <summary>
+            Gets or sets the audio engine.
+            </summary>
+            <value>
+            The audio engine.
+            </value>
+        </member>
+        <member name="E:SharpDX.XACT3.SoundBank.OnNotification">
+            <summary>
+            Occurs when a Soundbank event occurs.
+            </summary>
+            <remarks>
+            Use <see cref="M:SharpDX.XACT3.SoundBank.RegisterNotification(SharpDX.XACT3.NotificationType)"/> to register types.
+            </remarks>
+        </member>
+        <member name="P:SharpDX.XACT3.SoundBank.IsInUse">
+            <summary>
+            Gets a value indicating whether this instance is referenced by at least one valid cue instance or other client. For example, the game itself might reference the sound bank. 
+            </summary>
+            <value>
+              <c>true</c> if this instance is in use; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="T:SharpDX.XACT3.Wave">
+            <summary>	
+            Sets the volume value for each output of a wave.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave']/*"/>	
+            <msdn-id>ee418438</msdn-id>	
+            <unmanaged>IXACT3Wave</unmanaged>	
+            <unmanaged-short>IXACT3Wave</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.#ctor(System.IntPtr)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.Wave"/> class.
+            </summary>
+            <param name="nativePtr">The native pointer.</param>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.op_Explicit(System.IntPtr)~SharpDX.XACT3.Wave">
+            <summary>
+            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.XACT3.Wave"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
+            </summary>
+            <param name="nativePointer">The native pointer.</param>
+            <returns>
+            The result of the conversion.
+            </returns>
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.Destroy">
+            <summary>	
+            No documentation.	
+            </summary>	
+            <returns>No documentation.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::Destroy']/*"/>	
+            <unmanaged>HRESULT IXACT3Wave::Destroy()</unmanaged>	
+            <unmanaged-short>IXACT3Wave::Destroy</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.Play">
+            <summary>	
+            No documentation.	
+            </summary>	
+            <returns>No documentation.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::Play']/*"/>	
+            <unmanaged>HRESULT IXACT3Wave::Play()</unmanaged>	
+            <unmanaged-short>IXACT3Wave::Play</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.Stop(SharpDX.XACT3.StopFlags)">
+            <summary>	
+            Stops the wave.	
+            </summary>	
+            <param name="flags">Flags that affect how the wave is stopped: ValueDescriptionXACT_FLAG_STOP_RELEASEPlays the wave to completion, then stops. For looping waves, this flag plays the current iteration to completion, then stops (ignoring any subsequent iterations). In either case, any release or tail is played. To stop the wave immediately, use the XACT_FLAG_STOP_IMMEDIATE flag.?XACT_FLAG_STOP_IMMEDIATEStops the playback immediately.?</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::Stop']/*"/>	
+            <msdn-id>microsoft.directx_sdk.ixact3wave.ixact3wave.stop</msdn-id>	
+            <unmanaged>HRESULT IXACT3Wave::Stop([In] XACT_STOP_FLAGS dwFlags)</unmanaged>	
+            <unmanaged-short>IXACT3Wave::Stop</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.Pause(System.Boolean)">
+            <summary>	
+            No documentation.	
+            </summary>	
+            <param name="pause">No documentation.</param>	
+            <returns>No documentation.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::Pause']/*"/>	
+            <unmanaged>HRESULT IXACT3Wave::Pause([In] BOOL fPause)</unmanaged>	
+            <unmanaged-short>IXACT3Wave::Pause</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.GetState(SharpDX.XACT3.WaveState@)">
+            <summary>	
+            Returns the state of the wave object.	
+            </summary>	
+            <param name="stateRef">Pointer to a DWORD that receives the current wave state. ValueDescriptionXACT_STATE_CREATEDCreated, but nothing else.?XACT_STATE_PREPARINGIn the middle of preparing.?XACT_STATE_PREPAREDPrepared, but not yet played.?XACT_STATE_PLAYINGPlaying, but can be paused.?XACT_STATE_STOPPINGStopping.?XACT_STATE_STOPPEDStopped.?XACT_STATE_PAUSEDPaused. Can be combined with some of the other state flags.?XACT_STATE_INUSEObject is in use. Used by wave banks and sound banks.?XACT_STATE_PREPAREFAILEDObject preparation failed.?</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. If unsuccessful, an error code is returned.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::GetState']/*"/>	
+            <msdn-id>ee418435</msdn-id>	
+            <unmanaged>HRESULT IXACT3Wave::GetState([Out] XACT_WAVE_STATE* pdwState)</unmanaged>	
+            <unmanaged-short>IXACT3Wave::GetState</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.SetPitch(System.Int16)">
+            <summary>	
+            Sets the pitch of a wave.	
+            </summary>	
+            <param name="pitch">value that is used to set the pitch for playback of this wave.</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::SetPitch']/*"/>	
+            <msdn-id>ee418439</msdn-id>	
+            <unmanaged>HRESULT IXACT3Wave::SetPitch([In] short pitch)</unmanaged>	
+            <unmanaged-short>IXACT3Wave::SetPitch</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.SetVolume(System.Single)">
+            <summary>	
+            Sets the volume of a wave.	
+            </summary>	
+            <param name="volume">value that is used to set the volume for playback of this wave.</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::SetVolume']/*"/>	
+            <msdn-id>ee418440</msdn-id>	
+            <unmanaged>HRESULT IXACT3Wave::SetVolume([In] float volume)</unmanaged>	
+            <unmanaged-short>IXACT3Wave::SetVolume</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.SetMatrixCoefficients(System.Int32,System.Int32,System.Single[])">
+            <summary>	
+            Sets the volume value for each output of a wave.	
+            </summary>	
+            <param name="srcChannelCount">Number of source channels.</param>	
+            <param name="dstChannelCount">Number of destination channels.</param>	
+            <param name="matrixCoefficientsRef">Matrix coefficient table. This is an array that represents the volume level of each source channel that is present in each destination channel. The source channels are represented by the column index of the table. The destination channels are represented by the row index of the table. The table must have at least uSrcChannelCount?uDstChannelCount elements.</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::SetMatrixCoefficients']/*"/>	
+            <msdn-id>ee418438</msdn-id>	
+            <unmanaged>HRESULT IXACT3Wave::SetMatrixCoefficients([In] unsigned int uSrcChannelCount,[In] unsigned int uDstChannelCount,[In, Buffer] float* pMatrixCoefficients)</unmanaged>	
+            <unmanaged-short>IXACT3Wave::SetMatrixCoefficients</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.GetProperties(SharpDX.XACT3.WaveInstanceProperties@)">
+            <summary>	
+            Retrieves the properties of the wave object.	
+            </summary>	
+            <param name="propertiesRef">Pointer to an <see cref="T:SharpDX.XACT3.WaveInstanceProperties"/> structure that is returned.</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::GetProperties']/*"/>	
+            <msdn-id>microsoft.directx_sdk.ixact3wave.ixact3wave.getproperties</msdn-id>	
+            <unmanaged>HRESULT IXACT3Wave::GetProperties([Out] XACT_WAVE_INSTANCE_PROPERTIES* pProperties)</unmanaged>	
+            <unmanaged-short>IXACT3Wave::GetProperties</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.OnNotificationDelegate(SharpDX.XACT3.Notification)">
+            <summary>
+            Called when an internal notification occured.
+            </summary>
+            <param name="notification">The notification.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.RegisterNotification(SharpDX.XACT3.NotificationType)">
+            <summary>
+            Registers this instance to notify for a type of notification.
+            </summary>
+            <param name="notificationType">Type of the notification.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.Wave.UnregisterNotification(SharpDX.XACT3.NotificationType)">
+            <summary>
+            Unregisters this instance to notify for a type of notification.
+            </summary>
+            <param name="notificationType">Type of the notification.</param>
+        </member>
+        <member name="P:SharpDX.XACT3.Wave.State">
+            <summary>	
+            Returns the state of the wave object.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::GetState']/*"/>	
+            <msdn-id>ee418435</msdn-id>	
+            <unmanaged>GetState</unmanaged>	
+            <unmanaged-short>GetState</unmanaged-short>	
+            <unmanaged>HRESULT IXACT3Wave::GetState([Out] XACT_WAVE_STATE* pdwState)</unmanaged>
+        </member>
+        <member name="P:SharpDX.XACT3.Wave.Pitch">
+            <summary>	
+            Sets the pitch of a wave.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::SetPitch']/*"/>	
+            <msdn-id>ee418439</msdn-id>	
+            <unmanaged>SetPitch</unmanaged>	
+            <unmanaged-short>SetPitch</unmanaged-short>	
+            <unmanaged>HRESULT IXACT3Wave::SetPitch([In] short pitch)</unmanaged>
+        </member>
+        <member name="P:SharpDX.XACT3.Wave.Volume">
+            <summary>	
+            Sets the volume of a wave.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::SetVolume']/*"/>	
+            <msdn-id>ee418440</msdn-id>	
+            <unmanaged>SetVolume</unmanaged>	
+            <unmanaged-short>SetVolume</unmanaged-short>	
+            <unmanaged>HRESULT IXACT3Wave::SetVolume([In] float volume)</unmanaged>
+        </member>
+        <member name="P:SharpDX.XACT3.Wave.Properties">
+            <summary>	
+            Retrieves the properties of the wave object.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3Wave::GetProperties']/*"/>	
+            <msdn-id>microsoft.directx_sdk.ixact3wave.ixact3wave.getproperties</msdn-id>	
+            <unmanaged>GetProperties</unmanaged>	
+            <unmanaged-short>GetProperties</unmanaged-short>	
+            <unmanaged>HRESULT IXACT3Wave::GetProperties([Out] XACT_WAVE_INSTANCE_PROPERTIES* pProperties)</unmanaged>
+        </member>
+        <member name="P:SharpDX.XACT3.Wave.AudioEngine">
+            <summary>
+            Gets or sets the audio engine.
+            </summary>
+            <value>
+            The audio engine.
+            </value>
+        </member>
+        <member name="E:SharpDX.XACT3.Wave.OnNotification">
+            <summary>
+            Occurs when a Wave event occurs.
+            </summary>
+            <remarks>
+            Use <see cref="M:SharpDX.XACT3.Wave.RegisterNotification(SharpDX.XACT3.NotificationType)"/> to register types.
+            </remarks>
+        </member>
+        <member name="T:SharpDX.XACT3.WaveBank">
+            <summary>	
+            This section contains information about the methods used with the <see cref="T:SharpDX.XACT3.WaveBank"/> interface.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank']/*"/>	
+            <msdn-id>microsoft.directx_sdk.ixact3wavebank.ixact3wavebank</msdn-id>	
+            <unmanaged>IXACT3WaveBank</unmanaged>	
+            <unmanaged-short>IXACT3WaveBank</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.#ctor(System.IntPtr)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.WaveBank"/> class.
+            </summary>
+            <param name="nativePtr">The native pointer.</param>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.op_Explicit(System.IntPtr)~SharpDX.XACT3.WaveBank">
+            <summary>
+            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.XACT3.WaveBank"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
+            </summary>
+            <param name="nativePointer">The native pointer.</param>
+            <returns>
+            The result of the conversion.
+            </returns>
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.Destroy">
+            <summary>	
+            Destroys the wave bank.	
+            </summary>	
+            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful, an error code otherwise.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Destroy']/*"/>	
+            <msdn-id>ee418425</msdn-id>	
+            <unmanaged>HRESULT IXACT3WaveBank::Destroy()</unmanaged>	
+            <unmanaged-short>IXACT3WaveBank::Destroy</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.GetWaveCount(System.Int16@)">
+            <summary>	
+            Returns the number of wave entries in the wave bank.	
+            </summary>	
+            <param name="numWavesRef">Pointer to an XACTINDEX that returns the number of waves in the wave bank.</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetNumWaves']/*"/>	
+            <msdn-id>ee418426</msdn-id>	
+            <unmanaged>HRESULT IXACT3WaveBank::GetNumWaves([Out] unsigned short* pnNumWaves)</unmanaged>	
+            <unmanaged-short>IXACT3WaveBank::GetNumWaves</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.GetWaveIndex(System.String)">
+            <summary>	
+            Returns the wave index for the friendly name of a wave in a wave bank.	
+            </summary>	
+            <param name="friendlyName">Friendly name for the wave within the wave bank.</param>	
+            <returns><para>Wave index for the friendly name of a wave within a wave bank.</para> <para>If the wave bank does not contain the friendly name, or if an entry does not exist for the name that is passed in, the method returns XACTINDEX_INVALID.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetWaveIndex']/*"/>	
+            <msdn-id>ee418428</msdn-id>	
+            <unmanaged>unsigned short IXACT3WaveBank::GetWaveIndex([In] const char* szFriendlyName)</unmanaged>	
+            <unmanaged-short>IXACT3WaveBank::GetWaveIndex</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.GetWaveProperties(System.Int16,SharpDX.XACT3.WaveProperties@)">
+            <summary>	
+            Gets the properties of a specific wave in a wave bank.	
+            </summary>	
+            <param name="waveIndex">Index of the wave for which to get properties.</param>	
+            <param name="wavePropertiesRef">Pointer to an <see cref="T:SharpDX.XACT3.WaveProperties"/> structure that is returned.</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetWaveProperties']/*"/>	
+            <msdn-id>ee418429</msdn-id>	
+            <unmanaged>HRESULT IXACT3WaveBank::GetWaveProperties([In] unsigned short nWaveIndex,[Out] XACT_WAVE_PROPERTIES* pWaveProperties)</unmanaged>	
+            <unmanaged-short>IXACT3WaveBank::GetWaveProperties</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.Prepare_(System.Int16,SharpDX.XACT3.ContentPreparationFlags,System.Int32,System.Byte)">
+            <summary>	
+            No documentation.	
+            </summary>	
+            <param name="waveIndex">No documentation.</param>	
+            <param name="flags">No documentation.</param>	
+            <param name="playOffset">No documentation.</param>	
+            <param name="loopCount">No documentation.</param>	
+            <returns>No documentation.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Prepare']/*"/>	
+            <unmanaged>HRESULT IXACT3WaveBank::Prepare([In] unsigned short nWaveIndex,[In] XACT_CONTENT_PREPARATION_FLAGS dwFlags,[In] unsigned int dwPlayOffset,[In] unsigned char nLoopCount,[Out] IXACT3Wave** ppWave)</unmanaged>	
+            <unmanaged-short>IXACT3WaveBank::Prepare</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.Play_(System.Int16,SharpDX.XACT3.ContentPreparationFlags,System.Int32,System.Byte)">
+            <summary>	
+            Starts the playback for a wave that is indicated by the wave index.	
+            </summary>	
+            <param name="waveIndex">Index of the wave.</param>	
+            <param name="flags">Flags that affect wave preparation: ValueDescriptionXACT_FLAG_BACKGROUND_MUSICMarks the waves as background music.Xbox 360 This flag is supported only on the Xbox 360 platform.?XACT_FLAG_UNITS_MSIndicates that the units that are passed in are measured in milliseconds.?XACT_FLAG_UNITS_SAMPLESIndicates that the units that are passed in are in samples.?</param>	
+            <param name="playOffset">Play offset to use as the start of the wave. The offset can be described in milliseconds or in samples. The dwFlags argument determines the offset units.</param>	
+            <param name="loopCount">Number of loops for playback.</param>	
+            <returns>Pointer to an <see cref="T:SharpDX.XACT3.Wave"/> object that is returned.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Play']/*"/>	
+            <msdn-id>ee418430</msdn-id>	
+            <unmanaged>HRESULT IXACT3WaveBank::Play([In] unsigned short nWaveIndex,[In] XACT_CONTENT_PREPARATION_FLAGS dwFlags,[In] unsigned int dwPlayOffset,[In] unsigned char nLoopCount,[Out] IXACT3Wave** ppWave)</unmanaged>	
+            <unmanaged-short>IXACT3WaveBank::Play</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.Stop(System.Int16,SharpDX.XACT3.StopFlags)">
+            <summary>	
+            No documentation.	
+            </summary>	
+            <param name="waveIndex">No documentation.</param>	
+            <param name="flags">No documentation.</param>	
+            <returns>No documentation.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Stop']/*"/>	
+            <unmanaged>HRESULT IXACT3WaveBank::Stop([In] unsigned short nWaveIndex,[In] XACT_STOP_FLAGS dwFlags)</unmanaged>	
+            <unmanaged-short>IXACT3WaveBank::Stop</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.GetState(System.Int32@)">
+            <summary>	
+            Retrieves the current state of the wave bank.	
+            </summary>	
+            <param name="stateRef">[out]  Flags that indicate the state of the wave bank. The flags are as follows: ValueDescriptionXACT_WAVEBANKSTATE_INUSEIndicates that the wave bank is referenced by at least one valid cue instance or other client. For example, the game itself might reference the wave bank.?XACT_WAVEBANKSTATE_PREPAREDIndicates that the wave is prepared for use by a cue instance.?</param>	
+            <returns><para>Returns <see cref="F:SharpDX.Result.Ok"/> if successful. Otherwise, an error code.</para></returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetState']/*"/>	
+            <msdn-id>ee418427</msdn-id>	
+            <unmanaged>HRESULT IXACT3WaveBank::GetState([Out] unsigned int* pdwState)</unmanaged>	
+            <unmanaged-short>IXACT3WaveBank::GetState</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.#ctor(SharpDX.XACT3.AudioEngine,System.IO.Stream)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.WaveBank"/> class from a wave bank stream.
+            </summary>
+            <param name="audioEngine">The engine.</param>
+            <param name="stream">The wave bank stream.</param>
+            <unmanaged>HRESULT IXACT3Engine::CreateInMemoryWaveBank([In] const void* pvBuffer,[In] unsigned int dwSize,[In] unsigned int dwFlags,[In] unsigned int dwAllocAttributes,[Out, Fast] IXACT3WaveBank** ppWaveBank)</unmanaged>
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.#ctor(SharpDX.XACT3.AudioEngine,System.String,System.Int32,System.Int16)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.XACT3.WaveBank"/> class from a file for async reading.
+            </summary>
+            <param name="audioEngine">The engine.</param>
+            <param name="fileName">Name of the file to load the wavebank from.</param>
+            <param name="offset">The offset into the stream.</param>
+            <param name="packetSize">Packet size used to load the stream.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.OnNotificationDelegate(SharpDX.XACT3.Notification)">
+            <summary>
+            Called when an internal notification occured.
+            </summary>
+            <param name="notification">The notification.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.RegisterNotification(SharpDX.XACT3.NotificationType)">
+            <summary>
+            Registers this instance to notify for a type of notification.
+            </summary>
+            <param name="notificationType">Type of the notification.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.UnregisterNotification(SharpDX.XACT3.NotificationType)">
+            <summary>
+            Unregisters this instance to notify for a type of notification.
+            </summary>
+            <param name="notificationType">Type of the notification.</param>
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.Prepare(System.Int16,SharpDX.XACT3.ContentPreparationFlags,System.Int32,System.Byte)">
+            <summary>	
+            No documentation.	
+            </summary>	
+            <param name="waveIndex">No documentation.</param>	
+            <param name="flags">No documentation.</param>	
+            <param name="playOffset">No documentation.</param>	
+            <param name="loopCount">No documentation.</param>	
+            <returns>No documentation.</returns>	
+            <!-- Failed to insert some or all of included XML --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Prepare']/*"/>	
+            <unmanaged>HRESULT IXACT3WaveBank::Prepare([In] unsigned short nWaveIndex,[In] XACT_CONTENT_PREPARATION_FLAGS dwFlags,[In] unsigned int dwPlayOffset,[In] unsigned char nLoopCount,[Out] IXACT3Wave** ppWave)</unmanaged>	
+        </member>
+        <member name="M:SharpDX.XACT3.WaveBank.Play(System.Int16,SharpDX.XACT3.ContentPreparationFlags,System.Int32,System.Byte)">
+            <summary>	
+            No documentation.	
+            </summary>	
+            <param name="waveIndex">No documentation.</param>	
+            <param name="flags">No documentation.</param>	
+            <param name="playOffset">No documentation.</param>	
+            <param name="loopCount">No documentation.</param>	
+            <returns>No documentation.</returns>	
+            <!-- Failed to insert some or all of included XML --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::Play']/*"/>	
+            <unmanaged>HRESULT IXACT3WaveBank::Play([In] unsigned short nWaveIndex,[In] XACT_CONTENT_PREPARATION_FLAGS dwFlags,[In] unsigned int dwPlayOffset,[In] unsigned char nLoopCount,[Out] IXACT3Wave** ppWave)</unmanaged>	
+        </member>
+        <member name="P:SharpDX.XACT3.WaveBank.WaveCount">
+            <summary>	
+            Returns the number of wave entries in the wave bank.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetNumWaves']/*"/>	
+            <msdn-id>ee418426</msdn-id>	
+            <unmanaged>GetNumWaves</unmanaged>	
+            <unmanaged-short>GetNumWaves</unmanaged-short>	
+            <unmanaged>HRESULT IXACT3WaveBank::GetNumWaves([Out] unsigned short* pnNumWaves)</unmanaged>
+        </member>
+        <member name="P:SharpDX.XACT3.WaveBank.State">
+            <summary>	
+            Retrieves the current state of the wave bank.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IXACT3WaveBank::GetState']/*"/>	
+            <msdn-id>ee418427</msdn-id>	
+            <unmanaged>GetState</unmanaged>	
+            <unmanaged-short>GetState</unmanaged-short>	
+            <unmanaged>HRESULT IXACT3WaveBank::GetState([Out] unsigned int* pdwState)</unmanaged>
+        </member>
+        <member name="P:SharpDX.XACT3.WaveBank.AudioEngine">
+            <summary>
+            Gets or sets the audio engine.
+            </summary>
+            <value>
+            The audio engine.
+            </value>
+        </member>
+        <member name="E:SharpDX.XACT3.WaveBank.OnNotification">
+            <summary>
+            Occurs when a WaveBank event occurs.
+            </summary>
+            <remarks>
+            Use <see cref="M:SharpDX.XACT3.WaveBank.RegisterNotification(SharpDX.XACT3.NotificationType)"/> to register types.
+            </remarks>
         </member>
         <member name="T:SharpDX.XACT3.CueInstanceProperties">
             <summary>	
@@ -3030,29 +3016,19 @@
             <unmanaged>BOOL streaming</unmanaged>	
             <unmanaged-short>BOOL streaming</unmanaged-short>	
         </member>
-        <member name="T:SharpDX.XACT3.WaveNotification">
-            <summary>
-            Wave notification parameters.
-            </summary>
-            <unmanaged>XACT_NOTIFICATION_WAVE</unmanaged>
-        </member>
-        <member name="T:SharpDX.XACT3.WaveBankNotification">
-            <summary>
-            Wavebank notification parameters.
-            </summary>
-            <unmanaged>XACT_NOTIFICATION_WAVEBANK</unmanaged>
-        </member>
         <member name="T:SharpDX.XACT3.MarkerNotification">
             <summary>
             Marker notification parameters.
             </summary>
             <unmanaged>XACT_NOTIFICATION_MARKER</unmanaged>
         </member>
-        <member name="T:SharpDX.XACT3.XACT3">
-            <summary>	
-            Functions	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='SharpDX.XACT3.XACT3']/*"/>	
+        <member name="T:SharpDX.XACT3.NamespaceDoc">
+            <summary>
+            The <see cref="N:SharpDX.XACT3"/> namespace provides a managed XACT3 API.
+            </summary>
+            <msdn-id>hh405049</msdn-id>
+            <unmanaged>XACT3</unmanaged>	
+            <unmanaged-short>XACT3</unmanaged-short>	
         </member>
         <member name="T:SharpDX.XACT3.RawNotification">
             <summary>	
@@ -3124,6 +3100,30 @@
             No documentation.	
             </summary>	
             <unmanaged>XACT_NOTIFICATION_WAVE wave</unmanaged>	
+        </member>
+        <member name="T:SharpDX.XACT3.SoundBankNotification">
+            <summary>
+            SoundBank notification parameters.
+            </summary>
+            <unmanaged>XACT_NOTIFICATION_SOUNDBANK</unmanaged>	
+        </member>
+        <member name="T:SharpDX.XACT3.VariableNotification">
+            <summary>
+            Variable notification parameters.
+            </summary>
+            <unmanaged>XACT_NOTIFICATION_VARIABLE</unmanaged>
+        </member>
+        <member name="T:SharpDX.XACT3.WaveBankNotification">
+            <summary>
+            Wavebank notification parameters.
+            </summary>
+            <unmanaged>XACT_NOTIFICATION_WAVEBANK</unmanaged>
+        </member>
+        <member name="T:SharpDX.XACT3.WaveNotification">
+            <summary>
+            Wave notification parameters.
+            </summary>
+            <unmanaged>XACT_NOTIFICATION_WAVE</unmanaged>
         </member>
     </members>
 </doc>

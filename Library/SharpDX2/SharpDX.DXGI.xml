@@ -4,102 +4,12 @@
         <name>SharpDX.DXGI</name>
     </assembly>
     <members>
-        <member name="T:SharpDX.DXGI.Rational">
-            <summary>	
-            Represents a rational number.	
-            </summary>	
-            <remarks>	
-            The <see cref="T:SharpDX.DXGI.Rational"/> structure operates under the following rules:0/0 is legal and will be interpreted as 0/1. 0/anything is interpreted as zero. If you are representing a whole number, the denominator should be 1.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_RATIONAL']/*"/>	
-            <msdn-id>bb173069</msdn-id>	
-            <unmanaged>DXGI_RATIONAL</unmanaged>	
-            <unmanaged-short>DXGI_RATIONAL</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.Rational.#ctor(System.Int32,System.Int32)">
-            <summary>
-              Initializes a new instance of the <see cref = "T:SharpDX.DXGI.Rational" /> structure.
-            </summary>
-            <param name = "numerator">The numerator of the rational pair.</param>
-            <param name = "denominator">The denominator of the rational pair.</param>
-        </member>
-        <member name="F:SharpDX.DXGI.Rational.Numerator">
-            <summary>	
-            <para>An unsigned integer value representing the top of the rational number.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_RATIONAL::Numerator']/*"/>	
-            <msdn-id>bb173069</msdn-id>	
-            <unmanaged>unsigned int Numerator</unmanaged>	
-            <unmanaged-short>unsigned int Numerator</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.DXGI.Rational.Denominator">
-            <summary>	
-            <para>An unsigned integer value representing the bottom of the rational number.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_RATIONAL::Denominator']/*"/>	
-            <msdn-id>bb173069</msdn-id>	
-            <unmanaged>unsigned int Denominator</unmanaged>	
-            <unmanaged-short>unsigned int Denominator</unmanaged-short>	
-        </member>
-        <member name="T:SharpDX.DXGI.SampleDescription">
-            <summary>	
-            Describes multi-sampling parameters for a resource.	
-            </summary>	
-            <remarks>	
-            The default sampler mode, with no anti-aliasing, has a count of 1 and a quality level of 0.If multi-sample antialiasing is being used, all bound render targets and depth buffers must have the same sample counts and quality levels.<para>Differences between Direct3D 10.0 and Direct3D 10.1 and between Direct3D 10.0 and Direct3D 11:</para>	
-             <para>Direct3D 10.1 has defined two standard quality levels:   <see cref="!:SharpDX.Direct3D10.StandardMultisampleQualityLevels.StandardMultisamplePattern"/> and <see cref="!:SharpDX.Direct3D10.StandardMultisampleQualityLevels.CenterMultisamplePattern"/> in the <see cref="!:SharpDX.Direct3D10.StandardMultisampleQualityLevels"/> enumeration in D3D10_1.h.</para>	
-             <para>Direct3D 11 has defined two standard quality levels:   <see cref="!:SharpDX.Direct3D11.StandardMultisampleQualityLevels.StandardMultisamplePattern"/> and <see cref="!:SharpDX.Direct3D11.StandardMultisampleQualityLevels.CenterMultisamplePattern"/> in the <see cref="!:SharpDX.Direct3D11.StandardMultisampleQualityLevels"/> enumeration in D3D11.h.</para>?	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_SAMPLE_DESC']/*"/>	
-            <msdn-id>bb173072</msdn-id>	
-            <unmanaged>DXGI_SAMPLE_DESC</unmanaged>	
-            <unmanaged-short>DXGI_SAMPLE_DESC</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.SampleDescription.#ctor(System.Int32,System.Int32)">
-            <summary>
-              Initializes a new instance of the <see cref = "T:SharpDX.DXGI.SampleDescription" /> structure.
-            </summary>
-            <param name = "count">The sample count.</param>
-            <param name = "quality">The sample quality.</param>
-        </member>
-        <member name="F:SharpDX.DXGI.SampleDescription.Count">
-            <summary>	
-            <para>The number of multisamples per pixel.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_SAMPLE_DESC::Count']/*"/>	
-            <msdn-id>bb173072</msdn-id>	
-            <unmanaged>unsigned int Count</unmanaged>	
-            <unmanaged-short>unsigned int Count</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.DXGI.SampleDescription.Quality">
-            <summary>	
-            <para>The image quality level. The higher the quality, the lower the performance. The valid range is between zero and one less than the level returned  by <see cref="!:SharpDX.Direct3D10.Device.CheckMultisampleQualityLevels"/> for Direct3D 10 or <see cref="!:SharpDX.Direct3D11.Device.CheckMultisampleQualityLevels"/> for Direct3D 11.</para>	
-             <para>For Direct3D 10.1 and Direct3D 11, you can use two special quality level values. For more information about these quality level values, see Remarks.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_SAMPLE_DESC::Quality']/*"/>	
-            <msdn-id>bb173072</msdn-id>	
-            <unmanaged>unsigned int Quality</unmanaged>	
-            <unmanaged-short>unsigned int Quality</unmanaged-short>	
-        </member>
-        <member name="T:SharpDX.DXGI.ModuleInit">
-            <summary>
-            Internal class used to initialize this assembly.
-            </summary>
-        </member>
-        <member name="M:SharpDX.DXGI.ModuleInit.Setup">
-            <summary>
-            Initializes this assembly.
-            </summary>
-            <remarks>
-            This method is called when the assembly is loaded.
-            </remarks>
-        </member>
         <member name="T:SharpDX.DXGI.Adapter">
             <summary>	
             The  <see cref="T:SharpDX.DXGI.Adapter"/> interface represents a display sub-system (including one or more GPU's, DACs and video memory).	
             </summary>	
             <remarks>	
-            A display sub-system is often referred to as a video card, however, on some machines the display sub-system is part of the mother board.To enumerate the display sub-systems, use <see cref="M:SharpDX.DXGI.Factory.GetAdapter(System.Int32,SharpDX.DXGI.Adapter@)"/>. To get an interface to the adapter for a particular device, use <see cref="M:SharpDX.DXGI.Device.GetAdapter(SharpDX.DXGI.Adapter@)"/>. To create a software adapter, use <see cref="M:SharpDX.DXGI.Factory.CreateSoftwareAdapter(System.IntPtr)"/>.	
+            A display sub-system is often referred to as a video card, however, on some machines the display sub-system is part of the mother board.To enumerate the display sub-systems, use <see cref="M:SharpDX.DXGI.Factory.GetAdapter(System.Int32)"/>. To get an interface to the adapter for a particular device, use <see cref="M:SharpDX.DXGI.Device.GetAdapter(SharpDX.DXGI.Adapter@)"/>. To create a software adapter, use <see cref="M:SharpDX.DXGI.Factory.CreateSoftwareAdapter(System.Reflection.Module)"/>.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIAdapter']/*"/>	
             <msdn-id>bb174523</msdn-id>	
@@ -117,6 +27,16 @@
             <msdn-id>bb174541</msdn-id>	
             <unmanaged>IDXGIObject</unmanaged>	
             <unmanaged-short>IDXGIObject</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.DXGIObject.GetParent``1">
+            <summary>
+            Gets the parent of the object.
+            </summary>
+            <typeparam name="T">Type of the parent object</typeparam>
+            <returns>Returns the parent object based on the GUID of the type of the parent object.</returns>
+            <msdn-id>bb174542</msdn-id>
+            <unmanaged>HRESULT IDXGIObject::GetParent([In] const GUID&amp; riid,[Out] void** ppParent)</unmanaged>
+            <unmanaged-short>IDXGIObject::GetParent</unmanaged-short>
         </member>
         <member name="M:SharpDX.DXGI.DXGIObject.#ctor(System.IntPtr)">
             <summary>
@@ -195,16 +115,6 @@
             <msdn-id>bb174542</msdn-id>	
             <unmanaged>HRESULT IDXGIObject::GetParent([In] const GUID&amp; riid,[Out] void** ppParent)</unmanaged>	
             <unmanaged-short>IDXGIObject::GetParent</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.DXGIObject.GetParent``1">
-            <summary>
-            Gets the parent of the object.
-            </summary>
-            <typeparam name="T">Type of the parent object</typeparam>
-            <returns>Returns the parent object based on the GUID of the type of the parent object.</returns>
-            <msdn-id>bb174542</msdn-id>
-            <unmanaged>HRESULT IDXGIObject::GetParent([In] const GUID&amp; riid,[Out] void** ppParent)</unmanaged>
-            <unmanaged-short>IDXGIObject::GetParent</unmanaged-short>
         </member>
         <member name="M:SharpDX.DXGI.Adapter.IsInterfaceSupported(System.Type)">
             <summary>
@@ -389,6 +299,495 @@
             <unmanaged>GetDesc</unmanaged>	
             <unmanaged-short>GetDesc</unmanaged-short>	
             <unmanaged>HRESULT IDXGIAdapter::GetDesc([Out] DXGI_ADAPTER_DESC* pDesc)</unmanaged>
+        </member>
+        <member name="T:SharpDX.DXGI.AssemblyDoc">
+            <summary>
+            The <see cref="A:SharpDX.DXGI"/> assembly provides managed DXGI API.
+            </summary>
+            <msdn-id>hh404534</msdn-id>
+            <unmanaged>DXGI</unmanaged>	
+            <unmanaged-short>DXGI</unmanaged-short>	
+        </member>
+        <member name="T:SharpDX.DXGI.NamespaceDoc">
+            <summary>
+            The <see cref="N:SharpDX.DXGI"/> namespace provides a managed DXGI API.
+            </summary>
+            <msdn-id>hh404534</msdn-id>
+            <unmanaged>DXGI</unmanaged>	
+            <unmanaged-short>DXGI</unmanaged-short>	
+        </member>
+        <member name="T:SharpDX.DXGI.Device">
+            <summary>	
+            An <see cref="T:SharpDX.DXGI.Device"/> interface implements a derived class for DXGI objects that produce image data.	
+            </summary>	
+            <remarks>	
+            The <see cref="T:SharpDX.DXGI.Device"/> interface is designed for use by DXGI objects that need access to other DXGI objects. This interface is useful to  applications that do not use Direct3D to communicate with DXGI.The object returned by the Direct3D create device functions implements the <see cref="T:SharpDX.ComObject"/> interface and can be queried for the device's corresponding <see cref="T:SharpDX.DXGI.Device"/> interface. To retrieve the <see cref="T:SharpDX.DXGI.Device"/> interface of a Direct3D device the following code can be used.<code>	
+            <see cref="T:SharpDX.DXGI.Device"/> * pDXGIDevice;	
+            hr = g_pd3dDevice-&gt;QueryInterface(__uuidof(<see cref="T:SharpDX.DXGI.Device"/>), (void **)&amp;pDXGIDevice);	
+            	
+            </code>	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice']/*"/>	
+            <msdn-id>bb174527</msdn-id>	
+            <unmanaged>IDXGIDevice</unmanaged>	
+            <unmanaged-short>IDXGIDevice</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Device.QueryResourceResidency(SharpDX.ComObject[])">
+            <summary>	
+            Gets the residency status of an array of resources.	
+            </summary>	
+            <remarks>	
+            The information returned by the pResidencyStatus argument array describes the residency status at the time that the QueryResourceResidency method was called.   Note that the residency status will constantly change. If you call the QueryResourceResidency method during a device removed state, the pResidencyStatus argument will return the DXGI_RESIDENCY_EVICTED_TO_DISK flag. Note??This method should not be called every frame as it incurs a non-trivial amount of overhead. 	
+            </remarks>	
+            <param name="comObjects">An array of <see cref="T:SharpDX.DXGI.Resource"/> interfaces. </param>
+            <returns>Returns an array of <see cref="T:SharpDX.DXGI.Residency"/> flags. Each element describes the residency status for corresponding element in  the ppResources argument array. </returns>
+            <unmanaged>HRESULT IDXGIDevice::QueryResourceResidency([In, Buffer] const IUnknown** ppResources,[Out, Buffer] DXGI_RESIDENCY* pResidencyStatus,[None] int NumResources)</unmanaged>
+        </member>
+        <member name="M:SharpDX.DXGI.Device.#ctor(System.IntPtr)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.DXGI.Device"/> class.
+            </summary>
+            <param name="nativePtr">The native pointer.</param>	
+        </member>
+        <member name="M:SharpDX.DXGI.Device.op_Explicit(System.IntPtr)~SharpDX.DXGI.Device">
+            <summary>
+            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.DXGI.Device"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
+            </summary>
+            <param name="nativePointer">The native pointer.</param>
+            <returns>
+            The result of the conversion.
+            </returns>
+        </member>
+        <member name="M:SharpDX.DXGI.Device.GetAdapter(SharpDX.DXGI.Adapter@)">
+            <summary>	
+            Returns the adapter for the specified device.	
+            </summary>	
+            <param name="adapterRef"><para>The address of an <see cref="T:SharpDX.DXGI.Adapter"/> interface reference to the adapter.  This parameter must not be <c>null</c>.</para></param>	
+            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns one of the DXGI_ERROR that indicates failure. If the pAdapter parameter is <c>null</c> this method returns E_INVALIDARG.</returns>	
+            <remarks>	
+            If the GetAdapter method succeeds, the reference count on the adapter interface will be incremented. To avoid a memory leak, be sure to release the interface when you are finished using it.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::GetAdapter']/*"/>	
+            <msdn-id>bb174531</msdn-id>	
+            <unmanaged>HRESULT IDXGIDevice::GetAdapter([Out] IDXGIAdapter** pAdapter)</unmanaged>	
+            <unmanaged-short>IDXGIDevice::GetAdapter</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Device.CreateSurface(SharpDX.DXGI.SurfaceDescription@,System.Int32,System.Int32,System.Nullable{SharpDX.DXGI.SharedResource},SharpDX.DXGI.Surface@)">
+            <summary>	
+            Returns a surface. This method is used internally and you should not call it directly in your application.	
+            </summary>	
+            <param name="descRef"><para>A reference to a <see cref="T:SharpDX.DXGI.SurfaceDescription"/> structure that describes the surface.</para></param>	
+            <param name="numSurfaces"><para>The number of surfaces to create.</para></param>	
+            <param name="usage"><para>A DXGI_USAGE flag that specifies how the surface is expected to be used.</para></param>	
+            <param name="sharedResourceRef"><para>An optional reference to a <see cref="T:SharpDX.DXGI.SharedResource"/> structure that contains shared resource information for opening views of such resources.</para></param>	
+            <param name="surfaceOut"><para>The address of an <see cref="T:SharpDX.DXGI.Surface"/> interface reference to the first created surface.</para></param>	
+            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; an error code otherwise.  For a list of error codes, see DXGI_ERROR.</returns>	
+            <remarks>	
+            The CreateSurface method creates a buffer to exchange data between one or more devices. It is used internally, and you should not directly call it.The runtime automatically creates an <see cref="T:SharpDX.DXGI.Surface"/> interface when it creates a Direct3D resource object that represents a surface. For example, the runtime creates an <see cref="T:SharpDX.DXGI.Surface"/> interface when it calls <see cref="!:SharpDX.Direct3D11.Device.CreateTexture2D"/> or <see cref="!:SharpDX.Direct3D10.Device.CreateTexture2D"/> to create a 2D texture. To retrieve the <see cref="T:SharpDX.DXGI.Surface"/> interface that represents the 2D texture surface, call ID3D11Texture2D::QueryInterface or ID3D10Texture2D::QueryInterface. In this call, you must pass the identifier of <see cref="T:SharpDX.DXGI.Surface"/>. If the 2D texture has only a single MIP-map level and does not consist of an array of textures, QueryInterface succeeds and returns a reference to the <see cref="T:SharpDX.DXGI.Surface"/> interface reference. Otherwise, QueryInterface fails and does not return the reference to <see cref="T:SharpDX.DXGI.Surface"/>.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::CreateSurface']/*"/>	
+            <msdn-id>bb174530</msdn-id>	
+            <unmanaged>HRESULT IDXGIDevice::CreateSurface([In] const DXGI_SURFACE_DESC* pDesc,[In] unsigned int NumSurfaces,[In] unsigned int Usage,[In, Optional] const DXGI_SHARED_RESOURCE* pSharedResource,[Out] IDXGISurface** ppSurface)</unmanaged>	
+            <unmanaged-short>IDXGIDevice::CreateSurface</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Device.QueryResourceResidency(SharpDX.ComObject[],SharpDX.DXGI.Residency[],System.Int32)">
+            <summary>	
+            Gets the residency status of an array of resources.	
+            </summary>	
+            <param name="resourcesOut"><para>An array of <see cref="T:SharpDX.DXGI.Resource"/> interfaces.</para></param>	
+            <param name="residencyStatusRef"><para>An array of <see cref="T:SharpDX.DXGI.Residency"/> flags. Each element describes the residency status for corresponding element in  the ppResources argument array.</para></param>	
+            <param name="numResources"><para>The number of resources in the ppResources argument array and pResidencyStatus argument array.</para></param>	
+            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successfull; otherwise, returns <see cref="F:SharpDX.DXGI.ResultCode.DeviceRemoved"/>, E_INVALIDARG, or  E_POINTER (see WinError.h for more information).</returns>	
+            <remarks>	
+            The information returned by the pResidencyStatus argument array describes the residency status at the time that the QueryResourceResidency method was called.   Note that the residency status will constantly change.If you call the QueryResourceResidency method during a device removed state, the pResidencyStatus argument will return the <see cref="F:SharpDX.DXGI.Residency.EvictedToDisk"/> flag.Note??This method should not be called every frame as it incurs a non-trivial amount of overhead.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::QueryResourceResidency']/*"/>	
+            <msdn-id>bb174533</msdn-id>	
+            <unmanaged>HRESULT IDXGIDevice::QueryResourceResidency([In, Buffer] const IUnknown** ppResources,[Out, Buffer] DXGI_RESIDENCY* pResidencyStatus,[In] unsigned int NumResources)</unmanaged>	
+            <unmanaged-short>IDXGIDevice::QueryResourceResidency</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Device.QueryResourceResidency(SharpDX.ComArray{SharpDX.ComObject},SharpDX.DXGI.Residency[],System.Int32)">
+            <summary>	
+            Gets the residency status of an array of resources.	
+            </summary>	
+            <param name="resourcesOut"><para>An array of <see cref="T:SharpDX.DXGI.Resource"/> interfaces.</para></param>	
+            <param name="residencyStatusRef"><para>An array of <see cref="T:SharpDX.DXGI.Residency"/> flags. Each element describes the residency status for corresponding element in  the ppResources argument array.</para></param>	
+            <param name="numResources"><para>The number of resources in the ppResources argument array and pResidencyStatus argument array.</para></param>	
+            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successfull; otherwise, returns <see cref="F:SharpDX.DXGI.ResultCode.DeviceRemoved"/>, E_INVALIDARG, or  E_POINTER (see WinError.h for more information).</returns>	
+            <remarks>	
+            The information returned by the pResidencyStatus argument array describes the residency status at the time that the QueryResourceResidency method was called.   Note that the residency status will constantly change.If you call the QueryResourceResidency method during a device removed state, the pResidencyStatus argument will return the <see cref="F:SharpDX.DXGI.Residency.EvictedToDisk"/> flag.Note??This method should not be called every frame as it incurs a non-trivial amount of overhead.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::QueryResourceResidency']/*"/>	
+            <msdn-id>bb174533</msdn-id>	
+            <unmanaged>HRESULT IDXGIDevice::QueryResourceResidency([In, Buffer] const IUnknown** ppResources,[Out, Buffer] DXGI_RESIDENCY* pResidencyStatus,[In] unsigned int NumResources)</unmanaged>	
+            <unmanaged-short>IDXGIDevice::QueryResourceResidency</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Device.SetGPUThreadPriority(System.Int32)">
+            <summary>	
+            Sets the GPU thread priority.	
+            </summary>	
+            <param name="priority"><para>A value that specifies the required GPU thread priority. This value must be between -7 and 7, inclusive, where 0 represents normal priority.</para></param>	
+            <returns>Return <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns E_INVALIDARG if the Priority parameter is invalid.</returns>	
+            <remarks>	
+            The values for the Priority parameter function as follows:Positive values increase the likelihood that the GPU scheduler will grant GPU execution cycles to the device when rendering. Negative values lessen the likelihood that the device will receive GPU execution cycles when devices compete for them. The device is guaranteed to receive some GPU execution cycles at all settings.To use the SetGPUThreadPriority method, you should have a comprehensive understanding of GPU scheduling. You should profile your application to ensure that it behaves as intended. If used inappropriately, the SetGPUThreadPriority method can impede rendering speed and result in a poor user experience.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::SetGPUThreadPriority']/*"/>	
+            <msdn-id>bb174534</msdn-id>	
+            <unmanaged>HRESULT IDXGIDevice::SetGPUThreadPriority([In] int Priority)</unmanaged>	
+            <unmanaged-short>IDXGIDevice::SetGPUThreadPriority</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Device.GetGPUThreadPriority(System.Int32@)">
+            <summary>	
+            Gets the GPU thread priority.	
+            </summary>	
+            <param name="priorityRef"><para>A reference to a variable that receives a value that indicates the current GPU thread priority. The value will be between -7 and 7, inclusive, where 0 represents normal priority.</para></param>	
+            <returns>Return <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns E_POINTER if the pPriority parameter is <c>null</c>.</returns>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::GetGPUThreadPriority']/*"/>	
+            <msdn-id>Bb174532</msdn-id>	
+            <unmanaged>HRESULT IDXGIDevice::GetGPUThreadPriority([Out] int* pPriority)</unmanaged>	
+            <unmanaged-short>IDXGIDevice::GetGPUThreadPriority</unmanaged-short>	
+        </member>
+        <member name="P:SharpDX.DXGI.Device.Adapter">
+            <summary>	
+            Returns the adapter for the specified device.	
+            </summary>	
+            <remarks>	
+            If the GetAdapter method succeeds, the reference count on the adapter interface will be incremented. To avoid a memory leak, be sure to release the interface when you are finished using it.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::GetAdapter']/*"/>	
+            <msdn-id>bb174531</msdn-id>	
+            <unmanaged>GetAdapter</unmanaged>	
+            <unmanaged-short>GetAdapter</unmanaged-short>	
+            <unmanaged>HRESULT IDXGIDevice::GetAdapter([Out] IDXGIAdapter** pAdapter)</unmanaged>
+        </member>
+        <member name="P:SharpDX.DXGI.Device.GPUThreadPriority">
+            <summary>	
+            Gets the GPU thread priority.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::GetGPUThreadPriority']/*"/>	
+            <msdn-id>Bb174532</msdn-id>	
+            <unmanaged>GetGPUThreadPriority</unmanaged>	
+            <unmanaged-short>GetGPUThreadPriority</unmanaged-short>	
+            <unmanaged>HRESULT IDXGIDevice::GetGPUThreadPriority([Out] int* pPriority)</unmanaged>
+        </member>
+        <member name="T:SharpDX.DXGI.DeviceChild">
+            <summary>	
+            Inherited from objects that are tied to the device so that they can retrieve a reference to it.	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDeviceSubObject']/*"/>	
+            <msdn-id>bb174528</msdn-id>	
+            <unmanaged>IDXGIDeviceSubObject</unmanaged>	
+            <unmanaged-short>IDXGIDeviceSubObject</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.DeviceChild.GetDevice``1">
+            <summary>
+            Retrieves the device.
+            </summary>
+            <typeparam name="T">The interface that is returned can be any interface published by the device.</typeparam>
+            <returns>The associated device. </returns>
+            <unmanaged>HRESULT IDXGIDeviceSubObject::GetDevice([In] GUID* riid,[Out] void** ppDevice)</unmanaged>
+        </member>
+        <member name="M:SharpDX.DXGI.DeviceChild.#ctor(System.IntPtr)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.DXGI.DeviceChild"/> class.
+            </summary>
+            <param name="nativePtr">The native pointer.</param>	
+        </member>
+        <member name="M:SharpDX.DXGI.DeviceChild.op_Explicit(System.IntPtr)~SharpDX.DXGI.DeviceChild">
+            <summary>
+            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.DXGI.DeviceChild"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
+            </summary>
+            <param name="nativePointer">The native pointer.</param>
+            <returns>
+            The result of the conversion.
+            </returns>
+        </member>
+        <member name="M:SharpDX.DXGI.DeviceChild.GetDevice(System.Guid,System.IntPtr@)">
+            <summary>	
+            Retrieves the device.	
+            </summary>	
+            <param name="riid"><para>The reference id for the device.</para></param>	
+            <param name="deviceOut"><para>The address of a reference to the device.</para></param>	
+            <returns>A code that indicates success or failure (see DXGI_ERROR).</returns>	
+            <remarks>	
+            The type of interface that is returned can be any interface published by the device. For example, it could be an <see cref="T:SharpDX.DXGI.Device"/> * called pDevice, and therefore the REFIID would be obtained by calling __uuidof(pDevice).	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDeviceSubObject::GetDevice']/*"/>	
+            <msdn-id>bb174529</msdn-id>	
+            <unmanaged>HRESULT IDXGIDeviceSubObject::GetDevice([In] const GUID&amp; riid,[Out] void** ppDevice)</unmanaged>	
+            <unmanaged-short>IDXGIDeviceSubObject::GetDevice</unmanaged-short>	
+        </member>
+        <member name="P:SharpDX.DXGI.DeviceChild.DebugName">
+            <summary>
+            Gets or sets the debug-name for this object.
+            </summary>
+            <value>
+            The debug name.
+            </value>
+        </member>
+        <member name="T:SharpDX.DXGI.Factory">
+            <summary>	
+            An <see cref="T:SharpDX.DXGI.Factory"/> interface implements methods for generating DXGI objects (which handle full screen transitions).	
+            </summary>	
+            <remarks>	
+            Create a factory by calling CreateDXGIFactory.Because a Direct3D device can be created without creating a swap chain, you might need to retrieve the factory that is used to create the device in order to create a swap chain.	
+            This can be accomplished by requesting the <see cref="T:SharpDX.DXGI.Device"/> interface from the Direct3D device and then using <see cref="M:SharpDX.DXGI.DXGIObject.GetParent(System.Guid,System.IntPtr@)"/> to locate 	
+            the factory.  The following code illustrates the process.<code>	
+            <see cref="T:SharpDX.DXGI.Device"/> * pDXGIDevice;	
+            hr = g_pd3dDevice-&gt;QueryInterface(__uuidof(<see cref="T:SharpDX.DXGI.Device"/>), (void **)&amp;pDXGIDevice); <see cref="T:SharpDX.DXGI.Adapter"/> * pDXGIAdapter;	
+            hr = pDXGIDevice-&gt;GetParent(__uuidof(<see cref="T:SharpDX.DXGI.Adapter"/>), (void **)&amp;pDXGIAdapter); <see cref="T:SharpDX.DXGI.Factory"/> * pIDXGIFactory;	
+            pDXGIAdapter-&gt;GetParent(__uuidof(<see cref="T:SharpDX.DXGI.Factory"/>), (void **)&amp;pIDXGIFactory);	
+            	
+            </code>See <see cref="M:SharpDX.DXGI.DXGIObject.GetParent(System.Guid,System.IntPtr@)"/> for a diagram of the relationship between DXGI objects.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory']/*"/>	
+            <msdn-id>bb174535</msdn-id>	
+            <unmanaged>IDXGIFactory</unmanaged>	
+            <unmanaged-short>IDXGIFactory</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.#ctor">
+            <summary>
+              Default Constructor for Factory
+            </summary>
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.CreateSoftwareAdapter(System.Reflection.Module)">
+            <summary>	
+            Create an adapter interface that represents a software adapter.	
+            </summary>	
+            <remarks>	
+            A software adapter is a DLL that implements the entirety of a device driver interface, plus emulation, if necessary, of kernel-mode graphics components for Windows. Details on implementing a software adapter can be found in the Windows Vista Driver Development Kit. This is a very complex development task, and is not recommended for general readers. Calling this method will increment the module's reference count by one. The reference count can be decremented by calling {{FreeLibrary}}. The typical calling scenario is to call {{LoadLibrary}}, pass the handle to CreateSoftwareAdapter, then immediately call {{FreeLibrary}} on the DLL and forget the DLL's {{HMODULE}}. Since the software adapter calls FreeLibrary when it is destroyed, the lifetime of the DLL will now be owned by the adapter, and the application is free of any further consideration of its lifetime. 	
+            </remarks>	
+            <param name="module">Handle to the software adapter's dll.</param>
+            <returns>A reference to an adapter (see <see cref="T:SharpDX.DXGI.Adapter" />). </returns>
+            <unmanaged>HRESULT IDXGIFactory::CreateSoftwareAdapter([None] void* Module,[Out] IDXGIAdapter** ppAdapter)</unmanaged>
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.GetAdapter(System.Int32)">
+            <summary>	
+            Gets both adapters (video cards) with or without outputs.	
+            </summary>	
+            <param name="adapter"><para>The index of the adapter to enumerate.</para></param>	
+            <returns>a reference to an <see cref="T:SharpDX.DXGI.Adapter"/> interface at the position specified by the Adapter parameter</returns>
+            <remarks>	
+            When you create a factory, the factory enumerates the set of adapters that are available in the system. Therefore, if you change the adapters in a system, you must destroy  and recreate the <see cref="T:SharpDX.DXGI.Factory"/> object. The number of adapters in a system changes when you add or remove a display card, or dock or undock a laptop.When the EnumAdapters method succeeds and fills the ppAdapter parameter with the address of the reference to the adapter interface, EnumAdapters increments the adapter interface's reference count. When you finish using the  adapter interface, call the Release method to decrement the reference count before you destroy the reference.EnumAdapters first returns the local adapter with the output on which the desktop primary is displayed. This adapter corresponds with an index of zero. EnumAdapters then returns other adapters with outputs.	
+            </remarks>	
+            <unmanaged>HRESULT IDXGIFactory::EnumAdapters([In] unsigned int Adapter,[Out] IDXGIAdapter** ppAdapter)</unmanaged>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.GetAdapterCount">
+            <summary>
+              Return the number of available adapters from this factory.
+            </summary>
+            <returns>The number of adapters</returns>
+            <unmanaged>HRESULT IDXGIFactory::EnumAdapters([In] unsigned int Adapter,[Out] IDXGIAdapter** ppAdapter)</unmanaged>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.#ctor(System.IntPtr)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.DXGI.Factory"/> class.
+            </summary>
+            <param name="nativePtr">The native pointer.</param>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.op_Explicit(System.IntPtr)~SharpDX.DXGI.Factory">
+            <summary>
+            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.DXGI.Factory"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
+            </summary>
+            <param name="nativePointer">The native pointer.</param>
+            <returns>
+            The result of the conversion.
+            </returns>
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.GetAdapter(System.Int32,SharpDX.DXGI.Adapter@)">
+            <summary>	
+            Enumerates the adapters (video cards).	
+            </summary>	
+            <param name="adapter"><para>The index of the adapter to enumerate.</para></param>	
+            <param name="adapterOut"><para>The address of a reference to an <see cref="T:SharpDX.DXGI.Adapter"/> interface at the position specified by the Adapter parameter.  This parameter must not be <c>null</c>.</para></param>	
+            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns <see cref="F:SharpDX.DXGI.ResultCode.NotFound"/> if the index is greater than or equal to the number of adapters in the local system, or <see cref="F:SharpDX.DXGI.ResultCode.InvalidCall"/> if ppAdapter parameter is <c>null</c>.</returns>	
+            <remarks>	
+            When you create a factory, the factory enumerates the set of adapters that are available in the system. Therefore, if you change the adapters in a system, you must destroy  and recreate the <see cref="T:SharpDX.DXGI.Factory"/> object. The number of adapters in a system changes when you add or remove a display card, or dock or undock a laptop.When the EnumAdapters method succeeds and fills the ppAdapter parameter with the address of the reference to the adapter interface, EnumAdapters increments the adapter interface's reference count. When you finish using the  adapter interface, call the Release method to decrement the reference count before you destroy the reference.EnumAdapters first returns the local adapter with the output on which the desktop primary is displayed. This adapter corresponds with an index of zero. EnumAdapters then returns other adapters with outputs.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory::EnumAdapters']/*"/>	
+            <msdn-id>bb174538</msdn-id>	
+            <unmanaged>HRESULT IDXGIFactory::EnumAdapters([In] unsigned int Adapter,[Out] IDXGIAdapter** ppAdapter)</unmanaged>	
+            <unmanaged-short>IDXGIFactory::EnumAdapters</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.MakeWindowAssociation(System.IntPtr,SharpDX.DXGI.WindowAssociationFlags)">
+            <summary>	
+            Allows DXGI to monitor an application's message queue for the alt-enter key sequence (which causes the application to switch from windowed to full screen or vice versa).	
+            </summary>	
+            <param name="windowHandle"><para>The handle of the window that is to be monitored. This parameter can be <c>null</c>; but only if the flags are also 0. </para></param>	
+            <param name="flags"><para>One or more of the following values:</para>  <see cref="F:SharpDX.DXGI.WindowAssociationFlags.IgnoreAll"/> - Prevent DXGI from monitoring an applications message queue; this makes DXGI unable to respond to mode changes. <see cref="F:SharpDX.DXGI.WindowAssociationFlags.IgnoreAltEnter"/> - Prevent DXGI from responding to an alt-enter sequence. <see cref="F:SharpDX.DXGI.WindowAssociationFlags.IgnorePrintScreen"/> - Prevent DXGI from responding to a print-screen key.</param>	
+            <returns>if WindowHandle is invalid, or E_OUTOFMEMORY.</returns>	
+            <remarks>	
+            The combination of WindowHandle and Flags informs DXGI to stop monitoring window messages for the previously-associated window.If the application switches to full-screen mode, DXGI will choose a full-screen resolution to be the smallest supported resolution that is larger or the same size as the current back buffer size.Applications can make some changes to make the transition from windowed to full screen more efficient. For example, on a WM_SIZE message, the application should release any outstanding swap-chain back buffers, call <see cref="M:SharpDX.DXGI.SwapChain.ResizeBuffers(System.Int32,System.Int32,System.Int32,SharpDX.DXGI.Format,SharpDX.DXGI.SwapChainFlags)"/>, then re-acquire the back buffers from the swap chain(s). This gives the swap chain(s) an opportunity to resize the back buffers, and/or recreate them to enable full-screen flipping operation. If the application does not perform this sequence, DXGI will still make the full-screen/windowed transition, but may be forced to use a stretch operation (since the back buffers may not be the correct size), which may be less efficient. Even if a stretch is not required, presentation may not be optimal because the back buffers might not be directly interchangeable with the front buffer. Thus, a call to ResizeBuffers on WM_SIZE is always recommended, since WM_SIZE is always sent during a fullscreen transition.While windowed, the application can, if it chooses, restrict the size of its window's client area to sizes to which it is comfortable rendering. A fully flexible application would make no such restriction, but UI elements or other design considerations can, of course, make this flexibility untenable. If the application further chooses to restrict its window's client area to just those that match supported full-screen resolutions, the application can field WM_SIZING, then check against <see cref="M:SharpDX.DXGI.Output.FindClosestMatchingMode(SharpDX.DXGI.ModeDescription@,SharpDX.DXGI.ModeDescription@,SharpDX.ComObject)"/>. If a matching mode is found, allow the resize. (The <see cref="T:SharpDX.DXGI.Output"/> can be retrieved from <see cref="M:SharpDX.DXGI.SwapChain.GetContainingOutput(SharpDX.DXGI.Output@)"/>. Absent subsequent changes to desktop topology, this will be the same output that will be chosen when alt-enter is fielded and fullscreen mode is begun for that swap chain.)Applications that want to handle mode changes or Alt+Enter themselves should call MakeWindowAssociation with the <see cref="F:SharpDX.DXGI.WindowAssociationFlags.IgnoreAll"/> flag after swap chain creation. The WindowHandle argument, if non-<c>null</c>, specifies that the application message queues will not be handled by the DXGI runtime for all swap chains of a particular target <see cref="T:System.IntPtr"/>.  Calling MakeWindowAssociation with the <see cref="F:SharpDX.DXGI.WindowAssociationFlags.IgnoreAll"/> flag after swapchain creation ensures that DXGI will not interfere with application's handling of window mode changes or Alt+Enter.Notes for Metro style appsIf a Metro style app calls MakeWindowAssociation, it fails with <see cref="F:SharpDX.DXGI.ResultCode.NotCurrentlyAvailable"/>.A Microsoft Win32 application can use MakeWindowAssociation to control full-screen transitions through the Alt+Enter key combination and print screen behavior for full screen.  For Metro style apps, because DXGI cannot perform full-screen transitions, Metro style app have no way to control full-screen transitions.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory::MakeWindowAssociation']/*"/>	
+            <msdn-id>bb174540</msdn-id>	
+            <unmanaged>HRESULT IDXGIFactory::MakeWindowAssociation([In] HWND WindowHandle,[In] DXGI_MWA_FLAGS Flags)</unmanaged>	
+            <unmanaged-short>IDXGIFactory::MakeWindowAssociation</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.GetWindowAssociation">
+            <summary>	
+            Get the window through which the user controls the transition to and from full screen.	
+            </summary>	
+            <returns><para>A reference to a window handle.</para></returns>	
+            <remarks>	
+            Notes for Metro style appsIf a Metro style app calls GetWindowAssociation, it fails with <see cref="F:SharpDX.DXGI.ResultCode.NotCurrentlyAvailable"/>.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory::GetWindowAssociation']/*"/>	
+            <msdn-id>Bb174539</msdn-id>	
+            <unmanaged>HRESULT IDXGIFactory::GetWindowAssociation([Out] HWND* pWindowHandle)</unmanaged>	
+            <unmanaged-short>IDXGIFactory::GetWindowAssociation</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.CreateSwapChain(SharpDX.ComObject,SharpDX.DXGI.SwapChainDescription@,SharpDX.DXGI.SwapChain)">
+            <summary>	
+            [Starting with Direct3D 11.1, we recommend not to use CreateSwapChain anymore to create a swap chain. Instead, use CreateSwapChainForHwnd, CreateSwapChainForImmersiveWindow, or CreateSwapChainForCompositionSurface depending on how you want to create the swap chain.]	
+            </summary>	
+            <param name="deviceRef">No documentation.</param>	
+            <param name="descRef">No documentation.</param>	
+            <param name="swapChainOut">No documentation.</param>	
+            <returns>if pDesc or ppSwapChain is <c>null</c>, <see cref="F:SharpDX.DXGI.DXGIStatus.Occluded"/> if you request full-screen mode and it is unavailable, or E_OUTOFMEMORY. Other error codes defined by the type of device passed in may also be returned.</returns>	
+            <remarks>	
+            If you attempt to create a swap chain in full-screen mode, and full-screen mode is unavailable, the swap chain will be created in windowed mode and <see cref="F:SharpDX.DXGI.DXGIStatus.Occluded"/> will be returned.If the buffer width or the buffer height is zero, the sizes will be inferred from the output window size in the swap-chain description.Because the target output cannot be chosen explicitly when the swap-chain is created, you should not create a full-screen swap chain. This can reduce presentation performance if the swap chain size and the output window size do not match. Here are two ways to ensure that the sizes match:Create a windowed swap chain and then set it full-screen using <see cref="M:SharpDX.DXGI.SwapChain.SetFullscreenState(System.Boolean,SharpDX.DXGI.Output)"/>. Save a reference to the swap chain immediately after creation, and use it to get the output window size during a WM_SIZE event. Then resize the swap chain buffers (with <see cref="M:SharpDX.DXGI.SwapChain.ResizeBuffers(System.Int32,System.Int32,System.Int32,SharpDX.DXGI.Format,SharpDX.DXGI.SwapChainFlags)"/>) during the transition from windowed to full-screen.If the swap chain is in full-screen mode, before you release it you must use SetFullscreenState to switch it to windowed mode. For more information about releasing a swap chain, see the "Destroying a Swap Chain" section of DXGI Overview.You can specify <see cref="T:SharpDX.DXGI.SwapEffect"/> and <see cref="T:SharpDX.DXGI.SwapChainFlags"/> values in the swap-chain description that pDesc points to. These values allow you to use features like flip-model presentation and content protection by using pre-Windows Developer Preview APIs.However, to use stereo presentation and to change resize behavior for the flip model, applications must use the IDXGIFactory2::CreateSwapChainForHwnd method. Otherwise, the back-buffer contents implicitly scale to fit the presentation target size; that is, you can't turn off scaling.Notes for Metro style appsIf a Metro style app calls CreateSwapChain with full screen specified, CreateSwapChain fails.Metro style apps call the  IDXGIFactory2::CreateSwapChainForImmersiveWindow method to create a swap chain.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory::CreateSwapChain']/*"/>	
+            <msdn-id>bb174537</msdn-id>	
+            <unmanaged>HRESULT IDXGIFactory::CreateSwapChain([In] IUnknown* pDevice,[In] DXGI_SWAP_CHAIN_DESC* pDesc,[Out, Fast] IDXGISwapChain** ppSwapChain)</unmanaged>	
+            <unmanaged-short>IDXGIFactory::CreateSwapChain</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory.CreateSoftwareAdapter(System.IntPtr)">
+            <summary>	
+            Create an adapter interface that represents a software adapter.	
+            </summary>	
+            <param name="module"><para>Handle to the software adapter's dll. HMODULE can be obtained with GetModuleHandle or LoadLibrary.</para></param>	
+            <returns><para>Address of a reference to an adapter (see <see cref="T:SharpDX.DXGI.Adapter"/>).</para></returns>	
+            <remarks>	
+            A software adapter is a DLL that implements the entirety of a device driver interface, plus emulation, if necessary, of kernel-mode graphics components for Windows. Details on implementing a software adapter can be found in the Windows Vista Driver Development Kit. This is a very complex development task, and is not recommended for general readers.Calling this method will increment the module's reference count by one. The reference count can be decremented by calling FreeLibrary.The typical calling scenario is to call LoadLibrary, pass the handle to CreateSoftwareAdapter, then immediately call FreeLibrary on the DLL and forget the DLL's HMODULE. Since the software adapter calls FreeLibrary when it is destroyed, the lifetime of the DLL will now be owned by the adapter, and the application is free of any further consideration of its lifetime.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory::CreateSoftwareAdapter']/*"/>	
+            <msdn-id>bb174536</msdn-id>	
+            <unmanaged>HRESULT IDXGIFactory::CreateSoftwareAdapter([In] HINSTANCE Module,[Out] IDXGIAdapter** ppAdapter)</unmanaged>	
+            <unmanaged-short>IDXGIFactory::CreateSoftwareAdapter</unmanaged-short>	
+        </member>
+        <member name="P:SharpDX.DXGI.Factory.Adapters">
+            <summary>
+            Return an array of <see cref="T:SharpDX.DXGI.Adapter"/> available from this factory.
+            </summary>
+            <unmanaged>HRESULT IDXGIFactory::EnumAdapters([In] unsigned int Adapter,[Out] IDXGIAdapter** ppAdapter)</unmanaged>	
+        </member>
+        <member name="T:SharpDX.DXGI.Factory1">
+            <summary>	
+            The <see cref="T:SharpDX.DXGI.Factory1"/> interface implements methods for generating DXGI objects.	
+            </summary>	
+            <remarks>	
+            This interface is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).To create a factory, call the CreateDXGIFactory1 function.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory1']/*"/>	
+            <msdn-id>ff471335</msdn-id>	
+            <unmanaged>IDXGIFactory1</unmanaged>	
+            <unmanaged-short>IDXGIFactory1</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory1.#ctor">
+            <summary>
+              Default Constructor for Factory1.
+            </summary>
+        </member>
+        <member name="M:SharpDX.DXGI.Factory1.GetAdapter1(System.Int32)">
+            <summary>	
+            Gets both adapters (video cards) with or without outputs.	
+            </summary>	
+            <param name="adapter"><para>The index of the adapter to enumerate.</para></param>	
+            <returns>a reference to an <see cref="T:SharpDX.DXGI.Adapter1"/> interface at the position specified by the Adapter parameter</returns>	
+            <remarks>	
+            This method is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).When you create a factory, the factory enumerates the set of adapters that are available in the system. Therefore, if you change the adapters in a system, you must destroy  and recreate the <see cref="T:SharpDX.DXGI.Factory1"/> object. The number of adapters in a system changes when you add or remove a display card, or dock or undock a laptop.When the EnumAdapters1 method succeeds and fills the ppAdapter parameter with the address of the reference to the adapter interface, EnumAdapters1 increments the adapter interface's reference count. When you finish using the  adapter interface, call the Release method to decrement the reference count before you destroy the reference.EnumAdapters1 first returns the local adapter with the output on which the desktop primary is displayed. This adapter corresponds with an index of zero. EnumAdapters1 next returns other adapters with outputs. EnumAdapters1 finally returns adapters without outputs.	
+            </remarks>	
+            <unmanaged>HRESULT IDXGIFactory1::EnumAdapters1([In] unsigned int Adapter,[Out] IDXGIAdapter1** ppAdapter)</unmanaged>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory1.GetAdapterCount1">
+            <summary>
+              Return the number of available adapters from this factory.
+            </summary>
+            <returns>The number of adapters</returns>
+            <unmanaged>HRESULT IDXGIFactory1::EnumAdapters1([In] unsigned int Adapter,[Out] IDXGIAdapter1** ppAdapter)</unmanaged>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory1.#ctor(System.IntPtr)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SharpDX.DXGI.Factory1"/> class.
+            </summary>
+            <param name="nativePtr">The native pointer.</param>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory1.op_Explicit(System.IntPtr)~SharpDX.DXGI.Factory1">
+            <summary>
+            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.DXGI.Factory1"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
+            </summary>
+            <param name="nativePointer">The native pointer.</param>
+            <returns>
+            The result of the conversion.
+            </returns>
+        </member>
+        <member name="M:SharpDX.DXGI.Factory1.GetAdapter1(System.Int32,SharpDX.DXGI.Adapter1@)">
+            <summary>	
+            Enumerates both adapters (video cards) with or without outputs.	
+            </summary>	
+            <param name="adapter"><para>The index of the adapter to enumerate.</para></param>	
+            <param name="adapterOut"><para>The address of a reference to an <see cref="T:SharpDX.DXGI.Adapter1"/> interface at the position specified by the Adapter parameter.   This parameter must not be <c>null</c>.</para></param>	
+            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns <see cref="F:SharpDX.DXGI.ResultCode.NotFound"/> if the index is greater than or equal to the number of adapters in the local  system, or <see cref="F:SharpDX.DXGI.ResultCode.InvalidCall"/> if ppAdapter parameter is <c>null</c>.</returns>	
+            <remarks>	
+            This method is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).When you create a factory, the factory enumerates the set of adapters that are available in the system. Therefore, if you change the adapters in a system, you must destroy  and recreate the <see cref="T:SharpDX.DXGI.Factory1"/> object. The number of adapters in a system changes when you add or remove a display card, or dock or undock a laptop.When the EnumAdapters1 method succeeds and fills the ppAdapter parameter with the address of the reference to the adapter interface, EnumAdapters1 increments the adapter interface's reference count. When you finish using the  adapter interface, call the Release method to decrement the reference count before you destroy the reference.EnumAdapters1 first returns the local adapter with the output on which the desktop primary is displayed. This adapter corresponds with an index of zero. EnumAdapters1 next returns other adapters with outputs. EnumAdapters1 finally returns adapters without outputs.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory1::EnumAdapters1']/*"/>	
+            <msdn-id>ff471336</msdn-id>	
+            <unmanaged>HRESULT IDXGIFactory1::EnumAdapters1([In] unsigned int Adapter,[Out] IDXGIAdapter1** ppAdapter)</unmanaged>	
+            <unmanaged-short>IDXGIFactory1::EnumAdapters1</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Factory1.IsCurrent_">
+            <summary>	
+            Informs an application of the possible need to re-enumerate adapters.	
+            </summary>	
+            <returns>FALSE, if a new adapter is becoming available or the current adapter is going away. TRUE, no adapter changes.IsCurrent returns <see cref="F:SharpDX.Result.False"/> to inform the calling application to re-enumerate adapters.</returns>	
+            <remarks>	
+            This method is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory1::IsCurrent']/*"/>	
+            <msdn-id>ff471337</msdn-id>	
+            <unmanaged>BOOL IDXGIFactory1::IsCurrent()</unmanaged>	
+            <unmanaged-short>IDXGIFactory1::IsCurrent</unmanaged-short>	
+        </member>
+        <member name="P:SharpDX.DXGI.Factory1.Adapters1">
+            <summary>
+            Return an array of <see cref="T:SharpDX.DXGI.Adapter1"/> available from this factory.
+            </summary>
+            <unmanaged>HRESULT IDXGIFactory1::EnumAdapters1([In] unsigned int Adapter,[Out] IDXGIAdapter1** ppAdapter)</unmanaged>	
+        </member>
+        <member name="P:SharpDX.DXGI.Factory1.IsCurrent">
+            <summary>	
+            Informs an application of the possible need to re-enumerate adapters.	
+            </summary>	
+            <remarks>	
+            This method is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory1::IsCurrent']/*"/>	
+            <msdn-id>ff471337</msdn-id>	
+            <unmanaged>IsCurrent</unmanaged>	
+            <unmanaged-short>IsCurrent</unmanaged-short>	
+            <unmanaged>BOOL IDXGIFactory1::IsCurrent()</unmanaged>
+        </member>
+        <member name="T:SharpDX.DXGI.FormatHelper">
+            <summary>
+            Helper to use with <see cref="T:SharpDX.DXGI.Format"/>.
+            </summary>
+        </member>
+        <member name="M:SharpDX.DXGI.FormatHelper.SizeOfInBytes(SharpDX.DXGI.Format)">
+            <summary>
+            Calculates the size of a <see cref="T:SharpDX.DXGI.Format"/> in bytes.
+            </summary>
+            <param name="format">The dxgi format.</param>
+            <returns>size of in bytes</returns>
+        </member>
+        <member name="M:SharpDX.DXGI.FormatHelper.SizeOfInBits(SharpDX.DXGI.Format)">
+            <summary>
+            Calculates the size of a <see cref="T:SharpDX.DXGI.Format"/> in bits.
+            </summary>
+            <param name="format">The dxgi format.</param>
+            <returns>size of in bits</returns>
         </member>
         <member name="T:SharpDX.DXGI.AdapterFlags">
             <summary>	
@@ -1927,166 +2326,114 @@
             <unmanaged>None</unmanaged>	
             <unmanaged-short>None</unmanaged-short>	
         </member>
-        <member name="T:SharpDX.DXGI.Device">
+        <member name="T:SharpDX.DXGI.DXGI">
             <summary>	
-            An <see cref="T:SharpDX.DXGI.Device"/> interface implements a derived class for DXGI objects that produce image data.	
+            Functions	
             </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='SharpDX.DXGI.DXGI']/*"/>	
+        </member>
+        <member name="M:SharpDX.DXGI.DXGI.CreateDXGIFactory1(System.Guid,System.IntPtr@)">
+            <summary>	
+            Creates a DXGI 1.1 factory that generates objects used to enumerate and specify video graphics settings.	
+            </summary>	
+            <param name="riid"><para>The globally unique identifier (<see cref="T:System.Guid"/>) of the <see cref="T:SharpDX.DXGI.Factory1"/> object referenced by  the ppFactory parameter.</para></param>	
+            <param name="factoryOut"><para>Address of a reference to an <see cref="T:SharpDX.DXGI.Factory1"/> object.</para></param>	
+            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; an error code otherwise. For a list of error codes, see DXGI_ERROR.</returns>	
             <remarks>	
-            The <see cref="T:SharpDX.DXGI.Device"/> interface is designed for use by DXGI objects that need access to other DXGI objects. This interface is useful to  applications that do not use Direct3D to communicate with DXGI.The object returned by the Direct3D create device functions implements the <see cref="T:SharpDX.ComObject"/> interface and can be queried for the device's corresponding <see cref="T:SharpDX.DXGI.Device"/> interface. To retrieve the <see cref="T:SharpDX.DXGI.Device"/> interface of a Direct3D device the following code can be used.<code>	
-            <see cref="T:SharpDX.DXGI.Device"/> * pDXGIDevice;	
-            hr = g_pd3dDevice-&gt;QueryInterface(__uuidof(<see cref="T:SharpDX.DXGI.Device"/>), (void **)&amp;pDXGIDevice);	
-            	
-            </code>	
+            Use a DXGI 1.1 factory to generate objects that enumerate adapters,  create swap chains, and associate a window with  the alt+enter key sequence for toggling to and from the full-screen display mode.If the CreateDXGIFactory1 function succeeds, the reference count on the <see cref="T:SharpDX.DXGI.Factory1"/> interface is incremented. To avoid a memory leak, when you finish using the interface, call the IDXGIFactory1::Release method to release the interface.This entry point is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).Note??Do not mix the use of DXGI 1.0 (<see cref="T:SharpDX.DXGI.Factory"/>) and DXGI 1.1 (<see cref="T:SharpDX.DXGI.Factory1"/>) in an application. Use <see cref="T:SharpDX.DXGI.Factory"/> or <see cref="T:SharpDX.DXGI.Factory1"/>, but not both in an application.	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice']/*"/>	
-            <msdn-id>bb174527</msdn-id>	
-            <unmanaged>IDXGIDevice</unmanaged>	
-            <unmanaged-short>IDXGIDevice</unmanaged-short>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='CreateDXGIFactory1']/*"/>	
+            <msdn-id>ff471318</msdn-id>	
+            <unmanaged>HRESULT CreateDXGIFactory1([In] const GUID&amp; riid,[Out] void** ppFactory)</unmanaged>	
+            <unmanaged-short>CreateDXGIFactory1</unmanaged-short>	
         </member>
-        <member name="M:SharpDX.DXGI.Device.QueryResourceResidency(SharpDX.ComObject[])">
+        <member name="M:SharpDX.DXGI.DXGI.CreateDXGIFactory(System.Guid,System.IntPtr@)">
             <summary>	
-            Gets the residency status of an array of resources.	
+            Creates a DXGI 1.0 factory that generates objects used to enumerate and specify video graphics settings.	
             </summary>	
+            <param name="riid"><para>The globally unique identifier (<see cref="T:System.Guid"/>) of the <see cref="T:SharpDX.DXGI.Factory"/> object referenced by the ppFactory parameter.</para></param>	
+            <param name="factoryOut"><para>Address of a reference to an <see cref="T:SharpDX.DXGI.Factory"/> object.</para></param>	
+            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns one of the following DXGI_ERROR.</returns>	
             <remarks>	
-            The information returned by the pResidencyStatus argument array describes the residency status at the time that the QueryResourceResidency method was called.   Note that the residency status will constantly change. If you call the QueryResourceResidency method during a device removed state, the pResidencyStatus argument will return the DXGI_RESIDENCY_EVICTED_TO_DISK flag. Note??This method should not be called every frame as it incurs a non-trivial amount of overhead. 	
+            Use a DXGI factory to generate objects that enumerate adapters, create swap chains, and associate a window with the alt+enter key sequence for toggling to and from the fullscreen display mode.If the CreateDXGIFactory function succeeds, the reference count on the <see cref="T:SharpDX.DXGI.Factory"/> interface is incremented. To avoid a memory leak, when you finish using the interface, call the IDXGIFactory::Release method to release the interface.Note??Do not mix the use of DXGI 1.0 (<see cref="T:SharpDX.DXGI.Factory"/>) and DXGI 1.1 (<see cref="T:SharpDX.DXGI.Factory1"/>) in an application. Use <see cref="T:SharpDX.DXGI.Factory"/> or <see cref="T:SharpDX.DXGI.Factory1"/>, but not both in an application.The CreateDXGIFactory function does not exist for Metro style apps. Instead, Metro style apps use the  CreateDXGIFactory1 function.	
             </remarks>	
-            <param name="comObjects">An array of <see cref="T:SharpDX.DXGI.Resource"/> interfaces. </param>
-            <returns>Returns an array of <see cref="T:SharpDX.DXGI.Residency"/> flags. Each element describes the residency status for corresponding element in  the ppResources argument array. </returns>
-            <unmanaged>HRESULT IDXGIDevice::QueryResourceResidency([In, Buffer] const IUnknown** ppResources,[Out, Buffer] DXGI_RESIDENCY* pResidencyStatus,[None] int NumResources)</unmanaged>
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='CreateDXGIFactory']/*"/>	
+            <msdn-id>bb204862</msdn-id>	
+            <unmanaged>HRESULT CreateDXGIFactory([In] const GUID&amp; riid,[Out] void** ppFactory)</unmanaged>	
+            <unmanaged-short>CreateDXGIFactory</unmanaged-short>	
         </member>
-        <member name="M:SharpDX.DXGI.Device.#ctor(System.IntPtr)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.DXGI.Device"/> class.
-            </summary>
-            <param name="nativePtr">The native pointer.</param>	
-        </member>
-        <member name="M:SharpDX.DXGI.Device.op_Explicit(System.IntPtr)~SharpDX.DXGI.Device">
-            <summary>
-            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.DXGI.Device"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
-            </summary>
-            <param name="nativePointer">The native pointer.</param>
-            <returns>
-            The result of the conversion.
-            </returns>
-        </member>
-        <member name="M:SharpDX.DXGI.Device.GetAdapter(SharpDX.DXGI.Adapter@)">
+        <member name="T:SharpDX.DXGI.ResultCode">
             <summary>	
-            Returns the adapter for the specified device.	
+            Functions	
             </summary>	
-            <param name="adapterRef"><para>The address of an <see cref="T:SharpDX.DXGI.Adapter"/> interface reference to the adapter.  This parameter must not be <c>null</c>.</para></param>	
-            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns one of the DXGI_ERROR that indicates failure. If the pAdapter parameter is <c>null</c> this method returns E_INVALIDARG.</returns>	
-            <remarks>	
-            If the GetAdapter method succeeds, the reference count on the adapter interface will be incremented. To avoid a memory leak, be sure to release the interface when you are finished using it.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::GetAdapter']/*"/>	
-            <msdn-id>bb174531</msdn-id>	
-            <unmanaged>HRESULT IDXGIDevice::GetAdapter([Out] IDXGIAdapter** pAdapter)</unmanaged>	
-            <unmanaged-short>IDXGIDevice::GetAdapter</unmanaged-short>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='SharpDX.DXGI.ResultCode']/*"/>	
         </member>
-        <member name="M:SharpDX.DXGI.Device.CreateSurface(SharpDX.DXGI.SurfaceDescription@,System.Int32,System.Int32,System.Nullable{SharpDX.DXGI.SharedResource},SharpDX.DXGI.Surface@)">
-            <summary>	
-            Returns a surface. This method is used internally and you should not call it directly in your application.	
-            </summary>	
-            <param name="descRef"><para>A reference to a <see cref="T:SharpDX.DXGI.SurfaceDescription"/> structure that describes the surface.</para></param>	
-            <param name="numSurfaces"><para>The number of surfaces to create.</para></param>	
-            <param name="usage"><para>A DXGI_USAGE flag that specifies how the surface is expected to be used.</para></param>	
-            <param name="sharedResourceRef"><para>An optional reference to a <see cref="T:SharpDX.DXGI.SharedResource"/> structure that contains shared resource information for opening views of such resources.</para></param>	
-            <param name="surfaceOut"><para>The address of an <see cref="T:SharpDX.DXGI.Surface"/> interface reference to the first created surface.</para></param>	
-            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; an error code otherwise.  For a list of error codes, see DXGI_ERROR.</returns>	
-            <remarks>	
-            The CreateSurface method creates a buffer to exchange data between one or more devices. It is used internally, and you should not directly call it.The runtime automatically creates an <see cref="T:SharpDX.DXGI.Surface"/> interface when it creates a Direct3D resource object that represents a surface. For example, the runtime creates an <see cref="T:SharpDX.DXGI.Surface"/> interface when it calls <see cref="!:SharpDX.Direct3D11.Device.CreateTexture2D"/> or <see cref="!:SharpDX.Direct3D10.Device.CreateTexture2D"/> to create a 2D texture. To retrieve the <see cref="T:SharpDX.DXGI.Surface"/> interface that represents the 2D texture surface, call ID3D11Texture2D::QueryInterface or ID3D10Texture2D::QueryInterface. In this call, you must pass the identifier of <see cref="T:SharpDX.DXGI.Surface"/>. If the 2D texture has only a single MIP-map level and does not consist of an array of textures, QueryInterface succeeds and returns a reference to the <see cref="T:SharpDX.DXGI.Surface"/> interface reference. Otherwise, QueryInterface fails and does not return the reference to <see cref="T:SharpDX.DXGI.Surface"/>.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::CreateSurface']/*"/>	
-            <msdn-id>bb174530</msdn-id>	
-            <unmanaged>HRESULT IDXGIDevice::CreateSurface([In] const DXGI_SURFACE_DESC* pDesc,[In] unsigned int NumSurfaces,[In] unsigned int Usage,[In, Optional] const DXGI_SHARED_RESOURCE* pSharedResource,[Out] IDXGISurface** ppSurface)</unmanaged>	
-            <unmanaged-short>IDXGIDevice::CreateSurface</unmanaged-short>	
+        <member name="F:SharpDX.DXGI.ResultCode.RemoteClientDisconnected">
+            <summary>Constant RemoteClientDisconnected.</summary>
+            <unmanaged>DXGI_ERROR_REMOTE_CLIENT_DISCONNECTED</unmanaged>
         </member>
-        <member name="M:SharpDX.DXGI.Device.QueryResourceResidency(SharpDX.ComObject[],SharpDX.DXGI.Residency[],System.Int32)">
-            <summary>	
-            Gets the residency status of an array of resources.	
-            </summary>	
-            <param name="resourcesOut"><para>An array of <see cref="T:SharpDX.DXGI.Resource"/> interfaces.</para></param>	
-            <param name="residencyStatusRef"><para>An array of <see cref="T:SharpDX.DXGI.Residency"/> flags. Each element describes the residency status for corresponding element in  the ppResources argument array.</para></param>	
-            <param name="numResources"><para>The number of resources in the ppResources argument array and pResidencyStatus argument array.</para></param>	
-            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successfull; otherwise, returns <see cref="F:SharpDX.DXGI.ResultCode.DeviceRemoved"/>, E_INVALIDARG, or  E_POINTER (see WinError.h for more information).</returns>	
-            <remarks>	
-            The information returned by the pResidencyStatus argument array describes the residency status at the time that the QueryResourceResidency method was called.   Note that the residency status will constantly change.If you call the QueryResourceResidency method during a device removed state, the pResidencyStatus argument will return the <see cref="F:SharpDX.DXGI.Residency.EvictedToDisk"/> flag.Note??This method should not be called every frame as it incurs a non-trivial amount of overhead.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::QueryResourceResidency']/*"/>	
-            <msdn-id>bb174533</msdn-id>	
-            <unmanaged>HRESULT IDXGIDevice::QueryResourceResidency([In, Buffer] const IUnknown** ppResources,[Out, Buffer] DXGI_RESIDENCY* pResidencyStatus,[In] unsigned int NumResources)</unmanaged>	
-            <unmanaged-short>IDXGIDevice::QueryResourceResidency</unmanaged-short>	
+        <member name="F:SharpDX.DXGI.ResultCode.DeviceRemoved">
+            <summary>Constant DeviceRemoved.</summary>
+            <unmanaged>DXGI_ERROR_DEVICE_REMOVED</unmanaged>
         </member>
-        <member name="M:SharpDX.DXGI.Device.QueryResourceResidency(SharpDX.ComArray{SharpDX.ComObject},SharpDX.DXGI.Residency[],System.Int32)">
-            <summary>	
-            Gets the residency status of an array of resources.	
-            </summary>	
-            <param name="resourcesOut"><para>An array of <see cref="T:SharpDX.DXGI.Resource"/> interfaces.</para></param>	
-            <param name="residencyStatusRef"><para>An array of <see cref="T:SharpDX.DXGI.Residency"/> flags. Each element describes the residency status for corresponding element in  the ppResources argument array.</para></param>	
-            <param name="numResources"><para>The number of resources in the ppResources argument array and pResidencyStatus argument array.</para></param>	
-            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successfull; otherwise, returns <see cref="F:SharpDX.DXGI.ResultCode.DeviceRemoved"/>, E_INVALIDARG, or  E_POINTER (see WinError.h for more information).</returns>	
-            <remarks>	
-            The information returned by the pResidencyStatus argument array describes the residency status at the time that the QueryResourceResidency method was called.   Note that the residency status will constantly change.If you call the QueryResourceResidency method during a device removed state, the pResidencyStatus argument will return the <see cref="F:SharpDX.DXGI.Residency.EvictedToDisk"/> flag.Note??This method should not be called every frame as it incurs a non-trivial amount of overhead.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::QueryResourceResidency']/*"/>	
-            <msdn-id>bb174533</msdn-id>	
-            <unmanaged>HRESULT IDXGIDevice::QueryResourceResidency([In, Buffer] const IUnknown** ppResources,[Out, Buffer] DXGI_RESIDENCY* pResidencyStatus,[In] unsigned int NumResources)</unmanaged>	
-            <unmanaged-short>IDXGIDevice::QueryResourceResidency</unmanaged-short>	
+        <member name="F:SharpDX.DXGI.ResultCode.Nonexclusive">
+            <summary>Constant Nonexclusive.</summary>
+            <unmanaged>DXGI_ERROR_NONEXCLUSIVE</unmanaged>
         </member>
-        <member name="M:SharpDX.DXGI.Device.SetGPUThreadPriority(System.Int32)">
-            <summary>	
-            Sets the GPU thread priority.	
-            </summary>	
-            <param name="priority"><para>A value that specifies the required GPU thread priority. This value must be between -7 and 7, inclusive, where 0 represents normal priority.</para></param>	
-            <returns>Return <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns E_INVALIDARG if the Priority parameter is invalid.</returns>	
-            <remarks>	
-            The values for the Priority parameter function as follows:Positive values increase the likelihood that the GPU scheduler will grant GPU execution cycles to the device when rendering. Negative values lessen the likelihood that the device will receive GPU execution cycles when devices compete for them. The device is guaranteed to receive some GPU execution cycles at all settings.To use the SetGPUThreadPriority method, you should have a comprehensive understanding of GPU scheduling. You should profile your application to ensure that it behaves as intended. If used inappropriately, the SetGPUThreadPriority method can impede rendering speed and result in a poor user experience.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::SetGPUThreadPriority']/*"/>	
-            <msdn-id>bb174534</msdn-id>	
-            <unmanaged>HRESULT IDXGIDevice::SetGPUThreadPriority([In] int Priority)</unmanaged>	
-            <unmanaged-short>IDXGIDevice::SetGPUThreadPriority</unmanaged-short>	
+        <member name="F:SharpDX.DXGI.ResultCode.FrameStatisticsDisjoint">
+            <summary>Constant FrameStatisticsDisjoint.</summary>
+            <unmanaged>DXGI_ERROR_FRAME_STATISTICS_DISJOINT</unmanaged>
         </member>
-        <member name="M:SharpDX.DXGI.Device.GetGPUThreadPriority(System.Int32@)">
-            <summary>	
-            Gets the GPU thread priority.	
-            </summary>	
-            <param name="priorityRef"><para>A reference to a variable that receives a value that indicates the current GPU thread priority. The value will be between -7 and 7, inclusive, where 0 represents normal priority.</para></param>	
-            <returns>Return <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns E_POINTER if the pPriority parameter is <c>null</c>.</returns>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::GetGPUThreadPriority']/*"/>	
-            <msdn-id>Bb174532</msdn-id>	
-            <unmanaged>HRESULT IDXGIDevice::GetGPUThreadPriority([Out] int* pPriority)</unmanaged>	
-            <unmanaged-short>IDXGIDevice::GetGPUThreadPriority</unmanaged-short>	
+        <member name="F:SharpDX.DXGI.ResultCode.DeviceHung">
+            <summary>Constant DeviceHung.</summary>
+            <unmanaged>DXGI_ERROR_DEVICE_HUNG</unmanaged>
         </member>
-        <member name="P:SharpDX.DXGI.Device.Adapter">
-            <summary>	
-            Returns the adapter for the specified device.	
-            </summary>	
-            <remarks>	
-            If the GetAdapter method succeeds, the reference count on the adapter interface will be incremented. To avoid a memory leak, be sure to release the interface when you are finished using it.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::GetAdapter']/*"/>	
-            <msdn-id>bb174531</msdn-id>	
-            <unmanaged>GetAdapter</unmanaged>	
-            <unmanaged-short>GetAdapter</unmanaged-short>	
-            <unmanaged>HRESULT IDXGIDevice::GetAdapter([Out] IDXGIAdapter** pAdapter)</unmanaged>
+        <member name="F:SharpDX.DXGI.ResultCode.RemoteOutofmemory">
+            <summary>Constant RemoteOutofmemory.</summary>
+            <unmanaged>DXGI_ERROR_REMOTE_OUTOFMEMORY</unmanaged>
         </member>
-        <member name="P:SharpDX.DXGI.Device.GPUThreadPriority">
-            <summary>	
-            Gets the GPU thread priority.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDevice::GetGPUThreadPriority']/*"/>	
-            <msdn-id>Bb174532</msdn-id>	
-            <unmanaged>GetGPUThreadPriority</unmanaged>	
-            <unmanaged-short>GetGPUThreadPriority</unmanaged-short>	
-            <unmanaged>HRESULT IDXGIDevice::GetGPUThreadPriority([Out] int* pPriority)</unmanaged>
+        <member name="F:SharpDX.DXGI.ResultCode.Unsupported">
+            <summary>Constant Unsupported.</summary>
+            <unmanaged>DXGI_ERROR_UNSUPPORTED</unmanaged>
+        </member>
+        <member name="F:SharpDX.DXGI.ResultCode.NotFound">
+            <summary>Constant NotFound.</summary>
+            <unmanaged>DXGI_ERROR_NOT_FOUND</unmanaged>
+        </member>
+        <member name="F:SharpDX.DXGI.ResultCode.DeviceReset">
+            <summary>Constant DeviceReset.</summary>
+            <unmanaged>DXGI_ERROR_DEVICE_RESET</unmanaged>
+        </member>
+        <member name="F:SharpDX.DXGI.ResultCode.MoreData">
+            <summary>Constant MoreData.</summary>
+            <unmanaged>DXGI_ERROR_MORE_DATA</unmanaged>
+        </member>
+        <member name="F:SharpDX.DXGI.ResultCode.DriverInternalError">
+            <summary>Constant DriverInternalError.</summary>
+            <unmanaged>DXGI_ERROR_DRIVER_INTERNAL_ERROR</unmanaged>
+        </member>
+        <member name="F:SharpDX.DXGI.ResultCode.InvalidCall">
+            <summary>Constant InvalidCall.</summary>
+            <unmanaged>DXGI_ERROR_INVALID_CALL</unmanaged>
+        </member>
+        <member name="F:SharpDX.DXGI.ResultCode.GraphicsVidpnSourceInUse">
+            <summary>Constant GraphicsVidpnSourceInUse.</summary>
+            <unmanaged>DXGI_ERROR_GRAPHICS_VIDPN_SOURCE_IN_USE</unmanaged>
+        </member>
+        <member name="F:SharpDX.DXGI.ResultCode.WasStillDrawing">
+            <summary>Constant WasStillDrawing.</summary>
+            <unmanaged>DXGI_ERROR_WAS_STILL_DRAWING</unmanaged>
+        </member>
+        <member name="F:SharpDX.DXGI.ResultCode.NotCurrentlyAvailable">
+            <summary>Constant NotCurrentlyAvailable.</summary>
+            <unmanaged>DXGI_ERROR_NOT_CURRENTLY_AVAILABLE</unmanaged>
         </member>
         <member name="T:SharpDX.DXGI.Adapter1">
             <summary>	
             The <see cref="T:SharpDX.DXGI.Adapter1"/> interface represents a display sub-system (including one or more GPU's, DACs and video memory).	
             </summary>	
             <remarks>	
-            This interface is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).A display sub-system is often referred to as a video card, however, on some machines the display sub-system is part of the mother board.To enumerate the display sub-systems, use <see cref="M:SharpDX.DXGI.Factory1.GetAdapter1(System.Int32,SharpDX.DXGI.Adapter1@)"/>. To get an interface to the adapter for a  particular device, use <see cref="M:SharpDX.DXGI.Device.GetAdapter(SharpDX.DXGI.Adapter@)"/>. To create a software adapter, use <see cref="M:SharpDX.DXGI.Factory.CreateSoftwareAdapter(System.IntPtr)"/>.	
+            This interface is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).A display sub-system is often referred to as a video card, however, on some machines the display sub-system is part of the mother board.To enumerate the display sub-systems, use <see cref="M:SharpDX.DXGI.Factory1.GetAdapter1(System.Int32)"/>. To get an interface to the adapter for a  particular device, use <see cref="M:SharpDX.DXGI.Device.GetAdapter(SharpDX.DXGI.Adapter@)"/>. To create a software adapter, use <see cref="M:SharpDX.DXGI.Factory.CreateSoftwareAdapter(System.Reflection.Module)"/>.	
             </remarks>	
             <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIAdapter1']/*"/>	
             <msdn-id>ff471329</msdn-id>	
@@ -2202,306 +2549,6 @@
             <unmanaged>GetMaximumFrameLatency</unmanaged>	
             <unmanaged-short>GetMaximumFrameLatency</unmanaged-short>	
             <unmanaged>HRESULT IDXGIDevice1::GetMaximumFrameLatency([Out] unsigned int* pMaxLatency)</unmanaged>
-        </member>
-        <member name="T:SharpDX.DXGI.DeviceChild">
-            <summary>	
-            Inherited from objects that are tied to the device so that they can retrieve a reference to it.	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDeviceSubObject']/*"/>	
-            <msdn-id>bb174528</msdn-id>	
-            <unmanaged>IDXGIDeviceSubObject</unmanaged>	
-            <unmanaged-short>IDXGIDeviceSubObject</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.DeviceChild.#ctor(System.IntPtr)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.DXGI.DeviceChild"/> class.
-            </summary>
-            <param name="nativePtr">The native pointer.</param>	
-        </member>
-        <member name="M:SharpDX.DXGI.DeviceChild.op_Explicit(System.IntPtr)~SharpDX.DXGI.DeviceChild">
-            <summary>
-            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.DXGI.DeviceChild"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
-            </summary>
-            <param name="nativePointer">The native pointer.</param>
-            <returns>
-            The result of the conversion.
-            </returns>
-        </member>
-        <member name="M:SharpDX.DXGI.DeviceChild.GetDevice(System.Guid,System.IntPtr@)">
-            <summary>	
-            Retrieves the device.	
-            </summary>	
-            <param name="riid"><para>The reference id for the device.</para></param>	
-            <param name="deviceOut"><para>The address of a reference to the device.</para></param>	
-            <returns>A code that indicates success or failure (see DXGI_ERROR).</returns>	
-            <remarks>	
-            The type of interface that is returned can be any interface published by the device. For example, it could be an <see cref="T:SharpDX.DXGI.Device"/> * called pDevice, and therefore the REFIID would be obtained by calling __uuidof(pDevice).	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIDeviceSubObject::GetDevice']/*"/>	
-            <msdn-id>bb174529</msdn-id>	
-            <unmanaged>HRESULT IDXGIDeviceSubObject::GetDevice([In] const GUID&amp; riid,[Out] void** ppDevice)</unmanaged>	
-            <unmanaged-short>IDXGIDeviceSubObject::GetDevice</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.DeviceChild.GetDevice``1">
-            <summary>
-            Retrieves the device.
-            </summary>
-            <typeparam name="T">The interface that is returned can be any interface published by the device.</typeparam>
-            <returns>The associated device. </returns>
-            <unmanaged>HRESULT IDXGIDeviceSubObject::GetDevice([In] GUID* riid,[Out] void** ppDevice)</unmanaged>
-        </member>
-        <member name="P:SharpDX.DXGI.DeviceChild.DebugName">
-            <summary>
-            Gets or sets the debug-name for this object.
-            </summary>
-            <value>
-            The debug name.
-            </value>
-        </member>
-        <member name="T:SharpDX.DXGI.Factory">
-            <summary>	
-            An <see cref="T:SharpDX.DXGI.Factory"/> interface implements methods for generating DXGI objects (which handle full screen transitions).	
-            </summary>	
-            <remarks>	
-            Create a factory by calling CreateDXGIFactory.Because a Direct3D device can be created without creating a swap chain, you might need to retrieve the factory that is used to create the device in order to create a swap chain.	
-            This can be accomplished by requesting the <see cref="T:SharpDX.DXGI.Device"/> interface from the Direct3D device and then using <see cref="M:SharpDX.DXGI.DXGIObject.GetParent(System.Guid,System.IntPtr@)"/> to locate 	
-            the factory.  The following code illustrates the process.<code>	
-            <see cref="T:SharpDX.DXGI.Device"/> * pDXGIDevice;	
-            hr = g_pd3dDevice-&gt;QueryInterface(__uuidof(<see cref="T:SharpDX.DXGI.Device"/>), (void **)&amp;pDXGIDevice); <see cref="T:SharpDX.DXGI.Adapter"/> * pDXGIAdapter;	
-            hr = pDXGIDevice-&gt;GetParent(__uuidof(<see cref="T:SharpDX.DXGI.Adapter"/>), (void **)&amp;pDXGIAdapter); <see cref="T:SharpDX.DXGI.Factory"/> * pIDXGIFactory;	
-            pDXGIAdapter-&gt;GetParent(__uuidof(<see cref="T:SharpDX.DXGI.Factory"/>), (void **)&amp;pIDXGIFactory);	
-            	
-            </code>See <see cref="M:SharpDX.DXGI.DXGIObject.GetParent(System.Guid,System.IntPtr@)"/> for a diagram of the relationship between DXGI objects.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory']/*"/>	
-            <msdn-id>bb174535</msdn-id>	
-            <unmanaged>IDXGIFactory</unmanaged>	
-            <unmanaged-short>IDXGIFactory</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.#ctor(System.IntPtr)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.DXGI.Factory"/> class.
-            </summary>
-            <param name="nativePtr">The native pointer.</param>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.op_Explicit(System.IntPtr)~SharpDX.DXGI.Factory">
-            <summary>
-            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.DXGI.Factory"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
-            </summary>
-            <param name="nativePointer">The native pointer.</param>
-            <returns>
-            The result of the conversion.
-            </returns>
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.GetAdapter(System.Int32,SharpDX.DXGI.Adapter@)">
-            <summary>	
-            Enumerates the adapters (video cards).	
-            </summary>	
-            <param name="adapter"><para>The index of the adapter to enumerate.</para></param>	
-            <param name="adapterOut"><para>The address of a reference to an <see cref="T:SharpDX.DXGI.Adapter"/> interface at the position specified by the Adapter parameter.  This parameter must not be <c>null</c>.</para></param>	
-            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns <see cref="F:SharpDX.DXGI.ResultCode.NotFound"/> if the index is greater than or equal to the number of adapters in the local system, or <see cref="F:SharpDX.DXGI.ResultCode.InvalidCall"/> if ppAdapter parameter is <c>null</c>.</returns>	
-            <remarks>	
-            When you create a factory, the factory enumerates the set of adapters that are available in the system. Therefore, if you change the adapters in a system, you must destroy  and recreate the <see cref="T:SharpDX.DXGI.Factory"/> object. The number of adapters in a system changes when you add or remove a display card, or dock or undock a laptop.When the EnumAdapters method succeeds and fills the ppAdapter parameter with the address of the reference to the adapter interface, EnumAdapters increments the adapter interface's reference count. When you finish using the  adapter interface, call the Release method to decrement the reference count before you destroy the reference.EnumAdapters first returns the local adapter with the output on which the desktop primary is displayed. This adapter corresponds with an index of zero. EnumAdapters then returns other adapters with outputs.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory::EnumAdapters']/*"/>	
-            <msdn-id>bb174538</msdn-id>	
-            <unmanaged>HRESULT IDXGIFactory::EnumAdapters([In] unsigned int Adapter,[Out] IDXGIAdapter** ppAdapter)</unmanaged>	
-            <unmanaged-short>IDXGIFactory::EnumAdapters</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.MakeWindowAssociation(System.IntPtr,SharpDX.DXGI.WindowAssociationFlags)">
-            <summary>	
-            Allows DXGI to monitor an application's message queue for the alt-enter key sequence (which causes the application to switch from windowed to full screen or vice versa).	
-            </summary>	
-            <param name="windowHandle"><para>The handle of the window that is to be monitored. This parameter can be <c>null</c>; but only if the flags are also 0. </para></param>	
-            <param name="flags"><para>One or more of the following values:</para>  <see cref="F:SharpDX.DXGI.WindowAssociationFlags.IgnoreAll"/> - Prevent DXGI from monitoring an applications message queue; this makes DXGI unable to respond to mode changes. <see cref="F:SharpDX.DXGI.WindowAssociationFlags.IgnoreAltEnter"/> - Prevent DXGI from responding to an alt-enter sequence. <see cref="F:SharpDX.DXGI.WindowAssociationFlags.IgnorePrintScreen"/> - Prevent DXGI from responding to a print-screen key.</param>	
-            <returns>if WindowHandle is invalid, or E_OUTOFMEMORY.</returns>	
-            <remarks>	
-            The combination of WindowHandle and Flags informs DXGI to stop monitoring window messages for the previously-associated window.If the application switches to full-screen mode, DXGI will choose a full-screen resolution to be the smallest supported resolution that is larger or the same size as the current back buffer size.Applications can make some changes to make the transition from windowed to full screen more efficient. For example, on a WM_SIZE message, the application should release any outstanding swap-chain back buffers, call <see cref="M:SharpDX.DXGI.SwapChain.ResizeBuffers(System.Int32,System.Int32,System.Int32,SharpDX.DXGI.Format,SharpDX.DXGI.SwapChainFlags)"/>, then re-acquire the back buffers from the swap chain(s). This gives the swap chain(s) an opportunity to resize the back buffers, and/or recreate them to enable full-screen flipping operation. If the application does not perform this sequence, DXGI will still make the full-screen/windowed transition, but may be forced to use a stretch operation (since the back buffers may not be the correct size), which may be less efficient. Even if a stretch is not required, presentation may not be optimal because the back buffers might not be directly interchangeable with the front buffer. Thus, a call to ResizeBuffers on WM_SIZE is always recommended, since WM_SIZE is always sent during a fullscreen transition.While windowed, the application can, if it chooses, restrict the size of its window's client area to sizes to which it is comfortable rendering. A fully flexible application would make no such restriction, but UI elements or other design considerations can, of course, make this flexibility untenable. If the application further chooses to restrict its window's client area to just those that match supported full-screen resolutions, the application can field WM_SIZING, then check against <see cref="M:SharpDX.DXGI.Output.FindClosestMatchingMode(SharpDX.DXGI.ModeDescription@,SharpDX.DXGI.ModeDescription@,SharpDX.ComObject)"/>. If a matching mode is found, allow the resize. (The <see cref="T:SharpDX.DXGI.Output"/> can be retrieved from <see cref="M:SharpDX.DXGI.SwapChain.GetContainingOutput(SharpDX.DXGI.Output@)"/>. Absent subsequent changes to desktop topology, this will be the same output that will be chosen when alt-enter is fielded and fullscreen mode is begun for that swap chain.)Applications that want to handle mode changes or Alt+Enter themselves should call MakeWindowAssociation with the <see cref="F:SharpDX.DXGI.WindowAssociationFlags.IgnoreAll"/> flag after swap chain creation. The WindowHandle argument, if non-<c>null</c>, specifies that the application message queues will not be handled by the DXGI runtime for all swap chains of a particular target <see cref="T:System.IntPtr"/>.  Calling MakeWindowAssociation with the <see cref="F:SharpDX.DXGI.WindowAssociationFlags.IgnoreAll"/> flag after swapchain creation ensures that DXGI will not interfere with application's handling of window mode changes or Alt+Enter.Notes for Metro style appsIf a Metro style app calls MakeWindowAssociation, it fails with <see cref="F:SharpDX.DXGI.ResultCode.NotCurrentlyAvailable"/>.A Microsoft Win32 application can use MakeWindowAssociation to control full-screen transitions through the Alt+Enter key combination and print screen behavior for full screen.  For Metro style apps, because DXGI cannot perform full-screen transitions, Metro style app have no way to control full-screen transitions.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory::MakeWindowAssociation']/*"/>	
-            <msdn-id>bb174540</msdn-id>	
-            <unmanaged>HRESULT IDXGIFactory::MakeWindowAssociation([In] HWND WindowHandle,[In] DXGI_MWA_FLAGS Flags)</unmanaged>	
-            <unmanaged-short>IDXGIFactory::MakeWindowAssociation</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.GetWindowAssociation">
-            <summary>	
-            Get the window through which the user controls the transition to and from full screen.	
-            </summary>	
-            <returns><para>A reference to a window handle.</para></returns>	
-            <remarks>	
-            Notes for Metro style appsIf a Metro style app calls GetWindowAssociation, it fails with <see cref="F:SharpDX.DXGI.ResultCode.NotCurrentlyAvailable"/>.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory::GetWindowAssociation']/*"/>	
-            <msdn-id>Bb174539</msdn-id>	
-            <unmanaged>HRESULT IDXGIFactory::GetWindowAssociation([Out] HWND* pWindowHandle)</unmanaged>	
-            <unmanaged-short>IDXGIFactory::GetWindowAssociation</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.CreateSwapChain(SharpDX.ComObject,SharpDX.DXGI.SwapChainDescription@,SharpDX.DXGI.SwapChain)">
-            <summary>	
-            [Starting with Direct3D 11.1, we recommend not to use CreateSwapChain anymore to create a swap chain. Instead, use CreateSwapChainForHwnd, CreateSwapChainForImmersiveWindow, or CreateSwapChainForCompositionSurface depending on how you want to create the swap chain.]	
-            </summary>	
-            <param name="deviceRef">No documentation.</param>	
-            <param name="descRef">No documentation.</param>	
-            <param name="swapChainOut">No documentation.</param>	
-            <returns>if pDesc or ppSwapChain is <c>null</c>, <see cref="F:SharpDX.DXGI.DXGIStatus.Occluded"/> if you request full-screen mode and it is unavailable, or E_OUTOFMEMORY. Other error codes defined by the type of device passed in may also be returned.</returns>	
-            <remarks>	
-            If you attempt to create a swap chain in full-screen mode, and full-screen mode is unavailable, the swap chain will be created in windowed mode and <see cref="F:SharpDX.DXGI.DXGIStatus.Occluded"/> will be returned.If the buffer width or the buffer height is zero, the sizes will be inferred from the output window size in the swap-chain description.Because the target output cannot be chosen explicitly when the swap-chain is created, you should not create a full-screen swap chain. This can reduce presentation performance if the swap chain size and the output window size do not match. Here are two ways to ensure that the sizes match:Create a windowed swap chain and then set it full-screen using <see cref="M:SharpDX.DXGI.SwapChain.SetFullscreenState(System.Boolean,SharpDX.DXGI.Output)"/>. Save a reference to the swap chain immediately after creation, and use it to get the output window size during a WM_SIZE event. Then resize the swap chain buffers (with <see cref="M:SharpDX.DXGI.SwapChain.ResizeBuffers(System.Int32,System.Int32,System.Int32,SharpDX.DXGI.Format,SharpDX.DXGI.SwapChainFlags)"/>) during the transition from windowed to full-screen.If the swap chain is in full-screen mode, before you release it you must use SetFullscreenState to switch it to windowed mode. For more information about releasing a swap chain, see the "Destroying a Swap Chain" section of DXGI Overview.You can specify <see cref="T:SharpDX.DXGI.SwapEffect"/> and <see cref="T:SharpDX.DXGI.SwapChainFlags"/> values in the swap-chain description that pDesc points to. These values allow you to use features like flip-model presentation and content protection by using pre-Windows Developer Preview APIs.However, to use stereo presentation and to change resize behavior for the flip model, applications must use the IDXGIFactory2::CreateSwapChainForHwnd method. Otherwise, the back-buffer contents implicitly scale to fit the presentation target size; that is, you can't turn off scaling.Notes for Metro style appsIf a Metro style app calls CreateSwapChain with full screen specified, CreateSwapChain fails.Metro style apps call the  IDXGIFactory2::CreateSwapChainForImmersiveWindow method to create a swap chain.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory::CreateSwapChain']/*"/>	
-            <msdn-id>bb174537</msdn-id>	
-            <unmanaged>HRESULT IDXGIFactory::CreateSwapChain([In] IUnknown* pDevice,[In] DXGI_SWAP_CHAIN_DESC* pDesc,[Out, Fast] IDXGISwapChain** ppSwapChain)</unmanaged>	
-            <unmanaged-short>IDXGIFactory::CreateSwapChain</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.CreateSoftwareAdapter(System.IntPtr)">
-            <summary>	
-            Create an adapter interface that represents a software adapter.	
-            </summary>	
-            <param name="module"><para>Handle to the software adapter's dll. HMODULE can be obtained with GetModuleHandle or LoadLibrary.</para></param>	
-            <returns><para>Address of a reference to an adapter (see <see cref="T:SharpDX.DXGI.Adapter"/>).</para></returns>	
-            <remarks>	
-            A software adapter is a DLL that implements the entirety of a device driver interface, plus emulation, if necessary, of kernel-mode graphics components for Windows. Details on implementing a software adapter can be found in the Windows Vista Driver Development Kit. This is a very complex development task, and is not recommended for general readers.Calling this method will increment the module's reference count by one. The reference count can be decremented by calling FreeLibrary.The typical calling scenario is to call LoadLibrary, pass the handle to CreateSoftwareAdapter, then immediately call FreeLibrary on the DLL and forget the DLL's HMODULE. Since the software adapter calls FreeLibrary when it is destroyed, the lifetime of the DLL will now be owned by the adapter, and the application is free of any further consideration of its lifetime.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory::CreateSoftwareAdapter']/*"/>	
-            <msdn-id>bb174536</msdn-id>	
-            <unmanaged>HRESULT IDXGIFactory::CreateSoftwareAdapter([In] HINSTANCE Module,[Out] IDXGIAdapter** ppAdapter)</unmanaged>	
-            <unmanaged-short>IDXGIFactory::CreateSoftwareAdapter</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.#ctor">
-            <summary>
-              Default Constructor for Factory
-            </summary>
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.CreateSoftwareAdapter(System.Reflection.Module)">
-            <summary>	
-            Create an adapter interface that represents a software adapter.	
-            </summary>	
-            <remarks>	
-            A software adapter is a DLL that implements the entirety of a device driver interface, plus emulation, if necessary, of kernel-mode graphics components for Windows. Details on implementing a software adapter can be found in the Windows Vista Driver Development Kit. This is a very complex development task, and is not recommended for general readers. Calling this method will increment the module's reference count by one. The reference count can be decremented by calling {{FreeLibrary}}. The typical calling scenario is to call {{LoadLibrary}}, pass the handle to CreateSoftwareAdapter, then immediately call {{FreeLibrary}} on the DLL and forget the DLL's {{HMODULE}}. Since the software adapter calls FreeLibrary when it is destroyed, the lifetime of the DLL will now be owned by the adapter, and the application is free of any further consideration of its lifetime. 	
-            </remarks>	
-            <param name="module">Handle to the software adapter's dll.</param>
-            <returns>A reference to an adapter (see <see cref="T:SharpDX.DXGI.Adapter" />). </returns>
-            <unmanaged>HRESULT IDXGIFactory::CreateSoftwareAdapter([None] void* Module,[Out] IDXGIAdapter** ppAdapter)</unmanaged>
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.GetAdapter(System.Int32)">
-            <summary>	
-            Gets both adapters (video cards) with or without outputs.	
-            </summary>	
-            <param name="adapter"><para>The index of the adapter to enumerate.</para></param>	
-            <returns>a reference to an <see cref="T:SharpDX.DXGI.Adapter"/> interface at the position specified by the Adapter parameter</returns>
-            <remarks>	
-            When you create a factory, the factory enumerates the set of adapters that are available in the system. Therefore, if you change the adapters in a system, you must destroy  and recreate the <see cref="T:SharpDX.DXGI.Factory"/> object. The number of adapters in a system changes when you add or remove a display card, or dock or undock a laptop.When the EnumAdapters method succeeds and fills the ppAdapter parameter with the address of the reference to the adapter interface, EnumAdapters increments the adapter interface's reference count. When you finish using the  adapter interface, call the Release method to decrement the reference count before you destroy the reference.EnumAdapters first returns the local adapter with the output on which the desktop primary is displayed. This adapter corresponds with an index of zero. EnumAdapters then returns other adapters with outputs.	
-            </remarks>	
-            <unmanaged>HRESULT IDXGIFactory::EnumAdapters([In] unsigned int Adapter,[Out] IDXGIAdapter** ppAdapter)</unmanaged>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory.GetAdapterCount">
-            <summary>
-              Return the number of available adapters from this factory.
-            </summary>
-            <returns>The number of adapters</returns>
-            <unmanaged>HRESULT IDXGIFactory::EnumAdapters([In] unsigned int Adapter,[Out] IDXGIAdapter** ppAdapter)</unmanaged>	
-        </member>
-        <member name="P:SharpDX.DXGI.Factory.Adapters">
-            <summary>
-            Return an array of <see cref="T:SharpDX.DXGI.Adapter"/> available from this factory.
-            </summary>
-            <unmanaged>HRESULT IDXGIFactory::EnumAdapters([In] unsigned int Adapter,[Out] IDXGIAdapter** ppAdapter)</unmanaged>	
-        </member>
-        <member name="T:SharpDX.DXGI.Factory1">
-            <summary>	
-            The <see cref="T:SharpDX.DXGI.Factory1"/> interface implements methods for generating DXGI objects.	
-            </summary>	
-            <remarks>	
-            This interface is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).To create a factory, call the CreateDXGIFactory1 function.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory1']/*"/>	
-            <msdn-id>ff471335</msdn-id>	
-            <unmanaged>IDXGIFactory1</unmanaged>	
-            <unmanaged-short>IDXGIFactory1</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory1.#ctor(System.IntPtr)">
-            <summary>
-            Initializes a new instance of the <see cref="T:SharpDX.DXGI.Factory1"/> class.
-            </summary>
-            <param name="nativePtr">The native pointer.</param>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory1.op_Explicit(System.IntPtr)~SharpDX.DXGI.Factory1">
-            <summary>
-            Performs an explicit conversion from <see cref="T:System.IntPtr"/> to <see cref="T:SharpDX.DXGI.Factory1"/>. (This method is a shortcut to <see cref="P:SharpDX.CppObject.NativePointer"/>) 
-            </summary>
-            <param name="nativePointer">The native pointer.</param>
-            <returns>
-            The result of the conversion.
-            </returns>
-        </member>
-        <member name="M:SharpDX.DXGI.Factory1.GetAdapter1(System.Int32,SharpDX.DXGI.Adapter1@)">
-            <summary>	
-            Enumerates both adapters (video cards) with or without outputs.	
-            </summary>	
-            <param name="adapter"><para>The index of the adapter to enumerate.</para></param>	
-            <param name="adapterOut"><para>The address of a reference to an <see cref="T:SharpDX.DXGI.Adapter1"/> interface at the position specified by the Adapter parameter.   This parameter must not be <c>null</c>.</para></param>	
-            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns <see cref="F:SharpDX.DXGI.ResultCode.NotFound"/> if the index is greater than or equal to the number of adapters in the local  system, or <see cref="F:SharpDX.DXGI.ResultCode.InvalidCall"/> if ppAdapter parameter is <c>null</c>.</returns>	
-            <remarks>	
-            This method is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).When you create a factory, the factory enumerates the set of adapters that are available in the system. Therefore, if you change the adapters in a system, you must destroy  and recreate the <see cref="T:SharpDX.DXGI.Factory1"/> object. The number of adapters in a system changes when you add or remove a display card, or dock or undock a laptop.When the EnumAdapters1 method succeeds and fills the ppAdapter parameter with the address of the reference to the adapter interface, EnumAdapters1 increments the adapter interface's reference count. When you finish using the  adapter interface, call the Release method to decrement the reference count before you destroy the reference.EnumAdapters1 first returns the local adapter with the output on which the desktop primary is displayed. This adapter corresponds with an index of zero. EnumAdapters1 next returns other adapters with outputs. EnumAdapters1 finally returns adapters without outputs.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory1::EnumAdapters1']/*"/>	
-            <msdn-id>ff471336</msdn-id>	
-            <unmanaged>HRESULT IDXGIFactory1::EnumAdapters1([In] unsigned int Adapter,[Out] IDXGIAdapter1** ppAdapter)</unmanaged>	
-            <unmanaged-short>IDXGIFactory1::EnumAdapters1</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory1.IsCurrent_">
-            <summary>	
-            Informs an application of the possible need to re-enumerate adapters.	
-            </summary>	
-            <returns>FALSE, if a new adapter is becoming available or the current adapter is going away. TRUE, no adapter changes.IsCurrent returns <see cref="F:SharpDX.Result.False"/> to inform the calling application to re-enumerate adapters.</returns>	
-            <remarks>	
-            This method is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory1::IsCurrent']/*"/>	
-            <msdn-id>ff471337</msdn-id>	
-            <unmanaged>BOOL IDXGIFactory1::IsCurrent()</unmanaged>	
-            <unmanaged-short>IDXGIFactory1::IsCurrent</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory1.#ctor">
-            <summary>
-              Default Constructor for Factory1.
-            </summary>
-        </member>
-        <member name="M:SharpDX.DXGI.Factory1.GetAdapter1(System.Int32)">
-            <summary>	
-            Gets both adapters (video cards) with or without outputs.	
-            </summary>	
-            <param name="adapter"><para>The index of the adapter to enumerate.</para></param>	
-            <returns>a reference to an <see cref="T:SharpDX.DXGI.Adapter1"/> interface at the position specified by the Adapter parameter</returns>	
-            <remarks>	
-            This method is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).When you create a factory, the factory enumerates the set of adapters that are available in the system. Therefore, if you change the adapters in a system, you must destroy  and recreate the <see cref="T:SharpDX.DXGI.Factory1"/> object. The number of adapters in a system changes when you add or remove a display card, or dock or undock a laptop.When the EnumAdapters1 method succeeds and fills the ppAdapter parameter with the address of the reference to the adapter interface, EnumAdapters1 increments the adapter interface's reference count. When you finish using the  adapter interface, call the Release method to decrement the reference count before you destroy the reference.EnumAdapters1 first returns the local adapter with the output on which the desktop primary is displayed. This adapter corresponds with an index of zero. EnumAdapters1 next returns other adapters with outputs. EnumAdapters1 finally returns adapters without outputs.	
-            </remarks>	
-            <unmanaged>HRESULT IDXGIFactory1::EnumAdapters1([In] unsigned int Adapter,[Out] IDXGIAdapter1** ppAdapter)</unmanaged>	
-        </member>
-        <member name="M:SharpDX.DXGI.Factory1.GetAdapterCount1">
-            <summary>
-              Return the number of available adapters from this factory.
-            </summary>
-            <returns>The number of adapters</returns>
-            <unmanaged>HRESULT IDXGIFactory1::EnumAdapters1([In] unsigned int Adapter,[Out] IDXGIAdapter1** ppAdapter)</unmanaged>	
-        </member>
-        <member name="P:SharpDX.DXGI.Factory1.IsCurrent">
-            <summary>	
-            Informs an application of the possible need to re-enumerate adapters.	
-            </summary>	
-            <remarks>	
-            This method is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='IDXGIFactory1::IsCurrent']/*"/>	
-            <msdn-id>ff471337</msdn-id>	
-            <unmanaged>IsCurrent</unmanaged>	
-            <unmanaged-short>IsCurrent</unmanaged-short>	
-            <unmanaged>BOOL IDXGIFactory1::IsCurrent()</unmanaged>
-        </member>
-        <member name="P:SharpDX.DXGI.Factory1.Adapters1">
-            <summary>
-            Return an array of <see cref="T:SharpDX.DXGI.Adapter1"/> available from this factory.
-            </summary>
-            <unmanaged>HRESULT IDXGIFactory1::EnumAdapters1([In] unsigned int Adapter,[Out] IDXGIAdapter1** ppAdapter)</unmanaged>	
         </member>
         <member name="T:SharpDX.DXGI.KeyedMutex">
             <summary>	
@@ -3370,213 +3417,6 @@
             	<c>true</c> if this swapchain is in fullscreen; otherwise, <c>false</c>.
             </value>
         </member>
-        <member name="T:SharpDX.DXGI.DXGI">
-            <summary>	
-            Functions	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='SharpDX.DXGI.DXGI']/*"/>	
-        </member>
-        <member name="M:SharpDX.DXGI.DXGI.CreateDXGIFactory1(System.Guid,System.IntPtr@)">
-            <summary>	
-            Creates a DXGI 1.1 factory that generates objects used to enumerate and specify video graphics settings.	
-            </summary>	
-            <param name="riid"><para>The globally unique identifier (<see cref="T:System.Guid"/>) of the <see cref="T:SharpDX.DXGI.Factory1"/> object referenced by  the ppFactory parameter.</para></param>	
-            <param name="factoryOut"><para>Address of a reference to an <see cref="T:SharpDX.DXGI.Factory1"/> object.</para></param>	
-            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; an error code otherwise. For a list of error codes, see DXGI_ERROR.</returns>	
-            <remarks>	
-            Use a DXGI 1.1 factory to generate objects that enumerate adapters,  create swap chains, and associate a window with  the alt+enter key sequence for toggling to and from the full-screen display mode.If the CreateDXGIFactory1 function succeeds, the reference count on the <see cref="T:SharpDX.DXGI.Factory1"/> interface is incremented. To avoid a memory leak, when you finish using the interface, call the IDXGIFactory1::Release method to release the interface.This entry point is not supported by DXGI 1.0, which shipped in Windows?Vista and Windows Server?2008. DXGI 1.1 support is required, which is available on  Windows?7, Windows Server?2008?R2, and as an update to Windows?Vista with Service Pack?2 (SP2) (KB 971644) and Windows Server?2008 (KB 971512).Note??Do not mix the use of DXGI 1.0 (<see cref="T:SharpDX.DXGI.Factory"/>) and DXGI 1.1 (<see cref="T:SharpDX.DXGI.Factory1"/>) in an application. Use <see cref="T:SharpDX.DXGI.Factory"/> or <see cref="T:SharpDX.DXGI.Factory1"/>, but not both in an application.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='CreateDXGIFactory1']/*"/>	
-            <msdn-id>ff471318</msdn-id>	
-            <unmanaged>HRESULT CreateDXGIFactory1([In] const GUID&amp; riid,[Out] void** ppFactory)</unmanaged>	
-            <unmanaged-short>CreateDXGIFactory1</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.DXGI.CreateDXGIFactory(System.Guid,System.IntPtr@)">
-            <summary>	
-            Creates a DXGI 1.0 factory that generates objects used to enumerate and specify video graphics settings.	
-            </summary>	
-            <param name="riid"><para>The globally unique identifier (<see cref="T:System.Guid"/>) of the <see cref="T:SharpDX.DXGI.Factory"/> object referenced by the ppFactory parameter.</para></param>	
-            <param name="factoryOut"><para>Address of a reference to an <see cref="T:SharpDX.DXGI.Factory"/> object.</para></param>	
-            <returns>Returns <see cref="F:SharpDX.Result.Ok"/> if successful; otherwise, returns one of the following DXGI_ERROR.</returns>	
-            <remarks>	
-            Use a DXGI factory to generate objects that enumerate adapters, create swap chains, and associate a window with the alt+enter key sequence for toggling to and from the fullscreen display mode.If the CreateDXGIFactory function succeeds, the reference count on the <see cref="T:SharpDX.DXGI.Factory"/> interface is incremented. To avoid a memory leak, when you finish using the interface, call the IDXGIFactory::Release method to release the interface.Note??Do not mix the use of DXGI 1.0 (<see cref="T:SharpDX.DXGI.Factory"/>) and DXGI 1.1 (<see cref="T:SharpDX.DXGI.Factory1"/>) in an application. Use <see cref="T:SharpDX.DXGI.Factory"/> or <see cref="T:SharpDX.DXGI.Factory1"/>, but not both in an application.The CreateDXGIFactory function does not exist for Metro style apps. Instead, Metro style apps use the  CreateDXGIFactory1 function.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='CreateDXGIFactory']/*"/>	
-            <msdn-id>bb204862</msdn-id>	
-            <unmanaged>HRESULT CreateDXGIFactory([In] const GUID&amp; riid,[Out] void** ppFactory)</unmanaged>	
-            <unmanaged-short>CreateDXGIFactory</unmanaged-short>	
-        </member>
-        <member name="T:SharpDX.DXGI.ResultCode">
-            <summary>	
-            Functions	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='SharpDX.DXGI.ResultCode']/*"/>	
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.RemoteClientDisconnected">
-            <summary>Constant RemoteClientDisconnected.</summary>
-            <unmanaged>DXGI_ERROR_REMOTE_CLIENT_DISCONNECTED</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.DeviceRemoved">
-            <summary>Constant DeviceRemoved.</summary>
-            <unmanaged>DXGI_ERROR_DEVICE_REMOVED</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.Nonexclusive">
-            <summary>Constant Nonexclusive.</summary>
-            <unmanaged>DXGI_ERROR_NONEXCLUSIVE</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.FrameStatisticsDisjoint">
-            <summary>Constant FrameStatisticsDisjoint.</summary>
-            <unmanaged>DXGI_ERROR_FRAME_STATISTICS_DISJOINT</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.DeviceHung">
-            <summary>Constant DeviceHung.</summary>
-            <unmanaged>DXGI_ERROR_DEVICE_HUNG</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.RemoteOutofmemory">
-            <summary>Constant RemoteOutofmemory.</summary>
-            <unmanaged>DXGI_ERROR_REMOTE_OUTOFMEMORY</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.Unsupported">
-            <summary>Constant Unsupported.</summary>
-            <unmanaged>DXGI_ERROR_UNSUPPORTED</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.NotFound">
-            <summary>Constant NotFound.</summary>
-            <unmanaged>DXGI_ERROR_NOT_FOUND</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.DeviceReset">
-            <summary>Constant DeviceReset.</summary>
-            <unmanaged>DXGI_ERROR_DEVICE_RESET</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.MoreData">
-            <summary>Constant MoreData.</summary>
-            <unmanaged>DXGI_ERROR_MORE_DATA</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.DriverInternalError">
-            <summary>Constant DriverInternalError.</summary>
-            <unmanaged>DXGI_ERROR_DRIVER_INTERNAL_ERROR</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.InvalidCall">
-            <summary>Constant InvalidCall.</summary>
-            <unmanaged>DXGI_ERROR_INVALID_CALL</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.GraphicsVidpnSourceInUse">
-            <summary>Constant GraphicsVidpnSourceInUse.</summary>
-            <unmanaged>DXGI_ERROR_GRAPHICS_VIDPN_SOURCE_IN_USE</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.WasStillDrawing">
-            <summary>Constant WasStillDrawing.</summary>
-            <unmanaged>DXGI_ERROR_WAS_STILL_DRAWING</unmanaged>
-        </member>
-        <member name="F:SharpDX.DXGI.ResultCode.NotCurrentlyAvailable">
-            <summary>Constant NotCurrentlyAvailable.</summary>
-            <unmanaged>DXGI_ERROR_NOT_CURRENTLY_AVAILABLE</unmanaged>
-        </member>
-        <member name="T:SharpDX.DXGI.FormatHelper">
-            <summary>
-            Helper to use with <see cref="T:SharpDX.DXGI.Format"/>.
-            </summary>
-        </member>
-        <member name="M:SharpDX.DXGI.FormatHelper.SizeOfInBytes(SharpDX.DXGI.Format)">
-            <summary>
-            Calculates the size of a <see cref="T:SharpDX.DXGI.Format"/> in bytes.
-            </summary>
-            <param name="format">The dxgi format.</param>
-            <returns>size of in bytes</returns>
-        </member>
-        <member name="M:SharpDX.DXGI.FormatHelper.SizeOfInBits(SharpDX.DXGI.Format)">
-            <summary>
-            Calculates the size of a <see cref="T:SharpDX.DXGI.Format"/> in bits.
-            </summary>
-            <param name="format">The dxgi format.</param>
-            <returns>size of in bits</returns>
-        </member>
-        <member name="T:SharpDX.DXGI.NamespaceDoc">
-            <summary>
-            The <see cref="N:SharpDX.DXGI"/> namespace provides a managed DXGI API.
-            </summary>
-            <msdn-id>hh404534</msdn-id>
-            <unmanaged>DXGI</unmanaged>	
-            <unmanaged-short>DXGI</unmanaged-short>	
-        </member>
-        <member name="T:SharpDX.DXGI.ModeDescription">
-            <summary>	
-            Describes a display mode.	
-            </summary>	
-            <remarks>	
-            The following format values are valid for display modes and when you create a bit-block transfer (bitblt) model swap chain. The valid values depend on the feature level that you are working with.<para>Feature level &gt;= 9.1</para>	
-               <see cref="F:SharpDX.DXGI.Format.R8G8B8A8_UNorm"/>  <see cref="F:SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb"/>  <see cref="F:SharpDX.DXGI.Format.B8G8R8A8_UNorm"/> (except 10.x on Windows?Vista) <see cref="F:SharpDX.DXGI.Format.B8G8R8A8_UNorm_SRgb"/> (except 10.x on Windows?Vista)    <para>Feature level &gt;= 10.0</para>	
-               <see cref="F:SharpDX.DXGI.Format.R16G16B16A16_Float"/>  <see cref="F:SharpDX.DXGI.Format.R10G10B10A2_UNorm"/>    <para>Feature level &gt;= 11.0</para>	
-              <see cref="F:SharpDX.DXGI.Format.R10G10B10_Xr_Bias_A2_UNorm"/>You can pass one of these format values to <see cref="!:SharpDX.Direct3D11.Device.CheckFormatSupport"/> to determine if it is a valid format for displaying on screen. If <see cref="!:SharpDX.Direct3D11.Device.CheckFormatSupport"/> returns <see cref="!:SharpDX.Direct3D11.FormatSupport.Display"/> in the bit field to which the pFormatSupport parameter points, the format is valid for displaying on screen.Starting with Windows Developer Preview for a flip model swap chain (that is, a swap chain that has the DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL value set in the SwapEffect member of <see cref="T:SharpDX.DXGI.SwapChainDescription"/>), you must set the Format member of <see cref="T:SharpDX.DXGI.ModeDescription"/> to <see cref="F:SharpDX.DXGI.Format.R16G16B16A16_Float"/>, <see cref="F:SharpDX.DXGI.Format.B8G8R8A8_UNorm"/>, or <see cref="F:SharpDX.DXGI.Format.R8G8B8A8_UNorm"/>.Because of the relaxed render target creation rules that Direct3D 11 has for back buffers, applications can create a <see cref="F:SharpDX.DXGI.Format.B8G8R8A8_UNorm_SRgb"/> render target view from a <see cref="F:SharpDX.DXGI.Format.B8G8R8A8_UNorm"/> swap chain so they can use automatic color space conversion when they render the swap chain.	
-            </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC']/*"/>	
-            <msdn-id>bb173064</msdn-id>	
-            <unmanaged>DXGI_MODE_DESC</unmanaged>	
-            <unmanaged-short>DXGI_MODE_DESC</unmanaged-short>	
-        </member>
-        <member name="M:SharpDX.DXGI.ModeDescription.#ctor(System.Int32,System.Int32,SharpDX.DXGI.Rational,SharpDX.DXGI.Format)">
-            <summary>
-              Initializes a new instance of the <see cref = "T:SharpDX.DXGI.ModeDescription" /> structure.
-            </summary>
-            <param name = "width">The width.</param>
-            <param name = "height">The height.</param>
-            <param name = "refreshRate">The refresh rate.</param>
-            <param name = "format">The format.</param>
-        </member>
-        <member name="F:SharpDX.DXGI.ModeDescription.Width">
-            <summary>	
-            <para>A value that describes the resolution width. If you specify the width as zero when you call the  <see cref="M:SharpDX.DXGI.Factory.CreateSwapChain(SharpDX.ComObject,SharpDX.DXGI.SwapChainDescription@,SharpDX.DXGI.SwapChain)"/> method to create a swap chain, the runtime obtains the width from the output window and assigns this width value to the swap-chain description. You can subsequently call the <see cref="M:SharpDX.DXGI.SwapChain.GetDescription(SharpDX.DXGI.SwapChainDescription@)"/> method to retrieve the assigned width value.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::Width']/*"/>	
-            <msdn-id>bb173064</msdn-id>	
-            <unmanaged>unsigned int Width</unmanaged>	
-            <unmanaged-short>unsigned int Width</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.DXGI.ModeDescription.Height">
-            <summary>	
-            <para>A value describing the resolution height. If you specify the height as zero when you call the  <see cref="M:SharpDX.DXGI.Factory.CreateSwapChain(SharpDX.ComObject,SharpDX.DXGI.SwapChainDescription@,SharpDX.DXGI.SwapChain)"/> method to create a swap chain, the runtime obtains the height from the output window and assigns this height value to the swap-chain description. You can subsequently call the <see cref="M:SharpDX.DXGI.SwapChain.GetDescription(SharpDX.DXGI.SwapChainDescription@)"/> method to retrieve the assigned height value.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::Height']/*"/>	
-            <msdn-id>bb173064</msdn-id>	
-            <unmanaged>unsigned int Height</unmanaged>	
-            <unmanaged-short>unsigned int Height</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.DXGI.ModeDescription.RefreshRate">
-            <summary>	
-            <para>A <see cref="T:SharpDX.DXGI.Rational"/> structure describing the refresh rate in hertz</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::RefreshRate']/*"/>	
-            <msdn-id>bb173064</msdn-id>	
-            <unmanaged>DXGI_RATIONAL RefreshRate</unmanaged>	
-            <unmanaged-short>DXGI_RATIONAL RefreshRate</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.DXGI.ModeDescription.Format">
-            <summary>	
-            <para>A <see cref="T:SharpDX.DXGI.Format"/> structure describing the display format.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::Format']/*"/>	
-            <msdn-id>bb173064</msdn-id>	
-            <unmanaged>DXGI_FORMAT Format</unmanaged>	
-            <unmanaged-short>DXGI_FORMAT Format</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.DXGI.ModeDescription.ScanlineOrdering">
-            <summary>	
-            <para>A member of the <see cref="T:SharpDX.DXGI.DisplayModeScanlineOrder"/> enumerated type describing the scanline drawing mode.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::ScanlineOrdering']/*"/>	
-            <msdn-id>bb173064</msdn-id>	
-            <unmanaged>DXGI_MODE_SCANLINE_ORDER ScanlineOrdering</unmanaged>	
-            <unmanaged-short>DXGI_MODE_SCANLINE_ORDER ScanlineOrdering</unmanaged-short>	
-        </member>
-        <member name="F:SharpDX.DXGI.ModeDescription.Scaling">
-            <summary>	
-            <para>A member of the <see cref="T:SharpDX.DXGI.DisplayModeScaling"/> enumerated type describing the scaling mode.</para>	
-            </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::Scaling']/*"/>	
-            <msdn-id>bb173064</msdn-id>	
-            <unmanaged>DXGI_MODE_SCALING Scaling</unmanaged>	
-            <unmanaged-short>DXGI_MODE_SCALING Scaling</unmanaged-short>	
-        </member>
         <member name="T:SharpDX.DXGI.AdapterDescription">
             <summary>	
             Describes an adapter (or video card) by using DXGI 1.0.	
@@ -3957,6 +3797,84 @@
             <unmanaged>unsigned char* pBits</unmanaged>	
             <unmanaged-short>unsigned char pBits</unmanaged-short>	
         </member>
+        <member name="T:SharpDX.DXGI.ModeDescription">
+            <summary>	
+            Describes a display mode.	
+            </summary>	
+            <remarks>	
+            The following format values are valid for display modes and when you create a bit-block transfer (bitblt) model swap chain. The valid values depend on the feature level that you are working with.<para>Feature level &gt;= 9.1</para>	
+               <see cref="F:SharpDX.DXGI.Format.R8G8B8A8_UNorm"/>  <see cref="F:SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb"/>  <see cref="F:SharpDX.DXGI.Format.B8G8R8A8_UNorm"/> (except 10.x on Windows?Vista) <see cref="F:SharpDX.DXGI.Format.B8G8R8A8_UNorm_SRgb"/> (except 10.x on Windows?Vista)    <para>Feature level &gt;= 10.0</para>	
+               <see cref="F:SharpDX.DXGI.Format.R16G16B16A16_Float"/>  <see cref="F:SharpDX.DXGI.Format.R10G10B10A2_UNorm"/>    <para>Feature level &gt;= 11.0</para>	
+              <see cref="F:SharpDX.DXGI.Format.R10G10B10_Xr_Bias_A2_UNorm"/>You can pass one of these format values to <see cref="!:SharpDX.Direct3D11.Device.CheckFormatSupport"/> to determine if it is a valid format for displaying on screen. If <see cref="!:SharpDX.Direct3D11.Device.CheckFormatSupport"/> returns <see cref="!:SharpDX.Direct3D11.FormatSupport.Display"/> in the bit field to which the pFormatSupport parameter points, the format is valid for displaying on screen.Starting with Windows Developer Preview for a flip model swap chain (that is, a swap chain that has the DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL value set in the SwapEffect member of <see cref="T:SharpDX.DXGI.SwapChainDescription"/>), you must set the Format member of <see cref="T:SharpDX.DXGI.ModeDescription"/> to <see cref="F:SharpDX.DXGI.Format.R16G16B16A16_Float"/>, <see cref="F:SharpDX.DXGI.Format.B8G8R8A8_UNorm"/>, or <see cref="F:SharpDX.DXGI.Format.R8G8B8A8_UNorm"/>.Because of the relaxed render target creation rules that Direct3D 11 has for back buffers, applications can create a <see cref="F:SharpDX.DXGI.Format.B8G8R8A8_UNorm_SRgb"/> render target view from a <see cref="F:SharpDX.DXGI.Format.B8G8R8A8_UNorm"/> swap chain so they can use automatic color space conversion when they render the swap chain.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC']/*"/>	
+            <msdn-id>bb173064</msdn-id>	
+            <unmanaged>DXGI_MODE_DESC</unmanaged>	
+            <unmanaged-short>DXGI_MODE_DESC</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.DXGI.ModeDescription.Width">
+            <summary>	
+            <para>A value that describes the resolution width. If you specify the width as zero when you call the  <see cref="M:SharpDX.DXGI.Factory.CreateSwapChain(SharpDX.ComObject,SharpDX.DXGI.SwapChainDescription@,SharpDX.DXGI.SwapChain)"/> method to create a swap chain, the runtime obtains the width from the output window and assigns this width value to the swap-chain description. You can subsequently call the <see cref="M:SharpDX.DXGI.SwapChain.GetDescription(SharpDX.DXGI.SwapChainDescription@)"/> method to retrieve the assigned width value.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::Width']/*"/>	
+            <msdn-id>bb173064</msdn-id>	
+            <unmanaged>unsigned int Width</unmanaged>	
+            <unmanaged-short>unsigned int Width</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.DXGI.ModeDescription.Height">
+            <summary>	
+            <para>A value describing the resolution height. If you specify the height as zero when you call the  <see cref="M:SharpDX.DXGI.Factory.CreateSwapChain(SharpDX.ComObject,SharpDX.DXGI.SwapChainDescription@,SharpDX.DXGI.SwapChain)"/> method to create a swap chain, the runtime obtains the height from the output window and assigns this height value to the swap-chain description. You can subsequently call the <see cref="M:SharpDX.DXGI.SwapChain.GetDescription(SharpDX.DXGI.SwapChainDescription@)"/> method to retrieve the assigned height value.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::Height']/*"/>	
+            <msdn-id>bb173064</msdn-id>	
+            <unmanaged>unsigned int Height</unmanaged>	
+            <unmanaged-short>unsigned int Height</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.DXGI.ModeDescription.RefreshRate">
+            <summary>	
+            <para>A <see cref="T:SharpDX.DXGI.Rational"/> structure describing the refresh rate in hertz</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::RefreshRate']/*"/>	
+            <msdn-id>bb173064</msdn-id>	
+            <unmanaged>DXGI_RATIONAL RefreshRate</unmanaged>	
+            <unmanaged-short>DXGI_RATIONAL RefreshRate</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.DXGI.ModeDescription.Format">
+            <summary>	
+            <para>A <see cref="T:SharpDX.DXGI.Format"/> structure describing the display format.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::Format']/*"/>	
+            <msdn-id>bb173064</msdn-id>	
+            <unmanaged>DXGI_FORMAT Format</unmanaged>	
+            <unmanaged-short>DXGI_FORMAT Format</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.DXGI.ModeDescription.ScanlineOrdering">
+            <summary>	
+            <para>A member of the <see cref="T:SharpDX.DXGI.DisplayModeScanlineOrder"/> enumerated type describing the scanline drawing mode.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::ScanlineOrdering']/*"/>	
+            <msdn-id>bb173064</msdn-id>	
+            <unmanaged>DXGI_MODE_SCANLINE_ORDER ScanlineOrdering</unmanaged>	
+            <unmanaged-short>DXGI_MODE_SCANLINE_ORDER ScanlineOrdering</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.DXGI.ModeDescription.Scaling">
+            <summary>	
+            <para>A member of the <see cref="T:SharpDX.DXGI.DisplayModeScaling"/> enumerated type describing the scaling mode.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_MODE_DESC::Scaling']/*"/>	
+            <msdn-id>bb173064</msdn-id>	
+            <unmanaged>DXGI_MODE_SCALING Scaling</unmanaged>	
+            <unmanaged-short>DXGI_MODE_SCALING Scaling</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.ModeDescription.#ctor(System.Int32,System.Int32,SharpDX.DXGI.Rational,SharpDX.DXGI.Format)">
+            <summary>
+              Initializes a new instance of the <see cref = "T:SharpDX.DXGI.ModeDescription" /> structure.
+            </summary>
+            <param name = "width">The width.</param>
+            <param name = "height">The height.</param>
+            <param name = "refreshRate">The refresh rate.</param>
+            <param name = "format">The format.</param>
+        </member>
         <member name="T:SharpDX.DXGI.OutputDescription">
             <summary>	
             Describes an output or physical connection between the adapter (video card) and a device.	
@@ -4013,6 +3931,83 @@
             <msdn-id>bb173068</msdn-id>	
             <unmanaged>BOOL AttachedToDesktop</unmanaged>	
             <unmanaged-short>BOOL AttachedToDesktop</unmanaged-short>	
+        </member>
+        <member name="T:SharpDX.DXGI.Rational">
+            <summary>	
+            Represents a rational number.	
+            </summary>	
+            <remarks>	
+            The <see cref="T:SharpDX.DXGI.Rational"/> structure operates under the following rules:0/0 is legal and will be interpreted as 0/1. 0/anything is interpreted as zero. If you are representing a whole number, the denominator should be 1.	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_RATIONAL']/*"/>	
+            <msdn-id>bb173069</msdn-id>	
+            <unmanaged>DXGI_RATIONAL</unmanaged>	
+            <unmanaged-short>DXGI_RATIONAL</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.DXGI.Rational.Numerator">
+            <summary>	
+            <para>An unsigned integer value representing the top of the rational number.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_RATIONAL::Numerator']/*"/>	
+            <msdn-id>bb173069</msdn-id>	
+            <unmanaged>unsigned int Numerator</unmanaged>	
+            <unmanaged-short>unsigned int Numerator</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.DXGI.Rational.Denominator">
+            <summary>	
+            <para>An unsigned integer value representing the bottom of the rational number.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_RATIONAL::Denominator']/*"/>	
+            <msdn-id>bb173069</msdn-id>	
+            <unmanaged>unsigned int Denominator</unmanaged>	
+            <unmanaged-short>unsigned int Denominator</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.Rational.#ctor(System.Int32,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref = "T:SharpDX.DXGI.Rational" /> structure.
+            </summary>
+            <param name = "numerator">The numerator of the rational pair.</param>
+            <param name = "denominator">The denominator of the rational pair.</param>
+        </member>
+        <member name="T:SharpDX.DXGI.SampleDescription">
+            <summary>	
+            Describes multi-sampling parameters for a resource.	
+            </summary>	
+            <remarks>	
+            The default sampler mode, with no anti-aliasing, has a count of 1 and a quality level of 0.If multi-sample antialiasing is being used, all bound render targets and depth buffers must have the same sample counts and quality levels.<para>Differences between Direct3D 10.0 and Direct3D 10.1 and between Direct3D 10.0 and Direct3D 11:</para>	
+             <para>Direct3D 10.1 has defined two standard quality levels:   <see cref="!:SharpDX.Direct3D10.StandardMultisampleQualityLevels.StandardMultisamplePattern"/> and <see cref="!:SharpDX.Direct3D10.StandardMultisampleQualityLevels.CenterMultisamplePattern"/> in the <see cref="!:SharpDX.Direct3D10.StandardMultisampleQualityLevels"/> enumeration in D3D10_1.h.</para>	
+             <para>Direct3D 11 has defined two standard quality levels:   <see cref="!:SharpDX.Direct3D11.StandardMultisampleQualityLevels.StandardMultisamplePattern"/> and <see cref="!:SharpDX.Direct3D11.StandardMultisampleQualityLevels.CenterMultisamplePattern"/> in the <see cref="!:SharpDX.Direct3D11.StandardMultisampleQualityLevels"/> enumeration in D3D11.h.</para>?	
+            </remarks>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_SAMPLE_DESC']/*"/>	
+            <msdn-id>bb173072</msdn-id>	
+            <unmanaged>DXGI_SAMPLE_DESC</unmanaged>	
+            <unmanaged-short>DXGI_SAMPLE_DESC</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.DXGI.SampleDescription.Count">
+            <summary>	
+            <para>The number of multisamples per pixel.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_SAMPLE_DESC::Count']/*"/>	
+            <msdn-id>bb173072</msdn-id>	
+            <unmanaged>unsigned int Count</unmanaged>	
+            <unmanaged-short>unsigned int Count</unmanaged-short>	
+        </member>
+        <member name="F:SharpDX.DXGI.SampleDescription.Quality">
+            <summary>	
+            <para>The image quality level. The higher the quality, the lower the performance. The valid range is between zero and one less than the level returned  by <see cref="!:SharpDX.Direct3D10.Device.CheckMultisampleQualityLevels"/> for Direct3D 10 or <see cref="!:SharpDX.Direct3D11.Device.CheckMultisampleQualityLevels"/> for Direct3D 11.</para>	
+             <para>For Direct3D 10.1 and Direct3D 11, you can use two special quality level values. For more information about these quality level values, see Remarks.</para>	
+            </summary>	
+            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='DXGI_SAMPLE_DESC::Quality']/*"/>	
+            <msdn-id>bb173072</msdn-id>	
+            <unmanaged>unsigned int Quality</unmanaged>	
+            <unmanaged-short>unsigned int Quality</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.SampleDescription.#ctor(System.Int32,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref = "T:SharpDX.DXGI.SampleDescription" /> structure.
+            </summary>
+            <param name = "count">The sample count.</param>
+            <param name = "quality">The sample quality.</param>
         </member>
         <member name="T:SharpDX.DXGI.SharedResource">
             <summary>	
@@ -4166,13 +4161,18 @@
             <unmanaged>BOOL Windowed</unmanaged>	
             <unmanaged-short>BOOL Windowed</unmanaged-short>	
         </member>
-        <member name="T:SharpDX.DXGI.AssemblyDoc">
+        <member name="T:SharpDX.DXGI.ModuleInit">
             <summary>
-            The <see cref="A:SharpDX.DXGI"/> assembly provides managed DXGI API.
+            Internal class used to initialize this assembly.
             </summary>
-            <msdn-id>hh404534</msdn-id>
-            <unmanaged>DXGI</unmanaged>	
-            <unmanaged-short>DXGI</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.DXGI.ModuleInit.Setup">
+            <summary>
+            Initializes this assembly.
+            </summary>
+            <remarks>
+            This method is called when the assembly is loaded.
+            </remarks>
         </member>
     </members>
 </doc>

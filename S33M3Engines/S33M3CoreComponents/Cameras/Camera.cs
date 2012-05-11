@@ -9,6 +9,7 @@ using SharpDX.Direct3D11;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.WorldFocus.Interfaces;
+using S33M3_DXEngine.Main;
 #endregion
 
 namespace S33M3CoreComponents.Cameras
@@ -21,7 +22,7 @@ namespace S33M3CoreComponents.Cameras
 
     public delegate void CameraUpdateOrder(ICamera camera, int newOrderId);
 
-    public abstract class Camera : Component, ICamera
+    public abstract class Camera : BaseComponent, ICamera
     {
         #region Private TimeDepending Variable ===> Will be LERPED, SLERPED or recomputed
         protected Vector3D _worldPosition = new Vector3D();

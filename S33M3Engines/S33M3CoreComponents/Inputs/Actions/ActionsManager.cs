@@ -8,6 +8,7 @@ using S33M3DXEngine;
 using System.Diagnostics;
 using System.Reflection;
 using SharpDX;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Inputs.Actions
 {
@@ -16,7 +17,7 @@ namespace S33M3CoreComponents.Inputs.Actions
     /// Everything will run in an separated thread, running as fast as possible to avoid missing a input event (Keypress, ...)
     /// The result will be "buffered" until requested.
     /// </summary>
-    public class ActionsManager : Component
+    public class ActionsManager : BaseComponent
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 

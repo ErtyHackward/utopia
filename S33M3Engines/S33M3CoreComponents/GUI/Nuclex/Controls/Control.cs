@@ -27,6 +27,7 @@ using System.Diagnostics;
 using S33M3CoreComponents.GUI.Nuclex.Input;
 using System.Windows.Forms;
 using S33M3Resources.Structs;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Controls
 {
@@ -47,7 +48,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
     ///     even think about graphics device resets and similar trouble.
     ///   </para>
     /// </remarks>
-    public partial class Control : Component
+    public partial class Control : BaseComponent
     {
         private ByteColor _color = Colors.White;
         public bool ColorSet { get; private set; }

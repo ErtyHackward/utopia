@@ -5,10 +5,11 @@ using System.Text;
 using SharpDX;
 using S33M3DXEngine;
 using System.Windows.Forms;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Inputs.KeyboardHandler
 {
-    public class KeyboardManager : Component
+    public class KeyboardManager : BaseComponent
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 

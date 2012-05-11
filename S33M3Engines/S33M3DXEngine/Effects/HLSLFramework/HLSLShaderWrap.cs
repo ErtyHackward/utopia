@@ -11,6 +11,7 @@ using SharpDX;
 using System.IO;
 using S33M3DXEngine.VertexFormat;
 using S33M3DXEngine.Debug;
+using S33M3_DXEngine.Main;
 
 namespace S33M3DXEngine.Effects.HLSLFramework
 {
@@ -38,7 +39,7 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         public static readonly int PS = 2;
     }
 
-    public abstract class HLSLShaderWrap : Component
+    public abstract class HLSLShaderWrap : BaseComponent
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 

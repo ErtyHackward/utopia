@@ -9,10 +9,11 @@ using S33M3Resources.Structs;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.Structs.Vertex;
 using Rectangle = System.Drawing.Rectangle;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Sprites
 {
-    public class SpriteRenderer : Component, ISpriteRenderer
+    public class SpriteRenderer : BaseComponent, ISpriteRenderer
     {
         public enum TextFontPosition
         {

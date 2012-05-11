@@ -21,10 +21,11 @@ using S33M3DXEngine.Main;
 using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
+using S33M3_DXEngine.Main;
 
 namespace Utopia.Entities.Renderer
 {
-    public class DynamicEntityRenderer : Component, IEntitiesRenderer
+    public class DynamicEntityRenderer : BaseComponent, IEntitiesRenderer
     {
         #region Private variables
         private HLSLTerran _entityEffect;

@@ -6,10 +6,11 @@ using S33M3DXEngine;
 using System.Windows.Forms;
 using S33M3CoreComponents.Unsafe;
 using SharpDX;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Inputs.MouseHandler
 {
-    public class Mouse : Component
+    public class Mouse : BaseComponent
     {
         // Fields
         private MouseMessageHooker _mouseMessageHooker;
