@@ -35,7 +35,6 @@ namespace NoiseVisualisator
         Random _rnd;
         private INoise NoiseComposition(bool is2DRenderRequest)
         {
-
             long from = Stopwatch.GetTimestamp();
             UtopiaProcessor processor = new UtopiaProcessor(new Utopia.Shared.World.WorldParameters() { SeedName = "test", SeaLevel =64, WorldName = "test" });
             label4.Text = ((Stopwatch.GetTimestamp() - from) / (double)Stopwatch.Frequency * 1000.0).ToString();
@@ -50,11 +49,11 @@ namespace NoiseVisualisator
                 ground_gradient = new Gradient(0, 0, 0.42, 0);
             }
 
-            var test = new UncommonCubeDistri(123456, ground_gradient); //, ground_gradient);
+            var test = new IslandCtrl(1234156); //, ground_gradient);
 
             return test.GetLandFormFct();
 
-            return processor.CreateLandFormFct(ground_gradient);
+            //return processor.CreateLandFormFct(ground_gradient);
         }
 
         private void btStart_Click(object sender, EventArgs e)
