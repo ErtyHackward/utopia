@@ -10,6 +10,7 @@ using Utopia.Shared.Cubes;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
+using Utopia.Shared.World.Processors.Utopia.LandformFct.Biomes;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -191,12 +192,16 @@ namespace Utopia.Shared.World.Processors.Utopia
             int surfaceMud, surfaceMudLayer;
             int inWaterMaxLevel = 0;
 
+            Biome currentBiome;
+
             int index = 0;
             for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
             {
                 for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
                 {
-                    surfaceMud = 4;
+                    currentBiome = Biome.BiomeList[BiomeType.Grassland];
+
+                    surfaceMud = currentBiome.UnderSurfaceLayers.Max;
                     inWaterMaxLevel = 0;
                     surfaceMudLayer = 0;
 
@@ -209,13 +214,13 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                         if (cubeId == CubeId.Stone)
                         {
+                            cubeId = currentBiome.GroundCube;
                             //Under water soil
                             if (Y < _worldParameters.SeaLevel && inWaterMaxLevel != 0)
                             {
-                                if (cubeId == CubeId.Stone)
+                                if (cubeId == currentBiome.GroundCube)
                                 {
-                                    ChunkCubes[index] = CubeId.Dirt;
-
+                                    ChunkCubes[index] = currentBiome.UnderSurfaceCube;
                                 }
                                 break;
                             }
@@ -226,11 +231,11 @@ namespace Utopia.Shared.World.Processors.Utopia
                             {
                                 if (surfaceMudLayer == 0)
                                 {
-                                    ChunkCubes[index] = CubeId.Grass;
+                                    ChunkCubes[index] = currentBiome.SurfaceCube;
                                 }
                                 else
                                 {
-                                    ChunkCubes[index] = CubeId.Dirt;
+                                    ChunkCubes[index] = currentBiome.UnderSurfaceCube;
                                 }
                                 surfaceMudLayer++;
                             }

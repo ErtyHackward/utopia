@@ -43,6 +43,8 @@ namespace Sandbox.Client
         #region Public Methods
         public void Run()
         {
+            Utopia.Shared.World.Processors.Utopia.LandformFct.Biomes.Biome.BiomeList.Count();
+
             //Load Client config XML file
             LoadClientsSettings();
 
