@@ -29,7 +29,7 @@ namespace Sandbox.Client
             LoadClientsSettings();
 
             //Bings all components
-            IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 640));
+            IocBinding("Utopia Sandbox", new System.Drawing.Size(1024, 640));
 
             //Set Windows Icon
             _d3dEngine.GameWindow.Icon = Sandbox.Client.Properties.Resources.Utopia;

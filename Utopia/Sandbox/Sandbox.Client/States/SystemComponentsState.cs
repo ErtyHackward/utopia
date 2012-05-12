@@ -43,7 +43,10 @@ namespace Sandbox.Client.States
         {
             var guiManager = _iocContainer.Get<GuiManager>();
             var inputManager = _iocContainer.Get<InputsManager>();
-            var debugComponent = _iocContainer.Get<DebugComponent>(new ConstructorArgument("withDisplayInfoActivated", true));
+
+            DebugComponent debugComponent = null;
+            if (Program.ShowDebug)
+                debugComponent = _iocContainer.Get<DebugComponent>(new ConstructorArgument("withDisplayInfoActivated", true));
 
             //Init Common GUI Menu resources
             var commonResources = _iocContainer.Get<SandboxCommonResources>();
@@ -59,7 +62,8 @@ namespace Sandbox.Client.States
             //"Late Binding" of IVoxelModelStorage, must be done after vars is initialized
             _iocContainer.Bind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
 
-            AddComponent(debugComponent);
+            if (debugComponent != null)
+                AddComponent(debugComponent);
             AddComponent(guiManager);
             AddComponent(inputManager);
             base.Initialize(context);
