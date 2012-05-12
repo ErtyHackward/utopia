@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Drawing;
 using Ninject;
-using Sandbox.Client.Components;
-using Sandbox.Client.States;
-using Utopia;
+using Realms.Client.Components;
+using Realms.Client.Components.GUI;
+using Realms.Client.Components.GUI.Settings;
+using Realms.Client.Components.GUI.SinglePlayer;
+using Realms.Client.States;
+using Realms.Shared;
+using Sandbox.Client;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
-using Utopia.Server;
-using Utopia.Server.Managers;
-using Utopia.Shared.Entities.Dynamic;
-using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Web;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
@@ -42,26 +42,20 @@ using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Timers;
 using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.Inputs;
-using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.GUI.Nuclex;
 using Utopia.GUI.Inventory;
-using Utopia.GUI.Map;
 using S33M3DXEngine.Main.Interfaces;
 using Utopia.Action;
 using System.Collections.Generic;
 using System.Reflection;
 using S33M3CoreComponents.Debug;
 using Utopia.Shared.Entities;
-using Sandbox.Shared;
 using S33M3Resources.Structs;
-using Sandbox.Client.Components.GUI;
-using Sandbox.Client.Components.GUI.Settings;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Net.Messages;
-using Sandbox.Client.Components.GUI.SinglePlayer;
 
-namespace Sandbox.Client
+namespace Realms.Client
 {
     public partial class GameClient
     {
@@ -128,7 +122,7 @@ namespace Sandbox.Client
             //GUI =========================================================
             //Create a list of assembly where GUI components will be looked into.
             List<Assembly> componentsAssemblies = new List<Assembly>();
-            componentsAssemblies.Add(typeof(Sandbox.Client.Program).Assembly); //Add all components from Sanbox.Client Assembly
+            componentsAssemblies.Add(typeof(Program).Assembly); //Add all components from Sanbox.Client Assembly
             componentsAssemblies.Add(typeof(Utopia.UtopiaRender).Assembly); //Check inside Utopia namespace assembly
             _iocContainer.Bind<GuiManager>().ToSelf().InSingletonScope().WithConstructorArgument("skinPath", @"GUI\Skins\SandBox\SandBox.skin.xml")
                                                                         .WithConstructorArgument("plugInComponentAssemblies", componentsAssemblies);        //Gui base class
@@ -172,9 +166,9 @@ namespace Sandbox.Client
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InScope(x => GameScope.CurrentGameScope); //Impact on player action (From server events)
             _iocContainer.Bind<ILandscapeManager2D>().ToMethod(x => x.Kernel.Get<IChunkEntityImpactManager>()).InScope(x => GameScope.CurrentGameScope);
 
-            _iocContainer.Bind<SandboxEntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<RealmsEntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
-            _iocContainer.Bind<EntityFactory>().To<SandboxEntityFactory>().InScope(x => GameScope.CurrentGameScope).Named("Client");
+            _iocContainer.Bind<EntityFactory>().To<RealmsEntityFactory>().InScope(x => GameScope.CurrentGameScope).Named("Client");
 
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);

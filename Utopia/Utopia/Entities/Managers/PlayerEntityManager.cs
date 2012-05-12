@@ -176,7 +176,6 @@ namespace Utopia.Entities.Managers
                                    [Named("PlayerEntityRenderer")] IEntitiesRenderer playerRenderer,
                                    IPickingRenderer pickingRenderer,
                                    IEntityPickingManager entityPickingManager,
-                                   IGameStateToolManager gameStateToolManager,
                                    VoxelModelManager voxelModelManager
             )
         {
@@ -188,7 +187,6 @@ namespace Utopia.Entities.Managers
             _playerRenderer = playerRenderer;
             _pickingRenderer = pickingRenderer;
             _entityPickingManager = entityPickingManager;
-            _gameStateToolManager = gameStateToolManager;
 
             entityPickingManager.Player = this;
             Player = player;
@@ -244,18 +242,11 @@ namespace Utopia.Entities.Managers
             {
                 if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool!=null)
                 {
-                    if  (Player.Equipment.LeftTool is IGameStateTool)
-                    {
-                        _gameStateToolManager.Use(Player.Equipment.LeftTool as IGameStateTool);
-                    }
-                    else
-                    {                     
-                        //sends the client server event that does tool.use on server
-                        Player.LeftToolUse(ToolUseMode.LeftMouse);
+                    //sends the client server event that does tool.use on server
+                    Player.LeftToolUse(ToolUseMode.LeftMouse);
 
-                        //client invocation to keep the client inventory in synch
-                        Player.Equipment.LeftTool.Use(Player, ToolUseMode.LeftMouse);
-                    }
+                    //client invocation to keep the client inventory in synch
+                    Player.Equipment.LeftTool.Use(Player, ToolUseMode.LeftMouse);
                 }
             }
 
