@@ -46,7 +46,7 @@ namespace Sandbox.Client.Components.GUI
             
             StLogo =                    LoadTexture(engine, @"Images\logo.png");
             StShadow =                  LoadTexture(engine, @"Images\shadow.png");
-            StGameName =                LoadTexture(engine, @"Images\version.png");
+            StGameName =                LoadTexture(engine, @"Images\sandbox_version.png");
             StCubesPattern =            LoadTexture(engine, @"Images\cubes.png");
             StLinenPattern =            LoadTexture(engine, @"Images\black-linen.png");
             StInputBackground =         LoadTexture(engine, @"Images\Login\login_input_bg.png");

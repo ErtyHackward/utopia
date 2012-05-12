@@ -15,21 +15,14 @@ namespace Sandbox.Client.Components.GUI
         private readonly MainScreen _screen;
         private readonly RuntimeVariables _runtime;
 
-        private SpriteTexture _stLabelContinue;
         private SpriteTexture _stLabelCredits;
         private SpriteTexture _stLabelExit;
-        private SpriteTexture _stLabelLogOut;
-        private SpriteTexture _stLabelMultiplayer;
         private SpriteTexture _stLabelSingleplayer;
         private SpriteTexture _stLabelSettings;
-        private SpriteTexture _stLabelEditor;
         private SpriteTexture _stMainMenuLabel;
 
-        private ButtonControl _continueButton;
         private ButtonControl _singlePlayer;
-        private ButtonControl _multiplayer;
         private ButtonControl _settingsButton;
-        private ButtonControl _editor;
         private ButtonControl _credits;
         private ButtonControl _exitButton;
         private ImageControl _mainMenuLabel;
@@ -94,15 +87,10 @@ namespace Sandbox.Client.Components.GUI
 
             _engine.ViewPort_Updated += UpdateLayout;
             
-
-            _stLabelContinue        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_continue.png"));
             _stLabelCredits         = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_credits.png"));
             _stLabelExit            = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_exit.png"));
-            _stLabelLogOut          = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_logout.png"));
-            _stLabelMultiplayer     = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_multiplayer.png"));
             _stLabelSingleplayer    = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_singleplayer.png"));
             _stLabelSettings        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_settings.png"));
-            _stLabelEditor          = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_editor.png"));
             _stMainMenuLabel        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu.png"));
         }
 
@@ -120,15 +108,6 @@ namespace Sandbox.Client.Components.GUI
             const int buttonWidth = 212;
             const int buttomHeight = 40;
             
-            _continueButton = new ButtonControl{ 
-                CustomImage = _commonResources.StButtonBackground, 
-                CustomImageDown = _commonResources.StButtonBackgroundDown, 
-                CustomImageHover = _commonResources.StButtonBackgroundHover,
-                CusomImageLabel = _stLabelContinue,
-                Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
-            };
-            _continueButton.Pressed += delegate { OnContinuePressed(); };
-
             _singlePlayer = new ButtonControl
             {
                 CustomImage = _commonResources.StButtonBackground,
@@ -138,16 +117,6 @@ namespace Sandbox.Client.Components.GUI
                 Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
             };
             _singlePlayer.Pressed += delegate { OnSinglePlayerPressed(); };
-
-            _multiplayer = new ButtonControl
-            {
-                CustomImage = _commonResources.StButtonBackground,
-                CustomImageDown = _commonResources.StButtonBackgroundDown,
-                CustomImageHover = _commonResources.StButtonBackgroundHover,
-                CusomImageLabel = _stLabelMultiplayer,
-                Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
-            };
-            _multiplayer.Pressed += delegate { OnMultiplayerPressed(); };
 
             _settingsButton = new ButtonControl
             {
@@ -159,16 +128,6 @@ namespace Sandbox.Client.Components.GUI
 
             };
             _settingsButton.Pressed += delegate { OnSettingsButtonPressed(); };
-
-            _editor = new ButtonControl
-            {
-                CustomImage = _commonResources.StButtonBackground,
-                CustomImageDown = _commonResources.StButtonBackgroundDown,
-                CustomImageHover = _commonResources.StButtonBackgroundHover,
-                CusomImageLabel = _stLabelEditor,
-                Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
-            };
-            _editor.Pressed += delegate { OnEditorPressed(); };
 
             _credits = new ButtonControl
             {
@@ -190,11 +149,8 @@ namespace Sandbox.Client.Components.GUI
             };
             _exitButton.Pressed += delegate { OnExitPressed(); };
             
-            _buttonsGroup.Children.Add(_continueButton);
             _buttonsGroup.Children.Add(_singlePlayer);
-            _buttonsGroup.Children.Add(_multiplayer);
             _buttonsGroup.Children.Add(_settingsButton);
-            _buttonsGroup.Children.Add(_editor);
             _buttonsGroup.Children.Add(_credits);
             _buttonsGroup.Children.Add(_exitButton);
             _buttonsGroup.ControlsSpacing = new SharpDX.Vector2(0, 0);
@@ -219,7 +175,6 @@ namespace Sandbox.Client.Components.GUI
 
         public override void EnableComponent()
         {
-
             _nicknameLabel.Text = _runtime.DisplayName;
             _screen.Desktop.Children.Add(_helloLabel);
             _screen.Desktop.Children.Add(_nicknameLabel);
@@ -242,7 +197,7 @@ namespace Sandbox.Client.Components.GUI
         {
             _helloLabel.Bounds    = new UniRectangle((_engine.ViewPort.Width - 212) / 2 - 250, _headerHeight + 90, 50, 40);
             _nicknameLabel.Bounds = new UniRectangle((_engine.ViewPort.Width - 212) / 2 - 195, _headerHeight + 90, 200, 40);
-            _mainMenuLabel.Bounds = new UniRectangle((_engine.ViewPort.Width - 212) / 2 + 60, _headerHeight + 96, 85, 50);
+            _mainMenuLabel.Bounds = new UniRectangle((_engine.ViewPort.Width - 212) / 2 + 65, _headerHeight + 96, 85, 50);
             _buttonsGroup.Bounds  = new UniRectangle((_engine.ViewPort.Width - 212) / 2, _headerHeight + 137, 212, 400);
         }
     }
