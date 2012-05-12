@@ -3,23 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Utopia.Shared.World.Processors.Utopia.LandformFct.Biomes
+namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     public static class BiomeType
     {
         public const byte Snow = 0;
-        public const byte Tundra = 1;
-        public const byte Bare = 2;
-        public const byte Scorched = 3;
-        public const byte Taiga = 4;
-        public const byte Shrubland = 5;
-        public const byte TemperateDesert = 6;
-        public const byte TemperateRainForest = 7;
-        public const byte TemperateDeciduousForest = 8;
-        public const byte Grassland = 9;
-        public const byte TropicalRainForest = 10;
-        public const byte TropicalSeasonalForest = 11;
-        public const byte SubtropicalDesert = 12;
+        public const byte Grassland = 1;
+        public const byte Desert = 2;
+        public const byte Forest = 3;
+        public const byte Ocean = 4;
 
         public static readonly Dictionary<byte, string> BiomeTypesCollection;
 
