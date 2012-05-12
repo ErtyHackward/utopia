@@ -17,6 +17,11 @@ namespace S33M3CoreComponents.Noise.NoiseResultCombiner
         #endregion
 
         #region Public Properties
+        public NoiseParam LowSource { get { return _lowSource; } }
+        public NoiseParam HighSource { get { return _highSource; } }
+        public NoiseParam Control { get { return _control; } }
+        public NoiseParam Threshold { get { return _threshold; } }
+        public NoiseParam Falloff { get { return _falloff; } }
         #endregion
 
         public Select(object lowSource, object highSource, object control, object threshold, object falloff)

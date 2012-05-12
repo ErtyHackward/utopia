@@ -13,11 +13,19 @@ namespace S33M3CoreComponents.Noise
         #endregion
 
         #region Public Properties
+        public INoise Param
+        {
+            get { return _noiseParam; }
+        }
+        public double ScalarParam
+        {
+            get { return _scalarParam; }
+        }
         #endregion
 
         public NoiseParam(object param)
         {
-            if (param is INoise || param.GetType() == typeof(double) || param.GetType() == typeof(int))
+            if (param is Enum || param is INoise || param.GetType() == typeof(double) || param.GetType() == typeof(int) || param is NoiseParam)
             {
                 if (param is INoise)
                 {
@@ -31,7 +39,16 @@ namespace S33M3CoreComponents.Noise
                     }
                     else
                     {
-                        SetSource((int)param);
+                        if (param is int || param is Enum)
+                        {
+                            SetSource((int)param);
+                        }
+                        else
+                        {
+                            NoiseParam p = (NoiseParam)param;
+                            this._noiseParam = p.Param;
+                            this._scalarParam = p.ScalarParam;
+                        }
                     }
                 }
             }

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Cubes;
+using Utopia.Shared.Structs;
+using S33M3_Resources.Structs;
 
-namespace Utopia.Shared.World.Processors.Utopia.LandformFct.Biomes
+namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public class ScorchedBiome : Biome
+    public class GrasslandBiome : Biome
     {
         #region Private Variables
         #endregion
@@ -13,22 +16,22 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct.Biomes
         #region Public Properties
         public override byte SurfaceCube
         {
-            get { throw new NotImplementedException(); }
+            get { return CubeId.Grass; }
         }
 
         public override byte UnderSurfaceCube
         {
-            get { throw new NotImplementedException(); }
+            get { return CubeId.Dirt; }
         }
 
-        public override S33M3_Resources.Structs.RangeI UnderSurfaceLayers
+        public override RangeI UnderSurfaceLayers
         {
-            get { throw new NotImplementedException(); }
+            get { return _underSurfaceLayers; }
         }
 
         public override byte GroundCube
         {
-            get { throw new NotImplementedException(); }
+            get { return CubeId.Stone; }
         }
         #endregion
 
@@ -37,6 +40,5 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct.Biomes
 
         #region Private Methods
         #endregion
-
     }
 }

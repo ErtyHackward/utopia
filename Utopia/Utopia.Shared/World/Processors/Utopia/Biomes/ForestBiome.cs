@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Cubes;
+using S33M3_Resources.Structs;
 
-namespace Utopia.Shared.World.Processors.Utopia.LandformFct.Biomes
+namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public class TundraBiome : Biome
+    public class ForestBiome : Biome
     {
         #region Private Variables
         #endregion
@@ -13,22 +15,22 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct.Biomes
         #region Public Properties
         public override byte SurfaceCube
         {
-            get { throw new NotImplementedException(); }
+            get { return CubeId.Trunk; }
         }
 
         public override byte UnderSurfaceCube
         {
-            get { throw new NotImplementedException(); }
+            get { return CubeId.Dirt; }
         }
 
-        public override S33M3_Resources.Structs.RangeI UnderSurfaceLayers
+        public override RangeI UnderSurfaceLayers
         {
-            get { throw new NotImplementedException(); }
+            get { return _underSurfaceLayers; }
         }
 
         public override byte GroundCube
         {
-            get { throw new NotImplementedException(); }
+            get { return CubeId.Stone; }
         }
         #endregion
 

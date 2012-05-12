@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3_Resources.Structs;
+using Utopia.Shared.Cubes;
 
-namespace Utopia.Shared.World.Processors.Utopia.LandformFct.Biomes
+namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     public class SnowBiome : Biome
     {
@@ -13,22 +15,22 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct.Biomes
         #region Public Properties
         public override byte SurfaceCube
         {
-            get { throw new NotImplementedException(); }
+            get { return CubeId.Gravel; }
         }
 
         public override byte UnderSurfaceCube
         {
-            get { throw new NotImplementedException(); }
+            get { return CubeId.Dirt; }
         }
 
-        public override S33M3_Resources.Structs.RangeI UnderSurfaceLayers
+        public override RangeI UnderSurfaceLayers
         {
-            get { throw new NotImplementedException(); }
+            get { return _underSurfaceLayers; }
         }
 
         public override byte GroundCube
         {
-            get { throw new NotImplementedException(); }
+            get { return CubeId.Stone; }
         }
         #endregion
 
