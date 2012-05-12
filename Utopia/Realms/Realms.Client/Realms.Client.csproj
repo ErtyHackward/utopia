@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B2B7381A-86E2-4897-B04D-14EF79BE34C3}</ProjectGuid>
+    <ProjectGuid>{6DF982CF-DAE8-4994-9ADE-E30FD3E13723}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sandbox.Client</RootNamespace>
-    <AssemblyName>Sandbox</AssemblyName>
+    <RootNamespace>Realms.Client</RootNamespace>
+    <AssemblyName>Realms</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -141,9 +141,12 @@
     <Compile Include="GameClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RuntimeVariables.cs" />
-    <Compile Include="SandboxEntityClassId.cs" />
-    <Compile Include="SandboxEntityFactory.cs" />
     <Compile Include="States\GameScope.cs" />
     <Compile Include="States\InGameMenuState.cs" />
     <Compile Include="States\CreditsState.cs" />
@@ -157,16 +160,6 @@
     <Compile Include="States\SystemComponentsState.cs" />
     <Compile Include="States\SinglePlayerMenuState.cs" />
     <Compile Include="States\StartUpState.cs" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -177,9 +170,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\WelcomeScreen.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\S33M3Engines\S33M3CoreComponents\S33M3CoreComponents.csproj">
@@ -202,7 +192,7 @@
       <Project>{0DE240B7-B340-43AD-B663-65CFA43351ED}</Project>
       <Name>Utopia.Server</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sandbox.Resources\Sandbox.Resources.csproj">
+    <ProjectReference Include="..\..\Sandbox\Sandbox.Resources\Sandbox.Resources.csproj">
       <Project>{C09A8BDD-5E9F-43D9-91C5-7C6F6362A0B7}</Project>
       <Name>Sandbox.Resources</Name>
     </ProjectReference>
@@ -213,6 +203,10 @@
     <ProjectReference Include="..\..\Utopia\Utopia.csproj">
       <Project>{DB3E251E-EF28-44D5-9F9A-DB07624CD753}</Project>
       <Name>Utopia</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Realms.Shared\Realms.Shared.csproj">
+      <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
+      <Name>Realms.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +233,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Utopia.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

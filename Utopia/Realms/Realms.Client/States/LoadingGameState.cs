@@ -2,6 +2,8 @@
 using System.IO;
 using Ninject;
 using Ninject.Parameters;
+using Realms.Client.Components.GUI;
+using Realms.Shared;
 using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
@@ -48,13 +50,12 @@ using S33M3CoreComponents.WorldFocus.Interfaces;
 using S33M3DXEngine;
 using Utopia.Components;
 using Utopia.Shared.Interfaces;
-using Sandbox.Client.Components.GUI;
 using Utopia.Shared.Settings;
 using Utopia.Worlds.SkyDomes.SharedComp;
 using S33M3CoreComponents.Config;
 using Utopia.Shared.World.Processors.Utopia;
 
-namespace Sandbox.Client.States
+namespace Realms.Client.States
 {
     /// <summary>
     /// Main gameplay stuff. Displaying the chunks, an entities, handling an input
@@ -64,7 +65,7 @@ namespace Sandbox.Client.States
         private readonly IKernel _ioc;
         private RuntimeVariables _vars;
         private Server _server;
-        private SandboxEntityFactory _serverFactory;
+        private RealmsEntityFactory _serverFactory;
         private SharpDX.Direct3D11.DeviceContext _context;
         private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
 
@@ -151,7 +152,7 @@ namespace Sandbox.Client.States
                 _server.Dispose();
             }
 
-            _serverFactory = new SandboxEntityFactory(null);
+            _serverFactory = new RealmsEntityFactory(null);
             var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
 
             _serverSqliteStorageSinglePlayer = new SQLiteStorageManager(dbPath,_serverFactory, worldParam);

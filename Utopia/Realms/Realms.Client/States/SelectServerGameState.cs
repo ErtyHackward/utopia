@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Ninject;
-using Sandbox.Client.Components;
-using Utopia;
+using Realms.Client.Components.GUI;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
-using Sandbox.Client.Components.GUI;
 using Utopia.Shared.Net.Web;
 using Utopia.Shared.Net.Web.Responces;
 
-namespace Sandbox.Client.States
+namespace Realms.Client.States
 {
     public class SelectServerGameState : GameState
     {

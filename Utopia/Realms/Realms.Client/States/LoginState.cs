@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using Ninject;
+using Realms.Client.Components.GUI;
 using Utopia.Components;
 using Utopia.Shared.ClassExt;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
-using Sandbox.Client.Components.GUI;
 using Utopia.Shared.Net.Web;
 using Utopia.Shared.Net.Web.Responces;
 using Utopia.Shared.Settings;
 
-namespace Sandbox.Client.States
+namespace Realms.Client.States
 {
     /// <summary>
     /// First state of the game, requests login and password

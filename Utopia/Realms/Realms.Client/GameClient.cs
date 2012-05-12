@@ -1,5 +1,7 @@
 ﻿using System;
-using Sandbox.Client.States;
+using Realms.Client.Components.GUI.Settings;
+using Realms.Client.Properties;
+using Realms.Client.States;
 using Utopia.Components;
 using Ninject;
 using S33M3DXEngine.Main;
@@ -7,11 +9,10 @@ using S33M3CoreComponents.States;
 using S33M3DXEngine.Threading;
 using S33M3CoreComponents.Inputs;
 using S33M3DXEngine;
-using Sandbox.Client.Components.GUI.Settings;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Config;
 
-namespace Sandbox.Client
+namespace Realms.Client
 {
     public partial class GameClient : IDisposable
     {
@@ -32,7 +33,7 @@ namespace Sandbox.Client
             IocBinding("Utopia Sandbox mode", new System.Drawing.Size(1024, 640));
 
             //Set Windows Icon
-            _d3dEngine.GameWindow.Icon = Sandbox.Client.Properties.Resources.Utopia;
+            _d3dEngine.GameWindow.Icon = Resources.Utopia;
 
             System.Net.ServicePointManager.Expect100Continue = false;
 
