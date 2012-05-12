@@ -23,6 +23,7 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.GUI.Inventory;
 using Utopia.Components;
 using Utopia.Shared.Settings;
+using System.Linq;
 
 namespace Realms.Client.States
 {
@@ -98,7 +99,7 @@ namespace Realms.Client.States
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
             foreach (var gc in _ioc.Get<LoadingGameState>().GameComponents.Except(GameComponents))
             {
-                if (gc.GetType() != typeof(Sandbox.Client.Components.GUI.LoadingComponent))
+                if (gc.GetType() != typeof(Realms.Client.Components.GUI.LoadingComponent))
                 {
                     logger.Warn("Missing GamePlayState component, present inside LoadingGameState : {0}", gc.GetType().ToString());
                 }
@@ -107,7 +108,7 @@ namespace Realms.Client.States
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
             foreach (var gc in GameComponents.Except(_ioc.Get<LoadingGameState>().GameComponents))
             {
-                if (gc.GetType() != typeof(Sandbox.Client.Components.GUI.LoadingComponent))
+                if (gc.GetType() != typeof(Realms.Client.Components.GUI.LoadingComponent))
                 {
                     logger.Warn("Missing LoadingGameState component, present inside GamePlayState : {0}", gc.GetType().ToString());
                 }
