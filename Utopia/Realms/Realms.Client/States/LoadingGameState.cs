@@ -308,7 +308,7 @@ namespace Realms.Client.States
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
             var soundManager = _ioc.Get<GameSoundManager>();
-            var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>();
+            var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;

@@ -82,6 +82,7 @@ namespace Utopia.Worlds.Chunks
         private IEntityPickingManager _pickingManager;
         private int _readyToDrawCount;
         private StaggingBackBuffer _solidBackBuffer;
+        private StaggingBackBuffer _skyBackBuffer;
         private readonly object _counterLock = new object();
 
         /// <summary>
@@ -146,7 +147,9 @@ namespace Utopia.Worlds.Chunks
                            IEntityPickingManager pickingManager,
                            IWeather weather,
                            SharedFrameCB sharedFrameCB,
-                           StaggingBackBuffer solidBackBuffer)
+                           StaggingBackBuffer solidBackBuffer,
+                           StaggingBackBuffer skyBackBuffer
+            )
         {
             _server = server;
             _chunkstorage = chunkstorage;
@@ -167,6 +170,7 @@ namespace Utopia.Worlds.Chunks
             _sharedFrameCB = sharedFrameCB;
             _pickingManager = pickingManager;
             _solidBackBuffer = solidBackBuffer;
+            _skyBackBuffer = skyBackBuffer;
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;
@@ -174,7 +178,7 @@ namespace Utopia.Worlds.Chunks
             lightingManager.WorldChunk = this;
             _playerManager.WorldChunks = this;
 
-            DrawOrders.UpdateIndex(SOLID_DRAW, 11, "SOLID_DRAW");
+            DrawOrders.UpdateIndex(SOLID_DRAW, 100, "SOLID_DRAW");
             TRANSPARENT_DRAW = DrawOrders.AddIndex(1050, "TRANSPARENT_DRAW");
             ENTITIES_DRAW = DrawOrders.AddIndex(900, "ENTITIES_DRAW");
 
@@ -579,7 +583,7 @@ namespace Utopia.Worlds.Chunks
             var chunk = (VisualChunk)sender;
             chunk.Opaque = 0f;
 
-            //_transparentChunks.Add(chunk);
+            _transparentChunks.Add(chunk);
 
             if (IsInitialLoadCompleted) return;
 

@@ -118,8 +118,8 @@ namespace Utopia.Worlds.Chunks
 
             _terraEffect.Begin(context);
 
-            //_terraEffect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
-            //_terraEffect.SolidBackBuffer.IsDirty = true;
+            _terraEffect.SkyBackBuffer.Value = _skyBackBuffer.SolidStaggingBackBuffer;
+            _terraEffect.SkyBackBuffer.IsDirty = true;
 
             //Foreach faces type
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
@@ -154,6 +154,7 @@ namespace Utopia.Worlds.Chunks
 
             _liquidEffect.Begin(context);
 
+            _liquidEffect.SkyBackBuffer.Value = _skyBackBuffer.SolidStaggingBackBuffer;
             _liquidEffect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
             _liquidEffect.SolidBackBuffer.IsDirty = true;
 

@@ -1,5 +1,4 @@
-﻿using Utopia.Shared.Structs;
-using S33M3Resources.Structs;
+﻿using System.ComponentModel;
 
 namespace Utopia.Shared.World
 {
@@ -8,15 +7,9 @@ namespace Utopia.Shared.World
     /// </summary>
     public class WorldParameters
     {
-        ///// <summary>
-        ///// World size in chunk unit (width and length)
-        ///// </summary>
-        //public Vector2I WorldChunkSize { get; set; }
-
         /// <summary>
         /// Base seed to use in random initializers
         /// </summary>
-        /// 
         public int Seed
         {
             get
@@ -36,11 +29,6 @@ namespace Utopia.Shared.World
         /// The World Name
         /// </summary>
         public string WorldName { get; set; }
-
-
-        public WorldParameters()
-        {
-        }
 
         public void Clear()
         {

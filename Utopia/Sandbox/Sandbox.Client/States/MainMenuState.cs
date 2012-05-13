@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using Ninject;
-using Sandbox.Client.Components;
-using Utopia;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
-using Ninject.Parameters;
 using Sandbox.Client.Components.GUI;
 using Utopia.Components;
 
@@ -97,8 +94,8 @@ namespace Sandbox.Client.States
         void MenuSinglePlayerPressed(object sender, EventArgs e)
         {
             _vars.SinglePlayer = true;
-            //StatesManager.ActivateGameStateAsync("LoadingGame");
-            StatesManager.ActivateGameStateAsync("SinglePlayerMenu");
+            StatesManager.ActivateGameStateAsync("LoadingGame");
+            //StatesManager.ActivateGameStateAsync("SinglePlayerMenu");
         }
         
         void MenuCreditsPressed(object sender, EventArgs e)

@@ -158,8 +158,9 @@ namespace Realms.Client
 
             _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InScope(x => GameScope.CurrentGameScope);//Camera manager
             _iocContainer.Bind<TimerManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);      //Ingame based Timer class
-            _iocContainer.Bind<SharedFrameCB>().ToSelf().InScope(x => GameScope.CurrentGameScope);     //Ingame based Timer class
-            _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("SolidBuffer");
+            _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("SkyBuffer");
+            _iocContainer.Bind<SharedFrameCB>().ToSelf().InScope(x => GameScope.CurrentGameScope).WithConstructorArgument("backBuffer", _iocContainer.Get<StaggingBackBuffer>("SolidBuffer"));     //Ingame based Timer class
 
             //Network Related =============================================
             _iocContainer.Bind<NetworkMessageFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
@@ -186,7 +187,7 @@ namespace Realms.Client
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InScope(x => GameScope.CurrentGameScope).Named("Stars");
             _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IWeather>().To<Weather>().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InScope(x => GameScope.CurrentGameScope).Named("Clouds");
+            _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InScope(x => GameScope.CurrentGameScope).Named("Clouds").WithConstructorArgument("solidBackBuffer", _iocContainer.Get<StaggingBackBuffer>("SolidBuffer"));
             _iocContainer.Bind<VoxelModelManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
             //Landscape Creation/Acces/Management ====================================
@@ -197,7 +198,9 @@ namespace Realms.Client
             _iocContainer.Bind<ILandscapeManager>().To<LandscapeManager>().InScope(x => GameScope.CurrentGameScope);   //Interface betwee the big array and landscape processors
             _iocContainer.Bind<ILightingManager>().To<LightingManager>().InScope(x => GameScope.CurrentGameScope);     //Landscape lightings
             _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InScope(x => GameScope.CurrentGameScope);   //Chunk Mesh + Entities creation
-            _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope);             //Chunk Management (Update/Draw)
+            _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope).
+                            WithConstructorArgument("skyBackBuffer", _iocContainer.Get<StaggingBackBuffer>("SkyBuffer")).
+                            WithConstructorArgument("solidBackBuffer", _iocContainer.Get<StaggingBackBuffer>("SolidBuffer"));             //Chunk Management (Update/Draw)
             _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InScope(x => GameScope.CurrentGameScope);    //Chunk "Wrapping" inside the big Array
             //=============================================================
 

@@ -33,17 +33,17 @@ namespace Utopia.Worlds.Chunks
                 SortChunks();
             }
 
-            //// make chunks appear slowly and not hurt the eyes
-            //for (int i = _transparentChunks.Count - 1; i >= 0; i--)
-            //{
-            //    var transparentChunk = _transparentChunks[i];
-            //    transparentChunk.Opaque += 2f * timeSpend.ElapsedGameTimeInS_LD;
-            //    if (transparentChunk.Opaque >= 1)
-            //    {
-            //        transparentChunk.Opaque = 1;
-            //        _transparentChunks.RemoveAt(i);
-            //    }
-            //}
+            // make chunks appear slowly and not hurt the eyes
+            for (int i = _transparentChunks.Count - 1; i >= 0; i--)
+            {
+                var transparentChunk = _transparentChunks[i];
+                transparentChunk.Opaque += 2f * timeSpend.ElapsedGameTimeInS_LD;
+                if (transparentChunk.Opaque >= 1)
+                {
+                    transparentChunk.Opaque = 1;
+                    _transparentChunks.RemoveAt(i);
+                }
+            }
         }
 
         #endregion

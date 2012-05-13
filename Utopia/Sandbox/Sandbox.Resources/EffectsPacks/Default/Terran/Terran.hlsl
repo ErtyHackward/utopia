@@ -40,6 +40,8 @@ static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
 // Texture Samplers
 //--------------------------------------------------------------------------------------
 Texture2DArray TerraTexture;
+Texture2D SkyBackBuffer;
+SamplerState SamplerBackBuffer;
 SamplerState SamplerDiffuse;
 
 //--------------------------------------------------------------------------------------
@@ -114,12 +116,18 @@ PS_OUT PS(PS_IN input)
 	color = color * float4(input.EmissiveLight, 1);
 
 	float4 Finalfogcolor = {SunColor / 1.5, color.a};
-	color = lerp(color, Finalfogcolor, input.fogPower);
+	//color = lerp(color, Finalfogcolor, input.fogPower);
 
 	//color.a = min( Opaque, 1 - input.fogPower);
 
+	float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
+    float4 backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+
+	color.a = min( Opaque, 1 - input.fogPower);
+	float4 finalColor = {(color.rgb * color.a) + (backBufferColor.rgb * (1 - color.a)), color.a};
+
 	// Apply fog on output color
-	output.Color = color;
+	output.Color = finalColor;
     return output;
 }
 
