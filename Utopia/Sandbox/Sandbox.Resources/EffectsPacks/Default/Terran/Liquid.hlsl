@@ -49,6 +49,8 @@ SamplerState SamplerBackBuffer
 	AddressV = CLAMP ;
 };
 
+Texture2D SkyBackBuffer;
+
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 
@@ -120,12 +122,15 @@ PS_OUT PS(PS_IN input)
 	//Manual Blending with SolidBackBuffer color received
 	float4 color = {(colorInput.rgb * colorInput.a) + (backBufferColor.rgb * (1 - colorInput.a)), colorInput.a};
 
-	float4 Finalfogcolor = {SunColor / 1.5, color.a};
-	color = lerp(color, Finalfogcolor, input.fogPower);
+	//float4 Finalfogcolor = {SunColor / 1.5, color.a};
+	//color = lerp(color, Finalfogcolor, input.fogPower);
 
-	//color.a = min(min(Opaque, 1 -input.fogPower), color.a);
+    backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
 
-	output.Color = color;
+	color.a = min( Opaque, 1 - input.fogPower);
+	float4 finalColor = {(color.rgb * color.a) + (backBufferColor.rgb * (1 - color.a)), color.a};
+
+	output.Color = finalColor;
 
     return output;
 }

@@ -146,12 +146,12 @@ namespace Utopia.Shared.Entities.Concrete
                         
                         impact.Success = true;
                         //If the Tool Owner is a player, then Add the resource removed into the inventory
-                        if (character != null)
-                        {
-                            var adder = Factory.CreateEntity<CubeResource>();
-                            adder.CubeId = cube;
-                            character.Inventory.PutItem(adder);
-                        }
+                        //if (character != null)
+                        //{
+                        //    var adder = Factory.CreateEntity<CubeResource>();
+                        //    adder.CubeId = cube;
+                        //    character.Inventory.PutItem(adder);
+                        //}
                         return impact;
                     }
                 }
@@ -198,9 +198,6 @@ namespace Utopia.Shared.Entities.Concrete
         {
             throw new NotImplementedException();
         }
-
-
-
     }
 
     public class CubeChangedEventArgs : EventArgs

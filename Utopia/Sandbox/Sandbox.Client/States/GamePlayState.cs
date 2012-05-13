@@ -59,13 +59,16 @@ namespace Sandbox.Client.States
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
             var skyDome = _ioc.Get<ISkyDome>();
+            skyDome.DrawOrders.UpdateIndex(0, 40);
             var weather = _ioc.Get<IWeather>();
             var worldChunks = _ioc.Get<IWorldChunks>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
-            var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>();
+            var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
+            var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
+            skyBackBuffer.DrawOrders.UpdateIndex(0, 50);
             _sandboxGameSoundManager = (SandboxGameSoundManager)_ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
             var fadeComponent = _ioc.Get<FadeComponent>();
@@ -93,6 +96,7 @@ namespace Sandbox.Client.States
             AddComponent(sharedFrameCB);
             AddComponent(_sandboxGameSoundManager);
             AddComponent(staggingBackBuffer);
+            AddComponent(skyBackBuffer);
             AddComponent(fadeComponent);
 
 #if DEBUG
