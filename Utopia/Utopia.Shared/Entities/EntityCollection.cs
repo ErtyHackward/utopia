@@ -341,6 +341,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Performs loading of the entites from binary format
         /// </summary>
+        /// <param name="factory">A factory used to generate new entities</param>
         /// <param name="ms">Memory stream to deserialize</param>
         /// <param name="offset">offset in memory stream</param>
         /// <param name="length">bytes amount to process</param>
