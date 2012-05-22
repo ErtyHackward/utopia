@@ -1,5 +1,4 @@
 ﻿using System;
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Chunks
@@ -19,8 +18,7 @@ namespace Utopia.Shared.Chunks
             var handler = BlockDataChanged;
             if (handler != null) handler(this, e);
         }
-
-
+        
         /// <summary>
         /// Ocurrs when whole buffer was changed
         /// </summary>
@@ -31,8 +29,7 @@ namespace Utopia.Shared.Chunks
             var handler = BlockBufferChanged;
             if (handler != null) handler(this, e);
         }
-
-
+        
         /// <summary>
         /// Requests a full block buffer for a chunk. This operation should be used only for saving the data
         /// </summary>
