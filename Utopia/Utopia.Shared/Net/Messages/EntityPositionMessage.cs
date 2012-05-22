@@ -51,19 +51,15 @@ namespace Utopia.Shared.Net.Messages
             EntityPositionMessage msg;
 
             msg._entityId = reader.ReadUInt32();
-            msg._position.X = reader.ReadDouble();
-            msg._position.Y = reader.ReadDouble();
-            msg._position.Z = reader.ReadDouble();
-
+            msg._position = reader.ReadVector3D();
+            
             return msg;
         }
 
         public static void Write(BinaryWriter writer, EntityPositionMessage msg)
         {
             writer.Write(msg._entityId);
-            writer.Write(msg._position.X);
-            writer.Write(msg._position.Y);
-            writer.Write(msg._position.Z);
+            writer.Write(msg._position);
         }
 
         public void Write(BinaryWriter writer)
