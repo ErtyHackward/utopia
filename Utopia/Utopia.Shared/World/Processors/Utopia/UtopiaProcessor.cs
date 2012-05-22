@@ -11,6 +11,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -18,7 +19,6 @@ namespace Utopia.Shared.World.Processors.Utopia
     {
         #region Private Variables
         private WorldParameters _worldParameters;
-        private Random _rnd;
         #endregion
 
         #region Public Properties
@@ -41,8 +41,6 @@ namespace Utopia.Shared.World.Processors.Utopia
         public UtopiaProcessor(WorldParameters worldParameters)
         {
             _worldParameters = worldParameters;
-
-            _rnd = new Random(_worldParameters.Seed);
         }
 
         public void Dispose()
@@ -56,6 +54,9 @@ namespace Utopia.Shared.World.Processors.Utopia
             generationRange.Foreach(pos =>
             {
                 var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
+
+                FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
+
                 var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
 
                 chunkWorldRange = new Range3I()
@@ -66,7 +67,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                 double[,] biomeMap;
                 GenerateLandscape(chunkBytes, ref chunkWorldRange,out biomeMap);
-                TerraForming(chunkBytes, ref chunkWorldRange, biomeMap);
+                TerraForming(chunkBytes, ref chunkWorldRange, biomeMap, chunkRnd);
 
                 chunk.BlockData.SetBlockBytes(chunkBytes);
             });
@@ -107,23 +108,27 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             //=====================================================================================================
             //Plains Noise selecting based on plainsCtrl controler
-            Select flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, 0.25, 0.1);         //Merge flat with Plain
-            INoise flat_Plain_result = new Select(enuLandFormType.Flat, enuLandFormType.Plain, plainsCtrl, flat_Plain_select.Threshold);
+            //Merge flat with Plain *************************************************************
+            Select flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, 0.25, 0.1);                                            
+            INoise flat_Plain_result = new Select(enuLandFormType.Flat, enuLandFormType.Plain, plainsCtrl, flat_Plain_select.Threshold);   //Biome composition    
 
-            Select mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, 0.60, 0.1);   //Merge Plain with hill
-            INoise mergedPlainFct_result = new Select(flat_Plain_result, enuLandFormType.Hill, plainsCtrl, mergedPlainFct.Threshold);
+            //Merge Plain with hill *************************************************************
+            Select mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, 0.60, 0.1);
+            INoise mergedPlainFct_result = new Select(flat_Plain_result, enuLandFormType.Hill, plainsCtrl, mergedPlainFct.Threshold);     //Biome composition 
 
             //=====================================================================================================
             //Surface Noise selecting based on surfaceCtrl controler
-            Select Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, 0.45, 0.10);         //Merge Plains with Midland
-            INoise Plain_midland_result = new Select(mergedPlainFct_result, enuLandFormType.Midland, surfaceCtrl, Plain_midland_select.Threshold);
-                    
-            Select midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, 0.55, 0.05); //Merge MidLand with Montain
-            INoise midland_montain_result = new Select(Plain_midland_result, enuLandFormType.Montain, surfaceCtrl, midland_montain_select.Threshold); //Merge MidLand with Montain
+            //Merge Plains with Midland *********************************************************
+            Select Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, 0.45, 0.10);
+            INoise Plain_midland_result = new Select(mergedPlainFct_result, enuLandFormType.Midland, surfaceCtrl, Plain_midland_select.Threshold); //Biome composition
+
+            //Merge MidLand with Montain ********************************************************
+            Select midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, 0.55, 0.05);
+            INoise midland_montain_result = new Select(Plain_midland_result, enuLandFormType.Montain, surfaceCtrl, midland_montain_select.Threshold); //Biome composition
 
             //Merge the Water landForm with the surface landForm
-            Select world_select = new Select(oceanBaseFct, midland_montain_select, islandCtrl, 0.01, 0.20);         //Merge Plains with Midland
-            INoise world_select_result = new Select(enuLandFormType.Ocean, midland_montain_result, islandCtrl, world_select.Threshold);         //Merge Plains with Midland
+            Select world_select = new Select(oceanBaseFct, midland_montain_select, islandCtrl, 0.01, 0.20);         
+            INoise world_select_result = new Select(enuLandFormType.Ocean, midland_montain_result, islandCtrl, world_select.Threshold);         //Biome composition
 
             landScapeTypeFct = world_select_result;
 
@@ -201,9 +206,9 @@ namespace Utopia.Shared.World.Processors.Utopia
             }
         }
 
-        private void TerraForming(byte[] ChunkCubes, ref Range3I chunkWorldRange, double[,] biomeMap)
+        private void TerraForming(byte[] ChunkCubes, ref Range3I chunkWorldRange, double[,] biomeMap, FastRandom chunkRnd)
         {
-            int surfaceMud, surfaceMudLayer;
+            int surfaceMud, surfaceLayer;
             int inWaterMaxLevel = 0;
 
             Biome currentBiome;
@@ -218,20 +223,22 @@ namespace Utopia.Shared.World.Processors.Utopia
                     //Get this landscape Column Biome value
                     currentBiome = Biome.BiomeList[Biome.GetBiome(biomeMap[noise2DIndex, 0], 0, 0)];
 
-                    surfaceMud = currentBiome.UnderSurfaceLayers.Max;
+                    surfaceMud = chunkRnd.Next(currentBiome.UnderSurfaceLayers.Min, currentBiome.UnderSurfaceLayers.Max + 1);
                     inWaterMaxLevel = 0;
-                    surfaceMudLayer = 0;
+                    surfaceLayer = 0;
 
                     for (int Y = AbstractChunk.ChunkSize.Y - 1; Y >= 0; Y--) //Y
                     {
                         index = ((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y;
                         byte cubeId = ChunkCubes[index];
 
-                        if (surfaceMudLayer > 0 && cubeId == CubeId.Air) surfaceMudLayer = 0;
+                        //Restart Surface layer if needed
+                        if (surfaceLayer > 0 && cubeId == CubeId.Air && Y > (_worldParameters.SeaLevel - 5)) surfaceLayer = 0;
 
                         if (cubeId == CubeId.Stone)
                         {
                             cubeId = currentBiome.GroundCube;
+
                             //Under water soil
                             if (Y < _worldParameters.SeaLevel && inWaterMaxLevel != 0)
                             {
@@ -244,9 +251,10 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                             inWaterMaxLevel = 0;
 
-                            if (surfaceMud > surfaceMudLayer)
+                            //Surface Layer handling
+                            if (surfaceMud > surfaceLayer)
                             {
-                                if (surfaceMudLayer == 0)
+                                if (surfaceLayer == 0)
                                 {
                                     ChunkCubes[index] = currentBiome.SurfaceCube;
                                 }
@@ -254,7 +262,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                                 {
                                     ChunkCubes[index] = currentBiome.UnderSurfaceCube;
                                 }
-                                surfaceMudLayer++;
+                                surfaceLayer++;
                             }
 
                         }

@@ -281,6 +281,7 @@
     <Compile Include="World\PlanGenerator\VectorExtensions.cs" />
     <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
     <Compile Include="World\Processors\PlanWorldProcessor.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\MontainBiome.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\OceanBiome.cs" />
     <Compile Include="World\Processors\Utopia\CubesFct\RareCubeDistri.cs" />
     <Compile Include="World\Processors\Utopia\CubesFct\UncommonCubeDistri.cs" />
