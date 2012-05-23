@@ -41,6 +41,7 @@ static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
 //--------------------------------------------------------------------------------------
 Texture2DArray TerraTexture;
 Texture2D SkyBackBuffer;
+Texture2DArray BiomesColors;
 SamplerState SamplerBackBuffer;
 SamplerState SamplerDiffuse;
 
@@ -51,6 +52,7 @@ struct VS_IN
 	uint4 Position		 : POSITION;
 	float4 Col			 : COLOR;
 	uint4 VertexInfo	 : INFO;   // (bool)x = is Upper vertex, y = facetype, z = AOPower factor 255 = Factor of 3, w = Offset
+	float2 BiomeData     : BIOMEINFO; //X = Temperature, Y = Humidity
 };
 
 struct PS_IN
@@ -59,6 +61,7 @@ struct PS_IN
 	float3 UVW					: TEXCOORD0;
 	float fogPower				: VARIOUS0;
 	float3 EmissiveLight		: Light0;
+	float2 BiomeData			: BIOMEDATA0;
 };
 
 struct PS_OUT
@@ -98,6 +101,7 @@ PS_IN VS(VS_IN input)
 	output.EmissiveLight *= faceshades[facetype];
 
 	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
+	output.BiomeData = input.BiomeData;
 
     return output;
 }
@@ -111,18 +115,27 @@ PS_OUT PS(PS_IN input)
 
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW);
 	
-	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
+	//Apply Biome Color if the Alpha is < 1
+	if(color.a < 1.0)
+	{
+		float3 biomeColorSampling = {input.BiomeData.xy, 0};
+	    float4 biomeColor =  BiomesColors.Sample(SamplerBackBuffer, biomeColorSampling);
+		color.r = color.r * biomeColor.r;
+		color.g = color.g * biomeColor.g;
+		color.b = color.b * biomeColor.b;
+	}
+
+	clip(color.a < 0.1f ? -1:1 );    //Remove the pixel if alpha < 0.1
+
+
 
 	color = color * float4(input.EmissiveLight, 1);
 
-	float4 Finalfogcolor = {SunColor / 1.5, color.a};
-	//color = lerp(color, Finalfogcolor, input.fogPower);
-
-	//color.a = min( Opaque, 1 - input.fogPower);
-
+	//Get sky Color
 	float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
     float4 backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
 
+	//Compute Transparency, and blend current color with sky color in a blended way
 	color.a = min( Opaque, 1 - input.fogPower);
 	float4 finalColor = {(color.rgb * color.a) + (backBufferColor.rgb * (1 - color.a)), color.a};
 

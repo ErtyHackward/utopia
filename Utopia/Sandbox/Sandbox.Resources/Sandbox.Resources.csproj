@@ -319,6 +319,15 @@
     <None Include="TexturesPacks\Default\charactersheet.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="TexturesPacks\Default\BiomesColors\02_FoliageColors.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\Default\BiomesColors\01_GrassColors.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\Default\BiomesColors\03_WaterColors.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TexturesPacks\Default\Editor\ct00.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -466,6 +475,15 @@
     <None Include="TexturesPacks\FullHD\charactersheet.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="TexturesPacks\FullHD\BiomesColors\02_FoliageColors.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\FullHD\BiomesColors\01_GrassColors.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\FullHD\BiomesColors\03_WaterColors.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TexturesPacks\FullHD\Editor\ct00.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -622,6 +640,15 @@
     <None Include="TexturesPacks\HD\charactersheet.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="TexturesPacks\HD\BiomesColors\02_FoliageColors.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\HD\BiomesColors\01_GrassColors.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\HD\BiomesColors\03_WaterColors.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TexturesPacks\HD\Editor\ct00.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
