@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
@@ -264,7 +266,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private void createLandScape_threaded(VisualChunk visualChunk)
         {
             GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
-            
+
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes());
             //visualChunk.Entities = generatedChunk.Entities;
             

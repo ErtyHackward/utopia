@@ -99,7 +99,7 @@ namespace Utopia.Shared.Chunks
         {
             ms.Position = 0;
             var reader = new BinaryReader(ms);
-            BlockData.SetBlockBytes(reader.ReadBytes(ChunkBlocksByteLength));
+            BlockData.Load(reader);
             Entities.Clear();
             Entities.LoadEntities(factory, ms, ChunkBlocksByteLength, (int)(ms.Length - ChunkBlocksByteLength));
             ms.Dispose();
@@ -111,7 +111,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="writer"></param>
         public void Serialize(BinaryWriter writer)
         {
-            writer.Write(BlockData.GetBlocksBytes());
+            BlockData.Save(writer);
             Entities.SaveEntities(writer);
         }
 
