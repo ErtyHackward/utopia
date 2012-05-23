@@ -14,9 +14,9 @@ namespace Utopia.Shared.Chunks
         private Vector3I _chunkSize;
 
         private byte[] _blockBytes;
+        private ChunkColumnInfo[] _chunkColumns;
 
         private readonly Dictionary<Vector3I, IBinaryStorable> _tags = new Dictionary<Vector3I, IBinaryStorable>();
-
         /// <summary>
         /// Gets or sets the inside buffer
         /// </summary>
@@ -193,6 +193,23 @@ namespace Utopia.Shared.Chunks
                                        Tags = tags
                                    });
         }
+
+        #region Chunk Column Information Manager
+        public override ChunkColumnInfo[] GetColumnInfo()
+        {
+            return _chunkColumns;
+        }
+
+        public override ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition)
+        {
+            return _chunkColumns[inChunkPosition.Y * AbstractChunk.ChunkSize.X + inChunkPosition.X];
+        }
+
+        public override void SetColumnInfos(ChunkColumnInfo[] columnInfo)
+        {
+            _chunkColumns = columnInfo;
+        }
+        #endregion
 
         /// <summary>
         /// Saves current object state to binary form
