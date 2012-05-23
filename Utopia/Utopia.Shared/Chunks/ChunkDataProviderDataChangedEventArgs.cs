@@ -1,5 +1,5 @@
 using System;
-using Utopia.Shared.Structs;
+using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Chunks
@@ -20,5 +20,10 @@ namespace Utopia.Shared.Chunks
         /// Gets values array of the blocks
         /// </summary>
         public byte[] Bytes { get; set; }
+
+        /// <summary>
+        /// Gets optional tags array
+        /// </summary>
+        public IBinaryStorable[] Tags { get; set; }
     }
 }

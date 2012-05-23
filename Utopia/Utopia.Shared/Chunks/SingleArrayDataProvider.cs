@@ -1,5 +1,4 @@
 using System;
-using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
@@ -12,7 +11,7 @@ namespace Utopia.Shared.Chunks
     public class SingleArrayDataProvider : ChunkDataProvider
     {
         //A reference to the class using this DataProvider.
-        public ISingleArrayDataProviderUser DataProviderUser {get; set;}
+        public ISingleArrayDataProviderUser DataProviderUser { get; set; }
         public SingleArrayChunkContainer ChunkCubes { get; set; }
 
         public SingleArrayDataProvider(SingleArrayChunkContainer singleArrayContainer)
@@ -73,7 +72,8 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
-        public override void SetBlock(Vector3I inChunkPosition, byte blockValue)
+        /// <param name="tag"></param>
+        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, IBinaryStorable tag = null)
         {
             ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPositionBlockUnit.X,
                                                      inChunkPosition.Y,
@@ -88,7 +88,8 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="positions"></param>
         /// <param name="values"></param>
-        public override void SetBlocks(Vector3I[] positions, byte[] values)
+        /// <param name="tags"></param>
+        public override void SetBlocks(Vector3I[] positions, byte[] values, IBinaryStorable[] tags = null)
         {
             for (int i = 0; i < positions.Length; i++)
             {
@@ -136,5 +137,20 @@ namespace Utopia.Shared.Chunks
 
         #endregion
 
+
+        public override IBinaryStorable GetTag(Vector3I inChunkPosition)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Save(System.IO.BinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Load(System.IO.BinaryReader reader)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,5 +1,7 @@
 using System;
-using Utopia.Shared.Structs;
+using System.Collections.Generic;
+using System.IO;
+using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Chunks
@@ -12,6 +14,8 @@ namespace Utopia.Shared.Chunks
         private Vector3I _chunkSize;
 
         private byte[] _blockBytes;
+
+        private readonly Dictionary<Vector3I, IBinaryStorable> _tags = new Dictionary<Vector3I, IBinaryStorable>();
 
         /// <summary>
         /// Gets or sets the inside buffer
@@ -115,11 +119,24 @@ namespace Utopia.Shared.Chunks
         }
 
         /// <summary>
+        /// Gets an optional block tag
+        /// </summary>
+        /// <param name="inChunkPosition"></param>
+        /// <returns></returns>
+        public override IBinaryStorable GetTag(Vector3I inChunkPosition)
+        {
+            IBinaryStorable result;
+            _tags.TryGetValue(inChunkPosition, out result);
+            return result;
+        }
+
+        /// <summary>
         /// Sets a single block into location specified
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
-        public override void SetBlock(Vector3I inChunkPosition, byte blockValue)
+        /// <param name="tag"></param>
+        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, IBinaryStorable tag = null)
         {
             if (_blockBytes == null)
             {
@@ -127,7 +144,17 @@ namespace Utopia.Shared.Chunks
             }
             _blockBytes[inChunkPosition.X * _chunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * _chunkSize.Y * _chunkSize.X] = blockValue;
 
-            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { inChunkPosition }, Bytes = new[] { blockValue } });
+            if (tag != null)
+                _tags[inChunkPosition] = tag;
+            else _tags.Remove(inChunkPosition);
+
+            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
+                                   {
+                                       Count = 1,
+                                       Locations = new[] {inChunkPosition},
+                                       Bytes = new[] {blockValue},
+                                       Tags = new[] {tag}
+                                   });
         }
 
         /// <summary>
@@ -135,7 +162,8 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="positions">internal chunk positions</param>
         /// <param name="values"></param>
-        public override void SetBlocks(Vector3I[] positions, byte[] values)
+        /// <param name="tags"> </param>
+        public override void SetBlocks(Vector3I[] positions, byte[] values, IBinaryStorable[] tags = null)
         {
             if (_blockBytes == null)
             {
@@ -144,10 +172,87 @@ namespace Utopia.Shared.Chunks
 
             for (var i = 0; i < positions.Length; i++)
             {
-                _blockBytes[positions[i].X * _chunkSize.Y + positions[i].Y + positions[i].Z * _chunkSize.Y * _chunkSize.X] = values[i];    
+                _blockBytes[positions[i].X * _chunkSize.Y + positions[i].Y + positions[i].Z * _chunkSize.Y * _chunkSize.X] = values[i];
             }
 
-            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs { Count = positions.Length, Locations = positions, Bytes = values });
+            if (tags != null)
+            {
+                for (var i = 0; i < positions.Length; i++)
+                {
+                    if (tags[i] != null)
+                        _tags[positions[i]] = tags[i];
+                    else _tags.Remove(positions[i]);
+                }
+            }
+
+            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
+                                   {
+                                       Count = positions.Length,
+                                       Locations = positions,
+                                       Bytes = values,
+                                       Tags = tags
+                                   });
+        }
+
+        /// <summary>
+        /// Saves current object state to binary form
+        /// </summary>
+        /// <param name="writer"></param>
+        public override void Save(BinaryWriter writer)
+        {
+            writer.Write(_chunkSize);
+            writer.Write(_blockBytes);
+            writer.Write(_tags.Count);
+
+            foreach (var pair in _tags)
+            {
+                writer.Write(pair.Key);
+
+                // hardcoded factory
+                // will need to change to dynamic factory if needed
+                if (pair.Value is LiquidTag)
+                {
+                    writer.Write((byte)0);
+                    pair.Value.Save(writer);
+                }
+                else throw new NotSupportedException();
+            }
+        }
+
+        /// <summary>
+        /// Loads current object from binary form
+        /// </summary>
+        /// <param name="reader"></param>
+        public override void Load(BinaryReader reader)
+        {
+            _chunkSize = reader.ReadVector3I();
+
+            var bytesCount = _chunkSize.X * _chunkSize.Y * _chunkSize.Z;
+
+            _blockBytes = reader.ReadBytes(bytesCount);
+
+            if (_blockBytes.Length != bytesCount)
+                throw new EndOfStreamException();
+            
+            var tagsCount = reader.ReadInt32();
+
+            _tags.Clear();
+
+            for (var i = 0; i < tagsCount; i++)
+            {
+                var position = reader.ReadVector3I();
+                var tagId = reader.ReadByte();
+
+                if (tagId != 0)
+                    throw new InvalidDataException();
+
+                var tag = new LiquidTag();
+
+                tag.Load(reader);
+
+                _tags.Add(position, tag);
+            }
+
         }
     }
 }
