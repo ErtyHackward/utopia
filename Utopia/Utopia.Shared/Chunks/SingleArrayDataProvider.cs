@@ -145,12 +145,12 @@ namespace Utopia.Shared.Chunks
 
         public override void Save(System.IO.BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override void Load(System.IO.BinaryReader reader)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
