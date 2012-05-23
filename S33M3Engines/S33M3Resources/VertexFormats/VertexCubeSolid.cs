@@ -20,7 +20,7 @@ namespace S33M3Resources.Structs.Vertex
         public Vector4B Position;
         public ByteColor Color;
         public Vector4B VertexInfo;  //X = Vertex Y offset; Y = texture index;Z=Additional Texture Index
-        public Vector2B BiomeInfo;   //X = Temperature, Y = Humidity
+        public Vector4B BiomeInfo;   //X = Temperature, Y = Humidity
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
@@ -33,13 +33,13 @@ namespace S33M3Resources.Structs.Vertex
                                                             new InputElement("POSITION", 0, Format.R8G8B8A8_UInt, InputElement.AppendAligned , 0),  
                                                             new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0),
                                                             new InputElement("INFO", 0, Format.R8G8B8A8_UInt, InputElement.AppendAligned, 0),
-                                                            new InputElement("BIOMEINFO", 0, Format.R8G8_UNorm, InputElement.AppendAligned, 0)
+                                                            new InputElement("BIOMEINFO", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0)
                                                             };
 
             VertexDeclaration = new VertexDeclaration(elements);
         }
 
-        public VertexCubeSolid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector2B biomeInfo)
+        public VertexCubeSolid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B biomeInfo)
         {
             this.VertexInfo = new Vector4B();
             this.Color = lighting;
@@ -48,7 +48,7 @@ namespace S33M3Resources.Structs.Vertex
             this.BiomeInfo = biomeInfo;
         }
 
-        public VertexCubeSolid(Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector2B biomeInfo)
+        public VertexCubeSolid(Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector4B biomeInfo)
         {
             this.VertexInfo = vertexInfo;
             this.Color = lighting;
@@ -57,7 +57,7 @@ namespace S33M3Resources.Structs.Vertex
             this.BiomeInfo = biomeInfo;
         }
 
-        public VertexCubeSolid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector2B biomeInfo)
+        public VertexCubeSolid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector4B biomeInfo)
         {
             this.VertexInfo = vertexInfo;
             this.Color = lighting;
