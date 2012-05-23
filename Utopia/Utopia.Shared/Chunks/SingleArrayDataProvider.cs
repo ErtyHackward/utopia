@@ -13,10 +13,12 @@ namespace Utopia.Shared.Chunks
         //A reference to the class using this DataProvider.
         public ISingleArrayDataProviderUser DataProviderUser { get; set; }
         public SingleArrayChunkContainer ChunkCubes { get; set; }
+        public ChunkColumnInfo[] ChunkColumns;
 
         public SingleArrayDataProvider(SingleArrayChunkContainer singleArrayContainer)
         {
             ChunkCubes = singleArrayContainer;
+            ChunkColumns = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
         }
 
         #region Circular Array access through chunk
@@ -137,6 +139,22 @@ namespace Utopia.Shared.Chunks
 
         #endregion
 
+        #region Chunk Column Information Manager
+        public override ChunkColumnInfo[] GetColumnInfo()
+        {
+            return ChunkColumns;
+        }
+
+        public override ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition)
+        {
+            return ChunkColumns[inChunkPosition.Y * AbstractChunk.ChunkSize.X + inChunkPosition.X];
+        }
+
+        public override void SetColumnInfos(ChunkColumnInfo[] columnInfo)
+        {
+            ChunkColumns = columnInfo;
+        }
+        #endregion
 
         public override IBinaryStorable GetTag(Vector3I inChunkPosition)
         {
@@ -145,12 +163,12 @@ namespace Utopia.Shared.Chunks
 
         public override void Save(System.IO.BinaryWriter writer)
         {
-            //throw new NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void Load(System.IO.BinaryReader reader)
         {
-            //throw new NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }
