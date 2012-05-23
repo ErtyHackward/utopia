@@ -65,7 +65,7 @@ namespace Utopia.Worlds.Cubes
 
             int[] ind = new int[9];
 
-            Vector2B biomeInfo = new Vector2B(125, 125);
+            Vector4B biomeInfo = new Vector4B(125, 125, 0, 0);
 
             switch (cubeFace)
             {
