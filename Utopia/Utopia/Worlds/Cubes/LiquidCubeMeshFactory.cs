@@ -27,11 +27,22 @@ namespace Utopia.Worlds.Cubes
         }
 
          //Default Face Generation Checks !
-        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
+        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube neightboorFaceCube, int seaLevel, ref Vector4B cubePosition, VisualChunk chunk)
         {
             if (cubeFace != CubeFaces.Bottom && cubeFace != CubeFaces.Top) //Never display a bottom Water face !
             {
-                if ((!GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].IsBlockingLight && GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].CubeFamilly != enuCubeFamilly.Liquid))
+                CubeProfile NeightboorProfile = GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id];
+                float NeightBoorOffset = (float)NeightboorProfile.YBlockOffset;
+
+                CubeProfile CubeProfile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
+                //Compute the Current Offset, and the neightboor offset
+                if (NeightboorProfile.IsTaggable)
+                {
+                    LiquidTag tag = chunk.BlockData.GetTag(new Vector3I(cubePosition.X, cubePosition.Y, cubePosition.Z)) as LiquidTag;
+                    if (tag != null) NeightBoorOffset = (tag.Pressure - 1) * -1;
+                }
+
+                if ((!NeightboorProfile.IsBlockingLight && NeightboorProfile.CubeFamilly != enuCubeFamilly.Liquid))
                 {
                     return true;
                 }
@@ -75,7 +86,7 @@ namespace Utopia.Worlds.Cubes
             //GetBlock Offset
             if (cubeProfile.IsTaggable && tag is LiquidTag)
             {
-                yBlockOffset = (float)(((LiquidTag)tag).Pressure - 1);
+                yBlockOffset = (float)(((LiquidTag)tag).Pressure - 1.0f) * -1.0f;
             }
             else
             {
