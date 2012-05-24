@@ -1,8 +1,6 @@
 ﻿using System;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
-using Utopia.Shared.Structs.Landscape;
-using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 
@@ -37,7 +35,25 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return _landscapeManager.CubesHolder.Cubes[_bigArrayIndex].Id;
         }
 
-        public void Write(byte value)
+        /// <summary>
+        /// Reads current block tag at the cursor position
+        /// </summary>
+        /// <returns></returns>
+        public BlockTag ReadTag()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Reads current block and tag at the cursor position
+        /// </summary>
+        /// <returns></returns>
+        public void ReadBlockWithTag(out byte blockValue, out BlockTag tag)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write(byte value, BlockTag tag = null)
         {
             _landscapeManager.ReplaceBlock(_bigArrayIndex, ref _globalPosition, value);
         }
