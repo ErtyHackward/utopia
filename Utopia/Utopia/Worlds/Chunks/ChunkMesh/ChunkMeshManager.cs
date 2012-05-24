@@ -18,6 +18,7 @@ using Utopia.Shared.Settings;
 using S33M3DXEngine.Threading;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
+using Utopia.Shared.Chunks.Tags;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -95,8 +96,8 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
         private void GenerateCubesFace(CubeFaces cubeFace, VisualChunk chunk)
         {
-            TerraCube currentCube, neightborCube;
-            CubeProfile cubeProfile;
+            TerraCube currentCube, neightborCube, topCube;
+            CubeProfile cubeProfile, neightborCubeProfile;
 
             Vector4B cubePosiInChunk;
             Vector3I cubePosiInWorld;
@@ -111,6 +112,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             var worldRangeMaxX = _visualWorldParameters.WorldRange.Max.X;
             var worldRangeMaxY = _visualWorldParameters.WorldRange.Max.Y;
             var worldRangeMaxZ = _visualWorldParameters.WorldRange.Max.Z;
+            int xn, yn, zn;
 
             for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
             {
@@ -165,60 +167,85 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //BorderChunk value is true if the chunk is at the border of the visible world.
                         int topCubeIndex = cubeIndex + _cubesHolder.MoveY;
 
+                        xn = x;
+                        yn = y;
+                        zn = z;
+
                         switch (cubeFace)
                         {
                             case CubeFaces.Back:
                                 if (ZWorld - 1 < _visualWorldParameters.WorldRange.Position.Z) continue;
                                 //neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1);
+                                zn--;
                                 break;
                             case CubeFaces.Front:
                                 if (ZWorld + 1 >= worldRangeMaxZ) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1);
+                                zn++;
                                 break;
                             case CubeFaces.Bottom:
                                 if (YWorld - 1 < 0) continue;
                                 neightborCubeIndex = cubeIndex - _cubesHolder.MoveY;
-                                
+                                yn--;
                                 break;
                             case CubeFaces.Top:
                                 if (YWorld + 1 >= worldRangeMaxY) continue;
                                 neightborCubeIndex = topCubeIndex;
-                                
+                                yn++;
                                 break;
                             case CubeFaces.Left:
                                 if (XWorld - 1 < _visualWorldParameters.WorldRange.Position.X) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1);
-                                
+                                xn--;
                                 break;
                             case CubeFaces.Right:
                                 if (XWorld + 1 >= worldRangeMaxX) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1);
+                                xn++;
                                 break;
                             default:
                                 throw new NullReferenceException();
                         }
 
-                        //Custom test to see if the face can be generated (Between cube checks)
-                        //_landscape.FastIndex is another method of computing index of the big table but faster !
-                        //The constraint is that it only compute index of a cube neightbor
-                        //int i = neightborCubeIndex;
-                        //if (i >= _cubesHolder.Cubes.Length) i -= _cubesHolder.Cubes.Length;
-                        //if (i < 0) i += _cubesHolder.Cubes.Length;
                         neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
-                        TerraCube topCube = _cubesHolder.Cubes[topCubeIndex];
+                        neightborCubeProfile = GameSystemSettings.Current.Settings.CubesProfile[neightborCube.Id];
+
+                        //Check if a tag is present and ICubeYOffsetModifier is implementad by the tag;
+                        float cubeYOffset = (float)cubeProfile.YBlockOffset;
+                        if (cubeProfile.IsTaggable)
+                        {
+                            ICubeYOffsetModifier tagOffset = (chunk.BlockData.GetTag(new Vector3I(x, y, z))) as ICubeYOffsetModifier;
+                            if (tagOffset != null)
+                            {
+                                cubeYOffset = tagOffset.YOffset;
+                            }
+                        }
+
+                        float neightborcubeYOffset = (float)neightborCubeProfile.YBlockOffset;
+                        if (neightborCubeProfile.IsTaggable)
+                        {
+                            ICubeYOffsetModifier tagOffset = (chunk.BlockData.GetTag(new Vector3I(xn, yn, zn))) as ICubeYOffsetModifier;
+                            if (tagOffset != null)
+                            {
+                                neightborcubeYOffset = tagOffset.YOffset;
+                            }
+                        }
+
+                        bool yOffsetDiff = (cubeYOffset < neightborcubeYOffset);
 
                         switch (cubeProfile.CubeFamilly)
                         {
                             case enuCubeFamilly.Solid:
-                                //Other delegate.
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;
-                                if (!_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
+                                if (!yOffsetDiff && !_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube,  ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
+                                topCube = _cubesHolder.Cubes[topCubeIndex];
                                 _solidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);
                                 break;
                             case enuCubeFamilly.Liquid:
                                 //Default linked to : CubeMeshFactory.GenLiquidCubeFace;
-                                if (!_liquidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
+                                if (!yOffsetDiff && !_liquidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
+                                topCube = _cubesHolder.Cubes[topCubeIndex];
                                 _liquidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);
                                 break;
                             case enuCubeFamilly.Other:

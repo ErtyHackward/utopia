@@ -24,10 +24,10 @@ namespace Utopia.Worlds.Cubes
         }
 
         //Default Face Generation Checks !
-        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
+        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube NeightBorFaceCube, int seaLevel)
         {
-            //By default I don't need to trace the cubeFace of my cube if the face neightboor cube is blocking light ! (Not see-through)
-            if (GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].IsSeeThrough) return true;
+            //By default I don't need to trace the cubeFace of my cube if the face NeightBor cube is blocking light ! (Not see-through)
+            if (GameSystemSettings.Current.Settings.CubesProfile[NeightBorFaceCube.Id].IsSeeThrough) return true;
             //Else draw the face
             return false;
         }
