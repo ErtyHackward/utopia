@@ -19,12 +19,9 @@ namespace Utopia.Shared.Settings
         public bool IsBlockingLight;
         public bool IsSeeThrough;
         public bool IsBlockingWater;
-        public bool IsFloodPropagation;
         public bool IsSolidToEntity;
         public bool IsEmissiveColorLightSource;
-        public bool IsFlooding;
         public bool IsTaggable;
-        public int FloodingPropagationPower;
         public ByteColor EmissiveColor;
         public byte EmissiveColorA { get { return EmissiveColor.A; } set { EmissiveColor.A = value; } }
         public byte EmissiveColorR { get { return EmissiveColor.R; } set { EmissiveColor.R = value; } }
