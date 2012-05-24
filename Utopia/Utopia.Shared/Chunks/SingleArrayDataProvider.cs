@@ -75,14 +75,21 @@ namespace Utopia.Shared.Chunks
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, IBinaryStorable tag = null)
+        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null)
         {
             ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPositionBlockUnit.X,
-                                                     inChunkPosition.Y,
-                                                     inChunkPosition.Z + DataProviderUser.ChunkPositionBlockUnit.Y)] = new TerraCube(blockValue);
+                                              inChunkPosition.Y,
+                                              inChunkPosition.Z + DataProviderUser.ChunkPositionBlockUnit.Y)] =
+                new TerraCube(blockValue);
 
             //Init ChunkCubes.CubesMetaData[] ???
-            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { inChunkPosition }, Bytes = new[] { blockValue } });
+            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
+                                   {
+                                       Count = 1,
+                                       Locations = new[] { inChunkPosition },
+                                       Bytes = new[] { blockValue },
+                                       Tags = tag != null ? new[] { tag } : null
+                                   });
         }
 
         /// <summary>
@@ -91,17 +98,24 @@ namespace Utopia.Shared.Chunks
         /// <param name="positions"></param>
         /// <param name="values"></param>
         /// <param name="tags"></param>
-        public override void SetBlocks(Vector3I[] positions, byte[] values, IBinaryStorable[] tags = null)
+        public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null)
         {
             for (int i = 0; i < positions.Length; i++)
             {
                 ChunkCubes.Cubes[ChunkCubes.Index(positions[i].X + DataProviderUser.ChunkPositionBlockUnit.X,
-                                         positions[i].Y,
-                                         positions[i].Z + DataProviderUser.ChunkPositionBlockUnit.Y)] = new TerraCube(values[i]);
+                                                  positions[i].Y,
+                                                  positions[i].Z + DataProviderUser.ChunkPositionBlockUnit.Y)] =
+                    new TerraCube(values[i]);
             }
 
             //Init ChunkCubes.CubesMetaData[] ???
-            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs() { Bytes = values, Count = values.Length, Locations = positions} );
+            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
+                                   {
+                                       Bytes = values,
+                                       Count = values.Length,
+                                       Locations = positions,
+                                       Tags = tags
+                                   });
         }
 
         /// <summary>
@@ -156,7 +170,7 @@ namespace Utopia.Shared.Chunks
         }
         #endregion
 
-        public override IBinaryStorable GetTag(Vector3I inChunkPosition)
+        public override BlockTag GetTag(Vector3I inChunkPosition)
         {
             throw new NotImplementedException();
         }

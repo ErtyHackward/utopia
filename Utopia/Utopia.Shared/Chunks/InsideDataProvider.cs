@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Utopia.Shared.Interfaces;
+using Utopia.Shared.Entities;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Chunks
@@ -16,7 +16,7 @@ namespace Utopia.Shared.Chunks
         private byte[] _blockBytes;
         private ChunkColumnInfo[] _chunkColumns;
 
-        private readonly Dictionary<Vector3I, IBinaryStorable> _tags = new Dictionary<Vector3I, IBinaryStorable>();
+        private readonly Dictionary<Vector3I, BlockTag> _tags = new Dictionary<Vector3I, BlockTag>();
         /// <summary>
         /// Gets or sets the inside buffer
         /// </summary>
@@ -123,9 +123,9 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <returns></returns>
-        public override IBinaryStorable GetTag(Vector3I inChunkPosition)
+        public override BlockTag GetTag(Vector3I inChunkPosition)
         {
-            IBinaryStorable result;
+            BlockTag result;
             _tags.TryGetValue(inChunkPosition, out result);
             return result;
         }
@@ -136,7 +136,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, IBinaryStorable tag = null)
+        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null)
         {
             if (_blockBytes == null)
             {
@@ -146,14 +146,15 @@ namespace Utopia.Shared.Chunks
 
             if (tag != null)
                 _tags[inChunkPosition] = tag;
-            else _tags.Remove(inChunkPosition);
+            else
+                _tags.Remove(inChunkPosition);
 
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
                                    {
                                        Count = 1,
                                        Locations = new[] {inChunkPosition},
                                        Bytes = new[] {blockValue},
-                                       Tags = new[] {tag}
+                                       Tags = tag != null ? new[] {tag} : null
                                    });
         }
 
@@ -163,7 +164,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="positions">internal chunk positions</param>
         /// <param name="values"></param>
         /// <param name="tags"> </param>
-        public override void SetBlocks(Vector3I[] positions, byte[] values, IBinaryStorable[] tags = null)
+        public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null)
         {
             if (_blockBytes == null)
             {
@@ -202,7 +203,7 @@ namespace Utopia.Shared.Chunks
 
         public override ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition)
         {
-            return _chunkColumns[inChunkPosition.Y * AbstractChunk.ChunkSize.X + inChunkPosition.X];
+            return _chunkColumns[inChunkPosition.Y * _chunkSize.X + inChunkPosition.X];
         }
 
         public override void SetColumnInfos(ChunkColumnInfo[] columnInfo)
@@ -224,16 +225,21 @@ namespace Utopia.Shared.Chunks
             foreach (var pair in _tags)
             {
                 writer.Write(pair.Key);
+                
+                writer.Write(pair.Value.Id);
+                pair.Value.Save(writer);
 
-                // hardcoded factory
-                // will need to change to dynamic factory if needed
-                if (pair.Value is LiquidTag)
-                {
-                    writer.Write((byte)0);
-                    pair.Value.Save(writer);
-                }
-                else throw new NotSupportedException();
             }
+
+            if (_chunkColumns != null)
+            {
+                writer.Write(_chunkColumns.Length);
+                for (var i = 0; i < _chunkColumns.Length; i++)
+                {
+                    _chunkColumns[i].Save(writer);
+                }
+            }
+            else writer.Write(0);
         }
 
         /// <summary>
@@ -258,18 +264,25 @@ namespace Utopia.Shared.Chunks
             for (var i = 0; i < tagsCount; i++)
             {
                 var position = reader.ReadVector3I();
-                var tagId = reader.ReadByte();
-
-                if (tagId != 0)
-                    throw new InvalidDataException();
-
-                var tag = new LiquidTag();
-
-                tag.Load(reader);
-
+                var tag = EntityFactory.CreateTagFromBytes(reader);
                 _tags.Add(position, tag);
             }
 
+            var columnsInfoCount = reader.ReadInt32();
+
+            if (columnsInfoCount == 0)
+            {
+                _chunkColumns = null;
+            }
+            else
+            {
+                _chunkColumns = new ChunkColumnInfo[columnsInfoCount];
+                for (var i = 0; i < columnsInfoCount; i++)
+                {
+                    _chunkColumns[i] = new ChunkColumnInfo();
+                    _chunkColumns[i].Load(reader);
+                }
+            }
         }
     }
 }

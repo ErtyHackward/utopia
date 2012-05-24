@@ -24,6 +24,6 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Gets optional tags array
         /// </summary>
-        public IBinaryStorable[] Tags { get; set; }
+        public BlockTag[] Tags { get; set; }
     }
 }
