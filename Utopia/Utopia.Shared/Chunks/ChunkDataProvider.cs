@@ -86,6 +86,13 @@ namespace Utopia.Shared.Chunks
         public abstract BlockTag GetTag(Vector3I inChunkPosition);
 
         /// <summary>
+        /// Gets an optional block tag
+        /// </summary>
+        /// <param name="inChunkPosition"></param>
+        /// <returns></returns>
+        public abstract void SetTag(BlockTag tag, Vector3I inChunkPosition);
+
+        /// <summary>
         /// Sets a single block into location specified
         /// </summary>
         /// <param name="inChunkPosition"></param>

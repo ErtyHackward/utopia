@@ -32,8 +32,9 @@ namespace Utopia.Worlds.Cubes
             return false;
         }
 
-        public void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref Vector4B cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)
+        public void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref Vector4B cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk, ref TerraCube topCube)
         {
+            byte yBlockOffset = 0;
             int verticeCubeOffset = chunk.SolidCubeVertices.Count;
             int indiceCubeOffset = chunk.SolidCubeIndices.Count;
             ByteColor newColor = cube.EmissiveColor;
@@ -54,7 +55,14 @@ namespace Utopia.Worlds.Cubes
             //z = OA Factor for light (0 to 85 * 3) (== 0 to 3)
             //w = Cube "Offset"
 
-            Vector4B vertexInfo = new Vector4B((byte)0, (byte)cubeFace, (byte)85, (byte)(cubeProfile.YBlockOffset * 255));
+            //GetBlock Offset
+            //This "natural" offset should only be made when the upper block is not the same as the block itself
+            if (topCube.Id != cube.Id)
+            {
+                yBlockOffset = (byte)(cubeProfile.YBlockOffset * 255);
+            }
+
+            Vector4B vertexInfo = new Vector4B((byte)0, (byte)cubeFace, (byte)85, yBlockOffset);
 
             long hashVertex;
             int generatedVertex = 0;
