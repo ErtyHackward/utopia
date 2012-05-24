@@ -1,5 +1,4 @@
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Interfaces
@@ -12,15 +11,28 @@ namespace Utopia.Shared.Interfaces
         Vector3I GlobalPosition { get; set; }
 
         /// <summary>
-        /// Reads current block type at cursor position
+        /// Reads current block type at the cursor position
         /// </summary>
         byte Read();
+
+        /// <summary>
+        /// Reads current block tag at the cursor position
+        /// </summary>
+        /// <returns></returns>
+        BlockTag ReadTag();
+
+        /// <summary>
+        /// Reads current block and tag at the cursor position
+        /// </summary>
+        /// <returns></returns>
+        void ReadBlockWithTag(out byte blockValue, out BlockTag tag);
 
         /// <summary>
         /// Writes specidfied value to current cursor position
         /// </summary>
         /// <param name="value"></param>
-        void Write(byte value);
+        /// <param name="tag"> </param>
+        void Write(byte value, BlockTag tag = null);
 
         /// <summary>
         /// Creates a copy of current cursor
@@ -64,6 +76,7 @@ namespace Utopia.Shared.Interfaces
         byte PeekValue(Vector3I moveVector);
 
         ILandscapeCursor MoveDown();
+
         ILandscapeCursor MoveUp();
 
         /// <summary>
