@@ -342,21 +342,15 @@ namespace Utopia.Shared.Entities
         /// Performs loading of the entites from binary format
         /// </summary>
         /// <param name="factory">A factory used to generate new entities</param>
-        /// <param name="ms">Memory stream to deserialize</param>
-        /// <param name="offset">offset in memory stream</param>
-        /// <param name="length">bytes amount to process</param>
-        public void LoadEntities(EntityFactory factory, MemoryStream ms, int offset, int length)
+        /// <param name="reader">Data flaw coming embeeded inside a binary reader</param>
+        public void LoadEntities(EntityFactory factory, BinaryReader reader)
         {
             _initialisation = true;
-            using (var reader = new BinaryReader(ms))
+            int nbrEntities = reader.ReadInt32();
+            for (int i = 0; i < nbrEntities; i++)
             {
-                ms.Position = offset;
-
-                while (ms.Position < offset + length)
-                {
-                    var entity = (IStaticEntity)factory.CreateFromBytes(reader);
-                    Add(entity);
-                }
+                var entity = (IStaticEntity)factory.CreateFromBytes(reader);
+                Add(entity);
             }
             _initialisation = false;
         }
@@ -369,6 +363,8 @@ namespace Utopia.Shared.Entities
         {
             lock (_syncRoot)
             {
+                //Write the Nbr of Entities that needs to be saved
+                writer.Write(_entities.Count);
                 foreach (var entity in _entities)
                 {
                     entity.Value.Save(writer);
