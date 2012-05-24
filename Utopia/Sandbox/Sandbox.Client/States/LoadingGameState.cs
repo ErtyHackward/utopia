@@ -202,10 +202,9 @@ namespace Sandbox.Client.States
             dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
             dEntity.CharacterName = "Local player";
             ContainedSlot outItem;
-            //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(SandboxEntityClassId.Annihilator) }, out outItem);
 
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.CubeId = CubeId.HalfWoodPlank;//looting a terraincube will create a new blockadder instance or add to the stack
+            adder.CubeId = CubeId.Sand;//looting a terraincube will create a new blockadder instance or add to the stack
 
             dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 

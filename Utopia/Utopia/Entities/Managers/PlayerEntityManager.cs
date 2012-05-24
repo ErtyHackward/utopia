@@ -415,7 +415,7 @@ namespace Utopia.Entities.Managers
                 }
 
                 //Eyes under water (Used to change view Color)
-                if (_headCube.Id == CubeId.Water || _headCube.Id == CubeId.WaterSource)
+                if (_headCube.Id == CubeId.StillWater || _headCube.Id == CubeId.DynamicWater)
                 {
                     int AboveHead = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Fastfloor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
                     if (_cubesHolder.Cubes[AboveHead].Id == CubeId.Air)

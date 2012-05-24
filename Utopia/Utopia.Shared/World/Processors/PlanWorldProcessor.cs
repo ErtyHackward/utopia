@@ -84,7 +84,7 @@ namespace Utopia.Shared.World.Processors
                     var undegroundBlock = CubeId.Dirt;
 
                     if (pointData.IsRiver)
-                        topGroundBlock = CubeId.Water;
+                        topGroundBlock = CubeId.StillWater;
 
                     if (Biome.IsDesert(pointData.Biome))
                     {
@@ -104,7 +104,7 @@ namespace Utopia.Shared.World.Processors
                         }
                         else if (y <= _worldParameters.SeaLevel)
                         {
-                            chunk.BlockData[new Vector3I(x, y, z)] = CubeId.Water;
+                            chunk.BlockData[new Vector3I(x, y, z)] = CubeId.StillWater;
                         }
 
                         if (y == pointData.Elevation)
@@ -235,7 +235,7 @@ namespace Utopia.Shared.World.Processors
                 {
                     for (int z = -radius; z <= radius; z++)
                     {
-                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), CubeId.Leaves);
+                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), CubeId.Foliage);
                     }
                 }
 

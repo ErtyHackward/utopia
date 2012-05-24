@@ -193,7 +193,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                         if ( Y == _worldParameters.SeaLevel && cube == CubeId.Air)
                         {
-                            cube = CubeId.WaterSource;
+                            cube = CubeId.StillWater;
                         }
 
                         if(cube != CubeId.Air)
@@ -268,7 +268,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         else
                         {
-                            if (cubeId == CubeId.WaterSource)
+                            if (cubeId == CubeId.StillWater)
                             {
                                 inWaterMaxLevel = Y;
                             }
@@ -276,7 +276,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                             {
                                 if (inWaterMaxLevel > 0 && cubeId == CubeId.Air)
                                 {
-                                    ChunkCubes[index] = CubeId.WaterSource;
+                                    ChunkCubes[index] = CubeId.StillWater;
                                 }
                             }
                         }

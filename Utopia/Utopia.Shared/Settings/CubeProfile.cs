@@ -23,6 +23,7 @@ namespace Utopia.Shared.Settings
         public bool IsSolidToEntity;
         public bool IsEmissiveColorLightSource;
         public bool IsFlooding;
+        public bool IsTaggable;
         public int FloodingPropagationPower;
         public ByteColor EmissiveColor;
         public byte EmissiveColorA { get { return EmissiveColor.A; } set { EmissiveColor.A = value; } }

@@ -2,6 +2,9 @@ using System;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
+using System.IO;
+using Utopia.Shared.Entities;
+using System.Collections.Generic;
 
 namespace Utopia.Shared.Chunks
 {
@@ -10,6 +13,9 @@ namespace Utopia.Shared.Chunks
     /// </summary>
     public class SingleArrayDataProvider : ChunkDataProvider
     {
+        private Vector3I _chunkSize;
+        private readonly Dictionary<Vector3I, BlockTag> _tags = new Dictionary<Vector3I, BlockTag>();
+
         //A reference to the class using this DataProvider.
         public ISingleArrayDataProviderUser DataProviderUser { get; set; }
         public SingleArrayChunkContainer ChunkCubes { get; set; }
@@ -18,7 +24,8 @@ namespace Utopia.Shared.Chunks
         public SingleArrayDataProvider(SingleArrayChunkContainer singleArrayContainer)
         {
             ChunkCubes = singleArrayContainer;
-            ChunkColumns = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
+            _chunkSize = AbstractChunk.ChunkSize;
+            ChunkColumns = new ChunkColumnInfo[_chunkSize.X * _chunkSize.Z];
         }
 
         #region Circular Array access through chunk
@@ -36,15 +43,15 @@ namespace Utopia.Shared.Chunks
 
             byte[] extractedCubes = new byte[AbstractChunk.ChunkBlocksByteLength];
 
-            for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
+            for (int Z = 0; Z < _chunkSize.Z; Z++)
             {
                 if (Z != 0) { CubeIndexZ += ChunkCubes.MoveZ; CubeIndexX = CubeIndexZ; cubeIndex = CubeIndexZ; }
 
-                for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
+                for (int X = 0; X < _chunkSize.X; X++)
                 {
                     if (X != 0) { CubeIndexX += ChunkCubes.MoveX; cubeIndex = CubeIndexX; }
 
-                    for (int Y = 0; Y < AbstractChunk.ChunkSize.Y; Y++)
+                    for (int Y = 0; Y < _chunkSize.Y; Y++)
                     {
                         if (Y != 0) { cubeIndex += ChunkCubes.MoveY; }
 
@@ -82,7 +89,11 @@ namespace Utopia.Shared.Chunks
                                               inChunkPosition.Z + DataProviderUser.ChunkPositionBlockUnit.Y)] =
                 new TerraCube(blockValue);
 
-            //Init ChunkCubes.CubesMetaData[] ???
+            if (tag != null)
+                _tags[inChunkPosition] = tag;
+            else
+                _tags.Remove(inChunkPosition);
+
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
                                    {
                                        Count = 1,
@@ -108,7 +119,16 @@ namespace Utopia.Shared.Chunks
                     new TerraCube(values[i]);
             }
 
-            //Init ChunkCubes.CubesMetaData[] ???
+            if (tags != null)
+            {
+                for (var i = 0; i < positions.Length; i++)
+                {
+                    if (tags[i] != null)
+                        _tags[positions[i]] = tags[i];
+                    else _tags.Remove(positions[i]);
+                }
+            }
+
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
                                    {
                                        Bytes = values,
@@ -129,15 +149,15 @@ namespace Utopia.Shared.Chunks
             int CubeIndexX = baseCubeIndex;
             int CubeIndexZ = baseCubeIndex;
             int cubeIndex = baseCubeIndex;
-            for (int Z = 0; Z < AbstractChunk.ChunkSize.Z;Z++)
+            for (int Z = 0; Z < _chunkSize.Z; Z++)
             {
                 if (Z != 0) { CubeIndexZ += ChunkCubes.MoveZ; CubeIndexX = CubeIndexZ; cubeIndex = CubeIndexZ; }
 
-                for (int X = 0; X < AbstractChunk.ChunkSize.X; X++)
+                for (int X = 0; X < _chunkSize.X; X++)
                 {
                     if (X != 0) { CubeIndexX += ChunkCubes.MoveX; cubeIndex = CubeIndexX; }
 
-                    for (int Y = 0; Y < AbstractChunk.ChunkSize.Y; Y++)
+                    for (int Y = 0; Y < _chunkSize.Y; Y++)
                     {
                         if (Y != 0) { cubeIndex += ChunkCubes.MoveY; }
 
@@ -147,42 +167,91 @@ namespace Utopia.Shared.Chunks
                 }
             }
 
-
             OnBlockBufferChanged(new ChunkDataProviderBufferChangedEventArgs() { NewBuffer = bytes });
         }
 
         #endregion
 
         #region Chunk Column Information Manager
-        public override ChunkColumnInfo[] GetColumnInfo()
+        public override ChunkColumnInfo[] GetColumnsInfo
         {
-            return ChunkColumns;
+            get
+            {
+                return ChunkColumns;
+            }
+            set
+            {
+                ChunkColumns = value;
+            }
+        }
+
+        public override ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition)
+        {
+            return ChunkColumns[inChunkPosition.Z * _chunkSize.X + inChunkPosition.X];
         }
 
         public override ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition)
         {
-            return ChunkColumns[inChunkPosition.Y * AbstractChunk.ChunkSize.X + inChunkPosition.X];
-        }
-
-        public override void SetColumnInfos(ChunkColumnInfo[] columnInfo)
-        {
-            ChunkColumns = columnInfo;
+            return ChunkColumns[inChunkPosition.Y * _chunkSize.X + inChunkPosition.X];
         }
         #endregion
 
         public override BlockTag GetTag(Vector3I inChunkPosition)
         {
-            throw new NotImplementedException();
+            BlockTag result;
+            _tags.TryGetValue(inChunkPosition, out result);
+            return result;
         }
 
-        public override void Save(System.IO.BinaryWriter writer)
+        //Should be never use
+        public override void Save(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            //Save the Chunk Block informations ==================
+            writer.Write(_chunkSize);
+            writer.Write(GetBlocksBytes());
+
+            //Save the Block tags metaData informations ==========
+            writer.Write(_tags.Count);
+            foreach (var pair in _tags)
+            {
+                writer.Write(pair.Key);      //Block Tag Position
+                writer.Write(pair.Value.Id); //Block Tag Cube ID
+                pair.Value.Save(writer);     //Block tag object binary form
+            }
+
+            //Save the Chunk Column informations =================
+            writer.Write(ChunkColumns.Length); //Save the qt of chunkColumn
+            for (var i = 0; i < ChunkColumns.Length; i++)
+            {
+                ChunkColumns[i].Save(writer); //Save the chunkColumn object data
+            }
         }
 
-        public override void Load(System.IO.BinaryReader reader)
+        public override void Load(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            //Load the Chunk Block informations ==================
+            _chunkSize = reader.ReadVector3I();
+            var bytesCount = _chunkSize.X * _chunkSize.Y * _chunkSize.Z;
+            SetBlockBytes(reader.ReadBytes(bytesCount));            
+
+            //Load the Block tags metaData informations ==========
+            var tagsCount = reader.ReadInt32();
+            _tags.Clear();
+            for (var i = 0; i < tagsCount; i++)
+            {
+                var position = reader.ReadVector3I();
+                var tag = EntityFactory.CreateTagFromBytes(reader);
+                _tags.Add(position, tag);
+            }
+
+            //Load the Chunk Column informations =================
+            var columnsInfoCount = reader.ReadInt32();
+            for (var i = 0; i < columnsInfoCount; i++)
+            {
+                ChunkColumns[i] = new ChunkColumnInfo();
+                ChunkColumns[i].Load(reader);
+            }
+            
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Utopia.Shared.Chunks
         /// Will send back chunk columns informations = "Kind of Data heightmap"
         /// </summary>
         /// <returns></returns>
-        public abstract ChunkColumnInfo[] GetColumnInfo();
+        public abstract ChunkColumnInfo[] GetColumnsInfo { get; set; }
 
         /// <summary>
         /// Gets a single ColumnInf from internal location specified
@@ -46,10 +46,12 @@ namespace Utopia.Shared.Chunks
         public abstract ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition);
 
         /// <summary>
-        /// Sets a full block buffer for a chunk (only raw block ids)
+        /// Gets a single ColumnInf from internal location specified
         /// </summary>
-        /// <param name="columnInfo"></param>
-        public abstract void SetColumnInfos(ChunkColumnInfo[] columnInfo);
+        /// <param name="inChunkPosition"></param>
+        /// <returns></returns>
+        public abstract ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition);
+
 
         /// <summary>
         /// Requests a full block buffer for a chunk. This operation should be used only for saving the data. Only raw blocks ids

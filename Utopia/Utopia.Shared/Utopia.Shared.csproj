@@ -286,8 +286,6 @@
     <Compile Include="World\Processors\PlanWorldProcessor.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\MontainBiome.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\OceanBiome.cs" />
-    <Compile Include="World\Processors\Utopia\CubesFct\RareCubeDistri.cs" />
-    <Compile Include="World\Processors\Utopia\CubesFct\UncommonCubeDistri.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\DesertBiome.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\Biome.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\BiomeType.cs" />
@@ -359,7 +357,9 @@
       <Name>S33M3Resources</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="World\Processors\Utopia\CubesFct\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

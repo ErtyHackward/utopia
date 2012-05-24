@@ -78,8 +78,6 @@ namespace Utopia.Shared.Chunks
             Entities.CollectionDirty += EntitiesCollectionDirty;
 
         }
-
-
         /// <summary>
         /// Loads chunk data from bytes array (blocks and entites)
         /// </summary>

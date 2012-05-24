@@ -328,7 +328,7 @@ namespace Utopia.Shared.World.Processors
 
                                     if (Y == _worldParameters.SeaLevel && cube == CubeId.Air)
                                     {
-                                        cube = CubeId.WaterSource;
+                                        cube = CubeId.StillWater;
                                     }
 
                                     if (cube != CubeId.Air)
