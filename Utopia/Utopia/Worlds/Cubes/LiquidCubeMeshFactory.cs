@@ -31,7 +31,7 @@ namespace Utopia.Worlds.Cubes
         {
             if (cubeFace != CubeFaces.Bottom && cubeFace != CubeFaces.Top) //Never display a bottom Water face !
             {
-                if ((!GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].IsBlockingLight && !GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].IsFlooding))
+                if ((!GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].IsBlockingLight && GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].CubeFamilly != enuCubeFamilly.Liquid))
                 {
                     return true;
                 }

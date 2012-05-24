@@ -401,8 +401,8 @@ namespace Utopia.Entities.Managers
                 TerraCube feetBlock = _cubesHolder.Cubes[feetBlockIdx];
                 TerraCube BelowfeetBlock = _cubesHolder.Cubes[_cubesHolder.FastIndex(feetBlockIdx, MathHelper.Fastfloor(CameraWorldPosition.Y) - 1, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1)];
 
-                if (GameSystemSettings.Current.Settings.CubesProfile[feetBlock.Id].IsFlooding &&
-                   (GameSystemSettings.Current.Settings.CubesProfile[BelowfeetBlock.Id].IsFlooding || GameSystemSettings.Current.Settings.CubesProfile[_headCube.Id].IsFlooding))
+                if (GameSystemSettings.Current.Settings.CubesProfile[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
+                   (GameSystemSettings.Current.Settings.CubesProfile[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || GameSystemSettings.Current.Settings.CubesProfile[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))
                 {
                     if (DisplacementMode == EntityDisplacementModes.Walking)
                     {

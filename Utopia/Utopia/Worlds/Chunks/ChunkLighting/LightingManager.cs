@@ -106,11 +106,6 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         //Create SunLight LightSources from AIR blocs
                         cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id];
                         if ((!blockLight && cubeprofile.IsBlockingLight)) blockLight = true; //If my block is blocking light, stop sunlight propagation !
-                        if (cubeprofile.IsFlooding)
-                        {
-                            maxSunLight -= 32;
-                            maxSunLight = Math.Max(maxSunLight, 0);
-                        }
                         if (!blockLight)
                         {
                             _cubesHolder.Cubes[index].EmissiveColor.A = (byte)maxSunLight;
