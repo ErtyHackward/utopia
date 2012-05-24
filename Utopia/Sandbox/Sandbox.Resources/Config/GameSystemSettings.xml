@@ -175,7 +175,7 @@
     <IsTaggable>true</IsTaggable>
     <CubeFamilly>Liquid</CubeFamilly>
     <LiquidType>FreshWater</LiquidType>
-    <YBlockOffset>0.1</YBlockOffset>
+    <YBlockOffset>0.0</YBlockOffset>
     <Friction>0.3</Friction>
     <SlidingValue>0</SlidingValue>
   </Cube>

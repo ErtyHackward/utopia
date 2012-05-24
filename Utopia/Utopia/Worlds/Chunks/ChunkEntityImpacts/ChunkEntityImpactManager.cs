@@ -55,7 +55,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _initialized = false;
         }
 
-        public void LateInitialization(ServerComponent server,
+        public void LateInitialization( ServerComponent server,
                                         SingleArrayChunkContainer cubesHolder,
                                         IWorldChunks worldChunks,
                                         IChunkStorageManager chunkStorageManager,
@@ -224,20 +224,37 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public void ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, BlockTag blockTag = null)
         {
+            VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
+
             //Create the new cube
             TerraCube newCube = new TerraCube(replacementCubeId);
 
             //Get Cube Profile
             CubeProfile cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[replacementCubeId];
 
-
-
             ////Check if the cube is not already the same ? ! ?
             TerraCube existingCube = _cubesHolder.Cubes[cubeArrayIndex];
-            if (existingCube.Id == replacementCubeId) return;
+            if (existingCube.Id == replacementCubeId)
+            {
+                if (cubeProfile.IsTaggable)
+                {
+                    BlockTag ExistingTag = impactedChunk.BlockData.GetTag(cubeCoordinates);
+                    if (ExistingTag != null && ExistingTag == blockTag)
+                    {
+                        return; //The block & tags are the sames !
+                    }
+                }
+                return; //The block are the sames !
+            }
 
             //Change the cube in the big array
             _cubesHolder.SetCube(cubeArrayIndex, ref cubeCoordinates, ref newCube);
+
+            //Update chunk tag collection if needed
+            if (cubeProfile.IsTaggable)
+            {
+                impactedChunk.BlockData.SetTag(blockTag, cubeCoordinates);
+            }
 
             //Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy
             TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId);
@@ -247,7 +264,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
             //Save the modified Chunk in local buffer DB
             //Is it Worth ????
-            VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
             impactedChunk.CompressedDirty = true;
             Md5Hash chunkHash;
             byte[] chunkDataCompressed = impactedChunk.CompressAndComputeHash(out chunkHash);

@@ -46,13 +46,21 @@ namespace Utopia.Worlds.Cubes
             return false;
         }
 
-        public void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref Vector4B cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk)
+        public void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref Vector4B cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk, ref TerraCube topCube)
         {
+            float yBlockOffset = 0;
             int verticeCubeOffset = chunk.LiquidCubeVertices.Count;
             int indiceCubeOffset = chunk.LiquidCubeIndices.Count;
             ByteColor newColor = cube.EmissiveColor;
+            BlockTag tag = null;
 
             CubeProfile cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
+            //Get the Cube Tag Informations
+            if (cubeProfile.IsTaggable)
+            {
+                tag = chunk.BlockData.GetTag(new Vector3I(cubePosition.X, cubePosition.Y, cubePosition.Z));
+            }
+
             bool IsEmissiveColor = cubeProfile.IsEmissiveColorLightSource;
             bool vertexInDico;
 
@@ -64,7 +72,21 @@ namespace Utopia.Worlds.Cubes
 
             int cubeFaceType = (int)cubeFace;
 
-            Vector4 vertexInfo2 = new Vector4((float)cubeProfile.YBlockOffset, 0, 0, 0);
+            //GetBlock Offset
+            if (cubeProfile.IsTaggable && tag is LiquidTag)
+            {
+                yBlockOffset = (float)(((LiquidTag)tag).Pressure - 1);
+            }
+            else
+            {
+                //This "natural" offset should only be made when the upper block is not the same as the block itself
+                if (topCube.Id != cube.Id)
+                {
+                    yBlockOffset = (float)cubeProfile.YBlockOffset;
+                }
+            }
+
+            Vector4 vertexInfo2 = new Vector4(yBlockOffset, 0, 0, 0);
             Vector4B vertexInfo1 = new Vector4B((byte)cubeFace,
                                                       (byte)0,          //Is "UP" vertex
                                                       (byte)0,

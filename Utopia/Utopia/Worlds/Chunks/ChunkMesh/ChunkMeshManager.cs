@@ -163,6 +163,8 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //Check to see if the face needs to be generated or not !
                         //Border Chunk test ! ==> Don't generate faces that are "border" chunks
                         //BorderChunk value is true if the chunk is at the border of the visible world.
+                        int topCubeIndex = cubeIndex + _cubesHolder.MoveY;
+
                         switch (cubeFace)
                         {
                             case CubeFaces.Back:
@@ -181,7 +183,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 break;
                             case CubeFaces.Top:
                                 if (YWorld + 1 >= worldRangeMaxY) continue;
-                                neightborCubeIndex = cubeIndex + _cubesHolder.MoveY;
+                                neightborCubeIndex = topCubeIndex;
                                 
                                 break;
                             case CubeFaces.Left:
@@ -204,6 +206,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //if (i >= _cubesHolder.Cubes.Length) i -= _cubesHolder.Cubes.Length;
                         //if (i < 0) i += _cubesHolder.Cubes.Length;
                         neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
+                        TerraCube topCube = _cubesHolder.Cubes[topCubeIndex];
 
                         switch (cubeProfile.CubeFamilly)
                         {
@@ -211,12 +214,12 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 //Other delegate.
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;
                                 if (!_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
-                                _solidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk);
+                                _solidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);
                                 break;
                             case enuCubeFamilly.Liquid:
                                 //Default linked to : CubeMeshFactory.GenLiquidCubeFace;
                                 if (!_liquidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
-                                _liquidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk);
+                                _liquidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);
                                 break;
                             case enuCubeFamilly.Other:
                                 break;

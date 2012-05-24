@@ -131,6 +131,14 @@ namespace Utopia.Shared.Chunks
             return result;
         }
 
+        public override void SetTag(BlockTag tag, Vector3I inChunkPosition)
+        {
+            if (tag != null)
+                _tags[inChunkPosition] = tag;
+            else
+                _tags.Remove(inChunkPosition);
+        }
+
         /// <summary>
         /// Sets a single block into location specified
         /// </summary>
@@ -145,10 +153,7 @@ namespace Utopia.Shared.Chunks
             }
             _blockBytes[inChunkPosition.X * _chunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * _chunkSize.Y * _chunkSize.X] = blockValue;
 
-            if (tag != null)
-                _tags[inChunkPosition] = tag;
-            else
-                _tags.Remove(inChunkPosition);
+            SetTag(tag, inChunkPosition);
 
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
                                    {
@@ -181,9 +186,7 @@ namespace Utopia.Shared.Chunks
             {
                 for (var i = 0; i < positions.Length; i++)
                 {
-                    if (tags[i] != null)
-                        _tags[positions[i]] = tags[i];
-                    else _tags.Remove(positions[i]);
+                    SetTag(tags[i], positions[i]);
                 }
             }
 
@@ -280,5 +283,7 @@ namespace Utopia.Shared.Chunks
                 _chunkColumns[i].Load(reader);
             }
         }
+
+
     }
 }
