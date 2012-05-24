@@ -1,7 +1,5 @@
 using System;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
-using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 
@@ -38,7 +36,7 @@ namespace Utopia.Shared.Chunks
         }
 
         /// <summary>
-        /// Reads current block type at cursor position
+        /// Reads current block type at the cursor position
         /// </summary>
         public byte Read()
         {
@@ -46,12 +44,27 @@ namespace Utopia.Shared.Chunks
         }
 
         /// <summary>
-        /// Writes specidfied value to current cursor position
+        /// Reads current block tag at the cursor position
+        /// </summary>
+        /// <returns></returns>
+        public BlockTag ReadTag()
+        {
+            return _currentChunk.BlockData.GetTag(_internalPosition);
+        }
+
+        public void ReadBlockWithTag(out byte blockValue, out BlockTag tag)
+        {
+            _currentChunk.BlockData.GetBlockWithTag(_internalPosition, out blockValue, out tag);
+        }
+
+        /// <summary>
+        /// Writes specidfied value to the current cursor position
         /// </summary>
         /// <param name="value"></param>
-        public void Write(byte value)
+        /// <param name="tag"> </param>
+        public void Write(byte value, BlockTag tag = null)
         {
-            _currentChunk.BlockData[_internalPosition] = value;
+            _currentChunk.BlockData.SetBlock(_internalPosition, value, tag);
         }
 
         protected LandscapeCursor(ILandscapeManager2D manager)
