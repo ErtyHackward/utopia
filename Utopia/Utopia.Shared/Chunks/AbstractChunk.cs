@@ -99,7 +99,7 @@ namespace Utopia.Shared.Chunks
             var reader = new BinaryReader(ms);
             BlockData.Load(reader);
             Entities.Clear();
-            Entities.LoadEntities(factory, ms, ChunkBlocksByteLength, (int)(ms.Length - ChunkBlocksByteLength));
+            Entities.LoadEntities(factory, reader);
             ms.Dispose();
         }
 

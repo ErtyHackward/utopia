@@ -1,9 +1,16 @@
 ﻿using System.IO;
+using Utopia.Shared.Chunks.Tags;
 
-namespace Utopia.Shared.Chunks
+namespace Utopia.Shared.Chunks.Tags
 {
-    public class LiquidTag : BlockTag
+    public class LiquidTag : BlockTag, ICubeYOffsetModifier
     {
+        //YOffset : 0 = FULL cube, 1 = Empty cube
+        public float YOffset
+        {
+            get { return (Pressure - 1) * -1; }
+        }
+
         /// <summary>
         /// Pressure of the liquid, less than one values indicate non full block
         /// </summary>

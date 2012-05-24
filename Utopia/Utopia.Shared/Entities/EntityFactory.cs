@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Chunks.Tags;
 
 namespace Utopia.Shared.Entities
 {

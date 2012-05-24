@@ -14,6 +14,7 @@ using Utopia.Shared.Enums;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
+using Utopia.Shared.Chunks.Tags;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -27,18 +28,20 @@ namespace Utopia.Worlds.Cubes
         }
 
          //Default Face Generation Checks !
-        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube neightboorFaceCube, int seaLevel)
+        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube NeightBorFaceCube, int seaLevel)
         {
             if (cubeFace != CubeFaces.Bottom && cubeFace != CubeFaces.Top) //Never display a bottom Water face !
             {
-                if ((!GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].IsBlockingLight && GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id].CubeFamilly != enuCubeFamilly.Liquid))
+                CubeProfile NeightBorProfile = GameSystemSettings.Current.Settings.CubesProfile[NeightBorFaceCube.Id];
+
+                if ((!NeightBorProfile.IsBlockingLight && NeightBorProfile.CubeFamilly != enuCubeFamilly.Liquid))
                 {
                     return true;
                 }
             }
             if (cubeFace == CubeFaces.Top)
             {
-                if (cubePosiInWorld.Y == seaLevel || neightboorFaceCube.Id == CubeId.Air)
+                if (cubePosiInWorld.Y == seaLevel || NeightBorFaceCube.Id == CubeId.Air)
                 {
                     return true;
                 }
@@ -73,9 +76,9 @@ namespace Utopia.Worlds.Cubes
             int cubeFaceType = (int)cubeFace;
 
             //GetBlock Offset
-            if (cubeProfile.IsTaggable && tag is LiquidTag)
+            if (cubeProfile.IsTaggable && tag is ICubeYOffsetModifier)
             {
-                yBlockOffset = (float)(((LiquidTag)tag).Pressure - 1);
+                yBlockOffset = ((ICubeYOffsetModifier)tag).YOffset;
             }
             else
             {

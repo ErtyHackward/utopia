@@ -98,7 +98,8 @@
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
-    <Compile Include="Chunks\LiquidTag.cs" />
+    <Compile Include="Chunks\Tags\ICubeYOffsetModifier.cs" />
+    <Compile Include="Chunks\Tags\LiquidTag.cs" />
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\Vector3DExtensions.cs" />
     <Compile Include="Entities\Models\ColorMapping.cs" />
