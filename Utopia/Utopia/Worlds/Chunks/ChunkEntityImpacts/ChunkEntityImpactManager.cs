@@ -114,11 +114,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             };
 
             //Refresh the Visual Entity if needed !
-            VisualChunk neightboorChunk;
-            neightboorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z);
-            //if (neightboorChunk.Entities.IsDirty)
+            VisualChunk NeightBorChunk;
+            NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z);
+            //if (NeightBorChunk.Entities.IsDirty)
             //{
-            //    neightboorChunk.RefreshVisualEntities();
+            //    NeightBorChunk.RefreshVisualEntities();
             //}
 
             _lightManager.CreateLightSources(ref cubeRange);
@@ -135,82 +135,82 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             CubeProfile profile = GameSystemSettings.Current.Settings.CubesProfile[cube.Cube.Id];
 
             //Find the chunks that have been impacted around the 8 surrending chunks
-            neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
-            neightboorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-            neightboorChunk.UserChangeOrder = !profile.IsBlockingLight ? 2 : 1;
-            mainChunkId = neightboorChunk.ChunkID;
-            //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
+            NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+            NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+            NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 2 : 1;
+            mainChunkId = NeightBorChunk.ChunkID;
+            //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
 
-            neightboorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z);
-            if (neightboorChunk.ChunkID != mainChunkId)
+            NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z);
+            if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
-                neightboorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-                neightboorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
-                //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
+                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+                NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z);
-            if (neightboorChunk.ChunkID != mainChunkId)
+            NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z);
+            if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
-                neightboorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-                neightboorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
-                //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
+                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+                NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z + _lightManager.LightPropagateSteps);
-            if (neightboorChunk.ChunkID != mainChunkId)
+            NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z + _lightManager.LightPropagateSteps);
+            if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
-                neightboorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-                neightboorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
-                //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
+                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+                NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z - _lightManager.LightPropagateSteps);
-            if (neightboorChunk.ChunkID != mainChunkId)
+            NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z - _lightManager.LightPropagateSteps);
+            if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
-                neightboorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-                neightboorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
-                //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
+                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+                NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
-            if (neightboorChunk.ChunkID != mainChunkId)
+            NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
+            if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
-                neightboorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-                neightboorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
-                //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
+                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+                NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
-            if (neightboorChunk.ChunkID != mainChunkId)
+            NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
+            if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
-                neightboorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-                neightboorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
-                //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
+                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+                NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
-            if (neightboorChunk.ChunkID != mainChunkId)
+            NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
+            if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
-                neightboorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-                neightboorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
-                //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
+                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+                NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             }
 
-            neightboorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
-            if (neightboorChunk.ChunkID != mainChunkId)
+            NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
+            if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                neightboorChunk.State = ChunkState.LandscapeLightsPropagated;
-                neightboorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-                neightboorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
-                //Console.WriteLine(neightboorChunk.ChunkID + " => " + neightboorChunk.UserChangeOrder);
+                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+                NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             }
 
         }

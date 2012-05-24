@@ -14,6 +14,7 @@ using Utopia.Shared.Enums;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
+using Utopia.Shared.Chunks.Tags;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -27,29 +28,20 @@ namespace Utopia.Worlds.Cubes
         }
 
          //Default Face Generation Checks !
-        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube neightboorFaceCube, int seaLevel, ref Vector4B cubePosition, VisualChunk chunk)
+        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube NeightBorFaceCube, int seaLevel)
         {
             if (cubeFace != CubeFaces.Bottom && cubeFace != CubeFaces.Top) //Never display a bottom Water face !
             {
-                CubeProfile NeightboorProfile = GameSystemSettings.Current.Settings.CubesProfile[neightboorFaceCube.Id];
-                float NeightBoorOffset = (float)NeightboorProfile.YBlockOffset;
+                CubeProfile NeightBorProfile = GameSystemSettings.Current.Settings.CubesProfile[NeightBorFaceCube.Id];
 
-                CubeProfile CubeProfile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
-                //Compute the Current Offset, and the neightboor offset
-                if (NeightboorProfile.IsTaggable)
-                {
-                    LiquidTag tag = chunk.BlockData.GetTag(new Vector3I(cubePosition.X, cubePosition.Y, cubePosition.Z)) as LiquidTag;
-                    if (tag != null) NeightBoorOffset = (tag.Pressure - 1) * -1;
-                }
-
-                if ((!NeightboorProfile.IsBlockingLight && NeightboorProfile.CubeFamilly != enuCubeFamilly.Liquid))
+                if ((!NeightBorProfile.IsBlockingLight && NeightBorProfile.CubeFamilly != enuCubeFamilly.Liquid))
                 {
                     return true;
                 }
             }
             if (cubeFace == CubeFaces.Top)
             {
-                if (cubePosiInWorld.Y == seaLevel || neightboorFaceCube.Id == CubeId.Air)
+                if (cubePosiInWorld.Y == seaLevel || NeightBorFaceCube.Id == CubeId.Air)
                 {
                     return true;
                 }
@@ -84,9 +76,9 @@ namespace Utopia.Worlds.Cubes
             int cubeFaceType = (int)cubeFace;
 
             //GetBlock Offset
-            if (cubeProfile.IsTaggable && tag is LiquidTag)
+            if (cubeProfile.IsTaggable && tag is ICubeYOffsetModifier)
             {
-                yBlockOffset = (float)(((LiquidTag)tag).Pressure - 1.0f) * -1.0f;
+                yBlockOffset = ((ICubeYOffsetModifier)tag).YOffset;
             }
             else
             {
