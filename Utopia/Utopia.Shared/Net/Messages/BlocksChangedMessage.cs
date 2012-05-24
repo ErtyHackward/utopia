@@ -44,7 +44,7 @@ namespace Utopia.Shared.Net.Messages
         }
 
         /// <summary>
-        /// According block tags
+        /// According block tags (can be null, otherwise tags array will correspond the order of BlockPosition array, each value of the array still can be null)
         /// </summary>
         public BlockTag[] Tags
         {
