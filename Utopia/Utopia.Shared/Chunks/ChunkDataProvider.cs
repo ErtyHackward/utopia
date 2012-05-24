@@ -48,7 +48,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Sets a full block buffer for a chunk (only raw block ids)
         /// </summary>
-        /// <param name="bytes"></param>
+        /// <param name="columnInfo"></param>
         public abstract void SetColumnInfos(ChunkColumnInfo[] columnInfo);
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public void GetBlockWithTag(Vector3I inChunkPosition, out byte blockValue, out IBinaryStorable tag)
+        public void GetBlockWithTag(Vector3I inChunkPosition, out byte blockValue, out BlockTag tag)
         {
             blockValue = GetBlock(inChunkPosition);
             tag = GetTag(inChunkPosition);
@@ -81,7 +81,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <returns></returns>
-        public abstract IBinaryStorable GetTag(Vector3I inChunkPosition);
+        public abstract BlockTag GetTag(Vector3I inChunkPosition);
 
         /// <summary>
         /// Sets a single block into location specified
@@ -89,7 +89,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public abstract void SetBlock(Vector3I inChunkPosition, byte blockValue, IBinaryStorable tag = null);
+        public abstract void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null);
 
         /// <summary>
         /// Seta a group of blocks
@@ -97,7 +97,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="positions"></param>
         /// <param name="values"></param>
         /// <param name="tags"> </param>
-        public abstract void SetBlocks(Vector3I[] positions, byte[] values, IBinaryStorable[] tags = null);
+        public abstract void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null);
 
         /// <summary>
         /// Sets a full block buffer for a chunk (only raw block ids)

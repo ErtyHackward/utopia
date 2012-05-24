@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
@@ -157,6 +158,21 @@ namespace Utopia.Shared.Entities
                 var reader = new BinaryReader(ms);
                 return CreateFromBytes(reader);
             }
+        }
+
+        public static BlockTag CreateTagFromBytes(BinaryReader reader)
+        {
+            var tagId = reader.ReadByte();
+
+            if (tagId == 0) return null;
+
+            if (tagId != 1)
+                throw new InvalidDataException();
+
+            var tag = new LiquidTag();
+            tag.Load(reader);
+
+            return tag;
         }
 
     }

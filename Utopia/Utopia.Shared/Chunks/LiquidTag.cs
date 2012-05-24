@@ -1,8 +1,8 @@
-﻿using Utopia.Shared.Interfaces;
+﻿using System.IO;
 
 namespace Utopia.Shared.Chunks
 {
-    public class LiquidTag : IBinaryStorable
+    public class LiquidTag : BlockTag
     {
         /// <summary>
         /// Pressure of the liquid, less than one values indicate non full block
@@ -13,14 +13,19 @@ namespace Utopia.Shared.Chunks
 
         public bool Sourced;
 
-        public void Save(System.IO.BinaryWriter writer)
+        public override byte Id
+        {
+            get { return 1; }
+        }
+
+        public override void Save(BinaryWriter writer)
         {
             writer.Write(LiquidType);
             writer.Write(Pressure);
             writer.Write(Sourced);
         }
 
-        public void Load(System.IO.BinaryReader reader)
+        public override void Load(BinaryReader reader)
         {
             LiquidType = reader.ReadByte();
             Pressure = reader.ReadSingle();
