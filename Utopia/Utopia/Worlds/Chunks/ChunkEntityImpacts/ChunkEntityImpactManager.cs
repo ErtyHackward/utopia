@@ -217,15 +217,20 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         #endregion
 
         #region Public methods
-        public void ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId)
+        public void ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, BlockTag blockTag = null)
         {
-            ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId);
+            ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId, blockTag);
         }
 
-        public void ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId)
+        public void ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, BlockTag blockTag = null)
         {
             //Create the new cube
             TerraCube newCube = new TerraCube(replacementCubeId);
+
+            //Get Cube Profile
+            CubeProfile cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[replacementCubeId];
+
+
 
             ////Check if the cube is not already the same ? ! ?
             TerraCube existingCube = _cubesHolder.Cubes[cubeArrayIndex];

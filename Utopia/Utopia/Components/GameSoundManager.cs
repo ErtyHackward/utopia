@@ -241,7 +241,7 @@ namespace Utopia.Components
                     var soundIndex = pair.LastSound;
 
                     //If walking on the ground, but with Feets and legs inside water block
-                    if (currentCube.Id == CubeId.Water && cubeUnderFeet.Id != CubeId.Water)
+                    if (currentCube.Id == CubeId.StillWater && cubeUnderFeet.Id != CubeId.StillWater)
                     {
                         //If my Head is not inside a Water block (Meaning = I've only the feet inside water)
                         TerraCube headCube = _singleArray.GetCube(entity.Position + new Vector3I(0, entity.Size.Y, 0));
@@ -256,7 +256,7 @@ namespace Utopia.Components
                         }
                         else
                         {
-                            if (headCube.Id == CubeId.Water)
+                            if (headCube.Id == CubeId.StillWater)
                             {
                                 //Play Sound ??
                                 //Entity having its head, and feet inside water, but "walking" on the ground.

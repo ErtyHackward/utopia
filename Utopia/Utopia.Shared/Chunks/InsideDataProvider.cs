@@ -43,6 +43,7 @@ namespace Utopia.Shared.Chunks
         public InsideDataProvider()
         {
             _chunkSize = AbstractChunk.ChunkSize;
+            _chunkColumns = new ChunkColumnInfo[_chunkSize.X * _chunkSize.Z];
         }
 
         /// <summary>
@@ -196,9 +197,21 @@ namespace Utopia.Shared.Chunks
         }
 
         #region Chunk Column Information Manager
-        public override ChunkColumnInfo[] GetColumnInfo()
+        public override ChunkColumnInfo[] GetColumnsInfo
         {
-            return _chunkColumns;
+            get
+            {
+                return _chunkColumns;
+            }
+            set
+            {
+                _chunkColumns = value;
+            }
+        }
+
+        public override ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition)
+        {
+            return _chunkColumns[inChunkPosition.Z * _chunkSize.X + inChunkPosition.X];
         }
 
         public override ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition)
@@ -206,10 +219,6 @@ namespace Utopia.Shared.Chunks
             return _chunkColumns[inChunkPosition.Y * _chunkSize.X + inChunkPosition.X];
         }
 
-        public override void SetColumnInfos(ChunkColumnInfo[] columnInfo)
-        {
-            _chunkColumns = columnInfo;
-        }
         #endregion
 
         /// <summary>
@@ -218,28 +227,25 @@ namespace Utopia.Shared.Chunks
         /// <param name="writer"></param>
         public override void Save(BinaryWriter writer)
         {
+            //Save the Chunk Block informations ==================
             writer.Write(_chunkSize);
             writer.Write(_blockBytes);
-            writer.Write(_tags.Count);
 
+            //Save the Block tags metaData informations ==========
+            writer.Write(_tags.Count);
             foreach (var pair in _tags)
             {
-                writer.Write(pair.Key);
-                
-                writer.Write(pair.Value.Id);
-                pair.Value.Save(writer);
-
+                writer.Write(pair.Key);      //Block Tag Position
+                writer.Write(pair.Value.Id); //Block Tag Cube ID
+                pair.Value.Save(writer);     //Block tag object binary form
             }
 
-            if (_chunkColumns != null)
+            //Save the Chunk Column informations =================
+            writer.Write(_chunkColumns.Length); //Save the qt of chunkColumn
+            for (var i = 0; i < _chunkColumns.Length; i++)
             {
-                writer.Write(_chunkColumns.Length);
-                for (var i = 0; i < _chunkColumns.Length; i++)
-                {
-                    _chunkColumns[i].Save(writer);
-                }
+                _chunkColumns[i].Save(writer); //Save the chunkColumn object data
             }
-            else writer.Write(0);
         }
 
         /// <summary>
@@ -248,19 +254,17 @@ namespace Utopia.Shared.Chunks
         /// <param name="reader"></param>
         public override void Load(BinaryReader reader)
         {
-            _chunkSize = reader.ReadVector3I();
-
+            //Load the Chunk Block informations ==================
+            _chunkSize = reader.ReadVector3I(); 
             var bytesCount = _chunkSize.X * _chunkSize.Y * _chunkSize.Z;
-
             _blockBytes = reader.ReadBytes(bytesCount);
 
             if (_blockBytes.Length != bytesCount)
                 throw new EndOfStreamException();
-            
+
+            //Load the Block tags metaData informations ==========
             var tagsCount = reader.ReadInt32();
-
             _tags.Clear();
-
             for (var i = 0; i < tagsCount; i++)
             {
                 var position = reader.ReadVector3I();
@@ -268,20 +272,12 @@ namespace Utopia.Shared.Chunks
                 _tags.Add(position, tag);
             }
 
+            //Load the Chunk Column informations =================
             var columnsInfoCount = reader.ReadInt32();
-
-            if (columnsInfoCount == 0)
+            for (var i = 0; i < columnsInfoCount; i++)
             {
-                _chunkColumns = null;
-            }
-            else
-            {
-                _chunkColumns = new ChunkColumnInfo[columnsInfoCount];
-                for (var i = 0; i < columnsInfoCount; i++)
-                {
-                    _chunkColumns[i] = new ChunkColumnInfo();
-                    _chunkColumns[i].Load(reader);
-                }
+                _chunkColumns[i] = new ChunkColumnInfo();
+                _chunkColumns[i].Load(reader);
             }
         }
     }

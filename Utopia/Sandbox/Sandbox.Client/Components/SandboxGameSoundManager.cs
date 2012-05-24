@@ -40,10 +40,10 @@ namespace Sandbox.Client.Components
             RegisterStepSound(CubeId.Stone, "Sounds\\Footsteps\\footsteps_stone03.ogg");
             RegisterStepSound(CubeId.Stone, "Sounds\\Footsteps\\footsteps_stone04.ogg");
 
-            RegisterStepSound(CubeId.Water, "Sounds\\Footsteps\\footsteps_water01.ogg");
+            RegisterStepSound(CubeId.StillWater, "Sounds\\Footsteps\\footsteps_water01.ogg");
 
             // ambiance
-            RegisterCubeAmbientSound(CubeId.Water, "Sounds\\Ambiance\\water_stream.ogg");
+            RegisterCubeAmbientSound(CubeId.StillWater, "Sounds\\Ambiance\\water_stream.ogg");
 
             PreLoadSound("Sounds\\Blocks\\put.wav");
             PreLoadSound("Sounds\\Blocks\\take.wav");

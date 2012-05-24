@@ -252,7 +252,7 @@ namespace Utopia.Shared.World.Processors
                         }
                         else
                         {
-                            if (cubeId == CubeId.WaterSource)
+                            if (cubeId == CubeId.StillWater)
                             {
                                 inWaterMaxLevel = Y;
                             }
@@ -260,7 +260,7 @@ namespace Utopia.Shared.World.Processors
                             {
                                 if (inWaterMaxLevel > 0 && cubeId == CubeId.Air)
                                 {
-                                    Cubes[index] = CubeId.WaterSource;
+                                    Cubes[index] = CubeId.StillWater;
                                 }
                             }
                         }
@@ -294,7 +294,7 @@ namespace Utopia.Shared.World.Processors
                 {
                     for (int z = -radius; z <= radius; z++)
                     {
-                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), CubeId.Leaves);
+                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), CubeId.Foliage);
                     }
                 }
                 vector3i.Y--;
