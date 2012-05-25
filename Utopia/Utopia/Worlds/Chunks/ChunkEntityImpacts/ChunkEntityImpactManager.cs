@@ -260,6 +260,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId);
             SmartThread.ThreadPool.QueueWorkItem(CheckImpactThreaded, cube, Amib.Threading.WorkItemPriority.Highest);
 
+            //Raise event for sound
             OnBlockReplaced(new LandscapeBlockReplacedEventArgs { Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube.Id });
 
             //Save the modified Chunk in local buffer DB
