@@ -136,5 +136,10 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="reader"></param>
         public abstract void Load(BinaryReader reader);
+
+        /// <summary>
+        /// Allows to block write operations for the chunk for threadsafety
+        /// </summary>
+        public abstract object WriteSyncRoot { get; }
     }
 }

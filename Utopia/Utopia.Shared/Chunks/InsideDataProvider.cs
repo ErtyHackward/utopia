@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Utopia.Shared.Entities;
 using S33M3Resources.Structs;
 
@@ -11,6 +12,8 @@ namespace Utopia.Shared.Chunks
     /// </summary>
     public class InsideDataProvider : ChunkDataProvider
     {
+        private readonly object _writeSyncRoot = new object();
+
         private Vector3I _chunkSize;
 
         private byte[] _blockBytes;
@@ -24,6 +27,11 @@ namespace Utopia.Shared.Chunks
         {
             get { return _blockBytes; }
             set { _blockBytes = value; }
+        }
+
+        public override object WriteSyncRoot
+        {
+            get { return _writeSyncRoot; }
         }
 
         /// <summary>
@@ -59,6 +67,8 @@ namespace Utopia.Shared.Chunks
             // copy data
             if (_blockBytes != null && copyData)
             {
+                lock (_writeSyncRoot) { }
+                
                 var newArray = new byte[newSize.X * newSize.Y * newSize.Z];
 
                 Vector3I copySize;
@@ -97,6 +107,8 @@ namespace Utopia.Shared.Chunks
 
             if (bytes.Length != arrayLength)
                 throw new ArgumentOutOfRangeException(string.Format("Wrong block buffer size. Expected: {0}, Actual: {1}", arrayLength, bytes.Length));
+
+            lock (_writeSyncRoot) { }
 
             BlockBytes = bytes;
             OnBlockBufferChanged(new ChunkDataProviderBufferChangedEventArgs { NewBuffer = bytes });
@@ -147,6 +159,8 @@ namespace Utopia.Shared.Chunks
         /// <param name="tag"></param>
         public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null)
         {
+            lock (_writeSyncRoot) { }
+
             if (_blockBytes == null)
             {
                 _blockBytes = new byte[_chunkSize.X * _chunkSize.Y * _chunkSize.Z];
@@ -172,6 +186,8 @@ namespace Utopia.Shared.Chunks
         /// <param name="tags"> </param>
         public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null)
         {
+            lock (_writeSyncRoot) { }
+
             if (_blockBytes == null)
             {
                 _blockBytes = new byte[_chunkSize.X * _chunkSize.Y * _chunkSize.Z];
@@ -230,24 +246,27 @@ namespace Utopia.Shared.Chunks
         /// <param name="writer"></param>
         public override void Save(BinaryWriter writer)
         {
-            //Save the Chunk Block informations ==================
-            writer.Write(_chunkSize);
-            writer.Write(_blockBytes);
-
-            //Save the Block tags metaData informations ==========
-            writer.Write(_tags.Count);
-            foreach (var pair in _tags)
+            lock (_writeSyncRoot)
             {
-                writer.Write(pair.Key);      //Block Tag Position
-                writer.Write(pair.Value.Id); //Block Tag Cube ID
-                pair.Value.Save(writer);     //Block tag object binary form
-            }
+                //Save the Chunk Block informations ==================
+                writer.Write(_chunkSize);
+                writer.Write(_blockBytes);
 
-            //Save the Chunk Column informations =================
-            writer.Write(_chunkColumns.Length); //Save the qt of chunkColumn
-            for (var i = 0; i < _chunkColumns.Length; i++)
-            {
-                _chunkColumns[i].Save(writer); //Save the chunkColumn object data
+                //Save the Block tags metaData informations ==========
+                writer.Write(_tags.Count);
+                foreach (var pair in _tags)
+                {
+                    writer.Write(pair.Key); //Block Tag Position
+                    writer.Write(pair.Value.Id); //Block Tag Cube ID
+                    pair.Value.Save(writer); //Block tag object binary form
+                }
+
+                //Save the Chunk Column informations =================
+                writer.Write(_chunkColumns.Length); //Save the qt of chunkColumn
+                for (var i = 0; i < _chunkColumns.Length; i++)
+                {
+                    _chunkColumns[i].Save(writer); //Save the chunkColumn object data
+                }
             }
         }
 
