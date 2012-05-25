@@ -107,7 +107,7 @@ PS_OUT PS(PS_IN input)
 
 	float4 colorInput = TerraTexture.Sample(SamplerDiffuse, input.UVW) * float4(input.EmissiveLight, 1);
 	
-	float3 biomeColorSampling = {input.BiomeData.xy, 2};
+	float3 biomeColorSampling = {input.BiomeData.x, input.BiomeData.y, 2};
 	float4 biomeColor =  BiomesColors.Sample(SamplerBackBuffer, biomeColorSampling);
 	colorInput.r = colorInput.r * biomeColor.r;
 	colorInput.g = colorInput.g * biomeColor.g;
