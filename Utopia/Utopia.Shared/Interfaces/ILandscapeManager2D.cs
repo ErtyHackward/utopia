@@ -1,4 +1,3 @@
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Interfaces
@@ -11,14 +10,14 @@ namespace Utopia.Shared.Interfaces
         /// <summary>
         /// Gets the chunk at position specified
         /// </summary>
-        /// <param name="position">chunk position in World coordinate</param>
+        /// <param name="chunkPosition">chunk position in World coordinate</param>
         /// <returns></returns>
         IChunkLayout2D GetChunk(Vector2I chunkPosition);
 
         /// <summary>
         /// Gets the chunk at block position specified
         /// </summary>
-        /// <param name="position">block position in World coordinate</param>
+        /// <param name="blockPosition">block position in World coordinate</param>
         /// <returns></returns>
         IChunkLayout2D GetChunk(Vector3I blockPosition);
 
