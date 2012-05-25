@@ -232,7 +232,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                             }
                         }
 
-                        bool yOffsetDiff = (cubeYOffset < neightborcubeYOffset);
+                        bool yOffsetDiff = (cubeYOffset < neightborcubeYOffset) || (cubeYOffset > 0 && cubeFace == CubeFaces.Top && neightborCube.Id != currentCube.Id);
 
                         switch (cubeProfile.CubeFamilly)
                         {

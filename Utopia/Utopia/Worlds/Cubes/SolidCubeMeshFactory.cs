@@ -97,9 +97,9 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new Vector4B(0, 0, 1, cubeFaceType);
                     bottomRight = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
 
-                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
                         if(!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
@@ -109,9 +109,9 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
@@ -123,7 +123,7 @@ namespace Utopia.Worlds.Cubes
 
                     hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
@@ -135,7 +135,7 @@ namespace Utopia.Worlds.Cubes
 
                     hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
@@ -175,9 +175,9 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
                     bottomRight = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
 
-                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
@@ -187,9 +187,9 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
@@ -201,7 +201,7 @@ namespace Utopia.Worlds.Cubes
 
                     hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
@@ -213,7 +213,7 @@ namespace Utopia.Worlds.Cubes
 
                     hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
@@ -253,7 +253,7 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
                     bottomRight = cubePosition + new Vector4B(1, 1, 1, cubeFaceType);
 
-                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
@@ -264,7 +264,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
@@ -275,7 +275,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
@@ -286,7 +286,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
@@ -403,9 +403,9 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
                     topRight = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
 
-                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
@@ -415,9 +415,9 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
@@ -429,7 +429,7 @@ namespace Utopia.Worlds.Cubes
 
                     hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
@@ -441,7 +441,7 @@ namespace Utopia.Worlds.Cubes
 
                     hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
@@ -480,9 +480,9 @@ namespace Utopia.Worlds.Cubes
                     bottomLeft = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
                     bottomRight = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
 
-                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
@@ -492,9 +492,9 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset1) == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
@@ -506,7 +506,7 @@ namespace Utopia.Worlds.Cubes
 
                     hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset2) == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
@@ -518,7 +518,7 @@ namespace Utopia.Worlds.Cubes
 
                     hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40);
                     vertexInDico = chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3);
-                    if (cubeProfile.YBlockOffset > 0 || chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
+                    if (chunk.CubeVerticeDico.TryGetValue(hashVertex, out vertexOffset3) == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
                         if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
