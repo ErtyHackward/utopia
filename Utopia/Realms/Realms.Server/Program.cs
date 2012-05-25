@@ -6,6 +6,7 @@ using System.Threading;
 using Ninject;
 using Realms.Shared;
 using Utopia.Server;
+using Utopia.Server.Interfaces;
 using Utopia.Server.Managers;
 using Utopia.Server.Sample;
 using Utopia.Shared.Entities;
