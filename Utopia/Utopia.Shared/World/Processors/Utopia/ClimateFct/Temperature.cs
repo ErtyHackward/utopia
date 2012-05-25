@@ -27,10 +27,11 @@ namespace Utopia.Shared.World.Processors.Utopia.ClimateFct
         public INoise GetLandFormFct()            
         {
             //Create the Lowland base fractal with range from 0 to 1 values
-            INoise Temperature_fractal = new FractalFbm(new Simplex(_seed), 2, 0.8, enuBaseNoiseRange.ZeroToOne);
+            INoise Temperature_fractal = new FractalFbm(new Simplex(_seed), 2, 1.4, enuBaseNoiseRange.ZeroToOne);
             INoise Temperature_fractal_biased = new Gain(Temperature_fractal, 0.6);
+            INoise ClampedValue = new Clamp(Temperature_fractal_biased, 0, 1);
 
-            return Temperature_fractal_biased;
+            return ClampedValue;
         }
         #endregion
 
