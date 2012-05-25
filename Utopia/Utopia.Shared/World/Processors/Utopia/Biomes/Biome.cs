@@ -27,7 +27,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             BiomeList[BiomeType.Montain] = new MontainBiome();
         }
 
-        public static byte GetBiome(double landFormType, double temperature, double humidity)
+        public static byte GetBiome(double landFormType, double temperature, double moisture)
         {
             enuLandFormType landForm = (enuLandFormType)landFormType;
 
@@ -42,9 +42,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 case enuLandFormType.Montain:
                     return BiomeType.Montain;
                 case enuLandFormType.Midland:
-                    return BiomeType.Snow;
-                case enuLandFormType.Ocean:
                     return BiomeType.Grassland;
+                case enuLandFormType.Ocean:
+                    return BiomeType.Ocean;
                 default:
                     return BiomeType.Grassland;
             }

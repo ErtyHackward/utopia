@@ -73,7 +73,8 @@ namespace Utopia.Worlds.Cubes
 
             int[] ind = new int[9];
 
-            Vector4B biomeInfo = new Vector4B(125, 125, 0, 0);
+            ChunkColumnInfo chunkInfo =  chunk.BlockData.GetColumnInfo(new Vector2I(cubePosition.X, cubePosition.Z));
+            Vector4B biomeInfo = new Vector4B(chunkInfo.Temperature, chunkInfo.Moisture, (byte)0, (byte)0);
 
             switch (cubeFace)
             {

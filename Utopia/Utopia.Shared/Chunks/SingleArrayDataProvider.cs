@@ -168,7 +168,7 @@ namespace Utopia.Shared.Chunks
         #endregion
 
         #region Chunk Column Information Manager
-        public override ChunkColumnInfo[] GetColumnsInfo
+        public override ChunkColumnInfo[] ColumnsInfo
         {
             get
             {
@@ -182,12 +182,12 @@ namespace Utopia.Shared.Chunks
 
         public override ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition)
         {
-            return ChunkColumns[inChunkPosition.Z * _chunkSize.X + inChunkPosition.X];
+            return ChunkColumns[inChunkPosition.X * _chunkSize.Z + inChunkPosition.Z];
         }
 
         public override ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition)
         {
-            return ChunkColumns[inChunkPosition.Y * _chunkSize.X + inChunkPosition.X];
+            return ChunkColumns[inChunkPosition.X * _chunkSize.Z + inChunkPosition.Y];
         }
         #endregion
 
@@ -204,6 +204,14 @@ namespace Utopia.Shared.Chunks
                 _tags[inChunkPosition] = tag;
             else
                 _tags.Remove(inChunkPosition);
+        }
+
+        public override IEnumerable<KeyValuePair<Vector3I, BlockTag>> GetTags()
+        {
+            foreach (var KVPTag in _tags)
+            {
+                yield return KVPTag;
+            }
         }
 
         //Should be never use

@@ -2,6 +2,7 @@
 using System.IO;
 using S33M3Resources.Structs;
 using Utopia.Shared.Interfaces;
+using System.Collections.Generic;
 
 namespace Utopia.Shared.Chunks
 {
@@ -36,7 +37,7 @@ namespace Utopia.Shared.Chunks
         /// Will send back chunk columns informations = "Kind of Data heightmap"
         /// </summary>
         /// <returns></returns>
-        public abstract ChunkColumnInfo[] GetColumnsInfo { get; set; }
+        public abstract ChunkColumnInfo[] ColumnsInfo { get; set; }
 
         /// <summary>
         /// Gets a single ColumnInf from internal location specified
@@ -77,6 +78,13 @@ namespace Utopia.Shared.Chunks
             blockValue = GetBlock(inChunkPosition);
             tag = GetTag(inChunkPosition);
         }
+
+        /// <summary>
+        /// Gets an optional block tag
+        /// </summary>
+        /// <param name="inChunkPosition"></param>
+        /// <returns></returns>
+        public abstract IEnumerable<KeyValuePair<Vector3I,BlockTag>> GetTags();
 
         /// <summary>
         /// Gets an optional block tag

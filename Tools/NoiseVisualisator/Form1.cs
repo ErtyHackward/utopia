@@ -22,6 +22,7 @@ using S33M3CoreComponents.Noise.Sampler;
 using S33M3Resources.Structs;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
 using Utopia.Shared.World.Processors.Utopia;
+using Utopia.Shared.World.Processors.Utopia.ClimateFct;
 
 namespace NoiseVisualisator
 {
@@ -36,20 +37,20 @@ namespace NoiseVisualisator
         private INoise NoiseComposition(bool is2DRenderRequest)
         {
             long from = Stopwatch.GetTimestamp();
-            UtopiaProcessor processor = new UtopiaProcessor(new Utopia.Shared.World.WorldParameters() { SeedName = "test", SeaLevel =64, WorldName = "test" });
-            label4.Text = ((Stopwatch.GetTimestamp() - from) / (double)Stopwatch.Frequency * 1000.0).ToString();
+            //UtopiaProcessor processor = new UtopiaProcessor(new Utopia.Shared.World.WorldParameters() { SeedName = "test", SeaLevel =64, WorldName = "test" });
+            //label4.Text = ((Stopwatch.GetTimestamp() - from) / (double)Stopwatch.Frequency * 1000.0).ToString();
 
-            Gradient ground_gradient;
-            if (is2DRenderRequest)
-            {
-                ground_gradient = new Gradient(0, 0, 1, 0);
-            }
-            else
-            {
-                ground_gradient = new Gradient(0, 0, 0.42, 0);
-            }
+            //Gradient ground_gradient;
+            //if (is2DRenderRequest)
+            //{
+            //    ground_gradient = new Gradient(0, 0, 1, 0);
+            //}
+            //else
+            //{
+            //    ground_gradient = new Gradient(0, 0, 0.42, 0);
+            //}
 
-            var test = new IslandCtrl(1234156); //, ground_gradient);
+            var test = new Temperature(1234156); //, ground_gradient);
 
             return test.GetLandFormFct();
 
