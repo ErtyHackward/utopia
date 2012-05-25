@@ -189,6 +189,7 @@ namespace Realms.Client
             _iocContainer.Bind<IWeather>().To<Weather>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IDrawableComponent>().To<Clouds>().InScope(x => GameScope.CurrentGameScope).Named("Clouds").WithConstructorArgument("solidBackBuffer", _iocContainer.Get<StaggingBackBuffer>("SolidBuffer"));
             _iocContainer.Bind<VoxelModelManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<LocalServer>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
             //Landscape Creation/Acces/Management ====================================
             _iocContainer.Bind<IChunkStorageManager>().To<SQLiteWorldStorageManager>().InScope(x => GameScope.CurrentGameScope);

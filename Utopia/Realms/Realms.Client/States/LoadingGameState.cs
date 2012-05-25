@@ -2,6 +2,7 @@
 using System.IO;
 using Ninject;
 using Ninject.Parameters;
+using Realms.Client.Components;
 using Realms.Client.Components.GUI;
 using Realms.Shared;
 using Utopia.Effects.Shared;
@@ -64,11 +65,7 @@ namespace Realms.Client.States
     {
         private readonly IKernel _ioc;
         private RuntimeVariables _vars;
-        private Server _server;
-        private RealmsEntityFactory _serverFactory;
-        private SharpDX.Direct3D11.DeviceContext _context;
-        private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
-
+        
         public override string Name
         {
             get { return "LoadingGame"; }
@@ -84,12 +81,11 @@ namespace Realms.Client.States
         //Add Loading screen animation, and ServerComponent
         public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
-            if (this.PreviousGameState != this) this.GameComponents.Clear();
+            if (PreviousGameState != this) GameComponents.Clear();
 
             var loading = _ioc.Get<LoadingComponent>();
             _vars = _ioc.Get<RuntimeVariables>();
-            _context = context;
-
+            
             AddComponent(loading); //Will "Mask" the Components being loaded.
             AddComponent(_ioc.Get<ServerComponent>());
             AddComponent(_ioc.Get<GuiManager>());
@@ -107,7 +103,7 @@ namespace Realms.Client.States
 
         private void GameplayInitializeAsync()
         {
-            ServerComponent serverComponent = _ioc.Get<ServerComponent>();
+            var serverComponent = _ioc.Get<ServerComponent>();
 
             if (_vars.SinglePlayer)
             {
@@ -118,10 +114,13 @@ namespace Realms.Client.States
                 {
                     wp.WorldName = "SandBox World";
                     wp.SeedName = "Utopia SandBox";
-                    wp.SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2;
+                    wp.SeaLevel = AbstractChunk.ChunkSize.Y / 2;
                 }
 
-                InitSinglePlayerServer(wp);
+                if (_vars.LocalServer == null)
+                    _vars.LocalServer = _ioc.Get<LocalServer>();
+
+                _vars.LocalServer.InitSinglePlayerServer(wp);
 
                 if (serverComponent.ServerConnection == null ||
                     serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
@@ -144,89 +143,7 @@ namespace Realms.Client.States
                 }
             }
         }
-
-        private void InitSinglePlayerServer(WorldParameters worldParam)
-        {
-            if (_server != null)
-            {
-                _server.Dispose();
-            }
-
-            _serverFactory = new RealmsEntityFactory(null);
-            var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
-
-            _serverSqliteStorageSinglePlayer = new SQLiteStorageManager(dbPath,_serverFactory, worldParam);
-            _serverSqliteStorageSinglePlayer.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
-
-            var settings = new XmlSettingsManager<ServerSettings>(@"Server\localServer.config");
-            settings.Load();
-            settings.Save();
-
-            //Utopia New Landscape Test
-            var utopiaProcessor = new UtopiaProcessor(worldParam);
-            var worldGenerator = new WorldGenerator(worldParam, utopiaProcessor);
-
-            //Old s33m3 landscape
-            //IWorldProcessor processor1 = new s33m3WorldProcessor(worldParam);
-            //IWorldProcessor processor2 = new LandscapeLayersProcessor(worldParam, _serverFactory);
-            //var worldGenerator = new WorldGenerator(worldParam, processor1, processor2);
-
-            //Vlad Generator
-            //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
-            //var worldGenerator = new WorldGenerator(wp, planProcessor);
-            settings.Settings.ChunksCountLimit = 1024 * 3; // better use viewRange * viewRange * 3
-
-            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory);
-            _serverFactory.LandscapeManager = _server.LandscapeManager;
-            _server.ConnectionManager.LocalMode = true;
-            _server.ConnectionManager.Listen();
-            _server.ConnectionManager.ConnectionRemoved += ConnectionManager_ConnectionRemoved;
-            _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
-            _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
-            _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
-
-        }
-
-        //The event will only be called when the client is removed from the local Single Player server
-        //I need to dispose manually the SQLlite connection to the database server, in order to remove the lock
-        void ConnectionManager_ConnectionRemoved(object sender, ConnectionEventArgs e)
-        {
-            _server.ConnectionManager.ConnectionRemoved -= ConnectionManager_ConnectionRemoved;
-            _serverSqliteStorageSinglePlayer.Dispose();
-        }
-
-        void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
-        {
-            var dEntity = new PlayerCharacter();
-            dEntity.DynamicId = e.EntityId;
-            dEntity.DisplacementMode = EntityDisplacementModes.Walking;
-            dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
-            dEntity.CharacterName = "Local player";
-            ContainedSlot outItem;
-            //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(SandboxEntityClassId.Annihilator) }, out outItem);
-
-            var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.CubeId = CubeId.Sand;//looting a terraincube will create a new blockadder instance or add to the stack
-
-            dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
-
-            foreach (var cubeId in CubeId.All())
-            {
-                if (cubeId == CubeId.Air)
-                    continue;
-
-                var item3 = _server.EntityFactory.CreateEntity<CubeResource>();
-                item3.CubeId = cubeId;
-                dEntity.Inventory.PutItem(item3);
-            }
-            //var goldCoins = _server.EntityFactory.CreateEntity<GoldCoin>();
-            //dEntity.Inventory.PutItem(goldCoins);
-            //var Torch = _server.EntityFactory.CreateEntity<Sandbox.Shared.Items.Torch>();
-            //dEntity.Inventory.PutItem(Torch);
-
-            e.PlayerEntity = dEntity;
-        }
-
+        
         void ServerConnectionMessageEntityIn(object sender, Utopia.Shared.Net.Connections.ProtocolMessageEventArgs<Utopia.Shared.Net.Messages.EntityInMessage> e)
         {
             ServerComponent serverComponent = _ioc.Get<ServerComponent>();
