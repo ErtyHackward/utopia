@@ -34,23 +34,12 @@ static const float SHADOW_EPSILON = 0.001f;
 // Texture Samplers
 //--------------------------------------------------------------------------------------
 Texture2DArray TerraTexture;
-SamplerState SamplerDiffuse
-{
-	Filter = MIN_LINEAR_MAG_POINT_MIP_LINEAR;
-	AddressU = Wrap ; 
-	AddressV = Wrap ;
-};
-
+Texture2DArray BiomesColors;
 Texture2D SolidBackBuffer;
-SamplerState SamplerBackBuffer
-{
-	Filter = MIN_MAG_MIP_POINT;
-	AddressU = CLAMP ; 
-	AddressV = CLAMP ;
-};
-
 Texture2D SkyBackBuffer;
 
+SamplerState SamplerDiffuse;
+SamplerState SamplerBackBuffer;
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 
@@ -59,15 +48,16 @@ struct VS_LIQUID_IN
 	uint4 Position		 : POSITION;
 	float4 Col			 : COLOR;
 	uint4 VertexInfo1	 : INFO0; // x = FaceType, (bool)y = is Upper vertex
-	float4 VertexInfo2	 : INFO1; // x = Y Modified block Height modificator, 
+	float4 VertexInfo2	 : INFO1; // x = Y Modified block Height modificator, Y = Temperature, Z = Moisture
 };
 
 struct PS_IN
 {
 	float4 Position				: SV_POSITION;
 	float3 UVW					: TEXCOORD0;
-	float3 EmissiveLight		: Light0;
 	float fogPower				: VARIOUS0;
+	float3 EmissiveLight		: Light0;
+	float2 BiomeData			: BIOMEDATA0;
 };
 
 struct PS_OUT
@@ -104,7 +94,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 
 	output.EmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
 	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
-
+	output.BiomeData = input.VertexInfo2.yz;
     return output;
 }
 
@@ -116,6 +106,13 @@ PS_OUT PS(PS_IN input)
 	PS_OUT output;
 
 	float4 colorInput = TerraTexture.Sample(SamplerDiffuse, input.UVW) * float4(input.EmissiveLight, 1);
+	
+	float3 biomeColorSampling = {input.BiomeData.xy, 2};
+	float4 biomeColor =  BiomesColors.Sample(SamplerBackBuffer, biomeColorSampling);
+	colorInput.r = colorInput.r * biomeColor.r;
+	colorInput.g = colorInput.g * biomeColor.g;
+	colorInput.b = colorInput.b * biomeColor.b;
+	
 	float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
 	float4 backBufferColor = SolidBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
 
