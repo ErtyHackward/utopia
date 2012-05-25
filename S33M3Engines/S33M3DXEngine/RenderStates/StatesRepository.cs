@@ -27,10 +27,10 @@ namespace S33M3DXEngine.RenderStates
         public static void Dispose()
         {
             _engine = null;
-            if (_rasterStates != null) foreach (RasterizerState obj in _rasterStates) obj.Dispose();
-            if (_blendStates != null) foreach (BlendState obj in _blendStates) obj.Dispose();
-            if (_depthStencilStates != null) foreach (DepthStencilState obj in _depthStencilStates) obj.Dispose();
-            if (_samplerStates != null) foreach (SamplerState obj in _samplerStates) obj.Dispose();
+            if (_rasterStates != null) foreach (RasterizerState obj in _rasterStates.Where(x => x != null)) obj.Dispose();
+            if (_blendStates != null) foreach (BlendState obj in _blendStates.Where(x => x != null)) obj.Dispose();
+            if (_depthStencilStates != null) foreach (DepthStencilState obj in _depthStencilStates.Where(x => x != null)) obj.Dispose();
+            if (_samplerStates != null) foreach (SamplerState obj in _samplerStates.Where(x => x != null)) obj.Dispose();
         }
 
         //Raster States Management ======================================================================

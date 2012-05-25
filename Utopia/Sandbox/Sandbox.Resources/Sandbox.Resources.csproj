@@ -445,6 +445,12 @@
     <None Include="TexturesPacks\Default\TexturePackConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="TexturesPacks\Default\Terran\ct17_Snow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\Default\Terran\ct18_Ice.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TexturesPacks\Default\Weather\clouds.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

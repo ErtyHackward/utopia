@@ -24,7 +24,8 @@ namespace Utopia.Shared.Cubes
         public const byte Brick = 15;
         public const byte Foliage = 16;
         public const byte Glass = 17;
-        public const byte QuickStep = 18;
+        public const byte Snow = 18;
+        public const byte Ice = 19;
 
         // note: when adding new block modify 2 methods below
         public const byte Error = 255;
@@ -57,7 +58,8 @@ namespace Utopia.Shared.Cubes
                 case 15: return "Brick";
                 case 16: return "Foliage";
                 case 17: return "Glass";
-                case 18: return "QuickStep";
+                case 18: return "Snow";
+                case 19: return "Ice";
                 case 255: return "Error";
                 default: return "Unknown";
             }
@@ -96,7 +98,8 @@ namespace Utopia.Shared.Cubes
             yield return Brick;
             yield return Foliage;
             yield return Glass;
-            yield return QuickStep;
+            yield return Snow;
+            yield return Ice;
         }
     }
 }

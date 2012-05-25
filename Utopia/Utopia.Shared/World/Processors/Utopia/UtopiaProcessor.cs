@@ -223,7 +223,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         private void TerraForming(byte[] ChunkCubes, ChunkColumnInfo[] columnsInfo, ref Range3I chunkWorldRange, double[,] biomeMap, FastRandom chunkRnd)
         {
-            int surfaceMud, surfaceLayer;
+            int surface, surfaceLayer;
             int inWaterMaxLevel = 0;
 
             Biome currentBiome;
@@ -250,7 +250,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         MaxHeight = byte.MaxValue
                     };
 
-                    surfaceMud = chunkRnd.Next(currentBiome.UnderSurfaceLayers.Min, currentBiome.UnderSurfaceLayers.Max + 1);
+                    surface = chunkRnd.Next(currentBiome.UnderSurfaceLayers.Min, currentBiome.UnderSurfaceLayers.Max + 1);
                     inWaterMaxLevel = 0;
                     surfaceLayer = 0;
                     bool solidGroundHitted = false;
@@ -286,10 +286,17 @@ namespace Utopia.Shared.World.Processors.Utopia
                             inWaterMaxLevel = 0;
 
                             //Surface Layer handling
-                            if (surfaceMud > surfaceLayer)
+                            if (surface > surfaceLayer)
                             {
                                 if (surfaceLayer == 0)
                                 {
+                                    if (temperature < 0.2)
+                                    {
+                                        //Get cube index above this one
+                                        //Place a snow block on it
+                                        ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + (Y + 1)] = CubeId.Snow;
+                                    }
+
                                     ChunkCubes[index] = currentBiome.SurfaceCube;
                                 }
                                 else
@@ -304,6 +311,12 @@ namespace Utopia.Shared.World.Processors.Utopia
                         {
                             if (cubeId == CubeId.StillWater)
                             {
+                                if (temperature < 0.2)
+                                {
+                                    //Get cube index above this one
+                                    //Place a snow block on it
+                                    ChunkCubes[index] = CubeId.Ice;
+                                }
                                 inWaterMaxLevel = Y;
                             }
                             else

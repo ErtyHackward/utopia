@@ -19,7 +19,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             BiomeList = new Biome[BiomeType.BiomeTypesCollection.Values.Count];
             //Init Biomes Type
-            BiomeList[BiomeType.Snow] = new SnowBiome();
             BiomeList[BiomeType.Grassland] = new GrasslandBiome();
             BiomeList[BiomeType.Desert] = new DesertBiome();
             BiomeList[BiomeType.Forest] = new ForestBiome();
@@ -37,8 +36,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public static byte GetBiome(double landFormType, double temperature, double moisture)
         {
             enuLandFormType landForm = (enuLandFormType)landFormType;
-
-            if (temperature < 0.2) return BiomeType.Snow;
 
             switch (landForm)
             {
