@@ -12,6 +12,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using S33M3CoreComponents.Maths;
+using Utopia.Shared.World.Processors.Utopia.ClimateFct;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -53,11 +54,14 @@ namespace Utopia.Shared.World.Processors.Utopia
             Range3I chunkWorldRange;
             generationRange.Foreach(pos =>
             {
-                var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
-
+                //Get the chunk
+                GeneratedChunk chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
+                //Create the Rnd component to be used by the landscape creator
                 FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
-
-                var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
+                //Create a byte array that will receive the landscape generated
+                byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
+                //Create an array that wll receive the ColumnChunk Informations
+                ChunkColumnInfo[] columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
 
                 chunkWorldRange = new Range3I()
                 {
@@ -67,22 +71,27 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                 double[,] biomeMap;
                 GenerateLandscape(chunkBytes, ref chunkWorldRange,out biomeMap);
-                TerraForming(chunkBytes, ref chunkWorldRange, biomeMap, chunkRnd);
+                TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
 
-                chunk.BlockData.SetBlockBytes(chunkBytes);
+                chunk.BlockData.SetBlockBytes(chunkBytes); //Save block array
+                chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
             });
         }
         #endregion
 
         #region Private Methods
 
-        private void CreateNoises(out INoise mainLandscape, out INoise underground, out INoise landScapeType) //, out INoise uncommonCubeDistri, out INoise rareCubeDistri)
+        private void CreateNoises(out INoise mainLandscape, 
+                                  out INoise underground, 
+                                  out INoise landScapeType, 
+                                  out INoise temperature, 
+                                  out INoise moisture)
         {           
             INoise terrainDelimiter = new Cache<INoise>(new IslandCtrl(_worldParameters.Seed + 1233).GetLandFormFct());
             mainLandscape = new Cache<INoise>(CreateLandFormFct(new Gradient(0, 0, 0.45, 0), terrainDelimiter, out landScapeType));
             underground = new UnderGround(_worldParameters.Seed + 999, mainLandscape, terrainDelimiter).GetLandFormFct();
-            //uncommonCubeDistri = new UncommonCubeDistri(_worldParameters.Seed - 6, mainLandscape).GetLandFormFct();
-            //rareCubeDistri = new RareCubeDistri(_worldParameters.Seed - 63, mainLandscape).GetLandFormFct();
+            temperature = new Temperature(_worldParameters.Seed - 963).GetLandFormFct();
+            moisture = new Moisture(_worldParameters.Seed - 96).GetLandFormFct();
         }
 
         public INoise CreateLandFormFct(Gradient ground_gradient, INoise islandCtrl, out INoise landScapeTypeFct)
@@ -138,23 +147,27 @@ namespace Utopia.Shared.World.Processors.Utopia
         private void GenerateLandscape(byte[] ChunkCubes, ref Range3I chunkWorldRange, out double[,] biomeMap)
         {
             //Create the test Noise, A new object must be created each time
-            INoise mainLandscape, underground, landScapeType;
-            CreateNoises(out mainLandscape, out underground, out landScapeType);
+            INoise mainLandscape, underground, landScapeType, temperature, moisture;
+            CreateNoises(out mainLandscape, out underground, out landScapeType, out temperature, out moisture);
 
             //Create value from Noise Fct sampling
+            //noiseLandscape[x,0] = MainLandscape
+            //noiseLandscape[x,1] = underground mask
             double[,] noiseLandscape = NoiseSampler.NoiseSampling(new Vector3I(AbstractChunk.ChunkSize.X /4 , AbstractChunk.ChunkSize.Y /8 , AbstractChunk.ChunkSize.Z /4 ),
                                                             chunkWorldRange.Position.X / 320.0, (chunkWorldRange.Position.X / 320.0) + 0.05, AbstractChunk.ChunkSize.X,
                                                             chunkWorldRange.Position.Y / 2560.0, (chunkWorldRange.Position.Y / 2560.0) + 0.4, AbstractChunk.ChunkSize.Y,
                                                             chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z,
                                                             mainLandscape, 
                                                             underground);
-
+            //biomeMap[x,0] = Biome Type
+            //biomeMap[x,1] = temperature
+            //biomeMap[x,2] = Moisture
             biomeMap = NoiseSampler.NoiseSampling(new Vector2I(AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Z),
                                                             chunkWorldRange.Position.X / 320.0, (chunkWorldRange.Position.X / 320.0) + 0.05, AbstractChunk.ChunkSize.X,
                                                             chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z,
-                                                            landScapeType);
-
-            //Get 2D 
+                                                            landScapeType,
+                                                            temperature,
+                                                            moisture);
 
             //Create the chunk Block byte from noiseResult
             int noiseValueIndex = 0;
@@ -185,17 +198,19 @@ namespace Utopia.Shared.World.Processors.Utopia
                         {
                             cube = CubeId.Rock;
                         }
-
+                        //Be sure that the last landscape row is composed of air
                         if (Y == AbstractChunk.ChunkSize.Y - 1)
                         {
                             cube = CubeId.Air;
                         }
-
+                        
+                        //Place "StillWater" block at SeaLevel
                         if ( Y == _worldParameters.SeaLevel && cube == CubeId.Air)
                         {
                             cube = CubeId.StillWater;
                         }
-
+                        
+                        //Save block if changed
                         if(cube != CubeId.Air)
                         {
                             ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y] = cube;
@@ -206,12 +221,13 @@ namespace Utopia.Shared.World.Processors.Utopia
             }
         }
 
-        private void TerraForming(byte[] ChunkCubes, ref Range3I chunkWorldRange, double[,] biomeMap, FastRandom chunkRnd)
+        private void TerraForming(byte[] ChunkCubes, ChunkColumnInfo[] columnsInfo, ref Range3I chunkWorldRange, double[,] biomeMap, FastRandom chunkRnd)
         {
             int surfaceMud, surfaceLayer;
             int inWaterMaxLevel = 0;
 
             Biome currentBiome;
+            ChunkColumnInfo columnInfo;
 
             int index = 0;
             int noise2DIndex = 0;
@@ -220,23 +236,41 @@ namespace Utopia.Shared.World.Processors.Utopia
             {
                 for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
                 {
+                    double temperature = biomeMap[noise2DIndex, 1];
+                    double moisture = biomeMap[noise2DIndex, 2];
+                    byte biomeId = Biome.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
                     //Get this landscape Column Biome value
-                    currentBiome = Biome.BiomeList[Biome.GetBiome(biomeMap[noise2DIndex, 0], 0, 0)];
+                    currentBiome = Biome.BiomeList[biomeId];
+                    //Get Temperature and Moisture
+                    columnInfo = new ChunkColumnInfo()
+                    {
+                        Biome = biomeId,
+                        Moisture = (byte)(moisture * 255),
+                        Temperature = (byte)(temperature * 255),
+                        MaxHeight = byte.MaxValue
+                    };
 
                     surfaceMud = chunkRnd.Next(currentBiome.UnderSurfaceLayers.Min, currentBiome.UnderSurfaceLayers.Max + 1);
                     inWaterMaxLevel = 0;
                     surfaceLayer = 0;
+                    bool solidGroundHitted = false;
 
                     for (int Y = AbstractChunk.ChunkSize.Y - 1; Y >= 0; Y--) //Y
                     {
                         index = ((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y;
                         byte cubeId = ChunkCubes[index];
 
+                        if (solidGroundHitted == false && cubeId == CubeId.Air)
+                        {
+                            if (columnInfo.MaxHeight > Y) columnInfo.MaxHeight = (byte)Y;
+                        }
+
                         //Restart Surface layer if needed
                         if (surfaceLayer > 0 && cubeId == CubeId.Air && Y > (_worldParameters.SeaLevel - 5)) surfaceLayer = 0;
 
                         if (cubeId == CubeId.Stone)
                         {
+                            solidGroundHitted = true;
                             cubeId = currentBiome.GroundCube;
 
                             //Under water soil
@@ -281,7 +315,10 @@ namespace Utopia.Shared.World.Processors.Utopia
                             }
                         }
                     }
+
+                    columnsInfo[noise2DIndex] = columnInfo;
                     noise2DIndex++;
+
                 }
             }
         }

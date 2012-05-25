@@ -14,11 +14,6 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         public Vector2I Position { get; set; }
 
-        /// <summary>
-        /// Gets or sets medium chunk terrain elevation level
-        /// </summary>
-        public int GroundHeight { get; set; }
-
         public GeneratedChunk() : base(new InsideDataProvider())
         {
             

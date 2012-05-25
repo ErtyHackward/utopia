@@ -52,7 +52,7 @@ struct VS_IN
 	uint4 Position		 : POSITION;
 	float4 Col			 : COLOR;
 	uint4 VertexInfo	 : INFO;   // (bool)x = is Upper vertex, y = facetype, z = AOPower factor 255 = Factor of 3, w = Offset
-	float4 BiomeData     : BIOMEINFO; //X = Temperature, Y = Humidity
+	float4 BiomeData     : BIOMEINFO; //X = Temperature, Y = Moisture
 };
 
 struct PS_IN

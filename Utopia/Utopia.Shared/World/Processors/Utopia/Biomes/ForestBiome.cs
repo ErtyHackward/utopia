@@ -15,7 +15,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Public Properties
         public override byte SurfaceCube
         {
-            get { return CubeId.Trunk; }
+            get { return CubeId.Grass; }
         }
 
         public override byte UnderSurfaceCube

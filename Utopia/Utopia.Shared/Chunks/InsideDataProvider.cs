@@ -139,6 +139,14 @@ namespace Utopia.Shared.Chunks
                 _tags.Remove(inChunkPosition);
         }
 
+        public override IEnumerable<KeyValuePair<Vector3I, BlockTag>> GetTags()
+        {
+            foreach(var KVPTag in _tags)
+            {
+                yield return KVPTag;
+            }
+        }
+
         /// <summary>
         /// Sets a single block into location specified
         /// </summary>
@@ -200,7 +208,7 @@ namespace Utopia.Shared.Chunks
         }
 
         #region Chunk Column Information Manager
-        public override ChunkColumnInfo[] GetColumnsInfo
+        public override ChunkColumnInfo[] ColumnsInfo
         {
             get
             {
@@ -283,7 +291,5 @@ namespace Utopia.Shared.Chunks
                 _chunkColumns[i].Load(reader);
             }
         }
-
-
     }
 }
