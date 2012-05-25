@@ -54,14 +54,14 @@ namespace S33M3DXEngine.Threading
                     coreCount += int.Parse(item["NumberOfCores"].ToString());
                 }
 
-                _totThread = coreCount - 1 + ThreadAllocatedModifier; //Remove the one use by the applicatino itself
+                _totThread = 1 + coreCount + ThreadAllocatedModifier; //Remove the one use by the applicatino itself
             }
             else
             {
                 _totThread = ThreadAllocatedModifier;
             }
 
-            if (_totThread < 1) _totThread = 1;
+            if (_totThread < 1) _totThread = 2;
 
             if (ThreadPool != null) ThreadPool.Dispose();
             STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };

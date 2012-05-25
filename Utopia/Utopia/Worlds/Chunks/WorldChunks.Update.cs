@@ -144,7 +144,7 @@ namespace Utopia.Worlds.Chunks
         private void ProcessChunks_MeshesChanged()
         {
             userOrder = CheckUserModifiedChunks();
-
+            bool lowpriorityThreadChunkAlreadyProcessed = false;
             VisualChunk chunk;
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
@@ -152,12 +152,18 @@ namespace Utopia.Worlds.Chunks
                 if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
 
                 if (chunk.UserChangeOrder != userOrder && chunk.ThreadPriority == WorkItemPriority.Highest)
-                { //If this thread is user changed, but 
+                { //If this thread is user changed
                     continue;
                 }
 
+                if (lowpriorityThreadChunkAlreadyProcessed && chunk.ThreadPriority != WorkItemPriority.Highest) continue;
+
                 if (chunk.State == ChunkState.MeshesChanged)
                 {
+                    if (chunk.ThreadPriority != WorkItemPriority.Highest)
+                    {
+                        lowpriorityThreadChunkAlreadyProcessed = true;
+                    }
                     chunk.UserChangeOrder = 0;
                     chunk.ThreadPriority = WorkItemPriority.Normal;
                     //If Executed in a thread ==> Must be executed on a deferred context, with a Replay system in place.
