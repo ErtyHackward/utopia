@@ -1,6 +1,6 @@
 using Utopia.Shared.Entities.Interfaces;
 
-namespace Utopia.Server.Managers
+namespace Utopia.Server.Interfaces
 {
     public interface IEntityStorage
     {
