@@ -264,5 +264,10 @@ namespace Utopia.Shared.Chunks
             }
             
         }
+
+        public override object WriteSyncRoot
+        {
+            get { throw new NotSupportedException(); }
+        }
     }
 }

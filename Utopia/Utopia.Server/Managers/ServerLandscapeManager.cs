@@ -56,29 +56,6 @@ namespace Utopia.Server.Managers
             var handler = ChunkLoaded;
             if (handler != null) handler(this, e);
         }
-        
-        private void RequestSave(ServerChunk chunk)
-        {
-            chunk.NeedSave = true;
-            chunk.PureGenerated = false;
-
-            lock (_chunksToSave)
-            {
-                if (!_chunksToSave.Contains(chunk))
-                    _chunksToSave.Add(chunk);
-            }
-        }
-
-        void ChunkBlocksChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
-        {
-            var serverChunk = (ServerChunk)sender;
-            RequestSave(serverChunk);
-        }
-
-        void EntitiesCollectionDirty(object sender, EventArgs e)
-        {
-            RequestSave(((EntityCollection)sender).Chunk as ServerChunk);
-        }
 
         public event EventHandler<LandscapeManagerChunkEventArgs> ChunkUnloaded;
 
@@ -88,6 +65,14 @@ namespace Utopia.Server.Managers
             e.Chunk.Entities.CollectionDirty -= EntitiesCollectionDirty;
 
             var handler = ChunkUnloaded;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<ChunkDataProviderDataChangedEventArgs> BlockChanged;
+
+        private void OnBlockChanged(ChunkDataProviderDataChangedEventArgs e)
+        {
+            var handler = BlockChanged;
             if (handler != null) handler(this, e);
         }
 
@@ -143,6 +128,30 @@ namespace Utopia.Server.Managers
 
             _cleanUpTimer = new Timer(CleanUp, null, CleanUpInterval, CleanUpInterval);
             _saveTimer = new Timer(SaveChunks, null, SaveInterval, SaveInterval);
+        }
+
+        private void RequestSave(ServerChunk chunk)
+        {
+            chunk.NeedSave = true;
+            chunk.PureGenerated = false;
+
+            lock (_chunksToSave)
+            {
+                if (!_chunksToSave.Contains(chunk))
+                    _chunksToSave.Add(chunk);
+            }
+        }
+
+        void ChunkBlocksChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
+        {
+            OnBlockChanged(e);
+            var serverChunk = (ServerChunk)sender;
+            RequestSave(serverChunk);
+        }
+
+        void EntitiesCollectionDirty(object sender, EventArgs e)
+        {
+            RequestSave(((EntityCollection)sender).Chunk as ServerChunk);
         }
 
         void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
