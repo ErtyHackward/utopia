@@ -55,7 +55,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public void Write(byte value, BlockTag tag = null)
         {
-            _landscapeManager.ReplaceBlock(_bigArrayIndex, ref _globalPosition, value);
+            _landscapeManager.ReplaceBlock(_bigArrayIndex, ref _globalPosition, value, tag);
         }
 
         public ILandscapeCursor Clone()

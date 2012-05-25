@@ -132,6 +132,7 @@
     <Compile Include="Components\GUI\SinglePlayer\SinglePlayerComponent.Designer.cs">
       <DependentUpon>SinglePlayerComponent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\LocalServer.cs" />
     <Compile Include="Components\SandboxGameSoundManager.cs" />
     <Compile Include="Components\GUI\ServerSelectionComponent.cs" />
     <Compile Include="Components\GUI\Settings\SettingsComponent.Designer.cs">

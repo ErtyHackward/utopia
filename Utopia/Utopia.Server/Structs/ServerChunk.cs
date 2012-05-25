@@ -1,7 +1,6 @@
 using System;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
 namespace Utopia.Server.Structs
@@ -12,7 +11,7 @@ namespace Utopia.Server.Structs
     public class ServerChunk : CompressibleChunk, IChunkLayout2D
     {
         /// <summary>
-        /// Indicates that we no need to send bytes to client, it can obtain in using generator
+        /// Indicates that we no need to send bytes to client, it can obtain the chunk locally using its generator
         /// </summary>
         public bool PureGenerated { get; set; }
 

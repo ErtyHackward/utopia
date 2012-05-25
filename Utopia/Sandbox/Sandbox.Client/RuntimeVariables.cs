@@ -1,10 +1,18 @@
-﻿namespace Sandbox.Client
+﻿using Sandbox.Client.Components;
+using Sandbox.Client.States;
+
+namespace Sandbox.Client
 {
     /// <summary>
     /// Contains various runtime game variables
     /// </summary>
     public class RuntimeVariables
     {
+        /// <summary>
+        /// Single player server instance wrapper (can be null)
+        /// </summary>
+        public LocalServer LocalServer { get; set; }
+
         /// <summary>
         /// Indicates if game should be started in single player mode
         /// </summary>

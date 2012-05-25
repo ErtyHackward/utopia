@@ -39,7 +39,7 @@ namespace Utopia.Server.Managers
             _server = server;
             _factory = factory;
             _server.ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
-            _server.ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
+            _server.ConnectionManager.BeforeConnectionRemoved += ConnectionManagerBeforeConnectionRemoved;
         }
 
         private void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
@@ -48,7 +48,7 @@ namespace Utopia.Server.Managers
             e.Connection.MessageLogin += ConnectionMessageLogin;
         }
 
-        private void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
+        private void ConnectionManagerBeforeConnectionRemoved(object sender, ConnectionEventArgs e)
         {
             // stop listening
             e.Connection.MessageLogin -= ConnectionMessageLogin;
