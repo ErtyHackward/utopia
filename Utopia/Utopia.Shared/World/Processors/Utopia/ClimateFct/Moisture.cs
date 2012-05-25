@@ -30,7 +30,7 @@ namespace Utopia.Shared.World.Processors.Utopia.ClimateFct
         {
             //Create the Lowland base fractal with range from 0 to 1 values
             INoise Moisture_fractal = new FractalFbm(new Simplex(_seed), 2, 0.8, enuBaseNoiseRange.ZeroToOne);
-            INoise Moisture_fractal_biased = new Gain(Moisture_fractal, 0.7);
+            INoise Moisture_fractal_biased = new Gain(Moisture_fractal, 0.6);
 
             return Moisture_fractal_biased;
         }

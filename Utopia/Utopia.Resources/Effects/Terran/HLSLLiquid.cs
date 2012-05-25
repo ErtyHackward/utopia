@@ -41,6 +41,7 @@ namespace Utopia.Resources.Effects.Terran
         public ShaderResource TerraTexture;
         public ShaderResource SolidBackBuffer;
         public ShaderResource SkyBackBuffer;
+        public ShaderResource BiomesColors;
         #endregion
 
         #region Sampler
@@ -76,6 +77,9 @@ namespace Utopia.Resources.Effects.Terran
 
             SkyBackBuffer = new ShaderResource("SkyBackBuffer", false);
             ShaderResources.Add(SkyBackBuffer);
+
+            BiomesColors = new ShaderResource("BiomesColors");
+            ShaderResources.Add(BiomesColors);
 
             //Create the Sampler interface ==================================================
             SamplerDiffuse = new ShaderSampler("SamplerDiffuse");

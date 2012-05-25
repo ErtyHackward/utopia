@@ -157,7 +157,6 @@ namespace Utopia.Shared.Entities.Concrete
                 }
                 else
                 {
-
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
                     if (cursor.Read() == Cubes.CubeId.Air)
                     {
