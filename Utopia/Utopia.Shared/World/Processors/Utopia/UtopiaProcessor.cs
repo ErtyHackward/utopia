@@ -118,11 +118,11 @@ namespace Utopia.Shared.World.Processors.Utopia
             //=====================================================================================================
             //Plains Noise selecting based on plainsCtrl controler
             //Merge flat with Plain *************************************************************
-            Select flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, 0.25, 0.1);                                            
+            Select flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, 0.4, 0.1);                                            
             INoise flat_Plain_result = new Select(enuLandFormType.Flat, enuLandFormType.Plain, plainsCtrl, flat_Plain_select.Threshold);   //Biome composition    
 
             //Merge Plain with hill *************************************************************
-            Select mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, 0.60, 0.1);
+            Select mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, 0.65, 0.1);
             INoise mergedPlainFct_result = new Select(flat_Plain_result, enuLandFormType.Hill, plainsCtrl, mergedPlainFct.Threshold);     //Biome composition 
 
             //=====================================================================================================
