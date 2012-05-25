@@ -232,12 +232,16 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                             }
                         }
 
-                        bool yOffsetDiff = (cubeYOffset < neightborcubeYOffset) || (cubeYOffset > 0 && cubeFace == CubeFaces.Top && neightborCube.Id != currentCube.Id);
+                        bool yOffsetDiff = (cubeYOffset < neightborcubeYOffset && cubeFace != CubeFaces.Top) || (cubeYOffset > 0 && cubeFace == CubeFaces.Top && neightborCube.Id != currentCube.Id);
 
                         switch (cubeProfile.CubeFamilly)
                         {
                             case enuCubeFamilly.Solid:
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;
+                                if (cubeFace == CubeFaces.Top && cubePosiInWorld == new Vector3I(54, 74, 154))
+                                {
+                                    Console.Write("");
+                                }
                                 if (!yOffsetDiff && !_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube,  ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
                                 topCube = _cubesHolder.Cubes[topCubeIndex];
                                 _solidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);

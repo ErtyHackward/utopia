@@ -7,12 +7,11 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     public static class BiomeType
     {
-        public const byte Snow = 0;
-        public const byte Grassland = 1;
-        public const byte Desert = 2;
-        public const byte Forest = 3;
-        public const byte Ocean = 4;
-        public const byte Montain = 5;
+        public const byte Grassland = 0;
+        public const byte Desert = 1;
+        public const byte Forest = 2;
+        public const byte Ocean = 3;
+        public const byte Montain = 4;
 
         public static readonly Dictionary<byte, string> BiomeTypesCollection;
 

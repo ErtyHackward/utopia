@@ -394,23 +394,42 @@
     <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
-    <Name>QuickStep</Name>
+    <Name>Snow</Name>
     <Id>18</Id>
-    <Tex_Top>4</Tex_Top>
-    <Tex_Bottom>4</Tex_Bottom>
-    <Tex_Front>4</Tex_Front>
-    <Tex_Back>4</Tex_Back>
-    <Tex_Left>4</Tex_Left>
-    <Tex_Right>4</Tex_Right>
+    <Tex_Top>17</Tex_Top>
+    <Tex_Bottom>17</Tex_Bottom>
+    <Tex_Front>17</Tex_Front>
+    <Tex_Back>17</Tex_Back>
+    <Tex_Left>17</Tex_Left>
+    <Tex_Right>17</Tex_Right>
     <IsBlockingLight>false</IsBlockingLight>
-    <IsSeeThrough>true</IsSeeThrough>
+    <IsSeeThrough>false</IsSeeThrough>
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
     <IsTaggable>false</IsTaggable>
     <CubeFamilly>Solid</CubeFamilly>
     <YBlockOffset>0.9</YBlockOffset>
-    <Friction>0.25</Friction>
+    <Friction>0.35</Friction>
     <SlidingValue>0</SlidingValue>
+  </Cube>
+  <Cube>
+    <Name>Ice</Name>
+    <Id>19</Id>
+    <Tex_Top>18</Tex_Top>
+    <Tex_Bottom>18</Tex_Bottom>
+    <Tex_Front>18</Tex_Front>
+    <Tex_Back>18</Tex_Back>
+    <Tex_Left>18</Tex_Left>
+    <Tex_Right>18</Tex_Right>
+    <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
+    <IsPickable>true</IsPickable>
+    <IsSolidToEntity>true</IsSolidToEntity>
+    <IsBlockingWater>true</IsBlockingWater>
+    <IsTaggable>false</IsTaggable>
+    <CubeFamilly>Solid</CubeFamilly>
+    <Friction>0.25</Friction>
+    <SlidingValue>0.05</SlidingValue>
   </Cube>
 </GameSystemSettings>
