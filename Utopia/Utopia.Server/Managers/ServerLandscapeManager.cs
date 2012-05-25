@@ -302,7 +302,11 @@ namespace Utopia.Server.Managers
                             new ThreadStart(TrimChunks).BeginInvoke(null, null);
                         }
                     }
-                    else chunk = _chunks[position];
+                    else
+                    {
+                        chunk = _chunks[position];
+                        chunk.LastAccess = DateTime.Now;
+                    }
                 }
             }
             return chunk;
@@ -465,6 +469,8 @@ namespace Utopia.Server.Managers
 
             _cleanUpTimer.Dispose();
             _saveTimer.Dispose();
+
+            SaveChunks();
         }
 
         public IEnumerable<ServerChunk> SurroundChunks(Vector3D vector3D, float radius = 10)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
@@ -41,7 +42,19 @@ namespace Utopia.Server.Managers
         protected void OnConnectionRemoved(ConnectionEventArgs e)
         {
             e.Connection.MessagePing -= ConnectionMessagePing;
-            if (ConnectionRemoved != null) ConnectionRemoved(this, e);
+            var handler = ConnectionRemoved;
+            if (handler != null) handler(this, e);
+        }
+
+        /// <summary>
+        /// Occurs before connection is removed from connection manager
+        /// </summary>
+        public event EventHandler<ConnectionEventArgs> BeforeConnectionRemoved;
+
+        protected void OnBeforeConnectionRemoved(ConnectionEventArgs e)
+        {
+            var handler = BeforeConnectionRemoved;
+            if (handler != null) handler(this, e);
         }
 
         /// <summary>
@@ -180,11 +193,13 @@ namespace Utopia.Server.Managers
 
             if (e.Status == ConnectionStatus.Disconnected)
             {
+                var ea = new ConnectionEventArgs { Connection = connection };
+                OnBeforeConnectionRemoved(ea);
                 lock (_syncRoot)
                 {
                     if (connection != null) _connections.Remove(connection.Id);
                 }
-                OnConnectionRemoved(new ConnectionEventArgs { Connection = connection });
+                OnConnectionRemoved(ea);
             }
         }
 
@@ -217,6 +232,9 @@ namespace Utopia.Server.Managers
                     connection.BeginDispose();
                 }
             }
+
+            while (_connections.Count > 0)
+                Thread.Yield();
         }
 
         public ClientConnection Find(Predicate<ClientConnection> condition)
