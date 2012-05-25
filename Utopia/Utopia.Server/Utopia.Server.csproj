@@ -74,6 +74,7 @@
     <Compile Include="ClientConnection.cs" />
     <Compile Include="Commands\AdministratorCommand.cs" />
     <Compile Include="Commands\ServerCommands.cs" />
+    <Compile Include="Interfaces\IEntityStorage.cs" />
     <Compile Include="Interfaces\IRoleRestrictedCommand.cs" />
     <Compile Include="Managers\LoginManager.cs" />
     <Compile Include="Sample\BlueprintRecorderService.cs" />
@@ -89,7 +90,6 @@
     <Compile Include="Managers\ConnectionManager.cs" />
     <Compile Include="Managers\AreaManager.cs" />
     <Compile Include="Managers\EntityManager.cs" />
-    <Compile Include="Managers\IEntityStorage.cs" />
     <Compile Include="Managers\ServerLandscapeManager.cs" />
     <Compile Include="Managers\ChatManager.cs" />
     <Compile Include="Managers\PerformanceManager.cs" />
@@ -103,6 +103,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Sample\TestNpcService.cs" />
+    <Compile Include="Services\WaterDynamicService.cs" />
     <Compile Include="Structs\MapArea.cs" />
     <Compile Include="Structs\ServerChunk.cs" />
     <Compile Include="Interfaces\IServerCommand.cs" />

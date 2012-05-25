@@ -156,5 +156,13 @@ namespace Utopia.Server.Managers
             _timer.Dispose();
             _tasks.Clear();
         }
+
+        public void RemoveByName(string p)
+        {
+            lock (_syncRoot)
+            {
+                _tasks.RemoveAll(t => t.Name == p);
+            }
+        }
     }
 }
