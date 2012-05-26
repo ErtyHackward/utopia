@@ -77,6 +77,7 @@
     <Compile Include="Interfaces\IEntityStorage.cs" />
     <Compile Include="Interfaces\IRoleRestrictedCommand.cs" />
     <Compile Include="Managers\LoginManager.cs" />
+    <Compile Include="Managers\ServerLandscapeManagerBlockChangedEventArgs.cs" />
     <Compile Include="Sample\BlueprintRecorderService.cs" />
     <Compile Include="Sample\Entities\TestNpc.cs" />
     <Compile Include="Sample\Entities\TestNpcState.cs" />

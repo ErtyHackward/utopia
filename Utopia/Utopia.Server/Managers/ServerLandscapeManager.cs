@@ -68,9 +68,9 @@ namespace Utopia.Server.Managers
             if (handler != null) handler(this, e);
         }
 
-        public event EventHandler<ChunkDataProviderDataChangedEventArgs> BlockChanged;
+        public event EventHandler<ServerLandscapeManagerBlockChangedEventArgs> BlockChanged;
 
-        private void OnBlockChanged(ChunkDataProviderDataChangedEventArgs e)
+        private void OnBlockChanged(ServerLandscapeManagerBlockChangedEventArgs e)
         {
             var handler = BlockChanged;
             if (handler != null) handler(this, e);
@@ -144,7 +144,9 @@ namespace Utopia.Server.Managers
 
         void ChunkBlocksChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
         {
-            OnBlockChanged(e);
+            var ea = new ServerLandscapeManagerBlockChangedEventArgs((IChunkLayout2D)sender, e);
+
+            OnBlockChanged(ea);
             var serverChunk = (ServerChunk)sender;
             RequestSave(serverChunk);
         }

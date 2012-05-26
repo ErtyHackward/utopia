@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
+using System.Threading;
 using S33M3Resources.Structs;
-using Utopia.Shared.Chunks.Tags;
+using Utopia.Server.Managers;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Interfaces;
 
@@ -20,6 +20,7 @@ namespace Utopia.Server.Services
         
         private bool _updating = false;
         private Server _server;
+        private Timer _updateTimer;
 
         public override string ServiceName
         {
@@ -30,88 +31,124 @@ namespace Utopia.Server.Services
         {
             _server = server;
             _server.LandscapeManager.BlockChanged += LandscapeManagerBlockChanged;
-            _server.Scheduler.AddTaskPeriodic("Water update", DateTime.Now, TimeSpan.FromSeconds(0.5), Update);
+            _updateTimer = new Timer(o => Update(), null, 0, 500);
         }
 
         private void Update()
         {
             if (_updateList.Count == 0) return;
 
-            
+            if (_updating) return;
 
             lock (_updateList)
             {
                 _updating = true;
-
-                var node = _updateList.Last;
+                var sw = Stopwatch.StartNew();
+                
+                var node = _updateList.First;
 
                 var cursor = _server.LandscapeManager.GetCursor(new Vector3I());
 
-                for (; node != null; node = node.Previous)
+                for (; node != null; node = node.Next)
                 {
                     cursor.GlobalPosition = node.Value;
 
                     var active = false;
 
-                    var currentTag = (LiquidTag)cursor.ReadTag();
+                    //var currentTag = (LiquidTag)cursor.ReadTag();
 
                     // check if this water can fall down
-                    if (cursor.PeekDown() == CubeId.Air)
-                    {
-                        node.Value = cursor.GlobalPosition - new Vector3I(0, 1, 0);
-                        _updateSet.Remove(cursor.GlobalPosition);
-                        _updateSet.Add(cursor.GlobalPosition - new Vector3I(0, 1, 0));
+                    if (TryFallTo(node, cursor, new Vector3I(0, -1, 0)))
                         continue;
+                    if (cursor.PeekValue(new Vector3I(1, 0, 0)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(1, -1, 0)))
+                        continue;
+                    if (cursor.PeekValue(new Vector3I(-1, 0, 0)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(-1, -1, 0)))
+                        continue;
+                    if (cursor.PeekValue(new Vector3I(0, 0, 1)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(0, -1, 1)))
+                        continue;
+                    if (cursor.PeekValue(new Vector3I(0, 0, -1)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(0, -1, -1)))
+                        continue;
+                    
+                    if (!active)
+                    {
+                        _updateSet.Remove(node.Value);
+                        _updateList.Remove(node);
                     }
-
-                    // water can not fall, try to spread in sides
-                    //CanFlowTo(currentTag.Pressure, new Vector3I(0, -1, 0));
-
                 }
-
-
-
+                
                 _updating = false;
+                Console.WriteLine("Water cycle update " + sw.Elapsed.TotalMilliseconds + " ms");
             }
         }
-        
-        void LandscapeManagerBlockChanged(object sender, Shared.Chunks.ChunkDataProviderDataChangedEventArgs e)
+
+        bool TryFallTo(LinkedListNode<Vector3I> node, ILandscapeCursor cursor, Vector3I move)
+        {
+            if (cursor.PeekValue(move) == CubeId.Air)
+            {
+                var prevPosition = cursor.GlobalPosition;
+
+                node.Value = cursor.GlobalPosition + move;
+                _updateSet.Remove(cursor.GlobalPosition);
+                _updateSet.Add(node.Value);
+                
+                cursor.Write(CubeId.Air);
+                cursor.Move(move).Write(CubeId.DynamicWater);
+
+                PropagateUpdate(prevPosition);
+                PropagateUpdate(node.Value);
+                return true;
+            }
+            return false;
+        }
+
+        void LandscapeManagerBlockChanged(object sender, ServerLandscapeManagerBlockChangedEventArgs e)
         {
             lock (_updateList)
             {
                 // don't handle our own changes
                 if (_updating) return;
-
+                
                 for (int i = 0; i < e.Count; i++)
                 {
+
                     // check if new water block was created
-                    if (e.Bytes[i] == CubeId.DynamicWater)
+                    if (e.Values[i] == CubeId.DynamicWater)
                     {
                         AddToUpdateList(e.Locations[i]);
                     }
 
-                    // check if we touch surrounding water block
-                    var cursor = _server.LandscapeManager.GetCursor(e.Locations[i]);
-
-                    // up
-                    CheckDirection(cursor, new Vector3I(0, 1, 0));
-
-                    // sides
-                    CheckDirection(cursor, new Vector3I(1, 0, 0));
-                    CheckDirection(cursor, new Vector3I(-1, 0, 0));
-                    CheckDirection(cursor, new Vector3I(0, 0, 1));
-                    CheckDirection(cursor, new Vector3I(0, 0, -1));
-
-                    // down
-                    CheckDirection(cursor, new Vector3I(0, -1, 0));
+                    PropagateUpdate(e.Locations[i]);
                 }
             }
+        }
+
+        private void PropagateUpdate(Vector3I globalPos)
+        {
+            // check if we touch surrounding water block
+            var cursor = _server.LandscapeManager.GetCursor(globalPos);
+
+            // up
+            CheckDirection(cursor, new Vector3I(0, 1, 0));
+
+            // sides
+            CheckDirection(cursor, new Vector3I(1, 0, 0));
+            CheckDirection(cursor, new Vector3I(-1, 0, 0));
+            CheckDirection(cursor, new Vector3I(0, 0, 1));
+            CheckDirection(cursor, new Vector3I(0, 0, -1));
+
+            CheckDirection(cursor, new Vector3I(1, 1, 0));
+            CheckDirection(cursor, new Vector3I(-1, 1, 0));
+            CheckDirection(cursor, new Vector3I(0, 1, 1));
+            CheckDirection(cursor, new Vector3I(0, 1, -1));
+
+            // down
+            CheckDirection(cursor, new Vector3I(0, -1, 0));
         }
 
         private void CheckDirection(ILandscapeCursor cursor, Vector3I move)
         {
             if (cursor.PeekValue(move) == CubeId.DynamicWater)
-                AddToUpdateList(move);
+                AddToUpdateList(cursor.GlobalPosition + move);
         }
 
         private void AddToUpdateList(Vector3I vec)
@@ -126,7 +163,7 @@ namespace Utopia.Server.Services
         public override void Dispose()
         {
             _server.LandscapeManager.BlockChanged -= LandscapeManagerBlockChanged;
-            _server.Scheduler.RemoveByName("Water update");
+            _updateTimer.Dispose();
         }
     }
 }

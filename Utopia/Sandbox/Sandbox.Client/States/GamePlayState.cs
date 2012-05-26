@@ -8,6 +8,7 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.GUI;
 using Utopia.Network;
+using Utopia.Shared.Cubes;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Worlds.GameClocks;
@@ -127,6 +128,11 @@ namespace Sandbox.Client.States
         
         void ChunkEntityImpactManagerBlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
         {
+            if (e.NewBlockType == CubeId.Air && e.PreviousBlock == CubeId.DynamicWater)
+                return;
+            if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.Air)
+                return;
+
             if (e.NewBlockType == 0)
                 _sandboxGameSoundManager.PlayBlockTake(e.Position);
             else
