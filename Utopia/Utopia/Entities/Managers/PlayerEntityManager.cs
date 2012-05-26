@@ -973,11 +973,10 @@ namespace Utopia.Entities.Managers
         public bool ShowDebugInfo { get; set; }
         public string GetDebugInfo()
         {
-            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] LookAt : {4} PickedBlock: {5}; NewBlockPlace: {6}", Player.CharacterName,
+            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] PickedBlock: {4}; NewBlockPlace: {5}", Player.CharacterName,
                                                                                   Math.Round(Player.Position.X, 1),
                                                                                   Math.Round(Player.Position.Y, 1),
                                                                                   Math.Round(Player.Position.Z, 1),
-                                                                                  _lookAt,
                                                                                   Player._entityState.IsBlockPicked ? Player._entityState.PickedBlockPosition.ToString() : "None",
                                                                                   Player._entityState.IsBlockPicked ? Player._entityState.NewBlockPosition.ToString() : "None"
                                                                                   );            

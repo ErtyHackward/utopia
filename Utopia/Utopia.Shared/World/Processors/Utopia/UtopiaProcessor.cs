@@ -236,6 +236,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             {
                 for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
                 {
+                    bool isSnow;
                     double temperature = biomeMap[noise2DIndex, 1];
                     double moisture = biomeMap[noise2DIndex, 2];
                     byte biomeId = Biome.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
@@ -250,6 +251,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         MaxHeight = byte.MaxValue
                     };
 
+                    isSnow =  (temperature < 0.2 && moisture > 0.5);
                     surface = chunkRnd.Next(currentBiome.UnderSurfaceLayers.Min, currentBiome.UnderSurfaceLayers.Max + 1);
                     inWaterMaxLevel = 0;
                     surfaceLayer = 0;
@@ -290,7 +292,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                             {
                                 if (surfaceLayer == 0)
                                 {
-                                    if (temperature < 0.2)
+                                    if (isSnow)
                                     {
                                         //Get cube index above this one
                                         //Place a snow block on it
@@ -311,13 +313,14 @@ namespace Utopia.Shared.World.Processors.Utopia
                         {
                             if (cubeId == CubeId.StillWater)
                             {
-                                if (temperature < 0.2)
+                                if (isSnow)
                                 {
                                     //Get cube index above this one
                                     //Place a snow block on it
                                     ChunkCubes[index] = CubeId.Ice;
                                 }
-                                inWaterMaxLevel = Y;
+                                if (biomeId == BiomeType.Desert) ChunkCubes[index] = CubeId.Air;
+                                else inWaterMaxLevel = Y;
                             }
                             else
                             {

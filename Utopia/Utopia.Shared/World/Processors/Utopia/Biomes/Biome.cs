@@ -41,7 +41,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             {
                 case enuLandFormType.Plain:
                 case enuLandFormType.Flat:
-                    if (temperature > 0.7) return BiomeType.Desert;
+                    if (temperature > 0.7 && moisture < 0.6) return BiomeType.Desert;
                     if (moisture < 0.5)
                     {
                         return BiomeType.Grassland;

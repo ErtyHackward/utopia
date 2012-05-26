@@ -346,6 +346,8 @@ namespace S33M3CoreComponents.Noise.Sampler
                 result = InterpolateResult(result, NoiseSampledSteps, new Vector2I(StepsCountX, StepsCountY));
             }
 
+
+
             return result;
         }
 
