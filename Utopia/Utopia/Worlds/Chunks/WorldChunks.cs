@@ -634,6 +634,13 @@ namespace Utopia.Worlds.Chunks
         {
             if (ShowDebugInfo)
             {
+
+                var c = GetChunk((int)_playerManager.CameraWorldPosition.X, (int)_playerManager.CameraWorldPosition.Z);
+                            //From World Coord to Cube Array Coord
+                int arrayX = MathHelper.Mod((int)_playerManager.CameraWorldPosition.X, AbstractChunk.ChunkSize.X);
+                int arrayZ = MathHelper.Mod((int)_playerManager.CameraWorldPosition.Z, AbstractChunk.ChunkSize.Z);
+                var columnInfo = c.BlockData.GetColumnInfo(new Vector2I(arrayX,arrayZ));
+
                 int BprimitiveCount = 0;
                 int VprimitiveCount = 0;
                 VisualChunk chunk;
@@ -650,7 +657,7 @@ namespace Utopia.Worlds.Chunks
                     if (chunk.LiquidCubeIB != null) BprimitiveCount += chunk.LiquidCubeIB.IndicesCount;
 
                 }
-                return string.Format("Nbr chunks : {0:000}, Nbr Visible chunks : {1:000}, {2:0000000} Buffered indices, {3:0000000} Visible indices", SortedChunks.Length, _chunkDrawByFrame, BprimitiveCount, VprimitiveCount);
+                return string.Format("Nbr chunks : {0:000}, Nbr Visible chunks : {1:000}, {2:0000000} Buffered indices, {3:0000000} Visible indices, Temperature {4:0.00}, Moisture {5:0.00}", SortedChunks.Length, _chunkDrawByFrame, BprimitiveCount, VprimitiveCount, columnInfo.Temperature / 255.0f, columnInfo.Moisture / 255.0f);
             }
             else
             {
