@@ -1,5 +1,4 @@
 using System;
-using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Chunks
