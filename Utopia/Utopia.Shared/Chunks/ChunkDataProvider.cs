@@ -53,6 +53,10 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public abstract ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition);
 
+        /// <summary>
+        /// Will return the Id of the Biome most present on the chunk.
+        /// </summary>
+        public abstract ChunkMetaData ChunkMetaData { get; set; }
 
         /// <summary>
         /// Requests a full block buffer for a chunk. This operation should be used only for saving the data. Only raw blocks ids

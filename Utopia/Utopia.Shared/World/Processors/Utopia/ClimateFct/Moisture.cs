@@ -30,11 +30,12 @@ namespace Utopia.Shared.World.Processors.Utopia.ClimateFct
         {
             //Create the Lowland base fractal with range from 0 to 1 values
             INoise Moisture_fractal = new FractalFbm(new Simplex(_seed), 2, 1.4, enuBaseNoiseRange.ZeroToOne);
-            INoise Moisture_fractal_biased = new Gain(Moisture_fractal, 0.6);
+            INoise ClampedValue = new Clamp(Moisture_fractal, 0, 1);
+            INoise Moisture_fractal_biased = new Gain(ClampedValue, 0.6);
             INoise Moisture_fractal_Offset = new ScaleOffset(Moisture_fractal_biased, 1, 0.1);
-            INoise ClampedValue = new Clamp(Moisture_fractal_Offset, 0, 1);
+            INoise ClampedValue2 = new Clamp(Moisture_fractal_Offset, 0, 1);
 
-            return ClampedValue;
+            return ClampedValue2;
         }
         #endregion
 

@@ -370,55 +370,55 @@
     <None Include="TexturesPacks\Default\Sprites\0000_4_Grass1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct00.png">
+    <None Include="TexturesPacks\Default\Terran\ct00_GrassTop.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct01.png">
+    <None Include="TexturesPacks\Default\Terran\ct01_Stone.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct02.png">
+    <None Include="TexturesPacks\Default\Terran\ct02_Dirt.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct03.png">
+    <None Include="TexturesPacks\Default\Terran\ct03_GrassSide.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct04.png">
+    <None Include="TexturesPacks\Default\Terran\ct04_Plank.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct05.png">
+    <None Include="TexturesPacks\Default\Terran\ct05_Water.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct06.png">
+    <None Include="TexturesPacks\Default\Terran\ct06_Rock.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct07.png">
+    <None Include="TexturesPacks\Default\Terran\ct07_Sand.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct08.png">
+    <None Include="TexturesPacks\Default\Terran\ct08_Gravel.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct09.png">
+    <None Include="TexturesPacks\Default\Terran\ct09_TreeTrunk.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct10.png">
+    <None Include="TexturesPacks\Default\Terran\ct10_TreeSlide.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct11.png">
+    <None Include="TexturesPacks\Default\Terran\ct11_GoldStone.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct12.png">
+    <None Include="TexturesPacks\Default\Terran\ct12_CoalStone.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct13.png">
+    <None Include="TexturesPacks\Default\Terran\ct13_MoonStone.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct14.png">
+    <None Include="TexturesPacks\Default\Terran\ct14_Brick.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct15.png">
+    <None Include="TexturesPacks\Default\Terran\ct15_Foliage.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Terran\ct16.png">
+    <None Include="TexturesPacks\Default\Terran\ct16_Glass.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="TexturesPacks\Default\Sprites\0001_0_Mush1.png">

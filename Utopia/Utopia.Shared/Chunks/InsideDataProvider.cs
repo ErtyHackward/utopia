@@ -15,14 +15,28 @@ namespace Utopia.Shared.Chunks
         private Vector3I _chunkSize;
         private byte[] _blockBytes;
         private ChunkColumnInfo[] _chunkColumns;
+        private ChunkMetaData _chunkMetaData;
 
         private bool _transaction;
         private readonly List<Vector3I> _transactionPositions = new List<Vector3I>();
         private readonly List<byte> _transactionValues = new List<byte>();
         private readonly List<BlockTag> _transactionTags = new List<BlockTag>();
 
-
         private readonly Dictionary<Vector3I, BlockTag> _tags = new Dictionary<Vector3I, BlockTag>();
+
+        //Get Or Set the Chunk MetaData
+        public override ChunkMetaData ChunkMetaData
+        {
+            get
+            {
+                return _chunkMetaData;
+            }
+            set
+            {
+                _chunkMetaData = value;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the inside buffer
         /// </summary>
@@ -316,6 +330,8 @@ namespace Utopia.Shared.Chunks
 
         #endregion
 
+
+
         /// <summary>
         /// Saves current object state to binary form
         /// </summary>
@@ -343,6 +359,9 @@ namespace Utopia.Shared.Chunks
                 {
                     _chunkColumns[i].Save(writer); //Save the chunkColumn object data
                 }
+
+                //Save The chunk metaData
+                ChunkMetaData.Save(writer);
             }
         }
 
@@ -377,6 +396,9 @@ namespace Utopia.Shared.Chunks
                 _chunkColumns[i] = new ChunkColumnInfo();
                 _chunkColumns[i].Load(reader);
             }
+
+            //Load The chunk metaData
+            ChunkMetaData.Load(reader);
         }
     }
 }
