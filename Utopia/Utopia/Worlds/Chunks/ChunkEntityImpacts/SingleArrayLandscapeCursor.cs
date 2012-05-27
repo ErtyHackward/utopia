@@ -1,7 +1,6 @@
 ﻿using System;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
@@ -11,6 +10,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         private readonly IChunkEntityImpactManager _landscapeManager;
         private Vector3I _globalPosition;
         private int _bigArrayIndex;
+
+        /// <summary>
+        /// Occurs when someone tries to write using this cursor
+        /// </summary>
+        public event EventHandler<LandscapeCursorBeforeWriteEventArgs> BeforeWrite;
 
         public SingleArrayLandscapeCursor(IChunkEntityImpactManager landscapeManager, Vector3I blockPosition)
         {
@@ -55,6 +59,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public void Write(byte value, BlockTag tag = null)
         {
+            var handler = BeforeWrite;
+            if (handler != null) 
+                handler(this, new LandscapeCursorBeforeWriteEventArgs { GlobalPosition = GlobalPosition, Value = value, BlockTag = tag });
+
             _landscapeManager.ReplaceBlock(_bigArrayIndex, ref _globalPosition, value, tag);
         }
 
@@ -62,41 +70,24 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         {
             return new SingleArrayLandscapeCursor(_landscapeManager, _globalPosition);
         }
-
-        public bool IsSolid()
-        {
-            return GameSystemSettings.Current.Settings.CubesProfile[Read()].IsSolidToEntity;
-        }
-
+        
         /// <summary>
-        /// Returns whether the block at current position is solid to entity
+        /// Optimized method
         /// </summary>
-        /// <param name="moveVector">relative move</param>
         /// <returns></returns>
-        public bool IsSolid(Vector3I moveVector)
-        {
-            return GameSystemSettings.Current.Settings.CubesProfile[PeekValue(moveVector)].IsSolidToEntity;
-        }
-
-        public bool IsSolidUp()
-        {
-            return GameSystemSettings.Current.Settings.CubesProfile[PeekUp()].IsSolidToEntity;
-        }
-
-        public bool IsSolidDown()
-        {
-            return GameSystemSettings.Current.Settings.CubesProfile[PeekDown()].IsSolidToEntity;
-        }
-
         public byte PeekDown()
         {
-            var peekIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, Shared.Chunks.SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1, false);
+            var peekIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1);
             return _landscapeManager.CubesHolder.Cubes[peekIndex].Id;
         }
 
+        /// <summary>
+        /// Optimized method
+        /// </summary>
+        /// <returns></returns>
         public byte PeekUp()
         {
-            var peekIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, Shared.Chunks.SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1, false);
+            var peekIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
             return _landscapeManager.CubesHolder.Cubes[peekIndex].Id;
         }
 
@@ -107,15 +98,23 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return _landscapeManager.CubesHolder.Cubes[peekIndex].Id;
         }
 
+        /// <summary>
+        /// Optimized method
+        /// </summary>
+        /// <returns></returns>
         public ILandscapeCursor MoveDown()
         {
-            _bigArrayIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, Shared.Chunks.SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1, false);
+            _bigArrayIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1);
             return this;
         }
 
+        /// <summary>
+        /// Optimized method
+        /// </summary>
+        /// <returns></returns>
         public ILandscapeCursor MoveUp()
         {
-            _bigArrayIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, Shared.Chunks.SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1, false);
+            _bigArrayIndex = _landscapeManager.CubesHolder.FastIndex(_bigArrayIndex, _globalPosition.Y, SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
             return this;
         }
 

@@ -1,3 +1,4 @@
+using System;
 using Utopia.Shared.Chunks;
 using S33M3Resources.Structs;
 
@@ -5,6 +6,11 @@ namespace Utopia.Shared.Interfaces
 {
     public interface ILandscapeCursor
     {
+        /// <summary>
+        /// Occurs when someone tries to write using this cursor
+        /// </summary>
+        event EventHandler<LandscapeCursorBeforeWriteEventArgs> BeforeWrite;
+
         /// <summary>
         /// Gets or sets cursor global block position
         /// </summary>
@@ -41,43 +47,11 @@ namespace Utopia.Shared.Interfaces
         ILandscapeCursor Clone();
 
         /// <summary>
-        /// Returns whether this block is solid to entity
-        /// </summary>
-        /// <returns></returns>
-        bool IsSolid();
-
-        /// <summary>
-        /// Returns whether the block at current position is solid to entity
-        /// </summary>
-        /// <param name="moveVector">relative move</param>
-        /// <returns></returns>
-        bool IsSolid(Vector3I moveVector);
-
-        bool IsSolidUp();
-        bool IsSolidDown();
-
-        /// <summary>
-        /// Returns value downside the cursor
-        /// </summary>
-        /// <returns></returns>
-        byte PeekDown();
-
-        /// <summary>
-        /// Returns value upside the cursor
-        /// </summary>
-        /// <returns></returns>
-        byte PeekUp();
-
-        /// <summary>
         /// Returns block value from cursor moved by vector specified
         /// </summary>
         /// <param name="moveVector"></param>
         /// <returns></returns>
         byte PeekValue(Vector3I moveVector);
-
-        ILandscapeCursor MoveDown();
-
-        ILandscapeCursor MoveUp();
 
         /// <summary>
         /// Moves current cursor and returns itself (Fluent interface)
@@ -85,5 +59,14 @@ namespace Utopia.Shared.Interfaces
         /// <param name="moveVector"></param>
         /// <returns></returns>
         ILandscapeCursor Move(Vector3I moveVector);
+    }
+
+    public class LandscapeCursorBeforeWriteEventArgs : EventArgs
+    {
+        public Vector3I GlobalPosition { get; set; }
+
+        public byte Value { get; set; }
+
+        public BlockTag BlockTag { get; set; }
     }
 }

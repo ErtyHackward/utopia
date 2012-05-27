@@ -1,5 +1,6 @@
 ﻿using System;
 using S33M3Resources.Structs;
+using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
 
@@ -14,20 +15,13 @@ namespace Utopia.Server.Managers
             Count = e.Count;
 
             Locations = new Vector3I[Count];
-            Values = new byte[Count];
+            e.Locations.CopyTo(Locations, 0);
+            BlockHelper.ConvertToGlobal(chunk.Position, Locations);
+
+            Values = e.Bytes;
+
             if (e.Tags != null)
-                Tags = new BlockTag[Count];
-
-            var chunkPos = new Vector3I(chunk.Position.X * AbstractChunk.ChunkSize.X,0, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
-
-            for (int i = 0; i < Count; i++)
-            {
-                Locations[i] = chunkPos + e.Locations[i];
-                Values[i] = e.Bytes[i];
-                if (e.Tags != null)
-                    Tags[i] = e.Tags[i];
-            }
-
+                Tags = e.Tags;
         }
         /// <summary>
         /// Global positions array
