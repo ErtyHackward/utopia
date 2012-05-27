@@ -1,6 +1,5 @@
 using System;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Chunks
@@ -14,6 +13,17 @@ namespace Utopia.Shared.Chunks
         private Vector3I _internalPosition;
         private IChunkLayout2D _currentChunk;
         private Vector3I _position;
+
+        /// <summary>
+        /// Occurs when someone tries to write using this cursor
+        /// </summary>
+        public event EventHandler<LandscapeCursorBeforeWriteEventArgs> BeforeWrite;
+
+        private void OnBeforeWrite(LandscapeCursorBeforeWriteEventArgs e)
+        {
+            var handler = BeforeWrite;
+            if (handler != null) handler(this, e);
+        }
 
         /// <summary>
         /// Gets or sets cursor global block position
@@ -64,6 +74,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="tag"> </param>
         public void Write(byte value, BlockTag tag = null)
         {
+            OnBeforeWrite(new LandscapeCursorBeforeWriteEventArgs { GlobalPosition = GlobalPosition, Value = value, BlockTag = tag }); 
             _currentChunk.BlockData.SetBlock(_internalPosition, value, tag);
         }
 
@@ -97,53 +108,6 @@ namespace Utopia.Shared.Chunks
                              };
 
             return cursor;
-        }
-
-        /// <summary>
-        /// Returns whether this block is solid to entity
-        /// </summary>
-        /// <returns></returns>
-        public bool IsSolid()
-        {
-            return GameSystemSettings.Current.Settings.CubesProfile[Read()].IsSolidToEntity;
-        }
-
-        /// <summary>
-        /// Returns whether the block at current position is solid to entity
-        /// </summary>
-        /// <param name="moveVector">relative move</param>
-        /// <returns></returns>
-        public bool IsSolid(Vector3I moveVector)
-        {
-            return GameSystemSettings.Current.Settings.CubesProfile[PeekValue(moveVector)].IsSolidToEntity;
-        }
-
-        public bool IsSolidUp()
-        {
-            return IsSolid(new Vector3I(0, 1, 0));
-        }
-
-        public bool IsSolidDown()
-        {
-            return IsSolid(new Vector3I(0, -1, 0));
-        }
-
-        /// <summary>
-        /// Returns value downside the cursor
-        /// </summary>
-        /// <returns></returns>
-        public byte PeekDown()
-        {
-            return PeekValue(new Vector3I(0, -1, 0));
-        }
-
-        /// <summary>
-        /// Returns value upside the cursor
-        /// </summary>
-        /// <returns></returns>
-        public byte PeekUp()
-        {
-            return PeekValue(new Vector3I(0, 1, 0));
         }
 
         /// <summary>
@@ -184,16 +148,6 @@ namespace Utopia.Shared.Chunks
                 return chunk.BlockData[peekPosition];
             }
             return _currentChunk.BlockData[peekPosition];
-        }
-
-        public ILandscapeCursor MoveDown()
-        {
-            return Move(new Vector3I(0, -1, 0));
-        }
-
-        public ILandscapeCursor MoveUp()
-        {
-            return Move(new Vector3I(0, 1, 0));
         }
 
         /// <summary>
@@ -239,5 +193,6 @@ namespace Utopia.Shared.Chunks
 
             return this;
         }
+
     }
 }

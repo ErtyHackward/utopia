@@ -53,13 +53,13 @@ namespace Utopia.Server.Services
                 {
                     cursor.GlobalPosition = node.Value;
 
-                    var active = false;
-
                     //var currentTag = (LiquidTag)cursor.ReadTag();
 
                     // check if this water can fall down
                     if (TryFallTo(node, cursor, new Vector3I(0, -1, 0)))
                         continue;
+
+                    // fall in sides
                     if (cursor.PeekValue(new Vector3I(1, 0, 0)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(1, -1, 0)))
                         continue;
                     if (cursor.PeekValue(new Vector3I(-1, 0, 0)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(-1, -1, 0)))
@@ -68,12 +68,10 @@ namespace Utopia.Server.Services
                         continue;
                     if (cursor.PeekValue(new Vector3I(0, 0, -1)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(0, -1, -1)))
                         continue;
+
+                    _updateSet.Remove(node.Value);
+                    _updateList.Remove(node);
                     
-                    if (!active)
-                    {
-                        _updateSet.Remove(node.Value);
-                        _updateList.Remove(node);
-                    }
                 }
                 
                 _updating = false;

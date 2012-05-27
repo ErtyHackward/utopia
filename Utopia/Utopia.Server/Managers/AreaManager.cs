@@ -136,10 +136,10 @@ namespace Utopia.Server.Managers
             // tell entities about blocks change
             var eargs = new BlocksChangedEventArgs 
             { 
-                ChunkPosition = chunk.Position, 
-                BlockValues = e.Bytes, 
-                Locations = e.Locations, 
-                GlobalLocations = globalPos 
+                ChunkPosition = chunk.Position,
+                BlockValues = e.Bytes,
+                Locations = e.Locations,
+                GlobalLocations = globalPos
             };
 
             GetArea(new Vector3D(eargs.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, eargs.ChunkPosition.Y * AbstractChunk.ChunkSize.Z)).OnBlocksChanged(eargs);

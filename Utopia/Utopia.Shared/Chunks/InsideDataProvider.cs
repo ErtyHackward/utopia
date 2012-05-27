@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using Utopia.Shared.Entities;
 using S33M3Resources.Structs;
 
@@ -13,11 +12,15 @@ namespace Utopia.Shared.Chunks
     public class InsideDataProvider : ChunkDataProvider
     {
         private readonly object _writeSyncRoot = new object();
-
         private Vector3I _chunkSize;
-
         private byte[] _blockBytes;
         private ChunkColumnInfo[] _chunkColumns;
+
+        private bool _transaction;
+        private readonly List<Vector3I> _transactionPositions = new List<Vector3I>();
+        private readonly List<byte> _transactionValues = new List<byte>();
+        private readonly List<BlockTag> _transactionTags = new List<BlockTag>();
+
 
         private readonly Dictionary<Vector3I, BlockTag> _tags = new Dictionary<Vector3I, BlockTag>();
         /// <summary>
@@ -52,6 +55,46 @@ namespace Utopia.Shared.Chunks
         {
             _chunkSize = AbstractChunk.ChunkSize;
             _chunkColumns = new ChunkColumnInfo[_chunkSize.X * _chunkSize.Z];
+        }
+
+        /// <summary>
+        /// Starts accumulating changes
+        /// </summary>
+        public void BeginTransaction()
+        {
+            if (_transaction)
+                throw new InvalidOperationException("Transaction is already started");
+            _transaction = true;
+        }
+
+        /// <summary>
+        /// Fire all accumulated changes in one event
+        /// </summary>
+        public void CommitTransaction()
+        {
+            if (!_transaction)
+                throw new InvalidOperationException("Transaction was not started");
+            _transaction = false;
+
+            if (_transactionPositions.Count == 0) 
+                return;
+
+            lock (_transactionPositions)
+            {
+
+                OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
+                                       {
+                                           Count = _transactionPositions.Count,
+                                           Locations = _transactionPositions.ToArray(),
+                                           Bytes = _transactionValues.ToArray(),
+                                           Tags = _transactionTags.ToArray()
+                                       });
+            }
+
+            _transactionPositions.Clear();
+            _transactionValues.Clear();
+            _transactionTags.Clear();
+
         }
 
         /// <summary>
@@ -153,10 +196,7 @@ namespace Utopia.Shared.Chunks
 
         public override IEnumerable<KeyValuePair<Vector3I, BlockTag>> GetTags()
         {
-            foreach(var KVPTag in _tags)
-            {
-                yield return KVPTag;
-            }
+            return _tags;
         }
 
         /// <summary>
@@ -177,13 +217,26 @@ namespace Utopia.Shared.Chunks
 
             SetTag(tag, inChunkPosition);
 
-            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
-                                   {
-                                       Count = 1,
-                                       Locations = new[] {inChunkPosition},
-                                       Bytes = new[] {blockValue},
-                                       Tags = tag != null ? new[] {tag} : null
-                                   });
+            if (_transaction)
+            {
+                lock (_transactionPositions)
+                {
+                    _transactionPositions.Add(inChunkPosition);
+                    _transactionValues.Add(blockValue);
+                    _transactionTags.Add(tag);
+                }
+            }
+            else
+            {
+                // notify everyone about block change
+                OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
+                                       {
+                                           Count = 1,
+                                           Locations = new[] {inChunkPosition},
+                                           Bytes = new[] {blockValue},
+                                           Tags = tag != null ? new[] {tag} : null
+                                       });
+            }
         }
 
         /// <summary>
@@ -213,14 +266,29 @@ namespace Utopia.Shared.Chunks
                     SetTag(tags[i], positions[i]);
                 }
             }
-
-            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
-                                   {
-                                       Count = positions.Length,
-                                       Locations = positions,
-                                       Bytes = values,
-                                       Tags = tags
-                                   });
+            
+            if (_transaction)
+            {
+                lock (_transactionPositions)
+                {
+                    _transactionPositions.AddRange(positions);
+                    _transactionValues.AddRange(values);
+                    if (tags == null)
+                        tags = new BlockTag[positions.Length];
+                    _transactionTags.AddRange(tags);
+                }
+            }
+            else
+            {
+                // notify everyone about block change
+                OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
+                                       {
+                                           Count = positions.Length,
+                                           Locations = positions,
+                                           Bytes = values,
+                                           Tags = tags
+                                       });
+            }
         }
 
         #region Chunk Column Information Manager

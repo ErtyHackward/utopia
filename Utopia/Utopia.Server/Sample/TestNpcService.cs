@@ -4,6 +4,7 @@ using Utopia.Server.Commands;
 using Utopia.Server.Entities;
 using Utopia.Server.Events;
 using Utopia.Server.Services;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities.Concrete;
 using S33M3Resources.Structs;
@@ -122,7 +123,7 @@ namespace Utopia.Server.Sample
             {
                 var blockPos = _server.LandscapeManager.GetCursor(e.Connection.ServerEntity.DynamicEntity.Position);
                 
-                if (!blockPos.IsSolid() && blockPos.IsSolidDown())
+                if (!blockPos.IsSolid() && blockPos.Down().IsSolid())
                 {
                     foreach (var serverZombie in _aliveNpc)
                     {

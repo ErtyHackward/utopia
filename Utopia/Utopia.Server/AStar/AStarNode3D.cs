@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
 namespace Utopia.Server.AStar
@@ -50,28 +49,28 @@ namespace Utopia.Server.AStar
             var cursor = Cursor.Clone().Move(move);
 
             // do we have a blocking cube in front of our face?
-            if (cursor.IsSolidUp())
+            if (cursor.Up().IsSolid())
                 return;
 
             if (!cursor.IsSolid())
             {
                 // simple move?
-                if (cursor.IsSolidDown())
+                if (cursor.Down().IsSolid())
                 {
                     CreateNode(aSuccessors, cursor, 1);
                     return;
                 }
 
                 // or jump down?
-                if (cursor.IsSolid(new Vector3I(0, -2, 0)))
+                if (cursor.Offset(new Vector3I(0, -2, 0)).IsSolid())
                 {
-                    CreateNode(aSuccessors, cursor.MoveDown(), 2);
+                    CreateNode(aSuccessors, cursor.Down().Move(), 2);
                 }
             }
-            else if (!cursor.IsSolid(new Vector3I(0, 2, 0)))
+            else if (!cursor.Offset(new Vector3I(0, 2, 0)).IsSolid())
             {
                 // jump up!
-                CreateNode(aSuccessors, cursor.MoveUp(), 3);
+                CreateNode(aSuccessors, cursor.Up().Move(), 3);
             }
         }
 

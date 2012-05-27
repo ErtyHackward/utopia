@@ -4,6 +4,7 @@ using SharpDX;
 using Utopia.Server.AStar;
 using Utopia.Server.Managers;
 using Utopia.Server.Structs;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
@@ -117,7 +118,7 @@ namespace Utopia.Server.Entities
 
             #region Falling
             var current = _server.LandscapeManager.GetCursor(DynamicEntity.Position);
-            if (State == TestNpcState.Staying && !current.IsSolidDown())
+            if (State == TestNpcState.Staying && !current.Down().IsSolid())
             {
                 var pos = DynamicEntity.Position;
                 pos.Y = Math.Round(DynamicEntity.Position.Y);
