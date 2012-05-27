@@ -20,6 +20,7 @@ namespace Utopia.Shared.Chunks
         public ISingleArrayDataProviderUser DataProviderUser { get; set; }
         public SingleArrayChunkContainer ChunkCubes { get; set; }
         public ChunkColumnInfo[] ChunkColumns;
+        private ChunkMetaData _chunkMetaData;
 
         public SingleArrayDataProvider(SingleArrayChunkContainer singleArrayContainer)
         {
@@ -191,6 +192,18 @@ namespace Utopia.Shared.Chunks
         }
         #endregion
 
+        public override ChunkMetaData ChunkMetaData
+        {
+            get
+            {
+                return _chunkMetaData;
+            }
+            set
+            {
+                _chunkMetaData = value;
+            }
+        }
+
         public override BlockTag GetTag(Vector3I inChunkPosition)
         {
             BlockTag result;
@@ -236,6 +249,9 @@ namespace Utopia.Shared.Chunks
             {
                 ChunkColumns[i].Save(writer); //Save the chunkColumn object data
             }
+
+            //Save The chunk metaData
+            ChunkMetaData.Save(writer);
         }
 
         public override void Load(BinaryReader reader)
@@ -262,7 +278,10 @@ namespace Utopia.Shared.Chunks
                 ChunkColumns[i] = new ChunkColumnInfo();
                 ChunkColumns[i].Load(reader);
             }
-            
+
+            //Load The chunk metaData
+            ChunkMetaData.Load(reader);
+
         }
 
         public override object WriteSyncRoot

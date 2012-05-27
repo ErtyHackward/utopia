@@ -13,6 +13,7 @@ using Utopia.Shared.World.Processors.Utopia.LandformFct;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.World.Processors.Utopia.ClimateFct;
+using System.Linq;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -72,9 +73,11 @@ namespace Utopia.Shared.World.Processors.Utopia
                 double[,] biomeMap;
                 GenerateLandscape(chunkBytes, ref chunkWorldRange,out biomeMap);
                 TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
+                ChunkMetaData metaData = CreateChunkMetaDate(columnsInfo);
 
                 chunk.BlockData.SetBlockBytes(chunkBytes); //Save block array
                 chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
+                chunk.BlockData.ChunkMetaData = metaData;  //Save the metaData Informations
             });
         }
         #endregion
@@ -236,6 +239,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             {
                 for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
                 {
+                    //Get Biomes informations for this Column============================================
                     bool isSnow;
                     double temperature = biomeMap[noise2DIndex, 1];
                     double moisture = biomeMap[noise2DIndex, 2];
@@ -250,8 +254,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                         Temperature = (byte)(temperature * 255),
                         MaxHeight = byte.MaxValue
                     };
-
                     isSnow =  (temperature < 0.2 && moisture > 0.5);
+                    //====================================================================================
                     surface = chunkRnd.Next(currentBiome.UnderSurfaceLayers.Min, currentBiome.UnderSurfaceLayers.Max + 1);
                     inWaterMaxLevel = 0;
                     surfaceLayer = 0;
@@ -319,8 +323,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                                     //Place a snow block on it
                                     ChunkCubes[index] = CubeId.Ice;
                                 }
-                                if (biomeId == BiomeType.Desert) ChunkCubes[index] = CubeId.Air;
-                                else inWaterMaxLevel = Y;
+
+                                inWaterMaxLevel = Y;
                             }
                             else
                             {
@@ -338,6 +342,15 @@ namespace Utopia.Shared.World.Processors.Utopia
                 }
             }
         }
+
+        private ChunkMetaData CreateChunkMetaDate(ChunkColumnInfo[] columnsInfo)
+        {
+            ChunkMetaData metaData = new ChunkMetaData();
+            //Compute the Master Biome for the chunk.
+            metaData.ChunkMasterBiomeType = columnsInfo.GroupBy(item => item.Biome).OrderByDescending(x => x.Count()).First().Key;
+            return metaData;
+        }
+        
         #endregion
     }
 }
