@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Threading;
 using S33M3Resources.Structs;
 using Utopia.Server.Managers;
+using Utopia.Server.Utils;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Interfaces;
 
@@ -15,9 +17,10 @@ namespace Utopia.Server.Services
     public class WaterDynamicService : Service
     {
         private LinkedList<Vector3I> _updateList = new LinkedList<Vector3I>();
-
         private HashSet<Vector3I> _updateSet = new HashSet<Vector3I>();
-        
+        private Dictionary<Vector2I, InsideDataProvider> _affectedChunks = new Dictionary<Vector2I, InsideDataProvider>();
+
+
         private bool _updating = false;
         private Server _server;
         private Timer _updateTimer;
@@ -48,6 +51,7 @@ namespace Utopia.Server.Services
                 var node = _updateList.First;
 
                 var cursor = _server.LandscapeManager.GetCursor(new Vector3I());
+                cursor.BeforeWrite += CursorBeforeWrite;
 
                 for (; node != null; node = node.Next)
                 {
@@ -73,9 +77,33 @@ namespace Utopia.Server.Services
                     _updateList.Remove(node);
                     
                 }
-                
+
+                cursor.BeforeWrite -= CursorBeforeWrite;
+
+                // commit all changes
+                foreach (var pair in _affectedChunks)
+                {
+                    pair.Value.CommitTransaction();
+                }
+
+                _affectedChunks.Clear();
+
                 _updating = false;
                 Console.WriteLine("Water cycle update " + sw.Elapsed.TotalMilliseconds + " ms");
+            }
+        }
+
+        void CursorBeforeWrite(object sender, LandscapeCursorBeforeWriteEventArgs e)
+        {
+            var chunkPos = BlockHelper.BlockToChunkPosition(e.GlobalPosition);
+            if (!_affectedChunks.ContainsKey(chunkPos))
+            {
+                var chunk = _server.LandscapeManager.GetChunk(chunkPos);
+                var chunkDataProvider = (InsideDataProvider)chunk.BlockData;
+
+                chunkDataProvider.BeginTransaction();
+
+                _affectedChunks.Add(chunkPos, chunkDataProvider);
             }
         }
 
