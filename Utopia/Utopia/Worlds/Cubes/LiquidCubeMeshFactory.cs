@@ -30,7 +30,7 @@ namespace Utopia.Worlds.Cubes
          //Default Face Generation Checks !
         public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube NeightBorFaceCube, int seaLevel)
         {
-            if (cubeFace != CubeFaces.Bottom && cubeFace != CubeFaces.Top) //Never display a bottom Water face !
+            if (cubeFace != CubeFaces.Top)
             {
                 CubeProfile NeightBorProfile = GameSystemSettings.Current.Settings.CubesProfile[NeightBorFaceCube.Id];
 
@@ -38,9 +38,7 @@ namespace Utopia.Worlds.Cubes
                 {
                     return true;
                 }
-            }
-            if (cubeFace == CubeFaces.Top)
-            {
+            }else{
                 if (cubePosiInWorld.Y == seaLevel || NeightBorFaceCube.Id == CubeId.Air)
                 {
                     return true;
