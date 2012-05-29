@@ -15,6 +15,7 @@ cbuffer PerFrame
 	float3 SunColor;			  // Diffuse lighting color
 	float fogdist;
 	float2 BackBufferSize;
+	float2 Various;               //.x = 1 if head under water
 };
 
 
@@ -127,13 +128,18 @@ PS_OUT PS(PS_IN input)
 
 	clip(color.a < 0.1f ? -1:1 );    //Remove the pixel if alpha < 0.1
 
-
-
 	color = color * float4(input.EmissiveLight, 1);
 
 	//Get sky Color
 	float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
-    float4 backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+
+    float4 backBufferColor;
+	if(Various.x == 1)
+	{
+		backBufferColor = float4(0,0,0.2,1);
+	}else{
+		backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+	}
 
 	//Compute Transparency, and blend current color with sky color in a blended way
 	color.a = min( Opaque, 1 - input.fogPower);

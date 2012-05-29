@@ -1,10 +1,14 @@
 ﻿using System.Threading;
 using System;
+using S33M3CoreComponents.Config;
+using System.IO;
 
 namespace Sandbox.Client
 {
     static class Program
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// Indicates whether the debug should be shown
         /// </summary>
@@ -18,8 +22,8 @@ namespace Sandbox.Client
         {
             foreach (var arg in args)
             {
-                if (arg.ToLower() == "-showdebug")
-                    ShowDebug = true;
+                if (arg.ToLower() == "-showdebug") ShowDebug = true;
+                if (arg.ToLower() == "-resetsingleplayerworld") DeleteAllSavedGame();
             }
 
 #if DEBUG
@@ -31,6 +35,32 @@ namespace Sandbox.Client
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 main.Run();
             }
+        }
+
+        private static void DeleteAllSavedGame()
+        {
+            string clientDirectory = XmlSettingsManager.GetFilePath(@"Client\Singleplayer", SettingsStorage.ApplicationData, false);
+            string serverDirectory = XmlSettingsManager.GetFilePath(@"Server\Singleplayer", SettingsStorage.ApplicationData, false); 
+
+            if (Directory.Exists(clientDirectory))
+            {
+                foreach (var d in Directory.GetDirectories(clientDirectory))
+                {
+                    DirectoryInfo di = new DirectoryInfo(d);
+                    di.Delete(true);
+                }
+            }
+
+            if (Directory.Exists(serverDirectory))
+            {
+                foreach (var d in Directory.GetDirectories(serverDirectory))
+                {
+                    DirectoryInfo di = new DirectoryInfo(d);
+                    di.Delete(true);
+                }
+            }
+
+            logger.Info("SinglePlayer saved games have been deleted");
         }
     }
 }

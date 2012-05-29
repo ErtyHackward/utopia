@@ -36,6 +36,8 @@ namespace Utopia.Resources.Effects.Skydome
             public float time;
             [FieldOffset(144)]
             public Vector3 LightDirection;
+            [FieldOffset(156)]
+            public float HeadUnderWater;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
         #endregion

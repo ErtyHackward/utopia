@@ -385,7 +385,6 @@ namespace Utopia.Entities.Managers
         /// </summary>
         private void CheckAfterNewPosition()
         {
-            CheckHeadUnderWater();      //Under water head test
             CheckForEventRaising();
         }
 
@@ -424,11 +423,13 @@ namespace Utopia.Entities.Managers
                         var Offset = CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y);
                         if (Offset >= 1 - GameSystemSettings.Current.Settings.CubesProfile[_headCube.Id].YBlockOffset)
                         {
+                            Console.WriteLine(Offset);
                             IsHeadInsideWater = false;
                             return;
                         }
                     }
 
+                    Console.WriteLine("UnderWater Eye : " + (CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y)));
                     IsHeadInsideWater = true;
                 }
                 else
@@ -960,6 +961,8 @@ namespace Utopia.Entities.Managers
             VisualEntity.World = Matrix.RotationQuaternion(_lookAtDirection.ValueInterp) * Matrix.Translation(entityCenteredPosition);
             //VisualEntity.World = Matrix.Scaling(Player.Size) * Matrix.Translation(entityCenteredPosition);
             //===================================================================================================================================
+
+            CheckHeadUnderWater();      //Under water head test
         }
 
         public override void Draw(DeviceContext context, int index)

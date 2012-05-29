@@ -35,6 +35,8 @@ namespace Utopia.Effects.Shared
             public float fogdist;           //4 (float)
             [FieldOffset(80)]
             public Vector2 BackBufferSize;
+            [FieldOffset(88)]
+            public Vector2 Various;
         }
 
         private D3DEngine _engine;
@@ -84,6 +86,7 @@ namespace Utopia.Effects.Shared
             else CBPerFrame.Values.SunColor = _skydome.SunColor;
             CBPerFrame.Values.fogdist = ((_visualWorldParam.WorldVisibleSize.X) / 2) - 48;
             CBPerFrame.Values.BackBufferSize = _backBuffer.SolidStaggingBackBufferSize;
+            CBPerFrame.Values.Various.X = _playerManager.IsHeadInsideWater ? 1.0f : 0.0f;
             CBPerFrame.IsDirty = false;
 
             CBPerFrame.Update(context); //Send updated data to Graphical Card
@@ -96,3 +99,4 @@ namespace Utopia.Effects.Shared
     }
 
 }
+

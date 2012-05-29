@@ -9,6 +9,7 @@ cbuffer PerDraw
 	float3 CameraWorldPosition;
 	float time;
 	float3 LightDirection;
+	float headUnderWater;
 }
 
 static const float3 LightColor = {1.0f, 1.0f, 1.0f};
@@ -77,7 +78,14 @@ PS_OUT mainPS(vertexOutput IN)
 	// Calculate a wider sun highlight 
 	float largeSunHighlight = pow(max(0.000001f, dot(lightVec, -eyeVec)), largeSunRadiusAttenuation) * largeSunLightness;
 
-	colorOutput = DiffuseTexture.Sample(SkySampler, IN.texcoord);
+	if(headUnderWater.x == 1)
+	{
+		colorOutput = float4(0,0,0.2,1);
+	}else{
+		colorOutput = DiffuseTexture.Sample(SkySampler, IN.texcoord);
+	}
+
+	//colorOutput = DiffuseTexture.Sample(SkySampler, IN.texcoord);
 
 	colorOutput += sunHighlight + largeSunHighlight;
 
