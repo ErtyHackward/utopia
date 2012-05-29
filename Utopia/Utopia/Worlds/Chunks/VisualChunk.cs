@@ -121,6 +121,11 @@ namespace Utopia.Worlds.Chunks
 
         public int StorageRequestTicket { get; set; }
 
+        public new SingleArrayDataProvider BlockData
+        {
+            get { return (SingleArrayDataProvider)base.BlockData; }
+        }
+
         public Range3I CubeRange
         {
             get { return _cubeRange; }

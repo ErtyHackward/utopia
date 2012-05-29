@@ -84,9 +84,8 @@ namespace Utopia.Shared.Chunks
         }
 
         /// <summary>
-        /// Gets an optional block tag
+        /// Get all tags
         /// </summary>
-        /// <param name="inChunkPosition"></param>
         /// <returns></returns>
         public abstract IEnumerable<KeyValuePair<Vector3I,BlockTag>> GetTags();
 
@@ -96,13 +95,6 @@ namespace Utopia.Shared.Chunks
         /// <param name="inChunkPosition"></param>
         /// <returns></returns>
         public abstract BlockTag GetTag(Vector3I inChunkPosition);
-
-        /// <summary>
-        /// Gets an optional block tag
-        /// </summary>
-        /// <param name="inChunkPosition"></param>
-        /// <returns></returns>
-        public abstract void SetTag(BlockTag tag, Vector3I inChunkPosition);
 
         /// <summary>
         /// Sets a single block into location specified
@@ -121,10 +113,11 @@ namespace Utopia.Shared.Chunks
         public abstract void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null);
 
         /// <summary>
-        /// Sets a full block buffer for a chunk (only raw block ids)
+        /// Sets a full block buffer for a chunk (only raw block ids) and the tags collection
         /// </summary>
         /// <param name="bytes"></param>
-        public abstract void SetBlockBytes(byte[] bytes);
+        /// <param name="tags"> </param>
+        public abstract void SetBlockBytes(byte[] bytes, IEnumerable<KeyValuePair<Vector3I,BlockTag>> tags = null);
 
         /// <summary>
         /// Gets or sets a block in the buffer
