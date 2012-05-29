@@ -26,6 +26,8 @@ namespace Utopia.Shared.Cubes
         public const byte Glass = 17;
         public const byte Snow = 18;
         public const byte Ice = 19;
+        public const byte StillLava = 20;
+        public const byte DynamicLava = 21;
 
         // note: when adding new block modify 2 methods below
         public const byte Error = 255;
@@ -60,6 +62,8 @@ namespace Utopia.Shared.Cubes
                 case 17: return "Glass";
                 case 18: return "Snow";
                 case 19: return "Ice";
+                case 20: return "StillLava";
+                case 21: return "DynamicLava";
                 case 255: return "Error";
                 default: return "Unknown";
             }
@@ -100,6 +104,8 @@ namespace Utopia.Shared.Cubes
             yield return Glass;
             yield return Snow;
             yield return Ice;
+            yield return StillLava;
+            yield return DynamicLava;
         }
     }
 }

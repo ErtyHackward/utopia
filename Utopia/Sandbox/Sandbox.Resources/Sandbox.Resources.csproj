@@ -451,6 +451,9 @@
     <Content Include="TexturesPacks\Default\Terran\ct18_Ice.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TexturesPacks\Default\Terran\ct19_Lava.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TexturesPacks\Default\Weather\clouds.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
