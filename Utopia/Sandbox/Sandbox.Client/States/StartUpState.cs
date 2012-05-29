@@ -44,7 +44,7 @@ namespace Sandbox.Client.States
                 slides.Add(new FileInfo(slide));
             }
             
-            startUpComponent.SetSlideShows(slides.ToArray(), 3000);
+            startUpComponent.SetSlideShows(slides.ToArray(), 1000);
 
             startUpComponent.SlideShowFinished += startUpComponent_SlideShowFinished;
 

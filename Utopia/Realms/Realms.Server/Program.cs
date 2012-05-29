@@ -84,7 +84,7 @@ namespace Realms.Server
             IocBind(new WorldParameters()
             {
                 SeedName = "New World",
-                SeaLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2
+                SeaLevel = (Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y / 2) - 3
             }
             );
 
