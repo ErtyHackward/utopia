@@ -280,7 +280,7 @@
     <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
-    <Name>Minerai1</Name>
+    <Name>GoldOre</Name>
     <Id>12</Id>
     <Tex_Top>11</Tex_Top>
     <Tex_Bottom>11</Tex_Bottom>
@@ -299,7 +299,7 @@
     <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
-    <Name>Minerai2</Name>
+    <Name>CoalOre</Name>
     <Id>13</Id>
     <Tex_Top>12</Tex_Top>
     <Tex_Bottom>12</Tex_Bottom>
@@ -318,7 +318,7 @@
     <SlidingValue>0</SlidingValue>
   </Cube>
   <Cube>
-    <Name>Minerai3</Name>
+    <Name>MoonStone</Name>
     <Id>14</Id>
     <Tex_Top>13</Tex_Top>
     <Tex_Bottom>13</Tex_Bottom>
@@ -431,5 +431,53 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0.05</SlidingValue>
+  </Cube>
+  <Cube>
+    <Name>StillLava</Name>
+    <Id>20</Id>
+    <Tex_Top>19</Tex_Top>
+    <Tex_Bottom>19</Tex_Bottom>
+    <Tex_Front>19</Tex_Front>
+    <Tex_Back>19</Tex_Back>
+    <Tex_Left>19</Tex_Left>
+    <Tex_Right>19</Tex_Right>
+    <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
+    <IsPickable>true</IsPickable>
+    <IsSolidToEntity>true</IsSolidToEntity>
+    <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
+    <EmissiveColorR>255</EmissiveColorR>
+    <EmissiveColorG>161</EmissiveColorG>
+    <EmissiveColorB>38</EmissiveColorB>
+    <EmissiveColorA>255</EmissiveColorA>
+    <IsBlockingWater>true</IsBlockingWater>
+    <IsTaggable>false</IsTaggable>
+    <CubeFamilly>Solid</CubeFamilly>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
+  </Cube>
+  <Cube>
+    <Name>DynamicLava</Name>
+    <Id>21</Id>
+    <Tex_Top>19</Tex_Top>
+    <Tex_Bottom>19</Tex_Bottom>
+    <Tex_Front>19</Tex_Front>
+    <Tex_Back>19</Tex_Back>
+    <Tex_Left>19</Tex_Left>
+    <Tex_Right>19</Tex_Right>
+    <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
+    <IsPickable>true</IsPickable>
+    <IsSolidToEntity>true</IsSolidToEntity>
+    <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
+    <EmissiveColorR>255</EmissiveColorR>
+    <EmissiveColorG>161</EmissiveColorG>
+    <EmissiveColorB>38</EmissiveColorB>
+    <EmissiveColorA>255</EmissiveColorA>
+    <IsBlockingWater>true</IsBlockingWater>
+    <IsTaggable>true</IsTaggable>
+    <CubeFamilly>Solid</CubeFamilly>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
   </Cube>
 </GameSystemSettings>

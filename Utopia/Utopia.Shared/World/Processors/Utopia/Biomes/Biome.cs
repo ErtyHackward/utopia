@@ -8,6 +8,7 @@ using S33M3_Resources.Structs;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -78,6 +79,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private CubeVein _coalVein = new CubeVein() { CubeId = CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1, 80) };
         private CubeVein _moonStoneVein = new CubeVein() { CubeId = CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1, 20) };
 
+        private CubeVein _waterSource = new CubeVein() { CubeId = CubeId.DynamicWater,  VeinPerChunk = 30, SpawningHeight = new RangeB(60, 120) };
+        private CubeVein _lavaSource = new CubeVein() { CubeId = CubeId.DynamicLava,  VeinPerChunk = 40, SpawningHeight = new RangeB(2, 70) };
+
         //Default chunk Vein values
         protected virtual CubeVein SandVein { get { return _sandVein; } }
         protected virtual CubeVein RockVein { get { return _rockVein; } }
@@ -86,6 +90,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         protected virtual CubeVein GoldVein { get { return _goldVein; } }
         protected virtual CubeVein CoalVein { get { return _coalVein; } }
         protected virtual CubeVein MoonStoneVein { get { return _moonStoneVein; } }
+
+        protected virtual CubeVein WaterSource { get { return _waterSource; } }
+        protected virtual CubeVein LavaSource { get { return _lavaSource; } }
         #endregion
 
         #region Public Properties
@@ -170,6 +177,43 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 PopulateChunkWithResource(MoonStoneVein.CubeId, cursor, x, y, z, MoonStoneVein.VeinSize, rnd);
             }
 
+            //Generate MoonStoneVein vein
+            for (int i = 0; i < WaterSource.VeinPerChunk; i++)
+            {
+                //Get Rnd chunk Location.
+                int x = rnd.Next(1, 15);
+                int y = rnd.Next(WaterSource.SpawningHeight.Min, WaterSource.SpawningHeight.Max);
+                int z = rnd.Next(1, 15);
+                PopulateChunkLiquidSources(WaterSource.CubeId, cursor, x, y, z, rnd);
+            }
+
+            //Generate MoonStoneVein vein
+            for (int i = 0; i < LavaSource.VeinPerChunk; i++)
+            {
+                //Get Rnd chunk Location.
+                int x = rnd.Next(1, 15);
+                int y = rnd.Next(LavaSource.SpawningHeight.Min, LavaSource.SpawningHeight.Max);
+                int z = rnd.Next(1, 15);
+                PopulateChunkLiquidSources(LavaSource.CubeId, cursor, x, y, z, rnd);
+            }
+
+        }
+
+        public void GenerateChunkLakes(byte[] chunkData, FastRandom rnd)
+        {
+            //Generate Still Water Lakes
+
+            //Generate Still Lava Lakes
+        }
+
+        public void GenerateChunkTrees(byte[] chunkData, FastRandom rnd)
+        {
+            //Generate Tree type
+        }
+
+        public void GenerateChunkItems(byte[] chunkData, FastRandom rnd)
+        {
+            //Generate grass, ...
         }
         #endregion
 
@@ -183,6 +227,33 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 cursor.Move(relativeMove);
                 if (cursor.Read() == CubeId.Stone) 
                     cursor.Write(cubeId);
+            }
+        }
+
+        private void PopulateChunkLiquidSources(byte cubeId, ByteChunkCursor cursor, int x, int y, int z, FastRandom rnd)
+        {
+            cursor.SetInternalPosition(x, y, z);
+
+            //Check if this source is candidate as valid source = Must be surrended by 5 solid blocks and ahave one side block going to Air
+            if (cursor.Read() != CubeId.Air)
+            {
+                //Looking Up for Air
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(3)].IsSolidToEntity == false) return;
+                //Looking Down for Air
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(2)].IsSolidToEntity == false) return;
+                int cpt = 0;
+                //Counting the number of holes arround the source
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(0)].IsSolidToEntity == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(1)].IsSolidToEntity == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(4)].IsSolidToEntity == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(5)].IsSolidToEntity == false) cpt++;
+
+                //Only one face touching air ==> Createing the Liquid Source !
+                if (cpt == 1)
+                {
+                    cursor.Write(cubeId);
+                }
+
             }
         }
         #endregion

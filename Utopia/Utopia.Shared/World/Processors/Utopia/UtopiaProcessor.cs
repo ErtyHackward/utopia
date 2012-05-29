@@ -207,13 +207,19 @@ namespace Utopia.Shared.World.Processors.Utopia
                         {
                             cube = CubeId.Air;
                         }
+
+                        //Create Bottom Lava lake
+                        if (Y <= 3 && cube == CubeId.Air)
+                        {
+                            cube = CubeId.StillLava;
+                        }
                         
                         //Place "StillWater" block at SeaLevel
                         if (Y == _worldParameters.SeaLevel && cube == CubeId.Air && valueUnderground == 1)
                         {
                             cube = CubeId.StillWater;
-                        }
-                        
+                        }                       
+
                         //Save block if changed
                         if(cube != CubeId.Air)
                         {
