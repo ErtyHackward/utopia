@@ -74,6 +74,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 GenerateLandscape(chunkBytes, ref chunkWorldRange,out biomeMap);
                 TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
                 ChunkMetaData metaData = CreateChunkMetaDate(columnsInfo);
+                PopulateChunk(chunkBytes, metaData, chunkRnd);
 
                 chunk.BlockData.SetBlockBytes(chunkBytes); //Save block array
                 chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
@@ -342,6 +343,20 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                 }
             }
+        }
+
+        /// <summary>
+        /// Will Populate the chunks with various resources (Ore, Items, ...)
+        /// </summary>
+        /// <param name="ChunkCubes"></param>
+        /// <param name="chunkMetaData"></param>
+        private void PopulateChunk(byte[] ChunkCubes, ChunkMetaData chunkMetaData, FastRandom chunkRnd)
+        {
+            //Get Chunk Master Biome
+            var masterBiome = Biome.BiomeList[chunkMetaData.ChunkMasterBiomeType];
+
+            masterBiome.GenerateChunkBlockResource(ChunkCubes, chunkRnd);
+
         }
 
         private ChunkMetaData CreateChunkMetaDate(ChunkColumnInfo[] columnsInfo)

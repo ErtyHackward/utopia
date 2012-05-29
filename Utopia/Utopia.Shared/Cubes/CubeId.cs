@@ -18,9 +18,9 @@ namespace Utopia.Shared.Cubes
         public const byte Sand = 9;
         public const byte Gravel = 10;
         public const byte Trunk = 11;
-        public const byte Minerai1 = 12;
-        public const byte Minerai2 = 13;
-        public const byte Minerai3 = 14;
+        public const byte GoldOre = 12;
+        public const byte CoalOre = 13;
+        public const byte MoonStone = 14;
         public const byte Brick = 15;
         public const byte Foliage = 16;
         public const byte Glass = 17;
@@ -92,9 +92,9 @@ namespace Utopia.Shared.Cubes
             yield return Sand;
             yield return Gravel;
             yield return Trunk;
-            yield return Minerai1;
-            yield return Minerai2;
-            yield return Minerai3;
+            yield return GoldOre;
+            yield return CoalOre;
+            yield return MoonStone;
             yield return Brick;
             yield return Foliage;
             yield return Glass;
