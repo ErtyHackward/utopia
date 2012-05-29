@@ -14,6 +14,7 @@ cbuffer PerFrame
 	float3 SunColor;			  // Diffuse lighting color
 	float fogdist;
 	float2 BackBufferSize;
+	float2 Various;               //.x = 1 if head under water
 };
 
 static const float foglength = 45;

@@ -331,6 +331,11 @@
     <IsPickable>true</IsPickable>
     <IsSolidToEntity>true</IsSolidToEntity>
     <IsBlockingWater>true</IsBlockingWater>
+    <IsEmissiveColorLightSource>true</IsEmissiveColorLightSource>
+    <EmissiveColorR>86</EmissiveColorR>
+    <EmissiveColorG>143</EmissiveColorG>
+    <EmissiveColorB>255</EmissiveColorB>
+    <EmissiveColorA>255</EmissiveColorA>
     <IsTaggable>false</IsTaggable>
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>

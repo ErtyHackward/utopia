@@ -15,6 +15,7 @@ namespace Sandbox.Client
 {
     public partial class GameClient : IDisposable
     {
+
         private IKernel _iocContainer;
         private D3DEngine _d3dEngine;
         
