@@ -27,6 +27,7 @@ namespace Utopia.Shared.Chunks
             ChunkCubes = singleArrayContainer;
             _chunkSize = AbstractChunk.ChunkSize;
             ChunkColumns = new ChunkColumnInfo[_chunkSize.X * _chunkSize.Z];
+            _chunkMetaData = new ChunkMetaData();
         }
 
         #region Circular Array access through chunk
@@ -78,67 +79,34 @@ namespace Utopia.Shared.Chunks
         }
 
         /// <summary>
-        /// Sets a single block into location specified
+        /// Operation is not supported
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
         public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null)
         {
-            ChunkCubes.Cubes[ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPositionBlockUnit.X,
-                                              inChunkPosition.Y,
-                                              inChunkPosition.Z + DataProviderUser.ChunkPositionBlockUnit.Y)] =
-                new TerraCube(blockValue);
-
-            SetTag(tag, inChunkPosition);
-
-            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
-                                   {
-                                       Count = 1,
-                                       Locations = new[] { inChunkPosition },
-                                       Bytes = new[] { blockValue },
-                                       Tags = tag != null ? new[] { tag } : null
-                                   });
+            throw new NotSupportedException();
         }
 
         /// <summary>
-        /// Seta a group of blocks
+        /// Operation is not supported
         /// </summary>
         /// <param name="positions"></param>
         /// <param name="values"></param>
         /// <param name="tags"></param>
+        /// <exception cref="NotSupportedException"></exception>
         public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null)
         {
-            for (int i = 0; i < positions.Length; i++)
-            {
-                ChunkCubes.Cubes[ChunkCubes.Index(positions[i].X + DataProviderUser.ChunkPositionBlockUnit.X,
-                                                  positions[i].Y,
-                                                  positions[i].Z + DataProviderUser.ChunkPositionBlockUnit.Y)] =
-                    new TerraCube(values[i]);
-            }
-
-            if (tags != null)
-            {
-                for (var i = 0; i < positions.Length; i++)
-                {
-                    SetTag(tags[i], positions[i]);
-                }
-            }
-
-            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
-                                   {
-                                       Bytes = values,
-                                       Count = values.Length,
-                                       Locations = positions,
-                                       Tags = tags
-                                   });
+            throw new NotSupportedException();
         }
 
         /// <summary>
         /// Sets a full block buffer for a chunk
         /// </summary>
         /// <param name="bytes"></param>
-        public override void SetBlockBytes(byte[] bytes)
+        /// <param name="tags"> </param>
+        public override void SetBlockBytes(byte[] bytes, IEnumerable<KeyValuePair<Vector3I, BlockTag>> tags = null)
         {
             int byteArrayIndex = 0;
             int baseCubeIndex = ChunkCubes.Index(DataProviderUser.ChunkPositionBlockUnit.X, 0, DataProviderUser.ChunkPositionBlockUnit.Y);
@@ -163,7 +131,17 @@ namespace Utopia.Shared.Chunks
                 }
             }
 
-            OnBlockBufferChanged(new ChunkDataProviderBufferChangedEventArgs() { NewBuffer = bytes });
+            _tags.Clear();
+
+            if (tags != null)
+            {
+                foreach (var pair in tags)
+                {
+                    _tags.Add(pair.Key, pair.Value);
+                }
+            }
+
+            OnBlockBufferChanged(new ChunkDataProviderBufferChangedEventArgs { NewBuffer = bytes });
         }
 
         #endregion
@@ -211,7 +189,7 @@ namespace Utopia.Shared.Chunks
             return result;
         }
 
-        public override void SetTag(BlockTag tag, Vector3I inChunkPosition)
+        public void SetTag(BlockTag tag, Vector3I inChunkPosition)
         {
             if (tag != null)
                 _tags[inChunkPosition] = tag;
@@ -221,13 +199,10 @@ namespace Utopia.Shared.Chunks
 
         public override IEnumerable<KeyValuePair<Vector3I, BlockTag>> GetTags()
         {
-            foreach (var KVPTag in _tags)
-            {
-                yield return KVPTag;
-            }
+            return _tags;
         }
 
-        //Should be never use
+        // used to store chunk in the local storage
         public override void Save(BinaryWriter writer)
         {
             //Save the Chunk Block informations ==================

@@ -69,6 +69,7 @@ namespace Utopia.Shared.Chunks
         {
             _chunkSize = AbstractChunk.ChunkSize;
             _chunkColumns = new ChunkColumnInfo[_chunkSize.X * _chunkSize.Z];
+            _chunkMetaData = new ChunkMetaData();
         }
 
         /// <summary>
@@ -155,7 +156,8 @@ namespace Utopia.Shared.Chunks
         /// Sets a full block buffer for a chunk
         /// </summary>
         /// <param name="bytes"></param>
-        public override void SetBlockBytes(byte[] bytes)
+        /// <param name="tags"> </param>
+        public override void SetBlockBytes(byte[] bytes, IEnumerable<KeyValuePair<Vector3I,BlockTag>> tags = null)
         {
             if (bytes == null)
                 throw new ArgumentNullException("bytes");
@@ -168,6 +170,18 @@ namespace Utopia.Shared.Chunks
             lock (_writeSyncRoot) { }
 
             BlockBytes = bytes;
+
+            _tags.Clear();
+
+            if (tags != null)
+            {
+                foreach (var keyValuePair in tags)
+                {
+                    _tags.Add(keyValuePair.Key, keyValuePair.Value);
+                }
+            }
+
+
             OnBlockBufferChanged(new ChunkDataProviderBufferChangedEventArgs { NewBuffer = bytes });
         }
 
@@ -200,7 +214,7 @@ namespace Utopia.Shared.Chunks
             return result;
         }
 
-        public override void SetTag(BlockTag tag, Vector3I inChunkPosition)
+        private void SetTag(BlockTag tag, Vector3I inChunkPosition)
         {
             if (tag != null)
                 _tags[inChunkPosition] = tag;
