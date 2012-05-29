@@ -208,7 +208,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         
                         //Place "StillWater" block at SeaLevel
-                        if ( Y == _worldParameters.SeaLevel && cube == CubeId.Air)
+                        if (Y == _worldParameters.SeaLevel && cube == CubeId.Air && valueUnderground == 1)
                         {
                             cube = CubeId.StillWater;
                         }
@@ -240,7 +240,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
                 {
                     //Get Biomes informations for this Column============================================
-                    bool isSnow;
+                    bool mustPlacedSnow;
                     double temperature = biomeMap[noise2DIndex, 1];
                     double moisture = biomeMap[noise2DIndex, 2];
                     byte biomeId = Biome.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
@@ -254,7 +254,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         Temperature = (byte)(temperature * 255),
                         MaxHeight = byte.MaxValue
                     };
-                    isSnow =  (temperature < 0.2 && moisture > 0.5);
+                    mustPlacedSnow =  (temperature < 0.2 && moisture > 0.5);
                     //====================================================================================
                     surface = chunkRnd.Next(currentBiome.UnderSurfaceLayers.Min, currentBiome.UnderSurfaceLayers.Max + 1);
                     inWaterMaxLevel = 0;
@@ -272,7 +272,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
 
                         //Restart Surface layer if needed
-                        if (surfaceLayer > 0 && cubeId == CubeId.Air && Y > (_worldParameters.SeaLevel - 5)) surfaceLayer = 0;
+                        if (surfaceLayer > 0 && cubeId == CubeId.Air && Y > (_worldParameters.SeaLevel - 5)) surfaceLayer = 1;
 
                         if (cubeId == CubeId.Stone)
                         {
@@ -296,11 +296,12 @@ namespace Utopia.Shared.World.Processors.Utopia
                             {
                                 if (surfaceLayer == 0)
                                 {
-                                    if (isSnow)
+                                    if (mustPlacedSnow)
                                     {
                                         //Get cube index above this one
                                         //Place a snow block on it
                                         ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + (Y + 1)] = CubeId.Snow;
+                                        mustPlacedSnow = false;
                                     }
 
                                     ChunkCubes[index] = currentBiome.SurfaceCube;
@@ -313,11 +314,11 @@ namespace Utopia.Shared.World.Processors.Utopia
                             }
 
                         }
-                        else
+                        else //This block is not Stone (Air, Water, or BedRock)
                         {
                             if (cubeId == CubeId.StillWater)
                             {
-                                if (isSnow)
+                                if (mustPlacedSnow)
                                 {
                                     //Get cube index above this one
                                     //Place a snow block on it

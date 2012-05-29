@@ -92,7 +92,7 @@ namespace Utopia.Worlds.Cubes
 
             ChunkColumnInfo chunkInfo = chunk.BlockData.GetColumnInfo(new Vector2I(cubePosition.X, cubePosition.Z));
 
-            Vector4 vertexInfo2 = new Vector4(yBlockOffset, chunkInfo.Temperature / 255.0f, chunkInfo.Moisture / 255.0f, 0);
+            Vector4 vertexInfo2 = new Vector4(yBlockOffset, chunkInfo.Moisture / 255.0f, chunkInfo.Temperature / 255.0f, 0);
             Vector4B vertexInfo1 = new Vector4B((byte)cubeFace,
                                                       (byte)0,          //Is "UP" vertex
                                                       (byte)0,

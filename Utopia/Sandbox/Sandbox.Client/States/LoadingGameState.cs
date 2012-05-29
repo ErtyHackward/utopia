@@ -106,7 +106,7 @@ namespace Sandbox.Client.States
                 {
                     wp.WorldName = "SandBox World";
                     wp.SeedName = "Utopia SandBox";
-                    wp.SeaLevel = AbstractChunk.ChunkSize.Y / 2;
+                    wp.SeaLevel = (AbstractChunk.ChunkSize.Y / 2) - 3;
                 }
 
                 if (_vars.LocalServer == null)

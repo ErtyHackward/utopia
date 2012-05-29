@@ -8,10 +8,9 @@ using System.IO.Compression;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using S33M3Engines.Shared.Math.Noises;
-using Utopia.MapGenerator.Properties;
-using Utopia.Shared.Structs;
 using Utopia.Shared.World.PlanGenerator;
+using S33M3Resources.Structs;
+using Utopia.MapGenerator.Properties;
 
 namespace Utopia.MapGenerator
 {
