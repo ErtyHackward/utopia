@@ -58,8 +58,6 @@ namespace Realms.Server
 
             //dEntity.Inventory.PutItem(new GoldCoin(), 45821);
 
-            dEntity.Inventory.PutItem(_server.EntityFactory.CreateEntity<Carver>());
-            
             return dEntity;
         }
 

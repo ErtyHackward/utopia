@@ -30,6 +30,7 @@ namespace Utopia.Shared.Settings
         public double YBlockOffset;
         public float Friction;
         public float SlidingValue;
+        public byte BiomeColorArrayTexture;
 
         public enuCubeFamilly CubeFamilly { get; set; }
 
