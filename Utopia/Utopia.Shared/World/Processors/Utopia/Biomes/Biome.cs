@@ -333,6 +333,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 cursor.IsCubePresent(treeTemplate.TrunkCubeId, radiusRange) == false &&
                 cursor.IsCubePresent(CubeId.StillWater, radiusRange) == false)
             {
+                cursor.SetInternalPosition(x, y + 1, z);
                 //Generate the Trunk first
                 int trunkSize = rnd.Next(treeTemplate.TrunkSize.Min, treeTemplate.TrunkSize.Max + 1);
                 for (int trunkBlock = 0; trunkBlock < trunkSize; trunkBlock++)

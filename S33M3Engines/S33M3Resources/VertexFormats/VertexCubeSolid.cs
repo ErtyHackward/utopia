@@ -20,7 +20,7 @@ namespace S33M3Resources.Structs.Vertex
         public Vector4B Position;
         public ByteColor Color;
         public Vector4B VertexInfo;  //X = Vertex Y offset; Y = texture index;Z=Additional Texture Index
-        public Vector4B BiomeInfo;   //X = Temperature, Y = Humidity
+        public Vector4B BiomeInfo;   //X = Temperature, Y = Humidity, Z = TextureArray
 
         VertexDeclaration IVertexType.VertexDeclaration
         {

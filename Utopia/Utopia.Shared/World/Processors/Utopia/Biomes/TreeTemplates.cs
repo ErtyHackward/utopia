@@ -27,7 +27,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             {
                 TreeType = TreeType.Small,
                 Radius = 3,
-                TrunkSize = new RangeB(4,5),
+                TrunkSize = new RangeB(3,4),
                 TrunkCubeId = CubeId.Trunk,
                 FoliageCubeId = CubeId.Foliage
             };
@@ -43,7 +43,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             {
                 TreeType = TreeType.Small,
                 Radius = 3,
-                TrunkSize = new RangeB(4, 5),
+                TrunkSize = new RangeB(3, 4),
                 TrunkCubeId = CubeId.Trunk,
                 FoliageCubeId = CubeId.Foliage
             };
@@ -59,7 +59,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             {
                 TreeType = TreeType.Small,
                 Radius = 3,
-                TrunkSize = new RangeB(4, 8),
+                TrunkSize = new RangeB(3, 7),
                 TrunkCubeId = CubeId.Trunk,
                 FoliageCubeId = CubeId.Foliage
             };
@@ -75,11 +75,11 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             {
                 TreeType = TreeType.Small,
                 Radius = 3,
-                TrunkSize = new RangeB(3, 5),
-                TrunkCubeId = CubeId.Trunk,
-                FoliageCubeId = CubeId.Foliage
+                TrunkSize = new RangeB(2, 3),
+                TrunkCubeId = CubeId.Cactus,
+                FoliageCubeId = CubeId.CactusTop
             };
-            cactusTemplate.FoliageStructure = new List<int>() { };
+            cactusTemplate.FoliageStructure = new List<int>() { 3 };
             Templates[(int)TreeType.Cactus] = cactusTemplate;
         }
 
@@ -92,12 +92,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             public byte FoliageCubeId;
             //Foliage structure construction, always as Offset from last trunk block position
             // Move the cursor in the chunk
-            // 0 = X_Plus1
-            // 1 = X_Minus1
-            // 2 = Y_Plus1
-            // 3 = Y_Minus1
-            // 4 = Z_Plus1
-            // 5 = Z_Minus1
+            // 1 = X_Plus1
+            // 2 = X_Minus1
+            // 3 = Y_Plus1
+            // 4 = Y_Minus1
+            // 5 = Z_Plus1
+            // 6 = Z_Minus1
             public List<int> FoliageStructure;
         }
 
