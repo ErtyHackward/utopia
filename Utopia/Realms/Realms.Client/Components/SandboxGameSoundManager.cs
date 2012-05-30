@@ -44,6 +44,7 @@ namespace Realms.Client.Components
 
             // ambiance
             RegisterCubeAmbientSound(CubeId.StillWater, "Sounds\\Ambiance\\water_stream.ogg");
+            RegisterCubeAmbientSound(CubeId.StillLava, "Sounds\\Ambiance\\lava.ogg");
 
             PreLoadSound("Sounds\\Blocks\\put.wav");
             PreLoadSound("Sounds\\Blocks\\take.wav");
