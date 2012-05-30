@@ -327,7 +327,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //No other tree around me ?
             byte trunkRootCube = cursor.Read();
 
-            Vector3I radiusRange = new Vector3I(treeTemplate.Radius / 2.0, 1, treeTemplate.Radius / 2.0);
+            Vector3I radiusRange = new Vector3I(treeTemplate.Radius - 1, 1, treeTemplate.Radius - 1);
 
             if ((trunkRootCube == CubeId.Grass || trunkRootCube == CubeId.Dirt || trunkRootCube == CubeId.Snow || trunkRootCube == CubeId.Sand) &&
                 cursor.IsCubePresent(treeTemplate.TrunkCubeId, radiusRange) == false &&
@@ -338,10 +338,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 for (int trunkBlock = 0; trunkBlock < trunkSize; trunkBlock++)
                 {
                     cursor.Write(treeTemplate.TrunkCubeId);
-                    cursor.Move(3);
+                    cursor.Move(CursorRelativeMovement.Up);
                 }
                 //Move Down to the last trunk block
-                cursor.Move(4);
+                cursor.Move(CursorRelativeMovement.Down);
                 //Add Foliage
                 foreach (int foliageMove in treeTemplate.FoliageStructure)
                 {

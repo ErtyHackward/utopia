@@ -124,8 +124,13 @@ PS_OUT PS(PS_IN input)
 {
 	PS_OUT output;
 
+	float fogvalue = min( Opaque, 1 - input.fogPower);
+	clip(fogvalue == 0 ? -1:1); 
+
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW);
 	
+	clip(color.a < 0.1f ? -1:1 );    //Remove the pixel if alpha < 0.1
+
 	//Apply Biome Color if the Alpha is < 1
 	if(color.a < 1.0)
 	{
@@ -136,25 +141,23 @@ PS_OUT PS(PS_IN input)
 		color.b = color.b * biomeColor.b;
 	}
 
-	clip(color.a < 0.1f ? -1:1 );    //Remove the pixel if alpha < 0.1
-
 	color = color * float4(input.EmissiveLight, 1);
 
-	//Get sky Color
-	float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
+	float4 finalColor = color;
+	//To execute only when Fog is present !
+	if(fogvalue < 1){
+		float4 backBufferColor = { 0.0f, 0.0f, 0.2f, 1.0f }; //Defaulted Set to underWaterColor
+		if(Various.x != 1) //Not Under Water and Fog present
+		{
+			//Get sky Color
+			float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
+			backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+		}
 
-    float4 backBufferColor;
-	if(Various.x == 1)
-	{
-		backBufferColor = float4(0,0,0.2,1);
-	}else{
-		backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+		//Compute Transparency, and blend current color with sky color in a blended way
+		finalColor.rgb = (color.rgb * fogvalue) + (backBufferColor.rgb * (1 - fogvalue));
+		finalColor.a = fogvalue;
 	}
-
-	//Compute Transparency, and blend current color with sky color in a blended way
-	color.a = min( Opaque, 1 - input.fogPower);
-	float4 finalColor = {(color.rgb * color.a) + (backBufferColor.rgb * (1 - color.a)), color.a};
-
 	// Apply fog on output color
 	output.Color = finalColor;
     return output;

@@ -423,13 +423,11 @@ namespace Utopia.Entities.Managers
                         var Offset = CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y);
                         if (Offset >= 1 - GameSystemSettings.Current.Settings.CubesProfile[_headCube.Id].YBlockOffset)
                         {
-                            Console.WriteLine(Offset);
                             IsHeadInsideWater = false;
                             return;
                         }
                     }
 
-                    Console.WriteLine("UnderWater Eye : " + (CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y)));
                     IsHeadInsideWater = true;
                 }
                 else
