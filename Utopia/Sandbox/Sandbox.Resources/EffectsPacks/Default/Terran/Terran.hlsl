@@ -53,7 +53,8 @@ struct VS_IN
 	uint4 Position		 : POSITION;
 	float4 Col			 : COLOR;
 	uint4 VertexInfo	 : INFO;   // (bool)x = is Upper vertex, y = facetype, z = AOPower factor 255 = Factor of 3, w = Offset
-	float4 BiomeData     : BIOMEINFO; //X = Temperature, Y = Moisture
+	float2 BiomeData     : BIOMEINFO; //X = Temperature, Y = Moisture
+	uint2 Various		 : VARIOUS;   //X = ArrayTextureID for Biome
 };
 
 struct PS_IN
@@ -62,7 +63,8 @@ struct PS_IN
 	float3 UVW					: TEXCOORD0;
 	float fogPower				: VARIOUS0;
 	float3 EmissiveLight		: Light0;
-	float4 BiomeData			: BIOMEDATA0;
+	float2 BiomeData			: BIOMEDATA0;
+	uint2 Various				: BIOMEDATAVARIOUS0;  
 };
 
 struct PS_OUT
@@ -103,6 +105,7 @@ PS_IN VS(VS_IN input)
 
 	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 	output.BiomeData = input.BiomeData;
+	output.Various = input.Various;
 
     return output;
 }
@@ -119,8 +122,8 @@ PS_OUT PS(PS_IN input)
 	//Apply Biome Color if the Alpha is < 1
 	if(color.a < 1.0)
 	{
-		float3 biomeColorSampling = {input.BiomeData.xy, 0};
-	    float4 biomeColor =  BiomesColors.Sample(SamplerBackBuffer, biomeColorSampling);
+		float3 samplingBiomeColor = {input.BiomeData.xy, input.Various.x };
+	    float4 biomeColor =  BiomesColors.Sample(SamplerBackBuffer, samplingBiomeColor);
 		color.r = color.r * biomeColor.r;
 		color.g = color.g * biomeColor.g;
 		color.b = color.b * biomeColor.b;

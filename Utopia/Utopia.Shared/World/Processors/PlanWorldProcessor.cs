@@ -193,12 +193,12 @@ namespace Utopia.Shared.World.Processors
                                     double result = r.NextDouble();
                                     if (result <= 0.001)
                                     {
-                                        var cactus = _factory.CreateEntity<Cactus>();
+                                        //var cactus = _factory.CreateEntity<Cactus>();
 
-                                        cactus.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                        cactus.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+                                        //cactus.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                        //cactus.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
-                                        chunk.Entities.Add(cactus);
+                                        //chunk.Entities.Add(cactus);
                                     }
                                 }
 
