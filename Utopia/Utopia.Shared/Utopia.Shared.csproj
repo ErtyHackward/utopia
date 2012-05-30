@@ -96,6 +96,7 @@
     <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\CursorHelper.cs" />
+    <Compile Include="Chunks\CursorRelativeMovement.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />

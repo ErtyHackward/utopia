@@ -19,6 +19,7 @@ namespace Utopia.Shared.Chunks
 
         #region Public Properties
         #endregion
+
         public ByteChunkCursor(byte[] chunkData, Vector3I internalChunkPosition)
         {
             _chunkData = chunkData;
@@ -83,6 +84,10 @@ namespace Utopia.Shared.Chunks
             _chunkData[_arrayIndex] = cubeId;
         }
 
+        public bool Move(CursorRelativeMovement relativeMove)
+        {
+            return Move((int)relativeMove);
+        }
         /// <summary>
         /// Move the cursor in the chunk
         /// </summary>
@@ -134,7 +139,10 @@ namespace Utopia.Shared.Chunks
             return true;
         }
 
-
+        public bool PeekWithCheck(CursorRelativeMovement relativeMove, byte value)
+        {
+            return PeekWithCheck((int)relativeMove, value);
+        }
         /// <summary>
         /// Move the cursor in the chunk
         /// </summary>
@@ -181,6 +189,10 @@ namespace Utopia.Shared.Chunks
             return true;
         }
 
+        public byte Peek(CursorRelativeMovement relativeMove)
+        {
+            return Peek((int)relativeMove);
+        }
         /// <summary>
         /// Move the cursor in the chunk
         /// </summary>
