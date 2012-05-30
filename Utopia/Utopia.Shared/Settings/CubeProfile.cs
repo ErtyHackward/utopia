@@ -31,6 +31,7 @@ namespace Utopia.Shared.Settings
         public float Friction;
         public float SlidingValue;
         public byte BiomeColorArrayTexture;
+        public byte SideOffsetMultiplier;
 
         public enuCubeFamilly CubeFamilly { get; set; }
 

@@ -37,6 +37,8 @@ static const float texmul3[6] = { -1, -1,  0,  0, -1, -1};
 static const float texmul4[6] = {  0,  0,  1,  1,  0,  0};
 static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
 
+static const float4 faceSpecialOffset[6] = { {0.0f,0.0f,0.0625f,0.0f} , {0.0f,0.0f,-0.0625f,0.0f}, {0.0f,0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f,0.0f}, {0.0625f,0.0f,0.0f,0.0f}, {-0.0625f,0.0f,0.0f,0.0f} };
+
 //--------------------------------------------------------------------------------------
 // Texture Samplers
 //--------------------------------------------------------------------------------------
@@ -54,7 +56,7 @@ struct VS_IN
 	float4 Col			 : COLOR;
 	uint4 VertexInfo	 : INFO;   // (bool)x = is Upper vertex, y = facetype, z = AOPower factor 255 = Factor of 3, w = Offset
 	float2 BiomeData     : BIOMEINFO; //X = Temperature, Y = Moisture
-	uint2 Various		 : VARIOUS;   //X = ArrayTextureID for Biome
+	uint2 Various		 : VARIOUS;   //X = ArrayTextureID for Biome, Y SideOffset multiplier
 };
 
 struct PS_IN
@@ -85,6 +87,11 @@ PS_IN VS(VS_IN input)
     PS_IN output;
 	
 	float4 newPosition = {input.Position.xyz, 1.0f};
+	if(input.Various.y > 0)
+	{
+		newPosition += (faceSpecialOffset[input.VertexInfo.y] * input.Various.y);
+	}
+
 	float YOffset = 0;
 	if(input.VertexInfo.x == 1) YOffset = (input.VertexInfo.w/255.0f);
 	newPosition.y -= YOffset;

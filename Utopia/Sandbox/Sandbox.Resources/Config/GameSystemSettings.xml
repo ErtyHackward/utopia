@@ -54,7 +54,7 @@
     <IsTaggable>false</IsTaggable>
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
-    <SlidingValue>0</SlidingValue>
+    <SlidingValue>0</SlidingValue>    
     <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
@@ -500,6 +500,48 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
+  </Cube>
+  <Cube>
+    <Name>Cactus</Name>
+    <Id>22</Id>
+    <Tex_Top>22</Tex_Top>
+    <Tex_Bottom>22</Tex_Bottom>
+    <Tex_Front>20</Tex_Front>
+    <Tex_Back>20</Tex_Back>
+    <Tex_Left>20</Tex_Left>
+    <Tex_Right>20</Tex_Right>
+    <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
+    <IsPickable>true</IsPickable>
+    <IsSolidToEntity>true</IsSolidToEntity>
+    <IsBlockingWater>true</IsBlockingWater>
+    <IsTaggable>false</IsTaggable>
+    <CubeFamilly>Solid</CubeFamilly>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
+    <SideOffsetMultiplier>1</SideOffsetMultiplier>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
+  </Cube>
+  <Cube>
+    <Name>CactusTop</Name>
+    <Id>23</Id>
+    <Tex_Top>21</Tex_Top>
+    <Tex_Bottom>22</Tex_Bottom>
+    <Tex_Front>20</Tex_Front>
+    <Tex_Back>20</Tex_Back>
+    <Tex_Left>20</Tex_Left>
+    <Tex_Right>20</Tex_Right>
+    <IsBlockingLight>true</IsBlockingLight>
+    <IsSeeThrough>false</IsSeeThrough>
+    <IsPickable>true</IsPickable>
+    <IsSolidToEntity>true</IsSolidToEntity>
+    <IsBlockingWater>true</IsBlockingWater>
+    <IsTaggable>false</IsTaggable>
+    <CubeFamilly>Solid</CubeFamilly>
+    <Friction>0.25</Friction>
+    <SlidingValue>0</SlidingValue>
+    <SideOffsetMultiplier>1</SideOffsetMultiplier>
     <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
 </GameSystemSettings>
