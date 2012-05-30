@@ -362,12 +362,12 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             //Get Chunk Master Biome
             var masterBiome = Biome.BiomeList[chunkMetaData.ChunkMasterBiomeType];
-
-            masterBiome.GenerateChunkLakes(ChunkCubes, chunkRnd);
-            masterBiome.GenerateChunkLiquidSources(ChunkCubes, chunkRnd);
-            masterBiome.GenerateChunkResources(ChunkCubes, chunkRnd);
-            masterBiome.GenerateChunkItems(ChunkCubes, chunkRnd);
-            masterBiome.GenerateChunkTrees(ChunkCubes, columnInfo, chunkRnd);
+            ByteChunkCursor dataCursor = new ByteChunkCursor(ChunkCubes);
+            Biome.GenerateChunkLakes(dataCursor, masterBiome, chunkRnd);
+            Biome.GenerateChunkLiquidSources(dataCursor, masterBiome,chunkRnd);
+            Biome.GenerateChunkResources(dataCursor, masterBiome, chunkRnd);
+            Biome.GenerateChunkItems(dataCursor, masterBiome, chunkRnd);
+            Biome.GenerateChunkTrees(dataCursor, columnInfo, masterBiome,  chunkRnd);
         }
 
         private ChunkMetaData CreateChunkMetaData(ChunkColumnInfo[] columnsInfo)
