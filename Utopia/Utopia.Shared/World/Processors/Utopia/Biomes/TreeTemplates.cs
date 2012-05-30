@@ -27,7 +27,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             {
                 TreeType = TreeType.Small,
                 Radius = 3,
-                TrunkSize = new RangeB(3,4),
+                TrunkSize = new RangeB(3,5),
                 TrunkCubeId = CubeId.Trunk,
                 FoliageCubeId = CubeId.Foliage
             };
@@ -41,9 +41,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //Medium Tree
             TreeTemplate mediumTreeTemplate = new TreeTemplate()
             {
-                TreeType = TreeType.Small,
+                TreeType = TreeType.Medium,
                 Radius = 3,
-                TrunkSize = new RangeB(3, 4),
+                TrunkSize = new RangeB(4,5),
                 TrunkCubeId = CubeId.Trunk,
                 FoliageCubeId = CubeId.Foliage
             };
@@ -57,9 +57,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //Big Tree
             TreeTemplate bigTreeTemplate = new TreeTemplate()
             {
-                TreeType = TreeType.Small,
+                TreeType = TreeType.Big,
                 Radius = 3,
-                TrunkSize = new RangeB(3, 7),
+                TrunkSize = new RangeB(4, 12),
                 TrunkCubeId = CubeId.Trunk,
                 FoliageCubeId = CubeId.Foliage
             };
@@ -73,9 +73,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //Cactus 
             TreeTemplate cactusTemplate = new TreeTemplate()
             {
-                TreeType = TreeType.Small,
-                Radius = 3,
-                TrunkSize = new RangeB(2, 3),
+                TreeType = TreeType.Cactus,
+                Radius = 2,
+                TrunkSize = new RangeB(2, 4),
                 TrunkCubeId = CubeId.Cactus,
                 FoliageCubeId = CubeId.CactusTop
             };
