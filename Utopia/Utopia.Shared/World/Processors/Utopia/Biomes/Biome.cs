@@ -123,124 +123,119 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         /// </summary>
         /// <param name="chunkData"></param>
         /// <param name="rnd"></param>
-        public virtual void GenerateChunkResources(byte[] chunkData, FastRandom rnd)
+        public static void GenerateChunkResources(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
         {
-            ByteChunkCursor cursor = new ByteChunkCursor(chunkData);
-
             //Generate Sand vein
-            for (int i = 0; i < SandVein.VeinPerChunk; i++)
+            for (int i = 0; i < biome.SandVein.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
                 int x = rnd.Next(0,16);
-                int y = rnd.Next(SandVein.SpawningHeight.Min,SandVein.SpawningHeight.Max);
+                int y = rnd.Next(biome.SandVein.SpawningHeight.Min, biome.SandVein.SpawningHeight.Max);
                 int z = rnd.Next(0,16);
-                PopulateChunkWithResource(SandVein.CubeId, cursor, x, y, z, SandVein.VeinSize, rnd);
+                PopulateChunkWithResource(biome.SandVein.CubeId, cursor, x, y, z, biome.SandVein.VeinSize, rnd);
             }
 
             //Generate RockVein vein
-            for (int i = 0; i < RockVein.VeinPerChunk; i++)
+            for (int i = 0; i < biome.RockVein.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
                 int x = rnd.Next(0, 16);
-                int y = rnd.Next(RockVein.SpawningHeight.Min, RockVein.SpawningHeight.Max);
+                int y = rnd.Next(biome.RockVein.SpawningHeight.Min, biome.RockVein.SpawningHeight.Max);
                 int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(RockVein.CubeId, cursor, x, y, z, RockVein.VeinSize, rnd);
+                PopulateChunkWithResource(biome.RockVein.CubeId, cursor, x, y, z, biome.RockVein.VeinSize, rnd);
             }
 
             //Generate DirtVein vein
-            for (int i = 0; i < DirtVein.VeinPerChunk; i++)
+            for (int i = 0; i < biome.DirtVein.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
                 int x = rnd.Next(0, 16);
-                int y = rnd.Next(DirtVein.SpawningHeight.Min, DirtVein.SpawningHeight.Max);
+                int y = rnd.Next(biome.DirtVein.SpawningHeight.Min, biome.DirtVein.SpawningHeight.Max);
                 int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(DirtVein.CubeId, cursor, x, y, z, DirtVein.VeinSize, rnd);
+                PopulateChunkWithResource(biome.DirtVein.CubeId, cursor, x, y, z, biome.DirtVein.VeinSize, rnd);
             }
 
             //Generate GravelVein vein
-            for (int i = 0; i < GravelVein.VeinPerChunk; i++)
+            for (int i = 0; i < biome.GravelVein.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
                 int x = rnd.Next(0, 16);
-                int y = rnd.Next(GravelVein.SpawningHeight.Min, GravelVein.SpawningHeight.Max);
+                int y = rnd.Next(biome.GravelVein.SpawningHeight.Min, biome.GravelVein.SpawningHeight.Max);
                 int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(GravelVein.CubeId, cursor, x, y, z, GravelVein.VeinSize, rnd);
+                PopulateChunkWithResource(biome.GravelVein.CubeId, cursor, x, y, z, biome.GravelVein.VeinSize, rnd);
             }
 
             //Generate GoldVein vein
-            for (int i = 0; i < GoldVein.VeinPerChunk; i++)
+            for (int i = 0; i < biome.GoldVein.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
                 int x = rnd.Next(0, 16);
-                int y = rnd.Next(GoldVein.SpawningHeight.Min, GoldVein.SpawningHeight.Max);
+                int y = rnd.Next(biome.GoldVein.SpawningHeight.Min, biome.GoldVein.SpawningHeight.Max);
                 int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(GoldVein.CubeId, cursor, x, y, z, GoldVein.VeinSize, rnd);
+                PopulateChunkWithResource(biome.GoldVein.CubeId, cursor, x, y, z, biome.GoldVein.VeinSize, rnd);
             }
 
             //Generate CoalVein vein
-            for (int i = 0; i < CoalVein.VeinPerChunk; i++)
+            for (int i = 0; i < biome.CoalVein.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
                 int x = rnd.Next(0, 16);
-                int y = rnd.Next(CoalVein.SpawningHeight.Min, CoalVein.SpawningHeight.Max);
+                int y = rnd.Next(biome.CoalVein.SpawningHeight.Min, biome.CoalVein.SpawningHeight.Max);
                 int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(CoalVein.CubeId, cursor, x, y, z, CoalVein.VeinSize, rnd);
+                PopulateChunkWithResource(biome.CoalVein.CubeId, cursor, x, y, z, biome.CoalVein.VeinSize, rnd);
             }
 
             //Generate MoonStoneVein vein
-            for (int i = 0; i < MoonStoneVein.VeinPerChunk; i++)
+            for (int i = 0; i < biome.MoonStoneVein.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
                 int x = rnd.Next(0, 16);
-                int y = rnd.Next(MoonStoneVein.SpawningHeight.Min, MoonStoneVein.SpawningHeight.Max);
+                int y = rnd.Next(biome.MoonStoneVein.SpawningHeight.Min, biome.MoonStoneVein.SpawningHeight.Max);
                 int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(MoonStoneVein.CubeId, cursor, x, y, z, MoonStoneVein.VeinSize, rnd);
+                PopulateChunkWithResource(biome.MoonStoneVein.CubeId, cursor, x, y, z, biome.MoonStoneVein.VeinSize, rnd);
             }
         }
 
-        public virtual void GenerateChunkLiquidSources(byte[] chunkData, FastRandom rnd)
+        public static void GenerateChunkLiquidSources(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
         {
-            ByteChunkCursor cursor = new ByteChunkCursor(chunkData);
-
             //Generate WaterSource
-            for (int i = 0; i < WaterSource.VeinPerChunk; i++)
+            for (int i = 0; i < biome.WaterSource.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
                 int x = rnd.Next(1, 15);
-                int y = rnd.Next(WaterSource.SpawningHeight.Min, WaterSource.SpawningHeight.Max);
+                int y = rnd.Next(biome.WaterSource.SpawningHeight.Min, biome.WaterSource.SpawningHeight.Max);
                 int z = rnd.Next(1, 15);
-                PopulateChunkLiquidSources(WaterSource.CubeId, cursor, x, y, z);
+                PopulateChunkLiquidSources(biome.WaterSource.CubeId, cursor, x, y, z);
             }
 
             //Generate LavaSources
-            for (int i = 0; i < LavaSource.VeinPerChunk; i++)
+            for (int i = 0; i < biome.LavaSource.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
                 int x = rnd.Next(1, 15);
-                int y = rnd.Next(LavaSource.SpawningHeight.Min, LavaSource.SpawningHeight.Max);
+                int y = rnd.Next(biome.LavaSource.SpawningHeight.Min, biome.LavaSource.SpawningHeight.Max);
                 int z = rnd.Next(1, 15);
-                PopulateChunkLiquidSources(LavaSource.CubeId, cursor, x, y, z);
+                PopulateChunkLiquidSources(biome.LavaSource.CubeId, cursor, x, y, z);
             }
         }
 
-        public virtual void GenerateChunkLakes(byte[] chunkData, FastRandom rnd)
+        public static void GenerateChunkLakes(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
         {
             //Generate Still Water Lakes
 
             //Generate Still Lava Lakes
         }
 
-        public virtual void GenerateChunkTrees(byte[] chunkData, ChunkColumnInfo[] columndInfo, FastRandom rnd)
+        public static void GenerateChunkTrees(ByteChunkCursor cursor, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
         {
-            ByteChunkCursor cursor = new ByteChunkCursor(chunkData);
-            int nbrTree = rnd.Next(TreePerChunk.Min, TreePerChunk.Max + 1);
+            int nbrTree = rnd.Next(biome.TreePerChunk.Min, biome.TreePerChunk.Max + 1);
             for (int i = 0; i < nbrTree; i++)
             {
-                PopulateChunkWithTree(cursor, columndInfo, rnd);
+                PopulateChunkWithTree(cursor, columndInfo, biome, rnd);
             }
         }
 
-        public virtual void GenerateChunkItems(byte[] chunkData, FastRandom rnd)
+        public static void GenerateChunkItems(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
         {
             //Generate grass, ...
         }
@@ -257,7 +252,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         /// <param name="z">InsideChunk Z starting position</param>
         /// <param name="qt">Vein size</param>
         /// <param name="rnd">Random generator for vein creation</param>
-        protected void PopulateChunkWithResource(byte cubeId, ByteChunkCursor cursor, int x, int y, int z, int qt, FastRandom rnd)
+        protected static void PopulateChunkWithResource(byte cubeId, ByteChunkCursor cursor, int x, int y, int z, int qt, FastRandom rnd)
         {
             cursor.SetInternalPosition(x, y, z);
             int nbrCubePlaced;
@@ -286,7 +281,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         /// <param name="x">InsideChunk X starting position</param>
         /// <param name="y">InsideChunk Y starting position</param>
         /// <param name="z">InsideChunk Z starting position</param>
-        protected void PopulateChunkLiquidSources(byte cubeId, ByteChunkCursor cursor, int x, int y, int z)
+        protected static void PopulateChunkLiquidSources(byte cubeId, ByteChunkCursor cursor, int x, int y, int z)
         {
             cursor.SetInternalPosition(x, y, z);
 
@@ -309,14 +304,13 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 {
                     cursor.Write(cubeId);
                 }
-
             }
         }
 
 
-        protected virtual void PopulateChunkWithTree(ByteChunkCursor cursor, ChunkColumnInfo[] columndInfo, FastRandom rnd)
+        protected static void PopulateChunkWithTree(ByteChunkCursor cursor, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
         {
-            var treeTemplate = TreeTemplates.Templates[rnd.Next(TreeTypeRange.Min, TreeTypeRange.Max + 1)];
+            var treeTemplate = TreeTemplates.Templates[rnd.Next(biome.TreeTypeRange.Min, biome.TreeTypeRange.Max + 1)];
 
             //Get Rnd chunk Location.
             int x = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);

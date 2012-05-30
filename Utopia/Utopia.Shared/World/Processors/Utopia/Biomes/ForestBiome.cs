@@ -10,7 +10,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     public class ForestBiome : Biome
     {
         #region Private Variables
-        private RangeI _treePerChunk = new RangeI(5, 7);
+        private RangeI _treePerChunk = new RangeI(8, 15);
         private RangeI _treeTypeRange = new RangeI(0, 2);
         #endregion
 
