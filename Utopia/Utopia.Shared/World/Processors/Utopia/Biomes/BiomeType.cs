@@ -12,6 +12,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public const byte Forest = 2;
         public const byte Ocean = 3;
         public const byte Montain = 4;
+        public const byte Plain = 5;
 
         public static readonly Dictionary<byte, string> BiomeTypesCollection;
 

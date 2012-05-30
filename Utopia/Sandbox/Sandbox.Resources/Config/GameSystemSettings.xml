@@ -35,11 +35,6 @@
     <ClassID>3</ClassID>
     <SpriteID>10</SpriteID>
   </Entity>
-  <Entity>
-    <!-- Cactus -->
-    <ClassID>4005</ClassID>
-    <SpriteID>11</SpriteID>
-  </Entity>
   <Cube>
     <Name>Air</Name>
     <Id>0</Id>
@@ -60,6 +55,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Stone</Name>
@@ -79,6 +75,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Dirt</Name>
@@ -98,6 +95,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Grass</Name>
@@ -117,6 +115,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>0</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>WoodPlank</Name>
@@ -136,6 +135,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>StillWater</Name>
@@ -157,6 +157,7 @@
     <YBlockOffset>0.1</YBlockOffset>
     <Friction>0.3</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>2</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>DynamicWater</Name>
@@ -178,6 +179,7 @@
     <YBlockOffset>0.0</YBlockOffset>
     <Friction>0.3</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>2</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>LightWhite</Name>
@@ -202,6 +204,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Rock</Name>
@@ -221,6 +224,7 @@
     <IsTaggable>false</IsTaggable>
     <Friction>0.25</Friction>
     <SlidingValue>0.05</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Sand</Name>
@@ -240,6 +244,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.3</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Gravel</Name>
@@ -259,6 +264,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Trunk</Name>
@@ -278,6 +284,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>GoldOre</Name>
@@ -297,6 +304,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>CoalOre</Name>
@@ -316,6 +324,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>MoonStone</Name>
@@ -340,6 +349,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Brick</Name>
@@ -359,6 +369,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
    <Name>Foliage</Name>
@@ -378,6 +389,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>1</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Glass</Name>
@@ -397,6 +409,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Snow</Name>
@@ -417,6 +430,7 @@
     <YBlockOffset>0.9</YBlockOffset>
     <Friction>0.35</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>Ice</Name>
@@ -436,6 +450,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0.05</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>StillLava</Name>
@@ -460,6 +475,7 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
   <Cube>
     <Name>DynamicLava</Name>
@@ -484,5 +500,6 @@
     <CubeFamilly>Solid</CubeFamilly>
     <Friction>0.25</Friction>
     <SlidingValue>0</SlidingValue>
+    <BiomeColorArrayTexture>255</BiomeColorArrayTexture>
   </Cube>
 </GameSystemSettings>

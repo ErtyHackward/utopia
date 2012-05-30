@@ -33,7 +33,8 @@ namespace S33M3Resources.Structs.Vertex
                                                             new InputElement("POSITION", 0, Format.R8G8B8A8_UInt, InputElement.AppendAligned , 0),  
                                                             new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0),
                                                             new InputElement("INFO", 0, Format.R8G8B8A8_UInt, InputElement.AppendAligned, 0),
-                                                            new InputElement("BIOMEINFO", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0)
+                                                            new InputElement("BIOMEINFO", 0, Format.R8G8_UNorm, InputElement.AppendAligned, 0),
+                                                            new InputElement("VARIOUS", 0, Format.R8G8_UInt, InputElement.AppendAligned, 0)
                                                             };
 
             VertexDeclaration = new VertexDeclaration(elements);
