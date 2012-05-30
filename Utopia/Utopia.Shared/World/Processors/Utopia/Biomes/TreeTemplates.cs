@@ -36,7 +36,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                       2,1,1,1,1,6,2,2,2,2,6,1,1,1,1,6,2,2,2,2,6,1,1,1,1,  -3,-5, 
                       2,2,2,5,-1,1,5,2,2
                     };
-            Templates[(int)TreeType.Small] = smallTreeTemplate;
+            Templates[(int)smallTreeTemplate.TreeType] = smallTreeTemplate;
 
             //Medium Tree
             TreeTemplate mediumTreeTemplate = new TreeTemplate()
@@ -52,7 +52,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                       2,1,1,1,1,6,2,2,2,2,6,1,1,1,1,6,2,2,2,2,6,1,1,1,1,  -3,-5, 
                       2,2,2,5,-1,1,5,2,2
                     };
-            Templates[(int)TreeType.Medium] = mediumTreeTemplate;
+            Templates[(int)mediumTreeTemplate.TreeType] = mediumTreeTemplate;
 
             //Big Tree
             TreeTemplate bigTreeTemplate = new TreeTemplate()
@@ -68,19 +68,19 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                       2,1,1,1,1,6,2,2,2,2,6,1,1,1,1,6,2,2,2,2,6,1,1,1,1,  -3,-5, 
                       2,2,2,5,-1,1,5,2,2
                     };
-            Templates[(int)TreeType.Big] = bigTreeTemplate;
+            Templates[(int)bigTreeTemplate.TreeType] = bigTreeTemplate;
 
             //Cactus 
             TreeTemplate cactusTemplate = new TreeTemplate()
             {
                 TreeType = TreeType.Cactus,
                 Radius = 2,
-                TrunkSize = new RangeB(2, 4),
+                TrunkSize = new RangeB(2, 3),
                 TrunkCubeId = CubeId.Cactus,
                 FoliageCubeId = CubeId.CactusTop
             };
             cactusTemplate.FoliageStructure = new List<int>() { 3 };
-            Templates[(int)TreeType.Cactus] = cactusTemplate;
+            Templates[(int)cactusTemplate.TreeType] = cactusTemplate;
         }
 
         public class TreeTemplate
