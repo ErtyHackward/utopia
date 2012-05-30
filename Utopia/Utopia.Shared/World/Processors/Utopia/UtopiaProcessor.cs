@@ -73,8 +73,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                 double[,] biomeMap;
                 GenerateLandscape(chunkBytes, ref chunkWorldRange,out biomeMap);
                 TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
-                ChunkMetaData metaData = CreateChunkMetaDate(columnsInfo);
-                PopulateChunk(chunkBytes, metaData, chunkRnd);
+                ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
+                PopulateChunk(chunkBytes, columnsInfo, metaData, chunkRnd);
 
                 chunk.BlockData.SetBlockBytes(chunkBytes); //Save block array
                 chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
@@ -253,6 +253,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                     byte biomeId = Biome.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
                     //Get this landscape Column Biome value
                     currentBiome = Biome.BiomeList[biomeId];
+
                     //Get Temperature and Moisture
                     columnInfo = new ChunkColumnInfo()
                     {
@@ -273,17 +274,17 @@ namespace Utopia.Shared.World.Processors.Utopia
                         index = ((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y;
                         byte cubeId = ChunkCubes[index];
 
-                        if (solidGroundHitted == false && cubeId == CubeId.Air)
-                        {
-                            if (columnInfo.MaxHeight > Y) columnInfo.MaxHeight = (byte)Y;
-                        }
-
                         //Restart Surface layer if needed
                         if (surfaceLayer > 0 && cubeId == CubeId.Air && Y > (_worldParameters.SeaLevel - 5)) surfaceLayer = 1;
 
                         if (cubeId == CubeId.Stone)
                         {
-                            solidGroundHitted = true;
+                            if (solidGroundHitted == false)
+                            {
+                                columnInfo.MaxHeight = (byte)Y;
+                                solidGroundHitted = true;
+                            }
+
                             cubeId = currentBiome.GroundCube;
 
                             //Under water soil
@@ -342,6 +343,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                                 }
                             }
                         }
+
                     }
 
                     columnsInfo[noise2DIndex] = columnInfo;
@@ -352,20 +354,23 @@ namespace Utopia.Shared.World.Processors.Utopia
         }
 
         /// <summary>
-        /// Will Populate the chunks with various resources (Ore, Items, ...)
+        /// Will Populate the chunks with various resources
         /// </summary>
         /// <param name="ChunkCubes"></param>
         /// <param name="chunkMetaData"></param>
-        private void PopulateChunk(byte[] ChunkCubes, ChunkMetaData chunkMetaData, FastRandom chunkRnd)
+        private void PopulateChunk(byte[] ChunkCubes, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd)
         {
             //Get Chunk Master Biome
             var masterBiome = Biome.BiomeList[chunkMetaData.ChunkMasterBiomeType];
 
-            masterBiome.GenerateChunkBlockResource(ChunkCubes, chunkRnd);
-
+            masterBiome.GenerateChunkLakes(ChunkCubes, chunkRnd);
+            masterBiome.GenerateChunkLiquidSources(ChunkCubes, chunkRnd);
+            masterBiome.GenerateChunkResources(ChunkCubes, chunkRnd);
+            masterBiome.GenerateChunkItems(ChunkCubes, chunkRnd);
+            masterBiome.GenerateChunkTrees(ChunkCubes, columnInfo, chunkRnd);
         }
 
-        private ChunkMetaData CreateChunkMetaDate(ChunkColumnInfo[] columnsInfo)
+        private ChunkMetaData CreateChunkMetaData(ChunkColumnInfo[] columnsInfo)
         {
             ChunkMetaData metaData = new ChunkMetaData();
             //Compute the Master Biome for the chunk.
