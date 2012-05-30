@@ -21,6 +21,10 @@ namespace Realms.Client.Components
         {
 
             // steps
+
+            RegisterStepSound(CubeId.Snow, "Sounds\\Footsteps\\footsteps_snow01.ogg");
+            //RegisterStepSound(CubeId.Snow, "Sounds\\Footsteps\\footsteps_snow02.ogg");
+
             RegisterStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass01.ogg");
             //RegisterStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass02.ogg");
             //RegisterStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass03.ogg");

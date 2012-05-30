@@ -120,6 +120,7 @@ namespace Utopia.Components
                 throw new InvalidOperationException("Only one ambient sound is allowed per cube type");
 
             _ambientSounds.Add(new KeyValuePair<int, string>(cubeId, sound));
+            PreLoadSound(sound);
         }
 
         public void PreLoadSound(string path)
