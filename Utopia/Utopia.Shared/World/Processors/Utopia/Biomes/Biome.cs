@@ -327,14 +327,14 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //No other tree around me ?
             byte trunkRootCube = cursor.Read();
 
-            Vector3I radiusRange = new Vector3I(treeTemplate.Radius / 2.0 + 1, 1, treeTemplate.Radius / 2.0 + 1);
+            Vector3I radiusRange = new Vector3I(treeTemplate.Radius / 2.0, 1, treeTemplate.Radius / 2.0);
 
             if ((trunkRootCube == CubeId.Grass || trunkRootCube == CubeId.Dirt || trunkRootCube == CubeId.Snow || trunkRootCube == CubeId.Sand) &&
                 cursor.IsCubePresent(treeTemplate.TrunkCubeId, radiusRange) == false &&
                 cursor.IsCubePresent(CubeId.StillWater, radiusRange) == false)
             {
                 //Generate the Trunk first
-                int trunkSize = rnd.Next(treeTemplate.TrunkSize.Min, treeTemplate.TrunkSize.Max);
+                int trunkSize = rnd.Next(treeTemplate.TrunkSize.Min, treeTemplate.TrunkSize.Max + 1);
                 for (int trunkBlock = 0; trunkBlock < trunkSize; trunkBlock++)
                 {
                     cursor.Write(treeTemplate.TrunkCubeId);
