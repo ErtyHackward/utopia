@@ -81,7 +81,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             {
                 TreeType = TreeType.Cactus,
                 Radius = 2,
-                TrunkSize = new RangeB(1, 3),
+                TrunkSize = new RangeB(1, 2),
                 TrunkCubeId = CubeId.Cactus,
                 FoliageCubeId = CubeId.CactusTop
             };
