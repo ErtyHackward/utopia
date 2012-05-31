@@ -12,7 +12,7 @@ namespace Utopia.Worlds.Storage
     {
         #region Private variables
         private Thread _storageThread;
-        private readonly static int _nbrTicket = 2000;
+        private readonly static int _nbrTicket = 4096;
         private Queue<int> _requestTickets;
         private ConcurrentQueue<CubeRequest> _dataRequestQueue;
         private ConcurrentQueue<ChunkDataStorage> _dataStoreQueue;

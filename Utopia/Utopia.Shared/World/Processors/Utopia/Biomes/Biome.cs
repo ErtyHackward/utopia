@@ -289,15 +289,15 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             if (cursor.Read() != CubeId.Air)
             {
                 //Looking Up for Air
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(4)].IsSolidToEntity == false) return;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.Up)].IsSolidToEntity == false) return;
                 //Looking Down for Air
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(3)].IsSolidToEntity == false) return;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.Down)].IsSolidToEntity == false) return;
                 int cpt = 0;
                 //Counting the number of holes arround the source
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(1)].IsSolidToEntity == false) cpt++;
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(2)].IsSolidToEntity == false) cpt++;
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(5)].IsSolidToEntity == false) cpt++;
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(6)].IsSolidToEntity == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.East)].IsSolidToEntity == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.West)].IsSolidToEntity == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.North)].IsSolidToEntity == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.South)].IsSolidToEntity == false) cpt++;
 
                 //Only one face touching air ==> Createing the Liquid Source !
                 if (cpt == 1)
@@ -337,11 +337,62 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 //Move Down to the last trunk block
                 cursor.Move(CursorRelativeMovement.Down);
                 //Add Foliage
-                foreach (int foliageMove in treeTemplate.FoliageStructure)
+                foreach (List<int> treeStructBlock in treeTemplate.FoliageStructure)
                 {
-                    cursor.Move(foliageMove);
-                    if (foliageMove >= 0 && cursor.Read() == CubeId.Air) cursor.Write(treeTemplate.FoliageCubeId);
+                    int foliageStructOffset1 = 0; int foliageStructOffset2 = 0;
+                    //Random "move" between each block if blocks nbr is > 1
+                    if (treeTemplate.FoliageStructure.Count > 1)
+                    {
+                        foliageStructOffset1 = rnd.Next(1, 5);
+                        cursor.Move(foliageStructOffset1);
+                        foliageStructOffset2 = rnd.Next(1, 5);
+                        cursor.Move(foliageStructOffset2);
+                    }
+                    foreach (int foliageMove in treeStructBlock)
+                    {
+                        cursor.Move(foliageMove);
+                        if (foliageMove >= 0 && cursor.Read() == CubeId.Air) cursor.Write(treeTemplate.FoliageCubeId);
+                    }
+                    //Remove OFfset
+                    if (foliageStructOffset1 != 0)
+                    {
+                        switch (foliageStructOffset1)
+                        {
+                            case 1:
+                                cursor.Move(CursorRelativeMovement.West);
+                                break;
+                            case 2:
+                                cursor.Move(CursorRelativeMovement.East);
+                                break;
+                            case 3:
+                                cursor.Move(CursorRelativeMovement.South);
+                                break;
+                            case 4:
+                                cursor.Move(CursorRelativeMovement.North);
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (foliageStructOffset2)
+                        {
+                            case 1:
+                                cursor.Move(CursorRelativeMovement.West);
+                                break;
+                            case 2:
+                                cursor.Move(CursorRelativeMovement.East);
+                                break;
+                            case 3:
+                                cursor.Move(CursorRelativeMovement.South);
+                                break;
+                            case 4:
+                                cursor.Move(CursorRelativeMovement.North);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
+
             }
         }
         #endregion

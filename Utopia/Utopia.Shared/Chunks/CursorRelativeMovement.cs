@@ -9,9 +9,9 @@ namespace Utopia.Shared.Chunks
     {
         East = 1,
         West = 2,
-        Up = 3,
-        Down = 4,
-        North = 5,
-        South = 6
+        North = 3,
+        South = 4,
+        Up = 5,
+        Down = 6
     }
 }

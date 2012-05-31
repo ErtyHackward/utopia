@@ -125,7 +125,7 @@ namespace Utopia.Shared.Settings
     [Serializable]
     public class GraphicalParameters
     {
-        [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 32]", " chunk(s)", ParamInputMethod.Slider, 10, 32, true)]
+        [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 50]", " chunk(s)", ParamInputMethod.Slider, 10, 50, true)]
         public int WorldSize { get; set; }
         [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", " block(s)", ParamInputMethod.Slider, 4, 12, true)]
         public int LightPropagateSteps { get; set; }

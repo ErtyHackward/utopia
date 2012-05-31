@@ -107,7 +107,7 @@ PS_OUT PS(PS_IN input)
 	PS_OUT output;
 
 	float fogvalue = min( Opaque, 1 - input.fogPower);
-	clip(fogvalue == 0 ? -1:1); 
+	clip(fogvalue <= 0.001 ? -1:1); 
 
 	float4 colorInput = TerraTexture.Sample(SamplerDiffuse, input.UVW) * float4(input.EmissiveLight, 1);
 	
