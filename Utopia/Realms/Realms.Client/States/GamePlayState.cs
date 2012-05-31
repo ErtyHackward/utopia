@@ -68,7 +68,7 @@ namespace Realms.Client.States
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
-            skyBackBuffer.DrawOrders.UpdateIndex(0, 50);
+            skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
             _sandboxGameSoundManager = (SandboxGameSoundManager)_ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
             var fadeComponent = _ioc.Get<FadeComponent>();

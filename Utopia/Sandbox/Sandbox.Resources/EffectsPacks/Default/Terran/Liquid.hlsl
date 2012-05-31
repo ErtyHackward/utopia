@@ -106,6 +106,9 @@ PS_OUT PS(PS_IN input)
 {
 	PS_OUT output;
 
+	float fogvalue = min( Opaque, 1 - input.fogPower);
+	clip(fogvalue == 0 ? -1:1); 
+
 	float4 colorInput = TerraTexture.Sample(SamplerDiffuse, input.UVW) * float4(input.EmissiveLight, 1);
 	
 	float3 biomeColorSampling = {input.BiomeData.x, input.BiomeData.y, 2};
@@ -114,20 +117,24 @@ PS_OUT PS(PS_IN input)
 	colorInput.g = colorInput.g * biomeColor.g;
 	colorInput.b = colorInput.b * biomeColor.b;
 	
+	//Sample against Solid landscape
 	float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
 	float4 backBufferColor = SolidBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
 
 	//Manual Blending with SolidBackBuffer color received
 	float4 color = {(colorInput.rgb * colorInput.a) + (backBufferColor.rgb * (1 - colorInput.a)), colorInput.a};
 
-	//float4 Finalfogcolor = {SunColor / 1.5, color.a};
-	//color = lerp(color, Finalfogcolor, input.fogPower);
+	float4 finalColor = color;
+	
+	//To execute only when Fog is present !
+	if(fogvalue < 1){
+		//Sample BackGround Sky
+		backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
 
-    backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
-
-	color.a = min( Opaque, 1 - input.fogPower);
-	float4 finalColor = {(color.rgb * color.a) + (backBufferColor.rgb * (1 - color.a)), color.a};
-
+		color.a = min( Opaque, 1 - input.fogPower);
+		finalColor.rgb = (color.rgb * color.a) + (backBufferColor.rgb * (1 - color.a));
+		finalColor.a = color.a;
+	}
 	output.Color = finalColor;
 
     return output;
