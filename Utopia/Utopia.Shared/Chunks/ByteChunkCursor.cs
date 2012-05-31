@@ -115,22 +115,22 @@ namespace Utopia.Shared.Chunks
                     _internalPosition.X--;
                     _arrayIndex = _arrayIndex - (AbstractChunk.ChunkSize.Z * AbstractChunk.ChunkSize.Y);
                     break;
-                case 3://Y + 1
+                case 5://Y + 1
                     if (_internalPosition.Y + 1 >= AbstractChunk.ChunkSize.Y) return false;
                     _internalPosition.Y++;
                     _arrayIndex = _arrayIndex + 1;
                     break;
-                case 4://Y - 1
+                case 6://Y - 1
                     if (_internalPosition.Y - 1 < 0) return false;
                     _internalPosition.Y--;
                     _arrayIndex = _arrayIndex - 1;
                     break;
-                case 5://Z + 1
+                case 3://Z + 1
                     if (_internalPosition.Z + 1 >= AbstractChunk.ChunkSize.Z) return false;
                     _internalPosition.Z++;
                     _arrayIndex = _arrayIndex + (AbstractChunk.ChunkSize.Y);
                     break;
-                case 6://Z - 1
+                case 4://Z - 1
                     if (_internalPosition.Z - 1 < 0) return false;
                     _internalPosition.Z--;
                     _arrayIndex = _arrayIndex - (AbstractChunk.ChunkSize.Y);
@@ -169,19 +169,19 @@ namespace Utopia.Shared.Chunks
                     if (_internalPosition.X - 1 < 0) return false;
                     value = _chunkData[_arrayIndex - (AbstractChunk.ChunkSize.Z * AbstractChunk.ChunkSize.Y)];
                     break;
-                case 3://Y + 1
+                case 5://Y + 1
                     if (_internalPosition.Y + 1 >= AbstractChunk.ChunkSize.Y) return false;
                     value = _chunkData[_arrayIndex + 1];
                     break;
-                case 4://Y - 1
+                case 6://Y - 1
                     if (_internalPosition.Y - 1 < 0) return false;
                     value = _chunkData[_arrayIndex - 1];
                     break;
-                case 5://Z + 1
+                case 3://Z + 1
                     if (_internalPosition.Z + 1 >= AbstractChunk.ChunkSize.Z) return false;
                     value = _chunkData[_arrayIndex + (AbstractChunk.ChunkSize.Y)];
                     break;
-                case 6://Z - 1
+                case 4://Z - 1
                     if (_internalPosition.Z - 1 < 0) return false;
                     value = _chunkData[_arrayIndex - (AbstractChunk.ChunkSize.Y)];
                     break;
@@ -214,13 +214,13 @@ namespace Utopia.Shared.Chunks
                     return _chunkData[_arrayIndex + (AbstractChunk.ChunkSize.Z * AbstractChunk.ChunkSize.Y)];
                 case 2://X - 1
                     return _chunkData[_arrayIndex - (AbstractChunk.ChunkSize.Z * AbstractChunk.ChunkSize.Y)];
-                case 3://Y + 1
+                case 5://Y + 1
                     return _chunkData[_arrayIndex + 1];
-                case 4://Y - 1
+                case 6://Y - 1
                     return _chunkData[_arrayIndex - 1];
-                case 5://Z + 1
+                case 3://Z + 1
                     return _chunkData[_arrayIndex + (AbstractChunk.ChunkSize.Y)];
-                case 6://Z - 1
+                case 4://Z - 1
                     return _chunkData[_arrayIndex - (AbstractChunk.ChunkSize.Y)];
                 default:
                     throw new Exception("Peek error, relativeMove unknown : " + relativeMove);

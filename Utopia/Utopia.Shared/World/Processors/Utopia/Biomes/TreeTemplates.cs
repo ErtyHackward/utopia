@@ -33,16 +33,18 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             {
                 TreeType = TreeType.Small,
                 Radius = 3,
-                TrunkSize = new RangeB(4,6),
+                TrunkSize = new RangeB(5,6),
                 TrunkCubeId = CubeId.Trunk,
                 FoliageCubeId = CubeId.Foliage
             };
-            smallTreeTemplate.FoliageStructure = new List<int>() 
-                    { -4,
-                      5,1,6,6,2,2,5,5,  -3,-5,
-                      -2,1,1,1,-1,6,2,2,2,2,6,1,-1,1,1,6,2,2,2,2,-6,1,1,1,-1,  -3,-5, 
-                      -2,2,-2,5,1,1,-5,2,-2
-                    };
+            smallTreeTemplate.FoliageStructure = new List<List<int>>();
+            smallTreeTemplate.FoliageStructure.Add (new List<int>() 
+                    { -6,
+                      3,1,4,4,2,2,3,3,  -5,-3,
+                      -2,1,1,1,-1,4,2,2,2,2,4,1,-1,1,1,4,2,2,2,2,-4,1,1,1,-1,  -5,-3, 
+                      -2,2,-2,3,1,1,-3,2
+                    }
+            );
             Templates[(int)smallTreeTemplate.TreeType] = smallTreeTemplate;
 
             //Medium Tree
@@ -50,30 +52,65 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             {
                 TreeType = TreeType.Medium,
                 Radius = 4,
-                TrunkSize = new RangeB(4,6),
+                TrunkSize = new RangeB(5,7),
                 TrunkCubeId = CubeId.Trunk,
                 FoliageCubeId = CubeId.Foliage
             };
-            mediumTreeTemplate.FoliageStructure = new List<int>() 
-                    { -4,
-                      5,1,6,6,2,2,5,5,  -3,-5,
-                      2,1,1,1,1,6,2,2,2,2,6,1,-1,1,1,6,2,2,2,2,6,1,1,1,1,  
-                      3,1,-6,2,2,2,2,2,-2,5,1,-2,5,5,5,5,-5,1,6,-5,1,1,1,1,-1,6,2,-1,6,6,6,-2,-2,-2,5
-                    };
+            mediumTreeTemplate.FoliageStructure = new List<List<int>>();
+            mediumTreeTemplate.FoliageStructure.Add(new List<int>() 
+                    { -6,
+                      3,1,4,4,2,2,3,3,  -5,-3,
+                      2,1,1,1,1,4,2,2,2,2,4,1,-1,1,1,4,2,2,2,2,4,1,1,1,1,  
+                      5,1,-4,2,2,2,2,2,-2,3,1,-2,3,3,3,3,-3,1,4,-3,1,1,1,1,-1,4,2,-1,4,4,4,-2,-2,-2,3
+                    }
+            );
             Templates[(int)mediumTreeTemplate.TreeType] = mediumTreeTemplate;
 
             //Big Tree
             TreeTemplate bigTreeTemplate = new TreeTemplate()
             {
                 TreeType = TreeType.Big,
-                Radius = 3,
-                TrunkSize = new RangeB(4, 12),
+                Radius = 5,
+                TrunkSize = new RangeB(9, 13),
                 TrunkCubeId = CubeId.Trunk,
                 FoliageCubeId = CubeId.Foliage
             };
-            bigTreeTemplate.FoliageStructure = new List<int>() 
+            bigTreeTemplate.FoliageStructure = new List<List<int>>();
+            bigTreeTemplate.FoliageStructure.Add(new List<int>() 
+                    { -6,-6,-6, -6,
+                      3,1,4,4,2,2,3,3,  -5,-3,
+                      -2,1,1,1,-1,4,2,2,2,2,4,1,1,1,1,4,2,2,2,2,-4,1,1,1,-1,  -5,-3, 
+                      -2,2,-2,3,1,1,-3,2,-4
+                    }
+            );
+            bigTreeTemplate.FoliageStructure.Add(new List<int>() 
+                    { -6,
+                      3,1,4,4,2,2,3,3,  -5,-3,
+                      -2,1,1,1,-1,4,2,2,2,2,4,1,1,1,1,4,2,2,2,2,-4,1,1,1,-1,  -5,-3, 
+                      -2,2,-2,3,1,1,-3,2,-4
+                    }
+            );
+            bigTreeTemplate.FoliageStructure.Add(new List<int>() 
                     { 
-                    };
+                      3,1,4,4,2,2,3,3,  -5,-3,
+                      -2,1,1,1,-1,4,2,2,2,2,4,1,1,1,1,4,2,2,2,2,-4,1,1,1,-1,  -5,-3, 
+                      -2,2,-2,3,1,1,-3,2,-4
+                    }
+            );
+            bigTreeTemplate.FoliageStructure.Add(new List<int>() 
+                    { -6,
+                      3,1,4,4,2,2,3,3,  -5,-3,
+                      -2,1,1,1,-1,4,2,2,2,2,4,1,1,1,1,4,2,2,2,2,-4,1,1,1,-1,  -5,-3, 
+                      -2,2,-2,3,1,1,-3,2,-4
+                    }
+            );
+            bigTreeTemplate.FoliageStructure.Add(new List<int>() 
+                    { -6,
+                      3,1,4,4,2,2,3,3,  -5,-3,
+                      -2,1,1,1,-1,4,2,2,2,2,4,1,1,1,1,4,2,2,2,2,-4,1,1,1,-1,  -5,-3, 
+                      -2,2,-2,3,1,1,-3,2,-4
+                    }
+            );
             Templates[(int)bigTreeTemplate.TreeType] = bigTreeTemplate;
 
             //Cactus 
@@ -85,7 +122,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 TrunkCubeId = CubeId.Cactus,
                 FoliageCubeId = CubeId.CactusTop
             };
-            cactusTemplate.FoliageStructure = new List<int>() { 3 };
+            cactusTemplate.FoliageStructure = new List<List<int>>();
+            cactusTemplate.FoliageStructure.Add(new List<int>() { 5 });
             Templates[(int)cactusTemplate.TreeType] = cactusTemplate;
         }
 
@@ -104,7 +142,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             // 4 = Y_Minus1
             // 5 = Z_Plus1
             // 6 = Z_Minus1
-            public List<int> FoliageStructure;
+            public List<List<int>> FoliageStructure;
         }
 
     }
